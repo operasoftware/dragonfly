@@ -68,11 +68,11 @@ templates.network_options_override_list = function(headers, overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
   return [
           ["br"],
-          "Presets:", templates.network_options_override_presets(overrides),
+          ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.network_options_override_presets(overrides),
           ["br"],
           tpl, 
           ["br"], 
-          ["button", "save",
+          ["button", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
            "handler", "update-header-overrides"].concat(overrides ? [] : ["disabled", "disabled"])
          ];
 }
@@ -85,25 +85,6 @@ templates.network_options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 }
 
-templates.network_options_header_table = function(headers)
-{
-  var fun = function(header) {
-      return ["tr",
-               ["td", "DEL"],
-               ["td", "ON"],
-               ["td", ["input", "", "value", header.name]],
-               ["td", ["input", "", "value", header.value]]
-             ];
-  };
-
-  var tpl = ["table",
-              ["tr",
-                ["th", "X"], ["th", "Y"], ["th", "Name"], ["th", "Value"]],
-                headers.map(fun)
-            ];
-  return tpl;
-};
-
 templates.network_request_crafter_main = function(url, loading, request, response)
 {
   // fixme: replace request in progress text with spinner or similar.
@@ -115,7 +96,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
             "handler", "request-crafter-url-change"],
            ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
             ["_auto_height_textarea", request],
-           ["button", "Send request", "handler", "request-crafter-send"],
+           ["button", ui_strings.M_NETWORK_CRAFTER_SEND, "handler", "request-crafter-send"],
            ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
            (loading ? ["span", ui_strings.M_NETWORK_CRAFTER_SEND] : ["div", ["textarea", response]]),
            "class", "padding request-crafter"
@@ -149,7 +130,6 @@ templates.network_log_main = function(ctx, graphwidth)
   ];
 }
 
-
 templates.network_log_details = function(ctx, selected, listwidth)
 {
   return  [
@@ -163,14 +143,6 @@ templates.network_log_details = function(ctx, selected, listwidth)
     ]
   ]
 }
-
- = "URL";
-/* DESC: label for response in http request details */
-ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
-/* DESC: label for method in http request details */
-ui_strings.S_HTTP_LABEL_METHOD = "Method";
-
-
 
 templates.network_log_request_detail = function(ctx, selected)
 {
@@ -187,7 +159,7 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(req.responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
-     ["tr", ["th", "ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION" + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
      "class", "resource-detail"
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
@@ -279,7 +251,7 @@ templates.network_response_body = function(req)
     }
     else
     {
-      bodytpl = ["span", "Not able to show data of type %s".replace("%s", req.mime)];
+      bodytpl = ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", req.mime)];
     }
 
     return ["div",
@@ -352,7 +324,6 @@ templates.network_log_graph = function(ctx, width)
   var rows = templates.network_graph_rows(ctx, rowheight, width)
   var grid = templates.grid_lines(ctx, width, height, rowheight);
 
-
   var tpl = ["svg:svg",
              gradients,
              rows,
@@ -362,7 +333,6 @@ templates.network_log_graph = function(ctx, width)
              "class", "resource-graph"];
     return tpl;
 }
-
 
 templates.network_graph_rows = function(ctx, rowheight, width)
 {
@@ -444,11 +414,14 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var title = "";
   if (request.cached)
   {
-    title = "Cached" + (request.duration ? " " + request.duration + "ms" : "")
+    title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED.replace("%s", request.duration || 0)
   }
   else
   {
-    title = "Total duration: " + request.duration + "\nRequest time: " + (request.requesttime - request.starttime) + "\nResponse time: " + (request.endtime - request.requesttime)
+    title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL;
+    title = title.replace("%(total)s", request.duration);
+    title = title.replace("%(request)s", (request.requesttime - request.starttime));
+    title = title.replace("%(response)s", (request.endtime - request.requesttime));
   }
 
   var tpl = [
