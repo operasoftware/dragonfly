@@ -123,7 +123,7 @@
     return false;
   };
 
-  this._handlers["toggle-command-line"] = function(action_id, event, target)
+  this._handlers["toggle-console"] = function(action_id, event, target)
   {
     // escape does much more than just toggle-command-line, 
     // perhaps we should reflect that
@@ -131,8 +131,8 @@
     if (this.mode == MODE_EDIT)
     {
       var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
-      if (sc_listener && shortcut_listener in this._sc_listeners &&
-          this._sc_listeners[shortcut_listener](action_id, event, target) === false)
+      if (sc_listener && sc_listener in this._sc_listeners &&
+          this._sc_listeners[sc_listener](action_id, event, target) === false)
       {
          return false;
       }

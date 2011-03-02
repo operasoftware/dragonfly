@@ -168,7 +168,7 @@ Search.prototype = new function()
           return false;
         }
       }
-      case 'toggle-command-line':
+      case 'toggle-console':
       {
         if (this.is_active)
         {
