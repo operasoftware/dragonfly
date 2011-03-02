@@ -1,0 +1,89 @@
+.cookie_manager .sortable-table input[type=text], .cookie_manager .add-cookie-form input[type=text] {
+  width: 99%; border: 1px solid #CCC;
+}
+
+.cookie_manager .replaced-val {
+  color: #AAA;
+}
+
+.cookie_manager .expired_cookie {
+  color: #AAA;
+}
+
+/* editing */
+
+.cookie_manager .value_container {
+  position: relative;
+  height: 15px;
+}
+
+.cookie_manager .edit_container {
+  display: none;
+  margin-top: -2px;
+  margin-left: -15px;
+}
+
+.cookie_manager .edit_mode .edit_container {
+  display: block;
+}
+
+.cookie_manager .edit_mode .value_container {
+  display: none;
+}
+
+/* ellipsis */
+
+.cookie_manager .sortable-table .ellipsis_cont {
+  position: relative;
+  height: 12px;
+}
+
+.cookie_manager .sortable-table .ellipsis_cont .ellipsis {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#contextmenu .ellipsis_cont, #contextmenu .ellipsis {
+  display: inline; /* hide containers in context menu */
+}
+
+/* columns */
+
+.cookie_manager .sortable-table .col_domain {
+  width: 15%;
+}
+.cookie_manager .sortable-table .col_name {
+  width: 15%;
+}
+.cookie_manager .sortable-table .col_value {
+  width: 25%;
+}
+.cookie_manager .sortable-table .col_path {
+  width: 5%;
+}
+.cookie_manager .sortable-table .col_expires {
+  width: 15%;
+}
+.cookie_manager .sortable-table .col_secure {
+  width: 7.5%;
+}
+.cookie_manager .sortable-table .col_httponly {
+  width: 7.5%;
+}
+
+/* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
+  it's just for the add_cookie button */
+.cookie_manager .sortable-table tr.sortable-table-summation-row td {
+  border: none;
+  background: none;
+  padding-bottom: 7px;
+}
+
+.cookie_manager .sortable-table tr.sortable-table-summation-row {
+  background: none;
+}

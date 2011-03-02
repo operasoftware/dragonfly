@@ -553,7 +553,18 @@ ui_framework.layouts.storage_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabs: ['cookies', 'local_storage', 'session_storage', 'widget_preferences'] } ]
+    children: [ {
+      height: 1000,
+      tabs: function(services)
+      {
+        var cookie_module = 'cookies';
+        if(services["cookie-manager"])
+        {
+          var cookie_module = 'cookie_manager';
+        }
+        return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences']
+      }
+    } ]
 }
 
 ui_framework.layouts.main_layout =
