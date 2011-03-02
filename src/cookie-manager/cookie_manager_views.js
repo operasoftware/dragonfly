@@ -76,7 +76,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this.data.remove_cookie(sel_cookie_obj._objectref);
+                    this.data.remove_cookie(sel_cookie_obj._objectref, this.data.refetch);
                   }).bind(this)
                 }
               );
@@ -90,12 +90,25 @@ cls.CookieManager.CookieManagerViewBase = function()
                 handler: (function(runtime_id, context){
                   return function() {
                     var items = context.data.get_cookies();
-                    for (var i=0; i < items.length; i++) {
-                      var cookie = items[i];
-                      if(cookie._rt_id == runtime_id)
+                    var items_to_remove = items.filter(
+                      function(cookie)
                       {
-                        context.data.remove_cookie(cookie._objectref);
+                        if(cookie._rt_id === runtime_id && !cookie._is_runtime_placeholder)
+                        {
+                          return true;
+                        }
                       }
+                    );
+
+                    for (var i=0; i < items_to_remove.length; i++) {
+                      var cookie = items_to_remove[i];
+                      // only set callback on last
+                      var callback = function(){};
+                      if(i === items_to_remove.length - 1)
+                      {
+                        callback = context.data.refetch;
+                      }
+                      context.data.remove_cookie(cookie._objectref, callback);
                     };
                   }
                 })(runtime_id, this)
@@ -118,7 +131,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
                   handler: (function() {
-                    this.data.remove_cookie(removable_cookies[0]._objectref);
+                    this.data.remove_cookie(removable_cookies[0]._objectref, this.data.refetch);
                   }).bind(this)
                 }
               );
@@ -133,7 +146,13 @@ cls.CookieManager.CookieManagerViewBase = function()
                     {
                       for (var i=0; i < removable_cookies.length; i++)
                       {
-                        context.data.remove_cookie(removable_cookies[i]._objectref);
+                        // only set callback on last
+                        var callback = function(){};
+                        if(i === removable_cookies.length - 1)
+                        {
+                          callback = context.data.refetch;
+                        }
+                        context.data.remove_cookie(removable_cookies[i]._objectref, callback);
                       }
                     }
                   })(removable_cookies, this)
@@ -166,7 +185,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
-            return ["button", "Add Cookie", "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+            return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
           }
         },
         name: {
@@ -307,7 +326,10 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
-    this._sortable_table.restore_columns(this._table_elem);
+    if(!document.querySelector(".add_cookie_row")) // (lousy) fix for adding multiple cookies at once
+    {
+      this._sortable_table.restore_columns(this._table_elem);
+    }
     var row = document.querySelector("[data-object-id='"+objectref+"']");
     var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
     var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
@@ -346,6 +368,14 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     var edit_trs = document.querySelectorAll("tr.edit_mode");
     for (var i=0; i < edit_trs.length; i++) {
+      // avoid refetching multiple times when saving multiple cookies.
+      var is_last_cookie_in_list = (i == edit_trs.length - 1);
+      var callback_after_set_cookie = function(){};
+      if(is_last_cookie_in_list)
+      {
+        callback_after_set_cookie = this.data.refetch;
+      }
+
       var edit_tr = edit_trs[i];
       edit_tr.removeClass("edit_mode");
 
@@ -397,13 +427,13 @@ cls.CookieManager.CookieManagerViewBase = function()
                            expires:        expires,
                            is_secure:      +is_secure,
                            is_http_only:   +is_http_only,
-                           _rt_id: runtime 
+                           _rt_id:         runtime
                           }, this.data);
 
         if(!new_cookie._rt_id)
         {
           /**
-            * Try to find runtime where this might end up to be able to highlight it. Using endsWith 
+            * Try to find runtime where this might end up to be able to highlight it. Using endsWith
             * makes it work for subdomains, it can get the wrong one too, but chances are good
             * and it doesnt matter too much. Todo: Improve by making a runtimes list with those that fit.
             */
@@ -422,11 +452,11 @@ cls.CookieManager.CookieManagerViewBase = function()
         if(old_cookie)
         {
           // remove old_cookie, on finished add new cookie
-          this.data.remove_cookie(old_cookie._objectref, this.data.set_cookie.bind(this.data, new_cookie));
+          this.data.remove_cookie(old_cookie._objectref, this.data.set_cookie.bind(this.data, new_cookie, callback_after_set_cookie));
         }
         else
         {
-          this.data.set_cookie(new_cookie);
+          this.data.set_cookie(new_cookie, callback_after_set_cookie);
         }
       }
       else

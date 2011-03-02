@@ -528,7 +528,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 /* DESC: Label for grouping by (location.hostname + location.pathname) */
 ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_HOST_AND_PATH = "host and path";
-/* DESC: Context menu entry that brings up "Add cookie" UI */
+/* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
 ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
 /* DESC: Context menu entry that brings up "Edit cookie" UI */
 ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE = "Edit cookie";

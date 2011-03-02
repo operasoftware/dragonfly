@@ -187,7 +187,7 @@ templates.cookie_manager = {
         ["td", this.input_datetime_container("expires")],
         ["td"],
         ["td"],
-      "class", "edit_mode"
+      "class", "edit_mode add_cookie_row"
     ];
   },
   add_cookie_row_all_editable: function(default_domain) {
@@ -199,7 +199,7 @@ templates.cookie_manager = {
         ["td", this.input_datetime_container("expires")],
         ["td", this.input_checkbox_container("is_secure")],
         ["td", this.input_checkbox_container("is_http_only")],
-      "class", "edit_mode"
+      "class", "edit_mode add_cookie_row"
     ];
   }
 }

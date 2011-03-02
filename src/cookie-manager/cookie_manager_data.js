@@ -26,14 +26,14 @@ cls.CookieManager.Cookie = function(details, data)
   {
     this._objectref = "runtime_placeholder_"+this._rt_id;
   }
-  
+
   /**
    * Decide if the cookie can be edited.
    * The cookie.domain and .isHTTPOnly conditions applies only when the "add cookie"
    * interface is not used, which allows specifying the domain when creating cookies
    * cookie_service 1.0.2 fixes CORE-35055 -> correct paths, allows for editing
   */
-  this._is_editable = 
+  this._is_editable =
     data._is_min_service_version_1_1 || (
       !this.isHTTPOnly &&
       (!this.path || data._is_min_service_version_1_0_2) &&
@@ -59,7 +59,7 @@ cls.CookieManager.CookieDataBase = function()
   this.get_cookies = function(){};
   this.create_objectref = function(cookie, runtimes, fixed_name){};
   this.get_cookie_by_objectref = function(objectref){};
-  this.set_cookie = function(cookie_instance){};
+  this.set_cookie = function(cookie_instance, callback){};
 
   this.refetch = function()
   {
@@ -69,10 +69,40 @@ cls.CookieManager.CookieDataBase = function()
     };
   };
 
+  this.get_cookies = function()
+  {
+    return this.cookie_list;
+  };
+
+  this.get_cookie_by_objectref = function(objectref)
+  {
+    for (var i=0; i < this.cookie_list.length; i++) {
+      if(this.cookie_list[i]._objectref === objectref)
+      {
+        return this.cookie_list[i];
+      }
+    };
+  };
+
+  this.set_cookie = function(cookie_instance, callback)
+  {
+    var callback = callback || (function(){});
+    this._view._restore_selection = [cookie_instance._objectref];
+
+    var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
+    if(cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    {
+      add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
+    }
+    add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
+    var tag = tagManager.set_callback(this, callback, []);
+    services['ecmascript-debugger'].requestEval(tag,[cookie_instance._rt_id, 0, 0, add_cookie_script]);
+  };
+
   this.remove_cookie = function(objectref, callback)
   {
     var cookie;
-    var callback = callback || this.refetch;
+    var callback = callback || (function(){});
     for (var i=0; i < this.cookie_list.length; i++)
     {
       if(this.cookie_list[i]._objectref === objectref)
@@ -95,35 +125,6 @@ cls.CookieManager.CookieDataBase = function()
       }
     }
   };
-
-  this.get_cookies = function()
-  {
-    return this.cookie_list;
-  }
-
-  this.get_cookie_by_objectref = function(objectref)
-  {
-    for (var i=0; i < this.cookie_list.length; i++) {
-      if(this.cookie_list[i]._objectref === objectref)
-      {
-        return this.cookie_list[i];
-      }
-    };
-  }
-
-  this.set_cookie = function(cookie_instance)
-  {
-    this._view._restore_selection = [cookie_instance._objectref];
-
-    var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
-    if(cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
-    {
-      add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
-    }
-    add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
-    var tag = tagManager.set_callback(this, this.refetch, []);
-    services['ecmascript-debugger'].requestEval(tag,[cookie_instance._rt_id, 0, 0, add_cookie_script]);
-  }
 
   this._on_active_tab = function(msg)
   {
@@ -191,7 +192,7 @@ cls.CookieManager.CookieDataBase = function()
       else
       {
         // if runtime has no location.hostname, only update view. occurs on opera:* pages for example.
-        this._view.update()
+        this._view.update();
       }
     }
   };
@@ -260,7 +261,7 @@ cls.CookieManager.CookieDataBase = function()
         for (var i=0; i < cookies.length; i++) {
           var cookie_info = cookies[i];
           var pos = cookie_info.indexOf('=', 0);
-          
+
           this.cookie_list.push(
             new cls.CookieManager.Cookie(
               {
@@ -299,8 +300,9 @@ cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.Coo
 
 cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
-  this.set_cookie = function(cookie_instance)
+  this.set_cookie = function(cookie_instance, callback)
   {
+    var callback = callback || (function(){});
     this._view._restore_selection = [cookie_instance._objectref];
     // todo: work around CORE-36742 - possibly move that to the Cookie class
     var cookie_detail_arr = [
@@ -312,7 +314,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
       cookie_instance.isSecure,
       cookie_instance.isHTTPOnly
     ];
-    var tag = tagManager.set_callback(this, this.refetch);
+    var tag = tagManager.set_callback(this, callback);
     services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   }
   this._init(service_version, view);
