@@ -19,35 +19,29 @@ textarea, input {
   font-size: 11px;
 }
 
-
 /* UI Style */
 viewport {
   width: 100%;
   height: 100%;
   display: block;
   overflow: hidden;
-  }
+}
 
-main-view { /**/
+main-view {
   width: 100%;
   display: block;
-  }
+}
 
-windows-container, 
-toolbar, 
+windows-container,
+toolbar,
 modebar,
 searchbar,
-tabs, 
-container, 
-top-tabs, 
-top-container, 
+tabs,
+container,
+top-tabs,
+top-container,
 top-toolbar {
-  display: block;
   position: absolute;
-  }
-
-panel-toolbar {
-  display: block;
 }
 
 panel-container {
@@ -58,73 +52,71 @@ panel-container {
   position: relative;
 }
 
+container,
+top-toolbar,
+top-tabs,
+tabs,
+modebar,
+searchbar,
+toolbar,
+panel-toolbar,
+window-toolbar {
+    border: 0 solid #999;
+}
+
 top-toolbar, top-tabs, tabs {
-    border-bottom: 1px solid #999;
+    border-bottom-width: 1px;
 }
+
 modebar {
-    border-top: 1px solid #999;
+    border-top-width: 1px;
 }
 
-/* set with css. height, border and padding are supported */
-
-top-container { /**/
+top-container {
   background-color: #e6e6e6;
-  }
+}
 
-/* set with css. height, border and padding are supported */
-
-container { /**/
-  border-left: 1px solid #999;
-  border-right: 1px solid #999;
+container {
+  border-width: 0 1px;
   background-color: #fafafa;
   overflow: hidden;
-  } 
+}
 
-window-statusbar { /**/
-  display: block;
-  background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
-  border-top: 1px solid #ccc;
-  line-height: 20px;
-  height: 20px;
-  }
-
-info { /**/
-  padding: 0 7px;
-  }
-
-
-.scroll {
-  overflow: auto;
-  }
-	
-top-toolbar { /**/
+top-toolbar {
   height: 22px;
   padding: 5px 4px 3px 4px;
   background: #f3f3f3 url("../ui-images/shine_1_attached.png") repeat-x;
 }
 
+window-statusbar {
+  display: block;
+  background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
+  border-top: 1px solid #ccc;
+  line-height: 20px;
+  height: 20px;
+}
 
-window-toolbar { /**/
+window-toolbar {
   display: block;
 }
 
-/* set with css. height, border and padding are supported */
-
-toolbar, panel-toolbar, window-toolbar{ /**/
-  border: 0 solid #999;
+toolbar, panel-toolbar, window-toolbar {
   border-width: 0 1px 1px;
   padding: 3px 2px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   background: #f3f3f3 url("../ui-images/shine_2.png") 0 0 repeat-x;
-  }
+}
+
 panel-toolbar {
+  display: block;
   border-width: 0 0 1px 0;
 }
+
 toolbar-buttons, toolbar-switches {
   display: block;
   float: left;
   height: 100%;
-  }
+}
 
 button[handler="reload-window"] {
     content: url("../ui-images/icons/icon_reload.png");
@@ -262,6 +254,29 @@ cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_clear.png");
 }
 
+/* Top tabs */
+.dom_mode {
+    background-image: url("../ui-images/documents_attached.png");
+}
+.js_mode {
+    content: url("../ui-images/scripts_attached.png");
+}
+.network_mode {
+    background: url("../ui-images/network_attached.png");
+}
+.resource_panel {
+    background: url("../ui-images/resources_attached.png");
+}
+.storage {
+    background: url("../ui-images/storage_attached.png");
+}
+.console_mode {
+    background: url("../ui-images/errorlog_attached.png");
+}
+.utils {
+    background: url("../ui-images/utilities_attached.png");
+}
+
 .ui-control
 {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
@@ -289,9 +304,6 @@ cst-icon[class="debugger-menu"] {
                 inset 0 1px 2px rgba(0, 0, 0, .4);
     background-position: 0 1px;
 }
-cst-select:active {
-    padding: 1px;
-}
 .ui-control[is-active="true"] {
     box-shadow: 0 1px #fff,
                 inset 0 1px 2px rgba(0,0,0,0.1),
@@ -316,7 +328,6 @@ cst-select:active {
 #toggle-remote-debug-overlay[is-active="true"]:active {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
-
 
 /* Alert state */
 .ui-control.alert {
@@ -374,15 +385,61 @@ toolbar-separator {
   float: left;
   height: 21px;
   margin: 0 3px;
-  /*border-left: 1px solid #fff;
-  border-right: 1px solid #8e8e8e;*/
-  }
-	
+}
+
 toolbar-filters,
 toolbar-search {
   display: block;
   float: right;
-  }
+}
+
+toolbar-filters input[type=button]
+{
+  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-radius: 3px;
+  margin: 0 0 0 4px;
+  padding: 1px 10px;
+  height: 17px;
+  line-height: 27px;
+  text-shadow: 0 1px rgba(255,255,255,0.5);
+  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  display: inline-block;
+  vertical-align: top;
+  -o-transition: background-color 0.2s;
+  box-sizing: content-box;
+}
+
+toolbar-filters input[type=button]:active
+{
+  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+  background-position: 0 1px;
+  padding-top: 2px;
+  padding-bottom: 0;
+}
+
+toolbar-filters input[type=button].search-move-highlight-up
+{
+  content: url("../ui-images/icons/icon_back.png");
+  border-radius: 10px 2px 2px 10px;
+  padding: 1px 2px;
+}
+
+toolbar-filters input[type=button].search-move-highlight-down
+{
+  content: url("../ui-images/icons/icon_forward.png");
+  border-radius: 2px 10px 10px 2px;
+  padding: 1px 2px;
+  margin-left: 1px;
+  margin-right: 2px;
+}
+
+toolbar-filters span {
+  display: inline-block;
+  width: 140px;
+  color: #999;
+  vertical-align: top;
+}
 
 filter {
   margin: 0 2px;
@@ -395,14 +452,7 @@ filter {
   background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
   box-shadow: 0 1px #fff,
               inset 0 1px 1px #d5d5d5;
-  }
-
-toolbar-filters span {
-  display: inline-block;
-  width: 140px;
-  color: #999;
-  vertical-align: top;
-  }
+}
 
 filter input {
   width: 138px;
@@ -413,11 +463,11 @@ filter input {
   padding: 0;
   padding-right: 2px;
   color: #666;
-  }
+}
 
 toolbar-filters filter.focus input {
   color: #000;
-  }
+}
 
 modebar {
   height: 21px;
@@ -428,8 +478,8 @@ modebar.hidden {
   display: none;
 }
 searchbar {
-  border: 1px solid #999;
   border-top: none;
+  border-width: 0 1px 1px;
   padding: 3px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   line-height: 21px;
@@ -439,194 +489,17 @@ searchbar {
 window-select {
   position: relative;
   padding: 2px 0;
-  }
+}
 
 window-select select {
   width: 100%;
   max-width: 400px;
   margin:0;
   height: 22px;
-  }
+}
 
 window-select select option[value="-1"]  {
   color: #999;
-  }
-
-/* set with css. height, border and padding are supported */
-
-tabs { /* The bottom tabs containers */
-  height: 21px;
-  padding: 5px 2px 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
-}
-
-tab { /**/
-  display:block;
-  float:left;
-  height: 15px;
-  line-height: 15px;
-  padding: 2px 6px 3px;
-  border: 0 transparent solid;
-  border-width: 1px 1px 0;
-  position: relative;
-  top: 1px; /* Push down one pixel to hide the border */
-}
-
-tabs tab {
-  border-radius: 3px 3px 0 0;
-  margin-right: 1px;
-}
-
-tabs tab.active {
-  background: #fafafa;
-  border-color: #999;
-  box-shadow: 0 0 3px #ccc;
-}
-
-tabs tab:not(.active):hover {
-  background-color: #eee;
-  border-color: #ccc;
-  padding-bottom: 2px;
-}
-
-tabs tab:not(.active) {
-    color: #666;
-}
-
-input[handler="tab"] { /**/
-  font-size: 11px;
-  background: transparent url('../ui-images/tab.png') scroll no-repeat 100% 0;
-  border: none;
-  margin: 0 -4px 0 6px;
-  padding-left: 6px;
-  padding-right: 10px; /* to be removed when the close buttons are activated */
-  height: 17px;
-  line-height: 17px;
-  vertical-align: top;
-  }
-
-top-tabs { /* The top tabs container, replaced with, placed into or merged with top-toolbar */
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 30px;
-  background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
-  }
-top-tabs.detached {
-  height: 60px;
-  background-image: url("../ui-images/shine_1_detached.png");
-}
-top-tabs.detached tab {
-  background-image: url("../ui-images/shine_1_detached.png");
-}
-
-/* this is a quick hack to get the runtime button in the tabs bar */
-top-tabs toolbar-buttons { 
-  margin: -7px 3px 0 -2px;
-  }
-
-top-tabs tab {  /**/
-  height: 26px;
-  line-height: 26px;
-  border: 0;
-  border-right: 1px solid rgba(0,0,0,0.2);
-  padding: 2px 6px;
-  text-shadow: 0 1px rgba(255, 255, 255, .5);
-  background: #e6e6e6 url("../ui-images/shine_1_attached.png") repeat-x;
-  top: 0;
-  }
-
-top-tabs.detached tab {
-  height: 60px;
-  min-width: 60px;
-  line-height: normal;
-  text-align: center;
-  padding: 0 5px;
-  line-height: .4;
-}
-
-top-tabs tab.active {
-  background-color: #cecece;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
-
-}
-top-tabs tab.active:first-of-type {
-  border-left-color: transparent;
-}
-top-tabs.detached tab.active {
-  background-image: url("../ui-images/shine_1_detached.png");
-}
-
-/* Alert state - Warning & Error */
-top-tabs tab.alert {
-  text-shadow: 0 1px rgba(255, 255, 255, .3);
-  background-color: #f6ae66;
-  color: #662914;
-}
-
-top-tabs tab.alert.active {
-  background-color: #f2883d;
-  box-shadow: inset 0 1px 4px rgba(128,0,0,0.3),
-              inset 0 1px 2px rgba(128,0,0,0.4),
-              -1px 0 rgba(0,0,0,0.3);
-}
-
-/* Alert state - Information */
-top-tabs tab[data-state="waiting"] {
-  background-color: #aadaf2;
-  color: #263f5d;
-}
-
-top-tabs tab[data-state="waiting"].active {
-  background-color: #8ac7e5;
-  box-shadow: inset 0 1px 4px
-              rgba(0,64,128,0.3),
-              inset 0 1px 2px rgba(0,64,128,0.4),
-              -1px 0 rgba(0,0,0,0.3);
-}
-
-top-tabs .icon {
-  display: inline-block;
-  height: 26px;
-  width: 26px;
-  vertical-align: top;
-  margin-right: 3px;
-}
-top-tabs .badge {
-  position: absolute;
-  background: #df6531;
-  color: #000;
-  text-shadow: none;
-  line-height: 1;
-  padding: 1px 3px;
-  border-radius: 4px;
-  top: 1px;
-  right: 1px;
-  font-size: 9px;
-}
-top-tabs .badge:empty {
-  display: none;
-}
-
-.dom_mode {
-    background-image: url("../ui-images/documents_attached.png");
-}
-.js_mode {
-    content: url("../ui-images/scripts_attached.png");
-}
-.network_mode {
-    background: url("../ui-images/network_attached.png");
-}
-.resource_panel {
-    background: url("../ui-images/resources_attached.png");
-}
-.storage {
-    background: url("../ui-images/storage_attached.png");
-}
-.console_mode {
-    background: url("../ui-images/errorlog_attached.png");
-}
-.utils {
-    background: url("../ui-images/utilities_attached.png");
 }
 
 button[handler="top-settings"]
@@ -730,7 +603,7 @@ settings-container button:active, settings-container input[type=button]:active {
   background-color: rgba(255,255,255,0.3);
 }
 
-settings-container checkbox label:hover{
+settings-container checkbox label:hover {
   color: #fff;
 }
 
@@ -820,7 +693,7 @@ ui-menu ul { /* The list needs a bottom shadow when opened */
 
 ui-menu li { /**/
   padding: 0;
-	margin-right: 6px;
+  margin-right: 6px;
   padding-left: 10px;
   width: 155px;
   background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -19px;
@@ -829,7 +702,7 @@ ui-menu li { /**/
 ui-menu li h2 { /**/
   padding: 0;
   margin: 0;
-	width: 165px;
+  width: 165px;
   height: 22px;
   line-height: 22px;
   font-weight: normal;
@@ -862,7 +735,7 @@ window-header {
   background: rgba(255,255,255,0.1);
   border-radius: 3px 3px 0 0;
   border-top: 1px solid rgba(255,255,255,0.2);
-  border-bottom: 1px solid rgba(0,0,0,0.4); 
+  border-bottom: 1px solid rgba(0,0,0,0.4);
 }
 
 windows-container [handler="window-move"] { /**/
@@ -998,15 +871,6 @@ window.hud window-container {
   border: 0;
 }
 
-
-#spin-button { /**/
-  float: left;
-  height: 16px;
-  width: 48px;
-  margin: 5px;
-  background: transparent url('../ui-images/spin.png') scroll no-repeat 0 0;
-  }
-
 /* editing */
 textarea
 {
@@ -1023,7 +887,7 @@ textarea-container {
   border: 1px solid #808080;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
   }
-textarea-container, textarea-container-inline, textarea-inner-container, textarea {
+textarea-container, textarea-container-inline, textarea {
     border-radius: 3px;
 }
 textarea-container textarea{
@@ -1047,12 +911,6 @@ textarea-container-inline
   border: 1px solid #808080;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
 }
- 
-textarea-container-inline textarea-inner-container 
-{
-  display: inline-block;
-}
- 
 textarea-container-inline textarea
 {
   border: none;
@@ -1062,25 +920,6 @@ textarea-container-inline textarea
   overflow: hidden;
   height: 0px;
 }
-
-fade-out
-{
-  display: block;
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height: 100%;
-  background: rgba(0, 0, 0, .2);
-}
-  
-/*
-  width: 26px;
-  height: 24px;
-  margin: 1px;
-  padding: 0;
-  */
-
 cst-select-toolbar-setting
 {
     display: inline-block;
@@ -1115,6 +954,9 @@ cst-drop-down
   top: -1px;
 }
 
+cst-select:active {
+    padding: 1px;
+}
 cst-select cst-value {
   text-shadow: 0 1px rgba(255, 255, 255, .5);
 }
@@ -1315,33 +1157,6 @@ cst-select-option-list-container.color .ok-cancel input + input
   float: right;
 }
 
-pin-label
-{
-  display: inline-block;
-  line-height: 22px;
-  padding: 2px 9px 0px 8px;
-  margin: -4px -4px -4px 0px;
-  vertical-align: -7px;
-  background-image:-o-skin('Speed Dial Configuration Dialog Skin');
-}
-
-pin-label span
-{
-  display: inline-block;
-  max-width: 200px;
-  padding-right: 5px;
-  margin: 0px;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-pin-label.pinned
-{
-  background-image:-o-skin('Speed Dial Configuration Dialog No Alpha Skin');
-}
-
 .info-box
 {
   margin: 30px 50px 0 50px;
@@ -1351,7 +1166,7 @@ pin-label.pinned
   border-radius: 4px;
   background: #f3f3f3;
 }
-.info-box p 
+.info-box p
 {
   margin: 5px 0 0;
   padding: 0;
@@ -1490,123 +1305,9 @@ cst-title
   font-style: normal;
 }
 
-overlay {
-    background: rgba(0, 0, 0, .5);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    z-index: 300; /* Need to clean this up, there is no reason for z-index to ever be this high. */
-    padding: 0 30px;
-}
-
 .script-options cst-title
 {
   margin-left: 2em;
-}
-
-overlay.active {
-    display: block;
-}
-overlay-window {
-    color: #fff;
-    border-radius: 7px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
-    background: rgba(40, 40, 40, .9);
-    width: 650px;
-    border: 2px solid #b1b1b1;
-    display: block;
-    position: absolute;
-    height: 80%;
-    max-height: 600px;
-    right: 20px;
-}
-overlay-arrow {
-  content: url("../ui-images/overlay_arrow.png");
-  position: absolute;
-  top: -12px;
-}
-overlay-window h2 {
-    font-size: 1em;
-}
-overlay-tabs, overlay-content {
-    display: block;
-    border: 1px solid #000;
-}
-overlay-tabs {
-    border-radius: 7px 7px 0 0;
-    border-bottom: none;
-    padding: 5px 5px 0;
-    overflow: hidden;
-    white-space: nowrap;
-}
-overlay-tabs tab {
-    border-radius: 3px 3px 0 0;
-    padding: 0 15px;
-    height: 25px;
-    line-height: 25px;
-    margin-right: 5px;
-    color: #bbb;
-    display: inline-block;
-    float: none;
-    position: static;
-    border: none;
-}
-overlay-tabs tab:hover {
-     background: rgba(0, 0, 0, .2);
-}
-overlay-tabs tab.active {
-    color: #fff;
-    text-shadow: 0 0 10px rgba(255,255,255,0.75);
-    border-color: #000;
-    background: rgba(0, 0, 0, .4);
-    cursor: auto;
-}
-overlay-content, overlay-info {
-    position: absolute;
-    top: 31px;
-    bottom: 0;
-    right: 0;
-    padding: 10px;
-    overflow: auto;
-}
-overlay-content {
-    background: rgba(0, 0, 0, .4);
-    border-radius: 0 0 7px 7px;
-    border-top-width: 0;
-    left: 0;
-}
-overlay-info:not(:empty) + overlay-content {
-    padding-right: 200px;
-}
-overlay-info:not(:empty) {
-    z-index: 2;
-    border-left: 1px solid rgba(255, 255, 255, .1);
-    width: 180px;
-}
-overlay-info p {
-    margin: 0 0 8px;
-}
-overlay-info ol {
-    margin: 0;
-    padding: 0 0 0 20px;;
-}
-overlay-info li {
-    margin-bottom: 8px;
-}
-overlay fieldset, overlay hr {
-    border: 1px solid rgba(255, 255, 255, .1);
-}
-overlay fieldset {
-    margin: 10px 5px 10px 5px;
-    color: #999;
-}
-overlay fieldset legend {
-    color: #fff;
-}
-overlay hr {
-    border-width: 0 0 1px;
 }
 
 cst-group
@@ -1629,13 +1330,11 @@ tabs, toolbar {
 }
 
 .close-tab-button {
-  background: rgba(0,0,0,0) url("../ui-images/icons/icon_close_tab.png") no-repeat 50% 50%;
+  background: transparent url("../ui-images/icons/icon_close_tab.png") no-repeat 50% 50%;
   border: none;
   width: 11px;
   height: 11px;
-  margin-top: -1px;
-  margin-right: -4px;
-  margin-left: 4px;
+  margin: -1px -4px 0 4px;
   opacity: 0.4;
 }
 
@@ -1652,20 +1351,6 @@ tab.active .close-tab-button {
   margin-left: 20px;
 }
 
-toolbar-filters input[type=button].search-move-highlight-up
-{
-  content: url("../ui-images/icons/icon_back.png");
-  border-radius: 10px 2px 2px 10px;
-  padding: 1px 2px;
-}
-toolbar-filters input[type=button].search-move-highlight-down
-{
-  content: url("../ui-images/icons/icon_forward.png");
-  border-radius: 2px 10px 10px 2px;
-  padding: 1px 2px;
-  margin-left: 1px;
-  margin-right: 2px;
-}
 
 .context-window
 {
@@ -1716,31 +1401,6 @@ toolbar-filters input[type=button].search-move-highlight-down
   color: #000;
 }
 
-toolbar-filters input[type=button]
-{
-  background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 3px;
-  margin: 0 0 0 4px;
-  padding: 1px 10px;
-  height: 17px;
-  line-height: 27px;
-  text-shadow: 0 1px rgba(255,255,255,0.5);
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
-  display: inline-block;
-  vertical-align: top;
-  -o-transition: background-color 0.2s;
-  box-sizing: content-box;
-}
-
-toolbar-filters input[type=button]:active
-{
-  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
-  background-position: 0 1px;
-  padding-top: 2px;
-  padding-bottom: 0;
-}
-
 /* Button style. Use for buttons inside the <container>. */
 container button
 {
@@ -1759,4 +1419,12 @@ container button:active
   box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
   text-shadow: none;
+}
+
+info {
+  padding: 0 7px;
+}
+
+.scroll {
+  overflow: auto;
 }
