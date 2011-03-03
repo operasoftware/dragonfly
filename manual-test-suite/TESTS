@@ -1126,7 +1126,7 @@ desc:
 Storage.Cookies
 ***************
 
-url: ./test-cases/storages/create-storages.html
+url: ./test-cases/storages/create-storages.php
 
 url: ./test-cases/storages/check-storages.html
 
@@ -1134,7 +1134,12 @@ id: 00100
 label: Inspect cookies
 desc:
   - Go to the above url in the above order
-  - Verify that you see cookie a - j
+  - Verify that you see cookie a - m, or if your host protocol is https, a - n
+  - In case the host has the cookie-service:
+  - Verify that you see cookie a - o (with n only present if the host protocol is https)
+  - Verify that cookie "n", if you see it, has a secure checkmark
+  - Verify that the "expires" values follow a logical order from 2 years to "(Session)"
+  - Verify that you can watch them expire without any further action
 
 url: ./test-cases/storages/check-storages.html
 
