@@ -340,6 +340,58 @@ desc:
   - Check it again.
   - Verify that comment node is shown again.
 
+DOM.Breadcrumbs
+***************
+
+label: Updating of breadcrumbs
+desc:
+  - Click on different elements in the DOM view
+  - Verify that the breadcrumbs update
+
+label: Hover breadcrumbs
+desc:
+  - Verify that there are at least two visible breadcrumbs
+  - Hover all of them
+  - Verify that the elements are spotlighted in the host
+
+label: Clicking breadcrumbs
+desc:
+  - Click a breadcrumb
+  - Verify that the corresponding element is selected in the DOM view
+
+label: Navigation buttons on resizing
+desc:
+  - Verify that the breadcrumb trail is long but fits inside the window
+  - Resize the window so that the breadcrumbs don't fit
+  - Verify that that navigation buttons appear on both sides
+
+label: Navigation buttons on long breadcrumb trail
+desc:
+  - Click on a deeply nested element so that the breadcrumb trail is too long to fit inside the window
+  - Verify that that navigation buttons appear on both sides
+  - Verify that the end of the breadcrumb trail is visible and that the right button is disabled
+  - Click on a shallow element
+  - Verify that the buttons disappear
+
+label: Interacting with navigation buttons
+desc:
+  - Click on a navigation button
+  - Verify that the breadcrumbs move in that direction
+  - Click and hold a navigation button
+  - Verify that the breadcrumb trail is continously moving
+
+label: Dragging the breadcrumb bar
+desc:
+  - Verify that the breadcrumb trail is too long to fit into the window
+  - Grab the bar and drag it
+  - Verify that it's possible to drag
+
+label: Dragging the breadcrumb bar
+desc:
+  - Verify that the breadcrumb trail is too long to fit into the window
+  - Use the mousewheel on top of the bar
+  - Verify that it scrolls
+
 Statusbar
 *********
 
@@ -683,8 +735,20 @@ desc:
   - Type e.g. 'dir(this)'
   - Verify that the according object is displayed in the Inspection view.
 
-Scripts.REPL (command line version 2)
-*************************************
+Console HUD
+***********
+
+label: Toggle console
+desc:
+  - Verify that the console is toggled by the console button and Esc
+  - Verify that the console gets focus when shown
+
+label: Resizing console
+desc:
+  - Verify that the console can be resized at the top
+
+Console
+*******
 
 url: ./test-cases/repl/console_api.html
 
@@ -1487,3 +1551,52 @@ desc:
   - Open Dragonfly.
   - Verify that Dragonfly starts up in remote debug mode.
   - Verify that port number is 7101.
+
+label: Warn on port conflict
+desc:
+  - Choose a port that is already taken and appply
+  - Verify that there's an error message
+  - Verify that the local connection is set up when dismissing the overlay
+
+label: Local connection setup
+desc:
+  - Choose a port and click apply, but don't connect
+  - Dismiss the overlay
+  - Verify that the local connection is set up
+
+Overlays
+********
+
+label: Show overlay
+desc:
+  - Click the settings button
+  - Verify that the overlay is shown
+  - Hide it, do the same with other overlays
+
+label: Hide overlay
+desc:
+  - Click the settings button while the settings overlay is visible
+  - Verify that the overlay hides
+  - Do the same with other overlays
+
+label: Hide overlay by Esc
+desc:
+  - Press Esc while the settings overlay is visible
+  - Verify that the overlay hides
+  - Do the same with other overlays
+
+Status badges/icons
+*******************
+
+label: Badge when stopped
+desc:
+  - Set a breakpoint and hit it
+  - Verify that the Script tab gets a badge showing that the script is stopped
+
+label: Error count
+desc:
+  - Go to a page with errors
+  - Verify that the Error tab gets a badge with the number of errors
+  - Verify that the badge gets hidden when pressing Clear log in the Errors Tab
+  - Verify that the error count starts on 0 next time
+
