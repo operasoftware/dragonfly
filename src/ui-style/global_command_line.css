@@ -1,4 +1,4 @@
-﻿.command-line textarea {
+.command-line textarea {
     background: transparent;
     color: #fff;
 }
@@ -10,6 +10,7 @@
 .command-line .stylesheets value,
 .command-line .css-inspector value,
 .command-line .js-source .string,
+.command-line .js-source .object,
 .command-line .js-source .number
 .command-line .js-source .object
 {
@@ -27,6 +28,7 @@
 .command-line .repl-input,
 .command-line .repl-output,
 .command-line #examine-objects .object,
+.command-line .js-source,
 .command-line examine-objects .object {
   color: #fff;
 }

@@ -708,6 +708,25 @@ NodeList.prototype.indexOf = function(item)
   return -1;
 };
 
+/**
+ * Return the sum of all the values in the array. If selectorfun is given,
+ * it will be called to retrieve the relevant value for each item in the
+ * array.
+ */
+Array.prototype.sum = function(selectorfun)
+{
+  if (selectorfun)
+  {
+    return this.map(selectorfun).sum();
+  }
+  else
+  {
+    var ret = 0;
+    this.forEach(function(e) { ret += e });
+    return ret
+  }
+};
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;

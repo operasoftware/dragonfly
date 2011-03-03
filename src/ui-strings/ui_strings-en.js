@@ -31,6 +31,8 @@ ui_strings.M_VIEW_LABEL_NETWORK = 'Network';
 ui_strings.M_VIEW_LABEL_UTILITIES = 'Utilities';
 /* DESC: View for all types of storage, cookies, localStorage, sessionStorage e.t.c */
 ui_strings.M_VIEW_LABEL_STORAGE = 'Storage';
+/* DESC: View for overview of resources contained in a document */
+ui_strings.M_VIEW_LABEL_RESOURCES = 'Resources';
 
 /*
  * Level 2 View Tab Headings
@@ -256,6 +258,10 @@ ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent obje
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
+/* DESC: Show help in command line */
+ui_strings.S_HELP_COMMAND_LINE = "Help";
+/* DESC: Close command line window */
+ui_strings.S_CLOSE_COMMAND_LINE = "Close command line";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
 /* DESC: Enabling/disabling DOM modebar */
@@ -665,6 +671,103 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debu
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1 = "Specify the port number you wish to connect over, or leave as the default";
 /* DESC: Remote debug guide, connection setup */
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click “Apply”";
+
+/* DESC: Title for caching settings section in global network options */
+ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
+/* DESC: Help text for explaining caching setting in global network options */
+ui_strings.S_NETWORK_CACHING_SETTING_DESC = "This setting controls how caching works in Opera. When caching is disable, Opera will bypass all caching, always doing full reloads";
+/* DESC: Name of network caching setting for default browser caching policy */
+ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL = "Standard browser caching behaviour";
+/* DESC: Name of network caching setting for disabling browser caching policy */
+ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
+
+
+/* DESC: Title for content tracking settings section in global network options */
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE = "Content tracking behaviour";
+/* DESC: Help text for explaing content tracking setting in global network options */
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate";
+/* DESC: Name of content tracking setting for no tracking */
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Don't track content (default)";
+/* DESC: Name of content tracking setting for tracking content */
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
+
+/* DESC: Title of global header overrides section in global network settings */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
+/* DESC: Description of network header overrides feature. */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers";
+/* DESC: Label for checkbox to enable global header overrides */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overides";
+
+
+/* DESC: Label for presets */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
+/* DESC: Label for save nbutton */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
+
+/* DESC: Label for request body input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";
+/* DESC: Label for response body input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY = "Response";
+/* DESC: Label for send request button in network crafter */
+ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
+
+/* DESC: Title request summary */
+ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY_TITLE = "Summary";
+/* DESC: Label request status */
+ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
+/* DESC: Label for request duration */
+ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION = "Duration";
+/* DESC: Title for request details section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request details";
+/* DESC: Title for response details section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
+/* DESC: Title for response body section */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
+/* DESC: Label for area telling user there were no headers for request or response */
+ui_strings.S_NETWORK_REQUEST_DETAIL_NO_HEADERS_LABEL = "No headers";
+/* DESC: Help text about how to always track resources in request view */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.";
+/* DESC: Label for get response body int network request view */
+ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL = "Get response body";
+/* DESC: Message about file types we have no good way of showing. */
+ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show data of type %s";
+
+/* DESC: String describing duration of a request when hovering it in the graph. Applied to cached requests */
+ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
+/* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
+ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+
+
+/* DESC: Name of protocol column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL = "Protocol";
+/* DESC: Name of host column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
+/* DESC: Name of path column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
+/* DESC: Name of mime column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+/* DESC: Name of type column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE = "Type";
+/* DESC: Name of size column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size";
+/* DESC: Name of pretty printed size column */
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size (pretty printed)";
+/* DESC: Name of hosts size group */
+ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
+/* DESC: Name of types size group */
+ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
+/* DESC: Fallback text for unknown groups */
+ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
+/* DESC: Fallback text for no host */
+ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
+/* DESC: "Not applicable" abbreviation */
+ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
+
+
+/* DESC: Context menu entry to select that there should be no grouping in the table */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
+/* DESC: Context menu entry to selecting to group by %s */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER = "On the remote device:";

@@ -166,7 +166,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'http-logger',
     'exec',
     'window-manager',
-    'ecmascript-debugger'
+    'ecmascript-debugger',
+    'resource-manager',
+    'document-manager'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)

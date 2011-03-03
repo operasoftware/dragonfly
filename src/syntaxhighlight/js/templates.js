@@ -107,7 +107,7 @@
   {
     var context =
     {
-      template: context || [pre],
+      template: context || ["pre"],
       text: "",
       online: online
     };

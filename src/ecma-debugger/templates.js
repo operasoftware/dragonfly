@@ -1,4 +1,4 @@
-﻿window.templates = window.templates || {};
+window.templates = window.templates || {};
 
 (function()
 {
@@ -553,7 +553,12 @@ MODE ::= "<mode>"
       {
         browserLanguge: "be",
         key: "be",
-        name: "български език"
+        name: "Беларуская"
+      },
+      {
+        browserLanguge: "bg",
+        key: "bg",
+        name: "Български"
       },
       {
         browserLanguge: "cs",
@@ -578,7 +583,12 @@ MODE ::= "<mode>"
       {
         browserLanguge: "en",
         key: "en",
-        name: "English"
+        name: "U.S. English"
+      },
+      {
+        browserLanguge: "en-GB",
+        key: "en-GB",
+        name: "British English"
       },
       {
         browserLanguge: "es-ES",
@@ -696,9 +706,24 @@ MODE ::= "<mode>"
         name: "Português (Brasil)"
       },
       {
+        browserLanguge: "ro",
+        key: "ro",
+        name: "Română"
+      },
+      {
         browserLanguge: "ru",
         key: "ru",
         name: "Русский язык"
+      },
+      {
+        browserLanguge: "sk",
+        key: "sk",
+        name: "Slovenčina"
+      },
+      {
+        browserLanguge: "sr",
+        key: "sr",
+        name: "српски"
       },
       {
         browserLanguge: "sv",

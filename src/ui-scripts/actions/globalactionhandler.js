@@ -151,7 +151,6 @@
     {
       UIWindowBase.closeWindow('command_line');
     }
-
     UI.get_instance().get_button("toggle-console")
                      .setAttribute("is-active", !visible);
     return false;
