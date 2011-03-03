@@ -462,7 +462,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       else
       {
         // todo: missing required info, needs feedback in UI. will refetch and discard for now.
-        callback_after_set_cookie.call(this);
+        callback_after_set_cookie.call(this.data);
       }
     }
   }
