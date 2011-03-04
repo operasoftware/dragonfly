@@ -19,15 +19,3 @@
 .markup-bogus-comment {
      color: grey;
 }
-
-.markup-resource pre .js-source {
-  opacity: 0.6; /*
-  position: relative; */
-  -o-transition-function: ease-in;
-  -o-transition-duration: 2s;
-  -o-transition-property: all;
-}
-
-.markup-resource pre .js-source:hover {
-  opacity: 1;
-}
