@@ -174,8 +174,6 @@ window.templates.js_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
- /* source.unshift('div');
-  source.push('class', 'js-source js-resource-content'); */
   return ['code',
     ['div',
       source,
