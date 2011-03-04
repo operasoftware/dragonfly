@@ -16,7 +16,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._bound_update_expiry = this._update_expiry.bind(this);
 
     var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("cookie_refetch", [
+    contextmenu.register(id, [
       {
         label: ui_strings.S_LABEL_STORAGE_UPDATE,
         handler: this.data.refetch.bind(this.data)
@@ -115,34 +115,25 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
       }
     };
-    this.sortby = "domain";
-    this.groupby = "runtime";
-
+    this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
+    this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
+    this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
+    if(!this._update_expiry_interval)
+    {
+      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
+    }
     this.init(id, name, container_class, null, "cookiemanager-container");
   };
 
   this.createView = function(container)
   {
     this._container = container;
-    container.setAttribute("data-menu", "cookie_refetch");
     var storage_data = this.data.get_cookies();
-    var sortby = this.sortby;
-    var groupby = this.groupby;
-    if(!this._sortable_table)
-    {
-      this._sortable_table = new SortableTable(this._tabledef, storage_data, null, sortby, groupby, true);
-      this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
-      this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
-    }
-    if(!this._update_expiry_interval)
-    {
-      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
-    }
     this._sortable_table.data = storage_data;
     this._before_table_render();
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render();
-    window.messages.addListener("debug-context-selected", this._clear_container);
+    window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
   this._create_context_menu = function(event, row)
@@ -198,27 +189,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         {
           // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
           label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
-          handler: (function(runtime_id) {
-            var items = this.data.get_cookies();
-            var items_to_remove = items.filter(
-              function(cookie)
-              {
-                if(cookie._rt_id === runtime_id && !cookie._is_runtime_placeholder)
-                {
-                  return true;
-                }
-              }
-            );
-            for (var i=0, cookie; cookie = items_to_remove[i]; i++) {
-              // only set callback on last
-              var callback = function(){};
-              if(i === items_to_remove.length - 1)
-              {
-                callback = this.data.refetch;
-              }
-              this.data.remove_cookie(cookie._objectref, callback);
-            };
-          }).bind(this, runtime_id)
+          handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
         }
       );
     }
@@ -246,18 +217,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         options.push(
           {
             label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-            handler: (function(removable_cookies) {
-              for (var i=0, removable_cookie; removable_cookie = removable_cookies[i]; i++)
-              {
-                // only set callback on last
-                var callback = function(){};
-                if(i === removable_cookies.length - 1)
-                {
-                  callback = this.data.refetch;
-                }
-                this.data.remove_cookie(removable_cookie._objectref, callback);
-              }
-            }).bind(this, removable_cookies)
+            handler: this.data.remove_cookies.bind(this, removable_cookies)
           }
         );
       }
@@ -450,10 +410,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._clear_container = function()
   {
-    if(this._container)
-    {
-      this._container.innerHTML = "";
-    }
+    this._container.innerHTML = "";
   }
 
   this._before_table_render = function(message)

@@ -86,7 +86,6 @@ cls.CookieManager.CookieDataBase = function()
 
   this.set_cookie = function(cookie_instance, callback)
   {
-    var callback = callback || (function(){});
     this._view._restore_selection = [cookie_instance._objectref];
 
     var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
@@ -95,33 +94,57 @@ cls.CookieManager.CookieDataBase = function()
       add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
     }
     add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
-    var tag = tagManager.set_callback(this, callback, []);
+    var tag = callback ? tagManager.set_callback(this, callback, []) : 0;
     services['ecmascript-debugger'].requestEval(tag,[cookie_instance._rt_id, 0, 0, add_cookie_script]);
   };
 
   this.remove_cookie = function(objectref, callback)
   {
-    var callback = callback || (function(){});
-    for (var i=0, cookie; cookie = this.cookie_list[i]; i++)
+    var cookie = this.get_cookie_by_objectref(objectref);
+    if(cookie)
     {
-      if(cookie._objectref === objectref)
+      var domain = cookie.domain;
+      if(!domain)
       {
-        var domain = cookie.domain;
-        if(!domain)
-        {
-          // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
-          domain = this._rts[cookie._rt_id].hostname;
-        }
-        var path = cookie.path;
-        if(!path)
-        {
-          // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
-          path = "/";
-        }
-        var tag = tagManager.set_callback(this, callback, []);
-        services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
+        // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
+        domain = this._rts[cookie._rt_id].hostname;
       }
+      var path = cookie.path;
+      if(!path)
+      {
+        // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
+        path = "/";
+      }
+      var tag = callback ? tagManager.set_callback(this, callback, []) : 0;
+      services['cookie-manager'].requestRemoveCookie(tag,[domain, path, cookie.name]);
     }
+  };
+
+  this.remove_cookies = function(cookies)
+  {
+    for (var i=0, cookie; cookie = cookies[i]; i++)
+    {
+      var callback;
+      if(i === cookies.length - 1)
+      {
+        callback = this.data.refetch;
+      }
+      this.data.remove_cookie(cookie._objectref, callback);
+    }
+  }
+
+  this.remove_cookies_of_runtime = function(rt_id)
+  {
+    this.get_cookies().filter(
+      function(cookie)
+      {
+        return cookie._rt_id === rt_id && !cookie._is_runtime_placeholder;
+      }
+    ).forEach(
+      function(cookie, index, list) {
+        this.remove_cookie(cookie._objectref, index === list.length - 1 ? this.refetch : null);
+      },
+    this);
   };
 
   this._on_active_tab = function(msg)
@@ -302,7 +325,6 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 {
   this.set_cookie = function(cookie_instance, callback)
   {
-    var callback = callback || (function(){});
     this._view._restore_selection = [cookie_instance._objectref];
 
     // work around CORE-36742, cookies with path "/" don't show up on document.cookie, "" to be used instead
@@ -320,7 +342,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
       cookie_instance.isSecure,
       cookie_instance.isHTTPOnly
     ];
-    var tag = tagManager.set_callback(this, callback);
+    var tag = callback ? tagManager.set_callback(this, callback) : 0;
     services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   }
   this._init(service_version, view);

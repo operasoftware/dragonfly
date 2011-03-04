@@ -41,17 +41,17 @@ templates.cookie_manager = {
     ]
   },
   input_checkbox_container: function(name, checked) {
-    var checked_template = [];
-    if(checked)
-    {
-      checked_template = ["checked", "checked"];
-    }
-    return [
-      "input",
-      "type",  "checkbox",
-      "name",  name,
-      "handler", "cookiemanager-input-field"
-    ].concat(checked_template);
+    var template = [
+     "input",
+     "type", "checkbox",
+     "name", name,
+     "handler", "cookiemanager-input-field"
+   ];
+   if(checked)
+   {
+     template.push("checked", "checked");
+   }
+   return template;
   },
   input_datetime_container: function(name, value) {
     return [
