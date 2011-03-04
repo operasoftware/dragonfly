@@ -64,29 +64,6 @@ ul {
   }
 
 
-#command-line {
-  overflow:hidden;
-  }
-#command-line textarea {
-  width:100%;
-  height:100%
-  }
-
-#command-line input {
-
-  }
-
-#command-line-debug-container {
-  height: 100%;
-  }
-
-#command-line-debug-container textarea {
-  width:100%;
-  height:80%
-  }
-
-
-
 .folder li li {
   margin-left:18px;
   }
