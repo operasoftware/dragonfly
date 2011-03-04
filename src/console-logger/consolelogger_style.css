@@ -3,8 +3,13 @@
     width: 22px;
 }
 
-/* File cell */
+/* Icon cell */
 .error-console td:nth-child(2) {
+    width: 22px;
+}
+
+/* File cell */
+.error-console td:nth-child(3) {
     width: 30%;
     overflow: hidden;
     -o-text-overflow: ellipsis;
@@ -14,7 +19,7 @@
 }
 
 /* Line cell */
-.error-console td:nth-child(3) {
+.error-console td:nth-child(4) {
     width: 128px;
     text-align: right;
     max-width: 32px;
@@ -45,6 +50,32 @@
     font-family: monospace;
     font-size: 12px;
     background-color: white;
+}
+
+.error-console .severity {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.error-console .severity.debug {
+  background-image: url('../ui-images/error-console-default.png');
+}
+
+.error-console .severity.verbose {
+  background-image: url('../ui-images/error-console-default.png');
+}
+
+.error-console .severity.information {
+  background-image: url('../ui-images/error-console-default.png');
+}
+
+.error-console .severity.error {
+  background-image: url('../ui-images/error-console-error.png');
+}
+
+.error-console .severity.critical {
+  background-image: url('../ui-images/error-console-error.png');
 }
 
 button[key="request_list.expand-all-entries"]:before
