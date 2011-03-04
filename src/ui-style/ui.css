@@ -9,7 +9,7 @@ viewport, .info-box {
 .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, 
 charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, 
 .storage-table .new-key, .repl-input, .repl-output, .js-search-results-script, code,
-css-new-style-sheet {
+css-new-style-sheet, .js-resource, .markup-resource {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   color: #111;

@@ -143,8 +143,6 @@
 .js-resource, .markup-resource {
   position: relative;
   white-space: pre;
-  font-family: monospace;
-  line-height: 16px;
 }
 
 .js-resource-content pre, .markup-resource-content pre {
