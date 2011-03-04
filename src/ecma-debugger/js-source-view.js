@@ -140,11 +140,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
     if (force_repaint)
     {
-      setTimeout(force_repaint, 1);
+      setTimeout(repaint_line_numbers, 0);
     }
   };
 
-  var force_repaint = function()
+  var repaint_line_numbers = function()
   {
     if (line_numbers)
     {
