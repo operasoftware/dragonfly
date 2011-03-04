@@ -22,143 +22,9 @@ cls.CookieManager.CookieManagerViewBase = function()
         handler: this.data.refetch.bind(this.data)
       }
     ]);
-
     contextmenu.register("cookie_context", [
       {
-        callback: (function(event, target)
-        {
-          this.check_to_exit_edit_mode(event, target);
-          var row = target;
-          while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
-          {
-            row = row.parentNode;
-          }
-          // if row has an object-id, add edit and remove options
-          var objectref = row.getAttribute("data-object-id");
-          if(objectref)
-          {
-            // row represents a cookie, so it can be selected
-            this.select_row(event, row);
-          }
-          var selection = this._table_elem.querySelectorAll(".selected");
-          var selected_cookie_objects = [];
-          for (var i=0, selected_node; selected_node = selection[i]; i++) {
-            var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
-            selected_cookie_objects.push(sel_cookie_obj);
-          };
-
-          var options = [
-            {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-              handler: (function() {
-                var objectref = selected_cookie_objects[0]._objectref;
-                this.insert_add_cookie_row_after_objectref(objectref);
-              }).bind(this)
-            }
-          ];
-          if(selected_cookie_objects.length === 1)
-          {
-            var sel_cookie_obj = selected_cookie_objects[0];
-            if(sel_cookie_obj._is_editable)
-            {
-              options.push(
-                {
-                  label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-                  handler: (function() {
-                    this.enter_edit_mode(sel_cookie_obj._objectref);
-                  }).bind(this)
-                }
-              );
-            }
-            if(sel_cookie_obj._is_removable)
-            {
-              options.push(
-                {
-                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-                  handler: (function() {
-                    this.data.remove_cookie(sel_cookie_obj._objectref, this.data.refetch);
-                  }).bind(this)
-                }
-              );
-            }
-            // Add "Remove all from domain-and-path"
-            var runtime_id = sel_cookie_obj._rt_id;
-            options.push(
-              {
-                // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
-                label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
-                handler: (function(runtime_id, context){
-                  return function() {
-                    var items = context.data.get_cookies();
-                    var items_to_remove = items.filter(
-                      function(cookie)
-                      {
-                        if(cookie._rt_id === runtime_id && !cookie._is_runtime_placeholder)
-                        {
-                          return true;
-                        }
-                      }
-                    );
-
-                    for (var i=0, cookie; cookie = items_to_remove[i]; i++) {
-                      // only set callback on last
-                      var callback = function(){};
-                      if(i === items_to_remove.length - 1)
-                      {
-                        callback = context.data.refetch;
-                      }
-                      context.data.remove_cookie(cookie._objectref, callback);
-                    };
-                  }
-                })(runtime_id, this)
-              }
-            );
-          }
-          else
-          {
-            // multiple selection
-            var removable_cookies = [];
-            for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
-              if(selected_cookie_o._is_removable)
-              {
-                removable_cookies.push(selected_cookie_o);
-              }
-            };
-            if(removable_cookies.length === 1)
-            {
-              options.push(
-                {
-                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-                  handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
-                }
-              );
-            }
-            else
-            {
-              options.push(
-                {
-                  label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-                  handler: (function(removable_cookies, context) {
-                    return function()
-                    {
-                      for (var i=0, removable_cookie; removable_cookie = removable_cookies[i]; i++)
-                      {
-                        // only set callback on last
-                        var callback = function(){};
-                        if(i === removable_cookies.length - 1)
-                        {
-                          callback = context.data.refetch;
-                        }
-                        context.data.remove_cookie(removable_cookie._objectref, callback);
-                      }
-                    }
-                  })(removable_cookies, this)
-                }
-              );
-            }
-          }
-          return options;
-        }).bind(this)
+        callback: this._create_context_menu.bind(this)
       }
     ]);
 
@@ -279,6 +145,126 @@ cls.CookieManager.CookieManagerViewBase = function()
     window.messages.addListener("debug-context-selected", this._clear_container);
   };
 
+  this._create_context_menu = function(event, row)
+  {
+    this.check_to_exit_edit_mode(event, row);
+    while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
+    {
+      row = row.parentNode;
+    }
+    // if row has an object-id, add edit and remove options
+    var objectref = row.getAttribute("data-object-id");
+    if(objectref)
+    {
+      this.select_row(event, row);
+    }
+    var selection = this._table_elem.querySelectorAll(".selected");
+    var selected_cookie_objects = [];
+    for (var i=0, selected_node; selected_node = selection[i]; i++) {
+      var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
+      selected_cookie_objects.push(sel_cookie_obj);
+    };
+
+    var options = [
+      {
+        label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+        handler: this.insert_add_cookie_row_after_objectref.bind(this, selected_cookie_objects[0]._objectref)
+      }
+    ];
+    if(selected_cookie_objects.length === 1)
+    {
+      var sel_cookie_obj = selected_cookie_objects[0];
+      if(sel_cookie_obj._is_editable)
+      {
+        options.push(
+          {
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
+            handler: this.enter_edit_mode.bind(this, sel_cookie_obj._objectref)
+          }
+        );
+      }
+      if(sel_cookie_obj._is_removable)
+      {
+        options.push(
+          {
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+            handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
+          }
+        );
+      }
+      // Add "Remove all from domain-and-path"
+      var runtime_id = sel_cookie_obj._rt_id;
+      options.push(
+        {
+          // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+          handler: (function(runtime_id) {
+            var items = this.data.get_cookies();
+            var items_to_remove = items.filter(
+              function(cookie)
+              {
+                if(cookie._rt_id === runtime_id && !cookie._is_runtime_placeholder)
+                {
+                  return true;
+                }
+              }
+            );
+            for (var i=0, cookie; cookie = items_to_remove[i]; i++) {
+              // only set callback on last
+              var callback = function(){};
+              if(i === items_to_remove.length - 1)
+              {
+                callback = this.data.refetch;
+              }
+              this.data.remove_cookie(cookie._objectref, callback);
+            };
+          }).bind(this, runtime_id)
+        }
+      );
+    }
+    else
+    {
+      // multiple selection
+      var removable_cookies = [];
+      for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
+        if(selected_cookie_o._is_removable)
+        {
+          removable_cookies.push(selected_cookie_o);
+        }
+      };
+      if(removable_cookies.length === 1)
+      {
+        options.push(
+          {
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+            handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
+          }
+        );
+      }
+      else
+      {
+        options.push(
+          {
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
+            handler: (function(removable_cookies) {
+              for (var i=0, removable_cookie; removable_cookie = removable_cookies[i]; i++)
+              {
+                // only set callback on last
+                var callback = function(){};
+                if(i === removable_cookies.length - 1)
+                {
+                  callback = this.data.refetch;
+                }
+                this.data.remove_cookie(removable_cookie._objectref, callback);
+              }
+            }).bind(this, removable_cookies)
+          }
+        );
+      }
+    }
+    return options;
+  };
+
   this.ondestroy = function()
   {
     delete this._container;
@@ -286,7 +272,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       this._update_expiry_interval = clearInterval(this._update_expiry_interval);
     }
-  }
+  };
 
   this.select_row = function(event, elem) // public just towards actions
   {

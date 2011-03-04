@@ -101,7 +101,6 @@ cls.CookieManager.CookieDataBase = function()
 
   this.remove_cookie = function(objectref, callback)
   {
-    var cookie;
     var callback = callback || (function(){});
     for (var i=0, cookie; cookie = this.cookie_list[i]; i++)
     {
