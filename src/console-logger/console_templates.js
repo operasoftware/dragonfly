@@ -79,7 +79,7 @@ window.templates.error_log_detail_row = function(entry)
          "data-resource-url", entry.uri
        ],
        [ "pre", entry.description ],
-                 "colspan", "4"
+                 "colspan", "5"
       ]
     ]
   ];
