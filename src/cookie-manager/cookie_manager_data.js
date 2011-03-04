@@ -168,8 +168,8 @@ cls.CookieManager.CookieDataBase = function()
       if(!this._rts[rt_id])
       {
         this._rts[rt_id]={rt_id: rt_id};
+        this._request_runtime_details(rt_id);
       }
-      this._request_runtime_details(rt_id);
     };
   };
 

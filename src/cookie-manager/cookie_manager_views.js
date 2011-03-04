@@ -227,7 +227,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.ondestroy = function()
   {
-    delete this._container;
+    this._container = null;
     if(this._update_expiry_interval)
     {
       this._update_expiry_interval = clearInterval(this._update_expiry_interval);
@@ -273,11 +273,14 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._sortable_table.restore_columns(this._table_elem);
     }
     var row = document.querySelector("[data-object-id='"+objectref+"']");
-    var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
-    var inserted = row.parentElement.insertAfter(templ, row);
-    inserted.querySelector("[name=name]").focus();
-    this.select_row(null, inserted);
+    if(row)
+    {
+      var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
+      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
+      var inserted = row.parentElement.insertAfter(templ, row);
+      inserted.querySelector("[name=name]").focus();
+      this.select_row(null, inserted);
+    }
   }
 
   this.enter_edit_mode = function(objectref, event)
