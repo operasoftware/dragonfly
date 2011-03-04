@@ -448,53 +448,53 @@ cls.MarkupTokenizer = function()
         {
           return false;
         }    
-          this._token_type = cls.MarkupTokenizer.types.DATA;
-          this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
-          return false;
-        }
-
-        if (c === "/")
-        {
-          this._emitToken(this._token_type, this._token_buffer);
-          this._tokenizer_state_handler = this._tokenizer_state_handlers.SELF_CLOSING_TAG;
-          this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
-          this._token_buffer = c;
-          return false;
-        }
-
-        this._tokenizer_state_handler = this._tokenizer_state_handlers.ATTRIBUTE_NAME;
-        this._emitToken(this._token_type, this._token_buffer);
-        this._token_type = cls.MarkupTokenizer.types.ATTRIBUTE_NAME;
-        this._token_buffer = c;
-
+        this._token_type = cls.MarkupTokenizer.types.DATA;
+        this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
         return false;
+      }
+
+      if (c === "/")
+      {
+        this._emitToken(this._token_type, this._token_buffer);
+        this._tokenizer_state_handler = this._tokenizer_state_handlers.SELF_CLOSING_TAG;
+        this._token_type = cls.MarkupTokenizer.types.TAG_CLOSE;
+        this._token_buffer = c;
+        return false;
+      }
+
+      this._tokenizer_state_handler = this._tokenizer_state_handlers.ATTRIBUTE_NAME;
+      this._emitToken(this._token_type, this._token_buffer);
+      this._token_type = cls.MarkupTokenizer.types.ATTRIBUTE_NAME;
+      this._token_buffer = c;
+
+      return false;
     },
 
     SELF_CLOSING_TAG: function()
     {
-        if (this._is_EOF())
-        {
-            return false;
-        }
-        if (this._is_EOL())
-        {
-            return false;
-        }
-        var c = this._buffer.charAt(this._current_pos++);
-
-        if (c === ">")
-        {
-            this._token_buffer += c;
-            this._emitToken(this._token_type, this._token_buffer);
-            this._token_buffer = "";        
-            this._token_type = cls.MarkupTokenizer.types.DATA;
-            this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
-            return false;
-        }
-        this._token_type = cls.MarkupTokenizer.types.BOGUS_DATA;
-        this._token_buffer +=c;
-        this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
+      if (this._is_EOF())
+      {
         return false;
+      }
+      if (this._is_EOL())
+      {
+        return false;
+      }
+      var c = this._buffer.charAt(this._current_pos++);
+
+      if (c === ">")
+      {
+        this._token_buffer += c;
+        this._emitToken(this._token_type, this._token_buffer);
+        this._token_buffer = "";        
+        this._token_type = cls.MarkupTokenizer.types.DATA;
+        this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
+        return false;
+      }
+      this._token_type = cls.MarkupTokenizer.types.BOGUS_DATA;
+      this._token_buffer +=c;
+      this._tokenizer_state_handler = this._tokenizer_state_handlers.BEFORE_ATTRIBUTE;
+      return false;
     },
 
     ATTRIBUTE_NAME: function()
@@ -740,4 +740,4 @@ cls.MarkupTokenizer.types = {
 
   EOL_DATA              : 500,
   EOF                   : 999
-}
+};
