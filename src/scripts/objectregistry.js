@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Registry that maintains a mapping between object IDs and objects.
  * Mostly used by the template system and UI framework to avoid
  * storing objects in the DOM and to reduce the coupling between

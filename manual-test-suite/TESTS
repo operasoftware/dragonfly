@@ -230,6 +230,69 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
+
+DOM.Colorpicker
+***************
+
+url: ./test-cases/dom/colorpicker/index.html
+id: 00100
+label: Show and hide colorpicker
+desc:
+  - Open the testcase and inspect "test"
+  - Verify that a small color swatch appears at the end of the color declaration for 'h1'
+  - Click the color swatch
+  - Verify that an utility window to edit the color value opens
+  - Verify that no other property can be edited while the color picker is opened
+  - Verify that the window can be closed by clicking the close button
+  - Verify that the window gets closed on switching to an other mode
+
+id: 00200
+label: Edit color with visual controls
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Verify that you can move around the circle with the mouse
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the values in all inputs updated accordingly
+  - Verify that the color value gets updated accordingly in the 'Styles' panel
+  - Verify that the color in the host document changes accordingly
+  - Verify that you can change the color in the same way with the vertical slider
+  - Select all other views of the color model with the radio select and verify the above for each color model
+
+id: 00300
+label: Edit color with inputs
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Edit the value of one of the inputs
+  - Verify that the other inputs are updated accordingly
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the color in the host document changes accordingly
+  - Verify the above for each of the inputs
+
+id: 00400
+label: Edit transparent color
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the background-color declaration to open the color picker
+  - Verify that there are additional controls for the alpha value, a vertical slider and an input
+  - Verify that the color examples gets a splitted background with black and white
+  - Change the alpha value with the slider
+  - Verify that the color examples in the top right corner changes accordingly
+  - Verify that the values in the input updates accordingly
+  - Verify that the color value gets updated accordingly in the 'Styles' panel
+  - Verify that the color in the host document changes accordingly
+  - Verify that the aplpha value can be changed in the same way with in the alpha input field
+
+id: 00500
+label: Reset color value
+desc:
+  - Open the testcase and inspect "test"
+  - Click the color swatch of the color declaration to open the color picker
+  - Change the current color
+  - Verify that the color can be reset to the initial value by clicking the left part of the color example in the top right corner
+
+
 DOM.Properties
 **************
 
@@ -339,6 +402,120 @@ desc:
   - Verify that comment node is not shown.
   - Check it again.
   - Verify that comment node is shown again.
+
+DOM.Searchbar
+*************
+
+url: ./test-cases/dom/searchbar/basic-search.html
+
+id: 00100
+label: Show and hide the search-bar with search button
+desc:
+  - Select the 'Document' tab
+  - Press the search button at the end of the toolbar
+  - Verify that the search button keeps the pressed state
+  - Verify that the search-bar appears and the search field gets focused
+  - Press the search button again
+  - Verify that the search button gets and keeps the unpressed state
+  - Verify that the search-bar disappears
+  - Repeat several times and verify that the search-bar appears and disappears accordingly
+  - Press the search button to make the bar appear and switch to an other tab, e.g. Scripts
+  - Switch back to 'Document'
+  - Verify that the search-bar is still displayed
+  - Switch forth and back several times between tabs and verify that the search-bar is always displayed
+
+id: 00200
+label: Show and hide the search-bar with shortcuts
+desc:
+  - Select the 'Document' tab
+  - Click the DOM pane to ensure that the DOM view has focus
+  - Hit 'ctrl f'
+  - Verify that the search-bar gets displayed
+  - Hit escape
+  - Verify that the search-bar disappears
+  - Display the search-bar again
+  - Focus some other element in the DOM view, e.g. expand a node to blur the search field
+  - Verify that if you hit 'escape' now the command line gets displayed instead
+
+id: 00300
+label: Perform a search
+desc:
+ - Open the test case, select the 'Document' tab and expand the whole DOM tree
+ - Open the search-bar by hitting the search button
+ - Search for 'cla'
+ - Verify the 'Matches for "cla": Match 1 out of 7' is displayed in the bar
+ - Verify that the matching tokens are highlighted in the document
+ - Verify that the first match is highlighted differently
+ - Continue to type 'class' and verify that all matches are instantly updated accordingly
+ - Continue to type 'classe' and verify that all matches disappear and the string 'No match for "classe"' is displayed in the bar
+
+url: ./test-cases/dom/searchbar/long-document.html
+id: 00400
+label: Move the search highlight
+desc: 
+ - Open the test case, select the 'Document' tab and expand the whole DOM tree
+ - Open the search-bar by hitting the search button
+ - Search for 'class' and verify that you get 7 hits
+ - Hit 'enter'
+ - Verify that the match highlight moves to the next match
+ - Repeat and verify that the according match is scrolled into view
+ - Hit 'Shift enter' and verify that the match highlight now moves in the other direction
+ - Verify that you can move the search highlight in the same way with 'F3' and 'Shift F3'
+ - Verify that you can move the search highlight in the same way with the two buttons close to the search filed
+
+
+
+DOM.Breadcrumbs
+***************
+
+label: Updating of breadcrumbs
+desc:
+  - Click on different elements in the DOM view
+  - Verify that the breadcrumbs update
+
+label: Hover breadcrumbs
+desc:
+  - Verify that there are at least two visible breadcrumbs
+  - Hover all of them
+  - Verify that the elements are spotlighted in the host
+
+label: Clicking breadcrumbs
+desc:
+  - Click a breadcrumb
+  - Verify that the corresponding element is selected in the DOM view
+
+label: Navigation buttons on resizing
+desc:
+  - Verify that the breadcrumb trail is long but fits inside the window
+  - Resize the window so that the breadcrumbs don't fit
+  - Verify that that navigation buttons appear on both sides
+
+label: Navigation buttons on long breadcrumb trail
+desc:
+  - Click on a deeply nested element so that the breadcrumb trail is too long to fit inside the window
+  - Verify that that navigation buttons appear on both sides
+  - Verify that the end of the breadcrumb trail is visible and that the right button is disabled
+  - Click on a shallow element
+  - Verify that the buttons disappear
+
+label: Interacting with navigation buttons
+desc:
+  - Click on a navigation button
+  - Verify that the breadcrumbs move in that direction
+  - Click and hold a navigation button
+  - Verify that the breadcrumb trail is continously moving
+
+label: Dragging the breadcrumb bar
+desc:
+  - Verify that the breadcrumb trail is too long to fit into the window
+  - Grab the bar and drag it
+  - Verify that it's possible to drag
+
+label: Dragging the breadcrumb bar
+desc:
+  - Verify that the breadcrumb trail is too long to fit into the window
+  - Use the mousewheel on top of the bar
+  - Verify that it scrolls
 
 Statusbar
 *********
@@ -520,6 +697,48 @@ desc:
   - Search for 'default'.
   - Verify that you 5 hits and that the view scrolls on enter to each of them.
 
+Scripts.Search bar and window
+*****************************
+
+url: ./test-cases/scripts/searchbar-window/search.html
+
+id: 00100
+label: Switch between search bar and window
+desc:
+  - Select the 'Scripts' tab
+  - Press the search button at the end of the toolbar to show the search bar
+  - Press the 'More' button on the search bar
+  - Verify that the search bar disappears and a search window gets displayed instead
+  - Press the 'Less' button on the search window
+  - Verify that the window closes and the search bar gets displayed instead
+  - Switch between 'More' and 'Less' several times and verify that it works
+  - Switch to 'More' and close the search window with the close button
+  - Hit the search button on the tool bar again and verify that the search window opens directly
+  - Switch back to 'Less', close the search bar, hit the search button again and verify that it now opens the search bar
+
+id: 00200
+label: Perform a search in the search window
+desc:
+  - Open the test url
+  - Select the 'Scripts' tab, hit the search button and hit the 'More' button to open the search window
+  - Verify that the search field has focus
+  - Type 'abrax' and hit enter
+  - Verify that the string 'Matches for "abrax": Match 1 out of 4' appears in the tool bar
+  - Verify that four matches are displayed in the window
+  - Verify that the first match is highlighted differently
+  - Verify that for each match the according source line including line number is displayed
+  - Hit 'Enter'
+  - Verify that the match highlight moves down
+  - Hit 'Shift Enter' 
+  - Verify that the match highlight moves in the other direction
+  - Verify that the match highlight can be moved in the same way with 'F3' and 'Shift F3'
+  - Verify that the match highlight can be moved in the same way with the buttons close to the search field
+  - Hit 'Ctrl Enter'
+  - Verify that the file of the highlighted match is displayed in the source view
+  - Verify that for each match the according file can be displayed with 'Ctrl Enter'
+
+
+
 Scripts.Call Stack
 ******************
 
@@ -683,8 +902,20 @@ desc:
   - Type e.g. 'dir(this)'
   - Verify that the according object is displayed in the Inspection view.
 
-Scripts.REPL (command line version 2)
-*************************************
+Console HUD
+***********
+
+label: Toggle console
+desc:
+  - Verify that the console is toggled by the console button and Esc
+  - Verify that the console gets focus when shown
+
+label: Resizing console
+desc:
+  - Verify that the console can be resized at the top
+
+Console
+*******
 
 url: ./test-cases/repl/console_api.html
 
@@ -1012,6 +1243,156 @@ desc:
   - Verify that the highlighted word is entered in the console
   - Verify that the keys [, ], (, ) have the samme effect as "."
 
+url: ./test-cases/repl/unpack-list-alikes.html
+
+id: 04100
+label: Unpack list alikes
+desc:
+  - Open the test case
+  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
+  - Uncheck 'Use specific information to represent object in the commandline' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit the 'console.log([1,2,3,4])' button
+  - Verify that you get 'Array[1, 2, 3, 4]' in the command line (ignore a '[object Array]' before that)
+  - Verify that 'Array' is clickable and opens the 'Inspection' view with the Array
+  - Hit 'console.log(document.all)' button
+  - Verify that you get 'HTMLCollection[HTMLHtmlElement, HTMLHeadElement, HTMLBodyElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement]' (ignore a '[object HTMLCollection]' before that)
+  - Verify that 'HTMLCollection' is clickable and opens the 'Inspection' view with the HTMLCollection
+  - Verify that each element in the list is clickable and shows the according element in the DOM tree
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that you get 'NodeList[DocumentType, HTMLHtmlElement]' in the command line (ignore a '[object HTMLCollection]' before that)
+  - Verify that each object of type Element is clickable and shows the according element in the DOM tree
+  - Verify that other objects are clickable too and open the according 'Inspection' view
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get 'XPathResult[HTMLParagraphElement, HTMLParagraphElement, HTMLParagraphElement, HTMLParagraphElement]' in the command line (ignore a '[object XPathResult]' before that)
+  - Verify that all objects are clickable and open the appropriated view
+  - Write '[1,2,3,4]', 'document.all' and 'document.childNodes' in the command line
+  - Verify that you get the same output back as before (without the ignorable line)
+  - Write 'console.log([1,2,3,4])', 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
+  - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
+
+id: 04200
+label: Setting for unpack list alikes
+desc:
+  - Open the test case
+  - Uncheck 'Unpack list alikes in the command line' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit the 'console.log([1,2,3,4])' button
+  - Verify that the output is now only a clickable 'Array' (ignore a '[object Array]' before that)
+  - Hit 'console.log(document.all)' button
+  - Verify that the ourtput is now only a clickable 'HTMLCollection' (ignore a '[object HTMLCollection]' before that)
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that the output is now only a clickable 'NodeList' (ignore a '[object HTMLCollection]' before that)
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that the output is now only a clickable 'XPathResult'
+
+id: 04300
+label: User friendly object representation
+desc:
+  - Open the test case
+  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
+  - Enable 'Use specific information to represent object in the commandline' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit 'console.log(document.all)' button
+  - Verify that you get 'HTMLCollection[html, head, body, p, input.foo, p, input#bar, p, input, p, input]'
+  - Verify that all objects are clickable and open the appropriated view
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that you get 'NodeList[DocumentType, html]' in the command line
+  - Verify clickability
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get 'XPathResult[p, p, p, p]' in the command line
+  - Verify clickability
+  - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
+  - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
+
+Scripts.Breakpoints
+*******************
+
+url: ./test-cases/breakpoints/breakpoints.html
+
+id: 00100
+label: Default breakpoint
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
+  - Set a breakpoint on line 8 in script 'a.js'
+  - Verify that the 'Breakpoints' view get a new entry with a checked checkbox, the filename of the script with the line number and the according source code of that line
+  - Uncheck the checkbox
+  - Verify that the breakpoint in the script source now looks like a disabled breakpoint
+  - Click the breakpoint in the source view
+  - Verify that the panel view is updated and the breakpoint is checked now
+  - Verify that the breakpoint works by hitting the 'test' button
+  - Reload the host document
+  - Verify that the breakpoint is still in the source file and the panel
+  - Disable he breakpoint
+  - Reload the host document again
+  - Verify that the breakpoint is still disabled in the source view and the panel
+  - Verify that the breakpoint has no effect by hitting the 'test' button
+
+
+id: 00200
+label: Conditional breakpoint
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
+  - Set a breakpoint on line 8 in script 'a.js'
+  - Right click the breakpoint in the panel and select 'Add condition'
+  - Type 'i > 9'
+  - Verify that the breakpoint in the source view now looks like a breakpoint with a condition
+  - Hit the 'test' button
+  - Verify that the engine stops
+  - Open the command line and submit 'i'
+  - Verify that 'i' has the value 9
+  - Uncheck the breakpoint in the panel
+  - Verify that the breakpoint looks like a disabled breakpoint with condition in the source view
+  - Enable the breakpoint in the source view
+  - Verify that the view in the panel is updated accordingly and the breakpoint is checked
+  - Reload the host document
+  - Hit the 'test' button
+  - Verify that the engines stops and 'i' still has the value 9
+  - Disable the breakpoint
+  - Reload the host document
+  - Verify that the breakpoint looks like a disabled breakpoint in the source view and the panel
+  - Verify that the breakpoint no longer has any effect by hitting the 'test' button
+
+id: 00300
+label: Delete breakpoint
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
+  - Set a breakpoint on line 8 in script 'a.js'
+  - Verify that the breakpoint works by hitting the 'test' button
+  - Right click the breakpoint in the panel and select 'Delete'
+  - Verify that the breakpoints disappears in the panel and the the source view
+  - Verify that the engine doesn't stop on any breakpoint by hitting 'test'
+  - Reload the host document and hit 'test'
+  - Verify that there is no longer a breakpoint
+
+id: 00400
+label: Disable and delete all breakpoints
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
+  - Set breakpoints on line 8 in script 'a.js', 'b.js', 'c.js' and 'd.js'
+  - Add to all breakpoints the condition 'i > 8'
+  - Hit the 'test' button
+  - Verify that the engine stops in each script exactly once (use the 'Continue' button or 'F8' to continue)
+  - Right click the breakpoint panel and select 'Disable all'
+  - Verify that all breakpoints are unchecked 
+  - Verify that in each script in the source view the breakpoints look like disabled conditional breakpoints
+  - Hit the 'test' button again
+  - Verify that none breakpoint stops the engine
+  - Enable all breakpoints again and verify that they stop properly
+  - Right click the breakpoint panel and select 'Delete all'
+  - Verify that all breakpoints are removed from the panel
+  - Verify for each script that all breakpoints are removed in the source view 
+  - Hit the 'test' button
+  - Verify that no breakpoint stops the execution
+  
 Scripts.Event Breakpoints
 *************************
 
@@ -1097,6 +1478,42 @@ desc:
   - Press the 'Dispatch custom event 'test'' button in the test document
   - Verify that the debugger stops on entering the 'test' function
 
+Scripts.Watches
+*******************
+
+url: ./test-cases/breakpoints/breakpoints.html
+
+id: 00100
+label: Add a watch
+desc:
+  - Open the test case
+  - Select the 'Scripts' tab and reload the document
+  - Set a breakpoint on line 8 in script 'a.js'
+  - Select the 'State' tab and expand the 'Watches' section
+  - Click the 'Add' button, write 'i' and add the watch by hitting 'Enter'
+  - Verify that 'i' now has the value 'Error'
+  - Hit the 'test' button
+  - Verify that 'i' has now the value 0
+  - Continue with hitting the 'Continue' button or with 'F8'
+  - Verify that i updates accordingly and fals back to 'Error' at the end
+  - Add an other watch 'document'
+  - Verify that 'document' is an expandable entry
+
+id: 00200
+label: Right click option for a watch entry
+desc:
+  - Select the 'Scripts' tab and reload the document
+  - Select the 'State' tab and expand the 'Watches' section
+  - Add a watch 'document'
+  - Right click the watch and select 'Edit'
+  - Change the value to 'window'
+  - Verify that the entry is now an expandable 'Window' object
+  - Right click the watch and select 'Delete'
+  - Verify that the watch is removed from the view
+  - Right click the panel, select 'Add' and verify that you can some watch  
+
+
+
 Network.Request Log
 *******************
 
@@ -1126,7 +1543,7 @@ desc:
 Storage.Cookies
 ***************
 
-url: ./test-cases/storages/create-storages.html
+url: ./test-cases/storages/create-storages.php
 
 url: ./test-cases/storages/check-storages.html
 
@@ -1134,7 +1551,12 @@ id: 00100
 label: Inspect cookies
 desc:
   - Go to the above url in the above order
-  - Verify that you see cookie a - j
+  - Verify that you see cookie a - m, or if your host protocol is https, a - n
+  - In case the host has the cookie-service:
+  - Verify that you see cookie a - o (with n only present if the host protocol is https)
+  - Verify that cookie "n", if you see it, has a secure checkmark
+  - Verify that the "expires" values follow a logical order from 2 years to "(Session)"
+  - Verify that you can watch them expire without any further action
 
 url: ./test-cases/storages/check-storages.html
 
@@ -1144,6 +1566,8 @@ desc:
   - Delete some of the cookies
   - Reload the document
   - Verify that the deleted cookies are gone.
+  - In case the host has the cookie-service:
+  - Select multiple cookies and delete them
 
 id: 00300
 label: Edit cookies
@@ -1152,11 +1576,16 @@ desc:
   - Change the value and save.
   - Reload the document
   - Verify that the values still are changed
+  - In case the host has the cookie-service:
+  - Verify that the edited cookie is selected after it was saved
+  - Edit again, and try to confirm by pressing 'enter' or clicking outside of the current row.
+  - Right-click and remove a column by unchecking 'Name'
+  - Verify that when you then try to edit, 'Name' is shown again.
 
 id: 00400
 label: Delete all cookies
 desc:
-  - Press the 'Delete all' button
+  - Press the 'Delete all' button / right-click and select 'Remove cookie of domain/path'
   - Reload the document.
   - Verify that all cookies are gone.
 
@@ -1167,6 +1596,27 @@ desc:
   - Add some key and value
   - Reload the document
   - Verify that there is a new created cookie with the according key and value.
+
+id: 00600
+label: Refresh
+desc:
+  - Execute 'document.cookie="k"' on the command line
+  - Press the update button or choose Refresh from the context menu
+  - Verify that a cookie with the name 'k' shows up.
+
+id: 00700
+label: Sort cookies
+desc:
+  In case the host has the cookie-service:
+  - Sort the table by 'Name' and 'Expires'
+  - Verify that the order makes sense
+
+id: 00800
+label: Group cookies
+desc:
+  In case the host has the cookie-service:
+  - Switch to 'No grouping' in the context menu
+  - Verify that the group headers are gone
 
 Storage.Local Storage
 *********************
@@ -1487,3 +1937,52 @@ desc:
   - Open Dragonfly.
   - Verify that Dragonfly starts up in remote debug mode.
   - Verify that port number is 7101.
+
+label: Warn on port conflict
+desc:
+  - Choose a port that is already taken and appply
+  - Verify that there's an error message
+  - Verify that the local connection is set up when dismissing the overlay
+
+label: Local connection setup
+desc:
+  - Choose a port and click apply, but don't connect
+  - Dismiss the overlay
+  - Verify that the local connection is set up
+
+Overlays
+********
+
+label: Show overlay
+desc:
+  - Click the settings button
+  - Verify that the overlay is shown
+  - Hide it, do the same with other overlays
+
+label: Hide overlay
+desc:
+  - Click the settings button while the settings overlay is visible
+  - Verify that the overlay hides
+  - Do the same with other overlays
+
+label: Hide overlay by Esc
+desc:
+  - Press Esc while the settings overlay is visible
+  - Verify that the overlay hides
+  - Do the same with other overlays
+
+Status badges/icons
+*******************
+
+label: Badge when stopped
+desc:
+  - Set a breakpoint and hit it
+  - Verify that the Script tab gets a badge showing that the script is stopped
+
+label: Error count
+desc:
+  - Go to a page with errors
+  - Verify that the Error tab gets a badge with the number of errors
+  - Verify that the badge gets hidden when pressing Clear log in the Errors Tab
+  - Verify that the error count starts on 0 next time
+

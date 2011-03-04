@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   const MAX_SOURCE_CHARS = 160;
   this.breakpoint_condition = function(condition)

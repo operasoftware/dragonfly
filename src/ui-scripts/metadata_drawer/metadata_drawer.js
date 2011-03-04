@@ -1,4 +1,4 @@
-function MetadataDrawer(resource, title) {
+﻿function MetadataDrawer(resource, title) {
   this.expanded = false;
   this.resource = resource;
   this.title = title;

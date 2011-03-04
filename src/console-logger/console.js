@@ -150,6 +150,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           this._updateviews();
           break;
         }
+        case 'css-filter': 
+        case 'use-css-filter': 
+        {
+          this._set_css_filter();
+          break;
+        }
         default: { // these settings are names of tabs to show.
           var is_disabled = !settings[msg.id].get(msg.key);
           views[msg.key].ishidden_in_menu = is_disabled;
@@ -182,9 +188,42 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     message.id = "" + (++this._lastid);
     message.title =  this._extract_title(message.description);
     message.line = this._extract_line(message.description);
-    this.addentry(message);
-    this.current_error_count++;
-    window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+    if (this._filter(message))
+    {
+      this.addentry(message);
+      this.current_error_count++;
+      window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+    }
+  };
+
+  this._filter = function(message)
+  {
+    if (!this._filters.hasOwnProperty('css'))
+    {
+      this._set_css_filter();
+    }
+    if (message.source == "css" && this._filters.css)
+    {
+      for (var i = 0, filter; filter = this._filters.css[i]; i++)
+      {
+        if (message.description.indexOf(filter) != -1)
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  this._set_css_filter = function()
+  {
+    if (!this._setting)
+    {
+      this._setting = window.settings.console;
+    }
+    this._filters.css = this._setting.get('use-css-filter') ?
+                        this._setting.get('css-filter') :
+                        null;
   };
 
   this._stringify_log_args = function(message)
@@ -245,6 +284,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this.init = function()
   {
+    this._filters = {};
+    
     window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
     window.messages.addListener('runtime-selected', this._on_runtime_selected.bind(this));
 
@@ -532,7 +573,41 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'console-voice': false,
       'console-widget': false,
       'use-selected-runtime-as-filter': false,
-      'expand-all-entries': false
+      'expand-all-entries': false,
+      'use-css-filter': false,
+      'css-filter': 
+      [
+        '-webkit-',
+        '-khtml-',
+        '-moz-',
+        '-ms-',
+        '-o-',
+        '_height',
+        '_width ',
+        '_position',
+        '_display',
+        '_zoom',
+        '_word-wrap',
+        '_z-index',
+        '_background',
+        '_padding',
+        '_line-height',
+        '_vertical-align',
+        '*width',
+        '*border',
+        '*margin',
+        '*padding',
+        '*font',
+        '*display',
+        '*top',
+        '*z-index',
+        '*line-height',
+        '*left',
+        'zoom:',
+        'filter:',
+        'behavior:',
+        'DXImageTransform.Microsoft',
+      ]
     },
     // key-label map
     {
@@ -551,7 +626,7 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
       'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
       'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
-  },
+    },
     // settings map
     {
       checkboxes:
@@ -569,9 +644,24 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
         'console-bittorrent',
         'console-voice',
         'console-widget'
+      ],
+      customSettings:
+      [
+        'css_error_filters'
       ]
     },
-    null,
-    "console"
+    {
+      css_error_filters: window.templates.error_log_settings_css_filter,
+    },
+    "console"  
   );
+};
+
+eventHandlers.input['error-console-css-filter'] = function(event, target)
+{
+  var filters = event.target.value.split(', ').map(function(token)
+  {
+    return token.trim();
+  }).filter(Boolean);
+  window.settings.console.set('css-filter', filters);
 };

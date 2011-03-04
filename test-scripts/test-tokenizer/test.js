@@ -81,6 +81,8 @@ b >>> 1;
 d >>= 6;
 d <<= 7;
 
+OFFSETS  = {};
+
   GET_OFFSETS_SCRIPT = "\
     (function(ele)\
     {\
@@ -124,4 +126,6 @@ d <<= 7;
       return log;\
     })(ele)\
     ";
+
+alert(88);
 

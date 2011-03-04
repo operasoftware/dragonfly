@@ -175,7 +175,6 @@ var ui_framework = new function()
   this.setup = function()
   {
     window[defaults.viewport] = document.getElementsByTagName(defaults.viewport_main_container)[0];
-
     if( viewport )
     {
       UIBase.copyCSS(resolve_map);
