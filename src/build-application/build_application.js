@@ -109,7 +109,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
           builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
           if (builder)
           {
-            builder(service);
+            // service_description is a dict of services 
+            // with name and version for each service
+            builder(service, service_descriptions);
           }
         }
       }
