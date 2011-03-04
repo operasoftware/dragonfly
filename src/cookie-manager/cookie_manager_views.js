@@ -42,8 +42,8 @@ cls.CookieManager.CookieManagerViewBase = function()
           }
           var selection = this._table_elem.querySelectorAll(".selected");
           var selected_cookie_objects = [];
-          for (var i=0; i < selection.length; i++) {
-            var sel_cookie_obj = this.data.get_cookie_by_objectref(selection[i].getAttribute("data-object-id"));
+          for (var i=0, selected_node; selected_node = selection[i]; i++) {
+            var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
             selected_cookie_objects.push(sel_cookie_obj);
           };
 
@@ -100,8 +100,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                       }
                     );
 
-                    for (var i=0; i < items_to_remove.length; i++) {
-                      var cookie = items_to_remove[i];
+                    for (var i=0, cookie; cookie = items_to_remove[i]; i++) {
                       // only set callback on last
                       var callback = function(){};
                       if(i === items_to_remove.length - 1)
@@ -119,10 +118,10 @@ cls.CookieManager.CookieManagerViewBase = function()
           {
             // multiple selection
             var removable_cookies = [];
-            for (var j=0; j < selected_cookie_objects.length; j++) {
-              if(selected_cookie_objects[j]._is_removable)
+            for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
+              if(selected_cookie_o._is_removable)
               {
-                removable_cookies.push(selected_cookie_objects[j]);
+                removable_cookies.push(selected_cookie_o);
               }
             };
             if(removable_cookies.length === 1)
@@ -130,9 +129,7 @@ cls.CookieManager.CookieManagerViewBase = function()
               options.push(
                 {
                   label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-                  handler: (function() {
-                    this.data.remove_cookie(removable_cookies[0]._objectref, this.data.refetch);
-                  }).bind(this)
+                  handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
                 }
               );
             }
@@ -144,7 +141,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                   handler: (function(removable_cookies, context) {
                     return function()
                     {
-                      for (var i=0; i < removable_cookies.length; i++)
+                      for (var i=0, removable_cookie; removable_cookie = removable_cookies[i]; i++)
                       {
                         // only set callback on last
                         var callback = function(){};
@@ -152,7 +149,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                         {
                           callback = context.data.refetch;
                         }
-                        context.data.remove_cookie(removable_cookies[i]._objectref, callback);
+                        context.data.remove_cookie(removable_cookie._objectref, callback);
                       }
                     }
                   })(removable_cookies, this)
@@ -255,13 +252,12 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.sortby = "domain";
     this.groupby = "runtime";
 
-    this.init(id, name, container_class);
+    this.init(id, name, container_class, null, "cookiemanager-container");
   };
 
   this.createView = function(container)
   {
     this._container = container;
-    container.setAttribute("handler", "cookiemanager-container");
     container.setAttribute("data-menu", "cookie_refetch");
     var storage_data = this.data.get_cookies();
     var sortby = this.sortby;
@@ -303,8 +299,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     var selection = this._table_elem.querySelectorAll(".selected");
     if(!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
     {
-      for (var i=0; i < selection.length; i++) {
-        selection[i].removeClass("selected");
+      for (var i=0, selected_node; selected_node = selection[i]; i++) {
+        selected_node.removeClass("selected");
       };
     }
     elem.addClass("selected");
@@ -367,7 +363,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.exit_edit_and_save = function()
   {
     var edit_trs = document.querySelectorAll("tr.edit_mode");
-    for (var i=0; i < edit_trs.length; i++) {
+    for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++) {
       // avoid refetching multiple times when saving multiple cookies.
       var is_last_cookie_in_list = (i == edit_trs.length - 1);
       var callback_after_set_cookie = function(){};
@@ -376,7 +372,6 @@ cls.CookieManager.CookieManagerViewBase = function()
         callback_after_set_cookie = this.data.refetch;
       }
 
-      var edit_tr = edit_trs[i];
       edit_tr.removeClass("edit_mode");
 
       var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
@@ -483,8 +478,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       var selection = this._table_elem.querySelectorAll(".selected");
       this._restore_selection = this._restore_selection || [];
-      for (var i=0; i < selection.length; i++) {
-        this._restore_selection.push(selection[i].getAttribute("data-object-id"));
+      for (var i=0, selected_node; selected_node = selection[i]; i++) {
+        this._restore_selection.push(selected_node.getAttribute("data-object-id"));
       };
     }
   }
@@ -496,8 +491,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     // restore selection
     if(this._restore_selection)
     {
-      for (var i=0; i < this._restore_selection.length; i++) {
-        var objectref = this._restore_selection[i];
+      for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
         var elem = this._container.querySelector("[data-object-id='"+objectref+"']");
         if(elem)
         {
@@ -514,16 +508,16 @@ cls.CookieManager.CookieManagerViewBase = function()
 
     // select and dbl-click to edit
     var rows = this._container.querySelectorAll("tr[data-object-id]");
-    for (var i=0; i < rows.length; i++) {
-      rows[i].setAttribute("handler", "cookiemanager-row-select");
-      var objectref = rows[i].getAttribute("data-object-id");
+    for (var i=0, row; row = rows[i]; i++) {
+      row.setAttribute("handler", "cookiemanager-row-select");
+      var objectref = row.getAttribute("data-object-id");
       if(this.data.get_cookie_by_objectref(objectref)._is_editable)
       {
-        rows[i].setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+        row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
       else
       {
-        rows[i].addClass("non-editable");
+        row.addClass("non-editable");
       }
     };
   }
@@ -578,9 +572,8 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._update_expiry = function()
   {
     var items = this.data.get_cookies();
-    for (var i=0; i < items.length; i++)
+    for (var i=0, obj; obj = items[i]; i++)
     {
-      var obj = items[i];
       var elem = document.getElementById("expires_container_"+obj._objectref);
       if(elem)
       {

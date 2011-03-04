@@ -87,8 +87,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this._make_context_menu = function(evt)
   {
-    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
-    opera.postError(obj_id)
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     if (!obj.tabledef.groups) { return [] }
 

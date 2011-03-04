@@ -76,10 +76,10 @@ cls.CookieManager.CookieDataBase = function()
 
   this.get_cookie_by_objectref = function(objectref)
   {
-    for (var i=0; i < this.cookie_list.length; i++) {
-      if(this.cookie_list[i]._objectref === objectref)
+    for (var i=0, cookie; cookie = this.cookie_list[i]; i++) {
+      if(cookie._objectref === objectref)
       {
-        return this.cookie_list[i];
+        return cookie;
       }
     };
   };
@@ -103,11 +103,10 @@ cls.CookieManager.CookieDataBase = function()
   {
     var cookie;
     var callback = callback || (function(){});
-    for (var i=0; i < this.cookie_list.length; i++)
+    for (var i=0, cookie; cookie = this.cookie_list[i]; i++)
     {
-      if(this.cookie_list[i]._objectref === objectref)
+      if(cookie._objectref === objectref)
       {
-        cookie = this.cookie_list[i];
         var domain = cookie.domain;
         if(!domain)
         {
@@ -206,8 +205,7 @@ cls.CookieManager.CookieDataBase = function()
       if(message.length > 0)
       {
         var cookies = message[COOKIE];
-        for (var i=0; i < cookies.length; i++) {
-          var cookie_info = cookies[i];
+        for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
           var is_secure = cookie_info[5];
           if(is_secure && rt.protocol !== "https:")
@@ -264,16 +262,13 @@ cls.CookieManager.CookieDataBase = function()
       if(cookie_string && cookie_string.length > 0)
       {
         var cookies = cookie_string.split(';');
-        for (var i=0; i < cookies.length; i++) {
-          var cookie_info = cookies[i];
+        for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           var pos = cookie_info.indexOf('=', 0);
-
           this.cookie_list.push(
             new cls.CookieManager.Cookie(
               {
               name:  cookie_info.slice(0, pos),
               value: decodeURIComponent(cookie_info.slice(pos+1)),
-
               _rt_runtime:  rt_id,
               _rt_protocol: rt.protocol,
               _rt_hostname: rt.hostname,
