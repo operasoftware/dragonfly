@@ -1,0 +1,21 @@
+<!doctype html>
+<script src="a.js"></script>
+<script src="b.js"></script>
+<script src="c.js"></script>
+<script src="d.js"></script>
+<script>
+
+var log = (function()
+{
+  var arr = [];
+  return function(val)
+  {
+    arr.push(val);
+  };
+})();
+var test = function()
+{
+  a();
+};
+</script>
+<p><input type="button" onclick="test()" value="test">

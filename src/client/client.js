@@ -613,4 +613,4 @@ ui_framework.layouts.main_layout =
       'utils'
     ];
   }
-}
+};

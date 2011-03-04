@@ -109,4 +109,4 @@ var js_builtins=
   'Text': 1,
   'Textarea': 1,
   'window': 1
-}
+};

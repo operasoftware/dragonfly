@@ -282,7 +282,7 @@ def tests2singledocs():
             entry.tabs = cur.tabs
             entry.urls = entry.url or cur.urls
             entry.repo = cur.repo[0:]
-            entry.index = ''.join(entry.id)
+            entry.index = ''.join(entry.id).strip()
             file_name = label2filename(entry.label)
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1
