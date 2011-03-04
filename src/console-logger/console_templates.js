@@ -81,3 +81,25 @@ window.templates.error_log_detail_row = function(entry)
     ]
   ];
 };
+
+window.templates.error_log_settings_css_filter = function(setting)
+{
+  return (
+  [
+    ['setting-composite', 
+      window.templates.settingCheckbox('console', 
+                                       'use-css-filter', 
+                                       setting.get('use-css-filter'), 
+                                       'Use CSS filter'),
+      ['label',
+        ['input', 
+          'type', 'text',
+          'value', setting.get('css-filter').join(', '),
+          'handler', 'error-console-css-filter',
+          'id', 'error-console-css-filter',
+        ],
+      ],
+      'class', 'error-console-setting',
+    ]
+  ]);
+};

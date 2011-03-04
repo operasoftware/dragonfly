@@ -122,6 +122,7 @@ window.cls.NewScript.prototype = new function()
       // ensure that a string never exceeds the current 
       // line if the newline is not escaped 
       var temp_count = 0;
+      var is_cr = 0;
       var nl_cur = string.indexOf(NL, ref_pos + 1);
       do
       {
@@ -130,15 +131,17 @@ window.cls.NewScript.prototype = new function()
           nl_cur = string.indexOf(NL, nl_cur + 1);
         ref_pos = string.indexOf(ref_val, ref_pos + 1);
         if (nl_cur > -1 && nl_cur < ref_pos)
-          ref_pos = string[nl_cur-1] == CR ? nl_cr -1 : nl_cur;
+        {
+          ref_pos = nl_cur;
+          is_cr = string[nl_cur - 1] == CR ? 1 : 0;
+        }
         temp_count = 0;
-        while (string.charAt(ref_pos - temp_count - 1) == '\\')
+        while (string.charAt(ref_pos - temp_count - 1 - is_cr) == '\\')
           temp_count++;
       }
       while ((temp_count & 1) && ref_pos != -1);
       return ref_pos;
-    }
-
+    };
 
     while( min_cur != -1 )
     {

@@ -1,4 +1,4 @@
-window.cls = window.cls || {};
+﻿window.cls = window.cls || {};
 cls.ResourceUtil = {}
 /**
  * Utility class with static members and methods for the resource and network

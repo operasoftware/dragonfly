@@ -1467,9 +1467,9 @@ cls.Stylesheets = function()
 
     for (i = 0; cursor = __new_rts[i]; i++)
     {
+      // TODO: the handling of stylesheets needs to be cleaned up.
       if (!__sheets[cursor])
       {
-        delete obj.__call_count;
         self.getStylesheets(cursor, arguments);
       }
       else

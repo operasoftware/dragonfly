@@ -118,6 +118,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <!-- command concat_js "./script/dragonfly.js" -->
 
 <link rel="stylesheet" href="./ui-style/ui.css"/>
+<link rel="stylesheet" href="./ui-style/overlay.css"/>
+<link rel="stylesheet" href="./ui-style/tabs.css"/>
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
@@ -389,11 +391,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./resource-manager/resource_service.js"/>
-<!--
-<script src="./resource-manager/resource_view.js"/>
-<script src="./resource-manager/resource_font_view.js"/>
-<script src="./resource-manager/resource_image_view.js"/>
--->
+
 <script src="./resource-manager/resource_all_view.js"/>
 <script src="./resource-manager/resource_templates.js"/>
 <script src="./resource-manager/resource_util.js"/>
