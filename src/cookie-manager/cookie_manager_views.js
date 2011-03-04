@@ -474,7 +474,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     var diff = date.getTime() - compare_date.getTime();
     var in_sec     = diff / 1000;
     var in_min     = in_sec / 60;
-    var in_5_min   = in_min / 20;
+    var in_5_min   = in_min / 5;
     var in_hours   = in_min / 60;
     var in_days    = in_hours / 24;
     var in_weeks   = in_days / 7;
@@ -497,12 +497,12 @@ cls.CookieManager.CookieManagerViewBase = function()
 
     if (Math.round(in_days) === 1)
       return ui_strings.COOKIE_MANAGER_TOMORROW;
-    if (in_days < 7)
+    if (in_days < 6)
       return ui_strings.COOKIE_MANAGER_IN_X_DAYS.replace(/%s/, Math.round(in_days));
 
     if (Math.round(in_weeks) === 1)
       return ui_strings.COOKIE_MANAGER_IN_1_WEEK;
-    if (in_weeks < 4.3)
+    if (in_weeks < 3)
       return ui_strings.COOKIE_MANAGER_IN_X_WEEKS.replace(/%s/, Math.round(in_weeks));
 
     if (Math.round(in_months) === 1)
