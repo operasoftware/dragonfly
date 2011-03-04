@@ -372,12 +372,12 @@ cst-icon[class="debugger-menu"] {
 }
 
 cst-select[cst-id="debugger-menu"] {
-    width: 33px;
+    width: 28px;
 }
 cst-icon {
     display: inline-block;
     height: 100%;
-    width: 19px;
+    width: 17px;
 }
 
 toolbar-separator {
@@ -945,7 +945,7 @@ cst-value
 cst-drop-down
 {
   display: block;
-  width: 9px;
+  width: 7px;
   height: 19px;
   background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
