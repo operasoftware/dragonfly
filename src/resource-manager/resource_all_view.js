@@ -128,7 +128,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     },
     columns: {
       icon: {
-        label: "",
+        label: "Icon",
+        headerlabel: "",
         sorter: "unsortable",
         renderer: function(res) { return templates.resource_icon(res) }
       },
@@ -160,6 +161,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
+        headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
         getter: function(res) { return res.size },
         renderer: function(res) {

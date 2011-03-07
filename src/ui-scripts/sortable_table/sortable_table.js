@@ -302,7 +302,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
               tdclass += " "+coldef.classname;
             }
             return ["th",
-                    tabledef.columns[c].label,
+                    tabledef.columns[c].headerlabel !== undefined ? tabledef.columns[c].headerlabel : tabledef.columns[c].label,
                     "class", tdclass,
                     "data-column-id", c,
                    ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
