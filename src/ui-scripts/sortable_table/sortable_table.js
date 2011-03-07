@@ -398,7 +398,8 @@ templates.sortable_table_row = function(tabledef, item, cols)
 {
   return ["tr",
           cols.map(function(col) {
-            var content = tabledef.columns[col].renderer(item, tabledef.columns[col].getter);
+            var coldef = tabledef.columns[col];
+            var content = coldef.renderer(item, coldef.getter);
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
@@ -408,20 +409,18 @@ templates.sortable_table_row = function(tabledef, item, cols)
                 title_templ = ["title", content]; // fixme: use custom title renderer.
               }
 
-              if (typeof content == "string" &&
-                  tabledef.columns[col].maxlength &&
-                  tabledef.columns[col].maxlength < content.length)
+              if (typeof content == "string" && coldef.maxlength && coldef.maxlength < content.length)
               {
-                if (tabledef.columns[col].ellipsis=="start")
+                if (coldef.ellipsis=="start")
                 {
-                  content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                  content = "…" + content.slice(-coldef.maxlength);
                 }
                 else
                 {
-                  content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                  content = content.slice(0, coldef.maxlength) + "…";
                 }
               }
-              return ["td", content].concat(title_templ);
+              return ["td", content].concat(title_templ).concat(coldef.align ? ["style", "text-align: " + coldef.align] : [])
             }
             return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])
