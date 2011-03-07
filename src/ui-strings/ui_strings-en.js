@@ -20,7 +20,7 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Documents';
 /* DESC: View for error log. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
@@ -45,7 +45,7 @@ ui_strings.M_VIEW_LABEL_ENVIRONMENT = 'Environment';
 /* DESC: Source code view. */
 ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
 /* DESC: Command line. */
-ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
+ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Console';
 /* DESC: Call stack overview, a list of function calls. */
 ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
 /* DESC: Text to show in call stack when the execution is not stopped. */
@@ -61,11 +61,11 @@ ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
 /* DESC: Documents in the runtime. */
 ui_strings.M_VIEW_LABEL_DOCUMENTS = 'Documents';
 /* DESC: Stylesheets in the runtime. */
-ui_strings.M_VIEW_LABEL_STYLESHEETS = 'Stylesheets';
+ui_strings.M_VIEW_LABEL_STYLESHEETS = 'Style Sheets';
 /* DESC: View to see the DOM tree. */
-ui_strings.M_VIEW_LABEL_DOM = 'DOM';
+ui_strings.M_VIEW_LABEL_DOM = 'DOM Source';
 /* DESC: View to see stylesheet rules. */
-ui_strings.M_VIEW_LABEL_STYLESHEET = 'Stylesheet';
+ui_strings.M_VIEW_LABEL_STYLESHEET = 'Style Sheet';
 /* DESC: List of all applied styles. */
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 /* DESC: List of properties of a selected DOM node. */
@@ -93,11 +93,11 @@ ui_strings.M_VIEW_LABEL_ERROR_XSLT = 'XSLT';
 /* DESC: See Opera Error console: Error view filter for showing all SVG errors. */
 ui_strings.M_VIEW_LABEL_ERROR_SVG = 'SVG';
 /* DESC: See Opera Error console: Error view filter for showing all Bittorrent errors. */
-ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = 'Bittorrent';
+ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = 'BitTorrent';
 /* DESC: See Opera Error console: Error view filter for showing all Voice errors. */
 ui_strings.M_VIEW_LABEL_ERROR_VOICE = 'Voice';
 /* DESC: See Opera Error console: Error view filter for showing all Widget errors. */
-ui_strings.M_VIEW_LABEL_ERROR_WIDGET = 'Widget';
+ui_strings.M_VIEW_LABEL_ERROR_WIDGET = 'Widgets';
 /* DESC: See Opera Error console: Error view filter for showing all Opera Dragonfly errors. */
 ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY = 'Opera Dragonfly';
 /* DESC: The styles that the rendering computed from all stylesheets. */
@@ -105,7 +105,7 @@ ui_strings.M_VIEW_LABEL_COMPUTED_STYLE = 'Computed Style';
 /* DESC: The styles that got defined in the stylesheets.*/
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 /* DESC: The view on the console. */
-ui_strings.M_VIEW_LABEL_CONSOLE = 'Console';
+ui_strings.M_VIEW_LABEL_CONSOLE = 'Error tabs';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
 /* DESC: DEPRECATED Name of request log tab */
@@ -137,7 +137,7 @@ ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
 
 /* DESC: Label of the stored colors view */
-ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Stored Colors';
+ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Color Palette';
 /* DESC: Label of the pixel magnifier and color picker view */
 ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color Picker';
 /* DESC: Label of the section for selecting a color in color picker */
@@ -155,45 +155,45 @@ ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
  */
 
 /* DESC: Switch display of 'All' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_ALL = 'Show all messages tab';
+ui_strings.S_SWITCH_SHOW_TAB_ALL = 'All';
 /* DESC: Switch display of 'Script' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'Show script tab';
+ui_strings.S_SWITCH_SHOW_TAB_SCRIPT = 'JavaScript';
 /* DESC: Switch display of 'Java' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Show Java tab';
+ui_strings.S_SWITCH_SHOW_TAB_JAVA = 'Java';
 /* DESC: Switch display of 'Mail' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Show mail tab';
+ui_strings.S_SWITCH_SHOW_TAB_M2 = 'Mail';
 /* DESC: Switch display of 'Network' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Show network tab';
+ui_strings.S_SWITCH_SHOW_TAB_NETWORK = 'Network';
 /* DESC: Switch display of 'XML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XML = 'Show XML tab';
+ui_strings.S_SWITCH_SHOW_TAB_XML = 'XML';
 /* DESC: Switch display of 'HTML' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_HTML = 'Show HTML tab';
+ui_strings.S_SWITCH_SHOW_TAB_HTML = 'HTML';
 /* DESC: Switch display of 'CSS' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_CSS = 'Show CSS tab';
+ui_strings.S_SWITCH_SHOW_TAB_CSS = 'CSS';
 /* DESC: Switch display of 'XSLT' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'Show XSLT tab';
+ui_strings.S_SWITCH_SHOW_TAB_XSLT = 'XSLT';
 /* DESC: Switch display of 'SVG' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_SVG = 'Show SVG tab';
+ui_strings.S_SWITCH_SHOW_TAB_SVG = 'SVG';
 /* DESC: Switch display of 'Bittorrent' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'Show BitTorrent tab';
+ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'BitTorrent';
 /* DESC: Switch display of 'Voice' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Show voice tab';
+ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Voice';
 /* DESC: Switch display of 'Widget' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Show widget tab';
+ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Widgets';
 /* DESC: Switch display of 'Opera Dragonfly' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Show Opera Dragonfly tab';
+ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Opera Dragonfly';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Show prototpe objects when inspecting a js object. */
-ui_strings.S_SWITCH_SHOW_PROTOTYPES = 'Show the prototypes';
+ui_strings.S_SWITCH_SHOW_PROTOTYPES = 'Show prototypes';
 /* DESC: Show default null and empty string values when inspecting a js object. */
-ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default null and empty strings values';
+ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default, null, and empty string values';
 /* DESC: Show non enumerale properties when inspecting a js object. */
-ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non enumerable properties';
+ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non-enumerable properties';
 /* DESC: Will select the element when clicked. */
-ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Find element by clicking';
+ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Select elements';
 /* DESC: Highlights page elements when thet mouse hovers. */
-ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected or hovered element';
+ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight elements';
 /* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
@@ -201,15 +201,15 @@ ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is remov
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names for text/html';
 /* DESC: Shows or hides comments in DOM. */
-ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comment nodes';
+ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comments';
 /* DESC: Shows or hides DOM node attributes. */
 ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attributes';
 /* DESC: Shows or hides white space nodes in DOM. */
-ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show white space nodes';
+ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show whitespace nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
 ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in Tree View';
 /* DESC: Shows CSS properties as shorthands or in full effect. */
-ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use shorthand for properties';
+ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use CSS shorthands';
 /* DESC: Show or hide initial values in computed style. */
 ui_strings.S_SWITCH_HIDE_INITIAL_VALUES = 'Hide initial values in computed styles';
 /* DESC: Shows computed styles as shorthand or in full effect. */
@@ -229,54 +229,54 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed styles';
 /* DESC: Toggles the display of shorthands in computed styles view. */
-ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles view';
+ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles';
 /* DESC: Showing shorthands in style properties on or off. */
-ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
+ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use CSS shorthands';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb';
+ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb trail';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
-ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list ( uncheck to also show mail and feed windows etc. )";
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list (uncheck to also show mail and feed windows etc.)";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
 /* DESC: Show ECMAScript errors in the command line. */
-ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMAScript errors in the command line view";
+ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show JavaScript errors in the console";
 /* DESC: Expand all (entries in a list) */
 ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
-ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border on to selected elements";
+ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border around selected elements";
 /* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
-ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
+ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
-ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the console";
 /* DESC:  When enabled, objects of type element will be friendly printed */
-ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the commandline.";
+ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the console.";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
-ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
+ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show Element objects in the DOM view";
 /* DESC: Clears the command line log */
-ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
+ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
 /* DESC: Close command line window */
-ui_strings.S_CLOSE_COMMAND_LINE = "Close command line";
+ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
-ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
+ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show JavaScript errors in the console';
 /* DESC: Enabling/disabling DOM modebar */
-ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show DOM modebar';
+ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show breadcrumb bar';
 
 /* DESC: Header for settings group "General" */
 ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
 /* DESC: Header for settings group "Document" */
-ui_strings.S_SETTINGS_HEADER_DOCUMENT = "Document";
+ui_strings.S_SETTINGS_HEADER_DOCUMENT = "Documents";
 /* DESC: Header for settings group "Script" */
 ui_strings.S_SETTINGS_HEADER_SCRIPT = "Script";
 /* DESC: Header for settings group "Network" */
 ui_strings.S_SETTINGS_HEADER_NETWORK = "Network";
 /* DESC: Header for settings group "Console" */
-ui_strings.S_SETTINGS_HEADER_CONSOLE = "Console";
+ui_strings.S_SETTINGS_HEADER_CONSOLE = "Error Log";
 /* DESC: Header for settings group "Keyboard shortcuts" */
 ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS = "Keyboard shortcuts";
 /* DESC: Header for settings group "About" */
@@ -330,7 +330,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_EDIT = 'Edit item';
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = 'Delete item';
 
 /* DESC: Context menu item for adding a something to watches. */
-ui_strings.M_CONTEXTMENU_ADD_WATCH = 'Add "%s" to watches';
+ui_strings.M_CONTEXTMENU_ADD_WATCH = 'Watch "%s"';
 
 /*
  * Button tool-tips.
@@ -345,21 +345,21 @@ ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step into (%s)';
 /* DESC: Debugger step out from current statement. */
 ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step out (%s)';
 /* DESC: Execution stops when a new script is encountered. */
-ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Stop at new script';
+ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Break when reaching a new script';
 /* DESC: Execution stops when encountering an exception. */
-ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Stop at exception';
+ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Break when an exception occurs';
 /* DESC: Execution stops when encountering an error. */
-ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Stop at error';
+ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Break when an error occurs';
 /* DESC: Execution stops at encountering an abort. */
-ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Stop at abort';
+ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Break at abort';
 /* DESC: Reloads the browser to receive fresh DOM, etc.  */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = 'Reload the selected window in the browser';
 /* DESC: For selecting which window to debug. */
-ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the window you'd like to debug";
+ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the window you’d like to debug";
 /* DESC: Expands the DOM tree completely. */
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE = 'Expand the DOM tree';
 /* DESC: Exports the DOM currently shown. */
-ui_strings.S_BUTTON_LABEL_EXPORT_DOM = 'Export current DOM view';
+ui_strings.S_BUTTON_LABEL_EXPORT_DOM = 'Export the current DOM view';
 /* DESC: Hides all default properties in the global scope. */
 ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'Hide default properties in global scope';
 /* DESC: Logs all threads when activated. */
@@ -400,9 +400,9 @@ ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 /* DESC:  Reset all the values to their default state */
 ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
 /* DESC: */
-ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage stored colors";
+ui_strings.S_BUTTON_COLOR_MANAGE_STORED = "Manage color palette";
 /* DESC: */
-ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Store color";
+ui_strings.S_BUTTON_COLOR_STORE_COLOR = "Add to color palette";
 /* DESC: Global console toggle */
 ui_strings.S_BUTTON_TOGGLE_CONSOLE = "Toggle console";
 /* DESC: Global settings toggle */
@@ -430,9 +430,9 @@ ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
 /* DESC: Select the active window as debugger context. */
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
 /* DESC: Reload the debug context. */
-ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debug Context';
+ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debugging Context';
 /* DESC: Debug context menu */
-ui_strings.S_MENU_DEBUG_CONTEXT = 'Debug context';
+ui_strings.S_MENU_DEBUG_CONTEXT = 'Debugging context';
 
 
 /*
@@ -449,7 +449,7 @@ ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 /* DESC: For search fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
-ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Quick find';
+ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = 'Filter';
 /* DESC: Table heading for "file" column */
 ui_strings.S_COLUMN_LABEL_FILE = "File";
 /* DESC: Table heading for column showing line number */
@@ -487,7 +487,7 @@ ui_strings.S_LABEL_COLOR_LUMINOSITY = "Luminosity";
 ui_strings.S_LABEL_COLOR_OPACITY = "Opacity";
 
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Spotlight";
+ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME = "Color Theme";
 /* DESC: */
@@ -501,7 +501,7 @@ ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset Default Colors";
 /* DESC: */
 ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED = "Advanced";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT = "Default Spotlight";
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT = "Default Highlight";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION = "Dimension";
 /* DESC: */
@@ -511,7 +511,7 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "Border";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN = "Margin";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Spotlight Metrics";
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Highlight Metrics";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER_ANY = "hover inner any";
 /* DESC: */
@@ -519,7 +519,7 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER = "hover inner";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Spotlight Locked Elements";
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Highlight Locked Elements";
 /* DESC: */
 ui_strings.S_LABEL_STORAGE_ADD = "Add";
 /* DESC: */
@@ -610,18 +610,18 @@ ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
  */
 
 /* DESC: Currently no scripts are loaded and a reload of the page will resolve all linked scripts.*/
-ui_strings.S_INFO_RELOAD_FOR_SCRIPT = 'Click the reload button above to fetch the scripts for the selected window';
+ui_strings.S_INFO_RELOAD_FOR_SCRIPT = 'Click the reload button above to fetch the scripts for the selected debugging context';
 
 /* DESC: Information shown if the window has no runtime, e.g. speed dial. */
 ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME = 'This window has no runtime';
 /* DESC: Information shown if the document does not hold any scripts. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = 'This document has no scripts';
 /* DESC: Information shown if the document does not hold any style sheet. */
-ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = 'This document has no stylesheet';
+ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = 'This document has no style sheets';
 /* DESC: Information shown if the stylesheet does not hold any style rules. */
-ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = 'This stylesheet has no rules';
+ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = 'This style sheet has no rules';
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = 'Opera Dragonfly is loading ...';
+ui_strings.S_INFO_DOCUMNENT_LOADING = 'Updating Opera Dragonfly…';
 /* DESC: General. */
 ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 /* DESC: Dragonfly is waiting for host connection */
@@ -710,7 +710,7 @@ ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\
 /* DESC: Description of the "help" command in the repl */
 ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
-ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
+ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jQuery in the active tab";
 
 /* DESC: Remote debug guide, connection setup */
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debugging:";
@@ -732,9 +732,9 @@ ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 /* DESC: Title for content tracking settings section in global network options */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE = "Content tracking behaviour";
 /* DESC: Help text for explaing content tracking setting in global network options */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate";
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Opera Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate";
 /* DESC: Name of content tracking setting for no tracking */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Don't track content (default)";
+ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Don’t track content (default)";
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
@@ -796,9 +796,9 @@ ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
 /* DESC: Name of type column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE = "Type";
 /* DESC: Name of size column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size (raw)";
 /* DESC: Name of pretty printed size column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size (pretty printed)";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size";
 /* DESC: Name of hosts size group */
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 /* DESC: Name of types size group */
