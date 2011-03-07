@@ -14,7 +14,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._service = new cls.ResourceManagerService();
   this._sort_by = "name";
   this._reverse = false;
-  this._columns = ["icon", "protocol", "host", "path", "type", "size_h"];
+  this._columns = ["icon", "host", "path", "type", "size_h"];
   this._loading = false;
 
   this.createView = function(container)
