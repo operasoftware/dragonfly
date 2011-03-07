@@ -122,29 +122,23 @@ cls.CookieManager.CookieDataBase = function()
 
   this.remove_cookies = function(cookies)
   {
-    for (var i=0, cookie; cookie = cookies[i]; i++)
+    var cookie = cookies.pop();
+    var callback = this.remove_cookies.bind(this, cookies);
+    if(cookies.length === 0)
     {
-      var callback;
-      if(i === cookies.length - 1)
-      {
-        callback = this.data.refetch;
-      }
-      this.data.remove_cookie(cookie._objectref, callback);
+      callback = this.refetch;
     }
+    this.remove_cookie(cookie._objectref, callback);
   }
 
   this.remove_cookies_of_runtime = function(rt_id)
   {
-    this.get_cookies().filter(
+    this.remove_cookies(this.get_cookies().filter(
       function(cookie)
       {
         return cookie._rt_id === rt_id && !cookie._is_runtime_placeholder;
       }
-    ).forEach(
-      function(cookie, index, list) {
-        this.remove_cookie(cookie._objectref, index === list.length - 1 ? this.refetch : null);
-      },
-    this);
+    ))
   };
 
   this._on_active_tab = function(msg)
@@ -220,7 +214,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._handle_cookies = function(status, message, rt_id)
   {
-    var rt = this._rts[rt_id];
+    var rt = this._rts[rt_id] || {};
     if(status === 0)
     {
       const COOKIE = 0;
@@ -279,7 +273,7 @@ cls.CookieManager.CookieDataBase = function()
     const DATA = 2;
     if(status === 0 && message[STATUS] == "completed")
     {
-      var rt = this._rts[rt_id];
+      var rt = this._rts[rt_id] || {};
       var cookie_string = message[DATA];
       if(cookie_string && cookie_string.length > 0)
       {

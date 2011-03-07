@@ -217,7 +217,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         options.push(
           {
             label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-            handler: this.data.remove_cookies.bind(this, removable_cookies)
+            handler: this.data.remove_cookies.bind(this.data, removable_cookies)
           }
         );
       }
@@ -457,7 +457,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     for (var i=0, row; row = rows[i]; i++) {
       row.setAttribute("handler", "cookiemanager-row-select");
       var objectref = row.getAttribute("data-object-id");
-      if(this.data.get_cookie_by_objectref(objectref)._is_editable)
+      if(
+        this.data.get_cookie_by_objectref(objectref) &&
+        this.data.get_cookie_by_objectref(objectref)._is_editable
+      )
       {
         row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
       }
