@@ -5,9 +5,13 @@ import shutil
 import tempfile
 import sys
 import zipfile
-import jsminify
 import base64
 import StringIO
+
+try:
+    import uglifyjs as jsminify
+except:
+    import jsminify
 
 
 _text_exts = (".js", ".html", ".xml", ".css")
