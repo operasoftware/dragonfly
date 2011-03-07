@@ -4,8 +4,13 @@ window.app.builders.HttpLogger || ( window.app.builders.HttpLogger = {} );
 /**
   * @param {Object} service the service description of the according service on the host side
   */
-window.app.builders.HttpLogger["2.0"] = function(service)
+window.app.builders.HttpLogger["2.0"] = function(service, service_descriptions)
 {
+  if (service_descriptions && "resource-manager" in service_descriptions)
+  {
+    return;
+  }
+
   var namespace = cls.HttpLogger && cls.HttpLogger["2.0"];
   var service_interface = window.services['http-logger'];
   if(service_interface)
