@@ -64,7 +64,7 @@ cls.ResourceDetailBase = function()
     this.resourcedata = null;
     this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
     this.drawer = new MetadataDrawer(res, "Details for " + (res.type || "unknown type"));
-    this.drawer.expanded = true;
+    this.drawer.expanded = false;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
   }
 }
