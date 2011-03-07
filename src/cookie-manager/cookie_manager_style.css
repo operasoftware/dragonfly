@@ -88,6 +88,10 @@
   background: none;
 }
 
+.cookie_manager tr[data-object-id ^= "runtime_placeholder_"] {
+  display: none;
+}
+
 /* other sortable-table stuff specific to cookie-manager (for now) */
 
 .cookie_manager .sortable-table td, .cookie_manager .sortable-table th {
