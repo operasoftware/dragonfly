@@ -9,9 +9,20 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.enter_edit_mode = function(objectref, event){};
   this.check_to_exit_edit_mode = function(event, target){};
   this.exit_edit_and_save = function(){};
+  
+  const
+  MODE_DEFAULT = "default",
+  MODE_EDIT = "edit"; // duplicated in cls.CookieManager["1.1"].CookieManagerView
 
   this._init = function(id, name, container_class, data_reference)
   {
+    this.init(id, name, container_class, null, "cookiemanager-container");
+
+    ActionHandlerInterface.apply(this);
+    this._handlers["submit"] = this._submit.bind(this);
+    this._handlers["cancel"] = this._cancel.bind(this);
+    ActionBroker.get_instance().register_handler(this);
+
     this.data = data_reference;
     this._bound_update_expiry = this._update_expiry.bind(this);
 
@@ -122,7 +133,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
     }
-    this.init(id, name, container_class, null, "cookiemanager-container");
   };
 
   this.createView = function(container)
@@ -268,6 +278,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
+    this.mode = MODE_EDIT;
     if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
     {
       this._sortable_table.restore_columns(this._table_elem);
@@ -285,10 +296,24 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.enter_edit_mode = function(objectref, event)
   {
+    this.mode = MODE_EDIT;
     this._sortable_table.restore_columns(this._table_elem);
     var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
     this.select_row(event, row);
     // Todo: focus input in clicked td if applicable
+  }
+
+  this._submit = function(event, target)
+  {
+    this.exit_edit_and_save();
+    return false;
+  }
+
+  this._cancel = function(event, target)
+  {
+    this.data.refetch();
+    this.mode = MODE_DEFAULT;
+    return false;
   }
 
   this.check_to_exit_edit_mode = function(event, target)
@@ -311,6 +336,8 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.exit_edit_and_save = function()
   {
+    this.mode = MODE_DEFAULT;
+
     var edit_trs = document.querySelectorAll("tr.edit_mode");
     for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++) {
       // avoid refetching multiple times when saving multiple cookies.
@@ -471,51 +498,71 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
   }
 
-  this._fuzzy_date = function(date)
+  this._fuzzy_date = function(time_in_seconds)
   {
-    var compare_date = new Date();
-    var diff = date.getTime() - compare_date.getTime();
-    var in_sec     = diff / 1000;
-    var in_min     = in_sec / 60;
-    var in_5_min   = in_min / 5;
-    var in_hours   = in_min / 60;
-    var in_days    = in_hours / 24;
-    var in_weeks   = in_days / 7;
-    var in_months  = in_weeks / 4.3;
-    var in_years   = in_months / 12;
+    var cookie_exp = new Date(time_in_seconds*1000);
+    var diff_in_seconds = Math.round((cookie_exp.getTime() - new Date().getTime()) / 1000);
+    var def = [
+      {
+        up_to_sec: 0,
+        string: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED
+      },
+      {
+        up_to_sec: 60, // a minute
+        string: ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE
+      },
+      {
+        up_to_sec: 60 * 60, // an hour
+        string: ui_strings.COOKIE_MANAGER_IN_X_MINUTES,
+        string_singular: ui_strings.COOKIE_MANAGER_IN_1_MINUTE
+      },
+      {
+        up_to_sec: 60 * 60 * 24, // a day
+        string: ui_strings.COOKIE_MANAGER_IN_X_HOURS,
+        string_singular: ui_strings.COOKIE_MANAGER_IN_1_HOUR,
+      },
+      {
+        up_to_sec: 60 * 60 * 24 * 7, // a week
+        string: ui_strings.COOKIE_MANAGER_IN_X_DAYS,
+        string_singular: ui_strings.COOKIE_MANAGER_TOMORROW,
+      },
+      {
+        up_to_sec: 60 * 60 * 24 * 7 * 4.3, // a month
+        string: ui_strings.COOKIE_MANAGER_IN_X_WEEKS,
+        string_singular: ui_strings.COOKIE_MANAGER_IN_1_WEEK,
+      },
+      {
+        up_to_sec: 60 * 60 * 24 * 7 * 4.3 * 12, // a year
+        string: ui_strings.COOKIE_MANAGER_IN_X_MONTHS,
+        string_singular: ui_strings.COOKIE_MANAGER_IN_1_MONTH,
+      },
+      {
+        up_to_sec: Infinity,
+        string: ui_strings.COOKIE_MANAGER_IN_X_YEARS,
+        string_singular: ui_strings.COOKIE_MANAGER_IN_1_YEAR,
+      }
+    ].sort(function(a, b){ return a.up_to_sec > b.up_to_sec });
 
-    if(in_sec < 60)
-      return ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE;
-    if (Math.round(in_min) === 1)
-      return ui_strings.COOKIE_MANAGER_IN_1_MINUTE;
-    if (in_min < 15)
-      return ui_strings.COOKIE_MANAGER_IN_X_MINUTES.replace(/%s/, Math.round(in_min));
-    if (in_5_min < 11)
-      return ui_strings.COOKIE_MANAGER_IN_X_MINUTES.replace(/%s/, Math.round(in_5_min) * 5);
+    var str = "", val = 0, i = 0;
+    for (var i=0, current_def; current_def = def[i]; i++)
+    {
+      if(diff_in_seconds < current_def.up_to_sec)
+      {
+        break;
+      }
+    }
+    var val;
+    if(def[i-1] && def[i-1].up_to_sec)
+    {
+      val = Math.round(diff_in_seconds / def[i-1].up_to_sec);
+    }
 
-    if (Math.round(in_hours) === 1)
-      return ui_strings.COOKIE_MANAGER_IN_1_HOUR;
-    if (in_hours < 23)
-      return ui_strings.COOKIE_MANAGER_IN_X_HOURS.replace(/%s/, Math.round(in_hours));
-
-    if (Math.round(in_days) === 1)
-      return ui_strings.COOKIE_MANAGER_TOMORROW;
-    if (in_days < 6)
-      return ui_strings.COOKIE_MANAGER_IN_X_DAYS.replace(/%s/, Math.round(in_days));
-
-    if (Math.round(in_weeks) === 1)
-      return ui_strings.COOKIE_MANAGER_IN_1_WEEK;
-    if (in_weeks < 3)
-      return ui_strings.COOKIE_MANAGER_IN_X_WEEKS.replace(/%s/, Math.round(in_weeks));
-
-    if (Math.round(in_months) === 1)
-      return ui_strings.COOKIE_MANAGER_IN_1_MONTH;
-    if (in_months < 11)
-      return ui_strings.COOKIE_MANAGER_IN_X_MONTHS.replace(/%s/, Math.round(in_months));
-
-    if (Math.round(in_years) === 1)
-      return ui_strings.COOKIE_MANAGER_IN_1_YEAR;
-    return ui_strings.COOKIE_MANAGER_IN_X_YEARS.replace(/%s/, Math.round(in_years))
+    var ret_string = current_def.string.replace(/%s/, val);
+    if(val === 1 && current_def.string_singular)
+    {
+      ret_string = current_def.string_singular.replace(/%s/, val);
+    }
+    return {string: ret_string, is_disabled: !val};
   };
 
   this._update_expiry = function()
@@ -526,13 +573,10 @@ cls.CookieManager.CookieManagerViewBase = function()
       var elem = document.getElementById("expires_container_"+obj._objectref);
       if(elem)
       {
-        if(new Date().getTime() < new Date(obj.expires*1000))
+        var fuzzy_date = this._fuzzy_date(obj.expires)
+        elem.textContent = fuzzy_date.string;
+        if(fuzzy_date.is_disabled)
         {
-          elem.textContent = this._fuzzy_date(new Date(obj.expires*1000));
-        }
-        else
-        {
-          elem.clearAndRender(window.templates.cookie_manager.expired_value());
           // find row, add expired_cookie class
           while(elem.nodeName !== "tr" || !elem.parentNode)
           {
@@ -606,6 +650,7 @@ cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
 cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class, data_reference, service_version)
 {
   var data = data_reference;
+  const MODE_EDIT = "edit";
   if(typeof data_reference === "function")
   {
     data = new data_reference(service_version, this);
@@ -652,6 +697,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
+    this.mode = MODE_EDIT;
     if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
     {
       this._sortable_table.restore_columns(this._table_elem);

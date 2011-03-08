@@ -134,6 +134,7 @@ templates.cookie_manager = {
   },
   editable_expires: function(date_in_seconds, objectref) {
     var parsed_date = new Date(date_in_seconds*1000);
+    // todo: Use .toLocaleString instead, but only when it's consistent with the date picker. Helps a lot though.
     var expires_container = ["div", "id", "expires_container_"+objectref, "title", parsed_date.toUTCString()];
     var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString())
     if(date_in_seconds === 0)
@@ -156,9 +157,6 @@ templates.cookie_manager = {
       "class", "replaced-val",
       "title", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE
     ];
-  },
-  expired_value: function() {
-    return ["span", ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED, "class", "replaced-val"];
   },
   unknown_value: function() {
     return ["span", "-", "class", "replaced-val"];
