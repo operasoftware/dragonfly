@@ -1,4 +1,4 @@
-﻿var ini =
+var ini =
 {
   // all files in http-clients must be updated to the cvs version of this file //
   protocol_version: '5',
@@ -17,7 +17,6 @@
         "default":
         {
           "ctrl a": "select-all",
-          "ctrl f": "focus-container-search-field",
           "ctrl i": "invert-spotlight-colors",
           "f3": "focus-container-search-field",
           "f8": "continue-run",
@@ -40,7 +39,6 @@
           "shift enter": "highlight-previous-match",
           "shift f3": "highlight-previous-match",
           "ctrl enter": "show-script",
-          "escape": "hide-search",
           "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
@@ -99,7 +97,7 @@
       {
         "default":
         {
-          "ctrl l": "clear-repl",
+          "ctrl l": "clear",
         },
         "single-line-edit":
         {
@@ -190,13 +188,16 @@
         "default":
         {
           "cmd shift a": "select-all",
-          "cmd f": "focus-container-search-field",
           "cmd i": "invert-spotlight-colors",
+          "f3": "focus-container-search-field", // doesn't seem to do anything
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
-          "escape": "toggle-console"
+          "escape": "toggle-console",
+          // "ctrl tab": "navigate-next-top-tab",
+          // "ctrl shift tab": "navigate-previous-top-tab",
+          "cmd shift f": "show-search"
         },
         "edit":
         {
@@ -205,10 +206,14 @@
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
           "enter": "highlight-next-match",
-          "cmd g": "highlight-next-match",
+          // "cmd g": "highlight-next-match", // seems it can't be stolen from Opera
           "shift enter": "highlight-previous-match",
-          "cmd shift g": "highlight-previous-match",
-          "escape": "toggle-console"
+          // "cmd shift g": "highlight-previous-match",
+          "cmd enter": "show-script", // todo: check why that doesn't hide the floating search window on mac
+          "escape": "toggle-console",
+          // "ctrl tab": "navigate-next-top-tab",
+          // "ctrl shift tab": "navigate-previous-top-tab",
+          "cmd shift f": "show-search"
         }
       },
       "dom":
@@ -251,8 +256,8 @@
         },
         "edit":
         {
-          "up": "autocomplete-previous",
-          "down": "autocomplete-next",
+          "up": "autocomplete-next",
+          "down": "autocomplete-previous",
           "shift tab": "edit-previous",
           "tab": "edit-next",
           "enter": "submit-edit-and-new-edit",
@@ -263,7 +268,7 @@
       {
         "default":
         {
-          // "ctrl l": "clear-repl",
+          "cmd k": "clear",
         },
         "single-line-edit":
         {
@@ -272,10 +277,10 @@
           "tab": "autocomplete",
           "enter": "eval",
           "shift enter": "enter-multiline-mode",
-          // "ctrl l": "clear",
+          "cmd k": "clear",
           //"ctrl p": "backlog-prev",
           //"ctrl n": "backlog-next",
-          // "ctrl k": "kill-to-end-of-line",
+          // "ctrl k": "kill-to-end-of-line", // supported on mac text input anyway
           // "ctrl u": "kill-to-beginning-of-line", // non-existent on mac afaict
           // "ctrl e": "move-to-end-of-LINE",
           // "ctrl a": "move-to-beginning-of-line",
@@ -305,12 +310,46 @@
          "(": "commit-and-insert",
          ")": "commit-and-insert",
          "escape": "cancel-completion",
-         // "ctrl l": "cancel-input",
+         "cmd k": "clear",
          // "ctrl k": "kill-to-end-of-line",
          // "ctrl u": "kill-to-beginning-of-line",
          // "ctrl w": "kill-word-backwards",
          // "ctrl y": "yank"
         },
+      },
+      "js_source":
+      {
+        "default":
+        {
+          "up": "scroll-arrow-up",
+          "down": "scroll-arrow-down",
+          "page-up": "scroll-page-up",
+          "page-down": "scroll-page-down",
+        },
+      },
+      "watches":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel",
+        }
+      },
+      "breakpoints":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel",
+        }
       },
     },
   },
