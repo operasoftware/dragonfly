@@ -12,6 +12,7 @@ charset-rule, media-rule, examine-objects, examine-objects item, .storage-table 
 css-new-style-sheet, .js-resource, .markup-resource {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
+  line-height: 15px;
   color: #111;
 }
 

@@ -10,8 +10,8 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
   return [
     "table", [
       "tr", [
-        ['th', " "],
-        //['th', "TT"],
+        ['th', ""],
+        ['th', ""],
         ['th', ui_strings.S_COLUMN_LABEL_FILE],
         ['th', ui_strings.S_COLUMN_LABEL_LINE],
         ['th', ui_strings.S_COLUMN_LABEL_ERROR]
@@ -38,6 +38,7 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     var expanded = toggledList.indexOf(entry.id) != -1;
   }
 
+  var severity = entry.severity || "information";
   var rows = [
     [
       "tr", [
@@ -45,10 +46,12 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
                  "type", "button",
                  //"handler", "error-log-list-expand-collapse",
                  "data-logid", entry.id,
-                 "data-viewid", viewId
+                 "data-viewid", viewId,
+                 "unselectable", "on"
                ]
       ],
-        ["td", entry.uri],
+      ["td", ["span", "class", "severity " + severity, "title", severity]],
+      ["td", entry.uri],
       ["td", (entry.line==null ? "?" : entry.line) ],
       ["td", entry.title]
      ],  "class", (expanded ? "expanded" : "collapsed"),
@@ -76,7 +79,7 @@ window.templates.error_log_detail_row = function(entry)
          "data-resource-url", entry.uri
        ],
        [ "pre", entry.description ],
-                 "colspan", "4"
+                 "colspan", "5"
       ]
     ]
   ];
