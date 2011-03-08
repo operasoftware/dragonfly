@@ -193,7 +193,7 @@ ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non-enumerable properties';
 /* DESC: Will select the element when clicked. */
 ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Select an element in the page to inspect it';
 /* DESC: Highlights page elements when thet mouse hovers. */
-ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected elements';
+ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected element';
 /* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
@@ -207,7 +207,7 @@ ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attribute nodes';
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show whitespace nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
-ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Represent the DOM as a tree';
+ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Represent the DOM as a node tree';
 /* DESC: DEPRECATED Shows CSS properties as shorthands or in full effect. */
 ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use CSS shorthands';
 /* DESC: Show or hide initial values in computed style. */
@@ -247,11 +247,11 @@ ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Keep elements highlighted when selecting a different element";
 /* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
-ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new debugging context";
+ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
-ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack objects which have list-like properties in the console";
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack objects which have list-like behavior in the console";
 /* DESC:  When enabled, objects of type element will be friendly printed */
 ui_strings.S_SWITCH_FRIENDLY_PRINT = "Enable smart-printing for Element objects in the console";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
@@ -535,7 +535,7 @@ ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 /* DESC: A setting to define which prototypes of inspected js objects should be collapsed by default. */
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
 /* DESC: In the command line, choose the size of the typed history */
-ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history';
+ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of stored history';
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = 'Keyboard shortcuts %s';
 /* DESC: Label of a subsection in the keyboard configuration */
