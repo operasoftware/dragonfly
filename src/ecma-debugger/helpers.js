@@ -208,7 +208,7 @@ window.cls.Helpers = function()
     };
   }
 
-  this.pretty_print_number(num)
+  this.pretty_print_number = function(num)
   {
     var numstring = String(num);
     var parts = numstring.split(".");
