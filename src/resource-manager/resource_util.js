@@ -80,6 +80,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
+  "application/json": "script",
 
   "image/png": "image",
   "image/gif": "image",
@@ -116,7 +117,6 @@ cls.ResourceUtil.mime_type_map = {
   "video/webm": "video",
   "video/x-ms-wmv": "video",
 
-  "application/json": "data",
   "application/rdf+xml": "data",
   "text/rdf+n3": "data",
   "application/x-turtle": "data",
