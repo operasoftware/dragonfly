@@ -38,11 +38,11 @@ ui_strings.M_VIEW_LABEL_RESOURCES = 'Resources';
  * Level 2 View Tab Headings
  */
 
-/* DESC: Scripts contained in runtime. */
+/* DESC: DEPRECATED Scripts contained in runtime. */
 ui_strings.M_VIEW_LABEL_SCRIPTS = 'Scripts';
 /* DESC: Information of the runtime environment. */
 ui_strings.M_VIEW_LABEL_ENVIRONMENT = 'Environment';
-/* DESC: Source code view. */
+/* DESC: DEPRECATED Source code view. */
 ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
 /* DESC: Command line. */
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Console';
@@ -52,18 +52,18 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
 ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
-/* DESC: Thread log overview, a list of threads. */
+/* DESC: DEPRECATED Thread log overview, a list of threads. */
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = 'Inspection';
-/* DESC: The JS properties of an object. */
+/* DESC: DEPRECATED The JS properties of an object. */
 ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
-/* DESC: Documents in the runtime. */
+/* DESC: DEPRECATED Documents in the runtime. */
 ui_strings.M_VIEW_LABEL_DOCUMENTS = 'Documents';
-/* DESC: Stylesheets in the runtime. */
+/* DESC: DEPRECATED Stylesheets in the runtime. */
 ui_strings.M_VIEW_LABEL_STYLESHEETS = 'Style Sheets';
 /* DESC: View to see the DOM tree. */
-ui_strings.M_VIEW_LABEL_DOM = 'DOM Source';
+ui_strings.M_VIEW_LABEL_DOM = 'DOM Panel';
 /* DESC: View to see stylesheet rules. */
 ui_strings.M_VIEW_LABEL_STYLESHEET = 'Style Sheet';
 /* DESC: List of all applied styles. */
@@ -105,7 +105,7 @@ ui_strings.M_VIEW_LABEL_COMPUTED_STYLE = 'Computed Style';
 /* DESC: The styles that got defined in the stylesheets.*/
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
 /* DESC: The view on the console. */
-ui_strings.M_VIEW_LABEL_CONSOLE = 'Error tabs';
+ui_strings.M_VIEW_LABEL_CONSOLE = 'Error Panels';
 /* DESC: One Export view. */
 ui_strings.M_VIEW_LABEL_EXPORT = 'Export';
 /* DESC: DEPRECATED Name of request log tab */
@@ -187,13 +187,13 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Show prototpe objects when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_PROTOTYPES = 'Show prototypes';
 /* DESC: Show default null and empty string values when inspecting a js object. */
-ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default, null, and empty string values';
+ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = 'Show default values if they are null or empty strings';
 /* DESC: Show non enumerale properties when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non-enumerable properties';
 /* DESC: Will select the element when clicked. */
-ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Select elements';
+ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Select an element in the page to inspect it';
 /* DESC: Highlights page elements when thet mouse hovers. */
-ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight elements';
+ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected elements';
 /* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
@@ -201,21 +201,21 @@ ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is remov
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names for text/html';
 /* DESC: Shows or hides comments in DOM. */
-ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comments';
+ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comment nodes';
 /* DESC: Shows or hides DOM node attributes. */
-ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attributes';
+ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attribute nodes';
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show whitespace nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
-ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in Tree View';
-/* DESC: Shows CSS properties as shorthands or in full effect. */
+ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Represent the DOM as a tree';
+/* DESC: DEPRECATED Shows CSS properties as shorthands or in full effect. */
 ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use CSS shorthands';
 /* DESC: Show or hide initial values in computed style. */
-ui_strings.S_SWITCH_HIDE_INITIAL_VALUES = 'Hide initial values in computed styles';
+ui_strings.S_SWITCH_HIDE_INITIAL_VALUES = 'Show initial values in computed style panel';
 /* DESC: Shows computed styles as shorthand or in full effect. */
-ui_strings.S_SWITCH_HIDE_SHORTHANDS = 'Hide shorthand for computed styles';
+ui_strings.S_SWITCH_HIDE_SHORTHANDS = 'Show shorthands in computed style panel';
 /* DESC: Shows or hides empty strings and null values. */
-ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = 'Hide empty strings and null values';
+ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = 'Show empty strings and null values';
 /* DESC: Route debugging traffic trough proxy to enable debugging devices */
 ui_strings.S_SWITCH_REMOTE_DEBUG = 'Remote debug';
 /* DESC: Show or hide Views menu. */
@@ -229,8 +229,8 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed styles';
 /* DESC: Toggles the display of shorthands in computed styles view. */
-ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Hide shorthands in computed styles';
-/* DESC: Showing shorthands in style properties on or off. */
+ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Show shorthands in computed style panel';
+/* DESC: DEPRECATED Showing shorthands in style properties on or off. */
 ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use CSS shorthands';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb trail';
@@ -239,23 +239,23 @@ ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classe
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
 ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list (uncheck to also show mail and feed windows etc.)";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
-ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
+ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Highlight';
 /* DESC: Show ECMAScript errors in the command line. */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show JavaScript errors in the console";
 /* DESC: Expand all (entries in a list) */
 ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
-ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Draw a border around selected elements";
+ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Keep elements highlighted when selecting a different element";
 /* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
-ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
+ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new debugging context";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
-ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the console";
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack objects which have list-like properties in the console";
 /* DESC:  When enabled, objects of type element will be friendly printed */
-ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the console.";
+ui_strings.S_SWITCH_FRIENDLY_PRINT = "Enable smart-printing for Element objects in the console";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
-ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show Element objects in the DOM view";
+ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Display Element objects in the DOM panel when selected in the console";
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
 /* DESC: Show help in command line */
@@ -265,14 +265,14 @@ ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show JavaScript errors in the console';
 /* DESC: Enabling/disabling DOM modebar */
-ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show breadcrumb bar';
+ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show breadcrumb trail';
 
 /* DESC: Header for settings group "General" */
 ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
 /* DESC: Header for settings group "Document" */
 ui_strings.S_SETTINGS_HEADER_DOCUMENT = "Documents";
 /* DESC: Header for settings group "Script" */
-ui_strings.S_SETTINGS_HEADER_SCRIPT = "Script";
+ui_strings.S_SETTINGS_HEADER_SCRIPT = "Scripts";
 /* DESC: Header for settings group "Network" */
 ui_strings.S_SETTINGS_HEADER_NETWORK = "Network";
 /* DESC: Header for settings group "Console" */
@@ -345,23 +345,23 @@ ui_strings.S_BUTTON_LABEL_STEP_INTO = 'Step into (%s)';
 /* DESC: Debugger step out from current statement. */
 ui_strings.S_BUTTON_LABEL_STEP_OUT = 'Step out (%s)';
 /* DESC: Execution stops when a new script is encountered. */
-ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Break when reaching a new script';
+ui_strings.S_BUTTON_LABEL_STOP_AT_THREAD = 'Break on first statement of a new script';
 /* DESC: Execution stops when encountering an exception. */
-ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Break when an exception occurs';
+ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Break when an exception is thrown';
 /* DESC: Execution stops when encountering an error. */
-ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Break when an error occurs';
+ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Show where a JavaScript error occurs';
 /* DESC: Execution stops at encountering an abort. */
-ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Break at abort';
+ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Stop when encountering an abort message';
 /* DESC: Reloads the browser to receive fresh DOM, etc.  */
-ui_strings.S_BUTTON_LABEL_RELOAD_HOST = 'Reload the selected window in the browser';
+ui_strings.S_BUTTON_LABEL_RELOAD_HOST = 'Reload the selected debugging context in the browser';
 /* DESC: For selecting which window to debug. */
-ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the window you’d like to debug";
+ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you’d like to debug";
 /* DESC: Expands the DOM tree completely. */
 ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE = 'Expand the DOM tree';
 /* DESC: Exports the DOM currently shown. */
-ui_strings.S_BUTTON_LABEL_EXPORT_DOM = 'Export the current DOM view';
+ui_strings.S_BUTTON_LABEL_EXPORT_DOM = 'Export the current DOM panel';
 /* DESC: Hides all default properties in the global scope. */
-ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'Hide default properties in global scope';
+ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = 'Show default properties in global scope';
 /* DESC: Logs all threads when activated. */
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = 'Log threads';
 /* DESC: Clears thread log. */
@@ -416,7 +416,7 @@ ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
 /* DESC: Search for an event in the event breakpoints view */
 ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
 /* DESC: Search for a keyboard shortcut in the keyboard configuration view */
-ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcut";
+ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcuts";
 /* DESC: Reset all keyboard shortcuts to the default values. */
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Reset the keyboard shortcuts of a specific section to the default values. */
@@ -440,7 +440,7 @@ ui_strings.S_MENU_DEBUG_CONTEXT = 'Debugging context';
  * FIXME: The DESCs needs to reflect this
  */
 
-/* DESC: Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
+/* DESC: DEPRECATED Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
 ui_strings.S_LABEL_STATUS_INDICATOR = 'Status indicator for the browser and the debugger';
 /* DESC: The network port to connect to. */
 ui_strings.S_LABEL_PORT = 'Port';
@@ -519,7 +519,7 @@ ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER = "hover inner";
 /* DESC: */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
 /* DESC: */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Highlight Locked Elements";
+ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Highlight for Unselected Elements";
 /* DESC: */
 ui_strings.S_LABEL_STORAGE_ADD = "Add";
 /* DESC: */
@@ -535,7 +535,7 @@ ui_strings.S_LABEL_UTIL_SCALE = 'Scale';
 /* DESC: A setting to define which prototypes of inspected js objects should be collapsed by default. */
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES ="Default collapsed prototype objects (a list of prototypes, e.g. Object, Array, etc. * will collapse all): ";
 /* DESC: In the command line, choose the size of the typed history */
-ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history to remember';
+ui_strings.S_LABEL_REPL_BACKLOG_LENGTH = 'Number of lines of history';
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = 'Keyboard shortcuts %s';
 /* DESC: Label of a subsection in the keyboard configuration */
@@ -572,7 +572,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Sessi
 /* DESC: Label for the expiry when cookie has already expired */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
 /* DESC: Label for isHTTPOnly flag on a cookie */
-ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
+ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTPOnly";
 /* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 /* DESC: Label for grouping by runtime (lowercase) */
@@ -796,9 +796,9 @@ ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
 /* DESC: Name of type column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE = "Type";
 /* DESC: Name of size column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size (raw)";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE = "Size";
 /* DESC: Name of pretty printed size column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE = "Size (pretty printed)";
 /* DESC: Name of hosts size group */
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 /* DESC: Name of types size group */
