@@ -314,7 +314,7 @@ cls.DOMInspectorActions = function(id)
     view_container_first_child = container.firstChild;
     selection = getSelection();
     range = document.createRange();
-    this.is_dom_type_tree = container.hasClass('tree-style');
+    this.is_dom_type_tree = container.firstElementChild.firstElementChild.hasClass('tree-style');
     if (event.type == 'click')
     {
       switch (event.target.nodeName.toLowerCase())
@@ -345,7 +345,7 @@ cls.DOMInspectorActions = function(id)
 
   this.setSelected = function(new_target, scroll_into_view)
   {
-    var firstChild = null, raw_delta = 0, delta = 0;
+    var firstChild = null, raw_delta = 0, delta = 0, is_end_tag = false;
     if(new_target)
     {
       if(nav_target)
@@ -378,7 +378,8 @@ cls.DOMInspectorActions = function(id)
         case 'value':
         {
           firstChild = new_target.firstChild;
-          range.setStart(firstChild, this.is_dom_type_tree ? 0 : 1);
+          is_end_tag = firstChild.nodeValue[1] == "/";
+          range.setStart(firstChild, this.is_dom_type_tree ? 0 : is_end_tag ? 2 : 1);
           range.setEnd(firstChild,
                        firstChild.nodeValue.length -
                        (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
