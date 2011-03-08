@@ -208,6 +208,31 @@ window.cls.Helpers = function()
     };
   }
 
+  this.pretty_print_number(num)
+  {
+    var numstring = String(num);
+    var parts = numstring.split(".");
+    var integral = parts[0].split("");
+    var fractional = parts[1];
+    var ret = "";
+
+    while (integral.length > 3)
+    {
+      ret = "," + integral.splice(integral.length-3, 3).join("") + ret;
+    }
+
+    if (integral.length)
+    {
+      ret = integral.join("") + ","  + ret;
+    }
+
+    if (fractional != null)
+    {
+      ret = ret + "." + fractional;
+    }
+    return ret;
+  }
+
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)
