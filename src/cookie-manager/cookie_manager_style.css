@@ -2,10 +2,7 @@
   width: 99%; border: 1px solid #CCC;
 }
 
-.cookie_manager .replaced-val {
-  color: #AAA;
-}
-
+.cookie_manager .replaced-val,
 .cookie_manager .expired_cookie {
   color: #AAA;
 }
@@ -86,6 +83,10 @@
 
 .cookie_manager .sortable-table tr.sortable-table-summation-row {
   background: none;
+}
+
+.cookie_manager tr[data-object-id ^= "runtime_placeholder_"] {
+  display: none;
 }
 
 /* other sortable-table stuff specific to cookie-manager (for now) */

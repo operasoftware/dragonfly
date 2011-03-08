@@ -168,6 +168,18 @@
         {
           "enter": "submit",
           "escape": "cancel",
+        },
+      },
+      "cookie_manager":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel"
         }
       },
       "breakpoints":
@@ -312,6 +324,18 @@
          // "ctrl y": "yank"
         },
       },
+      "cookie_manager":
+      {
+        "default":
+        {
+
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel"
+        }
+      }
     },
   },
   hostspotlight_matrixes:
