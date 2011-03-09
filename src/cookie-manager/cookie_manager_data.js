@@ -281,11 +281,10 @@ cls.CookieManager.CookieDataBase = function()
         for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           var pos = cookie_info.indexOf('=', 0);
           this.cookie_list.push(
-            new cls.CookieManager.Cookie(
-              {
+            new cls.CookieManager.Cookie({
               name:  cookie_info.slice(0, pos),
               value: decodeURIComponent(cookie_info.slice(pos+1)),
-              _rt_runtime:  rt_id,
+              _rt_id:       rt_id,
               _rt_protocol: rt.protocol,
               _rt_hostname: rt.hostname,
               _rt_path:     rt.pathname
