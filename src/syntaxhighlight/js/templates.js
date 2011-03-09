@@ -19,6 +19,14 @@
   classes[COMMENT] = 'comment';
   classes[REG_EXP] = 'reg_exp';
 
+  var js_types =
+  {
+    "false": "boolean",
+    "true": "boolean",
+    "null": "null",
+    "undefined": "undefined",
+  };
+
   var onjstoken = function(context, token_type, token)
   {
     var class_name = "";
@@ -33,11 +41,15 @@
       }
       case IDENTIFIER:
       {
-        if(token in js_keywords)
+        if (js_types.hasOwnProperty(token))
+        {
+          class_name = js_types[token];
+        }
+        else if(js_keywords.hasOwnProperty(token))
         {
           class_name = 'js_keywords';
         }
-        else if(token in js_builtins)
+        else if(js_builtins.hasOwnProperty(token))
         {
           class_name = 'js_builtins';
         }
@@ -78,11 +90,15 @@
       }
       case IDENTIFIER:
       {
-        if(token in js_keywords)
+        if (js_types.hasOwnProperty(token))
+        {
+          class_name = js_types[token];
+        }
+        else if(js_keywords.hasOwnProperty(token))
         {
           class_name = 'js_keywords';
         }
-        else if(token in js_builtins)
+        else if(js_builtins.hasOwnProperty(token))
         {
           class_name = 'js_builtins';
         }
