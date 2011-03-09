@@ -247,6 +247,12 @@ button[handler="reload-window"] {
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");
 }
+.disable-all-breakpoints {
+    content: url("../ui-images/icons/icon_disable.png");
+}
+.delete-all-breakpoints {
+    content: url("../ui-images/icons/icon_clear.png");
+}
 .ev-brp-expand-all-sections {
     content: url("../ui-images/icons/icon_expand.png");
 }

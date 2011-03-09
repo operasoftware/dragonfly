@@ -29,7 +29,7 @@ cls.WatchesView = function(id, name, container_class)
       ['div'],
       ['div',
         ['button',
-          [['img', 'src', 'ui-images/add-small.png'], ['span', 'Add']],
+          [['img', 'src', 'ui-images/icons/icon_add_small.png'], ['span', 'Add']],
           'handler', 'watches-add'
         ],
         'class', 'watches-controls padding'
