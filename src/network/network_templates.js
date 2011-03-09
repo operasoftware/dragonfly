@@ -294,13 +294,19 @@ templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
     var statusclass = "status-" + res.responsecode;
+    var statusstring = res.responsecode || null;
+    if (res.responsecode && res.responsecode in cls.ResourceUtil.http_status_codes)
+    {
+      statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
+    }
+
     if (res.cached) { statusclass = "status-cached" } 
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", String(res.responsecode),
+            ["span", String(statusstring || "-"),
              "class", "log-url-list-status " + statusclass,
-             "title", String(res.responsecode)
+             "title", String(statusstring || "-")
              ],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
