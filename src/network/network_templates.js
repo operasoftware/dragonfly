@@ -148,6 +148,8 @@ templates.network_log_details = function(ctx, selected, listwidth)
 templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
+  responsecode = req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
+                "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
     ["button", "handler", "close-request-detail", "unselectable", "on"],
@@ -157,7 +159,7 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(req.responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
