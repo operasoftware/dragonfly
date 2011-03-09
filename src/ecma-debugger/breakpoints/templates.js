@@ -10,7 +10,8 @@
       'class', 'condition',
       'edit-handler', 'edit-condition'
     ]);
-  }
+  };
+
   this.breakpoint = function(bp)
   {
     var ret = ['div'];
@@ -67,6 +68,16 @@
     ret.push('class', 'breakpoint', 
              'data-breakpoint-id', String(bp.id));
     return ret;
+  };
+
+  this.no_breakpoints = function()
+  {
+    return (
+    [
+      'div', 
+        ui_strings.M_VIEW_LABEL_NO_BREAKPOINT, 
+        'class', 'not-content inspection'
+    ]); 
   };
 
 }).apply(window.templates || (window.templates = {}));

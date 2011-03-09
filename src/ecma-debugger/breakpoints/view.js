@@ -224,8 +224,15 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    container.clearAndRender(this._bps.get_breakpoints().map(this._tmpls.breakpoint, 
-                                                             this._tmpls));
+    var bps = this._bps.get_breakpoints();
+    if (bps.length)
+    {
+      container.clearAndRender(bps.map(this._tmpls.breakpoint, this._tmpls));
+    }
+    else
+    {
+      container.clearAndRender(this._tmpls.no_breakpoints());
+    }
   };
 
   this.ondestroy = function()

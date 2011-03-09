@@ -136,7 +136,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     /* Runtime State */
     new SidePanelView('breakpoints-side-panel', 
-                      'Breakpoints',
+                      ui_strings.M_VIEW_LABEL_BREAKPOINTS,
                       ['breakpoints', 'event-breakpoints']);
 
     /* Event Breakpoints */

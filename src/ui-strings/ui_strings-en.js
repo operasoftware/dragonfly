@@ -150,6 +150,10 @@ ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color 
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
+/* DESC: view to set and remove breakpoints */
+ui_strings.M_VIEW_LABEL_BREAKPOINTS = 'Breakpoints';
+/* DESC: Text to show in breakpoins if there is no breakpoint. */
+ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = 'No breakpoint';
 
 
 
