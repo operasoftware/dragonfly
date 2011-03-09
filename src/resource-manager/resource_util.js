@@ -11,17 +11,22 @@ cls.ResourceUtil = {}
  */
 cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 {
+  var numformatter = String
+  if (window.helpers && window.helpers.pretty_print_number)
+  {
+    numformatter = window.helpers.pretty_print_number;
+  }
   if (bytes >= 1048576) // megabytes
   {
-    return "" + ((bytes / 1048576).toFixed(2)) + "MB";
+    return "" + numformatter((bytes / 1048576).toFixed(2)) + "MB";
   }
   else if (bytes >= 10240)
   {
-    return "" + Math.ceil((bytes / 1024)) + "KB";
+    return "" + numformatter(Math.ceil((bytes / 1024))) + "KB";
   }
   else
   {
-    return "" + bytes + "B";
+    return "" + numformatter(bytes) + "B";
   }
 }
 

@@ -223,7 +223,7 @@ window.cls.Helpers = function()
 
     if (integral.length)
     {
-      ret = integral.join("") + ","  + ret;
+      ret = integral.join("") + ret;
     }
 
     if (fractional != null)
