@@ -33,6 +33,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       var url_list_width = 250;
       if (this._selected !== null)
       {
+        url_list_width += window.defaults["scrollbar-width"];
         this.ondestroy(); // saves scroll pos
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._vscrollcontainer = container.querySelector(".network-details-url-list");
