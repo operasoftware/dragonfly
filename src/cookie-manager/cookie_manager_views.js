@@ -166,73 +166,76 @@ cls.CookieManager.CookieManagerViewBase = function()
       selected_cookie_objects.push(sel_cookie_obj);
     };
 
-    var options = [
-      {
-        label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-        handler: this.insert_add_cookie_row_after_objectref.bind(this, selected_cookie_objects[0]._objectref)
-      }
-    ];
-    if(selected_cookie_objects.length === 1)
+    if(selected_cookie_objects.length > 0)
     {
-      var sel_cookie_obj = selected_cookie_objects[0];
-      if(sel_cookie_obj._is_editable)
-      {
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-            handler: this.enter_edit_mode.bind(this, sel_cookie_obj._objectref)
-          }
-        );
-      }
-      if(sel_cookie_obj._is_removable)
-      {
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-            handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
-          }
-        );
-      }
-      // Add "Remove all from domain-and-path"
-      var runtime_id = sel_cookie_obj._rt_id;
-      options.push(
+      var options = [
         {
-          // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
-          handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+          handler: this.insert_add_cookie_row_after_objectref.bind(this, selected_cookie_objects[0]._objectref)
         }
-      );
-    }
-    else
-    {
-      // multiple selection
-      var removable_cookies = [];
-      for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
-        if(selected_cookie_o._is_removable)
-        {
-          removable_cookies.push(selected_cookie_o);
-        }
-      };
-      if(removable_cookies.length === 1)
+      ];
+      if(selected_cookie_objects.length === 1)
       {
+        var sel_cookie_obj = selected_cookie_objects[0];
+        if(sel_cookie_obj._is_editable)
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
+              handler: this.enter_edit_mode.bind(this, sel_cookie_obj._objectref)
+            }
+          );
+        }
+        if(sel_cookie_obj._is_removable)
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+              handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
+            }
+          );
+        }
+        // Add "Remove all from domain-and-path"
+        var runtime_id = sel_cookie_obj._rt_id;
         options.push(
           {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-            handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
+            // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+            handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
           }
         );
       }
       else
       {
-        options.push(
+        // multiple selection
+        var removable_cookies = [];
+        for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
+          if(selected_cookie_o._is_removable)
           {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-            handler: this.data.remove_cookies.bind(this.data, removable_cookies)
+            removable_cookies.push(selected_cookie_o);
           }
-        );
+        };
+        if(removable_cookies.length === 1)
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+              handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
+            }
+          );
+        }
+        else
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
+              handler: this.data.remove_cookies.bind(this.data, removable_cookies)
+            }
+          );
+        }
       }
+      return options;
     }
-    return options;
   };
 
   this.ondestroy = function()
