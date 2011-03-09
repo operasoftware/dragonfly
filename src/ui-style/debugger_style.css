@@ -1298,3 +1298,10 @@ property.disabled color-sample
   border: 0px solid;
   padding: 5px;
 }
+
+.not-content {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
+  padding-left: 23px;
+}

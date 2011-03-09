@@ -52,6 +52,10 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
 ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
+/* DESC: section in the script side panel for watches. */
+ui_strings.M_VIEW_LABEL_WATCHES = 'Watches';
+/* DESC: Text to show in watches if there are no watches */
+ui_strings.M_VIEW_LABEL_NO_WATCHES = 'No watches';
 /* DESC: Thread log overview, a list of threads. */
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */
