@@ -1310,3 +1310,10 @@ property.disabled color-sample
   padding: 5px 5px 5px 23px;
 }
 
+.go-to-line-input
+{
+  box-sizing: border-box;
+  width: 100%;
+  border: 3px solid transparent;
+}
+

@@ -156,6 +156,14 @@
           "down": "scroll-arrow-down",
           "page-up": "scroll-page-up",
           "page-down": "scroll-page-down",
+          "ctrl g": "show-window-go-to-line"
+        },
+      },
+      "go-to-line":
+      {
+        "default":
+        {
+          "enter": "submit",
         },
       },
       "watches":

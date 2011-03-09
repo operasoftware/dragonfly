@@ -44,6 +44,8 @@ ui_strings.M_VIEW_LABEL_SCRIPTS = 'Scripts';
 ui_strings.M_VIEW_LABEL_ENVIRONMENT = 'Environment';
 /* DESC: Source code view. */
 ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
+/* DESC: utility window to go to a line. */
+ui_strings.M_VIEW_LABEL_GO_TO_LINE = 'Go to line';
 /* DESC: Command line. */
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
