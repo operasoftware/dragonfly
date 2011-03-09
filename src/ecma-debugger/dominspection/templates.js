@@ -88,7 +88,6 @@
     var closing_tags = [];
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
-    var show_attrs = window.settings.dom.get('show-attributes');
     var node_name = '';
     var class_name = '';
     var re_formatted = /script|style|#comment/i;
@@ -131,28 +130,22 @@
         case ELEMENT_NODE:
         {
           is_script_node = node[NAME].toLowerCase() == 'script';
-          if (show_attrs)
+          attrs = '';
+          for (k = 0; attr = node[ATTRS][k]; k++)
           {
-            attrs = '';
-            for (k = 0; attr = node[ATTRS][k]; k++)
-            {
-              attrs += " <key>" +
-                ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-                /* regarding escaping "<". it happens that there are very starnge keys in broken html.
-                    perhaps we will have to extend the escaping to other data tokens as well */
-                (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
-                "</key>=<value" +
-                  (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link'"
-                    : "") + ">\"" +
-                  helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
-                  "\"</value>";
-            }
+            attrs += " <key>" +
+              ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
+              /* regarding escaping "<". it happens that there are very starnge keys in broken html.
+                  perhaps we will have to extend the escaping to other data tokens as well */
+              (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
+              "</key>=<value" +
+                (/^href|src$/i.test(attr[ATTR_KEY])
+                  ? " handler='dom-resource-link'"
+                  : "") + ">\"" +
+                helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
+                "\"</value>";
           }
-          else
-          {
-            attrs = '';
-          }
+
           child_pointer = i + 1;
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
           if (is_open)
@@ -334,7 +327,6 @@
     var data = model.getData();
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
-    var show_attrs = window.settings.dom.get('show-attributes');
     var show_white_space_nodes = window.settings.dom.get('show-whitespace-nodes');
     var tree = "<div class='padding dom'" +
                (editable ? " edit-handler='edit-dom'" : "") + 
@@ -391,22 +383,19 @@
         {
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
-          if (show_attrs)
+          for (k = 0; attr = node[ATTRS][k]; k++)
           {
-            for (k = 0; attr = node[ATTRS][k]; k++)
-            {
-              attrs += " <key>" +
-                (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-                /* regarding escaping "<". it happens that there are very starnge keys in broken html.
-                   perhaps we will have to extend the escaping to other data tokens as well */
-                (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
-                "</key>=<value" +
-                    (/^href|src$/i.test(attr[ATTR_KEY])
-                      ? " handler='dom-resource-link'"
-                      : "" ) + ">\"" +
-                    helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
-                "\"</value>";
-            }
+            attrs += " <key>" +
+              (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
+              /* regarding escaping "<". it happens that there are very starnge keys in broken html.
+                 perhaps we will have to extend the escaping to other data tokens as well */
+              (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
+              "</key>=<value" +
+                  (/^href|src$/i.test(attr[ATTR_KEY])
+                    ? " handler='dom-resource-link'"
+                    : "" ) + ">\"" +
+                  helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
+              "\"</value>";
           }
 
           child_pointer = i + 1;
