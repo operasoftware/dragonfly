@@ -1305,3 +1305,8 @@ property.disabled color-sample
   font-style: italic;
   padding-left: 23px;
 }
+
+.not-content.inspection {
+  padding: 5px 5px 5px 23px;
+}
+

@@ -60,6 +60,8 @@ ui_strings.M_VIEW_LABEL_NO_WATCHES = 'No watches';
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = 'Inspection';
+/* DESC: Text to show in inspection if there is no object to inspect. */
+ui_strings.M_VIEW_LABEL_NO_INSPECTION = 'No inspection';
 /* DESC: The JS properties of an object. */
 ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
 /* DESC: Documents in the runtime. */
