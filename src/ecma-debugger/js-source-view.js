@@ -745,14 +745,17 @@ cls.JsSourceView = function(id, name, container_class)
                            */
   this._scroll_lines = function(lines, event, target)
   {
-    var target_line = Math.max(1, Math.min(__current_line + lines, 
-                                           __current_script.line_arr.length + 1));
-    if (__current_line != target_line)
+    if (__current_script)
     {
-      __disregard_scroll_event = true;
-      document.getElementById(scroll_container_id).scrollTop =
-        target_line * context['line-height'];
-      this.showLine(__current_script.script_id, target_line, null, null, false, true);
+      var target_line = Math.max(1, Math.min(__current_line + lines, 
+                                             __current_script.line_arr.length + 1));
+      if (__current_line != target_line)
+      {
+        __disregard_scroll_event = true;
+        document.getElementById(scroll_container_id).scrollTop =
+          target_line * context['line-height'];
+        this.showLine(__current_script.script_id, target_line, null, null, false, true);
+      }
     }
     return false;
   }
