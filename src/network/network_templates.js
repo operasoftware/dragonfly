@@ -150,7 +150,7 @@ templates.network_log_request_detail = function(ctx, selected)
   var req = ctx.get_resource(selected);
   return [
   ["div",
-    ["button", "X", "handler", "close-request-detail", "unselectable", "on"],
+    ["button", "X", "class", "close-request-detail", "handler", "close-request-detail", "unselectable", "on"],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],

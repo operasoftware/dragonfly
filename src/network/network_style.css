@@ -155,10 +155,9 @@
 
 /* Network log / Detail view */
 
-button[handler="close-request-detail"]
+.close-request-detail
 {
-  border: solid thin red;
-  xxfloat: right;
+  content: url("../ui-images/icons/icon_button_back.png");
 }
 
 .network-details-url-list {

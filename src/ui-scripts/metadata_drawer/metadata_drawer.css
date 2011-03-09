@@ -46,3 +46,8 @@
 .metadata-drawer th {
     text-align: right;
 }
+
+.metadata-drawer h2 {
+    font-size: 15px;
+    font-weight: bold;
+}

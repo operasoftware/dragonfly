@@ -1336,7 +1336,7 @@ tabs, toolbar {
 }
 
 .close-tab-button {
-  background: transparent url("../ui-images/icons/icon_close_tab.png") no-repeat 50% 50%;
+  background: transparent url("../ui-images/icons/icon_close_tab_small.png") no-repeat 50% 50%;
   border: none;
   width: 11px;
   height: 11px;
