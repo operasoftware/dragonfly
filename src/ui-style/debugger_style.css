@@ -11,12 +11,11 @@
 h2, h3 {
   margin:0;
   padding:0;
-  font-weight:normal;
-  font-size:1.6em;
-  }
+  font-size: 15px;
+}
 
 h3 {
-  font-size:1.3em;
+  font-size: 12px;
   }
 
 ul {
@@ -830,13 +829,6 @@ d
   display: table-cell;
   vertical-align: top;
   padding: 0 5px;
-}
-
-.color-picker h2,
-.manage-stored-colors h2
-{
-  font-size: 1em;
-  font-weight: bold;
 }
 
 .color-picker pre

@@ -83,7 +83,8 @@ cls.EventBreakpointsView.create_ui_widgets = function()
       {
         handler: 'ev-brp-filter',
         title: ui_strings.S_BUTTON_SEARCH_EVENT,
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+        type: "filter"
       }
     ]
   );

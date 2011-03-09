@@ -237,7 +237,8 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         handler: 'inspection-text-search',
         shortcuts: 'inspection-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+        type: "filter"
       }
     ]
   );

@@ -114,7 +114,7 @@
           if (filter.hasOwnProperty(attr))
             tpl_input.push(attr, filter[attr]);
         });
-        ret.push(['filter', ['span', default_text], tpl_input]);
+        ret.push(['filter', ['span', default_text], tpl_input, "class", filter.type || ""]);
       }
     }
     return ret;

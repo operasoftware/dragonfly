@@ -460,6 +460,10 @@ filter {
               inset 0 1px 1px #d5d5d5;
 }
 
+filter.filter {
+    background-image: url("../ui-images/icons/icon_filter.png");
+}
+
 filter input {
   width: 138px;
   height: 19px;
