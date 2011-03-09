@@ -28,12 +28,11 @@ cls.WatchesView = function(id, name, container_class)
     [
       ['div'],
       ['div',
-        ['input',
-          'type', 'button',
-          'value', 'Add',
+        ['button',
+          [['img', 'src', 'ui-images/add-small.png'], ['span', 'Add']],
           'handler', 'watches-add'
         ],
-        'class', 'watches-controls'
+        'class', 'watches-controls padding'
       ]
     ]);
   };
