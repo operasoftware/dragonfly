@@ -144,6 +144,16 @@ cls.CookieManager.CookieDataBase = function()
   this._on_active_tab = function(msg)
   {
     this.cookie_list = [];
+    for (var i=0; i < msg.runtimes_with_dom.length; i++)
+    {
+      var rt_id = msg.runtimes_with_dom[i];
+      if(!this._rts[rt_id])
+      {
+        this._rts[rt_id]={rt_id: rt_id};
+      }
+      this._request_runtime_details(rt_id);
+    };
+
     // cleanup runtimes directory
     for(var rt in this._rts)
     {
@@ -155,16 +165,6 @@ cls.CookieManager.CookieDataBase = function()
         delete this._rts[rt_id];
       }
     }
-
-    for (var i=0; i < msg.runtimes_with_dom.length; i++)
-    {
-      var rt_id = msg.runtimes_with_dom[i];
-      if(!this._rts[rt_id])
-      {
-        this._rts[rt_id]={rt_id: rt_id};
-        this._request_runtime_details(rt_id);
-      }
-    };
   };
 
   this._is_min_service_version = function(compare_version)
