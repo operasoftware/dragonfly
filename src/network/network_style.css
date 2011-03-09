@@ -131,7 +131,7 @@
 
 .resource-graph text
 {
-  font-size: 12px;
+  font-size: 10px;
   text-anchor: middle;
 }
 
@@ -249,7 +249,7 @@
 /* Options */
 .network-options
 {
-  padding: 0px 30px;
+  padding: 5px 30px;
 }
 
 .header-override-input

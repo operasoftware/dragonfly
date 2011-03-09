@@ -6,7 +6,7 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
           ["div",
            ["h2", ui_strings.S_NETWORK_CACHING_SETTING_TITLE],
            ["p", ui_strings.S_NETWORK_CACHING_SETTING_DESC],
-           ["label",
+           ["p", ["label",
              ["input", "type", "radio",
               "name", "network-options-caching",
               "value", "default",
@@ -14,9 +14,8 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
               caching == "default" ? "checked" : "non-checked", "true"
              ],
              ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL,
-           ],
-           ["br"],
-           ["label",
+           ]],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-caching",
              "value", "disabled",
@@ -24,12 +23,10 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              caching == "disabled" ? "checked" : "non-checked", "true"
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL,
-           ]
-          ],
-          ["div",
+           ]],
            ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
-           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
-           ["label",
+           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "notrack",
@@ -37,10 +34,8 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              tracking == "notrack" ? "checked" : "non-checked", "true"
             ],
             ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL,
-            ],
-
-           ["br"],
-           ["label",
+           ]],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "track",
@@ -50,14 +45,13 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
             ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
            ]
           ],
-          ["div",
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
-           ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
+           ["p", ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
             templates.network_options_override_list(headers, overrides),
+           ]
           ],
-          "class", "padding network-options",
-          ]
+         "class", "network-options"
          ];
 };
 
