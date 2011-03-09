@@ -103,7 +103,7 @@ var JavaScriptTab = function(ref_id, name, has_close_button)
     switch (msg.state)
     {
       case "waiting":
-        this.set_badge("", "→");
+        this.set_badge("paused", "paused");
         break;
       default:
         this.clear_badge();
