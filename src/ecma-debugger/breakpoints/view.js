@@ -58,7 +58,7 @@ cls.BreakpointsView = function(id, name, container_class)
       {
         this._ui.show_view(JS_SOURCE_ID);
       }
-      js_source_view.showLine(bp.script_id, bp.line_nr - 10);
+      js_source_view.show_and_flash_line(bp.script_id, bp.line_nr);
     }
   }.bind(this);
 

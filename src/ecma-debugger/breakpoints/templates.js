@@ -49,7 +49,9 @@
                                                  null, 
                                                  script.state_arr[line_nr - 1], 
                                                  ['code']);
-      ret.push(['div', script_tmpl, 'class', 'source-line']);
+      ret.push(['div', script_tmpl, 
+                'class', 'source-line',
+                'handler', 'show-breakpoint-in-script-source']);
       if (bp.condition)
       {
         ret.push(this.breakpoint_condition(bp.condition));

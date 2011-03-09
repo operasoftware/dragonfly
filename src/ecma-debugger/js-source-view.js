@@ -413,6 +413,19 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  this.show_and_flash_line = function(script_id, line_nr)
+  {
+    this.showLine(script_id, line_nr - 10);
+    var source_content = document.getElementById(container_id);
+    var lines = source_content && source_content.getElementsByTagName('div');
+    var line = lines && lines[line_nr - __current_line];
+    if (line)
+    {
+      line.addClass('selected-js-source-line');
+      setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
+    }
+  }
+
   // return boolean for the visibility of this view
   this.showLine = function(script_id,
                            line_nr,
