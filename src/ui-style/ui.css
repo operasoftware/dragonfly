@@ -915,7 +915,7 @@ textarea-container-inline
 {
   display: inline-block;
   padding: 1px;
-  margin: -2px -3px;
+  margin: -2px -3px -3px;
   position:relative;
   z-index: 10;
   background: #fff;
