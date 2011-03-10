@@ -239,7 +239,7 @@ cls.Resource = function(id)
 
   this._guess_type = function()
   {
-    if (!this.finished)
+    if (!this.finished || !this.mime)
     {
       this.type = undefined;
     }
