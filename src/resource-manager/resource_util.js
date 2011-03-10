@@ -18,15 +18,15 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
   if (bytes >= 1048576) // megabytes
   {
-    return "" + numformatter((bytes / 1048576).toFixed(2)) + "MB";
+    return "" + numformatter((bytes / 1048576).toFixed(2)) + " Mb";
   }
-  else if (bytes >= 10240)
+  else if (bytes >= 1024)
   {
-    return "" + numformatter(Math.ceil((bytes / 1024))) + "KB";
+    return "" + numformatter(Math.ceil((bytes / 1024))) + " kb";
   }
   else
   {
-    return "" + numformatter(bytes) + "B";
+    return "" + numformatter(bytes) + " B";
   }
 }
 
@@ -37,15 +37,15 @@ cls.ResourceUtil.millis_to_human_readable = function(millis)
 {
   if (millis > 10000) // > 10 seconds
   {
-    return "" + ((millis / 1000).toFixed(1)) + "s";
+    return "" + ((millis / 1000).toFixed(1)) + " s";
   }
   else if (millis > 1000) // > 1 second
   {
-    return "" + (millis / 1000).toFixed(2) + "s";
+    return "" + (millis / 1000).toFixed(2) + " s";
   }
   else
   {
-    return "" + millis + "ms";
+    return "" + millis + " ms";
   }
 }
 
