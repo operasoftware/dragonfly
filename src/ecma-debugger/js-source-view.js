@@ -413,6 +413,19 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  this.show_and_flash_line = function(script_id, line_nr)
+  {
+    this.showLine(script_id, line_nr - 10);
+    var source_content = document.getElementById(container_id);
+    var lines = source_content && source_content.getElementsByTagName('div');
+    var line = lines && lines[line_nr - __current_line];
+    if (line)
+    {
+      line.addClass('selected-js-source-line');
+      setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
+    }
+  }
+
   // return boolean for the visibility of this view
   this.showLine = function(script_id,
                            line_nr,
@@ -623,7 +636,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.getCurrentScriptId = function()
   {
-    return __current_script.script_id;
+    return __current_script && __current_script.script_id;
   }
 
 
@@ -745,14 +758,17 @@ cls.JsSourceView = function(id, name, container_class)
                            */
   this._scroll_lines = function(lines, event, target)
   {
-    var target_line = Math.max(1, Math.min(__current_line + lines, 
-                                           __current_script.line_arr.length + 1));
-    if (__current_line != target_line)
+    if (__current_script)
     {
-      __disregard_scroll_event = true;
-      document.getElementById(scroll_container_id).scrollTop =
-        target_line * context['line-height'];
-      this.showLine(__current_script.script_id, target_line, null, null, false, true);
+      var target_line = Math.max(1, Math.min(__current_line + lines, 
+                                             __current_script.line_arr.length + 1));
+      if (__current_line != target_line)
+      {
+        __disregard_scroll_event = true;
+        document.getElementById(scroll_container_id).scrollTop =
+          target_line * context['line-height'];
+        this.showLine(__current_script.script_id, target_line, null, null, false, true);
+      }
     }
     return false;
   }
@@ -770,11 +786,22 @@ cls.JsSourceView = function(id, name, container_class)
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
   }.bind(this);
 
+  this._handlers['show-window-go-to-line'] = function(event, target)
+  {
+    UIWindowBase.showWindow(this._go_to_line.id,
+                            this._go_to_line.window_top,
+                            this._go_to_line.window_left,
+                            this._go_to_line.window_width,
+                            this._go_to_line.window_height);
+    return false;
+  }.bind(this);
+
   this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
   this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
   this.init(id, name, container_class, null, 'scroll-js-source-view');
+  this._go_to_line = new cls.GoToLine(this);
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
@@ -784,6 +811,46 @@ cls.JsSourceView = function(id, name, container_class)
 
 cls.JsSourceView.prototype = ViewBase;
 
+cls.GoToLine = function(js_source_view)
+{
+  this.window_top = 80;
+  this.window_left = 80;
+  this.window_width = 100;
+  this.window_height = 45;
+  this.window_resizable = false;
+  this.window_statusbar = false;
+
+  ActionHandlerInterface.apply(this);
+
+  this._handlers['submit'] = function(event, target)
+  {
+    var value = event.target.value.trim();
+    UIWindowBase.closeWindow(this.id);
+    var script_id = this._js_source_view.getCurrentScriptId();
+    if (script_id && value.isdigit())
+    {
+      if (this._js_source_view.showLine(script_id, parseInt(value)))
+      {
+        // workaround to reset the focus to the js source view
+        // needs a proper design
+        this._js_source_view.get_container().dispatchMouseEvent('click');
+      }
+    }
+  }.bind(this);
+
+  this.createView = function(container)
+  {
+    container.clearAndRender(['input', 'class', 'go-to-line-input']).focus();
+  };
+
+  this._js_source_view = js_source_view;
+  this.init('go-to-line', ui_strings.M_VIEW_LABEL_GO_TO_LINE, 'go-to-line');
+  
+  ActionBroker.get_instance().register_handler(this);
+
+};
+
+cls.GoToLine.prototype = ViewBase;
 
 cls.ScriptSelect = function(id, class_name)
 {
