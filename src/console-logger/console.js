@@ -657,11 +657,13 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
   );
 };
 
+
 eventHandlers.input['error-console-css-filter'] = function(event, target)
 {
-  var filters = event.target.value.split(', ').map(function(token)
+  var filters = event.target.value.split(/,\s*/).map(function(token)
   {
     return token.trim();
   }).filter(Boolean);
   window.settings.console.set('css-filter', filters);
 };
+
