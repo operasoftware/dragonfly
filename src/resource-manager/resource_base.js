@@ -63,7 +63,7 @@ cls.ResourceDetailBase = function()
     this.resource = res;
     this.resourcedata = null;
     this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
-    this.drawer = new MetadataDrawer(res, "Details for " + (res.type || "unknown type"));
+    this.drawer = new MetadataDrawer(res);
     this.drawer.expanded = false;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
   }
@@ -104,11 +104,15 @@ cls.TextResourceDetail = function(res, service)
 }
 cls.TextResourceDetail.prototype = new cls.ResourceDetailBase();
 
-cls.JSResourceDetail = function(res, service)
+cls.JSResourceDetail = function(res, service, options)
 {
+  options = options || {};
+  this.line = options.line;
+
   this.render_type_details = function(container, resource, resourcedata)
   {
-    return window.templates.js_resource_view(resource, resourcedata);
+
+    return window.templates.js_resource_view(resource, resourcedata, line);
   }
 
   this.init(res, service);
