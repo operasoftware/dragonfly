@@ -227,7 +227,7 @@ ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
 /* DESC: Attaches Opera Dragonfly to the main browser window. */
 ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
-ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Hide initial values in computed styles';
+ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Show initial values in computed style panel';
 /* DESC: Toggles the display of shorthands in computed styles view. */
 ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Show shorthands in computed style panel';
 /* DESC: DEPRECATED Showing shorthands in style properties on or off. */
@@ -237,7 +237,7 @@ ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb 
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
-ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list (uncheck to also show mail and feed windows etc.)";
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-specific contexts, such as mail and feed windows";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Highlight';
 /* DESC: Show ECMAScript errors in the command line. */
@@ -432,7 +432,7 @@ ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = 'Select Active Window';
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = 'Reload Debugging Context';
 /* DESC: Debug context menu */
-ui_strings.S_MENU_DEBUG_CONTEXT = 'Debugging context';
+ui_strings.S_MENU_DEBUG_CONTEXT = 'Select the debugging context';
 
 
 /*
