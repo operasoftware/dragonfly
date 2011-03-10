@@ -81,7 +81,8 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 
   return ["div",
           ["button",
-           "handler", "metadata-drawer-toggle"
+           "handler", "metadata-drawer-toggle",
+           "unselectable", "on"
           ],
           content,
           (expanded && title ? ["h2", title] : []),
