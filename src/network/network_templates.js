@@ -153,7 +153,7 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", String(responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
