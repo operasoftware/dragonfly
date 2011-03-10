@@ -58,10 +58,6 @@
   padding: 4px 0px 1px 8px;
 }
 
-.network-log-url-list li:first-child {
-  border-top: none;
-}
-
 .network-log-url-list li:nth-child(odd) {
   background-color: rgba(0,0,0,0.025);
 }
