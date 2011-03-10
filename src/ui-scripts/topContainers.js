@@ -8,8 +8,10 @@ var TopContainerBase = function()
   this.type = 'top-container';
   this.height = 0;
   this.width = 0;
-  this.border_left = 1;
-  this.border_right = 1;
+  this.vertical_border_padding = 0;
+  this.horizontal_border_padding = 0;
+  this.left_border_padding = 0;
+  this.top_border_padding = 0;
   this.top = 0;
   this.left = 0;
   this.is_dirty = true;
@@ -84,7 +86,7 @@ var TopContainerBase = function()
     }
     var view = views[this.view_id = view_id];
 
-    if( view )
+    if (view)
     {
       view.update(this);
     }

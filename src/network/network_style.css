@@ -154,8 +154,10 @@
 
 button[handler="close-request-detail"]
 {
-  border: solid thin red;
-  xxfloat: right;
+  background-image: url("../ui-images/network-inspector-back-button.png");
+  width: 40px;
+  background-repeat: no-repeat;
+  background-position:center;
 }
 
 .network-details-url-list {

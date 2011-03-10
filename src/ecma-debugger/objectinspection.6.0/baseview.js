@@ -20,7 +20,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
     }
     else
     {
-      container.innerHTML = '';
+      container.clearAndRender(this._tmpl_no_content());
     }
   };
 
@@ -49,7 +49,9 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
       this._searchterm = searchterm;
       this._create_view_bound();
     }
-  }
+  };
+
+  this._tmpl_no_content = function(){return []};
 
 }
 

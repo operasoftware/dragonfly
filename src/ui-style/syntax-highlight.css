@@ -9,6 +9,11 @@
         color: #d60;
     }
 
+.error {
+  color: #f60;
+  font-style: italic;
+}
+
 .number,
 offsets value { /* TODO: use class */
     color: #6c0;
@@ -62,6 +67,10 @@ offsets value { /* TODO: use class */
 
 .highlight-source { /* TODO: Not specified */
     background-color: yellow;
+}
+
+.selected-js-source-line {
+  background-color: #d4e3f4;
 }
 
 /* Property inspector */

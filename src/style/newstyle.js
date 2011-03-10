@@ -12,12 +12,10 @@ cls.NewStyle = function(id, name, container_class)
   {
     if (this._stylesheet)
     {
-      var textarea = container.clearAndRender(this._tmpl_edit());
-      textarea.value = this._current_style;
+      var textarea = container.clearAndRender(this._tmpl_edit(this._current_style));
       setTimeout(function() {
         textarea.focus();
         textarea.selectionEnd = textarea.value.length;
-        textarea.releaseEvent('input');
       }, 1);
     }
     else
@@ -26,12 +24,13 @@ cls.NewStyle = function(id, name, container_class)
     }
   };
 
-  this._tmpl_edit = function()
+  this._tmpl_edit = function(value)
   {
     return (
     ['_auto_height_textarea',
-      'handler', 'css-update-new-style',
-      'class', 'css-new-style-sheet']);
+       value || '',
+       'handler', 'css-update-new-style',
+       'class', 'css-new-style-sheet']);
   };
 
   this._tmpl_create = function()

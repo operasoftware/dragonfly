@@ -16,9 +16,18 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._reverse = false;
   this._columns = ["icon", "host", "path", "type", "size_h"];
   this._loading = false;
+  this._container = null;
+  this._scrollpos = 0;
+
+
+  this.ondestroy = function()
+  {
+    this._scrollpos = this._container ? this._container.scrollTop : 0;
+  }
 
   this.createView = function(container)
   {
+    this._container = container;
     this._render_main_view(container);
   };
 
@@ -52,6 +61,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       }
       this._table.data = ctx.resources.slice(0);
       container.clearAndRender(this._table.render());
+      container.scrollTop = this._scrollpos;
     }
     else if (this._loading)
     {
@@ -61,6 +71,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
          'class', 'info-box'
         ]
       );
+      this._scrollpos = 0;
     }
     else
     {
@@ -73,6 +84,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
          'class', 'info-box'
         ]
       );
+      this._scrollpos = 0;
     }
   };
 
@@ -128,7 +140,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     },
     columns: {
       icon: {
-        label: "",
+        label: "Icon",
+        headerlabel: "",
         sorter: "unsortable",
         renderer: function(res) { return templates.resource_icon(res) }
       },
@@ -154,11 +167,14 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
+        align: "right",
         renderer: function(res) { return res.size ? String(res.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
-        getter: function(res) { return res.size }
+        getter: function(res) { return res.size },
       },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
+        headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
+        align: "right",
         getter: function(res) { return res.size },
         renderer: function(res) {
           return String(res.size ?

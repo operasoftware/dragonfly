@@ -44,6 +44,8 @@ ui_strings.M_VIEW_LABEL_SCRIPTS = 'Scripts';
 ui_strings.M_VIEW_LABEL_ENVIRONMENT = 'Environment';
 /* DESC: Source code view. */
 ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
+/* DESC: utility window to go to a line. */
+ui_strings.M_VIEW_LABEL_GO_TO_LINE = 'Go to line';
 /* DESC: Command line. */
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
@@ -52,10 +54,16 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
 ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
+/* DESC: section in the script side panel for watches. */
+ui_strings.M_VIEW_LABEL_WATCHES = 'Watches';
+/* DESC: Text to show in watches if there are no watches */
+ui_strings.M_VIEW_LABEL_NO_WATCHES = 'No watches';
 /* DESC: Thread log overview, a list of threads. */
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = 'Inspection';
+/* DESC: Text to show in inspection if there is no object to inspect. */
+ui_strings.M_VIEW_LABEL_NO_INSPECTION = 'No inspection';
 /* DESC: The JS properties of an object. */
 ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
 /* DESC: Documents in the runtime. */
@@ -144,6 +152,10 @@ ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color 
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
+/* DESC: view to set and remove breakpoints */
+ui_strings.M_VIEW_LABEL_BREAKPOINTS = 'Breakpoints';
+/* DESC: Text to show in breakpoins if there is no breakpoint. */
+ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = 'No breakpoint';
 
 
 

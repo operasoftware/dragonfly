@@ -74,6 +74,15 @@ x/=2;
 
 var b="test \"2fg";
 
+var __js_types =
+{
+  "false": false,
+  "true": true,
+  "null": null,
+  "undefined": undefined,
+};
+
+
 
 
 var a = 1 === 2, b = 1, c = 4 !== 6, d = 8;

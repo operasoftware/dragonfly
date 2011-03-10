@@ -751,7 +751,15 @@ cls.SimpleJSParser.prototype = new function()
     }
   }
 
-  var read_buffer=null;
+  var read_buffer = null;
+
+  var __js_types =
+  {
+    "false": "boolean",
+    "true": "boolean",
+    "null": "null",
+    "undefined": "undefined",
+  };
 
   var read_buffer_default=function()
   {
@@ -766,7 +774,12 @@ cls.SimpleJSParser.prototype = new function()
         }
         case IDENTIFIER:
         {
-          if(__buffer in js_keywords)
+          if(__js_types.hasOwnProperty(__buffer))
+          {
+            __line += "<span class='" + __js_types[__buffer] + "'>" + 
+                      __buffer + "</span>";
+          }
+          else if(__buffer in js_keywords)
           {
             __line += "<span class='js_keywords'>" +  __buffer + "</span>";
           }
