@@ -5,9 +5,27 @@ import shutil
 import tempfile
 import sys
 import zipfile
-import jsminify
 import base64
 import StringIO
+
+"""
+uglifyjs is a python wrapper for uglifyjs.
+See e.g. https://bitbucket.org/chrisk/uglifyjs
+
+It can be any javascript minifyer. The required interface is:
+
+    def minify(inpath, outpath, encoding="utf_8"):
+        Minify input path to outputpath, optionally using encoding
+    
+    def minify_in_place(path, encoding="utf_8"):
+        Minify path and write it to to the same location. Optionally use
+        encoding
+"""
+
+try:
+    import uglifyjs as jsminify
+except ImportError:
+    import jsminify
 
 
 _text_exts = (".js", ".html", ".xml", ".css")
@@ -132,9 +150,6 @@ def _process_directives(root, filepath, vars):
             fin.close()
             os.unlink(os.path.join(root, infile))
         fout.close()
-        if fout_path.endswith('.js') and options.minify:
-            # fout is a temp file here
-            jsminify.minify_in_place(fout_path)
 
 def _clean_dir(root, exclude_dirs, exclude_files):
     """
@@ -234,12 +249,6 @@ def _minify_buildout(src):
             abs = os.path.join(base, file)
             jsminify.minify_in_place(abs)
             
-def _minify_file(path):
-    tmpfd, tmppath = tempfile.mkstemp(".tmp", "dfbuild.")
-    os.fdopen(tmpfd).close()
-    jsminify.minify(path, tmppath)
-    return tmppath
-
 def _localize_buildout(src, langdir):
     """Make a localized version of the build dir. That is, with one
     script.js for each language, with a prefix suffix for each language
@@ -263,9 +272,6 @@ def _localize_buildout(src, langdir):
     # Grab all english data. Will be put in front of localized strings so
     # there are fallbacks
     englishfile = os.path.join(langdir, "ui_strings-en.js")
-    if options.minify:
-        englishfile = _minify_file(englishfile)
-        tmpfiles.append(englishfile)
     fp = codecs.open(englishfile, "r", encoding="utf_8_sig")
     englishdata = fp.read()
     fp.close()
@@ -280,9 +286,6 @@ def _localize_buildout(src, langdir):
         if not options.minify:
             newscript.write(_concatcomment % englishfile)
         newscript.write(englishdata)
-        if options.minify:
-            path = _minify_file(path)
-            tmpfiles.append(path)
         langfile = codecs.open(path, "r", encoding="utf_8_sig")
         if not options.minify:
             newscript.write(_concatcomment % path)
@@ -724,7 +727,10 @@ Destination can be either a directory or a zip file"""
                 os.rmdir(img_dir)
             except OSError:
                 print "ui-images in destination not empty"
-                         
+ 
+        if options.minify:
+            _minify_buildout(dst)
+
         if options.license:
             _add_license(dst)
 
