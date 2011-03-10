@@ -25,6 +25,11 @@
     max-width: 32px;
 }
 
+.error-console .sortable-table tr:not(.header):not([handler]):active {
+    background-color: rgba(55,115,211,0.2);
+    color: #000;
+}
+
 .error-console button {
   height: 15px;
   width: 19px;
