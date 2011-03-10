@@ -215,6 +215,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         view.show_resource_for_id(rid);
       }
     },
+/*
     {
       label: "Copy to resource crafter",
       handler: function(evt, target) {
@@ -226,6 +227,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         }
       }
     }
+*/
   ]);
 
 
