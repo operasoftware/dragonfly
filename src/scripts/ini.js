@@ -18,7 +18,7 @@ var ini =
         {
           "ctrl a": "select-all",
           "ctrl i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field",
+          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
@@ -197,7 +197,7 @@ var ini =
         {
           "cmd shift a": "select-all",
           "cmd i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field", // doesn't seem to do anything
+          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
