@@ -229,8 +229,6 @@ var DOMAttrAndTextEditor = function(nav_filters)
           pos = state.key.indexOf('=');
           if(state.value)
           {
-            // TODO: this should really make sure that no old attribute is removed, but the
-            // details of that behavior needs to be specified. In practice, it shouldn't happen often.
             script = (state.oldkey ? 'node.removeAttribute("' + crlf_encode(state.oldkey) + '");' : '') +
                      'node.setAttribute("' + crlf_encode(state.key) + '",' +
                                        '"' + crlf_encode(state.value) + '")';
