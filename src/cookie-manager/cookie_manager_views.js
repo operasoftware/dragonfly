@@ -501,50 +501,51 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
   }
 
-  this._fuzzy_date = function(time_in_seconds)
+  this._fuzzy_date_def = [
+    {
+      up_to_sec: 0,
+      string: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED
+    },
+    {
+      up_to_sec: 60, // a minute
+      string: ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE
+    },
+    {
+      up_to_sec: 60 * 60, // an hour
+      string: ui_strings.COOKIE_MANAGER_IN_X_MINUTES,
+      string_singular: ui_strings.COOKIE_MANAGER_IN_1_MINUTE
+    },
+    {
+      up_to_sec: 60 * 60 * 24, // a day
+      string: ui_strings.COOKIE_MANAGER_IN_X_HOURS,
+      string_singular: ui_strings.COOKIE_MANAGER_IN_1_HOUR,
+    },
+    {
+      up_to_sec: 60 * 60 * 24 * 7, // a week
+      string: ui_strings.COOKIE_MANAGER_IN_X_DAYS,
+      string_singular: ui_strings.COOKIE_MANAGER_TOMORROW,
+    },
+    {
+      up_to_sec: 60 * 60 * 24 * 7 * 4.3, // a month
+      string: ui_strings.COOKIE_MANAGER_IN_X_WEEKS,
+      string_singular: ui_strings.COOKIE_MANAGER_IN_1_WEEK,
+    },
+    {
+      up_to_sec: 60 * 60 * 24 * 7 * 4.3 * 12, // a year
+      string: ui_strings.COOKIE_MANAGER_IN_X_MONTHS,
+      string_singular: ui_strings.COOKIE_MANAGER_IN_1_MONTH,
+    },
+    {
+      up_to_sec: Infinity,
+      string: ui_strings.COOKIE_MANAGER_IN_X_YEARS,
+      string_singular: ui_strings.COOKIE_MANAGER_IN_1_YEAR,
+    }
+  ];
+
+  this._fuzzy_date = function(time_in_seconds, def)
   {
     var cookie_exp = new Date(time_in_seconds*1000);
     var diff_in_seconds = Math.round((cookie_exp.getTime() - new Date().getTime()) / 1000);
-    var def = [
-      {
-        up_to_sec: 0,
-        string: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED
-      },
-      {
-        up_to_sec: 60, // a minute
-        string: ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE
-      },
-      {
-        up_to_sec: 60 * 60, // an hour
-        string: ui_strings.COOKIE_MANAGER_IN_X_MINUTES,
-        string_singular: ui_strings.COOKIE_MANAGER_IN_1_MINUTE
-      },
-      {
-        up_to_sec: 60 * 60 * 24, // a day
-        string: ui_strings.COOKIE_MANAGER_IN_X_HOURS,
-        string_singular: ui_strings.COOKIE_MANAGER_IN_1_HOUR,
-      },
-      {
-        up_to_sec: 60 * 60 * 24 * 7, // a week
-        string: ui_strings.COOKIE_MANAGER_IN_X_DAYS,
-        string_singular: ui_strings.COOKIE_MANAGER_TOMORROW,
-      },
-      {
-        up_to_sec: 60 * 60 * 24 * 7 * 4.3, // a month
-        string: ui_strings.COOKIE_MANAGER_IN_X_WEEKS,
-        string_singular: ui_strings.COOKIE_MANAGER_IN_1_WEEK,
-      },
-      {
-        up_to_sec: 60 * 60 * 24 * 7 * 4.3 * 12, // a year
-        string: ui_strings.COOKIE_MANAGER_IN_X_MONTHS,
-        string_singular: ui_strings.COOKIE_MANAGER_IN_1_MONTH,
-      },
-      {
-        up_to_sec: Infinity,
-        string: ui_strings.COOKIE_MANAGER_IN_X_YEARS,
-        string_singular: ui_strings.COOKIE_MANAGER_IN_1_YEAR,
-      }
-    ].sort(function(a, b){ return a.up_to_sec > b.up_to_sec });
 
     var str = "", val = 0, i = 0;
     for (var i=0, current_def; current_def = def[i]; i++)
@@ -576,7 +577,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       var elem = document.getElementById("expires_container_"+obj._objectref);
       if(elem)
       {
-        var fuzzy_date = this._fuzzy_date(obj.expires)
+        var fuzzy_date = this._fuzzy_date(obj.expires, this._fuzzy_date_def);
         elem.textContent = fuzzy_date.string;
         if(fuzzy_date.is_disabled)
         {
