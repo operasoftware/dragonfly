@@ -815,6 +815,16 @@ String.prototype.contains = function(str)
   return this.indexOf(str) != -1;
 };
 
+String.prototype.startswith = function(str)
+{
+  return this.substr(0, str.length) === str;
+};
+
+String.prototype.endswith = function(str)
+{
+  return this.substr(this.length - str.length) === str;
+};
+
 Array.prototype.extend = function(list)
 {
   this.push.apply(this, list);

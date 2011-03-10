@@ -202,7 +202,8 @@ cls.CookieManager.CookieDataBase = function()
       if(rt.hostname)
       {
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
-        services['cookie-manager'].requestGetCookie(tag,[rt.hostname, rt.pathname]);
+        // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
+        services['cookie-manager'].requestGetCookie(tag,[rt.hostname]);
       }
       else
       {
@@ -225,6 +226,12 @@ cls.CookieManager.CookieDataBase = function()
           // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
           var is_secure = cookie_info[5];
           if(is_secure && rt.protocol !== "https:")
+          {
+            continue;
+          }
+          // workaround: Check path to match if it's not root, CORE-37107
+          var path = cookie_info[1];
+          if(path && (path !== "/") && !rt.pathname.startswith(path+"/"))
           {
             continue;
           }
