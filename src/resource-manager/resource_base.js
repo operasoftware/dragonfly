@@ -111,8 +111,7 @@ cls.JSResourceDetail = function(res, service, options)
 
   this.render_type_details = function(container, resource, resourcedata)
   {
-
-    return window.templates.js_resource_view(resource, resourcedata, line);
+    return window.templates.js_resource_view(resource, resourcedata);
   }
 
   this.init(res, service);
