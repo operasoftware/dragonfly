@@ -224,12 +224,14 @@ var DOMAttrAndTextEditor = function(nav_filters)
       {
         case "key":
         {
-          state.key = this.textarea.value
+          state.oldkey = state.key;
+          state.key = this.textarea.value;
           pos = state.key.indexOf('=');
           if(state.value)
           {
-            script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
-                      crlf_encode(state.value) + '")';
+            script = (state.oldkey ? 'node.removeAttribute("' + crlf_encode(state.oldkey) + '");' : '') +
+                     'node.setAttribute("' + crlf_encode(state.key) + '",' +
+                                       '"' + crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].requestEval(0, 
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
           }

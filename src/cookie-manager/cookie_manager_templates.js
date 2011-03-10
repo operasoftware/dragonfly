@@ -1,4 +1,4 @@
-window.templates || (window.templates = {});
+﻿window.templates || (window.templates = {});
 
 templates.cookie_manager = {
   runtime_group_render: function(protocol, domain, path) {

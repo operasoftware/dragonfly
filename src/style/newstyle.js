@@ -10,50 +10,29 @@ cls.NewStyle = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    if (this._stylesheet)
-    {
-      var textarea = container.clearAndRender(this._tmpl_edit());
-      textarea.value = this._current_style;
-      setTimeout(function() {
-        textarea.focus();
-        textarea.selectionEnd = textarea.value.length;
-        textarea.releaseEvent('input');
-      }, 1);
-    }
-    else
-    {
-      container.clearAndRender(this._tmpl_create());
-    }
+    var textarea = container.clearAndRender(this._tmpl_edit(this._current_style));
+    textarea.value = this._current_style;
+    setTimeout(function() {
+      textarea.focus();
+      textarea.selectionEnd = textarea.value.length;
+    }, 1);
   };
 
-  this._tmpl_edit = function()
+  this._tmpl_edit = function(value)
   {
     return (
-    ['_auto_height_textarea',
-      'handler', 'css-update-new-style',
-      'class', 'css-new-style-sheet']);
-  };
-
-  this._tmpl_create = function()
-  {
-    return (
-    ['p', 
-      ['input',
-        'type', 'button',
-        'handler', 'css-create-new-style',
-        'value', 'Create new stylesheet'
-      ]
-    ]);
+        ['div',
+          ['_auto_height_textarea',
+            value || '',		
+            'handler', 'css-update-new-style',
+            'class', 'css-new-style-sheet'],
+           ['button', ui_strings.S_BUTTON_TEXT_APPLY, 'handler', 'apply-new-style'],
+        'class', 'padding']);
   };
 
   this._update_style = function()
   {
-    if (this._current_style == this._new_style)
-    {
-      clearInterval(this._update_interval);
-      this._update_interval = 0;
-    }
-    else
+    if (this._stylesheet)
     {
       var script = "try{style.textContent = \"" + 
                    this._new_style.replace(/\r?\n/g, "") +
@@ -62,8 +41,11 @@ cls.NewStyle = function(id, name, container_class)
                                  [['style', this._stylesheet]]]);
       this._current_style = this._new_style;
     }
+    else
+    {
+      this._create_new_stylesheet();
+    }
   };
-  
 
   this._handle_new_style = function(status, message)
   {
@@ -75,11 +57,11 @@ cls.NewStyle = function(id, name, container_class)
     else
     {
       this._stylesheet = message[OBJECT_VALUE][OBJECT_ID];
-      this.update();
+      this._update_style();
     }
   };
 
-  this._create_new_stylesheet = function()
+  this._create_new_stylesheet_element = function()
   {
     return (document.head || document.body || document.documentElement).
            appendChild(document.createElement('style'));
@@ -102,20 +84,16 @@ cls.NewStyle = function(id, name, container_class)
     this._top_rt_id = 0;
   };
 
-  this._create_new_sylesheet = function(event, target)
+  this._create_new_stylesheet = function(event, target)
   {
     var tag = this._tagman.set_callback(this, this._handle_new_style);
-    var script = "(" + this._create_new_stylesheet.toString() + ")();";
+    var script = "(" + this._create_new_stylesheet_element.toString() + ")();";
     this._esdb.requestEval(tag, [this._top_rt_id, 0, 0, script]);
   };
 
   this._update_new_style = function(event, target)
   {
     this._new_style = target.value;
-    if (this._current_style != this._new_style && !this._update_interval)
-    {
-      this._update_interval = setInterval(this._update_style_bound, 250);
-    }
   };
 
   this._init = function(id, name, container_class)
@@ -127,12 +105,11 @@ cls.NewStyle = function(id, name, container_class)
     this._new_style = '';
     this._current_style = '';
     this._top_rt_id = 0;
-    this._update_style_bound = this._update_style.bind(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
-    window.eventHandlers.click['css-create-new-style'] = 
-      this._create_new_sylesheet.bind(this);
-    window.eventHandlers.input['css-update-new-style'] = 
+    window.eventHandlers.input['css-update-new-style'] =
       this._update_new_style.bind(this);
+    window.eventHandlers.click['apply-new-style'] =
+      this._update_style.bind(this);
   };
 
   this._init(id, name, container_class);

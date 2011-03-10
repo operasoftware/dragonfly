@@ -11,17 +11,22 @@ cls.ResourceUtil = {}
  */
 cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 {
+  var numformatter = String
+  if (window.helpers && window.helpers.pretty_print_number)
+  {
+    numformatter = window.helpers.pretty_print_number;
+  }
   if (bytes >= 1048576) // megabytes
   {
-    return "" + ((bytes / 1048576).toFixed(2)) + "MB";
+    return "" + numformatter((bytes / 1048576).toFixed(2)) + " Mb";
   }
-  else if (bytes >= 10240)
+  else if (bytes >= 1024)
   {
-    return "" + Math.ceil((bytes / 1024)) + "KB";
+    return "" + numformatter(Math.ceil((bytes / 1024))) + " kb";
   }
   else
   {
-    return "" + bytes + "B";
+    return "" + numformatter(bytes) + " B";
   }
 }
 
@@ -32,15 +37,15 @@ cls.ResourceUtil.millis_to_human_readable = function(millis)
 {
   if (millis > 10000) // > 10 seconds
   {
-    return "" + ((millis / 1000).toFixed(1)) + "s";
+    return "" + ((millis / 1000).toFixed(1)) + " s";
   }
   else if (millis > 1000) // > 1 second
   {
-    return "" + (millis / 1000).toFixed(2) + "s";
+    return "" + (millis / 1000).toFixed(2) + " s";
   }
   else
   {
-    return "" + millis + "ms";
+    return "" + millis + " ms";
   }
 }
 
@@ -80,6 +85,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
+  "application/json": "script",
 
   "image/png": "image",
   "image/gif": "image",
@@ -116,7 +122,6 @@ cls.ResourceUtil.mime_type_map = {
   "video/webm": "video",
   "video/x-ms-wmv": "video",
 
-  "application/json": "data",
   "application/rdf+xml": "data",
   "text/rdf+n3": "data",
   "application/x-turtle": "data",
@@ -266,3 +271,22 @@ cls.ResourceUtil.header_presets = [
     ].join("\n")
   },
 ];
+// copied from python's httplib.responses
+cls.ResourceUtil.http_status_codes = {
+  200: 'OK', 201: 'Created', 202: 'Accepted',
+  203: 'Non-Authoritative Information', 204: 'No Content',
+  205: 'Reset Content', 206: 'Partial Content', 400: 'Bad Request',
+  401: 'Unauthorized', 402: 'Payment Required', 403: 'Forbidden',
+  404: 'Not Found', 405: 'Method Not Allowed', 406: 'Not Acceptable',
+  407: 'Proxy Authentication Required', 408: 'Request Timeout',
+  409: 'Conflict', 410: 'Gone', 411: 'Length Required',
+  412: 'Precondition Failed', 413: 'Request Entity Too Large',
+  414: 'Request-URI Too Long', 415: 'Unsupported Media Type',
+  416: 'Requested Range Not Satisfiable', 417: 'Expectation Failed',
+  418: 'I\'m a teapot', 100: 'Continue', 101: 'Switching Protocols',
+  300: 'Multiple Choices', 301: 'Moved Permanently', 302: 'Found',
+  303: 'See Other', 304: 'Not Modified', 305: 'Use Proxy', 306: '(Unused)',
+  307: 'Temporary Redirect', 500: 'Internal Server Error',
+  501: 'Not Implemented', 502: 'Bad Gateway', 503: 'Service Unavailable',
+  504: 'Gateway Timeout', 505: 'HTTP Version Not Supported'
+}

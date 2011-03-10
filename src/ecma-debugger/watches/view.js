@@ -28,12 +28,11 @@ cls.WatchesView = function(id, name, container_class)
     [
       ['div'],
       ['div',
-        ['input',
-          'type', 'button',
-          'value', 'Add',
+        ['button',
+          [['img', 'src', 'ui-images/icons/icon_add_small.png'], ['span', 'Add']],
           'handler', 'watches-add'
         ],
-        'class', 'watches-controls'
+        'class', 'watches-controls padding'
       ]
     ]);
   };
@@ -42,6 +41,17 @@ cls.WatchesView = function(id, name, container_class)
   {
     return ['item', ['key', 'class', 'no-expander', 'data-prop-uid', '0']];
   };
+
+  this._check_no_content = function()
+  {
+    var proto = this._watch_container && 
+                this._watch_container.getElementsByClassName('prototype')[0];
+    if (proto && !proto.textContent)
+    {
+      proto.clearAndRender(['div', ui_strings.M_VIEW_LABEL_NO_WATCHES, 
+                            'class', 'not-content']);
+    }
+  }
 
   /* action handler interface */
 
@@ -78,6 +88,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       this._data.remove_property(ele.getAttribute('data-prop-uid'));
     }
+    this._check_no_content();
   }.bind(this);
 
   this._handlers['submit'] = function(event, target)
@@ -85,6 +96,7 @@ cls.WatchesView = function(id, name, container_class)
     if (this.mode == MODE_EDIT)
     {
       this._editor.submit();
+      this._check_no_content();
       return false;
     }
   }.bind(this);
@@ -94,6 +106,7 @@ cls.WatchesView = function(id, name, container_class)
     if (this.mode == MODE_EDIT)
     {
       this._editor.cancel();
+      this._check_no_content();
       return false;
     }
   }.bind(this);
@@ -105,6 +118,11 @@ cls.WatchesView = function(id, name, container_class)
       var proto = this._watch_container.getElementsByClassName('prototype')[0];
       if (proto)
       {
+        var no_content = proto.getElementsByClassName('not-content')[0];
+        if (no_content)
+        {
+          proto.removeChild(no_content);
+        }
         var key = proto.render(this._tmpl_new_prop()).firstElementChild;
         this.mode = MODE_EDIT;
         this._editor.edit(event, key);
@@ -196,6 +214,7 @@ cls.WatchesView = function(id, name, container_class)
     }
     var tmpl = window.templates.inspected_js_object(this._data, false, null);
     this._watch_container.clearAndRender(tmpl);
+    this._check_no_content();
   };
 
   this.ondestroy = function()

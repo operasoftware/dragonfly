@@ -11,12 +11,11 @@
 h2, h3 {
   margin:0;
   padding:0;
-  font-weight:normal;
-  font-size:1.6em;
-  }
+  font-size: 15px;
+}
 
 h3 {
-  font-size:1.3em;
+  font-size: 12px;
   }
 
 ul {
@@ -106,12 +105,12 @@ ul {
 #backtrace-container li {
   padding-left: 20px;
   line-height:16px;
-  background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
+  background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
   }
 
 #backtrace-container li:first-child {
-  background-image: url('../ui-images/selected-frame-top.png');
+  background-image: url('../ui-images/selected_frame_top.png');
   }
 
 #backtrace-container li.selected {
@@ -257,7 +256,7 @@ cst-option.selected-runtime {
 .folder li[handler="display-script"] {
   margin-left: -2px;
   padding-left: 20px;
-  background: transparent url('../ui-images/selected-frame-top.png') no-repeat 0 -16px;
+  background: transparent url('../ui-images/selected_frame_top.png') no-repeat 0 -16px;
   }
 
 .info {
@@ -493,7 +492,7 @@ examine-objects item
 }
 examine-objects
 {
-  padding: 4px;
+  padding: 5px;
 }
 examine-objects examine-objects
 {
@@ -731,9 +730,14 @@ breadcrumb span
 
 .script-options cst-option
 {
-  background-image: url('../ui-images/selected-frame-top.png');
+  background-image: url('../ui-images/selected_frame_top.png');
   background-position:  5px -16px;
   background-repeat: no-repeat ;
+}
+
+.script-options cst-option.selected
+{
+  background-image: url('../ui-images/selected_frame_top_white.png');
 }
 
 .script-options cst-option.stopped
@@ -830,13 +834,6 @@ d
   display: table-cell;
   vertical-align: top;
   padding: 0 5px;
-}
-
-.color-picker h2,
-.manage-stored-colors h2
-{
-  font-size: 1em;
-  font-weight: bold;
 }
 
 .color-picker pre
@@ -1294,7 +1291,32 @@ property.disabled color-sample
 {
   display: block;
   box-sizing: border-box;
+  border: 1px solid #999;
   width: 100%;
-  border: 0px solid;
-  padding: 5px;
+  margin-bottom: 5px;
 }
+
+.css-new-style-sheet:focus
+{
+  border-color: #3c3c3c;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
+}
+
+.not-content {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
+  padding-left: 23px;
+}
+
+.not-content.inspection {
+  padding: 5px 5px 5px 23px;
+}
+
+.go-to-line-input
+{
+  box-sizing: border-box;
+  width: 100%;
+  border: 3px solid transparent;
+}
+

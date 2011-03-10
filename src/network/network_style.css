@@ -1,4 +1,4 @@
-﻿#main-scroll-container
+#main-scroll-container
 {
   height: 100%;
   overflow: auto;
@@ -56,6 +56,10 @@
   height: 19px;
   border-top: 1px solid rgba(0,0,0,0.1);
   padding: 4px 0px 1px 8px;
+}
+
+.network-log-url-list li:first-child {
+  border-top: none;
 }
 
 .network-log-url-list li:nth-child(odd) {
@@ -128,7 +132,7 @@
 
 .resource-graph text
 {
-  font-size: 12px;
+  font-size: 10px;
   text-anchor: middle;
 }
 
@@ -152,10 +156,9 @@
 
 /* Network log / Detail view */
 
-button[handler="close-request-detail"]
+.close-request-detail
 {
-  border: solid thin red;
-  xxfloat: right;
+  content: url("../ui-images/icons/icon_button_back.png");
 }
 
 .network-details-url-list {
@@ -223,7 +226,7 @@ button[handler="close-request-detail"]
 /* Request crafter */
 .request-crafter
 {
-  padding: 10px 30px;
+  padding: 5px 30px;
 }
 
 .request-crafter input
@@ -247,7 +250,7 @@ button[handler="close-request-detail"]
 /* Options */
 .network-options
 {
-  padding: 0px 30px;
+  padding: 5px 30px;
 }
 
 .header-override-input

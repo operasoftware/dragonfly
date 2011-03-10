@@ -1,4 +1,4 @@
-﻿window.templates || (window.templates = {});
+window.templates || (window.templates = {});
 
 templates.network_options_main = function(caching, tracking, headers, overrides)
 {
@@ -6,7 +6,7 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
           ["div",
            ["h2", ui_strings.S_NETWORK_CACHING_SETTING_TITLE],
            ["p", ui_strings.S_NETWORK_CACHING_SETTING_DESC],
-           ["label",
+           ["p", ["label",
              ["input", "type", "radio",
               "name", "network-options-caching",
               "value", "default",
@@ -14,9 +14,8 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
               caching == "default" ? "checked" : "non-checked", "true"
              ],
              ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL,
-           ],
-           ["br"],
-           ["label",
+           ]],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-caching",
              "value", "disabled",
@@ -24,12 +23,10 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              caching == "disabled" ? "checked" : "non-checked", "true"
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL,
-           ]
-          ],
-          ["div",
+           ]],
            ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
-           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
-           ["label",
+           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "notrack",
@@ -37,10 +34,8 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
              tracking == "notrack" ? "checked" : "non-checked", "true"
             ],
             ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL,
-            ],
-
-           ["br"],
-           ["label",
+           ]],
+           ["p", ["label",
             ["input", "type", "radio",
              "name", "network-options-track-bodies",
              "value", "track",
@@ -50,14 +45,13 @@ templates.network_options_main = function(caching, tracking, headers, overrides)
             ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
            ]
           ],
-          ["div",
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
-           ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
+           ["p", ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
             templates.network_options_override_list(headers, overrides),
+           ]
           ],
-          "class", "padding network-options",
-          ]
+         "class", "network-options"
          ];
 };
 
@@ -148,16 +142,18 @@ templates.network_log_details = function(ctx, selected, listwidth)
 templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
+  var responsecode = req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
+                "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["button", "X", "handler", "close-request-detail", "unselectable", "on"],
+    ["button", "X", "class", "close-request-detail", "handler", "close-request-detail", "unselectable", "on"],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(req.responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
@@ -292,13 +288,19 @@ templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
     var statusclass = "status-" + res.responsecode;
+    var statusstring = res.responsecode || null;
+    if (res.responsecode && res.responsecode in cls.ResourceUtil.http_status_codes)
+    {
+      statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
+    }
+
     if (res.cached) { statusclass = "status-cached" } 
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", String(res.responsecode),
+            ["span", String(statusstring || "-"),
              "class", "log-url-list-status " + statusclass,
-             "title", String(res.responsecode)
+             "title", String(statusstring || "-")
              ],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
