@@ -164,7 +164,7 @@ templates.cookie_manager = {
   boolean_value: function(bool) {
     if(bool)
     {
-      return ["img", "src", "ui-images/menu_check.png"];
+      return ["div", "class", "check"];
     }
     else {
       return [];

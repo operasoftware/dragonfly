@@ -49,6 +49,12 @@
   display: inline; /* hide containers in context menu */
 }
 
+/* "check" values */
+
+.cookie_manager .check {
+  content: url("../ui-images/menu_check.png");
+}
+
 /* columns */
 
 .cookie_manager .sortable-table .col_domain {
