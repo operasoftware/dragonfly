@@ -817,12 +817,12 @@ String.prototype.contains = function(str)
 
 String.prototype.startswith = function(str)
 {
-  return this.substr(0, str.length) === str;
+  return this.slice(0, str.length) === str;
 };
 
 String.prototype.endswith = function(str)
 {
-  return this.substr(this.length - str.length) === str;
+  return this.slice(this.length - str.length) === str;
 };
 
 Array.prototype.extend = function(list)
