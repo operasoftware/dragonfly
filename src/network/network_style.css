@@ -201,7 +201,6 @@ button[handler="close-request-detail"]
 }
 
 .network-details-header-list {
-  border: dotted 1px black;
   list-style: none;
   padding-left: 0;
   font-family: monospace;
