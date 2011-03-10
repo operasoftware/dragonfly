@@ -177,6 +177,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+  this._on_urlfinished_bound = function()
+  {
+    if (!this._loading)
+    {
+      this.update();
+    }
+  }.bind(this);
+
+
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
   // did, the event handler doesn't get added until the view is created
@@ -197,8 +206,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
 
   var doc_service = window.services['document-manager'];
+  var res_service = window.services['resource-manager'];
+
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+  res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
   var contextmenu = ContextMenu.get_instance();
   contextmenu.register("request-context-options", [
