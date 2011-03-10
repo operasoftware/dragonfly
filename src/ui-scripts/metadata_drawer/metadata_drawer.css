@@ -10,40 +10,6 @@
   z-index: 2;
 }
 
-.metadata-drawer.collapsed {
-}
-
-.metadata-drawer button {
-    position: absolute;
-    bottom: -9px;
-    left: 50%;
-    margin-left: -9px;
-    width: 18px;
-    height: 18px;
-    border: none;
-    border: 1px solid #999;
-    border-radius: 9px;
-    background: #fafafa 50% 50% no-repeat;
-}
-
-.metadata-drawer.collapsed button {
-    background-image: url(expand-drawer.png);
-}
-
-.metadata-drawer.expanded button {
-    background-image: url(collapse-drawer.png);
-}
-
-.metadata-drawer button:hover {
-    background-color: #fff;
-}
-
-.metadata-drawer button:active {
-    background-color: #ccc;
-}
-
-
 .metadata-drawer th {
     text-align: right;
 }
-
