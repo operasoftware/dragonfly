@@ -105,12 +105,12 @@ ul {
 #backtrace-container li {
   padding-left: 20px;
   line-height:16px;
-  background: transparent url('../ui-images/selected-frame.png') scroll no-repeat -20px 0;
+  background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
   }
 
 #backtrace-container li:first-child {
-  background-image: url('../ui-images/selected-frame-top.png');
+  background-image: url('../ui-images/selected_frame_top.png');
   }
 
 #backtrace-container li.selected {
@@ -256,7 +256,7 @@ cst-option.selected-runtime {
 .folder li[handler="display-script"] {
   margin-left: -2px;
   padding-left: 20px;
-  background: transparent url('../ui-images/selected-frame-top.png') no-repeat 0 -16px;
+  background: transparent url('../ui-images/selected_frame_top.png') no-repeat 0 -16px;
   }
 
 .info {
@@ -730,9 +730,14 @@ breadcrumb span
 
 .script-options cst-option
 {
-  background-image: url('../ui-images/selected-frame-top.png');
+  background-image: url('../ui-images/selected_frame_top.png');
   background-position:  5px -16px;
   background-repeat: no-repeat ;
+}
+
+.script-options cst-option.selected
+{
+  background-image: url('../ui-images/selected_frame_top_white.png');
 }
 
 .script-options cst-option.stopped
