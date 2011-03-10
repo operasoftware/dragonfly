@@ -1,0 +1,10 @@
+<!doctype html>
+<p><input type="button" value="console.log([1,2,3,4])" onclick="console.log([1,2,3,4])" class="foo">
+<p><input type="button" value="console.log(document.all)" onclick="console.log(document.all)" id="bar">
+<p><input type="button" value="console.log(document.childNodes)" onclick="console.log(document.childNodes)">
+<p><input 
+      type="button" 
+      value="console.log(xPathResult)" 
+      onclick="var xPathResult = document.evaluate('//p', document.body, null,
+                                                   XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+               console.log(xPathResult);">

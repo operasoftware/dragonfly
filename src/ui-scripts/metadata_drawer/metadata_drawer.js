@@ -1,4 +1,4 @@
-function MetadataDrawer(resource, title) {
+﻿function MetadataDrawer(resource, title) {
   this.expanded = false;
   this.resource = resource;
   this.title = title;
@@ -7,22 +7,22 @@ function MetadataDrawer(resource, title) {
     generic: [
       {label: "url", getter: function(res) { return ["a", (res.urltype == 4 ? "data:URI" : res.url), "href", res.url, "target", "_blank"] } },
       {label: "size", getter: function(res) { return  res.size
-                                              ? "" + res.size + " bytes"
+                                              ? "" + window.helpers.pretty_print_number(res.size) + " bytes"
                                               : "-"
                                             }
       },
       {label: "format", getter: function(res) { return res.type ? res.type : "-" }},
     ],
     image: [
-      {label: "dimensions", getter: function(res) { return "123 x 321" } },
-      {label: "colors", getter: function(res) { return "16 bit" } },
+      //{label: "dimensions", getter: function(res) { return "123 x 321" } },
+      //{label: "colors", getter: function(res) { return "16 bit" } },
     ],
     markup: [
-      {label: "doctype", getter: function(res) { return "123 x 321" } },
+      //{label: "doctype", getter: function(res) { return "123 x 321" } },
       // encoding , doctype
     ],
     stylesheet: [
-      {label: "doctype", getter: function(res) { return "123 x 321" } },
+      //{label: "doctype", getter: function(res) { return "123 x 321" } },
       // encoding , doctype
     ],
   }

@@ -1,4 +1,4 @@
-window.cls = window.cls || {};
+﻿window.cls = window.cls || {};
 
 /**
  * @constructor
@@ -12,6 +12,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
+  this._locked = false;
 
   this.createView = function(container)
   {
@@ -33,12 +34,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       var url_list_width = 250;
       if (this._selected !== null)
       {
+        this._locked = false;
+        url_list_width += window.defaults["scrollbar-width"];
         this.ondestroy(); // saves scroll pos
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._vscrollcontainer = container.querySelector(".network-details-url-list");
         this._vscrollcontainer.scrollTop = this._vscroll;
       }
-      else
+      else if (!this._locked)
       {
         container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;

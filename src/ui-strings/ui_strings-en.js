@@ -44,6 +44,8 @@ ui_strings.M_VIEW_LABEL_SCRIPTS = 'Scripts';
 ui_strings.M_VIEW_LABEL_ENVIRONMENT = 'Environment';
 /* DESC: Source code view. */
 ui_strings.M_VIEW_LABEL_SOURCE = 'Source';
+/* DESC: utility window to go to a line. */
+ui_strings.M_VIEW_LABEL_GO_TO_LINE = 'Go to line';
 /* DESC: Command line. */
 ui_strings.M_VIEW_LABEL_COMMAND_LINE = 'Command Line';
 /* DESC: Call stack overview, a list of function calls. */
@@ -52,10 +54,16 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = 'Call Stack';
 ui_strings.M_VIEW_LABEL_NOT_STOPPED = 'Not stopped';
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = 'State';
+/* DESC: section in the script side panel for watches. */
+ui_strings.M_VIEW_LABEL_WATCHES = 'Watches';
+/* DESC: Text to show in watches if there are no watches */
+ui_strings.M_VIEW_LABEL_NO_WATCHES = 'No watches';
 /* DESC: Thread log overview, a list of threads. */
 ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 /* DESC: The JS properties of a frame or object. */
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = 'Inspection';
+/* DESC: Text to show in inspection if there is no object to inspect. */
+ui_strings.M_VIEW_LABEL_NO_INSPECTION = 'No inspection';
 /* DESC: The JS properties of an object. */
 ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
 /* DESC: Documents in the runtime. */
@@ -144,6 +152,10 @@ ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = 'Pixel Magnifier and Color 
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
+/* DESC: view to set and remove breakpoints */
+ui_strings.M_VIEW_LABEL_BREAKPOINTS = 'Breakpoints';
+/* DESC: Text to show in breakpoins if there is no breakpoint. */
+ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = 'No breakpoint';
 
 
 
@@ -384,6 +396,8 @@ ui_strings.S_BUTTON_OK = "Ok";
 ui_strings.S_BUTTON_SAVE = "Save";
 /* DESC: */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
+/* DESC: */
+ui_strings.S_BUTTON_ADD = "Add";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
 /* DESC: Show request headers. */
@@ -554,10 +568,55 @@ ui_strings.S_LABEL_REPL_MODE_SINGLELINE = 'Single-line edit';
 ui_strings.S_LABEL_REPL_MODE_MULTILINE = 'Multi-line edit';
 /* DESC: Label of a subsection in the keyboard configuration */
 ui_strings.S_LABEL_REPL_MODE_AUTOCOMPLETE = 'Autocomplete';
+/* DESC: Label for the domain that is set for a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN = 'Domain';
+/* DESC: Label for the name (key) of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME = 'Name';
+/* DESC: Label for the value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE = 'Value';
+/* DESC: Label for the value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH = 'Path';
+/* DESC: Label for the expiry value of a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = 'Expires';
+/* DESC: Label for the expiry when cookie expires after the session is closed */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "When session ends, e.g. the tab is closed";
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Session";
+/* DESC: Label for the expiry when cookie has already expired */
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
+/* DESC: Label for isHTTPOnly flag on a cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY = "HTTP only";
+/* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
+ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
+/* DESC: Label for grouping by runtime (lowercase) */
+ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME = "runtime";
+/* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
+ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
+/* DESC: Context menu entry that brings up "Edit cookie" UI */
+ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE = "Edit cookie";
+/* DESC: Context menu entry that removes cookie */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE = "Remove cookie";
+/* DESC: Context menu entry that removes cookies (plural) */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES = "Remove cookies";
+/* DESC: Context menu entry that removes cookies of specific group */
+ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Remove cookies of %s";
+
+/* DESC: Time strings that express in how long something will happen */
+ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
+ui_strings.COOKIE_MANAGER_IN_1_MINUTE = "In 1 minute";
+ui_strings.COOKIE_MANAGER_IN_X_MINUTES = "In %s minutes";
+ui_strings.COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
+ui_strings.COOKIE_MANAGER_IN_X_HOURS = "In %s hours";
+ui_strings.COOKIE_MANAGER_TOMORROW = "Tomorrow";
+ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
+ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
+ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
+ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
+ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s month";
+ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
+ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
+
 /* DESC: Label of the section with the scvope chaine in the Inspection view */
 ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
-
-
 /*
  * Information strings in the UI
  */

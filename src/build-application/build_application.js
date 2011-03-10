@@ -52,7 +52,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       nums = ver.split(".").map(Number);
       if (nums[0] != numbers[0])
         continue;
-      if (!match || nums[1] > match[1][1])
+      if (!match || (nums[1] > match[1][1] && nums[1] <= numbers[1]))
         match = [ver, nums];
     }
     return match && match[0];
@@ -109,7 +109,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
           builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
           if (builder)
           {
-            builder(service);
+            // service_description is a dict of services 
+            // with name and version for each service
+            builder(service, service_descriptions);
           }
         }
       }
@@ -167,6 +169,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'exec',
     'window-manager',
     'ecmascript-debugger',
+    'cookie-manager',
     'resource-manager',
     'document-manager'
   ].forEach(create_raw_interface);

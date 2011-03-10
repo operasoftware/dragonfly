@@ -53,6 +53,7 @@
 }
 
 .network-log-url-list li {
+  height: 19px;
   border-top: 1px solid rgba(0,0,0,0.1);
   padding: 4px 0px 1px 8px;
 }

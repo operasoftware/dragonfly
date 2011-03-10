@@ -10,34 +10,41 @@ cls.NewStyle = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    var textarea = container.clearAndRender(this._tmpl_edit());
+    var textarea = container.clearAndRender(this._tmpl_edit(this._current_style));
     textarea.value = this._current_style;
     setTimeout(function() {
       textarea.focus();
       textarea.selectionEnd = textarea.value.length;
-      textarea.releaseEvent('input');
     }, 1);
   };
 
-  this._tmpl_edit = function()
+  this._tmpl_edit = function(value)
   {
     return (
         ['div',
-          [['_auto_height_textarea',
+          ['_auto_height_textarea',
+            value || '',		
             'handler', 'css-update-new-style',
             'class', 'css-new-style-sheet'],
-           ['button', ui_strings.S_BUTTON_TEXT_APPLY, 'handler', 'apply-new-style']],
+           ['button', ui_strings.S_BUTTON_TEXT_APPLY, 'handler', 'apply-new-style'],
         'class', 'padding']);
   };
 
   this._update_style = function()
   {
-    var script = "try{style.textContent = \"" + 
-                 this._new_style.replace(/\r?\n/g, "") +
-                 "\";}catch(e){};";
-    this._esdb.requestEval(0, [this._top_rt_id, 0, 0, script, 
-                               [['style', this._stylesheet]]]);
-    this._current_style = this._new_style;
+    if (this._stylesheet)
+    {
+      var script = "try{style.textContent = \"" + 
+                   this._new_style.replace(/\r?\n/g, "") +
+                   "\";}catch(e){};";
+      this._esdb.requestEval(0, [this._top_rt_id, 0, 0, script, 
+                                 [['style', this._stylesheet]]]);
+      this._current_style = this._new_style;
+    }
+    else
+    {
+      this._create_new_stylesheet();
+    }
   };
 
   this._handle_new_style = function(status, message)
@@ -50,6 +57,7 @@ cls.NewStyle = function(id, name, container_class)
     else
     {
       this._stylesheet = message[OBJECT_VALUE][OBJECT_ID];
+      this._update_style();
     }
   };
 
@@ -85,10 +93,6 @@ cls.NewStyle = function(id, name, container_class)
 
   this._update_new_style = function(event, target)
   {
-    if (!this._stylesheet)
-    {
-      this._create_new_stylesheet();
-    }
     this._new_style = target.value;
   };
 

@@ -3,3 +3,4 @@ syntax: glob
 build/*
 */Thumbs.db
 .DS_Store
+src/cookie-manager/cookie_manager_views copy.js

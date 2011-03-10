@@ -1,77 +1,11 @@
-.resource-main {
+﻿.resource-main {
     padding: 0;
     margin: 0;
-}
-
-.resource-listwrapper {
-    vertical-align: top;
-    width: 190px;
-    display: inline-block;
-}
-
-.resource-graphwrapper {
-    vertical-align: top;
-    width: 800px;
-    display: inline-block;
-}
-
-
-.request-list {
-    margin: 0;
-    width: 190px;
-    font-family: sans-serif;
-    font-size: 10px;
-    table-style: none;
-    display: table;
-    table-layout: fixed;
-    padding-left: 0;
-    background-color: #e6e6e6;
-}
-
-.request-list li {
-    height: 30px;
-    line-height: 30px;
-    vertical-align: middle;
-    display: table-row;
-}
-
-.request-list li:nth-child(odd) {
-    background-color: rgba(0,0,0,0.025);
-}
-
-.request-list li > * {
-    display: table-cell;
-}
-
-.request-list li > *:nth-child(1) {
-    width: 28px;
-}
-
-.request-list li > *:nth-child(2) {
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.request-list li > *:nth-child(3) {
-    width: 20px;
-    text-align: right;
-    padding-right: 6px;
-    color: #999999;
-}
-
-
-.resource-detail {
-
 }
 
 .image-resource-view {
     border: solid thin black;
     background-image: url(../ui-images/transparency_background.png);
-}
-
-.resource-image-view img {
 }
 
 .resource-image-box {
@@ -118,18 +52,6 @@
     background-image: url(../ui-images/type_picture.png);
 }
 
-.resource-data-wrapper {
-    text-align: center;
-}
-
-.resource-data-wrapper > *{
-    text-align: left;
-}
-
-.resource-data-wrapper.image > * {
-    text-align: center;
-}
-
 .resource-detail-container {
     display: block;
     box-sizing: border-box;
@@ -140,16 +62,15 @@
     position: relative;
 }
 
-.js-resource {
+.js-resource, .markup-resource {
   position: relative;
   white-space: pre;
-  font-family: monospace;
-  font-size: 12px;
-  line-height: 15px;
 }
 
-.js-resource-content {
-  margin-left: 10ex;
+.js-resource-content pre, .markup-resource-content pre {
+    padding-top: 0;
+    margin-top: 0;
+    margin-left: 10ex;
 }
 
 .resource-line-numbers {

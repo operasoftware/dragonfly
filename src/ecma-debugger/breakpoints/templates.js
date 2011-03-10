@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   const MAX_SOURCE_CHARS = 160;
   this.breakpoint_condition = function(condition)
@@ -10,7 +10,8 @@
       'class', 'condition',
       'edit-handler', 'edit-condition'
     ]);
-  }
+  };
+
   this.breakpoint = function(bp)
   {
     var ret = ['div'];
@@ -48,7 +49,9 @@
                                                  null, 
                                                  script.state_arr[line_nr - 1], 
                                                  ['code']);
-      ret.push(['div', script_tmpl, 'class', 'source-line']);
+      ret.push(['div', script_tmpl, 
+                'class', 'source-line',
+                'handler', 'show-breakpoint-in-script-source']);
       if (bp.condition)
       {
         ret.push(this.breakpoint_condition(bp.condition));
@@ -67,6 +70,16 @@
     ret.push('class', 'breakpoint', 
              'data-breakpoint-id', String(bp.id));
     return ret;
+  };
+
+  this.no_breakpoints = function()
+  {
+    return (
+    [
+      'div', 
+        ui_strings.M_VIEW_LABEL_NO_BREAKPOINT, 
+        'class', 'not-content inspection'
+    ]); 
   };
 
 }).apply(window.templates || (window.templates = {}));

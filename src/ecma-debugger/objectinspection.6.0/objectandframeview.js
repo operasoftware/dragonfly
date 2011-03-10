@@ -17,6 +17,17 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   // To keep backward compatibility with old code.
   this.clearView = function(){};
 
+
+  this._tmpl_no_content = function()
+  {
+    return (
+    [
+      'div', 
+        ui_strings.M_VIEW_LABEL_NO_INSPECTION, 
+        'class', 'not-content inspection'
+    ]); 
+  };
+
   this._on_object_selected = function(msg)
   {
     this._data = new cls.InspectableJSObject(msg.rt_id, msg.obj_id);

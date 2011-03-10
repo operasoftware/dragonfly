@@ -134,10 +134,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./shortcutconfig/style.css"/>
 <link rel="stylesheet" href="./ui-style/global_command_line.css"/>
 <link rel="stylesheet" href="./ui-style/contextmenu.css"/>
+<link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
-
-
+<link rel="stylesheet" href="./syntaxhighlight/markup/default_color_theme.css"/>
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -158,6 +158,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/objectregistry.js"/>
 <script src="./scripts/spec_links.js"/>
 <script src="./scripts/queue.js"/>
+
 
 
 <script src="./scripts/debug-helpers-liveSource.js"/>
@@ -244,6 +245,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_exec_2_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_5_0.js"></script>
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
+<script src="./build-application/build_cookie_manager_1_0.js"></script>
 <script src="./build-application/build_resource_manager_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
@@ -254,12 +256,19 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./shortcutconfig/shortcutconfig.js"/>
 <script src="./shortcutconfig/templates.js"/>
 
+<script src="./cookie-manager/cookie_manager_templates.js"></script>
+<script src="./cookie-manager/cookie_manager_data.js"></script>
+<script src="./cookie-manager/cookie_manager_views.js"></script>
+<script src="./cookie-manager/cookie_manager_actions.js"></script>
 
 
 
 <script src="./syntaxhighlight/js/syntax.js"/>
 <script src="./syntaxhighlight/js/tokenizer.js"/>
 <script src="./syntaxhighlight/js/templates.js"/>
+<script src="./syntaxhighlight/markup/tokenizer.js"/>
+<script src="./syntaxhighlight/markup/syntax.js"/>
+
 
 
 <script src="./ecma-debugger/ListTextSearch.js"/>
@@ -275,6 +284,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
+
 
 <script src="./ecma-debugger/object_inspection/inspection_base_data.js"/>
 
@@ -384,11 +394,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./resource-manager/resource_service.js"/>
-<!--
-<script src="./resource-manager/resource_view.js"/>
-<script src="./resource-manager/resource_font_view.js"/>
-<script src="./resource-manager/resource_image_view.js"/>
--->
+
 <script src="./resource-manager/resource_all_view.js"/>
 <script src="./resource-manager/resource_templates.js"/>
 <script src="./resource-manager/resource_util.js"/>

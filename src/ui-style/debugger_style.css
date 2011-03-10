@@ -1296,3 +1296,22 @@ property.disabled color-sample
   width: 100%;
   margin-bottom: 5px;
 }
+
+.not-content {
+  cursor: auto;
+  color: #999;
+  font-style: italic;
+  padding-left: 23px;
+}
+
+.not-content.inspection {
+  padding: 5px 5px 5px 23px;
+}
+
+.go-to-line-input
+{
+  box-sizing: border-box;
+  width: 100%;
+  border: 3px solid transparent;
+}
+

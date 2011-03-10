@@ -1,4 +1,4 @@
-/**
+﻿/**
  *
  */
 
@@ -32,6 +32,7 @@ cls.NetworkLoggerService = function(view, data)
     if (!this._current_context)
     {
       this._current_context = new cls.RequestContext();
+      this._current_context.partial = true;
     }
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
 
@@ -237,6 +238,7 @@ cls.RequestContext = function()
 cls.Request = function(id)
 {
   this.id = id;
+  this.partial = false;
   this.finished = false;
   this.url = null;
   this.human_url = "No URL";

@@ -1,0 +1,21 @@
+
+/* markup */
+
+.markup-tag {
+  color: #33f;
+}
+
+.markup-attribute {
+    color: purple;
+}
+
+.markup-attribute-value {
+    color: brown; /* #03a; */
+}
+
+.markup-comment {
+     color: green;
+}
+.markup-bogus-comment {
+     color: grey;
+}

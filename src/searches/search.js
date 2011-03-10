@@ -168,10 +168,13 @@ Search.prototype = new function()
           return false;
         }
       }
-      case 'hide-search':
+      case 'toggle-console':
       {
-        this.hide();
-        return false;
+        if (this.is_active)
+        {
+          this.hide();
+          return false;
+        }
       }
     }
   };

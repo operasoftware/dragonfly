@@ -1,4 +1,4 @@
-/**
+﻿/**
  *
  * Sortable table component for dragonfly.
  *
@@ -62,6 +62,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     this.tabledef = tabledef;
     this.data = data;
     this.columns = cols;
+    this.orgininal_columns = this.columns.slice(0);
     this.reversed = !!reversed;
     this.groupby = groupby;
     this._elem = null;
@@ -86,8 +87,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this._make_context_menu = function(evt)
   {
-    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
-    opera.postError(obj_id)
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     if (!obj.tabledef.groups) { return [] }
 
@@ -147,35 +147,41 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this._make_group_handler = function(group)
   {
     return function(evt) {
-      debugger;
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.group(group);
-      evt.target.re_render(obj.render());
-      obj.post_message("rendered");
+      var table = evt.target;
+      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
+      obj.post_message("before-render");
+      table.re_render(obj.render());
+      obj.post_message("after-render");
     }
   }
 
   this._make_colselect_handler = function(col)
   {
     return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.togglecol(col);
-      evt.target.re_render(obj.render());
-      obj.post_message("rendered");
+      var table = evt.target;
+      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
+      obj.post_message("before-render");
+      table.re_render(obj.render());
+      obj.post_message("after-render");
     }
   }
 
   this._sort_handler = function(evt, target)
   {
     var table = target.parentNode.parentNode;
-    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id')
+    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
+    obj.post_message("before-render");
     table.re_render(obj.render());
-    obj.post_message("rendered");
+    obj.post_message("after-render");
   }
 
   this._default_sorters = {
@@ -188,6 +194,14 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
                                     this.columns, this.groupby, this.sortby,
                                     this.reversed);
   };
+
+  this.restore_columns = function(target)
+  {
+    this.columns = this.orgininal_columns.slice(0);
+    this.post_message("before-render");
+    target.re_render(this.render());
+    this.post_message("after-render");
+  }
 
   this._prop_getter = function(name)
   {
@@ -288,7 +302,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
               tdclass += " "+coldef.classname;
             }
             return ["th",
-                    tabledef.columns[c].label,
+                    tabledef.columns[c].headerlabel !== undefined ? tabledef.columns[c].headerlabel : tabledef.columns[c].label,
                     "class", tdclass,
                     "data-column-id", c,
                    ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
@@ -327,7 +341,7 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
     groupnames.sort()
   }
 
-  var render_group_headers = groupnames.length > 1;
+  var render_group_headers = groupby && groupnames.length > 0;
   return groupnames.map(function(g) {
       return templates.sortable_table_group(tabledef, g,
                                             render_group_headers,
@@ -384,34 +398,29 @@ templates.sortable_table_row = function(tabledef, item, cols)
 {
   return ["tr",
           cols.map(function(col) {
-            var content = tabledef.columns[col].renderer(item, tabledef.columns[col].getter);
+            var coldef = tabledef.columns[col];
+            var content = coldef.renderer(item, coldef.getter);
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
+              var title_templ=[];
               if (typeof content == "string")
               {
-                var title = content; // fixme: use custom title renderer.
-              }
-              else
-              {
-                title = "";
+                title_templ = ["title", content]; // fixme: use custom title renderer.
               }
 
-              if (typeof content == "string" &&
-                  tabledef.columns[col].maxlength &&
-                  tabledef.columns[col].maxlength < content.length)
+              if (typeof content == "string" && coldef.maxlength && coldef.maxlength < content.length)
               {
-                if (tabledef.columns[col].ellipsis=="start")
+                if (coldef.ellipsis=="start")
                 {
-                  content = "…" + content.slice(-tabledef.columns[col].maxlength);
+                  content = "…" + content.slice(-coldef.maxlength);
                 }
                 else
                 {
-                  content = content.slice(0, tabledef.columns[col].maxlength) + "…";
+                  content = content.slice(0, coldef.maxlength) + "…";
                 }
               }
-              return ["td", content,
-                    "title", title];
+              return ["td", content].concat(title_templ).concat(coldef.align ? ["style", "text-align: " + coldef.align] : [])
             }
             return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])

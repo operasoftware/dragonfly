@@ -1,4 +1,4 @@
-window.cls = window.cls || {};
+﻿window.cls = window.cls || {};
 
 
 /**
@@ -63,8 +63,8 @@ cls.ResourceDetailBase = function()
     this.resource = res;
     this.resourcedata = null;
     this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
-    this.drawer = new MetadataDrawer(res, "Details for " + (res.type || "unknown type"));
-    this.drawer.expanded = true;
+    this.drawer = new MetadataDrawer(res);
+    this.drawer.expanded = false;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
   }
 }
@@ -104,8 +104,11 @@ cls.TextResourceDetail = function(res, service)
 }
 cls.TextResourceDetail.prototype = new cls.ResourceDetailBase();
 
-cls.JSResourceDetail = function(res, service)
+cls.JSResourceDetail = function(res, service, options)
 {
+  options = options || {};
+  this.line = options.line;
+
   this.render_type_details = function(container, resource, resourcedata)
   {
     return window.templates.js_resource_view(resource, resourcedata);
@@ -139,6 +142,17 @@ cls.FontResourceDetail = function(res, service)
 }
 cls.FontResourceDetail.prototype = new cls.ResourceDetailBase();
 
+cls.MarkupResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.markup_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+
+cls.MarkupResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
 
@@ -163,18 +177,33 @@ window.templates.js_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
-  source.unshift('div');
-  source.push('class', 'js-source js-resource-content');
   return ['code',
     ['div',
       source,
-      ['div', lines.join('\n'), 'class', 'resource-line-numbers'],
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
       'class', 'js-resource'
     ],
-    'class', 'resource-detail-container'
+    'class', 'resource-detail-container js-source js-resource-content'
   ]
 }
 
+window.templates.markup_resource_view = function(resource, resourcedata)
+{
+  var line_count = 1;
+  var lines = [line_count++];
+  var source = this.highlight_markup(resourcedata, function()
+  {
+    lines.push(line_count++);
+  });
+  return ['code',
+    ['div',
+      source,
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
+      'class', 'markup-resource'
+    ],
+    'class', 'resource-detail-container markup-source markup-resource-content'
+  ]
+}
 
 window.templates.image_resource_view = function(resource, resourcedata)
 {
