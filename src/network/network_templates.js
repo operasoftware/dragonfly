@@ -1,4 +1,4 @@
-window.templates || (window.templates = {});
+﻿window.templates || (window.templates = {});
 
 templates.network_options_main = function(caching, tracking, headers, overrides)
 {
