@@ -1,4 +1,6 @@
-﻿.command-line textarea {
+﻿/* TODO: some of this should be merged into syntax-highlight.css */
+
+.command-line textarea {
     background: transparent;
     color: #fff;
 }
@@ -29,7 +31,8 @@
 .command-line .repl-output,
 .command-line #examine-objects .object,
 .command-line .js-source,
-.command-line examine-objects .object {
+.command-line examine-objects .object,
+.command-line .datetime {
   color: #fff;
 }
 .command-line .prototype-chain-object {
