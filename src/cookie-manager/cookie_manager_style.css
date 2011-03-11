@@ -97,8 +97,16 @@
 
 /* other sortable-table stuff specific to cookie-manager (for now) */
 
-.cookie_manager .sortable-table td, .cookie_manager .sortable-table th {
+.cookie_manager .sortable-table td {
   padding: 6px 5px 2px 20px;
   position: relative;
   overflow: normal;
+}
+
+.cookie_manager .sortable-table td.align-center {
+  padding: 6px 5px 2px 5px;
+}
+
+.cookie_manager .sortable-table td.align-right {
+  padding: 6px 5px 2px 5px;
 }

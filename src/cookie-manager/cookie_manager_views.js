@@ -60,76 +60,85 @@ cls.CookieManager.CookieManagerViewBase = function()
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
             return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-          }
+          },
+          sorter: this._make_sorter("domain")
         },
         name: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
           classname: "col_name",
           renderer: function(obj) {
-            if(obj._is_runtime_placeholder)
+            if (obj._is_runtime_placeholder)
             {
               return;
             }
             return window.templates.cookie_manager.editable_name(obj.name);
-          }
+          },
+          sorter: this._make_sorter("name")
         },
         value: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
           classname: "col_value",
           renderer: function(obj) {
-            if(obj._is_runtime_placeholder)
+            if (obj._is_runtime_placeholder)
             {
               return;
             }
             return window.templates.cookie_manager.editable_value(obj.value);
-          }
+          },
+          sorter: this._make_sorter("value")
         },
         path: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
           classname: "col_path",
           renderer: function(obj) {
-            if(obj._is_runtime_placeholder)
+            if (obj._is_runtime_placeholder)
             {
               return;
             }
-            if(typeof obj.path === "string")
+            if (typeof obj.path === "string")
             {
               return window.templates.cookie_manager.editable_path(obj.path);
             }
             return window.templates.cookie_manager.unknown_value();
-          }
+          },
+          sorter: this._make_sorter("path")
         },
         expires: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
           classname: "col_expires",
           renderer: function(obj) {
-            if(obj._is_runtime_placeholder)
+            if (obj._is_runtime_placeholder)
             {
               return;
             }
-            if(typeof obj.expires === "number")
+            if (typeof obj.expires === "number")
             {
               return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
             }
             return window.templates.cookie_manager.unknown_value();
-          }
+          },
+          sorter: this._make_sorter("expires")
         },
         isSecure: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
-          renderer: this._is_secure_renderer.bind(this)
+          renderer: this._is_secure_renderer.bind(this),
+          align: "center",
+          sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
-          renderer: this._is_http_only_renderer.bind(this)
+          renderer: this._is_http_only_renderer.bind(this),
+          align: "center",
+          sorter: this._make_sorter("isHTTPOnly")
         }
       }
     };
     this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
-    if(!this._update_expiry_interval)
+    if (!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
     }
@@ -146,16 +155,31 @@ cls.CookieManager.CookieManagerViewBase = function()
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
+  this._make_sorter = function(prop)
+  {
+    return function(obj_a, obj_b) {
+      if (obj_a[prop] < obj_b[prop])
+      {
+        return 1;
+      }
+      if (obj_a[prop] > obj_b[prop])
+      {
+        return -1;
+      }
+      return 0;
+    }
+  }
+
   this._create_context_menu = function(event, row)
   {
     this.check_to_exit_edit_mode(event, row);
-    while(row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
+    while (row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
     {
       row = row.parentNode;
     }
     // if row has an object-id, add edit and remove options
     var objectref = row.getAttribute("data-object-id");
-    if(objectref)
+    if (objectref)
     {
       this.select_row(event, row);
     }
@@ -166,7 +190,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       selected_cookie_objects.push(sel_cookie_obj);
     };
 
-    if(selected_cookie_objects.length > 0)
+    if (selected_cookie_objects.length > 0)
     {
       var options = [
         {
@@ -174,10 +198,10 @@ cls.CookieManager.CookieManagerViewBase = function()
           handler: this.insert_add_cookie_row_after_objectref.bind(this, selected_cookie_objects[0]._objectref)
         }
       ];
-      if(selected_cookie_objects.length === 1)
+      if (selected_cookie_objects.length === 1)
       {
         var sel_cookie_obj = selected_cookie_objects[0];
-        if(sel_cookie_obj._is_editable)
+        if (sel_cookie_obj._is_editable)
         {
           options.push(
             {
@@ -186,7 +210,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
           );
         }
-        if(sel_cookie_obj._is_removable)
+        if (sel_cookie_obj._is_removable)
         {
           options.push(
             {
@@ -210,12 +234,12 @@ cls.CookieManager.CookieManagerViewBase = function()
         // multiple selection
         var removable_cookies = [];
         for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
-          if(selected_cookie_o._is_removable)
+          if (selected_cookie_o._is_removable)
           {
             removable_cookies.push(selected_cookie_o);
           }
         };
-        if(removable_cookies.length === 1)
+        if (removable_cookies.length === 1)
         {
           options.push(
             {
@@ -241,7 +265,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.ondestroy = function()
   {
     this._container = null;
-    if(this._update_expiry_interval)
+    if (this._update_expiry_interval)
     {
       this._update_expiry_interval = clearInterval(this._update_expiry_interval);
     }
@@ -256,7 +280,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       *   more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if(!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
+    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
         selected_node.removeClass("selected");
@@ -271,7 +295,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     // find closest runtime above button
     var row = target.parentElement.parentElement;
     var row_with_data_id = row.previousElementSibling;
-    while(!row_with_data_id.getAttribute("data-object-id"))
+    while (!row_with_data_id.getAttribute("data-object-id"))
     {
       row_with_data_id = row_with_data_id.previousElementSibling;
     }
@@ -282,12 +306,12 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
     this.mode = MODE_EDIT;
-    if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
+    if (!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
     var row = document.querySelector("[data-object-id='"+objectref+"']");
-    if(row)
+    if (row)
     {
       var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
@@ -321,13 +345,13 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.check_to_exit_edit_mode = function(event, target)
   {
-    if(document.querySelector(".edit_mode") && !target.hasClass("add_cookie_button"))
+    if (document.querySelector(".edit_mode") && !target.hasClass("add_cookie_button"))
     {
       // find out if target is within some .edit_mode node. don't exit then.
       var walk_up = target;
-      while(walk_up)
+      while (walk_up)
       {
-        if(walk_up.hasClass("edit_mode"))
+        if (walk_up.hasClass("edit_mode"))
         {
           return;
         }
@@ -346,7 +370,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       // avoid refetching multiple times when saving multiple cookies.
       var is_last_cookie_in_list = (i == edit_trs.length - 1);
       var callback_after_set_cookie = function(){};
-      if(is_last_cookie_in_list)
+      if (is_last_cookie_in_list)
       {
         callback_after_set_cookie = this.data.refetch;
       }
@@ -371,11 +395,11 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;
-      if(object_id)
+      if (object_id)
       {
         old_cookie = this.data.get_cookie_by_objectref(object_id);
         // check if unmodified
-        if(old_cookie &&
+        if (old_cookie &&
           (
             name         === old_cookie.name &&
             value        === old_cookie.value &&
@@ -391,7 +415,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
       }
 
-      if(domain && name)
+      if (domain && name)
       {
         var new_cookie = new cls.CookieManager.Cookie({
                            domain:         domain,
@@ -404,7 +428,7 @@ cls.CookieManager.CookieManagerViewBase = function()
                            _rt_id:         runtime
                           }, this.data);
 
-        if(typeof new_cookie._rt_id !== "number")
+        if (typeof new_cookie._rt_id !== "number")
         {
           /**
             * Try to find runtime where this might end up to be able to highlight it. Using endsWith
@@ -415,7 +439,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             // check if runtime hostname endsWith cookie-domain val
             var hostname = this.data._rts[id].hostname;
             var last_index = hostname.lastIndexOf(new_cookie.domain);
-            if(last_index !== -1 && last_index + new_cookie.domain.length == hostname.length)
+            if (last_index !== -1 && last_index + new_cookie.domain.length == hostname.length)
             {
               new_cookie._rt_id = this.data._rts[id].rt_id;
               break;
@@ -423,7 +447,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           };
         }
 
-        if(old_cookie)
+        if (old_cookie)
         {
           // remove old_cookie, on finished add new cookie
           this.data.remove_cookie(old_cookie._objectref, this.data.set_cookie.bind(this.data, new_cookie, callback_after_set_cookie));
@@ -450,7 +474,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     var message = message || {};
     // save selection
-    if(this._table_elem)
+    if (this._table_elem)
     {
       var selection = this._table_elem.querySelectorAll(".selected");
       this._restore_selection = this._restore_selection || [];
@@ -465,11 +489,11 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._update_expiry();
     this._table_elem = this._table_container.firstChild;
     // restore selection
-    if(this._restore_selection)
+    if (this._restore_selection)
     {
       for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
         var elem = this._container.querySelector("[data-object-id='"+objectref+"']");
-        if(elem)
+        if (elem)
         {
           elem.addClass("selected");
         }
@@ -477,7 +501,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._restore_selection = null;
     }
     // add context menus per tr
-    for(var i=0; i < this._table_elem.childNodes.length; i++)
+    for (var i=0; i < this._table_elem.childNodes.length; i++)
     {
       this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
     }
@@ -487,7 +511,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     for (var i=0, row; row = rows[i]; i++) {
       row.setAttribute("handler", "cookiemanager-row-select");
       var objectref = row.getAttribute("data-object-id");
-      if(
+      if (
         this.data.get_cookie_by_objectref(objectref) &&
         this.data.get_cookie_by_objectref(objectref)._is_editable
       )
@@ -550,19 +574,19 @@ cls.CookieManager.CookieManagerViewBase = function()
     var str = "", val = 0, i = 0;
     for (var i=0, current_def; current_def = def[i]; i++)
     {
-      if(diff_in_seconds < current_def.up_to_sec)
+      if (diff_in_seconds < current_def.up_to_sec)
       {
         break;
       }
     }
     var val;
-    if(def[i-1] && def[i-1].up_to_sec)
+    if (def[i-1] && def[i-1].up_to_sec)
     {
       val = Math.round(diff_in_seconds / def[i-1].up_to_sec);
     }
 
     var ret_string = current_def.string.replace(/%s/, val);
-    if(val === 1 && current_def.string_singular)
+    if (val === 1 && current_def.string_singular)
     {
       ret_string = current_def.string_singular.replace(/%s/, val);
     }
@@ -575,18 +599,18 @@ cls.CookieManager.CookieManagerViewBase = function()
     for (var i=0, obj; obj = items[i]; i++)
     {
       var elem = document.getElementById("expires_container_"+obj._objectref);
-      if(elem)
+      if (elem)
       {
         var fuzzy_date = this._fuzzy_date(obj.expires, this._fuzzy_date_def);
         elem.textContent = fuzzy_date.string;
-        if(fuzzy_date.is_disabled)
+        if (fuzzy_date.is_disabled)
         {
           // find row, add expired_cookie class
-          while(elem.nodeName !== "tr" || !elem.parentNode)
+          while (elem.nodeName !== "tr" || !elem.parentNode)
           {
             elem = elem.parentNode;
           }
-          if(elem.nodeName === "tr")
+          if (elem.nodeName === "tr")
           {
             elem.addClass("expired_cookie");
           }
@@ -598,11 +622,11 @@ cls.CookieManager.CookieManagerViewBase = function()
   // DEPENDEND ON SERVICE VERSION - those might get overwritten
   this._domain_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(obj.domain)
+    if (obj.domain)
     {
       return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts, obj.domain);
     }
@@ -611,11 +635,11 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._is_secure_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(typeof obj.isSecure === "number")
+    if (typeof obj.isSecure === "number")
     {
       return window.templates.cookie_manager.boolean_value(obj.isSecure);
     }
@@ -624,11 +648,11 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._is_http_only_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(typeof obj.isHTTPOnly === "number")
+    if (typeof obj.isHTTPOnly === "number")
     {
       // this will depend on the service version, it gets editable with 1.1
       return window.templates.cookie_manager.boolean_value(obj.isHTTPOnly);
@@ -642,7 +666,7 @@ cls.CookieManager.CookieManagerViewBase.prototype = ViewBase;
 cls.CookieManager["1.0"].CookieManagerView = function(id, name, container_class, data_reference, service_version)
 {
   var data = data_reference;
-  if(typeof data_reference === "function")
+  if (typeof data_reference === "function")
   {
     data = new data_reference(service_version, this);
   }
@@ -655,18 +679,18 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 {
   var data = data_reference;
   const MODE_EDIT = "edit";
-  if(typeof data_reference === "function")
+  if (typeof data_reference === "function")
   {
     data = new data_reference(service_version, this);
   }
 
   this._domain_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(obj.domain)
+    if (obj.domain)
     {
       return window.templates.cookie_manager.all_editable_domain(obj.domain);
     }
@@ -675,11 +699,11 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this._is_secure_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(typeof obj.isSecure === "number")
+    if (typeof obj.isSecure === "number")
     {
       return window.templates.cookie_manager.editable_secure(obj.isSecure);
     }
@@ -688,11 +712,11 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
 
   this._is_http_only_renderer = function(obj)
   {
-    if(obj._is_runtime_placeholder)
+    if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if(typeof obj.isHTTPOnly === "number")
+    if (typeof obj.isHTTPOnly === "number")
     {
       return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
     }
@@ -702,7 +726,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
     this.mode = MODE_EDIT;
-    if(!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
+    if (!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
