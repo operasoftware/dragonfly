@@ -20,7 +20,7 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Documents';
 /* DESC: View for error log. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
