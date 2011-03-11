@@ -60,7 +60,8 @@ cls.CookieManager.CookieManagerViewBase = function()
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
             return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
-          }
+          },
+          sorter: this._make_sorter("domain")
         },
         name: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
@@ -72,9 +73,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
             return window.templates.cookie_manager.editable_name(obj.name);
           },
-          sorter: function(obj_a, obj_b) {
-            return !obj_a.name || obj_a.name < obj_b.name;
-          }
+          sorter: this._make_sorter("name")
         },
         value: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
@@ -86,9 +85,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
             return window.templates.cookie_manager.editable_value(obj.value);
           },
-          sorter: function(obj_a, obj_b) {
-            return !obj_a.value || obj_a.value < obj_b.value;
-          }
+          sorter: this._make_sorter("value")
         },
         path: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
@@ -104,9 +101,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
             return window.templates.cookie_manager.unknown_value();
           },
-          sorter: function(obj_a, obj_b) {
-            return !obj_a.path || obj_a.path < obj_b.path;
-          }
+          sorter: this._make_sorter("path")
         },
         expires: {
           label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
@@ -122,27 +117,21 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
             return window.templates.cookie_manager.unknown_value();
           },
-          sorter: function(obj_a, obj_b) {
-            return !obj_a.expires || obj_a.expires < obj_b.expires;
-          }
+          sorter: this._make_sorter("expires")
         },
         isSecure: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
           renderer: this._is_secure_renderer.bind(this),
           align: "center",
-          sorter: function(obj_a, obj_b) {
-            return obj_a.isSecure < obj_b.isSecure;
-          }
+          sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
           renderer: this._is_http_only_renderer.bind(this),
           align: "center",
-          sorter: function(obj_a, obj_b) {
-            return obj_a.isHTTPOnly < obj_b.isHTTPOnly;
-          }
+          sorter: this._make_sorter("isHTTPOnly")
         }
       }
     };
@@ -165,6 +154,17 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._after_table_render();
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
+
+  this._make_sorter = function(prop)
+  {
+    return function(obj_a, obj_b) {
+      if(obj_a[prop] < obj_b[prop])
+        return 1;
+      if(obj_a[prop] > obj_b[prop])
+        return -1;
+      return 0;
+    }
+  }
 
   this._create_context_menu = function(event, row)
   {
