@@ -221,7 +221,11 @@ templates.network_headers_list = function(headers, firstline)
 
 templates.network_response_body = function(req)
 {
-  if (!req.responsebody)
+  if (req.body_unavailable)
+  {
+    return ["p", "Request body not available. Enable resource tracking and reload the page to view the resource."]
+  }
+  else if (!req.responsebody)
   {
     return ["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
