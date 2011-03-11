@@ -81,7 +81,10 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 
   return ["div",
           ["button",
-           "handler", "metadata-drawer-toggle"
+           "handler", "metadata-drawer-toggle",
+           "class", "folder-key",
+           "unselectable", "on",
+           "style", (expanded ? "background-position: 0px -11px" : ""),
           ],
           content,
           (expanded && title ? ["h2", title] : []),

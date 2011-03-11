@@ -10,6 +10,28 @@
   overflow: hidden;
 }
 
+.sortable-table td.align-center {
+  text-align: center;
+  padding: 4px 5px 1px 5px;
+}
+
+.sortable-table td.align-right {
+  text-align: right;
+  padding: 4px 5px 1px 5px;
+}
+
+.sortable-table td.align-justify {
+  text-align: justify;
+}
+
+.sortable-table td.align-start {
+  text-align: start;
+}
+
+.sortable-table td.align-end {
+  text-align: end;
+}
+
 .sortable-table th {
   word-wrap: normal;
 }
@@ -18,16 +40,12 @@
   background-color: rgba(0,0,0,0.025);
 }
 
-.sort-column:before {
-  content: url(sort_desc.png);
-  position: absolute;
-  margin-right: 4px;
-  top: 8px;
-  left: 8px;
+.sort-column {
+  background: url(sort_desc.png) no-repeat 6px 5px;
 }
 
-.sort-column.reversed:before {
-  content: url(sort_asc.png);
+.sort-column.reversed {
+  background-image: url(sort_asc.png);
 }
 
 .sortable-table tr.header {
@@ -56,8 +74,4 @@
   background-color: rgba(55,115,211,0.7);
   color: #fff;
   border-color: rgba(55,115,211,1.0);
-}
-
-.sortable-table tr .sort-column {
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQIHWNgYAcAAAoACCRAuTwAAAAASUVORK5CYII%3D);
 }

@@ -114,42 +114,38 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+  this._get_hover_eles = function(rid)
+  {
+    var rule = "li[data-resource-id='" + rid + "'], g[data-resource-id='" + rid + "']";
+    var eles = this._container.querySelectorAll(rule);
+    return eles.length ? {li: eles[0], g: eles[1]} : null;
+  }
 
-  // fixme: unify methods. Move bgcolor to css
   this._on_hover_request_bound = function(evt, target)
   {
+    var rid = target.getAttribute("data-resource-id");
+    if (rid && this._prev_hovered && rid == this._prev_hovered) { return }
+
     if (this._prev_hovered)
     {
-      this._prev_hovered.setAttribute("fill", this._prev_hovered_color)
-      this._prev_hovered.style.backgroundColor = "";
-      this._prev_hovered = null;
+      var eles = this._get_hover_eles(this._prev_hovered)
+      if (eles)
+      {
+        eles.li.removeClass("hovered");
+        if(eles.g) { eles.g.removeClass("hovered"); }
+      }
     }
-    var rid = target.getAttribute("data-resource-id");
-    var ele = document.querySelector("rect[data-resource-id=\"" + rid + "\"]");
-    if (ele) { 
-      this._prev_hovered = ele;
-      this._prev_hovered_color = ele.getAttribute("fill");
-      ele.setAttribute("fill", "rgba(55,115,211,0.2)") 
+
+    if (rid) { this._prev_hovered = rid }
+
+    var eles = this._get_hover_eles(this._prev_hovered)
+    if (eles)
+    {
+        eles.li.addClass("hovered");
+        if (eles.g) { eles.g.addClass("hovered") }
     }
   }.bind(this);
 
-  this._on_hover_request_graph_bound = function(evt, target)
-  {
-    if (this._prev_hovered)
-    {
-      this._prev_hovered.setAttribute("fill", this._prev_hovered_color)
-      this._prev_hovered.style.backgroundColor = "";
-      this._prev_hovered = null;
-    }
-    var rid = target.getAttribute("data-resource-id");
-    var ele = document.querySelector("li[data-resource-id=\"" + rid + "\"]");
-
-    if (ele) { 
-      this._prev_hovered = ele;
-      this._prev_hovered_color = ele.getAttribute("fill");
-      ele.style.backgroundColor = "rgba(55,115,211,0.2)";
-    }
-  }.bind(this);
 
   this._on_clicked_get_body = function(evt, target)
   {
@@ -177,6 +173,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+  this._on_urlfinished_bound = function()
+  {
+    if (!this._loading)
+    {
+      this.update();
+    }
+  }.bind(this);
+
+
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
   // did, the event handler doesn't get added until the view is created
@@ -188,7 +193,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
 
   eh.click["select-network-request-graph"] = this._on_clicked_request_bound;
-  eh.mouseover["select-network-request-graph"] = this._on_hover_request_graph_bound;
+  eh.mouseover["select-network-request-graph"] = this._on_hover_request_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
@@ -197,8 +202,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
 
   var doc_service = window.services['document-manager'];
+  var res_service = window.services['resource-manager'];
+
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+  res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
   var contextmenu = ContextMenu.get_instance();
   contextmenu.register("request-context-options", [
@@ -215,6 +223,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         view.show_resource_for_id(rid);
       }
     },
+/*
     {
       label: "Copy to resource crafter",
       handler: function(evt, target) {
@@ -226,6 +235,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         }
       }
     }
+*/
   ]);
 
 

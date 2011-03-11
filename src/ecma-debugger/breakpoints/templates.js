@@ -1,6 +1,6 @@
 ﻿(function()
 {
-  const MAX_SOURCE_CHARS = 160;
+  const MAX_SOURCE_CHARS = 300;
   this.breakpoint_condition = function(condition)
   {
     return (
@@ -43,7 +43,7 @@
                                                  script.line_arr[line_nr]).trim();
       if (script_data.length > MAX_SOURCE_CHARS)
       {
-        script_data = script_data.slice(0, MAX_SOURCE_CHARS) + " ...";
+        script_data = script_data.slice(0, MAX_SOURCE_CHARS) + " …";
       }
       var script_tmpl = this.highlight_js_source(script_data, 
                                                  null, 

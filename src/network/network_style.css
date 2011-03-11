@@ -58,17 +58,17 @@
   padding: 4px 0px 1px 8px;
 }
 
-.network-log-url-list li:first-child {
-  border-top: none;
-}
-
 .network-log-url-list li:nth-child(odd) {
   background-color: rgba(0,0,0,0.025);
 }
 
-.network-log-url-list li:hover {
+.network-log-url-list li.hovered {
   background-color: rgba(55,115,211,0.2);
   color: #000;
+}
+
+.hovered > rect.network-graph-bg-row {
+  fill: rgba(55,115,211,0.2);
 }
 
 .network-log-url-list li span {
@@ -136,23 +136,6 @@
   text-anchor: middle;
 }
 
-.network-graph-bg-row:hover
-{
-  fill: rgba(55,115,211,0.2);
-}
-
-/*
-.network-graph-bg-row
-{
-  fill: white;
-}
-
-.network-graph-bg-row:nth-of-type(odd)
-{
-  fill: rgba(0,0,0,0.025);
-}
-
-*/
 
 /* Network log / Detail view */
 
@@ -185,13 +168,15 @@
 {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .network-details-request td,
 .network-details-request th
 {
   border-top: 1px solid #eee;
-  padding: 6px 5px 4px 5px;
+  padding: 6px 5px 4px 0;
 }
 
 .network-details-request th
@@ -202,7 +187,6 @@
 }
 
 .network-details-header-list {
-  border: dotted 1px black;
   list-style: none;
   padding-left: 0;
   font-family: monospace;

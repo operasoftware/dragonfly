@@ -153,7 +153,7 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS], ["td", String(responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", String(responsecode || "-")],
       "data-spec", "http#" + req.responsecode
      ],
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
@@ -221,7 +221,11 @@ templates.network_headers_list = function(headers, firstline)
 
 templates.network_response_body = function(req)
 {
-  if (!req.responsebody)
+  if (req.body_unavailable)
+  {
+    return ["p", "Request body not available. Enable resource tracking and reload the page to view the resource."]
+  }
+  else if (!req.responsebody)
   {
     return ["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,

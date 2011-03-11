@@ -120,28 +120,37 @@ cls.NetworkLoggerService = function(view, data)
     var resource = this.get_resource(rid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(resource.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback]);
+    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, rid]);
     this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
   }
 
-  this._on_request_body_bound = function(type, data, callback)
+  this._on_request_body_bound = function(status, data, callback, rid)
   {
-    // fixme: generate class for this.
-    var msg = {
-      resourceID: data[0],
-      mimeType: data[2],
-      characterEncoding: data[3],
-      contentLength: data[4],
-      content: {
-        length: data[5][0],
-        characterEncoding: data[5][1],
-        byteData: data[5][2],
-        stringData: data[5][3]
-      }
+    if (status != 0)
+    {
+      if (!this._current_context) { return; }
+      this._current_context.update("responsebody", {resourceID: rid});
+      if (callback) { callback() }
     }
-    if (!this._current_context) { return; }
-    this._current_context.update("responsebody", msg);
-    if (callback) { callback() }
+    else
+    {
+      // fixme: generate class for this.
+      var msg = {
+        resourceID: data[0],
+        mimeType: data[2],
+        characterEncoding: data[3],
+        contentLength: data[4],
+        content: {
+          length: data[5][0],
+          characterEncoding: data[5][1],
+          byteData: data[5][2],
+          stringData: data[5][3]
+        }
+      }
+      if (!this._current_context) { return; }
+      this._current_context.update("responsebody", msg);
+      if (callback) { callback() }
+    }
   }.bind(this)
 
   this.get_request_context = function()
@@ -192,7 +201,6 @@ cls.RequestContext = function()
       // ignoring. Never saw an urlload, or it's allready invalidated
       return
     }
-
     res.update(eventname, event);
   }
 
@@ -260,6 +268,7 @@ cls.Request = function(id)
   this.response_raw = null;
   this.method = null;
   this.status = null;
+  this.body_unavailable = false;
   this.responsecode = null;
   this.responsebody = null;
 
@@ -343,6 +352,7 @@ cls.Request = function(id)
 
   this._update_event_responsebody = function(event)
   {
+    if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
   }
 

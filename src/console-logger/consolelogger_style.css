@@ -61,26 +61,27 @@
   width: 20px;
   height: 20px;
   display: inline-block;
+  background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
 }
 
 .error-console .severity.debug {
-  background: url('../ui-images/error-console-default.png') no-repeat 50% 50%;
-}
-
-.error-console .severity.verbose {
-  background: url('../ui-images/error-console-default.png') no-repeat 50% 50%;
+  background-image: url('../ui-images/error-console-info.png');
 }
 
 .error-console .severity.information {
-  background: url('../ui-images/error-console-default.png') no-repeat 50% 50%;
+  background-image: url('../ui-images/error-console-info.png');
+}
+
+.error-console .severity.verbose {
+  background-image: url('../ui-images/error-console-warning.png');
 }
 
 .error-console .severity.error {
-  background: url('../ui-images/error-console-error.png') no-repeat 50% 50%;
+  background-image: url('../ui-images/error-console-error.png');
 }
 
 .error-console .severity.critical {
-  background: url('../ui-images/error-console-error.png') no-repeat 50% 50%;
+  background-image: url('../ui-images/error-console-error.png');
 }
 
 button[key="request_list.expand-all-entries"]:before

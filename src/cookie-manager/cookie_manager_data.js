@@ -11,7 +11,7 @@ cls.CookieManager.Cookie = function(details, data)
   this._rt_protocol = details._rt_protocol;
 
   this._is_runtime_placeholder = details._is_runtime_placeholder;
-  if(!this._is_runtime_placeholder)
+  if (!this._is_runtime_placeholder)
   {
     this.domain     = details.domain || "";
     this.path       = details.path || "";
@@ -77,7 +77,7 @@ cls.CookieManager.CookieDataBase = function()
   this.get_cookie_by_objectref = function(objectref)
   {
     for (var i=0, cookie; cookie = this.cookie_list[i]; i++) {
-      if(cookie._objectref === objectref)
+      if (cookie._objectref === objectref)
       {
         return cookie;
       }
@@ -89,7 +89,7 @@ cls.CookieManager.CookieDataBase = function()
     this._view._restore_selection = [cookie_instance._objectref];
 
     var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
-    if(cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    if (cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
     {
       add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
     }
@@ -101,16 +101,16 @@ cls.CookieManager.CookieDataBase = function()
   this.remove_cookie = function(objectref, callback)
   {
     var cookie = this.get_cookie_by_objectref(objectref);
-    if(cookie)
+    if (cookie)
     {
       var domain = cookie.domain;
-      if(!domain)
+      if (!domain)
       {
         // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
         domain = this._rts[cookie._rt_id].hostname;
       }
       var path = cookie.path;
-      if(!path)
+      if (!path)
       {
         // in case the cookies path is undefined (cookie is retrieved via JS), try using "/" which is most likely
         path = "/";
@@ -124,7 +124,7 @@ cls.CookieManager.CookieDataBase = function()
   {
     var cookie = cookies.pop();
     var callback = this.remove_cookies.bind(this, cookies);
-    if(cookies.length === 0)
+    if (cookies.length === 0)
     {
       callback = this.refetch;
     }
@@ -147,7 +147,7 @@ cls.CookieManager.CookieDataBase = function()
     for (var i=0; i < msg.runtimes_with_dom.length; i++)
     {
       var rt_id = msg.runtimes_with_dom[i];
-      if(!this._rts[rt_id])
+      if (!this._rts[rt_id])
       {
         this._rts[rt_id]={rt_id: rt_id};
       }
@@ -155,11 +155,11 @@ cls.CookieManager.CookieDataBase = function()
     };
 
     // cleanup runtimes directory
-    for(var rt in this._rts)
+    for (var rt in this._rts)
     {
       // rt is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
       var rt_id = this._rts[rt].rt_id;
-      if(msg.runtimes_with_dom.indexOf(rt_id) === -1)
+      if (msg.runtimes_with_dom.indexOf(rt_id) === -1)
       {
         // runtime was not active and is to be removed from this._rts
         delete this._rts[rt_id];
@@ -172,7 +172,7 @@ cls.CookieManager.CookieDataBase = function()
     var compare_version = compare_version.split(".").map(Number);
     var service_version = this.service_version.split(".").map(Number);
     for (var i=0; i < compare_version.length; i++) {
-      if((service_version[i] || 0) < compare_version[i])
+      if ((service_version[i] || 0) < compare_version[i])
       {
         return false;
       }
@@ -191,7 +191,7 @@ cls.CookieManager.CookieDataBase = function()
   {
     const STATUS = 0;
     const DATA = 2;
-    if(status === 0 && message[STATUS] == "completed")
+    if (status === 0 && message[STATUS] == "completed")
     {
       var rt = this._rts[rt_id];
       var parsed_data = JSON.parse(message[DATA]);
@@ -199,7 +199,7 @@ cls.CookieManager.CookieDataBase = function()
       rt.hostname = parsed_data.hostname;
       rt.pathname = parsed_data.pathname;
 
-      if(rt.hostname)
+      if (rt.hostname)
       {
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
         // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
@@ -216,22 +216,22 @@ cls.CookieManager.CookieDataBase = function()
   this._handle_cookies = function(status, message, rt_id)
   {
     var rt = this._rts[rt_id] || {};
-    if(status === 0)
+    if (status === 0)
     {
       const COOKIE = 0;
-      if(message.length > 0)
+      if (message.length > 0)
       {
         var cookies = message[COOKIE];
         for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
           var is_secure = cookie_info[5];
-          if(is_secure && rt.protocol !== "https:")
+          if (is_secure && rt.protocol !== "https:")
           {
             continue;
           }
           // workaround: Check path to match if it's not root, CORE-37107
           var path = cookie_info[1];
-          if(path && (path !== "/") && !rt.pathname.startswith(path+"/"))
+          if (path && (path !== "/") && !rt.pathname.startswith(path+"/"))
           {
             continue;
           }
@@ -278,11 +278,11 @@ cls.CookieManager.CookieDataBase = function()
   {
     const STATUS = 0;
     const DATA = 2;
-    if(status === 0 && message[STATUS] == "completed")
+    if (status === 0 && message[STATUS] == "completed")
     {
       var rt = this._rts[rt_id] || {};
       var cookie_string = message[DATA];
-      if(cookie_string && cookie_string.length > 0)
+      if (cookie_string && cookie_string.length > 0)
       {
         var cookies = cookie_string.split(';');
         for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
@@ -329,7 +329,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
 
     // work around CORE-36742, cookies with path "/" don't show up on document.cookie, "" to be used instead
     var path_val = cookie_instance.path;
-    if(path_val && path_val.trim() === "/")
+    if (path_val && path_val.trim() === "/")
     {
       path_val = "";
     }

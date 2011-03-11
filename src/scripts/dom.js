@@ -188,25 +188,31 @@ Element.prototype.clearAndRender = function(template)
 /**
  * Add the css class "name" to the element's list of classes
  * fixme: Does not work with dashes in the name!
+ * Note: Uses get/setAttribute instead of .className so it will
+ * work on both html and svg elements
  */
 Element.prototype.addClass = function(name)
 {
-  if (!(new RegExp('\\b' + name + '\\b')).test(this.className))
+  var c = this.getAttribute("class");
+  if (!(new RegExp('\\b' + name + '\\b')).test(c))
   {
-    this.className = (this.className ? this.className + ' ' : '') + name;
+    this.setAttribute("class", (c ? c + ' ' : '') + name);
   }
   return this;
 };
 
 /**
  * Remove the css class "name" from the elements list of classes
+ * Note: Uses get/setAttribute instead of .className so it will
+ * work on both html and svg elements
  */
 Element.prototype.removeClass = function(name)
 {
+  var c = this.getAttribute("class");
   var re = new RegExp(name + ' ?| ?' + name);
-  if (re.test(this.className))
+  if (re.test(c))
   {
-    this.className = this.className.replace(re, '');
+    this.setAttribute("class", c.replace(re, ''));
   }
   return this;
 };
@@ -817,12 +823,12 @@ String.prototype.contains = function(str)
 
 String.prototype.startswith = function(str)
 {
-  return this.substr(0, str.length) === str;
+  return this.slice(0, str.length) === str;
 };
 
 String.prototype.endswith = function(str)
 {
-  return this.substr(this.length - str.length) === str;
+  return this.slice(this.length - str.length) === str;
 };
 
 Array.prototype.extend = function(list)

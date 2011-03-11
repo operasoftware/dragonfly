@@ -88,10 +88,11 @@ window.cls.FriendlyPrinter = function()
   this._friendly_print_host = function(list)
   {
     const ELEMENT = 1;
+    const DATE = 2;
     var ret = list.map(function(item)
     {
-      var _class = item === null ? "" : Object.prototype.toString.call(item);
-      if (/Element\]$/.test(_class))
+      var class_ = item === null ? "" : Object.prototype.toString.call(item);
+      if (/Element\]$/.test(class_))
       {
         return (
         [
@@ -102,6 +103,13 @@ window.cls.FriendlyPrinter = function()
           item.getAttribute('href'),
           item.getAttribute('src')
         ]);
+      }
+      else if (class_ == "[object Date]")
+      {
+        return [
+          DATE,
+          item.toISOString()
+        ];
       }
       return null;
     });
@@ -146,19 +154,27 @@ window.cls.FriendlyPrinter = function()
       }, []);
     };
 
+    this._friendly_print_date = function(value_list)
+    {
+      const DATE_STRING = 1;
+      return ["span", value_list[DATE_STRING], "class", "datetime"];
+    };
+
     this.friendly_print = function(value_list)
     {
       const
       TYPE = 0,
-      ELEMENT = 1;
+      ELEMENT = 1,
+      DATE = 2;
 
       var ret = [];
       switch (value_list[TYPE])
       {
         case ELEMENT:
-        {
           return this._friendly_print_element(value_list);
-        }
+
+        case DATE:
+          return this._friendly_print_date(value_list);
       }
     };
 
