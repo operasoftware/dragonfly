@@ -468,7 +468,7 @@ filter.filter {
 filter input {
   width: 138px;
   height: 19px;
-  margin-left: -140px;
+  margin-left: -140px !important;
   background: none;
   border: none;
   padding: 0;
@@ -588,7 +588,7 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-settings-container input[type=text], settings-container input[type=number], settings-container button, settings-container input[type=button] {
+settings-container input[type=text]:not([default-text]), settings-container input[type=number], settings-container button, settings-container input[type=button] {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 3px;
@@ -597,7 +597,7 @@ settings-container input[type=text], settings-container input[type=number], sett
   color: #fff;
 }
 
-settings-container input[type=text]:focus, settings-container input[type=number]:focus {
+settings-container input[type=text]:not([default-text]):focus, settings-container input[type=number]:focus {
   border: 1px solid rgba(255,255,255,1.0);
 }
 

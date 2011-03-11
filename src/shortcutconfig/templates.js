@@ -7,7 +7,8 @@
     {
       label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER, 
       handler: 'scc-quick-find', 
-      title: ui_strings.S_BUTTON_SEARCH_SHORTCUT
+      title: ui_strings.S_BUTTON_SEARCH_SHORTCUT,
+      type: "filter"
     };
     return (
     ['setting-composite',
