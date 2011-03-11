@@ -71,6 +71,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               return;
             }
             return window.templates.cookie_manager.editable_name(obj.name);
+          },
+          sorter: function(obj_a, obj_b) {
+            return !obj_a.name || obj_a.name < obj_b.name;
           }
         },
         value: {
@@ -82,6 +85,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               return;
             }
             return window.templates.cookie_manager.editable_value(obj.value);
+          },
+          sorter: function(obj_a, obj_b) {
+            return !obj_a.value || obj_a.value < obj_b.value;
           }
         },
         path: {
@@ -97,6 +103,9 @@ cls.CookieManager.CookieManagerViewBase = function()
               return window.templates.cookie_manager.editable_path(obj.path);
             }
             return window.templates.cookie_manager.unknown_value();
+          },
+          sorter: function(obj_a, obj_b) {
+            return !obj_a.path || obj_a.path < obj_b.path;
           }
         },
         expires: {
@@ -112,17 +121,28 @@ cls.CookieManager.CookieManagerViewBase = function()
               return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
             }
             return window.templates.cookie_manager.unknown_value();
+          },
+          sorter: function(obj_a, obj_b) {
+            return !obj_a.expires || obj_a.expires < obj_b.expires;
           }
         },
         isSecure: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
-          renderer: this._is_secure_renderer.bind(this)
+          renderer: this._is_secure_renderer.bind(this),
+          align: "center",
+          sorter: function(obj_a, obj_b) {
+            return obj_a.isSecure < obj_b.isSecure;
+          }
         },
         isHTTPOnly: {
           label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
-          renderer: this._is_http_only_renderer.bind(this)
+          renderer: this._is_http_only_renderer.bind(this),
+          align: "center",
+          sorter: function(obj_a, obj_b) {
+            return obj_a.isHTTPOnly < obj_b.isHTTPOnly;
+          }
         }
       }
     };
