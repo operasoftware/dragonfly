@@ -328,8 +328,20 @@ cls.ReplService = function(view, data)
 
   this._handle_exception = function(msg, rt_id)
   {
-    const VALUE = 2;
-    this._get_exception_info(rt_id, msg[3][0]);
+    this._data.add_output_str("Unhandled exception:");
+    const VALUE = 2, OBJECTVALUE = 3, CLASSNAME = 4;
+    if (msg[OBJECTVALUE] && msg[OBJECTVALUE][CLASSNAME] == "Error")
+    {
+      this._get_exception_info(rt_id, msg[3][0]);
+    }
+    else if (msg[OBJECTVALUE])
+    {
+      this._handle_object(msg, rt_id);
+    }
+    else
+    {
+      this._handle_native(msg, rt_id);
+    }
   };
 
   this._handle_object = function(msg, rt_id)
