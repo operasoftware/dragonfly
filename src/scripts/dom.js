@@ -188,6 +188,8 @@ Element.prototype.clearAndRender = function(template)
 /**
  * Add the css class "name" to the element's list of classes
  * fixme: Does not work with dashes in the name!
+ * Note: Uses get/setAttribute instead of .className so it will
+ * work on both html and svg elements
  */
 Element.prototype.addClass = function(name)
 {
@@ -201,6 +203,8 @@ Element.prototype.addClass = function(name)
 
 /**
  * Remove the css class "name" from the elements list of classes
+ * Note: Uses get/setAttribute instead of .className so it will
+ * work on both html and svg elements
  */
 Element.prototype.removeClass = function(name)
 {
