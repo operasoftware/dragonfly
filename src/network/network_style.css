@@ -62,9 +62,13 @@
   background-color: rgba(0,0,0,0.025);
 }
 
-.network-log-url-list li:hover {
+.network-log-url-list li.hovered {
   background-color: rgba(55,115,211,0.2);
   color: #000;
+}
+
+.hovered > rect.network-graph-bg-row {
+  fill: rgba(55,115,211,0.2);
 }
 
 .network-log-url-list li span {
@@ -132,23 +136,6 @@
   text-anchor: middle;
 }
 
-.network-graph-bg-row:hover
-{
-  fill: rgba(55,115,211,0.2);
-}
-
-/*
-.network-graph-bg-row
-{
-  fill: white;
-}
-
-.network-graph-bg-row:nth-of-type(odd)
-{
-  fill: rgba(0,0,0,0.025);
-}
-
-*/
 
 /* Network log / Detail view */
 
