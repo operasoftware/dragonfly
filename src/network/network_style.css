@@ -168,13 +168,15 @@
 {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .network-details-request td,
 .network-details-request th
 {
   border-top: 1px solid #eee;
-  padding: 6px 5px 4px 5px;
+  padding: 6px 5px 4px 0;
 }
 
 .network-details-request th
