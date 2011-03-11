@@ -221,9 +221,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     {
       this._setting = window.settings.console;
     }
-    this._filters.css = this._setting.get('use-css-filter') ?
-                        this._setting.get('css-filter') :
-                        null;
+    this._filters.css = null;
+    if (this._setting.get('use-css-filter'))
+    {
+      this._filters.css = (this._setting.get('css-filter') || '')
+                          .split(/,\s*/).map(function(token)
+                          {
+                            return token.trim();
+                          }).filter(Boolean);
+    }
   };
 
   this._stringify_log_args = function(message)
@@ -577,37 +583,14 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'use-css-filter': false,
       'css-filter': 
       [
-        '-webkit-',
-        '-khtml-',
-        '-moz-',
-        '-ms-',
-        '-o-',
-        '_height',
-        '_width ',
-        '_position',
-        '_display',
-        '_zoom',
-        '_word-wrap',
-        '_z-index',
-        '_background',
-        '_padding',
-        '_line-height',
-        '_vertical-align',
-        '*width',
-        '*border',
-        '*margin',
-        '*padding',
-        '*font',
-        '*display',
-        '*top',
-        '*z-index',
-        '*line-height',
-        '*left',
-        'zoom:',
-        'filter:',
-        'behavior:',
-        'DXImageTransform.Microsoft',
-      ]
+        '-webkit-, -khtml-, -moz-, -ms-, -o-',
+        '_height, _width, _position, _display, _zoom',
+        '_word-wrap, _z-index, _background, _padding',
+        '_line-height, _vertical-align',
+        '*width, *border, *margin, *font, *display', 
+        '*top, *z-index, *line-height, *left',
+        'zoom:, filter:, behavior:, DXImageTransform.Microsoft',
+      ].join(',\n')
     },
     // key-label map
     {
@@ -660,10 +643,6 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
 
 eventHandlers.input['error-console-css-filter'] = function(event, target)
 {
-  var filters = event.target.value.split(/,\s*/).map(function(token)
-  {
-    return token.trim();
-  }).filter(Boolean);
-  window.settings.console.set('css-filter', filters);
+  window.settings.console.set('css-filter', event.target.value);
 };
 

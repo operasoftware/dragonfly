@@ -96,7 +96,7 @@ window.templates.error_log_settings_css_filter = function(setting)
                                        'Use CSS filter'),
       ['label',
         ['_auto_height_textarea', 
-          setting.get('css-filter').join(',\n'),
+          setting.get('css-filter'),
           'handler', 'error-console-css-filter',
           'id', 'error-console-css-filter',
         ],
