@@ -106,6 +106,9 @@ def main(argv=sys.argv):
             if web_path.startswith("/app"):
                 if "cutting-edge" in web_path:
                     resources.append("/app/cutting-edge/")
+                elif "experimental" in web_path:
+                    resources.append("/app/experimental/")
+                    resources.append("/app/stp-1/experimental/")
                 else:
                     resources.append("/app/")
             resources.extend(get_resources(os_path, web_path, name))
