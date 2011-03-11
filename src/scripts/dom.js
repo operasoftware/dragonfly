@@ -191,9 +191,10 @@ Element.prototype.clearAndRender = function(template)
  */
 Element.prototype.addClass = function(name)
 {
-  if (!(new RegExp('\\b' + name + '\\b')).test(this.className))
+  var c = this.getAttribute("class");
+  if (!(new RegExp('\\b' + name + '\\b')).test(c))
   {
-    this.className = (this.className ? this.className + ' ' : '') + name;
+    this.setAttribute("class", (c ? c + ' ' : '') + name);
   }
   return this;
 };
@@ -203,10 +204,11 @@ Element.prototype.addClass = function(name)
  */
 Element.prototype.removeClass = function(name)
 {
+  var c = this.getAttribute("class");
   var re = new RegExp(name + ' ?| ?' + name);
-  if (re.test(this.className))
+  if (re.test(c))
   {
-    this.className = this.className.replace(re, '');
+    this.setAttribute("class", c.replace(re, ''));
   }
   return this;
 };
