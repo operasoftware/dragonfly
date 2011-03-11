@@ -29,7 +29,7 @@ cls.WatchesView = function(id, name, container_class)
       ['div'],
       ['div',
         ['button',
-          ['span', 'Add watch'],
+          ['span', ui_strings.S_LABEL_ADD_WATCH],
           'handler', 'watches-add'
         ],
         'class', 'watches-controls padding'
@@ -166,7 +166,7 @@ cls.WatchesView = function(id, name, container_class)
   this._menu_common_items =
   [
     {
-      label: "Add watch",
+      label: ui_strings.S_LABEL_ADD_WATCH,
       handler: this._handlers['add'],
     }
   ];
@@ -174,11 +174,11 @@ cls.WatchesView = function(id, name, container_class)
   this._menu_editable_items =
   [
     {
-      label: "Edit",
+      label: ui_strings.S_LABEL_EDIT_WATCH,
       handler: this._handlers['edit'],
     },
     {
-      label: "Delete",
+      label: ui_strings.S_LABEL_DELETE_WATCH,
       handler: this._handlers['delete'],
     }
   ]
