@@ -13,7 +13,7 @@ templates.cookie_manager = {
         ],
       "class", "ellipsis_cont"
     ];
-    if(typeof elem === "string")
+    if (typeof elem === "string")
     {
       template.push("title", elem);
     }
@@ -47,7 +47,7 @@ templates.cookie_manager = {
      "name", name,
      "handler", "cookiemanager-input-field"
    ];
-   if(checked)
+   if (checked)
    {
      template.push("checked", "checked");
    }
@@ -68,7 +68,7 @@ templates.cookie_manager = {
     var domain;
     for (var runtime_id in runtimes) {
       domain = runtimes[runtime_id].hostname || ""; // avoids undefined values where hostname is non-existent
-      if(!domains[domain])
+      if (!domains[domain])
       {
         domains[domain] = { runtimes: [runtime_id] };
         domain_count++;
@@ -77,12 +77,12 @@ templates.cookie_manager = {
       {
         domains[domain].runtimes.push(runtime_id);
       }
-      if(runtime_id == current_runtime)
+      if (runtime_id == current_runtime)
       {
         domains[domain].is_current = true;
       }
     };
-    if(domain_count <= 1) {
+    if (domain_count <= 1) {
       return [
         [
           "input",
@@ -97,7 +97,7 @@ templates.cookie_manager = {
       var option_arr = [];
       for (var id in domains) {
         var option = ["option", id, "value", domains[id].runtimes.toString()];
-        if(domains[id].is_current)
+        if (domains[id].is_current)
         {
           option = option.concat(["selected", "selected"]);
         }
@@ -137,7 +137,7 @@ templates.cookie_manager = {
     // todo: Use .toLocaleString instead, but only when it's consistent with the date picker. Helps a lot though.
     var expires_container = ["div", "id", "expires_container_"+objectref, "title", parsed_date.toUTCString()];
     var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString())
-    if(date_in_seconds === 0)
+    if (date_in_seconds === 0)
     {
       return this.edit_mode_switch_container(this.expires_0values(), edit_elem);
     }
@@ -162,7 +162,7 @@ templates.cookie_manager = {
     return ["span", "-", "class", "replaced-val"];
   },
   boolean_value: function(bool) {
-    if(bool)
+    if (bool)
     {
       return ["div", "class", "check"];
     }

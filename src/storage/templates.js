@@ -48,7 +48,7 @@ window.templates.storage = function(storages, storage_id, storage_title)
             ['th',
               this.storage_button({title: ui_strings.S_LABEL_STORAGE_ADD, handler: 'storage-add-key'}),
               this.storage_button({title: ui_strings.S_LABEL_STORAGE_UPDATE, handler: 'storage-update'}),
-              this.storage_button({label: ui_strings.S_BUTTON_STORAGE_DELETE_ALL, handler: 'storage-delete-all'}),
+              this.storage_button({title: ui_strings.S_BUTTON_STORAGE_DELETE_ALL, handler: 'storage-delete-all'}),
               'colspan', '3',
               'class', 'single-control'
             ]

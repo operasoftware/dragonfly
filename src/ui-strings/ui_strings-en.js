@@ -20,7 +20,7 @@ window.ui_strings.lang_code = "en";
 /* DESC: View for script debugging. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_SCRIPTS = 'Scripts';
 /* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Document';
+ui_strings.M_VIEW_LABEL_COMPOSITE_DOM = 'Documents';
 /* DESC: View for error log. */
 ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE = 'Errors';
 /* DESC: View for exported code. */
@@ -599,6 +599,16 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE = "Remove cookie";
 ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES = "Remove cookies";
 /* DESC: Context menu entry that removes cookies of specific group */
 ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Remove cookies of %s";
+/* DESC: Context menu entry that brings up "Add watch" UI, Label for "Add watch" button */
+ui_strings.S_LABEL_ADD_WATCH = "Add watch";
+/* DESC: Context menu entry that brings up "Edit" UI */
+ui_strings.S_LABEL_EDIT_WATCH = "Edit";
+/* DESC: Context menu entry that removes watch */
+ui_strings.S_LABEL_DELETE_WATCH = "Delete";
+/* DESC: Button tooltip  */
+ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP = "Move highlight up";
+/* DESC: Button tooltip  */
+ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN = "Move highlight down";
 
 /* DESC: Time strings that express in how long something will happen */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";

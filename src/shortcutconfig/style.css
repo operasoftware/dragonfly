@@ -33,18 +33,13 @@
 .shortcuts-config filter {
   font-size: inherit;
   vertical-align: middle;
-  box-sizing: border-box;
-  background-color: rgba(255,255,255,0.1);
+  background-color: transparent;
   border: 1px solid rgba(255,255,255,0.5);
   box-shadow: none;
   border-radius: 3px;
-
+  padding: 1px 1px 1px 20px;
   margin: 2px;
   color: #fff;
-}
-
-.shortcuts-config filter input {
-  background: yellow /* FIXME */
 }
 
 .shortcuts
@@ -103,4 +98,8 @@
 
 .shortcuts .controls {
   border: none;
+}
+
+.shortcuts-config ul {
+    clear: both;
 }

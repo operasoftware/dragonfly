@@ -29,7 +29,7 @@ cls.WatchesView = function(id, name, container_class)
       ['div'],
       ['div',
         ['button',
-          [['img', 'src', 'ui-images/icons/icon_add_small.png'], ['span', 'Add']],
+          ['span', ui_strings.S_LABEL_ADD_WATCH],
           'handler', 'watches-add'
         ],
         'class', 'watches-controls padding'
@@ -61,9 +61,14 @@ cls.WatchesView = function(id, name, container_class)
   {
     if (this.mode == MODE_EDIT)
     {
+      if (this._add_watches_button == event.target)
+      {
+        return false;
+      }
       if (this._editor.onclick(event))
       {
         this.mode = MODE_DEFAULT;
+        this._add_watches_button.disabled = false;
         return true;
       }
       return false;
@@ -78,6 +83,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       this.mode = MODE_EDIT;
       this._editor.edit(event, ele);
+      this._add_watches_button.disabled = true;
     }
   }.bind(this);
 
@@ -97,6 +103,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       this._editor.submit();
       this._check_no_content();
+      this._add_watches_button.disabled = false;
       return false;
     }
   }.bind(this);
@@ -107,6 +114,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       this._editor.cancel();
       this._check_no_content();
+      this._add_watches_button.disabled = false;
       return false;
     }
   }.bind(this);
@@ -126,6 +134,7 @@ cls.WatchesView = function(id, name, container_class)
         var key = proto.render(this._tmpl_new_prop()).firstElementChild;
         this.mode = MODE_EDIT;
         this._editor.edit(event, key);
+        this._add_watches_button.disabled = true;
       }
     }
   }.bind(this);
@@ -157,7 +166,7 @@ cls.WatchesView = function(id, name, container_class)
   this._menu_common_items =
   [
     {
-      label: "Add watch",
+      label: ui_strings.S_LABEL_ADD_WATCH,
       handler: this._handlers['add'],
     }
   ];
@@ -165,11 +174,11 @@ cls.WatchesView = function(id, name, container_class)
   this._menu_editable_items =
   [
     {
-      label: "Edit",
+      label: ui_strings.S_LABEL_EDIT_WATCH,
       handler: this._handlers['edit'],
     },
     {
-      label: "Delete",
+      label: ui_strings.S_LABEL_DELETE_WATCH,
       handler: this._handlers['delete'],
     }
   ]
@@ -211,6 +220,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       container.clearAndRender(this._tmpl_main());
       this._watch_container = container.firstElementChild;
+      this._add_watches_button = container.getElementsByTagName('button')[0];
     }
     var tmpl = window.templates.inspected_js_object(this._data, false, null);
     this._watch_container.clearAndRender(tmpl);
@@ -220,6 +230,7 @@ cls.WatchesView = function(id, name, container_class)
   this.ondestroy = function()
   {
     this._watch_container = null;
+    this._add_watches_button = null;
   };
 
   this.add_watch = function(key, uid)

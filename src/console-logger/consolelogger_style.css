@@ -61,18 +61,19 @@
   width: 20px;
   height: 20px;
   display: inline-block;
+  background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
 }
 
 .error-console .severity.debug {
-  background-image: url('../ui-images/error-console-default.png');
-}
-
-.error-console .severity.verbose {
-  background-image: url('../ui-images/error-console-default.png');
+  background-image: url('../ui-images/error-console-info.png');
 }
 
 .error-console .severity.information {
-  background-image: url('../ui-images/error-console-default.png');
+  background-image: url('../ui-images/error-console-info.png');
+}
+
+.error-console .severity.verbose {
+  background-image: url('../ui-images/error-console-warning.png');
 }
 
 .error-console .severity.error {

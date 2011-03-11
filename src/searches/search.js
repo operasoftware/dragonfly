@@ -250,13 +250,13 @@ Search.prototype = new function()
                            handler: this._view_id + '-move-highlight-up',
                            type: "search_control",
                            class: "search-move-highlight-up",
-                           title: "Move highlight up"
+                           title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP
                          },
                          {
                            handler: this._view_id + '-move-highlight-down',
                            type: "search_control",
                            class: "search-move-highlight-down",
-                           title: "Move highlight down"
+                           title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
                          },
                          {
                            handler: this._view_id + '-simple-text-search',

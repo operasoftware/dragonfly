@@ -258,7 +258,6 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
   (
     'inspection',
     [
-      'show-prototypes',
       'show-non-enumerables',
       'show-default-nulls-and-empty-strings',
     ]
