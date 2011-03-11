@@ -450,8 +450,8 @@ cls.ReplService = function(view, data)
     if (this._prev_selected) {
       magicvars.push(["$1", this._prev_selected]);
     }
-    this._edservice.requestEval(tag, [rt_id, thread, frame, cooked, magicvars]);
-
+    var wantdebugging = 1; // with this flag, debugger statements and stuff works from repl
+    this._edservice.requestEval(tag, [rt_id, thread, frame, cooked, magicvars, wantdebugging]);
   };
 
   this._get_host_info = function()
