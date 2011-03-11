@@ -467,7 +467,10 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._clear_container = function()
   {
-    this._container.innerHTML = "";
+    if(this._container)
+    {
+      this._container.innerHTML = "";
+    }
   }
 
   this._before_table_render = function(message)
