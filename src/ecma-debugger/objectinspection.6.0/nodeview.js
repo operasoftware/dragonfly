@@ -60,7 +60,6 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
   (
     'dom_attrs',
     [
-      'inspection.show-prototypes',
       'inspection.show-non-enumerables',
       'inspection.show-default-nulls-and-empty-strings',
     ]
