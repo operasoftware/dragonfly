@@ -1,5 +1,6 @@
-﻿.cookie_manager .sortable-table input[type=text], .cookie_manager .add-cookie-form input[type=text] {
-  width: 99%; border: 1px solid #CCC;
+﻿.cookie_manager .sortable-table input[type=text] {
+  width: 100%;
+  border: none;
 }
 
 .cookie_manager .replaced-val,
@@ -16,8 +17,8 @@
 
 .cookie_manager .edit_container {
   display: none;
-  margin-top: -2px;
-  margin-left: -15px;
+  margin: -3px 0 -1px -1px;
+  position: relative;
 }
 
 .cookie_manager .edit_mode .edit_container {
