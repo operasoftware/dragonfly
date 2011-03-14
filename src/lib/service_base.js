@@ -38,7 +38,6 @@ window.cls.ServiceBase = function ()
       {
         this._expose_method(parseInt(cmd_id), map[cmd_id].name);
       };
-      this.is_implemented = true;
       return true;
     }
     return false;

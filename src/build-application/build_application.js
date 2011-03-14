@@ -111,7 +111,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
           {
             // service_description is a dict of services 
             // with name and version for each service
-            builder(service, service_descriptions);
+            // return false if the service shall not be enabled
+            window.services[service_name].is_implemented = builder(service, service_descriptions);
           }
         }
       }

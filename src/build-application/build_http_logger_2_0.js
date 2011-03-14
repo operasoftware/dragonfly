@@ -8,7 +8,7 @@ window.app.builders.HttpLogger["2.0"] = function(service, service_descriptions)
 {
   if (service_descriptions && "resource-manager" in service_descriptions)
   {
-    return;
+    return false;
   }
 
   var namespace = cls.HttpLogger && cls.HttpLogger["2.0"];
@@ -20,5 +20,6 @@ window.app.builders.HttpLogger["2.0"] = function(service, service_descriptions)
     namespace.RequestListView.prototype = ViewBase;
     new namespace.RequestListView('request_list', ui_strings.M_VIEW_LABEL_REQUEST_LOG, 'scroll');
     namespace.RequestListView.create_ui_widgets();
+    return true;
   }
 }

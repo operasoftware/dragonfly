@@ -15,5 +15,6 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
     namespace.ConsoleView.create_ui_widgets();
     // TODO proper namespace handling for views
     ErrorConsoleView.roughViews.createViews();
+    return true;
   }
 };

@@ -11,4 +11,5 @@ window.app.builders.Exec["2.0"] = function(service)
   namespace.ColorPicker.prototype = ViewBase;
   new namespace.ColorPicker('color_picker', 'Color Picker', 'scroll');
   namespace.ColorPicker.create_ui_widget();
+  return true;
 }

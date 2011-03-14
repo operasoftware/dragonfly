@@ -15,5 +15,6 @@ window.app.builders.WindowManager["2.0"] = function(service)
     window.windowsDropDown = new namespace.WindowsDropDown();
     namespace.DebuggerMenu.prototype = new CstSelectWithAction();
     new namespace.DebuggerMenu('debugger-menu', 'debugger-menu');
+    return true;
   }
 }

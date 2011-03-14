@@ -167,6 +167,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     /* main view doesn't really exist */
     cls.MainView.create_ui_widgets();
 
+    return true;
   }
 
 }

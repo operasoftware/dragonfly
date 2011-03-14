@@ -25,5 +25,6 @@ window.app.builders.CookieManager["1.1"] = function(service)
   {
     new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", ui_strings.M_VIEW_LABEL_COOKIES, "scroll cookie_manager", cls.CookieManager["1.1"].CookieManagerData, service.version);
     cls.CookieManager.create_ui_widgets();
+    return true;
   }
 }
