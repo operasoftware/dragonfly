@@ -21,6 +21,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     ActionHandlerInterface.apply(this);
     this._handlers["submit"] = this._submit.bind(this);
     this._handlers["cancel"] = this._cancel.bind(this);
+    this._handlers["remove-item"] = this._remove_item.bind(this);
     ActionBroker.get_instance().register_handler(this);
 
     this.data = data_reference;
@@ -340,6 +341,18 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this.data.refetch();
     this.mode = MODE_DEFAULT;
+    return false;
+  }
+  
+  this._remove_item = function(event, target)
+  {
+    var selection = this._table_elem.querySelectorAll(".selected");
+    var selected_cookie_objects = [];
+    for (var i=0, selected_node; selected_node = selection[i]; i++) {
+      var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
+      selected_cookie_objects.push(sel_cookie_obj);
+    };
+    this.data.remove_cookies(selected_cookie_objects);
     return false;
   }
 
