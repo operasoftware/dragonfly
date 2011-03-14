@@ -51,7 +51,7 @@ window.cls.DOMSerializer.prototype = new function()
     {
       count--;
     }
-    while(count)
+    while(count > -1)
     {
       ret += INDENT;
       count--;
