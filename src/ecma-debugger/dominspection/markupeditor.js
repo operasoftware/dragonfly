@@ -189,7 +189,7 @@ var DOMMarkupEditor = function()
       var scroll_position = new Element.ScrollPosition(nav_target);
       var cb = function()
       {
-        nav_target.textContent = "";
+        nav_target.textContent = "\u00a0";
         window.views.dom.update();
         scroll_position.reset(document.getElementById('target-element'));
       }
