@@ -2,11 +2,28 @@
 
 window.cls.FriendlyPrinter = function()
 {
+  /*
+    If you like to add more types to be friendly printed look into
+        this._friendly_print_host
+    to get the friendly string representation and
+        this.templates
+    to print it on the client side.
+  */
+
   const
   VALUE_LIST = 2,
   OBJECT_VALUE = 1,
   OBJECT_ID = 0,
   MAX_ARGS = 60;
+
+  /*
+    - create an object list
+    - chunk the list
+    - check each object to be friendly printed
+    - examine each list chunk
+    - examine each object of the list chunk
+    - concatenate the chunks
+  */
 
   this._friendly_print = function(obj_list, rt_id, thread_id, frame_id, fallback)
   {
@@ -26,8 +43,9 @@ window.cls.FriendlyPrinter = function()
       var call_list = obj_ids.map(this._obj_id2str).join(',');
       var arg_list = obj_ids.reduce(this._create_arg_list, []);
       var tag = this._tagman.set_callback(this,
-                                          this._handle_queue,
+                                          this._handle_chunk_list,
                                           [
+                                            rt_id,
                                             processed_queue,
                                             index,
                                             queue_length,
@@ -39,50 +57,153 @@ window.cls.FriendlyPrinter = function()
     }, this);
   };
 
-  this._friendly_print_chunked_cb = function(obj_list, rt_id, obj_ids,
-                                             fallback, queue)
+  this._handle_chunk_list = function(status, message,
+                                     rt_id, queue, index, queue_length, cb)
   {
-    const
-    STATUS = 0,
-    MESSAGE = 1,
-    VALUE = 2,
-    VALUE_LIST = 2,
-    DF_INTERN_TYPE = 3,
-    FRIENDLY_PRINTED = 6,
-    OBJECT_VALUE = 1;
-
-    var ret = queue.reduce(function(list, response)
+    // This function handles the response of _friendly_print_host.
+    // That function returns a list of null or lists with type specific strings
+    // to friendly-print an object.
+    // Here we make the examine call for the returned list.
+    const OBJECT_ID = 0, OBJECT_VALUE = 3;
+    if (status || !message[OBJECT_VALUE])
     {
-      var status = response[STATUS], msg = response[MESSAGE];
-      if (status || msg[STATUS] != "completed")
-      {
-        opera.postError('Pretty printing failed: ' + JSON.stringify(msg));
-        return null;
-      }
-      if(list)
-      {
-        list.extend(JSON.parse(msg[VALUE]));
-      }
-      return list;
-    }, []);
-
-    if (ret)
-    {
-      obj_list.forEach(function(value, index)
-      {
-        value[FRIENDLY_PRINTED] = ret[index];
-      });
+      opera.postError('Pretty printing failed: ' + JSON.stringify(message));
+      cb(null);
     }
-    fallback();
+    else
+    {
+      var tag = this._tagman.set_callback(this, this._handle_examined_chunk_list,
+                                          [rt_id, queue, index, queue_length, cb]);
+      var msg = [rt_id, [message[OBJECT_VALUE][OBJECT_ID]]];
+      this._service.requestExamineObjects(tag, msg);
+    }
+  };
+
+  this._handle_examined_chunk_list = function(status, message,
+                                              rt_id, queue, index, queue_length, cb)
+  {
+    // This function handles the examined list returned by _friendly_print_host.
+    // Here we have to examine the objects in the returned list.
+    if (status)
+    {
+      opera.postError('Pretty printing failed: ' + JSON.stringify(message));
+      cb(null);
+    }
+    else
+    {
+      const
+      OBJECT_CHAIN_LIST = 0,
+      OBJECT_LIST = 0,
+      PROPERTY_LIST = 1,
+      OBJECT_ID = 0,
+      OBJECT_VALUE = 3,
+      NAME = 0;
+
+      var prop_list = message &&
+                      (message = message[OBJECT_CHAIN_LIST]) &&
+                      (message = message[0]) &&
+                      (message = message[OBJECT_LIST]) &&
+                      (message = message[0]) &&
+                      (message = message[PROPERTY_LIST]) || [];
+      queue[index] =
+      {
+        is_examined: false,
+        prop_list: prop_list.reduce(function(list, prop)
+        {
+          if (prop[NAME].isdigit())
+          {
+            list[prop[NAME]] = prop[OBJECT_VALUE] &&
+                               prop[OBJECT_VALUE][OBJECT_ID] || null;
+          }
+          return list;
+        }, [])
+      };
+      var object_id_list = queue[index].prop_list.filter(Boolean);
+      if (object_id_list.length)
+      {
+        var tag = this._tagman.set_callback(this, this._handle_queue,
+                                            [queue, index, queue_length, cb]);
+        this._service.requestExamineObjects(tag, [rt_id, object_id_list]);
+      }
+      else
+      {
+        this._handle_queue(0, null, queue, index, queue_length, cb);
+      }
+    }
   };
 
   this._handle_queue = function(status, message, queue, index, queue_length, cb)
   {
-    queue[index] = [status, message];
-    if (queue.filter(Boolean).length == queue_length)
+    // This function handles the examined objects of the examined list
+    // returned by _friendly_print_host.
+    // The object_id of the examined list gets replaced
+    // by the returned property lists for each object.
+    // If all chunks are examined, the callback is called.
+    if (status)
+    {
+      cb(null);
+    }
+    else
+    {
+      const
+      OBJECT_CHAIN_LIST = 0,
+      OBJECT_LIST = 0,
+      OBJECT_VALUE = 0,
+      OBJECT_ID = 0,
+      PROPERTY_LIST = 1,
+      NAME = 0,
+      TYPE = 1,
+      VALUE = 2;
+
+      var chuncked_list = queue[index].prop_list;
+      var object_list = message && message[OBJECT_CHAIN_LIST];
+      if (object_list)
+      {
+        object_list.forEach(function(object_chain)
+        {
+          var object = object_chain[OBJECT_LIST][0];
+          var object_id = object[OBJECT_VALUE][OBJECT_ID];
+          var index = chuncked_list.indexOf(object_id);
+          chuncked_list[index] = object[PROPERTY_LIST].reduce(function(list, prop)
+          {
+            if (prop[NAME].isdigit())
+            {
+              list[prop[NAME]] = prop[TYPE] == "number" ?
+                                 parseInt(prop[VALUE]) :
+                                 prop[VALUE];
+            }
+            return list;
+          }, []);
+        });
+      }
+      queue[index].is_examined = true;
+    }
+    for (var i = 0; i < queue.length && queue[i].is_examined; i++);
+    if (i == queue.length)
     {
       cb(queue);
     }
+  };
+
+  this._friendly_print_chunked_cb = function(obj_list, rt_id, obj_ids,
+                                             fallback, queue)
+  {
+    const FRIENDLY_PRINTED = 6;
+
+    // concatenate the chunks to one list
+    var friendly_list = queue && queue.reduce(function(list, friendly_list_chunk)
+    {
+      return list.extend(friendly_list_chunk.prop_list);
+    }, []);
+
+    if (friendly_list)
+    {
+      obj_list.forEach(function(value, index)
+      {
+        value[FRIENDLY_PRINTED] = friendly_list[index];
+      });
+    }
+    fallback();
   };
 
   this._friendly_print_host = function(list)
@@ -113,7 +234,7 @@ window.cls.FriendlyPrinter = function()
       }
       return null;
     });
-    return JSON.stringify(ret);
+    return ret;
   };
 
   this.templates = function()
