@@ -422,7 +422,6 @@ cls.ReplService = function(view, data)
     {
       this._handle_hostcommand(cooked);
     }
-
   };
 
   this.get_selected_objects = function()
@@ -454,7 +453,6 @@ cls.ReplService = function(view, data)
       frame = 0;
     }
 
-    var tag = this._tagman.set_callback(this, this._on_eval_done_bound, [rt_id, thread, frame]);
     var magicvars = [];
     if (this._cur_selected) {
       magicvars.push(["$0", this._cur_selected]);
@@ -462,9 +460,21 @@ cls.ReplService = function(view, data)
     if (this._prev_selected) {
       magicvars.push(["$1", this._prev_selected]);
     }
-    var wantdebugging = 1; // with this flag, debugger statements and stuff works from repl
-    this._edservice.requestEval(tag, [rt_id, thread, frame, cooked, magicvars, wantdebugging]);
+
+    var msg = [rt_id, thread, frame, cooked, magicvars];
+    this._eval(msg, this._on_eval_done_bound, [rt_id, thread, frame]);
   };
+
+  this._eval = function(msg, callback, cbargs)
+  {
+    var tag = this._tagman.set_callback(null, callback, cbargs);
+    var wantdebugging = 1;
+    if (msg.length == 5)
+    {
+      msg.push(wantdebugging);
+    }
+    this._edservice.requestEval(tag, msg);
+  }
 
   this._get_host_info = function()
   {
@@ -508,3 +518,15 @@ cls.ReplService = function(view, data)
 
   this.init(view, data);
 };
+
+cls.ReplServicePre6_3 = function(view, data) {
+  cls.ReplService.call(this, view, data);
+
+  this._eval = function(msg, callback, cbargs)
+  {
+    var tag = this._tagman.set_callback(null, callback, cbargs);
+    this._edservice.requestEval(tag, msg);
+  }
+}
+
+cls.ReplServicePre6_3.prototype = cls.ReplService;
