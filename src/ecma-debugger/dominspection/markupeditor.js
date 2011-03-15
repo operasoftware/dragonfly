@@ -48,8 +48,6 @@ var DOMMarkupEditor = function()
     dom = null,
     cb = null;
 
-
-
     while( container 
             && !/container/i.test(container.nodeName) 
             && ( container = container.parentElement ) );
@@ -81,10 +79,11 @@ var DOMMarkupEditor = function()
 
   this.oninput = function(event)
   {
-    
-    var 
+    var
     script = "",
     state = this.context_cur;
+
+    window.hostspotlighter.clearSpotlight();
 
     if( this.textarea_container.parentElement && state.host_target )
     {
@@ -92,7 +91,7 @@ var DOMMarkupEditor = function()
       state.outerHTML = this.textarea.value;
       var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
       services['ecmascript-debugger'].requestEval
-      ( 
+      (
         0, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
       );
     }
