@@ -189,9 +189,9 @@ var DOMMarkupEditor = function()
       var scroll_position = new Element.ScrollPosition(nav_target);
       var cb = function()
       {
-        nav_target.textContent = "\u00a0";
         window.views.dom.update();
         scroll_position.reset(document.getElementById('target-element'));
+        nav_target.textContent = "";
       }
       this.context_enter.model.collapse(state.parent_obj_id);
       this.context_enter.model.expand(cb, state.parent_obj_id, 'children');
