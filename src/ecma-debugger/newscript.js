@@ -97,6 +97,13 @@ window.cls.NewScript.prototype = new function()
     var NL = '\n';
     var CR = '\r';
 
+    var eol = NL;
+    // old mac end of lines
+    if (/\r(?!\n)/.test(input))
+    {
+      eol = CR;
+    }
+
     var line_count = 0;
 
     var temp_count = 0;
@@ -123,17 +130,17 @@ window.cls.NewScript.prototype = new function()
       // line if the newline is not escaped 
       var temp_count = 0;
       var is_cr = 0;
-      var nl_cur = string.indexOf(NL, ref_pos + 1);
+      var nl_cur = string.indexOf(eol, ref_pos + 1);
       do
       {
         // newline was escaped
         if (temp_count && (nl_cur == ref_pos))
-          nl_cur = string.indexOf(NL, nl_cur + 1);
+          nl_cur = string.indexOf(eol, nl_cur + 1);
         ref_pos = string.indexOf(ref_val, ref_pos + 1);
         if (nl_cur > -1 && nl_cur < ref_pos)
         {
           ref_pos = nl_cur;
-          is_cr = string[nl_cur - 1] == CR ? 1 : 0;
+          is_cr = (eol == NL && string[nl_cur - 1] == CR) ? 1 : 0;
         }
         temp_count = 0;
         while (string.charAt(ref_pos - temp_count - 1 - is_cr) == '\\')
@@ -182,7 +189,7 @@ window.cls.NewScript.prototype = new function()
         while( line_cur <= min_cur )
         {
           line_arr[line_count++] = line_cur;
-          if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
+          if( ( line_cur = string.indexOf(eol, line_cur) + 1 ) == 0 )
           {
             if( line_arr[ line_arr.length - 1 ] < string.length )
             {
@@ -203,7 +210,7 @@ window.cls.NewScript.prototype = new function()
               {
                 line_arr[line_count] = line_cur;
                 state_arr[line_count++] = SINGLE_QUOTE;
-                if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
+                if( ( line_cur = string.indexOf(eol, line_cur) + 1 ) == 0 )
                 {
                   if( line_arr[ line_arr.length - 1 ] < string.length )
                   {
@@ -225,7 +232,7 @@ window.cls.NewScript.prototype = new function()
               {
                 line_arr[line_count] = line_cur;
                 state_arr[line_count++] = DOUBLE_QUOTE;
-                if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
+                if( ( line_cur = string.indexOf(eol, line_cur) + 1 ) == 0 )
                 {
                   if( line_arr[ line_arr.length - 1 ] < string.length )
                   {
@@ -244,11 +251,11 @@ window.cls.NewScript.prototype = new function()
             {
               case '/':
               {
-                cur_cur = string.indexOf('\n', slash_cur+2);
+                cur_cur = string.indexOf(eol, slash_cur+2);
                 while( line_cur < cur_cur )
                 {
                   line_arr[line_count++] = line_cur;
-                  if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
+                  if( ( line_cur = string.indexOf(eol, line_cur) + 1 ) == 0 )
                   {
                     if( line_arr[ line_arr.length - 1 ] < string.length )
                     {
@@ -275,7 +282,7 @@ window.cls.NewScript.prototype = new function()
                     line_arr[line_count] = line_cur;
                     state_arr[line_count++] = COMMENT;
                     
-                    if ((line_cur = string.indexOf('\n', line_cur) + 1) == 0)
+                    if ((line_cur = string.indexOf(eol, line_cur) + 1) == 0)
                     {
                       if (line_arr[ line_arr.length - 1 ] < string.length)
                       {
@@ -341,7 +348,7 @@ window.cls.NewScript.prototype = new function()
                     {
                       line_arr[line_count] = line_cur;
                       state_arr[line_count++] = REG_EXP;
-                      if( ( line_cur = string.indexOf('\n', line_cur) + 1 ) == 0 )
+                      if( ( line_cur = string.indexOf(eol, line_cur) + 1 ) == 0 )
                       {
                         if( line_arr[ line_arr.length - 1 ] < string.length )
                         {
@@ -367,7 +374,7 @@ window.cls.NewScript.prototype = new function()
       {
         if( !line_cur && !line_arr.length )
         {
-          line_cur = string.indexOf('\n', line_cur) + 1 ;
+          line_cur = string.indexOf(eol, line_cur) + 1 ;
           if( line_cur  || string.length )
           {
             line_arr[line_count++] = 0;
@@ -376,7 +383,7 @@ window.cls.NewScript.prototype = new function()
         while( line_cur )
         {
           line_arr[line_count++] = line_cur;
-          line_cur = string.indexOf('\n', line_cur) + 1;
+          line_cur = string.indexOf(eol, line_cur) + 1;
         }
         if( line_arr[ line_arr.length - 1 ] < string.length )
         {
