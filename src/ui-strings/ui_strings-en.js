@@ -732,7 +732,7 @@ ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\
 /* DESC: Description of the "help" command in the repl */
 ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 /* DESC: Description of the "jquery" command in the repl */
-ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jquery in the active tab";
+ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jQuery in the active tab";
 
 /* DESC: Remote debug guide, connection setup */
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debugging:";
