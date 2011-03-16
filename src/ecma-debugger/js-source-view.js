@@ -766,7 +766,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         __disregard_scroll_event = true;
         document.getElementById(scroll_container_id).scrollTop =
-          target_line * context['line-height'];
+          (target_line - 1) * context['line-height'];
         this.showLine(__current_script.script_id, target_line, null, null, false, true);
       }
     }
