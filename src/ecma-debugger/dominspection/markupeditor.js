@@ -570,6 +570,8 @@ var DOMMarkupEditor = function()
     }
     scroll_position.reset(null, this.textarea);
     this.textarea.selectionEnd = this.textarea.selectionStart = 0;
+    // it seems it needs to be set twice to get set correctly
+    this.set_textarea_dimensions();
   }
 }
 
