@@ -139,10 +139,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
-    if (!this._update_expiry_interval)
-    {
-      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
-    }
   };
 
   this.createView = function(container)
@@ -150,6 +146,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._container = container;
     var storage_data = this.data.get_cookies();
     this._sortable_table.data = storage_data;
+    if (typeof this._update_expiry_interval !== "number")
+    {
+      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
+    }
     this._before_table_render();
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render();
@@ -266,9 +266,10 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.ondestroy = function()
   {
     this._container = null;
-    if (this._update_expiry_interval)
+    if (typeof this._update_expiry_interval === "number")
     {
-      this._update_expiry_interval = clearInterval(this._update_expiry_interval);
+      clearInterval(this._update_expiry_interval);
+      this._update_expiry_interval = null;
     }
   };
 
