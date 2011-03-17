@@ -152,6 +152,26 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  this._set_style = function()
+  {
+    context['line-height'] = defaults['js-source-line-height'];
+    context['scrollbar-width'] = defaults['scrollbar-width'];
+    var style = null;
+    var sheets = document.styleSheets;
+    if (style = sheets.getDeclaration('#js-source-scroll-container'))
+    {
+      style.width = defaults['scrollbar-width'] + 'px';
+    }
+    if (style = sheets.getDeclaration('#js-source-content div'))
+    {
+      style.lineHeight = style.height = context['line-height'] + 'px'; 
+    }
+    if (style = sheets.getDeclaration('#js-source-line-numbers li'))
+    {
+      style.height = context['line-height'] + 'px'; 
+    }
+  }
+
   this.createView = function(container)
   {
     // TODO this must be refactored
@@ -175,15 +195,9 @@ cls.JsSourceView = function(id, name, container_class)
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+
       "</div>";
-    if( !context['line-height'] )
+    if (!context['line-height'])
     {
-      context['line-height'] = defaults['js-source-line-height'];
-      context['scrollbar-width'] = defaults['scrollbar-width'];
-      var style = document.styleSheets.getDeclaration('#js-source-scroll-container');
-      if (style)
-      {
-        style.width = defaults['scrollbar-width'] + 'px';
-      }
+      this._set_style();
     }
     context['container-height'] = parseInt(container.style.height);
     var set = null, i = 0;
@@ -783,7 +797,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   this._onmonospacefontchange = function(msg)
   {
-    // opera.postError(window.defaults['js-source-line-height'])
+    this._set_style();
+    if (this.isvisible() && __container)
+    {
+      __view_is_destroyed = true;
+      this.createView(__container);
+    }
   };
 
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)

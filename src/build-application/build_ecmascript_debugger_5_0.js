@@ -63,7 +63,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
-    new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
+    new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source mono');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
 

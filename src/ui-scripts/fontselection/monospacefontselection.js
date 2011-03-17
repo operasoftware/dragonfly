@@ -61,7 +61,7 @@ cls.MonospaceFontView = function(id, name, container_class)
     }
   };
 
-  this.set_default_font_style = function()
+  this.set_default_font_style = function(event, target)
   {
     var style_ele = document.getElementById(STYLE_ELE_ID);
     if (style_ele)
@@ -73,6 +73,15 @@ cls.MonospaceFontView = function(id, name, container_class)
     {
       setting.set(key, cls.MonospaceFontView.preset_font[key]);
     }
+    while (target && target.nodeName.toLowerCase() != "setting-composite")
+    {
+      target = target.parentNode;
+    }
+    if (target)
+    {
+      target.re_render(window.templates.monospace_font_selection(setting));
+    }
+    window.ui_framework.set_default_properties('test-line-height');
     window.messages.post('monospace-font-changed');
   };
 

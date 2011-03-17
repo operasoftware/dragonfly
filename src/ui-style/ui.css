@@ -5,11 +5,11 @@ viewport, .info-box {
   color: #444;
 }
 
-.js-source, .markup-source, .console-output, .console-output pre, .console-input, 
+.markup-source, .console-output, .console-output pre, .console-input, 
 .console-input textarea, property, rule, font-face-rule, page-rule, import-rule, 
 charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, 
 .storage-table .new-key, .repl-input, .repl-output, .js-search-results-script, code,
-css-new-style-sheet, .js-resource, .markup-resource, .mono {
+css-new-style-sheet, .markup-resource, .mono {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   line-height: 15px;

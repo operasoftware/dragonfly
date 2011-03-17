@@ -171,10 +171,10 @@ var ui_framework = new function()
 
   resolve_map_2.markup = "" +
   "<div> " +
-    "<div class='js-source'> " +
+    "<div class='js-source mono'> " +
+      "<div id='test-line-height' class='mono'>test</div> " +
       "<div id='js-source-scroll-content'> " +
         "<div id='js-source-content'> " +
-          "<div id='test-line-height'>test</div> " +
           "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +
             "<div id='test-scrollbar-width' style='height:300px'></div> " +
           "</div> " +
@@ -209,7 +209,7 @@ var ui_framework = new function()
     container.innerHTML = resolve_map_2.markup;
     for (var set = null, i = 0; set = resolve_map_2[i]; i++)
     {
-      if (!test || test == set)
+      if (!test || test == set.id)
       {
         defaults[set.target] = set.getValue();
       }
