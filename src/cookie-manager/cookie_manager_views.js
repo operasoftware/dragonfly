@@ -19,9 +19,15 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.init(id, name, container_class, null, "cookiemanager-container");
 
     ActionHandlerInterface.apply(this);
-    this._handlers["submit"] = this._submit.bind(this);
-    this._handlers["cancel"] = this._cancel.bind(this);
-    this._handlers["remove-item"] = this._remove_item.bind(this);
+    this._handlers = {
+      "submit": this._submit.bind(this),
+      "cancel": this._cancel.bind(this),
+      "remove-item": this._remove_item.bind(this),
+      "select-row": this.select_row.bind(this),
+      "enter-edit-mode": this.enter_edit_mode.bind(this),
+      "check-to-exit-edit-mode": this.check_to_exit_edit_mode.bind(this),
+      "add-cookie": this.click_add_cookie_button.bind(this)
+    };
     ActionBroker.get_instance().register_handler(this);
 
     this.data = data_reference;
@@ -207,7 +213,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           options.push(
             {
               label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-              handler: this.enter_edit_mode.bind(this, sel_cookie_obj._objectref)
+              handler: this.enter_edit_mode.bind(this)
             }
           );
         }
@@ -220,12 +226,11 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
           );
         }
-        // Add "Remove all from domain-and-path"
+        // Add "Remove all from protocol-domain-path"
         var runtime_id = sel_cookie_obj._rt_id;
         options.push(
           {
-            // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
             handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
           }
         );
@@ -273,22 +278,23 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   };
 
-  this.select_row = function(event, elem) // public just towards actions
+  this.select_row = function(event, target) // public just towards actions
   {
     var event = event || {};
+    this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
       * unselect everything while not doing multiple selection, which is when:
       *   cmd / ctrl key is pressed OR
       *   more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
+    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
         selected_node.removeClass("selected");
       };
     }
-    elem.addClass("selected");
+    target.addClass("selected");
   };
 
   this.click_add_cookie_button = function(event, target)
@@ -319,17 +325,19 @@ cls.CookieManager.CookieManagerViewBase = function()
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name=name]").focus();
-      this.select_row(null, inserted);
+      this.select_row(null, inserted); // todo: check if it's nicer if a added row does not get selected, but the class gives it a selection-like style
     }
   }
 
-  this.enter_edit_mode = function(objectref, event)
+  this.enter_edit_mode = function(event, target)
   {
     this.mode = MODE_EDIT;
     this._sortable_table.restore_columns(this._table_elem);
-    var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
-    this.select_row(event, row);
-    // Todo: focus input in clicked td if applicable
+    // can't directly work with target because restore_columns has renewed it
+    var objectref = target.getAttribute("data-object-id");
+    var target = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    this.select_row(event, target);
+    // todo: find input that is closest to the actual event.target and focus it
   }
 
   this._submit = function(event, target)
