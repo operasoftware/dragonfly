@@ -149,6 +149,23 @@ var ui_framework = new function()
         val += 5;
         return val;
       }
+    },
+    {
+      id: 'test-font-faces',
+      target: 'monospace-fonts',
+      getValue: function()
+      {
+        var spans = document.getElementById(this.id).getElementsByTagName('span');
+        return Array.prototype.map.call(spans, function(span)
+        {
+          var font = getComputedStyle(span, null).getPropertyValue('font-family');
+          if (font.toLowerCase().indexOf(span.title.toLowerCase()) != -1)
+          {
+            return span.title; 
+          }
+          return null;
+        }).filter(Boolean);
+      }
     }
   ];
 
@@ -170,7 +187,35 @@ var ui_framework = new function()
         "<cst-drop-down/> " +
       "</cst-select> " +
     "</toolbar> " +
+    "<div id='test-font-faces'>" +
+    [
+      "Menlo", 
+      "Dejavu Sans Mono", 
+      "Bitstream Vera Sans Mono", 
+      "Consolas", 
+      "Monaco", 
+      "Lucida Console",
+      "Courier New",
+    ].map(function(font)
+    {
+      return "<span title='" + font + "'style='font-family:" + font + "'>test</span>";
+    }).join('') +
   "</div>";
+
+  this.set_default_properties = function(test)
+  {
+    var container = viewport.appendChild(document.createElement('div'));
+    container.style.cssText = 'position:absolute;top:0;left:-1000px;';
+    container.innerHTML = resolve_map_2.markup;
+    for (var set = null, i = 0; set = resolve_map_2[i]; i++)
+    {
+      if (!test || test == set)
+      {
+        defaults[set.target] = set.getValue();
+      }
+    }
+    viewport.removeChild(container);
+  };
 
   this.setup = function()
   {
@@ -178,14 +223,7 @@ var ui_framework = new function()
     if( viewport )
     {
       UIBase.copyCSS(resolve_map);
-      var container = viewport.appendChild(document.createElement('div'));
-      container.style.cssText = 'position:absolute;top:0;left:-1000px;';
-      container.innerHTML = resolve_map_2.markup;
-      for( var set = null, i = 0; set = resolve_map_2[i]; i++ )
-      {
-        defaults[set.target] = set.getValue();
-      }
-      viewport.removeChild(container);
+      this.set_default_properties();
       // event handlers to resize the views
       new SlideViews(document);
     }

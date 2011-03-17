@@ -781,6 +781,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  this._onmonospacefontchange = function(msg)
+  {
+    // opera.postError(window.defaults['js-source-line-height'])
+  };
+
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
   {
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
@@ -805,6 +810,8 @@ cls.JsSourceView = function(id, name, container_class)
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
+  messages.addListener('monospace-font-changed', 
+                       this._onmonospacefontchange.bind(this));
   
   ActionBroker.get_instance().register_handler(this);
 }

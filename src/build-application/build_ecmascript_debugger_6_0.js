@@ -94,7 +94,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.InspectableDOMNode = namespace.InspectableDOMNode;
     new cls.DOMInspectorActions('dom'); // the view id
     cls.DOMView.prototype = ViewBase;
-    new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
+    new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom mono');
     cls.DOMView.prototype.constructor = cls.DOMView;
     cls.DocumentSelect.prototype = new CstSelect();
     new cls.DocumentSelect('document-select', 'document-options');
