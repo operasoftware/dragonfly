@@ -125,12 +125,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._isprocessing = false;
   };
 
-  this.__defineGetter__ = function('isprocessing', function()
+  this.__defineGetter__('isprocessing', function()
   {
     return this._isprocessing;
-  };
+  });
 
-  this.__defineSetter__ = function('isprocessing', function(){};
+  this.__defineSetter__('isprocessing', function(){});
 
   this.collapse = function(object_id)
   {
