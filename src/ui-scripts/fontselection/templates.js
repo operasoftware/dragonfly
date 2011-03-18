@@ -9,7 +9,7 @@
         this._font_selection('Font Face', 
                              fonts,
                              'monospace-font-face',
-                             {"": "Current"}),
+                             {"": "Default"}),
         this._font_selection('Font Size', 
                              ['10px', '11px', '12px', '13px', 
                               '14px', '15px', '16px'],
@@ -28,7 +28,7 @@
       ]
     ]);
   }
-
+  
   this._font_selection = function(label, option_values, setting_name, 
                                   option_names)
   {

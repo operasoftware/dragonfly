@@ -6,7 +6,7 @@ viewport, .info-box {
 }
 
 .storage-table td, .storage-table .new-key, .mono {
-  font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
+  font-family: "Menlo", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   line-height: 15px;
   color: #111;
