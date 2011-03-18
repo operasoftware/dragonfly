@@ -24,7 +24,6 @@ def get_strings_in_lang_file(basedir, lang="en"):
 	data = open(filepath).read()
 	used_strings = stringdatare.findall(data)
 	used_strings = [(sid, sval.strip().strip("'\"")) for sid, sval in used_strings]
-	print used_strings
 	return used_strings
 
 def get_string_ids_in_lang_file(basedir, lang="en"):
