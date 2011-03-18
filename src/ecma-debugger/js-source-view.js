@@ -51,7 +51,9 @@ cls.JsSourceView = function(id, name, container_class)
   
   const
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP;
-  LINE_POINTER = window.cls.NewScript.LINE_POINTER;
+  LINE_POINTER = window.cls.NewScript.LINE_POINTER,
+  BP_IMAGE_LINE_HEIGHT = 24,
+  BP_IMAGE_HEIGHT = 12;
 
   templates.line_nummer_container = function(lines)
   {
@@ -122,15 +124,16 @@ cls.JsSourceView = function(id, name, container_class)
     }
     var lines = line_numbers.getElementsByTagName('span');
     var bp_states = __current_script.breakpoint_states;
+    var default_y = context['bp-line-pointer-default'];
     var line_height = context['line-height'];
     if (bp_states)
     {
-      for (var i = 0, line; line = lines[i]; i++)
+      for (var i = 0, line, y; line = lines[i]; i++)
       {
         if (bp_states[__current_line + i])
         {
-          line.style.backgroundPosition=
-            '0 ' + (-1 * bp_states[__current_line + i] * line_height) + 'px';
+          y = default_y - 1 * bp_states[__current_line + i] * BP_IMAGE_LINE_HEIGHT;
+          line.style.backgroundPosition = '0 ' + y + 'px';
         }
         else
         {
@@ -156,6 +159,8 @@ cls.JsSourceView = function(id, name, container_class)
   {
     context['line-height'] = defaults['js-source-line-height'];
     context['scrollbar-width'] = defaults['scrollbar-width'];
+    context['bp-line-pointer-default'] = 
+      (defaults['js-source-line-height'] - BP_IMAGE_HEIGHT) / 2 >> 0;
     var style = null;
     var sheets = document.styleSheets;
     if (style = sheets.getDeclaration('#js-source-scroll-container'))
