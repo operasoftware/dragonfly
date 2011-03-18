@@ -6,7 +6,8 @@
  */
 cls.NetworkOptionsView = function(id, name, container_class, html, default_handler) {
   this._cache_policy = "default";
-  this._tracking_policy = "notrack";
+  this._bypass_cache = false;
+  this._track_bodies = false;
   this._service = window.services["resource-manager"];
   this._overrides = false;
   this._headers = [{name: "Header-name", value: "Header-value"}];
@@ -20,8 +21,8 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._render_main_view = function(container)
   {
     var headers = [{name:"foo", value:"bar"}];
-    container.clearAndRender(templates.network_options_main(this._cache_policy,
-                                                            this._tracking_policy,
+    container.clearAndRender(templates.network_options_main(this._bypass_cache,
+                                                            this._track_bodies,
                                                             this._headers,
                                                             this._overrides));
     this._output = container.querySelector("code");
@@ -48,21 +49,17 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._handle_toggle_caching_bound = function(evt, target)
   {
-    this._cache_policy = target.value;
+    this._bypass_cache = target.checked;
     const DEFAULT = 1,  NO_CACHE = 2;
-    this._service.requestSetReloadPolicy(null, [ this._cache_policy == "default" ? DEFAULT : NO_CACHE]);
+    this._service.requestSetReloadPolicy(null, [this._bypass_cache ? NO_CACHE : DEFAULT]);
   }.bind(this);
 
   this._handle_toggle_content_tracking_bound = function(evt, target)
   {
     const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
-    this._tracking_policy = target.value;
+    this._track_bodies = target.checked;
 
-    if (this._tracking_policy == "notrack")
-    {
-      var arg = [[OFF]];
-    }
-    else
+    if (this._track_bodies)
     {
       var arg = [[DATA_URI, DECODE],
                  [ "text/html", "application/xhtml+xml", "application/mathml+xml",
@@ -71,6 +68,10 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
                    "application/javascript", "text/javascript"
                  ].map(function(e) { return [e, [STRING, DECODE]] })
                 ];
+    }
+    else
+    {
+      var arg = [[OFF]];
     }
     this._service.requestSetRequestMode(null, arg);
     this._service.requestSetResponseMode(null, arg);

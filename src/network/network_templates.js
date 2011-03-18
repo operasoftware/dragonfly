@@ -1,50 +1,29 @@
 ﻿window.templates || (window.templates = {});
 
-templates.network_options_main = function(caching, tracking, headers, overrides)
+templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
   return ["div",
           ["div",
            ["h2", ui_strings.S_NETWORK_CACHING_SETTING_TITLE],
            ["p", ui_strings.S_NETWORK_CACHING_SETTING_DESC],
            ["p", ["label",
-             ["input", "type", "radio",
-              "name", "network-options-caching",
-              "value", "default",
-              "handler", "network-options-toggle-caching",
-              caching == "default" ? "checked" : "non-checked", "true"
-             ],
-             ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL,
-           ]],
-           ["p", ["label",
-            ["input", "type", "radio",
+            ["input", "type", "checkbox",
              "name", "network-options-caching",
-             "value", "disabled",
              "handler", "network-options-toggle-caching",
-             caching == "disabled" ? "checked" : "non-checked", "true"
+             "checked", nocaching ? true : false
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL,
            ]],
            ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
            ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC],
            ["p", ["label",
-            ["input", "type", "radio",
+            ["input", "type", "checkbox",
              "name", "network-options-track-bodies",
-             "value", "notrack",
              "handler", "network-options-toggle-body-tracking",
-             tracking == "notrack" ? "checked" : "non-checked", "true"
-            ],
-            ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL,
-           ]],
-           ["p", ["label",
-            ["input", "type", "radio",
-             "name", "network-options-track-bodies",
-             "value", "track",
-             "handler", "network-options-toggle-body-tracking",
-             tracking == "track" ? "checked" : "non-checked", "true"
+             "checked", tracking ? true : false,
             ],
             ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
-           ]
-          ],
+           ]],
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
            ["p", ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
