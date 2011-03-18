@@ -3,8 +3,8 @@ import os.path
 import re
 import itertools
 
-stringidre = re.compile(r"""ui_strings\.([A-Z_]+)""")
-stringdatare = re.compile(r"""ui_strings\.([A-Z_]+)\s*=\s*(.*?);""")
+stringidre = re.compile(r"""ui_strings\.([A-Z_0-9]+)""")
+stringdatare = re.compile(r"""ui_strings\.([A-Z_0-9]+)\s*=\s*(.*?);""")
 
 def collect_used_string_ids(basedir):
 	found = set()
