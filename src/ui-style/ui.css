@@ -5,19 +5,15 @@ viewport, .info-box {
   color: #444;
 }
 
-.markup-source, .console-output, .console-output pre, .console-input, 
-.console-input textarea, property, rule, font-face-rule, page-rule, import-rule, 
-charset-rule, media-rule, examine-objects, examine-objects item, .storage-table td, 
-.storage-table .new-key, .repl-input, .repl-output, .js-search-results-script, code,
-css-new-style-sheet, .markup-resource, .mono {
+.storage-table td, .storage-table .new-key, .mono {
   font-family: "Menlo", "Dejavu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
   line-height: 15px;
   color: #111;
 }
 
-textarea, input {
-  font-size: 11px;
+textarea, input, code, pre {
+  font: inherit;
 }
 
 /* UI Style */
@@ -915,7 +911,7 @@ textarea-container-inline
 {
   display: inline-block;
   padding: 1px;
-  margin: -2px -3px -3px;
+  margin: -2px -3px -5px;
   position:relative;
   z-index: 10;
   background: #fff;
@@ -1420,6 +1416,7 @@ container button
   text-shadow: 0 1px rgba(255,255,255,0.5);
   border-radius: 10px;
   height: 20px;
+  line-height: 16px;
   padding: 1px 10px;
   box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
   -o-transition: background-color 0.2s;

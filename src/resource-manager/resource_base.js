@@ -177,14 +177,12 @@ window.templates.js_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
-  return ['code',
-    ['div',
-      source,
-      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
-      'class', 'js-resource'
-    ],
-    'class', 'resource-detail-container js-source js-resource-content'
-  ]
+  return (
+  ['div',
+    source,
+    ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
+    'class', 'resource-detail-container mono line-numbered-resource js-resource-content'
+  ]);
 }
 
 window.templates.markup_resource_view = function(resource, resourcedata)
@@ -195,14 +193,12 @@ window.templates.markup_resource_view = function(resource, resourcedata)
   {
     lines.push(line_count++);
   });
-  return ['code',
+  return (
     ['div',
       source,
       ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
-      'class', 'markup-resource'
-    ],
-    'class', 'resource-detail-container markup-source markup-resource-content'
-  ]
+      'class', 'resource-detail-container mono line-numbered-resource markup-resource-content'
+    ])
 }
 
 window.templates.image_resource_view = function(resource, resourcedata)

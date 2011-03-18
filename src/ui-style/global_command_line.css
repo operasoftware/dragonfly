@@ -3,6 +3,7 @@
 .command-line textarea {
     background: transparent;
     color: #fff;
+    vertical-align: text-top;
 }
 .command-line examine-objects {
     background-image: none !important;
