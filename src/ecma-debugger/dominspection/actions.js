@@ -62,19 +62,22 @@ cls.DOMInspectorActions = function(id)
       var is_editable = container.hasAttribute('edit-handler');
       var cb = null;
       var target_id = 0;
-
-      if (container.contains(target))
-        target_id = parseInt(target.getAttribute('ref-id'));
-      if (level_next > level)
+      
+      if (!model.isprocessing)
       {
-        model.collapse(ref_id);
-        this._get_children_callback(container, model, target_id, is_editable);
-      }
-      else
-      {
-        cb = this._get_children_callback.bind(this, container, model,
-                                              target_id, is_editable);
-        model.expand(cb, ref_id, traversal);
+        if (container.contains(target))
+          target_id = parseInt(target.getAttribute('ref-id'));
+        if (level_next > level)
+        {
+          model.collapse(ref_id);
+          this._get_children_callback(container, model, target_id, is_editable);
+        }
+        else
+        {
+          cb = this._get_children_callback.bind(this, container, model,
+                                                target_id, is_editable);
+          model.expand(cb, ref_id, traversal);
+        }
       }
     }
   }
