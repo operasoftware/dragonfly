@@ -39,7 +39,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   const
   ID = 0,
   TYPE = 1,
-  DEPTH = 3;
+  DEPTH = 3,
+  CHILDREN_LENGTH = 6;
 
   const NOT_CHECKED = 0;
   const CHECKED = 1;
@@ -325,6 +326,26 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         while (this._data[j] && this._data[j][DEPTH] > level)
           j++;
         this._data.splice(i, j - i);
+        // update the children count of the parent node
+        i--;
+        level--;
+        // get the parent node
+        while (this._data[i] && this._data[i][DEPTH] > level)
+          i--;
+        if (this._data[i])
+        {
+          var children_count = 0;
+          j = i + 1;
+          while (this._data[j] && this._data[j][DEPTH] > level)
+          {
+            if (this._data[j][DEPTH] == (level + 1))
+            {
+              children_count++;
+            }
+            j++;
+          }
+          this._data[i][CHILDREN_LENGTH] = children_count;
+        }
         if (!this._editor_active)
         {
           window.views[this._view_id].update();

@@ -18,7 +18,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     "Host: example.org",
     "User-Agent: " + this._uastring,
     "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-    "Accept-Language: nb-NO,nb;q=0.9,no-NO;q=0.8,no;q=0.7,en;q=0.6",
+    "Accept-Language: en",
     "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
     "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
     "Connection: Keep-Alive, TE",

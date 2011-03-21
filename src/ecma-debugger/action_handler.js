@@ -1,7 +1,7 @@
 ﻿window.eventHandlers.click['show-frame'] = function(event)
 {
   var target = event.target.has_attr("parent-node-chain", "ref-id");
-  var ref_id = target.getAttribute("ref-id");
+  var ref_id = parseInt(target.getAttribute("ref-id"));
 
   var frame = stop_at.getFrame(ref_id);
   if (frame)

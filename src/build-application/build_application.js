@@ -192,6 +192,13 @@ window.app.build_application = function(on_services_created, on_services_enabled
   new cls.GeneralView('general', ui_strings.M_SETTING_LABEL_GENERAL, '');
   cls.GeneralView.create_ui_widgets();
 
+  /* Monospace font selection */
+  cls.MonospaceFontView.prototype = ViewBase;
+  var view = new cls.MonospaceFontView('monospacefont', 
+                                       ui_strings.M_VIEW_LABEL_MONOSPACE_FONT);
+  cls.MonospaceFontView.create_ui_widgets();
+  view.set_font_style();
+
   /* Debug remote */
   cls.DebugRemoteSettingView.prototype = ViewBase;
   new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.S_SWITCH_REMOTE_DEBUG, '');

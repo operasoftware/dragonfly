@@ -166,6 +166,9 @@ var ActionBroker = function()
       }
       return true;
     }
+    // pass the event alsways to the global handler 
+    // so that the global mode is correct
+    this._global_handler.onclick(event);
     return false;
   }).bind(this);
 

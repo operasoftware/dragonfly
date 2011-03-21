@@ -157,9 +157,6 @@ ui_strings.M_VIEW_LABEL_BREAKPOINTS = 'Breakpoints';
 /* DESC: Text to show in breakpoins if there is no breakpoint. */
 ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = 'No breakpoint';
 
-
-
-
 /*
  * Settings dialogue entries. All the S_SWITCH_<something> strings are
  * used as check box labels and tool tips. Both these use sentence
@@ -610,6 +607,17 @@ ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP = "Move highlight up";
 /* DESC: Button tooltip  */
 ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN = "Move highlight down";
 
+/* DESC: Label for the setting of the monospace font. */
+ui_strings.M_VIEW_LABEL_MONOSPACE_FONT = 'Monospace Font';
+/* DESC: Setting label to select the font face  */
+ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font Face";
+/* DESC: Setting label to select the font face  */
+ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
+/* DESC: Setting label to select the line height  */
+ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
+/* DESC: Button label to reset the fon selection to the default values  */
+ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
+
 /* DESC: Time strings that express in how long something will happen */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
 ui_strings.COOKIE_MANAGER_IN_1_MINUTE = "In 1 minute";
@@ -765,8 +773,9 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers";
 /* DESC: Label for checkbox to enable global header overrides */
-ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overides";
-
+ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
+/* DESC: Message about there being no headers attached to a specific request or response */
+ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
@@ -805,6 +814,11 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+
+/* DESC: Label on button to pause/unpause updates of the network graph view */
+ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+/* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
+ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to screen view width";
 
 
 /* DESC: Name of protocol column */

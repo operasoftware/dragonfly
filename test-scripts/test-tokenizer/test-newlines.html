@@ -1,0 +1,144 @@
+﻿<!doctype HTML>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
+
+<style>
+
+</style>
+
+<script>
+
+const NEXT_RUN_DELAY = 20;
+
+var test_NL_indexOf = function()
+{
+  var t0 = Date.now();
+  var pos = 0;
+  var count = 0;
+  while ((pos = window.script_source.indexOf('\n', pos + 1)) != -1)
+  {
+    count++;
+  }
+  var t1 = Date.now();
+  ts1.push(t1 - t0);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
+}
+
+var test_CR_indexOf = function()
+{
+  var t0 = Date.now();
+  var pos = 0;
+  var count = 0;
+  while ((pos = window.script_source.indexOf('\r', pos + 1)) != -1)
+  {
+    count++;
+  }
+  var t1 = Date.now();
+  ts1.push(t1 - t0);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
+  alert(count)
+}
+
+var test_re_NL = function()
+{
+  var t0 = Date.now();
+  var pos = 0;
+  var count = 0;
+  var re = /\n/g;
+  while (re.exec(window.script_source))
+  {
+    count++;
+  }
+  var t1 = Date.now();
+  ts1.push(t1 - t0);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
+  alert(count)
+}
+
+var test_re_CR_opt_NL = function()
+{
+  var t0 = Date.now();
+  var pos = 0;
+  var count = 0;
+  var re = /(?:(?:\r)?\n)|(?:\r(?!\n))/g;
+  while (re.exec(window.script_source))
+  {
+    count++;
+  }
+  var t1 = Date.now();
+  ts1.push(t1 - t0);
+  setTimeout(ontestcompleted, NEXT_RUN_DELAY);
+  alert(count)
+}
+
+var test = function(method)
+{
+  window.ts1 = [];
+  window.ts2 = [];
+  window.ts3 = [];
+  window.method = method;
+  window.test_runs = parseInt(document.forms[0]['test-runs'].value);
+  ontestcompleted();
+}
+
+var ontestcompleted = function()
+{
+  const TOTAL = "-----------------------------------------";
+  if (window.test_runs)
+  {
+    window.test_runs--;
+    document.getElementById('output').value = "";
+    setTimeout(function(){
+      window[window.method]();
+    }, NEXT_RUN_DELAY);
+  }
+  else
+  {
+    document.getElementById('output').value = "total" + ": " + ((window.ts1.reduce(function(sum, t){return sum + t;}, 0))/window.ts1.length);
+
+  }
+}
+
+window.onload = function()
+{
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    window.script_source = this.responseText;
+    window.small_script_source = window.script_source.slice(0, 250000);
+    document.getElementById('controls').innerHTML = 
+      "<p>" + ['test_NL_indexOf',
+               'test_CR_indexOf',
+               'test_re_NL',
+               'test_re_CR_opt_NL',
+               'no_highlight'].map(function(method)
+               {
+                  return "<input type='button' value='" + method + 
+                         "' onclick='test(this.value)'>";
+               }).join('');
+  }
+  xhr.open("GET", "./dragonfly-windows-format.js");
+  xhr.send(null);
+};
+
+</script>
+
+
+<div id="header">
+  <form>
+    <textarea id="output" rows="4" cols="70"></textarea>
+    <p><label><input type="checkbox" id="make-line-numbers" checked> with line numbers</label>
+       <label><input type="checkbox" onchange="enable_stylesheets(this.checked)"> enable Dragonfly stylesheet</label>
+    <p>file size: <label><input type="radio" name="file-size" value="small" checked> 250KB</label>
+                  <label><input type="radio" name="file-size" value="big"> 1.5MB</label>
+    <p><label> test runs: <select name="test-runs" id ="test-runs">
+                            <option>1</option>
+                            <option>10</option>
+                            <option>50</option>
+                          </select></label>
+    <div></div>
+  </form>
+  <div id="controls"></div>
+</div>
+<div class="source"><div class="js-source"></div><div class='line-numbers'></div>
+</div>
+

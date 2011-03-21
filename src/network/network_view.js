@@ -12,7 +12,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
-  this._locked = false;
 
   this.createView = function(container)
   {
@@ -31,24 +30,27 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx && ctx.resources.length)
     {
       this._container = container;
+
+      var paused = settings.network_logger.get('paused-update');
+      var fit_to_width = settings.network_logger.get('fit-to-width');
+
       var url_list_width = 250;
       if (this._selected !== null)
       {
-        this._locked = false;
         url_list_width += window.defaults["scrollbar-width"];
         this.ondestroy(); // saves scroll pos
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._vscrollcontainer = container.querySelector(".network-details-url-list");
         this._vscrollcontainer.scrollTop = this._vscroll;
       }
-      else if (!this._locked)
+      else if (!paused)
       {
         container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;
         var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
         var duration = ctx.get_duration();
 
-        if (duration > 3000)
+        if (!fit_to_width && duration > 3000)
         {
           graphwidth = Math.ceil(duration * 0.35);
         }
@@ -154,6 +156,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._service.request_body(rid, this.update.bind(this));
   }.bind(this);
 
+  this._on_setting_change_bound = function(msg)
+  {
+    if (msg.id == "network_logger") { this.update(); }
+  }.bind(this);
+
   this._on_scroll_bound = function(evt)
   {
     this._container.querySelector(".resourcelist").scrollTop = evt.target.scrollTop;
@@ -181,7 +188,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
-
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
   // did, the event handler doesn't get added until the view is created
@@ -200,6 +206,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
+
+  messages.addListener("setting-changed", this._on_setting_change_bound);
+
 
   var doc_service = window.services['document-manager'];
   var res_service = window.services['resource-manager'];
@@ -239,26 +248,42 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   ]);
 
 
+
+  eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
+  eh.click["toggle-fit-graph-to-network-view"] = this._on_toggle_fit_graph_to_width;
+
   new Settings
   (
     // id
     "network_logger",
     // key-value map
     {
-      "request-view-mode": "cooked",
-      "response-view-mode": "cooked"
+      "paused-update": false,
+      "fit-to-width": false,
     },
     // key-label map
     {
-
+      "paused-update": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
+      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
     },
     // settings map
     {
-      checkboxes: []
+      checkboxes: ["paused-update", "fit-to-width"]
     },
     null,
     null
   );
+
+  new Switches
+  (
+    'network_logger',
+    [
+      'paused-update',
+      'fit-to-width',
+    ]
+  );
+
+
 
   this.init(id, name, container_class, html, default_handler);
 };

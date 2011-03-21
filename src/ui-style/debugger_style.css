@@ -104,7 +104,6 @@ ul {
 
 #backtrace-container li {
   padding-left: 20px;
-  line-height:16px;
   background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
   }
@@ -117,9 +116,7 @@ ul {
   background-position: 0 0;
   }
 
-#backtrace-container .scope-name {
-  font-family: monospace;
-}
+
 
 #backtrace-container li:hover .scope-name {
   color: #000;
@@ -347,7 +344,6 @@ stylesheet, import-rule, media-rule, rules, property {
 property {
   padding-left: 2em;
   padding-right: 3px;
-  line-height: 15px;
   }
 property.disabled, .disabled key, .disabled value {
   color: #999 !important;
@@ -1294,6 +1290,7 @@ property.disabled color-sample
   border: 1px solid #999;
   width: 100%;
   margin-bottom: 5px;
+  font: inherit;
 }
 
 .css-new-style-sheet:focus

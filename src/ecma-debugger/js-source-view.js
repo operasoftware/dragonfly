@@ -51,7 +51,9 @@ cls.JsSourceView = function(id, name, container_class)
   
   const
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
-  LINE_POINTER = window.cls.NewScript.LINE_POINTER;
+  LINE_POINTER = window.cls.NewScript.LINE_POINTER,
+  BP_IMAGE_LINE_HEIGHT = 24,
+  BP_IMAGE_HEIGHT = 12;
 
   templates.line_nummer_container = function(lines)
   {
@@ -122,15 +124,16 @@ cls.JsSourceView = function(id, name, container_class)
     }
     var lines = line_numbers.getElementsByTagName('span');
     var bp_states = __current_script.breakpoint_states;
+    var default_y = context['bp-line-pointer-default'];
     var line_height = context['line-height'];
     if (bp_states)
     {
-      for (var i = 0, line; line = lines[i]; i++)
+      for (var i = 0, line, y; line = lines[i]; i++)
       {
         if (bp_states[__current_line + i])
         {
-          line.style.backgroundPosition=
-            '0 ' + (-1 * bp_states[__current_line + i] * line_height) + 'px';
+          y = default_y - 1 * bp_states[__current_line + i] * BP_IMAGE_LINE_HEIGHT;
+          line.style.backgroundPosition = '0 ' + y + 'px';
         }
         else
         {
@@ -151,6 +154,28 @@ cls.JsSourceView = function(id, name, container_class)
       line_numbers.style.visibility = "visible";
     }
   };
+
+  this._set_style = function()
+  {
+    context['line-height'] = defaults['js-source-line-height'];
+    context['scrollbar-width'] = defaults['scrollbar-width'];
+    context['bp-line-pointer-default'] = 
+      (defaults['js-source-line-height'] - BP_IMAGE_HEIGHT) / 2 >> 0;
+    var style = null;
+    var sheets = document.styleSheets;
+    if (style = sheets.getDeclaration('#js-source-scroll-container'))
+    {
+      style.width = defaults['scrollbar-width'] + 'px';
+    }
+    if (style = sheets.getDeclaration('#js-source-content div'))
+    {
+      style.lineHeight = style.height = context['line-height'] + 'px'; 
+    }
+    if (style = sheets.getDeclaration('#js-source-line-numbers li'))
+    {
+      style.height = context['line-height'] + 'px'; 
+    }
+  }
 
   this.createView = function(container)
   {
@@ -175,15 +200,9 @@ cls.JsSourceView = function(id, name, container_class)
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+
       "</div>";
-    if( !context['line-height'] )
+    if (!context['line-height'])
     {
-      context['line-height'] = defaults['js-source-line-height'];
-      context['scrollbar-width'] = defaults['scrollbar-width'];
-      var style = document.styleSheets.getDeclaration('#js-source-scroll-container');
-      if (style)
-      {
-        style.width = defaults['scrollbar-width'] + 'px';
-      }
+      this._set_style();
     }
     context['container-height'] = parseInt(container.style.height);
     var set = null, i = 0;
@@ -766,7 +785,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         __disregard_scroll_event = true;
         document.getElementById(scroll_container_id).scrollTop =
-          target_line * context['line-height'];
+          (target_line - 1) * context['line-height'];
         this.showLine(__current_script.script_id, target_line, null, null, false, true);
       }
     }
@@ -778,6 +797,16 @@ cls.JsSourceView = function(id, name, container_class)
     if (__current_script && __current_script.script_id == msg.script_id)
     {
       updateBreakpoints();
+    }
+  };
+
+  this._onmonospacefontchange = function(msg)
+  {
+    this._set_style();
+    if (this.isvisible() && __container)
+    {
+      __view_is_destroyed = true;
+      this.createView(__container);
     }
   };
 
@@ -805,6 +834,8 @@ cls.JsSourceView = function(id, name, container_class)
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
+  messages.addListener('monospace-font-changed', 
+                       this._onmonospacefontchange.bind(this));
   
   ActionBroker.get_instance().register_handler(this);
 }

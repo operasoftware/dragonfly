@@ -12,13 +12,6 @@ cls.NetworkLoggerService = function(view, data)
 
   this._current_context = null;
 
-  this._enable_content_tracking = function()
-  {
-    const DATA_URI = 3, DECODE = 1;
-    // set default content mode to give us data URIs, and to decode (unzip etc.) them.
-    this._res_service.requestSetResponseMode(null, [[DATA_URI, DECODE]]);
-  }
-
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);

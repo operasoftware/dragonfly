@@ -74,6 +74,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this._get_dom = function(object_id, traverse_type, cb)
   {
+    this._isprocessing = true;
     var tag = window.tag_manager.set_callback(this, this.__handle_dom, [object_id, traverse_type, cb]);
     services['ecmascript-debugger'].requestInspectDom(tag, [object_id, traverse_type]);
   };
@@ -121,7 +122,15 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     }
     else
       opera.postError(error_ms + ' ' + JSON.stringify(message));
+    this._isprocessing = false;
   };
+
+  this.__defineGetter__('isprocessing', function()
+  {
+    return this._isprocessing;
+  });
+
+  this.__defineSetter__('isprocessing', function(){});
 
   this.collapse = function(object_id)
   {

@@ -303,7 +303,7 @@ Search.prototype = new function()
       this._window_view_id = view_id + "-search-window";
       this._searchwindow = new searchwindowclass(this._window_view_id, 
                                                  "Search", 
-                                                 view_id + "-search-window scroll",
+                                                 view_id + "-search-window scroll mono",
                                                  this.controls[SEARCHFIELD].handler);
       this._searchwindow.add_listener('onbeforesearch', this._beforesearch_bound);
       new ToolbarConfig(this._window_view_id, 
