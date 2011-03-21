@@ -6,15 +6,15 @@
     return (
     ['setting-composite',
       ['table',
-        this._font_selection('Font Face', 
+        this._font_selection(ui_strings.S_LABEL_FONT_SELECTION_FACE, 
                              fonts,
                              'monospace-font-face',
                              {"": "Default"}),
-        this._font_selection('Font Size', 
+        this._font_selection(ui_strings.S_LABEL_FONT_SELECTION_SIZE, 
                              ['10px', '11px', '12px', '13px', 
                               '14px', '15px', '16px'],
                              'monospace-font-size'),
-        this._font_selection('Line Height', 
+        this._font_selection(ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT, 
                              ['auto', '14px', '15px', '16px', '17px', 
                               '18px', '19px', '20px'],
                              'monospace-line-height'),
@@ -22,7 +22,7 @@
       ],
       ['p', 
         ['button', 
-          ['span', 'Reset to default values'],
+          ['span', ui_strings.S_BUTTON_RESET_TO_DEFAULTS],
           'handler', 'font-defualt-selection'
         ]
       ]

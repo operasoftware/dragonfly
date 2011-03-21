@@ -194,7 +194,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   /* Monospace font selection */
   cls.MonospaceFontView.prototype = ViewBase;
-  var view = new cls.MonospaceFontView('monospacefont', 'Monospace Font', '');
+  var view = new cls.MonospaceFontView('monospacefont', 
+                                       ui_strings.M_VIEW_LABEL_MONOSPACE_FONT);
   cls.MonospaceFontView.create_ui_widgets();
   view.set_font_style();
 
