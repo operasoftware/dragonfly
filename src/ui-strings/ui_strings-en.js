@@ -253,7 +253,7 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only brows
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
 /* DESC: Show ECMAScript errors in the command line. */
-ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMAScript errors in the command line view";
+ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMAScript errors in the console";
 /* DESC: Expand all (entries in a list) */
 ui_strings.S_SWITCH_EXPAND_ALL = 'Expand all';
 /* DESC: Draw a border on to selected DOM elements */
@@ -263,19 +263,19 @@ ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when load
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
-ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the command line";
+ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the console";
 /* DESC:  When enabled, objects of type element will be friendly printed */
-ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the commandline.";
+ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the console.";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
-ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear command line";
+ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
 /* DESC: Close command line window */
-ui_strings.S_CLOSE_COMMAND_LINE = "Close command line";
+ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 /* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
-ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page javascript errors in command line';
+ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show page JavaScript errors in console';
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show DOM modebar';
 
