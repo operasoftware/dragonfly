@@ -119,6 +119,9 @@
  *     <dt>breakpoint-removed</dt>
  *     <dd>A breakpoint was set. Payload: msg.id</dd>
  *
+ *     <dt>monospace-font-changed</dt>
+ *     <dd>The monospace font has changed.</dd>
+ *
  * </dl>
  *
  */

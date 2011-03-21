@@ -9,7 +9,6 @@
   color: #fff;
   margin: 0;
   font: inherit;
-  line-height: 16px;
   padding: 2px 5px;
 }
 
@@ -34,7 +33,6 @@
 .js-search-results-script div 
 {
   color: #000;
-  line-height: 16px;
   white-space: pre;
   -o-tab-size: 4;
 }
@@ -53,14 +51,14 @@
 
 .line-no
 {
-  background-color: hsl(0, 0%, 90%);
+  background-color: hsla(0, 0%, 0%, .1);
   color: hsl(0, 0%, 70%);
   border-right: 1px solid hsl(0, 0%, 70%);
   padding-right: 1ex;
   margin-right: 1ex;
   display: inline-block;
   border-bottom: 1px solid hsl(0, 0%, 70%);
-  line-height: 15px;
+  margin-top: -1px;
   vertical-align: top;
 }
 

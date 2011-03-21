@@ -237,6 +237,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/sidepanels/view.js"/>
 <script src="./ui-scripts/sidepanels/templates.js"/>
 
+<script src="./ui-scripts/fontselection/monospacefontselection.js"/>
+<script src="./ui-scripts/fontselection/templates.js"/>
+
 
 <script src="./build-application/build_application.js"></script>
 <script src="./build-application/build_window_manager_2_0.js"></script>

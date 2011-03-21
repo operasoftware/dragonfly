@@ -5,33 +5,6 @@
 
 var DOMAttrAndTextEditor = function(nav_filters)
 {
-  this.base_init(this);
-  this.type = "dom-attr-text-editor";
-  this.textarea_container_name = "textarea-container-inline";
-  // specific context 
-  this.context_enter =
-  {
-    type: '',
-    rt_id: '',
-    obj_id:'',
-    text: '',
-    key: '',
-    value: '',
-    has_value: false,
-    is_new: false
-  }
-  this.context_cur =
-  {
-    type: '',
-    rt_id: '',
-    obj_id:'',
-    text: '',
-    key: '',
-    value: '',
-    has_value: false,
-    is_new: false
-  }
-
   // TODO move this to an helper, this is duplicated code from DOM_tree_style
   var map = 
   {   
@@ -90,6 +63,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
     return str.replace(/\r\n/g, "\\n").replace(/"/g, "\\\"");
   }
 
+  this._onmonospacefontchange = function(msg)
+  {
+    this.base_style['font-size'] = 0;
+  }
+
   this.edit = function(event, ref_ele)
   {
     var 
@@ -107,7 +85,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
     },
     prop = '';
     
-    if( !this.base_style['font-size'] )
+    if (!this.base_style['font-size'])
     {
       this.get_base_style(ele);
     }
@@ -573,6 +551,41 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
     return true;
   }
+
+  this._init = function()
+  {
+    this.base_init(this);
+    messages.addListener('monospace-font-changed', 
+                         this._onmonospacefontchange.bind(this));
+    this.type = "dom-attr-text-editor";
+    this.textarea_container_name = "textarea-container-inline";
+    // specific context 
+    this.context_enter =
+    {
+      type: '',
+      rt_id: '',
+      obj_id:'',
+      text: '',
+      key: '',
+      value: '',
+      has_value: false,
+      is_new: false
+    }
+    this.context_cur =
+    {
+      type: '',
+      rt_id: '',
+      obj_id:'',
+      text: '',
+      key: '',
+      value: '',
+      has_value: false,
+      is_new: false
+    }
+  };
+
+  this._init();
+ 
 
 }
 

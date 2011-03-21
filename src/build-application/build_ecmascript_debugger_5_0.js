@@ -35,12 +35,16 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* ECMA object inspection */
     namespace.InspectionView.prototype = ViewBase;
-    new namespace.InspectionView('inspection', ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 'scroll');
+    new namespace.InspectionView('inspection', 
+                                 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION, 
+                                 'scroll mono');
     namespace.InspectionView.create_ui_widgets();
 
     /* DOM object inspection */
     namespace.DOMAttrsView.prototype = ViewBase;
-    new namespace.DOMAttrsView('dom_attrs', ui_strings.M_VIEW_LABEL_DOM_ATTR, 'scroll dom-attrs');
+    new namespace.DOMAttrsView('dom_attrs',
+                               ui_strings.M_VIEW_LABEL_DOM_ATTR, 
+                               'scroll dom-attrs mono');
     namespace.DOMAttrsView.create_ui_widgets();
 
     /*
@@ -52,18 +56,24 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* temporary export view */
     window.export_data = new cls.ExportData();
-    new cls.ExportDataView('export_data', ui_strings.M_VIEW_LABEL_EXPORT, 'scroll export-data');
+    new cls.ExportDataView('export_data', 
+                           ui_strings.M_VIEW_LABEL_EXPORT, 
+                           'scroll export-data');
 
     /* commandline */
     cls.CommandLineView.prototype = ViewBase;
-    new cls.CommandLineView('command_line', ui_strings.M_VIEW_LABEL_COMMAND_LINE, 'scroll', '', 'cmd-focus');
+    new cls.CommandLineView('command_line', 
+                            ui_strings.M_VIEW_LABEL_COMMAND_LINE, 
+                            'scroll mono', '', 'cmd-focus');
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
     cls.CommandLineView.create_ui_widgets();
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
-    new cls.JsSourceView('js_source', ui_strings.M_VIEW_LABEL_SOURCE, 'scroll js-source');
+    new cls.JsSourceView('js_source', 
+                         ui_strings.M_VIEW_LABEL_SOURCE, 
+                         'scroll js-source mono');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
 
@@ -74,18 +84,22 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
-    new cls.CallstackView('callstack', ui_strings.M_VIEW_LABEL_CALLSTACK, 'scroll');
+    new cls.CallstackView('callstack', 
+                          ui_strings.M_VIEW_LABEL_CALLSTACK, 
+                          'scroll mono');
 
     /* Threads */
     cls.ThreadsView.prototype = ViewBase;
-    new cls.ThreadsView('threads', ui_strings.M_VIEW_LABEL_THREAD_LOG, 'scroll threads');
+    new cls.ThreadsView('threads', 
+                        ui_strings.M_VIEW_LABEL_THREAD_LOG, 
+                        'scroll threads');
     //cls.ThreadsView.create_ui_widgets();
 
     /* DOM */
     cls.InspectableDOMNode = namespace.InspectableDOMNode;
     new cls.DOMInspectorActions('dom'); // the view id
     cls.DOMView.prototype = ViewBase;
-    new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom');
+    new cls.DOMView('dom', ui_strings.M_VIEW_LABEL_DOM, 'scroll dom mono');
     cls.DOMView.prototype.constructor = cls.DOMView;
     cls.DocumentSelect.prototype = new CstSelect();
     new cls.DocumentSelect('document-select', 'document-options');
@@ -94,7 +108,9 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     /* Stylesheets */
     window.stylesheets = new cls.Stylesheets();
     cls.StylesheetsView.prototype = ViewBase;
-    new cls.StylesheetsView('stylesheets', ui_strings.M_VIEW_LABEL_STYLESHEET, 'scroll stylesheets');
+    new cls.StylesheetsView('stylesheets', 
+                            ui_strings.M_VIEW_LABEL_STYLESHEET, 
+                            'scroll stylesheets mono');
     cls.StylesheetSelect.prototype = new CstSelect();
     new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
     //cls.StylesheetsView.create_ui_widgets();
@@ -102,10 +118,14 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     /* CSS inspector */
     window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
-    new cls.CSSInspectorView('css-inspector', ui_strings.M_VIEW_LABEL_STYLES, 'scroll css-inspector');
+    new cls.CSSInspectorView('css-inspector', 
+                             ui_strings.M_VIEW_LABEL_STYLES, 
+                             'scroll css-inspector mono');
 
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
-    new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
+    new cls.CSSInspectorCompStyleView('css-comp-style', 
+                                      ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 
+                                      'scroll css-inspector mono');
 
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
@@ -119,7 +139,9 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     /* Layout */
     window.elementLayout = new cls.ElementLayout();
     cls.CSSLayoutView.prototype = ViewBase;
-    new cls.CSSLayoutView('css-layout', ui_strings.M_VIEW_LABEL_LAYOUT, 'scroll css-layout');
+    new cls.CSSLayoutView('css-layout', 
+                          ui_strings.M_VIEW_LABEL_LAYOUT, 
+                          'scroll css-layout');
 
     /* storage objects and cookies */
     new cls.Namespace("storages");
@@ -142,16 +164,24 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
       'cookies',
       'cookies',
       ui_strings.M_VIEW_LABEL_COOKIES));
-    new cls.StorageView('local_storage', ui_strings.M_VIEW_LABEL_LOCAL_STORAGE, 'scroll');
-    new cls.StorageView('session_storage', ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 'scroll');
+    new cls.StorageView('local_storage', 
+                        ui_strings.M_VIEW_LABEL_LOCAL_STORAGE, 
+                        'scroll');
+    new cls.StorageView('session_storage', 
+                        ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 
+                        'scroll');
     new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
-    new cls.StorageView('widget_preferences', ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 'scroll');
+    new cls.StorageView('widget_preferences', 
+                        ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
+                        'scroll');
 
     /* the following views must be created to get entry in the Settings tab */
 
     /* Environment */
     cls.EnvironmentView.prototype = ViewBase;
-    new cls.EnvironmentView('environment', ui_strings.M_VIEW_LABEL_ENVIRONMENT, 'scroll');
+    new cls.EnvironmentView('environment', 
+                            ui_strings.M_VIEW_LABEL_ENVIRONMENT, 
+                            'scroll');
     cls.EnvironmentView.create_ui_widgets();
 
     /* About */
@@ -161,7 +191,8 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* Hostspotlighter */
     cls.HostSpotlightView.prototype = ViewBase;
-    new cls.HostSpotlightView('host-spotlight', ui_strings.S_LABEL_SPOTLIGHT_TITLE, '');
+    new cls.HostSpotlightView('host-spotlight', 
+                              ui_strings.S_LABEL_SPOTLIGHT_TITLE);
     cls.HostSpotlightView.create_ui_widgets();
 
     /* main view doesn't really exist */

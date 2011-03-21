@@ -474,6 +474,12 @@
         0
       ]
     ]
+  },
+  monospacefont:
+  {
+    font_face: "",
+    font_size: "11px",
+    line_height: "15px"
   }
 };
 window.ini.default_shortcuts = navigator.platform.toLowerCase().indexOf('mac') == -1 ?
