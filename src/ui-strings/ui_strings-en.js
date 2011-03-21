@@ -814,11 +814,13 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+/* DESC: String used when the user has clicked to get a resource body, but dragonfly wasn't able to do so. */
+ui_strings.S_NETWORK_BODY_NOT_AVAILABLE = "Request body not available. Enable resource tracking and reload the page to view the resource.";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
-ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+ui_strings.S_NETWORK_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 /* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
-ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to screen view width";
+ui_strings.S_NETWORK_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to screen view width";
 
 
 /* DESC: Name of protocol column */
