@@ -273,7 +273,7 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            tree += "<div" + this._get_indent(node) + ">" +
+            tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
                     "<text" +
                     (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -476,7 +476,7 @@
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._get_indent(node) +
-                       current_formatting + ">" +
+                       current_formatting + " data-menu='dom-element'>" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                        "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -486,7 +486,7 @@
           else
           {
             tree += "<div" + this._get_indent(node) +
-                    current_formatting + ">" +
+                    current_formatting + " data-menu='dom-element'>" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                       "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
                         (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +

@@ -1958,6 +1958,7 @@ SpecLinks.specs = {
     "415": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.16",
     "416": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.17",
     "417": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.18",
+    "418": "http://www.apps.ietf.org/rfc/rfc2324.html#sec-2.3.2",
 
     "500": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1",
     "501": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.2",

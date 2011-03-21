@@ -47,11 +47,11 @@ window.cls.DOMSerializer.prototype = new function()
   var getIndent = function(count)
   {
     var ret = '';
-    if(count)
+    if (count)
     {
       count--;
     }
-    while(count)
+    while (count > 0)
     {
       ret += INDENT;
       count--;

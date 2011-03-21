@@ -50,7 +50,7 @@ cls.JsSourceView = function(id, name, container_class)
   var view_invalid = true;
   
   const
-  LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP;
+  LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
   LINE_POINTER = window.cls.NewScript.LINE_POINTER;
 
   templates.line_nummer_container = function(lines)

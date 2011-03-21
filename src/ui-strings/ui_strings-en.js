@@ -247,11 +247,11 @@ ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use CSS shorthands';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb trail';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb trail";
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
 ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-specific contexts, such as mail and feed windows";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
-ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Highlight';
+ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into view on first highlight';
 /* DESC: Show ECMAScript errors in the command line. */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show JavaScript errors in the console";
 /* DESC: Expand all (entries in a list) */
@@ -621,7 +621,7 @@ ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
 ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
 ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
 ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
-ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s month";
+ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s months";
 ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
 ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
 

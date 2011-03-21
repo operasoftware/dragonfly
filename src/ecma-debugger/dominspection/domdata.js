@@ -41,6 +41,11 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   TYPE = 1,
   DEPTH = 3;
 
+  const NOT_CHECKED = 0;
+  const CHECKED = 1;
+  const CHECK_AGAIN_RUNTIME = 2;
+  const CHECK_AGAIN_NO_RUNTIME = 3;
+
   /* private */
 
   this._view_id = view_id;
@@ -48,7 +53,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._current_target = 0;
   // to select a runtime if none is selected
   this._active_window = [];
-  this._is_element_selected_checked = false;
+  this._element_selected_state = NOT_CHECKED;
   // spotlight on hover on the host side
   this._reset_spotlight_timeouts = new Timeouts();
   this._is_waiting = false;
@@ -92,18 +97,26 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         // in the case there is no runtime selected
         // set the top window to the active runtime
         if (!this._data_runtime_id)
+        {
           this._data_runtime_id = this._active_window[0];
+        }
+
         for (var key in this._settings)
         {
           if (window.settings[this._settings_id].get(key))
             this._handle_setting(key);
         }
-        if (!(this._is_waiting || this._data.length))
+
+        if (!this._is_waiting)
         {
-          if(this._is_element_selected_checked)
+          if (!this._data.length && this._element_selected_state == CHECKED)
+          {
             this._get_initial_view(this._data_runtime_id);
-          else
+          }
+          else if (this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
+          {
             this._get_selected_element(this._data_runtime_id);
+          }
         }
       }
       else
@@ -197,25 +210,36 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
 
   this._on_element_selected = function(status, message, rt_id, show_initial_view)
   {
+    // If the window ID is not the debug context, the runtime ID will not be set
     const OBJECT_ID = 0, WINDOW_ID = 1, RUNTIME_ID = 2;
-    this._is_element_selected_checked = true;
+    this._element_selected_state = CHECKED;
     if (message[OBJECT_ID])
     {
+      this._data_runtime_id = message[RUNTIME_ID];
       if (!window.views[this._view_id].isvisible())
       {
-        this._is_element_selected_checked = false;
+        if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
+        {
+          this._element_selected_state = CHECK_AGAIN_RUNTIME;
+        }
+        else
+        {
+          this._element_selected_state = CHECK_AGAIN_NO_RUNTIME;
+          window.window_manager_data.set_debug_context(message[WINDOW_ID]);
+        }
+
+        this._data = [];
         window.topCell.showView(this._view_id);
       }
       else
       {
-        // TODO this will fail on inspecting a popup which is part of the debug context
         if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
         {
           this._get_dom_sub(message[RUNTIME_ID], message[OBJECT_ID], true);
         }
         else
         {
-          this._is_element_selected_checked = false;
+          this._element_selected_state = CHECK_AGAIN_NO_RUNTIME;
           window.window_manager_data.set_debug_context(message[WINDOW_ID]);
         }
       }
@@ -240,14 +264,21 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     if (!this._data_runtime_id || 
         msg.activeTab.indexOf(this._data_runtime_id) == -1)
     {
-      this._on_reset_state();
-      // the first field is the top runtime
-      this._data_runtime_id = msg.activeTab[0];
-      messages.post("runtime-selected", {id: this._data_runtime_id});
-      window['cst-selects']['document-select'].updateElement();
-      this._active_window = msg.activeTab.slice();
-      if (window.views[this._view_id].isvisible())
-        this._on_show_view({id: this._view_id})
+      if (this._element_selected_state == CHECK_AGAIN_NO_RUNTIME)
+      {
+        this._get_selected_element();
+      }
+      else
+      {
+        this._on_reset_state();
+        // the first field is the top runtime
+        this._data_runtime_id = msg.activeTab[0];
+        messages.post("runtime-selected", {id: this._data_runtime_id});
+        window['cst-selects']['document-select'].updateElement();
+        this._active_window = msg.activeTab.slice();
+        if (window.views[this._view_id].isvisible())
+          this._on_show_view({id: this._view_id})
+      }
     }
   }
   
