@@ -60,9 +60,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
   var crlf_encode = function(str)
   {
-    return str.replace(/\r\n/g, "\\n")
-              .replace(/"/g, "\\\"")
-              .replace("\\", "\\\\");
+    return str.replace("\\", "\\\\")
+              .replace(/\r\n/g, "\\n")
+              .replace(/"/g, "\\\"");
   }
 
   this._onmonospacefontchange = function(msg)
