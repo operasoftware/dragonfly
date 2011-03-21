@@ -118,7 +118,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.CSSInspectorCompStyleView('css-comp-style', ui_strings.M_VIEW_LABEL_COMPUTED_STYLE, 'scroll css-inspector');
 
     cls.NewStyle.prototype = ViewBase;
-    new cls.NewStyle('new-style', 'New Style', 'scroll css-new-style');
+    new cls.NewStyle('new-style', ui_strings.M_VIEW_LABEL_NEW_STYLE, 'scroll css-new-style');
 
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
@@ -147,7 +147,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     /* Breakpoints */
     cls.BreakpointsView.prototype = ViewBase;
-    new cls.BreakpointsView('breakpoints', 'Breakpoints', 'scroll breakpoints');
+    new cls.BreakpointsView('breakpoints', ui_strings.M_VIEW_LABEL_BREAKPOINTS, 'scroll breakpoints');
     cls.BreakpointsView.create_ui_widgets();
     
     /* adjust the base class */

@@ -86,7 +86,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
          ['button',
           'class', 'ui-button',
           'handler', 'reload-window'],
-         ['p', "Click the reload button above to reload the debugged window and fetch its resources"],
+         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
          'class', 'info-box'
         ]
       );

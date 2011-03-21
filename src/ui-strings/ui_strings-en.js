@@ -70,6 +70,8 @@ ui_strings.M_VIEW_LABEL_DOM = 'DOM Panel';
 ui_strings.M_VIEW_LABEL_STYLESHEET = 'Style Sheet';
 /* DESC: List of all applied styles. */
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
+/* DESC: Section title for new styles. */
+ui_strings.M_VIEW_LABEL_NEW_STYLE = 'New Style';
 /* DESC: List of properties of a selected DOM node. */
 ui_strings.M_VIEW_LABEL_DOM_ATTR = 'Properties';
 /* DESC: Box model layout display. */
@@ -131,6 +133,15 @@ ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
 ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
 /* DESC: Label of the Views menu */
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
+
+/* DESC: view that shows all resources */
+ui_strings.M_VIEW_LABEL_ALL_RESOURCES = "All resources";
+/* DESC: view that shows network log */
+ui_strings.M_VIEW_LABEL_NETWORK_LOG = "Network log";
+/* DESC: view that shows request crafter */
+ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER = "Make request";
+/* DESC: view that shows network options */
+ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS = "Network options";
 
 /* DESC: Label of the stored colors view */
 ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Color Palette';
@@ -254,6 +265,8 @@ ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show JavaScript errors in the console';
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show breadcrumb trail';
+/* DESC: List of filters that will be hidden in the Error log */
+ui_strings.S_ERROR_LOG_CSS_FILTER = 'Use CSS filter';
 
 /* DESC: Header for settings group "General" */
 ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
@@ -304,6 +317,13 @@ ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = 'Add condition';
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = 'Edit condition';
+
+/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL = 'Disable all';
+/* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
+ui_strings.M_CONTEXTMENU_DELETE = 'Delete';
+/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL = 'Delete all';
 
 /* DESC: Context menu item for adding a breakpoint. */
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = 'Add breakpoint';
@@ -362,6 +382,8 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear log';
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
+/* DESC: Set the default value. */
+ui_strings.S_BUTTON_SET_DEFAULT_VALUE = 'Set default value';
 /* DESC: */
 ui_strings.S_BUTTON_OK = "Ok";
 /* DESC: */
@@ -395,6 +417,8 @@ ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
 ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 /* DESC: Remove all event breakpoints */
 ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
+/* DESC: Edit custom events */
+ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT = "Edit";
 /* DESC: Search for an event in the event breakpoints view */
 ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
 /* DESC: Search for a keyboard shortcut in the keyboard configuration view */
@@ -403,6 +427,14 @@ ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcuts";
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Reset the keyboard shortcuts of a specific section to the default values. */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
+/* DESC: Enter anvanced search mode */
+ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH = "More";
+/* DESC: Enter anvanced search mode tooltip */
+ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH_TOOLTIP = "Show advanced search";
+/* DESC: Leave anvanced search mode */
+ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH = "Less";
+/* DESC: Leave anvanced search mode tooltip */
+ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 
 
 /*
@@ -677,6 +709,10 @@ ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
 ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
 /* DESC: The string "None" used wherever there's an abscense of something */
 ui_strings.S_NONE = "None";
+/* DESC: Tooltip for filtering text-input boxes */
+ui_strings.S_SEARCH_INPUT_TOOLTIP = 'text search';
+/* DESC: Average color setting, " x pixels" will be added */
+ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF = "Average color of";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
 ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
@@ -779,6 +815,8 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
 /* DESC: "Not applicable" abbreviation */
 ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
+/* DESC: Click reload button to fetch resources */
+ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
 
 
 /* DESC: Context menu entry to select that there should be no grouping in the table */
