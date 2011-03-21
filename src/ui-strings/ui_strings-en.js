@@ -765,7 +765,7 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers";
 /* DESC: Label for checkbox to enable global header overrides */
-ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overides";
+ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 
 
 /* DESC: Label for presets */
