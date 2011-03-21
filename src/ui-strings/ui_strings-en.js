@@ -247,7 +247,7 @@ ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use CSS shorthands';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb trail';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb trail";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
 ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-specific contexts, such as mail and feed windows";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
