@@ -773,8 +773,9 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers";
 /* DESC: Label for checkbox to enable global header overrides */
-ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overides";
-
+ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
+/* DESC: Message about there being no headers attached to a specific request or response */
+ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
@@ -813,6 +814,11 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Not able to show
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+
+/* DESC: Label on button to pause/unpause updates of the network graph view */
+ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+/* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
+ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to screen view width";
 
 
 /* DESC: Name of protocol column */
