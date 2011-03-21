@@ -219,7 +219,7 @@ ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attributes';
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show white space nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
-ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in Tree View';
+ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Show DOM in tree view';
 /* DESC: Shows CSS properties as shorthands or in full effect. */
 ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use shorthand for properties';
 /* DESC: Show or hide initial values in computed style. */
@@ -247,11 +247,11 @@ ui_strings.S_SWITCH_CREATE_SHORTHANDS = 'Use shorthands for properties';
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = 'Show siblings in breadcrumb';
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show IDs and classes in breadcrumb";
 /* DESC: There are a lot of window types in Opera. This switch toggles if we show only the useful ones, or all of them. */
-ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list ( uncheck to also show mail and feed windows etc. )";
+ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Show only browser windows and widget windows in window list (uncheck to also show mail, feed windows etc.)";
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
-ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into View on first Spotlight';
+ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = 'Scroll into view on first spotlight';
 /* DESC: Show ECMAScript errors in the command line. */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show ECMAScript errors in the console";
 /* DESC: Expand all (entries in a list) */
@@ -265,7 +265,7 @@ ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto scroll request log";
 /* DESC:  When enabled, list alike objects will be unpacked in the command line */
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack list alikes in the console";
 /* DESC:  When enabled, objects of type element will be friendly printed */
-ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the console.";
+ui_strings.S_SWITCH_FRIENDLY_PRINT = "Use specific information to represent object in the console";
 /* DESC:  When enabled, objects of type element in the command line will be displayed in the DOM view */
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Show objects of type Element in the DOM view";
 /* DESC: Clears the command line log */
