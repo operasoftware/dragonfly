@@ -126,7 +126,7 @@ templates.network_log_request_detail = function(ctx, selected)
   return [
   ["div",
     ["button", "X", "class", "close-request-detail", "handler", "close-request-detail", "unselectable", "on"],
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY],
+    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY_TITLE],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
