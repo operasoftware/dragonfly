@@ -37,10 +37,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._textarea_handler = null;
   this._prev_frame_index = null;
   this._closed_group_nesting_level = 0;
-  this._keywords = ["break", "case", "catch", "continue", "debugger",
-      "default", "delete", "do", "else", "finally", "for", "function",
-      "if", "in", "instanceof", "new", "return", "switch", "this",
-      "throw", "try", "typeof", "var", "void", "while", "with"];
   this._actionbroker = ActionBroker.get_instance();
   this.mode = "single-line-edit";
   this.window_header = false;
@@ -454,11 +450,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._construct_line = function(pre, prop, post)
   {
-    // This doesn't cover every allowed character, but should be fine most of the time
-    var is_valid_identifier = /^[a-z$_][a-z$_0-9]*$/i.test(prop);
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if ((!is_valid_identifier || this._keywords.indexOf(prop) != -1)
-         && this._autocompletion_scope) {
+    if (!JSSyntax.is_valid_identifier(prop) && this._autocompletion_scope)
+    {
       if (!is_number_without_leading_zero.test(prop))
       {
         prop = '"' + prop + '"';
