@@ -98,7 +98,7 @@ ul {
 /* backtrace */
 
 #backtrace-container, #examine-objects-container {
-  padding:.3em;
+  padding: 5px;
   }
 
 
@@ -1295,11 +1295,11 @@ property.disabled color-sample
   cursor: auto;
   color: #999;
   font-style: italic;
-  padding-left: 23px;
+  padding-left: 20px;
 }
 
 .not-content.inspection {
-  padding: 5px 5px 5px 23px;
+  padding: 5px 5px 5px 25px;
 }
 
 .go-to-line-input
