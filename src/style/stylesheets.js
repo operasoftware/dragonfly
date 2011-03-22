@@ -763,6 +763,9 @@ cls.Stylesheets = function()
 
     for ( ; node_casc = data[i]; i++)
     {
+      element_name = node_casc[ELEMENT_NAME];
+      style_dec_list = node_casc[STYLE_LIST];
+
       if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
       {
         continue;
@@ -770,12 +773,16 @@ cls.Stylesheets = function()
 
       if (i)
       {
-        ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
+        for (j = 0; style_dec = style_dec_list[j]; j++)
+        {
+           if (style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
+           {
+             ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
+             break;
+           }
+        }
       }
 
-      // TODO
-      element_name = node_casc[ELEMENT_NAME];
-      style_dec_list = node_casc[STYLE_LIST];
       for (j = 0; style_dec = style_dec_list[j]; j++)
       {
         ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
@@ -872,7 +879,9 @@ cls.Stylesheets = function()
   prettyPrintStyleDec[ORIGIN_LOCAL] =
   function(rt_id, obj_id, element_name, style_dec, search_active)
   {
-    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
+    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
+
+    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
               "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
@@ -891,9 +900,10 @@ cls.Stylesheets = function()
     ret = '',
     header = null,
     i = 0,
-    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]);
+    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]),
+    has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
 
-    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
+    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
@@ -918,7 +928,9 @@ cls.Stylesheets = function()
   prettyPrintStyleDec[ORIGIN_ELEMENT] =
   function(rt_id, obj_id, element_name, style_dec, search_active)
   {
-    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
+    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
+
+    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       return "<rule rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
         "<inline-style>element.style</inline-style>" +
