@@ -13,3 +13,17 @@
 .metadata-drawer th {
     text-align: right;
 }
+
+
+input[handler=metadata-drawer-toggle] {
+  background:transparent url('../../ui-images/toggle.png') scroll no-repeat 50% 100%;
+  border:none;
+  width:5px;
+  height:9px;
+  opacity: 0.66;
+  -o-transition: .2s;
+}
+
+input[handler=metadata-drawer-toggle].unfolded {
+  -o-transform: rotate(90deg);
+}

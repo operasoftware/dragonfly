@@ -65,8 +65,6 @@ window.templates = window.templates || {};
 
 templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 {
-//  var type = resource.getType();
-
   var url = resource.urltype == 4 ? "data:URI" : resource.url;
   
   var content = [];
@@ -80,11 +78,11 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
   }
 
   return ["div",
-          ["button",
+          ["input",
            "handler", "metadata-drawer-toggle",
-           "class", "folder-key",
+           "class", expanded ? "unfolded" : "",
            "unselectable", "on",
-           "style", (expanded ? "background-position: 0px -11px" : ""),
+           "type", "button",
           ],
           content,
           (expanded && title ? ["h2", title] : []),
