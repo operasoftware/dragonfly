@@ -602,19 +602,31 @@ ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP = "Move highlight up";
 /* DESC: Button tooltip  */
 ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN = "Move highlight down";
 
-/* DESC: Time strings that express in how long something will happen */
+/* DESC: In less then 1 minute */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
+/* DESC: In 1 minute */
 ui_strings.COOKIE_MANAGER_IN_1_MINUTE = "In 1 minute";
+/* DESC: In x minutes */
 ui_strings.COOKIE_MANAGER_IN_X_MINUTES = "In %s minutes";
+/* DESC: In 1 hour */
 ui_strings.COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
+/* DESC: In x hours */
 ui_strings.COOKIE_MANAGER_IN_X_HOURS = "In %s hours";
+/* DESC: Tomorrow */
 ui_strings.COOKIE_MANAGER_TOMORROW = "Tomorrow";
+/* DESC: In x days */
 ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
+/* DESC: In 1 week */
 ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
+/* DESC: In x weeks */
 ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
+/* DESC: In 1 month */
 ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
+/* DESC: In x months */
 ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s month";
+/* DESC: In 1 year */
 ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
+/* DESC: In x years */
 ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
 
 /* DESC: Label of the section with the scvope chaine in the Inspection view */
