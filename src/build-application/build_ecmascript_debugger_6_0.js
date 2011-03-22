@@ -140,7 +140,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                                       'scroll css-inspector mono');
 
     cls.NewStyle.prototype = ViewBase;
-    new cls.NewStyle('new-style', 'New Style', 'scroll css-new-style mono');
+    new cls.NewStyle('new-style', ui_strings.M_VIEW_LABEL_NEW_STYLE, 'scroll css-new-style mono');
 
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
@@ -174,7 +174,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Breakpoints */
     cls.BreakpointsView.prototype = ViewBase;
     new cls.BreakpointsView('breakpoints', 
-                            'Breakpoints', 
+                            ui_strings.M_VIEW_LABEL_BREAKPOINTS, 
                             'scroll breakpoints mono');
     cls.BreakpointsView.create_ui_widgets();
     

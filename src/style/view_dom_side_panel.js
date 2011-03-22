@@ -28,7 +28,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     [
       {
         handler: 'css-inspector-text-search',
-        title: 'text search',
+        title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
         type: "filter"
       }

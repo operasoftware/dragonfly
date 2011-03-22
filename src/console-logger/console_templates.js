@@ -93,7 +93,7 @@ window.templates.error_log_settings_css_filter = function(setting)
       window.templates.settingCheckbox('console', 
                                        'use-css-filter', 
                                        setting.get('use-css-filter'), 
-                                       'Use CSS filter'),
+                                       ui_strings.S_ERROR_LOG_CSS_FILTER),
       ['label',
         ['_auto_height_textarea', 
           setting.get('css-filter'),
