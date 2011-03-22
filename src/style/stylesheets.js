@@ -771,20 +771,12 @@ cls.Stylesheets = function()
         continue;
       }
 
-      if (i)
-      {
-        for (j = 0; style_dec = style_dec_list[j]; j++)
-        {
-           if (style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
-           {
-             ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
-             break;
-           }
-        }
-      }
-
       for (j = 0; style_dec = style_dec_list[j]; j++)
       {
+        if (i && !j && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
+        {
+          ret += "<h2>Inherited from <code class='element-name'>" + element_name + "</code></h2>";
+        }
         ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
       }
     }
