@@ -211,6 +211,7 @@ cls.Breakpoints = function()
         script.breakpoint_states[line_nr] -= BP_DELTA_ENABLE;
       }
       this._remove_bp(bp_id);
+      return bp_id;
     }
   };
 

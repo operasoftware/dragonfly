@@ -1223,6 +1223,13 @@ cls.JsSourceView.create_ui_widgets = function()
               handler: function(event, target) {
                 breakpoints.remove_breakpoint(script_id, line);
               }
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
+              handler: function(event, target) {
+                var bp_id = breakpoints.remove_breakpoint(script_id, line);
+                breakpoints.delete_breakpoint(bp_id);
+              }
             });
           }
           else
