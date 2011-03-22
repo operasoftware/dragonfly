@@ -23,10 +23,12 @@ cls.NewStyle = function(id, name, container_class)
     return (
         ['div',
           ['_auto_height_textarea',
-            value || '',		
+            value || '',
             'handler', 'css-update-new-style',
             'class', 'css-new-style-sheet'],
-           ['button', ui_strings.S_BUTTON_TEXT_APPLY, 'handler', 'apply-new-style'],
+           ['button', ui_strings.S_BUTTON_TEXT_APPLY,
+             'class', 'container-button',
+             'handler', 'apply-new-style'],
         'class', 'padding']);
   };
 

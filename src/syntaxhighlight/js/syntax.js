@@ -4,6 +4,17 @@
  * formatter for syntax highlighting.
  */
 
+var JSSyntax = function()
+{
+};
+
+JSSyntax.is_valid_identifier = function(prop)
+{
+  // This doesn't cover every allowed character, but should be fine most of the time
+  return (/^[a-z$_][a-z$_0-9]*$/i.test(prop) && !js_keywords.hasOwnProperty(prop));
+}
+
+// TODO: make these static on JSSyntax
 var js_keywords=
 {
   'abstract': 1,

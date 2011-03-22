@@ -309,11 +309,37 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           return;
         }
 
-        var key = target.textContent;
+        var ele = target.parentNode;
+        var props = [target.parentNode.querySelector("key").textContent];
+        while (ele = ele.parentNode)
+        {
+          if (ele.nodeName.toLowerCase() == "item")
+          {
+            props.unshift(ele.querySelector("key").textContent);
+          }
+        }
+
+        var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
+        var prop = props.reduce(function(prev, curr) {
+          if (JSSyntax.is_valid_identifier(curr))
+          {
+            curr = "." + curr;
+          }
+          else
+          {
+            if (!is_number_without_leading_zero.test(curr))
+            {
+              curr = '"' + curr + '"';
+            }
+            curr = "[" + curr + "]";
+          }
+          return prev + curr;
+        });
+
         return {
-          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
+          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", prop),
           handler: function(event, target) {
-            window.views.watches.add_watch(key);
+            window.views.watches.add_watch(prop);
           }
         };
       }

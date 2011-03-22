@@ -463,6 +463,13 @@ cls.ElementStyle = function()
   {
     var index_map = window.css_index_map;
 
+    if (!style_dec[INDEX_LIST])
+    {
+      style_dec[INDEX_LIST] = [];
+      style_dec[VALUE_LIST] = [];
+      style_dec[PRIORITY_LIST] = [];
+      style_dec[STATUS_LIST] = [];
+    }
     style_dec[DISABLED_LIST] = [];
 
     var len = disabled_style_dec[INDEX_LIST].length;
