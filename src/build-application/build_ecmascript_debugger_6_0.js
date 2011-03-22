@@ -141,6 +141,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     cls.NewStyle.prototype = ViewBase;
     new cls.NewStyle('new-style', ui_strings.M_VIEW_LABEL_NEW_STYLE, 'scroll css-new-style mono');
+
     new cls.ColorPickerView('color-selector', 'Color Picker', 'color-selector');
     new cls.CSSInspectorActions('css-inspector');
 
