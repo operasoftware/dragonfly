@@ -311,7 +311,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         }
 
         var ele = target.parentNode;
-        var props = [target.textContent];
+        var props = [target.parentNode.querySelector("key").textContent];
         while (ele = ele.parentNode)
         {
           if (ele.nodeName.toLowerCase() == "item")

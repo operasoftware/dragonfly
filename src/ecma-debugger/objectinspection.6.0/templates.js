@@ -61,7 +61,7 @@
       }
       if (ret.length)
       {
-        ret.unshift("<examine-objects data-id='" + model.id + "' >");
+        ret.unshift("<examine-objects data-id='" + model.id + "' data-menu='object-inspection-key'>");
         ret.push("</examine-objects>");
       }
     };
@@ -161,7 +161,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -192,7 +192,7 @@
               ret.push(
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
-                  "<key data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
+                  "<key data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" + esc_name + "</key>" +
                   "<value class='" + type + "' data-value='\"" + value + "\"'>" +
                     "\"" + helpers.escapeTextHtml(short_val) + "\"" +
@@ -209,7 +209,7 @@
             {
               ret.push(
                 "<item>" +
-                  "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
+                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
                     editable(prop) + ">" +
                     esc_name +
                   "</key>" +
@@ -233,7 +233,7 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
                   editable(prop) + ">" +
                   esc_name +
                 "</key>" +
@@ -272,10 +272,10 @@
             ret.push(
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
-                        "data-menu='object-inspection-key' data-spec='dom#" + esc_name + "'" + editable(prop) +
+                        "data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key>" +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
-                     "data-menu='object-inspection-key' data-spec='dom#" + value + "'>" + value + "</value>"
+                     "data-spec='dom#" + value + "'>" + value + "</value>"
             );
             if (tree.hasOwnProperty(prop[NAME]))
             {

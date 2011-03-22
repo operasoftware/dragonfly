@@ -60,22 +60,27 @@ function ContextMenu() {
     var ele = event.target;
     var all_items = [];
     var menu_id = null;
+    var collected_menus = [];
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      var items = this._registered_menus[menu_id];
-      if (items && items.length)
-      {
-        if (all_items.length)
+      // Make sure the same menu is never collected twice
+      if (collected_menus.indexOf(menu_id) == -1) {
+        collected_menus.push(menu_id);
+
+        var items = this._registered_menus[menu_id];
+        if (items && items.length)
         {
-          all_items.push(ContextMenu.separator);
+          if (all_items.length)
+          {
+            all_items.push(ContextMenu.separator);
+          }
+
+          all_items = all_items.concat(this._expand_all_items(items, event, menu_id));
         }
-
-        all_items = all_items.concat(this._expand_all_items(items, event, menu_id));
       }
-
       ele = ele.parentNode;
     }
 
