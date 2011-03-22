@@ -713,7 +713,7 @@ cls.Stylesheets = function()
     // setProps is used to force the display if a given property is set
     // also if it has the initial value
     var setProps = elementStyle.getSetProps();
-    var hideInitialValue = settings['css-comp-style'].get('hide-initial-values');
+    var hideInitialValue = !settings['css-comp-style'].get('show-initial-values');
     var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
     var search_map = search_active && elementStyle.getSearchMap() || [];
     var is_not_initial_value = false;

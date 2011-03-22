@@ -41,19 +41,19 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     'css-comp-style', 
     // key-value map
     {
-      'hide-initial-values': true,
+      'show-initial-values': true,
       'hide-shorthands': true
     }, 
     // key-label map
     {
-      'hide-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
+      'show-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
       'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
     },
     // settings map
     {
       checkboxes:
       [
-        'hide-initial-values',
+        'show-initial-values',
         'hide-shorthands',
       ]
     },
@@ -65,7 +65,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
   (
     'dom-side-panel',
     [
-      'css-comp-style.hide-initial-values'/*,
+      'css-comp-style.show-initial-values'/*,
       'hide-shorthands',*/
     ]
   );

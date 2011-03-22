@@ -169,7 +169,7 @@ button[handler="reload-window"] {
 .stylesheets.shortcuts {
     content: url("../ui-images/icons/icon_shorthand.png");
 }
-.css-comp-style\.hide-initial-values {
+.css-comp-style\.show-initial-values {
     content: url("../ui-images/icons/icon_hidedefaults.png");
 }
 .css-inspector.hide-shorthands {
