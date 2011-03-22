@@ -572,6 +572,14 @@ var DOMMarkupEditor = function()
     // it seems it needs to be set twice to get set correctly
     this.set_textarea_dimensions();
   }
+
+  this._onmonospacefontchange = function(msg)
+  {
+    this.base_style['font-size'] = 0;
+  }
+
+  messages.addListener('monospace-font-changed',
+                       this._onmonospacefontchange.bind(this));
 }
 
 DOMMarkupEditor.prototype = BaseEditor;
