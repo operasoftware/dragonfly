@@ -14,8 +14,6 @@ JSSyntax.is_valid_identifier = function(prop)
   return (/^[a-z$_][a-z$_0-9]*$/i.test(prop) && !js_keywords.hasOwnProperty(prop));
 }
 
-JSSyntax
-
 // TODO: make these static on JSSyntax
 var js_keywords=
 {
