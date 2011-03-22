@@ -11,7 +11,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   }
   cls.ResourceManagerAllView.instance = this;
 
-  this._service = new cls.ResourceManagerService();
+  this._service = new cls.ResourceManagerService(this);
   this._sort_by = "name";
   this._reverse = false;
   this._columns = ["icon", "host", "path", "type", "size_h"];
