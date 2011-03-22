@@ -229,7 +229,33 @@ cls.GeneralView.create_ui_widgets = function()
   {
     helpers.setCookie('ui-lang', event.target.value);
     helpers.setCookie('ui-lang-set', '1');
-    location.reload();
+    var parent = event.target.parentNode;
+    var container = parent.getElementsByClassName('change-ui-lang-info')[0] ||
+                    parent.render(['div', 'class', 'change-ui-lang-info']);
+    var ui_str = ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO.split("%s");
+    var tmpl = 
+    [
+      ['h2', 
+        ui_str[0] + ' ',
+        ['a', 
+          'opera:config#DeveloperTools|DeveloperToolsURL', 
+          'href', 'opera:config#DeveloperTools|DeveloperToolsURL',
+          'target', '_blank'
+        ],
+        ' ' + ui_str[1]
+      ],
+      ['ul',
+        ["", "cutting-edge/", "experimental/"].map(function(part)
+        {
+          return (
+          ['li',
+            ['code', "https://dragonfly.opera.com/app/"  + part + "client-" + 
+                     event.target.value + ".xml"]
+          ]);
+        }),
+      ]
+    ];
+    container.clearAndRender(tmpl);
   };
 
 }
