@@ -610,6 +610,9 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 /* DESC: Button label to reset the fon selection to the default values  */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
 
+/* DESC: Instruction in settings how to change the user language. The place holder will be replace with an according link to the user setting in opera:config. */
+ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO = "Change %s to one of";
+
 /* DESC: In less then 1 minute */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
 /* DESC: In 1 minute */
