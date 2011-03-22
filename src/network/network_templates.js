@@ -47,7 +47,8 @@ templates.network_options_override_list = function(headers, overrides)
           tpl, 
           ["br"], 
           ["button", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
-           "handler", "update-header-overrides"].concat(overrides ? [] : ["disabled", "disabled"])
+           "handler", "update-header-overrides", "class", "container-button"
+          ].concat(overrides ? [] : ["disabled", "disabled"])
          ];
 }
 
@@ -65,14 +66,16 @@ templates.network_request_crafter_main = function(url, loading, request, respons
   return ["div",
           ["div",
            ["h2", ui_strings.S_HTTP_LABEL_URL],
-           ["input", "type", "text",
+           ["p", ["input", "type", "text",
             "value", url || "http://example.org",
-            "handler", "request-crafter-url-change"],
+            "handler", "request-crafter-url-change"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
-            ["_auto_height_textarea", request],
-           ["button", ui_strings.M_NETWORK_CRAFTER_SEND, "handler", "request-crafter-send"],
+            ["p", ["_auto_height_textarea", request]],
+           ["p", ["button", ui_strings.M_NETWORK_CRAFTER_SEND,
+            "handler", "request-crafter-send",
+            "class", "container-button"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
-           (loading ? ["span", ui_strings.M_NETWORK_CRAFTER_SEND] : ["div", ["textarea", response]]),
+           (loading ? ["p", ui_strings.M_NETWORK_CRAFTER_SEND] : ["p", ["textarea", response]]),
            "class", "padding request-crafter"
           ]
          ];

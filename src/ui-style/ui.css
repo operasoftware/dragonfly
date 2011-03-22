@@ -1409,8 +1409,7 @@ tab.active .close-tab-button {
 }
 
 /* Button style. Use for buttons inside the <container>. */
-container button
-{
+.container-button {
   background: #e6e6e6 url("../ui-images/shine_button.png") repeat-x;
   border: 1px solid rgba(0, 0, 0, .5);
   text-shadow: 0 1px rgba(255,255,255,0.5);
@@ -1422,14 +1421,13 @@ container button
   -o-transition: background-color 0.2s;
 }
 
-container button:active:not([disabled])
-{
+.container-button:active:not([disabled]) {
   box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
   text-shadow: none;
 }
 
-container button img {
+.container-button img {
     vertical-align: middle;
 }
 

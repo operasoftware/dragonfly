@@ -44,10 +44,6 @@
   background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
 }
 
-.error-console button:active {
-    background-color: highlight;
-}
-
 .error-console pre {
     padding: 6px;
     margin: 6px;

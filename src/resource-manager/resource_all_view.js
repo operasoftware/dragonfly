@@ -78,7 +78,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       container.clearAndRender(
         ['div',
          ['button',
-          'class', 'ui-button',
+          'class', 'container-button',
           'handler', 'reload-window'],
          ['p', "Click the reload button above to reload the debugged window and fetch its resources"],
          'class', 'info-box'
