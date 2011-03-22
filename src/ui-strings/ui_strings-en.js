@@ -789,6 +789,7 @@ ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY = "Response";
 /* DESC: Label for send request button in network crafter */
 ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
 
+
 /* DESC: Label request status */
 ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: Label for request duration */
@@ -801,6 +802,8 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.";
+/* DESC: Help text about how a resource could not be show because it's no longer available. */
+ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY = "Response body not available. Enable resource tracking and reload the page to view the resource.";
 /* DESC: Label for get response body int network request view */
 ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL = "Get response body";
 /* DESC: Message about file types we have no good way of showing. */

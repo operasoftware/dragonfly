@@ -126,7 +126,6 @@ templates.network_log_request_detail = function(ctx, selected)
   return [
   ["div",
     ["button", "X", "class", "close-request-detail", "handler", "close-request-detail", "unselectable", "on"],
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY_TITLE],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
@@ -202,12 +201,13 @@ templates.network_response_body = function(req)
 {
   if (req.body_unavailable)
   {
-    return ["p", "Request body not available. Enable resource tracking and reload the page to view the resource."]
+    return ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY];
   }
   else if (!req.responsebody)
   {
     return ["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
+            ["br"],
             ["button",
              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
              "data-resource-id", String(req.id),
