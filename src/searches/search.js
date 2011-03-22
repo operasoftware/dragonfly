@@ -289,16 +289,16 @@ Search.prototype = new function()
         handler: this._view_id + '-show-search-window',
         type: "search_control",
         class: "search-more",
-        title: "Show advanced search",
-        label: "More"
+        title: ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH_TOOLTIP,
+        label: ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH
       };
       this.advanced_controls[SEARCH_MORE] =
       {
         handler: this._view_id + '-show-search-window',
         type: "search_control",
         class: "search-more",
-        title: "Show search bar",
-        label: "Less"
+        title: ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP,
+        label: ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH
       };
       this._window_view_id = view_id + "-search-window";
       this._searchwindow = new searchwindowclass(this._window_view_id, 

@@ -183,7 +183,6 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         return [
           ['setting-composite',
             ['label',
-              // TODO create ui string
               ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES,
               ['input',
                 'type', 'text',
@@ -200,7 +199,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
             ],
             ['input',
               'type', 'button',
-              'value', 'Set default value.',
+              'value', ui_strings.S_BUTTON_SET_DEFAULT_VALUE,
               'handler', 'default-collapsed-prototypes'
             ],
             'class', ' '

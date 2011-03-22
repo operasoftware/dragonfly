@@ -64,18 +64,14 @@ ui_strings.M_VIEW_LABEL_THREAD_LOG = 'Thread Log';
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = 'Inspection';
 /* DESC: Text to show in inspection if there is no object to inspect. */
 ui_strings.M_VIEW_LABEL_NO_INSPECTION = 'No inspection';
-/* DESC: DEPRECATED The JS properties of an object. */
-ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = 'Object Inspection';
-/* DESC: DEPRECATED Documents in the runtime. */
-ui_strings.M_VIEW_LABEL_DOCUMENTS = 'Documents';
-/* DESC: DEPRECATED Stylesheets in the runtime. */
-ui_strings.M_VIEW_LABEL_STYLESHEETS = 'Style Sheets';
 /* DESC: View to see the DOM tree. */
 ui_strings.M_VIEW_LABEL_DOM = 'DOM Panel';
 /* DESC: View to see stylesheet rules. */
 ui_strings.M_VIEW_LABEL_STYLESHEET = 'Style Sheet';
 /* DESC: List of all applied styles. */
 ui_strings.M_VIEW_LABEL_STYLES = 'Styles';
+/* DESC: Section title for new styles. */
+ui_strings.M_VIEW_LABEL_NEW_STYLE = 'New Style';
 /* DESC: List of properties of a selected DOM node. */
 ui_strings.M_VIEW_LABEL_DOM_ATTR = 'Properties';
 /* DESC: Box model layout display. */
@@ -106,8 +102,6 @@ ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = 'BitTorrent';
 ui_strings.M_VIEW_LABEL_ERROR_VOICE = 'Voice';
 /* DESC: See Opera Error console: Error view filter for showing all Widget errors. */
 ui_strings.M_VIEW_LABEL_ERROR_WIDGET = 'Widgets';
-/* DESC: See Opera Error console: Error view filter for showing all Opera Dragonfly errors. */
-ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY = 'Opera Dragonfly';
 /* DESC: The styles that the rendering computed from all stylesheets. */
 ui_strings.M_VIEW_LABEL_COMPUTED_STYLE = 'Computed Style';
 /* DESC: The styles that got defined in the stylesheets.*/
@@ -126,10 +120,6 @@ ui_strings.M_VIEW_LABEL_RAW_RESPONSE_INFO = 'Raw Response';
 ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = 'Request Headers';
 /* DESC: Name of response headers tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = 'Response Headers';
-/* DESC: Name of request info view */
-ui_strings.M_VIEW_LABEL_REQUEST_INFO = 'Request Info';
-/* DESC: Name of response body view */
-ui_strings.M_VIEW_LABEL_RESPONSE_BODY = 'Response Body';
 /* DESC: Name of request summary view */
 ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY = 'Request Summary';
 
@@ -143,6 +133,15 @@ ui_strings.M_VIEW_LABEL_COOKIES = 'Cookies';
 ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES = 'Widget Preferences';
 /* DESC: Label of the Views menu */
 ui_strings.M_VIEW_LABEL_VIEWS = 'Views';
+
+/* DESC: view that shows all resources */
+ui_strings.M_VIEW_LABEL_ALL_RESOURCES = "All resources";
+/* DESC: view that shows network log */
+ui_strings.M_VIEW_LABEL_NETWORK_LOG = "Network log";
+/* DESC: view that shows request crafter */
+ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER = "Make request";
+/* DESC: view that shows network options */
+ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS = "Network options";
 
 /* DESC: Label of the stored colors view */
 ui_strings.M_VIEW_LABEL_STORED_COLORS = 'Color Palette';
@@ -189,8 +188,6 @@ ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT = 'BitTorrent';
 ui_strings.S_SWITCH_SHOW_TAB_VOICE = 'Voice';
 /* DESC: Switch display of 'Widget' tab on or off. */
 ui_strings.S_SWITCH_SHOW_TAB_WIDGET = 'Widgets';
-/* DESC: Switch display of 'Opera Dragonfly' tab on or off. */
-ui_strings.S_SWITCH_SHOW_TAB_DRAGONFLY = 'Opera Dragonfly';
 /* DESC: TODO. */
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = 'Automatically update global scope';
 /* DESC: Show prototpe objects when inspecting a js object. */
@@ -203,26 +200,16 @@ ui_strings.S_SWITCH_SHOW_NON_ENUMERABLES = 'Show non-enumerable properties';
 ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = 'Select an element in the page to inspect it';
 /* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = 'Highlight selected element';
-/* DESC: Highlights page elements when thet mouse hovers. */
-ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = 'Highlight by mouse hover';
 /* DESC: Updates the DOM model automatically when a node is being removed. */
 ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE = 'Update DOM when a node is removed';
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = 'Use lower case tag names for text/html';
 /* DESC: Shows or hides comments in DOM. */
 ui_strings.S_SWITCH_SHOW_COMMENT_NODES = 'Show comment nodes';
-/* DESC: Shows or hides DOM node attributes. */
-ui_strings.S_SWITCH_SHOW_ATTRIBUTES = 'Show attribute nodes';
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = 'Show whitespace nodes';
 /* DESC: Shows DOM in tree or mark-up mode. */
 ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = 'Represent the DOM as a node tree';
-/* DESC: DEPRECATED Shows CSS properties as shorthands or in full effect. */
-ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = 'Use CSS shorthands';
-/* DESC: Show or hide initial values in computed style. */
-ui_strings.S_SWITCH_HIDE_INITIAL_VALUES = 'Show initial values in computed style panel';
-/* DESC: Shows computed styles as shorthand or in full effect. */
-ui_strings.S_SWITCH_HIDE_SHORTHANDS = 'Show shorthands in computed style panel';
 /* DESC: Shows or hides empty strings and null values. */
 ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = 'Show empty strings and null values';
 /* DESC: Route debugging traffic trough proxy to enable debugging devices */
@@ -275,6 +262,8 @@ ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = 'Show JavaScript errors in the console';
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = 'Show breadcrumb trail';
+/* DESC: List of filters that will be hidden in the Error log */
+ui_strings.S_ERROR_LOG_CSS_FILTER = 'Use CSS filter';
 
 /* DESC: Header for settings group "General" */
 ui_strings.S_SETTINGS_HEADER_GENERAL = "General";
@@ -326,6 +315,13 @@ ui_strings.M_CONTEXTMENU_ADD_CONDITION = 'Add condition';
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = 'Edit condition';
 
+/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL = 'Disable all';
+/* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
+ui_strings.M_CONTEXTMENU_DELETE = 'Delete';
+/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL = 'Delete all';
+
 /* DESC: Context menu item for adding a breakpoint. */
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = 'Add breakpoint';
 /* DESC: Context menu item for removing a breakpoint. */
@@ -361,8 +357,6 @@ ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = 'Break when an exception is thrown';
 ui_strings.S_BUTTON_LABEL_AT_ERROR = 'Show where a JavaScript error occurs';
 /* DESC: Execution stops at encountering an abort. */
 ui_strings.S_BUTTON_LABEL_AT_ABORT = 'Stop when encountering an abort message';
-/* DESC: Reloads the browser to receive fresh DOM, etc.  */
-ui_strings.S_BUTTON_LABEL_RELOAD_HOST = 'Reload the selected debugging context in the browser';
 /* DESC: For selecting which window to debug. */
 ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you’d like to debug";
 /* DESC: Expands the DOM tree completely. */
@@ -385,16 +379,14 @@ ui_strings.S_BUTTON_LABEL_CLEAR_LOG = 'Clear log';
 ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW = 'Close window';
 /* DESC: Applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = 'Apply';
-/* DESC: DEPRECATED Clear request log. */
-ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = 'Clear request log';
+/* DESC: Set the default value. */
+ui_strings.S_BUTTON_SET_DEFAULT_VALUE = 'Set default value';
 /* DESC: */
 ui_strings.S_BUTTON_OK = "Ok";
 /* DESC: */
 ui_strings.S_BUTTON_SAVE = "Save";
 /* DESC: */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
-/* DESC: */
-ui_strings.S_BUTTON_ADD = "Add";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = 'Summary';
 /* DESC: Show request headers. */
@@ -422,6 +414,8 @@ ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
 ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 /* DESC: Remove all event breakpoints */
 ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
+/* DESC: Edit custom events */
+ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT = "Edit";
 /* DESC: Search for an event in the event breakpoints view */
 ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
 /* DESC: Search for a keyboard shortcut in the keyboard configuration view */
@@ -430,6 +424,14 @@ ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcuts";
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Reset the keyboard shortcuts of a specific section to the default values. */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to defaults";
+/* DESC: Enter anvanced search mode */
+ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH = "More";
+/* DESC: Enter anvanced search mode tooltip */
+ui_strings.S_BUTTON_ENTER_ADVANCED_SEARCH_TOOLTIP = "Show advanced search";
+/* DESC: Leave anvanced search mode */
+ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH = "Less";
+/* DESC: Leave anvanced search mode tooltip */
+ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 
 
 /*
@@ -449,12 +451,8 @@ ui_strings.S_MENU_DEBUG_CONTEXT = 'Select the debugging context';
  * FIXME: The DESCs needs to reflect this
  */
 
-/* DESC: DEPRECATED Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
-ui_strings.S_LABEL_STATUS_INDICATOR = 'Status indicator for the browser and the debugger';
 /* DESC: The network port to connect to. */
 ui_strings.S_LABEL_PORT = 'Port';
-/* DESC: For choosing a context (e.g. tab, window, widget) to be inspected. */
-ui_strings.S_SELECT_WINDOW_EMPTY = 'Select a window';
 /* DESC: For search fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = 'Search';
 /* DESC: For filter fields. */
@@ -465,8 +463,6 @@ ui_strings.S_COLUMN_LABEL_FILE = "File";
 ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Table heading for column showing error descriptions */
 ui_strings.S_COLUMN_LABEL_ERROR = "Error";
-/* DESC: label for link to the specification for something */
-ui_strings.S_SPEC_LINK_LABEL = "Spec";
 /* DESC: label for url in http request details */
 ui_strings.S_HTTP_LABEL_URL = "URL";
 /* DESC: label for response in http request details */
@@ -479,10 +475,6 @@ ui_strings.S_HTTP_LABEL_HOST = "Host";
 ui_strings.S_HTTP_LABEL_PATH = "Path";
 /* DESC: label for query arguments in http request details */
 ui_strings.S_HTTP_LABEL_QUERY_ARGS = "Query arguments";
-/* DESC: Toolbar text telling how many requests are in http the log */
-ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT = "%s requests";
-/* DESC: Toolbar text telling how many messages are in the error console */
-ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
 
 /* DESC: Tab size in source view. */
 ui_strings.S_LABEL_TAB_SIZE = 'Tab Size';
@@ -618,22 +610,34 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 /* DESC: Button label to reset the fon selection to the default values  */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
 
-/* DESC: Time strings that express in how long something will happen */
+/* DESC: In less then 1 minute */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
+/* DESC: In 1 minute */
 ui_strings.COOKIE_MANAGER_IN_1_MINUTE = "In 1 minute";
+/* DESC: In x minutes */
 ui_strings.COOKIE_MANAGER_IN_X_MINUTES = "In %s minutes";
+/* DESC: In 1 hour */
 ui_strings.COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
+/* DESC: In x hours */
 ui_strings.COOKIE_MANAGER_IN_X_HOURS = "In %s hours";
+/* DESC: Tomorrow */
 ui_strings.COOKIE_MANAGER_TOMORROW = "Tomorrow";
+/* DESC: In x days */
 ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
+/* DESC: In 1 week */
 ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
+/* DESC: In x weeks */
 ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
+/* DESC: In 1 month */
 ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
+/* DESC: In x months */
 ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s months";
+/* DESC: In 1 year */
 ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
+/* DESC: In x years */
 ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
 
-/* DESC: Label of the section with the scvope chaine in the Inspection view */
+/* DESC: Label of the section with the scope chain in the Inspection view */
 ui_strings.S_LABEL_SCOPE_CHAIN = 'Scope Chain';
 /*
  * Information strings in the UI
@@ -676,10 +680,6 @@ ui_strings.S_INFO_WRONG_START = "Opera Dragonfly cannot be used in this way.\n" 
 ui_strings.S_INFO_WAITING_FOR_CONNECTION =
   "Opera Dragonfly is waiting for a connection on port %s.\n" +
   "Please enter opera:debug in your device's URL field to connect.";
-/* DESC: Information shown if the service is not available. */
-ui_strings.S_INFO_SERVICE_NOT_AVAILABLE =  "Service is not available: %s";
-/* DESC: DEPRECATED Information shown when the user needs to select a runtime. */
-ui_strings.S_INFO_NO_RUNTIME_SELECTED =  "Select a runtime";
 /* DESC: Shown when entering something on the command line while there is no javascript running in the window being debugged */
 ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT =  "There is no JavaScript environment in the active window";
 
@@ -695,8 +695,6 @@ ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE =  "%(FUNCTION_NAME)s: %(SCRIPT_ID)s:%(LINE_NUMBER)s";
-/* DESC: The layout subview showing the box-model metrics of an element. */
-ui_strings.M_VIEW_SUB_LABEL_METRICS =  "Metrics";
 /* DESC: The layout subview showing the parent node chain used to calculøate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS =  "Parent Offsets";
 /* DESC: The layout subvie showing offsets of the selected element. */
@@ -725,14 +723,16 @@ ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 /*  */
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
-/* DESC: DEPRECATED Message in detail view of http logger when no request/response is selected */
-ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
 /* DESC: Prefix before debug output */
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
 /* DESC: shown in response view of http logger when request isn't finished */
 ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
 /* DESC: The string "None" used wherever there's an abscense of something */
 ui_strings.S_NONE = "None";
+/* DESC: Tooltip for filtering text-input boxes */
+ui_strings.S_SEARCH_INPUT_TOOLTIP = 'text search';
+/* DESC: Average color setting, " x pixels" will be added */
+ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF = "Average color of";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
 ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
@@ -789,8 +789,6 @@ ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY = "Response";
 /* DESC: Label for send request button in network crafter */
 ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
 
-/* DESC: Title request summary */
-ui_strings.S_NETWORK_REQUEST_DETAIL_SUMMARY_TITLE = "Summary";
 /* DESC: Label request status */
 ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: Label for request duration */
@@ -801,8 +799,6 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request details";
 ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
 /* DESC: Title for response body section */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
-/* DESC: Label for area telling user there were no headers for request or response */
-ui_strings.S_NETWORK_REQUEST_DETAIL_NO_HEADERS_LABEL = "No headers";
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.";
 /* DESC: Label for get response body int network request view */
@@ -847,6 +843,8 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
 /* DESC: "Not applicable" abbreviation */
 ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
+/* DESC: Click reload button to fetch resources */
+ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
 
 
 /* DESC: Context menu entry to select that there should be no grouping in the table */
