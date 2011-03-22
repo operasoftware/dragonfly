@@ -733,6 +733,8 @@ ui_strings.S_NONE = "None";
 ui_strings.S_SEARCH_INPUT_TOOLTIP = 'text search';
 /* DESC: Average color setting, " x pixels" will be added */
 ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF = "Average color of";
+/* DESC: Inhertied from, " <element name>" will be added */
+ui_strings.S_INHERITED_FROM = "Inherited from";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
 ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
