@@ -217,7 +217,8 @@ cls.Resource = function(id)
     }
     else if (eventname == "response")
     {
-      if ([200, 304].indexOf(eventdata.responseCode) == -1)
+      // If it's one of these, it's not a real resource.
+      if ([200, 206, 304].indexOf(eventdata.responseCode) == -1)
       {
         this.invalid = true;
       }
