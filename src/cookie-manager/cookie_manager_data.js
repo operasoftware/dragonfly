@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
@@ -103,7 +103,7 @@ cls.CookieManager.CookieDataBase = function()
     var cookie = this.get_cookie_by_objectref(objectref);
     if (cookie)
     {
-      var domain = cookie.domain;
+      var domain = this._check_to_add_local_to_domain(cookie.domain);
       if (!domain)
       {
         // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
@@ -201,9 +201,10 @@ cls.CookieManager.CookieDataBase = function()
 
       if (rt.hostname)
       {
+        var request_hostname = this._check_to_add_local_to_domain(rt.hostname); // check if this really is needed
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
         // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
-        services['cookie-manager'].requestGetCookie(tag,[rt.hostname]);
+        services['cookie-manager'].requestGetCookie(tag,[request_hostname]);
       }
       else
       {
@@ -303,6 +304,16 @@ cls.CookieManager.CookieDataBase = function()
     this._view.update();
   };
 
+  this._check_to_add_local_to_domain = function(domain)
+  {
+    // work around CORE-37379 by adding ".local" to domain names if they seem local
+    if(domain && domain.indexOf(".") === -1 || domain.match(/^[0-9]+$/))
+    {
+      domain += ".local";
+    }
+    return domain;
+  }
+
   this._init = function(service_version, view)
   {
     this.service_version = service_version || 0;
@@ -334,7 +345,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
       path_val = "";
     }
     var cookie_detail_arr = [
-      cookie_instance.domain,
+      this._check_to_add_local_to_domain(cookie_instance.domain),
       cookie_instance.name,
       path_val,
       cookie_instance.value,

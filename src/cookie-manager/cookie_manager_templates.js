@@ -54,9 +54,22 @@ templates.cookie_manager = {
    return template;
   },
   input_datetime_container: function(name, value) {
+    var lz = function(nr)
+    {
+      nr = String(nr);
+      if(nr.length < 2)
+        nr = "0" + nr;
+      return nr;
+    };
+    var datetime_local_val;
+    if(value)
+    {
+      var d = new Date(value);
+      datetime_local_val= d.getFullYear()+"-"+lz(d.getMonth())+"-"+lz(d.getDate())+"T"+lz(d.getHours())+":"+lz(d.getMinutes())+":"+lz(d.getSeconds());
+    }
     return [
       "input",
-      "value", value || "",
+      "value", datetime_local_val || "",
       "type",  "datetime-local",
       "name",  name,
       "handler", "cookiemanager-input-field"
