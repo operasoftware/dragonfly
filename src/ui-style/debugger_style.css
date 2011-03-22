@@ -309,10 +309,6 @@ cst-option.selected-runtime {
   padding-left:18px;
   }
 
-#examine-objects .key {
-  margin-right:7px;
-  }
-
 .css-inspector pre {
   white-space: pre-wrap;
   }
@@ -497,10 +493,6 @@ examine-objects examine-objects
 examine-objects examine-objects
 {
   padding: 0 0 0 16px;
-}
-examine-objects key
-{
-  margin-right:7px;
 }
 examine-objects key.no-expander
 {
