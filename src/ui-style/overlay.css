@@ -25,9 +25,11 @@ overlay-window {
     right: 20px;
 }
 overlay-arrow {
-  content: url("../ui-images/overlay_arrow.png");
-  position: absolute;
-  top: -12px;
+    background: transparent url("../ui-images/overlay_arrow.png");
+    width: 17px;
+    height: 13px;
+    position: absolute;
+    top: -12px;
 }
 overlay-window h2 {
     font-size: 1em;
