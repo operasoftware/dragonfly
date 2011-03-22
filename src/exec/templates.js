@@ -134,7 +134,7 @@ window.templates.color_picker_average_select = function()
   }
   return (
     ['p',
-      ['label', 'Average color of ',
+      ['label', ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF+' ',
         ['select', ret, 'handler', 'update-average'],
         ' pixels'],
     ]);

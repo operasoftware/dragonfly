@@ -62,7 +62,7 @@
     ['li', 
       ['input', 
         'type', 'button', 
-        'value', 'Edit', 
+        'value', ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT, 
         'handler', 'ev-brp-edit-custom-events'
       ],
       'class', 'controls'

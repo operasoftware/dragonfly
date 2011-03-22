@@ -81,7 +81,7 @@ cls.EcmascriptDebugger["5.0"].DOMAttrsView.create_ui_widgets = function()
       {
         handler: 'dom-attrs-text-search',
         shortcuts: 'dom-attrs-text-search',
-        title: 'text search'
+        title: ui_strings.S_SEARCH_INPUT_TOOLTIP
       }
     ]
   )

@@ -165,7 +165,7 @@ cls.StylesheetsView.create_ui_widgets = function()
       {
         handler: 'stylesheets-text-search',
         shortcuts: 'stylesheets-text-search',
-        title: 'text search'
+        title: ui_strings.S_SEARCH_INPUT_TOOLTIP
       }
     ],
     null,
