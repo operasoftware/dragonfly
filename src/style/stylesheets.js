@@ -770,7 +770,7 @@ cls.Stylesheets = function()
 
       if (i)
       {
-        ret += "<h2>Inherited from <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
+        ret += "<h2>"+ui_strings.S_INHERTITED_FROM+" <code class='element-name'>" + node_casc[ELEMENT_NAME] + "</code></h2>";
       }
 
       // TODO

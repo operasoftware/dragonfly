@@ -610,6 +610,9 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 /* DESC: Button label to reset the fon selection to the default values  */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
 
+/* DESC: Instruction in settings how to change the user language. The place holder will be replace with an according link to the user setting in opera:config. */
+ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO = "Change %s to one of";
+
 /* DESC: In less then 1 minute */
 ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
 /* DESC: In 1 minute */
@@ -733,6 +736,8 @@ ui_strings.S_NONE = "None";
 ui_strings.S_SEARCH_INPUT_TOOLTIP = 'text search';
 /* DESC: Average color setting, " x pixels" will be added */
 ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF = "Average color of";
+/* DESC: Inhertied from, " <element name>" will be added */
+ui_strings.S_INHERITED_FROM = "Inherited from";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
 ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
