@@ -210,14 +210,14 @@ templates.network_response_body = function(req)
   {
     return ["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-            ["br"],
-            ["button",
+            ["p", ["button",
              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
              "data-resource-id", String(req.id),
              // unselectable attribute works around bug CORE-35118
              "unselectable", "on",
-             "handler", "get-response-body"
-            ],
+             "handler", "get-response-body",
+             "class", "container-button"
+            ]],
             "class", "response-view-body-container"
            ];
   }
