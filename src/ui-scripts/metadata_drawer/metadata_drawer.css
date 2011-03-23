@@ -2,7 +2,6 @@
   background-color: #fafafa;
   border-bottom: 1px solid #999;
   margin: 0;
-  padding: 6px;
   position: absolute;
   top: 0;
   left: 0;
@@ -10,10 +9,35 @@
   z-index: 2;
 }
 
-.metadata-drawer th {
-    text-align: right;
+.metadata-drawer-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: solid thin silver;
 }
 
+.metadata-drawer-summary-table th {
+  text-align: left;
+  height: 32px;
+}
+
+.metadata-drawer-summary-table .iconcell
+{
+  text-align: center;
+  border-left: solid thin silver;
+  border-right: solid thin silver;
+  width: 48px;
+}
+
+.metadata-drawer-summary-table .expandercell
+{
+  text-align: center;
+  width: 32px;
+}
+
+.metadata-drawer-summary-table > table
+{
+  background-color: red;
+}
 
 input[handler=metadata-drawer-toggle] {
   background:transparent url('../../ui-images/toggle.png') scroll no-repeat 50% 100%;
