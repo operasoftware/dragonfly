@@ -771,11 +771,13 @@ cls.Stylesheets = function()
         continue;
       }
 
+      var inherited_printed = false;
       for (j = 0; style_dec = style_dec_list[j]; j++)
       {
-        if (i && !j && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
+        if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
         {
-          ret += "<h2>" + ui_strings.S_INHERITED_FROM + " <code class='element-name'>" + element_name + "</code></h2>";
+          inherited_printed = true;
+          ret += "<h2>" + ui_strings.S_INHERITED_FROM + " <code class='element-name'>" + style_dec[SELECTOR] + "</code></h2>";
         }
         ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
       }
