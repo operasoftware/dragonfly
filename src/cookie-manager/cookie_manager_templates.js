@@ -54,13 +54,7 @@ templates.cookie_manager = {
    return template;
   },
   input_datetime_container: function(name, value) {
-    var lz = function(nr) // todo: move this somewhere else
-    {
-      nr = String(nr);
-      if(nr.length < 2)
-        nr = "0" + nr;
-      return nr;
-    };
+    var lz = helpers.make_leading_zero_string;
     var datetime_local_val;
     if(value)
     {
