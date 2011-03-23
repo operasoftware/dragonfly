@@ -54,7 +54,7 @@ templates.cookie_manager = {
    return template;
   },
   input_datetime_container: function(name, value) {
-    var lz = function(nr)
+    var lz = function(nr) // todo: move this somewhere else
     {
       nr = String(nr);
       if(nr.length < 2)
@@ -65,7 +65,7 @@ templates.cookie_manager = {
     if(value)
     {
       var d = new Date(value);
-      datetime_local_val= d.getFullYear()+"-"+lz(d.getMonth())+"-"+lz(d.getDate())+"T"+lz(d.getHours())+":"+lz(d.getMinutes())+":"+lz(d.getSeconds());
+      datetime_local_val= d.getFullYear()+"-"+lz(d.getMonth() + 1)+"-"+lz(d.getDate())+"T"+lz(d.getHours())+":"+lz(d.getMinutes())+":"+lz(d.getSeconds());
     }
     return [
       "input",
