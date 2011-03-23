@@ -140,7 +140,7 @@ rule.non-editable {
     padding: 5px;
 }
 rule:not(.non-editable) + rule.non-editable {
-    margin: -5px; /* Adjust this so that the spacing is always consistent between rules */
+    margin: -5px -5px 0; /* Adjust this so that the spacing is always consistent between rules */
 }
 .css-inspector .non-editable key {
     color: #4c7899;
