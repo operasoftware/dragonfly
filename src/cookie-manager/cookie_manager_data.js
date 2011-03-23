@@ -205,7 +205,8 @@ cls.CookieManager.CookieDataBase = function()
 
       if (rt.hostname)
       {
-        var request_hostname = this._check_to_add_local_to_domain(rt.hostname); // check if this really is needed
+        // Add .local even in the GetCookie request, only for consistency reasons and to spot problems with it more easily
+        var request_hostname = this._check_to_add_local_to_domain(rt.hostname);
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
         // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
         services['cookie-manager'].requestGetCookie(tag,[request_hostname]);
