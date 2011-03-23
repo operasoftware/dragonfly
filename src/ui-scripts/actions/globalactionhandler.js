@@ -141,7 +141,7 @@
     var overlay = Overlay.get_instance();
     if (overlay.is_visible)
     {
-      this["hide-overlay"](action_id, event, target);
+      this._handlers["hide-overlay"](action_id, event, target);
       return;
     }
 

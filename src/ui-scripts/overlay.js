@@ -30,6 +30,12 @@ var Overlay = function()
       this.active_overlay = id;
       this.element = document.documentElement.render(window.templates.overlay(overlay));
       this.change_group(overlay[0].group_name); // Always show the first tab
+      this.element.addEventListener("click", function(event) {
+        if (event.target == this.element)
+        {
+          ActionBroker.get_instance().dispatch_action("global", "hide-overlay", event, event.target)
+        }
+      }.bind(this), false)
     }
   };
 
