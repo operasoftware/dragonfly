@@ -96,7 +96,8 @@ cls.DOMInspectorActions = function(id)
     inspections = window.dominspections,
     model = null,
     scroll_into_view = false,
-    current_target_id = 0;
+    current_target_id = 0,
+    breadcrumbhead = 0;
 
     if (model_id && obj_id)
     {
@@ -108,6 +109,7 @@ cls.DOMInspectorActions = function(id)
                            obj_id != current_target_id;
         hostspotlighter.spotlight(obj_id, scroll_into_view);
       }
+      breadcrumbhead = model.breadcrumbhead || model.target; 
       model.target = obj_id;
       inspections.active = model;
       window.messages.post("element-selected", {model: model,
@@ -116,8 +118,13 @@ cls.DOMInspectorActions = function(id)
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
-      if (!skip_breadcrumbs_update)
+      if (skip_breadcrumbs_update)
       {
+        model.breadcrumbhead = breadcrumbhead;
+      }
+      else
+      {
+        model.breadcrumbhead = model.target;
         if (!this._modebar)
         {
           this._modebar = UI.get_instance().get_modebar('dom');
