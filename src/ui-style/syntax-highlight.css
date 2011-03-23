@@ -2,26 +2,26 @@
 
 .null,
 .undefined {
-    color: #aaa;
+    color: #b43;
+    font-weight: bold;
 }
 
 .boolean {
-        color: #d60;
-    }
+    color: #d60;
+}
 
 .error {
-  color: #f60;
-  font-style: italic;
+    color: #f60;
+    font-style: italic;
 }
 
 .number,
 offsets value { /* TODO: use class */
-    color: #6c0;
+    color: #c32;
 }
 
-.string,
-.dom value { /* TODO: use class .attribute-name */
-    color: #c44;
+.string {
+    color: #a54;
 }
 
 .object {
@@ -33,15 +33,16 @@ offsets value { /* TODO: use class */
     color: #000;
 }
 
-.reg_exp { /* TODO: Not specified */
-    color: #c71;
+.reg_exp {
+    color: #c32; /* should not be the same as for color */
 }
 
-.js_builtins { /* TODO: Not specified */
-    color: #ac35a9;
+.js_builtins {
+    color: #55a;
 }
 
 .js_keywords {
+    color: #338;
     font-weight: bold;
 }
 
@@ -84,38 +85,53 @@ examine-objects key {
 
 .doctype,
 .comment {
-    color: #bbb;
-}
-
-.text-node,
-.comment-node,
-.cdata-node {
-	color: #abbaba; /* TODO: Not specified */
+    color: #987;
+    font-style: italic;
 }
 
 .document-node {
     color: #294556; /* TODO: Not specified */
 }
 
+.markup-tag,
 .dom node, /* TODO: use class */
 .element-name {
-    color: #55b;
+    color: #338;
 }
 
-.dom key { /* TODO: Rename to .attribute-name */
-    color: #336;
+.markup-attribute,
+.dom key {
+    color: #55a;
+}
+
+.markup-attribute-value,
+.dom value {
+    color: #a54;
+}
+
+.markup-bogus-comment,
+.markup-comment,
+.comment-node,
+.cdata-node,
+.text-node {
+    color: #987;
+    font-style: italic;
 }
 
 /* CSS */
 
-selector { /* TODO: use class */
-    color: #08d;
+.css-selector,
+selector {
+    color: #338;
+    font-weight: bold;
 }
 
+.css-property,
 .css-inspector key { /* Rename to .property */
-    color: #059;
+    color: #55a;
 }
 
+css-property-value,
 .css-inspector value { /* Use class */
     color: #111;
 }
