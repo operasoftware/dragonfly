@@ -323,7 +323,19 @@ Search.prototype = new function()
   
   this.show = function()
   {
-    if (!this._is_active)
+    if (this.is_active)
+    {
+      if (this._mode == MODE_SEARCHBAR)
+      {
+        this._searchbar.focus_searchfield();
+      }
+      else
+      {
+        this._searchwindow.focus_searchfield();
+      }
+
+    }
+    else
     {
       this._is_active = true;
       if (this._mode == MODE_SEARCHBAR)

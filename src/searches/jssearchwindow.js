@@ -200,6 +200,13 @@
     }
   };
 
+  this.focus_searchfield = function()
+  {
+    var container = this.get_container();
+    var input = container && this.getToolbarControl(container, this._searchhandler);
+    input && input.focus();
+  }
+
   this.ondestroy = function()
   {
     this.searchresults = null;

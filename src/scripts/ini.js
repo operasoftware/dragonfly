@@ -18,7 +18,7 @@
         {
           "ctrl a": "select-all",
           "ctrl i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
+          "f3": "show-search",
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
