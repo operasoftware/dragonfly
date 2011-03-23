@@ -1195,15 +1195,21 @@ cls.JsSourceView.create_ui_widgets = function()
   var contextmenu = ContextMenu.get_instance();
   var breakpoints = cls.Breakpoints.get_instance();
 
-  contextmenu.register("js-source-content", [
+  contextmenu.register("js_source", [
     {
       callback: function(event, target)
       {
-        var line = parseInt(event.target.get_attr("parent-node-chain", "data-line-number"));
+        var line = parseInt(event.target.get_attr("parent-node-chain", 
+                                                  "data-line-number"));
         var script_id = views.js_source.getCurrentScriptId();
         var bp_view = window.views.breakpoints;
         var items = [];
 
+        if (!line)
+        {
+          var input = event.target.parentNode.firstElementChild;
+          line = input && parseInt(input.value);
+        }
         if (line)
         {
           var selection = window.getSelection();
@@ -1251,5 +1257,5 @@ cls.JsSourceView.create_ui_widgets = function()
         }
       }
     }
-  ]);
+  ], true); // extend the default existing menu
 };
