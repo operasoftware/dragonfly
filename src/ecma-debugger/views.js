@@ -182,6 +182,7 @@ cls.GeneralView.create_ui_widgets = function()
       "window-attached": true,
       "show-only-normal-and-gadget-type-windows": true,
       "shortcuts": null,
+      "shortcuts-hash": ""
     }, 
     // key-label map
     {
