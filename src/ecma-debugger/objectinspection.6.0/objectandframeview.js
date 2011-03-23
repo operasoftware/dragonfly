@@ -304,9 +304,14 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
       {
         // Prevent "Add <key> to watches" from showing up in the actual watches view.
         // TODO: Not optimal, and we also don't get spec links, but this will do for now.
-        if (target.parentNode.get_attr("parent-node-chain", "data-menu") == "watches")
+        var ele = target;
+        while (ele)
         {
-          return;
+          if (ele.getAttribute("data-menu") == "watches")
+          {
+            return;
+          }
+          ele = ele.parentNode;
         }
 
         var ele = target.parentNode;
