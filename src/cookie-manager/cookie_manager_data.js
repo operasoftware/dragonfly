@@ -48,7 +48,7 @@ cls.CookieManager.Cookie = function(details, data)
   this._is_removable = (
     this.domain !== undefined &&
     this.path !== undefined &&
-    (!this.path || data._is_min_service_version_1_0_2)
+    (this.path === "/" || data._is_min_service_version_1_0_2)
   );
 }
 
@@ -175,6 +175,10 @@ cls.CookieManager.CookieDataBase = function()
       if ((service_version[i] || 0) < compare_version[i])
       {
         return false;
+      }
+      else if(service_version[i] > compare_version[i])
+      {
+        return true;
       }
     };
     return true;
