@@ -324,6 +324,8 @@ suggest_values['background-image'] =
 [
   // <image>
   'none',
+  '-o-linear-gradient()',
+  '-o-repeating-linear-gradient()',
   'inherit'
 ];
 
@@ -363,8 +365,13 @@ suggest_values['background-repeat'] =
 ];
 
 suggest_values['background'] =
-[
-];
+  suggest_values['background-attachment']
+  .concat(suggest_values['background-color'])
+  .concat(suggest_values['background-image'])
+  .concat(suggest_values['background-origin'])
+  .concat(suggest_values['background-position'])
+  .concat(suggest_values['background-size'])
+  .concat(suggest_values['background-repeat']);
 
 suggest_values['border-collapse'] =
 [
