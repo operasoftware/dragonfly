@@ -302,16 +302,11 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
     {
       callback: function(event, target)
       {
-        // Prevent "Add <key> to watches" from showing up in the actual watches view.
-        // TODO: Not optimal, and we also don't get spec links, but this will do for now.
-        var ele = target;
-        while (ele)
+        // Prevent "Watch <prop>" from showing up in the first level in watches view
+        if (target.has_attr("parent-node-chain", "data-menu").parentNode
+                  .get_attr("parent-node-chain", "data-menu") == "watches")
         {
-          if (ele.getAttribute("data-menu") == "watches")
-          {
-            return;
-          }
-          ele = ele.parentNode;
+          return;
         }
 
         var ele = target.parentNode;
@@ -342,7 +337,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         });
 
         return {
-          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", prop),
+          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", prop.replace("$", "$$$")),
           handler: function(event, target) {
             window.views.watches.add_watch(prop);
           }
