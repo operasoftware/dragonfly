@@ -271,9 +271,9 @@ cls.DOMInspectorActions = function(id)
 
   this.getFirstTarget = function()
   {
-    return view_container
-      && ( document.getElementById('target-element') || view_container ).
-      getElementsByTagName('input')[0];
+    return view_container &&
+           (document.getElementById('target-element') || view_container).
+           getElementsByTagName('input')[0];
   }
 
   this.resetTarget = function()
@@ -302,11 +302,7 @@ cls.DOMInspectorActions = function(id)
         this.is_dom_type_tree = cur && cur.hasClass('tree-style');
         this.setSelected(nav_target || (nav_target = this.getFirstTarget()));
       }
-      else
-        this.blur();
     }
-    else
-      this.blur();
   }
 
   var ondomnodeinserted = function(event)
@@ -362,7 +358,10 @@ cls.DOMInspectorActions = function(id)
       {
         nav_target.blur();
       }
-      selection && selection.removeAllRanges();
+      if (selection)
+      {
+        selection.removeAllRanges();
+      }
       nav_target = new_target;
       if (scroll_into_view)
       {
@@ -563,31 +562,46 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["nav-up"] = function(event, target)
   {
-    // TODO if setting of nav target fails
-    if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container,
-                                                            nav_filters.up_down),
-                           true))
+    if (view_container)
     {
-      view_container.scrollTop = 0;
+      var new_target = nav_target &&
+                       nav_target.getPreviousWithFilter(view_container,
+                                                        nav_filters.up_down) ||
+                       !nav_target && this.getFirstTarget();
+      if (!this.setSelected(new_target, true))
+      {
+        view_container.scrollTop = 0;
+      }
     }
     return true;
   }.bind(this);
 
   this._handlers["nav-down"] = function(event, target)
   {
-    // TODO if setting of nav target fails
-    if(!this.setSelected(nav_target.getNextWithFilter(view_container,
-                                                      nav_filters.up_down),
-                         true))
+    if (view_container)
     {
-      view_container.scrollTop = view_container.scrollHeight;
+      var new_target = nav_target &&
+                       nav_target.getNextWithFilter(view_container, 
+                                                    nav_filters.up_down) ||
+                       !nav_target && this.getFirstTarget();
+      if (!this.setSelected(new_target, true))
+      {
+        view_container.scrollTop = view_container.scrollHeight;
+      }
     }
     return true;
   }.bind(this);
 
   this._handlers["nav-left"] = function(event, target)
   {
-    // TODO if setting of nav target fails
+    if (view_container)
+    {
+      var new_target = nav_target &&
+                       nav_target.getPreviousWithFilter(view_container,
+                                                        nav_filters.left_right) ||
+                       !nav_target && this.getFirstTarget();
+      this.setSelected(new_target, true);
+    }
     this.setSelected(nav_target.getPreviousWithFilter(view_container,
                                                       nav_filters.left_right),
                      true);
@@ -596,11 +610,14 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["nav-right"] = function(event, target)
   {
-
-    // TODO if setting of nav target fails
-    this.setSelected(nav_target.getNextWithFilter(view_container,
-                                                  nav_filters.left_right),
-                     true);
+    if (view_container)
+    {
+      var new_target = nav_target &&
+                       nav_target.getNextWithFilter(view_container,
+                                                    nav_filters.left_right) ||
+                       !nav_target && this.getFirstTarget();
+      this.setSelected(new_target, true);
+    }
     return true;
   }.bind(this);
 
