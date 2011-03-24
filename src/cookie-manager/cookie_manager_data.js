@@ -56,6 +56,8 @@ cls.CookieManager.CookieDataBase = function()
 {
   this.refetch = function(){};
   this.remove_cookie = function(objectref, callback){};
+  this.remove_cookies = function(cookies){};
+  this.remove_cookies_of_runtime = function(rt_id){};
   this.get_cookies = function(){};
   this.create_objectref = function(cookie, runtimes, fixed_name){};
   this.get_cookie_by_objectref = function(objectref){};

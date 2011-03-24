@@ -621,7 +621,7 @@ ui_strings.COOKIE_MANAGER_IN_X_DAYS = "In %s days";
 ui_strings.COOKIE_MANAGER_IN_1_WEEK = "In 1 week";
 ui_strings.COOKIE_MANAGER_IN_X_WEEKS = "In %s weeks";
 ui_strings.COOKIE_MANAGER_IN_1_MONTH = "In 1 month";
-ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s month";
+ui_strings.COOKIE_MANAGER_IN_X_MONTHS = "In %s months";
 ui_strings.COOKIE_MANAGER_IN_1_YEAR = "In 1 year";
 ui_strings.COOKIE_MANAGER_IN_X_YEARS = "In %s years";
 
