@@ -380,9 +380,9 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     ret[ret.length] = 
     [
       "div", 
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "number", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "number", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "number", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "", "set-hsla"),
       this.templateInputRange(ui_strings.S_LABEL_COLOR_OPACITY, extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
         "100", "digit-3", "set-hsla", !select_obj.has_opacity),
       this.templateInputText("# ", colors.getHex(), "text", "set-hex"),
