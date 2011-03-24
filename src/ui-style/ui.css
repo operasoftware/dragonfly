@@ -755,6 +755,7 @@ ui-menu ul li:hover h2 {
 window-control {
   display: block;
   position: absolute;
+  cursor: default;
   }
 
 window-header {
