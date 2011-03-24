@@ -5,7 +5,7 @@
  * @extends ViewBase
  */
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
-  this._service = new cls.NetworkLoggerService()
+  this._service = new cls.NetworkLoggerService(this);
   this._loading = false;
   this._hscroll = 0;
   this._vscroll = 0;
