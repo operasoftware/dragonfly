@@ -9,6 +9,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._loading = false;
   this._hscroll = 0;
   this._vscroll = 0;
+  this._contentscroll = 0;
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
@@ -22,6 +23,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
     this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
+    var content = this._container.querySelector(".network-details-request");
+    this._contentscroll = content ? content.scrollTop : 0;
   }
 
   this._render_main_view = function(container)
@@ -42,9 +45,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._vscrollcontainer = container.querySelector(".network-details-url-list");
         this._vscrollcontainer.scrollTop = this._vscroll;
+        var content = container.querySelector(".network-details-request");
+        content.scrollTop = this._contentscroll;
       }
       else if (!paused)
       {
+        this._contentscroll = 0;
         container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;
         var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
