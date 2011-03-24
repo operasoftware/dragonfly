@@ -237,8 +237,13 @@ cls.CookieManager.CookieDataBase = function()
           }
           // workaround: Check path to match if it's not root, CORE-37107
           var path = cookie_info[1];
-          if (path && (path !== "/") && !rt.pathname.startswith(path+"/"))
+          if (path && (path !== "/") && !rt.pathname.startswith(path))
           {
+            /*
+             * In opera (and IE, checked IE8), the path value doesn't have to match
+             * with a trailing slash. Would be used with startswith(path+"/") in 
+             * other browsers, see http://people.opera.com/dherzog/cookie-path/
+             */
             continue;
           }
           this.cookie_list.push(
