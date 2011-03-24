@@ -61,12 +61,13 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     "document"
   );
 
+  new ToolbarConfig('css-comp-style');;
+
   new Switches
   (
-    'dom-side-panel',
+    'css-comp-style',
     [
-      'css-comp-style.hide-initial-values'/*,
-      'hide-shorthands',*/
+      'hide-initial-values'
     ]
   );
 
