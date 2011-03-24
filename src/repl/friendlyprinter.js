@@ -210,6 +210,7 @@ window.cls.FriendlyPrinter = function()
   {
     const ELEMENT = 1;
     const DATE = 2;
+    const FUNCTION = 3;
     var ret = list.map(function(item)
     {
       var class_ = item === null ? "" : Object.prototype.toString.call(item);
@@ -232,6 +233,13 @@ window.cls.FriendlyPrinter = function()
           item.toISOString()
         ];
       }
+      else if (class_ == "[object Function]")
+      {
+        return [
+          FUNCTION,
+          item.toString()
+        ];
+      }
       return null;
     });
     return ret;
@@ -246,33 +254,47 @@ window.cls.FriendlyPrinter = function()
     ELE_HREF = 4,
     ELE_SRC = 5;
 
-    var classes = {};
-    classes[ELE_NAME] = 'element-name';
-    classes[ELE_ID] = 'element-id';
-    classes[ELE_CLASS] = 'element-class';
-    classes[ELE_HREF] = 'element-href';
-    classes[ELE_SRC] = 'element-src';
+    var ele_classes = {};
+    ele_classes[ELE_NAME] = 'element-name';
+    ele_classes[ELE_ID] = 'element-id';
+    ele_classes[ELE_CLASS] = 'element-class';
+    ele_classes[ELE_HREF] = 'element-href';
+    ele_classes[ELE_SRC] = 'element-src';
 
-    var print_val = {};
-    print_val[ELE_NAME] = function(val) {return val;};
-    print_val[ELE_ID] = function(val) {return '#' + val;};
-    print_val[ELE_CLASS] = function(val)
+    this._print_values = function(index, val)
     {
-      return (' ' + val).replace(/\s+/g, '.');
+      switch (index)
+      {
+      case ELE_NAME:
+        return val;
+
+      case ELE_ID:
+        return "#" + val;
+
+      case ELE_CLASS:
+        return "." + val.trim().replace(/\s+/g, ".");
+
+      case ELE_HREF:
+        return " " + val;
+
+      case ELE_SRC:
+        return " " + val;
+
+      default:
+        return " ";
+      }
     };
-    print_val[ELE_HREF] = function(val) {return ' ' + val;};
-    print_val[ELE_SRC] = function(val) {return ' ' + val;};
 
     this._friendly_print_element = function(value_list)
     {
       return value_list.reduce(function(list, prop, index)
       {
-        if (index in classes && prop)
+        if (index in ele_classes && prop)
         {
-          list.push(['span', print_val[index](prop), 'class', classes[index]]);
+          list.push(['span', this._print_values(index, prop), 'class', ele_classes[index]]);
         }
-        return list
-      }, []);
+        return list;
+      }.bind(this), []);
     };
 
     this._friendly_print_date = function(value_list)
@@ -281,24 +303,35 @@ window.cls.FriendlyPrinter = function()
       return ["span", value_list[DATE_STRING], "class", "datetime"];
     };
 
+    this._friendly_print_function = function(value_list)
+    {
+      const FUNCTION_EXPRESSION = 1;
+      return ['span',
+             window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]),
+             'class', 'function-declaration'
+      ];
+    };
+
     this.friendly_print = function(value_list)
     {
       const
       TYPE = 0,
       ELEMENT = 1,
-      DATE = 2;
+      DATE = 2,
+      FUNCTION = 3;
 
-      var ret = [];
       switch (value_list[TYPE])
       {
-        case ELEMENT:
-          return this._friendly_print_element(value_list);
+      case ELEMENT:
+        return this._friendly_print_element(value_list);
 
-        case DATE:
-          return this._friendly_print_date(value_list);
+      case DATE:
+        return this._friendly_print_date(value_list);
+
+      case FUNCTION:
+        return this._friendly_print_function(value_list);
       }
     };
-
   };
 
   this._obj2obj_id_list = function(obj, index)
