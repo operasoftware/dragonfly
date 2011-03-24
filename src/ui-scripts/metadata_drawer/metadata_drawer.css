@@ -1,5 +1,4 @@
 ﻿.metadata-drawer {
-  background-color: #fafafa;
   border-bottom: 1px solid #999;
   margin: 0;
   position: absolute;
@@ -7,12 +6,17 @@
   left: 0;
   width: 100%;
   z-index: 2;
+  background-color: white;
 }
 
 .metadata-drawer-summary-table {
   width: 100%;
   border-collapse: collapse;
-  border-bottom: solid thin silver;
+  border-spacing: 0;
+}
+
+.metadata-drawer-summary-table.unfolded {
+  border-bottom: solid thin silver;  
 }
 
 .metadata-drawer-summary-table th {
@@ -20,7 +24,7 @@
   height: 32px;
 }
 
-.metadata-drawer-summary-table .iconcell
+.metadata-drawer .iconcell
 {
   text-align: center;
   border-left: solid thin silver;
@@ -28,15 +32,38 @@
   width: 48px;
 }
 
-.metadata-drawer-summary-table .expandercell
+.metadata-drawer .expandercell
 {
   text-align: center;
   width: 32px;
 }
 
-.metadata-drawer-summary-table > table
+.metadata-drawer .urlcell
 {
-  background-color: red;
+  padding-left: 12px;
+}
+
+.metadata-drawer .details-table
+{
+  width: 100%;
+  border-top: solid thin silver;
+  background-color: #f0f0f0;
+  padding-left: 30px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.metadata-drawer .details-table tr {
+  border-bottom: solid thin black;
+}
+
+.metadata-drawer .details-table th {
+  width: 100px;
+  text-align: left;
+}
+
+.metadata-drawer .details-table th {
+
 }
 
 input[handler=metadata-drawer-toggle] {
@@ -45,9 +72,5 @@ input[handler=metadata-drawer-toggle] {
   width:5px;
   height:9px;
   opacity: 0.66;
-  -o-transition: .2s;
 }
 
-input[handler=metadata-drawer-toggle].unfolded {
-  -o-transform: rotate(90deg);
-}

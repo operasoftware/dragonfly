@@ -72,7 +72,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
   var content = [];
   if (expanded)
   {
-    content = ["tr", ["td", templates.metadata_drawer_list(resource, rules), "colspan", "3"]]
+    content = templates.metadata_drawer_list(resource, rules);
   }
 
   return ["div",
@@ -86,10 +86,10 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
                   "type", "button",
                   "data-object-id", objectid
                   ],
-                  "class", "expandercell" 
+                  "class", "expandercell"
                ],
                ["th", templates.network_request_icon(resource), "class", "iconcell"],
-               ["th", url],
+               ["th", url, "class", "urlcell"],
              ],
              "class", "metadata-drawer-summary-table"
            ],
@@ -101,6 +101,6 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 templates.metadata_drawer_list = function(resource, rules)
 {
   return ["table", rules.map(function(rule) {
-    return ["tr", ["th", rule.label + ":"], ["td", rule.getter(resource) ]];
-  })];
+    return ["tr", ["th", rule.label + ":"], ["td", rule.getter(resource) ]]
+  }), "class", "details-table"];
 }
