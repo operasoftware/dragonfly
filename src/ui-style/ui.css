@@ -136,7 +136,7 @@ button[handler="reload-window"] {
 #top-window-toggle-attach::before {
     background-image: url("../ui-images/icons/icon_attach.png");
 }
-#top-window-toggle-attach.attached ::before {
+#top-window-toggle-attach.attached::before {
     background-image: url("../ui-images/icons/icon_detach.png");
 }
 #top-window-close::before {
