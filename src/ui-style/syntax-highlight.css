@@ -194,7 +194,7 @@ media, at { /* TODO: Use classes */
 }
 
 [handler="spotlight-node"]:hover,
-property:hover {
+rule:not(.non-editable) property:hover {
     border-color: #e0eaf6;
     background: #f2f5f9;
 }
