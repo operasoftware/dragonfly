@@ -1260,7 +1260,9 @@ nav {
     text-align: center;
     z-index: 1;
     display: none;
-    background: #d9d9d9 url("../ui-images/shadow_0.png")
+    background: #d9d9d9 50% 7px no-repeat;
+    content: "\00A0";
+    overflow: hidden;
 }
 nav:active {
     color: #000;
@@ -1272,19 +1274,19 @@ nav::selection {
     display: inline;
 }
 nav[dir="back"] {
-    content: url("../ui-images/nav_back.png");
+    background-image: url("../ui-images/nav_back.png");
     border-right-width: 1px;
 }
 nav[dir="forward"] {
-    content: url("../ui-images/nav_forward.png");
+    background-image: url("../ui-images/nav_forward.png");
     right: 0;
     border-left-width: 1px;
 }
 nav[dir="back"].disabled {
-    content: url("../ui-images/nav_back_disabled.png");
+    background-image: url("../ui-images/nav_back_disabled.png");
 }
 nav[dir="forward"].disabled {
-    content: url("../ui-images/nav_forward_disabled.png");
+    background-image: url("../ui-images/nav_forward_disabled.png");
 }
 nav:not(.disabled):hover {
   background-color: #cecece;
