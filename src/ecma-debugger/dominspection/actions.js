@@ -362,7 +362,7 @@ cls.DOMInspectorActions = function(id)
       {
         nav_target.blur();
       }
-      selection.removeAllRanges();
+      selection && selection.removeAllRanges();
       nav_target = new_target;
       if (scroll_into_view)
       {
