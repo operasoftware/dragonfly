@@ -230,7 +230,18 @@ cls.DOMView.create_ui_widgets = function()
       ]
     },
     null,
-    "document"
+    "document",
+    // default callback map on setting change
+    // called as method of the settings object
+    {
+      "lock-selected-elements": function(value)
+      {
+        if (value && !this.get('highlight-on-hover'))
+        {
+          this.set('highlight-on-hover', true, true);
+        }
+      },
+    }
   );
 
   new ToolbarConfig

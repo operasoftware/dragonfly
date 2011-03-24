@@ -363,7 +363,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var onSettingChange = function(msg)
   {
-    if( msg.id == settings_id )
+    if (msg.id == settings_id)
     {
       switch (msg.key)
       {
@@ -372,6 +372,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
           if(!settings[settings_id].get(msg.key))
           {
             locked_elements = [];
+            last_spotlight_command = null;
             self.clearSpotlight();
           }
           break;
