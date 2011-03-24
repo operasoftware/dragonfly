@@ -1,6 +1,6 @@
 ﻿window.cls || (window.cls = {});
 
-cls.DOMSidePanelView = function(id, name, view_list)
+cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
 {
   this._super_createView = this.createView;
   this.createView = function(container)
@@ -13,7 +13,7 @@ cls.DOMSidePanelView = function(id, name, view_list)
       quick_find.previousElementSibling.textContent = "";
     }
   }
-  this.init(id, name, view_list);
+  this.init(id, name, view_list, default_unfolded_list);
 }
 
 cls.DOMSidePanelView.prototype = SidePanelView.prototype;
