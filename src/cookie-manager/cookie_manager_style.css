@@ -3,6 +3,10 @@
   border: none;
 }
 
+.cookie_manager .sortable-table .add_cookie_dropdown {
+  font-size: 11px;
+}
+
 .cookie_manager .replaced-val,
 .cookie_manager .expired_cookie {
   color: #AAA;
