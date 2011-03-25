@@ -141,6 +141,16 @@
       }
       style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
       modal_box.style.cssText = style;
+      var selected_option = modal_box.querySelector("cst-option.selected");
+      if (selected_option)
+      {
+        var offset_top = selected_option.offsetTop;
+        var box_height = modal_box.offsetHeight;
+        if (offset_top > box_height)
+        {
+          modal_box.firstElementChild.scrollTop = offset_top + (selected_option.offsetHeight / 2) - (box_height / 2);
+        }
+      }
       EventHandler.__modal_mode= true;
     }
   }
