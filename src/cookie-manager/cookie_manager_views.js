@@ -66,7 +66,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
-            return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "container-button", "handler", "cookiemanager-add-cookie-row"];
+            return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "container-button", "handler", "cookiemanager-add-cookie-row", "unselectable", "on"];
           },
           sorter: this._make_sorter("domain")
         },
