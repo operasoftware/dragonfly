@@ -24,14 +24,6 @@
   text-align: justify;
 }
 
-.sortable-table td.align-start {
-  text-align: start;
-}
-
-.sortable-table td.align-end {
-  text-align: end;
-}
-
 .sortable-table th {
   word-wrap: normal;
 }

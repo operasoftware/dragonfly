@@ -19,8 +19,15 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.init(id, name, container_class, null, "cookiemanager-container");
 
     ActionHandlerInterface.apply(this);
-    this._handlers["submit"] = this._submit.bind(this);
-    this._handlers["cancel"] = this._cancel.bind(this);
+    this._handlers = {
+      "submit": this._submit.bind(this),
+      "cancel": this._cancel.bind(this),
+      "remove-item": this._remove_item.bind(this),
+      "select-row": this.select_row.bind(this),
+      "enter-edit-mode": this.enter_edit_mode.bind(this),
+      "check-to-exit-edit-mode": this.check_to_exit_edit_mode.bind(this),
+      "add-cookie": this.click_add_cookie_button.bind(this)
+    };
     ActionBroker.get_instance().register_handler(this);
 
     this.data = data_reference;
@@ -138,10 +145,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
-    if (!this._update_expiry_interval)
-    {
-      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
-    }
   };
 
   this.createView = function(container)
@@ -149,6 +152,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._container = container;
     var storage_data = this.data.get_cookies();
     this._sortable_table.data = storage_data;
+    if (!this._update_expiry_interval)
+    {
+      this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
+    }
     this._before_table_render();
     this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
     this._after_table_render();
@@ -206,7 +213,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           options.push(
             {
               label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-              handler: this.enter_edit_mode.bind(this, sel_cookie_obj._objectref)
+              handler: this.enter_edit_mode.bind(this)
             }
           );
         }
@@ -219,12 +226,11 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
           );
         }
-        // Add "Remove all from domain-and-path"
+        // Add "Remove all from protocol-domain-path"
         var runtime_id = sel_cookie_obj._rt_id;
         options.push(
           {
-            // todo: would like to show the protocol too, would have to use sel_cookie_obj._rt_protocol + "://" though, but only for http / https cases
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
             handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
           }
         );
@@ -271,22 +277,23 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   };
 
-  this.select_row = function(event, elem) // public just towards actions
+  this.select_row = function(event, target) // public just towards actions
   {
     var event = event || {};
+    this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
       * unselect everything while not doing multiple selection, which is when:
       *   cmd / ctrl key is pressed OR
       *   more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && elem.hasClass("selected")) ))
+    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
         selected_node.removeClass("selected");
       };
     }
-    elem.addClass("selected");
+    target.addClass("selected");
   };
 
   this.click_add_cookie_button = function(event, target)
@@ -317,17 +324,19 @@ cls.CookieManager.CookieManagerViewBase = function()
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name=name]").focus();
-      this.select_row(null, inserted);
+      this.select_row(null, inserted); // todo: check if it's nicer if a added row does not get selected, but the class gives it a selection-like style
     }
   }
 
-  this.enter_edit_mode = function(objectref, event)
+  this.enter_edit_mode = function(event, target)
   {
     this.mode = MODE_EDIT;
     this._sortable_table.restore_columns(this._table_elem);
-    var row = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
-    this.select_row(event, row);
-    // Todo: focus input in clicked td if applicable
+    // can't directly work with target because restore_columns has renewed it
+    var objectref = target.getAttribute("data-object-id");
+    var target = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    this.select_row(event, target);
+    // todo: find input that is closest to the actual event.target and focus it
   }
 
   this._submit = function(event, target)
@@ -340,6 +349,18 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this.data.refetch();
     this.mode = MODE_DEFAULT;
+    return false;
+  }
+  
+  this._remove_item = function(event, target)
+  {
+    var selection = this._table_elem.querySelectorAll(".selected");
+    var selected_cookie_objects = [];
+    for (var i=0, selected_node; selected_node = selection[i]; i++) {
+      var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
+      selected_cookie_objects.push(sel_cookie_obj);
+    };
+    this.data.remove_cookies(selected_cookie_objects);
     return false;
   }
 
@@ -386,8 +407,8 @@ cls.CookieManager.CookieManagerViewBase = function()
       var value        = edit_tr.querySelector("[name=value]").value;
       var expires      = new Date(edit_tr.querySelector("[name=expires]").value || 0).getTime();
       var path         = edit_tr.querySelector("[name=path]").value.trim();
-      var is_secure    = !!(is_secure_input && is_secure_input.checked);
-      var is_http_only = !!(is_http_only_input && is_http_only_input.checked);
+      var is_secure    = +(is_secure_input && is_secure_input.checked);
+      var is_http_only = +(is_http_only_input && is_http_only_input.checked);
       // "runtime" is val of [select] or [input type=hidden] (no add_cookie service)
       var runtime      = runtime_elem && parseInt(runtime_elem.value.split(",")[0]);
       // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
@@ -423,8 +444,8 @@ cls.CookieManager.CookieManagerViewBase = function()
                            path:           path,
                            value:          value,
                            expires:        expires,
-                           isSecure:      +is_secure,
-                           isHTTPOnly:    +is_http_only,
+                           isSecure:       is_secure,
+                           isHTTPOnly:     is_http_only,
                            _rt_id:         runtime
                           }, this.data);
 

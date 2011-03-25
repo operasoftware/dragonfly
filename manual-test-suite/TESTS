@@ -1553,14 +1553,13 @@ id: 00100
 label: Inspect cookies
 desc:
   - Go to the above url in the above order
-  - Verify that you see cookie a - m, or if your host protocol is https, a - n
+  - Verify that you see cookie a - m
   - In case the host has the cookie-service:
-  - Verify that you see cookie a - o (with n only present if the host protocol is https)
-  - Verify that cookie "n", if you see it, has a secure checkmark
-  - Verify that the "expires" values follow a logical order from 2 years to "(Session)"
-  - Verify that you can watch them expire without any further action
-
-url: ./test-cases/storages/check-storages.html
+  - If the host protocol is https, verify that cookie "w", if you see it, has a secure checkmark
+  - Verify that you see cookie "x" and that it is marked as http-only
+  - Verify that you see at least one cookie prefixed with "y" and at least one with "z"
+  - Verify that the path values of these cookie match exactly what is implied in value
+  - Verify that you do not see cookies with the name FAILED
 
 id: 00200
 label: Delete cookies
@@ -1569,7 +1568,7 @@ desc:
   - Reload the document
   - Verify that the deleted cookies are gone.
   - In case the host has the cookie-service:
-  - Select multiple cookies and delete them
+  - Select multiple cookies and delete them (context-menu)
 
 id: 00300
 label: Edit cookies
@@ -1579,9 +1578,15 @@ desc:
   - Reload the document
   - Verify that the values still are changed
   - In case the host has the cookie-service:
-  - Verify that the edited cookie is selected after it was saved
-  - Edit again, and try to confirm by pressing 'enter' or clicking outside of the current row.
-  - Right-click and remove a column by unchecking 'Name'
+  - Edit the cookies name and try to confirm by pressing 'enter' or clicking outside of the current row
+  - Verify that the name has changed, but all other values are still the same
+  - Edit the expiry date to be in one hour (choose today in the date picker and adjust the time manually)
+  - Verify that the expiry value fits and that the tooltip shows the absolute time
+  - If your see checkboxes for 'HTTP only', check the box on a cookie and save by clicking outside
+  - Verify that the checkmark is shown. Execute "javascript:alert(document.cookie)" and verify the cookie is not shown
+  - Go into edit mode again, change a value and try to cancel by pressing 'esc'
+  - Verify that the value hasn't changed
+  - Right-click and remove a column from the table by unchecking 'Name'
   - Verify that when you then try to edit, 'Name' is shown again.
 
 id: 00400
@@ -1590,6 +1595,8 @@ desc:
   - Press the 'Delete all' button / right-click and select 'Remove cookie of domain/path'
   - Reload the document.
   - Verify that all cookies are gone.
+  - In case the host has the cookie-service:
+  - Execute "javascript:alert(document.cookie)" and verify only a1 is shown.
 
 id: 00500
 label: Add new cookies
@@ -1598,19 +1605,25 @@ desc:
   - Add some key and value
   - Reload the document
   - Verify that there is a new created cookie with the according key and value.
+  - In case the host has the cookie-service:
+  - Press the Add button 3 times.
+  - Put in a1 and a2 for the names of the first two, make a1 HTTP-only, make a2 expire tomorrow, press "enter"
+  - Verify that two cookie were added with the given properties.
+  - Execute "javascript:alert(document.cookie)" and verify only a1 is shown.
 
 id: 00600
 label: Refresh
 desc:
-  - Execute 'document.cookie="k"' on the command line
-  - Press the update button or choose Refresh from the context menu
-  - Verify that a cookie with the name 'k' shows up.
+  - Execute "javascript:document.cookie='jscookie'"
+  - Press the update button (if existing) or choose 'Refresh' from the context menu
+  - Verify that a cookie with the name 'jscookie' shows up.
 
 id: 00700
 label: Sort cookies
 desc:
   In case the host has the cookie-service:
-  - Sort the table by 'Name' and 'Expires'
+  - Sort the table by Name, Value and Expires
+  - Reverse the order by clicking again
   - Verify that the order makes sense
 
 id: 00800
@@ -1619,6 +1632,15 @@ desc:
   In case the host has the cookie-service:
   - Switch to 'No grouping' in the context menu
   - Verify that the group headers are gone
+  
+url: ./test-cases/storages/cookie-expiry.html
+
+id: 00900
+label: Cookie expiry
+desc:
+  In case the host has the cookie-service:
+  - Verify that expires matches what value says, at least within the first few seconds
+  - Verify that you can watch 'exp_test_b' expire without any further action
 
 Storage.Local Storage
 *********************
