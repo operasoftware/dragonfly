@@ -247,7 +247,7 @@
     var ret = 
     [
       'cst-option',
-      ["span", (this._script_type_map[script_type] || script_type) + ' – ',
+      ["span", (script_type != "linked" ? (this._script_type_map[script_type] || script_type) + ' – ' : ''),
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
