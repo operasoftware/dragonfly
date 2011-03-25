@@ -52,16 +52,5 @@
     j++;
   };
 
-  // create some paths that should not match because the are not starting with "/".
-  // apparently those work in webkit though
-  var path = location.pathname.slice(1);
-  var k = 0;
-  while (path)
-  {
-    document.cookie = "FAILED" + make_leading_zero_string(k) + " = Path%20val:" + path + "; path=" + path;
-    path = path.slice(0, path.length - 3);
-    k++;
-  };
-
 })();
 </script>

@@ -1578,16 +1578,18 @@ desc:
   - Reload the document
   - Verify that the values still are changed
   - In case the host has the cookie-service:
-  - Edit the cookies name and try to confirm by pressing 'enter' or clicking outside of the current row
+  - Edit a cookies name and try to confirm by pressing 'enter' or clicking outside of the current row
   - Verify that the name has changed, but all other values are still the same
   - Edit the expiry date to be in one hour (choose today in the date picker and adjust the time manually)
   - Verify that the expiry value fits and that the tooltip shows the absolute time
-  - If your see checkboxes for 'HTTP only', check the box on a cookie and save by clicking outside
-  - Verify that the checkmark is shown. Execute "javascript:alert(document.cookie)" and verify the cookie is not shown
   - Go into edit mode again, change a value and try to cancel by pressing 'esc'
   - Verify that the value hasn't changed
   - Right-click and remove a column from the table by unchecking 'Name'
   - Verify that when you then try to edit, 'Name' is shown again.
+  In case there are checkboxes for "HTTP only" (depends on service-version):
+  - Edit another cookie
+  - Check the box on a cookie and save by clicking outside
+  - Verify that the checkmark is shown. Execute "javascript:alert(document.cookie)" and verify the cookie is not shown
 
 id: 00400
 label: Delete all cookies
@@ -1641,6 +1643,26 @@ desc:
   In case the host has the cookie-service:
   - Verify that expires matches what value says, at least within the first few seconds
   - Verify that you can watch 'exp_test_b' expire without any further action
+
+url: http://scope.bitbucket.org/tests/add-remove-runtime/index.html?open=http://opera.com/
+
+id: 01000
+label: Cookie domain changing
+desc:
+  In case the host has the cookie-service:
+  - Add a cookie to www.opera.com, with the name "foo"
+  - Press Enter to submit it
+  - Edit it and change the domain to scope.bitbucket.org
+  - Press Enter to submit it
+  - Verify that the cookie shows up in the correct runtime now and that no values have changed
+  In case the domain can be edited to anything (depends on service-version):
+  - Edit again and change the domain to bitbucket.org
+  - Verify the domain is changed, but the cookie still shows up in the right runtime
+  In case there are checkboxes for "Secure" (depends on service-version):
+  - Add another cookie named "foo_secure" and check the "is secure" box.
+  - Verify that it doesn't show up anymore
+  - Add an iframe with the url "https://scope.bitbucket.org" to the testcase
+  - Verify that it shows up directly and that the "foo_secure" shows up
 
 Storage.Local Storage
 *********************
