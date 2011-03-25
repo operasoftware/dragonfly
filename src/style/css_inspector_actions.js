@@ -565,6 +565,21 @@ cls.CSSInspectorActions = function(id)
     this.editor.insert_declaration_edit(event, target);
   }.bind(this);
 
+  this._handlers['remove-property'] = function enable_disable_property(event, target)
+  {
+    var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id"));
+    var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
+    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
+    var ele = event.target;
+    while (ele && ele.nodeName.toLowerCase() != "property")
+    {
+      ele = ele.parentNode;
+    }
+    var prop = ele.querySelector("key").textContent;
+
+    this.remove_property(rt_id, rule_id, prop, window.elementStyle.update);
+  }.bind(this);
+
   this._handlers["disable-all-properties"] = function(event, target)
   {
     var rt_id = parseInt(event.target.get_attr("parent-node-chain", "rt-id"));
