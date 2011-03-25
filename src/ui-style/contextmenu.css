@@ -12,12 +12,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid #727272;
-  background: rgba(230,230,230,0.95) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAATCAQAAAD7Aq%2BSAAAAIElEQVQIW2P5f4yF4ScLw3cw%2BgpGX8DoMwYDIgtR%2BRMANLETUgRzmpgAAAAASUVORK5CYII%3D") 0 0 repeat-x;
+  background: #fff;
   background-size: auto 100%;
   color: #333;
   text-shadow: 0 1px rgba(255,255,255,0.5);
   border-radius: 2px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 #contextmenu ::selection {

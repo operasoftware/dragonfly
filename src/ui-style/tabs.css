@@ -22,7 +22,7 @@ tabs tab {
 }
 
 tabs tab.active {
-  background: #fafafa;
+  background: #fefefe;
   border-color: #999;
   box-shadow: 0 0 3px #ccc;
 }
