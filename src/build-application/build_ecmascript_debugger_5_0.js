@@ -81,6 +81,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new SidePanelView('scripts-side-panel',
                       ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
                       ['callstack', 'inspection'],
+                      // default expanded flags for the view list
                       [true, true]);
 
     /* Callstack */
@@ -135,6 +136,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.DOMSidePanelView('dom-side-panel',
                              ui_strings.M_VIEW_LABEL_STYLES,
                              ['css-comp-style', 'css-inspector'],
+                             // default expanded flags for the view list
                              [true, true]);
     cls.DOMSidePanelView.create_ui_widgets();
 
