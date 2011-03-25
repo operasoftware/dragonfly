@@ -1,0 +1,23 @@
+message <span class="message">RequestHeader</span>
+{
+  message <span class="message">Header</span>
+  {
+    <span class="comment">/** 
+     * The name of the HTTP header, for instance "Accept-Charset".
+     */</span>
+    required <span class="string">string</span> name  = 1; 
+    <span class="comment">/** 
+     * The value of the HTTP header, for instance "utf-8" when using
+     * Accept-Charset, or "text/html; charset=utf8" for Content-Type.
+     */</span>
+    required <span class="string">string</span> value = 2; 
+  }
+  required <span class="number">uint32</span> requestID  = 1; 
+  required <span class="number">uint32</span> resourceID = 2; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double</span> time       = 3; 
+  required <span class="string">string</span> raw        = 4; 
+  repeated <span class="message">Header</span> headerList = 5; 
+}

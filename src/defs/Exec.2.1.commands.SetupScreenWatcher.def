@@ -1,0 +1,55 @@
+message <span class="message">ScreenWatcher</span>
+{
+  message <span class="message">Area</span>
+  {
+    required <span class="number">int32</span> x = 1; 
+    required <span class="number">int32</span> y = 2; 
+    required <span class="number">int32</span> w = 3; 
+    required <span class="number">int32</span> h = 4; 
+  }
+  <span class="comment">/** 
+   * Specifies a new color specification.
+   * The `id` is used when reporting back the results.
+   * You can have overlapping color specifications.
+   * Note: There can be a maximum of 16 color specifications!
+   * 
+   * Color values ranges from 0 (no color) to 255 (maximal saturation), other values are not allowed.
+   * Default (meaning field missing) is 0 for any low fields and 255 for any high fields.
+   */</span>
+  message <span class="message">ColorSpec</span>
+  {
+    required <span class="number">uint32</span> id        = 1; 
+    optional <span class="number">uint32</span> redLow    = 2; 
+    optional <span class="number">uint32</span> redHigh   = 3; 
+    optional <span class="number">uint32</span> greenLow  = 4; 
+    optional <span class="number">uint32</span> greenHigh = 5; 
+    optional <span class="number">uint32</span> blueLow   = 6; 
+    optional <span class="number">uint32</span> blueHigh  = 7; 
+  }
+  <span class="comment">/** 
+   * Number of milliseconds to wait before capturing the screen area.
+   * 
+   * The default is 10 seconds.
+   */</span>
+  required <span class="number">uint32   </span> timeOut       = 1; 
+  <span class="comment">/** 
+   * Define an area on the page, relative to the page (not viewport).
+   * 
+   * The default area is {x=0, y=0, w=200, h=100}.
+   */</span>
+  required <span class="message">Area     </span> area          = 2; 
+  <span class="comment">/** 
+   * ``MD5`` sum of an image, in hexadecimal.
+   */</span>
+  repeated <span class="string">string   </span> md5List       = 3; 
+  <span class="comment">/** 
+   * The ID of the window to watch, the default (or 0) is to watch the current window
+   */</span>
+  optional <span class="number">uint32   </span> windowID      = 4; 
+  repeated <span class="message">ColorSpec</span> colorSpecList = 5; 
+  <span class="comment">/** 
+   * If true then the image data will be sent in the response `WatcherResult.png`, otherwise the field will be omitted
+   * Can be used to reduce bandwith usage in applications where only hashes are needed.
+   */</span>
+  optional <span class="bool">bool     </span> includeImage  = 6; 
+}

@@ -1,0 +1,14 @@
+message <span class="message">CreateInstallerArg</span>
+{
+  <span class="comment">/** 
+   * If specified makes the installer perform an upgrade instead of a new
+   * installation. An upgrade causes the widget on the host to use the
+   * new widget file once installed.
+   */</span>
+  optional <span class="string">string     </span> widgetID   = 1; 
+  <span class="comment">/** 
+   * Which type the installer should be created for.
+   * The default is to create it for a widget installation.
+   */</span>
+  optional <span class="number">Widget.Type</span> widgetType = 2; 
+}

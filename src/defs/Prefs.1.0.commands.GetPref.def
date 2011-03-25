@@ -1,0 +1,19 @@
+message <span class="message">GetPrefArg</span>
+{
+  enum Mode
+  {
+    <span class="comment">/** 
+     * Get the current value of the pref.
+     */</span>
+    CURRENT = 1;
+    <span class="comment">/** 
+     * Get the default value of the pref (not necessarily the
+     * used value).
+     */</span>
+    DEFAULT = 2;
+  }
+
+  required <span class="string">string</span> section = 1; 
+  required <span class="string">string</span> key     = 2; 
+  optional <span class="number">Mode  </span> mode    = 3; 
+}

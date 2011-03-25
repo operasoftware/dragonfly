@@ -1,0 +1,6 @@
+message <span class="message">SetPrefArg</span>
+{
+  required <span class="string">string</span> section = 1; 
+  required <span class="string">string</span> key     = 2; 
+  required <span class="string">string</span> value   = 3; 
+}

@@ -1,0 +1,41 @@
+message <span class="message">UrlFinished</span>
+{
+  enum Result
+  {
+    <span class="comment">/** 
+     * A URL finished loading, without problems.
+     */</span>
+    FINISHED = 1;
+    <span class="comment">/** 
+     * A URL load failed, e.g. due to connection failure.
+     */</span>
+    FAILED = 2;
+    <span class="comment">/** 
+     * A URL load was stopped, e.g. by user request.
+     */</span>
+    STOPPED = 3;
+  }
+
+  required <span class="number">uint32</span> resourceID        = 1; 
+  required <span class="number">Result</span> result            = 2; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double</span> time              = 3; 
+  <span class="comment">/** 
+   * The MIME type of the resource. This information might not be available if the server
+   * did not specify the MIME type, and if content detection has not yet run (or was unable
+   * to detect the type).
+   */</span>
+  optional <span class="string">string</span> mimeType          = 4; 
+  <span class="comment">/** 
+   * The character encoding of the resource. This information might not be available if the server
+   * did not specify the character encoding, and if character encoding detection has not yet run
+   * (or was unable to detect the type).
+   */</span>
+  optional <span class="string">string</span> characterEncoding = 5; 
+  <span class="comment">/** 
+   * The size of the body (if any).
+   */</span>
+  optional <span class="number">uint32</span> contentLength     = 6; 
+}

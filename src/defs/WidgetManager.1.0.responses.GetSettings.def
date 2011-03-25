@@ -1,0 +1,17 @@
+message <span class="message">Settings</span>
+{
+  <span class="comment">/** 
+   * This host requires that the size of a chunk does not exceed this value.
+   * The host may run on a limited machine such as a mobile device and might
+   * not have enough memory to decode chunks larger than this size.
+   * 
+   * All clients must adhere to this maximum value and never send a larger
+   * chunk.
+   */</span>
+  required <span class="number">uint32</span> maxChunkSize = 1; 
+  <span class="comment">/** 
+   * Contains the user agent locales used to determine localized content.
+   * e.g. "en", "en-us", "*"
+   */</span>
+  repeated <span class="string">string</span> localeList   = 2; 
+}
