@@ -261,7 +261,6 @@ cls.BreakpointsView = function(id, name, container_class)
         window.topCell.showView(this.id);
       }
       var container = this.get_container();
-
       var bp_ele = container &&
                    container.querySelector("[data-breakpoint-id='" + bp_id + "']");
       if (bp_ele)
