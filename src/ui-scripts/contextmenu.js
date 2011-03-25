@@ -33,7 +33,7 @@ function ContextMenu() {
     {
       if (this._registered_menus[menu_id] && extend)
       {
-        item_list.push(ContextMenu.separator)
+        item_list.push(ContextMenu.separator);
         item_list.extend(this._registered_menus[menu_id]);
       }
       this._registered_menus[menu_id] = item_list;

@@ -333,7 +333,6 @@ Search.prototype = new function()
       {
         this._searchwindow.focus_searchfield();
       }
-
     }
     else
     {
