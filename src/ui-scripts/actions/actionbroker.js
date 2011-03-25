@@ -204,8 +204,7 @@ var ActionBroker = function()
     this._contextmenu = ContextMenu.get_instance();
     window.app.addListener('services-created', function()
     {
-      this._shortcuts = window.settings.general.get("shortcuts") ||
-                        window.helpers.copy_object(window.ini.default_shortcuts);
+      this._shortcuts = this._retrieve_shortcuts();
       this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler);
@@ -214,6 +213,59 @@ var ActionBroker = function()
       document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.post('shortcuts-changed');
     }.bind(this));
+  };
+
+  /* handling of the shortcuts map */
+
+  this._retrieve_shortcuts = function()
+  {
+    var stored_shortcuts = window.settings.general.get("shortcuts");
+    var default_shortcuts = window.helpers.copy_object(window.ini.default_shortcuts);
+    if (stored_shortcuts)
+    {
+      var shortcuts_hash = window.settings.general.get("shortcuts-hash");
+      if (this._hash_shortcuts(default_shortcuts) != shortcuts_hash)
+      {
+        stored_shortcuts = this._sync_shortcuts(default_shortcuts, stored_shortcuts);
+        this._store_shortcuts(stored_shortcuts);
+      }
+    }
+    return stored_shortcuts || default_shortcuts;
+  };
+
+  this._store_shortcuts = function(shortcuts)
+  {
+    var hash = shortcuts && this._hash_shortcuts(window.ini.default_shortcuts) || "";
+    window.settings.general.set("shortcuts", shortcuts);
+    window.settings.general.set("shortcuts-hash", hash);
+  };
+
+  this._sync_shortcuts = function(source, target)
+  {
+    for (var prop in source)
+    {
+      if (typeof source[prop] == 'object')
+      {
+        if (!target.hasOwnProperty(prop))
+        {
+          target[prop] = {};
+        }
+        this._sync_shortcuts(source[prop], target[prop]);
+      }
+      else
+      {
+        if (!target.hasOwnProperty(prop))
+        {
+          target[prop] = source[prop];
+        }
+      }
+    }
+    return target;
+  };
+
+  this._hash_shortcuts = function(shortcuts)
+  {
+    return JSON.stringify(shortcuts).replace(/["{},:\- ]/g, '');
   };
 
   /* implementation */
@@ -289,8 +341,7 @@ var ActionBroker = function()
     else
       this._shortcuts = shortcuts;
     this._global_shortcuts = this._shortcuts.global;
-    window.settings.general.set("shortcuts",
-                                clear_setting == true ? null : this._shortcuts);
+    this._store_shortcuts(clear_setting == true ? null : this._shortcuts);
     this._key_identifier.set_shortcuts(this._get_shortcut_keys());
     window.messages.post('shortcuts-changed');
   };

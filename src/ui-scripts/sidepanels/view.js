@@ -7,10 +7,10 @@
 
   this._init_super = this.init;
 
-  this.init = function(id, name, view_list)
+  this.init = function(id, name, view_list, default_unfolded_list)
   {
     var key_value_map = {};
-    key_value_map['panel-expanded-' + id] = [];
+    key_value_map['panel-expanded-' + id] = default_unfolded_list || [];
     new Settings(id, key_value_map);
     var unfolded_views = window.settings[id].get('panel-expanded-' + id);
     this._views = view_list.map(function(view_id, index)
@@ -71,7 +71,8 @@
 
   this._store_views_unfolded = function()
   {
-    window.settings[this.id].set('panel-expanded-' + this.id, this._views.map(function(view){return view.is_unfolded}));
+    window.settings[this.id].set('panel-expanded-' + this.id, 
+                                 this._views.map(function(view){return view.is_unfolded}));
   }
 
   this._show_view = function(obj, div)
@@ -149,9 +150,9 @@
 
 };
 
-var SidePanelView = function(id, name, view_list)
+var SidePanelView = function(id, name, view_list, default_unfolded_list)
 {
-  this.init(id, name, view_list);
+  this.init(id, name, view_list, default_unfolded_list);
 }
 
 SidePanelBaseView.prototype = ViewBase;

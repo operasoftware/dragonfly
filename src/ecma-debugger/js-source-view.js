@@ -29,7 +29,7 @@ cls.JsSourceView = function(id, name, container_class)
 
 
   var __current_line = 0;
-  
+
   var __current_pointer_script_id = 0;
 
   var __target_scroll_top = -1;
@@ -48,7 +48,7 @@ cls.JsSourceView = function(id, name, container_class)
   var __timeout_clear_view = 0;
   var __container = null;
   var view_invalid = true;
-  
+
   const
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
   LINE_POINTER = window.cls.NewScript.LINE_POINTER,
@@ -159,7 +159,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     context['line-height'] = defaults['js-source-line-height'];
     context['scrollbar-width'] = defaults['scrollbar-width'];
-    context['bp-line-pointer-default'] = 
+    context['bp-line-pointer-default'] =
       (defaults['js-source-line-height'] - BP_IMAGE_HEIGHT) / 2 >> 0;
     var style = null;
     var sheets = document.styleSheets;
@@ -169,11 +169,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
     if (style = sheets.getDeclaration('#js-source-content div'))
     {
-      style.lineHeight = style.height = context['line-height'] + 'px'; 
+      style.lineHeight = style.height = context['line-height'] + 'px';
     }
     if (style = sheets.getDeclaration('#js-source-line-numbers li'))
     {
-      style.height = context['line-height'] + 'px'; 
+      style.height = context['line-height'] + 'px';
     }
   }
 
@@ -340,7 +340,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateScriptContext = function()
   {
-    if (__current_script.scroll_width && 
+    if (__current_script.scroll_width &&
         source_content.firstChild &&
         __current_script.scroll_width > source_content.firstChild.firstChild.offsetWidth)
     {
@@ -623,7 +623,7 @@ cls.JsSourceView = function(id, name, container_class)
       updateBreakpoints();
     }
   };
-  
+
   this._clear_line_pointer = function()
   {
     if (__current_pointer_script_id)
@@ -779,7 +779,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if (__current_script)
     {
-      var target_line = Math.max(1, Math.min(__current_line + lines, 
+      var target_line = Math.max(1, Math.min(__current_line + lines,
                                              __current_script.line_arr.length + 1));
       if (__current_line != target_line)
       {
@@ -791,7 +791,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
     return false;
   }
-  
+
   this._onbreakpointupdated = function(msg)
   {
     if (__current_script && __current_script.script_id == msg.script_id)
@@ -834,9 +834,9 @@ cls.JsSourceView = function(id, name, container_class)
   messages.addListener('update-layout', updateLayout);
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
-  messages.addListener('monospace-font-changed', 
+  messages.addListener('monospace-font-changed',
                        this._onmonospacefontchange.bind(this));
-  
+
   ActionBroker.get_instance().register_handler(this);
 }
 
@@ -876,7 +876,7 @@ cls.GoToLine = function(js_source_view)
 
   this._js_source_view = js_source_view;
   this.init('go-to-line', ui_strings.M_VIEW_LABEL_GO_TO_LINE, 'go-to-line');
-  
+
   ActionBroker.get_instance().register_handler(this);
 
 };
@@ -943,8 +943,8 @@ cls.ScriptSelect = function(id, class_name)
         opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.script_dropdown(_runtimes, 
-                                 stopped_script_id, 
+      return templates.script_dropdown(_runtimes,
+                                 stopped_script_id,
                                  runtimes.getSelectedScript());
     }
   }
@@ -1005,7 +1005,7 @@ cls.ScriptSelect.prototype = new CstSelect();
 cls.JsSourceView.create_ui_widgets = function()
 {
   var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
-  var toolbar_buttons = 
+  var toolbar_buttons =
   [
     {
       handler: 'continue',
@@ -1154,15 +1154,15 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
 
-  new JSSourceSearch('js_source', 
+  new JSSourceSearch('js_source',
                      [Searchbar, VirtualTextSearch],
                      [cls.JSSearchWindow]);
-                     
+
   eventHandlers.click['show-script'] = function(event, target)
   {
     this.broker.dispatch_action("js_source-search-window", "show-script", event, target);
   };
-  
+
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
@@ -1183,7 +1183,7 @@ cls.JsSourceView.create_ui_widgets = function()
                             view.window_top,
                             view.window_left,
                             view.window_width,
-                            window.innerHeight >= view.window_height + 80 ? 
+                            window.innerHeight >= view.window_height + 80 ?
                             view.window_height :
                             window.innerHeight - 80);
   }
@@ -1194,14 +1194,22 @@ cls.JsSourceView.create_ui_widgets = function()
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
   var breakpoints = cls.Breakpoints.get_instance();
-  contextmenu.register("js-source-content", [
+
+  contextmenu.register("js_source", [
     {
       callback: function(event, target)
       {
-        var line = parseInt(event.target.get_attr("parent-node-chain", "data-line-number"));
+        var line = parseInt(event.target.get_attr("parent-node-chain", 
+                                                  "data-line-number"));
         var script_id = views.js_source.getCurrentScriptId();
+        var bp_view = window.views.breakpoints;
         var items = [];
 
+        if (!line)
+        {
+          var input = event.target.parentNode.firstElementChild;
+          line = input && parseInt(input.value);
+        }
         if (line)
         {
           var selection = window.getSelection();
@@ -1219,9 +1227,20 @@ cls.JsSourceView.create_ui_widgets = function()
           if (breakpoints.script_has_breakpoint_on_line(script_id, line))
           {
             items.push({
+              label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
+              handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
+            },
+            {
               label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
               handler: function(event, target) {
                 breakpoints.remove_breakpoint(script_id, line);
+              }
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
+              handler: function(event, target) {
+                var bp_id = breakpoints.remove_breakpoint(script_id, line);
+                breakpoints.delete_breakpoint(bp_id);
               }
             });
           }
@@ -1238,5 +1257,5 @@ cls.JsSourceView.create_ui_widgets = function()
         }
       }
     }
-  ]);
+  ], true); // extend the default existing menu
 };

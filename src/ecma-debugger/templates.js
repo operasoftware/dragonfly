@@ -520,7 +520,7 @@ MODE ::= "<mode>"
     return self['cst-select'](ui_obj.script_select);
   }
 
-  this.breadcrumb = function(model, obj_id, parent_node_chain)
+  this.breadcrumb = function(model, obj_id, parent_node_chain, target_id)
   {
     var setting = window.settings.dom;
     var css_path = model._get_css_path(obj_id, parent_node_chain,
@@ -528,6 +528,7 @@ MODE ::= "<mode>"
                                        setting.get('show-id_and_classes-in-breadcrumb'),
                                        setting.get('show-siblings-in-breadcrumb'));
     var ret = [];
+    target_id || (target_id = obj_id)
     if (css_path)
     {
       for (var i = 0; i < css_path.length; i++ )
@@ -538,7 +539,8 @@ MODE ::= "<mode>"
           'ref-id', css_path[i].id.toString(),
           'handler', 'breadcrumb-link',
           'data-menu', 'breadcrumb',
-          'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + (css_path[i].id == obj_id ? ' active' : ''),
+          'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
+                   (css_path[i].id == target_id ? ' active' : ''),
         ];
         //ret[ret.length] = css_path[i].combinator;
       }

@@ -637,6 +637,20 @@ settings hr
   margin: 9px 26px;
 }
 
+.change-ui-lang-info
+{
+  padding: 7px 0;
+}
+
+.change-ui-lang-info a
+{
+  color: inherit;
+}
+.change-ui-lang-info ul
+{
+  margin-top: 5px;
+}
+
 view-slider { /**/
   display: block;
   position: absolute;

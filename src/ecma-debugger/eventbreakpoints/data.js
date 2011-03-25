@@ -211,6 +211,20 @@ cls.EventBreakpoints = function()
       is_unfolded: false,
     },
     {
+      title: 'Touch events',
+      spec: "https://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html",
+      events:
+      [
+        ['touchstart', 0],
+        ['touchend', 0],
+        ['touchmove', 0],
+        ['touchenter', 0],
+        ['touchleave', 0],
+        ['touchcancel', 0],
+      ],
+      is_unfolded: false,
+    },
+    {
       title: "Opera User JavaScript",
       spec: "http://www.opera.com/docs/userjs/specs/#evlistener",
       events:

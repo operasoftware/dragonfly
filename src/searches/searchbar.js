@@ -88,6 +88,15 @@ var SearchbarBase = function()
     }
   };
 
+  this.focus_searchfield = function()
+  {
+    var ele = this.getElement(), cur = null;
+    if (ele)
+    {
+      ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0].focus();
+    }
+  }
+
   this.attributes =
   {
     'focus-handler': 'focus',

@@ -192,6 +192,10 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     var i = 0, j = 0, path = [];
     if (object_id)
     {
+      if (parent_offset_chain)
+      {
+        parent_offset_chain = parent_offset_chain.slice(0);
+      }
       for ( ; this._data[i] && this._data[i][ID] != object_id; i++);
       if (this._data[i])
       {

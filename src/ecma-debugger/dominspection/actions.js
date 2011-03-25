@@ -96,7 +96,8 @@ cls.DOMInspectorActions = function(id)
     inspections = window.dominspections,
     model = null,
     scroll_into_view = false,
-    current_target_id = 0;
+    current_target_id = 0,
+    breadcrumbhead = 0;
 
     if (model_id && obj_id)
     {
@@ -108,6 +109,7 @@ cls.DOMInspectorActions = function(id)
                            obj_id != current_target_id;
         hostspotlighter.spotlight(obj_id, scroll_into_view);
       }
+      breadcrumbhead = model.breadcrumbhead || model.target; 
       model.target = obj_id;
       inspections.active = model;
       window.messages.post("element-selected", {model: model,
@@ -116,8 +118,13 @@ cls.DOMInspectorActions = function(id)
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
-      if (!skip_breadcrumbs_update)
+      if (skip_breadcrumbs_update)
       {
+        model.breadcrumbhead = breadcrumbhead;
+      }
+      else
+      {
+        model.breadcrumbhead = model.target;
         if (!this._modebar)
         {
           this._modebar = UI.get_instance().get_modebar('dom');
@@ -264,9 +271,9 @@ cls.DOMInspectorActions = function(id)
 
   this.getFirstTarget = function()
   {
-    return view_container
-      && ( document.getElementById('target-element') || view_container ).
-      getElementsByTagName('input')[0];
+    return view_container &&
+           (document.getElementById('target-element') || view_container).
+           getElementsByTagName('input')[0];
   }
 
   this.resetTarget = function()
@@ -295,11 +302,7 @@ cls.DOMInspectorActions = function(id)
         this.is_dom_type_tree = cur && cur.hasClass('tree-style');
         this.setSelected(nav_target || (nav_target = this.getFirstTarget()));
       }
-      else
-        this.blur();
     }
-    else
-      this.blur();
   }
 
   var ondomnodeinserted = function(event)
@@ -355,7 +358,10 @@ cls.DOMInspectorActions = function(id)
       {
         nav_target.blur();
       }
-      selection.removeAllRanges();
+      if (selection)
+      {
+        selection.removeAllRanges();
+      }
       nav_target = new_target;
       if (scroll_into_view)
       {
@@ -556,31 +562,46 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["nav-up"] = function(event, target)
   {
-    // TODO if setting of nav target fails
-    if ( !this.setSelected(nav_target.getPreviousWithFilter(view_container,
-                                                            nav_filters.up_down),
-                           true))
+    if (view_container)
     {
-      view_container.scrollTop = 0;
+      var new_target = nav_target &&
+                       nav_target.getPreviousWithFilter(view_container,
+                                                        nav_filters.up_down) ||
+                       !nav_target && this.getFirstTarget();
+      if (!this.setSelected(new_target, true))
+      {
+        view_container.scrollTop = 0;
+      }
     }
     return true;
   }.bind(this);
 
   this._handlers["nav-down"] = function(event, target)
   {
-    // TODO if setting of nav target fails
-    if(!this.setSelected(nav_target.getNextWithFilter(view_container,
-                                                      nav_filters.up_down),
-                         true))
+    if (view_container)
     {
-      view_container.scrollTop = view_container.scrollHeight;
+      var new_target = nav_target &&
+                       nav_target.getNextWithFilter(view_container, 
+                                                    nav_filters.up_down) ||
+                       !nav_target && this.getFirstTarget();
+      if (!this.setSelected(new_target, true))
+      {
+        view_container.scrollTop = view_container.scrollHeight;
+      }
     }
     return true;
   }.bind(this);
 
   this._handlers["nav-left"] = function(event, target)
   {
-    // TODO if setting of nav target fails
+    if (view_container)
+    {
+      var new_target = nav_target &&
+                       nav_target.getPreviousWithFilter(view_container,
+                                                        nav_filters.left_right) ||
+                       !nav_target && this.getFirstTarget();
+      this.setSelected(new_target, true);
+    }
     this.setSelected(nav_target.getPreviousWithFilter(view_container,
                                                       nav_filters.left_right),
                      true);
@@ -589,11 +610,14 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["nav-right"] = function(event, target)
   {
-
-    // TODO if setting of nav target fails
-    this.setSelected(nav_target.getNextWithFilter(view_container,
-                                                  nav_filters.left_right),
-                     true);
+    if (view_container)
+    {
+      var new_target = nav_target &&
+                       nav_target.getNextWithFilter(view_container,
+                                                    nav_filters.left_right) ||
+                       !nav_target && this.getFirstTarget();
+      this.setSelected(new_target, true);
+    }
     return true;
   }.bind(this);
 

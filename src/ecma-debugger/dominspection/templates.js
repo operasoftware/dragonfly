@@ -530,11 +530,20 @@
     var model = window.dominspections.active, ret = [];
     if (model)
     {
+      var target_is_head = !model.breadcrumbhead || 
+                           model.breadcrumbhead == model.target;
+      if (target_is_head)
+      {
+        model.breadcrumb_offsets = window.helpers.copy_array(offsets_values[0]);
+      }
       ret =
       [
         ['h2', ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS],
         ['parent-node-chain', 
-          this.breadcrumb(model, model.target, offsets_values[0]),
+          target_is_head ?
+          this.breadcrumb(model, model.target, offsets_values[0]) :
+          this.breadcrumb(model, model.breadcrumbhead, 
+                          model.breadcrumb_offsets, model.target),
           'onmouseover', helpers.breadcrumbSpotlight, 
           'onmouseout', helpers.breadcrumbClearSpotlight
         ],

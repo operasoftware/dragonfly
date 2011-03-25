@@ -8,6 +8,9 @@
 cls.BreakpointsView = function(id, name, container_class)
 {
   /* interface */
+
+  this.show_and_edit_condition = function(script_id, line_no, event, target){};
+
   /* inherits from ViewBase */
   /* implements action handler interface */
 
@@ -37,7 +40,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['toggle-breakpoint'] = function(event, target)
   {
-    var bp_id = parseInt(event.target.get_attr('parent-node-chain', 
+    var bp_id = parseInt(event.target.get_attr('parent-node-chain',
                                                'data-breakpoint-id'));
     var bp = this._bps.get_breakpoint_with_id(bp_id);
     if (bp)
@@ -48,7 +51,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['show-breakpoint-in-script-source'] = function(event, target)
   {
-    var bp_id = parseInt(event.target.get_attr('parent-node-chain', 
+    var bp_id = parseInt(event.target.get_attr('parent-node-chain',
                                                'data-breakpoint-id'));
     var bp = this._bps.get_breakpoint_with_id(bp_id);
     if (bp)
@@ -64,7 +67,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['delete'] = function(event, target)
   {
-    var bp_id = parseInt(event.target.get_attr('parent-node-chain', 
+    var bp_id = parseInt(event.target.get_attr('parent-node-chain',
                                                'data-breakpoint-id'));
     var bp = this._bps.get_breakpoint_with_id(bp_id);
     if (bp)
@@ -192,7 +195,7 @@ cls.BreakpointsView = function(id, name, container_class)
     {
       callback: function(event, target)
       {
-        var bp_ele = event.target.has_attr('parent-node-chain', 
+        var bp_ele = event.target.has_attr('parent-node-chain',
                                            'data-breakpoint-id');
         return (
         bp_ele && bp_ele.getElementsByClassName('condition')[0] ?
@@ -246,6 +249,29 @@ cls.BreakpointsView = function(id, name, container_class)
     this.update();
   }
 
+  this.show_and_edit_condition = function(script_id, line_no, event, target)
+  {
+    var script = window.runtimes.getScript(script_id);
+    if (script)
+    {
+      var bp_id = script.breakpoints[line_no];
+      var broker = ActionBroker.get_instance();
+      if (!this.isvisible())
+      {
+        window.topCell.showView(this.id);
+      }
+      var container = this.get_container();
+
+      var bp_ele = container &&
+                   container.querySelector("[data-breakpoint-id='" + bp_id + "']");
+      if (bp_ele)
+      {
+        var event = {target: bp_ele.getElementsByTagName('div')[0]};
+        this._handlers['add-or-edit-condition'](event, bp_ele);
+      }
+    }
+  };
+
   this._init(id, name, container_class);
 
 };
@@ -259,7 +285,7 @@ cls.BreakpointsView.create_ui_widgets = function()
       {
         handler: 'disable-all-breakpoints',
         title: "Disable all breakpoints",
-      }, 
+      },
       {
         handler: 'delete-all-breakpoints',
         title: "Delete all breakpoints",

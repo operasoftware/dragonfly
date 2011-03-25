@@ -262,7 +262,6 @@ eventHandlers.click['toolbar-switch'] = function(event)
   var view = UIBase.getViewWithHandler(target);
   view && view.update();
   */
-  messages.post("setting-changed", {id: setting, key: key});
   // hack to trigger a repaint while
   target.style.backgroundColor = "transparent";
   target.style.removeProperty('background-color');
@@ -283,7 +282,6 @@ eventHandlers.change['checkbox-setting'] = function(event)
   {
     views.settings_view.syncSetting(view_id, ele.name, ele.checked);
   }
-  messages.post("setting-changed", {id: view_id, key: ele.name});
 }
 
 eventHandlers.focus['focus'] = function(event, target)

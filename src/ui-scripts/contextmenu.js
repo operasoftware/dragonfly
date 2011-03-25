@@ -27,10 +27,15 @@ function ContextMenu() {
    *                          for showing a checkbox before the item, or 'selected'
    *                          (boolean) for showing the selected item in a group.
    */
-  this.register = function(menu_id, item_list)
+  this.register = function(menu_id, item_list, extend)
   {
     if (item_list)
     {
+      if (this._registered_menus[menu_id] && extend)
+      {
+        item_list.push(ContextMenu.separator)
+        item_list.extend(this._registered_menus[menu_id]);
+      }
       this._registered_menus[menu_id] = item_list;
     }
   };
