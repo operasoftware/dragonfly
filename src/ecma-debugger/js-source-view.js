@@ -903,7 +903,7 @@ cls.ScriptSelect = function(id, class_name)
         return (
           display_uri.uri
           ? display_uri.uri
-          : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
+          : script.script_data.slice(0, 300) || ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
         )
       }
       else
