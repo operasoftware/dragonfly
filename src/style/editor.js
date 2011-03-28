@@ -887,7 +887,7 @@ var Editor = function(actions)
   this.escape = function()
   {
     this.last_suggest_type = '';
-    actions.restore_properties();
+    actions.restore_property();
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;

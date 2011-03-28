@@ -196,33 +196,40 @@ cls.CSSInspectorActions = function(id)
   };
 
   /**
-   * Restores all properties to the last saved state.
+   * Restores the currently edited property
    */
-  this.restore_properties = function restore_properties()
+  this.restore_property = function()
   {
     const INDEX_LIST = 1;
     const VALUE_LIST = 2;
     const PRIORITY_LIST = 3;
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var script = "object.style.cssText=\"\";";
+    var prop = this.editor.context_cur_prop;
+    var script = "";
 
-    var len = rule[INDEX_LIST].length;
-    for (var i = 0; i < len; i++) {
-      var prop = window.css_index_map[rule[INDEX_LIST][i]];
-      if (!window.elementStyle.disabled_style_dec_list[rule_id] ||
-          !window.elementStyle.has_property(window.elementStyle.disabled_style_dec_list[rule_id], prop))
+    var prop_index = window.css_index_map.indexOf(prop);
+    // Check if it's a real property. If not, we don't have to set something back.
+    if (prop_index != -1)
+    {
+      var script = "object.style.removeProperty(\"" + prop +  "\");";
+      var index = rule[INDEX_LIST].indexOf(prop_index);
+      // If the property existed before, set it back with the old values.
+      if (index != 1)
       {
         script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
-                     rule[VALUE_LIST][i].replace(/"/g, "'") + "\", " +
-                     (rule[PRIORITY_LIST][i] ? "\"important\"" : null) +
+                     rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
+                     (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
                   ");";
       }
     }
 
-    services['ecmascript-debugger'].requestEval(null,
-      [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+    if (script)
+    {
+      services['ecmascript-debugger'].requestEval(null,
+        [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+    }
   };
 
   /**
