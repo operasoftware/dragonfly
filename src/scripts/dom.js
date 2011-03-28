@@ -838,6 +838,15 @@ Array.prototype.extend = function(list)
 }
 
 /**
+ * Local ISO strings, currently needed as datetime-local input values
+ * http://dev.w3.org/html5/markup/input.datetime-local.html#input.datetime-local.attrs.value
+ */
+Date.prototype.toLocaleISOString = function()
+{
+ return new Date(this.getTime() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','');
+};
+
+/**
  * Convenience function for loading a resource with XHR using the get method.
  * Will automatically append a "time" guery argument to avoid caching.
  * When the load is finished, callback will be invoced with context as its

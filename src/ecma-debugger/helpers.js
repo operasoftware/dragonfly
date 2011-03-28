@@ -233,17 +233,6 @@ window.cls.Helpers = function()
     return ret;
   }
 
-  this.make_leading_zero_string = function(nr, digits)
-  {
-    digits = digits || 2;
-    nr = String(nr);
-    while(nr.length < digits)
-    {
-      nr = "0" + nr;
-    }
-    return nr;
-  };
-
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)

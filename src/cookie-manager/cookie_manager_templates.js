@@ -58,8 +58,7 @@ templates.cookie_manager = {
     var datetime_local_val;
     if(value)
     {
-      var d = new Date(value);
-      datetime_local_val= d.getFullYear()+"-"+lz(d.getMonth() + 1)+"-"+lz(d.getDate())+"T"+lz(d.getHours())+":"+lz(d.getMinutes())+":"+lz(d.getSeconds());
+      datetime_local_val= new Date(value).toLocaleISOString();
     }
     return [
       "input",
