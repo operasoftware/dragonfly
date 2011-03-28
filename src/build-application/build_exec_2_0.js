@@ -7,9 +7,16 @@ window.app.builders.Exec || ( window.app.builders.Exec = {} );
 window.app.builders.Exec["2.0"] = function(service)
 {
   var namespace = cls.Exec && cls.Exec["2.0"];
+
+  new cls.ScreenShotView('screenshot', "Screen Shot", "screenshot");
+  new cls.ScreenShotControlsView("screenshot-controls", 
+                                 "Color Picker", 
+                                 "screenshot-controls");
+  /*
   window.color_picker_data = new namespace.ColorPickerDate();
   namespace.ColorPicker.prototype = ViewBase;
   new namespace.ColorPicker('color_picker', 'Color Picker', 'scroll');
   namespace.ColorPicker.create_ui_widget();
+  */
   return true;
 }

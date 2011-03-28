@@ -574,13 +574,39 @@ ui_framework.layouts.resource_rough_layout =
                                                                  ] } } ]
 }
 
-
+/*
 ui_framework.layouts.utils_rough_layout =
 {
     dir: 'v',
     width: 1000,
     height: 1000,
     children: [ { height: 1000, tabbar: { tabs: ['color_picker'], is_hidden: true } } ]
+}
+*/
+ui_framework.layouts.utils_rough_layout =
+{
+  dir: 'h', width: 700, height: 700,
+  children:
+  [
+    {
+      width: 700,
+      children:
+      [
+        {
+          tabbar: { tabs: ['screenshot'], is_hidden: true }
+        }
+      ]
+    },
+    {
+      width: 250,
+      children:
+      [
+        {
+          tabs: ['screenshot-controls']
+        }
+      ]
+    }
+  ]
 }
 
 ui_framework.layouts.storage_rough_layout =

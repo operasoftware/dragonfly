@@ -138,6 +138,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./searches/style.css"/>
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
 <link rel="stylesheet" href="./syntaxhighlight/markup/default_color_theme.css"/>
+<link rel="stylesheet" href="./screenshot/style.css"/>
+
+
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -240,6 +243,8 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./ui-scripts/fontselection/monospacefontselection.js"/>
 <script src="./ui-scripts/fontselection/templates.js"/>
+
+<script src="./ui-scripts/pixelmagnifier.js"/>
 
 
 <script src="./build-application/build_application.js"></script>
@@ -422,6 +427,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./network/network_request_crafting_view.js"/>
 <script src="./network/network_global_options_view.js"/>
 <script src="./network/network_templates.js"/>
+
+<script src="./screenshot/screenshot.js"/>
+<script src="./screenshot/screenshotcontrols.js"/>
 
 <body/>
 </viewport>
