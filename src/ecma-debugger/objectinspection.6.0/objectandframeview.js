@@ -337,6 +337,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         });
 
         return {
+          // '$' is special in replace(), this makes sure that e.g. '$$' really stays that way
           label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", prop.replace("$", "$$$")),
           handler: function(event, target) {
             window.views.watches.add_watch(prop);
