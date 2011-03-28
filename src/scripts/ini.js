@@ -192,7 +192,7 @@
       {
         "default":
         {
-
+          "delete": "remove-item"
         },
         "edit":
         {
@@ -247,7 +247,8 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "cmd enter": "dispatch-dbl-click",
-          "delete": "remove-node"
+          "delete": "remove-node",
+          "cmd backspace": "remove-node"
         },
         "edit-attributes-and-text":
         {
@@ -383,7 +384,8 @@
       {
         "default":
         {
-
+          "delete": "remove-item",
+          "cmd backspace": "remove-item"
         },
         "edit":
         {

@@ -54,10 +54,16 @@ templates.cookie_manager = {
    return template;
   },
   input_datetime_container: function(name, value) {
+    var lz = helpers.make_leading_zero_string;
+    var datetime_local_val;
+    if(value)
+    {
+      datetime_local_val= new Date(value).toLocaleISOString();
+    }
     return [
       "input",
-      "value", value || "",
-      "type",  "datetime",
+      "value", datetime_local_val || "",
+      "type",  "datetime-local",
       "name",  name,
       "handler", "cookiemanager-input-field"
     ]
@@ -134,8 +140,7 @@ templates.cookie_manager = {
   },
   editable_expires: function(date_in_seconds, objectref) {
     var parsed_date = new Date(date_in_seconds*1000);
-    // todo: Use .toLocaleString instead, but only when it's consistent with the date picker. Helps a lot though.
-    var expires_container = ["div", "id", "expires_container_"+objectref, "title", parsed_date.toUTCString()];
+    var expires_container = ["div", "id", "expires_container_"+objectref, "title", parsed_date.toLocaleString()];
     var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString())
     if (date_in_seconds === 0)
     {
