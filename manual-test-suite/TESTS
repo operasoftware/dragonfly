@@ -372,6 +372,7 @@ DOM.Settings
 
 url: ./test-cases/dom/edit-attribute.html
 
+id: 00100
 label: Use lower case tag names
 desc:
   - Open Settings/Document
@@ -383,6 +384,7 @@ desc:
 
 url: ./test-cases/dom/nodes.html
   
+id: 00200
 label: Show DOM in tree view
 desc:
   - Verify that comment is shown in document (1 comment node).
@@ -393,6 +395,7 @@ desc:
   - Check it again.
   - Verify that comment node is shown again.
 
+id: 00300
 label: Show attributes
 desc:
   - Verify that comment is shown in document (1 comment node).
@@ -468,28 +471,33 @@ desc:
 DOM.Breadcrumbs
 ***************
 
+id: 00100
 label: Updating of breadcrumbs
 desc:
   - Click on different elements in the DOM view
   - Verify that the breadcrumbs update
 
+id: 00200
 label: Hover breadcrumbs
 desc:
   - Verify that there are at least two visible breadcrumbs
   - Hover all of them
   - Verify that the elements are spotlighted in the host
 
+id: 00300
 label: Clicking breadcrumbs
 desc:
   - Click a breadcrumb
   - Verify that the corresponding element is selected in the DOM view
 
+id: 00400
 label: Navigation buttons on resizing
 desc:
   - Verify that the breadcrumb trail is long but fits inside the window
   - Resize the window so that the breadcrumbs don't fit
   - Verify that that navigation buttons appear on both sides
 
+id: 00500
 label: Navigation buttons on long breadcrumb trail
 desc:
   - Click on a deeply nested element so that the breadcrumb trail is too long to fit inside the window
@@ -498,6 +506,7 @@ desc:
   - Click on a shallow element
   - Verify that the buttons disappear
 
+id: 00600
 label: Interacting with navigation buttons
 desc:
   - Click on a navigation button
@@ -505,12 +514,14 @@ desc:
   - Click and hold a navigation button
   - Verify that the breadcrumb trail is continously moving
 
+id: 00700
 label: Dragging the breadcrumb bar
 desc:
   - Verify that the breadcrumb trail is too long to fit into the window
   - Grab the bar and drag it
   - Verify that it's possible to drag
 
+id: 00800
 label: Dragging the breadcrumb bar
 desc:
   - Verify that the breadcrumb trail is too long to fit into the window
@@ -905,11 +916,13 @@ desc:
 Console HUD
 ***********
 
+id: 00100
 label: Toggle console
 desc:
   - Verify that the console is toggled by the console button and Esc
   - Verify that the console gets focus when shown
 
+id: 00200
 label: Resizing console
 desc:
   - Verify that the console can be resized at the top
@@ -1782,35 +1795,39 @@ desc:
 Settings.Settings
 *****************
 
+id: 00050
 label: Settings window
 desc:
-- Check if settings button is visible.
-- Click settings button.
-- Verify that the button is styled as pressed.
-- Verify that settings window appears and background is faded.
-- Verify that UI elements other than settings window are disabled/inaccessible.
-- Click settings button again.
-- Verify that the button styled as unpressed.
-- Verify that settings window disappeared.
+  - Check if settings button is visible.
+  - Click settings button.
+  - Verify that the button is styled as pressed.
+  - Verify that settings window appears and background is faded.
+  - Verify that UI elements other than settings window are disabled/inaccessible.
+  - Click settings button again.
+  - Verify that the button styled as unpressed.
+  - Verify that settings window disappeared.
 
 id: 00100
 label: Expand sections
 deprecated: true
 desc:
-- Expand all the sections
-- Verify that the sections display additional info and settings
+  - Expand all the sections
+  - Verify that the sections display additional info and settings
 
+id: 00150
 label: Settings tabs
 desc:
-- Verify if all tabs are clickable in settings window.
-- Verify that contents are properly changed.
+  - Verify if all tabs are clickable in settings window.
+  - Verify that contents are properly changed.
 
+id: 00175
 label: General settings
-- Uncheck "Show only browser windows..." checkbox.
-- Open a bookmark manager window.
-- Verify that the new window is shown in debug context menu.
-- Check "Show only browser windows..." checkbox.
-- Verify that the bookmarks window is not shown in debug context menu.
+desc:
+  - Uncheck "Show only browser windows..." checkbox.
+  - Open a bookmark manager window.
+  - Verify that the new window is shown in debug context menu.
+  - Check "Show only browser windows..." checkbox.
+  - Verify that the bookmarks window is not shown in debug context menu.
 
 id: 00200
 label: Remote debug
@@ -1845,6 +1862,7 @@ desc:
   - Type 'ctrl' in the 'Quick find' field
   - Verify that all shortcuts with a 'ctrl' token are displayed
 
+id: 00450
 label: Keyboard shortcuts, Quick find
 desc:
   - Click Keyboard shortcuts tab
@@ -1868,6 +1886,7 @@ desc:
   - Press the 'save' button
   - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
 
+id: 00600
 label: Keyboard shortcuts
 desc:
   - Expand 'Keyboard shortcuts Global'
@@ -1881,6 +1900,7 @@ desc:
   - Click 'Apply' button
   - Verify that a 'Invalid keyboard shortcut' label is added to the changed shortcut
 
+id: 00700
 label: About tab
 desc:
   - Verify contents of the About tab
@@ -1914,6 +1934,7 @@ desc:
 Remote debug
 ************
 
+id: 00100
 label: Enable remote debug mode
 desc:
   - Click remote debug button.
@@ -1925,6 +1946,7 @@ desc:
   - Verify that the debugging context is properly displayed.
   - Verify that remote debug button shows an animation for remote debug.
 
+id: 00200
 label: Disable remote debug mode
 desc:
   - Click remote debug button.
@@ -1932,6 +1954,7 @@ desc:
   - Click button.
   - Verify that you are returned to debugging your previous environment.
 
+id: 00300
 label: Dragonfly startup in remote debug mode
 desc:
   - Enable remote debug mode in Dragonfly on port 7101.
@@ -1940,12 +1963,14 @@ desc:
   - Verify that Dragonfly starts up in remote debug mode.
   - Verify that port number is 7101.
 
+id: 00400
 label: Warn on port conflict
 desc:
   - Choose a port that is already taken and appply
   - Verify that there's an error message
   - Verify that the local connection is set up when dismissing the overlay
 
+id: 00500
 label: Local connection setup
 desc:
   - Choose a port and click apply, but don't connect
@@ -1955,18 +1980,21 @@ desc:
 Overlays
 ********
 
+id: 00100
 label: Show overlay
 desc:
   - Click the settings button
   - Verify that the overlay is shown
   - Hide it, do the same with other overlays
 
+id: 00200
 label: Hide overlay
 desc:
   - Click the settings button while the settings overlay is visible
   - Verify that the overlay hides
   - Do the same with other overlays
 
+id: 00300
 label: Hide overlay by Esc
 desc:
   - Press Esc while the settings overlay is visible
@@ -1976,11 +2004,13 @@ desc:
 Status badges/icons
 *******************
 
+id: 00100
 label: Badge when stopped
 desc:
   - Set a breakpoint and hit it
   - Verify that the Script tab gets a badge showing that the script is stopped
 
+id: 00200
 label: Error count
 desc:
   - Go to a page with errors

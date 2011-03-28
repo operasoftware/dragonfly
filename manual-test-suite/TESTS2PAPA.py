@@ -152,7 +152,7 @@ def add_ids_test_index():
         tmpfile.write(line)
     tmpfile.close()
     if state == ERROR:
-        raise AssertionError("Not well formed entry!")
+        raise AssertionError("Not well formed entry on line %s!" % index)
     shutil.copy(tmppath, TESTS)
     os.unlink(tmppath)
             
