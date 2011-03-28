@@ -29,6 +29,21 @@ cls.StorageDataBase = new function()
     }
   };
 
+  this.get_storages_plain = function()
+  {
+    var items = [];
+    var storages = this.get_storages();
+    for (var id in storages) {
+      var storage = storages[id] || [];
+      for (var storage_ob, j=0; storage_ob = storage.storage[j]; j++) {
+        var item = storage_ob;
+        item._rt_id = storage.rt_id;
+        items.push(item);
+      };
+    };
+    return items;
+  }
+
   this.update = function()
   {
     for (var rt_id in this._rts)
@@ -321,6 +336,21 @@ cls.StorageDataBase = new function()
     this.post('storage-update', {storage_id: this.id});
   };
 
+  this._make_sorter = function(prop)
+  {
+    return function(obj_a, obj_b) {
+      if (obj_a[prop] < obj_b[prop])
+      {
+        return 1;
+      }
+      if (obj_a[prop] > obj_b[prop])
+      {
+        return -1;
+      }
+      return 0;
+    }
+  };
+
   this.init = function(id, update_event_name, title, storage_object)
   {
     this.id = id;
@@ -335,6 +365,52 @@ cls.StorageDataBase = new function()
     window.cls.MessageMixin.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
+    this.tabledef = {
+      groups: {
+        runtime: {
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME,
+          grouper: function(obj) {
+            return obj._rt_id;
+          },
+          renderer: function(groupvalue, obj) {
+            return obj[0]._rt_uri;
+          }
+        }
+      },
+      column_order: ["key", "value"],
+      idgetter: function(res) { return res._objectref },
+      columns: {
+        key: {
+          label: "Key",
+          classname: "col_key",
+          renderer: function(obj) {
+            if (obj._is_runtime_placeholder)
+            {
+              return;
+            }
+            var input_text_container = templates.cookie_manager.input_text_container("key", obj.key);
+            return templates.cookie_manager.edit_mode_switch_container(obj.key, input_text_container);
+          },
+          summer: function(values, groupname, getter) {
+            return ["button", "Add " + title, "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+          },
+          sorter: this._make_sorter("key")
+        },
+        value: {
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          classname: "col_value",
+          renderer: function(obj) {
+            if (obj._is_runtime_placeholder)
+            {
+              return;
+            }
+            var input_text_container = templates.cookie_manager.input_text_container("value", obj.value);
+            return templates.cookie_manager.edit_mode_switch_container(obj.value, input_text_container);
+          },
+          sorter: this._make_sorter("value")
+        }
+      }
+    }
   };
 }
 
