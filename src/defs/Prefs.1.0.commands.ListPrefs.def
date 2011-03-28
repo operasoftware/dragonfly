@@ -1,0 +1,12 @@
+message <span class="message">ListPrefsArg</span>
+{
+  <span class="comment">/** 
+   * Whether to sort the preferences alphabetically or not.
+   */</span>
+  optional <span class="bool">bool  </span> sort    = 1; 
+  <span class="comment">/** 
+   * List the keys in the specified section only. If not present,
+   * all keys in all sections will be listed.
+   */</span>
+  optional <span class="string">string</span> section = 2; 
+}

@@ -1,0 +1,15 @@
+message <span class="message">Breakpoint</span>
+{
+  <span class="comment">/** 
+   * A nonzero ID chosen by the client.
+   */</span>
+  required <span class="number">uint32</span> breakpointID = 1; 
+  <span class="comment">/** 
+   * ID of script where the breakpoint should be set.
+   */</span>
+  required <span class="number">uint32</span> scriptID     = 2; 
+  <span class="comment">/** 
+   * Line number to break on in script.
+   */</span>
+  required <span class="number">uint32</span> lineNumber   = 3; 
+}

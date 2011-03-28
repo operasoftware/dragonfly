@@ -91,7 +91,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Runtime State */
     new SidePanelView('scripts-side-panel', 
                       ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                      ['watches', 'callstack', 'inspection']);
+                      ['watches', 'callstack', 'inspection'],
+                      // default expanded flags for the view list
+                      [false, true, true]);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
@@ -148,7 +150,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* DOM sidepanel */
     new cls.DOMSidePanelView('dom-side-panel', 
                              ui_strings.M_VIEW_LABEL_STYLES,
-                             ['css-comp-style', 'css-inspector', 'new-style']);
+                             ['css-comp-style', 'css-inspector', 'new-style'],
+                             // default expanded flags for the view list
+                             [false, true, false]);
     cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */
@@ -161,7 +165,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Runtime State */
     new SidePanelView('breakpoints-side-panel', 
                       ui_strings.M_VIEW_LABEL_BREAKPOINTS,
-                      ['breakpoints', 'event-breakpoints']);
+                      ['breakpoints', 'event-breakpoints'],
+                      // default expanded flags for the view list
+                      [true, false]);
 
     /* Event Breakpoints */
     window.event_breakpoints = cls.EventBreakpoints.get_instance();

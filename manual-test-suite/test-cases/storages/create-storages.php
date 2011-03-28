@@ -1,37 +1,56 @@
 <?
   // secure cookie
-  setcookie("o", "secure", 0, "", "", true);
+  setcookie("w", "secure", 0, "/", "", true);
   // http-only cookie
-  setcookie("p", "http-only", 0, "", "", "", true);
+  setcookie("x", "http-only", 0, "/", "", "", true);
 ?>
 <!doctype HTML>
+
 <script>
 (function()
 {
-  // to test fuzzy_dates, [2 years, 1 year, 2 months, 1 month, 2 week … (session)]
-  var expires = [
-  2 * 12*4*7*24*60*60, 
-      12*4*7*24*60*60,
-     2 * 4*7*24*60*60,
-         4*7*24*60*60,
-       2 * 7*24*60*60,
-           7*24*60*60,
-         2 * 24*60*60,
-             24*60*60,
-            2 * 60*60,
-                60*60,
-               2 * 60,
-                   60,
-                    5,
-                    0
-  ]; // in seconds
-  for( var i = 97, char = ''; i < 107; i++)
+  for ( var i = 97, char = ''; i < 110; i++)
   {
     char = String.fromCharCode(i);
-    document.cookie = 
-      char + "=" + char + "; expires=" + new Date(new Date().getTime() + expires.pop()*1000) + "; path=/";
+    document.cookie = char + "=" + char + "; path=/";
     window.localStorage.setItem(char, char);
     window.sessionStorage.setItem(char, char);
   };
+
+  var make_leading_zero_string = function(nr, digits)
+  {
+    digits = digits || 2;
+    nr = String(nr);
+    while(nr.length < digits)
+    {
+      nr = "0" + nr;
+    }
+    return nr;
+  };
+
+  var pathname = location.pathname.slice(0, location.pathname.lastIndexOf("/") + 1);
+
+  // create cookie with path values out of location.pathname, working in all browsers
+  var last_found_index = 0;
+  var l = 0;
+  while(pathname.indexOf("/", last_found_index) != -1)
+  {
+    var last_found_index = pathname.indexOf("/", last_found_index);
+    var path = pathname.slice(0, last_found_index + 1);
+    document.cookie = "y" + make_leading_zero_string(l) + " = Path%20val: " + path + "; path=" + path;
+    last_found_index++; // compensating the "/"
+    l++;
+  }
+
+  // create cookie with pathes that only work in opera (and apparently ie)
+  var path = location.pathname;
+  var j = 0;
+  while (path)
+  {
+    document.cookie = "z" + make_leading_zero_string(j) + " = Path%20val:" + path + "; path=" + path;
+    path = path.slice(0, path.length - 1);
+    j++;
+  };
+
 })();
 </script>

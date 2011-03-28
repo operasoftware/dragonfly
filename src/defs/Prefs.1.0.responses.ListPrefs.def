@@ -1,0 +1,43 @@
+message <span class="message">PrefList</span>
+{
+  message <span class="message">Pref</span>
+  {
+    enum Type
+    {
+      STRING = 1;
+      INTEGER = 2;
+      BOOLEAN = 3;
+      FILE = 4;
+      REQUIRED_FILE = 5;
+      DIRECTORY = 6;
+      COLOR = 7;
+    }
+
+    required <span class="number">Type  </span> type    = 1; 
+    <span class="comment">/** 
+     * Preferences are divided into groups called *sections*. This
+     * field indicates which section this preference is a member of.
+     * 
+     * Example: *Developer Tools*
+     */</span>
+    optional <span class="string">string</span> section = 2; 
+    <span class="comment">/** 
+     * This is the key, or *name* of the preference.
+     * 
+     * Example: *Developer Tools URL*
+     */</span>
+    optional <span class="string">string</span> key     = 3; 
+    <span class="comment">/** 
+     * The value of the preference. For instance, for the preference
+     * *Developer Tools URL* in the *Developer Tools* section, the
+     * default value is https://dragonfly.opera.com/app/.
+     */</span>
+    optional <span class="string">string</span> value   = 4; 
+    <span class="comment">/** 
+     * Whether setting is overriden by global ini. If this value is
+     * missing, it means global ini is not supported.
+     */</span>
+    optional <span class="bool">bool  </span> enabled = 5; 
+  }
+  repeated <span class="message">Pref</span> prefList = 1; 
+}

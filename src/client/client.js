@@ -593,9 +593,9 @@ ui_framework.layouts.storage_rough_layout =
       tabs: function(services)
       {
         var cookie_module = 'cookies';
-        if(services["cookie-manager"])
+        if(services["cookie-manager"] && services["cookie-manager"].is_implemented)
         {
-          var cookie_module = 'cookie_manager';
+          cookie_module = 'cookie_manager';
         }
         return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences']
       }

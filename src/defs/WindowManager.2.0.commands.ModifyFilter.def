@@ -3,7 +3,7 @@ message <span class="message">WindowFilter</span>
   required <span class="bool">bool  </span> clearFilter        = 1; 
   repeated <span class="number">uint32</span> includeIDList      = 2; 
   <span class="comment">/** 
-   * The string can currently only have one value: `""`, meaing all window-ids.
+   * The string can currently only have one value: `"*"`, meaing all window-ids.
    * The filter automatically includes windows that are opened from windows
    * in the INCLUDE filter.
    */</span>

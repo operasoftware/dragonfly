@@ -1,0 +1,24 @@
+message <span class="message">ScreenWatcherResult</span>
+{
+  message <span class="message">ColorMatch</span>
+  {
+    <span class="comment">/** 
+     * The `ColorSpec.id` which matched a color
+     */</span>
+    required <span class="number">uint32</span> id    = 1; 
+    <span class="comment">/** 
+     * Number of pixels for the matching `id`
+     */</span>
+    required <span class="number">uint32</span> count = 2; 
+  }
+  <span class="comment">/** 
+   * The ID of the window that was triggered by a screen watch, or 0 if the screen watch failed or was cancelled
+   */</span>
+  required <span class="number">uint32    </span> windowID       = 1; 
+  <span class="comment">/** 
+   * ``MD5`` sum of an image, in hexadecimal.
+   */</span>
+  required <span class="string">string    </span> md5            = 2; 
+  optional <span class="bytes">bytes     </span> png            = 3; 
+  repeated <span class="message">ColorMatch</span> colorMatchList = 4; 
+}

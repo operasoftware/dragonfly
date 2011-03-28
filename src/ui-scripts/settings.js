@@ -49,10 +49,15 @@ var SettingsBase = function()
   this.set = function(key, value, sync_switches) 
   {
     window.localStorage.setItem(key, JSON.stringify(this.map[key] = value))
-    if( sync_switches && typeof value == 'boolean' )
+    if (sync_switches && typeof value == 'boolean')
     {
       this._sync_view(key, value);
     }
+    if (this.callback_map.hasOwnProperty(key))
+    {
+      this.callback_map[key].call(this, value);
+    }
+    messages.post("setting-changed", {id: this.view_id, key: key});
   }
 
   /**
@@ -83,7 +88,7 @@ var SettingsBase = function()
     views[this.view_id].update();
   };
 
-  this.init = function(view_id, key_map, label_map, setting_map, templates, group)
+  this.init = function(view_id, key_map, label_map, setting_map, templates, group, callback_map)
   {
     this.map = {};
     this.view_id = view_id;
@@ -91,6 +96,7 @@ var SettingsBase = function()
     this.setting_map = setting_map;
     this.templates = templates || {};
     this.group = group;
+    this.callback_map = callback_map || {};
     var stored_map = key_map, key = '', val = '';
     for( key in stored_map)
     {
@@ -149,9 +155,9 @@ var SettingsBase = function()
  * @constructor 
  * @extends SettingsBase
  */
-var Settings = function(view_id, key_map, label_map, setting_map, template, group)
+var Settings = function(view_id, key_map, label_map, setting_map, template, group, callback_map)
 {
-  this.init(view_id, key_map, label_map, setting_map, template, group);
+  this.init(view_id, key_map, label_map, setting_map, template, group, callback_map);
 }
 
 Settings.get_setting_with_view_key_token = function(token)

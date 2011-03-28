@@ -1,0 +1,9 @@
+message <span class="message">LoadDocumentArg</span>
+{
+  <span class="comment">/** 
+   * The window containing the frame.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+  required <span class="number">uint32</span> frameID  = 2; 
+  required <span class="string">string</span> url      = 3; 
+}

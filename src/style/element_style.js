@@ -211,21 +211,24 @@ cls.ElementStyle = function()
     // checks if the declaration actually has matchin property
     // search_list is a list with matching properties indexes
 
-    var
-    i = 0,
-    length = declaration[PROP_LIST].length,
-    has_matching_search_props = false;
-
-    declaration[SEARCH_LIST] = [];
-    for ( ; i < length; i++)
+    if (declaration[PROP_LIST])
     {
-      if (search_list[declaration[PROP_LIST][i]])
+      var
+      i = 0,
+      length = declaration[PROP_LIST].length,
+      has_matching_search_props = false;
+
+      declaration[SEARCH_LIST] = [];
+      for ( ; i < length; i++)
       {
-        declaration[SEARCH_LIST][i] = 1;
-        has_matching_search_props = true;
+        if (search_list[declaration[PROP_LIST][i]])
+        {
+          declaration[SEARCH_LIST][i] = 1;
+          has_matching_search_props = true;
+        }
       }
+      declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
     }
-    declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
   };
 
   var clearNodeCascade = function(node_cascade, search_list)

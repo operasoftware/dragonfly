@@ -327,7 +327,10 @@ ui_strings.M_CONTEXTMENU_DELETE_ALL = 'Delete all';
 /* DESC: Context menu item for adding a breakpoint. */
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = 'Add breakpoint';
 /* DESC: Context menu item for removing a breakpoint. */
-ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Remove breakpoint';
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+
+/* DESC: Context menu item for deleting a breakpoint. */
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
 
 /* DESC: Context menu item for adding an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_ADD = 'Add item';

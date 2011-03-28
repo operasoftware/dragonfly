@@ -1,0 +1,9 @@
+message <span class="message">ConsoleTimeInfo</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+  <span class="comment">/** 
+   * Timers are identified by a string passed as the first argument
+   * to the function. For instance, console.time("MyTimer").
+   */</span>
+  required <span class="string">string</span> title     = 2; 
+}

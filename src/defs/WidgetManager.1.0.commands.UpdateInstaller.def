@@ -1,0 +1,10 @@
+message <span class="message">UpdateInstallerArg</span>
+{
+  required <span class="number">uint32</span> installerID = 1; 
+  <span class="comment">/** 
+   * Byte data which will be appended to the temporary file.
+   * 
+   * @note Must not exceed the max size set by the host, see GetSettings.
+   */</span>
+  required <span class="bytes">bytes </span> byteData    = 2; 
+}

@@ -1,0 +1,12 @@
+message <span class="message">RuntimeSelection</span>
+{
+  <span class="comment">/** 
+   * List the ones you want to see, or none if you want all (also set `allRuntimes`).
+   */</span>
+  repeated <span class="number">uint32</span> runtimeList = 1; 
+  <span class="comment">/** 
+   * Create runtimes for all documents. Runtimes are normally not created for documents
+   * without ECMAScript.
+   */</span>
+  optional <span class="bool">bool  </span> allRuntimes = 2; 
+}

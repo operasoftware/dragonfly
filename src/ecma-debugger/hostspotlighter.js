@@ -363,7 +363,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
 
   var onSettingChange = function(msg)
   {
-    if( msg.id == settings_id )
+    if (msg.id == settings_id)
     {
       switch (msg.key)
       {
@@ -372,6 +372,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
           if(!settings[settings_id].get(msg.key))
           {
             locked_elements = [];
+            last_spotlight_command = null;
             self.clearSpotlight();
           }
           break;
@@ -542,7 +543,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     if( join.call(arguments) != last_spotlight_commands )
     {
       last_spotlight_commands = join.call(arguments);
-      var locked_s = settings.dom.get('lock-selecked-elements') && 
+      var locked_s = settings.dom.get('lock-selected-elements') && 
                      locked_elements.map(get_locked_commands) || null;
       var cmd = [get_command(node_id, scroll_into_view, type || "default")];
       last_spotlight_command = [get_command(node_id, false, type || "default")];

@@ -1,0 +1,14 @@
+<span class="comment">/** 
+ * List all valid `Action` `name`s
+ */</span>
+message <span class="message">ActionInfoList</span>
+{
+  <span class="comment">/** 
+   * Name of an action, to be used in the `Action` message.
+   */</span>
+  message <span class="message">ActionInfo</span>
+  {
+    required <span class="string">string</span> name = 1; 
+  }
+  repeated <span class="message">ActionInfo</span> actionInfoList = 1; 
+}

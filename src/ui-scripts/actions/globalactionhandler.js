@@ -233,20 +233,6 @@
     return false;
   };
   
-  this._handlers["focus-container-search-field"] = function(action_id, event, target)
-  {
-    /* get context -> get container (representation? view?) ->  get UI object -> get cell -> get toolbar -> get search field. If found, focus and return false */
-    var container = ActionBroker.get_instance().get_action_container();
-    var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-    var filters = ui_obj && ui_obj.cell.toolbar && ui_obj.cell.toolbar.get_filters();
-    var element = null;
-    if (filters && filters[0] && (element = ViewBase.getToolbarControl(container, filters[0].handler)))
-    {
-      element.focus();
-      return false;
-    }
-  }
-
   this._handlers["show-search"] = function(action_id, event, target)
   {
     var action_id = ActionBroker.get_instance().get_current_handler_id();

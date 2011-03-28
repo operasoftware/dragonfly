@@ -1,0 +1,4 @@
+message <span class="message">PrefValue</span>
+{
+  required <span class="string">string</span> value = 1; 
+}

@@ -18,7 +18,7 @@
         {
           "ctrl a": "select-all",
           "ctrl i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
+          "f3": "show-search",
           "f8": "continue-run",
           "f10": "continue-step-next-line",
           "f11": "continue-step-into-call",
@@ -192,7 +192,7 @@
       {
         "default":
         {
-
+          "delete": "remove-item"
         },
         "edit":
         {
@@ -209,7 +209,6 @@
         {
           "cmd shift a": "select-all",
           "cmd i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
@@ -217,7 +216,7 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "cmd shift f": "show-search"
+          "f3": "show-search"
         },
         "edit":
         {
@@ -233,7 +232,7 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "cmd shift f": "show-search"
+          "f3": "show-search"
         }
       },
       "dom":
@@ -247,7 +246,8 @@
           "enter": "dispatch-click",
           "shift enter": "dispatch-click",
           "cmd enter": "dispatch-dbl-click",
-          "delete": "remove-node"
+          "delete": "remove-node",
+          "cmd backspace": "remove-node"
         },
         "edit-attributes-and-text":
         {
@@ -383,7 +383,8 @@
       {
         "default":
         {
-
+          "delete": "remove-item",
+          "cmd backspace": "remove-item"
         },
         "edit":
         {

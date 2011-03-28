@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
@@ -48,7 +48,7 @@ cls.CookieManager.Cookie = function(details, data)
   this._is_removable = (
     this.domain !== undefined &&
     this.path !== undefined &&
-    (!this.path || data._is_min_service_version_1_0_2)
+    (this.path === "/" || data._is_min_service_version_1_0_2)
   );
 }
 
@@ -56,6 +56,8 @@ cls.CookieManager.CookieDataBase = function()
 {
   this.refetch = function(){};
   this.remove_cookie = function(objectref, callback){};
+  this.remove_cookies = function(cookies){};
+  this.remove_cookies_of_runtime = function(rt_id){};
   this.get_cookies = function(){};
   this.create_objectref = function(cookie, runtimes, fixed_name){};
   this.get_cookie_by_objectref = function(objectref){};
@@ -103,7 +105,7 @@ cls.CookieManager.CookieDataBase = function()
     var cookie = this.get_cookie_by_objectref(objectref);
     if (cookie)
     {
-      var domain = cookie.domain;
+      var domain = this._check_to_add_local_to_domain(cookie.domain);
       if (!domain)
       {
         // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
@@ -176,6 +178,10 @@ cls.CookieManager.CookieDataBase = function()
       {
         return false;
       }
+      else if(service_version[i] > compare_version[i])
+      {
+        return true;
+      }
     };
     return true;
   };
@@ -201,9 +207,11 @@ cls.CookieManager.CookieDataBase = function()
 
       if (rt.hostname)
       {
+        // Add .local even in the GetCookie request, only for consistency reasons and to spot problems with it more easily
+        var request_hostname = this._check_to_add_local_to_domain(rt.hostname);
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
         // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
-        services['cookie-manager'].requestGetCookie(tag,[rt.hostname]);
+        services['cookie-manager'].requestGetCookie(tag,[request_hostname]);
       }
       else
       {
@@ -231,8 +239,13 @@ cls.CookieManager.CookieDataBase = function()
           }
           // workaround: Check path to match if it's not root, CORE-37107
           var path = cookie_info[1];
-          if (path && (path !== "/") && !rt.pathname.startswith(path+"/"))
+          if (path && (path !== "/") && !rt.pathname.startswith(path))
           {
+            /*
+             * In opera (and IE, checked IE8), the path value doesn't have to match
+             * with a trailing slash. Would be used with startswith(path+"/") in 
+             * other browsers, see http://people.opera.com/dherzog/cookie-path/
+             */
             continue;
           }
           this.cookie_list.push(
@@ -303,6 +316,16 @@ cls.CookieManager.CookieDataBase = function()
     this._view.update();
   };
 
+  this._check_to_add_local_to_domain = function(domain)
+  {
+    // work around CORE-37379 by adding ".local" to domain names if they seem local
+    if(domain && domain.indexOf(".") === -1 || domain.match(/^[0-9]+$/))
+    {
+      domain += ".local";
+    }
+    return domain;
+  }
+
   this._init = function(service_version, view)
   {
     this.service_version = service_version || 0;
@@ -334,7 +357,7 @@ cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
       path_val = "";
     }
     var cookie_detail_arr = [
-      cookie_instance.domain,
+      this._check_to_add_local_to_domain(cookie_instance.domain),
       cookie_instance.name,
       path_val,
       cookie_instance.value,
