@@ -209,7 +209,6 @@
         {
           "cmd shift a": "select-all",
           "cmd i": "invert-spotlight-colors",
-          "f3": "focus-container-search-field", //  todo: should be "show search", has to always focus field
           "f5": "continue-run",
           "f6": "continue-step-next-line",
           "f7": "continue-step-into-call",
@@ -217,7 +216,7 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "cmd shift f": "show-search"
+          "f3": "show-search"
         },
         "edit":
         {
@@ -233,7 +232,7 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "cmd shift f": "show-search"
+          "f3": "show-search"
         }
       },
       "dom":
