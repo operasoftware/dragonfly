@@ -1643,6 +1643,7 @@ desc:
   In case the host has the cookie-service:
   - Verify that expires matches what value says, at least within the first few seconds
   - Verify that you can watch 'exp_test_b' expire without any further action
+  - Sort by Name and Expires and verify the order makes sense and doesn't change when switching between the two
 
 url: http://scope.bitbucket.org/tests/add-remove-runtime/index.html?open=http://opera.com/
 
@@ -1662,7 +1663,19 @@ desc:
   - Add another cookie named "foo_secure" and check the "is secure" box.
   - Verify that it doesn't show up anymore
   - Add an iframe with the url "https://scope.bitbucket.org" to the testcase
-  - Verify that it shows up directly and that the "foo_secure" shows up
+  - Verify that the runtime is now listed and that the "foo_secure" cookie shows up
+
+url: http://scope.bitbucket.org/tests/add-remove-runtime/index.html?open=http://t/,http://207.223.240.182/
+
+id: 01100
+label: Local domains and ip addresses
+desc:
+  In case the host has the cookie-service:
+  - Skip the warning in the left iframe by pressing "Continue"
+  - Verify that the following runtimes are listed: http://scope.bitbucket.org/tests/add-remove-runtime/index.html, http://207.223.240.182/, http://t/
+  - Add a cookie to each of them and verify they get added
+  - Edit the one you have set for t/, change the domain to scope.bitbucket.org and the path to /tests/
+  - Verify that the cookie is shown in t/ but nowhere else (known issue: Won't be shown when host has cookie-service < 1.1 - CORE-35207)
 
 Storage.Local Storage
 *********************
