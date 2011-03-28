@@ -223,7 +223,7 @@ ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window"  ;
 /* DESC: Attaches Opera Dragonfly to the main browser window. */
 ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
-ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Show initial values in computed style panel';
+ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = 'Show initial values';
 /* DESC: Toggles the display of shorthands in computed styles view. */
 ui_strings.S_SWITCH_SHOW_SHORTHANDS = 'Show shorthands in computed style panel';
 /* DESC: DEPRECATED Showing shorthands in style properties on or off. */
