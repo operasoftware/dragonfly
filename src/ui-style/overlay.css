@@ -25,9 +25,11 @@ overlay-window {
     right: 20px;
 }
 overlay-arrow {
-  content: url("../ui-images/overlay_arrow.png");
-  position: absolute;
-  top: -12px;
+    background: transparent url("../ui-images/overlay_arrow.png");
+    width: 17px;
+    height: 13px;
+    position: absolute;
+    top: -12px;
 }
 overlay-window h2 {
     font-size: 1em;
@@ -60,7 +62,6 @@ overlay-tabs tab:hover {
 }
 overlay-tabs tab.active {
     color: #fff;
-    text-shadow: 0 0 10px rgba(255,255,255,0.75);
     border-color: #000;
     background: rgba(0, 0, 0, .4);
     cursor: auto;

@@ -247,7 +247,7 @@
     var ret = 
     [
       'cst-option',
-      ["span", (this._script_type_map[script_type] || script_type) + ' – ',
+      ["span", (script_type != "linked" ? (this._script_type_map[script_type] || script_type) + ' – ' : ''),
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
@@ -323,7 +323,7 @@
       'cst-option',
        runtime['title'] || runtime.uri,
       'runtime-id', runtime.runtime_id.toString()
-    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected-runtime'] : [] ).
+    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected'] : [] ).
       concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
   }
 

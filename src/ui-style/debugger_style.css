@@ -98,7 +98,7 @@ ul {
 /* backtrace */
 
 #backtrace-container, #examine-objects-container {
-  padding:.3em;
+  padding: 5px;
   }
 
 
@@ -309,10 +309,6 @@ cst-option.selected-runtime {
   padding-left:18px;
   }
 
-#examine-objects .key {
-  margin-right:7px;
-  }
-
 .css-inspector pre {
   white-space: pre-wrap;
   }
@@ -497,10 +493,6 @@ examine-objects examine-objects
 examine-objects examine-objects
 {
   padding: 0 0 0 16px;
-}
-examine-objects key
-{
-  margin-right:7px;
 }
 examine-objects key.no-expander
 {
@@ -1303,11 +1295,11 @@ property.disabled color-sample
   cursor: auto;
   color: #999;
   font-style: italic;
-  padding-left: 23px;
+  padding-left: 20px;
 }
 
 .not-content.inspection {
-  padding: 5px 5px 5px 23px;
+  padding: 5px 5px 5px 25px;
 }
 
 .go-to-line-input

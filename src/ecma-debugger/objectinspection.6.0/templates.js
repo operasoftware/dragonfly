@@ -161,10 +161,10 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
                   editable(prop) + ">" +
                   esc_name +
-                "</key>" +
+                "</key> " +
                 "<value class='" + type + "'>" + value + "</value>" +
               "</item>"
             );
@@ -192,8 +192,8 @@
               ret.push(
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
-                  "<key data-spec='dom#" + esc_name + "'" + 
-                    editable(prop) + ">" + esc_name + "</key>" +
+                  "<key data-spec='dom#" + esc_name + "'" +
+                    editable(prop) + ">" + esc_name + "</key> " +
                   "<value class='" + type + "' data-value='\"" + value + "\"'>" +
                     "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
@@ -209,10 +209,10 @@
             {
               ret.push(
                 "<item>" +
-                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                  "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
                     editable(prop) + ">" +
                     esc_name +
-                  "</key>" +
+                  "</key> " +
                   "<value class='" + type + "'>\"" + value + "\"</value>" +
                 "</item>"
               );
@@ -233,10 +233,10 @@
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander' data-spec='dom#" + esc_name + "'" + 
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
                   editable(prop) + ">" +
                   esc_name +
-                "</key>" +
+                "</key> " +
                 "<value class='" + type + "'>" + type + "</value>" +
               "</item>"
             );
@@ -273,7 +273,7 @@
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
                         "data-spec='dom#" + esc_name + "'" + editable(prop) +
-                        ">" + esc_name + "</key>" +
+                        ">" + esc_name + "</key> " +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
                      "data-spec='dom#" + value + "'>" + value + "</value>"
             );

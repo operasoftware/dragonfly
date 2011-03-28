@@ -1,0 +1,43 @@
+<script>
+(function()
+{
+  var is_first_run = localStorage && !localStorage.has_set_cookies;
+  if(is_first_run)
+  {
+    var expires = [
+        { exp:                             0, rendered: "Session"   },
+        { exp:                            5, rendered: "<1 minute" },
+        { exp:                        2 * 60, rendered: "2 minutes" },
+        { exp:                       61 * 60, rendered: "1 hour"    },
+        { exp:                   2 * 60 * 60, rendered: "2 hours"   },
+        { exp:                  25 * 60 * 60, rendered: "Tomorrow"  },
+        { exp:              2 * 24 * 60 * 60, rendered: "2 days"    },
+        { exp:              8 * 24 * 60 * 60, rendered: "1 week"    },
+        { exp:          2 * 7 * 24 * 60 * 60, rendered: "2 weeks"   },
+        { exp:          5 * 7 * 24 * 60 * 60, rendered: "1 month"   },
+        { exp:      2 * 4 * 7 * 24 * 60 * 60, rendered: "2 months"  },
+        { exp:     13 * 4 * 7 * 24 * 60 * 60, rendered: "1 year"    },
+        { exp: 2 * 12 * 4 * 7 * 24 * 60 * 60, rendered: "2 years"   }
+    ];
+
+    var a = 97;
+    for (var i=0; i < expires.length; i++) {
+      char = String.fromCharCode(a + i);
+      var exp = expires[i];
+      if(exp.exp)
+      {
+        exp.exp = new Date(exp.exp*1000 + new Date().getTime()).toUTCString();
+      }
+      var cookiestr = "exp_test_" + char + "=" + exp.rendered + "; expires=" + exp.exp + "; path=/";
+      document.cookie = cookiestr;
+    };
+    // reload directly after creating to be sure cookies are shown soon as possible.
+    localStorage.has_set_cookies = true;
+    location.reload();
+  }
+  else
+  {
+    localStorage.removeItem("has_set_cookies")
+  }
+})();
+</script>

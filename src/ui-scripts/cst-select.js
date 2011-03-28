@@ -141,6 +141,16 @@
       }
       style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
       modal_box.style.cssText = style;
+      var selected_option = modal_box.querySelector("cst-option.selected");
+      if (selected_option)
+      {
+        var offset_top = selected_option.offsetTop;
+        var box_height = modal_box.offsetHeight;
+        if (offset_top > box_height)
+        {
+          modal_box.firstElementChild.scrollTop = offset_top + (selected_option.offsetHeight / 2) - (box_height / 2);
+        }
+      }
       EventHandler.__modal_mode= true;
     }
   }
@@ -380,9 +390,9 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     ret[ret.length] = 
     [
       "div", 
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "number", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "number", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "number", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "", "set-hsla"),
+      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "", "set-hsla"),
       this.templateInputRange(ui_strings.S_LABEL_COLOR_OPACITY, extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
         "100", "digit-3", "set-hsla", !select_obj.has_opacity),
       this.templateInputText("# ", colors.getHex(), "text", "set-hex"),

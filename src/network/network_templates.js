@@ -128,7 +128,7 @@ templates.network_log_request_detail = function(ctx, selected)
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["button", "X", "class", "close-request-detail", "handler", "close-request-detail", "unselectable", "on"],
+    ["button", "X", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
@@ -210,14 +210,14 @@ templates.network_response_body = function(req)
   {
     return ["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-            ["br"],
-            ["button",
+            ["p", ["button",
              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
              "data-resource-id", String(req.id),
              // unselectable attribute works around bug CORE-35118
              "unselectable", "on",
-             "handler", "get-response-body"
-            ],
+             "handler", "get-response-body",
+             "class", "container-button"
+            ]],
             "class", "response-view-body-container"
            ];
   }

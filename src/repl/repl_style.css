@@ -114,3 +114,6 @@ li > .repl-lines {
   color: hsl(0, 0%, 50%);
 }
 
+.function-expression {
+  color: #fff;
+}

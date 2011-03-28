@@ -303,6 +303,8 @@ ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE = 'Expand/collapse subtree';
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = 'Disable all declarations';
 /* DESC: Context menu item for adding a declaration in a rule. */
 ui_strings.M_CONTEXTMENU_ADD_DECLARATION = 'Add declaration';
+/* DESC: Context menu item for removing a property in a rule. */
+ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = 'Remove declaration';
 /* DESC: Context menu item for editiing a declaration in a rule. */
 ui_strings.M_CONTEXTMENU_EDIT_DECLARATION = 'Edit declaration';
 /* DESC: Context menu item for showing the color picker. */

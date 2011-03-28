@@ -105,11 +105,17 @@ cls.DOMSidePanelView.create_ui_widgets = function()
             handler: function(event, target) {
               broker.dispatch_action("css-inspector", "edit-css", event, target);
             }
+          },
+          {
+            label: ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION,
+            handler: function(event, target) {
+              broker.dispatch_action("css-inspector", "remove-property", event, target);
+            }
           });
         }
 
         // Only add this for the color swatch
-        var swatch = target.querySelector("color-sample");
+        var swatch = target && target.querySelector("color-sample");
         if (swatch)
         {
           items.push(

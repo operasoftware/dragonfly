@@ -900,11 +900,12 @@ cls.ScriptSelect = function(id, class_name)
       if( script )
       {
         var display_uri = helpers.shortenURI(script.uri);
-        return (
-          display_uri.uri
-          ? display_uri.uri
-          : ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id
-        )
+        var script_type = script.script_type[0].toUpperCase() +
+                          script.script_type.slice(1);
+        return display_uri.uri ?
+               display_uri.uri :
+               script_type + " – " + (script.script_data.slice(0, 300) ||
+               ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
       }
       else
       {

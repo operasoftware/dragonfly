@@ -324,6 +324,8 @@ suggest_values['background-image'] =
 [
   // <image>
   'none',
+  '-o-linear-gradient()',
+  '-o-repeating-linear-gradient()',
   'inherit'
 ];
 
@@ -363,8 +365,13 @@ suggest_values['background-repeat'] =
 ];
 
 suggest_values['background'] =
-[
-];
+  suggest_values['background-attachment']
+  .concat(suggest_values['background-color'])
+  .concat(suggest_values['background-image'])
+  .concat(suggest_values['background-origin'])
+  .concat(suggest_values['background-position'])
+  .concat(suggest_values['background-size'])
+  .concat(suggest_values['background-repeat']);
 
 suggest_values['border-collapse'] =
 [
@@ -456,6 +463,40 @@ suggest_values['box-shadow'] =
   'inset'
 ];
 
+suggest_values['break-after'] =
+[
+  'auto',
+  'always',
+  'avoid',
+  'left',
+  'right',
+  'page',
+  'column',
+  'avoid-page',
+  'avoid-column'
+];
+
+suggest_values['break-before'] =
+[
+  'auto',
+  'always',
+  'avoid',
+  'left',
+  'right',
+  'page',
+  'column',
+  'avoid-page',
+  'avoid-column'
+];
+
+suggest_values['break-inside'] =
+[
+  'auto',
+  'avoid',
+  'avoid-page',
+  'avoid-column'
+];
+
 suggest_values['caption-side'] =
 [
   'top',
@@ -486,6 +527,65 @@ suggest_values['clip'] =
 ];
 
 suggest_values['color'] = COLORS.concat('inherit');
+
+suggest_values['column-count'] =
+[
+  'auto'
+];
+
+suggest_values['column-fill'] =
+[
+];
+
+suggest_values['column-gap'] =
+[
+  'normal'
+];
+
+suggest_values['column-rule'] =
+[
+];
+
+suggest_values['column-rule-color'] = COLORS.concat('inherit');
+
+suggest_values['column-rule-style'] =
+[
+  'none',
+  'hidden',
+  'dotted ',
+  'dashed',
+  'solid',
+  'double',
+  'groove',
+  'ridge',
+  'inset',
+  'outset',
+  'inherit'
+];
+
+suggest_values['column-rule-width'] =
+[
+  // <length>
+  'thin',
+  'medium',
+  'thick'
+];
+
+suggest_values['column-span'] =
+[
+  'a',
+  'all'
+];
+
+suggest_values['column-width'] =
+[
+  'auto'
+];
+
+suggest_values['columns'] =
+[
+  'auto'
+];
 
 suggest_values['content'] =
 [

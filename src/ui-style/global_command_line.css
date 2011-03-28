@@ -8,17 +8,6 @@
 .command-line examine-objects {
     background-image: none !important;
 }
-.command-line .js-source .js_builtins,
-.command-line .dom value,
-.command-line .stylesheets value,
-.command-line .css-inspector value,
-.command-line .js-source .string,
-.command-line .js-source .object,
-.command-line .js-source .number
-.command-line .js-source .object
-{
-  color: #f33;
-}
 .command-line .repl-pobj {
   color: #88f;
 }
