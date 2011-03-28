@@ -306,10 +306,7 @@ window.cls.FriendlyPrinter = function()
     this._friendly_print_function = function(value_list)
     {
       const FUNCTION_EXPRESSION = 1;
-      return ['span',
-             window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]),
-             'class', 'function-declaration'
-      ];
+      return window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]).concat('class', 'function-expression');
     };
 
     this.friendly_print = function(value_list)

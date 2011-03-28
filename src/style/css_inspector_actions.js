@@ -572,7 +572,7 @@ cls.CSSInspectorActions = function(id)
     this.editor.insert_declaration_edit(event, target);
   }.bind(this);
 
-  this._handlers['remove-property'] = function enable_disable_property(event, target)
+  this._handlers['remove-property'] = function(event, target)
   {
     var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id"));
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
