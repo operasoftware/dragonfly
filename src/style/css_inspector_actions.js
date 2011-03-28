@@ -293,11 +293,12 @@ cls.CSSInspectorActions = function(id)
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
 
-    style_dec[INDEX_LIST].forEach(function(prop_idx) {
-      var property = window.css_index_map[prop_idx];
+    while (style_dec[INDEX_LIST].length)
+    {
+      var property = window.css_index_map[style_dec[INDEX_LIST][0]];
       window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
       window.elementStyle.remove_property(style_dec, property);
-    }, this);
+    }
 
     var tag = tagManager.set_callback(null, window.elementStyle.update);
     services['ecmascript-debugger'].requestEval(tag,
