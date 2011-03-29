@@ -7,6 +7,7 @@ import codecs
 import dfstrings
 import time
 import optparse
+import re
 
 js_file_template = """window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
@@ -21,7 +22,6 @@ window.ui_strings.lang_code = "en";
  * S        General strings
  * M        Menus
  */
-
 %s
 """
 
@@ -39,9 +39,14 @@ def make_js_from_db(path):
         if not "description" in e:
             e["description"] = "No description"
 
+        e["caption"] = _smart_escape(e["caption"])
         blocks.append(js_string_template % e)
 
     return js_file_template % "".join(blocks)
+
+
+def _smart_escape(s):
+    return re.sub(r'(?<!\\)"', r'\"', s)
 
 
 def _parse_options():
