@@ -12,6 +12,7 @@ PixelMagnifier.prototype = new function()
   this.set_source_base_64 = function(string, mime){};
   this.zoom = function(x, y, scale){};
   this.clear = function(){};
+  this.get_average_color = function(x, y, sample_size){};
 
   this.width;
   this.height;
@@ -39,15 +40,17 @@ PixelMagnifier.prototype = new function()
 
   this._onsrcload = function(event)
   {
-
-    this._src_area.max_width = this._src.width;
-    this._src_area.max_height = this._src.height;
+    if (this._src)
+    {
+      this._src_area.max_width = this._src.width;
+      this._src_area.max_height = this._src.height;
+    }
     this._src_area.width = this.width;
     this._src_area.height = this.height;
     this._scale = 1;
     this._check_dimesions();
     this._check_position();
-    if (this.onload)
+    if (event && this.onload)
     {
       this.onload(event);
     }
@@ -58,7 +61,9 @@ PixelMagnifier.prototype = new function()
     if (this._target_canvas)
     {
       this._target_canvas.width = width;
+      this._src_area.width = this.width;
       this._target_area.width = width;
+      this._onsrcload();
     }
   });
 
@@ -72,7 +77,9 @@ PixelMagnifier.prototype = new function()
     if (this._target_canvas)
     {
       this._target_canvas.height = height;
+      this._src_area.height = this.height;
       this._target_area.height = height;
+      this._onsrcload();
     }
   });
 
@@ -117,8 +124,8 @@ PixelMagnifier.prototype = new function()
   {
     if (scale < 1)
     {
-      scale = 1 
-    } 
+      scale = 1
+    }
     else if (scale > this.max_scale)
     {
       scale = 30
@@ -140,17 +147,18 @@ PixelMagnifier.prototype = new function()
     {
       return
     }
-    this._ctx_target.clearRect(0, 0, 
+    this._ctx_target.clearRect(0, 0,
                                this._target_area.width, this._target_area.height);
+
     if (this._scale > 10)
     {
-      this._ctx_src.drawImage(this._src, 
-                              this._src_area.x, this._src_area.y, 
+      this._ctx_src.drawImage(this._src,
+                              this._src_area.x, this._src_area.y,
                               this._src_area.width, this._src_area.height,
                               0, 0, this._src_area.width, this._src_area.height);
       var pixel_count = this._src_area.width * this._src_area.height;
-      var octets_source = this._ctx_src.getImageData(0, 0, 
-                                                     this._src_area.width, 
+      var octets_source = this._ctx_src.getImageData(0, 0,
+                                                     this._src_area.width,
                                                      this._src_area.height).data;
       if (octets_source)
       {
@@ -161,28 +169,28 @@ PixelMagnifier.prototype = new function()
                                                 octets_source[cur + 1] + "," +
                                                 octets_source[cur + 2] + ")";
           x = i % this._src_area.width;
-          this._ctx_target.fillRect(x * this._scale, 
-                                    (i - x) / this._src_area.width * this._scale, 
+          this._ctx_target.fillRect(x * this._scale,
+                                    (i - x) / this._src_area.width * this._scale,
                                     this._scale, this._scale);
         }
       }
     }
     else if (this._scale > 1)
-    { 
-      this._ctx_src.drawImage(this._src, 
-                              this._src_area.x, this._src_area.y, 
+    {
+      this._ctx_src.drawImage(this._src,
+                              this._src_area.x, this._src_area.y,
                               this._src_area.width, this._src_area.height,
                               0, 0, this._src_area.width, this._src_area.height);
-      var octets_src = this._ctx_src.getImageData(0, 0, 
-                                                  this._src_area.width, 
+      var octets_src = this._ctx_src.getImageData(0, 0,
+                                                  this._src_area.width,
                                                   this._src_area.height).data;
-      var image_data_target = this._ctx_target.createImageData(this._src_area.width * this._scale, 
+      var image_data_target = this._ctx_target.createImageData(this._src_area.width * this._scale,
                                                                this._src_area.height * this._scale);
       var octets_target = image_data_target.data;
       var octets_src_length = octets_src.length;
       var octets_src_width = this._src_area.width * 4, j = i;
-      for (var i = 0, j = 0, r, g, b, a, line_count, scale_count, shift; 
-           i < octets_src_length; 
+      for (var i = 0, j = 0, r, g, b, a, line_count, scale_count, shift;
+           i < octets_src_length;
            i += 4, j += 4 * this._scale)
       {
         r = octets_src[i];
@@ -192,7 +200,7 @@ PixelMagnifier.prototype = new function()
         if (i && (i % octets_src_width == 0))
         {
           j += (this._scale - 1) * this._scale * octets_src_width;
-        }    
+        }
         for (line_count = 0; line_count < this._scale; line_count++)
         {
           for (scale_count = 0; scale_count < this._scale; scale_count++)
@@ -209,9 +217,8 @@ PixelMagnifier.prototype = new function()
     }
     else if (this._scale == 1)
     {
-      
-      this._ctx_target.drawImage(this._src, 
-                                 this._src_area.x, this._src_area.y, 
+      this._ctx_target.drawImage(this._src,
+                                 this._src_area.x, this._src_area.y,
                                  this._src_area.width, this._src_area.height,
                                  0, 0, this._src_area.width, this._src_area.height);
     }
@@ -230,7 +237,7 @@ PixelMagnifier.prototype = new function()
   };
 
   this._check_position = function()
-  { 
+  {
     if (this._src_area.x < 0)
     {
       this._src_area.x = 0;
@@ -260,4 +267,27 @@ PixelMagnifier.prototype = new function()
     this._scale = 1;
     this._onsrcloadbound = this._onsrcload.bind(this);
   };
+
+  this.get_average_color = function(x, y, sample_size)
+  {
+    x -= x % this._scale;
+    y -= y % this._scale;
+    x /= this._scale;
+    y /= this._scale;
+    x -= (sample_size - 1) / 2;
+    y -= (sample_size - 1) / 2;
+    x += this._target_area.x;
+    y += this._target_area.y;
+    var src = this._scale == 1 ? this._ctx_target : this._ctx_src;
+    var image_data = src.getImageData(x, y, sample_size, sample_size);
+    return Array.prototype.reduce.call(image_data.data, function(rgba, octet, index)
+    {
+      rgba[index % 4] += octet;
+      return rgba;
+    }, [0, 0, 0, 0]).map(function(sum)
+    {
+      return Math.round(sum / (sample_size * sample_size));
+    }).slice(0, 3);
+  };
+
 };

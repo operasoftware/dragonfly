@@ -2,3 +2,16 @@
 {
   display: block;
 }
+
+.screenshot-overlay
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.screenshot-sample-color
+{
+  margin-top: 7px;
+  height: 50px;
+}

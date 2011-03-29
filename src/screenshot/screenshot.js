@@ -1,6 +1,6 @@
 window.cls || (window.cls = {});
 
-cls.DragState = function(pixelmagnifier)
+cls.DragState = function(screenshot, pixelmagnifier)
 {
   this._onmousemove = function(event)
   {
@@ -13,17 +13,19 @@ cls.DragState = function(pixelmagnifier)
     document.removeEventListener('mouseup', this._onmouseup, false);
     this.interval = clearInterval(this.interval);
     this.event = null;
+    this._screenshot._update_overlay(event.offsetX, event.offsetY);
   }.bind(this);
 
   this._updateondrag = function()
   {
     if (this.event)
-    { 
+    {
       var dx = (this.dx - this.event.clientX) / this._pixelmagnifier.scale;
       var dy = (this.dy - this.event.clientY) / this._pixelmagnifier.scale;
       this._pixelmagnifier.x = Math.round(this.x + dx);
       this._pixelmagnifier.y = Math.round(this.y + dy);
       this._pixelmagnifier.draw();
+      this._screenshot._update_overlay(this.event.offsetX, this.event.offsetY);
     }
   }.bind(this);
 
@@ -40,22 +42,35 @@ cls.DragState = function(pixelmagnifier)
     event.stopPropagation();
   };
 
-  this._init = function(pixelmagnifier)
+  this._init = function(screenshot, pixelmagnifier)
   {
+    this._screenshot = screenshot;
     this._pixelmagnifier = pixelmagnifier;
   };
 
-  this._init(pixelmagnifier);
+  this._init(screenshot, pixelmagnifier);
 }
 
 cls.ScreenShotView = function(id, name, container_class)
 {
+  this.update_screenshot = function(){};
+
+  this.zoom_center = function(scale){};
+
+  this.set_sample_size = function(size){};
+
   this.createView = function(container)
   {
-    var canvas = container.clearAndRender(['canvas']);
-    this._pixel_magnifier.set_canvas(canvas);
-    this._pixel_magnifier.width = container.clientWidth;
-    this._pixel_magnifier.height = container.clientHeight;
+    container.clearAndRender([['canvas'],
+                              ['canvas', 'class', 'screenshot-overlay']]);
+    var canvases = container.getElementsByTagName('canvas');
+    this._pixel_magnifier.set_canvas(canvases[0]);
+    this._overlay = canvases[1];
+    this._overlay.width = this._pixel_magnifier.width = container.clientWidth;
+    this._overlay.height = this._pixel_magnifier.height = container.clientHeight;
+    this._overlay_ctx = this._overlay.getContext('2d');
+    this._overlay_ctx.fillStyle = "rgba(0, 0, 0, .5)";
+
     if (!this._screenshot)
     {
       this._get_window_size();
@@ -92,11 +107,11 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._get_screenshot = function(win_scrollY, win_innerWidth, win_innerHeight)
   {
-    var msg = 
+    var msg =
     [
-      10, 
-      [0, win_scrollY, win_innerWidth, win_innerHeight], 
-      [], 
+      10,
+      [0, win_scrollY, win_innerWidth, win_innerHeight],
+      [],
       window.window_manager_data.get_debug_context(),
       [],
       1
@@ -116,6 +131,8 @@ cls.ScreenShotView = function(id, name, container_class)
     {
       this._screenshot = message[PNG];
       this._pixel_magnifier.set_source_base_64(this._screenshot, "image/png");
+      window.messages.post('screenshot-scale',
+                           {scale: this._pixel_magnifier.scale});
     }
   };
 
@@ -129,8 +146,11 @@ cls.ScreenShotView = function(id, name, container_class)
   this._handlers['zoom'] = function(event, target)
   {
     var scale = this._pixel_magnifier.scale + (event.wheelDelta > 0 ? 1 : -1);
-    this._pixel_magnifier.zoom(event.offsetX, event.offsetY, scale); 
+    this._pixel_magnifier.zoom(event.offsetX, event.offsetY, scale);
     this._pixel_magnifier.draw();
+    this._update_overlay(event.offsetX, event.offsetY);
+    window.messages.post('screenshot-scale',
+                         {scale: this._pixel_magnifier.scale});
   }.bind(this);
 
   this._handlers['dragstart'] = function(event)
@@ -140,7 +160,41 @@ cls.ScreenShotView = function(id, name, container_class)
       this._drag_state.start(event);
     }
   }.bind(this);
-  
+
+  this._handlers['click'] = function(event)
+  {
+    this._overlay_is_active = !this._overlay_is_active;
+    this._update_overlay(event.offsetX, event.offsetY);
+    this._sample_event = event;
+    if (this._overlay_is_active)
+    {
+      var color = this._pixel_magnifier.get_average_color(event.offsetX,
+                                                          event.offsetY,
+                                                          this._sample_size);
+      window.messages.post('sceenshot-sample-color', {color: color})
+    }
+  }.bind(this);
+
+  this._update_overlay = function(x, y)
+  {
+    this._overlay_ctx.clearRect(0, 0,
+                                this._pixel_magnifier.width,
+                                this._pixel_magnifier.height);
+    if (this._overlay_is_active)
+    {
+      this._overlay_ctx.fillRect(0, 0,
+                                 this._pixel_magnifier.width,
+                                 this._pixel_magnifier.height);
+      var scale = this._pixel_magnifier.scale;
+      x -= x % scale;
+      y -= y % scale;
+      var delta = ((this._sample_size - 1) / 2) * scale;
+      var width = this._sample_size * scale;
+      this._overlay_ctx.clearRect(x - delta, y - delta, width, width);
+    }
+  }
+
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class, "", "screenshot-tool");
@@ -153,9 +207,11 @@ cls.ScreenShotView = function(id, name, container_class)
     this._tagman = window.tag_manager;
     this._esdb = window.services['ecmascript-debugger'];
     this._exec = window.services.exec;
-    this._drag_state = new cls.DragState(this._pixel_magnifier);
+    this._drag_state = new cls.DragState(this, this._pixel_magnifier);
+    this._sample_size = 9;
     window.eventHandlers.mousewheel["screenshot-tool"] = this._handlers['zoom'];
     window.eventHandlers.mousedown["screenshot-tool"] = this._handlers['dragstart'];
+    window.eventHandlers.click["screenshot-tool"] = this._handlers['click'];
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   };
 
@@ -165,6 +221,42 @@ cls.ScreenShotView = function(id, name, container_class)
   {
     this._screenshot = "";
   }
+
+  this.onresize = function(container)
+  {
+    if(this.isvisible())
+    {
+      this.createView(container);
+    }
+  }
+
+  this.update_screenshot = function()
+  {
+    this._get_window_size();
+  };
+
+
+  this.zoom_center = function(scale)
+  {
+    if (scale >= 1 && scale <= this._pixel_magnifier.max_scale)
+    {
+      this._pixel_magnifier.zoom(this._pixel_magnifier.width / 2 >> 0,
+                                 this._pixel_magnifier.height / 2 >> 0,
+                                scale);
+      this._pixel_magnifier.draw();
+    }
+  };
+
+  this.set_sample_size = function(size)
+  {
+    this._sample_size = size;
+    if (this._sample_event)
+    {
+    this._handlers['click'](this._sample_event);
+    this._handlers['click'](this._sample_event);
+    }
+  };
+
 };
 
 cls.ScreenShotView.prototype = ViewBase;

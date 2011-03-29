@@ -430,6 +430,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./screenshot/screenshot.js"/>
 <script src="./screenshot/screenshotcontrols.js"/>
+<script src="./screenshot/templates.js"/>
 
 <body/>
 </viewport>
