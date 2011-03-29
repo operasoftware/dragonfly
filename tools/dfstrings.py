@@ -4,7 +4,8 @@ import polib
 # polib is easy_installable from pypi!
 
 _db_findre = re.compile("""^([A-Z0-9_-]+)[\.=](.*)""")
-_db_scopere = re.compile("^[A-Z0-9_-]+?.scope=\"(.*)\"")
+_db_scopere = re.compile("^[A-Z0-9_-]+?\.scope=\"(.*)\"")
+_db_detailre = re.compile("^[A-Z0-9_-]+?\.(.+?)=\"(.*)\"")
 _js_findre = re.compile("""^ui_strings.(\w*?)\s*=\s*['"](.*)['"]""")
 _js_concatere = re.compile("""\s*?['"](.*)['"]""")
 _po_tpl="""%(jsname)s=-1
@@ -33,12 +34,16 @@ def _db_block_reader(path):
 
 def _db_parser(path):
     for block in _db_block_reader(path):
-        name = _db_findre.search(block[0]).groups()[0]
         scopes=[]
+        ret = {"name": _db_findre.search(block[0]).groups()[0]}
         for line in block:
-            m = _db_scopere.search(line)
-            if m: scopes.extend(m.groups()[0].split(","))
-        yield {"jsname": name, "scope": scopes}
+            d = _db_detailre.search(line)
+            if d:
+                name, value = d.groups()
+                if name == "scope": scopes.extend(value.split(","))
+                else: ret[name] = value
+        ret["scopes"] = scopes
+        yield ret
 
 def _po_block_reader(path):
     """Yield blocks of text from a po file at path. Blocks are delimited by a
@@ -158,7 +163,7 @@ def get_js_strings(path):
     "return a list of string dicts taken from js file at path"
     return list(_js_parser(path))
 
-def get_db_version(path):
+def __version(path):
     "return db file version as string from db files at path"
     fp = open(path)
     for line in fp:
