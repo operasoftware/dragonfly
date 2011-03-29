@@ -4,6 +4,10 @@
   padding: 2px 0;
 }
 
+.breakpoint:last-of-type {
+  border-bottom: 0;
+}
+
 .breakpoint-checkbox
 {
   float: left; 
