@@ -2,7 +2,7 @@
  *
  */
 
-cls.ResourceManagerService = function(view, data)
+cls.ResourceManagerService = function(view)
 {
   if (cls.ResourceManagerService.instance)
   {
@@ -11,6 +11,7 @@ cls.ResourceManagerService = function(view, data)
   cls.ResourceManagerService.instance = this;
 
   this._current_context = null;
+  this._view = view;
 
   this._enable_content_tracking = function()
   {
@@ -60,6 +61,12 @@ cls.ResourceManagerService = function(view, data)
     this._current_context.update("response", data);
   }.bind(this);
 
+  this._on_debug_context_selected_bound = function()
+  {
+    this._current_context = null;
+    this._view.update();
+  }.bind(this);
+
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
@@ -69,6 +76,7 @@ cls.ResourceManagerService = function(view, data)
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
   };
 
   this.get_resource_context = function()

@@ -76,6 +76,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/mathml+xml": "markup",
   "application/xslt+xml": "markup",
   "text/xsl": "markup",
+  "text/xml": "markup",
   "application/xml": "markup",
 
   "text/css": "css",

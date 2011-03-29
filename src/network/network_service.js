@@ -2,7 +2,7 @@
  *
  */
 
-cls.NetworkLoggerService = function(view, data)
+cls.NetworkLoggerService = function(view)
 {
   if (cls.NetworkLoggerService.instance)
   {
@@ -10,6 +10,7 @@ cls.NetworkLoggerService = function(view, data)
   }
   cls.NetworkLoggerService.instance = this;
 
+  this._view = view;
   this._current_context = null;
 
   this._on_abouttoloaddocument_bound = function(msg)
@@ -92,6 +93,12 @@ cls.NetworkLoggerService = function(view, data)
     this._current_context.update("responsefinished", data);
   }.bind(this);
 
+  this._on_debug_context_selected_bound = function()
+  {
+    this._current_context = null;
+    this._view.update();
+  }.bind(this);
+
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
@@ -106,6 +113,7 @@ cls.NetworkLoggerService = function(view, data)
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
   this.request_body = function(rid, callback)

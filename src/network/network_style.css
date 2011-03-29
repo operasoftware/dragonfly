@@ -84,9 +84,10 @@
 }
 
 .network-log-url-list .log-url-list-status {
-  width: 20px;
+  width: 30px;
 }
 
+/*
 .status-200 {
   content: "";
 }
@@ -114,6 +115,7 @@
 .status-cached {
   content: url("../ui-images/network_cached.png");
 }
+*/
 
 .network-log-url-list li:active,
 .network-log-url-list li:nth-child(even):active,

@@ -284,7 +284,7 @@ templates.network_log_url_list = function(ctx, selected)
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", String(statusstring || "-"),
+            ["span", String(res.responsecode || "-"),
              "class", "log-url-list-status " + statusclass,
              "title", String(statusstring || "-")
              ],
