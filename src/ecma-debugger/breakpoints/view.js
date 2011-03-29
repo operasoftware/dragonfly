@@ -160,7 +160,7 @@ cls.BreakpointsView = function(id, name, container_class)
       label: ui_strings.M_CONTEXTMENU_DELETE,
       handler: this._handlers['delete'],
     },
-    {separator: true},
+    ContextMenu.separator,
     {
       label: ui_strings.M_CONTEXTMENU_DISABLE_ALL,
       handler: this._handlers['disable-all'],
@@ -197,10 +197,11 @@ cls.BreakpointsView = function(id, name, container_class)
       {
         var bp_ele = event.target.has_attr('parent-node-chain',
                                            'data-breakpoint-id');
-        return (
-        bp_ele && bp_ele.getElementsByClassName('condition')[0] ?
-        this._menu_edit_condition :
-        this._menu_add_condition);
+        return bp_ele
+             ? (bp_ele.getElementsByClassName('condition')[0]
+               ? this._menu_edit_condition
+               : this._menu_add_condition)
+             : null;
       }.bind(this)
     }
   ];
