@@ -1228,7 +1228,9 @@ cls.JsSourceView.create_ui_widgets = function()
           if (breakpoints.script_has_breakpoint_on_line(script_id, line))
           {
             items.push({
-              label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
+              label: breakpoints.get_breakpoint_on_script_line(script_id, line).condition == "" ?
+                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
               handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
             },
             {
