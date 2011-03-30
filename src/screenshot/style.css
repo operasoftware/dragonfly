@@ -19,7 +19,15 @@
 .screenshot-sample-color
 {
   margin-top: 7px;
+  border: 1px solid hsl(0, 0%, 75%);
+}
+
+.screenshot-sample-color::before
+{
+  content: "";
+  display: block;
   height: 50px;
+  border: 1px solid white;
 }
 
 .screenshot-store-color

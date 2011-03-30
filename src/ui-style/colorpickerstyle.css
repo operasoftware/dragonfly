@@ -1,4 +1,4 @@
-﻿.color-picker-popup svg 
+﻿.color-picker-popup svg
 {
   display: block;
 }
@@ -200,4 +200,21 @@
   position: absolute;
   left: 265px;
   top: 11px;
+}
+
+.color-picker-palette
+{
+  position: absolute;
+  left: 10px;
+  top: 220px;
+}
+
+.color-picker-palette-item
+{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin: 0 3px;
+  border: 1px solid #333;
 }

@@ -17,7 +17,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.window_left = 20;
   this.window_width_with_alpha = 523;
   this.window_width = 376;
-  this.window_height = 242;
+  this.window_height = 270;
   this.window_resizable = false;
   this.window_statusbar = false;
 
