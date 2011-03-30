@@ -574,6 +574,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH = 'Path';
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = 'Expires';
 /* DESC: Label for the expiry when cookie expires after the session is closed */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "When session ends, e.g. the tab is closed";
+/* DESC: Short label for the expiry when cookie expires after the session is closed */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Session";
 /* DESC: Label for the expiry when cookie has already expired */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRED = "(expired)";
@@ -729,7 +730,7 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
-/*  */
+/* DESC */
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 /* DESC: Prefix before debug output */
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
