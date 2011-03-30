@@ -12,5 +12,8 @@ window.app.builders.Exec["2.0"] = function(service)
   new cls.ScreenShotControlsView("screenshot-controls",
                                  "Color Picker",
                                  "screenshot-controls");
+  new cls.ColorPaletteView("color-palette",
+                           "Color Palette",
+                           "color-palette");
   return true;
 }

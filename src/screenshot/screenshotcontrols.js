@@ -21,6 +21,8 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color_container.clearAndRender(tmpl);
   };
 
+
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -28,9 +30,10 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color = new Color();
     this._sample_color_container = null;
     this._sample_color_template = window.templates.sample_color;
-    this._settings = new Settings('screenshot-controls', { 'sample-size': 3,});
+    this._settings = new Settings('screenshot-controls', { 'sample-size': 3, 'color-palette': []});
     this._screenshot = new cls.ScreenShotView('screenshot', "Screen Shot", "screenshot");
     window.eventHandlers.click['screenshot-update'] = this._handlers['screenshot-update'];
+    window.eventHandlers.click['screenshot-store-color'] = this._handlers['screenshot-store-color'];
     window.eventHandlers.input['screenshot-zoom'] = this._handlers['screenshot-zoom'];
     window.eventHandlers.input['screenshot-sample-size'] = this._handlers['screenshot-sample-size'];
     window.messages.addListener('screenshot-scale', this._onscalechange.bind(this));
@@ -71,6 +74,11 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._screenshot.set_sample_size(sample_size);
   }.bind(this);
 
+  this._handlers['screenshot-store-color'] = function(event, target)
+  {
+    cls.ColorPalette.get_instance().store_color(event.target.getAttribute('data-color'));
+  };
+
   /* implementation */
 
   this.createView = function(container)
@@ -86,7 +94,6 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
   {
     this._scale_control = null;
     this._sample_size_control = null;
-    this._sample_size_control.value = null;
     this._sample_color_container = null;
   }
 

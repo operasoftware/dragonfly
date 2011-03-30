@@ -36,6 +36,11 @@
   {
     return (
     ['pre',
+      ['button',
+            'Store color',
+            'handler', 'screenshot-store-color',
+            'data-color', color.getHex(),
+            'class', 'container-button screenshot-store-color'],
       ['span', 'RGB: '], color.getRGB().join(', ') + '\n',
       ['span', 'HSL: '], color.getHSL().join('%, ').replace('%', '') + '%\n',
       ['span', 'HEX: '], '#' + color.getHex() + '\n',
@@ -43,6 +48,34 @@
         'class', 'screenshot-sample-color',
         'style', 'background-color:' + this._sample_color.hhex],
       'class', 'mono']);
+  };
+
+  this.color_palette = function(color_palette)
+  {
+    return (
+    [
+      ['ul',
+        color_palette.map(this.color_palette_item, this),
+        'handler', 'color-palette-edit-color',
+        'class', 'color-palette mono'],
+      ['p',
+        ['button',
+          'Add color',
+          'handler', 'color-palette-add-color',
+          'class', 'container-button color-palette-add-button']]]);
+
+  };
+
+  this.color_palette_item = function(item, index)
+  {
+    return (
+    ['li',
+      ['span',
+        'class', 'color-palette-sample',
+        'style', 'background-color: #' + item.color],
+      '#' + item.color,
+      'data-color-id', String(item.id),
+      'class', 'color-palette-item']);
   };
 
 }).apply(window.templates || (window.templates = {}));

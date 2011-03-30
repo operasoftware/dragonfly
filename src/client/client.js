@@ -602,7 +602,7 @@ ui_framework.layouts.utils_rough_layout =
       children:
       [
         {
-          tabs: ['screenshot-controls']
+          tabs: ['screenshot-controls', 'color-palette']
         }
       ]
     }

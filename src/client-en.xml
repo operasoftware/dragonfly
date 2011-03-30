@@ -1,5 +1,5 @@
 ﻿<viewport xmlns='http://www.w3.org/1999/xhtml'
-          xmlns:xlink="http://www.w3.org/1999/xlink" 
+          xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:svg="http://www.w3.org/2000/svg"
           spellcheck="false">
 <link rel="icon" href="/favicon.ico" />
@@ -9,8 +9,8 @@
 {
   // this code was added 10.02.2009
   // it can be removed after some time
-  var 
-  lang_dict = 
+  var
+  lang_dict =
   {
     /*
       supported languages in Opera
@@ -55,15 +55,15 @@
     "zh-cn": "zh-cn",
     "zh-tw": "zh-tw",
   },
-  setCookie = function(key, value, time) 
+  setCookie = function(key, value, time)
   {
     document.cookie = (
       key + "=" + encodeURIComponent(value) +
-      "; expires=" + 
-      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; expires=" +
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() +
       "; path=/");
   },
-  getCookie = function(key) 
+  getCookie = function(key)
   {
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
@@ -84,7 +84,7 @@
 
 <windows-container></windows-container>
 <main-view></main-view>
-<script><![CDATA[ 
+<script><![CDATA[
 window.load_screen_timeout = window.setTimeout(function()
 {
   var main_container = document.getElementsByTagName('main-view')[0];
@@ -431,6 +431,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./screenshot/screenshot.js"/>
 <script src="./screenshot/screenshotcontrols.js"/>
 <script src="./screenshot/templates.js"/>
+<script src="./screenshot/colorpalette.js"/>
+<script src="./screenshot/colorpaletteview.js"/>
 
 <body/>
 </viewport>
