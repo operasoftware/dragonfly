@@ -37,8 +37,7 @@
 .shortcuts-config filter {
   font-size: inherit;
   vertical-align: middle;
-  background-color: transparent;
-  background-image: url("http://localhost:8002/src/ui-images/filter_white.png");
+  background: transparent url("http://localhost:8002/src/ui-images/filter_white.png") no-repeat 4px 50%;
   border: 1px solid rgba(255,255,255,0.5);
   box-shadow: none;
   border-radius: 3px;
