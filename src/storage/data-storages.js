@@ -33,15 +33,27 @@ cls.StorageDataBase = new function()
   {
     var items = [];
     var storages = this.get_storages();
-    for (var id in storages) {
-      var storage = storages[id] || [];
-      for (var storage_ob, j=0; storage_ob = storage.storage[j]; j++) {
-        var item = storage_ob;
-        item._rt_id = storage.rt_id;
-        items.push(item);
+    if(storages)
+    {
+      for (var id in storages) {
+        var storage = storages[id];
+        if(storage)
+        {
+          for (var storage_ob, j=0; storage_ob = storage.storage[j]; j++) {
+            var item = storage_ob; // replace by directly modifying storage_ob
+            item._rt_id = storage.rt_id;
+            // item._objectref = item.key + "/" + storage._rt_id;
+            items.push(item);
+          };
+          items.push({
+            _is_runtime_placeholder: true,
+            _rt_id: storage.rt_id
+            // ,_objectref: "runtime_placeholder_" + storage.rt_id
+          });
+        }
       };
-    };
-    return items;
+      return items;
+    }
   }
 
   this.update = function()
@@ -373,12 +385,15 @@ cls.StorageDataBase = new function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return obj[0]._rt_uri;
+            return ""+obj[0]._rt_id; // todo: put in runtime details instead, possibly from global runtimes thingy?
+          },
+          idgetter: function(obj) {
+            return ""+obj[0]._rt_id;
           }
         }
       },
       column_order: ["key", "value"],
-      idgetter: function(res) { return res._objectref },
+      idgetter: function(res) { return res._rt_id },
       columns: {
         key: {
           label: "Key",
@@ -392,7 +407,7 @@ cls.StorageDataBase = new function()
             return templates.cookie_manager.edit_mode_switch_container(obj.key, input_text_container);
           },
           summer: function(values, groupname, getter) {
-            return ["button", "Add " + title, "class", "add_cookie_button", "handler", "cookiemanager-add-cookie-row"];
+            return ["button", "Add " + title, "class", "add_storage_button", "handler", "storage-add-key"]; // todo: move to templates
           },
           sorter: this._make_sorter("key")
         },

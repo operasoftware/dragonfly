@@ -213,14 +213,17 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
       ui_strings.M_VIEW_LABEL_COOKIES));
     new cls.StorageView('local_storage', 
                         ui_strings.M_VIEW_LABEL_LOCAL_STORAGE, 
-                        'scroll');
-    new cls.StorageView('session_storage', 
+                        'scroll',
+                        'local_storage');
+    new cls.StorageView('session_storage',
                         ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 
-                        'scroll');
-    new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll');
+                        'scroll',
+                        'session_storage');
+    new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll', 'cookies');
     new cls.StorageView('widget_preferences', 
                         ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
-                        'scroll');
+                        'scroll',
+                        'widget_preferences');
     new cls.StorageViewActions('storage-view');
     cls.StorageView.create_ui_widgets();
 

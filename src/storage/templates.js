@@ -162,3 +162,62 @@ window.templates.storage_not_existing = function(storage_id)
   ]);
 };
 
+// new templates mostly copied from cookie_manager
+window.templates.storage = {
+  runtime_group_render: function(protocol, domain, path) {
+    return this.wrap_ellipsis(protocol + "//" + domain + path);
+  },
+  wrap_ellipsis: function(elem) {
+    var template = [
+      "div",
+        [
+          "div", elem,
+          "class", "ellipsis"
+        ],
+      "class", "ellipsis_cont"
+    ];
+    if (typeof elem === "string")
+    {
+      template.push("title", elem);
+    }
+    return template;
+  },
+  edit_mode_switch_container: function(value, edit_elem) {
+    return [
+      [
+        "div", this.wrap_ellipsis(value),
+        "class", "value_container"
+      ],
+      [
+        "div", edit_elem,
+        "class", "edit_container"
+      ]
+    ];
+  },
+  input_text_container: function(name, value) {
+    return [
+      "input",
+      "value", value || "",
+      "type",  "text",
+      "name",  name,
+      "handler", "storage-input-field"
+    ]
+  },
+  editable_key: function(key) {
+    var edit_elem = this.input_text_container("name", key);
+    return this.edit_mode_switch_container(key, edit_elem);
+  },
+  editable_value: function(value) {
+    var edit_elem = this.input_text_container("value", value);
+    return this.edit_mode_switch_container(value, edit_elem);
+  },
+  add_storage_row: function(current_runtime) {
+    return ["tr",
+        ["td", this.input_text_container("key")],
+        ["td", this.input_text_container("value")],
+      "class", "edit_mode add_storage_row",
+      "data-object-id", ""+current_runtime
+    ];
+  }
+};
+

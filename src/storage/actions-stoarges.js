@@ -2,9 +2,13 @@
 
 cls.StorageViewActions = function(id)
 {
+  const
+  MODE_DEFAULT = "default",
+  MODE_EDIT = "edit";
+
   this.id = id;
   this._broker = ActionBroker.get_instance();
-  this._broker.register_handler(this);
+  ActionHandlerInterface.apply(this);
   this._handlers = {};
 
   this._handlers['edit'] = function(event, target)
@@ -20,28 +24,31 @@ cls.StorageViewActions = function(id)
     tr.parentNode.replaceChild(document.render(window.templates.storage_item_edit(item)), tr);
   }.bind(this);
 
-  this._handlers['save'] = function(event, target)
+  this._handlers["my_save"] = function(event, target)
   {
-    var
-    tr = event.target.parentNode.parentNode.parentNode,
-    rt_id = tr.parentNode.getAttribute('data-rt-id'),
-    storage_id = tr.parentNode.getAttribute('data-storage-id'),
-    key = tr.getAttribute('data-storage-key') ||
-          (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
-    value = tr.getElementsByTagName('textarea')[0].value,
-    item = null;
+    this.mode = MODE_DEFAULT;
 
-    window.storages[storage_id].set_item(rt_id, key, value, function(success)
+    var container = target;
+    while(!container.getAttribute("data-storage-id"))
     {
-      if (success)
+      container = container.parentNode;
+    }
+
+    var storage_id = container.getAttribute("data-storage-id");
+    var edit_trs = container.querySelectorAll("tr.edit_mode");
+    for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
+    {
+      var rt_id = +edit_tr.getAttribute("data-object-id");
+      var key   = edit_tr.querySelector("[name=key]").value.trim();
+      var value = edit_tr.querySelector("[name=value]").value;
+
+      window.storages[storage_id].set_item(rt_id, key, value, function(container, success)
       {
-        window.eventHandlers.click['storage-edit-cancel'](event, target, true);
-      }
-      else
-      {
-        // TODO
-      }
-    });
+        var storage_id = container.getAttribute("data-storage-id");
+        window.storages[storage_id].update();
+        window.views[storage_id].update();
+      }.bind(this, container))
+    }
   }.bind(this);
 
   this._handlers['edit-cancel'] = function(event, target)
@@ -99,36 +106,50 @@ cls.StorageViewActions = function(id)
 
   this._handlers['update'] = function(event, target)
   {
-    window.storages[event.target.parentNode.parentNode.parentNode.getAttribute('data-storage-id')].update();
+    // todo: parentNode.parentNode.parentNode won't work. unsure if it's need anyway when theres no update button.
+    console.log("update", arguments);
+    window.storages[target.parentNode.parentNode.parentNode.getAttribute('data-storage-id')].update();
   }.bind(this);
 
-  this._handlers['add-key'] = function(event, target)
+  // nu
+  this._handlers["add-key"] = function(event, target)
   {
-    var
-    tr = event.target.has_attr("parent-node-chain", "data-rt-id").querySelector("tr:last-of-type"),
-    rt_id = tr.parentNode.getAttribute('data-rt-id'),
-    storage_id = tr.parentNode.getAttribute('data-storage-id');
+    this.mode = MODE_EDIT;
+    var row = target.parentElement.parentElement;
 
-    tr.parentNode.insertBefore(document.render(window.templates.storage_item_add()), tr);
+    if (!document.querySelector(".add_storage_row")) // add multiple items at once
+    {
+      // todo: how to reach _sortable_table from actions?
+      // this._sortable_table.restore_columns(document.querySelector(".storage_table_container").firstChild);
+    }
+
+    var header_row = row;
+    while (!header_row.hasClass("header"))
+    {
+      header_row = header_row.previousElementSibling;
+    }
+    var runtime_id = header_row.getAttribute("data-object-id");
+    var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
+    var inserted = row.parentElement.insertBefore(templ, row);
+    inserted.querySelector("[name=key]").focus();
   }.bind(this);
 
-  this.handle = function(action_id, event, target)
-  {
-    if (action_id in this._handlers)
-      return this._handlers[action_id](event, target);
-  }
+  ActionBroker.get_instance().register_handler(this);
 };
 
+// old
 window.eventHandlers.dblclick['storage-edit'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "edit", event, target);
+  this._broker.dispatch_action("storage-view", "edit", event, target);
 };
 
 window.eventHandlers.click['storage-save'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "save", event, target);
+  this._broker.dispatch_action("storage-view", "save", event, target);
 };
 
+/*
+// todo: this will be replaced by basically just updating directly, regardless if it worked or not.
 // TODO: what is is_success?
 window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_success)
 {
@@ -152,6 +173,7 @@ window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_s
   }
   //this.broker.dispatch_action("storage-view", "edit-cancel", event, target);
 };
+*/
 
 window.eventHandlers.click['storage-delete'] = function(event, target)
 {
@@ -172,4 +194,34 @@ window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
   this.broker.dispatch_action("storage-view", "add-key", event, target);
 };
+
+// nu
+/*
+window.eventHandlers.dblclick['storage-init-edit-mode'] = function(event, target)
+{
+  this.broker.dispatch_action("storage-view", "enter-edit-mode", event, target);
+}
+
+window.eventHandlers.click['storage-row-select'] = function(event, target)
+{
+  this.broker.dispatch_action("storage-view", "select-row", event, target);
+}
+*/
+
+window.eventHandlers.click["storage-view"] = function(event, target) // todo: make this the view container instead
+{
+  // todo: find out why "save" doesn't work as an action name.
+  this.broker.dispatch_action("storage-view", "my_save", event, target);
+}
+
+window.eventHandlers.click['storage-add-key'] = function(event, target)
+{
+  this.broker.dispatch_action("storage-view", "add-key", event, target);
+}
+
+window.eventHandlers.click['storage-input-field'] = function(event, target)
+{
+  // Empty for now, but preventing click['storage-container']
+  // which exits editing
+}
 
