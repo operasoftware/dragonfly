@@ -46,6 +46,10 @@
   color: #fff;
 }
 
+.shortcuts-config filter.focus input {
+  color: #fff;
+}
+
 .shortcuts
 {
   border-collapse: collapse;
