@@ -115,15 +115,15 @@ def _js_parser(path):
             else:
                 m = _js_concatere.search(line)
                 if m: msgstr.append(m.groups()[0])
-                
-        if desc and jsname:
-            yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc}
+
+        if jsname:
+            yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc or "Missing description!"}
             desc = ""
             jsname = ""
             msgstr = []
 
-    if desc and jsname:
-        yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc}
+    if jsname:
+        yield { "msgstr": "".join(msgstr), "jsname": jsname, "desc": desc or "Missing description!"}
 
 def make_po_entry(str):
     return _po_tpl % str
