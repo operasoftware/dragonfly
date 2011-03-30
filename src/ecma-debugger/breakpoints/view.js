@@ -164,7 +164,7 @@ cls.BreakpointsView = function(id, name, container_class)
   this._menu_common_items =
   [
     {
-      label: ui_strings.M_CONTEXTMENU_DELETE,
+      label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
       handler: this._handlers['delete'],
     },
     ContextMenu.separator,
