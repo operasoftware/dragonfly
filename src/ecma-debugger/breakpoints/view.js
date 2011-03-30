@@ -101,6 +101,13 @@ cls.BreakpointsView = function(id, name, container_class)
     this._editor.edit(event, ele.firstElementChild);
   }.bind(this);
 
+  this._handlers['delete-condition'] = function(event, target)
+  {
+    var bp_id = parseInt(event.target.get_attr('parent-node-chain',
+                                               'data-breakpoint-id'));
+    this._bps.set_condition("", bp_id);
+  }.bind(this);
+
   this._handlers['submit'] = function(event, target)
   {
     if (this.mode == MODE_EDIT)
@@ -176,7 +183,7 @@ cls.BreakpointsView = function(id, name, container_class)
     {
       label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
       handler: this._handlers['add-or-edit-condition'],
-    },
+    }
   ]
   .concat(this._menu_common_items);
 
@@ -186,6 +193,10 @@ cls.BreakpointsView = function(id, name, container_class)
       label: ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
       handler: this._handlers['add-or-edit-condition'],
     },
+    {
+      label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+      handler: this._handlers['delete-condition']
+    }
   ]
   .concat(this._menu_common_items);
 
@@ -197,8 +208,9 @@ cls.BreakpointsView = function(id, name, container_class)
       {
         var bp_ele = event.target.has_attr('parent-node-chain',
                                            'data-breakpoint-id');
+        var has_condition = bp_ele.getElementsByClassName('condition')[0];
         return bp_ele
-             ? (bp_ele.getElementsByClassName('condition')[0]
+             ? (has_condition
                ? this._menu_edit_condition
                : this._menu_add_condition)
              : null;

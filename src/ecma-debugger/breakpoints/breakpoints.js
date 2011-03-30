@@ -271,15 +271,16 @@ cls.Breakpoints = function()
     var bp = this.get_breakpoint_with_id(bp_id);
     if (bp)
     {
-      if (condition && !bp.condition)
+      var current_condition = bp.condition;
+      bp.condition = condition;
+      if (condition && !current_condition)
       {
         this._update_bp_state(bp, BP_DELTA_CONDITION);
       }
-      else if(!condition && bp.condition)
+      else if(!condition && current_condition)
       {
         this._update_bp_state(bp, -BP_DELTA_CONDITION);
       }
-      bp.condition = condition;
     }
   };
 

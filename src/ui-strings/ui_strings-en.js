@@ -316,6 +316,8 @@ ui_strings.M_CONTEXTMENU_SPEC_LINK = 'Specification for "%s"';
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = 'Add condition';
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = 'Edit condition';
+/* DESC: Context menu item for breakpoints to delete a condition. */
+ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
 
 /* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
 ui_strings.M_CONTEXTMENU_DISABLE_ALL = 'Disable all';
