@@ -671,9 +671,7 @@ ui_strings.M_SETTING_LABEL_GENERAL = 'General';
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
-/* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace
- * will not have a widget.preferences storage object.
- */
+/* DESC: the given storage type doesn't exist, e.g. a widget without the w3 widget namespace will not have a widget.preferences storage object. */
 ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";
 
 /*
@@ -686,14 +684,15 @@ ui_strings.S_INFO_WRONG_START = "Opera Dragonfly cannot be used in this way.\n" 
   "   opera:config > Developer Tools > Developer Tools URL\n\n" +
   "or setup a debugger environment with a proxy and server.";
 /* DESC: Information shown when the user enables remote debug and still has to connect the client. */
-ui_strings.S_INFO_WAITING_FOR_CONNECTION =
-  "Opera Dragonfly is waiting for a connection on port %s.\n" +
+ui_strings.S_INFO_WAITING_FOR_CONNECTION = "Opera Dragonfly is waiting for a connection on port %s.\n" +
   "Please enter opera:debug in your device's URL field to connect.";
 /* DESC: Shown when entering something on the command line while there is no javascript running in the window being debugged */
 ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT =  "There is no JavaScript environment in the active window";
 
+/* DESC: Message about there being no version of dragonfly compatible with the browser being debugged */
 ui_strings.S_INFO_NO_COMPATIBLE_VERSION =  "There is no compatible Opera Dragonfly version.";
 
+/* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
@@ -728,9 +727,9 @@ ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_LINKED = "Linked";
 ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN = "Unknown";
 /* DESC: The script ID. */
 ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID = "Script id";
-/* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
+/* DESC: Result text for the search. */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
-/* DESC */
+/* DESC: Result text for search when there are no matches */
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 /* DESC: Prefix before debug output */
 ui_strings.DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
