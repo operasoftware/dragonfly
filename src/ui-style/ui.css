@@ -476,7 +476,7 @@ filter {
 }
 
 filter.filter {
-    background-image: url("../ui-images/icons/icon_filter.png");
+    background-image: url("../ui-images/filter.png");
 }
 
 filter input {
