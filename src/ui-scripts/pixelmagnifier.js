@@ -1,4 +1,3 @@
-
 var PixelMagnifier = function()
 {
   this._init();
@@ -8,6 +7,7 @@ PixelMagnifier.prototype = new function()
 {
 
   /* interface */
+
   this.set_canvas = function(canvas){};
   this.set_source_base_64 = function(string, mime){};
   this.zoom = function(x, y, scale){};
@@ -23,38 +23,6 @@ PixelMagnifier.prototype = new function()
   this.max_scale = 30;
 
   /* private */
-
-  this.set_canvas = function(canvas)
-  {
-    this._target_canvas = canvas;
-    this._ctx_target = this._target_canvas.getContext('2d');
-  };
-
-  this.set_source_base_64 = function(string, mime)
-  {
-    this._src = document.createElement('img');
-    this._src.onload = this._onsrcloadbound;
-    this._src.src = "data:" + mime + ";base64," + string;
-
-  };
-
-  this._onsrcload = function(event)
-  {
-    if (this._src)
-    {
-      this._src_area.max_width = this._src.width;
-      this._src_area.max_height = this._src.height;
-    }
-    this._src_area.width = this.width;
-    this._src_area.height = this.height;
-    this._scale = 1;
-    this._check_dimesions();
-    this._check_position();
-    if (event && this.onload)
-    {
-      this.onload(event);
-    }
-  };
 
   this.__defineSetter__('width', function(width)
   {
@@ -120,15 +88,91 @@ PixelMagnifier.prototype = new function()
     return this._src_area.y;
   });
 
+  this._check_dimesions = function()
+  {
+    if (this._src_area.width > this._src_area.max_width)
+    {
+      this._src_area.width = this._src_area.max_width;
+    }
+    if (this._src_area.height > this._src_area.max_height)
+    {
+      this._src_area.height = this._src_area.max_height;
+    }
+  };
+
+  this._check_position = function()
+  {
+    if (this._src_area.x < 0)
+    {
+      this._src_area.x = 0;
+    }
+    if (this._src_area.x + this._src_area.width > this._src_area.max_width)
+    {
+      this._src_area.x = this._src_area.max_width - this._src_area.width;
+    }
+    if (this._src_area.y < 0)
+    {
+      this._src_area.y = 0;
+    }
+    if (this._src_area.y + this._src_area.height > this._src_area.max_height)
+    {
+      this._src_area.y = this._src_area.max_height - this._src_area.height;
+    }
+  };
+
+  this._onsrcload = function(event)
+  {
+    if (this._src)
+    {
+      this._src_area.max_width = this._src.width;
+      this._src_area.max_height = this._src.height;
+    }
+    this._src_area.width = this.width;
+    this._src_area.height = this.height;
+    this._scale = 1;
+    this._check_dimesions();
+    this._check_position();
+    if (event && this.onload)
+    {
+      this.onload(event);
+    }
+  };
+
+  this._init = function()
+  {
+    this._target_canvas = null;
+    this._ctx_target = null;
+    this._src_canvas = document.createElement('canvas');
+    this._ctx_src = this._src_canvas.getContext('2d');
+    this._src = document.createElement('img');
+    this._src.onload = this._onsrcload.bind(this);
+    this._src_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
+    this._target_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
+    this._scale = 1;
+  };
+
+  /* implementation */
+
+  this.set_canvas = function(canvas)
+  {
+    this._target_canvas = canvas;
+    this._ctx_target = this._target_canvas.getContext('2d');
+  };
+
+  this.set_source_base_64 = function(string, mime)
+  {
+    this._src.src = "data:" + mime + ";base64," + string;
+  };
+
   this.zoom = function(x, y, scale)
   {
     if (scale < 1)
     {
-      scale = 1
+      scale = 1;
     }
     else if (scale > this.max_scale)
     {
-      scale = 30
+      scale = 30;
     }
     this._src_area.width = Math.round(this._target_area.width / scale);
     this._src_area.height = Math.round(this._target_area.height / scale);
@@ -139,7 +183,7 @@ PixelMagnifier.prototype = new function()
     this._src_canvas.width = this._src_area.width;
     this._src_canvas.height = this._src_area.height;
     this._scale = scale;
-  }
+  };
 
   this.draw = function()
   {
@@ -224,50 +268,6 @@ PixelMagnifier.prototype = new function()
     }
   };
 
-  this._check_dimesions = function()
-  {
-    if (this._src_area.width > this._src_area.max_width)
-    {
-      this._src_area.width = this._src_area.max_width;
-    }
-    if (this._src_area.height > this._src_area.max_height)
-    {
-      this._src_area.height = this._src_area.max_height;
-    }
-  };
-
-  this._check_position = function()
-  {
-    if (this._src_area.x < 0)
-    {
-      this._src_area.x = 0;
-    }
-    if (this._src_area.x + this._src_area.width > this._src_area.max_width)
-    {
-      this._src_area.x = this._src_area.max_width - this._src_area.width;
-    }
-    if (this._src_area.y < 0)
-    {
-      this._src_area.y = 0;
-    }
-    if (this._src_area.y + this._src_area.height > this._src_area.max_height)
-    {
-      this._src_area.y = this._src_area.max_height - this._src_area.height;
-    }
-  };
-
-  this._init = function()
-  {
-    this._target_canvas = null;
-    this._ctx_target = null;
-    this._src_canvas = document.createElement('canvas');
-    this._ctx_src = this._src_canvas.getContext('2d');
-    this._src_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
-    this._target_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
-    this._scale = 1;
-    this._onsrcloadbound = this._onsrcload.bind(this);
-  };
-
   this.get_average_color = function(x, y, sample_size)
   {
     x -= x % this._scale;
@@ -276,8 +276,6 @@ PixelMagnifier.prototype = new function()
     y /= this._scale;
     x -= (sample_size - 1) / 2;
     y -= (sample_size - 1) / 2;
-    x += this._target_area.x;
-    y += this._target_area.y;
     var src = this._scale == 1 ? this._ctx_target : this._ctx_src;
     var image_data = src.getImageData(x, y, sample_size, sample_size);
     return Array.prototype.reduce.call(image_data.data, function(rgba, octet, index)

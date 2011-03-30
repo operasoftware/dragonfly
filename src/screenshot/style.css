@@ -1,6 +1,12 @@
 .screenshot canvas
 {
   display: block;
+  cursor: default;
+}
+
+.screenshot canvas:active
+{
+  cursor: move;
 }
 
 .screenshot-overlay

@@ -43,8 +43,6 @@
         'class', 'screenshot-sample-color',
         'style', 'background-color:' + this._sample_color.hhex],
       'class', 'mono']);
-  }
+  };
 
-
-
-}).apply(window.templates || (window.templates = {}))
+}).apply(window.templates || (window.templates = {}));
