@@ -269,8 +269,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     },
     // key-label map
     {
-      "paused-update": ui_strings.S_NETWORK_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "fit-to-width": ui_strings.S_NETWORK_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
+      "paused-update": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
+      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
     },
     // settings map
     {
