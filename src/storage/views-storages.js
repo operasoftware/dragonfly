@@ -12,6 +12,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
     var storage = window.storages[id];
     this._sortable_table = new SortableTable(storage.tabledef, null, null, null, "runtime", true);
     container.setAttribute("data-storage-id", storage_name);
+    container.setAttribute("data-menu", "storage-view"); // this becomes local_storage etc. otherwise.
 
     // this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
@@ -175,8 +176,24 @@ cls.StorageView.create_ui_widgets = function()
       handler: function(event, target) {
         broker.dispatch_action("storage-view", "delete", event, target)
       }
+    },
+    {
+      label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, "<INSERT URI HERE>"), // todo: make this dynamic so it can react on multiple select and know the uri
+      handler: function(event, target) {
+        broker.dispatch_action("storage-view", "delete-all", event, target)
+      }
     }
   ]);
+
+  contextmenu.register("storage-view", [
+    {
+      label: ui_strings.S_LABEL_STORAGE_UPDATE,
+      handler: function(event, target) {
+        broker.dispatch_action("storage-view", "update", event, target)
+      }
+    }
+  ]);
+  
   // todo: also add context menu for contextmenu.register("local_storage", [ ..
 };
 

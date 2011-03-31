@@ -204,8 +204,7 @@
       {
         "default":
         {
-          "delete": "remove-item",
-          "cmd backspace": "remove-item"
+          "delete": "remove-item"
         },
         "edit":
         {

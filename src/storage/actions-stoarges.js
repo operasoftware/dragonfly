@@ -45,12 +45,10 @@ cls.StorageViewActions = function(id)
       var key   = edit_tr.querySelector("[name=key]").value.trim();
       var value = edit_tr.querySelector("[name=value]").value;
 
-      window.storages[storage_id].set_item(rt_id, key, value, function(container, success)
+      window.storages[storage_id].set_item(rt_id, key, value, function(storage_id, success)
       {
-        var storage_id = container.getAttribute("data-storage-id");
         window.storages[storage_id].update();
-        window.views[storage_id].update();
-      }.bind(this, container))
+      }.bind(this, storage_id))
     }
   }.bind(this);
   
@@ -61,6 +59,7 @@ cls.StorageViewActions = function(id)
     return false;
   }
 
+/* todo: just update the view
   this._handlers['edit-cancel'] = function(event, target)
   {
     var
@@ -82,43 +81,48 @@ cls.StorageViewActions = function(id)
       tr.parentNode.removeChild(tr);
     }
   }.bind(this);
+*/
 
   this._handlers['delete'] = function(event, target)
   {
-    var
-    tr = event.target.has_attr("parent-node-chain", "data-storage-key"),
-    rt_id = tr.parentNode.getAttribute('data-rt-id'),
-    storage_id = tr.parentNode.getAttribute('data-storage-id'),
-    key = tr.getAttribute('data-storage-key');
-
-    window.storages[storage_id].remove_item(rt_id, key, function(success)
+    var container = target;
+    while(!container.getAttribute("data-storage-id"))
     {
-      if (success)
-      {
-        tr.parentNode.removeChild(tr);
-      }
-      else
-      {
-        // TODO
-      }
-    });
-  }.bind(this);
+      container = container.parentNode;
+    }
+
+    var storage_id = container.getAttribute("data-storage-id");
+    var rt_id = +target.querySelector("[name=rt_id]").value;
+    var key   = target.querySelector("[name=key]").value;
+
+    window.storages[storage_id].remove_item(rt_id, key, function(storage_id, success)
+    {
+      window.storages[storage_id].update();
+    }.bind(this, storage_id));
+  };
 
   this._handlers['delete-all'] = function(event, target)
   {
-    var
-    table = event.target.parentNode.parentNode.parentNode,
-    rt_id = table.getAttribute('data-rt-id'),
-    storage_id = table.getAttribute('data-storage-id');
-
-    window.storages[storage_id].clear(parseInt(rt_id));
+    var container = target;
+    while(!container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+    var storage_id = container.getAttribute("data-storage-id");
+    var rt_id = +target.querySelector("[name=rt_id]").value;
+    window.storages[storage_id].clear(rt_id);
+    // todo: use callback to update? OR, maybe even better, trigger the update after clear, remove_item, set_item
+    window.storages[storage_id].update();
   }.bind(this);
 
   this._handlers['update'] = function(event, target)
   {
-    // todo: parentNode.parentNode.parentNode won't work. unsure if it's need anyway when theres no update button.
-    console.log("update", arguments);
-    window.storages[target.parentNode.parentNode.parentNode.getAttribute('data-storage-id')].update();
+    var container = target;
+    while(!container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+    window.storages[container.getAttribute("data-storage-id")].update();
   }.bind(this);
 
   // nu

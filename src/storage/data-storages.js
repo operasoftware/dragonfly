@@ -165,6 +165,7 @@ cls.StorageDataBase = new function()
   this._handle_clear = function(status, message, rt_id)
   {
     this._get_key_value_pairs(rt_id);
+    // todo: make this call a callback too, like _handle_remove
   };
 
   this._handle_remove = function(status, message, success_callback, info, rt_id, key)
@@ -402,13 +403,12 @@ cls.StorageDataBase = new function()
             {
               return;
             }
-            var input_text_container = templates.cookie_manager.input_text_container("key", obj.key);
+            var input_text_container = templates.storage.input_text_container("key", obj.key);
             var hidden_rt = templates.storage.input_hidden("rt_id", obj._rt_id);
-            // todo: use storage templates > remove templates.cookie_manager
-            return templates.cookie_manager.edit_mode_switch_container(obj.key, [input_text_container, hidden_rt]);
+            return templates.storage.edit_mode_switch_container(obj.key, [input_text_container, hidden_rt]);
           },
           summer: function(values, groupname, getter) {
-            return ["button", "Add " + title, "class", "add_storage_button", "handler", "storage-add-key"]; // todo: move to templates
+            return ["button", "Add " + title, "class", "add_storage_button container-button", "handler", "storage-add-key"]; // todo: move to templates
           },
           sorter: this._make_sorter("key")
         },
@@ -420,8 +420,8 @@ cls.StorageDataBase = new function()
             {
               return;
             }
-            var input_text_container = templates.cookie_manager.input_text_container("value", obj.value);
-            return templates.cookie_manager.edit_mode_switch_container(obj.value, input_text_container);
+            var input_text_container = templates.storage.input_text_container("value", obj.value);
+            return templates.storage.edit_mode_switch_container(obj.value, input_text_container);
           },
           sorter: this._make_sorter("value")
         }
