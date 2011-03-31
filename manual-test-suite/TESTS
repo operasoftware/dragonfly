@@ -406,7 +406,6 @@ desc:
   - Check it again.
   - Verify that comment node is shown again.
 
-<<<<<<< local
 DOM.Searchbar
 *************
 
@@ -529,17 +528,12 @@ desc:
   - Use the mousewheel on top of the bar
   - Verify that it scrolls
 
-=======
->>>>>>> other
 DOM.Contextmenu
 ***************
 
 url: ./test-cases/dom/nodes.html
 
-<<<<<<< local
 id: 00100
-=======
->>>>>>> other
 label: General context menu of DOM tree
 desc:
   - Right-click an empty area in DOM tree.
@@ -549,12 +543,8 @@ desc:
   - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
 
 url: ./test-cases/dom/matching-style-declarations.html
-<<<<<<< local
 
 id: 00200
-=======
-  
->>>>>>> other
 label: Context menu for element node
 desc:
   - Right-click the name of the 'body' element in DOM tree.
@@ -564,25 +554,14 @@ desc:
   - Verify that "Remove node" option is present in context menu.
   - Verify that "Expand/collapse subtree" option is present in context menu.
 
-<<<<<<< local
 id: 00300
-=======
->>>>>>> other
 label: Context menu for element node: Edit markup
-<<<<<<< local
 desc:
-=======
-desc: 
->>>>>>> other
   - Right-click the name of the 'body' element in DOM tree.
   - Click "Edit markup" in the context menu.
   - Verify that you entered edit markup mode for the selected element (the whole body content is editable).
-<<<<<<< local
 
 id: 00400
-=======
-  
->>>>>>> other
 label: Context menu for element node: cancel add attribute
 desc:
   - Right-click the name of the body element in DOM tree.
@@ -593,10 +572,7 @@ desc:
   - Type "f()" and press Escape (cancel input).
   - Verify that new attribute is NOT shown for the element.
 
-<<<<<<< local
 id: 00500
-=======
->>>>>>> other
 label: Context menu for element node: Add attribute
 desc:
   - Right-click the name of the body element in DOM tree.
@@ -607,10 +583,7 @@ desc:
   - Type "f()" and press Enter.
   - Verify that new attribute is shown for the element.
 
-<<<<<<< local
 id: 00600
-=======
->>>>>>> other
 label: Context menu for element node: Remove node
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -618,10 +591,7 @@ desc:
   - Click "Remove node".
   - Verify that the clicked node is removed from the DOM tree.
 
-<<<<<<< local
 id: 00700
-=======
->>>>>>> other
 label: Context menu for element node: Expand subtree
 desc:
   - Reload page to have a collapsed DOM tree.
@@ -629,10 +599,7 @@ desc:
   - Click "Expand subtree".
   - Verify that the whole DOM tree is expanded under <body>.
 
-<<<<<<< local
 id: 00800
-=======
->>>>>>> other
 label: Context menu for element node: Collapse subtree
 desc:
   - Expand the whole DOM tree.
@@ -640,10 +607,7 @@ desc:
   - Click "Collapse subtree".
   - Verify that only subtree of <body> is collapsed in the view.
 
-<<<<<<< local
 id: 00900
-=======
->>>>>>> other
 label: Context menu for element node: General settings
 desc:
   - Right-click the name of <body> element.
@@ -651,10 +615,7 @@ desc:
   - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
   - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
 
-<<<<<<< local
 id: 01000
-=======
->>>>>>> other
 label: Context menu for attribute name: Edit attribute
 desc:
   - Expand the DOM tree.
@@ -662,34 +623,23 @@ desc:
   - Click "Edit attribute".
   - Verify that you entered edit attribute name mode.
 
-<<<<<<< local
 id: 01100
-=======
->>>>>>> other
 label: Context menu for attribute name: Add attribute
 desc:
   - Expand the DOM tree.
   - Right-click the attribute name "id" of the first <p> element.
   - Click "Add attribute" in the context menu.
   - Verify that you get a new edit field for the new attribute.
-<<<<<<< local
 
 id: 01200
-=======
-   
->>>>>>> other
 label: Context menu for attribute name: Edit markup
 desc:
   - Expand the DOM tree.
   - Right-click the attribute name "id" of the first <p> element.
   - Click "Edit markup" in the context menu.
   - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
-<<<<<<< local
 
 id: 01300
-=======
-   
->>>>>>> other
 label: Context menu for attribute name: Remove node
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -697,10 +647,7 @@ desc:
   - Click "Remove node".
   - Verify that the clicked element is removed from the DOM tree.
 
-<<<<<<< local
 id: 01400
-=======
->>>>>>> other
 label: Context menu for attribute name: General settings
 desc:
   - Expand the DOM tree.
@@ -709,58 +656,39 @@ desc:
   - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
   - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
 
-<<<<<<< local
 id: 01500
-=======
->>>>>>> other
 label: Context menu for attribute value: Edit attribute value
 desc:
   - Expand the DOM tree.
   - Right-click the attribute value of "id" of the first <p> element.
   - Click "Edit attribute".
   - Verify that you entered edit attribute value mode.
-<<<<<<< local
 
 id: 01600
-=======
-  
->>>>>>> other
 label: Context menu for attribute value: Add attribute
 desc:
   - Expand the DOM tree.
   - Right-click the attribute value of "id" of the first <p> element.
   - Click "Add attribute" in the context menu.
   - Verify that you get a new edit field for the new attribute.
-<<<<<<< local
 
 id: 01700
-=======
-  
->>>>>>> other
 label: Context menu for attribute value: Edit markup
 desc:
   - Expand the DOM tree.
   - Right-click the attribute value of "id" of the first <p> element.
   - Click "Edit markup" in the context menu.
   - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
-<<<<<<< local
 
 id: 01800
-=======
-  
->>>>>>> other
 label: Context menu for attribute value: Remove node
 desc:
   - Expand the whole DOM tree if it was not expanded.
   - Right-click the value of "id" attribute of the first <p> element in DOM tree.
   - Click "Remove node".
   - Verify that the clicked element is removed from the DOM tree.
-<<<<<<< local
 
 id: 01900
-=======
-  
->>>>>>> other
 label: Context menu for attribute value: General settings
 desc:
   - Expand the DOM tree.
@@ -769,10 +697,7 @@ desc:
   - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
   - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
 
-<<<<<<< local
 id: 02000
-=======
->>>>>>> other
 label: Context menu for styles: Specification for style descriptor of computed style
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -784,10 +709,7 @@ desc:
   - Select "Specification for ...".
   - Verify that the browser has opened a new tab with the specification of the descriptor.
 
-<<<<<<< local
 id: 02100
-=======
->>>>>>> other
 label: Context menu for styles: Specification for style descriptor of style
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -797,10 +719,7 @@ desc:
   - Select "Specification for background-color".
   - Verify that the browser has opened a new tab with the specification of the descriptor.
 
-<<<<<<< local
 id: 02200
-=======
->>>>>>> other
 label: Context menu for styles: Add declaration
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -810,10 +729,7 @@ desc:
   - Select "Add declaration".
   - Verify that new declaration edit mode is opened.
 
-<<<<<<< local
 id: 02300
-=======
->>>>>>> other
 label: Context menu for styles: Edit declaration
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -823,10 +739,7 @@ desc:
   - Select "Edit declaration".
   - Verify that the declaration edit mode is opened on the declation which was clicked.
 
-<<<<<<< local
 id: 02400
-=======
->>>>>>> other
 label: Context menu for styles: Disable all declarations
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -837,10 +750,7 @@ desc:
   - Verify that all declarations are disabled but still shown.
   - Verify that the effect of declarations is gone from the host (paragraph 1-2 are affected).
 
-<<<<<<< local
 id: 02500
-=======
->>>>>>> other
 label: Context menu for styles: Open color picker
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -850,10 +760,7 @@ desc:
   - Select "Open color picker".
   - Verify that color picker is opene with the same color as specified.
 
-<<<<<<< local
 id: 02600
-=======
->>>>>>> other
 label: Context menu for styles: Specification for style descriptor of default style values
 desc:
   - Expand the whole DOM tree if it was not expanded.
@@ -863,11 +770,7 @@ desc:
   - Verify that context menu contains only one element.
   - Select "Specification for display".
   - Verify that the browser has opened a new tab with the specification of the descriptor.
-<<<<<<< local
 
-=======
- 
->>>>>>> other
 Statusbar
 *********
 
@@ -1958,28 +1861,14 @@ desc:
   - Press the 'Dispatch custom event 'test'' button in the test document
   - Verify that the debugger stops on entering the 'test' function
 
-<<<<<<< local
 Scripts.Watches
 *******************
-=======
-Scripts.Contextmenu
-**************
->>>>>>> other
 
-<<<<<<< local
 url: ./test-cases/breakpoints/breakpoints.html
-=======
-url: ./test-cases/scripts-source/scripts.html
->>>>>>> other
 
-<<<<<<< local
 id: 00100
 label: Add a watch
-=======
-label: Contextmenu in source view: general
->>>>>>> other
 desc:
-<<<<<<< local
   - Open the test case
   - Select the 'Scripts' tab and reload the document
   - Set a breakpoint on line 8 in script 'a.js'
@@ -1992,23 +1881,10 @@ desc:
   - Verify that i updates accordingly and fals back to 'Error' at the end
   - Add an other watch 'document'
   - Verify that 'document' is an expandable entry
-=======
-  - Right-click in script source panel in script view below the actual script source.
-  - Verify that you get one menu option: Show where a JavaScript error occurs
-  - Click that option.
-  - Verify that it works as expected.
-  - Click option again to disable it.
-  - Check that the functionality has been disabled.
->>>>>>> other
 
-<<<<<<< local
 id: 00200
 label: Right click option for a watch entry
-=======
-label: Contextmenu in source view: source line general options
->>>>>>> other
 desc:
-<<<<<<< local
   - Select the 'Scripts' tab and reload the document
   - Select the 'State' tab and expand the 'Watches' section
   - Add a watch 'document'
@@ -2018,100 +1894,9 @@ desc:
   - Right click the watch and select 'Delete'
   - Verify that the watch is removed from the view
   - Right click the panel, select 'Add' and verify that you can some watch  
-=======
-  - Right-click in script source panel in script view on an actual script line.
-  - Verify that you get menu option: Add breakpoint
-  - Verify that you get menu option: Show where a JavaScript error occurs
-  - Click "Show where a JavaScript error occurs".
-  - Verify that it works as expected.
-  - Click option again to disable it.
-  - Check that the functionality has been disabled.
->>>>>>> other
 
-<<<<<<< local
-=======
-label: Contextmenu in source view: source line add breakpoint
-desc:
-  - Right-click in script source panel in script view on an actual script line.
-  - Verify that you get menu option: Add breakpoint
-  - Verify that you get menu option: Show where a JavaScript error occurs
-  - Click "Add breakpoint".
-  - Verify that breakpoint is added to selected line.
->>>>>>> other
 
-<<<<<<< local
-=======
-label: Contextmenu in source view: source line add condition on breakpoint
-desc:
-  - Right-click in script source panel in script view on script line with breakpoint.
-  - Verify that you get menu option: Add condition
-  - Verify that you get menu option: Disable breakpoint
-  - Verify that you get menu option: Delete breakpoint
-  - Verify that you get menu option: Show where a JavaScript error occurs
-  - Click "Add condition".
-  - Verify that you can add condition to the selected breakpoint.
->>>>>>> other
 
-<<<<<<< local
-=======
-label: Contextmenu in source view: source line edit condition on breakpoint
-desc:
-  - Right-click in script source panel in script view on script line with breakpoint.
-  - Click "Edit condition".
-  - Verify that you can edit condition for the selected breakpoint.
-
-label: Contextmenu in source view: source line disable breakpoint
-desc:
-  - Right-click in script source panel in script view on script line with breakpoint.
-  - Click "Disable breakpoint".
-  - Verify that the breakpoint is disabled.
-
-label: Contextmenu in source view: source line enable breakpoint
-desc:
-  - Right-click in script source panel in script view on script line with disabled breakpoint.
-  - Verify that you get menu option: Edit condition
-  - Verify that you get menu option: Enable breakpoint
-  - Verify that you get menu option: Delete breakpoint
-  - Verify that you get menu option: Show where a JavaScript error occurs
-  - Click "Enable breakpoint".
-  - Verify that the breakpoint is enabled.
-
-label: Contextmenu in source view: source line delete breakpoint
-desc:
-  - Right-click in script source panel in script view on script line with breakpoint.
-  - Click "Delete breakpoint".
-  - Verify that the breakpoint is deleted.
-
-label: Contextmenu in breakpoint list: general
-desc:
-  - Add breakpoint on a source line.
-  - Switch to breakpoint list in right panel.
-  - Right-click the existing breakpoint.
-  - Verify that you get menu option: Add condition
-  - Verify that you get menu option: Delete breakpoint
-  - Verify that you get menu option: Disable all breakpoints
-  - Verify that you get menu option: Delete all breakpoints
-
-label: Contextmenu in breakpoint list: add condition
-desc:
-  - Right-click the existing breakpoint.
-  - Click on: Add condition
-  - Verify that you get enter condition edit mode.
-  - Add a non-empty condition.
-
-label: Contextmenu in breakpoint list: edit condition
-desc:
-  - Right-click the existing breakpoint.
-  - Click on: Edit condition
-  - Verify that you get enter condition edit mode.
-
-label: Contextmenu in breakpoint list: edit condition
-desc:
-  - Right-click the existing breakpoint.
-  - Click on: Edit condition
-  - Verify that you get enter condition edit mode.
-
->>>>>>> other
 Network.Request Log
 *******************
 
