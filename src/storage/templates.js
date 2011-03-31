@@ -203,6 +203,14 @@ window.templates.storage = {
       "handler", "storage-input-field"
     ]
   },
+  input_hidden: function(name, value) {
+    return [
+      "input",
+      "value", value || "",
+      "type",  "hidden",
+      "name",  name
+    ]
+  },
   editable_key: function(key) {
     var edit_elem = this.input_text_container("name", key);
     return this.edit_mode_switch_container(key, edit_elem);
@@ -211,12 +219,11 @@ window.templates.storage = {
     var edit_elem = this.input_text_container("value", value);
     return this.edit_mode_switch_container(value, edit_elem);
   },
-  add_storage_row: function(current_runtime) {
+  add_storage_row: function(rt_id) {
     return ["tr",
-        ["td", this.input_text_container("key")],
+        ["td", [this.input_text_container("key"), this.input_hidden("rt_id", rt_id)]],
         ["td", this.input_text_container("value")],
-      "class", "edit_mode add_storage_row",
-      "data-object-id", ""+current_runtime
+      "class", "edit_mode add_storage_row"
     ];
   }
 };

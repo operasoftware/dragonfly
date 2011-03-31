@@ -8,7 +8,7 @@ cls.StorageDataBase = new function()
   this.set_item = function(rt_id, key, value){};
   this.remove_item = function(rt_id, key){};
   this.clear = function(rt_id){};
-  this.set_item_edit = function(rt_id, key, is_edit){};
+  this.set_item_edit = function(rt_id, key, is_edit){}; // deprecated
 
   this.get_storages = function()
   {
@@ -39,16 +39,15 @@ cls.StorageDataBase = new function()
         var storage = storages[id];
         if(storage)
         {
-          for (var storage_ob, j=0; storage_ob = storage.storage[j]; j++) {
-            var item = storage_ob; // replace by directly modifying storage_ob
+          for (var item, j=0; item = storage.storage[j]; j++) {
             item._rt_id = storage.rt_id;
-            // item._objectref = item.key + "/" + storage._rt_id;
+            item._object_id = item.key + "/" + storage.rt_id;
             items.push(item);
           };
           items.push({
             _is_runtime_placeholder: true,
-            _rt_id: storage.rt_id
-            // ,_objectref: "runtime_placeholder_" + storage.rt_id
+            _rt_id: storage.rt_id,
+            _object_id: "runtime_placeholder_" + storage.rt_id
           });
         }
       };
@@ -154,7 +153,7 @@ cls.StorageDataBase = new function()
     }
   };
 
-  this.set_item_edit = function(rt_id, key, is_edit)
+  this.set_item_edit = function(rt_id, key, is_edit) // deprecated
   {
     var item = this.get_item(rt_id, key);
     if (item)
@@ -393,7 +392,7 @@ cls.StorageDataBase = new function()
         }
       },
       column_order: ["key", "value"],
-      idgetter: function(res) { return res._rt_id },
+      idgetter: function(res) { return res._object_id },
       columns: {
         key: {
           label: "Key",
@@ -404,7 +403,9 @@ cls.StorageDataBase = new function()
               return;
             }
             var input_text_container = templates.cookie_manager.input_text_container("key", obj.key);
-            return templates.cookie_manager.edit_mode_switch_container(obj.key, input_text_container);
+            var hidden_rt = templates.storage.input_hidden("rt_id", obj._rt_id);
+            // todo: use storage templates > remove templates.cookie_manager
+            return templates.cookie_manager.edit_mode_switch_container(obj.key, [input_text_container, hidden_rt]);
           },
           summer: function(values, groupname, getter) {
             return ["button", "Add " + title, "class", "add_storage_button", "handler", "storage-add-key"]; // todo: move to templates

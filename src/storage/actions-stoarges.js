@@ -11,17 +11,20 @@ cls.StorageViewActions = function(id)
   ActionHandlerInterface.apply(this);
   this._handlers = {};
 
-  this._handlers['edit'] = function(event, target)
+  this._handlers["edit"] = function(event, target)
   {
-    var
-    tr = event.target.has_attr("parent-node-chain", "data-storage-key"),
-    rt_id = tr.parentNode.getAttribute('data-rt-id'),
-    storage_id = tr.parentNode.getAttribute('data-storage-id'),
-    key = tr.getAttribute('data-storage-key'),
-    item = window.storages[storage_id].get_item(rt_id, key);
-
-    window.storages[storage_id].set_item_edit(rt_id, key, true);
-    tr.parentNode.replaceChild(document.render(window.templates.storage_item_edit(item)), tr);
+    this.mode = MODE_EDIT;
+    var container = target;
+    while(!container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+    var table_elem = container.querySelector(".sortable-table");
+    var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
+    table.restore_columns(table_elem);
+    // can't directly work with target because restore_columns has renewed it.
+    var ref = target.getAttribute("data-object-id");
+    container.querySelector("tr[data-object-id='"+ref+"']").addClass("edit_mode");
   }.bind(this);
 
   this._handlers["my_save"] = function(event, target)
@@ -38,7 +41,7 @@ cls.StorageViewActions = function(id)
     var edit_trs = container.querySelectorAll("tr.edit_mode");
     for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
     {
-      var rt_id = +edit_tr.getAttribute("data-object-id");
+      var rt_id = +edit_tr.querySelector("[name=rt_id]").value.trim();
       var key   = edit_tr.querySelector("[name=key]").value.trim();
       var value = edit_tr.querySelector("[name=value]").value;
 
@@ -115,14 +118,16 @@ cls.StorageViewActions = function(id)
   this._handlers["add-key"] = function(event, target)
   {
     this.mode = MODE_EDIT;
-    var row = target.parentElement.parentElement;
-
+    var row = target;
+    while (row.nodeName != "tr")
+    {
+      row = row.parentElement;
+    }
     if (!document.querySelector(".add_storage_row")) // add multiple items at once
     {
       // todo: how to reach _sortable_table from actions?
       // this._sortable_table.restore_columns(document.querySelector(".storage_table_container").firstChild);
     }
-
     var header_row = row;
     while (!header_row.hasClass("header"))
     {
@@ -134,18 +139,35 @@ cls.StorageViewActions = function(id)
     inserted.querySelector("[name=key]").focus();
   }.bind(this);
 
+  this._handlers["select-row"] = function(event, target)
+  {
+    // trigger safe if target is not in edit mode
+    if (!target.hasClass("edit_mode"))
+    {
+      ActionBroker.get_instance().dispatch_action("storage-view", "my_save", event, target);
+    }
+
+    /**
+      * unselect everything while not doing multiple selection, which is when:
+      *   cmd / ctrl key is pressed OR
+      *   more than 1 item is already selected && event is right-click, clicked item was already selected
+      */
+    var container = target;
+    while (!container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+    var selection = container.querySelectorAll(".sortable-table .selected");
+    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
+    {
+      for (var i=0, selected_node; selected_node = selection[i]; i++) {
+        selected_node.removeClass("selected");
+      };
+    }
+    target.addClass("selected");
+  };
+
   ActionBroker.get_instance().register_handler(this);
-};
-
-// old
-window.eventHandlers.dblclick['storage-edit'] = function(event, target)
-{
-  this._broker.dispatch_action("storage-view", "edit", event, target);
-};
-
-window.eventHandlers.click['storage-save'] = function(event, target)
-{
-  this._broker.dispatch_action("storage-view", "save", event, target);
 };
 
 /*
@@ -196,17 +218,15 @@ window.eventHandlers.click['storage-add-key'] = function(event, target)
 };
 
 // nu
-/*
-window.eventHandlers.dblclick['storage-init-edit-mode'] = function(event, target)
+window.eventHandlers.dblclick['storage-row'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "enter-edit-mode", event, target);
+  this.broker.dispatch_action("storage-view", "edit", event, target);
 }
 
-window.eventHandlers.click['storage-row-select'] = function(event, target)
+window.eventHandlers.click['storage-row'] = function(event, target)
 {
   this.broker.dispatch_action("storage-view", "select-row", event, target);
 }
-*/
 
 window.eventHandlers.click["storage-view"] = function(event, target) // todo: make this the view container instead
 {
