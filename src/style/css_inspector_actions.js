@@ -13,6 +13,9 @@ cls.CSSInspectorActions = function(id)
   this.__active_container = null;
   this.__target = null;
   const CSS_CLASS_CP_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
+  const INDEX_LIST = 1;
+  const VALUE_LIST = 2;
+  const PRIORITY_LIST = 3;
 
   this.editor = new Editor(this);
 
@@ -182,13 +185,18 @@ cls.CSSInspectorActions = function(id)
   /**
    * Removes a single property.
    *
-   * @param {String} prop_to_remove The property to remove
+   * @param {String} property The property to remove
    * @param {Function} callback Callback to execute when the property has been added
    */
-  this.remove_property = function remove_property(rt_id, rule_id, prop_to_remove, callback)
+  this.remove_property = function remove_property(rt_id, rule_id, property, callback)
   {
-    prop_to_remove = this.normalize_property(prop_to_remove);
-    var script = "object.style.removeProperty(\"" + prop_to_remove + "\");";
+    property = this.normalize_property(property);
+    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    if (disabled_style_dec)
+    {
+      window.elementStyle.remove_property(disabled_style_dec, property);
+    }
+    var script = "object.style.removeProperty(\"" + property + "\");";
 
     var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
@@ -200,9 +208,6 @@ cls.CSSInspectorActions = function(id)
    */
   this.restore_property = function()
   {
-    const INDEX_LIST = 1;
-    const VALUE_LIST = 2;
-    const PRIORITY_LIST = 3;
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var prop = this.editor.context_cur_prop;
@@ -269,9 +274,11 @@ cls.CSSInspectorActions = function(id)
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
 
-    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
-    window.elementStyle.remove_property(style_dec, property);
-    this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
+    this.remove_property(rt_id, rule_id || obj_id, property, function() {
+      window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
+      window.elementStyle.remove_property(style_dec, property);
+      window.elementStyle.update();
+    });
   };
 
   /**
