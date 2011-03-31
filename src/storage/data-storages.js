@@ -384,7 +384,7 @@ cls.StorageDataBase = new function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return ""+obj[0]._rt_id; // todo: put in runtime details instead, possibly from global runtimes thingy?
+            return runtimes.getRuntime(obj[0]._rt_id).uri;
           },
           idgetter: function(obj) {
             return ""+obj[0]._rt_id;

@@ -53,6 +53,13 @@ cls.StorageViewActions = function(id)
       }.bind(this, container))
     }
   }.bind(this);
+  
+  this._handlers["submit"] = function(event, target)
+  {
+    console.log("submit handler");
+    this._handlers["my_save"](event, target);
+    return false;
+  }
 
   this._handlers['edit-cancel'] = function(event, target)
   {
@@ -169,33 +176,6 @@ cls.StorageViewActions = function(id)
 
   ActionBroker.get_instance().register_handler(this);
 };
-
-/*
-// todo: this will be replaced by basically just updating directly, regardless if it worked or not.
-// TODO: what is is_success?
-window.eventHandlers.click['storage-edit-cancel'] = function(event, target, is_success)
-{
-  var
-  tr = event.target.parentNode.parentNode.parentNode,
-  rt_id = tr.parentNode.getAttribute('data-rt-id'),
-  storage_id = tr.parentNode.getAttribute('data-storage-id'),
-  key = tr.hasAttribute('data-storage-key') ? tr.getAttribute('data-storage-key') :
-        (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
-  item = window.storages[storage_id].get_item(rt_id, key);
-
-  if (tr.hasAttribute('data-storage-key') || is_success)
-  {
-    window.storages[storage_id].update();
-    tr.parentNode.replaceChild(document.render(window.templates.storage_item(item)), tr);
-    window.storages[storage_id].set_item_edit(rt_id, key, false);
-  }
-  else
-  {
-    tr.parentNode.removeChild(tr);
-  }
-  //this.broker.dispatch_action("storage-view", "edit-cancel", event, target);
-};
-*/
 
 window.eventHandlers.click['storage-delete'] = function(event, target)
 {
