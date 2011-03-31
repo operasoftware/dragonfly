@@ -111,9 +111,6 @@ ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 /* DESC: Context menu entry to select that there should be no grouping in the table */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
 
-/* DESC: Settings > console: a set of checkboxes to show which tabs are displayed */
-ui_strings.M_VIEW_CONSOLE_SETTINGS_EXPLANATION = "Select tabs to show in the error console:";
-
 /* DESC: view that shows all resources */
 ui_strings.M_VIEW_LABEL_ALL_RESOURCES = "All resources";
 
@@ -153,9 +150,6 @@ ui_strings.M_VIEW_LABEL_CONSOLE = "Error Panels";
 /* DESC: view for cookies */
 ui_strings.M_VIEW_LABEL_COOKIES = "Cookies";
 
-/* DESC: Tab heading, a subhead under DOM, for area displaying documents in the runtime. */
-ui_strings.M_VIEW_LABEL_DOCUMENTS = "Documents";
-
 /* DESC: View to see the DOM tree. */
 ui_strings.M_VIEW_LABEL_DOM = "DOM Panel";
 
@@ -173,9 +167,6 @@ ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = "BitTorrent";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all CSS errors. */
 ui_strings.M_VIEW_LABEL_ERROR_CSS = "CSS";
-
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Opera Dragonfly errors. */
-ui_strings.M_VIEW_LABEL_ERROR_DRAGONFLY = "Opera Dragonfly";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all HTML errors. */
 ui_strings.M_VIEW_LABEL_ERROR_HTML = "HTML";
@@ -252,9 +243,6 @@ ui_strings.M_VIEW_LABEL_NO_INSPECTION = "No inspection";
 /* DESC: Text to show in watches if there are no watches */
 ui_strings.M_VIEW_LABEL_NO_WATCHES = "No watches";
 
-/* DESC: Settings label involving settings for diplaying the JS properties of an object. */
-ui_strings.M_VIEW_LABEL_OBJECT_INSPECTION = "Object Inspection";
-
 /* DESC: Name of raw request tab */
 ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = "Raw request";
 
@@ -266,9 +254,6 @@ ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER = "Make request";
 
 /* DESC: Name of request headers tab */
 ui_strings.M_VIEW_LABEL_REQUEST_HEADERS = "Request Headers";
-
-/* DESC: Name of request info tab */
-ui_strings.M_VIEW_LABEL_REQUEST_INFO = "Request info";
 
 /* DESC: Name of request log tab */
 ui_strings.M_VIEW_LABEL_REQUEST_LOG = "Request log";
@@ -341,9 +326,6 @@ ui_strings.S_BUTTON_CANCEL = "Cancel";
 
 /* DESC: Cancel button while the client is waiting for a host connection. */
 ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG = "Cancel Remote Debug";
-
-/* DESC: Clear request log. */
-ui_strings.S_BUTTON_CLEAR_REQUEST_LOG = "Clear request log";
 
 /* DESC: Reset all the values to their default state */
 ui_strings.S_BUTTON_COLOR_RESTORE_DEFAULTS = "Restore defaults";
@@ -594,9 +576,6 @@ ui_strings.S_INFO_NO_COMPATIBLE_VERSION = "There is no compatible Opera Dragonfl
 /* DESC: Shown when entering something on the command line while there is no javascript running in the window being debugged */
 ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment in the active window";
 
-/* DESC: Information shown when the user needs to select a runtime. */
-ui_strings.S_INFO_NO_RUNTIME_SELECTED = "Select a runtime";
-
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
 
@@ -605,9 +584,6 @@ ui_strings.S_INFO_RELOAD_FOR_SCRIPT = "Click the reload button above to fetch th
 
 /* DESC: Information shown if the document does not hold any scripts. Appears in Scripts view. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = "This document has no scripts";
-
-/* DESC: Information shown if the service is not available. */
-ui_strings.S_INFO_SERVICE_NOT_AVAILABLE = "Service is not available: %s";
 
 /* DESC: the given storage type doesn't exist, e.g. a widget without the w3c widget namespace */
 ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";
@@ -618,14 +594,8 @@ ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = "This style sheet has no rules";
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
 
-/* DESC: Information shown when the user enables remote debug and still has to connect the client. */
-ui_strings.S_INFO_WAITING_FOR_CONNECTION = "Opera Dragonfly is waiting for a connection on port %s.\nPlease enter opera:debug in your device's URL field to connect.";
-
 /* DESC: Information shown if the window has no runtime, e.g. speed dial. */
 ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME = "This window has no runtime";
-
-/* DESC: Error when people use the Drafgonfly URL right in the browser */
-ui_strings.S_INFO_WRONG_START = "Opera Dragonfly cannot be used in this way.\nEither set the current URL in\n\n   opera:config > Developer Tools > Developer Tools URL\n\nor setup a debugger environment with a proxy and server.";
 
 /* DESC: Inhertied from, " <element name>" will be added */
 ui_strings.S_INHERITED_FROM = "Inherited from";
@@ -822,9 +792,6 @@ ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
 /* DESC: Missing description! */
 ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
 
-/* DESC: Tooltip for a status indicator in the bottom left corner showing is the debugger is connected, busy, etc.. */
-ui_strings.S_LABEL_STATUS_INDICATOR = "Status indicator for the browser and the debugger";
-
 /* DESC: Tab size in source view. */
 ui_strings.S_LABEL_TAB_SIZE = "Tab Size";
 
@@ -996,9 +963,6 @@ ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button
 /* DESC: Tooltip for filtering text-input boxes */
 ui_strings.S_SEARCH_INPUT_TOOLTIP = "text search";
 
-/* DESC: For choosing a context (e.g. tab, window, widget) to be inspected. */
-ui_strings.S_SELECT_WINDOW_EMPTY = "Select a window";
-
 /* DESC: Header for settings group "About" */
 ui_strings.S_SETTINGS_HEADER_ABOUT = "About";
 
@@ -1029,9 +993,6 @@ ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 /* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
 ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 
-/* DESC: DEPRECATED Showing shorthands in style properties on or off. */
-ui_strings.S_SWITCH_CREATE_SHORTHANDS = "Use CSS shorthands";
-
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
 
@@ -1046,15 +1007,6 @@ ui_strings.S_SWITCH_FRIENDLY_PRINT = "Enable smart-printing for Element objects 
 
 /* DESC: Shows or hides empty strings and null values. */
 ui_strings.S_SWITCH_HIDE_EMPTY_STRINGS = "Show empty strings and null values";
-
-/* DESC: Tooltip text for button under the Styles tab that shows or hides initial values in computed style. */
-ui_strings.S_SWITCH_HIDE_INITIAL_VALUES = "Hide initial values in computed styles";
-
-/* DESC: Tooltip text for button under the Styles tab that shows computed styles as shorthand or in full effect. */
-ui_strings.S_SWITCH_HIDE_SHORTHANDS = "Hide shorthand for computed styles";
-
-/* DESC: List item in the DOM settings menu to choose to highlight page elements when the mouse hovers. Also Tooltip text for button in the secondary DOM menu. */
-ui_strings.S_SWITCH_HIGHLIGHT_BY_MOUSE_OVER = "Highlight by mouse hover";
 
 /* DESC: Highlights page elements when thet mouse hovers. */
 ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = "Highlight selected element";
@@ -1073,9 +1025,6 @@ ui_strings.S_SWITCH_REMOTE_DEBUG = "Remote debug";
 
 /* DESC: Scroll an element in the host into view when selecting it in the DOM. */
 ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT = "Scroll into view on first highlight";
-
-/* DESC: List item in the DOM settings menu to shows or hides DOM node attributes. */
-ui_strings.S_SWITCH_SHOW_ATTRIBUTES = "Show attributes";
 
 /* DESC: List item in the DOM settings menu to shows or hide comments in DOM. Also Tooltip text for button in the secondary DOM menu. */
 ui_strings.S_SWITCH_SHOW_COMMENT_NODES = "Show comment nodes";
@@ -1170,9 +1119,6 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = "Automatically update global scope";
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = "Use lower case tag names for text/html";
 
-/* DESC: Tooltip text for button in the Stylesheet menu under DOM that shows CSS properties as shorthands or in full effect. */
-ui_strings.S_SWITCH_USE_SHORTHAND_PROPERTIES = "Use shorthand for properties";
-
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE = "%(FUNCTION_NAME)s: %(SCRIPT_ID)s:%(LINE_NUMBER)s";
 
@@ -1206,9 +1152,6 @@ ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER = "Revision Number";
 /* DESC: Information on the user-agent submitted that appears in the Environment view. */
 ui_strings.S_TEXT_ENVIRONMENT_USER_AGENT = "User Agent";
 
-/* DESC: Message in detail view of http logger when no request/respons is selected */
-ui_strings.S_TEXT_NO_REQUEST_SELECTED = "No request selected.";
-
 /* DESC: Result text for a search when there were search results. The %(VARIABLE)s should not be translated, but its position in the text can be rearranged. Python syntax: %(VARIABLE)type_identifier, so %(FOO)s in its entirety is replaced. */
 ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEARCH_COUNT_INDEX)s out of %(SEARCH_COUNT_TOTAL)s";
 
@@ -1223,5 +1166,3 @@ ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to window wid
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
-
-
