@@ -342,6 +342,13 @@ ui_strings.M_CONTEXTMENU_STORAGE_DELETE = 'Delete item';
 /* DESC: Context menu item for adding a something to watches. */
 ui_strings.M_CONTEXTMENU_ADD_WATCH = 'Watch "%s"';
 
+/* DESC: Context menu item to add a color in the color palette. */
+ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
+/* DESC: Context menu item to edit a color in the color palette. */
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
+/* DESC: Context menu item to delete a color in the color palette. */
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+
 /*
  * Button tool-tips.
  */
@@ -612,6 +619,17 @@ ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font Face";
 ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
 /* DESC: Setting label to select the line height  */
 ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
+
+/* DESC: Setting label to select the zoom level of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
+/* DESC: Setting label to select the sample size of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
+/* DESC: Button label to update the screenshot */
+ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+/* DESC: Button label to store the color */
+ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+
+
 /* DESC: Button label to reset the fon selection to the default values  */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
 

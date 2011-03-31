@@ -62,7 +62,7 @@ cls.ColorPaletteView = function(id, name, container_class)
   this._menu_common_items =
   [
     {
-      label: 'Add color',
+      label: ui_strings.M_CONTEXTMENU_ADD_COLOR,
       handler: this._handlers['color-palette-add-color'],
     },
   ];
@@ -70,11 +70,11 @@ cls.ColorPaletteView = function(id, name, container_class)
   this._menu_editable_items =
   [
     {
-      label: 'Edit color',
+      label: ui_strings.M_CONTEXTMENU_EDIT_COLOR,
       handler: this._handlers['color-palette-edit-color'],
     },
     {
-      label: 'Delete color',
+      label: ui_strings.M_CONTEXTMENU_DELETE_COLOR,
       handler: this._handlers['color-palette-delete-color'],
     },
   ]
