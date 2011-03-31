@@ -900,8 +900,7 @@ cls.ScriptSelect = function(id, class_name)
       if( script )
       {
         var display_uri = helpers.shortenURI(script.uri);
-        var script_type = script.script_type[0].toUpperCase() +
-                          script.script_type.slice(1);
+        var script_type = script.script_type.capitalize(true);
         return display_uri.uri ?
                display_uri.uri :
                script_type + " – " + (script.script_data.slice(0, 300) ||

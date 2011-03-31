@@ -831,6 +831,20 @@ String.prototype.endswith = function(str)
   return this.slice(this.length - str.length) === str;
 };
 
+/**
+ * Capitalizes the first character of the string. Lowercases the rest of
+ * the characters, unless `only_first` is true.
+ */
+String.prototype.capitalize = function(only_first)
+{
+  var rest = this.slice(1);
+  if (!only_first)
+  {
+    rest = rest.toLowerCase();
+  }
+  return this[0].toUpperCase() + rest;
+};
+
 Array.prototype.extend = function(list)
 {
   this.push.apply(this, list);
