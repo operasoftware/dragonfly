@@ -274,11 +274,9 @@ cls.CSSInspectorActions = function(id)
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
 
-    this.remove_property(rt_id, rule_id || obj_id, property, function() {
-      window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
-      window.elementStyle.remove_property(style_dec, property);
-      window.elementStyle.update();
-    });
+    this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
+    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
+    window.elementStyle.remove_property(style_dec, property);
   };
 
   /**
