@@ -23,7 +23,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
     this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
-    var content = this._container.querySelector(".network-details-request");
+    var content = this._container ? this._container.querySelector(".network-details-request") : null;
     this._contentscroll = content ? content.scrollTop : 0;
   }
 
