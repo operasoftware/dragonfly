@@ -42,13 +42,13 @@ class Entry(object):
 
     def __str__(self):
         ret = []
-        for p in ['label', 
-                  'mode', 
-                  'tabs', 
-                  'urls', 
-                  'repo', 
-                  'index', 
-                  'file_name', 
+        for p in ['label',
+                  'mode',
+                  'tabs',
+                  'urls',
+                  'repo',
+                  'index',
+                  'file_name',
                   'desc']:
             value = getattr(self, p)
             if value:
@@ -64,7 +64,7 @@ class Entry(object):
 
     def is_empty(self):
         return bool(self.title or self.url or self.desc or self.label)
-        
+
 def check_test_index():
     """Verify that all tests in the TESTS file have a unique id.
     """
@@ -74,7 +74,7 @@ def check_test_index():
     ERROR = 4
     state = DESC
     in_file = open(TESTS, 'r')
-    # 
+    #
     for line in in_file.readlines():
         if line.startswith('id:'):
             if not state == DESC:
@@ -93,7 +93,7 @@ def check_test_index():
             state = DESC
     in_file.close()
     return not state == ERROR
-    
+
 DEFAULT_ID_DELTA = 100
 
 def get_next_id(id_count, lines, index):
@@ -104,7 +104,7 @@ def get_next_id(id_count, lines, index):
             return id_count + DEFAULT_ID_DELTA
         elif line.startswith('id:'):
             return int((id_count + int(line[3:])) / 2)
-    
+
 def add_ids_test_index():
     """Add an id to all tests which are missing one.
     """
@@ -122,7 +122,7 @@ def add_ids_test_index():
 
     tmpfd, tmppath = tempfile.mkstemp(".tmp", "dftests.")
     tmpfile = os.fdopen(tmpfd, "w")
-    
+
     # state order: ID, LABEL, DESC
     # title resets the id_count (counting restarts in each repo)
     for index, line in enumerate(lines):
@@ -155,7 +155,7 @@ def add_ids_test_index():
         raise AssertionError("Not well formed entry on line %s!" % index)
     shutil.copy(tmppath, TESTS)
     os.unlink(tmppath)
-            
+
 def get_tests():
     """Parse the TESTS file.
 
@@ -229,7 +229,7 @@ def parse_title(title):
                 st.pop()
             sub_tabs.append(' '.join(st))
     return top_tab, sub_tabs
-    
+
 def load_templates():
     with open(TEMPLATES, 'rb') as f:
         cur_key = ""
@@ -247,16 +247,16 @@ def load_templates():
 
 def label2filename(label):
     label = ''.join(label)
-    for char in ["|", "\\", "?", "*", "<", "\"", ":", 
+    for char in ["|", "\\", "?", "*", "<", "\"", ":",
                  ">", "+", "[", "]", "/", "%", " ", ","]:
         label = label.replace(char, '-')
     for pattern, repl in [[r"^-+", ""], [r"--+", "-"]]:
         label = re.sub(pattern, repl, label)
     return ''.join(label).strip().lower()
-            
+
 def tests2singledocs():
     entries = get_tests()
-    for e in entries: 
+    for e in entries:
       e.normalize()
     entries = filter(lambda e: e.is_empty(), entries)
     cur = Entry()
@@ -287,7 +287,7 @@ def tests2singledocs():
             entry.file_name = "%s.%s.html" % (entry.index, file_name)
             index += 1
     return filter(lambda e: e.label , entries)
-    
+
 def print_index(index):
     content = [HTML_HEAD % STYLESHEET_NAME, HTML_MAIN_TITLE]
     sections = []
@@ -298,11 +298,12 @@ def print_index(index):
         if not mode == cur_mode:
             cur_mode = mode
             sections.append((mode, None))
+            cur_tab = None
         if not tab == cur_tab:
             cur_tab = tab
             links = []
             sections.append((tab, links))
-        links.append(HTML_URL % (path, label)) 
+        links.append(HTML_URL % (path, label))
     for title, links in sections:
       if links == None:
         content.append(HTML_MODE_SECTION % title)
@@ -317,17 +318,17 @@ def print_stylesheet():
         content = f.read()
     with open(os.path.join(PAPA, STYLESHEET_NAME), 'wb') as f:
         f.write(content)
-    
+
 def item2html(item):
     ret = item.replace('<', '&lt;').replace('"', '&quot;').replace('@pre', '<pre>').replace('@/pre', '</pre>')
     if "@line-through" in ret:
         ret = HTML_LINE_THROUGH.strip() % ret.replace("@line-through", "")
     return ret
-    
+
 def test():
     load_templates()
     entries = tests2singledocs()
-    
+
     """
     label:  Export
     mode: DOM
@@ -359,7 +360,7 @@ def test():
                 string += ' ' + item
         if string:
             items.append(string)
-            
+
         content.append(HTML_TITLE % ("".join(e.label),
                                      e.deprecated and HTML_DEPRECATED or "",
                                      e.mode,
@@ -379,7 +380,7 @@ def test():
     print_stylesheet()
     if not os.path.exists(os.path.join(PAPA, TESTCASES)):
         shutil.copytree(TESTCASES, os.path.join(PAPA, TESTCASES))
-        
-        
+
+
 if __name__ == '__main__':
     test()
