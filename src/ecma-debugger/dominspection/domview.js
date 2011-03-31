@@ -297,8 +297,13 @@ cls.DOMView.create_ui_widgets = function()
     {
       callback: function(event, target)
       {
-        var menu = [];
         var target = event.target;
+        if (target.has_attr("parent-node-chain", "ref-id").hasClass("non-editable"))
+        {
+          return;
+        }
+
+        var menu = [];
         while (target != document && !/^(?:key|value|text|node)$/i.test(target.nodeName))
         {
           target = target.parentNode;
