@@ -200,6 +200,19 @@
           "escape": "cancel"
         }
       },
+      "storage":
+      {
+        "default":
+        {
+          "delete": "remove-item",
+          "cmd backspace": "remove-item"
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel"
+        }
+      }
     },
     mac:
     {
@@ -383,6 +396,7 @@
       {
         "default":
         {
+          "enter": "submit",
           "delete": "remove-item",
           "cmd backspace": "remove-item"
         },
@@ -392,6 +406,19 @@
           "escape": "cancel"
         }
       },
+      "storage":
+      {
+        "default":
+        {
+          "delete": "remove-item",
+          "cmd backspace": "remove-item"
+        },
+        "edit":
+        {
+          "enter": "submit",
+          "escape": "cancel"
+        }
+      }
     },
   },
   hostspotlight_matrixes:

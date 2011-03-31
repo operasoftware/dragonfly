@@ -1,0 +1,100 @@
+﻿.storage_table_container .sortable-table input[type=text] {
+  width: 100%;
+  border: none;
+}
+
+.storage_table_container .sortable-table .add_cookie_dropdown {
+  font-size: 11px;
+}
+
+.storage_table_container .replaced-val {
+  color: #AAA;
+}
+
+/* editing */
+
+.storage_table_container .value_container {
+  position: relative;
+  height: 15px;
+}
+
+.storage_table_container .edit_container {
+  display: none;
+  margin: -3px 0 -1px -1px;
+  position: relative;
+}
+
+.storage_table_container .edit_mode .edit_container {
+  display: block;
+}
+
+.storage_table_container .edit_mode .value_container {
+  display: none;
+}
+
+/* ellipsis */
+
+.storage_table_container .sortable-table .ellipsis_cont {
+  position: relative;
+  height: 12px;
+}
+
+.storage_table_container .sortable-table .ellipsis_cont .ellipsis {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#contextmenu .ellipsis_cont, #contextmenu .ellipsis {
+  display: inline; /* hide containers in context menu */
+}
+
+/* "check" values */
+
+.storage_table_container .check {
+  content: url("../ui-images/menu_check.png");
+}
+
+/* columns */
+
+.storage_table_container .sortable-table .col_key {
+  width: 25%;
+}
+.storage_table_container .sortable-table .col_value {
+  width: 75%;
+}
+
+/* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
+  it's just for the add_cookie button */
+.storage_table_container .sortable-table tr.sortable-table-summation-row td {
+  border: none;
+  background: none;
+  padding-bottom: 7px;
+}
+
+.storage_table_container .sortable-table tr.sortable-table-summation-row {
+  background: none;
+}
+
+.storage_table_container tr[data-object-id ^= "runtime_placeholder_"] {
+  display: none;
+}
+
+/* other sortable-table stuff specific to cookie-manager (for now) */
+
+.storage_table_container .sortable-table td {
+  padding: 6px 5px 2px 20px;
+  position: relative;
+}
+
+.storage_table_container .sortable-table td.align-center {
+  padding: 6px 5px 2px 5px;
+}
+
+.storage_table_container .sortable-table td.align-right {
+  padding: 6px 5px 2px 5px;
+}
