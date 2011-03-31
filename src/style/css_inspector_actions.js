@@ -210,7 +210,7 @@ cls.CSSInspectorActions = function(id)
   {
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var prop = this.editor.context_cur_prop;
+    var prop = this.editor.getProperties()[0];
     var script = "";
 
     var prop_index = window.css_index_map.indexOf(prop);
@@ -220,7 +220,7 @@ cls.CSSInspectorActions = function(id)
       var script = "object.style.removeProperty(\"" + prop +  "\");";
       var index = rule[INDEX_LIST].indexOf(prop_index);
       // If the property existed before, set it back with the old values.
-      if (index != 1)
+      if (index != -1)
       {
         script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
