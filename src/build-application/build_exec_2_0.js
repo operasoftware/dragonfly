@@ -7,13 +7,11 @@ window.app.builders.Exec || ( window.app.builders.Exec = {} );
 window.app.builders.Exec["2.0"] = function(service)
 {
   var namespace = cls.Exec && cls.Exec["2.0"];
-
-
   new cls.ScreenShotControlsView("screenshot-controls",
-                                 "Color Picker",
+                                 ui_strings.M_VIEW_LABEL_COLOR_PICKER,
                                  "screenshot-controls");
   new cls.ColorPaletteView("color-palette",
-                           "Color Palette",
+                           ui_strings.M_VIEW_LABEL_COLOR_PALETTE,
                            "color-palette");
   return true;
 }

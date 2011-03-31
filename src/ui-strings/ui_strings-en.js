@@ -153,8 +153,10 @@ ui_strings.M_VIEW_LABEL_COLOR_SELECT = 'Color Select';
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = 'Event Breakpoints';
 /* DESC: view to set and remove breakpoints */
 ui_strings.M_VIEW_LABEL_BREAKPOINTS = 'Breakpoints';
-/* DESC: Text to show in breakpoins if there is no breakpoint. */
-ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = 'No breakpoint';
+/* DESC: View with a screenshot to select a color. */
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
+/* DESC: View of the paleete of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
 
 /*
  * Settings dialogue entries. All the S_SWITCH_<something> strings are
