@@ -262,7 +262,7 @@ var ui_framework = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'missing viewport');
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'missing viewport');
     }
   }
 

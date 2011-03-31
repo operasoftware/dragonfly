@@ -62,7 +62,7 @@ cls.EcmascriptDebugger["5.0"].Frame_inspection_data = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         'getting window id has failed in handleShowGlobalScope in frame_inspection');
     }
   }

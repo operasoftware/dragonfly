@@ -231,7 +231,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
     if (status)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
     }
     else
     {
@@ -458,7 +458,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     var tag = window.tag_manager.set_callback(this, function(status, message)
     {
       if (status)
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                         'static method InspectableJSObject.set_property_filter failed, ' +
                         JSON.stringify(message));
     });
@@ -560,7 +560,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if (status || !(message[STATUS] == "completed" && message[OBJECT_VALUE]))
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.create_filter failed, " +
                       status + ', ' + JSON.stringify(message));
     else
@@ -582,7 +582,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     OBJECT_ID = 0;
     
     if (status)
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.handle_create_filter failed, " +
                       status + ', ' + JSON.stringify(message));
     else
@@ -638,7 +638,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     print = [];
 
     if (status)
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.handle_get_objects " +
                       status + ', ' + JSON.stringify(message));
     else

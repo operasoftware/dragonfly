@@ -326,7 +326,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " This should never happen");
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + " This should never happen");
     }
   }
 
@@ -589,7 +589,7 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
       else
       {
         str_input = current_path = '';
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "getting scope failed in autocomplete view-commandline");
       }
     }
@@ -851,7 +851,7 @@ cls.CndRtSelect = function(id, class_name)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.runtime_dropdown(_runtimes);

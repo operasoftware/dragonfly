@@ -68,7 +68,7 @@ var TabsBase = function()
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'tabs, removeTab. there should be a tab for that index');
         }
       }

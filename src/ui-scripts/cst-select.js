@@ -307,7 +307,7 @@ var CstSelectColorBase = function(id, rgba_arr, handler, option)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         'not a rgba value in setSelect3dValue in CstSelectColorBase');
     }
   }

@@ -62,7 +62,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'active window id does not exist, trying to select the first window instead');
       if(this._window_list.length)
       {
@@ -103,7 +103,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
       // workaround for wrong active window id. must be removed
       this._active_window = 0;
       this.set_debug_context(this._window_list[0].window_id);
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'active window id does not exist');
     }
     window.windowsDropDown.update();
   };

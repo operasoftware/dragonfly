@@ -83,7 +83,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   {
     var
     _data = message[NODE_LIST],  
-    error_ms = ui_strings.DRAGONFLY_INFO_MESSAGE + 'this.__handle_dom failed in DOMBaseData',
+    error_ms = ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'this.__handle_dom failed in DOMBaseData',
     splice_args = null,
     i = 0;
     
@@ -147,7 +147,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
                       'missing refrence in collapse_node in DOMBaseData');
     }
   };
@@ -179,7 +179,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       if (cur)
         ret = cur[1] == '1';
       else
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
                         "failed in this._parse_parent_offset in InspectableDOMNode");
     }
     return ret;

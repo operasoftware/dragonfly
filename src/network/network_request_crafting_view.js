@@ -110,14 +110,14 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
         }
         else
         { // should never happen with well formed headers
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
         }
       }
       else
       {
         var parts = line.match(/([\w-]*?):(.*)/);
         if (!parts || parts.length!=3) {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
           continue;
         }
         headers.push([parts[1], parts[2].trim()]);
