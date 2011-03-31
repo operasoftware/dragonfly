@@ -528,6 +528,249 @@ desc:
   - Use the mousewheel on top of the bar
   - Verify that it scrolls
 
+DOM.Contextmenu
+***************
+
+url: ./test-cases/dom/nodes.html
+
+id: 00100
+label: General context menu of DOM tree
+desc:
+  - Right-click an empty area in DOM tree.
+  - Verify that only general menu options show up in context menu (3 options, see below).
+  - Verify that "Show DOM in Tree View" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
+
+url: ./test-cases/dom/matching-style-declarations.html
+
+id: 00200
+label: Context menu for element node
+desc:
+  - Right-click the name of the 'body' element in DOM tree.
+  - Verify that general menu options show up at the bottom in context menu.
+  - Verify that "Add attribute" option is present in context menu.
+  - Verify that "Edit markup" option is present in context menu.
+  - Verify that "Remove node" option is present in context menu.
+  - Verify that "Expand/collapse subtree" option is present in context menu.
+
+id: 00300
+label: Context menu for element node: Edit markup
+desc:
+  - Right-click the name of the 'body' element in DOM tree.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole body content is editable).
+
+id: 00400
+label: Context menu for element node: cancel add attribute
+desc:
+  - Right-click the name of the body element in DOM tree.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+  - Type "onload=".
+  - Verify that new edit field is opened for the attribute value.
+  - Type "f()" and press Escape (cancel input).
+  - Verify that new attribute is NOT shown for the element.
+
+id: 00500
+label: Context menu for element node: Add attribute
+desc:
+  - Right-click the name of the body element in DOM tree.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+  - Type "onload=".
+  - Verify that new edit field is opened for the attribute value.
+  - Type "f()" and press Enter.
+  - Verify that new attribute is shown for the element.
+
+id: 00600
+label: Context menu for element node: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the name of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked node is removed from the DOM tree.
+
+id: 00700
+label: Context menu for element node: Expand subtree
+desc:
+  - Reload page to have a collapsed DOM tree.
+  - Right click <body> element.
+  - Click "Expand subtree".
+  - Verify that the whole DOM tree is expanded under <body>.
+
+id: 00800
+label: Context menu for element node: Collapse subtree
+desc:
+  - Expand the whole DOM tree.
+  - Right-click the name of the <body> element.
+  - Click "Collapse subtree".
+  - Verify that only subtree of <body> is collapsed in the view.
+
+id: 00900
+label: Context menu for element node: General settings
+desc:
+  - Right-click the name of <body> element.
+  - Verify that "Show DOM in Tree View" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
+
+id: 01000
+label: Context menu for attribute name: Edit attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Edit attribute".
+  - Verify that you entered edit attribute name mode.
+
+id: 01100
+label: Context menu for attribute name: Add attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+
+id: 01200
+label: Context menu for attribute name: Edit markup
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
+
+id: 01300
+label: Context menu for attribute name: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the "id" attribute name of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked element is removed from the DOM tree.
+
+id: 01400
+label: Context menu for attribute name: General settings
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Verify that "Show DOM in Tree View" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
+
+id: 01500
+label: Context menu for attribute value: Edit attribute value
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Edit attribute".
+  - Verify that you entered edit attribute value mode.
+
+id: 01600
+label: Context menu for attribute value: Add attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+
+id: 01700
+label: Context menu for attribute value: Edit markup
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
+
+id: 01800
+label: Context menu for attribute value: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the value of "id" attribute of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked element is removed from the DOM tree.
+
+id: 01900
+label: Context menu for attribute value: General settings
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Verify that "Show DOM in Tree View" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Draw a border on to selected elements" triggers the right behaviour (also verify switching option off).
+
+id: 02000
+label: Context menu for styles: Specification for style descriptor of computed style
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Unfold computed styles.
+  - Right-click the first style descriptor in computed styles.
+  - Verify that menu contains only one element.
+  - Select "Specification for ...".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
+
+id: 02100
+label: Context menu for styles: Specification for style descriptor of style
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Specification for background-color".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
+
+id: 02200
+label: Context menu for styles: Add declaration
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Add declaration".
+  - Verify that new declaration edit mode is opened.
+
+id: 02300
+label: Context menu for styles: Edit declaration
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Edit declaration".
+  - Verify that the declaration edit mode is opened on the declation which was clicked.
+
+id: 02400
+label: Context menu for styles: Disable all declarations
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Disable all declarations".
+  - Verify that all declarations are disabled but still shown.
+  - Verify that the effect of declarations is gone from the host (paragraph 1-2 are affected).
+
+id: 02500
+label: Context menu for styles: Open color picker
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Open color picker".
+  - Verify that color picker is opene with the same color as specified.
+
+id: 02600
+label: Context menu for styles: Specification for style descriptor of default style values
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click display in 'default values'.
+  - Verify that context menu contains only one element.
+  - Select "Specification for display".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
+
 Statusbar
 *********
 
@@ -912,6 +1155,133 @@ desc:
   - Verify that the view gets cleared.
   - Type e.g. 'dir(this)'
   - Verify that the according object is displayed in the Inspection view.
+
+Scripts.Contextmenu
+**************
+
+url: ./test-cases/scripts-source/scripts.html
+
+id: 00100
+label: Contextmenu in source view: general
+desc:
+  - Right-click in script source panel in script view below the actual script source.
+  - Verify that you get one menu option: Show where a JavaScript error occurs
+  - Click that option.
+  - Verify that it works as expected.
+  - Click option again to disable it.
+  - Check that the functionality has been disabled.
+
+id: 00200
+label: Contextmenu in source view: source line general options
+desc:
+  - Right-click in script source panel in script view on an actual script line.
+  - Verify that you get menu option: Add breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Show where a JavaScript error occurs".
+  - Verify that it works as expected.
+  - Click option again to disable it.
+  - Check that the functionality has been disabled.
+
+id: 00300
+label: Contextmenu in source view: source line add breakpoint
+desc:
+  - Right-click in script source panel in script view on an actual script line.
+  - Verify that you get menu option: Add breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Add breakpoint".
+  - Verify that breakpoint is added to selected line.
+
+id: 00400
+label: Contextmenu in source view: source line add condition on breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Verify that you get menu option: Add condition
+  - Verify that you get menu option: Disable breakpoint
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Add condition".
+  - Verify that you can add condition to the selected breakpoint.
+
+id: 00500
+label: Contextmenu in source view: source line edit condition on breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Click "Edit condition".
+  - Verify that you can edit condition for the selected breakpoint.
+
+id: 00600
+label: Contextmenu in source view: source line disable breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Click "Disable breakpoint".
+  - Verify that the breakpoint is disabled.
+
+id: 00700
+label: Contextmenu in source view: source line enable breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with disabled breakpoint.
+  - Verify that you get menu option: Edit condition
+  - Verify that you get menu option: Enable breakpoint
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Enable breakpoint".
+  - Verify that the breakpoint is enabled.
+
+id: 00800
+label: Contextmenu in source view: source line delete breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Click "Delete breakpoint".
+  - Verify that the breakpoint is deleted.
+
+id: 00900
+label: Contextmenu in breakpoint list: general
+desc:
+  - Add breakpoint on a source line.
+  - Switch to breakpoint list in right panel.
+  - Right-click the existing breakpoint.
+  - Verify that you get menu option: Add condition
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Disable all breakpoints
+  - Verify that you get menu option: Delete all breakpoints
+
+id: 01000
+label: Contextmenu in breakpoint list: add condition
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Add condition
+  - Verify that you get enter condition edit mode.
+  - Add a non-empty condition.
+
+id: 01100
+label: Contextmenu in breakpoint list: edit condition
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Edit condition
+  - Verify that you get enter condition edit mode.
+
+id: 01200
+label: Contextmenu in breakpoint list: delete breakpoint
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Delete breakpoint
+  - Verify that the breakpoint is deleted.
+
+id: 01300
+label: Contextmenu in breakpoint list: disable all breakpoints
+desc:
+  - Add 2 breakpoints in 2 different scripts.
+  - Right-click an existing breakpoint in the breakpoint list.
+  - Click on: Disable all breakpoints
+  - Verify that all the breakpoints are disabled.
+
+id: 01400
+label: Contextmenu in breakpoint list: delete all breakpoints
+desc:
+  - Right-click an existing breakpoint in the breakpoint list.
+  - Click on: Delete all breakpoints
+  - Verify that all the breakpoints are deleted.
+
 
 Console HUD
 ***********
