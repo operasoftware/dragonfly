@@ -298,7 +298,8 @@ cls.DOMView.create_ui_widgets = function()
       callback: function(event, target)
       {
         var target = event.target;
-        if (target.has_attr("parent-node-chain", "ref-id").hasClass("non-editable"))
+        var ele = target.has_attr("parent-node-chain", "ref-id");
+        if (ele && ele.hasClass("non-editable"))
         {
           return;
         }
