@@ -482,7 +482,7 @@ filter {
 }
 
 filter.filter {
-    background-image: url("../ui-images/icons/icon_filter.png");
+    background-image: url("../ui-images/filter.png");
 }
 
 filter input {
@@ -1524,3 +1524,10 @@ info {
     content: url("../ui-images/pause.png");
 }
 
+[handler="inspect-node-link"] {
+    cursor: pointer;
+}
+
+[handler="inspect-node-link"]:hover {
+    text-decoration: underline;
+}

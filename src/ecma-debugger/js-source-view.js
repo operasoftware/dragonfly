@@ -900,8 +900,7 @@ cls.ScriptSelect = function(id, class_name)
       if( script )
       {
         var display_uri = helpers.shortenURI(script.uri);
-        var script_type = script.script_type[0].toUpperCase() +
-                          script.script_type.slice(1);
+        var script_type = script.script_type.capitalize(true);
         return display_uri.uri ?
                display_uri.uri :
                script_type + " – " + (script.script_data.slice(0, 300) ||
@@ -1227,9 +1226,19 @@ cls.JsSourceView.create_ui_widgets = function()
 
           if (breakpoints.script_has_breakpoint_on_line(script_id, line))
           {
+            var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
             items.push({
-              label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
+              label: !bp.condition ?
+                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
               handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+              handler: function(event, target) {
+                breakpoints.set_condition("", bp.id);
+              },
+              disabled: !bp.condition
             },
             {
               label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,

@@ -243,11 +243,11 @@
   this.script_option = function(script)
   {
     var display_uri = helpers.shortenURI(script.uri);
-    var script_type = script.script_type;
+    var script_type = this._script_type_map[script.script_type] || script.script_type;
     var ret = 
     [
       'cst-option',
-      ["span", (script_type != "linked" ? (this._script_type_map[script_type] || script_type) + ' – ' : ''),
+      ["span", (script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :

@@ -57,9 +57,6 @@ ui_strings.M_CONTEXTMENU_EDIT_MARKUP = "Edit markup";
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = "Edit text";
 
-/* DESC: Context menu item for expanding/collapsing a node subtree. */
-ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE = "Expand/collapse subtree";
-
 /* DESC: Context menu item for showing the color picker. */
 ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = "Open color picker";
 
@@ -1166,3 +1163,12 @@ ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to window wid
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: Context menu item for expanding a node subtree. */
+ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = 'Expand subtree';
+
+/* DESC: Context menu item for collapsing a node subtree. */
+ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
+
+/* DESC: Context menu item for breakpoints to delete a condition. */
+ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';

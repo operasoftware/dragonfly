@@ -641,11 +641,6 @@ div.dom {
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
-.tree-style .text-node
-{
-  padding-right: 1ex;
-}
-
 .css-layout > div > h2:first-child {
 
   border-width: 0 0 1px;

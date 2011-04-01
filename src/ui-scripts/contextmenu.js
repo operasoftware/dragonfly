@@ -56,12 +56,6 @@ function ContextMenu() {
     // Prevent the normal context menu from showing up
     event.preventDefault();
 
-    if (EventHandler.__modal_mode)
-    {
-      EventHandler.__modal_mode = false;
-      return;
-    }
-
     var ele = event.target;
     var all_items = [];
     var menu_id = null;
@@ -129,7 +123,6 @@ function ContextMenu() {
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
       this.is_shown = true;
-      EventHandler.__modal_mode = true;
     }
   };
 
@@ -243,8 +236,6 @@ function ContextMenu() {
     event.stopPropagation();
     event.preventDefault();
 
-    this.dismiss();
-
     while (target != contextmenu && target != document)
     {
       var handler_id = target.getAttribute("data-handler-id");
@@ -256,6 +247,11 @@ function ContextMenu() {
         {
           if (item.id == handler_id && item.menu_id == menu_id)
           {
+            if (item.disabled)
+            {
+              return;
+            }
+
             var current_target = this._current_event.target;
             while (current_target && (menu_id == "spec"
                         ? current_target.getAttribute("data-spec") === null
@@ -265,14 +261,16 @@ function ContextMenu() {
               current_target = current_target.parentNode;
             }
             item.handler(this._current_event, current_target);
+            break;
           }
         }
       }
       target = target.parentNode;
     }
 
+    this.dismiss();
+
     this._broker.clear_setter_click_handler(this);
-    EventHandler.__modal_mode = false;
   }.bind(this);
 };
 
