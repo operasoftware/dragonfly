@@ -1,4 +1,4 @@
-﻿ï»¿Ã¯Â»Â¿window.ui_strings || ( window.ui_strings  = {} );
+﻿window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
