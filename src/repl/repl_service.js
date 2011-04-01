@@ -4,7 +4,7 @@ cls.ReplService = function(view, data)
 {
   if (cls.ReplService.instance)
   {
-    return cls.ReplService.instance;
+//    return cls.ReplService.instance;
   }
   cls.ReplService.instance = this;
 
@@ -120,6 +120,7 @@ cls.ReplService = function(view, data)
   this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
   {
     const VALUELIST = 2;
+    opera.postError(JSON.stringify(msg, null, "    "))
 
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
                     !is_unpacked &&
@@ -153,8 +154,16 @@ cls.ReplService = function(view, data)
     }
     else
     {
+      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1;
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
-      this._data.add_output_valuelist(rt_id, values);
+      var pos = null;
+      if (msg[POSITION])
+      {
+        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]}
+      }
+
+
+      this._data.add_output_valuelist(rt_id, values, pos);
       if (is_unpacked)
       {
         this._msg_queue.continue_processing();

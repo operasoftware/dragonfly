@@ -167,7 +167,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_pointer_to_object(e.data);
           break;
         case "valuelist":
-          this._render_value_list(e.data);
+          this._render_value_list(e);
           break;
         case "trace":
           this._render_trace(e.data);
@@ -289,8 +289,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(templates.repl_output_trace(data));
   };
 
-  this._render_value_list = function(values)
+  this._render_value_list = function(entry)
   {
+    var values = entry.data;
     const SPAN = 1, BRACKET = 2;
     var type = 0;
     var tpl = values.reduce(function(list, value)
@@ -313,6 +314,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       return list;
     }, []);
     tpl.pop();
+
+    if (entry.pos)
+    {
+      tpl = [templates.repl_output_location_link(entry.pos.scriptid, entry.pos.scriptline), tpl];
+    }
     this._add_line(tpl);
   };
 
@@ -919,6 +925,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     return actions;
   }
 
+  this._handle_repl_show_log_entry_source_bound = function(event, target)
+  {
+    var line = target.getAttribute("data-scriptline");
+    var script = target.getAttribute("data-scriptid");
+    var sourceview = window.views.js_source;
+    if (sourceview) { sourceview.highlight(script, line) }
+  }.bind(this);
+
   this.mode_labels = {
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,
@@ -929,6 +943,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   var eh = window.eventHandlers;
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
+  eh.click["show-log-entry-source"] = this._handle_repl_show_log_entry_source_bound;
   eh.change["set-typed-history-length"] = this._handle_option_change_bound;
   eh.focus["repl-textarea"] = this._handle_input_focus_bound;
   eh.blur["repl-textarea"] = this._handle_input_blur_bound;
