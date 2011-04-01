@@ -95,16 +95,6 @@ window.cls.Client = function()
       settings.debug_remote_setting.set('debug-remote', false);
       window.helpers.setCookie('debug-remote', "false");
     }
-    else if (client.is_remote_debug)
-    {
-      document.getElementById("remote-debug-settings").clearAndRender(
-        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
-      );
-
-      // Reset this so we don't start in remote debug next time
-      settings.debug_remote_setting.set('debug-remote', false);
-      window.helpers.setCookie('debug-remote', "false");
-    }
     else
     {
       show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
@@ -409,6 +399,7 @@ window.cls.Client = function()
 
   this.setup_top_cell = function(services)
   {
+    var open_windows = UIWindowBase.close_all_windows();
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
     {
@@ -440,6 +431,9 @@ window.cls.Client = function()
     {
       messages.post("host-state", {state: global_state.ui_framework.spin_state});
     }
+    setTimeout(function(){
+      open_windows.forEach(function(view_id){UIWindowBase.showWindow(view_id)});
+    }, 250)
   }
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
@@ -574,13 +568,39 @@ ui_framework.layouts.resource_rough_layout =
                                                                  ] } } ]
 }
 
-
+/*
 ui_framework.layouts.utils_rough_layout =
 {
     dir: 'v',
     width: 1000,
     height: 1000,
     children: [ { height: 1000, tabbar: { tabs: ['color_picker'], is_hidden: true } } ]
+}
+*/
+ui_framework.layouts.utils_rough_layout =
+{
+  dir: 'h', width: 700, height: 700,
+  children:
+  [
+    {
+      width: 700,
+      children:
+      [
+        {
+          tabbar: { tabs: ['screenshot'], is_hidden: true }
+        }
+      ]
+    },
+    {
+      width: 250,
+      children:
+      [
+        {
+          tabs: ['screenshot-controls', 'color-palette']
+        }
+      ]
+    }
+  ]
 }
 
 ui_framework.layouts.storage_rough_layout =

@@ -1,4 +1,4 @@
-window.ui_strings || ( window.ui_strings  = {} );
+﻿ï»¿Ã¯Â»Â¿window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -315,7 +315,7 @@ ui_strings.M_VIEW_SUB_LABEL_METRICS = "Metrics";
 /* DESC: Label for the layout subvie showing offsets of the selected element. */
 ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 
-/* DESC: Label for the layout subview showing the parent node chain used to calculøate the offset. */
+/* DESC: Label for the layout subview showing the parent node chain used to calculÃ¸ate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Missing description! */
@@ -385,7 +385,7 @@ ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
 
 /* DESC: For selecting which window to debug. */
-ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you’d like to debug";
+ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context youâ€™d like to debug";
 
 /* DESC: Tooltip text for the Settings button that launches the Settings view. */
 ui_strings.S_BUTTON_LABEL_SETTINGS = "Settings";
@@ -562,7 +562,7 @@ ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT = "%s requests";
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
 
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
+ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonflyâ€¦";
 
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
@@ -889,7 +889,7 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debu
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1 = "Specify the port number you wish to connect to, or leave as the default";
 
 /* DESC: Remote debug guide, connection setup */
-ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click “Apply”";
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click â€œApplyâ€";
 
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER = "On the remote device:";
@@ -904,7 +904,7 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2 = "Enter the IP address of the ma
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number %s";
 
 /* DESC: Remote debug guide, waiting for connection */
-ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click “Connect”";
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click â€œConnectâ€";
 
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5 = "Once connected navigate to the page you wish to debug";
@@ -1039,7 +1039,7 @@ ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = "Show JavaScript errors in the console
 ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = "Show default values if they are null or empty strings";
 
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show idâ€™s and classes in breadcrumb trail";
 
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = "Show initial values";
@@ -1172,3 +1172,42 @@ ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
 
 /* DESC: Context menu item for breakpoints to delete a condition. */
 ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
+
+
+
+
+
+
+
+/* DESC: View with a screenshot to select a color. */
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
+
+/* DESC: Context menu item to add a color in the color palette. */
+ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
+
+/* DESC: Context menu item to edit a color in the color palette. */
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
+
+/* DESC: Context menu item to delete a color in the color palette. */
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+
+/* DESC: Setting label to select the zoom level of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
+
+/* DESC: Setting label to select the sample size of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
+
+/* DESC: Button label to update the screenshot */
+ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
+/* DESC: Button label to store the color */
+ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+
+/* DESC: Context menu item for removing a breakpoint. */
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+
+/* DESC: Context menu item for deleting a breakpoint. */
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
