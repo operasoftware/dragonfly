@@ -174,7 +174,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.EventBreakpointsView.prototype = ViewBase;
     new cls.EventBreakpointsView('event-breakpoints', 
                                  ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS, 
-                                 'scroll event-breakpoints mono');
+                                 'scroll event-breakpoints');
     cls.EventBreakpointsView.create_ui_widgets();
 
     /* Breakpoints */

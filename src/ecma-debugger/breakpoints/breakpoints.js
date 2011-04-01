@@ -32,6 +32,7 @@ cls.Breakpoints = function()
   this.get_breakpoints = function(){};
   this.get_breakpoint_with_id = function(bp_id){};
   this.script_has_breakpoint_on_line = function(script_id, line_nr){};
+  this.get_breakpoint_on_script_line = function(script_id, line_nr){};
   // bp_id optional
   this.add_breakpoint = function(script_id, line_nr, bp_id){};
   // removes the breakpoint in the host
@@ -259,20 +260,27 @@ cls.Breakpoints = function()
     return Boolean(script && script.breakpoints[line_nr]);
   };
 
+  this.get_breakpoint_on_script_line = function(script_id, line_nr)
+  {
+    var bp_id = this._get_bp_id_with_script_id_and_line_nr(script_id, line_nr);
+    return bp_id ? this.get_breakpoint_with_id(bp_id): null;
+  };
+
   this.set_condition = function(condition, bp_id)
   {
     var bp = this.get_breakpoint_with_id(bp_id);
     if (bp)
     {
-      if (condition && !bp.condition)
+      var current_condition = bp.condition;
+      bp.condition = condition;
+      if (condition && !current_condition)
       {
         this._update_bp_state(bp, BP_DELTA_CONDITION);
       }
-      else if(!condition && bp.condition)
+      else if(!condition && current_condition)
       {
         this._update_bp_state(bp, -BP_DELTA_CONDITION);
       }
-      bp.condition = condition;
     }
   };
 

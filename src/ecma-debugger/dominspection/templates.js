@@ -293,7 +293,7 @@
 
   var nodeNameMap =
   {
-    3: "<span class='text-node'>#text</span>",
+    3: "<span class='text-node'>#text</span> ",
     4: "<span class='cdata-node'>#cdata-section</span>"
   };
 
