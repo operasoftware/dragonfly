@@ -210,24 +210,34 @@ cls.CSSInspectorActions = function(id)
   {
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var prop = this.editor.getProperties()[0];
+    var initial_property = this.editor.context_cur_prop;
+    var new_property = this.editor.getProperties()[0];
     var script = "";
 
-    var prop_index = window.css_index_map.indexOf(prop);
+    var prop_enum = window.css_index_map.indexOf(new_property);
     // Check if it's a real property. If not, we don't have to set something back.
-    if (prop_index != -1)
+    if (prop_enum != -1)
     {
-      var script = "object.style.removeProperty(\"" + prop +  "\");";
-      var index = rule[INDEX_LIST].indexOf(prop_index);
-      // If the property existed before, set it back with the old values.
-      if (index != -1)
-      {
-        script += "object.style.setProperty(\"" +
-                     prop + "\", \"" +
-                     rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
-                     (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
-                  ");";
-      }
+      var script = "object.style.removeProperty(\"" + new_property + "\");";
+    }
+
+    if (initial_property)
+    {
+      script += "object.style.setProperty(\"" +
+                   initial_property + "\", \"" +
+                   this.editor.context_cur_value.replace(/"/g, "'") + "\", " +
+                   (this.editor.context_cur_priority ? "\"important\"" : null) +
+                ");";
+    }
+
+    var index = rule[INDEX_LIST].indexOf(prop_enum);
+    if (index != -1)
+    {
+      script += "object.style.setProperty(\"" +
+                   new_property + "\", \"" +
+                   rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
+                   (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
+                ");";
     }
 
     if (script)
