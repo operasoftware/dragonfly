@@ -266,7 +266,7 @@ window.cls.Client = function()
     {
       if (this.status != 200)
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             "could not load fallback urls. (during local development this is OK!)")
         return;
       }

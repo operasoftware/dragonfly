@@ -199,7 +199,7 @@ var DOMMarkupEditor = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         'exit markup edit failed in DOMMarkupEditor');
     }
   };
@@ -524,7 +524,7 @@ var DOMMarkupEditor = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         "failed register_host_updater in DOMMarkupEditor");
     }
   }
@@ -546,7 +546,7 @@ var DOMMarkupEditor = function()
     // this should never be needed
     if( this.textarea_container.parentElement )
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         "this.textarea_container.parentElement is not null in submit");
     }
     this.textarea.value = outerHTML;

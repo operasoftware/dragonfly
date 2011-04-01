@@ -357,7 +357,7 @@ cls.CSSInspectorActions = function(id)
       return false;
     }
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'keyboard_handler: no target to move');
   }.bind(this);
 
@@ -375,7 +375,7 @@ cls.CSSInspectorActions = function(id)
       return false;
     }
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'keyboard_handler: no target to move');
   }.bind(this);
 

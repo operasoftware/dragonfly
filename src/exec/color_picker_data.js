@@ -81,7 +81,7 @@ cls.Exec["2.0"].ColorPickerDate = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed register_color_picker in ColorPicker");
     }
   }
@@ -106,7 +106,7 @@ cls.Exec["2.0"].ColorPickerDate = function()
   {
     if(message[STATUS] != 'completed')
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed handle_stop in ColorPicker");
     }
   }

@@ -116,7 +116,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       }
     }
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       '_handle_get_color failed in ColorPickerView');
   }
 

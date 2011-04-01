@@ -912,7 +912,7 @@ cls.Stylesheets = function()
     }
     if (!sheet)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');
     }
 

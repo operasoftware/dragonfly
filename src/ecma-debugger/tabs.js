@@ -218,7 +218,7 @@ cls.EcmascriptDebugger["5.0"].HostTabs = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
         'Error in host_tabs handleAddEventWithDocument');
     }
      

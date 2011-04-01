@@ -70,7 +70,7 @@ window.cls.RuntimeOnloadHandler = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'getting readyState has failed in runtime_onload_handler handleReadyState');
     }
   }
@@ -190,7 +190,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'getting readyState has failed in runtime_onload_handler handleReadyState');
     }
   }

@@ -153,7 +153,7 @@ SimpleBaseEditorPrototype = function()
     // this should never be needed
     if (this.textarea_container.parentElement)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "this.textarea_container.parentElement is not null in submit");
     }
     this.textarea.value = ele.textContent;

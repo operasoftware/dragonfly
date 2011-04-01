@@ -126,7 +126,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   {
     if (!(id in __runtimes))
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'runtime id does not exist');
       __runtimes[id] = null;
       services['ecmascript-debugger'].getRuntime(tagManager.set_callback(null, parseRuntime), id);
@@ -639,7 +639,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "script source is missing in onParseError handler in runtimes");
     }
 
@@ -716,7 +716,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'got a thread finished event \n' +
         'in a runtime where the thread \n'+
         'has never started: '+ rt_id+' '+thread_id);

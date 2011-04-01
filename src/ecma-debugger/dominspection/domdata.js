@@ -412,7 +412,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
                                 object_id: message[OBJECT_VALUE][OBJECT_ID],
                                 highlight: false});
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'this._handle_initial_view failed in dom_data\n');
   }
 
@@ -426,7 +426,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
                     this._handle_get_dom.bind(this, runtime_id));
     }
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'this._handle_snapshot in dom_data has failed');
   }
 

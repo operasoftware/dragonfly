@@ -162,8 +162,8 @@ window.templates = window.templates || {};
 window.templates.text_resource_view = function(resource, resourcedata)
 {
   return [
-    ['pre',
-        ["code", resourcedata],
+    ['div',
+        ["code", ["pre", resourcedata]],
         'class', 'resource-detail-container'
     ]
   ]

@@ -91,7 +91,7 @@ eventHandlers.mousedown['tab'] = function(event, target)
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
       "tabs is missing in eventHandlers.click['tab'] in ui-actions");
   }
 }

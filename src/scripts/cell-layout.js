@@ -96,7 +96,7 @@
     {
       if( ! this.id )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'cell has no id');
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'cell has no id');
         return 0;
       }
       var ele = document.getElementById( this.id );
@@ -110,7 +110,7 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'missing container in cell.update');
         }
       }
@@ -143,7 +143,7 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'missing container in cell.update');
         }
       }

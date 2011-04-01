@@ -102,7 +102,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   this.setUserStopAt = function(key, value)
   {
     //stop_at_user_settings[key] = value; // true or false;
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       'clean up. this should no longer be called. stop_at.setUserStopAt');
 
   }
