@@ -1166,3 +1166,30 @@ ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to window wid
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: View with a screenshot to select a color. */
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
+
+/* DESC: Context menu item to add a color in the color palette. */
+ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
+
+/* DESC: Context menu item to edit a color in the color palette. */
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
+
+/* DESC: Context menu item to delete a color in the color palette. */
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+
+/* DESC: Setting label to select the zoom level of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
+
+/* DESC: Setting label to select the sample size of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
+
+/* DESC: Button label to update the screenshot */
+ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
+/* DESC: Button label to store the color */
+ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
