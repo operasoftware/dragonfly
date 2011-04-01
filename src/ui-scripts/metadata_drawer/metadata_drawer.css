@@ -7,6 +7,7 @@
   width: 100%;
   z-index: 2;
   background-color: white;
+  border-color: #999;
 }
 
 .metadata-drawer-summary-table {
@@ -16,7 +17,7 @@
 }
 
 .metadata-drawer-summary-table.unfolded {
-  border-bottom: solid thin silver;  
+  border-bottom: solid thin;  
 }
 
 .metadata-drawer-summary-table th {
@@ -27,8 +28,8 @@
 .metadata-drawer .iconcell
 {
   text-align: center;
-  border-left: solid thin silver;
-  border-right: solid thin silver;
+  border-left: solid thin;
+  border-right: solid thin;
   width: 48px;
 }
 
@@ -46,7 +47,7 @@
 .metadata-drawer .details-table
 {
   width: 100%;
-  border-top: solid thin silver;
+  border-top: solid thin;
   background-color: #f0f0f0;
   padding-left: 30px;
   padding-top: 16px;
@@ -54,7 +55,7 @@
 }
 
 .metadata-drawer .details-table tr {
-  border-bottom: solid thin black;
+  border-bottom: solid thin;
 }
 
 .metadata-drawer .details-table th {
