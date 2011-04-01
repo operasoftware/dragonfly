@@ -1193,3 +1193,9 @@ ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
 
 /* DESC: Button label to store the color */
 ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+
+/* DESC: Context menu item for removing a breakpoint. */
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+
+/* DESC: Context menu item for deleting a breakpoint. */
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
