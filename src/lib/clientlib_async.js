@@ -136,6 +136,7 @@ window.cls.Proxy = function()
     }
     x.open("GET", "http://" + _host + ":" + _port + msg);
     x.send("");
+    return x;
   }
 
 

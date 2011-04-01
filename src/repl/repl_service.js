@@ -2,11 +2,6 @@
 
 cls.ReplService = function(view, data)
 {
-  if (cls.ReplService.instance)
-  {
-    return cls.ReplService.instance;
-  }
-  cls.ReplService.instance = this;
 
   this._count_map = {};
 

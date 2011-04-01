@@ -189,8 +189,20 @@ var UIWindowBase = new function()
       win.container.onclose();
       messages.post("hide-view", {id: win_ele.getAttribute('view_id')});
       win_ele.parentNode.removeChild(win_ele);
+      return view_id;
     }
+    return null;
   }
+
+  this.close_all_windows = function()
+  {
+    var ret = [];
+    for (id in window.ui_windows)
+    {
+      ret.push(this.closeWindow(window.ui_windows[id].view_id));
+    }
+    return ret.filter(Boolean);
+  };
 
  /* event handling */
 
