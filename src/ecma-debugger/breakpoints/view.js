@@ -208,7 +208,7 @@ cls.BreakpointsView = function(id, name, container_class)
       {
         var bp_ele = event.target.has_attr('parent-node-chain',
                                            'data-breakpoint-id');
-        var has_condition = bp_ele.getElementsByClassName('condition')[0];
+        var has_condition = bp_ele && bp_ele.getElementsByClassName('condition')[0];
         return bp_ele
              ? (has_condition
                ? this._menu_edit_condition
