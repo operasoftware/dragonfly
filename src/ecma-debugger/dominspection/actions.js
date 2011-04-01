@@ -671,7 +671,7 @@ cls.DOMInspectorActions = function(id)
               (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
             if( !new_target )
             {
-              opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+              opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                 'failed getting start tag in this.editDOM in action_dom.js')
               return;
             }

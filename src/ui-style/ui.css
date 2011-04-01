@@ -252,6 +252,12 @@ button[handler="reload-window"] {
 .ev-brp-remove-all-breakpoints::before {
     background-image: url("../ui-images/icons/icon_clear.png");
 }
+.network_logger\.paused-update::before {
+    background-image: url("../ui-images/icons/icon_pause.png");
+}
+.network_logger\.fit-to-width::before {
+    background-image: url("../ui-images/icons/icon_constrain.png");
+}
 
 cst-icon[class="debugger-menu"] {
     content: url("../ui-images/icons/icon_tabs.png");

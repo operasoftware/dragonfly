@@ -31,7 +31,7 @@
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
   }
 };
 
@@ -207,7 +207,7 @@ window.eventHandlers.click['display-script'] = function(event)
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       "missing script id in window.eventHandlers.click['display-script']")
   }
 };

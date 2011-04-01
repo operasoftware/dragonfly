@@ -210,7 +210,7 @@
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "Can't attach switch to a setting that does not exist: " + _switch );
       }
 
@@ -405,7 +405,7 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'failed in ui-templates checkboxes '+ arr + ' ' +setting.view_id);
         }
       }

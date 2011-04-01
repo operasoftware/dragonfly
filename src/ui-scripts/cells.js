@@ -373,7 +373,7 @@
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'missing container in cell.update');
         }
       }

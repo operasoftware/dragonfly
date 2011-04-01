@@ -507,7 +507,7 @@ cls.JsSourceView = function(id, name, container_class)
       else
       {
         document.getElementById(scroll_id).innerHTML = "";
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "script source is missing for given id in views.js_source.showLine");
         return;
       }
@@ -909,7 +909,7 @@ cls.ScriptSelect = function(id, class_name)
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'missing script in getSelectedOptionText in cls.ScriptSelect');
       }
     }
@@ -941,7 +941,7 @@ cls.ScriptSelect = function(id, class_name)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.script_dropdown(_runtimes,
@@ -966,7 +966,7 @@ cls.ScriptSelect = function(id, class_name)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "missing script id in handlers['display-script']")
     }
     selected_value = target_ele.textContent;

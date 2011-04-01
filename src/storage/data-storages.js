@@ -155,7 +155,7 @@ cls.StorageDataBase = new function()
     success_callback(message[STATUS] == 'completed');
     if (message[STATUS] != 'completed')
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + info);
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + info);
     }
   };
 
@@ -219,7 +219,7 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed register_loacal_storage in LocalStorageData");
     }
   };
@@ -249,7 +249,7 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed handle_get_key_value_pairs in LocalStorageData");
     }
   };
@@ -308,7 +308,7 @@ cls.StorageDataBase = new function()
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed finalize_get_key_value_pairs in LocalStorageData");
     }
   };

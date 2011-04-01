@@ -556,37 +556,37 @@ cls.CookieManager.CookieManagerViewBase = function()
     },
     {
       up_to_sec: 60, // a minute
-      string: ui_strings.COOKIE_MANAGER_SOONER_THEN_1_MINUTE
+      string: ui_strings.S_COOKIE_MANAGER_SOONER_THEN_1_MINUTE
     },
     {
       up_to_sec: 60 * 60, // an hour
-      string: ui_strings.COOKIE_MANAGER_IN_X_MINUTES,
-      string_singular: ui_strings.COOKIE_MANAGER_IN_1_MINUTE
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_MINUTES,
+      string_singular: ui_strings.S_COOKIE_MANAGER_IN_1_MINUTE
     },
     {
       up_to_sec: 60 * 60 * 24, // a day
-      string: ui_strings.COOKIE_MANAGER_IN_X_HOURS,
-      string_singular: ui_strings.COOKIE_MANAGER_IN_1_HOUR,
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_HOURS,
+      string_singular: ui_strings.S_COOKIE_MANAGER_IN_1_HOUR,
     },
     {
       up_to_sec: 60 * 60 * 24 * 7, // a week
-      string: ui_strings.COOKIE_MANAGER_IN_X_DAYS,
-      string_singular: ui_strings.COOKIE_MANAGER_TOMORROW,
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_DAYS,
+      string_singular: ui_strings.S_COOKIE_MANAGER_TOMORROW,
     },
     {
       up_to_sec: 60 * 60 * 24 * 7 * 4.3, // a month
-      string: ui_strings.COOKIE_MANAGER_IN_X_WEEKS,
-      string_singular: ui_strings.COOKIE_MANAGER_IN_1_WEEK,
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_WEEKS,
+      string_singular: ui_strings.S_COOKIE_MANAGER_IN_1_WEEK,
     },
     {
       up_to_sec: 60 * 60 * 24 * 7 * 4.3 * 12, // a year
-      string: ui_strings.COOKIE_MANAGER_IN_X_MONTHS,
-      string_singular: ui_strings.COOKIE_MANAGER_IN_1_MONTH,
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_MONTHS,
+      string_singular: ui_strings.S_COOKIE_MANAGER_IN_1_MONTH,
     },
     {
       up_to_sec: Infinity,
-      string: ui_strings.COOKIE_MANAGER_IN_X_YEARS,
-      string_singular: ui_strings.COOKIE_MANAGER_IN_1_YEAR,
+      string: ui_strings.S_COOKIE_MANAGER_IN_X_YEARS,
+      string_singular: ui_strings.S_COOKIE_MANAGER_IN_1_YEAR,
     }
   ];
 

@@ -134,7 +134,7 @@ cls.DocumentSelect = function(id)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.runtimes(_runtimes, 'dom');
@@ -154,7 +154,7 @@ cls.DocumentSelect = function(id)
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "missing runtime id in cls.DocumentSelect.checkChange")
       }
       return true;

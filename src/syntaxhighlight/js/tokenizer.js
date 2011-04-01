@@ -932,7 +932,7 @@ cls.SimpleJSParser.prototype = new function()
   // const DEFAULT_STATE = 0, SINGLE_QUOTE_STATE = 1, DOUBLE_QUOTE_STATE = 2, REG_EXP_STATE = 3, COMMENT_STATE = 4;
   states[SINGLE_QUOTE_STATE] = function()
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       'state parsing not implemented in formatter.js for SINGLE_QUOTE');
   };
 
@@ -961,7 +961,7 @@ cls.SimpleJSParser.prototype = new function()
 
   states[REG_EXP_STATE] = function()
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       'state parsing not implemented in formatter.js for REG_EXP');
   };
 
