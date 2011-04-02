@@ -315,7 +315,7 @@ ui_strings.M_VIEW_SUB_LABEL_METRICS = "Metrics";
 /* DESC: Label for the layout subvie showing offsets of the selected element. */
 ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 
-/* DESC: Label for the layout subview showing the parent node chain used to calculøate the offset. */
+/* DESC: Label for the layout subview showing the parent node chain used to calculate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Missing description! */
