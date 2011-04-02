@@ -363,12 +363,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/view_dom_side_panel.js"/>
 <script src="./style/newstyle.js"/>
 
-
-<script src="./exec/color_picker_data.js"/>
-<script src="./exec/color_picker_view.js"/>
-<script src="./exec/color_picker_controls.js"/>
-<script src="./exec/templates.js"/>
-
 <script src="./client/client.js"/>
 <script src="./client/templates.js"/>
 <script src="./window-manager/window-manager.js"/>
