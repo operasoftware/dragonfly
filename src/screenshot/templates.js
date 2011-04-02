@@ -1,9 +1,14 @@
 (function()
 {
-  this.scrennshot_controls = function()
+  this.scrennshot_controls = function(color)
   {
   	return (
   	['div',
+      ['p',
+        ['button',
+          ui_strings.S_BUTTON_UPDATE_SCREESHOT,
+          'handler', 'screenshot-update',
+          'class', 'container-button']],
       ['table',
         ['tr',
           ['td', ui_strings.S_LABEL_COLOR_PICKER_ZOOM + ':'],
@@ -23,31 +28,30 @@
               'min', '1', 'max', '9', 'step', '2',
               'handler', 'screenshot-sample-size']],
           ['td', '9 x 9']]],
-      ['p',
-        ['button',
-          ui_strings.S_BUTTON_UPDATE_SCREESHOT,
-          'handler', 'screenshot-update',
-          'class', 'container-button']],
-      ['div', 'class', 'screenshot-sample-container'],
-      'class', 'padding']);
+      ['div', 
+        this.sample_color(color),
+        'class', 'screenshot-sample-container'],
+      'class', 'padding screenshot-max-height']);
   };
 
   this.sample_color = function(color)
   {
     return (
-    ['pre',
+    ['div',
+      ['pre',
+        ['span', 'RGB: '], color.getRGB().join(', ') + '\n',
+        ['span', 'HSL: '], color.getHSL().join('%, ').replace('%', '') + '%\n',
+        ['span', 'HEX: '], '#' + color.getHex() + '\n',
+        'class', 'mono screenshot-sample-values'],
       ['button',
             ui_strings.S_BUTTON_STORE_COLOR,
             'handler', 'screenshot-store-color',
             'data-color', color.getHex(),
-            'class', 'container-button screenshot-store-color'],
-      ['span', 'RGB: '], color.getRGB().join(', ') + '\n',
-      ['span', 'HSL: '], color.getHSL().join('%, ').replace('%', '') + '%\n',
-      ['span', 'HEX: '], '#' + color.getHex() + '\n',
+            'class', 'container-button'],
       ['div',
         'class', 'screenshot-sample-color',
-        'style', 'background-color:' + this._sample_color.hhex],
-      'class', 'mono']);
+        'style', 'background-color:' + color.hhex],
+      'class', 'screenshot-sample-color-container']);
   };
 
   this.color_palette = function(color_palette)
@@ -57,6 +61,7 @@
       ['ul',
         color_palette.map(this.color_palette_item, this),
         'handler', 'color-palette-edit-color',
+        'edit-handler', 'color-palette-edit-color',
         'class', 'color-palette mono'],
       ['p',
         ['button',

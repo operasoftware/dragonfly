@@ -1,12 +1,7 @@
 .screenshot canvas
 {
   display: block;
-  cursor: default;
-}
-
-.screenshot canvas:active
-{
-  cursor: move;
+  cursor: crosshair;
 }
 
 .screenshot-overlay
@@ -16,10 +11,25 @@
   left: 0;
 }
 
+.screenshot-max-height
+{
+  position: relative;
+  min-height: 220px;
+  max-height: 320px;
+  height: 100%;
+}
+.screenshot-sample-color-container
+{
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+}
+
 .screenshot-sample-color
 {
-  margin-top: 7px;
   border: 1px solid hsl(0, 0%, 75%);
+  clear: both;
 }
 
 .screenshot-sample-color::before
@@ -30,9 +40,12 @@
   border: 1px solid white;
 }
 
-.screenshot-store-color
+.screenshot-sample-values
 {
   float: right;
+  width: 27ex;
+  margin: 0;
+  padding-bottom: 7px;
 }
 
 .color-palette-sample

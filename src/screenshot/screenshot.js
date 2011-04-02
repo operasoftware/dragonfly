@@ -16,12 +16,21 @@ cls.DragState = function(screenshot, pixelmagnifier)
     this.interval = clearInterval(this.interval);
     this.event = null;
     this._screenshot.update_overlay(event.offsetX, event.offsetY);
-  }.bind(this);
+    this._event_target.style.removeProperty('cursor');
+    this.is_cursor_style_set = false;
+}.bind(this);
 
   this._updateondrag = function()
   {
     if (this.event)
     {
+      if (!this.is_cursor_style_set && (this.dx - this.event.clientX || 
+                                        this.dy - this.event.clientY))
+      {
+        this._event_target = this.event.target;
+        this._event_target.style.cursor = 'move';
+        this.is_cursor_style_set = true;
+      }
       var dx = (this.dx - this.event.clientX) / this._pixelmagnifier.scale;
       var dy = (this.dy - this.event.clientY) / this._pixelmagnifier.scale;
       this._pixelmagnifier.x = Math.round(this.x + dx);
@@ -37,6 +46,7 @@ cls.DragState = function(screenshot, pixelmagnifier)
     this.dy = event.clientY;
     this.x = this._pixelmagnifier.x;
     this.y = this._pixelmagnifier.y;
+    this.is_cursor_style_set = false;
     document.addEventListener('mousemove', this._onmousemove, false);
     document.addEventListener('mouseup', this._onmouseup, false);
     this.interval = setInterval(this._updateondrag, 30);

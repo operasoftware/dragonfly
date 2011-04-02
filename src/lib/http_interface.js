@@ -177,8 +177,11 @@ cls.ScopeHTTPInterface = function(force_stp_0)
   {
     if (_quit_callback)
     {
-      _xhr.onload = null;
-      _xhr.abort();
+      if (_xhr)
+      {
+        _xhr.onload = null;
+        _xhr.abort();
+      }
       _quit_callback();
     }
     _connect_callback = connect_callback;

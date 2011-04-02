@@ -8,12 +8,14 @@ cls.ColorPalette = function()
   */
 
   if (cls.ColorPalette.instance)
+  {
     return cls.ColorPalette.instance;
+  }
 
   cls.ColorPalette.instance = this;
 
   /* interface */
-
+ 
   this.store_color = function(hex){};
   this.delete_color = function(id){};
   this.update_color = function(id, hex){};

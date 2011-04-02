@@ -17,8 +17,11 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
 
   this._onsamplecolor = function(msg)
   {
-    var tmpl = this._sample_color_template(this._sample_color.setRGB(msg.color));
-    this._sample_color_container.clearAndRender(tmpl);
+    if (this._sample_color_container)
+    {
+      var tmpl = this._sample_color_template(this._sample_color.setRGB(msg.color));
+      this._sample_color_container.clearAndRender(tmpl);
+    }
   };
 
 
@@ -28,6 +31,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this.init(id, name, container_class);
     this._screenshot = null;
     this._sample_color = new Color();
+    this._sample_color.setRGB([255, 255, 255]);
     this._sample_color_container = null;
     this._sample_color_template = window.templates.sample_color;
     this._settings = new Settings('screenshot-controls', { 'sample-size': 3, 'color-palette': []});
@@ -83,7 +87,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    container.clearAndRender(window.templates.scrennshot_controls());
+    container.clearAndRender(window.templates.scrennshot_controls(this._sample_color));
     this._scale_control = container.getElementsByTagName('input')[0];
     this._sample_size_control = container.getElementsByTagName('input')[1];
     this._sample_size_control.value = this._settings.get('sample-size');
@@ -95,6 +99,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._scale_control = null;
     this._sample_size_control = null;
     this._sample_color_container = null;
+    UIWindowBase.closeWindow('color-selector');
   }
 
   /* initialisation */
