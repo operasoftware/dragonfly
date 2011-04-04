@@ -243,11 +243,8 @@ TextSearch.prototype = new function()
   this.update = function()
   {
     var new_search_term = this._search_term;
-    if( this._search_term.length >= this._min_term_length )
-    {
-      this._search_term = '';
-      this.search(new_search_term);
-    }
+    this._search_term = '';
+    this.search(new_search_term);
   }
 
   /**

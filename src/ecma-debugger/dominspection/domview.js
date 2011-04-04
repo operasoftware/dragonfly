@@ -39,6 +39,7 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
+      window.messages.post('dom-view-updated', {model: model});
     }
     else
     {
@@ -432,6 +433,16 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  new Search('dom', [Searchbar]);
+  var search = new Search('dom', [Searchbar]);
+
+  window.messages.addListener('dom-view-updated', function(msg)
+  {
+    if (msg.model == window.dominspections.active)
+    {
+      search.update_search();
+    }
+  });
+
+
 
 };

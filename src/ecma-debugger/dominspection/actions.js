@@ -86,6 +86,7 @@ cls.DOMInspectorActions = function(id)
   {
     var tmpl = window.templates.inspected_dom_node(model, target_id, is_editable);
     container.re_render(tmpl);
+    window.messages.post('dom-view-updated', {model: model});
   }
 
   this._select_node = function(target, skip_breadcrumbs_update)

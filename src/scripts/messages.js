@@ -122,6 +122,9 @@
  *     <dt>monospace-font-changed</dt>
  *     <dd>The monospace font has changed.</dd>
  *
+ *     <dt>dom-view-updated</dt>
+ *     <dd>A template inspected_dom_node was rendered. Payload: msg.model, the according DOM model.</dd>
+ *
  * </dl>
  *
  */
