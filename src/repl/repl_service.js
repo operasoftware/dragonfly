@@ -114,8 +114,6 @@ cls.ReplService = function(view, data)
   this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
   {
     const VALUELIST = 2;
-    opera.postError(JSON.stringify(msg, null, "    "))
-
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
                     !is_unpacked &&
                     msg[VALUELIST];
@@ -472,10 +470,12 @@ cls.ReplService = function(view, data)
   {
     var tag = this._tagman.set_callback(null, callback, cbargs);
     var wantdebugging = 1;
+    /* The wantdebugging flag is not behaving as expected, so disabling this for 1.0. See DFL-1736
     if (msg.length == 5)
     {
       msg.push(wantdebugging);
     }
+    */
     this._edservice.requestEval(tag, msg);
   }
 
