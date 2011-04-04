@@ -32,6 +32,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
   var _status_map = null;
   var _type_map = null;
   var _socket = null;
+  var _xhr = null;
 
   var _get_maps = function()
   {
@@ -60,7 +61,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       var message = eval(xhr.responseText);
       _receive_callback(service, message, command, status, tag);
     }
-    _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
+    _xhr = _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
   
   var _receive_dragonkeeper_STP_1_websocket = function(message)
@@ -174,6 +175,15 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   this.scopeAddClient = function(connect_callback, receive_callback, quit_callback, port)
   {
+    if (_quit_callback)
+    {
+      if (_xhr)
+      {
+        _xhr.onload = null;
+        _xhr.abort();
+      }
+      _quit_callback();
+    }
     _connect_callback = connect_callback;
     _receive_callback = receive_callback;
     _quit_callback = quit_callback;

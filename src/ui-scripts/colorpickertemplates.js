@@ -2,7 +2,7 @@
 {
 
   /**
-    * Templates with svg_ prefix are meant to be used as part 
+    * Templates with svg_ prefix are meant to be used as part
     * of an other svg template, e.g. the svg root element must already exist.
     */
   var get_id = (function()
@@ -13,12 +13,12 @@
       return "svg-uid-" + (++id_count);
     };
   })();
-  
+
   this.svg_stop = function(offset, stop_color, stop_opacity)
   {
     return (
-    ['stop', 
-      'offset', offset, 
+    ['stop',
+      'offset', offset,
       'stop-color', stop_color
     ].concat( stop_opacity ? ['stop-opacity', stop_opacity] : [] ));
   };
@@ -38,22 +38,22 @@
   /*
   this.svg_rect = function(x, y, width, height, rx, ry, fill, mask, id)
   {
-    var ret = 
-    ['rect', 
-      'x', x.toString(), 
-      'y', y.toString(), 
-      'width', width.toString(), 
+    var ret =
+    ['rect',
+      'x', x.toString(),
+      'y', y.toString(),
+      'width', width.toString(),
       'height', height.toString()
     ];
-    if (rx) 
+    if (rx)
       ret.push('rx', rx.toString());
-    if (ry) 
+    if (ry)
       ret.push('ry', ry.toString());
-    if (fill) 
+    if (fill)
       ret.push('fill', fill);
-    if (mask) 
+    if (mask)
       ret.push('mask', mask);
-    if (id) 
+    if (id)
       ret.push('id', id);
     return ret;
   };
@@ -61,21 +61,21 @@
   this.svg_liner_mask = function(id, rotate)
   {
     var grad_id = get_id();
-    return ( 
+    return (
     [
       this.svg_liner_gradient(grad_id, ['#fff', '#000'], rotate),
       ['mask',
         this.svg_rect(null, null, 0, 0, '100%', '100%', 0, 0, 'url(#' + grad_id + ')'),
         'maskUnits', 'objectBoundingBox',
-        'x', '0', 
+        'x', '0',
         'y', '0',
-        'width', '100%',  
+        'width', '100%',
         'height', '100%',
         'id', id
       ]
     ]);
   };
-  
+
   this.svg_gradient = function(x, y, width, height, colors, rotate, mask)
   {
     var svg_defs = ['defs'];
@@ -93,19 +93,19 @@
     [
       svg_defs,
       this.svg_rect(null, null,
-                    x, y, width, height, 0, 0, 
-                    colors.length > 1 ? 'url(#' + grad_id + ')' : colors[0], 
+                    x, y, width, height, 0, 0,
+                    colors.length > 1 ? 'url(#' + grad_id + ')' : colors[0],
                     null, null, null,
                     mask ? 'url(#' + mask_id + ')' : false),
-    ]); 
+    ]);
   };
-  
+
   /**
     * To create an svg gradient.
     * @param {Array} colors. An array of css color values.
-    * @param {Boolean} rotate. If turned on, the gradient will be 
+    * @param {Boolean} rotate. If turned on, the gradient will be
     * turned by 90 degrees.
-    * @param  {Boolean} mask. If turned on the gradient will be masked with 
+    * @param  {Boolean} mask. If turned on the gradient will be masked with
     * an alpha gradient 0 - 1, turned by 90 degrees.
     * @param {Number} x. The x position. Defaults to 0.
     * @param {Number} y. The y position. Defaults to 0.
@@ -118,7 +118,7 @@
     y || (y = 0);
     width || (width = '100%');
     height || (height = '100%');
-    
+
     return (
     ['svg:svg',
       this.svg_gradient(x, y, width, height, colors, rotate, mask),
@@ -127,12 +127,12 @@
       'version', '1.1'
     ]);
   };
-  
+
   /**
     * To create an 2d svg gradient, e.g a layer in a rgb color space.
-    * @param {Array} top_colors. An array of css color values 
+    * @param {Array} top_colors. An array of css color values
     * for top-left to top-right.
-    * @param {Array} bottom_colors. An array of css color values 
+    * @param {Array} bottom_colors. An array of css color values
     * for bottom-left to bottom-right.
     * @param {Number} x. The x position. Defaults to 0.
     * @param {Number} y. The y position. Defaults to 0.
@@ -145,7 +145,7 @@
     y || (y = 0);
     width || (width = '100%');
     height || (height = '100%');
-    
+
     return (
     ['svg:svg',
       this.svg_gradient(x, y, width, height, top_colors),
@@ -155,26 +155,26 @@
       'version', '1.1'
     ]);
   };
-  
+
   this.color_picker_inputs = function(z_axis)
-  { 
+  {
 
     const COLORSPACE = 0, Z = 4;
 
-    var 
+    var
     set_checked = function(colorspace)
     {
       if (colorspace[COLORSPACE][Z] == z_axis)
         colorspace.push('checked')
       return colorspace;
     },
-    shv_inputs = 
+    shv_inputs =
     [
       ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
       ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
       ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
     ].map(set_checked),
-    rgb_inputs = 
+    rgb_inputs =
     [
       ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],
       ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
@@ -184,10 +184,10 @@
     [
       [null, 'hex', '#', 'text'],
     ];
-    
+
     return (
-    ['form', 
-      ['table', 
+    ['form',
+      ['table',
         shv_inputs.map(this.color_picker_inputs_row, this),
         ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
         rgb_inputs.map(this.color_picker_inputs_row, this),
@@ -197,36 +197,36 @@
       ]
     ]);
   };
-  
+
   this.color_picker_inputs_row = function(input, index)
   {
-    const 
-    COLOR_SPACE = 0, 
-    METHOD = 1, 
-    LABEL = 2, 
-    TYPE = 3, 
-    UNITS = 4, 
-    MIN = 5, 
+    const
+    COLOR_SPACE = 0,
+    METHOD = 1,
+    LABEL = 2,
+    TYPE = 3,
+    UNITS = 4,
+    MIN = 5,
     MAX = 6,
     CHECKED = 7;
-    
+
     return (
-    ['tr', 
+    ['tr',
       ['td',
-        input[COLOR_SPACE] ? 
-        ['input', 
-          'type', 'radio', 
-          'name', 'color-space', 
+        input[COLOR_SPACE] ?
+        ['input',
+          'type', 'radio',
+          'name', 'color-space',
           'value', input[COLOR_SPACE]
         ].concat(input[CHECKED] ? ['checked', 'checked'] : []) :
         []
       ],
-      ['td', input[LABEL]], 
+      ['td', input[LABEL]],
       ['td',
-        ['input', 
-          'name', input[METHOD], 
+        ['input',
+          'name', input[METHOD],
           'type', input[TYPE],
-          'class', 'color-picker-' + input[TYPE], 
+          'class', 'color-picker-' + input[TYPE],
         ].concat(input[MIN] ? ['min', input[MIN], 'max', input[MAX]] : []),
       ].concat(input[UNITS] ? [] : ['colspan', '2']),
       input[UNITS] ? ['td', input[UNITS]] : []
@@ -243,8 +243,8 @@
                        'width: 10px;'
     ]);
   }
-  
-  this.color_picker_popup = function(existing_color, cp_class, cp_2d_class, 
+
+  this.color_picker_popup = function(existing_color, cp_class, cp_2d_class,
                                      cp_1d_class, cp_old_class, cp_new_class,
                                      z_axis, cp_alpha_class, cp_alpha_bg)
   {
@@ -261,20 +261,21 @@
         'data-handler', 'onz',
         'class', cp_1d_class
       ],
-      window.templates.color_picker_inputs(z_axis), 
-      has_alpha ? 
+      window.templates.color_picker_palette(),
+      window.templates.color_picker_inputs(z_axis),
+      has_alpha ?
       ['svg:svg',
-        this.svg_rect(null, null, 0, 0, 100, 36, 0, 0, "#000"), 
-        ['path', 
+        this.svg_rect(null, null, 0, 0, 100, 36, 0, 0, "#000"),
+        ['path',
           'd', 'M 50 0 l -50 0 l 0 36 l 50 -36 l 50 0 l -50 36 z',
-          'fill', '#fff', 
+          'fill', '#fff',
         ],
         'viewBox', '0 0 100px 36px',
         'version', '1.1',
         'class', 'color-sample-alpha-bg'
       ] : [],
-      ['div', 
-        'class', cp_old_class, 
+      ['div',
+        'class', cp_old_class,
         'data-color', 'cancel',
         'style', 'background-color:' + existing_color.rgba
       ],
@@ -289,46 +290,66 @@
       ['div',
         ['label',
           'alpha: ',
-          ['input', 
-            'name', 'alpha', 
-            'type', 'number', 
-            'min', '0', 
+          ['input',
+            'name', 'alpha',
+            'type', 'number',
+            'min', '0',
             'max', '1',
             'step', '0.01',
-            'class', cp_alpha_bg, 
+            'class', cp_alpha_bg,
           ],
         ],
         'class', 'color-picker-input-alpha'
       ]: [],
       'class', cp_class + (has_alpha ? ' alpha' : '')
     ]);
+  };
+
+  this.color_picker_palette = function()
+  {
+    var palette = cls.ColorPalette.get_instance().get_color_palette();
+    return (
+    ['div',
+      ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT + ':',
+      palette.map(this.color_picker_palette_item, this),
+      'class', 'color-picker-palette']);
+  };
+
+  this.color_picker_palette_item = function(item)
+  {
+    return (
+    ['span',
+      'data-color', item.color,
+      'style', 'background-color:' + '#' + item.color,
+      'class', 'color-picker-palette-item']);
   }
+
 
   this.svg_slider_z = function(rotate)
   {
     return (
     ['svg:svg',
-        ['path', 
-          'd', rotate ? 
+        ['path',
+          'd', rotate ?
                'M 0.5 0.5 l 18 0 l 0 6 l -9 12 l -9 -12 z' :
                'M 0.5 0.5 l 0 18 l 6 0 l 12 -9 l -12 -9 z',
-          'fill', 'hsl(0, 0%, 70%)', 
-          'stroke', '#000', 
+          'fill', 'hsl(0, 0%, 70%)',
+          'stroke', '#000',
           'stroke-width', '1'
         ],
-        ['path', 
+        ['path',
           'd', rotate ?
-               'M 0.5 79.5 l 18 0 l 0 -6 l -9 -12 l -9 12 z' : 
-               'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z', 
-          'fill', 'hsl(0, 0%, 70%)', 
-          'stroke', '#000', 
+               'M 0.5 79.5 l 18 0 l 0 -6 l -9 -12 l -9 12 z' :
+               'M 79.5 0.5 l 0 18 l -6 0 l -12 -9 l 12 -9 z',
+          'fill', 'hsl(0, 0%, 70%)',
+          'stroke', '#000',
           'stroke-width', '1'
         ],
       'viewBox', rotate ? '0 0 20 80' : '0 0 80 20',
       'version', '1.1'
     ]);
   }
-  
+
   this.slider = function(slider_base_class, slider_class, slider_template)
   {
     return (
@@ -343,21 +364,21 @@
 
   this.cubic_bezier = function(cubic_bezier_base_class)
   {
-    const 
-    BORDER = 10, 
+    const
+    BORDER = 10,
     DELTA = 100,
-    ITER = 10, 
+    ITER = 10,
     WIDTH = 2 * DELTA + 100;
 
     return (
     ['div',
       ['svg:svg',
         this.svg_rect(null, null, 10, 10, 300, 300, 0, 0, 'hsl(0, 0%, 98%)', 'hsl(0, 0%, 50%)', 1),
-        this._svg_line(null, null, 
-                       BORDER, BORDER + WIDTH / 2, BORDER + WIDTH, BORDER + WIDTH / 2, 
+        this._svg_line(null, null,
+                       BORDER, BORDER + WIDTH / 2, BORDER + WIDTH, BORDER + WIDTH / 2,
                        'none', 'hsl(0, 0%, 80%)', WIDTH, '1 9', .2),
-        this._svg_line(null, null, 
-                       BORDER + WIDTH / 2, BORDER, BORDER + WIDTH / 2, BORDER + WIDTH, 
+        this._svg_line(null, null,
+                       BORDER + WIDTH / 2, BORDER, BORDER + WIDTH / 2, BORDER + WIDTH,
                        'none', 'hsl(0, 0%, 80%)', WIDTH, '1 9', .2),
         'viewBox', '0 0 320 320',
         'version', '1.1'
@@ -367,7 +388,7 @@
   }
 
   this._reduce_path = function(str, point)
-  { 
+  {
     const X = 0, Y = 1;
     return str + point[X] + ', ' + point[Y] + ' ';
   }
@@ -375,7 +396,7 @@
   this.svg_cubic_bezier = function(p1x, p1y, p2x, p2y, CLASS_P1, CLASS_P2)
   {
     const BORDER = 10, DELTA = 100;
-    var 
+    var
     x0 = BORDER + DELTA,
     y0 = BORDER + DELTA + 100,
     x1 = BORDER + DELTA + 100,
@@ -386,9 +407,9 @@
     p1y = y0 - p1y;
     p2x += x0;
     p2y = y0 - p2y;
-    path = ['M', [[x0, y0]].reduce(this._reduce_path, ' '), 
-            'C', [[p1x, p1y], 
-                  [p2x, p2y], 
+    path = ['M', [[x0, y0]].reduce(this._reduce_path, ' '),
+            'C', [[p1x, p1y],
+                  [p2x, p2y],
                   [x1, y1]].reduce(this._reduce_path, ' ')
            ].join('');
 
@@ -499,20 +520,20 @@
   {
     return (
     ['svg:svg',
-      ['circle', 
-        'cx', '10', 
-        'cy', '10', 
-        'r', '9.5', 
-        'fill', 'none', 
-        'stroke', 
-        'hsl(0, 0%, 20%)', 
+      ['circle',
+        'cx', '10',
+        'cy', '10',
+        'r', '9.5',
+        'fill', 'none',
+        'stroke',
+        'hsl(0, 0%, 20%)',
         'stroke-width', '1'
       ],
       'viewBox', '0 0 20 20',
       'version', '1.1'
     ]);
   }
-  
+
   this.pointer = function(pointer_class)
   {
     return (
@@ -521,5 +542,5 @@
       'class', pointer_class
     ]);
   }
-  
+
 }).apply(window.templates || (window.templates = {}));

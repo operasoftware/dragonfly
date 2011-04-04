@@ -45,11 +45,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.ondestroy = function()
   {
-    this._linelist = null;
-    this._lastupdate = 0;
-    this._backlog_index = -1;
-    this._current_input = this._textarea.value;
-    this._container.removeEventListener("scroll", this._save_scroll_bound, false);
+    if (this._container)
+    {
+      this._linelist = null;
+      this._lastupdate = 0;
+      this._backlog_index = -1;
+      this._current_input = this._textarea.value;
+      this._container.removeEventListener("scroll", this._save_scroll_bound, false);
+    }
   };
 
   this._create_structure = function(container)

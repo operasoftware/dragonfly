@@ -1,4 +1,4 @@
-window.ui_strings || ( window.ui_strings  = {} );
+﻿window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -315,7 +315,7 @@ ui_strings.M_VIEW_SUB_LABEL_METRICS = "Metrics";
 /* DESC: Label for the layout subvie showing offsets of the selected element. */
 ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 
-/* DESC: Label for the layout subview showing the parent node chain used to calculøate the offset. */
+/* DESC: Label for the layout subview showing the parent node chain used to calculate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Missing description! */
@@ -1172,3 +1172,39 @@ ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
 
 /* DESC: Context menu item for breakpoints to delete a condition. */
 ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
+
+/* DESC: View with a screenshot to select a color. */
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = 'Palette';
+
+/* DESC: Context menu item to add a color in the color palette. */
+ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
+
+/* DESC: Context menu item to edit a color in the color palette. */
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
+
+/* DESC: Context menu item to delete a color in the color palette. */
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+
+/* DESC: Setting label to select the zoom level of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
+
+/* DESC: Setting label to select the sample size of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
+
+/* DESC: Button label to update the screenshot */
+ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
+/* DESC: Button label to store the color */
+ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+
+/* DESC: Context menu item for removing a breakpoint. */
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+
+/* DESC: Context menu item for deleting a breakpoint. */
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
