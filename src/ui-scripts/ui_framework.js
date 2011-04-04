@@ -125,6 +125,16 @@ var ui_framework = new function()
       }
     },
     {
+      id: 'test-char-width',
+      target: 'js-source-char-width',
+      getValue: function()
+      {
+        var line = document.getElementById('test-line-height');
+        var chars = line && line.firstElementChild;
+        return chars && chars.getBoundingClientRect().width / 10 || 0;
+      }
+    },
+    {
       id: 'test-scrollbar-width',
       target: 'scrollbar-width',
       getValue: function(){return ( 100 - document.getElementById(this.id).offsetWidth )}
@@ -172,7 +182,7 @@ var ui_framework = new function()
   resolve_map_2.markup = "" +
   "<div> " +
     "<div class='js-source mono'> " +
-      "<div id='test-line-height' class='mono'>test</div> " +
+      "<div id='test-line-height' class='mono'><span>1234567890</span></div> " +
       "<div id='js-source-scroll-content'> " +
         "<div id='js-source-content'> " +
           "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +

@@ -30,6 +30,7 @@
   var onjstoken = function(context, token_type, token)
   {
     var class_name = "";
+    context.test_char_count += token.length;
     switch (token_type)
     {
       case LINETERMINATOR:
@@ -37,6 +38,11 @@
         if (context.online)
         {
           context.online();
+          if (context.test_char_count > context.max_char_count)
+          {
+            context.max_char_count = context.test_char_count;
+          }
+          context.test_char_count = 0;
         }
         break;
       }
@@ -126,7 +132,9 @@
     {
       template: context || ["pre"],
       text: "",
-      online: online
+      online: online,
+      test_char_count: 0,
+      max_char_count: 0
     };
     // the js implementation of bind causes a noticable overhead here
     // when we get a native implementation we can adjust the code
@@ -137,6 +145,16 @@
     if (context.text)
     {
       context.template.push(context.text);
+    }
+    // Opera cannot handle elements properly with a width over 32767px.
+    if (context.test_char_count > context.max_char_count)
+    {
+      context.max_char_count = context.test_char_count;
+    }
+    if (window.defaults['js-source-char-width'] && 
+        context.max_char_count * window.defaults['js-source-char-width'] > 32000)
+    {
+      context.template.push('style', 'white-space:pre-wrap; width: 32000px');
     }
     return context.template;
   };
