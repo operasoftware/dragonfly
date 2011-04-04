@@ -1179,6 +1179,9 @@ ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
 /* DESC: View of the palette of the stored colors. */
 ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
 
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = 'Palette';
+
 /* DESC: Context menu item to add a color in the color palette. */
 ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
 

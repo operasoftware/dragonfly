@@ -69,7 +69,7 @@ PixelMagnifier.prototype = new function()
   this.__defineSetter__('x', function(x)
   {
     this._src_area.x = x;
-    this._check_position();
+    this._check_src_area_position();
   });
 
   this.__defineGetter__('x', function()
@@ -80,7 +80,7 @@ PixelMagnifier.prototype = new function()
   this.__defineSetter__('y', function(y)
   {
     this._src_area.y = y;
-    this._check_position();
+    this._check_src_area_position();
   });
 
   this.__defineGetter__('y', function()
@@ -88,7 +88,7 @@ PixelMagnifier.prototype = new function()
     return this._src_area.y;
   });
 
-  this._check_dimesions = function()
+  this._check_src_area_dimesions = function()
   {
     if (this._src_area.width > this._src_area.max_width)
     {
@@ -100,7 +100,7 @@ PixelMagnifier.prototype = new function()
     }
   };
 
-  this._check_position = function()
+  this._check_src_area_position = function()
   {
     if (this._src_area.x < 0)
     {
@@ -130,8 +130,8 @@ PixelMagnifier.prototype = new function()
     this._src_area.width = this.width;
     this._src_area.height = this.height;
     this._scale = 1;
-    this._check_dimesions();
-    this._check_position();
+    this._check_src_area_dimesions();
+    this._check_src_area_position();
     if (event && this.onload)
     {
       this.onload(event);
@@ -176,10 +176,10 @@ PixelMagnifier.prototype = new function()
     }
     this._src_area.width = Math.round(this._target_area.width / scale);
     this._src_area.height = Math.round(this._target_area.height / scale);
-    this._check_dimesions();
+    this._check_src_area_dimesions();
     this._src_area.x = Math.round(this._src_area.x + (x / this._scale - x / scale));
     this._src_area.y = Math.round(this._src_area.y + (y / this._scale - y / scale));
-    this._check_position();
+    this._check_src_area_position();
     this._src_canvas.width = this._src_area.width;
     this._src_canvas.height = this._src_area.height;
     this._scale = scale;

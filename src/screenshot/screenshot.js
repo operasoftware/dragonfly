@@ -16,7 +16,10 @@ cls.DragState = function(screenshot, pixelmagnifier)
     this.interval = clearInterval(this.interval);
     this.event = null;
     this._screenshot.update_overlay(event.offsetX, event.offsetY);
-    this._event_target.style.removeProperty('cursor');
+    if (this._event_target)
+    {
+      this._event_target.style.removeProperty('cursor');
+    }
     this.is_cursor_style_set = false;
 }.bind(this);
 
