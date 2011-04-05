@@ -3,7 +3,7 @@
 /**
   * @constructor
   */
-cls.Breakpoint = function(id, script_id, line_nr, event_type)
+cls.Breakpoint = function(id, script_id, line_nr, event_type, active_rt_ids)
 {
   this.id = id;
   this.script_id = script_id || "";
@@ -12,7 +12,29 @@ cls.Breakpoint = function(id, script_id, line_nr, event_type)
   this.type = this.script_id ? "source" : "event";
   this.is_enabled = true;
   this.condition = "";
+  this.update_is_active(active_rt_ids);
 };
+
+cls.Breakpoint.prototype = new function()
+{
+  this._is_active = true;
+
+  this.__defineGetter__('is_active', function()
+  {
+    return this._is_active;
+  });
+
+  this.__defineSetter__('is_active', function(){});
+
+  this.update_is_active = function(active_rt_ids)
+  {
+    if (this.script_id)
+    {
+      var rt_id = window.runtimes.getScriptsRuntimeId(this.script_id);
+      this._is_active = active_rt_ids.indexOf(rt_id) != -1;
+    }
+  }
+}
 
 /**
   * @constructor
@@ -30,6 +52,7 @@ cls.Breakpoints = function()
   /* interface */
 
   this.get_breakpoints = function(){};
+  this.get_active_breakpoints = function(){};
   this.get_breakpoint_with_id = function(bp_id){};
   this.script_has_breakpoint_on_line = function(script_id, line_nr){};
   this.get_breakpoint_on_script_line = function(script_id, line_nr){};
@@ -71,7 +94,11 @@ cls.Breakpoints = function()
     }
     else
     {
-      this._bps.push(new this._bp_class(bp_id, script_id, line_nr, event_type));
+      this._bps.push(new this._bp_class(bp_id, 
+                                        script_id, 
+                                        line_nr, 
+                                        event_type,
+                                        this._active_rt_ids));
     }
     window.messages.post("breakpoint-updated",
                          {id: bp_id, script_id: script_id});
@@ -137,6 +164,7 @@ cls.Breakpoints = function()
       if (bp.script_id == old_script_id)
       {
         bp.script_id = new_script_id;
+        bp.update_is_active(this._active_rt_ids);
       }
     }
   };
@@ -147,11 +175,23 @@ cls.Breakpoints = function()
     return i;
   };
 
+  this._on_active_tab = function(msg)
+  {
+    this._active_rt_ids = msg.activeTab;
+    this._bps.forEach(function(bp)
+    {
+      bp.update_is_active(this._active_rt_ids);
+    }, this);
+    window.views.breakpoints.update();
+  };
+
   this._init = function()
   {
     this._bps = [];
     this._bp_class = window.cls.Breakpoint;
     this._esdb = window.services['ecmascript-debugger'];
+    this._active_rt_ids = [];
+    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   };
 
   /* implementation */
@@ -159,6 +199,14 @@ cls.Breakpoints = function()
   this.get_breakpoints = function()
   {
     return this._bps;
+  };
+
+  this.get_active_breakpoints = function()
+  {
+    return this._bps.filter(function(bp)
+    {
+      return bp.is_active;
+    });
   };
 
   this.get_breakpoint_with_id = function(bp_id)
