@@ -319,7 +319,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     if (this._data_runtime_id == rt_id)
     {
       for ( ; (node = this._data[i]) && obj_id != node[ID]; i++);
-      if (node && node[TYPE] == 1) // don't update the dom if it's only a text node
+      if (node)
       {
         level = node[DEPTH];
         j = i + 1 ;
