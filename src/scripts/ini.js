@@ -225,6 +225,8 @@
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
           "enter": "highlight-next-match",
+          "f3": "highlight-next-match",
+          "shift f3": "highlight-previous-match",
           // "cmd g": "highlight-next-match", // seems it can't be stolen from Opera
           "shift enter": "highlight-previous-match",
           // "cmd shift g": "highlight-previous-match",
@@ -232,7 +234,6 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "f3": "show-search"
         }
       },
       "dom":
