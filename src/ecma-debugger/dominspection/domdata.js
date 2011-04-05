@@ -390,6 +390,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
     if (obj_id)
     {
+      this.breadcrumbhead = null;
+      this.breadcrumb_offsets = null;
       this.target = obj_id;
       window.dominspections.active = this;
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});

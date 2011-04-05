@@ -542,7 +542,6 @@ MODE ::= "<mode>"
           'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
                    (css_path[i].id == target_id ? ' active' : ''),
         ];
-        //ret[ret.length] = css_path[i].combinator;
       }
     }
     return ret;

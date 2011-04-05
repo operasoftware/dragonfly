@@ -530,6 +530,11 @@
     var model = window.dominspections.active, ret = [];
     if (model)
     {
+      if (model.breadcrumbhead && !model.has_node(model.breadcrumbhead))
+      {
+        model.breadcrumbhead = null;
+        model.breadcrumb_offsets = null;
+      }
       var target_is_head = !model.breadcrumbhead || 
                            model.breadcrumbhead == model.target;
       if (target_is_head)
