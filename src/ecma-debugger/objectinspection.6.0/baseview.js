@@ -20,6 +20,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
     }
     else
     {
+      this._create_view_bound = null;
       container.clearAndRender(this._tmpl_no_content());
     }
   };
