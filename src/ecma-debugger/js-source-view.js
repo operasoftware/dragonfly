@@ -860,12 +860,10 @@ cls.GoToLine = function(js_source_view)
     var script_id = this._js_source_view.getCurrentScriptId();
     if (script_id && value.isdigit())
     {
-      if (this._js_source_view.showLine(script_id, parseInt(value)))
-      {
-        // workaround to reset the focus to the js source view
-        // needs a proper design
-        this._js_source_view.get_container().dispatchMouseEvent('click');
-      }
+      this._js_source_view.show_and_flash_line(script_id, parseInt(value));
+      // workaround to reset the focus to the js source view
+      // needs a proper design
+      this._js_source_view.get_container().dispatchMouseEvent('click');
     }
   }.bind(this);
 
