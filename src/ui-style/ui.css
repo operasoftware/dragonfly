@@ -265,25 +265,25 @@ cst-icon[class="debugger-menu"] {
 
 /* Top tabs */
 .dom_mode {
-    background: url("../ui-images/documents_attached.png");
+    background: url("../ui-images/mode_documents.png");
 }
 .js_mode {
-    background: url("../ui-images/scripts_attached.png");
+    background: url("../ui-images/mode_scripts.png");
 }
 .network_mode {
-    background: url("../ui-images/network_attached.png");
+    background: url("../ui-images/mode_network.png");
 }
 .resource_panel {
-    background: url("../ui-images/resources_attached.png");
+    background: url("../ui-images/mode_resources.png");
 }
 .storage {
-    background: url("../ui-images/storage_attached.png");
+    background: url("../ui-images/mode_storage.png");
 }
 .console_mode {
-    background: url("../ui-images/errorlog_attached.png");
+    background: url("../ui-images/mode_errors.png");
 }
 .utils {
-    background: url("../ui-images/utilities_attached.png");
+    background: url("../ui-images/mode_utilities.png");
 }
 
 button.ui-control::before {
