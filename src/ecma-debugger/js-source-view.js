@@ -913,7 +913,7 @@ cls.ScriptSelect = function(id, class_name)
       }
     }
     else if(runtimes.getSelectedRuntimeId() &&
-              runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
+            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
     {
       return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
     }
