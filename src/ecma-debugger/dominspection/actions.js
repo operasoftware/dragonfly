@@ -600,9 +600,6 @@ cls.DOMInspectorActions = function(id)
                        !nav_target && this.getFirstTarget();
       this.setSelected(new_target, true);
     }
-    this.setSelected(nav_target.getPreviousWithFilter(view_container,
-                                                      nav_filters.left_right),
-                     true);
     return true;
   }.bind(this);
 
