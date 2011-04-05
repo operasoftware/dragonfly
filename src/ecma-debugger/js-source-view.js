@@ -893,11 +893,11 @@ cls.ScriptSelect = function(id, class_name)
 
   this.getSelectedOptionText = function()
   {
-    var selected_script_id = runtimes.getSelectedScript();
-    if( selected_script_id )
+    selected_script_id = runtimes.getSelectedScript();
+    if (selected_script_id)
     {
       var script = runtimes.getScript(selected_script_id);
-      if( script )
+      if (script)
       {
         var display_uri = helpers.shortenURI(script.uri);
         var script_type = script.script_type.capitalize(true);
