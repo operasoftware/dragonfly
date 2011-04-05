@@ -54,12 +54,6 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     window.runtime_onload_handler = new cls.RuntimeOnloadHandler();
 
-    /* temporary export view */
-    window.export_data = new cls.ExportData();
-    new cls.ExportDataView('export_data', 
-                           ui_strings.M_VIEW_LABEL_EXPORT, 
-                           'scroll export-data');
-
     /* commandline */
     cls.CommandLineView.prototype = ViewBase;
     new cls.CommandLineView('command_line', 
