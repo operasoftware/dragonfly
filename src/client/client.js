@@ -435,8 +435,10 @@ window.cls.Client = function()
     setTimeout(function(){
       open_windows.forEach(function(view_id){UIWindowBase.showWindow(view_id)});
     }, 250);
-    UI.get_instance().show_view(last_selected_view);
-
+    if (last_selected_view)
+    {
+      UI.get_instance().show_view(last_selected_view);
+    }
   }
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
