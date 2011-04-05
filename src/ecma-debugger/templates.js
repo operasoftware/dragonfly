@@ -247,7 +247,7 @@
     var ret = 
     [
       'cst-option',
-      ["span", (script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
+      ["span", (script.script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
