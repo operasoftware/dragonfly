@@ -114,7 +114,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           {
             this._get_initial_view(this._data_runtime_id);
           }
-          else if (this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
+          else if (this._element_selected_state != CHECKED && 
+                   this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
           {
             this._get_selected_element(this._data_runtime_id);
           }
