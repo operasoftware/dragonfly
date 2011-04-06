@@ -114,8 +114,8 @@ toolbar-buttons, toolbar-switches {
   height: 100%;
 }
 
-button[handler="reload-window"] {
-    content: url("../ui-images/icons/icon_reload.png");
+button[handler="reload-window"]::before {
+    background-image: url("../ui-images/icons/icon_reload.png");
 }
 /* Window control buttons */
 #toggle-console::before {
@@ -286,11 +286,19 @@ cst-icon[class="debugger-menu"] {
     background: url("../ui-images/mode_utilities.png");
 }
 
-button.ui-control::before {
+button.ui-control::before,
+.container-button:empty::before {
     content: "";
     display: block;
     height: 17px;
     width: 17px;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+
+.container-button:empty::before {
+    height: 18px;
+    width: 18px;
 }
 
 .ui-control

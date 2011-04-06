@@ -128,7 +128,7 @@ templates.network_log_request_detail = function(ctx, selected)
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["button", "X", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
+    ["button", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],

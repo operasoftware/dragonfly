@@ -693,6 +693,8 @@ breadcrumb span
   border-width: 1px 0;
   background-color: #e6e6e6;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 1em;
 }
 .script-options h2.selected-runtime, .stylesheet-options h2.selected-runtime {

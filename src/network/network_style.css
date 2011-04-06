@@ -141,9 +141,9 @@
 
 /* Network log / Detail view */
 
-.close-request-detail
+.close-request-detail::before
 {
-  content: url("../ui-images/icons/icon_button_back.png");
+  background-image: url("../ui-images/icons/icon_button_back.png");
 }
 
 .network-details-url-list {
