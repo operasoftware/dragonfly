@@ -30,14 +30,27 @@
 {
   border: 1px solid hsl(0, 0%, 75%);
   clear: both;
+  position: relative;
+}
+
+.screenshot-sample-color canvas
+{
+  width: 65px;
+  height: 65px;
+  background-color: hsl(0, 0%, 75%);
+  display: block;
+  position: absolute;
+  left: 1px;
+  top: 1px;
 }
 
 .screenshot-sample-color::before
 {
   content: "";
   display: block;
-  height: 50px;
+  height: 65px;
   border: 1px solid white;
+  border-left-width: 67px;
 }
 
 .screenshot-sample-values

@@ -273,7 +273,7 @@ PixelMagnifier.prototype = new function()
     }
   };
 
-  this.get_average_color = function(x, y, sample_size)
+  this._get_image_data_of_area = function(x, y, sample_size)
   {
     x -= x % this._scale;
     y -= y % this._scale;
@@ -282,7 +282,32 @@ PixelMagnifier.prototype = new function()
     x -= (sample_size - 1) / 2;
     y -= (sample_size - 1) / 2;
     var src = this._scale == 1 ? this._ctx_target : this._ctx_src;
-    var image_data = src.getImageData(x, y, sample_size, sample_size);
+    return src.getImageData(x, y, sample_size, sample_size);
+  }
+
+  this.get_colors_of_area = function(x, y, sample_size)
+  {
+    var image_data = this._get_image_data_of_area(x, y, sample_size);
+    var color = [];
+    var ret = [];
+    Array.prototype.forEach.call(image_data.data, function(octet, index)
+    {
+      if (!((index + 1) % 4))
+      {
+        ret.push(color);
+        color = [];
+      }
+      else
+      {
+        color.push(octet);
+      }
+    });
+    return ret;
+  };
+
+  this.get_average_color = function(x, y, sample_size)
+  {
+    var image_data = this._get_image_data_of_area(x, y, sample_size);
     return Array.prototype.reduce.call(image_data.data, function(rgba, octet, index)
     {
       rgba[index % 4] += octet;
