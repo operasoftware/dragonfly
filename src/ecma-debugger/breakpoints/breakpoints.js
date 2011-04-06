@@ -138,7 +138,10 @@ cls.Breakpoints = function()
       }
       else
       {
+        var state = script.breakpoint_states[bp.line_nr] || 0;
+        var pointer_state = state % 3;
         script.breakpoint_states[bp.line_nr] = absolute;
+        script.breakpoint_states[bp.line_nr] += pointer_state;
       }
     }
     window.messages.post('breakpoint-updated',
@@ -226,7 +229,10 @@ cls.Breakpoints = function()
               this._get_bp_id_with_script_id_and_line_nr(script_id, line_nr) ||
               this._get_bp_id();
       script.breakpoints[line_nr] = bp_id;
-      if (!script.breakpoint_states[line_nr])
+      var state = script.breakpoint_states[line_nr] || 0;
+      var pointer_state = state % 3;
+      state -= pointer_state;
+      if (!state)
       {
         script.breakpoint_states[line_nr] = BP_DISABLED;
       }
@@ -234,6 +240,7 @@ cls.Breakpoints = function()
       {
         script.breakpoint_states[line_nr] += BP_DELTA_ENABLE;
       }
+      script.breakpoint_states[line_nr] += pointer_state;
       // message signature has changes with version 6.0
       // AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint
@@ -257,10 +264,14 @@ cls.Breakpoints = function()
       var bp_id = script.breakpoints[line_nr];
       this._esdb.requestRemoveBreakpoint(0, [bp_id]);
       script.breakpoints[line_nr] = 0;
-      if (script.breakpoint_states[line_nr] >= BP_ENABLED)
+      var state = script.breakpoint_states[line_nr] || 0;
+      var pointer_state = state % 3;
+      state -= pointer_state;
+      if (state >= BP_ENABLED)
       {
-        script.breakpoint_states[line_nr] -= BP_DELTA_ENABLE;
+        script.breakpoint_states[line_nr] = state - BP_DELTA_ENABLE;
       }
+      script.breakpoint_states[line_nr] += pointer_state;
       this._remove_bp(bp_id);
       return bp_id;
     }
