@@ -202,15 +202,24 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       var fn_name = '', line = '', script_id = '', argument_id = '', scope_id = '';
       var _frames_length = _frames.length;
       var is_all_frames = _frames_length <= ini.max_frames;
+      var line_number = 0;
       callstack = [];
       for( ; frame  = _frames[i]; i++ )
       {
+        line_number = frame[LINE_NUMBER];
+        // workaround for CORE-37771 and CORE-37798 
+        // line number of the top frame is sometime off by one or two lines
+        if (!i && typeof stop_at.line_number == 'number' && 
+            Math.abs(line_number - stop_at.line_number) < 3)
+        {
+          line_number = stop_at.line_number;
+        } 
         callstack[i] =
         {
           fn_name : is_all_frames && i == _frames_length - 1
                     ? 'global scope'
                     : frame[OBJECT_VALUE][NAME] || 'anonymous',
-          line : frame[LINE_NUMBER],
+          line : line_number,
           script_id : frame[SCRIPT_ID],
           argument_id : frame[ARGUMENT_OBJECT],
           scope_id : frame[VARIABLE_OBJECT],
