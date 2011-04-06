@@ -541,11 +541,12 @@
         ['h2', ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS],
         ['parent-node-chain', 
           target_is_head ?
-          this.breadcrumb(model, model.target, offsets_values[0]) :
+          this.breadcrumb(model, model.target, offsets_values[0], null, true) :
           this.breadcrumb(model, model.breadcrumbhead, 
-                          model.breadcrumb_offsets, model.target),
+                          model.breadcrumb_offsets, model.target, true),
           'onmouseover', helpers.breadcrumbSpotlight, 
-          'onmouseout', helpers.breadcrumbClearSpotlight
+          'onmouseout', helpers.breadcrumbClearSpotlight,
+          'class', 'mono'
         ],
         ['h2', ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES],
         ['offsets', offsets_values.map(this._offsets)]

@@ -520,7 +520,7 @@ MODE ::= "<mode>"
     return self['cst-select'](ui_obj.script_select);
   }
 
-  this.breadcrumb = function(model, obj_id, parent_node_chain, target_id)
+  this.breadcrumb = function(model, obj_id, parent_node_chain, target_id, show_combinator)
   {
     var setting = window.settings.dom;
     var css_path = model._get_css_path(obj_id, parent_node_chain,
@@ -542,7 +542,10 @@ MODE ::= "<mode>"
           'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
                    (css_path[i].id == target_id ? ' active' : ''),
         ];
-        //ret[ret.length] = css_path[i].combinator;
+        if (show_combinator)
+        {
+          ret[ret.length] = " " + css_path[i].combinator + " ";
+        }
       }
     }
     return ret;

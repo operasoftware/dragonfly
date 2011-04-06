@@ -733,7 +733,7 @@ breadcrumb span
   background-position: 5px 50%;
 }
 
-.css-layout breadcrumb span
+parent-node-chain breadcrumb span
 {
   padding: 0 .2em;
   margin: 0 .2em;
@@ -743,13 +743,28 @@ breadcrumb span
 
 parent-node-chain breadcrumb {
     color: rgba(0, 0, 0, .5);
-}
-breadcrumb.parent-offset
-{
-  color: #000;
+    background: none;
+    padding: 0;
+    cursor: pointer;
 }
 
-breadcrumb span:hover, .css-layout breadcrumb span:hover
+parent-node-chain breadcrumb::before, parent-node-chain breadcrumb::after {
+    background: none !important;
+}
+
+parent-node-chain breadcrumb.parent-offset
+{
+    color: #000;
+    font-weight: bold;
+}
+
+parent-node-chain breadcrumb.active
+{
+    color: #204d80;
+    font-weight: bold;
+}
+
+parent-node-chain breadcrumb span:hover, .css-layout parent-node-chain breadcrumb span:hover
 {
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);
