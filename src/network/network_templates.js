@@ -131,19 +131,21 @@ templates.network_log_request_detail = function(ctx, selected)
     ["button", "X", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", String(responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.responsecode
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network ? "" + req.duration + "ms" : "0"]],
      "class", "resource-detail"
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-    templates.response_details(req),
+    req.touched_network ? [
+      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+      templates.response_details(req),
+    ] : [],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
     ],
@@ -155,7 +157,8 @@ templates.network_log_request_detail = function(ctx, selected)
 
 templates.request_details = function(req)
 {
-  if (!req.request_headers) { return [] }
+  if (!req.touched_network) { return ["p","asdf" + ui_strings.S_NETWORK_SERVED_FROM_CACHE] }
+  if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
   var firstline = req.request_raw.split("\n")[0];
   var parts = firstline.split(" ");
   if (parts.length == 3)
@@ -171,7 +174,7 @@ templates.request_details = function(req)
 
 templates.response_details = function(req)
 {
-  if (!req.response_headers) { return [] }
+  if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
   var firstline = req.response_raw.split("\n")[0];
   var parts = firstline.split(" ", 2)
   if (parts.length == 2)
@@ -284,9 +287,9 @@ templates.network_log_url_list = function(ctx, selected)
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", String(res.responsecode || "-"),
+            ["span", res.touched_network ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
              "class", "log-url-list-status " + statusclass,
-             "title", String(statusstring || "-")
+             "title", String(statusstring || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
              ],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),

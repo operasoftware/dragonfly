@@ -164,7 +164,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_setting_change_bound = function(msg)
   {
-    if (msg.id == "network_logger") { this.update(); }
+    if (msg.id == "network_logger")
+    {
+      this.ondestroy(); // saves scroll pos
+      this.update();
+    }
   }.bind(this);
 
   this._on_scroll_bound = function(evt)
