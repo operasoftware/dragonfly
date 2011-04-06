@@ -371,7 +371,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           var msg = [stopAt.runtime_id, 
                      stopAt.thread_id, 
                      0, 
-                     condition, 
+                     "Boolean(" + condition + ")", 
                      [['dummy', 0]]];
           services['ecmascript-debugger'].requestEval(tag, msg);
         }
