@@ -151,8 +151,18 @@ cls.MarkupResourceDetail = function(res, service)
 
   this.init(res, service);
 }
-
 cls.MarkupResourceDetail.prototype = new cls.ResourceDetailBase();
+
+cls.CSSResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.css_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.CSSResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
 
@@ -198,6 +208,21 @@ window.templates.markup_resource_view = function(resource, resourcedata)
       source,
       ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
       'class', 'resource-detail-container mono line-numbered-resource markup-resource-content'
+    ])
+}
+window.templates.css_resource_view = function(resource, resourcedata)
+{
+  var line_count = 1;
+  var lines = [line_count++];
+  var source = this.highlight_css(resourcedata, function()
+  {
+    lines.push(line_count++);
+  });
+  return (
+    ['div',
+      source,
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
+      'class', 'resource-detail-container mono line-numbered-resource css-resource-content'
     ])
 }
 

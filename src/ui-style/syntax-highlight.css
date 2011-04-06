@@ -131,7 +131,7 @@ selector {
     color: #55a;
 }
 
-css-property-value,
+.css-property-value,
 .css-inspector value { /* Use class */
     color: #111;
 }

@@ -96,7 +96,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       font: cls.FontResourceDetail,
       script: cls.JSResourceDetail,
       markup: cls.MarkupResourceDetail,
-      css: cls.TextResourceDetail,
+      css: cls.CSSResourceDetail,
+      text: cls.TextResourceDetail
     }
     var viewclass = viewclasses[type] || cls.GenericResourceDetail;
     var view = new viewclass(resource, this._service);
