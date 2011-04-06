@@ -777,7 +777,7 @@ cls.JsSourceView = function(id, name, container_class)
                            */
   this._scroll_lines = function(lines, event, target)
   {
-    if (__current_script)
+    if (__current_script && __current_script.line_arr)
     {
       var target_line = Math.max(1, Math.min(__current_line + lines,
                                              __current_script.line_arr.length + 1));
