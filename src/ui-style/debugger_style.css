@@ -106,6 +106,9 @@ ul {
   padding-left: 20px;
   background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   }
 
 #backtrace-container li:first-child {

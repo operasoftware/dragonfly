@@ -345,9 +345,9 @@
   this.frame = function(frame, is_top)
   {
     // Fall back to document URI if it's inline
-    var uri = (frame.script_id && runtimes.getScript(frame.script_id)
-            ? runtimes.getScript(frame.script_id).uri
-            : runtimes.getRuntime(frame.rt_id).uri) || null;
+    var uri = frame.script_id && runtimes.getScript(frame.script_id)
+            ? (runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri)
+            : null;
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
              ['span',
