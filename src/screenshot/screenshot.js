@@ -133,6 +133,10 @@ cls.ScreenShotView = function(id, name, container_class)
   this._on_active_tab = function(msg)
   {
     this._top_rt_id = msg.runtimes_with_dom[0];
+    if (this.isvisible())
+    {
+      this._get_window_size();
+    }
   };
 
   /* action handler interface */

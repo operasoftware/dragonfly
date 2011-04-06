@@ -122,19 +122,23 @@ PixelMagnifier.prototype = new function()
 
   this._onsrcload = function(event)
   {
-    if (this._src)
+    if (this._src.src && this._src.width && this._src.height)
     {
-      this._src_area.max_width = this._src.width;
-      this._src_area.max_height = this._src.height;
-    }
-    this._src_area.width = this.width;
-    this._src_area.height = this.height;
-    this._scale = 1;
-    this._check_src_area_dimesions();
-    this._check_src_area_position();
-    if (event && this.onload)
-    {
-      this.onload(event);
+      if (this._src)
+      {
+        this._src_area.max_width = this._src.width;
+        this._src_area.max_height = this._src.height;
+      }
+      this._src_area.width = this.width;
+      this._src_area.height = this.height;
+      this._scale = 1;
+      this._check_src_area_dimesions();
+      this._check_src_area_position();
+      this._has_source = true;
+      if (event && this.onload)
+      {
+        this.onload(event);
+      }
     }
   };
 
@@ -149,6 +153,7 @@ PixelMagnifier.prototype = new function()
     this._src_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
     this._target_area = {x:0, y: 0, width: 0, height: 0, max_width: 0, max_height: 0};
     this._scale = 1;
+    this._has_source = false;
   };
 
   /* implementation */
@@ -187,7 +192,7 @@ PixelMagnifier.prototype = new function()
 
   this.draw = function()
   {
-    if (!this._target_canvas)
+    if (!(this._target_canvas && this._has_source))
     {
       return
     }
