@@ -2445,3 +2445,163 @@ desc:
   - Verify that the badge gets hidden when pressing Clear log in the Errors Tab
   - Verify that the error count starts on 0 next time
 
+
+Resource view
+*************
+
+label: Smoke test
+desc:
+  - Load a page
+  - Open dragonfly
+  - Verify that nothing is shown in the resource tab, except a prompt and a button to reload
+  - Click the button
+  - Verify that the page in the opera instance being debugged is loaded
+
+label: requests that didn't result in a resource are disregarded
+desc:
+  - Open dragonfly
+  - Load http://www.ikke.no
+  - Verify that the resource view shows a single html document. There must be no favicon.ico in the resource list
+
+label: Request type detection
+desc:
+  - Open a web site
+  - Verify that all the image files on the page have the correct icon and type in the resource view
+
+label: Mime to type mapping
+desc:
+  - Open a page
+  - Enable showing mime types in resource view. Right click table, select "mime types"
+  - Verify that the mime type and type columns match
+
+label: Grouping
+desc:
+  - Open a page
+  - Group by host by selecting it from the menu on right clicking the table.
+  - Verify that the resources are sorted by the host they were loaded from
+  - Group by type by selecting it from the menu on right clicking the table.
+  - Verify that the resources are sorted by the file type
+
+label: Sorting
+desc:
+  - Open a page
+  - Sort the resources by clicking one of the column headers
+  - Verify that the resource is sorted by the selected column
+  - Sort the resources by using the righ click menu on the table
+  - Verify that the resource is sorted by the selected column
+
+label: Detail view generic
+desc:
+  - click on a resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the url shown at the top of the detail view is correct
+  - verify that the metadata can be shown by clicking the arrow
+  - verify that the metadata can be collapsed by clicking the arrow again
+
+label: Image detail view
+desc: 
+  - load a page that contains an image
+  - click the image in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the image is shown in the temporary tab
+  - verify that closing the temporary tab returns to the resource list
+
+label: Markup detail view
+desc: 
+  - load a page
+  - click the html resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the html source for the resource is shown and syntax higlighted
+  - verify that closing the temporary tab returns to the resource list
+
+label: Javascript detail view
+desc: 
+  - load a page that contains a javascriptfile
+  - click the javascript resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the javascript source for the resource is shown and syntax higlighted
+  - verify that closing the temporary tab returns to the resource list
+
+
+Network view log
+****************
+
+label: Smoke test
+desc:
+  - Load a page
+  - open dragonfly
+  - verify that there are no network resources listed in the network tab, only a prompt and button for reloading debugged page
+  - click button
+  - verify that the debugged page reloads and that a graph of the network  activity is shown
+
+label: Fit to width
+desc:
+  - Load a page that takes several seconds to load
+  - Verify that there is a horizontal scrollbar for the network graph
+  - Verify that clicking the fit to width button scales the graph to the available screen width
+  - Verify that clicking the fit to width button again reverts to the previous state
+
+label: Pause
+desc:
+  - Load a page
+  - click the pause button
+  - reload the debugged page
+  - verify that the network graph is not updated
+  - click the pause button
+  - verify that the network graph is updated
+
+label: Request list hover sync
+  - Load a page
+  - Hover a url on the left hand side of the graph view
+  - Verify at the url, and the graph bar are higlighted when hovered.
+  - Hover the graph part of a request.
+  - Verify that the url and the graph bar are higlighted
+
+label: Request details
+desc:
+  - Load a page
+  - Click a request
+  - Verify that the details view is shown
+
+
+Network request crafter
+***********************
+
+label: Default request
+desc:
+  - Open "make request" tab in the network view
+  - Verify that it contains an example request
+  - click send request
+  - verify that the request is sent and that a response is shown in the response text area
+
+label: syncing url field to request body
+desc:
+  - type a url in the url field
+  - verify that the first line of the request body text area matches the path and protocol you typed
+  - verify that the second line of the request body text area matches host you typed
+
+
+Network options
+***************
+
+label: Caching
+desc:
+  - load a page
+  - open "network options" tab
+  - Check the "disable all caching" box
+  - reload the page
+  - verify in the network log view that none of the loaded pages were loaded from cache
+  - uncheck the "disable all caching" box.
+  - reload the page
+  - reload the page again
+  - verify that some resources were loaded from cache.
+
+label: Content tracking
+desc:
+  - Open "network options" tab.
+  - Check the "enable global overrides" box
+  - Load a page
+  - In the network log view, look at the details for all resources
+  - Verify that the body section of the request detail view contains the response body.
+
+
