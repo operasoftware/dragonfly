@@ -140,9 +140,11 @@ cls.Breakpoints = function()
       {
         script.breakpoint_states[bp.line_nr] = absolute;
       }
-      window.messages.post('breakpoint-updated',
-                           {id: bp.id, script_id: bp.script_id});
     }
+    window.messages.post('breakpoint-updated',
+                         {id: bp.id, 
+                          script_id: bp.script_id,
+                          event_type: bp.event_type});
   };
 
   this._get_bp_id_with_event_name = function(event_name)

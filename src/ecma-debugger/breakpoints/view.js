@@ -152,11 +152,11 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._delete_bp = function(bp)
   {
-    this._bps.delete_breakpoint(bp.id);
     if (bp.is_enabled)
     {
       this._toggle_bp(bp, false);
     }
+    this._bps.delete_breakpoint(bp.id);
   };
 
   /* rightclick menu */
