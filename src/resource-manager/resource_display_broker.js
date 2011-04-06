@@ -5,7 +5,7 @@ cls.ResourceDisplayBroker = function()
   if (cls.ResourceDisplayBroker.instance)
   {
     return cls.ResourceDisplayBroker.instance;
-  } 
+  }
   cls.ResourceDisplayBroker.instance = this;
 
   this.show_resource_for_id = function(id)
@@ -24,17 +24,22 @@ cls.ResourceDisplayBroker = function()
       var view = window.views.resource_all;
       view.show_resource_for_url(url);
     }
+    else
+    {
+      window.open(url);
+    }
   }
 
   /**
-   * convenience method that looks for a data-resource-id or 
+   * convenience method that looks for a data-resource-id or
    * data-resource-url attribute on an element and calls the
    * appropriate method
    */
   this.show_resource_for_ele = function(ele)
   {
-    if (rid = target.getAttribute("data-resource-id")) { this.show_resource_for_id(rid) }
-    else if (url = target.getAttribute("data-resource-url")) { this.show_resource_for_url(url) }
+    var rid, url;
+    if (rid = ele.getAttribute("data-resource-id")) { this.show_resource_for_id(rid) }
+    else if (url = ele.getAttribute("data-resource-url")) { this.show_resource_for_url(url) }
   }
 
 }
