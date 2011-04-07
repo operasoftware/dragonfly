@@ -245,6 +245,7 @@ cls.CSSTokenizer = function()
             }
           }
           this._emitToken(cls.CSSTokenizer.types.EOL_DATA, this._EOL_buffer);
+          this._EOL_buffer = "";
           this._state_handler = this._state_cache.shift();
           return false;
         }
@@ -258,7 +259,8 @@ cls.CSSTokenizer = function()
             this._state_cache.shift(); // Throw away the string handler
         //    this._state_cache.unshift(this._state_handlers.BAD_DATA);
         }
-        this._emitToken(cls.CSSTokenizer.types.EOL_DATA,LF)
+        this._emitToken(cls.CSSTokenizer.types.EOL_DATA,LF);
+        this._EOL_buffer = "";
         // Switch to whatever state we were in prior to EOL
         this._state_handler = this._state_cache.shift(); 
         return false;
