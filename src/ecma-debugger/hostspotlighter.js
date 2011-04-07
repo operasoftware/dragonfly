@@ -415,7 +415,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
       {
         style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
       }
-      if (index < 4)
+      if (class_name != "dimension")
       {
         style = target.getElementsByClassName(class_names[index])[0].style;
         style_source = {'background-color': '#fff', 'color': '#000'};
