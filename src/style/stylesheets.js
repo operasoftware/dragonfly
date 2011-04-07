@@ -908,7 +908,8 @@ cls.Stylesheets = function()
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
-           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
+           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
+           " data-resource-url='" + sheet.href + "'>" + sheet.name +
          "</stylesheet-link>" : 
         "")+
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
@@ -1010,6 +1011,7 @@ cls.Stylesheets = function()
         {
           return {
             index: i,
+            href: sheet[SHEET_HREF],
             name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
               || sheet[SHEET_TITLE]
               || 'stylesheet ' + i)

@@ -61,7 +61,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* temporary export view */
     window.export_data = new cls.ExportData();
     new cls.ExportDataView('export_data', 
-                           ui_strings.M_VIEW_LABEL_EXPORT, 
+                           ui_strings.M_VIEW_LABEL_EXPORT,
                            'scroll export-data');
 
     /* commandline */
@@ -70,14 +70,14 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', 
-                     ui_strings.M_VIEW_LABEL_CONSOLE, 
+                     ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                      'scroll command-line mono', 
                      '', 'repl-focus');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
     new cls.JsSourceView('js_source', 
-                         ui_strings.M_VIEW_LABEL_SOURCE, 
+                         ui_strings.M_VIEW_LABEL_SOURCE,
                          'scroll js-source mono');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
@@ -85,7 +85,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Watches */
     cls.WatchesView.prototype = ViewBase;
     new cls.WatchesView('watches', 
-                        ui_strings.M_VIEW_LABEL_WATCHES, 
+                        ui_strings.M_VIEW_LABEL_WATCHES,
                         'scroll mono');
     
     /* Runtime State */

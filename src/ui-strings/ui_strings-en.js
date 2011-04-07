@@ -1209,5 +1209,8 @@ ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
 /* DESC: Context menu item for deleting a breakpoint. */
 ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
 
+/* DESC: Explanation about why a network requests lacks headers. */
+ui_strings.S_NETWORK_SERVED_FROM_CACHE = 'There is no reqest and response data, as the request was completely cached, and did not use the network';
+
 /* DESC: Info text in the settings to invert the highlight color for elements. */
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with '%s' shortcut.";
