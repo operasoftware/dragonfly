@@ -553,9 +553,9 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
           'value', ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
           'handler', 'reset-default-spotlight-colors',
           'class', 'reset-defaults'],
-        ['p', 'Invert the current highlight color with \'' + shortcut + '\'.'],
+        ['p', ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT.replace ("%s", shortcut)],
       'class', 'host-spotlight']])  
-  }
+  };
      
   /* constructor calls */
 
