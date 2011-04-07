@@ -79,7 +79,7 @@ container {
 
 window-statusbar {
   display: block;
-  background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
+  background: #e6e6e6 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
   border-top: 1px solid #ccc;
   line-height: 20px;
   height: 20px;
@@ -719,28 +719,12 @@ ui-menu > h2 { /**/
   padding-left: 10px;
   font-weight: normal;
   font-size: 11px;
-  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -66px;
+  background: #fff;
   width: 170px;
 	height: 18px;
   line-height: 14px;
-  }
-
-ui-menu > h2:after { /**/ 
-  display: block;
-  margin-right: 5px;
-  width: 15px;
-  height: 18px;
-  content: '';
-  float: right;
-  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -66px;
-  }
-	
-ui-menu:hover > h2 {
-  background-position: 0 0;
-  }
-
-ui-menu:hover > h2:after {
-  background-position: 100% 0;
+  border: 1px solid #000;
+  border-top-width: 0;
   }
 
 ui-menu ul { /* The list needs a bottom shadow when opened */
@@ -750,6 +734,9 @@ ui-menu ul { /* The list needs a bottom shadow when opened */
   margin: 0;
   padding: 0;
   list-style: none;
+  background: #fff;
+  border: 1px solid #000;
+  border-top-width: 0;
   }
 
 ui-menu li { /**/
@@ -757,7 +744,6 @@ ui-menu li { /**/
   margin-right: 6px;
   padding-left: 10px;
   width: 155px;
-  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -19px;
   }
 
 ui-menu li h2 { /**/
@@ -768,18 +754,12 @@ ui-menu li h2 { /**/
   line-height: 22px;
   font-weight: normal;
   font-size: 12px;
-  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -19px;
   white-space: nowrap;
   }
 
 ui-menu ul li:hover {
-  background-position: 0 -41px;
+  background: #eee;
   }
-
-ui-menu ul li:hover h2 {
-  background-position: 100% -41px;
-  }
-
 
 window-control {
   display: block;
