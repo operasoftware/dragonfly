@@ -615,7 +615,10 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-settings-container input[type=text]:not([default-text]), settings-container input[type=number], settings-container button, settings-container input[type=button] {
+settings-container input[type=text]:not([default-text]), 
+settings-container input[type=number], 
+settings-container button, 
+settings-container input[type=button] {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 3px;

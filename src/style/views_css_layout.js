@@ -14,20 +14,13 @@ cls.CSSLayoutView = function(id, name, container_class)
   {
     if (elementLayout.has_selected_element())
     {
-      if( !container.getElementsByTagName('layout-container')[0] )
+      if (!container.getElementsByTagName('layout-container')[0])
       {
-        container.innerHTML = "<div class='padding'>\
-            <layout-container></layout-container>\
-            <offsets-container></offsets-container>\
-            </div>";
-
-        var layout = container.getElementsByTagName('layout-container')[0];
-        if(layout)
-        {
-          hostspotlighter.clearMouseHandlerTarget();
-          layout.addEventListener('mouseover', hostspotlighter.metricsMouseoverHandler, false);
-          layout.addEventListener('mouseout', hostspotlighter.metricsMouseoutHandler, false);
-        }
+        container.clearAndRender(['div',
+                                  ['layout-container', 
+                                    'handler', 'spotlight-box'],
+                                  ['offsets-container'],
+                                  'class', 'padding']);
       }
       this.updateLayout({});
       window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));

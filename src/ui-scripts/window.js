@@ -81,7 +81,7 @@ var UIWindowBase = new function()
       this.statusbar.setup(this.view_id);
 
     this.setZIndex();
-    win.style.zIndex = 200;
+    win.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
   }
 
   this._delete = function(id)
@@ -165,7 +165,8 @@ var UIWindowBase = new function()
       if(document.getElementById(win.id))
       {
         self.setZIndex();
-        document.getElementById(win.id).style.zIndex = 200;
+        document.getElementById(win.id).style.zIndex = 
+          Overlay.get_instance().is_visible ? 400 : 200;
         window.views[view_id].update();
       }
       else
@@ -254,7 +255,7 @@ var UIWindowBase = new function()
         {
           click_target = id;
           self.setZIndex();
-          current_style.zIndex = 200;
+          current_style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
         }
         update_handler = update[handler];
         set[handler](event);
@@ -286,7 +287,7 @@ var UIWindowBase = new function()
             {
               click_target = parent.id;
               self.setZIndex();
-              parent.style.zIndex = 200;
+              parent.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
             }
             break;
           }
