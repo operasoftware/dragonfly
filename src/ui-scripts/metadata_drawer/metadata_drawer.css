@@ -28,7 +28,7 @@
 .metadata-drawer .iconcell
 {
   text-align: center;
-  border: 0 solid #999;
+  border: 0 solid #ccc;
   border-width: 0 1px;
   width: 48px;
 }
@@ -48,7 +48,6 @@
 {
   width: 100%;
   border-top: 1px solid #999;
-  background-color: #f0f0f0;
   padding: 10px 0;
 }
 

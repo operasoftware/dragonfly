@@ -197,7 +197,7 @@ templates.network_headers_list = function(headers, firstline)
   {
     lis.unshift(["li", firstline]);
   }
-  return ["ol", lis, "class", "network-details-header-list"]  
+  return ["ol", lis, "class", "network-details-header-list mono"]
 }
 
 templates.network_response_body = function(req)
