@@ -218,7 +218,7 @@ window.templates.font_resource_view = function(resource, data)
 {
   return ['div',
     templates.font_style(resource, data),
-    ["div", "The quick brown fox jumped over the lazy dog",
+    ["div", "The quick brown fox jumped over the lazy dog", ["br"], "1234567890",
      "style", "font-family: fontresource-" + resource.id,
      "class", "font-preview",
      "contenteditable", "true"],
