@@ -42,6 +42,7 @@
 .metadata-drawer .urlcell
 {
   padding-left: 12px;
+  word-wrap: break-word;
 }
 
 .metadata-drawer .details-table

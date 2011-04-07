@@ -100,6 +100,6 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 templates.metadata_drawer_list = function(resource, rules)
 {
   return ["table", rules.map(function(rule) {
-    return ["tr", ["th", rule.label + ":"], ["td", rule.getter(resource) ]]
+    return ["tr", ["th", rule.label.capitalize() + ":"], ["td", rule.getter(resource) ]]
   }), "class", "details-table"];
 }

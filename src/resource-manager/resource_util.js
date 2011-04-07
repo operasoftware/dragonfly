@@ -11,7 +11,7 @@ cls.ResourceUtil = {}
  */
 cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 {
-  var numformatter = String
+  var numformatter = String;
   if (window.helpers && window.helpers.pretty_print_number)
   {
     numformatter = window.helpers.pretty_print_number;
@@ -136,6 +136,12 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-shockwave-flash": "flash",
   "application/x-silverlight-app": "silverlight"
 }
+
+cls.ResourceUtil.type_to_string_map = {
+  "css": "CSS",
+  "pdf": "PDF",
+  "postscript": "PostScript"
+};
 
 /**
  * Returns the most sensible way of getting this resource,
