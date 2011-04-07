@@ -222,17 +222,17 @@ button[handler="reload-window"] {
 .request_list\.auto-scroll-request-list::before {
     background-image: url("../ui-images/icons/icon_autoscroll.png");
 }
-.storage-add-key::before {
-    background-image: url("../ui-images/icons/icon_add.png");
+.storage-add-key {
+    content: url("../ui-images/icons/icon_add.png");
 }
-.storage-update::before {
-    background-image: url("../ui-images/icons/icon_reload.png");
+.storage-update {
+    content: url("../ui-images/icons/icon_reload.png");
 }
-.storage-delete-all::before {
-    background-image: url("../ui-images/icons/icon_clear.png");
+.storage-delete-all {
+    content: url("../ui-images/icons/icon_clear.png");
 }
-.storage-delete::before {
-    background-image: url("../ui-images/icons/icon_delete.png");
+.storage-delete {
+    content: url("../ui-images/icons/icon_delete.png");
 }
 [class^="clear-error-console"]::before {
     background-image: url("../ui-images/icons/icon_clear.png");
