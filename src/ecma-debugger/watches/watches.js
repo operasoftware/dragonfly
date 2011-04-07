@@ -167,6 +167,12 @@ cls.Watches = function(view)
     this._view.update();
   };
 
+  this.remove_all_properties = function()
+  {
+    this._obj_map.watches[0][PROPERTY_LIST] = [];
+    this._view.update();
+  };
+
   this.update_watches = function()
   {
     var update_list = {};

@@ -673,10 +673,10 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Delete cookies from %s";
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 
 /* DESC: Context menu entry that removes watch */
-ui_strings.S_LABEL_DELETE_WATCH = "Delete";
+ui_strings.S_LABEL_DELETE_WATCH = "Delete watch";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
-ui_strings.S_LABEL_EDIT_WATCH = "Edit";
+ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font Face";
@@ -1208,3 +1208,6 @@ ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
 
 /* DESC: Context menu item for deleting a breakpoint. */
 ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
+
+/* DESC: Context menu entry that removes all watches */
+ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
