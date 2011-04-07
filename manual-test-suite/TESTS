@@ -1992,7 +1992,7 @@ desc:
 id: 00600
 label: Refresh
 desc:
-  - Execute "javascript:document.cookie='jscookie'"
+  - Execute "javascript:(function(){document.cookie='jscookie'})()"
   - Press the update button (if existing) or choose 'Refresh' from the context menu
   - Verify that a cookie with the name 'jscookie' shows up.
 

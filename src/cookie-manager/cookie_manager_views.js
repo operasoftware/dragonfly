@@ -320,7 +320,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     var row = document.querySelector("[data-object-id='"+objectref+"']");
     if (row)
     {
-      var runtime_id = this.data.get_cookie_by_objectref(objectref)._rt_id;
+      var cookie_object = this.data.get_cookie_by_objectref(objectref);
+      var runtime_id = (cookie_object && cookie_object._rt_id) || null;
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name=name]").focus();
@@ -755,11 +756,15 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
       this._sortable_table.restore_columns(this._table_elem);
     }
     var row = document.querySelector("[data-object-id='"+objectref+"']");
-    var default_domain = this.data.get_cookie_by_objectref(objectref)._rt_hostname;
-    var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
-    var inserted = row.parentElement.insertAfter(templ, row);
-    inserted.querySelector("[name=name]").focus();
-    this.select_row(null, inserted);
+    if (row)
+    {
+      var cookie_object = this.data.get_cookie_by_objectref(objectref);
+      var default_domain = (cookie_object && cookie_object._rt_hostname) || "";
+      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
+      var inserted = row.parentElement.insertAfter(templ, row);
+      inserted.querySelector("[name=name]").focus();
+      this.select_row(null, inserted);
+    }
   }
 
   this._init(id, name, container_class, data);
