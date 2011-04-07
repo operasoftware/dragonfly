@@ -777,7 +777,7 @@ cls.JsSourceView = function(id, name, container_class)
                            */
   this._scroll_lines = function(lines, event, target)
   {
-    if (__current_script)
+    if (__current_script && __current_script.line_arr)
     {
       var target_line = Math.max(1, Math.min(__current_line + lines,
                                              __current_script.line_arr.length + 1));
@@ -860,12 +860,10 @@ cls.GoToLine = function(js_source_view)
     var script_id = this._js_source_view.getCurrentScriptId();
     if (script_id && value.isdigit())
     {
-      if (this._js_source_view.showLine(script_id, parseInt(value)))
-      {
-        // workaround to reset the focus to the js source view
-        // needs a proper design
-        this._js_source_view.get_container().dispatchMouseEvent('click');
-      }
+      this._js_source_view.show_and_flash_line(script_id, parseInt(value));
+      // workaround to reset the focus to the js source view
+      // needs a proper design
+      this._js_source_view.get_container().dispatchMouseEvent('click');
     }
   }.bind(this);
 
@@ -893,11 +891,11 @@ cls.ScriptSelect = function(id, class_name)
 
   this.getSelectedOptionText = function()
   {
-    var selected_script_id = runtimes.getSelectedScript();
-    if( selected_script_id )
+    selected_script_id = runtimes.getSelectedScript();
+    if (selected_script_id)
     {
       var script = runtimes.getScript(selected_script_id);
-      if( script )
+      if (script)
       {
         var display_uri = helpers.shortenURI(script.uri);
         var script_type = script.script_type.capitalize(true);
@@ -913,7 +911,7 @@ cls.ScriptSelect = function(id, class_name)
       }
     }
     else if(runtimes.getSelectedRuntimeId() &&
-              runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
+            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
     {
       return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
     }

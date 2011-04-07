@@ -78,26 +78,34 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
 
   this.showView = function(view_id)
   {
-    var view = views[view_id];
-    if(view.requires_view && !this.tab.hasTab(view.requires_view))
+    if (this.tab.hasTab(view_id))
     {
-      global_state.ui_framework.temporary_tabs.push(view.requires_view);
-      this.tab.addTab(new Tab(view.requires_view, views[view.requires_view].name, true))
-    }
-    if( view.isvisible() )
-    {
-      view.update();
+      this.tab.setActiveTab(view_id);
     }
     else
     {
-      var ret = this.getView(view_id), tab = null, i = 0;
-      if( ret )
+      var view = views[view_id];
+      if(view.requires_view && !this.tab.hasTab(view.requires_view))
       {
-        for( ; tab = ret[i]; i += 2 )
+        global_state.ui_framework.temporary_tabs.push(view.requires_view);
+        this.tab.addTab(new Tab(view.requires_view, views[view.requires_view].name, true))
+      }
+      if( view.isvisible() )
+      {
+        view.update();
+      }
+      else
+      {
+        var ret = this.getView(view_id), tab = null, i = 0;
+        //opera.postError('ret: '+JSON.stringify(ret))
+        if( ret )
         {
-          if( tab.activeTab != ret[i+1] )
+          for( ; tab = ret[i]; i += 2 )
           {
-            tab.setActiveTab(ret[i+1]);
+            if( tab.activeTab != ret[i+1] )
+            {
+              tab.setActiveTab(ret[i+1]);
+            }
           }
         }
       }

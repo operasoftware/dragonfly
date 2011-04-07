@@ -46,6 +46,7 @@ var Overlay = function()
       this.element.parentElement.removeChild(this.element);
       this.active_overlay = null;
       this.element = null;
+      UIWindowBase.closeWindow('color-selector');
     }
   };
 

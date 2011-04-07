@@ -395,6 +395,7 @@
       },
     },
   },
+  spotlight_color: "3875d7",
   hostspotlight_matrixes:
   {
     /*

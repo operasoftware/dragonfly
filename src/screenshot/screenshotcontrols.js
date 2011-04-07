@@ -19,12 +19,42 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
   {
     if (this._sample_color_container)
     {
+      this._sample_colors = msg.colors;
       var tmpl = this._sample_color_template(this._sample_color.setRGB(msg.color));
       this._sample_color_container.clearAndRender(tmpl);
+      this._update_sample_colors();
     }
   };
 
-
+  this._update_sample_colors = function()
+  {
+    if (this._sample_colors && this._sample_color_container)
+    {
+      var canvas = this._sample_color_container.getElementsByTagName('canvas')[0];
+      if (canvas)
+      {
+        canvas.height = canvas.width = 65;
+        var ctx = canvas.getContext('2d');
+        var sample_size = 65 / this._settings.get('sample-size') >> 0;
+        var x0 = 1;
+        var y0 = 1;
+        var width = 63;
+        if (sample_size % 13 == 0)
+        {
+          x0 = 0;
+          y0 = 0;
+          width = 65;
+        }
+        for (var i = 0, x, y; i < this._sample_colors.length; i++)
+        {
+          ctx.fillStyle = "rgb(" + this._sample_colors[i].join(',') + ")";
+          x = i * sample_size % width;
+          y = (i * sample_size - x) / width * sample_size;
+          ctx.fillRect(x0 + x, y0 + y, sample_size, sample_size);
+        }
+      }
+    }
+  };
 
   this._init = function(id, name, container_class)
   {
@@ -33,6 +63,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color = new Color();
     this._sample_color.setRGB([255, 255, 255]);
     this._sample_color_container = null;
+    this._sample_colors = null;
     this._sample_color_template = window.templates.sample_color;
     this._settings = new Settings('screenshot-controls', { 'sample-size': 3, 'color-palette': []});
     this._screenshot = new cls.ScreenShotView('screenshot', "Screen Shot", "screenshot");
@@ -92,6 +123,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_size_control = container.getElementsByTagName('input')[1];
     this._sample_size_control.value = this._settings.get('sample-size');
     this._sample_color_container = container.getElementsByClassName('screenshot-sample-container')[0];
+    this._update_sample_colors();
   };
 
   this.ondestroy = function()

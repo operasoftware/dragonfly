@@ -231,7 +231,8 @@ window.eventHandlers.click['set-break-point'] = function(event)
   {
     if (bps.script_has_breakpoint_on_line(script_id, line))
     {
-      bps.remove_breakpoint(script_id, line);
+      var bp_id = bps.remove_breakpoint(script_id, line);
+      cls.Breakpoints.get_instance().delete_breakpoint(bp_id);
     }
     else
     {
