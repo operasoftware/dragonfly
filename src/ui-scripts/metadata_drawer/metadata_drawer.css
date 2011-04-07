@@ -17,7 +17,7 @@
 }
 
 .metadata-drawer-summary-table.unfolded {
-  border-bottom: solid thin;  
+  border-bottom: 1px solid #999;
 }
 
 .metadata-drawer-summary-table th {
@@ -28,8 +28,8 @@
 .metadata-drawer .iconcell
 {
   text-align: center;
-  border-left: solid thin;
-  border-right: solid thin;
+  border: 0 solid #999;
+  border-width: 0 1px;
   width: 48px;
 }
 
@@ -47,15 +47,13 @@
 .metadata-drawer .details-table
 {
   width: 100%;
-  border-top: solid thin;
+  border-top: 1px solid #999;
   background-color: #f0f0f0;
-  padding-left: 30px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding: 10px 0;
 }
 
 .metadata-drawer .details-table tr {
-  border-bottom: solid thin;
+  border-bottom: 1px solid #999;
 }
 
 .metadata-drawer .details-table th {
@@ -64,7 +62,9 @@
 }
 
 .metadata-drawer .details-table th {
-
+  padding-right: 10px;
+  width: 82px;
+  text-align: right;
 }
 
 input[handler=metadata-drawer-toggle] {

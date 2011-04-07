@@ -86,7 +86,7 @@
 }
 
 .resource-image-container {
-  background-color: hsl(0, 0%, 30%);  
+  background: #fff url("../ui-images/grid_checkers_black.png");
 }
 .resource-image {
   display: block;
