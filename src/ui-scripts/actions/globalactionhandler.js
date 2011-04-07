@@ -125,7 +125,7 @@
 
   this._handlers["toggle-console"] = function(action_id, event, target)
   {
-    // escape does much more than just toggle-command-line, 
+    // escape does much more than just toggle-console,
     // perhaps we should reflect that
     
     if (this.mode == MODE_EDIT)

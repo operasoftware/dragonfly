@@ -654,8 +654,8 @@ pre[handler="inspect-object-link"] {
   color: blue;
   }
 
-pre[handler="inspect-object-link"]:hover {
-  text-decoration: underline;;
+[handler="inspect-object-link"]:hover {
+  background: #000;
   }
 
 breadcrumb span

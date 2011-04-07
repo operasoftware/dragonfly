@@ -34,7 +34,7 @@ offsets value { /* TODO: use class */
 }
 
 .reg_exp {
-    color: #c32; /* should not be the same as for color */
+    color: #3a3; /* should not be the same as for color */
 }
 
 .js_builtins {

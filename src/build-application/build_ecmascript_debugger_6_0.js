@@ -65,7 +65,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', 
                      ui_strings.M_VIEW_LABEL_CONSOLE, 
-                     'scroll command-line mono', 
+                     'scroll console mono', 
                      '', 'repl-focus');
 
     /* JS source */
