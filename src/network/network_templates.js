@@ -502,10 +502,10 @@ templates.grid_lines = function(ctx, width, height, topoffset)
 };
 
 templates.network_graph_stroke_defs = {
-   "image": "#333",
-   "script": "#333",
-   "css": "#333",
-   "markup": "#333",
+   "image": "#922424",
+   "script": "#807040",
+   "css": "#266099",
+   "markup": "#383f77",
    "unknown": "#333"
 };
 
