@@ -51,7 +51,7 @@
 
 #contextmenu .contextmenu-icon {
   display: inline-block;
-  vertical-align: center;
+  vertical-align: middle;
   text-align: center;
   width: 10px;
   height: 9px;
@@ -80,15 +80,15 @@
 }
 
 #contextmenu .check {
-  background-image: url("../ui-images/menu_check.png");
+  background: transparent url("../ui-images/menu_check.png") 50% no-repeat;
 }
 
 #contextmenu li:not(.disabled):active .check {
-  background-image: url("../ui-images/menu_check_selected.png");
+  background-image: transparent url("../ui-images/menu_check_selected.png");
 }
 
 #contextmenu .radio {
-  background-image: url("../ui-images/menu_bullet.png");
+  background: transparent url("../ui-images/menu_bullet.png") 50% no-repeat;
 }
 
 #contextmenu li:not(.disabled):active .radio {
