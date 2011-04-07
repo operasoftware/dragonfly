@@ -211,7 +211,7 @@ cls.Resource = function(id)
       this.url = eventdata.url;
       this.urltype = eventdata.urlType;
       // fixme: complete list
-      this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
+      this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
       this._humanize_url();
     }
     else if (eventname == "urlfinished")

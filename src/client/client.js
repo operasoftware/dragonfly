@@ -312,11 +312,6 @@ window.cls.Client = function()
                       layouts.utils_rough_layout,
                       null,
                       services);
-    new CompositeView('export_new',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
-                      layouts.export_rough_layout,
-                      null,
-                      services);
     new CompositeView('resource_panel',
                       ui_strings.M_VIEW_LABEL_RESOURCES,
                       layouts.resource_rough_layout);
@@ -471,15 +466,6 @@ ui_framework.layouts.environment_rough_layout =
   children:
   [
     { height: 200, tabs: ['environment'] }
-  ]
-}
-
-ui_framework.layouts.export_rough_layout =
-{
-  dir: 'v', width: 700, height: 700,
-  children:
-  [
-    { height: 200, tabs: ['export_data'] }
   ]
 }
 

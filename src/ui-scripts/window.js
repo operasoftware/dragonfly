@@ -37,10 +37,10 @@ var UIWindowBase = new function()
       typeof view.window_statusbar == 'boolean' ? view.window_statusbar : true;
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
-    this.top = top != undefined ? top : view && view.window_top || this.default_top;
-    this.left = left != undefined ? left : view && view.window_left || this.default_left;
-    this.width = width != undefined ? width : view && view.window_width || this.default_width;
-    this.height = height != undefined ? height : view && view.window_height || this.default_height;
+    this.top = top != undefined ? Math.round(top) : view && view.window_top || this.default_top;
+    this.left = left != undefined ? Math.round(left) : view && view.window_left || this.default_left;
+    this.width = width != undefined ? Math.round(width) : view && view.window_width || this.default_width;
+    this.height = height != undefined ? Math.round(height) : view && view.window_height || this.default_height;
     this.min_top = 6;
     this.min_visible_height = 80;
     this.min_visible_width = 150;
@@ -171,6 +171,7 @@ var UIWindowBase = new function()
       else
       {
         win.render();
+        resize();
       }
     }
     else
