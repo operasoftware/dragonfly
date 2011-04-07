@@ -5,12 +5,16 @@
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
-      {label: "size", getter: function(res) { return  res.size
+      {label: "size", getter: function(res) { return res.size
                                               ? "" + window.helpers.pretty_print_number(res.size) + " bytes"
-                                              : "-"
+                                              : "—"
                                             }
       },
-      {label: "format", getter: function(res) { return res.type ? res.type : "-" }},
+      {label: "format", getter: function(res) { return res.type
+                                                  ? (cls.ResourceUtil.type_to_string_map[res.type] || res.type.capitalize())
+                                                  : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+                                              }
+      },
     ],
     image: [
       //{label: "dimensions", getter: function(res) { return "123 x 321" } },
