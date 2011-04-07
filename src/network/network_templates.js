@@ -350,7 +350,7 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
 {
   return [
           ["rect", "x", "0",
-           "y", String(index * rowheight),
+           "y", String(helpers.crispifySvgValue(index * rowheight)),
            "width", "100%",
            "height", String(rowheight),
            "fill", (index % 2 ? "rgba(0,0,0,0.025)" : "white"),
@@ -358,9 +358,9 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
           ],
           ["line",
            "x1", "0",
-           "y1", String((index * rowheight) + 0.5),
+           "y1", String(helpers.crispifySvgValue(index * rowheight)),
            "x2", "100%",
-           "y2", String((index * rowheight) + 0.5),
+           "y2", String(helpers.crispifySvgValue(index * rowheight)),
            "stroke", "rgba(0, 0, 0, 0.1)",
            "stroke-width", "1",
            "pointer-events", "none",
@@ -386,6 +386,7 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var resstart = ((request.requesttime || start) - basetime) * multiplier;
   var reswidth = (request.duration - (request.requesttime - request.starttime)) * multiplier;
   var texture = "gradient-" + (request.type || "unknown");
+  var stroke = templates.network_graph_stroke_defs[request.type || "unknown"];
 
   if (reqwidth < min_bar_width) // too small bar looks ugly
   {
@@ -416,26 +417,26 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var tpl = [
     ["rect", 
       ["title", title],
-      "x", String(start),
-      "y", String(bary),
-      "width", String(reqwidth),
+      "x", String(helpers.crispifySvgValue(start)),
+      "y", String(helpers.crispifySvgValue(bary)),
+      "width", String(Math.round(reqwidth)),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
-      "fill", "#dfdfdf",
-      "stroke", "#969696",
+      "fill", "rgba(0,0,0,.1)",
+      "stroke", "rgba(0,0,0,.2)",
       "stroke-width", "1.0",
     ],
 
     ["rect",
-      "x", String(resstart),
-      "y", String(bary),
-      "width", String(reswidth),
+      "x", String(helpers.crispifySvgValue(resstart)),
+      "y", String(helpers.crispifySvgValue(bary)),
+      "width", String(Math.round(reswidth)),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
-      "fill", "url(#" + texture + ")", 
-      "stroke", "#333333", 
+      "fill", "url(#" + texture + ")",
+      "stroke", stroke,
       "stroke-width", "1.0",
       "pointer-events", "none"
     ]
@@ -461,13 +462,15 @@ templates.grid_lines = function(ctx, width, height, topoffset)
   for (var n=100; n<millis; n+=100)
   {
     var color = null;
+    var is_sec_line = false;
     if (!(n % 1000))
     {
-      color = "black";
+      color = "rgba(0,0,0,.5)";
+      is_sec_line = true;
     }
     else if (secondwidth > THRESH_500MS && !(n % 500))
     {
-      color = "rgba(0,0,0,0.3)";
+      color = "rgba(0,0,0,0.25)";
     }
     else if (secondwidth > THRESH_100MS && !(n % 100))
     {
@@ -476,26 +479,34 @@ templates.grid_lines = function(ctx, width, height, topoffset)
 
     if (color) {
       ret.push(["line",
-                "x1", String(n*multiplier),
+                "x1", String(helpers.crispifySvgValue(n*multiplier)),
                 "y1", topoffset,
-                "x2", String(n*multiplier),
-                "y2", String(height),
+                "x2", String(helpers.crispifySvgValue(n*multiplier)),
+                "y2", String(helpers.crispifySvgValue(height)),
                 "stroke", color,
                 "stroke-width", "1.0",
                 "pointer-events", "none",
       ]);
 
-      if (color == "black")
+      if (is_sec_line)
       {
         ret.push([
           "text", "" + (n/1000) + "s",
-          "x", String(n*multiplier) + "px",
+          "x", String(helpers.crispifySvgValue(n*multiplier)) + "px",
           "y", "20px",
         ]);
       }
     }
   }
   return ret;
+};
+
+templates.network_graph_stroke_defs = {
+   "image": "#333",
+   "script": "#333",
+   "css": "#333",
+   "markup": "#333",
+   "unknown": "#333"
 };
 
 templates.network_graph_gradient_defs = function()

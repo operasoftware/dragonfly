@@ -696,6 +696,7 @@ breadcrumb span
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1em;
+  font-weight: normal;
 }
 .script-options h2.selected-runtime, .stylesheet-options h2.selected-runtime {
   color: #000;
