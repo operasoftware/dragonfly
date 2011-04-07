@@ -157,7 +157,7 @@ templates.network_log_request_detail = function(ctx, selected)
 
 templates.request_details = function(req)
 {
-  if (!req.touched_network) { return ["p","asdf" + ui_strings.S_NETWORK_SERVED_FROM_CACHE] }
+  if (!req.touched_network) { return ["p", ui_strings.S_NETWORK_SERVED_FROM_CACHE] }
   if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
   var firstline = req.request_raw.split("\n")[0];
   var parts = firstline.split(" ");
