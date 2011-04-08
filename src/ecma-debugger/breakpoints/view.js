@@ -78,7 +78,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['disable-all'] = function(event, target)
   {
-    this._bps.get_breakpoints().forEach(function(bp)
+    this._bps.get_active_breakpoints().forEach(function(bp)
     {
       if (bp.is_enabled)
       {
@@ -89,7 +89,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['delete-all'] = function(event, target)
   {
-    this._bps.get_breakpoints().slice().forEach(this._delete_bp, this);
+    this._bps.get_active_breakpoints().forEach(this._delete_bp, this);
   }.bind(this);
 
   this._handlers['add-or-edit-condition'] = function(event, target)
@@ -152,11 +152,11 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._delete_bp = function(bp)
   {
-    this._bps.delete_breakpoint(bp.id);
     if (bp.is_enabled)
     {
       this._toggle_bp(bp, false);
     }
+    this._bps.delete_breakpoint(bp.id);
   };
 
   /* rightclick menu */
@@ -240,7 +240,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    var bps = this._bps.get_breakpoints();
+    var bps = this._bps.get_active_breakpoints();
     if (bps.length)
     {
       container.clearAndRender(bps.map(this._tmpls.breakpoint, this._tmpls));

@@ -29,12 +29,12 @@ offsets value { /* TODO: use class */
     background-color: rgba(0, 0, 0, .075);
 }
 
-.punctuator { /* TODO: Not specified */
+.punctuator {
     color: #000;
 }
 
 .reg_exp {
-    color: #c32; /* should not be the same as for color */
+    color: #3a3;
 }
 
 .js_builtins {

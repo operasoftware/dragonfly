@@ -120,6 +120,14 @@ cls.Watches = function(view)
   this._init = function(view)
   {
     this._super_init(0, "watches");
+    this._set_initial_values();
+    this._esdb = window.services['ecmascript-debugger'];
+    this._tagman = window.tag_manager;
+    this._view = view;
+  };
+
+  this._set_initial_values = function()
+  {
     this._obj_map =
     {
       "0": [[["watches"]]],
@@ -130,9 +138,6 @@ cls.Watches = function(view)
       "object_id": 0,
       "protos": {"0": {"": {"object_id": "watches"}}}
     };
-    this._esdb = window.services['ecmascript-debugger'];
-    this._tagman = window.tag_manager;
-    this._view = view;
   };
 
   /* implementation */
@@ -164,6 +169,12 @@ cls.Watches = function(view)
       }
       prop_list.splice(i, 1);
     }
+    this._view.update();
+  };
+
+  this.remove_all_properties = function()
+  {
+    this._set_initial_values();
     this._view.update();
   };
 

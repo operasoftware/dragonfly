@@ -88,6 +88,11 @@ li > .repl-lines {
     margin-left: 6em;
 }
 
+.repl-output-go-to-source {
+  text-decoration: underline;
+  color: white;
+}
+
 .repl-input span, .repl-input div {
   display: table-cell;
   vertical-align: top;

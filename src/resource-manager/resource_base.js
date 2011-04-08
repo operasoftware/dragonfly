@@ -30,8 +30,7 @@ cls.ResourceDetailBase = function()
     {
       var resptype = cls.ResourceUtil.mime_to_content_mode(this.resource.mime);
       this.service.fetch_resource_data(this.on_resource_data.bind(this),
-                                       this.resource.id,
-                                       resptype);
+                                       this.resource.id, resptype);
     }
     else
     {
@@ -53,7 +52,7 @@ cls.ResourceDetailBase = function()
   this.on_resource_data = function(type, data)
   {
     const CONTENT = 5, TEXTCONTENT = 3;
-    this.resourcedata = data[CONTENT][TEXTCONTENT];
+    this.resourcedata = data[CONTENT] ? data[CONTENT][TEXTCONTENT] : null;
     this.update();
   }
 
@@ -243,9 +242,10 @@ window.templates.font_resource_view = function(resource, data)
 {
   return ['div',
     templates.font_style(resource, data),
-    ["h1", "Font details view"],
-    ["div", "The quick brown fox jumped over the lazy dog",
-     "style", "font-family: fontresource-" + resource.id],
+    ["div", "The quick brown fox jumped over the lazy dog", ["br"], "1234567890",
+     "style", "font-family: fontresource-" + resource.id,
+     "class", "font-preview",
+     "contenteditable", "true"],
     'class', 'resource-detail-container'
   ]
 }

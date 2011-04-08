@@ -17,13 +17,9 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   /* Metrics mouse event handlers */
   this.metricsMouseoutHandler = function(event){};
   this.metricsMouseoverHandler = function(event){};
-  this.clearMouseHandlerTarget = function(){};
+
   
   const
-  DIMENSION = 0,
-  PADDING = 1,
-  BORDER = 2,
-  MARGIN = 3,
   FILL = 0,
   FRAME = 1,
   GRID = 2,
@@ -34,40 +30,14 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     'border-color': 'borderColor',
     'color':  'color'
   },
-  INNER_INNER = 0,
-  INNER = 1,
   ACTIVE = 2,
   DEFAULT = 0,
   HOVER = 1,
   LOCKED = 2,
-  SETTING_MATRIXES =
-  [
-    "spotlighter-matrix-default",
-    "spotlighter-matrix-hover",
-    "spotlighter-matrix-locked",
-  ],
-  COLOR_THEME_ALPHAS = // red: 1 grid color 0 fill-and-frame color
-  [
-    [
-      [[0, 0, 0, .2 * 255], [0, 0, 0, .6 * 255], 0],
-      [[0, 0, 0, .45 * 255], [0, 0, 0, .8 * 255], 0],
-      [[0, 0, 0, .7 * 255], [0, 0, 0, .1 * 255], [1, 0, 0, .3 * 255]],
-      [0, 0, 0]
-    ],
-    [
-      [[0, 0, 0, .2 * 255], 0, 0],
-      [[0, 0, 0, .2 * 255], [0, 0, 0, .8 * 255], 0],
-      [[0, 0, 0, .7 * 255], [0, 0, 0, .8 * 255], [1, 0, 0, .3 * 255]],
-      [0, 0, 0]
-    ],
-    [
-      [[0, 0, 0, .05 * 255], [0, 0, 0, .1 * 255], 0],
-      [[0, 0, 0, .1 * 255], [0, 0, 0, .15 * 255], 0],
-      [[0, 0, 0, .15 * 255], [1, 0, 0, .5 * 255], 0],
-      [0, 0, 0]
-    ],
-  ];
-
+  DIMENSION = 3,
+  PADDING = 4,
+  BORDER = 5,
+  MARGIN = 6;
 
   var self = this;
   var matrixes = [];
@@ -111,50 +81,118 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     }
   }
 
-  var set_color_theme = function(fill_frame_color, grid_color)
+  var opacity =
   {
-    var color = null, i = 0, j = 0, k = 0;
-    var sat = 0;
-    for( i = 0; i < 3; i++)
+    "default":
+    [
+      // dimension box; fill, frame, grid
+      [52, 0, 0],
+      // padding box; fill, frame, grid
+      [104, 0, 0],
+      // border box; fill, frame, grid
+      [255, 0, 128],
+      // margin box; fill, frame, grid
+      [156, 0, 0],
+    ],
+    "hover":
+    [
+      // dimension box; fill, frame, grid
+      [24, 0, 0],
+      // padding box; fill, frame, grid
+      [52, 0, 0],
+      // border box; fill, frame, grid
+      [128, 0, 64],
+      // margin box; fill, frame, grid
+      [76, 0, 0],
+    ],
+    "locked":
+    [
+      // dimension box; fill, frame, grid
+      [52, 0, 0],
+      // padding box; fill, frame, grid
+      [52, 0, 0],
+      // border box; fill, frame, grid
+      [52, 128, 0],
+      // margin box; fill, frame, grid
+      [0, 0, 0],
+    ],
+    "dimension":
+    [
+      // dimension box; fill, frame, grid
+      [200, 0, 0],
+      // padding box; fill, frame, grid
+      [0, 0, 0],
+      // border box; fill, frame, grid
+      [0, 0, 128],
+      // margin box; fill, frame, grid
+      [0, 0, 0],
+    ],
+    "padding":
+    [
+      // dimension box; fill, frame, grid
+      [0, 0, 0],
+      // padding box; fill, frame, grid
+      [200, 0, 0],
+      // border box; fill, frame, grid
+      [0, 0, 128],
+      // margin box; fill, frame, grid
+      [0, 0, 0],
+    ],
+    "border":
+    [
+      // dimension box; fill, frame, grid
+      [0, 0, 0],
+      // padding box; fill, frame, grid
+      [0, 0, 0],
+      // border box; fill, frame, grid
+      [200, 0, 128],
+      // margin box; fill, frame, grid
+      [0, 0, 0],
+    ],
+    "margin":
+    [
+      // dimension box; fill, frame, grid
+      [0, 0, 0],
+      // padding box; fill, frame, grid
+      [0, 0, 0],
+      // border box; fill, frame, grid
+      [0, 0, 128],
+      // margin box; fill, frame, grid
+      [200, 0, 0],
+    ],
+
+  };
+
+  var create_matrix = function(hex_color, opacity_type)
+  {
+    var ret = [];
+    var rgb = new Color().setHex(hex_color).getRGB();
+    for (var i = 0, boxes, ops, j; i < 4; i++)
     {
-      for( j = 0; j < 4; j++)
+      boxes = [];
+      ret.push(boxes);
+      ops = opacity[opacity_type][i];
+      for (j = 0; j < 3; j++)
       {
-        for( k = 0; k < 3; k++)
-        {
-          if( color = COLOR_THEME_ALPHAS[i][j][k] )
-          {
-            colors.setRGB( color[0] && grid_color || fill_frame_color );
-            if( !color[0] )
-            {
-              colors.setSaturationV(colors.getSaturationV() * ( 1 - j * .28 ) * ( k == 1 && .2 || 1 ) );
-              colors.setValue(colors.getValue() * ( 1 - j * .28 ) * ( k == 1 && .2 || 1 ) );
-            }
-            matrixes[i][j][k] = colors.getRGB();
-            matrixes[i][j][k][3] = color[3];
-          }
-          else
-          {
-            matrixes[i][j][k] = 0;
-          }
-        }
+        boxes.push(ops[j] ? rgb.concat([ops[j]]) : 0);
       }
     }
-    stringify_commands();
-  }
+    return ret;
+  };
 
   var invert_colors = function(matrix)
   {
     var matrix = null, prop = '', box = null, color = null, i = 0, j = 0, k = 0;
-    for( i = 0; i < 3; i++)
+    for (i = 0; i < matrixes.length; i++)
     {
       matrix = matrixes[i];
-      for( j = 0; j < 4; j++)
+      for (j = 0; j < 4; j++)
       {
-        if( box = matrix[j] )
+        if (box = matrix[j])
         {
-          for( k = 0; k < 3; k++)
+          for (k = 0; k < 3; k++)
           {
-            if( box[k])
+            if (box[k])
             {
               box[k] = colors.setRGB(box[k]).invert().getRGB().concat(box[k][3]);
             }
@@ -162,38 +200,40 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
         }
       }
     }
-  }
+  };
 
   var set_initial_values = function()
   {
-    matrixes[DEFAULT] = 
-    (window.settings['host-spotlight'].get(SETTING_MATRIXES[DEFAULT]) || 
-    ini.hostspotlight_matrixes["default"]).map(copy_array);
-
-    matrixes[HOVER] = 
-    (window.settings['host-spotlight'].get(SETTING_MATRIXES[HOVER]) || 
-    ini.hostspotlight_matrixes["metrics-hover"]).map(copy_array);
-
-    matrixes[LOCKED] = 
-    (window.settings['host-spotlight'].get(SETTING_MATRIXES[LOCKED]) ||
-    ini.hostspotlight_matrixes["locked"]).map(copy_array);
-
+    var color = window.settings['host-spotlight'].get('spotlight-color');
+    var locked_color = new Color().setHex(color);
+    var hue = (360 + locked_color.getHue() + 180) % 360;
+    locked_color = locked_color.setHue(hue).getHex();
+    matrixes[DEFAULT] = create_matrix(color, "default");
+    matrixes[HOVER] = create_matrix(color, "hover");
+    matrixes[LOCKED] = create_matrix(locked_color, "locked");
+    matrixes[DIMENSION] = create_matrix(color, "dimension");
+    matrixes[PADDING] = create_matrix(color, "padding");
+    matrixes[BORDER] = create_matrix(color, "border");
+    matrixes[MARGIN] = create_matrix(color, "margin");
     normalize_matrixes();
     stringify_commands();
-  }
+  };
 
   var stringify_commands = function()
   {
     var matrix = [matrixes[HOVER][0]].concat(matrixes[HOVER]);
     commands["default"] = stringify_command(matrixes[DEFAULT]);
+    commands["hover"] = stringify_command(matrixes[HOVER]);
     commands["locked"] = stringify_command(matrixes[LOCKED]);
-    commands["dimension"] = stringify_command(matrix.slice(3));
-    commands["padding"] = stringify_command(matrix.slice(2));
-    commands["border"] = stringify_command(matrix.slice(1));
-    commands["margin"] = stringify_command(matrix.slice(0));
-    extract_css_properties(matrixes[HOVER][2], ( client_colors.active = {} ) );
-    extract_css_properties(matrixes[HOVER][1], ( client_colors.inner = {} ) );
-  }
+    commands["dimension"] = stringify_command(matrixes[DIMENSION]);
+    commands["padding"] = stringify_command(matrixes[PADDING]);
+    commands["border"] = stringify_command(matrixes[BORDER]);
+    commands["margin"] = stringify_command(matrixes[MARGIN]);
+    extract_css_properties(matrixes[DIMENSION][0], (client_colors.dimension = {}));
+    extract_css_properties(matrixes[PADDING][1], (client_colors.padding = {}));
+    extract_css_properties(matrixes[BORDER][2], (client_colors.border = {}));
+    extract_css_properties(matrixes[MARGIN][3], (client_colors.margin = {}));
+  };
   
   // TODO fix name
   var stringify_command = function(matrix)
@@ -233,86 +273,20 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     // fill, frame, grid
     var 
-    properties = ['background-color', 'border-color', 'border-color'],
+    properties = ['background-color'],
     color = null, 
     i = 0;
 
-    for( i = 2; i > -1; i--)
+    for (i = 0; i < properties.length; i++)
     {
-      if( color = box[i])
+      if (color = box[i]) // box; fill, frame, grid
       {
         target[properties[i]] = convert_rgba_to_hex(color);
       }
     }
     target['color'] = colors.getGrayValue() > 130 && "#000" || "#fff";
     return target;
-  }
-
-  var create_color_selects = function()
-  {
-    var matrix = null, box = null, i = 0, j = 0, k = 0;
-    new CstSelectColor
-    (
-      "spotlight-color-fill-and-frame", 
-      matrixes[0][0][0] || [0, 0, 255, 255],
-      "set-spotlight-color-theme",
-      "no-opacity"
-    );
-    new CstSelectColor
-    (
-      "spotlight-color-grid", 
-      matrixes[0][2][2] || [0, 0, 255, 255],
-      "set-spotlight-color-theme",
-      "no-opacity"
-    );
-    for( i = 0; i < 3; i++)
-    {
-      matrix = matrixes[i];
-      for( j = 0; j < 4; j++)
-      {
-        box = matrix[j] || [];
-        for( k = 0; k < 3; k++)
-        {
-          new CstSelectColor
-          (
-            "spotlight-color-" + ( ( i << 6 ) | ( j << 3 ) | ( k ) ), 
-            box[k] || [0, 0, 255, 255],
-            "set-spotlight-color"
-          );
-        }
-      }
-    }
-  }
-
-  var update_color_selects = function()
-  {
-    var matrix = null, box = null, i = 0, j = 0, k = 0;
-    var cst_selects = window['cst-selects'];
-    var cst_select = null;
-
-    cst_select = cst_selects["spotlight-color-fill-and-frame"];
-    cst_select.setSelectedValue(matrixes[0][0][0] || [0, 0, 255, 255]);
-    cst_select.updateElement();
-
-    cst_select = cst_selects["spotlight-color-grid"];
-    cst_select.setSelectedValue(matrixes[0][2][2] || [0, 0, 255, 255]);
-    cst_select.updateElement();
-
-    for( i = 0; i < 3; i++)
-    {
-      matrix = matrixes[i];
-      for( j = 0; j < 4; j++)
-      {
-        box = matrix[j] || [];
-        for( k = 0; k < 3; k++)
-        {
-          cst_select = cst_selects["spotlight-color-" + ( ( i << 6 ) | ( j << 3 ) | ( k ) )];
-          cst_select.setSelectedValue(box[k] || [0, 0, 255, 255]);
-          cst_select.updateElement(box[k] != 0);
-        }
-      }
-    }
-  }
+  };
 
   var normalize_matrixes = function()
   {
@@ -325,7 +299,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
         matrix[j] || ( matrix[j] = [0, 0, 0] );
       }
     }
-  }
+  };
 
   /* helpers to manage locked elements */
   // TODO make a new message for new top runtime
@@ -381,55 +355,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     }
   }
 
-  /* helper Metrics mouse event handler */
-  var setStyleMouseHandlerTarget = function(target, class_name)
-  {
-    if (class_name == "position") return;
 
-    var 
-    index = class_names.indexOf(class_name) + 1, 
-    style = target.style,
-    style_source = client_colors.active, 
-    prop = '';
 
-    mouse_handler_target = target;
-    for( prop in style_source )
-    {
-      style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
-    }
-    if( index && index < 4 )
-    {
-      style = target.getElementsByClassName(class_names[index])[0].style;
-      style_source = client_colors.inner;
-      for( prop in style_source )
-      {
-        style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
-      }
-    }
-  }
-
-  /* template */
-  var color_select_row_template = function(label, i, j)
-  {
-    var row_id = ( i << 6 ) | ( j << 3 );
-    var ret = [];
-    var k = 0;
-    var checked = false;
- 
-    for( ; k < 3; k++)
-    {
-      checked = matrixes[i][j][k] && true || false;
-      ret[ret.length] =
-      ['td', 
-        ['input', 'type', 'checkbox', 'checked', checked, 'handler', 'check-spotlight-color-select'], 
-        window['cst-selects']['spotlight-color-' + ( row_id | k ) ].template(null, !checked)
-      ]
-    }
-    return [
-      'tr', 
-      ['td', label]
-    ].concat(ret)
-  }
   /* convert a rgba array to a integer */
   var convert_rgba_to_int = function(arr)
   {
@@ -463,81 +390,107 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     {
       return item;
     }
-  }
+  };
+
+  this._oneditcolor = function(color)
+  {
+    this._edit_context.ele_container.style.backgroundColor = color.hhex;
+    window.settings['host-spotlight'].set('spotlight-color', color.hex);
+    set_initial_values();
+  }.bind(this);
+
+  /* helper Metrics mouse event handler */
+
+  this._set_style_metrics_target = function(target, class_name)
+  {
+    var 
+    index = class_names.indexOf(class_name) + 1, 
+    style = target.style,
+    style_source = client_colors[class_name];
+
+    if (index)
+    {
+      mouse_handler_target = target;
+      for (var prop in style_source)
+      {
+        style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
+      }
+      if (class_name != "dimension")
+      {
+        style = target.getElementsByClassName(class_names[index])[0].style;
+        style_source = {'background-color': '#fff', 'color': '#000'};
+        for (var prop in style_source)
+        {
+          style[CSS_CONVERT_TABLE[prop]] = style_source[prop];
+        }
+      }
+    }
+  };
+
+  this._clear_style_metrics_target = function()
+  {
+    if (mouse_handler_target)
+    {
+      mouse_handler_target.style.cssText = '';
+      var index = class_names.indexOf(mouse_handler_target.className) + 1;
+      if (index && index < 4)
+      {
+        mouse_handler_target.getElementsByClassName(class_names[index])[0].style.cssText = '';
+      }
+    }
+    mouse_handler_target = null;
+  };
 
   /* event handlers */
 
-  eventHandlers.click["toggle-advanced-color-setting"] = function(event, target)
-  {
-    var 
-    parent = target.parentElement, 
-    table = parent.getElementsByTagName('table')[0];
-
-    if(table)
-    {
-      parent.removeChild(table);
-      target.firstElementChild.removeClass('unfolded');
-    }
-    else
-    {
-      parent.render(self.colorAdvancedSelectsTemplate());
-      target.firstElementChild.addClass('unfolded');
-    }
-  }
-
   eventHandlers.click["reset-default-spotlight-colors"] = function(event, target)
   {
-    [DEFAULT, HOVER, LOCKED].forEach(function(matrix, index, arr)
+    window.settings['host-spotlight'].set('spotlight-color', 
+                                          window.ini.spotlight_color);
+    if (event.target.previousElementSibling)
     {
-      window.settings['host-spotlight'].set(SETTING_MATRIXES[matrix], null);
-    });
+      event.target.previousElementSibling.style.backgroundColor = 
+        "#" + window.ini.spotlight_color;
+    }
     set_initial_values();
-    update_color_selects();
-  }
-  
-  eventHandlers.change['set-spotlight-color'] = function(event)
+  };
+    
+  eventHandlers.click['select-spotlight-color'] = function(event, target)
   {
-    var target = event.target;
-    var id = parseInt(target.getAttribute('cst-id').slice(16));
-    var matrix = id >> 6 & 7;
-    matrixes[matrix][id >> 3 & 7][id & 7] = 
-      window['cst-selects'][target.getAttribute('cst-id')].getSelectedValue();
-    stringify_commands();
-    window.settings['host-spotlight'].set(SETTING_MATRIXES[matrix], matrixes[matrix]);
-  }
-  
-  eventHandlers.change['set-spotlight-color-theme'] = function(event)
-  {
-    set_color_theme(window['cst-selects']['spotlight-color-fill-and-frame'].getSelectedValue(),
-      window['cst-selects']['spotlight-color-grid'].getSelectedValue());
-  }
-
-  eventHandlers.change['check-spotlight-color-select'] = function(event)
-  {
-    var 
-    target = event.target,
-    cst_select = target.nextElementSibling,
-    id = cst_select.getAttribute('cst-id'),
-    select_obj = window['cst-selects'][id];
-
-    id = parseInt(id.slice(16));
-    if(target.checked)
+    var color_sample = target;
+    this._edit_context =
     {
-      cst_select.removeAttribute('disabled');
-      matrixes[id >> 6 & 7][id >> 3 & 7][id & 7] = select_obj.getSelectedValue();
-    }
-    else
+      initial_color: new Color().parseCSSColor(color_sample.style.backgroundColor),
+      ele_container: color_sample,
+      callback: this._oneditcolor,
+      edit_class: 'edited-color'
+    };
+    window.views['color-selector'].show_color_picker(color_sample, 
+                                                     this._edit_context);
+  }.bind(this);
+
+  /* Metrics mouse event handlers */
+
+  eventHandlers.mouseover['spotlight-box'] = function(event, target)
+  {
+    var ele = event.target, class_name = '', active_model = null;
+    this._clear_style_metrics_target();
+    while (ele && ele != target && !(class_name = ele.className))
     {
-      cst_select.setAttribute('disabled', 'disabled');
-      matrixes[id >> 6 & 7][id >> 3 & 7][id & 7] = 0;
+      ele = ele.parentNode;
     }
-    stringify_commands();
-  }
+    this._set_style_metrics_target(ele, class_name);
+    if (active_model = window.dominspections && window.dominspections.active)
+    {
+      this.spotlight(active_model.target, 0, class_name || "default");
+    }
+  }.bind(this);
   
   /* interface */
   
   this.spotlight = function(node_id, scroll_into_view, type)
   {
+    type || (type = "default");
     spotlight_clear_timeouts.clear();
     var join = Array.prototype.join;
     if( join.call(arguments) != last_spotlight_commands )
@@ -545,8 +498,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
       last_spotlight_commands = join.call(arguments);
       var locked_s = settings.dom.get('lock-selected-elements') && 
                      locked_elements.map(get_locked_commands) || null;
-      var cmd = [get_command(node_id, scroll_into_view, type || "default")];
-      last_spotlight_command = [get_command(node_id, false, type || "default")];
+      var cmd = [get_command(node_id, scroll_into_view, type)];
+      last_spotlight_command = [get_command(node_id, false, type)];
       if (locked_s)
       {
         cmd.push.apply(cmd, locked_s);
@@ -554,12 +507,12 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
       }
       services['ecmascript-debugger'].requestSpotlightObjects(0, [cmd]);
     }
-  }
+  };
 
   this.soft_spotlight = function(node_id)
   {
     services['ecmascript-debugger'].requestSpotlightObjects(0,
-      [(last_spotlight_command || []).concat([get_command(node_id, 0, "locked")])]);
+      [(last_spotlight_command || []).concat([get_command(node_id, 0, "hover")])]);
   }
 
   // commands["locked"]
@@ -573,142 +526,37 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     invert_colors();
     stringify_commands();
+    last_spotlight_commands = [];
+    var active_model = window.dominspections && window.dominspections.active;
+    if (active_model && window.views.dom.isvisible())
+    {
+      this.spotlight(active_model.target, 0);
+    }
   }
 
   /* templates */
   this.colorSelectsTemplate = function()
   {
-    return [
-      'setting-composite',
-      [
-        'h3', ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME,
-        [
-          'label',
-          " " + ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL + ", " +  
-          ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME + " ",
-          window['cst-selects']['spotlight-color-fill-and-frame'].template(),
-        ],
-        [
-          'label',
-          ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID + ' ',
-          window['cst-selects']['spotlight-color-grid'].template(),
-        ]
-      ],
-      [
-        'input', 
-        'type', 'button', 
-        'value', ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
-        'handler', 'reset-default-spotlight-colors',
-        'class', 'reset-defaults'],
-      [
-        'settings-header',
-        ['input', 'type', 'button'],
-        ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED,
-        'handler', 'toggle-advanced-color-setting'
-      ],
-      'class', 'host-spotlight'
-    ]  
-  }
-  
-  this.colorAdvancedSelectsTemplate = function()
-  {
-    return [
-      'table',
-      [
-        'tbody',
-        ['tr', ['th', ['h2', ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT], 'colspan', '4']],
-        ['tr', 
-          ['td'], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID]
-        ],
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION, 0, 0),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING, 0, 1),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER, 0, 2),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN, 0, 3),
-        ['tr', ['th', ['h2', ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS], 'colspan', '4']],
-        ['tr', 
-          ['td'], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID]
-        ],
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER_ANY, 1, 0),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER, 1, 1),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER, 1, 2),
-        ['tr', ['th', ['h2', ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS], 'colspan', '4']],
-        ['tr', 
-          ['td'], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME], 
-          ['td', ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID]
-        ],
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION, 2, 0),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING, 2, 1),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER, 2, 2),
-        color_select_row_template(ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN, 2, 3)
-      ],
-      'class', 'advanced-spotlight-color-settings'
-    ]
-  }
-  
-  /* Metrics mouse event handlers */
-  this.metricsMouseoverHandler = function(event)
-  {
-    var target = event.target, class_name = '', active_model = null;
-    while(target && target != this 
-            && !(class_name = target.className) &&  ( target = target.parentNode ) );
-    if( target && class_name )
-    {
-      mouse_handler_timeouts.clear();
-      self.clearMouseHandlerTarget();
-      setStyleMouseHandlerTarget(target, class_name);
-      if (active_model = window.dominspections && window.dominspections.active)
-        self.spotlight(active_model.target, 0, class_name);
-    }
-  }
-
-  this.metricsMouseoutHandler = function(event)
-  {
-    var target = event.target, class_name = '';
-    while(target && target != this 
-            && !(class_name = target.className) &&  ( target = target.parentNode ) );
-    if( target && class_name && /^margin$/.test(class_name)  )
-    {
-      mouse_handler_timeouts.set(self.clearMouseHandlerTarget, 50);
-    }
-  }
-
-  this.clearMouseHandlerTarget = function()
-  {
-    var index = 0, 
-    style = null,
-    style_source = client_colors.active, 
-    prop = '';
-
-    if(mouse_handler_target)
-    {
-      style = mouse_handler_target.style;
-      for( prop in style_source )
-      {
-        style.removeProperty(prop);
-      } 
-      index = class_names.indexOf(mouse_handler_target.className) + 1;
-      if( index && index < 4 )
-      {
-        style = mouse_handler_target.getElementsByClassName(class_names[index])[0].style;
-        style_source = client_colors.inner;
-        for( prop in style_source )
-        {
-          style.removeProperty(prop);
-        } 
-      }
-      self.clearSpotlight();
-    }
-    mouse_handler_target = null;    
-  }
- 
+    var shortcut = ActionBroker.get_instance()
+                  .get_shortcut_with_handler_and_action('global', 
+                                                        'invert-spotlight-colors');
+    var color = window.settings['host-spotlight'].get('spotlight-color');
+    return (
+    ['setting-composite',
+      ['div',
+        ['span', 
+          'style', 'background-color: #' + color,
+          'class', 'spotlight-color-select',
+          'handler', 'select-spotlight-color'],
+        ['input', 
+          'type', 'button', 
+          'value', ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
+          'handler', 'reset-default-spotlight-colors',
+          'class', 'reset-defaults'],
+        ['p', ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT.replace ("%s", shortcut)],
+      'class', 'host-spotlight']])  
+  };
+     
   /* constructor calls */
 
   messages.addListener("element-selected", onElementSelected); 
@@ -717,12 +565,11 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   window.app.addListener('services-created', function()
   {
     set_initial_values();
-    create_color_selects();
   });
 
   this.bind = function(ecma_debugger)
   {
     ecma_debugger.handleSpotlightObjects = function(status, message){};
-  }
+  };
 
-}
+};

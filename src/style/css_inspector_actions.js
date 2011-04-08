@@ -480,19 +480,8 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['display-rule-in-stylesheet'] = function(event, target)
   {
-    var index = parseInt(target.getAttribute('index'));
-    var rt_id = parseInt(target.getAttribute('rt-id'));
-    var rule_id = target.parentNode.getAttribute('rule-id');
-    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-    // handleGetRulesWithIndex in stylesheets will
-    // set for this reason __call_count on the event object
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if (rules)
-    {
-      self.setSelected(target);
-      stylesheets.setSelectedSheet(rt_id, index, rules, rule_id);
-      topCell.showView(views.stylesheets.id);
-    }
+    var broker = cls.ResourceDisplayBroker.get_instance();
+    broker.show_resource_for_ele(target);
   }.bind(this);
 
   this.target_enter = function(event, action_id)

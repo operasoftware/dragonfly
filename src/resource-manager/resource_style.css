@@ -85,12 +85,16 @@
   white-space: pre;
 }
 
-.resource-image-container {
-  background-color: hsl(0, 0%, 30%);  
-}
 .resource-image {
   display: block;
   max-height: 100%;
   max-width: 100%;
-  margin:auto;
+  margin: 10px auto;
+  background: #fff url("../ui-images/grid_checkers_black.png");
+  box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+}
+
+.font-preview {
+  font-size: 400%;
+  text-align: center;
 }

@@ -29,7 +29,7 @@
   this.getView = function(view_id)
   {
     var ret = null, tab = '', view = null, child = null, i = 0;
-    if( this.tab )
+    if (this.tab)
     {
       for( i = 0 ; tab = this.tab.tabs[i]; i++ )
       {
@@ -47,6 +47,10 @@
             if (view.has_view(view_id))
             {
               view.set_view_unfolded(view_id);
+              return [this.tab, view.id];
+            }
+            if (tab.ref_id == view_id)
+            {
               return [this.tab, view.id];
             }
           }

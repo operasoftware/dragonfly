@@ -82,3 +82,13 @@ templates.repl_group_line = function(group)
                      "handler", "repl-toggle-group", "group-id", group.id
           ], group.name];
 };
+
+templates.repl_output_location_link = function(id, line)
+{
+  return ["span", "(" + line + ")",
+                          "class", "repl-output-go-to-source",
+                          "handler", "show-log-entry-source",
+                          "data-scriptid", String(id),
+                          "data-scriptline", String(line)
+         ];
+}

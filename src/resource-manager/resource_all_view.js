@@ -164,7 +164,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       type: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE,
-        getter: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
+        getter: function(res) { return res.type ? (cls.ResourceUtil.type_to_string_map[res.type] || res.type.capitalize())
+                                                : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,

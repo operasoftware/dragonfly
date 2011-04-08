@@ -38,8 +38,6 @@ cls.ThreadsView = function(id, name, container_class)
 
   this.exportLog = function()
   {
-    export_data.data = runtimes.getThreads().join('\n');
-    topCell.showView('export_data');
   }
 
 

@@ -262,6 +262,7 @@ cls.Request = function(id)
   this.requesttime = null;
   this.endtime = null;
   this.cached = false;
+  this.touched_network = false;
   this.duration = null;
   this.request_headers = null;
   this.response_headers = null;
@@ -317,6 +318,7 @@ cls.Request = function(id)
   this._update_event_request = function(event)
   {
     this.method = event.method;
+    this.touched_network = true;
   }
 
   this._update_event_requestheader = function(event)
