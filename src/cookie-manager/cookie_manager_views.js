@@ -383,7 +383,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.check_to_exit_edit_mode = function(event, target)
   {
-    if (document.querySelector(".edit_mode") && !target.hasClass("add_cookie_button"))
+    if (document.querySelector(".edit_mode") && target.getAttribute("handler") !== "cookiemanager-add-cookie-row")
     {
       // find out if target is within some .edit_mode node. don't exit then.
       var walk_up = target;
