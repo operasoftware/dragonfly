@@ -624,6 +624,11 @@ div.dom {
   padding-right: 3px;
 }
 
+.dom div:not(.info-box)
+{
+  margin: -2px 0;
+}
+
 
 .dom input
 {
