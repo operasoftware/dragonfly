@@ -432,9 +432,24 @@ window.cls.Client = function()
     }, 250);
     if (last_selected_view)
     {
-      UI.get_instance().show_view(last_selected_view);
+      var esdi = window.services['ecmascript-debugger'];
+      esdi.add_listener('enable-success',
+                        this._on_ecmascript_enabled.bind(this, last_selected_view));
     }
   }
+
+  this._on_ecmascript_enabled = function(last_selected_view)
+  {
+    var tag = tagManager.set_callback(null, function(status, message)
+    {
+      const OBJECT_ID = 0;
+      if (!message[OBJECT_ID])
+      {
+        UI.get_instance().show_view(last_selected_view);
+      }
+    });
+    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+  };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
 
