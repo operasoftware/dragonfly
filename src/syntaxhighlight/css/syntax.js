@@ -81,7 +81,7 @@
     
     // the js implementation of bind causes a noticable overhead here
     // when we get a native implementation we can adjust the code
-    css_tokenizer.tokenize(script, function(token_type, token)
+    css_tokenizer.tokenize(stylesheet, function(token_type, token)
     {
         highlight_token(context, token_type, token);
     });
