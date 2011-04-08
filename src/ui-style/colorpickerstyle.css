@@ -148,19 +148,6 @@
   position: relative;
   z-index: 3;
 }
-.color-picker-target-element::before
-{
-  content: " ";
-  position: absolute;
-  top: -7px;
-  left: -0px;
-  padding: 8px 0px;
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-image: -o-skin('Speed Dial Configuration Dialog Skin');
-  z-index: 2;
-}
 
 .black-50
 {

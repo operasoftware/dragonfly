@@ -1189,17 +1189,6 @@ d
   border-bottom: 1px solid #ccc;
 }
 
-.storage-table h4::before
-{
-  display: block;
-  float: right;
-  width: -o-skin;
-  height: -o-skin;
-  content: -o-skin('Group.open');
-  margin-right: -15px;
-  margin-bottom: -10px;
-}
-
 .storage-table p
 {
   margin: 0;
