@@ -206,7 +206,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     var color = window.settings['host-spotlight'].get('spotlight-color');
     var locked_color = new Color().setHex(color);
-    var hue = (360 + locked_color.getHue() + 180) % 360;
+    var hue = (360 + locked_color.getHue() - 120) % 360;
     locked_color = locked_color.setHue(hue).getHex();
     matrixes[DEFAULT] = create_matrix(color, "default");
     matrixes[HOVER] = create_matrix(color, "hover");

@@ -286,7 +286,7 @@ cls.HostSpotlightView.create_ui_widgets = function()
     'host-spotlight', 
     // key-value map
     {
-      'host-spotlight': "3875d7",
+      'spotlight-color': "3875d7",
     }, 
     // key-label map
     {
