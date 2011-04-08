@@ -1217,3 +1217,9 @@ ui_strings.S_NETWORK_SERVED_FROM_CACHE = 'There is no reqest and response data, 
 
 /* DESC: Info text in the settings to invert the highlight color for elements. */
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with '%s' shortcut.";
+
+/* DESC: When enabled, a screenshot is taken automatically on showing utilities */
+ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically on showing utilities";
+
+/* DESC: Button label to take a screenshot */
+ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';

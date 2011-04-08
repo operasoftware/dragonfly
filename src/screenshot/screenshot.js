@@ -129,7 +129,7 @@ cls.ScreenShotView = function(id, name, container_class)
   this._on_active_tab = function(msg)
   {
     this._top_rt_id = msg.runtimes_with_dom[0];
-    if (this.isvisible())
+    if (this._take_screenshot && this.isvisible())
     {
       this._get_window_size();
     }
@@ -141,16 +141,19 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._handlers['zoom'] = function(event, target)
   {
-    var scale = this._pixel_magnifier.scale + (event.wheelDelta > 0 ? 1 : -1);
-    this._pixel_magnifier.zoom(event.offsetX, event.offsetY, scale);
-    this._pixel_magnifier.draw();
-    window.messages.post('screenshot-scale',
-                         {scale: this._pixel_magnifier.scale});
+    if (this._screenshot)
+    {
+      var scale = this._pixel_magnifier.scale + (event.wheelDelta > 0 ? 1 : -1);
+      this._pixel_magnifier.zoom(event.offsetX, event.offsetY, scale);
+      this._pixel_magnifier.draw();
+      window.messages.post('screenshot-scale',
+                           {scale: this._pixel_magnifier.scale});
+    }
   }.bind(this);
 
   this._handlers['dragstart'] = function(event)
   {
-    if (!this._drag_state.interval)
+    if (this._screenshot && !this._drag_state.interval)
     {
       this._drag_state.start_drag(event);
     }
@@ -158,17 +161,25 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._handlers['click'] = function(event)
   {
-    this._sample_event = event;
-    var color = this._pixel_magnifier.get_average_color(event.offsetX,
-                                                        event.offsetY,
-                                                        this._sample_size);
-    var colors = this._pixel_magnifier.get_colors_of_area(event.offsetX,
+    if (this._screenshot)
+    {
+      this._sample_event = event;
+      var color = this._pixel_magnifier.get_average_color(event.offsetX,
                                                           event.offsetY,
                                                           this._sample_size);
-    window.messages.post('sceenshot-sample-color', {color: color,
-                                                    colors: colors});
+      var colors = this._pixel_magnifier.get_colors_of_area(event.offsetX,
+                                                            event.offsetY,
+                                                            this._sample_size);
+      window.messages.post('sceenshot-sample-color', {color: color,
+                                                      colors: colors});
+    }
   }.bind(this);
 
+  this._handlers['take-first-screenshot'] = function(event)
+  {
+    this._take_screenshot = true;
+    this.update();
+  }.bind(this);
 
   this._init = function(id, name, container_class)
   {
@@ -183,27 +194,64 @@ cls.ScreenShotView = function(id, name, container_class)
     this._esdb = window.services['ecmascript-debugger'];
     this._exec = window.services.exec;
     this._drag_state = new cls.DragState(this._pixel_magnifier);
+    this._setting = window.settings['screenshot-controls'];
     this._sample_size = 1;
-    window.eventHandlers.mousewheel["screenshot-tool"] = this._handlers['zoom'];
-    window.eventHandlers.mousedown["screenshot-tool"] = this._handlers['dragstart'];
-    window.eventHandlers.click["screenshot-tool"] = this._handlers['click'];
+    this._take_screenshot = this._setting.get('auto-screenshot');
+    var evh = window.eventHandlers;
+    evh.mousewheel["screenshot-tool"] = this._handlers['zoom'];
+    evh.mousedown["screenshot-tool"] = this._handlers['dragstart'];
+    evh.click["screenshot-tool"] = this._handlers['click'];
+    evh.click["take-first-screenshot"] = this._handlers['take-first-screenshot'];
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+    window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
   };
+
+  this._on_setting_change = function(msg)
+  {
+    if (msg.id == 'screenshot-controls' &&
+        msg.key == 'auto-screenshot')
+    {
+      this._take_screenshot = this._setting.get('auto-screenshot');
+    }
+  };
+
+  this._first_start_tmpl = function()
+  {
+    return (
+    ['div',
+      ['button',
+        ui_strings.S_BUTTON_TAKE_SCREENSHOT,
+        'class', 'container-button',
+        'handler', 'take-first-screenshot'],
+      ['p',
+        window.templates.settingCheckbox('screenshot-controls', 
+                                         'auto-screenshot', 
+                                         false,
+                                         ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY)],
+      'class', 'info-box']);
+  }
 
   /* implementation */
 
   this.createView = function(container)
   {
-    this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
-    this._pixel_magnifier.width = container.clientWidth;
-    this._pixel_magnifier.height = container.clientHeight;
-    if (!this._screenshot)
+    if (this._take_screenshot)
     {
-      this._get_window_size();
+      this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
+      this._pixel_magnifier.width = container.clientWidth;
+      this._pixel_magnifier.height = container.clientHeight;
+      if (!this._screenshot)
+      {
+        this._get_window_size();
+      }
+      else
+      {
+        this._pixel_magnifier.draw();
+      }
     }
     else
     {
-      this._pixel_magnifier.draw();
+      container.clearAndRender(this._first_start_tmpl());
     }
   };
 

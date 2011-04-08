@@ -433,10 +433,10 @@ window.cls.Client = function()
     if (last_selected_view)
     {
       var esdi = window.services['ecmascript-debugger'];
-      esdi.add_listener('enable-success',
-                        this._on_ecmascript_enabled.bind(this, last_selected_view));
+      var cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
+      esdi.add_listener('enable-success', cb);
     }
-  }
+  };
 
   this._on_ecmascript_enabled = function(last_selected_view)
   {
