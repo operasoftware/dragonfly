@@ -150,7 +150,6 @@ templates.network_log_request_detail = function(ctx, selected)
     templates.network_response_body(req),
     ],
     "data-resource-id", String(req.id),
-    "data-menu", "request-context-options",
     "class", "request-details"
   ]
 }
@@ -294,7 +293,6 @@ templates.network_log_url_list = function(ctx, selected)
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
-            "data-menu", "request-context-options",
             "title", res.human_url
            ]
   }
@@ -320,7 +318,6 @@ templates.network_log_graph = function(ctx, width)
              gradients,
              rows,
              grid,
-             "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
     return tpl;
