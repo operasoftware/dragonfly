@@ -150,8 +150,8 @@
     if (!visible)
     {
       UIWindowBase.showWindow('command_line',
-                              innerHeight/2, 0,
-                              innerWidth, innerHeight/2);
+                              Math.ceil(innerHeight/2), 0,
+                              innerWidth, Math.floor(innerHeight/2));
       setTimeout(function() {
         var ele = window.views.command_line.get_container();
         if (ele)
