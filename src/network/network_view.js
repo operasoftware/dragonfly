@@ -231,7 +231,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   var contextmenu = ContextMenu.get_instance();
   contextmenu.register("request-context-options", [
     {
-      label: "Show in resource view",
+      label: ui_strings.M_CONTEXTMENU_SHOW_RESOURCE,
       handler: function(evt, target) {
         var cur = evt.target, rid;
         while (cur)
