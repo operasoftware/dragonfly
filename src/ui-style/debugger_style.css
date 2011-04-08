@@ -558,7 +558,7 @@ examine-objects key.no-expander
   min-width: 80px;
   white-space: nowrap;
 }
-.css-layout layout-container .is-positioned .position,
+.css-layout layout-container .position,
 .css-layout layout-container .dimension,
 .css-layout layout-container .padding,
 .css-layout layout-container .margin,
@@ -572,6 +572,14 @@ examine-objects key.no-expander
 .css-layout layout-container .padding,
 .css-layout layout-container .margin {
     border-style: dashed;
+}
+
+#layout-info {
+    margin: auto;
+}
+
+#layout-info th {
+    text-align: right;
 }
 
 
@@ -762,7 +770,6 @@ parent-node-chain breadcrumb.parent-offset
 parent-node-chain breadcrumb.active
 {
     color: #204d80;
-    font-weight: bold;
 }
 
 parent-node-chain breadcrumb span:hover, .css-layout parent-node-chain breadcrumb span:hover

@@ -336,17 +336,16 @@ cls.ElementLayout = function()
   
   this.metricsTemplate = function()
   {
-    var is_positioned = __comp_style[layout_map[POSITION]] != "static";
     return (
       ['div',
         [['ul',
           ['li',
             ['ul',
-              (is_positioned ? [['li',['p','\u00a0',['span', 'position']]],
+              [['li',['p','\u00a0',['span', 'position']]],
               ['li', convert_to_unitless(__comp_style[layout_map[TOP]])],
-              ['li']] : [])
+              ['li']]
             ],
-            ['ul', (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[LEFT]])] : []), ['li',
+            ['ul', ['li', convert_to_unitless(__comp_style[layout_map[LEFT]])], ['li',
               ['ul',
                 ['li',['p','\u00a0',['span', 'margin']]],
                 ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_TOP]])],
@@ -378,23 +377,24 @@ cls.ElementLayout = function()
               ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[BORDER_BOTTOM_WIDTH]])],['li']]],
               'class', 'border'], ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_RIGHT]])]],
             ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]])],['li']]],
-            'class', 'margin'], (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[RIGHT]])] : [])],
-          ['ul', (is_positioned ? [['li'],['li', convert_to_unitless(__comp_style[layout_map[BOTTOM]])],['li']] : [])],
+            'class', 'margin'], ['li', convert_to_unitless(__comp_style[layout_map[RIGHT]])]],
+          ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[BOTTOM]])],['li']]],
           'class', 'position'],
-        'class', __comp_style[layout_map[BOX_SIZING]] + (is_positioned ? ' is-positioned' : '')]],
+        'class', __comp_style[layout_map[BOX_SIZING]]]],
         ['table',
           ['tr',
-            [['td', 'position', 'data-spec', 'css#position'],
+            [['th', 'position:', 'data-spec', 'css#position'],
              ['td', __comp_style[layout_map[POSITION]] || "–"]],
           ],
           ['tr',
-            [['td', 'z-index', 'data-spec', 'css#z-index'],
+            [['th', 'z-index:', 'data-spec', 'css#z-index'],
              ['td', __comp_style[layout_map[Z_INDEX]] || "–"]],
           ],
           ['tr',
-            [['td', 'box-sizing', 'data-spec', 'css#box-sizing'],
+            [['th', 'box-sizing:', 'data-spec', 'css#box-sizing'],
              ['td', __comp_style[layout_map[BOX_SIZING]] || "–"]],
           ],
+          'id', 'layout-info'
         ]
       ]
     );
