@@ -21,12 +21,17 @@
 
 .cookie_manager .edit_container {
   display: none;
-  margin: -3px 0 -1px -1px;
   position: relative;
+  margin: -6px 0 -2px -5px;
+  padding: 2px;
 }
 
 .cookie_manager .edit_mode .edit_container {
   display: block;
+}
+
+.cookie_manager .edit_container input[type=text] {
+  padding: 2px 3px 0 3px;
 }
 
 .cookie_manager .edit_mode .value_container {
@@ -76,6 +81,7 @@
 }
 .cookie_manager .sortable-table .col_expires {
   width: 15%;
+  min-width: 160px; /* due too the date-picker */
 }
 .cookie_manager .sortable-table .col_secure {
   width: 7.5%;
