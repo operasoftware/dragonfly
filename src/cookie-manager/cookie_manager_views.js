@@ -225,15 +225,12 @@ cls.CookieManager.CookieManagerViewBase = function()
             }
           );
         }
-        if (sel_cookie_obj._is_removable)
-        {
-          options.push(
-            {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-              handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
-            }
-          );
-        }
+        options.push(
+          {
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+            handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
+          }
+        );
         // Add "Remove all from protocol-domain-path"
         var runtime_id = sel_cookie_obj._rt_id;
         options.push(
@@ -245,32 +242,12 @@ cls.CookieManager.CookieManagerViewBase = function()
       }
       else
       {
-        // multiple selection
-        var removable_cookies = [];
-        for (var j=0, selected_cookie_o; selected_cookie_o = selected_cookie_objects[j]; j++) {
-          if (selected_cookie_o._is_removable)
+        options.push(
           {
-            removable_cookies.push(selected_cookie_o);
+            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
+            handler: this.data.remove_cookies.bind(this.data, selected_cookie_objects)
           }
-        };
-        if (removable_cookies.length === 1)
-        {
-          options.push(
-            {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-              handler: this.data.remove_cookie.bind(this, removable_cookies[0]._objectref, this.data.refetch)
-            }
-          );
-        }
-        else
-        {
-          options.push(
-            {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-              handler: this.data.remove_cookies.bind(this.data, removable_cookies)
-            }
-          );
-        }
+        );
       }
       return options;
     }
@@ -302,7 +279,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
-    if(target.hasClass("selected"))
+    if(event.ctrlKey && target.hasClass("selected"))
     {
       target.removeClass("selected");
     }
