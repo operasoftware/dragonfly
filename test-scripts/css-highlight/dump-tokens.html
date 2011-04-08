@@ -4,8 +4,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; utf-8">
 <link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
-<link rel="stylesheet" href="../../src/syntaxhighlight/markup/default_color_theme.css">
-
 <link rel="alternate stylesheet" title="t1" href="../../src/ui-style/ui.css">
 <link rel="alternate stylesheet" title="t1"  href="../../src/ui-style/debugger_style.css">
 <link rel="alternate stylesheet" title="t2"  href="../../src/ui-style/js-source.css">
@@ -17,7 +15,6 @@
 <link rel="alternate stylesheet" title="t8"  href="../../src/shortcutconfig/style.css">
 <link rel="alternate stylesheet" title="t9"  href="../../src/ui-style/global_command_line.css">
 <link rel="alternate stylesheet" title="t10"  href="../../src/ui-style/contextmenu.css">
-  
 <style>
 body
 {
@@ -94,55 +91,37 @@ textarea
 .dom-bogus-comment {
      color: grey;
 }
-.js-source pre {
-margin-top: 0;
-}
 
 </style>
 <title>Page Title</title>
     <script src="../../src/scripts/dom.js"></script>
-    <script src="../../src/syntaxhighlight/js/tokenizer.js"></script>
-    <script src="../../src/syntaxhighlight/js/syntax.js"></script>
-    <script src="../../src/syntaxhighlight/js/templates.js"></script>
-  
-    <script src="../../src/syntaxhighlight/markup/tokenizer.js"></script>
-    <script src="../../src/syntaxhighlight/markup/syntax.js"></script>
+    <script src="../../src/syntaxhighlight/css/tokenizer.js"></script>
+    <script src="dump-tokens.js"></script>
 <script>
 
-var tmpl, line_count = 1, lines = [];
-var t1, t2, t3, x, c = 100;
+var tmpl;
+var output;
+var called = 0;
 var render_template = function(doc)
 {
-    lines = [line_count++];
-    var line_counter = function()
-    {
-        lines.push(line_count++);
-    }
-    tmpl = window.templates.highlight_markup(doc, line_counter);
-    
+    output = "";
+    var line_count = 1;
+    var lines = [line_count++];
+    var line_counter = null;
+    tmpl = window.templates.highlight_css(doc, line_counter);
+    document.getElementsByClassName('js-source')[0].render(tmpl);
+    console.log("DOC: "+doc.length+" "+output.length);
+    var h = document.body.offsetHeight + document.body.offsetWidth;
     
 };
 
 window.onload = function()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET","dbno.html",true);
+    xhr.open("GET","test.css?"+Date.now(),true);
     xhr.onload = function()
     {
-        // console.log(this.responseText)
-        t1 = Date.now();
-        for (var i = 0; i < c; i++)
-        {
-          render_template(this.responseText);
-          x += i;
-        }
-        t2 = Date.now();
-//        alert((t2-t1)/25);
-        document.getElementsByClassName('js-source')[0].style.height = line_count*15+"px";
-        document.getElementsByClassName('js-source')[0].render(tmpl);
-        document.getElementsByClassName('line-numbers')[0].textContent = lines.join('\n');
-        var h = document.body.offsetHeight + document.body.offsetWidth;
-        alert( (Date.now()-t2)+ " "+Math.round((t2-t1)/c));
+        render_template(this.responseText);
     }
     xhr.send(null);
 }
@@ -154,5 +133,29 @@ window.onload = function()
 
 <body>
 <div class="source"><div class="js-source"></div><div class='line-numbers'></div>
+<pre>cls.CSSTokenizer.types = {
+
+    SELECTOR                    : 1,
+    AT_RULE                     : 2,
+    WHITESPACE                  : 4,
+
+    PROPERTY                    : 101,
+    PROPERTY_SEPARATOR          : 102,
+    PROPERTY_VALUE              : 103,
+    DECLARATION_TERMINATOR      : 104,
+    DECLARATION_BLOCK_START     : 105,
+    DECLARATION_BLOCK_END       : 106,
+
+    COMMENT                     : 201,
+    SGML_COMMENT_DELIM          : 202,
+
+    INVALID                     : 401,
+    INVALID_SELECTOR            : 402,
+    INVALID_PROPERTY            : 403,
+    INVALID_PROPERTY_VALUE      : 404,
+
+    EOL_DATA                    : 500,
+    EOF                         : 999
+}</pre>
 </body>
 </html>
