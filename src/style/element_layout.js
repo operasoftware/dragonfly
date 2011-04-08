@@ -398,7 +398,7 @@ cls.ElementLayout = function()
         ]
       ]
     );
-  }
+  };
 
   function convert_to_unitless(value, no_replace)
   {

@@ -98,6 +98,12 @@ cls.WatchesView = function(id, name, container_class)
     this._check_no_content();
   }.bind(this);
 
+  this._handlers['delete-all'] = function(event, target)
+  {
+    this._data.remove_all_properties();
+    this._check_no_content();
+  }.bind(this);
+
   this._handlers['submit'] = function(event, target)
   {
     if (this.mode == MODE_EDIT)
@@ -168,7 +174,7 @@ cls.WatchesView = function(id, name, container_class)
   [
     {
       label: ui_strings.S_LABEL_ADD_WATCH,
-      handler: this._handlers['add'],
+      handler: this._handlers['add']
     }
   ];
 
@@ -176,11 +182,15 @@ cls.WatchesView = function(id, name, container_class)
   [
     {
       label: ui_strings.S_LABEL_EDIT_WATCH,
-      handler: this._handlers['edit'],
+      handler: this._handlers['edit']
     },
     {
       label: ui_strings.S_LABEL_DELETE_WATCH,
-      handler: this._handlers['delete'],
+      handler: this._handlers['delete']
+    },
+    {
+      label: ui_strings.S_LABEL_DELETE_ALL_WATCHES,
+      handler: this._handlers['delete-all']
     }
   ]
   .concat(ContextMenu.separator)

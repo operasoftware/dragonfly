@@ -673,10 +673,10 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Delete cookies from %s";
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 
 /* DESC: Context menu entry that removes watch */
-ui_strings.S_LABEL_DELETE_WATCH = "Delete";
+ui_strings.S_LABEL_DELETE_WATCH = "Delete watch";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
-ui_strings.S_LABEL_EDIT_WATCH = "Edit";
+ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font Face";
@@ -838,7 +838,7 @@ ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affe
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
 
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
-ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms\nRequest time: %(request)s ms\nResponse time: %(response)s ms";
+ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms \nRequest time: %(request)s ms \nResponse time: %(response)s ms";
 
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers.";
@@ -1209,9 +1209,14 @@ ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
 /* DESC: Context menu item for deleting a breakpoint. */
 ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
 
+/* DESC: Context menu entry that removes all watches */
+ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
+
 /* DESC: Explanation about why a network requests lacks headers. */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = 'There is no reqest and response data, as the request was completely cached, and did not use the network';
 
 /* DESC: Show resource context menu entry. */
 ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
 
+/* DESC: Info text in the settings to invert the highlight color for elements. */
+ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with '%s' shortcut.";

@@ -247,11 +247,11 @@
     var ret = 
     [
       'cst-option',
-      ["span", (script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
+      ["span", (script.script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
-          ["code", script.script_data.slice(0, 120), "class", "code-snippet"]
+          ["code", script.script_data.replace(/\s+/g, " ").slice(0, 120), "class", "code-snippet"]
         )]
       ],
       'script-id', script.script_id.toString()
@@ -345,9 +345,9 @@
   this.frame = function(frame, is_top)
   {
     // Fall back to document URI if it's inline
-    var uri = (frame.script_id && runtimes.getScript(frame.script_id)
-            ? runtimes.getScript(frame.script_id).uri
-            : runtimes.getRuntime(frame.rt_id).uri) || null;
+    var uri = frame.script_id && runtimes.getScript(frame.script_id)
+            ? (runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri)
+            : null;
     return ['li',
              ['span', frame.fn_name, 'class', 'scope-name'],
              ['span',
@@ -520,7 +520,7 @@ MODE ::= "<mode>"
     return self['cst-select'](ui_obj.script_select);
   }
 
-  this.breadcrumb = function(model, obj_id, parent_node_chain, target_id)
+  this.breadcrumb = function(model, obj_id, parent_node_chain, target_id, show_combinator)
   {
     var setting = window.settings.dom;
     var css_path = model._get_css_path(obj_id, parent_node_chain,
@@ -542,7 +542,10 @@ MODE ::= "<mode>"
           'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
                    (css_path[i].id == target_id ? ' active' : ''),
         ];
-        //ret[ret.length] = css_path[i].combinator;
+        if (show_combinator)
+        {
+          ret[ret.length] = " " + css_path[i].combinator + " ";
+        }
       }
     }
     return ret;

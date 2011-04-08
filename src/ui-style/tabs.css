@@ -57,11 +57,11 @@ top-tabs toolbar-buttons {
 }
 
 top-tabs tab {  /**/
-  height: 26px;
-  line-height: 26px;
+  height: 30px;
+  line-height: 30px;
   border: 0;
   border-right: 1px solid rgba(0,0,0,0.2);
-  padding: 2px 6px;
+  padding: 0 6px;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   top: 0;
   background-color: #e6e6e6;
@@ -113,8 +113,8 @@ top-tabs tab[data-state="waiting"].active {
 
 top-tabs .icon {
   display: inline-block;
-  height: 26px;
-  width: 26px;
+  height: 30px;
+  width: 32px;
   vertical-align: top;
   margin-right: 3px;
 }

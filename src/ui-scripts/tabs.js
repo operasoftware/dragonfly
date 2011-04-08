@@ -207,6 +207,7 @@ var TabsBase = function()
       }
 
       messages.post("show-view", {id: view_id});
+      UI.get_instance().store_last_selected_view(this.activeTab);
       if(views[view_id].type == 'composite-view' )
       {
         global_state.ui_framework.last_selected_top_tab = view_id;

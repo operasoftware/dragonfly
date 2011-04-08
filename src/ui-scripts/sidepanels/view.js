@@ -37,6 +37,7 @@
       view.is_unfolded = true;
       this._store_views_unfolded();
     }
+    this.update();
   }
 
   this.createView = function(container)

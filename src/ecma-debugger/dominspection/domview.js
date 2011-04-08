@@ -39,6 +39,7 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
+      window.messages.post('dom-view-updated', {model: model});
     }
     else
     {
@@ -188,7 +189,8 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': false,
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
-      'lock-selected-elements': false
+      'lock-selected-elements': false,
+      'spotlight-color': "3875d7"
     }, 
     // key-label map
     {
@@ -217,7 +219,6 @@ cls.DOMView.create_ui_widgets = function()
         'find-with-click',
         'highlight-on-hover',
         'update-on-dom-node-inserted',
-        'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
         'lock-selected-elements'
@@ -432,6 +433,16 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  new Search('dom', [Searchbar]);
+  var search = new Search('dom', [Searchbar]);
+
+  window.messages.addListener('dom-view-updated', function(msg)
+  {
+    if (msg.model == window.dominspections.active)
+    {
+      search.update_search();
+    }
+  });
+
+
 
 };

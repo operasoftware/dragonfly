@@ -49,6 +49,7 @@
             'data-color', color.getHex(),
             'class', 'container-button'],
       ['div',
+        ['canvas'],
         'class', 'screenshot-sample-color',
         'style', 'background-color:' + color.hhex],
       'class', 'screenshot-sample-color-container']);

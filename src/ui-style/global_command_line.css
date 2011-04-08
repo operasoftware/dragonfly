@@ -1,38 +1,53 @@
 ﻿/* TODO: some of this should be merged into syntax-highlight.css */
 
-.command-line textarea {
+.console textarea {
     background: transparent;
     color: #fff;
     vertical-align: text-top;
 }
-.command-line examine-objects {
+.console examine-objects {
     background-image: none !important;
 }
-.command-line .repl-pobj {
-  color: #88f;
-}
-.command-line .dom node,
-.command-line key,
-.command-line text,
-.command-line selector,
-.command-line .js-source,
-.command-line .element-name,
-.command-line .repl-input,
-.command-line .repl-output,
-.command-line #examine-objects .object,
-.command-line .js-source,
-.command-line examine-objects .object,
-.command-line .datetime {
+.console .dom node,
+.console key,
+.console text,
+.console selector,
+.console .js-source,
+.console .element-name,
+.console .repl-input,
+.console .repl-output,
+.console #examine-objects .object,
+.console .js-source,
+.console examine-objects .object,
+.console .datetime {
   color: #fff;
 }
-.command-line .prototype-chain-object {
+.console .prototype-chain-object {
   background-color: rgba(0,0,0,0.2);
   border: 1px solid rgba(255,255,255,0.2);
 }
-.command-line #target-element,
-.command-line .dom [handler="spotlight-node"]:hover {
+.console #target-element,
+.console .dom [handler="spotlight-node"]:hover {
   background-color: rgba(255,255,255,0.2);
 }
-.command-line ::selection {
+.console ::selection {
   color: #f33;
 }
+
+.console .js_keywords {
+  color: #66c;
+}
+.console .repl-pobj,
+.console .js_builtins {
+  color: #88f;
+}
+
+.console [handler="inspect-object-link"]:hover {
+  text-decoration: none;
+}
+
+.console [handler="inspect-node-link"]:hover {
+  text-decoration: none;
+  background: #000;
+}
+

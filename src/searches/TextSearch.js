@@ -193,11 +193,12 @@ TextSearch.prototype = new function()
     }
   };
 
-  this.search = function(new_search_term, old_cursor)
+  this.search = function(new_search_term, old_cursor, force_search)
   {
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
+      this._search_forced = Boolean(force_search);
       if(this._hits)
       {
         this._clear_search_results();
@@ -207,7 +208,7 @@ TextSearch.prototype = new function()
       this.post_message("onbeforesearch", 
                         {search_term: this._search_term.length >= this._min_term_length ? 
                                       this._search_term : ""});
-      if( this._search_term.length >= this._min_term_length )
+      if (this._search_term.length >= this._min_term_length || force_search)
       {
         if(this._container)
         {
@@ -243,11 +244,8 @@ TextSearch.prototype = new function()
   this.update = function()
   {
     var new_search_term = this._search_term;
-    if( this._search_term.length >= this._min_term_length )
-    {
-      this._search_term = '';
-      this.search(new_search_term);
-    }
+    this._search_term = '';
+    this.search(new_search_term);
   }
 
   /**
@@ -257,6 +255,16 @@ TextSearch.prototype = new function()
    */
   this.highlight = function(check_position, direction)
   {
+    if (this._search_term && 
+        this._search_term.length < this._min_term_length &&
+        !this._search_forced)
+    {
+      var new_search_term = this._search_term;
+      this._search_term = '';
+      this.search(new_search_term, null, true);
+      this._search_forced = true;
+      return;
+    }
     if (this._hits.length)
     {
       if (this._match_cursor >= 0) // if we have a currently highlighted hit..
