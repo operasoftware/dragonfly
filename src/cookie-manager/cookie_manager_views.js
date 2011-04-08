@@ -301,7 +301,15 @@ cls.CookieManager.CookieManagerViewBase = function()
         selected_node.removeClass("selected");
       };
     }
-    target.addClass("selected");
+    // unselect, works with multiple selection as ".selected" was removed otherwise
+    if(target.hasClass("selected"))
+    {
+      target.removeClass("selected");
+    }
+    else
+    {
+      target.addClass("selected");
+    }
   };
 
   this.click_add_cookie_button = function(event, target)
