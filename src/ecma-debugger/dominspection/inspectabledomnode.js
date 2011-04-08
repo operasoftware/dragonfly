@@ -241,6 +241,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return Boolean(this._data.length);
   }
 
+  this.has_node = function(node_id)
+  {
+    for (var i = 0; this._data[i] && this._data[i][ID] != node_id; i++);
+    return Boolean(this._data[i]);
+  }
+
   this.getData = function()
   {
     return this._data;

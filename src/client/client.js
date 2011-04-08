@@ -394,6 +394,7 @@ window.cls.Client = function()
 
   this.setup_top_cell = function(services)
   {
+    var last_selected_view = UI.get_instance().retrieve_last_selected_view();
     var open_windows = UIWindowBase.close_all_windows();
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
@@ -428,7 +429,11 @@ window.cls.Client = function()
     }
     setTimeout(function(){
       open_windows.forEach(function(view_id){UIWindowBase.showWindow(view_id)});
-    }, 250)
+    }, 250);
+    if (last_selected_view)
+    {
+      UI.get_instance().show_view(last_selected_view);
+    }
   }
 
   window.app.addListener('services-created', this.on_services_created.bind(this));

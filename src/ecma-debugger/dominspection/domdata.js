@@ -114,7 +114,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           {
             this._get_initial_view(this._data_runtime_id);
           }
-          else if (this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
+          else if (this._element_selected_state != CHECKED && 
+                   this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
           {
             this._get_selected_element(this._data_runtime_id);
           }
@@ -392,6 +393,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
     if (obj_id)
     {
+      this.breadcrumbhead = null;
+      this.breadcrumb_offsets = null;
       this.target = obj_id;
       window.dominspections.active = this;
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});

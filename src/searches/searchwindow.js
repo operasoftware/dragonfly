@@ -12,6 +12,8 @@ window.cls.SearchWindowBase = function(id, name, container_class)
 
   this.close_search_window = function(event){};
 
+  this.update_search = function(){};
+
   /* settings */
   
   this.show_in_views_menu = true;
