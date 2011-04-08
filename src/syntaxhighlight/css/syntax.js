@@ -67,7 +67,7 @@
     return;
   }
   
-  this.highlight_css = function(script, onnewline)
+  this.highlight_css = function(stylesheet, onnewline)
   {
     var css_tokenizer = new cls.CSSTokenizer();
     var context =

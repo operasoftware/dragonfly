@@ -71,13 +71,6 @@ cls.CSSTokenizer = function()
       this._escape_sequence = c;
       return;
     }
-/*
-    if (  (this._escape_sequence === "\\") 
-       && (c in this._QUOTES)
-     )
-    {
-      this._escape_sequence += c;
-    }; */
 
     if (c in this._WHITESPACE)
     {
@@ -257,7 +250,6 @@ cls.CSSTokenizer = function()
         {
             this._quote_literal="";
             this._state_cache.shift(); // Throw away the string handler
-        //    this._state_cache.unshift(this._state_handlers.BAD_DATA);
         }
         this._emitToken(cls.CSSTokenizer.types.EOL_DATA,LF);
         this._EOL_buffer = "";
@@ -368,7 +360,6 @@ cls.CSSTokenizer = function()
         }
         if (c === ":")
         {
-//          this._emitToken(cls.CSSTokenizer.types.PROPERTY, "");
           this._emitToken(cls.CSSTokenizer.types.PROPERTY_SEPARATOR,c);
           this._token_buffer = "";
           this._state_handler = this._state_handlers.PROPERTY_VALUE;
@@ -473,7 +464,7 @@ cls.CSSTokenizer = function()
 
       CHARSET_RULE: function()
       {
-        this._token_type = cls.CSSTokenizer.types.AT_RULE; // cls.CSSTokenizer.types.AT_RULE;
+        this._token_type = cls.CSSTokenizer.types.AT_RULE; 
         if (this._init_state())
         {
           return false;
