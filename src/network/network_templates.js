@@ -134,10 +134,10 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.responsecode
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network ? "" + req.duration + "ms" : "0"]],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network && req.duration ? "" + req.duration + " ms" : "0"]],
      "class", "resource-detail"
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
@@ -287,7 +287,7 @@ templates.network_log_url_list = function(ctx, selected)
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", res.touched_network ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
+            ["span", res.touched_network && res.responsecode ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
              "class", "log-url-list-status " + statusclass,
              "title", String(statusstring || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
              ],
