@@ -7,6 +7,7 @@ cls.CSSTokenizer = function()
   const BS = "\\";
   const OP_BRACKET = "{";
   const CL_BRACKET = "}" ;
+  const _escapes_re = /\\[0-9a-f]{1,6}/i;
 
   this._EOL_buffer = "";
   this._buffer = "";
@@ -19,6 +20,17 @@ cls.CSSTokenizer = function()
   this._state_handler = {};
   this._state_cache = [];
   this._quote_literal = "";
+
+
+  this.normalize_token = function(token)
+  {
+    // check dom.js and helpers.js for trim.
+    // There are some inherent limitations in fromCharCode wrt
+    // multibyte sequences, but this should work for all CSS keywords.
+    return token.replace(_escapes_re, function(s,p1,p2){ 
+      return String.fromCharCode(parseInt(p1,16))
+    });
+  }
 
   this.tokenize = function(input_buffer, ontoken)
   {
@@ -489,15 +501,31 @@ cls.CSSTokenizer = function()
           return false;
         }
         var c = this._buffer.charAt(this._current_pos++);
-        if (   (c === ";")
-            || (c === "{")
-          )
+        if ( c === ";")
         {
           this._emitToken(cls.CSSTokenizer.types.AT_RULE, this._token_buffer)
+          this._emitToken(cls.CSSTokenizer.types.DECLARATION_TERMINATOR, ";")
           this._state_handler = this._state_handlers.BEFORE_RULE;
           this._token_buffer = "";
           return false;
         }
+        if ( c === "{")
+        {
+          this._emitToken(cls.CSSTokenizer.types.AT_RULE, this._token_buffer);
+          this._emitToken(cls.CSSTokenizer.types.DECLARATION_BLOCK_START, "{");
+          // Fix for DFL-1844, 
+          if (this.normalize_token(this._token_buffer).trim().toLowerCase() == "@font-face")
+          {
+            this._state_handler = this._state_handlers.BEFORE_PROPERTY;
+          } 
+          else
+          {
+            this._state_handler = this._state_handlers.BEFORE_RULE;
+          }
+          this._token_buffer = "";
+          return false;
+        }
+
         this._token_buffer+=c;
         return false;
       },
