@@ -100,6 +100,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-font-ttf": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/woff": "font", // not official, but seems to be common
   "font/opentype": "font",
   "application/x-font-otf": "font",
   "application/x-woff": "font",
