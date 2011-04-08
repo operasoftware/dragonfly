@@ -217,7 +217,7 @@ cls.DOMView.create_ui_widgets = function()
         'find-with-click',
         'highlight-on-hover',
         'update-on-dom-node-inserted',
-        'show-siblings-in-breadcrumb',
+        //'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
         'lock-selected-elements'
