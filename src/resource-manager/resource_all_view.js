@@ -130,11 +130,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     idgetter: function(res) { return String(res.id) },
     groups: {
       hosts: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS,
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST,
         grouper: function(res) { return res.urltype == 4 ? ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST : cls.ResourceUtil.url_host(res.url) }
       },
       types: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS,
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE,
         grouper: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP}
       }
     },
