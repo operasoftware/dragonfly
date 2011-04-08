@@ -165,6 +165,14 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
+      if(obj_a._is_runtime_placeholder)
+      {
+        return Infinity;
+      }
+      if(obj_b._is_runtime_placeholder)
+      {
+        return -Infinity;
+      }
       if (obj_a[prop] < obj_b[prop])
       {
         return 1;
