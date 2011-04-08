@@ -48,7 +48,19 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     {
       this._open_resource_tab(res);
     }
+    else if (window.services["resource-manager"].requestGetResourceID)
+    {
+      var tag = window.tagManager.set_callback(this, this._on_resolve_url);
+      window.services["resource-manager"].requestGetResourceID(tag, [url]);
+    }
   };
+
+  this._on_resolve_url = function(status, msg)
+  {
+    var RESOURCE_ID = 0;
+    var rid = msg[RESOURCE_ID];
+    this.show_resource_for_id(rid);
+  }
 
   this._render_main_view = function(container)
   {
