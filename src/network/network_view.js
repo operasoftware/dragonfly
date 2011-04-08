@@ -72,7 +72,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");
-          e.scrollLeft = evt.target.scrollLeft;
+          var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
+          e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
         }
         scrollfun({target:this._hscrollcontainer});
         this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
