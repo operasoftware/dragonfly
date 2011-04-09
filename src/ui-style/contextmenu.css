@@ -84,7 +84,7 @@
 }
 
 #contextmenu li:not(.disabled):active .check {
-  background-image: transparent url("../ui-images/menu_check_selected.png");
+  background: transparent url("../ui-images/menu_check_selected.png");
 }
 
 #contextmenu .radio {
