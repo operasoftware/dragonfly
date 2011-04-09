@@ -7,6 +7,7 @@ import sys
 import zipfile
 import base64
 import StringIO
+import urllib
 
 """
 uglifyjs is a python wrapper for uglifyjs.
@@ -419,6 +420,9 @@ def _find_file_path(base, file_name):
                 return os.path.join(dirpath, fn)
     return None
 
+def URI_to_os_path(path):
+    return os.path.join(*[urllib.unquote(part) for part in path.split('/')])
+
 def _convert_imgs_to_data_uris(src):
     re_img = re.compile(r""".*?url\((['"]?(.*?)['"]?)\)""")
     deletions = []
@@ -431,13 +435,14 @@ def _convert_imgs_to_data_uris(src):
                 match = re_img.findall(line)
                 if match:
                     for full, stripped in match:
-                        if stripped.startswith("data:"): temp.write(line.encode("ascii"))
-                        file_path = os.path.join(base, stripped)
+                        file_path = os.path.join(base, URI_to_os_path(stripped))
                         if not os.path.isfile(file_path):
                             # src is actually the target destination of the build
                             # that means the relations of css and according images 
                             # are lost. Clashing filenames will cause problems.
-                            file_path = _find_file_path(src, stripped)
+                            parts = stripped.split('/')
+                            file_name = parts[len(parts) - 1]
+                            file_path = _find_file_path(src, file_name)
                         uri = ""
                         if file_path:
                             deletions.append(file_path)
@@ -445,6 +450,8 @@ def _convert_imgs_to_data_uris(src):
                         if uri:
                             temp.write(line.replace(full, uri).encode("ascii"))
                         else:
+                            if not stripped.startswith("data:"):
+                                print "no data uri for path:", os.path.join(base, URI_to_os_path(stripped)) 
                             temp.write(line.encode("ascii"))
                             dirty = True
                 else:
