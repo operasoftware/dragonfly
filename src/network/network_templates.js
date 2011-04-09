@@ -150,7 +150,6 @@ templates.network_log_request_detail = function(ctx, selected)
     templates.network_response_body(req),
     ],
     "data-resource-id", String(req.id),
-    "data-menu", "request-context-options",
     "class", "request-details"
   ]
 }
@@ -294,7 +293,6 @@ templates.network_log_url_list = function(ctx, selected)
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
-            "data-menu", "request-context-options",
             "title", res.human_url
            ]
   }
@@ -320,7 +318,6 @@ templates.network_log_graph = function(ctx, width)
              gradients,
              rows,
              grid,
-             "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
     return tpl;
@@ -388,7 +385,17 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var reqwidth = request.duration * multiplier;
   var resstart = ((request.requesttime || start) - basetime) * multiplier;
   var reswidth = (request.duration - (request.requesttime - request.starttime)) * multiplier;
-  var texture = "gradient-" + (request.type || "unknown");
+
+  var gradientmap = {
+    css: "blue",
+    script: "yellow",
+    markup: "purple",
+    image: "red",
+    audio: "green",
+    video: "green"
+  }
+
+  var texture = "gradient-" + (gradientmap[request.type] || "gray");
   var stroke = templates.network_graph_stroke_defs[request.type || "unknown"];
 
   if (reqwidth < min_bar_width) // too small bar looks ugly
@@ -515,21 +522,22 @@ templates.network_graph_stroke_defs = {
 templates.network_graph_gradient_defs = function()
 {
   return ["defs",
-          templates.network_graph_gradient("image", "#ff7c7c", "#cb1313", "#b40000", "#c42222"),
-          templates.network_graph_gradient("script", "#ffffeb","#e2dd9a","#c6bf7a", "#d1cd95"),
-          templates.network_graph_gradient("css", "#e6ffff", "#91c4ff", "#71a6f0", "#8eb8f3"),
-          templates.network_graph_gradient("markup", "#d9deff", "#7c85b9", "#6972a6", "#8088b4"),
-          templates.network_graph_gradient("unknown", "#ffffff", "#c0c0c0", "#aaaaaa", "#b8b8b8")
+            templates.network_graph_gradient("purple", "#c9c9ff", "#a7a5d6", "#b0b0d6"),
+            templates.network_graph_gradient("blue", "#b8d4ff", "#8bafe0", "#a6c5f3"),
+            templates.network_graph_gradient("red", "#ed9696", "#d46868", "#e78989"),
+            templates.network_graph_gradient("yellow", "#f7f2d5", "#e3d696", "#f4edc9"),
+            templates.network_graph_gradient("gray", "#d9d9d9", "#adadad", "#bfbfbf"),
+            templates.network_graph_gradient("green", "#cae6ca", "#9ec59e", "#b5d6b5"),
          ];
 };
 
-templates.network_graph_gradient = function(id, c1, c2, c3, c4)
+
+templates.network_graph_gradient = function(id, c1, c2, c3)
 {
   return ["linearGradient",
-          ["stop", "offset", "5%", "stop-color", c1],
-          ["stop", "offset", "49%", "stop-color", c2],
-          ["stop", "offset", "50%", "stop-color", c3],
-          ["stop", "offset", "100%", "stop-color", c4],
+          ["stop", "offset", "1%", "stop-color", c1],
+          ["stop", "offset", "60%", "stop-color", c2],
+          ["stop", "offset", "100%", "stop-color", c3],
           "x1", "0",
           "x2", "0",
           "y1", "0",
