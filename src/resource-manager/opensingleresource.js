@@ -40,7 +40,6 @@ cls.OpenSingleResource.prototype = new function()
   {
     if (status)
     {
-      opera.postError("GetResourceID in OpenSingleResource failed");
       this._fallback();
     }
     else
@@ -59,7 +58,6 @@ cls.OpenSingleResource.prototype = new function()
   {
     if (status)
     {
-      opera.postError("GetResource in OpenSingleResource failed");
       this._fallback();
     }
     else
@@ -85,7 +83,6 @@ cls.OpenSingleResource.prototype = new function()
   {
     if (status)
     {
-      opera.postError("GetResource in OpenSingleResource failed");
       this._fallback();
     }
     else
