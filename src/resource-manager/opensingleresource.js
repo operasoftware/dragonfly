@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 cls.OpenSingleResource = function(resource_manager, url)
 {

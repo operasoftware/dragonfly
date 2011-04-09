@@ -1,4 +1,4 @@
-var PixelMagnifier = function()
+﻿var PixelMagnifier = function()
 {
   this._init();
 };

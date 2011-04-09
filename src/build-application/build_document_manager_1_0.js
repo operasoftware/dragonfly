@@ -1,4 +1,4 @@
-window.app.builders.DocumentManager || ( window.app.builders.DocumentManager = {} );
+﻿window.app.builders.DocumentManager || ( window.app.builders.DocumentManager = {} );
 /**
   * @param {Object} service the service description of the according service on the host side
   */
