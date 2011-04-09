@@ -406,6 +406,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resource_base.js"/>
 <script src="./ui-scripts/metadata_drawer/metadata_drawer.js"/>
 <script src="./resource-manager/resource_display_broker.js"/>
+<script src="./resource-manager/opensingleresource.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlredirect.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
@@ -417,6 +418,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
+
 
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>

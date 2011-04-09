@@ -37,27 +37,9 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     if (res)
     {
       this._open_resource_tab(res);
+      return true;
     }
-    else
-    {
-      var tag = window.tagManager.set_callback(this, function(status, message)
-      {
-        if (status)
-        {
-          opera.postError("GetResource failed.");
-        }
-        else
-        {
-          var raw = new cls.ResourceManager["1.0"].ResourceData(message);
-          var res = new cls.Resource(rid);
-          res.url = raw.url;
-          res.update("urlfinished", raw);
-          this._open_resource_tab(res);
-        }
-      });
-      window.services["resource-manager"].requestGetResource(tag, [rid, [1]]);
-    }
-
+    return false;
   };
 
   this.show_resource_for_url = function(url)
@@ -66,20 +48,10 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     if (res)
     {
       this._open_resource_tab(res);
+      return true
     }
-    else if (window.services["resource-manager"].requestGetResourceID)
-    {
-      var tag = window.tagManager.set_callback(this, this._on_resolve_url);
-      window.services["resource-manager"].requestGetResourceID(tag, [url]);
-    }
+    return false;
   };
-
-  this._on_resolve_url = function(status, msg)
-  {
-    var RESOURCE_ID = 0;
-    var rid = msg[RESOURCE_ID];
-    this.show_resource_for_id(rid);
-  }
 
   this._render_main_view = function(container)
   {
@@ -136,6 +108,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     ui.get_tabbar("resources").add_tab(view.id);
     ui.show_view(view.id);
   }
+
+  this.open_resource_tab = this._open_resource_tab;
 
   this._handle_open_resource_tab_bound = function(evt, target) {
     var rid = target.getAttribute("data-resource-id");
