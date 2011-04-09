@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   this.scrennshot_controls = function(color)
   {

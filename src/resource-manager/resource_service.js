@@ -216,6 +216,10 @@ cls.Resource = function(id)
     }
     else if (eventname == "urlfinished")
     {
+      if (!this.url)
+      {
+        this.url = eventdata.url;
+      }
       this.result = eventdata.result;
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;

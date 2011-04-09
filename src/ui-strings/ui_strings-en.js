@@ -1159,7 +1159,7 @@ ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 
 /* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
-ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to window width";
+ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to the window width";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
@@ -1213,7 +1213,17 @@ ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
 ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
 
 /* DESC: Explanation about why a network requests lacks headers. */
-ui_strings.S_NETWORK_SERVED_FROM_CACHE = 'There is no reqest and response data, as the request was completely cached, and did not use the network';
+ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made.  All data was retrieved from cache without accessing the network";
+
+/* DESC: Show resource context menu entry. */
+ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
 
 /* DESC: Info text in the settings to invert the highlight color for elements. */
-ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with '%s' shortcut.";
+ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the “%s” shortcut.";
+
+/* DESC: When enabled, a screenshot is taken automatically on showing utilities */
+ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
+
+/* DESC: Button label to take a screenshot */
+ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
+

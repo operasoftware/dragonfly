@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   this.monospace_font_selection = function(setting)
   {

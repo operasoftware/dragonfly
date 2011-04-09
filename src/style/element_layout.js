@@ -342,11 +342,18 @@ cls.ElementLayout = function()
         [['ul',
           ['li',
             ['ul',
-              (is_positioned ? [['li',['p','\u00a0',['span', 'position']]],
-              ['li', convert_to_unitless(__comp_style[layout_map[TOP]])],
-              ['li']] : [])
+              [['li',['p','\u00A0',
+                        ['span', is_positioned ? 'position' : '\u00A0']]],
+              ['li', is_positioned ?
+                     convert_to_unitless(__comp_style[layout_map[TOP]])
+                     : '\u00A0'],
+              ['li']]
             ],
-            ['ul', (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[LEFT]])] : []), ['li',
+            ['ul',
+              ['li', is_positioned ? 
+                     convert_to_unitless(__comp_style[layout_map[LEFT]]) :
+                     '\u00A0'], 
+              ['li',
               ['ul',
                 ['li',['p','\u00a0',['span', 'margin']]],
                 ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_TOP]])],
@@ -378,10 +385,16 @@ cls.ElementLayout = function()
               ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[BORDER_BOTTOM_WIDTH]])],['li']]],
               'class', 'border'], ['li', convert_to_unitless(__comp_style[layout_map[MARGIN_RIGHT]])]],
             ['ul', [['li'],['li', convert_to_unitless(__comp_style[layout_map[MARGIN_BOTTOM]])],['li']]],
-            'class', 'margin'], (is_positioned ? ['li', convert_to_unitless(__comp_style[layout_map[RIGHT]])] : [])],
-          ['ul', (is_positioned ? [['li'],['li', convert_to_unitless(__comp_style[layout_map[BOTTOM]])],['li']] : [])],
-          'class', 'position'],
-        'class', __comp_style[layout_map[BOX_SIZING]] + (is_positioned ? ' is-positioned' : '')]],
+            'class', 'margin'], 
+              ['li', is_positioned ?
+                     convert_to_unitless(__comp_style[layout_map[RIGHT]]) :
+                     '\u00A0']],
+          ['ul', 
+            [['li'],['li', is_positioned ? 
+                           convert_to_unitless(__comp_style[layout_map[BOTTOM]]) :
+                           '\u00A0'],['li']]],
+          'class', is_positioned ? 'position' : ''],
+        'class', __comp_style[layout_map[BOX_SIZING]]]],
         ['table',
           ['tr',
             [['td', 'position', 'data-spec', 'css#position'],

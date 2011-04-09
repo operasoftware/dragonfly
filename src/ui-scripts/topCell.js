@@ -82,7 +82,8 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
     {
       this.tab.setActiveTab(view_id);
     }
-    else
+    // a temporary view perhaps doesn't exist anymore
+    else if (views[view_id])  
     {
       var view = views[view_id];
       if(view.requires_view && !this.tab.hasTab(view.requires_view))
@@ -97,7 +98,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
       else
       {
         var ret = this.getView(view_id), tab = null, i = 0;
-        //opera.postError('ret: '+JSON.stringify(ret))
         if( ret )
         {
           for( ; tab = ret[i]; i += 2 )

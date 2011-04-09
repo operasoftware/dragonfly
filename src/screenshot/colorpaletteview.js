@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 
 cls.ColorPaletteView = function(id, name, container_class)

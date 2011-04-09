@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 window.cls.ScreenShotControlsView = function(id, name, container_class)
 {
@@ -65,7 +65,22 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color_container = null;
     this._sample_colors = null;
     this._sample_color_template = window.templates.sample_color;
-    this._settings = new Settings('screenshot-controls', { 'sample-size': 3, 'color-palette': []});
+    var setting_map = 
+    {
+      'sample-size': 3, 
+      'color-palette': [],
+      'auto-screenshot': false
+    };
+    var label_map =
+    {
+      'auto-screenshot': ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY
+    };
+    var settings_map = 
+    {
+      checkboxes: ['auto-screenshot']
+    };
+    this._settings = new Settings('screenshot-controls', setting_map, label_map,
+                                  settings_map, null, 'general');
     this._screenshot = new cls.ScreenShotView('screenshot', "Screen Shot", "screenshot");
     window.eventHandlers.click['screenshot-update'] = this._handlers['screenshot-update'];
     window.eventHandlers.click['screenshot-store-color'] = this._handlers['screenshot-store-color'];
