@@ -59,12 +59,17 @@ function ContextMenu() {
     var ele = event.target;
     var all_items = [];
     var menu_id = null;
+    var last_found_menu_id = '';
     var collected_menus = [];
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
+      if (menu_id)
+      {
+        last_found_menu_id = menu_id;
+      }
       // Make sure the same menu is never collected twice
       if (collected_menus.indexOf(menu_id) == -1) {
         collected_menus.push(menu_id);
@@ -116,9 +121,15 @@ function ContextMenu() {
       }
     }
 
-    var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || event.target.get_attr("parent-node-chain", "data-resource-url");
+    var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || 
+                         event.target.get_attr("parent-node-chain", "data-resource-url");
     if (res_id_or_url)
     {
+      if (last_found_menu_id == "dom")
+      {
+        var rt_id = event.target.get_attr('parent-node-chain', 'rt-id');
+        res_id_or_url = helpers.resolveURLS(runtimes.getURI(rt_id), res_id_or_url);
+      }
       var broker = cls.ResourceDisplayBroker.get_instance();
       var rid = parseInt(res_id_or_url, 10);
       if (rid)
@@ -134,6 +145,11 @@ function ContextMenu() {
         {
           broker.show_resource_for_url(res_id_or_url);
         }
+      }
+
+      if (all_items.length)
+      {
+        all_items.push(ContextMenu.separator);
       }
 
       all_items.push(
