@@ -38,6 +38,25 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     {
       this._open_resource_tab(res);
     }
+    else
+    {
+      var tag = window.tagManager.set_callback(this, function(status, message)
+      {
+        if (status)
+        {
+          opera.postError("GetResource failed.");
+        }
+        else
+        {
+          var raw = new cls.ResourceManager["1.0"].ResourceData(message);
+          var res = new cls.Resource(rid);
+          res.url = raw.url;
+          res.update("urlfinished", raw);
+          this._open_resource_tab(res);
+        }
+      });
+      window.services["resource-manager"].requestGetResource(tag, [rid, [1]]);
+    }
 
   };
 
