@@ -140,7 +140,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link'"
+                  ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
                   : "") + ">\"" +
                 helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
                 "\"</value>";
@@ -392,7 +392,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link'"
+                    ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
                     : "" ) + ">\"" +
                   helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
               "\"</value>";
