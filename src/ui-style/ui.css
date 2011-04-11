@@ -96,8 +96,8 @@ toolbar, panel-toolbar, window-toolbar {
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 50%,
-                                       rgba(0,0,0,0.05) 50%,
+                                       rgba(255,255,255,0.25) 49%,
+                                       rgba(0,0,0,0.05) 49%,
                                        rgba(0,0,0,0.05) 52%,
                                        transparent 52%,
                                        rgba(255,255,255,0.25) 100%);
@@ -915,8 +915,8 @@ window.hud window-container {
     background-color: #000;
     background-image: -o-linear-gradient(-90deg,
                                          rgba(255,255,255,0.33) 0,
-                                         rgba(255,255,255,0.15) 50%,
-                                         rgba(0,0,0,0.05) 50%,
+                                         rgba(255,255,255,0.15) 49%,
+                                         rgba(0,0,0,0.05) 49%,
                                          rgba(0,0,0,0.05) 52%,
                                          transparent 52%,
                                          rgba(255,255,255,0.15) 100%);
@@ -1486,7 +1486,7 @@ tab.active .close-tab-button {
     border: 1px solid rgba(0, 0, 0, .5);
     border-radius: 4px;
     height: 22px;
-    line-height: 18px;
+    line-height: 20px;
     padding: 1px 12px;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
     -o-transition: background-color 0.2s;
