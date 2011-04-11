@@ -1,4 +1,4 @@
-﻿#main-scroll-container
+﻿﻿#main-scroll-container
 {
   height: 100%;
   overflow: auto;
@@ -85,37 +85,15 @@
 
 .network-log-url-list .log-url-list-status {
   width: 30px;
-}
-
-/*
-.status-200 {
-  content: "";
-}
-
-.status-301 {
-  content: url("../ui-images/network_redirect.png");
-}
-
-.status-302 {
-  content: url("../ui-images/network_redirect.png");
-}
-
-.status-400 {
-  content: url("../ui-images/network_error.png");
-}
-
-.status-404 {
-  content: url("../ui-images/network_error.png");
-}
-
-.status-500 {
-  content: url("../ui-images/network_error.png");
+  text-align: center;
+  margin: 0 2px;
+  padding: 2px 0;
+  border-radius: 3px;
 }
 
 .status-cached {
-  content: url("../ui-images/network_cached.png");
+  background: rgba(0,0,0,0.15);
 }
-*/
 
 .network-log-url-list li:active,
 .network-log-url-list li:nth-child(even):active,
@@ -161,7 +139,7 @@
   bottom: 0;
   overflow: hidden;
   overflow-y: auto;
-  padding: 10px 30px;
+  padding: 15px 20px 25px 20px;
   border-left: 1px solid #999;
   background-color: #fff;
 }
@@ -191,6 +169,8 @@
 .network-details-header-list {
   list-style: none;
   padding-left: 0;
+  margin-top: 0;
+  padding-top: 0; 
 }
 
 .network-details-header-list span
@@ -198,21 +178,32 @@
   font-weight: bold;
 }
 
-.request-details h2
+.network-details-request p
 {
-  font-size: 1em;
-  font-weight: bold;
-  padding: 25px 0px 4px 0;
-  text-transform: uppercase;
-  color: #000;
-  text-shadow: 0 0 7px #bbb;
+  margin: 0;
+  max-width: 60em;
+  line-height: 150%;
+}
+
+.network-details-request h2,
+.request-crafter h2,
+.network-options h2
+{
+  font-size: 125%;
+  margin: 15px 0 0 0;
 }
 
 /* Request crafter */
 .request-crafter
 {
-  padding: 5px 30px;
+  padding: 5px 20px;
 }
+
+.request-crafter p
+{
+  margin-top: 0;
+}
+
 
 .request-crafter input
 {
@@ -232,13 +223,42 @@
   border: solid thin black;
 }
 
+
 /* Options */
 .network-options
 {
-  padding: 5px 30px;
+  padding: 5px 20px 25px 20px;
+}
+
+.network-options label {
+  margin: 5px 0 0 0;
+  display: block;
+  color: #666;
+}
+
+.network-options label:hover, .network-options label:focus {
+  color: #000;
+}
+
+.network-options input[type=checkbox] {
+  padding: 0 10px 0 5px;
+}
+
+.network-options p
+{
+  margin: 0;
+  max-width: 60em;
+  line-height: 150%;
+}
+
+
+.network-options select
+{
+  margin-left: 10px;
 }
 
 .header-override-input
 {
   width: 100%;
+  margin: 10px 0;
 }

@@ -640,7 +640,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = "Expires";
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "When session ends, e.g. the tab is closed";
 
 /* DESC: Label for the expiry when cookie expires after the session is closed */
-ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Session";
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "When session ends, e.g. the tab is closedSession";
 
 /* DESC: Label for the name (key) of a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME = "Name";
@@ -1220,6 +1220,9 @@ ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
 
 /* DESC: Info text in the settings to invert the highlight color for elements. */
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the “%s” shortcut.";
+
+/* DESC: Info text in when a request in the request crafter failed. */
+ui_strings.S_INFO_REQUEST_FAILED = "The request failed.";
 
 /* DESC: When enabled, a screenshot is taken automatically on showing utilities */
 ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
