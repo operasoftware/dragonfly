@@ -640,7 +640,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES = "Expires";
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE = "When session ends, e.g. the tab is closed";
 
 /* DESC: Label for the expiry when cookie expires after the session is closed */
-ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "When session ends, e.g. the tab is closedSession";
+ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES_ON_SESSION_CLOSE_SHORT = "Session";
 
 /* DESC: Label for the name (key) of a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME = "Name";
