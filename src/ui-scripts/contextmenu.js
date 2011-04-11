@@ -84,10 +84,10 @@ function ContextMenu() {
     }
 
     // This should preferably not be done inside ContextMenu.
-    var speclinks = SpecLinks.get_instance();
     var spec = event.target.get_attr("parent-node-chain", "data-spec");
     if (spec)
     {
+      var speclinks = SpecLinks.get_instance();
       var specs = speclinks.get_spec_links(spec);
       if (specs.length)
       {
@@ -114,6 +114,36 @@ function ContextMenu() {
       {
         all_items = all_items.concat(items);
       }
+    }
+
+    var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || event.target.get_attr("parent-node-chain", "data-resource-url");
+    if (res_id_or_url)
+    {
+      var broker = cls.ResourceDisplayBroker.get_instance();
+      var rid = parseInt(res_id_or_url, 10);
+      if (rid)
+      {
+        var fun = function()
+        {
+          broker.show_resource_for_id(rid);
+        }
+      }
+      else
+      {
+        var fun = function()
+        {
+          broker.show_resource_for_url(res_id_or_url);
+        }
+      }
+
+      all_items.push(
+        {
+          label: ui_strings.M_CONTEXTMENU_SHOW_RESOURCE,
+          handler: fun,
+          id: res_id_or_url,
+          menu_id: "resource"
+        }
+      )
     }
 
     this._current_items = all_items;
@@ -253,11 +283,12 @@ function ContextMenu() {
             }
 
             var current_target = this._current_event.target;
-            while (current_target && (menu_id == "spec"
-                        ? current_target.getAttribute("data-spec") === null
-                        : current_target.getAttribute("data-menu") != menu_id)
-            )
+            while (current_target)
             {
+              if (menu_id == "spec" && current_target.getAttribute("data-spec")) { break }
+              else if (menu_id == "resource" && current_target.getAttribute("data-resource-url")) { break }
+              else if (menu_id == "resource" && current_target.getAttribute("data-resource-id")) { break }
+              else if (current_target.getAttribute("data-menu") == menu_id) { break }
               current_target = current_target.parentNode;
             }
             item.handler(this._current_event, current_target);

@@ -256,10 +256,20 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     var resource = this._resources[this._listening_for];
     this._stop_loading();
-    var response = resource.responseheader.raw;
-    if (!resource.urlredirect)
+
+    var response = "";
+
+    if (resource.urlfinished && resource.urlfinished.result != 1) // 1 == success
     {
-      response += resource.responsefinished.data.content.stringData;
+      response = ui_strings.S_INFO_REQUEST_FAILED;
+    }
+    else
+    {
+      var response = resource.responseheader.raw;
+      if (!resource.urlredirect)
+      {
+        response += resource.responsefinished.data.content.stringData;
+      }
     }
 
     this._prev_response = response;
