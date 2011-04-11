@@ -317,7 +317,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       var runtime_id = (cookie_object && cookie_object._rt_id) || null;
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
-      inserted.querySelector("[name=name]").focus();
+      inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted); // todo: check if it's nicer if a added row does not get selected, but the class gives it a selection-like style
     }
   }
@@ -392,15 +392,15 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       edit_tr.removeClass("edit_mode");
 
-      var is_secure_input    = edit_tr.querySelector("[name=is_secure]");
-      var is_http_only_input = edit_tr.querySelector("[name=is_http_only]");
-      var runtime_elem       = edit_tr.querySelector("[name=add_cookie_runtime]");
-      var domain_input       = edit_tr.querySelector("[name=domain]");
+      var is_secure_input    = edit_tr.querySelector("[name='is_secure']");
+      var is_http_only_input = edit_tr.querySelector("[name='is_http_only']");
+      var runtime_elem       = edit_tr.querySelector("[name='add_cookie_runtime']");
+      var domain_input       = edit_tr.querySelector("[name='domain']");
 
-      var name         = edit_tr.querySelector("[name=name]").value.trim();
-      var value        = edit_tr.querySelector("[name=value]").value;
-      var expires      = new Date(edit_tr.querySelector("[name=expires]").value || 0).getTime();
-      var path         = edit_tr.querySelector("[name=path]").value.trim();
+      var name         = edit_tr.querySelector("[name='name']").value.trim();
+      var value        = edit_tr.querySelector("[name='value']").value;
+      var expires      = new Date(edit_tr.querySelector("[name='expires']").value || 0).getTime();
+      var path         = edit_tr.querySelector("[name='path']").value.trim();
       var is_secure    = +(is_secure_input && is_secure_input.checked);
       var is_http_only = +(is_http_only_input && is_http_only_input.checked);
       // "runtime" is val of [select] or [input type=hidden] (no add_cookie service)
@@ -755,7 +755,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
       var default_domain = (cookie_object && cookie_object._rt_hostname) || "";
       var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
       var inserted = row.parentElement.insertAfter(templ, row);
-      inserted.querySelector("[name=name]").focus();
+      inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted);
     }
   }
