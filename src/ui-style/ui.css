@@ -172,7 +172,7 @@ button[handler="reload-window"]::before {
     background-image: url("../ui-images/icons/icon_hidedefaults.png");
 }
 .css-inspector.hide-shorthands::before {
-    background-image: url("../ui-images/icons/icon_shorthands.png");
+    background-image: url("../ui-images/icons/icon_shorthand.png");
 }
 .dom_attrs.hide-null-values::before {
     background-image: url("../ui-images/icons/icon_empty.png");

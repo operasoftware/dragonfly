@@ -1,4 +1,4 @@
-﻿(function()
+(function()
 {
   // ML_ prefixes to avoid name clashes with other highlighters
   const

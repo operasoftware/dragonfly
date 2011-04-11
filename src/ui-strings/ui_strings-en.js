@@ -1224,6 +1224,9 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 /* DESC: Info text in when a request in the request crafter failed. */
 ui_strings.S_INFO_REQUEST_FAILED = "The request failed.";
 
+/* DESC: Info text in the network view when a page starts to load while screen updats are paused */
+ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
+
 /* DESC: When enabled, a screenshot is taken automatically on showing utilities */
 ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
 
