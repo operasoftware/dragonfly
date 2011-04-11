@@ -1011,7 +1011,7 @@ cls.Stylesheets = function()
         {
           return {
             index: i,
-            href: sheet[SHEET_HREF],
+            href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
             name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
               || sheet[SHEET_TITLE]
               || 'stylesheet ' + i)
