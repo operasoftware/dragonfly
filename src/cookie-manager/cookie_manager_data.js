@@ -39,17 +39,6 @@ cls.CookieManager.Cookie = function(details, data)
       (!this.path || data._is_min_service_version_1_0_2) &&
       this.domain === this._rt_hostname
     );
-  /**
-   * Decide if the cookie can be removed.
-   * Cookie retrieved via JS can't reliably be removed because domain (and path) are unknown.
-   * Also while path info is mostly incorrect when present (CORE-35055), cookie with path
-   * won't be removable for service_versions < 1.0.2.
-  */
-  this._is_removable = (
-    this.domain !== undefined &&
-    this.path !== undefined &&
-    (this.path === "/" || data._is_min_service_version_1_0_2)
-  );
 }
 
 cls.CookieManager.CookieDataBase = function()
