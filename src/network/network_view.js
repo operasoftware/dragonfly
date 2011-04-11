@@ -30,11 +30,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
+    var paused = settings.network_logger.get('paused-update');
     if (ctx && ctx.resources.length)
     {
       this._container = container;
 
-      var paused = settings.network_logger.get('paused-update');
       var fit_to_width = settings.network_logger.get('fit-to-width');
 
       var url_list_width = 250;
@@ -78,6 +78,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         scrollfun({target:this._hscrollcontainer});
         this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
       }
+    }
+    else if (paused)
+    {
+      container.clearAndRender(
+        ['div',
+         ['p', ui_strings.S_INFO_NETWORK_UPDATES_PAUSED],
+         'class', 'info-box'
+        ]
+      );
     }
     else if (this._loading)
     {
