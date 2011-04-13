@@ -417,18 +417,12 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(horizontal_scoller).style.right = '0px';
   }
 
+  // deprecated. use this.show_and_flash_line instead.
   this.highlight = function(script_id, line_nr, highlight_line_start, highlight_line_end)
   {
     if (this.isvisible())
     {
-      highlight_line_start = highlight_line_start === undefined ? line_nr : highlight_line_start;
-      __highlight_line_start = highlight_line_start - 1;
-      __highlight_line_end = typeof highlight_line_end == "number" ?
-                              highlight_line_end - 1:
-                              __highlight_line_start;
-      // Reset the stored current line to ensure that the view gets updated
-      __current_line = 0;
-      this.showLine(script_id, line_nr, null, null, null, true);
+      this.show_and_flash_line(script_id, line_nr);
     }
   }
 
@@ -786,7 +780,7 @@ cls.JsSourceView = function(id, name, container_class)
         __disregard_scroll_event = true;
         document.getElementById(scroll_container_id).scrollTop =
           (target_line - 1) * context['line-height'];
-        this.showLine(__current_script.script_id, target_line, null, null, false, true);
+        this.showLine(__current_script.script_id, target_line, null, null, false);
       }
     }
     return false;
