@@ -358,7 +358,7 @@ var VirtualTextSearchBase = function()
     }
     this._source_container.parentNode.scrollLeft = 0;
     this._hit = this._hits[this._script.match_cursor];
-    if (this._hit.length
+    if (this._hit && this._hit.length
        && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft + this._source_container_parent.offsetWidth)
     {
       this._source_container.parentNode.scrollLeft = this._hit[0].offsetLeft - 50;
@@ -536,6 +536,10 @@ var VirtualTextSearchBase = function()
   {
     var new_search_term = this._search_term;
     this._search_term = '';
+    if (this._script)
+    {
+      this._search_source();
+    }
     this._search_bound(new_search_term);
   }
 
