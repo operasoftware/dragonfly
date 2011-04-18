@@ -533,13 +533,13 @@ var VirtualTextSearchBase = function()
   };
   
   this.update = function()
-  {
-    var new_search_term = this._search_term;
-    this._search_term = '';
-    if (this._script)
+  {    
+    if (!this._search_term && this._script)
     {
       this._search_source();
     }
+    var new_search_term = this._search_term || '';
+    this._search_term = '';
     this._search_bound(new_search_term);
   }
 
