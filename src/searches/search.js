@@ -228,6 +228,7 @@ Search.prototype = new function()
 
   this._init = function(view_id, searchbar, searchwindow)
   {
+    this._search_term = '';
     var searchbarclass = searchbar && searchbar[0];
     var simplesearchclass = searchbar && (searchbar[1] || TextSearch);
     var searchwindowclass = searchwindow && searchwindow[0];

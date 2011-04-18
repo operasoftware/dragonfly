@@ -116,6 +116,7 @@ var ActionBroker = function()
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
+  const MAX_CONTEXT_QUEUE_LENGTH = 10;
 
   /* private */
 
@@ -185,6 +186,12 @@ var ActionBroker = function()
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
+      this._context_queue.push(handler_id);
+      while (this._context_queue.length && 
+             this._context_queue.length > MAX_CONTEXT_QUEUE_LENGTH)
+      {
+        this._context_queue.shift();
+      }
     }
   }
 
@@ -196,6 +203,29 @@ var ActionBroker = function()
       event.preventDefault();
   }.bind(this);
 
+  this._onhideviewbound = function(msg)
+  {
+    var handler_id = msg.id;
+    var view = null;
+    if (handler_id == this._action_context_id)
+    {
+      while (this._context_queue.length)
+      {
+        handler_id = this._context_queue.pop();
+        view = window.views[handler_id];
+        if (view && view.isvisible())
+        {
+          // Workaround to reset the focus to the a given view.
+          // Needs a proper design.
+          // Also used in js source view.
+          view.get_container().dispatchMouseEvent('click');
+          return;
+        }
+      }
+      this._set_current_handler(this._global_handler.id);
+    }
+  }.bind(this);
+
   this._init = function()
   {
     this._key_identifier = new KeyIdentifier(this.dispatch_key_input.bind(this),
@@ -204,13 +234,15 @@ var ActionBroker = function()
     this._contextmenu = ContextMenu.get_instance();
     window.app.addListener('services-created', function()
     {
+      this._context_queue = [];
       this._shortcuts = this._retrieve_shortcuts();
       this._global_shortcuts = this._shortcuts.global; 
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
-      this._set_current_handler(this._global_handler);
+      this._set_current_handler(this._global_handler.id);
       document.addEventListener("contextmenu", this._oncontextmenubound, false);
       document.addEventListener('click', this._set_action_context_bound, true);
       document.addEventListener('focus', this._set_action_context_bound, true);
+      window.messages.addListener('hide-view', this._onhideviewbound);
       window.messages.post('shortcuts-changed');
     }.bind(this));
   };
