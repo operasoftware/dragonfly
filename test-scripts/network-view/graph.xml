@@ -69,10 +69,10 @@
       xhr.onload = function()
       {
         window.ctx = new TestContext(JSON.parse(this.responseText));
+        test();
       }
       xhr.open('GET', './data.json');
       xhr.send();
-
     };
 
     ]]></script>
