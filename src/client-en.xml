@@ -90,8 +90,7 @@ window.load_screen_timeout = window.setTimeout(function()
   const DFL_IS_RELOADED = 'dfl_is_reloaded';
   if (document.cookie.indexOf(DFL_IS_RELOADED + '=') == -1)
   {
-    var exp = (new Date(new Date().getTime() + 5 * 60 * 1000)).toGMTString();
-    document.cookie = DFL_IS_RELOADED + "=1; expires=" + exp + "; path=/");
+    document.cookie = DFL_IS_RELOADED + "=1; path=/";
     location.reload();
   }
   var main_container = document.getElementsByTagName('main-view')[0];
