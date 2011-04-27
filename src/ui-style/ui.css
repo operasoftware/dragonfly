@@ -235,7 +235,8 @@ button[handler="reload-window"]::before {
 .console\.expand-all-entries::before {
     background-image: url("../ui-images/icons/icon_expand.png");
 }
-.disable-all-breakpoints::before {
+.disable-all-breakpoints::before,
+.ev-brp-remove-all-breakpoints::before {
     background-image: url("../ui-images/icons/icon_disable.png");
 }
 .delete-all-breakpoints::before {
@@ -243,9 +244,6 @@ button[handler="reload-window"]::before {
 }
 .ev-brp-expand-all-sections::before {
     background-image: url("../ui-images/icons/icon_expand.png");
-}
-.ev-brp-remove-all-breakpoints::before {
-    background-image: url("../ui-images/icons/icon_clear.png");
 }
 .network_logger\.paused-update::before {
     background-image: url("../ui-images/icons/icon_pause.png");
