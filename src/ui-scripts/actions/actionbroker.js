@@ -154,22 +154,9 @@ var ActionBroker = function()
         case 'window-container':
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
-          // debugger;
           if (ui_obj)
           {
-            // todo: local_storage, session_storage, widget_preferences all use the "storage" actions, working around that:
-            if(
-                ui_obj.view_id == "local_storage" ||
-                ui_obj.view_id == "session_storage" ||
-                ui_obj.view_id == "widget_preferences"
-              )
-            {
-              this._set_current_handler("storage", event, container);
-            }
-            else
-            {
-              this._set_current_handler(ui_obj.view_id, event, container);
-            }
+            this._set_current_handler(ui_obj.view_id, event, container);
           }
           break;
         }
@@ -197,7 +184,8 @@ var ActionBroker = function()
         this._container.removeClass('edit-mode');
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
-      this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
+      this._action_context_inherited_shortcuts = this._action_context.inherited_shortcuts;
+      this._current_shortcuts = this._shortcuts[this._action_context_inherited_shortcuts] || this._shortcuts[this._action_context_id] || {};
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
     }

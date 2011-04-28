@@ -205,20 +205,30 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
       'cookies',
       'cookies',
       ui_strings.M_VIEW_LABEL_COOKIES));
+
     new cls.StorageView('local_storage', 
                         ui_strings.M_VIEW_LABEL_LOCAL_STORAGE, 
                         'scroll',
                         'local_storage');
+    new cls.StorageViewActions('local_storage');
+
     new cls.StorageView('session_storage',
                         ui_strings.M_VIEW_LABEL_SESSION_STORAGE, 
                         'scroll',
                         'session_storage');
-    new cls.StorageView('cookies', ui_strings.M_VIEW_LABEL_COOKIES, 'scroll', 'cookies');
+    new cls.StorageViewActions('session_storage');
+
+    new cls.StorageView('cookies',
+                        ui_strings.M_VIEW_LABEL_COOKIES,
+                        'scroll',
+                        'cookies');
+    new cls.StorageViewActions('cookies');
+
     new cls.StorageView('widget_preferences', 
                         ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
                         'scroll',
                         'widget_preferences');
-    new cls.StorageViewActions('storage');
+    new cls.StorageViewActions('widget_preferences');
     cls.StorageView.create_ui_widgets();
 
     /* the following views must be created to get entry in the Settings tab */

@@ -7,6 +7,7 @@ cls.StorageViewActions = function(id)
   MODE_EDIT = "edit";
 
   this.id = id;
+  this.inherited_shortcuts = "storage";
   ActionHandlerInterface.apply(this);
   this._handlers = {};
 
@@ -124,7 +125,7 @@ cls.StorageViewActions = function(id)
     // trigger safe if target is not in edit mode
     if (!target.hasClass("edit_mode"))
     {
-      ActionBroker.get_instance().dispatch_action("storage", "submit", event, target);
+      ActionBroker.get_instance().dispatch_action(id, "submit", event, target);
     }
 
     /**
@@ -152,43 +153,51 @@ cls.StorageViewActions = function(id)
 
 window.eventHandlers.click['storage-delete'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "remove-item", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "remove-item", event, target);
 };
 
 window.eventHandlers.click['storage-delete-all'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "delete-all", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "delete-all", event, target);
 };
 
 window.eventHandlers.click['storage-update'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "update", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "update", event, target);
 };
 
 window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "add-key", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "add-key", event, target);
 };
 
 // nu
 window.eventHandlers.dblclick['storage-row'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "edit", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "edit", event, target);
 }
 
 window.eventHandlers.click['storage-row'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "select-row", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "select-row", event, target);
 }
 
 window.eventHandlers.click["storage"] = function(event, target) // todo: make this the view container instead
 {
-  this.broker.dispatch_action("storage", "submit", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "submit", event, target);
 }
 
 window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
-  this.broker.dispatch_action("storage", "add-key", event, target);
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "add-key", event, target);
 }
 
 window.eventHandlers.click['storage-input-field'] = function(event, target)
