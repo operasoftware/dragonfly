@@ -95,16 +95,6 @@ window.cls.Client = function()
       settings.debug_remote_setting.set('debug-remote', false);
       window.helpers.setCookie('debug-remote', "false");
     }
-    else if (client.is_remote_debug)
-    {
-      document.getElementById("remote-debug-settings").clearAndRender(
-        window.templates.remote_debug_settings(port + 1, ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port))
-      );
-
-      // Reset this so we don't start in remote debug next time
-      settings.debug_remote_setting.set('debug-remote', false);
-      window.helpers.setCookie('debug-remote', "false");
-    }
     else
     {
       show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
@@ -266,7 +256,7 @@ window.cls.Client = function()
     {
       if (this.status != 200)
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             "could not load fallback urls. (during local development this is OK!)")
         return;
       }
@@ -320,11 +310,6 @@ window.cls.Client = function()
     new CompositeView('utils',
                       ui_strings.M_VIEW_LABEL_UTILITIES,
                       layouts.utils_rough_layout,
-                      null,
-                      services);
-    new CompositeView('export_new',
-                      ui_strings.M_VIEW_LABEL_COMPOSITE_EXPORTS,
-                      layouts.export_rough_layout,
                       null,
                       services);
     new CompositeView('resource_panel',
@@ -409,6 +394,8 @@ window.cls.Client = function()
 
   this.setup_top_cell = function(services)
   {
+    var last_selected_view = UI.get_instance().retrieve_last_selected_view();
+    var open_windows = UIWindowBase.close_all_windows();
     var tabs = viewport.getElementsByTagName('tab'), i = 0, tab = null;
     for( ; tab = tabs[i]; i++)
     {
@@ -440,7 +427,29 @@ window.cls.Client = function()
     {
       messages.post("host-state", {state: global_state.ui_framework.spin_state});
     }
-  }
+    setTimeout(function(){
+      open_windows.forEach(function(view_id){UIWindowBase.showWindow(view_id)});
+    }, 250);
+    if (last_selected_view)
+    {
+      var esdi = window.services['ecmascript-debugger'];
+      var cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
+      esdi.add_listener('enable-success', cb);
+    }
+  };
+
+  this._on_ecmascript_enabled = function(last_selected_view)
+  {
+    var tag = tagManager.set_callback(null, function(status, message)
+    {
+      const OBJECT_ID = 0;
+      if (!message[OBJECT_ID])
+      {
+        UI.get_instance().show_view(last_selected_view);
+      }
+    });
+    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+  };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
 
@@ -477,15 +486,6 @@ ui_framework.layouts.environment_rough_layout =
   children:
   [
     { height: 200, tabs: ['environment'] }
-  ]
-}
-
-ui_framework.layouts.export_rough_layout =
-{
-  dir: 'v', width: 700, height: 700,
-  children:
-  [
-    { height: 200, tabs: ['export_data'] }
   ]
 }
 
@@ -574,13 +574,30 @@ ui_framework.layouts.resource_rough_layout =
                                                                  ] } } ]
 }
 
-
 ui_framework.layouts.utils_rough_layout =
 {
-    dir: 'v',
-    width: 1000,
-    height: 1000,
-    children: [ { height: 1000, tabbar: { tabs: ['color_picker'], is_hidden: true } } ]
+  dir: 'h', width: 700, height: 700,
+  children:
+  [
+    {
+      width: 700,
+      children:
+      [
+        {
+          tabbar: { tabs: ['screenshot'], is_hidden: true }
+        }
+      ]
+    },
+    {
+      width: 250,
+      children:
+      [
+        {
+          tabs: ['screenshot-controls', 'color-palette']
+        }
+      ]
+    }
+  ]
 }
 
 ui_framework.layouts.storage_rough_layout =

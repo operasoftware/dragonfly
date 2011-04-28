@@ -61,6 +61,7 @@ cls.EventBreakpoints = function()
   this._is_synced = false;
   this._breakpoints = {};
   this._bps = cls.Breakpoints.get_instance();
+  // out commented duplicates
   this._events =
   [
     {
@@ -116,23 +117,23 @@ cls.EventBreakpoints = function()
       spec: "http://dev.w3.org/html5/spec/index.html#events-0",
       events:
       [
-        ['DOMActivate', 0],
+        // ['DOMActivate', 0],
         ['DOMContentLoaded', 0],
-        ['abort', 0],
+        // ['abort', 0],
         ['afterprint', 0],
         ['beforeprint', 0],
         ['beforeunload', 0],
-        ['blur', 0],
+        // ['blur', 0],
         ['change', 0],
         ['contextmenu', 0],
-        ['error', 0],
-        ['focus', 0],
+        // ['error', 0],
+        // ['focus', 0],
         ['formchange', 0],
         ['forminput', 0],
         ['hashchange', 0],
         ['input', 0],
         ['invalid', 0],
-        ['load', 0],
+        // ['load', 0],
         ['message', 0],
         ['offline', 0],
         ['online', 0],
@@ -145,7 +146,7 @@ cls.EventBreakpoints = function()
         ['show', 0],
         ['submit', 0],
         ['undo', 0],
-        ['unload', 0],
+        // ['unload', 0],
       ],
       is_unfolded: false,
     },
@@ -157,8 +158,8 @@ cls.EventBreakpoints = function()
         ['loadstart', 0],
         ['progress', 0],
         ['suspend', 0],
-        ['abort', 0],
-        ['error', 0],
+        // ['abort', 0],
+        // ['error', 0],
         ['emptied', 0],
         ['stalled', 0],
         ['play', 0],
@@ -187,11 +188,11 @@ cls.EventBreakpoints = function()
         ['checking', 0],
         ['noupdate', 0],
         ['downloading', 0],
-        ['progress', 0],
+        // ['progress', 0],
         ['cached', 0],
         ['updateready', 0],
         ['obsolete', 0],
-        ['error', 0],
+        // ['error', 0],
       ],
       is_unfolded: false,
     },

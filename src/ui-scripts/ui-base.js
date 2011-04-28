@@ -103,7 +103,7 @@ var UIBase = new function()
         }
         else
         {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
             'missing parent_container in update in UIBase');
         }
 

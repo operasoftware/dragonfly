@@ -237,6 +237,8 @@
           "f7": "continue-step-into-call",
           "shift f7": "continue-step-out-of-call",
           "enter": "highlight-next-match",
+          "f3": "highlight-next-match",
+          "shift f3": "highlight-previous-match",
           // "cmd g": "highlight-next-match", // seems it can't be stolen from Opera
           "shift enter": "highlight-previous-match",
           // "cmd shift g": "highlight-previous-match",
@@ -244,7 +246,6 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "f3": "show-search"
         }
       },
       "dom":
@@ -420,88 +421,7 @@
       }
     },
   },
-  hostspotlight_matrixes:
-  {
-    /*
-      box : null | [fill-color , frame-color, grid-color]
-      color: 0 | [r, g, b, alpha]
-    */
-    "default":
-    [
-      // dimension box
-      [
-        [51,117,215, 52],
-        0,
-        0
-      ],
-      // padding box
-      [
-        [51,117,215, 104],
-        0,
-        0
-      ],
-      // border box
-      [
-        [51,117,215, 255],
-        0,
-        [51,117,215, 128]
-      ],
-      // margin box
-      [
-        [51,117,215, 156],
-        0,
-        0
-      ]
-    ],
-    "metrics-hover":
-    [
-      // inner inner * box
-      [
-        [51,117,215, 48],
-        0,
-        0
-      ],
-      // inner box
-      [
-        [51,117,215, 48],
-        0,
-        0
-      ],
-      // active box
-      [
-        [51,117,215, 128],
-        0,
-        0
-      ]
-    ],
-    "locked":
-    [
-      // dimension box
-      [
-        [51,117,215, 24],
-        0,
-        0
-      ],
-      // padding box
-      [
-        [51,117,215, 52],
-        0,
-        0
-      ],
-      // border box
-      [
-        [51,117,215, 128],
-        0,
-        [51,117,215, 64]
-      ],
-      // margin box
-      [
-        [51,117,215, 76],
-        0,
-        0
-      ]
-    ]
-  },
+  spotlight_color: "3875d7",
   monospacefont:
   {
     font_face: "",

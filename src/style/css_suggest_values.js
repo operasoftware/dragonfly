@@ -649,7 +649,7 @@ suggest_values['cursor'] =
   'progress',
   'inherit',
   '-zoom-in',
-  '-o-zoom-out'
+  '-zoom-out'
 ];
 
 suggest_values['direction'] =

@@ -286,7 +286,7 @@ cls.HostSpotlightView.create_ui_widgets = function()
     'host-spotlight', 
     // key-value map
     {
-
+      'spotlight-color': "3875d7",
     }, 
     // key-label map
     {
@@ -437,7 +437,6 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         // for older clients
         window.helpers.setCookie('debug-remote', "true");
         window.helpers.setCookie('port', JSON.stringify(port));
-        window.topCell.showView('dom');
         client.setup(true);
       }
       else

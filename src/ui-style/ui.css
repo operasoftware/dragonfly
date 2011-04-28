@@ -79,7 +79,7 @@ container {
 
 window-statusbar {
   display: block;
-  background: #e1e4e9 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
+  background: #e6e6e6 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
   border-top: 1px solid #ccc;
   line-height: 20px;
   height: 20px;
@@ -91,13 +91,13 @@ window-toolbar {
 
 toolbar, panel-toolbar, window-toolbar {
   border-width: 0 1px 1px;
-  padding: 3px 2px 2px;
+  padding: 3px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 50%,
-                                       rgba(0,0,0,0.05) 50%,
+                                       rgba(255,255,255,0.25) 49%,
+                                       rgba(0,0,0,0.05) 49%,
                                        rgba(0,0,0,0.05) 52%,
                                        transparent 52%,
                                        rgba(255,255,255,0.25) 100%);
@@ -114,8 +114,8 @@ toolbar-buttons, toolbar-switches {
   height: 100%;
 }
 
-button[handler="reload-window"] {
-    content: url("../ui-images/icons/icon_reload.png");
+button[handler="reload-window"]::before {
+    background-image: url("../ui-images/icons/icon_reload.png");
 }
 /* Window control buttons */
 #toggle-console::before {
@@ -172,7 +172,7 @@ button[handler="reload-window"] {
     background-image: url("../ui-images/icons/icon_hidedefaults.png");
 }
 .css-inspector.hide-shorthands::before {
-    background-image: url("../ui-images/icons/icon_shorthands.png");
+    background-image: url("../ui-images/icons/icon_shorthand.png");
 }
 .dom_attrs.hide-null-values::before {
     background-image: url("../ui-images/icons/icon_empty.png");
@@ -222,17 +222,12 @@ button[handler="reload-window"] {
 .request_list\.auto-scroll-request-list::before {
     background-image: url("../ui-images/icons/icon_autoscroll.png");
 }
-.storage-add-key::before {
-    background-image: url("../ui-images/icons/icon_add.png");
-}
-.storage-update::before {
-    background-image: url("../ui-images/icons/icon_reload.png");
-}
-.storage-delete-all::before {
+.storage-delete {
     background-image: url("../ui-images/icons/icon_clear.png");
-}
-.storage-delete::before {
-    background-image: url("../ui-images/icons/icon_delete.png");
+    content: "";
+    display: inline-block;
+    width: 17px;
+    height: 17px;
 }
 [class^="clear-error-console"]::before {
     background-image: url("../ui-images/icons/icon_clear.png");
@@ -252,39 +247,53 @@ button[handler="reload-window"] {
 .ev-brp-remove-all-breakpoints::before {
     background-image: url("../ui-images/icons/icon_clear.png");
 }
+.network_logger\.paused-update::before {
+    background-image: url("../ui-images/icons/icon_pause.png");
+}
+.network_logger\.fit-to-width::before {
+    background-image: url("../ui-images/icons/icon_constrain.png");
+}
 
 cst-icon[class="debugger-menu"] {
-    content: url("../ui-images/icons/icon_tabs.png");
+    background-image: url("../ui-images/icons/icon_tabs.png");
 }
 
 /* Top tabs */
 .dom_mode {
-    background: url("../ui-images/documents_attached.png");
+    background: url("../ui-images/mode_documents.png");
 }
 .js_mode {
-    background: url("../ui-images/scripts_attached.png");
+    background: url("../ui-images/mode_scripts.png");
 }
 .network_mode {
-    background: url("../ui-images/network_attached.png");
+    background: url("../ui-images/mode_network.png");
 }
 .resource_panel {
-    background: url("../ui-images/resources_attached.png");
+    background: url("../ui-images/mode_resources.png");
 }
 .storage {
-    background: url("../ui-images/storage_attached.png");
+    background: url("../ui-images/mode_storage.png");
 }
 .console_mode {
-    background: url("../ui-images/errorlog_attached.png");
+    background: url("../ui-images/mode_errors.png");
 }
 .utils {
-    background: url("../ui-images/utilities_attached.png");
+    background: url("../ui-images/mode_utilities.png");
 }
 
-button.ui-control::before {
+button.ui-control::before,
+.container-button:empty::before {
     content: "";
     display: block;
     height: 17px;
     width: 17px;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+
+.container-button:empty::before {
+    height: 18px;
+    width: 18px;
 }
 
 .ui-control
@@ -442,17 +451,18 @@ toolbar-filters input[type=button]:active
 toolbar-filters input[type=button].search-move-highlight-up
 {
   content: url("../ui-images/icons/icon_back.png");
-  border-radius: 10px 2px 2px 10px;
+  border-radius: 10px 0 0 10px;
   padding: 1px 2px;
+  margin: 0;
 }
 
 toolbar-filters input[type=button].search-move-highlight-down
 {
   content: url("../ui-images/icons/icon_forward.png");
-  border-radius: 2px 10px 10px 2px;
+  border-radius: 0 10px 10px 0;
   padding: 1px 2px;
-  margin-left: 1px;
-  margin-right: 2px;
+  margin: 0 2px 0 0;
+  border-left: 0;
 }
 
 toolbar-filters span {
@@ -476,7 +486,7 @@ filter {
 }
 
 filter.filter {
-    background-image: url("../ui-images/icons/icon_filter.png");
+    background-image: url("../ui-images/filter.png");
 }
 
 filter input {
@@ -609,7 +619,10 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-settings-container input[type=text]:not([default-text]), settings-container input[type=number], settings-container button, settings-container input[type=button] {
+settings-container input[type=text]:not([default-text]), 
+settings-container input[type=number], 
+settings-container button, 
+settings-container input[type=button] {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 3px;
@@ -704,28 +717,12 @@ ui-menu > h2 { /**/
   padding-left: 10px;
   font-weight: normal;
   font-size: 11px;
-  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -66px;
+  background: #fff;
   width: 170px;
 	height: 18px;
   line-height: 14px;
-  }
-
-ui-menu > h2:after { /**/ 
-  display: block;
-  margin-right: 5px;
-  width: 15px;
-  height: 18px;
-  content: '';
-  float: right;
-  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -66px;
-  }
-	
-ui-menu:hover > h2 {
-  background-position: 0 0;
-  }
-
-ui-menu:hover > h2:after {
-  background-position: 100% 0;
+  border: 1px solid #000;
+  border-top-width: 0;
   }
 
 ui-menu ul { /* The list needs a bottom shadow when opened */
@@ -735,6 +732,9 @@ ui-menu ul { /* The list needs a bottom shadow when opened */
   margin: 0;
   padding: 0;
   list-style: none;
+  background: #fff;
+  border: 1px solid #000;
+  border-top-width: 0;
   }
 
 ui-menu li { /**/
@@ -742,7 +742,6 @@ ui-menu li { /**/
   margin-right: 6px;
   padding-left: 10px;
   width: 155px;
-  background: transparent url('../ui-images/menu.png') scroll no-repeat 0 -19px;
   }
 
 ui-menu li h2 { /**/
@@ -753,18 +752,12 @@ ui-menu li h2 { /**/
   line-height: 22px;
   font-weight: normal;
   font-size: 12px;
-  background: transparent url('../ui-images/menu-right.png') scroll no-repeat 100% -19px;
   white-space: nowrap;
   }
 
 ui-menu ul li:hover {
-  background-position: 0 -41px;
+  background: #eee;
   }
-
-ui-menu ul li:hover h2 {
-  background-position: 100% -41px;
-  }
-
 
 window-control {
   display: block;
@@ -922,8 +915,8 @@ window.hud window-container {
     background-color: #000;
     background-image: -o-linear-gradient(-90deg,
                                          rgba(255,255,255,0.33) 0,
-                                         rgba(255,255,255,0.15) 50%,
-                                         rgba(0,0,0,0.05) 50%,
+                                         rgba(255,255,255,0.15) 49%,
+                                         rgba(0,0,0,0.05) 49%,
                                          rgba(0,0,0,0.05) 52%,
                                          transparent 52%,
                                          rgba(255,255,255,0.15) 100%);
@@ -1154,7 +1147,6 @@ cst-option-list-background
   display:block;
   position: relative;
   width: 160px;
-  background-image:-o-skin('Speed Dial Configuration Dialog Skin');
   padding: 10px 15px 15px 10px;
   margin: -1px -11px -8px -8px;
 }
@@ -1321,7 +1313,7 @@ breadcrumbs {
     left: 16px;
     right: 15px; /* minus one pixel to hide the right border of the last breadcrumb */
 }
-breadcrumb {
+breadcrumbs breadcrumb {
     height: 21px;
     line-height: 21px;
     display: inline-block;
@@ -1329,15 +1321,15 @@ breadcrumb {
     padding: 0 0 0 15px;
     background: transparent url("../ui-images/crumb_middle.png");
 }
-breadcrumbs::selection {
+breadcrumbs breadcrumbs::selection {
     background: transparent;
 }
-.drag breadcrumb {
+breadcrumbs .drag breadcrumb {
     cursor: move;
 }
 /* Styling of arrows */
-breadcrumb:not(:first-of-type)::before,
-breadcrumb:last-of-type::after {
+breadcrumbs breadcrumb:not(:first-of-type)::before,
+breadcrumbs breadcrumb:last-of-type::after {
     content: "";
     height: 21px;
     width: 11px;
@@ -1345,17 +1337,17 @@ breadcrumb:last-of-type::after {
     left: 0;
     background: transparent url("../ui-images/crumb_arrow.png");
 }
-breadcrumb:last-of-type::after {
+breadcrumbs breadcrumb:last-of-type::after {
     left: auto;
     right: -11px;
 }
-.navs breadcrumb:last-of-type {
+.navs breadcrumbs breadcrumb:last-of-type {
     padding-right: 4px;
 }
-.navs breadcrumb:last-of-type::after {
+.navs breadcrumbs breadcrumb:last-of-type::after {
     display: none;
 }
-breadcrumb:first-of-type {
+breadcrumbs breadcrumb:first-of-type {
     padding-left: 4px;
 }
 breadcrumb:hover,
@@ -1487,18 +1479,22 @@ tab.active .close-tab-button {
 /* Button style. Use for buttons inside the <container>. */
 .container-button {
     background-color: #ddd;
-    background-image: -o-linear-gradient(-90deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.25) 85%, rgba(255,255,255,0.50) 100%);
+    background-image: -o-linear-gradient(-90deg,
+                                         rgba(255,255,255,0.90) 0%,
+                                         rgba(255,255,255,0.25) 85%,
+                                         rgba(255,255,255,0.50) 100%);
     border: 1px solid rgba(0, 0, 0, .5);
     border-radius: 4px;
     height: 22px;
-    line-height: 18px;
+    line-height: 20px;
     padding: 1px 12px;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
     -o-transition: background-color 0.2s;
 }
 
 .container-button:active:not([disabled]) {
-    box-shadow: 0 1px rgba(0,0,0,0.0), inset 0 1px 3px rgba(0, 0, 0, .4);
+    box-shadow: 0 1px rgba(0,0,0,0.0),
+                inset 0 1px 3px rgba(0, 0, 0, .4);
     background-color: #ccc;
 }
 
@@ -1516,5 +1512,13 @@ info {
 
 .badge.paused {
     content: url("../ui-images/pause.png");
+}
+
+[handler="inspect-node-link"] {
+    cursor: pointer;
+}
+
+[handler="inspect-node-link"]:hover {
+    text-decoration: underline;
 }
 

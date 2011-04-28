@@ -2,7 +2,7 @@
  *
  */
 
-cls.ResourceManagerService = function(view, data)
+cls.ResourceManagerService = function(view)
 {
   if (cls.ResourceManagerService.instance)
   {
@@ -11,6 +11,7 @@ cls.ResourceManagerService = function(view, data)
   cls.ResourceManagerService.instance = this;
 
   this._current_context = null;
+  this._view = view;
 
   this._enable_content_tracking = function()
   {
@@ -60,6 +61,12 @@ cls.ResourceManagerService = function(view, data)
     this._current_context.update("response", data);
   }.bind(this);
 
+  this._on_debug_context_selected_bound = function()
+  {
+    this._current_context = null;
+    this._view.update();
+  }.bind(this);
+
   this.init = function()
   {
     this._res_service = window.services['resource-manager'];
@@ -69,6 +76,7 @@ cls.ResourceManagerService = function(view, data)
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
   };
 
   this.get_resource_context = function()
@@ -108,7 +116,8 @@ cls.ResourceManagerService = function(view, data)
   {
     var typecode = {datauri: 3, string: 1}[type] || 1;
     var tag = window.tagManager.set_callback(null, callback);
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+    const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
+    this._res_service.requestGetResource(tag, [rid, [typecode, 1, MAX_PAYLOAD_SIZE]]);
   }
 
   this.init();
@@ -202,11 +211,15 @@ cls.Resource = function(id)
       this.url = eventdata.url;
       this.urltype = eventdata.urlType;
       // fixme: complete list
-      this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[eventdata.urlType];
+      this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
       this._humanize_url();
     }
     else if (eventname == "urlfinished")
     {
+      if (!this.url)
+      {
+        this.url = eventdata.url;
+      }
       this.result = eventdata.result;
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;

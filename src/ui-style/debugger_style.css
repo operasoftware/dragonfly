@@ -106,6 +106,9 @@ ul {
   padding-left: 20px;
   background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   }
 
 #backtrace-container li:first-child {
@@ -555,7 +558,7 @@ examine-objects key.no-expander
   min-width: 80px;
   white-space: nowrap;
 }
-.css-layout layout-container .is-positioned .position,
+.css-layout layout-container .position,
 .css-layout layout-container .dimension,
 .css-layout layout-container .padding,
 .css-layout layout-container .margin,
@@ -569,6 +572,14 @@ examine-objects key.no-expander
 .css-layout layout-container .padding,
 .css-layout layout-container .margin {
     border-style: dashed;
+}
+
+#layout-info {
+    margin: auto;
+}
+
+#layout-info th {
+    text-align: right;
 }
 
 
@@ -621,6 +632,11 @@ div.dom {
   padding-right: 3px;
 }
 
+.dom div:not(.info-box)
+{
+  margin: -2px 0;
+}
+
 
 .dom input
 {
@@ -641,11 +657,6 @@ div.dom {
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }
 
-.tree-style .text-node
-{
-  padding-right: 1ex;
-}
-
 .css-layout > div > h2:first-child {
 
   border-width: 0 0 1px;
@@ -656,8 +667,8 @@ pre[handler="inspect-object-link"] {
   color: blue;
   }
 
-pre[handler="inspect-object-link"]:hover {
-  text-decoration: underline;;
+[handler="inspect-object-link"]:hover {
+  background: #000;
   }
 
 breadcrumb span
@@ -695,7 +706,10 @@ breadcrumb span
   border-width: 1px 0;
   background-color: #e6e6e6;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 1em;
+  font-weight: normal;
 }
 .script-options h2.selected-runtime, .stylesheet-options h2.selected-runtime {
   color: #000;
@@ -733,7 +747,7 @@ breadcrumb span
   background-position: 5px 50%;
 }
 
-.css-layout breadcrumb span
+parent-node-chain breadcrumb span
 {
   padding: 0 .2em;
   margin: 0 .2em;
@@ -743,13 +757,27 @@ breadcrumb span
 
 parent-node-chain breadcrumb {
     color: rgba(0, 0, 0, .5);
-}
-breadcrumb.parent-offset
-{
-  color: #000;
+    background: none;
+    padding: 0;
+    cursor: pointer;
 }
 
-breadcrumb span:hover, .css-layout breadcrumb span:hover
+parent-node-chain breadcrumb::before, parent-node-chain breadcrumb::after {
+    background: none !important;
+}
+
+parent-node-chain breadcrumb.parent-offset
+{
+    color: #000;
+    font-weight: bold;
+}
+
+parent-node-chain breadcrumb.active
+{
+    color: #204d80;
+}
+
+parent-node-chain breadcrumb span:hover, .css-layout parent-node-chain breadcrumb span:hover
 {
   background-color: hsl(240, 80%, 90%);
   border-color: hsl(240, 50%, 70%);
@@ -1166,17 +1194,6 @@ d
   border-bottom: 1px solid #ccc;
 }
 
-.storage-table h4::before
-{
-  display: block;
-  float: right;
-  width: -o-skin;
-  height: -o-skin;
-  content: -o-skin('Group.open');
-  margin-right: -15px;
-  margin-bottom: -10px;
-}
-
 .storage-table p
 {
   margin: 0;
@@ -1219,12 +1236,7 @@ d
 {
   text-align: right;
   background-color: #fff;
-}
-
-.single-control input {
-    border: 0;
-    padding: 0;
-    margin: 0 2px;
+  padding-top: 5px;
 }
 
 #about-authors
@@ -1307,5 +1319,25 @@ property.disabled color-sample
   box-sizing: border-box;
   width: 100%;
   border: 3px solid transparent;
+}
+
+.spotlight-color-select
+{
+  display: inline-block;
+  vertical-align: middle;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 3px;
+  margin: 0 10px 0 2px;
+}
+
+.spotlight-color-select::before
+{
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  width: 60px;
+  height: 17px;
+  border: 1px solid black;
+  border-radius: 2px;
 }
 

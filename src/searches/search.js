@@ -19,6 +19,8 @@ Search.prototype = new function()
   
   this.get_searchbar = function(){};
 
+  this.update_search = function(){};
+
   /* constants */
   
   const 
@@ -371,6 +373,21 @@ Search.prototype = new function()
            this._searchbar && 
            this._mode == MODE_SEARCHBAR && 
            this._searchbar || null;
+  };
+
+  this.update_search = function()
+  {
+    if (this.is_active)
+    {
+      if (this._mode == MODE_SEARCHBAR)
+      {
+        this._simple_text_search.update();
+      }
+      else
+      {
+        this._searchwindow.update_search();
+      }
+    }
   };
   
   this.__defineSetter__('is_active', function(){});

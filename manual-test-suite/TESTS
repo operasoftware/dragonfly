@@ -100,7 +100,7 @@ desc:
   - Select 'Show DOM tree view'
   - Select and unselect 'Show white space nodes'.
   - Verify that the DOM view is updated accordingly
-  (pure white space nodes are escaped, e.g. a space is dispaled as \u0020).
+  (pure white space nodes are escaped, e.g. a space is displayed as \u0020).
 
 id: 00900
 label: Dropdown settings, tree view
@@ -173,9 +173,9 @@ desc:
 url: http://dev.opera.com
 
 id: 00200
-label: Hide initial value
+label: Show initial values in computed style panel
 desc:
-  - Select and unselect the 'Hide initial value' switch
+  - Select and unselect the 'Show initial values in computed style panel' switch
   - Verify that the Computed Style section is updated accordingly
 
 id: 00300
@@ -198,7 +198,7 @@ id: 00500
 label: Searching for a newly added property
 desc:
   - Add a property
-  - Search for it and make sure it shows Update
+  - Search for it and make sure it shows up
 
 id: 00600
 label: Detaching
@@ -324,22 +324,22 @@ desc:
   - Verify that the properties are show and removed accordingly
 
 id: 00300
-label: Hide empty strings
+label: Show default null and empty strings values
 desc:
-  - Select and unselect the 'Hide empty strings' switch
+  - Select and unselect the 'Show default null and empty strings values' switch
   - Verify that the view is updated accordingly, e.g. that values which are empty strings, 0 or null are displayed or hidden.
 
 id: 00400
 label: Search
 desc:
-  - Search for some term
+  - Use the filter with some term
   - Verify that the matches are highlighted
-  - Verify that on enter the next natch is scrolled into view.
+  - Verify that on enter the next match is scrolled into view.
 
 DOM.Layout
 **********
 
-url: highlight-element.html
+url: ./test-cases/dom/highlight-element.html
 
 id: 00100
 label: Highlight boxes
@@ -383,28 +383,32 @@ desc:
   - Verify that tag names are displayed in lowercase.
 
 url: ./test-cases/dom/nodes.html
-  
-id: 00200
-label: Show DOM in tree view
-desc:
-  - Verify that comment is shown in document (1 comment node).
-  - Open Settings/Document.
-  - Verify that "Show comment nodes" is checked.
-  - Uncheck it.
-  - Verify that comment node is not shown.
-  - Check it again.
-  - Verify that comment node is shown again.
 
-id: 00300
-label: Show attributes
-desc:
-  - Verify that comment is shown in document (1 comment node).
-  - Open Settings/Document.
-  - Verify that "Show comment nodes" is checked.
-  - Uncheck it.
-  - Verify that comment node is not shown.
-  - Check it again.
-  - Verify that comment node is shown again.
+# TODO: unsure of what this is supposed to test, headline doesn't match desc
+# 
+# id: 00200
+# label: Represent the DOM as a node tree
+# desc:
+#   - Verify that comment is shown in document (1 comment node).
+#   - Open Settings/Document.
+#   - Verify that "Show comment nodes" is checked.
+#   - Uncheck it.
+#   - Verify that comment node is not shown.
+#   - Check it again.
+#   - Verify that comment node is shown again.
+
+# TODO: unsure of what this is supposed to test, headline doesn't match desc
+# id: 00300
+# label: Show attributes
+# desc:
+#   - Verify that comment is shown in document (1 comment node).
+#   - Open Settings/Document.
+#   - Verify that "Show comment nodes" is checked.
+#   - Uncheck it.
+#   - Verify that comment node is not shown.
+#   - Check it again.
+#   - Verify that comment node is shown again.
+
 
 DOM.Searchbar
 *************
@@ -522,11 +526,254 @@ desc:
   - Verify that it's possible to drag
 
 id: 00800
-label: Dragging the breadcrumb bar
+label: Scrolling the breadcrumb bar
 desc:
   - Verify that the breadcrumb trail is too long to fit into the window
   - Use the mousewheel on top of the bar
   - Verify that it scrolls
+
+DOM.Contextmenu
+***************
+
+url: ./test-cases/dom/nodes.html
+
+id: 00100
+label: General context menu of DOM tree
+desc:
+  - Right-click an empty area in DOM tree.
+  - Verify that only general menu options show up in context menu (3 options, see below).
+  - Verify that "Represent the DOM as a node tree" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Keep elements highlighted when selecting a different element" triggers the right behaviour (also verify switching option off).
+
+url: ./test-cases/dom/matching-style-declarations.html
+
+id: 00200
+label: Context menu for element node
+desc:
+  - Right-click the name of the 'body' element in DOM tree.
+  - Verify that general menu options show up at the bottom in context menu.
+  - Verify that "Add attribute" option is present in context menu.
+  - Verify that "Edit markup" option is present in context menu.
+  - Verify that "Remove node" option is present in context menu.
+  - Verify that "Expand/collapse subtree" option is present in context menu.
+
+id: 00300
+label: Context menu for element node: Edit markup
+desc:
+  - Right-click the name of the 'body' element in DOM tree.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole body content is editable).
+
+id: 00400
+label: Context menu for element node: cancel add attribute
+desc:
+  - Right-click the name of the body element in DOM tree.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+  - Type "onload=".
+  - Verify that new edit field is opened for the attribute value.
+  - Type "f()" and press Escape (cancel input).
+  - Verify that new attribute is NOT shown for the element.
+
+id: 00500
+label: Context menu for element node: Add attribute
+desc:
+  - Right-click the name of the body element in DOM tree.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+  - Type "onload=".
+  - Verify that new edit field is opened for the attribute value.
+  - Type "f()" and press Enter.
+  - Verify that new attribute is shown for the element.
+
+id: 00600
+label: Context menu for element node: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the name of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked node is removed from the DOM tree.
+
+id: 00700
+label: Context menu for element node: Expand subtree
+desc:
+  - Reload page to have a collapsed DOM tree.
+  - Right click <body> element.
+  - Click "Expand subtree".
+  - Verify that the whole DOM tree is expanded under <body>.
+
+id: 00800
+label: Context menu for element node: Collapse subtree
+desc:
+  - Expand the whole DOM tree.
+  - Right-click the name of the <body> element.
+  - Click "Collapse subtree".
+  - Verify that only subtree of <body> is collapsed in the view.
+
+id: 00900
+label: Context menu for element node: General settings
+desc:
+  - Right-click the name of <body> element.
+  - Verify that "Represent the DOM as a node tree" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Keep elements highlighted when selecting a different element" triggers the right behaviour (also verify switching option off).
+
+id: 01000
+label: Context menu for attribute name: Edit attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Edit attribute".
+  - Verify that you entered edit attribute name mode.
+
+id: 01100
+label: Context menu for attribute name: Add attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+
+id: 01200
+label: Context menu for attribute name: Edit markup
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
+
+id: 01300
+label: Context menu for attribute name: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the "id" attribute name of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked element is removed from the DOM tree.
+
+id: 01400
+label: Context menu for attribute name: General settings
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute name "id" of the first <p> element.
+  - Verify that "Represent the DOM as a node tree" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Keep elements highlighted when selecting a different element" triggers the right behaviour (also verify switching option off).
+
+id: 01500
+label: Context menu for attribute value: Edit attribute value
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Edit attribute".
+  - Verify that you entered edit attribute value mode.
+
+id: 01600
+label: Context menu for attribute value: Add attribute
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Add attribute" in the context menu.
+  - Verify that you get a new edit field for the new attribute.
+
+id: 01700
+label: Context menu for attribute value: Edit markup
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Click "Edit markup" in the context menu.
+  - Verify that you entered edit markup mode for the selected element (the whole <p> content is editable).
+
+id: 01800
+label: Context menu for attribute value: Remove node
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Right-click the value of "id" attribute of the first <p> element in DOM tree.
+  - Click "Remove node".
+  - Verify that the clicked element is removed from the DOM tree.
+
+id: 01900
+label: Context menu for attribute value: General settings
+desc:
+  - Expand the DOM tree.
+  - Right-click the attribute value of "id" of the first <p> element.
+  - Verify that "Represent the DOM as a node tree" triggers the Tree View (also verify switching option off).
+  - Verify that "Show comment nodes" triggers the right behaviour (also verify switching option off).
+  - Verify that "Keep elements highlighted when selecting a different element" triggers the right behaviour (also verify switching option off).
+
+id: 02000
+label: Context menu for styles: Specification for style descriptor of computed style
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Unfold computed styles.
+  - Right-click the first style descriptor in computed styles.
+  - Verify that menu contains only one element.
+  - Select "Specification for ...".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
+
+id: 02100
+label: Context menu for styles: Specification for style descriptor of style
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Specification for background-color".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
+
+id: 02200
+label: Context menu for styles: Add declaration
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Add declaration".
+  - Verify that new declaration edit mode is opened.
+
+id: 02300
+label: Context menu for styles: Edit declaration
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Edit declaration".
+  - Verify that the declaration edit mode is opened on the declation which was clicked.
+
+id: 02400
+label: Context menu for styles: Disable all declarations
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Disable all declarations".
+  - Verify that all declarations are disabled but still shown.
+  - Verify that the effect of declarations is gone from the host (paragraph 1-2 are affected).
+
+id: 02500
+label: Context menu for styles: Open color picker
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click background-color in '.foo'.
+  - Select "Open color picker".
+  - Verify that color picker is opene with the same color as specified.
+
+id: 02600
+label: Context menu for styles: Specification for style descriptor of default style values
+desc:
+  - Expand the whole DOM tree if it was not expanded.
+  - Click on the first <p> element in DOM tree.
+  - Select "Styles" on right panel.
+  - Right-click display in 'default values'.
+  - Verify that context menu contains only one element.
+  - Select "Specification for display".
+  - Verify that the browser has opened a new tab with the specification of the descriptor.
 
 Statusbar
 *********
@@ -618,7 +865,7 @@ desc:
 id: 00500
 label: Breakpoint, Continue with keyboard
 desc:
-  - The same as the previous test, but use the F8 key instead the mouse.
+  - The same as the previous test, but use the F8 key instead of the mouse. (F5 on Mac)
 
 id: 00600
 label: Breakpoint, Step into
@@ -634,7 +881,7 @@ desc:
 id: 00700
 label: Breakpoint, Step into with keyboard
 desc:
-  - The same as the previous test, but use the F11 key instead the mouse.
+  - The same as the previous test, but use the F11 key instead the mouse. (F7 on Mac)
 
 id: 00800
 label: Breakpoint, Step Over
@@ -649,7 +896,7 @@ desc:
 id: 00900
 label: Breakpoint, Step Over with keyboard
 desc:
-  - The same as the previous test, but use the F11 and F10 key instead the mouse.
+  - The same as the previous test, but use the F11 and F10 key instead the mouse. (F7 and F6 on Mac)
 
 id: 01000
 label: Breakpoint, Step Out
@@ -658,12 +905,12 @@ desc:
   - Press the 'e()' button
   - Press the 'Step Into' button continuously till you get to 'var cc = 1;'.
   - Now press the 'Step Out' button continuously.
-  - Verify that the engine stops at 'c()', then 'd()' and then finishes.
+  - Verify that the engine stops at 'c()', then 'd()' and then finishes. - TODO: test slightly wrong I think, it stops at e() too as we now get the event handler
 
 id: 01100
 label: Breakpoint, Step Out with keyboard
 desc:
-  - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse.
+  - The same as the previous test, but use the F11 and Shift-F11 key instead the mouse. (F7 and Shift-F7 on Mac)
 
 url: ./test-cases/scripts-source/scripts.html
 
@@ -673,7 +920,7 @@ desc:
   - Open Dragonfly
   - Turn the 'Stop at new script' switch on.
   - Load the test url.
-  - Verify that the engine stops for each new script (use the continue button), e.g. three times
+  - Verify that the engine stops for each new script (use the continue button), e.g. three times - TODO (+browser.js, right?)
   - Verify that the setting can be turned off.
 
 url: ./test-cases/scripts-source/parse-error.html
@@ -682,7 +929,7 @@ id: 01300
 label: Parse error
 desc:
   - Open Dragonfly
-  - Turn the 'Stop at error' switch on.
+  - Turn the 'Show where a JavaScript error occurs' switch on.
   - Go tho the test url
   - Verify that the Script Source pane opens,
     the first non parsable token is highlighted,
@@ -781,7 +1028,7 @@ id: 00200
 label: Inspectable js objects
 desc:
   - Go to the url above.
-  - Verify that three entries appear, 'arguments', 'this' and 'ele',
+  - Verify that three entries appear in Scripts > State > Inspection: 'arguments', 'this' and 'ele'
 
 id: 00300
 label: Expand inspectable objects
@@ -861,7 +1108,7 @@ id: 00900
 label: Setting Inspection 'Default collapsed prototype objects' in Settings
 desc:
   - Go to the url above.
-  - Ensure that 'Show the prototypes' is on.
+  - Ensure that "Show the prototypes" and "Show non-enumerable properties" are on.
   - Ensure that Settings Inspection 'Default collapsed prototype objects' is '*'.
   - Expand 'this'.
   - Verify that the 'Object' prototype is displayed and
@@ -903,7 +1150,7 @@ desc:
   - Type e.g. 'this' and hit enter.
   - Verify that the result is the correct object displayed as link.
   - Click the link.
-  - Verify that the according object is displayed in the Inspection view.
+  - Verify that the according object is displayed.
 
 id: 00400
 label: Built-in commands
@@ -912,6 +1159,133 @@ desc:
   - Verify that the view gets cleared.
   - Type e.g. 'dir(this)'
   - Verify that the according object is displayed in the Inspection view.
+
+Scripts.Contextmenu
+**************
+
+url: ./test-cases/scripts-source/scripts.html
+
+id: 00100
+label: Contextmenu in source view: general
+desc:
+  - Right-click in script source panel in script view below the actual script source.
+  - Verify that you get one menu option: Show where a JavaScript error occurs
+  - Click that option.
+  - Verify that it works as expected. - TODO: does a script error occur here at all? hard to check otherwise?
+  - Click option again to disable it.
+  - Check that the functionality has been disabled.
+
+id: 00200
+label: Contextmenu in source view: source line general options
+desc:
+  - Right-click in script source panel in script view on an actual script line.
+  - Verify that you get menu option: Add breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Show where a JavaScript error occurs".
+  - Verify that it works as expected.
+  - Click option again to disable it.
+  - Check that the functionality has been disabled.
+
+id: 00300
+label: Contextmenu in source view: source line add breakpoint
+desc:
+  - Right-click in script source panel in script view on an actual script line.
+  - Verify that you get menu option: Add breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Add breakpoint".
+  - Verify that breakpoint is added to selected line.
+
+id: 00400
+label: Contextmenu in source view: source line add condition on breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Verify that you get menu option: Add condition
+  - Verify that you get menu option: Disable breakpoint
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Add condition".
+  - Verify that you can add condition to the selected breakpoint.
+
+id: 00500
+label: Contextmenu in source view: source line edit condition on breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint that has a condition.
+  - Click "Edit condition".
+  - Verify that you can edit condition for the selected breakpoint.
+
+id: 00600
+label: Contextmenu in source view: source line disable breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Click "Disable breakpoint".
+  - Verify that the breakpoint is disabled.
+
+id: 00700
+label: Contextmenu in source view: source line enable breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with disabled breakpoint.
+  - Verify that you get menu option: Edit condition
+  - Verify that you get menu option: Enable breakpoint
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Show where a JavaScript error occurs
+  - Click "Enable breakpoint".
+  - Verify that the breakpoint is enabled.
+
+id: 00800
+label: Contextmenu in source view: source line delete breakpoint
+desc:
+  - Right-click in script source panel in script view on script line with breakpoint.
+  - Click "Delete breakpoint".
+  - Verify that the breakpoint is deleted.
+
+id: 00900
+label: Contextmenu in breakpoint list: general
+desc:
+  - Add breakpoint on a source line.
+  - Switch to breakpoint list in right panel.
+  - Right-click the existing breakpoint.
+  - Verify that you get menu option: Add condition
+  - Verify that you get menu option: Delete breakpoint
+  - Verify that you get menu option: Disable all breakpoints
+  - Verify that you get menu option: Delete all breakpoints
+
+id: 01000
+label: Contextmenu in breakpoint list: add condition
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Add condition
+  - Verify that you get enter condition edit mode.
+  - Add a non-empty condition.
+
+id: 01100
+label: Contextmenu in breakpoint list: edit condition
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Edit condition
+  - Verify that you get enter condition edit mode.
+
+id: 01200
+label: Contextmenu in breakpoint list: delete breakpoint
+desc:
+  - Right-click the existing breakpoint.
+  - Click on: Delete breakpoint
+  - Verify that the breakpoint is deleted.
+
+id: 01300
+label: Contextmenu in breakpoint list: disable all breakpoints
+desc:
+  - Add 2 breakpoints in 2 different scripts.
+  - Right-click an existing breakpoint in the breakpoint list.
+  - Click on: Disable all breakpoints
+  - Verify that all the breakpoints are disabled.
+
+id: 01400
+label: Contextmenu in breakpoint list: delete all breakpoints
+desc:
+  - Right-click an existing breakpoint in the breakpoint list.
+  - Click on: Delete all breakpoints
+  - Verify that all the breakpoints are deleted.
+
 
 Console HUD
 ***********
@@ -1057,19 +1431,7 @@ desc:
   - Type "values(dict)"
   - Verify that "Array" is added to the console
   - Click the Array link
-  - Verify that the array is of length 2 and contains the values "1" and "1"
-
-id: 02000
-label: Command line API: keys
-desc:
-  - Click the "console.trace" button
-  - Verify that a stack trace is printed in the console
-
-id: 02100
-label: Command line API: keys
-desc:
-  - Click the "console.trace" button
-  - Verify that a stack trace is printed in the console
+  - Verify that the array is of length 2 and contains the values "1" and "2"
 
 url: ./test-cases/repl/misc_selection.html
 
@@ -1089,15 +1451,15 @@ desc:
 id: 02300
 label: Command line API: $()
 desc:
-  - Enter $("i") in th command line
+  - Enter $("i") in the command line
   - Verify that HTMLElement is printed in the view
 
 id: 02400
 label: Command line API: $() on sites using jquery/other libs
 desc:
   - Navigate to a site that uses jquery, like http://jquery.com
-  - Enter $("i") in th command line
-  - Verify that HTMLElement is printed in the view
+  - Enter $("i") in the command line
+  - Verify that a jQuery object with the body element is printed in the view
 
 id: 02500
 label: Command line API: $$()
@@ -1162,7 +1524,7 @@ label: ctrl-k
 desc:
   - Enter some text.
   - Move the cursor to the middle of the line
-  - Press ctrl-l
+  - Press ctrl-k
   - Verify that all text after the cursor is deleted
 
 id: 03200
@@ -1176,7 +1538,7 @@ id: 03300
 label: ctrl-l
 desc:
   - Create some entries
-  - Press ctrl-l
+  - Press ctrl-l or cmd-k
   - Verify that the view gets cleared.
   - Verify that the typed history was NOT cleared.
 
@@ -1262,8 +1624,8 @@ id: 04100
 label: Unpack list alikes
 desc:
   - Open the test case
-  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
-  - Uncheck 'Use specific information to represent object in the commandline' in settings &gt; 'General'
+  - Ensure that 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General' is checked
+  - Uncheck 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
   - Open the command line (hit 'escape' or hit the command line button)
   - Hit the 'console.log([1,2,3,4])' button
   - Verify that you get 'Array[1, 2, 3, 4]' in the command line (ignore a '[object Array]' before that)
@@ -1288,7 +1650,7 @@ id: 04200
 label: Setting for unpack list alikes
 desc:
   - Open the test case
-  - Uncheck 'Unpack list alikes in the command line' in settings &gt; 'General'
+  - Uncheck 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
   - Open the command line (hit 'escape' or hit the command line button)
   - Hit the 'console.log([1,2,3,4])' button
   - Verify that the output is now only a clickable 'Array' (ignore a '[object Array]' before that)
@@ -1303,8 +1665,8 @@ id: 04300
 label: User friendly object representation
 desc:
   - Open the test case
-  - Ensure that 'Unpack list alikes in the command line' in settings &gt; 'General' is checked
-  - Enable 'Use specific information to represent object in the commandline' in settings &gt; 'General'
+  - Ensure that 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
   - Open the command line (hit 'escape' or hit the command line button)
   - Hit 'console.log(document.all)' button
   - Verify that you get 'HTMLCollection[html, head, body, p, input.foo, p, input#bar, p, input, p, input]'
@@ -1352,7 +1714,7 @@ desc:
   - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
   - Set a breakpoint on line 8 in script 'a.js'
   - Right click the breakpoint in the panel and select 'Add condition'
-  - Type 'i > 9'
+  - Type 'i > 8'
   - Verify that the breakpoint in the source view now looks like a breakpoint with a condition
   - Hit the 'test' button
   - Verify that the engine stops
@@ -1393,7 +1755,7 @@ desc:
   - Set breakpoints on line 8 in script 'a.js', 'b.js', 'c.js' and 'd.js'
   - Add to all breakpoints the condition 'i > 8'
   - Hit the 'test' button
-  - Verify that the engine stops in each script exactly once (use the 'Continue' button or 'F8' to continue)
+  - Verify that the engine stops in each script exactly once (use the 'Continue' button or 'F8' ('F5' on Mac) to continue)
   - Right click the breakpoint panel and select 'Disable all'
   - Verify that all breakpoints are unchecked 
   - Verify that in each script in the source view the breakpoints look like disabled conditional breakpoints
@@ -1477,7 +1839,7 @@ desc:
   - Click 'paragraph with a 'onclick' attribute' in the test document
   - Verify that the debugger stops in the according callback
 
-url: test-cases/event-breakpoints/custom-event.html
+url: ./test-cases/event-breakpoints/custom-event.html
 
 id: 00700
 label: Custom event
@@ -1534,7 +1896,6 @@ url: ./test-cases/network/img-js-css.html
 
 id: 00100
 label: Request table
-deprecated: true
 desc:
   - Go to the url above
   - Verify that the request table makes sense
@@ -1543,14 +1904,12 @@ desc:
 
 id: 00200
 label: Request and response detail
-deprecated: true
 desc:
   - Expand some of the entries
-  - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense
+  - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense - TODO: N/A for the network tab?
 
 id: 00300
 label: Clear log
-deprecated: true
 desc:
   - Press the 'Clear log' button
   - Verify that the view gets cleared.
@@ -1611,7 +1970,7 @@ desc:
   - Reload the document.
   - Verify that all cookies are gone.
   - In case the host has the cookie-service:
-  - Execute "javascript:alert(document.cookie)" and verify only a1 is shown.
+  - Execute "javascript:alert(document.cookie)" and verify it's empty.
 
 id: 00500
 label: Add new cookies
@@ -1629,7 +1988,7 @@ desc:
 id: 00600
 label: Refresh
 desc:
-  - Execute "javascript:document.cookie='jscookie'"
+  - Execute "javascript:(function(){document.cookie='jscookie'})()"
   - Press the update button (if existing) or choose 'Refresh' from the context menu
   - Verify that a cookie with the name 'jscookie' shows up.
 
@@ -1669,10 +2028,10 @@ desc:
   - Edit it and change the domain to scope.bitbucket.org
   - Press Enter to submit it
   - Verify that the cookie shows up in the correct runtime now and that no values have changed
-  In case the domain can be edited to anything (depends on service-version):
+  - In case the domain can be edited to anything (depends on service-version):
   - Edit again and change the domain to bitbucket.org
   - Verify the domain is changed, but the cookie still shows up in the right runtime
-  In case there are checkboxes for "Secure" (depends on service-version):
+  - In case there are checkboxes for "Secure" (depends on service-version):
   - Add another cookie named "foo_secure" and check the "is secure" box.
   - Verify that it doesn't show up anymore
   - Add an iframe with the url "https://scope.bitbucket.org" to the testcase
@@ -1688,12 +2047,12 @@ desc:
   - Verify that the following runtimes are listed: http://scope.bitbucket.org/tests/add-remove-runtime/index.html, http://207.223.240.182/, http://t/
   - Add a cookie to each of them and verify they get added
   - Edit the one you have set for t/, change the domain to scope.bitbucket.org and the path to /tests/
-  - Verify that the cookie is shown in t/ but nowhere else (known issue: Won't be shown when host has cookie-service < 1.1 - CORE-35207)
+  - Verify that the cookie is shown in the scope.bitbucket.org runtime, but nowhere else (known issue: Won't be shown when host has cookie-service < 1.1 - CORE-35207)
 
 Storage.Local Storage
 *********************
 
-url: ./test-cases/storages/create-storages.html
+url: ./test-cases/storages/create-storages.php
 
 url: ./test-cases/storages/check-storages.html
 
@@ -1738,7 +2097,7 @@ desc:
 Storage.Session Storage
 *********************
 
-url: ./test-cases/storages/create-storages.html
+url: ./test-cases/storages/create-storages.php
 
 url: ./test-cases/storages/check-storages.html
 
@@ -1815,19 +2174,20 @@ Utilities.Color Picker
 
 url: http://www.nzz.ch
 
-id: 00100
-label: Pixel Magnifier
-desc:
-  - Hover over the page
-  - Verify that the screenshot area is updated accordingly
-  - Click some where on a image
-  - Verify that the updating of the screenshot area stops.
-  - Change the Area in the dropdown
-  - Verify that the screenshot area is updated accordingly
-  - Change the scale
-  - Verify that the screenshot area is update accordingly
-  - Press the 'Reset default values' button.
-  - Verify that the values and the screenshot area are reset.
+# TODO: test completely outdated
+# id: 00100
+# label: Pixel Magnifier
+# desc: 
+#   - Hover over the page
+#   - Verify that the screenshot area is updated accordingly
+#   - Click some where on a image
+#   - Verify that the updating of the screenshot area stops.
+#   - Change the Area in the dropdown
+#   - Verify that the screenshot area is updated accordingly
+#   - Change the scale
+#   - Verify that the screenshot area is update accordingly
+#   - Press the 'Reset default values' button.
+#   - Verify that the values and the screenshot area are reset.
 
 id: 00200
 label: Color Picker
@@ -1880,7 +2240,7 @@ desc:
 id: 00175
 label: General settings
 desc:
-  - Uncheck "Show only browser windows..." checkbox.
+  - Uncheck "Hide browser-specific contexts, such as mail and feed windows" checkbox.
   - Open a bookmark manager window.
   - Verify that the new window is shown in debug context menu.
   - Check "Show only browser windows..." checkbox.
@@ -1924,8 +2284,8 @@ label: Keyboard shortcuts, Quick find
 desc:
   - Click Keyboard shortcuts tab
   - Expand 'Shortcut Config'
-  - Type 'ctrl' in the 'Quick find'
-  - Verify that all shortcuts with a 'ctrl' token are displayed
+  - Type 'ctrl' in the 'Quick find' (try 'cmd' on mac)
+  - Verify that all shortcuts with a 'ctrl' or 'cmd' token are displayed
 
 id: 00500
 label: Shortcut Configuration
@@ -1933,9 +2293,9 @@ deprecated: true
 desc:
   - Expand 'Shortcut Config'
   - Expand 'Keyboard shortcuts Global'
-  - Change 'ctrl a' to 'ctrl b'
+  - Change the shortcut for select-all to 'ctrl b' or 'cmd d' on mac
   - Press the 'Save' button
-  - Verify that 'ctrl b' now selects all text
+  - Verify that 'ctrl b' or 'cmd d' now selects all text
   - Press the 'Reset all to defaults' button
   - Verify that 'ctrl b' no longer selects all text
   - Expand 'Keyboard shortcuts Global'
@@ -1981,12 +2341,13 @@ desc:
   - Verify that 'Select Active Window' works
   - Verify that each open tab can be selected as debug context.
 
-id: 00300
-label: Debug context menu display
-desc:
-  - Click debug context menu button.
-  - Verify that the menu opens and button is styled as pressed.
-  - Verify that the settings
+# TODO: test unfinished
+# id: 00300
+# label: Debug context menu display
+# desc:
+#   - Click debug context menu dropdown.
+#   - Verify that the menu opens and button is styled as pressed.
+#   - Verify that the settings
 
 Remote debug
 ************
@@ -2023,7 +2384,7 @@ desc:
 id: 00400
 label: Warn on port conflict
 desc:
-  - Choose a port that is already taken and appply
+  - Choose a port that is already taken and apply
   - Verify that there's an error message
   - Verify that the local connection is set up when dismissing the overlay
 
@@ -2032,7 +2393,7 @@ label: Local connection setup
 desc:
   - Choose a port and click apply, but don't connect
   - Dismiss the overlay
-  - Verify that the local connection is set up
+  - Verify that remote debug mode is turning off
 
 Overlays
 ********
@@ -2074,4 +2435,184 @@ desc:
   - Verify that the Error tab gets a badge with the number of errors
   - Verify that the badge gets hidden when pressing Clear log in the Errors Tab
   - Verify that the error count starts on 0 next time
+
+
+Resource view
+*************
+
+id: 00100
+label: Smoke test
+desc:
+  - Load a page
+  - Open dragonfly
+  - Verify that nothing is shown in the resource tab, except a prompt and a button to reload
+  - Click the button
+  - Verify that the page in the opera instance being debugged is loaded
+
+id: 00200
+label: requests that didn't result in a resource are disregarded
+desc:
+  - Open dragonfly
+  - Load http://www.ikke.no
+  - Verify that the resource view shows a single html document. There must be no favicon.ico in the resource list
+
+id: 00300
+label: Request type detection
+desc:
+  - Open a web site
+  - Verify that all the image files on the page have the correct icon and type in the resource view
+
+id: 00400
+label: Mime to type mapping
+desc:
+  - Open a page
+  - Enable showing mime types in resource view. Right click table, select "mime types"
+  - Verify that the mime type and type columns match
+
+id: 00500
+label: Grouping
+desc:
+  - Open a page
+  - Group by host by selecting it from the menu on right clicking the table.
+  - Verify that the resources are sorted by the host they were loaded from
+  - Group by type by selecting it from the menu on right clicking the table.
+  - Verify that the resources are sorted by the file type
+
+id: 00600
+label: Sorting
+desc:
+  - Open a page
+  - Sort the resources by clicking one of the column headers
+  - Verify that the resource is sorted by the selected column
+  - Sort the resources by using the right click menu on the table
+  - Verify that the resource is sorted by the selected column
+
+id: 00700
+label: Detail view generic
+desc:
+  - click on a resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the url shown at the top of the detail view is correct
+  - verify that the metadata can be shown by clicking the arrow
+  - verify that the metadata can be collapsed by clicking the arrow again
+
+id: 00800
+label: Image detail view
+desc: 
+  - load a page that contains an image
+  - click the image in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the image is shown in the temporary tab
+  - verify that closing the temporary tab returns to the resource list
+
+id: 00900
+label: Markup detail view
+desc: 
+  - load a page
+  - click the html resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the html source for the resource is shown and syntax higlighted
+  - verify that closing the temporary tab returns to the resource list
+
+id: 01000
+label: Javascript detail view
+desc: 
+  - load a page that contains a javascriptfile
+  - click the javascript resource in the resource table
+  - verify that a temporary tab is opened and focused
+  - verify that the javascript source for the resource is shown and syntax higlighted
+  - verify that closing the temporary tab returns to the resource list
+
+
+Network view log
+****************
+
+id: 00100
+label: Smoke test
+desc:
+  - Load a page
+  - open dragonfly
+  - verify that there are no network resources listed in the network tab, only a prompt and button for reloading debugged page
+  - click button
+  - verify that the debugged page reloads and that a graph of the network  activity is shown
+
+id: 00200
+label: Fit to width
+desc:
+  - Load a page that takes several seconds to load
+  - Verify that there is a horizontal scrollbar for the network graph
+  - Verify that clicking the fit to width button scales the graph to the available screen width
+  - Verify that clicking the fit to width button again reverts to the previous state
+
+id: 00300
+label: Pause
+desc:
+  - Load a page
+  - click the pause button
+  - reload the debugged page
+  - verify that the network graph is not updated
+  - click the pause button
+  - verify that the network graph is updated
+
+id: 00400
+label: Request list hover sync
+desc:
+  - Load a page
+  - Hover a url on the left hand side of the graph view
+  - Verify at the url, and the graph bar are higlighted when hovered.
+  - Hover the graph part of a request.
+  - Verify that the url and the graph bar are higlighted
+
+id: 00500
+label: Request details
+desc:
+  - Load a page
+  - Click a request
+  - Verify that the details view is shown
+
+
+Network request crafter
+***********************
+
+id: 00100
+label: Default request
+desc:
+  - Open "make request" tab in the network view
+  - Verify that it contains an example request
+  - click send request
+  - verify that the request is sent and that a response is shown in the response text area
+
+id: 00200
+label: syncing url field to request body
+desc:
+  - type a url in the url field
+  - verify that the first line of the request body text area matches the path and protocol you typed
+  - verify that the second line of the request body text area matches host you typed
+
+
+Network options
+***************
+
+id: 00100
+label: Caching
+desc:
+  - load a page
+  - open "network options" tab
+  - Check the "disable all caching" box
+  - reload the page
+  - verify in the network log view that none of the loaded pages were loaded from cache
+  - uncheck the "disable all caching" box.
+  - reload the page
+  - reload the page again
+  - verify that some resources were loaded from cache.
+
+id: 00200
+label: Content tracking
+desc:
+  - Open "network options" tab.
+  - Check the "enable global overrides" box
+  - Load a page
+  - In the network log view, look at the details for all resources
+  - Verify that the body section of the request detail view contains the response body.
+
 

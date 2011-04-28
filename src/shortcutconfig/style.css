@@ -6,23 +6,27 @@
 
 .shortcuts-config header
 {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 3px;
   padding: 3px;
   margin: 2px 4px;
-  color: #000;
-  font-weight: bold;
+  color: #fff;
 }
 
 .shortcuts-config header:hover
 {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.15);
+}
+
+.shortcuts-config header:active
+{
+  background: rgba(255,255,255,0.3);
 }
 
 .shortcuts-config header input
 {
-  background:transparent url('../ui-images/toggle.png') scroll no-repeat 50% 100% !important;
+  background:transparent url('../ui-images/toggle_white.png') scroll no-repeat 50% 100%;
   border:none;
   width:5px;
   height:9px;
@@ -33,12 +37,16 @@
 .shortcuts-config filter {
   font-size: inherit;
   vertical-align: middle;
-  background-color: transparent;
+  background: transparent url("http://localhost:8002/src/ui-images/filter_white.png") no-repeat 4px 50%;
   border: 1px solid rgba(255,255,255,0.5);
   box-shadow: none;
   border-radius: 3px;
   padding: 1px 1px 1px 20px;
   margin: 2px;
+  color: #fff;
+}
+
+.shortcuts-config filter.focus input {
   color: #fff;
 }
 

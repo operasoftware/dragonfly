@@ -417,18 +417,12 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(horizontal_scoller).style.right = '0px';
   }
 
+  // deprecated. use this.show_and_flash_line instead.
   this.highlight = function(script_id, line_nr, highlight_line_start, highlight_line_end)
   {
     if (this.isvisible())
     {
-      highlight_line_start = highlight_line_start === undefined ? line_nr : highlight_line_start;
-      __highlight_line_start = highlight_line_start - 1;
-      __highlight_line_end = typeof highlight_line_end == "number" ?
-                              highlight_line_end - 1:
-                              __highlight_line_start;
-      // Reset the stored current line to ensure that the view gets updated
-      __current_line = 0;
-      this.showLine(script_id, line_nr, null, null, null, true);
+      this.show_and_flash_line(script_id, line_nr);
     }
   }
 
@@ -507,7 +501,7 @@ cls.JsSourceView = function(id, name, container_class)
       else
       {
         document.getElementById(scroll_id).innerHTML = "";
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "script source is missing for given id in views.js_source.showLine");
         return;
       }
@@ -777,7 +771,7 @@ cls.JsSourceView = function(id, name, container_class)
                            */
   this._scroll_lines = function(lines, event, target)
   {
-    if (__current_script)
+    if (__current_script && __current_script.line_arr)
     {
       var target_line = Math.max(1, Math.min(__current_line + lines,
                                              __current_script.line_arr.length + 1));
@@ -786,7 +780,7 @@ cls.JsSourceView = function(id, name, container_class)
         __disregard_scroll_event = true;
         document.getElementById(scroll_container_id).scrollTop =
           (target_line - 1) * context['line-height'];
-        this.showLine(__current_script.script_id, target_line, null, null, false, true);
+        this.showLine(__current_script.script_id, target_line, null, null, false);
       }
     }
     return false;
@@ -860,12 +854,10 @@ cls.GoToLine = function(js_source_view)
     var script_id = this._js_source_view.getCurrentScriptId();
     if (script_id && value.isdigit())
     {
-      if (this._js_source_view.showLine(script_id, parseInt(value)))
-      {
-        // workaround to reset the focus to the js source view
-        // needs a proper design
-        this._js_source_view.get_container().dispatchMouseEvent('click');
-      }
+      this._js_source_view.show_and_flash_line(script_id, parseInt(value));
+      // workaround to reset the focus to the js source view
+      // needs a proper design
+      this._js_source_view.get_container().dispatchMouseEvent('click');
     }
   }.bind(this);
 
@@ -893,28 +885,27 @@ cls.ScriptSelect = function(id, class_name)
 
   this.getSelectedOptionText = function()
   {
-    var selected_script_id = runtimes.getSelectedScript();
-    if( selected_script_id )
+    selected_script_id = runtimes.getSelectedScript();
+    if (selected_script_id)
     {
       var script = runtimes.getScript(selected_script_id);
-      if( script )
+      if (script)
       {
         var display_uri = helpers.shortenURI(script.uri);
-        var script_type = script.script_type[0].toUpperCase() +
-                          script.script_type.slice(1);
+        var script_type = script.script_type.capitalize(true);
         return display_uri.uri ?
                display_uri.uri :
-               script_type + " – " + (script.script_data.slice(0, 300) ||
+               script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
                ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'missing script in getSelectedOptionText in cls.ScriptSelect');
       }
     }
     else if(runtimes.getSelectedRuntimeId() &&
-              runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
+            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
     {
       return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
     }
@@ -941,7 +932,7 @@ cls.ScriptSelect = function(id, class_name)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.script_dropdown(_runtimes,
@@ -966,7 +957,7 @@ cls.ScriptSelect = function(id, class_name)
     }
     else
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "missing script id in handlers['display-script']")
     }
     selected_value = target_ele.textContent;
@@ -1227,9 +1218,19 @@ cls.JsSourceView.create_ui_widgets = function()
 
           if (breakpoints.script_has_breakpoint_on_line(script_id, line))
           {
+            var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
             items.push({
-              label: ui_strings.M_CONTEXTMENU_ADD_CONDITION,
+              label: !bp.condition ?
+                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
               handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
+            },
+            {
+              label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+              handler: function(event, target) {
+                breakpoints.set_condition("", bp.id);
+              },
+              disabled: !bp.condition
             },
             {
               label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,

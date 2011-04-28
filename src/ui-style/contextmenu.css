@@ -51,9 +51,10 @@
 
 #contextmenu .contextmenu-icon {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
   text-align: center;
-  width: 12px;
+  width: 10px;
+  height: 9px;
   margin: 0 4px;
   overflow: hidden;
 }
@@ -79,18 +80,18 @@
 }
 
 #contextmenu .check {
-  content: url("../ui-images/menu_check.png");
+  background: transparent url("../ui-images/menu_check.png") 50% no-repeat;
 }
 
 #contextmenu li:not(.disabled):active .check {
-  content: url("../ui-images/menu_check_selected.png");
+  background: transparent url("../ui-images/menu_check_selected.png");
 }
 
 #contextmenu .radio {
-  content: url("../ui-images/menu_bullet.png");
+  background: transparent url("../ui-images/menu_bullet.png") 50% no-repeat;
 }
 
 #contextmenu li:not(.disabled):active .radio {
-  content: url("../ui-images/menu_bullet_selected.png");
+  background-image: url("../ui-images/menu_bullet_selected.png");
 }
 

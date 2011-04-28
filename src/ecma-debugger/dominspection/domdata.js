@@ -114,7 +114,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           {
             this._get_initial_view(this._data_runtime_id);
           }
-          else if (this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
+          else if (this._element_selected_state != CHECKED && 
+                   this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
           {
             this._get_selected_element(this._data_runtime_id);
           }
@@ -236,6 +237,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
       {
         if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
         {
+          messages.post("runtime-selected", {id: this._data_runtime_id});
+          window['cst-selects']['document-select'].updateElement();
           this._get_dom_sub(message[RUNTIME_ID], message[OBJECT_ID], true);
         }
         else
@@ -268,6 +271,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
       if (this._element_selected_state == CHECK_AGAIN_NO_RUNTIME)
       {
         this._get_selected_element();
+        this._active_window = msg.activeTab.slice();
       }
       else
       {
@@ -319,7 +323,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     if (this._data_runtime_id == rt_id)
     {
       for ( ; (node = this._data[i]) && obj_id != node[ID]; i++);
-      if (node && node[TYPE] == 1) // don't update the dom if it's only a text node
+      if (node)
       {
         level = node[DEPTH];
         j = i + 1 ;
@@ -389,6 +393,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     }
     if (obj_id)
     {
+      this.breadcrumbhead = null;
+      this.breadcrumb_offsets = null;
       this.target = obj_id;
       window.dominspections.active = this;
       messages.post("element-selected", {obj_id: obj_id, rt_id: rt_id, model: this});
@@ -412,7 +418,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
                                 object_id: message[OBJECT_VALUE][OBJECT_ID],
                                 highlight: false});
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'this._handle_initial_view failed in dom_data\n');
   }
 
@@ -426,7 +432,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
                     this._handle_get_dom.bind(this, runtime_id));
     }
     else
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'this._handle_snapshot in dom_data has failed');
   }
 

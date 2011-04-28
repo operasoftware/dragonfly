@@ -11,7 +11,7 @@ cls.ResourceUtil = {}
  */
 cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 {
-  var numformatter = String
+  var numformatter = String;
   if (window.helpers && window.helpers.pretty_print_number)
   {
     numformatter = window.helpers.pretty_print_number;
@@ -76,6 +76,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/mathml+xml": "markup",
   "application/xslt+xml": "markup",
   "text/xsl": "markup",
+  "text/xml": "markup",
   "application/xml": "markup",
 
   "text/css": "css",
@@ -99,7 +100,9 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-font-ttf": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/woff": "font", // not official, but seems to be common
   "font/opentype": "font",
+  "application/x-font-otf": "font",
   "application/x-woff": "font",
 
   "audio/mid": "audio",
@@ -135,6 +138,12 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-shockwave-flash": "flash",
   "application/x-silverlight-app": "silverlight"
 }
+
+cls.ResourceUtil.type_to_string_map = {
+  "css": "CSS",
+  "pdf": "PDF",
+  "postscript": "PostScript"
+};
 
 /**
  * Returns the most sensible way of getting this resource,

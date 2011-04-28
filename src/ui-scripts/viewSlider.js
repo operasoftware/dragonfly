@@ -69,7 +69,7 @@ var SlideViews = function(container)
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'missing target in mousedownhandler in slideViews');
       }
 

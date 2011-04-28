@@ -109,7 +109,7 @@ margin-top: 0;
     <script src="../../src/syntaxhighlight/markup/syntax.js"></script>
 <script>
 
-var tmpl, line_count = 1, lines;
+var tmpl, line_count = 1, lines = [];
 var t1, t2, t3, x, c = 100;
 var render_template = function(doc)
 {
@@ -133,7 +133,6 @@ window.onload = function()
         t1 = Date.now();
         for (var i = 0; i < c; i++)
         {
-          lines = [], line_count = 1;
           render_template(this.responseText);
           x += i;
         }

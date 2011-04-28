@@ -160,7 +160,7 @@ window.cls.ListUnpacker = function()
     const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
     if (status || !msg[OBJECT_CHAIN_LIST])
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       " ExamineObjects failed in _handle_unpacked_list in ListUnpacker");
       error_callback();
     }

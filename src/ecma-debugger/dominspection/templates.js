@@ -140,7 +140,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link'"
+                  ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
                   : "") + ">\"" +
                 helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
                 "\"</value>";
@@ -293,7 +293,7 @@
 
   var nodeNameMap =
   {
-    3: "<span class='text-node'>#text</span>",
+    3: "<span class='text-node'>#text</span> ",
     4: "<span class='cdata-node'>#cdata-section</span>"
   };
 
@@ -392,7 +392,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link'"
+                    ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
                     : "" ) + ">\"" +
                   helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
               "\"</value>";
@@ -530,6 +530,11 @@
     var model = window.dominspections.active, ret = [];
     if (model)
     {
+      if (model.breadcrumbhead && !model.has_node(model.breadcrumbhead))
+      {
+        model.breadcrumbhead = null;
+        model.breadcrumb_offsets = null;
+      }
       var target_is_head = !model.breadcrumbhead || 
                            model.breadcrumbhead == model.target;
       if (target_is_head)
@@ -541,11 +546,12 @@
         ['h2', ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS],
         ['parent-node-chain', 
           target_is_head ?
-          this.breadcrumb(model, model.target, offsets_values[0]) :
+          this.breadcrumb(model, model.target, offsets_values[0], null, true) :
           this.breadcrumb(model, model.breadcrumbhead, 
-                          model.breadcrumb_offsets, model.target),
+                          model.breadcrumb_offsets, model.target, true),
           'onmouseover', helpers.breadcrumbSpotlight, 
-          'onmouseout', helpers.breadcrumbClearSpotlight
+          'onmouseout', helpers.breadcrumbClearSpotlight,
+          'class', 'mono'
         ],
         ['h2', ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES],
         ['offsets', offsets_values.map(this._offsets)]

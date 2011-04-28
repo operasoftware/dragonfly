@@ -110,14 +110,14 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
         }
         else
         { // should never happen with well formed headers
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
         }
       }
       else
       {
         var parts = line.match(/([\w-]*?):(.*)/);
         if (!parts || parts.length!=3) {
-          opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
           continue;
         }
         headers.push([parts[1], parts[2].trim()]);
@@ -256,10 +256,20 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     var resource = this._resources[this._listening_for];
     this._stop_loading();
-    var response = resource.responseheader.raw;
-    if (!resource.urlredirect)
+
+    var response = "";
+
+    if (resource.urlfinished && resource.urlfinished.result != 1) // 1 == success
     {
-      response += resource.responsefinished.data.content.stringData;
+      response = ui_strings.S_INFO_REQUEST_FAILED;
+    }
+    else
+    {
+      var response = resource.responseheader.raw;
+      if (!resource.urlredirect)
+      {
+        response += resource.responsefinished.data.content.stringData;
+      }
     }
 
     this._prev_response = response;

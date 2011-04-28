@@ -30,8 +30,7 @@ cls.ResourceDetailBase = function()
     {
       var resptype = cls.ResourceUtil.mime_to_content_mode(this.resource.mime);
       this.service.fetch_resource_data(this.on_resource_data.bind(this),
-                                       this.resource.id,
-                                       resptype);
+                                       this.resource.id, resptype);
     }
     else
     {
@@ -53,7 +52,7 @@ cls.ResourceDetailBase = function()
   this.on_resource_data = function(type, data)
   {
     const CONTENT = 5, TEXTCONTENT = 3;
-    this.resourcedata = data[CONTENT][TEXTCONTENT];
+    this.resourcedata = data[CONTENT] ? data[CONTENT][TEXTCONTENT] : null;
     this.update();
   }
 
@@ -151,8 +150,18 @@ cls.MarkupResourceDetail = function(res, service)
 
   this.init(res, service);
 }
-
 cls.MarkupResourceDetail.prototype = new cls.ResourceDetailBase();
+
+cls.CSSResourceDetail = function(res, service)
+{
+  this.render_type_details = function(container, resource, resourcedata)
+  {
+    return window.templates.css_resource_view(resource, resourcedata);
+  }
+
+  this.init(res, service);
+}
+cls.CSSResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
 
@@ -162,8 +171,8 @@ window.templates = window.templates || {};
 window.templates.text_resource_view = function(resource, resourcedata)
 {
   return [
-    ['pre',
-        ["code", resourcedata],
+    ['div',
+        ["code", ["pre", resourcedata]],
         'class', 'resource-detail-container'
     ]
   ]
@@ -200,6 +209,21 @@ window.templates.markup_resource_view = function(resource, resourcedata)
       'class', 'resource-detail-container mono line-numbered-resource markup-resource-content'
     ])
 }
+window.templates.css_resource_view = function(resource, resourcedata)
+{
+  var line_count = 1;
+  var lines = [line_count++];
+  var source = this.highlight_css(resourcedata, function()
+  {
+    lines.push(line_count++);
+  });
+  return (
+    ['div',
+      source,
+      ['div', lines.join('\n'), 'class', 'resource-line-numbers', 'unselectable', 'on'],
+      'class', 'resource-detail-container mono line-numbered-resource css-resource-content'
+    ])
+}
 
 window.templates.image_resource_view = function(resource, resourcedata)
 {
@@ -218,9 +242,10 @@ window.templates.font_resource_view = function(resource, data)
 {
   return ['div',
     templates.font_style(resource, data),
-    ["h1", "Font details view"],
-    ["div", "The quick brown fox jumped over the lazy dog",
-     "style", "font-family: fontresource-" + resource.id],
+    ["div", "The quick brown fox jumped over the lazy dog", ["br"], "1234567890",
+     "style", "font-family: fontresource-" + resource.id,
+     "class", "font-preview",
+     "contenteditable", "true"],
     'class', 'resource-detail-container'
   ]
 }

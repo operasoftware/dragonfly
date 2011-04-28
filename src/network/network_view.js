@@ -5,10 +5,11 @@
  * @extends ViewBase
  */
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
-  this._service = new cls.NetworkLoggerService()
+  this._service = new cls.NetworkLoggerService(this);
   this._loading = false;
   this._hscroll = 0;
   this._vscroll = 0;
+  this._contentscroll = 0;
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
@@ -22,16 +23,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
     this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
+    var content = this._container ? this._container.querySelector(".network-details-request") : null;
+    this._contentscroll = content ? content.scrollTop : 0;
   }
 
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
+    var paused = settings.network_logger.get('paused-update');
     if (ctx && ctx.resources.length)
     {
       this._container = container;
 
-      var paused = settings.network_logger.get('paused-update');
       var fit_to_width = settings.network_logger.get('fit-to-width');
 
       var url_list_width = 250;
@@ -42,9 +45,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
         this._vscrollcontainer = container.querySelector(".network-details-url-list");
         this._vscrollcontainer.scrollTop = this._vscroll;
+        var content = container.querySelector(".network-details-request");
+        content.scrollTop = this._contentscroll;
       }
       else if (!paused)
       {
+        this._contentscroll = 0;
         container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;
         var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
@@ -66,11 +72,21 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
         var scrollfun = function(evt) {
           var e = document.getElementById("right-side-container");
-          e.scrollLeft = evt.target.scrollLeft;
+          var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
+          e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
         }
         scrollfun({target:this._hscrollcontainer});
         this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
       }
+    }
+    else if (paused)
+    {
+      container.clearAndRender(
+        ['div',
+         ['p', ui_strings.S_INFO_NETWORK_UPDATES_PAUSED],
+         'class', 'info-box'
+        ]
+      );
     }
     else if (this._loading)
     {
@@ -158,7 +174,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_setting_change_bound = function(msg)
   {
-    if (msg.id == "network_logger") { this.update(); }
+    if (msg.id == "network_logger")
+    {
+      this.ondestroy(); // saves scroll pos
+      this.update();
+    }
   }.bind(this);
 
   this._on_scroll_bound = function(evt)
@@ -217,38 +237,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
   res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
-  var contextmenu = ContextMenu.get_instance();
-  contextmenu.register("request-context-options", [
-    {
-      label: "Show in resource view",
-      handler: function(evt, target) {
-        var cur = evt.target, rid;
-        while (cur)
-        {
-          if (rid = cur.getAttribute("data-resource-id")) { break }
-          cur = cur.parentNode;
-        }
-        var view = cls.ResourceManagerAllView.get_instance();
-        view.show_resource_for_id(rid);
-      }
-    },
-/*
-    {
-      label: "Copy to resource crafter",
-      handler: function(evt, target) {
-        var cur = evt.target, rid;
-        while (cur)
-        {
-          if (rid = cur.getAttribute("data-resource-id")) { break }
-          cur = cur.parentNode;
-        }
-      }
-    }
-*/
-  ]);
-
-
-
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
   eh.click["toggle-fit-graph-to-network-view"] = this._on_toggle_fit_graph_to_width;
 
@@ -263,8 +251,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     },
     // key-label map
     {
-      "paused-update": ui_strings.S_NETWORK_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "fit-to-width": ui_strings.S_NETWORK_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
+      "paused-update": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
+      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
     },
     // settings map
     {

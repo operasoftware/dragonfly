@@ -16,7 +16,7 @@ window.cls.InspectableObjectView.prototype =
     var tpl = window.templates.inspected_js_object(this.model, this.show_root);
     if (!tpl)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + " Inspectable object template yielded no data");
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + " Inspectable object template yielded no data");
     }
     return tpl;
   },

@@ -3,7 +3,7 @@
 /**
   * @constructor
   */
-cls.Breakpoint = function(id, script_id, line_nr, event_type)
+cls.Breakpoint = function(id, script_id, line_nr, event_type, active_rt_ids)
 {
   this.id = id;
   this.script_id = script_id || "";
@@ -12,7 +12,29 @@ cls.Breakpoint = function(id, script_id, line_nr, event_type)
   this.type = this.script_id ? "source" : "event";
   this.is_enabled = true;
   this.condition = "";
+  this.update_is_active(active_rt_ids);
 };
+
+cls.Breakpoint.prototype = new function()
+{
+  this._is_active = true;
+
+  this.__defineGetter__('is_active', function()
+  {
+    return this._is_active;
+  });
+
+  this.__defineSetter__('is_active', function(){});
+
+  this.update_is_active = function(active_rt_ids)
+  {
+    if (this.script_id)
+    {
+      var rt_id = window.runtimes.getScriptsRuntimeId(this.script_id);
+      this._is_active = active_rt_ids.indexOf(rt_id) != -1;
+    }
+  }
+}
 
 /**
   * @constructor
@@ -30,8 +52,10 @@ cls.Breakpoints = function()
   /* interface */
 
   this.get_breakpoints = function(){};
+  this.get_active_breakpoints = function(){};
   this.get_breakpoint_with_id = function(bp_id){};
   this.script_has_breakpoint_on_line = function(script_id, line_nr){};
+  this.get_breakpoint_on_script_line = function(script_id, line_nr){};
   // bp_id optional
   this.add_breakpoint = function(script_id, line_nr, bp_id){};
   // removes the breakpoint in the host
@@ -70,7 +94,11 @@ cls.Breakpoints = function()
     }
     else
     {
-      this._bps.push(new this._bp_class(bp_id, script_id, line_nr, event_type));
+      this._bps.push(new this._bp_class(bp_id, 
+                                        script_id, 
+                                        line_nr, 
+                                        event_type,
+                                        this._active_rt_ids));
     }
     window.messages.post("breakpoint-updated",
                          {id: bp_id, script_id: script_id});
@@ -110,11 +138,16 @@ cls.Breakpoints = function()
       }
       else
       {
+        var state = script.breakpoint_states[bp.line_nr] || 0;
+        var pointer_state = state % 3;
         script.breakpoint_states[bp.line_nr] = absolute;
+        script.breakpoint_states[bp.line_nr] += pointer_state;
       }
-      window.messages.post('breakpoint-updated',
-                           {id: bp.id, script_id: bp.script_id});
     }
+    window.messages.post('breakpoint-updated',
+                         {id: bp.id, 
+                          script_id: bp.script_id,
+                          event_type: bp.event_type});
   };
 
   this._get_bp_id_with_event_name = function(event_name)
@@ -136,6 +169,7 @@ cls.Breakpoints = function()
       if (bp.script_id == old_script_id)
       {
         bp.script_id = new_script_id;
+        bp.update_is_active(this._active_rt_ids);
       }
     }
   };
@@ -146,11 +180,23 @@ cls.Breakpoints = function()
     return i;
   };
 
+  this._on_active_tab = function(msg)
+  {
+    this._active_rt_ids = msg.activeTab;
+    this._bps.forEach(function(bp)
+    {
+      bp.update_is_active(this._active_rt_ids);
+    }, this);
+    window.views.breakpoints.update();
+  };
+
   this._init = function()
   {
     this._bps = [];
     this._bp_class = window.cls.Breakpoint;
     this._esdb = window.services['ecmascript-debugger'];
+    this._active_rt_ids = [];
+    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   };
 
   /* implementation */
@@ -158,6 +204,14 @@ cls.Breakpoints = function()
   this.get_breakpoints = function()
   {
     return this._bps;
+  };
+
+  this.get_active_breakpoints = function()
+  {
+    return this._bps.filter(function(bp)
+    {
+      return bp.is_active;
+    });
   };
 
   this.get_breakpoint_with_id = function(bp_id)
@@ -175,7 +229,10 @@ cls.Breakpoints = function()
               this._get_bp_id_with_script_id_and_line_nr(script_id, line_nr) ||
               this._get_bp_id();
       script.breakpoints[line_nr] = bp_id;
-      if (!script.breakpoint_states[line_nr])
+      var state = script.breakpoint_states[line_nr] || 0;
+      var pointer_state = state % 3;
+      state -= pointer_state;
+      if (!state)
       {
         script.breakpoint_states[line_nr] = BP_DISABLED;
       }
@@ -183,6 +240,7 @@ cls.Breakpoints = function()
       {
         script.breakpoint_states[line_nr] += BP_DELTA_ENABLE;
       }
+      script.breakpoint_states[line_nr] += pointer_state;
       // message signature has changes with version 6.0
       // AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint
@@ -206,10 +264,14 @@ cls.Breakpoints = function()
       var bp_id = script.breakpoints[line_nr];
       this._esdb.requestRemoveBreakpoint(0, [bp_id]);
       script.breakpoints[line_nr] = 0;
-      if (script.breakpoint_states[line_nr] >= BP_ENABLED)
+      var state = script.breakpoint_states[line_nr] || 0;
+      var pointer_state = state % 3;
+      state -= pointer_state;
+      if (state >= BP_ENABLED)
       {
-        script.breakpoint_states[line_nr] -= BP_DELTA_ENABLE;
+        script.breakpoint_states[line_nr] = state - BP_DELTA_ENABLE;
       }
+      script.breakpoint_states[line_nr] += pointer_state;
       this._remove_bp(bp_id);
       return bp_id;
     }
@@ -259,20 +321,27 @@ cls.Breakpoints = function()
     return Boolean(script && script.breakpoints[line_nr]);
   };
 
+  this.get_breakpoint_on_script_line = function(script_id, line_nr)
+  {
+    var bp_id = this._get_bp_id_with_script_id_and_line_nr(script_id, line_nr);
+    return bp_id ? this.get_breakpoint_with_id(bp_id): null;
+  };
+
   this.set_condition = function(condition, bp_id)
   {
     var bp = this.get_breakpoint_with_id(bp_id);
     if (bp)
     {
-      if (condition && !bp.condition)
+      var current_condition = bp.condition;
+      bp.condition = condition;
+      if (condition && !current_condition)
       {
         this._update_bp_state(bp, BP_DELTA_CONDITION);
       }
-      else if(!condition && bp.condition)
+      else if(!condition && current_condition)
       {
         this._update_bp_state(bp, -BP_DELTA_CONDITION);
       }
-      bp.condition = condition;
     }
   };
 

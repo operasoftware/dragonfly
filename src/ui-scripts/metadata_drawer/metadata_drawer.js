@@ -5,13 +5,16 @@
   this._objectid = ObjectRegistry.get_instance().set_object(this);
   this._rules = {
     generic: [
-      {label: "url", getter: function(res) { return ["a", (res.urltype == 4 ? "data:URI" : res.url), "href", res.url, "target", "_blank"] } },
-      {label: "size", getter: function(res) { return  res.size
+      {label: "size", getter: function(res) { return res.size
                                               ? "" + window.helpers.pretty_print_number(res.size) + " bytes"
-                                              : "-"
+                                              : "—"
                                             }
       },
-      {label: "format", getter: function(res) { return res.type ? res.type : "-" }},
+      {label: "format", getter: function(res) { return res.type
+                                                  ? (cls.ResourceUtil.type_to_string_map[res.type] || res.type.capitalize())
+                                                  : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+                                              }
+      },
     ],
     image: [
       //{label: "dimensions", getter: function(res) { return "123 x 321" } },
@@ -49,8 +52,10 @@
 
   this._toggle_handler = function(evt, target)
   {
-    var div = target.parentNode;
-    var obj = ObjectRegistry.get_instance().get_object(div.getAttribute("data-object-id"));
+    var objid = target.getAttribute('data-object-id');
+    var obj = ObjectRegistry.get_instance().get_object(objid);
+    var table = target.parentNode.parentNode.parentNode;
+    var div = table.parentNode;
     var container = div.parentNode;
     obj.toggle();
     div.re_render(obj.render());
@@ -65,8 +70,6 @@ window.templates = window.templates || {};
 
 templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 {
-//  var type = resource.getType();
-
   var url = resource.urltype == 4 ? "data:URI" : resource.url;
   
   var content = [];
@@ -74,28 +77,33 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
   {
     content = templates.metadata_drawer_list(resource, rules);
   }
-  else
-  {
-    content = "URL: " + url;
-  }
 
   return ["div",
-          ["button",
-           "handler", "metadata-drawer-toggle",
-           "class", "folder-key",
-           "unselectable", "on",
-           "style", (expanded ? "background-position: 0px -11px" : ""),
-          ],
-          content,
-          (expanded && title ? ["h2", title] : []),
-          "class", "metadata-drawer " + (expanded ? "expanded" : "collapsed"),
-          "data-object-id", objectid,
+           ["table",
+             ["tr",
+               ["th",
+                 ["input",
+                  "handler", "metadata-drawer-toggle",
+                  "class", expanded ? "unfolded" : "",
+                  "unselectable", "on",
+                  "type", "button",
+                  "data-object-id", objectid
+                  ],
+                  "class", "expandercell"
+               ],
+               ["th", templates.network_request_icon(resource), "class", "iconcell"],
+               ["th", url, "class", "urlcell"],
+             ],
+             "class", "metadata-drawer-summary-table"
+           ],
+           content,
+           "class", "metadata-drawer"
          ]
 }
 
 templates.metadata_drawer_list = function(resource, rules)
 {
   return ["table", rules.map(function(rule) {
-    return ["tr", ["th", rule.label + ":"], ["td", rule.getter(resource) ]];
-  })];
+    return ["tr", ["th", rule.label.capitalize() + ":"], ["td", rule.getter(resource) ]]
+  }), "class", "details-table"];
 }

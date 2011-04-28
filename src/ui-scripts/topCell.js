@@ -78,26 +78,34 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
 
   this.showView = function(view_id)
   {
-    var view = views[view_id];
-    if(view.requires_view && !this.tab.hasTab(view.requires_view))
+    if (this.tab.hasTab(view_id))
     {
-      global_state.ui_framework.temporary_tabs.push(view.requires_view);
-      this.tab.addTab(new Tab(view.requires_view, views[view.requires_view].name, true))
+      this.tab.setActiveTab(view_id);
     }
-    if( view.isvisible() )
+    // a temporary view perhaps doesn't exist anymore
+    else if (views[view_id])  
     {
-      view.update();
-    }
-    else
-    {
-      var ret = this.getView(view_id), tab = null, i = 0;
-      if( ret )
+      var view = views[view_id];
+      if(view.requires_view && !this.tab.hasTab(view.requires_view))
       {
-        for( ; tab = ret[i]; i += 2 )
+        global_state.ui_framework.temporary_tabs.push(view.requires_view);
+        this.tab.addTab(new Tab(view.requires_view, views[view.requires_view].name, true))
+      }
+      if( view.isvisible() )
+      {
+        view.update();
+      }
+      else
+      {
+        var ret = this.getView(view_id), tab = null, i = 0;
+        if( ret )
         {
-          if( tab.activeTab != ret[i+1] )
+          for( ; tab = ret[i]; i += 2 )
           {
-            tab.setActiveTab(ret[i+1]);
+            if( tab.activeTab != ret[i+1] )
+            {
+              tab.setActiveTab(ret[i+1]);
+            }
           }
         }
       }
@@ -174,7 +182,6 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_GENERAL, "general"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_DOCUMENT, "document"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_SCRIPT, "script"),
-      new SettingsGroup(ui_strings.S_SETTINGS_HEADER_NETWORK, "resource_manager"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_CONSOLE, "console"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS, "keyboard-shortcuts"),
       new SettingsGroup(ui_strings.S_SETTINGS_HEADER_ABOUT, "about")

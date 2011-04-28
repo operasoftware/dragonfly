@@ -112,7 +112,7 @@ cls.HttpLogger["2.0"].HTTPLoggerService = function(name)
         var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
         if (!reqparts || reqparts.length != 4) {
-            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
               "Could not parse request:\n" + retval.raw);
         }
         else {
@@ -164,7 +164,7 @@ cls.HttpLogger["2.0"].HTTPLoggerService = function(name)
         var respparts = respline.match(/(\w*?) (\w*?) (.*)/);
 
         if (!respparts || respparts.length != 4) {
-            opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
               "could not parse response header: " + retval.raw);
         }
         else {
@@ -196,14 +196,14 @@ cls.HttpLogger["2.0"].HTTPLoggerService = function(name)
                     var old = headerList.pop();
                     headerList.push([old[0], old[1]+value]);
                 } else { // should never happen with well formed headers
-                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line);
+                    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "this header is malformed\n" + line);
                 }
             }
             else
             {
                 var parts = line.match(/([\w-]*?): (.*)/);
                 if (!parts || parts.length!=3) {
-                    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line);
+                    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "Could not parse header!:\n" + line);
                     continue;
                 }
                 var name = parts[1];

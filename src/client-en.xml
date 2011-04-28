@@ -1,5 +1,5 @@
 ﻿<viewport xmlns='http://www.w3.org/1999/xhtml'
-          xmlns:xlink="http://www.w3.org/1999/xlink" 
+          xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:svg="http://www.w3.org/2000/svg"
           spellcheck="false">
 <link rel="icon" href="/favicon.ico" />
@@ -9,8 +9,8 @@
 {
   // this code was added 10.02.2009
   // it can be removed after some time
-  var 
-  lang_dict = 
+  var
+  lang_dict =
   {
     /*
       supported languages in Opera
@@ -55,15 +55,15 @@
     "zh-cn": "zh-cn",
     "zh-tw": "zh-tw",
   },
-  setCookie = function(key, value, time) 
+  setCookie = function(key, value, time)
   {
     document.cookie = (
       key + "=" + encodeURIComponent(value) +
-      "; expires=" + 
-      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; expires=" +
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() +
       "; path=/");
   },
-  getCookie = function(key) 
+  getCookie = function(key)
   {
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
@@ -84,7 +84,7 @@
 
 <windows-container></windows-container>
 <main-view></main-view>
-<script><![CDATA[ 
+<script><![CDATA[
 window.load_screen_timeout = window.setTimeout(function()
 {
   var main_container = document.getElementsByTagName('main-view')[0];
@@ -137,8 +137,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
-<link rel="stylesheet" href="./syntaxhighlight/markup/default_color_theme.css"/>
 <link rel="stylesheet" href="./storage/storage_style.css"/>
+<link rel="stylesheet" href="./screenshot/style.css"/>
+
+
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -242,6 +244,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/fontselection/monospacefontselection.js"/>
 <script src="./ui-scripts/fontselection/templates.js"/>
 
+<script src="./ui-scripts/pixelmagnifier.js"/>
+
 
 <script src="./build-application/build_application.js"></script>
 <script src="./build-application/build_window_manager_2_0.js"></script>
@@ -274,6 +278,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./syntaxhighlight/js/templates.js"/>
 <script src="./syntaxhighlight/markup/tokenizer.js"/>
 <script src="./syntaxhighlight/markup/syntax.js"/>
+<script src="./syntaxhighlight/css/tokenizer.js"/>
+<script src="./syntaxhighlight/css/syntax.js"/>
 
 
 
@@ -324,7 +330,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/dominspection/markupeditor.js"/>
 
 <script src="./ecma-debugger/views-threads.js"/>
-<script src="./ecma-debugger/export_data.js"/>
 <script src="./ecma-debugger/action_handler.js"/>
 
 <script src="./ecma-debugger/hostspotlighter.js"/>
@@ -358,12 +363,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/css_inspector_actions.js"/>
 <script src="./style/view_dom_side_panel.js"/>
 <script src="./style/newstyle.js"/>
-
-
-<script src="./exec/color_picker_data.js"/>
-<script src="./exec/color_picker_view.js"/>
-<script src="./exec/color_picker_controls.js"/>
-<script src="./exec/templates.js"/>
 
 <script src="./client/client.js"/>
 <script src="./client/templates.js"/>
@@ -406,6 +405,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resource_util.js"/>
 <script src="./resource-manager/resource_base.js"/>
 <script src="./ui-scripts/metadata_drawer/metadata_drawer.js"/>
+<script src="./resource-manager/resource_display_broker.js"/>
+<script src="./resource-manager/opensingleresource.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlredirect.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
@@ -418,11 +419,18 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
 
+
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>
 <script src="./network/network_request_crafting_view.js"/>
 <script src="./network/network_global_options_view.js"/>
 <script src="./network/network_templates.js"/>
+
+<script src="./screenshot/screenshot.js"/>
+<script src="./screenshot/screenshotcontrols.js"/>
+<script src="./screenshot/templates.js"/>
+<script src="./screenshot/colorpalette.js"/>
+<script src="./screenshot/colorpaletteview.js"/>
 
 <body/>
 </viewport>

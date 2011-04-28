@@ -37,10 +37,10 @@ var UIWindowBase = new function()
       typeof view.window_statusbar == 'boolean' ? view.window_statusbar : true;
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
-    this.top = top != undefined ? top : view && view.window_top || this.default_top;
-    this.left = left != undefined ? left : view && view.window_left || this.default_left;
-    this.width = width != undefined ? width : view && view.window_width || this.default_width;
-    this.height = height != undefined ? height : view && view.window_height || this.default_height;
+    this.top = top != undefined ? Math.round(top) : view && view.window_top || this.default_top;
+    this.left = left != undefined ? Math.round(left) : view && view.window_left || this.default_left;
+    this.width = width != undefined ? Math.round(width) : view && view.window_width || this.default_width;
+    this.height = height != undefined ? Math.round(height) : view && view.window_height || this.default_height;
     this.min_top = 6;
     this.min_visible_height = 80;
     this.min_visible_width = 150;
@@ -81,7 +81,7 @@ var UIWindowBase = new function()
       this.statusbar.setup(this.view_id);
 
     this.setZIndex();
-    win.style.zIndex = 200;
+    win.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
   }
 
   this._delete = function(id)
@@ -165,12 +165,14 @@ var UIWindowBase = new function()
       if(document.getElementById(win.id))
       {
         self.setZIndex();
-        document.getElementById(win.id).style.zIndex = 200;
+        document.getElementById(win.id).style.zIndex = 
+          Overlay.get_instance().is_visible ? 400 : 200;
         window.views[view_id].update();
       }
       else
       {
         win.render();
+        resize();
       }
     }
     else
@@ -189,8 +191,20 @@ var UIWindowBase = new function()
       win.container.onclose();
       messages.post("hide-view", {id: win_ele.getAttribute('view_id')});
       win_ele.parentNode.removeChild(win_ele);
+      return view_id;
     }
+    return null;
   }
+
+  this.close_all_windows = function()
+  {
+    var ret = [];
+    for (id in window.ui_windows)
+    {
+      ret.push(this.closeWindow(window.ui_windows[id].view_id));
+    }
+    return ret.filter(Boolean);
+  };
 
  /* event handling */
 
@@ -242,7 +256,7 @@ var UIWindowBase = new function()
         {
           click_target = id;
           self.setZIndex();
-          current_style.zIndex = 200;
+          current_style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
         }
         update_handler = update[handler];
         set[handler](event);
@@ -274,7 +288,7 @@ var UIWindowBase = new function()
             {
               click_target = parent.id;
               self.setZIndex();
-              parent.style.zIndex = 200;
+              parent.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
             }
             break;
           }
@@ -537,7 +551,7 @@ var UIWindowBase = new function()
     if(!viewport)
     {
       self.showWindow = function(){};
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'missing view port in init in windows');
     }
   }

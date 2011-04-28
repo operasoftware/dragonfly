@@ -31,7 +31,7 @@
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "missing frame in 'show-frame' handler");
   }
 };
 
@@ -207,7 +207,7 @@ window.eventHandlers.click['display-script'] = function(event)
   }
   else
   {
-    opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       "missing script id in window.eventHandlers.click['display-script']")
   }
 };
@@ -231,7 +231,8 @@ window.eventHandlers.click['set-break-point'] = function(event)
   {
     if (bps.script_has_breakpoint_on_line(script_id, line))
     {
-      bps.remove_breakpoint(script_id, line);
+      var bp_id = bps.remove_breakpoint(script_id, line);
+      cls.Breakpoints.get_instance().delete_breakpoint(bp_id);
     }
     else
     {

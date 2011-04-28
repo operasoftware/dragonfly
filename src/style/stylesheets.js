@@ -777,7 +777,13 @@ cls.Stylesheets = function()
         if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
         {
           inherited_printed = true;
-          ret += "<h2>" + ui_strings.S_INHERITED_FROM + " <code class='element-name'>" + style_dec[SELECTOR] + "</code></h2>";
+          ret += "<h2>" +
+                ui_strings.S_INHERITED_FROM +
+                " <code class='element-name'" +
+                " handler='inspect-node-link'" +
+                " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
+                element_name +
+              "</code></h2>";
         }
         ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
       }
@@ -902,7 +908,8 @@ cls.Stylesheets = function()
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
-           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'>" + sheet.name +
+           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
+           " data-resource-url='" + sheet.href + "'>" + sheet.name +
          "</stylesheet-link>" : 
         "")+
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
@@ -912,7 +919,7 @@ cls.Stylesheets = function()
     }
     if (!sheet)
     {
-      opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');
     }
 
@@ -1004,6 +1011,7 @@ cls.Stylesheets = function()
         {
           return {
             index: i,
+            href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
             name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
               || sheet[SHEET_TITLE]
               || 'stylesheet ' + i)

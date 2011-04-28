@@ -39,6 +39,7 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
+      window.messages.post('dom-view-updated', {model: model});
     }
     else
     {
@@ -134,7 +135,7 @@ cls.DocumentSelect = function(id)
       for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
       if( !rt && _runtimes[0] )
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
       return templates.runtimes(_runtimes, 'dom');
@@ -154,7 +155,7 @@ cls.DocumentSelect = function(id)
       }
       else
       {
-        opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "missing runtime id in cls.DocumentSelect.checkChange")
       }
       return true;
@@ -188,7 +189,8 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': false,
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
-      'lock-selected-elements': false
+      'lock-selected-elements': false,
+      'spotlight-color': "3875d7"
     }, 
     // key-label map
     {
@@ -217,7 +219,6 @@ cls.DOMView.create_ui_widgets = function()
         'find-with-click',
         'highlight-on-hover',
         'update-on-dom-node-inserted',
-        'show-siblings-in-breadcrumb',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
         'lock-selected-elements'
@@ -298,6 +299,13 @@ cls.DOMView.create_ui_widgets = function()
       callback: function(event, target)
       {
         var target = event.target;
+        var ele = target.has_attr("parent-node-chain", "ref-id");
+        if (ele && ele.hasClass("non-editable"))
+        {
+          return;
+        }
+
+        var menu = [];
         while (target != document && !/^(?:key|value|text|node)$/i.test(target.nodeName))
         {
           target = target.parentNode;
@@ -306,23 +314,34 @@ cls.DOMView.create_ui_widgets = function()
         switch (target.nodeName.toLowerCase())
         {
         case "node":
-          return [
+          var toggle = target.parentNode.querySelector("[handler='get-children']");
+          var is_open = toggle ? toggle.hasClass("open") : null;
+          menu = [
             {
               label: ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE,
               handler: contextmenu_add_attribute
             }
           ]
           .concat(ContextMenu.separator)
-          .concat(dom_element_common_items)
-          .concat(ContextMenu.separator)
-          .concat({
-            label: ui_strings.M_CONTEXTMENU_EXPAND_COLLAPSE_SUBTREE,
-            handler: contextmenu_expand_collapse_subtree
-          });
+          .concat(dom_element_common_items);
+
+          if (toggle)
+          {
+            menu.extend([
+              ContextMenu.separator,
+              {
+                label: is_open ? ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE
+                               : ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                handler: function contextmenu_expand_collapse_subtree(event, target) {
+                  broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
+                }
+              }
+            ]);
+          }
           break;
 
         case "key":
-          return [
+          menu = [
             {
               label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE,
               handler: contextmenu_edit_dom
@@ -341,7 +360,7 @@ cls.DOMView.create_ui_widgets = function()
           break;
 
         case "value":
-          return [
+          menu = [
             {
               label: ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE,
               handler: contextmenu_edit_dom
@@ -356,7 +375,7 @@ cls.DOMView.create_ui_widgets = function()
           break;
 
         case "text":
-          return [
+          menu = [
             {
               label: ui_strings.M_CONTEXTMENU_EDIT_TEXT,
               handler: contextmenu_edit_dom
@@ -364,6 +383,8 @@ cls.DOMView.create_ui_widgets = function()
           ];
           break;
         }
+
+        return menu;
       }
     }
   ]);
@@ -402,10 +423,6 @@ cls.DOMView.create_ui_widgets = function()
     broker.dispatch_action("dom", "remove-node", event, event.target);
   }
 
-  function contextmenu_expand_collapse_subtree(event, target) {
-    broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
-  }
-
   new Switches
   (
     'dom',
@@ -416,6 +433,16 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  new Search('dom', [Searchbar]);
+  var search = new Search('dom', [Searchbar]);
+
+  window.messages.addListener('dom-view-updated', function(msg)
+  {
+    if (msg.model == window.dominspections.active)
+    {
+      search.update_search();
+    }
+  });
+
+
 
 };

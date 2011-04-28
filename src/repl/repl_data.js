@@ -15,12 +15,13 @@ cls.ReplData = function(view)
   };
 
   this._entry_count = 0;
-  this._add_entry = function(type, data)
+  this._add_entry = function(type, data, pos)
   {
     var entry = {
       time: ++this._entry_count,
       type: type,
-      data: data
+      data: data,
+      pos: pos
     };
     this._repllog.push(entry);
     this._view.update();
@@ -78,9 +79,9 @@ cls.ReplData = function(view)
     this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name, friendly_printed: friendly_printed});
   };
 
-  this.add_output_valuelist = function(rt, values)
+  this.add_output_valuelist = function(rt, values, pos)
   {
-    this._add_entry("valuelist", values);
+    this._add_entry("valuelist", values, pos);
   };
 
   this.add_output_exception = function(message, trace)

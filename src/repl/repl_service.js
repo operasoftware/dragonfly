@@ -2,12 +2,6 @@
 
 cls.ReplService = function(view, data)
 {
-  if (cls.ReplService.instance)
-  {
-    return cls.ReplService.instance;
-  }
-  cls.ReplService.instance = this;
-
   this._count_map = {};
 
   
@@ -120,7 +114,6 @@ cls.ReplService = function(view, data)
   this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
   {
     const VALUELIST = 2;
-
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
                     !is_unpacked &&
                     msg[VALUELIST];
@@ -153,8 +146,16 @@ cls.ReplService = function(view, data)
     }
     else
     {
+      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1;
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
-      this._data.add_output_valuelist(rt_id, values);
+      var pos = null;
+      if (msg[POSITION])
+      {
+        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]}
+      }
+
+
+      this._data.add_output_valuelist(rt_id, values, pos);
       if (is_unpacked)
       {
         this._msg_queue.continue_processing();
@@ -469,10 +470,12 @@ cls.ReplService = function(view, data)
   {
     var tag = this._tagman.set_callback(null, callback, cbargs);
     var wantdebugging = 1;
+    /* The wantdebugging flag is not behaving as expected, so disabling this for 1.0. See DFL-1736
     if (msg.length == 5)
     {
       msg.push(wantdebugging);
     }
+    */
     this._edservice.requestEval(tag, msg);
   }
 

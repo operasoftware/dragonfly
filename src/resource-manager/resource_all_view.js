@@ -11,7 +11,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   }
   cls.ResourceManagerAllView.instance = this;
 
-  this._service = new cls.ResourceManagerService();
+  this._service = new cls.ResourceManagerService(this);
   this._sort_by = "name";
   this._reverse = false;
   this._columns = ["icon", "host", "path", "type", "size_h"];
@@ -37,8 +37,9 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     if (res)
     {
       this._open_resource_tab(res);
+      return true;
     }
-
+    return false;
   };
 
   this.show_resource_for_url = function(url)
@@ -47,7 +48,9 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     if (res)
     {
       this._open_resource_tab(res);
+      return true
     }
+    return false;
   };
 
   this._render_main_view = function(container)
@@ -96,7 +99,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       font: cls.FontResourceDetail,
       script: cls.JSResourceDetail,
       markup: cls.MarkupResourceDetail,
-      css: cls.TextResourceDetail,
+      css: cls.CSSResourceDetail,
+      text: cls.TextResourceDetail
     }
     var viewclass = viewclasses[type] || cls.GenericResourceDetail;
     var view = new viewclass(resource, this._service);
@@ -104,6 +108,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     ui.get_tabbar("resources").add_tab(view.id);
     ui.show_view(view.id);
   }
+
+  this.open_resource_tab = this._open_resource_tab;
 
   this._handle_open_resource_tab_bound = function(evt, target) {
     var rid = target.getAttribute("data-resource-id");
@@ -130,11 +136,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     idgetter: function(res) { return String(res.id) },
     groups: {
       hosts: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS,
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST,
         grouper: function(res) { return res.urltype == 4 ? ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST : cls.ResourceUtil.url_host(res.url) }
       },
       types: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS,
+        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE,
         grouper: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP}
       }
     },
@@ -163,7 +169,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       type: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_TYPE,
-        getter: function(res) { return res.type || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
+        getter: function(res) { return res.type ? (cls.ResourceUtil.type_to_string_map[res.type] || res.type.capitalize())
+                                                : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,

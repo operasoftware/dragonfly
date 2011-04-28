@@ -23,108 +23,123 @@
      * @param {String} tabbar_id.
      * @returns an instance of Tabbar.
      */
-    this.get_tabbar = function(id){};
-    
-    this.get_modebar = function(id){};
+  this.get_tabbar = function(id){};
+  
+  this.get_modebar = function(id){};
 
-    this.get_search = function(id){};
-    
-    this.get_overlay = function(id){};
+  this.get_search = function(id){};
+  
+  this.get_overlay = function(id){};
 
-    this.register_tabbar = function(id, tabs){};
-    
-    this.register_modebar = function(id, modebar){};
+  this.register_tabbar = function(id, tabs){};
+  
+  this.register_modebar = function(id, modebar){};
 
-    this.register_search = function(id, search){};
+  this.register_search = function(id, search){};
 
-    this.register_overlay = function(id, items){};
-    
-    this.show_view = function(id){};
+  this.register_overlay = function(id, items){};
+  
+  this.show_view = function(id){};
 
-    this.get_layout_box = function(view_id){};
+  this.get_layout_box = function(view_id){};
+
+  this.store_last_selected_view = function(view_id){};
+
+  this.retrieve_last_selected_view = function(){};
 
 
-    /* implemenation */
-    this.get_tabbar = function(id)
+  /* implemenation */
+  this.get_tabbar = function(id)
+  {
+    return this._tabbars[id] || null;
+  };
+  
+  this.get_modebar = function(id)
+  {
+    return this._modebars[id] || null;
+  };
+
+  this.get_search = function(id)
+  {
+    return this._searches[id] || null;
+  };
+
+  this.get_overlay = function(id)
+  {
+    return this._overlays[id] || null;
+  };
+
+  this.get_layout_box = function(view_id)
+  {
+    return window.topCell.get_cell(view_id);
+  };
+
+  this.register_tabbar = function(id, tabs)
+  {
+    if (!this._tabbars[id])
     {
-      return this._tabbars[id] || null;
-    };
-    
-    this.get_modebar = function(id)
+      this._tabbars[id] = new Tabbar(id, tabs);
+    }
+    return this._tabbars[id];
+  };
+  
+  this.register_modebar = function(id, _class)
+  {
+    if (!this._modebars[id])
     {
-      return this._modebars[id] || null;
-    };
+      this._modebars[id] = new _class();
+    }
+    return this._modebars[id];
+  };
 
-    this.get_search = function(id)
+  this.register_search = function(id, search)
+  {
+    if (!this._searches[id])
     {
-      return this._searches[id] || null;
-    };
+      this._searches[id] = search;
+    }
+    return this._searches[id];
+  };
 
-    this.get_overlay = function(id)
+  this.register_overlay = function(id, items)
+  {
+    if (!this._overlays[id])
     {
-      return this._overlays[id] || null;
-    };
+      this._overlays[id] = items;
+    }
+    return this._overlays[id];
+  };    
 
-    this.get_layout_box = function(view_id)
+  this.show_view = function(id)
+  {
+    // TODO make topCell a private member of UI
+    if (window.topCell)
     {
-      return window.topCell.get_cell(view_id);
-    };
+      window.topCell.showView(id);
+    }
+  };
 
-    this.register_tabbar = function(id, tabs)
-    {
-      if (!this._tabbars[id])
-      {
-        this._tabbars[id] = new Tabbar(id, tabs);
-      }
-      return this._tabbars[id];
-    };
-    
-    this.register_modebar = function(id, _class)
-    {
-      if (!this._modebars[id])
-      {
-        this._modebars[id] = new _class();
-      }
-      return this._modebars[id];
-    };
+  this.get_button = function(id)
+  {
+    // TODO: make this a bit more sophisticated
+    return document.getElementById(id);
+  };
 
-    this.register_search = function(id, search)
-    {
-      if (!this._searches[id])
-      {
-        this._searches[id] = search;
-      }
-      return this._searches[id];
-    };
+  this.get_mode_tab = function(id)
+  {
+    return TabBase.get_tab_by_ref_id(id);
+  };
 
-    this.register_overlay = function(id, items)
-    {
-      if (!this._overlays[id])
-      {
-        this._overlays[id] = items;
-      }
-      return this._overlays[id];
-    };    
+  this.store_last_selected_view = function(view_id)
+  {
+    window.settings.general.set('last-selected-view', view_id);
+  };
 
-    this.show_view = function(id)
-    {
-      // TODO make topCell a private member of UI
-      if (window.topCell)
-      {
-        window.topCell.showView(id);
-      }
-    };
+  this.retrieve_last_selected_view = function()
+  {
+    return window.settings.general.get('last-selected-view');
+  };
 
-    this.get_button = function(id)
-    {
-      // TODO: make this a bit more sophisticated
-      return document.getElementById(id);
-    };
-
-    this.get_mode_tab = function(id)
-    {
-      return TabBase.get_tab_by_ref_id(id);
-    };
 }
 
 UI.get_instance = function()

@@ -128,34 +128,36 @@ templates.network_log_request_detail = function(ctx, selected)
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["button", "X", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
+    ["button", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.method || "-"],
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", String(responsecode || "-")],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
       "data-spec", "http#" + req.responsecode
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", String(req.duration ? "" + req.duration + "ms" : "-")]],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network && req.duration ? "" + req.duration + " ms" : "0"]],
      "class", "resource-detail"
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-    templates.response_details(req),
+    req.touched_network ? [
+      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+      templates.response_details(req),
+    ] : [],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
     ],
     "data-resource-id", String(req.id),
-    "data-menu", "request-context-options",
     "class", "request-details"
   ]
 }
 
 templates.request_details = function(req)
 {
-  if (!req.request_headers) { return [] }
+  if (!req.touched_network) { return ["p", ui_strings.S_NETWORK_SERVED_FROM_CACHE] }
+  if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
   var firstline = req.request_raw.split("\n")[0];
   var parts = firstline.split(" ");
   if (parts.length == 3)
@@ -171,7 +173,7 @@ templates.request_details = function(req)
 
 templates.response_details = function(req)
 {
-  if (!req.response_headers) { return [] }
+  if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
   var firstline = req.response_raw.split("\n")[0];
   var parts = firstline.split(" ", 2)
   if (parts.length == 2)
@@ -197,7 +199,7 @@ templates.network_headers_list = function(headers, firstline)
   {
     lis.unshift(["li", firstline]);
   }
-  return ["ol", lis, "class", "network-details-header-list"]  
+  return ["ol", lis, "class", "network-details-header-list mono"]
 }
 
 templates.network_response_body = function(req)
@@ -284,14 +286,13 @@ templates.network_log_url_list = function(ctx, selected)
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
-            ["span", String(statusstring || "-"),
+            ["span", res.touched_network && res.responsecode ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
              "class", "log-url-list-status " + statusclass,
-             "title", String(statusstring || "-")
+             "title", String(statusstring || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
              ],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
-            "data-menu", "request-context-options",
             "title", res.human_url
            ]
   }
@@ -317,7 +318,6 @@ templates.network_log_graph = function(ctx, width)
              gradients,
              rows,
              grid,
-             "data-menu", "request-context-options",
              "xmlns", "http://www.w3.org/2000/svg",
              "class", "resource-graph"];
     return tpl;
@@ -350,7 +350,7 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
 {
   return [
           ["rect", "x", "0",
-           "y", String(index * rowheight),
+           "y", String(helpers.crispifySvgValue(index * rowheight)),
            "width", "100%",
            "height", String(rowheight),
            "fill", (index % 2 ? "rgba(0,0,0,0.025)" : "white"),
@@ -358,9 +358,9 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
           ],
           ["line",
            "x1", "0",
-           "y1", String((index * rowheight) + 0.5),
+           "y1", String(helpers.crispifySvgValue(index * rowheight)),
            "x2", "100%",
-           "y2", String((index * rowheight) + 0.5),
+           "y2", String(helpers.crispifySvgValue(index * rowheight)),
            "stroke", "rgba(0, 0, 0, 0.1)",
            "stroke-width", "1",
            "pointer-events", "none",
@@ -385,7 +385,18 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var reqwidth = request.duration * multiplier;
   var resstart = ((request.requesttime || start) - basetime) * multiplier;
   var reswidth = (request.duration - (request.requesttime - request.starttime)) * multiplier;
-  var texture = "gradient-" + (request.type || "unknown");
+
+  var gradientmap = {
+    css: "blue",
+    script: "yellow",
+    markup: "purple",
+    image: "red",
+    audio: "green",
+    video: "green"
+  }
+
+  var texture = "gradient-" + (gradientmap[request.type] || "gray");
+  var stroke = templates.network_graph_stroke_defs[request.type || "unknown"];
 
   if (reqwidth < min_bar_width) // too small bar looks ugly
   {
@@ -416,26 +427,26 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var tpl = [
     ["rect", 
       ["title", title],
-      "x", String(start),
-      "y", String(bary),
-      "width", String(reqwidth),
+      "x", String(helpers.crispifySvgValue(start)),
+      "y", String(helpers.crispifySvgValue(bary)),
+      "width", String(Math.round(reqwidth)),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
-      "fill", "#dfdfdf",
-      "stroke", "#969696",
+      "fill", "rgba(0,0,0,.1)",
+      "stroke", "rgba(0,0,0,.2)",
       "stroke-width", "1.0",
     ],
 
     ["rect",
-      "x", String(resstart),
-      "y", String(bary),
-      "width", String(reswidth),
+      "x", String(helpers.crispifySvgValue(resstart)),
+      "y", String(helpers.crispifySvgValue(bary)),
+      "width", String(Math.round(reswidth)),
       "height", String(barheight),
       "rx", "4",
       "ry", "4",
-      "fill", "url(#" + texture + ")", 
-      "stroke", "#333333", 
+      "fill", "url(#" + texture + ")",
+      "stroke", stroke,
       "stroke-width", "1.0",
       "pointer-events", "none"
     ]
@@ -461,13 +472,15 @@ templates.grid_lines = function(ctx, width, height, topoffset)
   for (var n=100; n<millis; n+=100)
   {
     var color = null;
+    var is_sec_line = false;
     if (!(n % 1000))
     {
-      color = "black";
+      color = "rgba(0,0,0,.5)";
+      is_sec_line = true;
     }
     else if (secondwidth > THRESH_500MS && !(n % 500))
     {
-      color = "rgba(0,0,0,0.3)";
+      color = "rgba(0,0,0,0.25)";
     }
     else if (secondwidth > THRESH_100MS && !(n % 100))
     {
@@ -476,20 +489,20 @@ templates.grid_lines = function(ctx, width, height, topoffset)
 
     if (color) {
       ret.push(["line",
-                "x1", String(n*multiplier),
+                "x1", String(helpers.crispifySvgValue(n*multiplier)),
                 "y1", topoffset,
-                "x2", String(n*multiplier),
-                "y2", String(height),
+                "x2", String(helpers.crispifySvgValue(n*multiplier)),
+                "y2", String(helpers.crispifySvgValue(height)),
                 "stroke", color,
                 "stroke-width", "1.0",
                 "pointer-events", "none",
       ]);
 
-      if (color == "black")
+      if (is_sec_line)
       {
         ret.push([
           "text", "" + (n/1000) + "s",
-          "x", String(n*multiplier) + "px",
+          "x", String(helpers.crispifySvgValue(n*multiplier)) + "px",
           "y", "20px",
         ]);
       }
@@ -498,24 +511,33 @@ templates.grid_lines = function(ctx, width, height, topoffset)
   return ret;
 };
 
+templates.network_graph_stroke_defs = {
+   "image": "#922424",
+   "script": "#807040",
+   "css": "#266099",
+   "markup": "#383f77",
+   "unknown": "#333"
+};
+
 templates.network_graph_gradient_defs = function()
 {
   return ["defs",
-          templates.network_graph_gradient("image", "#ff7c7c", "#cb1313", "#b40000", "#c42222"),
-          templates.network_graph_gradient("script", "#ffffeb","#e2dd9a","#c6bf7a", "#d1cd95"),
-          templates.network_graph_gradient("css", "#e6ffff", "#91c4ff", "#71a6f0", "#8eb8f3"),
-          templates.network_graph_gradient("markup", "#d9deff", "#7c85b9", "#6972a6", "#8088b4"),
-          templates.network_graph_gradient("unknown", "#ffffff", "#c0c0c0", "#aaaaaa", "#b8b8b8")
+            templates.network_graph_gradient("purple", "#c9c9ff", "#a7a5d6", "#b0b0d6"),
+            templates.network_graph_gradient("blue", "#b8d4ff", "#8bafe0", "#a6c5f3"),
+            templates.network_graph_gradient("red", "#ed9696", "#d46868", "#e78989"),
+            templates.network_graph_gradient("yellow", "#f7f2d5", "#e3d696", "#f4edc9"),
+            templates.network_graph_gradient("gray", "#d9d9d9", "#adadad", "#bfbfbf"),
+            templates.network_graph_gradient("green", "#cae6ca", "#9ec59e", "#b5d6b5"),
          ];
 };
 
-templates.network_graph_gradient = function(id, c1, c2, c3, c4)
+
+templates.network_graph_gradient = function(id, c1, c2, c3)
 {
   return ["linearGradient",
-          ["stop", "offset", "5%", "stop-color", c1],
-          ["stop", "offset", "49%", "stop-color", c2],
-          ["stop", "offset", "50%", "stop-color", c3],
-          ["stop", "offset", "100%", "stop-color", c4],
+          ["stop", "offset", "1%", "stop-color", c1],
+          ["stop", "offset", "60%", "stop-color", c2],
+          ["stop", "offset", "100%", "stop-color", c3],
           "x1", "0",
           "x2", "0",
           "y1", "0",

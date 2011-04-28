@@ -58,26 +58,20 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     window.runtime_onload_handler = new namespace.RuntimeOnloadHandler();
 
-    /* temporary export view */
-    window.export_data = new cls.ExportData();
-    new cls.ExportDataView('export_data', 
-                           ui_strings.M_VIEW_LABEL_EXPORT, 
-                           'scroll export-data');
-
     /* commandline */
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
 
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', 
-                     ui_strings.M_VIEW_LABEL_CONSOLE, 
-                     'scroll command-line mono', 
+                     ui_strings.M_VIEW_LABEL_COMMAND_LINE, 
+                     'scroll console mono', 
                      '', 'repl-focus');
 
     /* JS source */
     window.simple_js_parser = new window.cls.SimpleJSParser();
     new cls.JsSourceView('js_source', 
-                         ui_strings.M_VIEW_LABEL_SOURCE, 
+                         ui_strings.M_VIEW_LABEL_SOURCE,
                          'scroll js-source mono');
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
@@ -85,7 +79,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Watches */
     cls.WatchesView.prototype = ViewBase;
     new cls.WatchesView('watches', 
-                        ui_strings.M_VIEW_LABEL_WATCHES, 
+                        ui_strings.M_VIEW_LABEL_WATCHES,
                         'scroll mono');
     
     /* Runtime State */
@@ -174,7 +168,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.EventBreakpointsView.prototype = ViewBase;
     new cls.EventBreakpointsView('event-breakpoints', 
                                  ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS, 
-                                 'scroll event-breakpoints mono');
+                                 'scroll event-breakpoints');
     cls.EventBreakpointsView.create_ui_widgets();
 
     /* Breakpoints */

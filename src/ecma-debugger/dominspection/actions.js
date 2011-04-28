@@ -86,6 +86,7 @@ cls.DOMInspectorActions = function(id)
   {
     var tmpl = window.templates.inspected_dom_node(model, target_id, is_editable);
     container.re_render(tmpl);
+    window.messages.post('dom-view-updated', {model: model});
   }
 
   this._select_node = function(target, skip_breadcrumbs_update)
@@ -538,9 +539,7 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["export-markup"] = function(event, target)
   {
-    window.export_data.data =
-      window.helpers.escapeTextHtml(this.serializer.serialize(window.dom_data));
-    window.topCell.showView('export_data');
+    window.open("data:text/plain," + encodeURIComponent(this.serializer.serialize(window.dom_data)));
   }.bind(this);
 
   this._handlers["expand-whole-dom"] = function(event, target)
@@ -602,9 +601,6 @@ cls.DOMInspectorActions = function(id)
                        !nav_target && this.getFirstTarget();
       this.setSelected(new_target, true);
     }
-    this.setSelected(nav_target.getPreviousWithFilter(view_container,
-                                                      nav_filters.left_right),
-                     true);
     return true;
   }.bind(this);
 
@@ -671,7 +667,7 @@ cls.DOMInspectorActions = function(id)
               (target.parentNode.parentNode, self.makeFilterGetStartTag(target));
             if( !new_target )
             {
-              opera.postError(ui_strings.DRAGONFLY_INFO_MESSAGE +
+              opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                 'failed getting start tag in this.editDOM in action_dom.js')
               return;
             }

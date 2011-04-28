@@ -233,6 +233,14 @@ window.cls.Helpers = function()
     return ret;
   }
 
+  /**
+   * Aligns SVG lines to the pixel grid.
+   */
+  this.crispifySvgValue = function(value)
+  {
+    return Math.floor(value) + .5;
+  };
+
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)
