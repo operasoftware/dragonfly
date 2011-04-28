@@ -218,7 +218,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                         ui_strings.M_VIEW_LABEL_WIDGET_PREFERNCES, 
                         'scroll',
                         'widget_preferences');
-    new cls.StorageViewActions('storage-view');
+    new cls.StorageViewActions('storage');
     cls.StorageView.create_ui_widgets();
 
     /* the following views must be created to get entry in the Settings tab */

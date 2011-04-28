@@ -154,8 +154,23 @@ var ActionBroker = function()
         case 'window-container':
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
+          // debugger;
           if (ui_obj)
-            this._set_current_handler(ui_obj.view_id, event, container);
+          {
+            // todo: local_storage, session_storage, widget_preferences all use the "storage" actions, working around that:
+            if(
+                ui_obj.view_id == "local_storage" ||
+                ui_obj.view_id == "session_storage" ||
+                ui_obj.view_id == "widget_preferences"
+              )
+            {
+              this._set_current_handler("storage", event, container);
+            }
+            else
+            {
+              this._set_current_handler(ui_obj.view_id, event, container);
+            }
+          }
           break;
         }
         // TODO set according key handler, e.g. toolbar, tab

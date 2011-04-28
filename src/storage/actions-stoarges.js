@@ -7,7 +7,6 @@ cls.StorageViewActions = function(id)
   MODE_EDIT = "edit";
 
   this.id = id;
-  this._broker = ActionBroker.get_instance();
   ActionHandlerInterface.apply(this);
   this._handlers = {};
 
@@ -27,7 +26,7 @@ cls.StorageViewActions = function(id)
     container.querySelector("tr[data-object-id='"+ref+"']").addClass("edit_mode");
   }.bind(this);
 
-  this._handlers["my_save"] = function(event, target)
+  this._handlers["submit"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
 
@@ -51,39 +50,8 @@ cls.StorageViewActions = function(id)
       }.bind(this, storage_id))
     }
   }.bind(this);
-  
-  this._handlers["submit"] = function(event, target)
-  {
-    console.log("submit handler");
-    this._handlers["my_save"](event, target);
-    return false;
-  }
 
-/* todo: just update the view
-  this._handlers['edit-cancel'] = function(event, target)
-  {
-    var
-    tr = event.target.parentNode.parentNode.parentNode,
-    rt_id = tr.parentNode.getAttribute('data-rt-id'),
-    storage_id = tr.parentNode.getAttribute('data-storage-id'),
-    key = tr.hasAttribute('data-storage-key') ? tr.getAttribute('data-storage-key') :
-          (tr.getElementsByTagName('input')[0] && tr.getElementsByTagName('input')[0].value),
-    item = window.storages[storage_id].get_item(rt_id, key);
-
-    if (tr.hasAttribute('data-storage-key') || is_success)
-    {
-      window.storages[storage_id].update();
-      tr.parentNode.replaceChild(document.render(window.templates.storage_item(item)), tr);
-      window.storages[storage_id].set_item_edit(rt_id, key, false);
-    }
-    else
-    {
-      tr.parentNode.removeChild(tr);
-    }
-  }.bind(this);
-*/
-
-  this._handlers['delete'] = function(event, target)
+  this._handlers['remove-item'] = function(event, target)
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -115,7 +83,7 @@ cls.StorageViewActions = function(id)
     window.storages[storage_id].update();
   }.bind(this);
 
-  this._handlers['update'] = function(event, target)
+  this._handlers['update'] = this._handlers['cancel'] = function(event, target)
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -123,6 +91,7 @@ cls.StorageViewActions = function(id)
       container = container.parentNode;
     }
     window.storages[container.getAttribute("data-storage-id")].update();
+    return false;
   }.bind(this);
 
   // nu
@@ -155,7 +124,7 @@ cls.StorageViewActions = function(id)
     // trigger safe if target is not in edit mode
     if (!target.hasClass("edit_mode"))
     {
-      ActionBroker.get_instance().dispatch_action("storage-view", "my_save", event, target);
+      ActionBroker.get_instance().dispatch_action("storage", "submit", event, target);
     }
 
     /**
@@ -183,44 +152,43 @@ cls.StorageViewActions = function(id)
 
 window.eventHandlers.click['storage-delete'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "delete", event, target);
+  this.broker.dispatch_action("storage", "remove-item", event, target);
 };
 
 window.eventHandlers.click['storage-delete-all'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "delete-all", event, target);
+  this.broker.dispatch_action("storage", "delete-all", event, target);
 };
 
 window.eventHandlers.click['storage-update'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "update", event, target);
+  this.broker.dispatch_action("storage", "update", event, target);
 };
 
 window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "add-key", event, target);
+  this.broker.dispatch_action("storage", "add-key", event, target);
 };
 
 // nu
 window.eventHandlers.dblclick['storage-row'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "edit", event, target);
+  this.broker.dispatch_action("storage", "edit", event, target);
 }
 
 window.eventHandlers.click['storage-row'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "select-row", event, target);
+  this.broker.dispatch_action("storage", "select-row", event, target);
 }
 
-window.eventHandlers.click["storage-view"] = function(event, target) // todo: make this the view container instead
+window.eventHandlers.click["storage"] = function(event, target) // todo: make this the view container instead
 {
-  // todo: find out why "save" doesn't work as an action name.
-  this.broker.dispatch_action("storage-view", "my_save", event, target);
+  this.broker.dispatch_action("storage", "submit", event, target);
 }
 
 window.eventHandlers.click['storage-add-key'] = function(event, target)
 {
-  this.broker.dispatch_action("storage-view", "add-key", event, target);
+  this.broker.dispatch_action("storage", "add-key", event, target);
 }
 
 window.eventHandlers.click['storage-input-field'] = function(event, target)
