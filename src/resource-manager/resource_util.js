@@ -98,12 +98,13 @@ cls.ResourceUtil.mime_type_map = {
 
   "application/vnd.ms-fontobject": "font",
   "application/x-font-ttf": "font",
+  "application/x-font-otf": "font",
+  "application/x-font-woff": "font",
+  "application/x-woff": "font",
+  "font/opentype": "font",
   "font/ttf": "font",
   "font/otf": "font",
   "font/woff": "font", // not official, but seems to be common
-  "font/opentype": "font",
-  "application/x-font-otf": "font",
-  "application/x-woff": "font",
 
   "audio/mid": "audio",
   "audio/mpeg": "audio",

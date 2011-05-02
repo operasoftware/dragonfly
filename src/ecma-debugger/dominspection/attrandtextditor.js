@@ -60,9 +60,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
   var crlf_encode = function(str)
   {
-    return str.replace("\\", "\\\\")
-              .replace(/\r\n/g, "\\n")
-              .replace(/"/g, "\\\"");
+    return helpers.escape_input(str).replace(/\r\n/g, "\\n");
   }
 
   this._onmonospacefontchange = function(msg)
@@ -207,19 +205,19 @@ var DOMAttrAndTextEditor = function(nav_filters)
           state.oldkey = state.key;
           state.key = this.textarea.value;
           pos = state.key.indexOf('=');
-          if(state.value)
+          if (pos > -1)
+          {
+            state.value = state.key.slice(pos + 1);
+            state.key = state.key.slice(0, pos);
+            this.nav_next();
+          }
+          if (state.value != null)
           {
             script = (state.oldkey ? 'node.removeAttribute("' + crlf_encode(state.oldkey) + '");' : '') +
                      'node.setAttribute("' + crlf_encode(state.key) + '",' +
                                        '"' + crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].requestEval(0, 
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
-          }
-          if (pos > -1)
-          {
-            state.value = state.key.slice(pos + 1);
-            state.key = state.key.slice(0, pos);
-            this.nav_next();
           }
           break;
         }
@@ -273,7 +271,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         }
         case "value":
         {
-          if(state.key && state.value)
+          if (state.key && state.value != null)
           {
             if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
               this.context_enter.model.expand(null, state.obj_id, "node");
@@ -336,7 +334,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           }
           case "value":
           {
-            if(state.value)
+            if (state.value != null)
             {
               script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
               services['ecmascript-debugger'].requestEval(0, 
