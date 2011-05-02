@@ -188,18 +188,6 @@ var ini =
           "escape": "cancel",
         }
       },
-      "cookie_manager":
-      {
-        "default":
-        {
-          "delete": "remove-item"
-        },
-        "edit":
-        {
-          "enter": "submit",
-          "escape": "cancel"
-        }
-      },
       "storage":
       {
         "default":
@@ -392,24 +380,11 @@ var ini =
           "escape": "cancel",
         }
       },
-      "cookie_manager":
-      {
-        "default":
-        {
-          "enter": "submit",
-          "delete": "remove-item",
-          "cmd backspace": "remove-item"
-        },
-        "edit":
-        {
-          "enter": "submit",
-          "escape": "cancel"
-        }
-      },
       "storage":
       {
         "default":
         {
+          "enter": "submit",
           "delete": "remove-item",
           "cmd backspace": "remove-item"
         },

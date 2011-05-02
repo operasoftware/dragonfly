@@ -18,6 +18,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this.init(id, name, container_class, null, "cookiemanager-container");
 
+    this.inherited_shortcuts = "storage";
     ActionHandlerInterface.apply(this);
     this._handlers = {
       "submit": this._submit.bind(this),

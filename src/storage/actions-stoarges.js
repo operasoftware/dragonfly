@@ -24,7 +24,9 @@ cls.StorageViewActions = function(id)
     table.restore_columns(table_elem);
     // can't directly work with target because restore_columns has renewed it.
     var ref = target.getAttribute("data-object-id");
-    container.querySelector("tr[data-object-id='"+ref+"']").addClass("edit_mode");
+    var tr = container.querySelector("tr[data-object-id='"+ref+"']")
+    tr.addClass("edit_mode");
+    this._handlers["select-row"](event, tr);
   }.bind(this);
 
   this._handlers["submit"] = function(event, target)
@@ -52,7 +54,7 @@ cls.StorageViewActions = function(id)
     }
   }.bind(this);
 
-  this._handlers['remove-item'] = function(event, target)
+  this._handlers["remove-item"] = function(event, target)
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -68,9 +70,10 @@ cls.StorageViewActions = function(id)
     {
       window.storages[storage_id].update();
     }.bind(this, storage_id));
+    return false;
   };
 
-  this._handlers['delete-all'] = function(event, target)
+  this._handlers["delete-all"] = function(event, target) // todo: "remove" is the new "delete"
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -84,7 +87,7 @@ cls.StorageViewActions = function(id)
     window.storages[storage_id].update();
   }.bind(this);
 
-  this._handlers['update'] = this._handlers['cancel'] = function(event, target)
+  this._handlers["update"] = this._handlers["cancel"] = function(event, target)
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -148,7 +151,64 @@ cls.StorageViewActions = function(id)
     target.addClass("selected");
   };
 
-  ActionBroker.get_instance().register_handler(this);
+  var broker = ActionBroker.get_instance();
+  broker.register_handler(this);
+
+  var contextmenu = ContextMenu.get_instance();
+  
+  contextmenu.register("storage-view", [
+    {
+      label: ui_strings.S_LABEL_STORAGE_UPDATE,
+      handler: function(event, target) {
+        broker.dispatch_action(id, "update", event, target)
+      }
+    }
+  ]);
+  
+  this._create_context_menu = function(event, target)
+  {
+    // this.check_to_exit_edit_mode(event, target); // todo
+    while (target.nodeName !== "tr" || !target.parentNode)
+    {
+      target = target.parentNode;
+    }
+    this._handlers["select-row"](event, target);
+    // todo: check what to change on multiple select
+
+    var rt_id = +target.querySelector("[name=rt_id]").value;
+    return [
+      {
+        label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
+        handler: function(event, target) {
+          broker.dispatch_action(id, "add-key", event, target)
+        }
+      },
+      {
+        label: ui_strings.M_CONTEXTMENU_STORAGE_EDIT,
+        handler: function(event, target) {
+          broker.dispatch_action(id, "edit", event, target)
+        }
+      },
+      {
+        label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE,
+        handler: function(event, target) {
+          broker.dispatch_action(id, "remove-item", event, target)
+        }
+      },
+      {
+        label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, runtimes.getRuntime(rt_id).uri),
+        handler: function(event, target) {
+          broker.dispatch_action(id, "delete-all", event, target)
+        }
+      }
+    ]
+  };
+
+  contextmenu.register("storage-item", [
+    {
+      callback: this._create_context_menu.bind(this)
+    }
+  ]);
 };
 
 window.eventHandlers.click['storage-delete'] = function(event, target)
