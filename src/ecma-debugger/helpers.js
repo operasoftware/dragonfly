@@ -113,6 +113,17 @@ window.cls.Helpers = function()
       return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&quot;");
     }
   })();
+
+  this.escape_input = (function()
+  {
+    var re_escape_char = /\\/g;
+    var re_quot_mark = /"/g;
+    return function(str)
+    {
+      return str.replace(re_escape_char, "\\\\")
+                .replace(re_quot_mark, "\\\"");
+    }
+  })();
   
   this.setCookie = function(key, value, time) 
   {
