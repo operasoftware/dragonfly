@@ -1,4 +1,4 @@
-﻿/* Generated from sr.po at Fri Apr 29 18:02:54 2011 */
+﻿/* Generated from sr.po at Mon May 02 18:11:35 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "sr";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Аутоматски обнови глобални приказ";

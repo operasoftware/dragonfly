@@ -1,4 +1,4 @@
-﻿/* Generated from fr-CA.po at Fri Apr 29 18:01:51 2011 */
+﻿/* Generated from fr-CA.po at Mon May 02 18:10:32 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fr-CA";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Mettre à jour automatiquement la vue globale";

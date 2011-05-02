@@ -1,4 +1,4 @@
-﻿/* Generated from ka.po at Fri Apr 29 18:02:17 2011 */
+﻿/* Generated from ka.po at Mon May 02 18:10:58 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ka";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Global scope მოდულის ავტოგანახლება";

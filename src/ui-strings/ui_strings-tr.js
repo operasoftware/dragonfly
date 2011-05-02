@@ -1,4 +1,4 @@
-﻿/* Generated from tr.po at Fri Apr 29 18:03:07 2011 */
+﻿/* Generated from tr.po at Mon May 02 18:11:48 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "tr";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Ana pencereyi otomatik güncelle";

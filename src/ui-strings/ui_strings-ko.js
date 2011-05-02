@@ -1,4 +1,4 @@
-﻿/* Generated from ko.po at Fri Apr 29 18:02:20 2011 */
+﻿/* Generated from ko.po at Mon May 02 18:11:02 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ko";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="전체 범위 자동 업데이트";

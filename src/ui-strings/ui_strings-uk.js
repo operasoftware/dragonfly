@@ -1,4 +1,4 @@
-﻿/* Generated from uk.po at Fri Apr 29 18:03:09 2011 */
+﻿/* Generated from uk.po at Mon May 02 18:11:50 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "uk";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Автоматично оновлювати загальний перегляд";

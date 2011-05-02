@@ -1,4 +1,4 @@
-﻿/* Generated from fr.po at Fri Apr 29 18:01:53 2011 */
+﻿/* Generated from fr.po at Mon May 02 18:10:34 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fr";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Mettre à jour automatiquement la portée globale";

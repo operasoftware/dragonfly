@@ -1,4 +1,4 @@
-﻿/* Generated from ta.po at Fri Apr 29 18:02:58 2011 */
+﻿/* Generated from ta.po at Mon May 02 18:11:40 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ta";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="குளோபல் ஸ்கோப்பை தானாகவே புதுப்பி";
@@ -51,7 +51,7 @@ ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS="இந்த ஆவணத்தில�
 ui_strings.S_INFO_DOCUMNENT_LOADING="Opera Dragonfly ஐப் புதுப்பிக்கிறது…";
 ui_strings.S_INFO_SERVICE_NOT_AVAILABLE="சேவை கிடைக்கவில்லை: %s";
 ui_strings.S_INFO_NO_RUNTIME_SELECTED="ஒரு இயக்கநேரத்தைத் தேர்ந்தெடுக்கவும்";
-ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)sகள்: %(SCRIPT_ID)sகள்:%(LINE_NUMBER)sகள்";
+ui_strings.S_TEXT_CALL_STACK_FRAME_LINE="%(FUNCTION_NAME)sகள்: %(SCRIPT_ID)sகள்:%(LINE_NUMBER)sகள";
 ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION="நெறிமுறை பதிப்பு";
 ui_strings.S_TEXT_ENVIRONMENT_OPERATING_SYSTEM="இயங்கு தளம்";
 ui_strings.S_TEXT_ENVIRONMENT_PLATFORM="ப்ளாட்பார்ம்";

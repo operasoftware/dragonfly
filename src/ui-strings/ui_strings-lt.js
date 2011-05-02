@@ -1,4 +1,4 @@
-﻿/* Generated from lt.po at Fri Apr 29 18:02:23 2011 */
+﻿/* Generated from lt.po at Mon May 02 18:11:05 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "lt";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Automatiškai naujinti visuotinę sritį";
