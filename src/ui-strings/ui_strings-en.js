@@ -1233,3 +1233,8 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
+/* DESC: Label for request input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_REQUEST = "Request";
+
+/* DESC: Label for response input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_RESPONSE = "Response";
