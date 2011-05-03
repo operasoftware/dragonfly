@@ -2,10 +2,11 @@
 #
 # This script is just a quick draft. 
 # The functionality should probably be 
-# included in existings scripts.
+# included in existing scripts.
 # The purpose is to check if any of the place holders 
 # in the master string file also exists in the generated 
-# language file and if the placeholders is correct and complete.
+# language file and if the place-holders are correct and complete.
+#
 
 
 import os
