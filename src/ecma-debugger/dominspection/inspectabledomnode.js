@@ -56,17 +56,6 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return this._data.length && this._mime == "text/html" || false;
   };
 
-  // workaround for bug CORE-16147
-  this.getDoctypeName = function()
-  {
-    for (var node = null, i = 0; node = this._data[i]; i++)
-    {
-      if (node[TYPE] == 1)
-        return node[NAME];
-    }
-    return null;
-  }
-
   this.expand = function(cb, object_id, traverse_type)
   {
     this._get_dom(object_id, traverse_type || "children", cb);
