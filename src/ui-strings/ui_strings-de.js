@@ -1,4 +1,4 @@
-﻿/* Generated from de.po at Mon May 02 18:10:10 2011 */
+﻿/* Generated from de.po at Tue May 03 11:40:29 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "de";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Globalen Bereich automatisch aktualisieren";

@@ -1,4 +1,4 @@
-﻿/* Generated from vi.po at Mon May 02 18:11:54 2011 */
+﻿/* Generated from vi.po at Tue May 03 11:42:15 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "vi";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Tự động cập nhật phạm vi toàn cầu";

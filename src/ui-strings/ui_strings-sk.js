@@ -1,4 +1,4 @@
-﻿/* Generated from sk.po at Mon May 02 18:11:32 2011 */
+﻿/* Generated from sk.po at Tue May 03 11:41:53 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "sk";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Automaticky aktualizovať v celom rozsahu";

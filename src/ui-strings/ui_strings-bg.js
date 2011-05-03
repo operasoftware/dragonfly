@@ -1,4 +1,4 @@
-﻿/* Generated from bg.po at Mon May 02 18:09:58 2011 */
+﻿/* Generated from bg.po at Tue May 03 11:40:18 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "bg";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Автоматично обновяване на глобалния обхват";

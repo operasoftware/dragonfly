@@ -1,4 +1,4 @@
-﻿/* Generated from pl.po at Mon May 02 18:11:21 2011 */
+﻿/* Generated from pl.po at Tue May 03 11:41:41 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pl";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Automatycznie odświeżaj widok globalny";

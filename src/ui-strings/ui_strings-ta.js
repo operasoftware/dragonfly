@@ -1,4 +1,4 @@
-﻿/* Generated from ta.po at Mon May 02 18:11:40 2011 */
+﻿/* Generated from ta.po at Tue May 03 11:42:00 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ta";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="குளோபல் ஸ்கோப்பை தானாகவே புதுப்பி";

@@ -1,4 +1,4 @@
-﻿/* Generated from ja.po at Mon May 02 18:10:57 2011 */
+﻿/* Generated from ja.po at Tue May 03 11:41:16 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ja";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="グローバルスコープを自動更新する";

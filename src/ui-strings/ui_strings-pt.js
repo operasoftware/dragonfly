@@ -1,4 +1,4 @@
-﻿/* Generated from pt.po at Mon May 02 18:11:26 2011 */
+﻿/* Generated from pt.po at Tue May 03 11:41:46 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pt";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Actualizar automaticamente o escopo global";

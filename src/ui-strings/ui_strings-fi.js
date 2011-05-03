@@ -1,4 +1,4 @@
-﻿/* Generated from fi.po at Mon May 02 18:10:30 2011 */
+﻿/* Generated from fi.po at Tue May 03 11:40:49 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "fi";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Päivitä globaali alue automaattisesti";
