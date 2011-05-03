@@ -310,7 +310,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
-    var row = document.querySelector("[data-object-id='"+objectref+"']");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var row = document.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
     if (row)
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
@@ -328,7 +329,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table.restore_columns(this._table_elem);
     // can't directly work with target because restore_columns has renewed it
     var objectref = target.getAttribute("data-object-id");
-    var target = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
     this.select_row(event, target);
     // todo: find input that is closest to the actual event.target and focus it
   }
@@ -510,7 +512,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     if (this._restore_selection)
     {
       for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
-        var elem = this._container.querySelector("[data-object-id='"+objectref+"']");
+        var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+        var elem = this._container.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
         if (elem)
         {
           elem.addClass("selected");

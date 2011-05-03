@@ -20,7 +20,7 @@ cls.CookieManager.Cookie = function(details, data)
     this.expires    = details.expires;
     this.isSecure   = details.isSecure;
     this.isHTTPOnly = details.isHTTPOnly;
-    this._objectref = (this.domain + "/" + this.path + "/" + this.name + "/" + this._rt_id).replace(/'/g,"")
+    this._objectref = this.domain + "/" + this.path + "/" + this.name + "/" + this._rt_id;
   }
   else
   {
@@ -289,10 +289,11 @@ cls.CookieManager.CookieDataBase = function()
         var cookies = cookie_string.split(';');
         for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           var pos = cookie_info.indexOf('=', 0);
+          var has_value = pos !== -1;
           this.cookie_list.push(
             new cls.CookieManager.Cookie({
-              name:  cookie_info.slice(0, pos),
-              value: decodeURIComponent(cookie_info.slice(pos+1)),
+              name:  has_value ? cookie_info.slice(0, pos) : cookie_info,
+              value: has_value ? decodeURIComponent(cookie_info.slice(pos+1)) : null,
               _rt_id:       rt_id,
               _rt_protocol: rt.protocol,
               _rt_hostname: rt.hostname,
