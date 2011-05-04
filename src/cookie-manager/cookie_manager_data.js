@@ -286,7 +286,7 @@ cls.CookieManager.CookieDataBase = function()
       var cookie_string = message[DATA];
       if (cookie_string && cookie_string.length > 0)
       {
-        var cookies = cookie_string.split(';');
+        var cookies = cookie_string.split('; ');
         for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
           var pos = cookie_info.indexOf('=', 0);
           var has_value = pos !== -1;
