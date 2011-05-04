@@ -253,6 +253,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if( nav_target )
     {
+      var cb = this._select_node.bind(this, nav_target.has_attr("parent-node-chain", "ref-id"));
       switch(state.type)
       {
         case "key":
@@ -260,7 +261,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           if(state.key && ( !check_value || state.value ) )
           {
             if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
-              this.context_enter.model.expand(null, state.obj_id, "node");
+              this.context_enter.model.expand(cb, state.obj_id, "node");
             nav_target.textContent = state.key;
           }
           else 
@@ -274,7 +275,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           if (state.key && state.value != null)
           {
             if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
-              this.context_enter.model.expand(null, state.obj_id, "node");
+              this.context_enter.model.expand(cb, state.obj_id, "node");
             nav_target.textContent = '"' + state.value+ '"';
           }
           else 
@@ -286,7 +287,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "text":
         {
           if ( !(state.text == this.context_enter.text))
-            this.context_enter.model.expand(null, state.obj_id, "node");
+            this.context_enter.model.expand(cb, state.obj_id, "node");
           if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
             nav_target.textContent = _escape(state.text);
@@ -551,6 +552,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
     return true;
   }
+
+  this._select_node = function(target)
+  {
+    ActionBroker.get_instance().dispatch_action("dom", "select-node", null, target);
+  };
 
   this._init = function()
   {
