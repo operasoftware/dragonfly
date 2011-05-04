@@ -48,6 +48,9 @@ function ContextMenu() {
     // Hide the currently visible context menu, if any
     this.dismiss();
 
+    // Prevent scrolling by mouse wheel when menu is visible
+    window.onmousewheel = function(event) { event.preventDefault(); }
+
     if (/*!window.getSelection().isCollapsed ||*/ event.shiftKey) // Shift key overrides for debugging
     {
       return;
@@ -278,6 +281,8 @@ function ContextMenu() {
   {
     var target = event.target;
     var contextmenu = document.getElementById("contextmenu");
+
+    window.onmousewheel = null;
 
     event.stopPropagation();
     event.preventDefault();
