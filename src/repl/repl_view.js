@@ -636,6 +636,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (this._textarea)
     {
       this._textarea.removeClass("multiline");
+      this._textarea.rows = "1";
       this._textarea.focus();
     }
   };
