@@ -4,6 +4,37 @@
           spellcheck="false">
 <link rel="icon" href="/favicon.ico" />
 <!-- command set_rel_base_url -->
+<style><![CDATA[
+button.ui-control::before {
+    content: "";
+    display: block;
+    height: 17px;
+    width: 17px;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+.ui-control
+{
+  background: #ddd repeat-x -o-linear-gradient(-90deg, rgba(255,255,255,0.75) 0,
+                                               rgba(255,255,255,0.25) 50%,
+                                               rgba(0,0,0,0.05) 50%,
+                                               rgba(0,0,0,0.05) 52%,
+                                               transparent 52%,
+                                               rgba(255,255,255,0.25) 100%);
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-radius: 3px;
+  height: 17px;
+  width: 17px;
+  margin: 0 2px;
+  padding: 1px;
+  box-sizing: content-box;
+  display: inline-block;
+  box-shadow: 0 1px rgba(255,255,255,0.5),
+              inset 0 1px 1px #fff;
+  vertical-align: top;
+  -o-transition: background-color 0.2s;
+}
+]]></style>
 <script><![CDATA[
 (function()
 {
@@ -87,6 +118,12 @@
 <script><![CDATA[
 window.load_screen_timeout = window.setTimeout(function()
 {
+  const DFL_IS_RELOADED = 'dfl_is_reloaded';
+  if (document.cookie.indexOf(DFL_IS_RELOADED + '=') == -1)
+  {
+    document.cookie = DFL_IS_RELOADED + "=1; path=/";
+    location.reload();
+  }
   var main_container = document.getElementsByTagName('main-view')[0];
   if (main_container && !main_container.childNodes.length)
   {
@@ -97,7 +134,18 @@ window.load_screen_timeout = window.setTimeout(function()
     margin-top:-90px; \
     margin-left:-250px; \
     text-align:center;'> \
+  <style>/*\u003c\u0021\u005bCDATA\u005b*/ \
+    #start-window-close {float: right;} \
+    #start-window-reload {float: left;} \
+    #start-window-close::before {background-image: url('data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAABHklEQVR42s2Tv2qEQBDG8xLBpzgIKIqFiuJ/wd4ihZ29sb/+Llj6CKnyCoKvEy4cnGw9ma/YHOzhcnDNCcPwzX78lplZX4jo4XhSiGmaxPHL8SZryvmO4we+TYjneSIIArJt+6yCoLl+8n2f4NuEzPP8GcexKIqCHMf5ByGzPuV5TjiHTzcTA4Y0TUVZlhL0jgxwkiQSYGggVxBDRF3XFEURIUNLwL3bMcZx/Oq6jtq2JWRoBaCHmPxxS2vf9zQMAyFDc9m+C4Ihuq57bpoGbYhpmr6Robl+AUgLkVvg/nGznMFuWZYjdFVVGLYCUiB4B7wFANQhvgKUZdmKC9h32YRYlkX82La2ANAhDMMVPt1M9hzDLeAK4viA7zn/4j8uA/2m8cS1FwAAAABJRU5ErkJggg==');} \
+    #start-window-reload::before {background-image: url('data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAQAAACRZI9xAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAARZJREFUGBm1wU8ow3EYwOG3yXXF1Z3DUur92oZms/m3GpcNRU5S/m5FqyUHix2UCymt7CC5OhBKDuIkqUkcqBV3FxeW+FguPzM5KM8j8g+0VmOa1gmtkp9opR4YnLhwYvKalFLuzXr8z4ls8nzwoRkXmpDvHofjl7k1woSIbhwFcL9qjRSjnB7s8gkTuwngX5HfLC8FCWbFoguKoR6D5rVTCkanQkSuxRJdb6GddrzvmUMcUtB23MX0rljiqT4mGWf+AqeIlmmyjdaXswGxzI1FmCVO/5v71GyZnAcvmT3sYlnsbiBxNZP14aORJjqeDnYw8lW6buSWXsL3mxtHqyfb+6SolmJ3FfkhKcCOwYNDSmHDJn/3AZHHgNnzMRSAAAAAAElFTkSuQmCC');} \
+  /*\u005d\u005d\u003e*/</style> \
+  <div style='width: 330px; margin: auto;'> \
+    <button class='ui-control' id='start-window-close' onclick='window.close()'></button> \
+    <button class='ui-control' id='start-window-reload' onclick='window.location.reload()'></button> \
+  </div> \
   <h1 style='height:100px; \
+      clear: both; \
       line-height:100px; \
       margin:0; \
       padding:0; \

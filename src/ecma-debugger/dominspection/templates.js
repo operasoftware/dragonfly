@@ -76,7 +76,7 @@
     var i = 0;
     var node = null;
     var length = data.length;
-    var attrs = null, attr = null, k = 0, key = '';
+    var attrs = null, attr = null, k = 0, key = '', attr_value = '';
     var is_open = 0;
     var has_only_one_child = 0;
     var one_child_text_content = '';
@@ -133,6 +133,7 @@
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
           {
+            attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
             attrs += " <key>" +
               ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               /* regarding escaping "<". it happens that there are very starnge keys in broken html.
@@ -140,9 +141,9 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
+                  ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
-                helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
+                attr_value +
                 "\"</value>";
           }
 
@@ -310,7 +311,7 @@
                " data-model-id='" + model.id + "'" +
                "><div class='tree-style'>";
     var i = 0, node = null, length = data.length;
-    var attrs = null, key = '';
+    var attrs = null, key = '', attr_value = '';
     var is_open = 0;
     var has_only_one_child = 0;
     var one_child_value = ''
@@ -361,6 +362,7 @@
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
           {
+            attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
             attrs += " <key>" +
               (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               /* regarding escaping "<". it happens that there are very starnge keys in broken html.
@@ -368,9 +370,9 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link' data-resource-url='" + attr[ATTR_VALUE] + "' "
+                    ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
                     : "" ) + ">\"" +
-                  helpers.escapeAttributeHtml(attr[ATTR_VALUE]) +
+                  attr_value +
               "\"</value>";
           }
 

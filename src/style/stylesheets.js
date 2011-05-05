@@ -909,7 +909,7 @@ cls.Stylesheets = function()
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
-           " data-resource-url='" + sheet.href + "'>" + sheet.name +
+           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'>" + sheet.name +
          "</stylesheet-link>" : 
         "")+
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
