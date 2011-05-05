@@ -297,30 +297,6 @@
     4: "<span class='cdata-node'>#cdata-section</span>"
   };
 
-  var _escape = function(string)
-  {
-    var 
-    _char = '', 
-    i = 0, 
-    map =
-    {
-      '\t': '\\t',
-      '\v': '\\v',
-      '\f': '\\f',
-      '\u0020': '\\u0020',
-      '\u00A0': '\\u00A0',
-      '\r': '\\r',
-      '\n': '\\n',
-      '\u2028': '\\u2028',
-      '\u2029': '\\u2029'
-    },
-    ret = '';
-
-    for ( ; _char = string.charAt(i); i++)
-      ret += map[_char];
-    return ret;
-  };
-
   this._inspected_dom_node_tree_style = function(model, target, editable)
   {
 
@@ -489,7 +465,8 @@
                     current_formatting + " data-menu='dom-element'>" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                       "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
-                        (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
+                        (/^\s*$/.test(node[VALUE]) ? helpers.escape_spaces(node[VALUE])
+                                                   : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }

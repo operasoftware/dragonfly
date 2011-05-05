@@ -5,31 +5,6 @@
 
 var DOMAttrAndTextEditor = function(nav_filters)
 {
-  // TODO move this to an helper, this is duplicated code from DOM_tree_style
-  var map = 
-  {   
-    '\t': '\\t',
-    '\v': '\\v',
-    '\f': '\\f',
-    '\u0020': '\\u0020',
-    '\u00A0': '\\u00A0',
-    '\r': '\\r',
-    '\n': '\\n',
-    '\u2028': '\\u2028',
-    '\u2029': '\\u2029'
-  };
-
-  var _escape = function(string)
-  {
-    string = new String(string);
-    var _char = '', i = 0, ret = '';
-    for( ; _char = string.charAt(i); i++ )
-    {
-      ret += map[_char];
-    }
-    return ret;
-  }
-
   var re_encoded = /^(?:\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029)+$/;
 
   var decode_escape = function(string)
@@ -290,7 +265,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
             this.context_enter.model.expand(cb, state.obj_id, "node");
           if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
-            nav_target.textContent = _escape(state.text);
+            nav_target.textContent = helpers.escape_spaces(state.text);
           }
           else
           {
@@ -359,7 +334,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
             if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
             {
-              nav_target.textContent = _escape(state.text);
+              nav_target.textContent = helpers.escape_spaces(state.text);
             }
             else
             {

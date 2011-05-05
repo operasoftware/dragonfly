@@ -831,6 +831,16 @@ String.prototype.endswith = function(str)
   return this.slice(this.length - str.length) === str;
 };
 
+String.prototype.zfill = function(fill)
+{
+  var n = fill - this.length;
+  var ret = "";
+  while (n-- > 0) {
+    ret += "0";
+  }
+  return ret + this;
+};
+
 /**
  * Capitalizes the first character of the string. Lowercases the rest of
  * the characters, unless `only_first` is true.
