@@ -1487,7 +1487,6 @@ tab.active .close-tab-button {
     border: 1px solid rgba(0, 0, 0, .5);
     border-radius: 4px;
     height: 22px;
-    line-height: 20px;
     padding: 1px 12px;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
     -o-transition: background-color 0.2s;
