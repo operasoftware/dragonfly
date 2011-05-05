@@ -42,11 +42,11 @@
   color: #88f;
 }
 
-.console [handler="inspect-object-link"]:hover {
+.console .inspect-object-link:hover {
   text-decoration: none;
 }
 
-.console [handler="inspect-node-link"]:hover {
+.console .inspect-node-link:hover {
   text-decoration: none;
   background: #000;
 }

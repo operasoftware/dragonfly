@@ -456,14 +456,14 @@
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
-          ['window-control', 'handler', 'window-scale-top-left'],
-          ['window-control', 'handler', 'window-scale-top'],
-          ['window-control', 'handler', 'window-scale-top-right'],
-          ['window-control', 'handler', 'window-scale-right'],
-          ['window-control', 'handler', 'window-scale-bottom'],
-          ['window-control', 'handler', 'window-scale-bottom-right'],
-          ['window-control', 'handler', 'window-scale-bottom-left'],
-          ['window-control', 'handler', 'window-scale-left'],
+          ['window-control', 'handler', 'window-scale-top-left', 'class', 'window-scale-top-left'],
+          ['window-control', 'handler', 'window-scale-top', 'class', 'window-scale-top'],
+          ['window-control', 'handler', 'window-scale-top-right', 'class', 'window-scale-top-right'],
+          ['window-control', 'handler', 'window-scale-right', 'class', 'window-scale-right'],
+          ['window-control', 'handler', 'window-scale-bottom', 'class', 'window-scale-bottom'],
+          ['window-control', 'handler', 'window-scale-bottom-right', 'class', 'window-scale-bottom-right'],
+          ['window-control', 'handler', 'window-scale-bottom-left', 'class', 'window-scale-bottom-left'],
+          ['window-control', 'handler', 'window-scale-left', 'class', 'window-scale-left'],
         ] : [],
       'id', win.id,
       'style',
@@ -484,7 +484,7 @@
   {
     return (
     ['window',
-      ['window-control', 'handler', 'window-scale-top'],
+      ['window-control', 'handler', 'window-scale-top', 'class', 'window-scale-top'],
       'id', win.id,
       'style',
       'top:' + win.top + 'px;' +
@@ -499,9 +499,10 @@
   this.window_header = function(name)
   {
     return ['window-header',
-        ['window-control', 'handler', 'window-close'],
+        ['window-control', 'handler', 'window-close', 'class', 'window-close'],
         name,
-      'handler', 'window-move'
+      'handler', 'window-move',
+      'class', 'window-move'
     ]
   }
 }).apply(window.templates);

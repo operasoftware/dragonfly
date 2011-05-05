@@ -402,7 +402,7 @@ stylesheet-link {
   float: right;
   margin-left: 10px;
   }
-stylesheet-link[handler], [handler="dom-resource-link"] {
+stylesheet-link[handler], .dom-resource-link {
     cursor: pointer;
 }
 
@@ -663,11 +663,11 @@ div.dom {
   margin-top: -9px;
   }
 
-pre[handler="inspect-object-link"] {
+pre.inspect-object-link {
   color: blue;
   }
 
-[handler="inspect-object-link"]:hover {
+.inspect-object-link:hover {
   background: #000;
   }
 
@@ -789,7 +789,7 @@ d
   color: #999;
 }
 
-[handler="dom-resource-link"]:hover
+.dom-resource-link:hover
 {
   text-decoration: underline;
   color: #4d1100;

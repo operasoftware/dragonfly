@@ -779,7 +779,7 @@ cls.Stylesheets = function()
           inherited_printed = true;
           ret += "<h2>" +
                 ui_strings.S_INHERITED_FROM +
-                " <code class='element-name'" +
+                " <code class='element-name inspect-node-link'" +
                 " handler='inspect-node-link'" +
                 " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
                 element_name +
