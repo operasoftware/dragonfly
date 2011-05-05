@@ -10,6 +10,9 @@ if (!(function(){}).bind)
   };
 };
 
+const DELAY_NEXT_RUN = 15;
+const DELAY_NEW_TEST = 90;
+
 var TestRunner = function(config)
 {
   this._before_test_run = config.before_test_run;
@@ -25,14 +28,15 @@ var TestRunner = function(config)
   {
     this._before_test_run();
     this._current_test_count = 0;
+    this._current_times = [];
     this._current_test = this._get_next_test();
-    setTimeout(this._run_next_test, 16);
+    setTimeout(this._run_next_test, DELAY_NEW_TEST);
   };
 
   this._prepare_next_test = function()
   {
     this._prepare_test_run();
-    setTimeout(this._run_next_test, 16);
+    setTimeout(this._run_next_test, DELAY_NEXT_RUN);
   }.bind(this);
 
   this._run_next_test = function()
@@ -44,7 +48,7 @@ var TestRunner = function(config)
         this._current_times.push(Date.now());
         this._current_test_count++;
         this._current_test.test();
-        setTimeout(this._prepare_next_test, 16);
+        setTimeout(this._prepare_next_test, DELAY_NEXT_RUN);
       }
       else
       {
@@ -70,7 +74,7 @@ var TestRunner = function(config)
         this._current_test_count = 0;
         this._current_test = this._get_next_test();
         this._current_times = [];
-        setTimeout(this._prepare_next_test, 64);
+        setTimeout(this._prepare_next_test, DELAY_NEW_TEST);
       }
       
     }

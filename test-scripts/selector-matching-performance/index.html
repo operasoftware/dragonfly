@@ -26,7 +26,7 @@ body
 {
   font-family: sans-serif;
 }
-table
+body table
 {
   margin-top: 20px;
   border-collapse: collapse;
@@ -47,10 +47,6 @@ td:first-child,
 td:nth-child(2)
 {
   text-align: right;
-}
-code
-{
-  color: hsl(215, 100%, 50%);
 }
 </style>
 <script src="./testrunner.js"></script>
@@ -81,25 +77,6 @@ var single_test_run = function()
 };
 
 var tests = [];
-/*
-tests.push( 
-{
-  description: 'Dragonfly style sheet disabled',
-  setup: function()
-  {
-    document.getElementById('df-style-sheet').disabled = true;
-  }
-});
-
-tests.push( 
-{
-  description: "Dragonfly stylesheet enabled",
-  setup: function()
-  {
-    document.getElementById('df-style-sheet').disabled = false;
-  }
-});
-*/
 
 var enable_stylesheet = function(sheet_link)
 {
@@ -166,6 +143,7 @@ var test_config =
   test_runs: 10,
   onresults: function(results)
   {
+    enable_stylesheet();
     results.sort(function(a,b){ return a.average > b.average ? -1 : a.average < b.average ? 1 : 0});
     var min = Math.min.apply(Math, results.map(function(entry) { return entry.average; }));
     var max = Math.max.apply(Math, results.map(function(entry) { return entry.average; }));
