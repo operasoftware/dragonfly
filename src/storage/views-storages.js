@@ -153,7 +153,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
   window.storages[id].addListener('storage-update', this.on_storage_update.bind(this)); // todo: check to send this message from actions, right now calls directly on global
   this.init(id, name, container_class, null, "storage-view");
 };
-
+/* todo: remove me
 cls.StorageView.create_ui_widgets = function()
 {
   var broker = ActionBroker.get_instance();
@@ -177,8 +177,8 @@ cls.StorageView.create_ui_widgets = function()
         broker.dispatch_action("storage-view", "delete", event, target)
       }
     },
-    {
-      label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, "<INSERT URI HERE>"), // todo: make this dynamic so it can react on multiple select and know the uri
+    {                                
+      label: ui_strings.M_CONTEXTMENU_DELETE_ALL_STORAGETYPE_OF.replace("%s", "<INSERT URI HERE>").replace("%s", PORT_MAX);, // todo: make this dynamic so it can react on multiple select and know the uri
       handler: function(event, target) {
         broker.dispatch_action("storage-view", "delete-all", event, target)
       }
@@ -196,5 +196,5 @@ cls.StorageView.create_ui_widgets = function()
   
   // todo: also add context menu for contextmenu.register("local_storage", [ ..
 };
-
+*/
 cls.StorageView.prototype = ViewBase;

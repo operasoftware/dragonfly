@@ -196,7 +196,7 @@ cls.StorageViewActions = function(id)
         }
       },
       {
-        label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, runtimes.getRuntime(rt_id).uri),
+        label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM.replace(/%s/, runtimes.getRuntime(rt_id).uri),
         handler: function(event, target) {
           broker.dispatch_action(id, "delete-all", event, target)
         }

@@ -1,45 +1,49 @@
-﻿.storage_table_container .sortable-table input[type=text] {
+﻿.storage_view .sortable-table input[type=text] {
   width: 100%;
   border: none;
 }
 
-.storage_table_container .sortable-table .add_cookie_dropdown {
-  font-size: 11px;
+.storage_view .replaced-val {
+  color: #AAA;
 }
 
-.storage_table_container .replaced-val {
-  color: #AAA;
+.storage_view .sortable-table tr {
+  height: 26px;
 }
 
 /* editing */
 
-.storage_table_container .value_container {
+.storage_view .value_container {
   position: relative;
   height: 15px;
 }
 
-.storage_table_container .edit_container {
+.storage_view .edit_container {
   display: none;
   margin: -3px 0 -1px -1px;
   position: relative;
 }
 
-.storage_table_container .edit_mode .edit_container {
+.storage_view .edit_mode .edit_container {
   display: block;
 }
 
-.storage_table_container .edit_mode .value_container {
+.storage_view .edit_mode .value_container {
   display: none;
+}
+
+.storage_view .edit_container input[type=text] {
+  padding: 2px 3px 0 3px;
 }
 
 /* ellipsis */
 
-.storage_table_container .sortable-table .ellipsis_cont {
+.storage_view .sortable-table .ellipsis_cont {
   position: relative;
   height: 12px;
 }
 
-.storage_table_container .sortable-table .ellipsis_cont .ellipsis {
+.storage_view .sortable-table .ellipsis_cont .ellipsis {
   position: absolute;
   top: 0;
   left: 0;
@@ -55,46 +59,47 @@
 
 /* "check" values */
 
-.storage_table_container .check {
+.storage_view .storage_table_container .check {
   content: url("../ui-images/menu_check.png");
 }
 
 /* columns */
+/* .local_storage, .session_storage, .cookies and .widget_preferences might get their own here too */
 
-.storage_table_container .sortable-table .col_key {
+.storage_view .sortable-table .col_key {
   width: 25%;
 }
-.storage_table_container .sortable-table .col_value {
+.storage_view .storage_table_container .sortable-table .col_value {
   width: 75%;
 }
 
 /* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
   it's just for the add_cookie button */
-.storage_table_container .sortable-table tr.sortable-table-summation-row td {
+.storage_view .sortable-table tr.sortable-table-summation-row td {
   border: none;
   background: none;
   padding-bottom: 7px;
 }
 
-.storage_table_container .sortable-table tr.sortable-table-summation-row {
+.storage_view .sortable-table tr.sortable-table-summation-row {
   background: none;
 }
 
-.storage_table_container tr[data-object-id ^= "runtime_placeholder_"] {
+.storage_view .sortable-table tr[data-object-id ^= "runtime_placeholder_"] {
   display: none;
 }
 
-/* other sortable-table stuff specific to cookie-manager (for now) */
+/* other sortable-table stuff specific to storage */
 
-.storage_table_container .sortable-table td {
+.storage_view .storage_table_container .sortable-table td {
   padding: 6px 5px 2px 20px;
   position: relative;
 }
 
-.storage_table_container .sortable-table td.align-center {
+.storage_view .storage_table_container .sortable-table td.align-center {
   padding: 6px 5px 2px 5px;
 }
 
-.storage_table_container .sortable-table td.align-right {
+.storage_view .storage_table_container .sortable-table td.align-right {
   padding: 6px 5px 2px 5px;
 }
