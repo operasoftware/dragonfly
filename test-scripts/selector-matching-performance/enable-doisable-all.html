@@ -1,0 +1,168 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../src/ui-style/ui.css">
+<link rel="stylesheet" href="../../src/ui-style/overlay.css">
+<link rel="stylesheet" href="../../src/ui-style/tabs.css">
+<link rel="stylesheet" href="../../src/ui-style/debugger_style.css">
+<link rel="stylesheet" href="../../src/ui-style/js-source.css">
+<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css">
+<link rel="stylesheet" href="../../src/http-logger/httplogger_style.css">
+<link rel="stylesheet" href="../../src/console-logger/consolelogger_style.css">
+<link rel="stylesheet" href="../../src/ui-style/colorpickerstyle.css">
+<link rel="stylesheet" href="../../src/ui-scripts/sortable_table/sortable_table.css">
+<link rel="stylesheet" href="../../src/ui-scripts/metadata_drawer/metadata_drawer.css">
+<link rel="stylesheet" href="../../src/repl/repl_style.css">
+<link rel="stylesheet" href="../../src/resource-manager/resource_style.css">
+<link rel="stylesheet" href="../../src/network/network_style.css">
+<link rel="stylesheet" href="../../src/shortcutconfig/style.css">
+<link rel="stylesheet" href="../../src/ui-style/global_command_line.css">
+<link rel="stylesheet" href="../../src/ui-style/contextmenu.css">
+<link rel="stylesheet" href="../../src/cookie-manager/cookie_manager_style.css">
+<link rel="stylesheet" href="../../src/searches/style.css">
+<link rel="stylesheet" href="../../src/ecma-debugger/breakpoints/style.css">
+<link rel="stylesheet" href="../../src/screenshot/style.css">
+<style>
+body
+{
+  font-family: sans-serif;
+}
+body table
+{
+  margin-top: 20px;
+  border-collapse: collapse;
+  empty-cells: show;
+}
+th
+{
+  padding: 2px 10px;
+  text-align: left;
+}
+td
+{
+  border: 1px solid #ccc;
+  padding: 2px 10px;
+  white-space: pre;
+}
+td:first-child,
+td:nth-child(2)
+{
+  text-align: right;
+}
+</style>
+<script src="./testrunner.js"></script>
+<script>
+
+const DIV_COUNT = 1000;
+const SPAN_COUNT = 3;
+
+var test_tmpl = function()
+{
+  var ret = "";
+  for (var i = 0; i < DIV_COUNT; i++)
+  {
+    ret += "<div>" + i;
+    for (var j = 0; j < SPAN_COUNT; j++)
+    {
+      ret += "<span>" + i + "</span>" + i;
+    }
+    ret += "</div>";
+  }
+  return ret;
+};
+
+var single_test_run = function()
+{
+  document.getElementById('out').innerHTML = test_tmpl();
+  var a = document.body.offsetHeight + document.body.offsetWidth;
+};
+
+var tests = [];
+
+var enable_stylesheets = function(bool)
+{
+  [].forEach.call(document.getElementsByTagName('link'), function(link)
+  {
+    if (/stylesheet/i.test(link.getAttribute('rel'))) 
+    {
+      link.disabled = !bool;
+    }
+  });
+};
+
+tests.push( 
+{
+  description: "all stylesheets disabled",
+  setup: function()
+  {
+    enable_stylesheets(false);
+  }
+});
+
+tests.push( 
+{
+  description: "all stylesheets enabled",
+  setup: function()
+  {
+    enable_stylesheets(true);
+  }
+});
+
+var test_config = 
+{
+  before_test_run: function()
+  {
+    enable_stylesheets(false);
+  },
+  prepare_test_run: function()
+  {
+    document.getElementById('out').innerHTML = "";
+  },
+  /* 
+    must return an object with test, description
+  */
+  get_next_test: function()
+  {
+    this.current_test = tests.pop();
+    if (this.current_test)
+    {
+      this.current_test.setup();
+      return {test: single_test_run, description: this.current_test.description};
+    }
+    return null;
+  },
+  test_runs: 10,
+  onresults: function(results)
+  {
+    enable_stylesheets(false);
+    results.sort(function(a,b){ return a.average > b.average ? -1 : a.average < b.average ? 1 : 0});
+    var min = Math.min.apply(Math, results.map(function(entry) { return entry.average; }));
+    var max = Math.max.apply(Math, results.map(function(entry) { return entry.average; }));
+    var markup = "";
+    markup += "<h1>Measuring performance of css selector matching</h1>";
+    markup += "Two test runs, one with and one without the Dragonfly stylesheet.";
+    markup += "<table><tr><th>average per test run<th>in % of the best<th>description</tr>" +
+              results.map(function(entry)
+              {
+                return (
+                "<tr>" +
+                  "<td>" + entry.average.toFixed(1) + 
+                  "<td>" + (entry.average / min * 100 >> 0) + "%" +
+                  "<td style='background-color: hsl(" + 
+                      (120 - (120 * (entry.average - min)/(max - min) >> 0)) + 
+                      ", 100%, 50%);'>" + 
+                  "<td>" + entry.description +
+                  "<td>±" + entry.deviation + '%' +
+                "</tr>");
+              }).join('\n') + "</table>";
+    document.getElementById('out').innerHTML = markup;
+    document.body.removeChild(document.getElementById('info'));    
+  }
+};
+
+window.onload = function()
+{
+  new TestRunner(test_config);
+}
+</script>
+<div id="info">test running ...</div>
+<div id="out"></div>
