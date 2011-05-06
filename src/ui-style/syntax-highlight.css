@@ -187,20 +187,20 @@ media, at { /* TODO: Use classes */
 
 /* dom */
 
-div[handler="spotlight-node"] { /* TODO: Use same highlighting in CSS inspector */
+.spotlight-node { /* TODO: Use same highlighting in CSS inspector */
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 2px;
 }
 
-div[handler="spotlight-node"]:hover,
+.spotlight-node:hover,
 rule:not(.non-editable) property:hover {
     border-color: #e0eaf6;
     background: #f2f5f9;
 }
 
 #target-element,
-div[handler="spotlight-node"]:active {
+.spotlight-node:active {
     border-color: #c5daf1;
     background: #d4e3f4;
 }

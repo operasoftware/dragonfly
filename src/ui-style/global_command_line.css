@@ -27,7 +27,7 @@
   border: 1px solid rgba(255,255,255,0.2);
 }
 .console #target-element,
-.console .dom [handler="spotlight-node"]:hover {
+.console .spotlight-node:hover {
   background-color: rgba(255,255,255,0.2);
 }
 .console ::selection {
