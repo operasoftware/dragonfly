@@ -71,6 +71,10 @@ cls.debug.create_debug_environment = function(params)
       {
         handler: 'reload-dragonfly',
         title: 'Reload Dragonfly'
+      },
+      {
+        handler: 'find-strings',
+        title: 'Find untranslated strings'
       }
     ]
   )
@@ -81,6 +85,14 @@ cls.debug.create_debug_environment = function(params)
       'pretty-print-messages',
     ]
   );
+
+  eventHandlers.click['find-strings'] = function(event, target)
+  {
+    for (key in window.ui_strings) {
+      window.ui_strings[key] = "# " + key + " #";
+    }
+    client.setup();
+  }
 
   eventHandlers.click['reload-dragonfly'] = function(event, target)
   {
