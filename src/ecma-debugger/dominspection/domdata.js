@@ -428,17 +428,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
     if(message[STATUS] == 'completed' )
     {
       this._data = [];
-     this._isprocessing = true;
-     var object_id = message[OBJECT_VALUE][OBJECT_ID];
-    var tag = window.tag_manager.set_callback(this, this.__handle_dom, 
-                                              [object_id, 
-                                               'subtree', 
-                                               this._handle_get_dom.bind(this, runtime_id)]);
-    services['ecmascript-debugger'].requestSearchDom(tag, 
-                                                    [runtime_id, 
-                                                     '[class]', 
-                                                     4]);
-
+      this._get_dom(message[OBJECT_VALUE][OBJECT_ID], 'subtree',
+                    this._handle_get_dom.bind(this, runtime_id));
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
