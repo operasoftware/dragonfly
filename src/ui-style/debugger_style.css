@@ -24,24 +24,6 @@ ul {
   list-style:none;
   }
 
-#debug-container {
-  /*background-color:#ccc;*/
-  /*overflow: hidden;*/
-}
-
-/*#debug {*/
-/*  position:absolute;*/
-/*  overflow:auto;*/
-/*  border:1px solid #666;*/
-/*  background-color:#fff;*/
-/*  top:25px;*/
-/*  left:5px;*/
-/*  right:5px;*/
-/*  bottom:5px;*/
-/*  padding:.5em;*/
-/*  margin:0;*/
-/*  }*/
-
 #source-view #line-pointer, #source-view .breakpoint {
   position:absolute;
   content: '\25B6';
@@ -314,22 +296,11 @@ property:hover .enable-disable,
 
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   display:block;
-  /*xxwhite-space: pre-wrap;*/
   margin: 5px 0;
   }
 
-/* This selectors are super slow, find replacement
-stylesheet :last-child {
-    margin-bottom: 0;
-}
-*/
-
 .stylesheets pre {
   background:red;
-  }
-
-media {
-  /*xxwhite-space: pre-wrap;*/
   }
 
 media-rule rules {
@@ -367,7 +338,6 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 }
 
 styles {
-  /*xxwhite-space: pre-wrap;*/
   padding: 8px 4px;
   }
 
@@ -383,7 +353,7 @@ header {
   }
 
 div.unfolded {
-  border-bottom: 1px solid #ccc;;
+  border-bottom: 1px solid #ccc;
 }
 
 header:hover {

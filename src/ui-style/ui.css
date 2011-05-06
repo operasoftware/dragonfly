@@ -229,7 +229,7 @@ button[handler="reload-window"]::before {
     width: 17px;
     height: 17px;
 }
-button[class^="clear-error-console"]::before {
+.clear-log::before {
     background-image: url("../ui-images/icons/icon_clear.png");
 }
 .console\.expand-all-entries::before {
