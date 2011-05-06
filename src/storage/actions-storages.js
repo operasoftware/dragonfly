@@ -61,15 +61,22 @@ cls.StorageViewActions = function(id)
     {
       container = container.parentNode;
     }
-
     var storage_id = container.getAttribute("data-storage-id");
-    var rt_id = +target.querySelector("[name=rt_id]").value;
-    var key   = target.querySelector("[name=key]").value;
-
-    window.storages[storage_id].remove_item(rt_id, key, function(storage_id, success)
-    {
-      window.storages[storage_id].update();
-    }.bind(this, storage_id));
+    var selection = container.querySelectorAll("tr.selected");
+    for (var i=0, selected; selected = selection[i]; i++) {
+      selection[i]
+      var rt_id = +selected.querySelector("[name=rt_id]").value;
+      var key   = selected.querySelector("[name=key]").value;
+      var cb = function(){};
+      if(i === selection.length - 1)
+      {
+        cb = function(storage_id, success)
+        {
+          window.storages[storage_id].update();
+        }.bind(this, storage_id);
+      }
+      window.storages[storage_id].remove_item(rt_id, key, cb);
+    };
     return false;
   };
 
@@ -167,15 +174,25 @@ cls.StorageViewActions = function(id)
   
   this._create_context_menu = function(event, target)
   {
-    // this.check_to_exit_edit_mode(event, target); // todo
+    // this.check_to_exit_edit_mode(event, target); // todo, or possibly remove it from cookie view
     while (target.nodeName !== "tr" || !target.parentNode)
     {
       target = target.parentNode;
     }
-    this._handlers["select-row"](event, target);
-    // todo: check what to change on multiple select
-
     var rt_id = +target.querySelector("[name=rt_id]").value;
+    this._handlers["select-row"](event, target);
+
+    var container = target;
+    while (!container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+    var selection = container.querySelectorAll("tr.selected");
+    var remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE;
+    if(selection.length > 1)
+    {
+      remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL;
+    }
     return [
       {
         label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
@@ -190,7 +207,7 @@ cls.StorageViewActions = function(id)
         }
       },
       {
-        label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE,
+        label: remove_label,
         handler: function(event, target) {
           broker.dispatch_action(id, "remove-item", event, target)
         }
