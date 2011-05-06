@@ -141,10 +141,9 @@
     return (
     ['toolbar-search', 
       ['button', 
-        'class', 'search ui-control', 
+        'class', 'search ui-control ' + (search.is_active ? "is-active" : ""),
         'handler', 'show-search',
-        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
-        'is-active', String(search.is_active)
+        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       ]
      ]);
   }
@@ -204,8 +203,7 @@
             'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
-            'is-active', setting.value ? 'true' : 'false',
-            'class', _switch + ' ui-control switch'
+            'class', _switch + ' ui-control switch ' + (setting.value ? "is-active" : "")
           ];
       }
       else

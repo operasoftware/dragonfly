@@ -164,8 +164,8 @@
     {
       UIWindowBase.closeWindow('command_line');
     }
-    UI.get_instance().get_button("toggle-console")
-                     .setAttribute("is-active", !visible);
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
     return false;
   }.bind(this);
 
@@ -179,7 +179,7 @@
     var ui = UI.get_instance();
     var overlay_id = target.getAttribute("data-overlay-id");
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "true");
+    ui.get_button("toggle-" + overlay_id).addClass("is-active");
 
     overlay.show(overlay_id);
 
@@ -208,7 +208,7 @@
     var client = window.client.current_client;
     var overlay_id = overlay.active_overlay;
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "false");
+    ui.get_button("toggle-" + overlay_id).removeClass("is-active");
 
     if (overlay_id == "remote-debug-overlay" && (!client || !client.connected))
     {

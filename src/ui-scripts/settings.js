@@ -36,7 +36,7 @@ var SettingsBase = function()
       {
         if( button.getAttribute('key') == key_id )
         {
-          button.setAttribute('is-active' , value ? "true" : "false" );
+          value ? button.addClass('is-active') : button.removeClass('is-active');
           force_reflow = true;
         }
       }
