@@ -535,35 +535,6 @@ window-select select option[value="-1"]  {
   color: #999;
 }
 
-button[handler="top-settings"]
-{
-  background: transparent none;
-  border-color: transparent;
-  border-style: solid;
-  padding: 1px 8px;
-  margin: 2px 4px;
-  float: right;
-  line-height: 10px;
-}
-button[handler="top-settings"]:before
-{
-  content: '\00A0';
-  display: inline-block;
-  background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px;
-  margin: -4px -12px;
-  vertical-align: 4px;
-}
-button[handler="top-settings"]:hover:before
-{
-  background-position:0 -24px;
-}
-button[handler="top-settings"]:active:before
-{
-  background-position:0 -48px;
-}
-
 window-controls {
   display: block;
   position: absolute;

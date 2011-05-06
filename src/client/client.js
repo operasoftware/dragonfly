@@ -489,17 +489,6 @@ ui_framework.layouts.environment_rough_layout =
   ]
 }
 
-ui_framework.layouts.settings_rough_layout =
-{
-  dir: 'v', width: 700, height: 700,
-  children:
-  [
-    { height: 200, tabs: ['settings_view'] }
-  ]
-}
-
-
-
 ui_framework.layouts.dom_rough_layout =
 {
   dir: 'h', width: 700, height: 700,

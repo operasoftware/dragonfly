@@ -202,11 +202,6 @@ eventHandlers.click['show-window'] = function(event)
   UIWindowBase.showWindow(view_id);
 }
 
-eventHandlers.click['top-settings'] = function(event)
-{
-  UIWindowBase.showWindow('settings_view');
-}
-
 eventHandlers.click['documentation'] = function(event)
 {
   window.open(event.target.getAttribute('param'), '_info_window').focus();
