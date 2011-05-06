@@ -144,8 +144,6 @@ var TabsBase = function()
 
   this.setActiveTab = function(view_id, force_create)
   {
-      var t = new Date
-      setTimeout(function(){opera.postError(new Date-t)},0)
     var container_id = 'container-to-' + this.cell.id;
     var toolbar_id = 'toolbar-to-' + this.cell.id;
     if( this.activeTab != view_id || force_create)
