@@ -667,7 +667,7 @@ cls.JsSourceView = function(id, name, container_class)
       __current_pointer_script_id = 0;
     }
   };
-  
+
   this.scroll = function()
   {
     if (!view_invalid && !__disregard_scroll_event)
