@@ -53,7 +53,18 @@ cls.JsSourceView = function(id, name, container_class)
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
   LINE_POINTER = window.cls.NewScript.LINE_POINTER,
   BP_IMAGE_LINE_HEIGHT = 24,
-  BP_IMAGE_HEIGHT = 12;
+  BP_IMAGE_HEIGHT = 12,
+  
+  //TODO Add proper classes names.
+  //Add styles for all classes.
+  LINE_HIGHLIGHT_CLASSNAMES = ["", 
+                              "selected-js-source-line",
+                              "selected-js-redirected-line"],
+  BP_HIGHLIGHT_CLASSNAMES = ["",
+                            "selected-js-bp-disabled",
+                            "selected-js-bp-disabled-condition",
+                            "selected-js-bp",
+                            "selected-js-bp-condition"];
 
   templates.line_nummer_container = function(lines)
   {
@@ -145,7 +156,31 @@ cls.JsSourceView = function(id, name, container_class)
     {
       setTimeout(repaint_line_numbers, 0);
     }
+    addLineHighlight();
   };
+
+  var addLineHighlight = function()
+  {
+    var lines = source_content.getElementsByTagName('div');
+    var bp_states = __current_script.breakpoint_states;
+    if (bp_states)
+    {
+      //TODO Change variables naming style if needed
+      for (var i = 0, line, highlightClass, bpState; line = lines[i]; i++)
+      {
+        highlightClass = "";
+        
+        if (bpState = bp_states[__current_line + i])
+        {
+          highlightClass = (LINE_HIGHLIGHT_CLASSNAMES[bpState % 3] + " " +
+                            BP_HIGHLIGHT_CLASSNAMES[bpState >> 3]);
+        }
+        
+        line.className = highlightClass;
+      }
+    }
+  
+  }
 
   var repaint_line_numbers = function()
   {
@@ -632,7 +667,7 @@ cls.JsSourceView = function(id, name, container_class)
       __current_pointer_script_id = 0;
     }
   };
-
+  
   this.scroll = function()
   {
     if (!view_invalid && !__disregard_scroll_event)
