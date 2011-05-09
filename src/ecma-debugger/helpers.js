@@ -116,7 +116,42 @@ window.cls.Helpers = function()
                 .replace(re_s_quot, "&#x27;");
     }
   })();
-  
+
+  this.escape_input = (function()
+  {
+    var re_escape_char = /\\/g;
+    var re_quot_mark = /"/g;
+    return function(str)
+    {
+      return str.replace(re_escape_char, "\\\\")
+                .replace(re_quot_mark, "\\\"");
+    }
+  })();
+
+  this.escape_spaces = (function()
+  {
+    var map = {
+      "\t": "\\t",
+      "\v": "\\v",
+      "\f": "\\f",
+      "\r": "\\r",
+      "\n": "\\n"
+    };
+
+    return function(string)
+    {
+      var chr = "";
+      var ret = "";
+
+      for (var i = 0; chr = string[i]; i++)
+      {
+        ret += map[chr] || "\\u" + chr.charCodeAt(0).toString(16).zfill(4);
+      }
+
+      return ret;
+    }
+  })();
+
   this.setCookie = function(key, value, time) 
   {
     document.cookie = (

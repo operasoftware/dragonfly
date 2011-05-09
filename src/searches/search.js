@@ -63,7 +63,7 @@ Search.prototype = new function()
     var button = layout_box && layout_box.toolbar.get_control("show-search");
     if (button)
     {
-      button.setAttribute("is-active", String(this._is_active));
+      this._is_active ? button.addClass("is-active") : button.removeClass("is-active");
     }
   };
 

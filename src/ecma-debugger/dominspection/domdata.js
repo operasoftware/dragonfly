@@ -413,13 +413,20 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._handle_initial_view = function(status, message, rt_id)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
-    if(message[STATUS] == 'completed' )
-      this._click_handler_host({runtime_id: rt_id,
-                                object_id: message[OBJECT_VALUE][OBJECT_ID],
-                                highlight: false});
+    if (message[STATUS] == 'completed')
+    {
+      if (message[OBJECT_VALUE])
+      {
+        this._click_handler_host({runtime_id: rt_id,
+                                  object_id: message[OBJECT_VALUE][OBJECT_ID],
+                                  highlight: false});
+      }
+    }
     else
+    {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'this._handle_initial_view failed in dom_data\n');
+    }
   }
 
   this._handle_snapshot = function(status, message, runtime_id)

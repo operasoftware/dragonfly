@@ -37,7 +37,7 @@ cls.NewStyle = function(id, name, container_class)
     if (this._stylesheet)
     {
       var script = "try{style.textContent = \"" + 
-                   this._new_style.replace(/\r?\n/g, "").replace(/"/g, "\\\"") +
+                   helpers.escape_input(this._new_style).replace(/\r?\n/g, "") +
                    "\";}catch(e){};";
       this._esdb.requestEval(0, [this._top_rt_id, 0, 0, script, 
                                  [['style', this._stylesheet]]]);

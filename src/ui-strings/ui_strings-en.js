@@ -1233,3 +1233,6 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+

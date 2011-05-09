@@ -167,7 +167,7 @@ cls.CSSInspectorActions = function(id)
 
     script += "object.style.setProperty(\"" +
                   prop + "\", \"" +
-                  declaration[1].replace(/"/g, "\\\"") + "\", " +
+                  helpers.escape_input(declaration[1]) + "\", " +
                   (declaration[2] ? "\"important\"" : null) +
               ");";
 
@@ -225,7 +225,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                    initial_property + "\", \"" +
-                   this.editor.context_cur_value.replace(/"/g, "'") + "\", " +
+                   helpers.escape_input(this.editor.context_cur_value) + "\", " +
                    (this.editor.context_cur_priority ? "\"important\"" : null) +
                 ");";
     }
@@ -235,7 +235,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                    new_property + "\", \"" +
-                   rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
+                   helpers.escape_input(rule[VALUE_LIST][index]) + "\", " +
                    (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
                 ");";
     }

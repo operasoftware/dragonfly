@@ -141,7 +141,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                  ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
                 attr_value +
                 "\"</value>";
@@ -190,6 +190,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -204,6 +205,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
@@ -214,6 +216,7 @@
 
               closing_tags.push("<div" + this._get_indent(node) +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                                "class='spotlight-node' " +
                                 "data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
@@ -224,6 +227,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
@@ -298,30 +302,6 @@
     4: "<span class='cdata-node'>#cdata-section</span>"
   };
 
-  var _escape = function(string)
-  {
-    var 
-    _char = '', 
-    i = 0, 
-    map =
-    {
-      '\t': '\\t',
-      '\v': '\\v',
-      '\f': '\\f',
-      '\u0020': '\\u0020',
-      '\u00A0': '\\u00A0',
-      '\r': '\\r',
-      '\n': '\\n',
-      '\u2028': '\\u2028',
-      '\u2029': '\\u2029'
-    },
-    ret = '';
-
-    for ( ; _char = string.charAt(i); i++)
-      ret += map[_char];
-    return ret;
-  };
-
   this._inspected_dom_node_tree_style = function(model, target, editable)
   {
 
@@ -394,7 +374,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                    ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                     : "" ) + ">\"" +
                   attr_value +
               "\"</value>";
@@ -424,7 +404,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "class='spotlight-node' " +
+                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -434,7 +416,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "class='spotlight-node' " +
+                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -491,7 +475,8 @@
                     current_formatting + " data-menu='dom-element'>" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                       "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
-                        (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
+                        (/^\s*$/.test(node[VALUE]) ? helpers.escape_spaces(node[VALUE])
+                                                   : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }
