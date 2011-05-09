@@ -19,16 +19,16 @@ templates.cookie_manager = {
     }
     return template;
   },
-  edit_mode_switch_container: function(value, edit_elem) {
+  value_container: function(content) {
     return [
-      [
-        "div", this.wrap_ellipsis(value),
-        "class", "value_container"
-      ],
-      [
-        "div", edit_elem,
-        "class", "edit_container"
-      ]
+      "div", this.wrap_ellipsis(content),
+      "class", "value_container"
+    ]
+  },
+  edit_container: function(edit_elem) {
+    return [
+      "div", edit_elem,
+      "class", "edit_container"
     ];
   },
   input_text_container: function(name, value) {
@@ -114,47 +114,91 @@ templates.cookie_manager = {
         "name", "add_cookie_runtime",
         "handler", "cookiemanager-add-cookie-domain-select",
         "class", "add_cookie_dropdown",
-        "handler", "cookiemanager-input-field"
+        "handler", "cookiemanager-input-field" // <<< Todo: handler set twice? wtf?
       ];
     }
   },
-  editable_domain: function(current_runtime, runtimes, domain) {
-    var edit_elem = this.input_domain(current_runtime, runtimes);
-    return this.edit_mode_switch_container(domain, edit_elem);
+  domain: function(domain) {
+    return this.value_container(domain || this.unknown_value());
   },
-  all_editable_domain: function(domain) {
-    var edit_elem = this.input_text_container("domain", domain);
-    return this.edit_mode_switch_container(domain, edit_elem);
+  editable_domain: function(current_runtime, runtimes) {
+    // in this case editing_default is fixed to the hostname of the runtime.
+    var edit_elem = this.input_domain(current_runtime, runtimes);
+    return [this.domain(domain), this.edit_container(edit_elem)];
+  },
+  all_editable_domain: function(current_runtime, runtimes, domain) {
+    var editing_default = domain || runtimes[current_runtime].hostname;
+    var edit_elem = this.input_text_container("domain", editing_default);
+    return [this.domain(domain), this.edit_container(edit_elem)];
+  },
+  name: function(name) {
+    return this.value_container(name);
   },
   editable_name: function(name) {
     var edit_elem = this.input_text_container("name", name);
-    return this.edit_mode_switch_container(name, edit_elem);
+    return [this.value_container(name), this.edit_container(edit_elem)];
+  },
+  value: function(value) {
+    return this.value_container(value);
   },
   editable_value: function(value) {
-    var edit_elem = this.input_text_container("value", value);
-    return this.edit_mode_switch_container(value, edit_elem);
+    var editing_default = value || "";
+    var edit_elem = this.input_text_container("value", editing_default);
+    return [this.value(value), this.edit_container(edit_elem)];
+  },
+  path: function(path) {
+    return this.value_container(path || this.unknown_value());
   },
   editable_path: function(path) {
-    var edit_elem = this.input_text_container("path", path);
-    return this.edit_mode_switch_container(path, edit_elem);
+    var editing_default = path || "/";
+    var edit_elem = this.input_text_container("path", editing_default);
+    return [this.path(path), this.edit_container(edit_elem)];
+  },
+  expires: function(date_in_seconds, objectref) {
+    if(date_in_seconds === undefined)
+    {
+      return this.value_container(this.unknown_value());
+    }
+    if(date_in_seconds === 0)
+    {
+      return this.value_container(this.expires_0values());
+    }
+    var parsed_date = new Date(date_in_seconds * 1000);
+    return this.value_container(["div", "id", "expires_container_"+objectref, "title", parsed_date.toLocaleString()]);    
   },
   editable_expires: function(date_in_seconds, objectref) {
-    var parsed_date = new Date(date_in_seconds*1000);
-    var expires_container = ["div", "id", "expires_container_"+objectref, "title", parsed_date.toLocaleString()];
-    var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString())
-    if (date_in_seconds === 0)
+    var editing_default = date_in_seconds;
+    if(date_in_seconds === undefined)
     {
-      return this.edit_mode_switch_container(this.expires_0values(), edit_elem);
+       editing_default = new Date().getTime() / 1000 + 60 * 60; // if expiry is unknown, editing default is in one hour
     }
-    return this.edit_mode_switch_container(expires_container, edit_elem);
+    var parsed_date = new Date(editing_default * 1000);
+    var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString());
+    return [this.expires(date_in_seconds, objectref), this.edit_container(edit_elem)];
+  },
+  secure: function(is_secure) {
+    if (is_secure === undefined)
+    {
+      return this.value_container(this.unknown_value());
+    }
+    return this.value_container(this.boolean_value(is_secure));
   },
   editable_secure: function(is_secure) {
+    // editing_default is implicitely 0 > "off"
     var edit_elem = this.input_checkbox_container("is_secure", is_secure);
-    return this.edit_mode_switch_container(this.boolean_value(is_secure), edit_elem);
+    return [this.secure(is_secure), this.edit_container(edit_elem)];
+  },
+  http_only: function(is_http_only) {
+    if (is_http_only === undefined)
+    {
+      return this.value_container(this.unknown_value());
+    }
+    return this.value_container(this.boolean_value(is_http_only));
   },
   editable_http_only: function(is_http_only) {
+    // editing_default is implicitely 0 > "off"
     var edit_elem = this.input_checkbox_container("is_http_only", is_http_only);
-    return this.edit_mode_switch_container(this.boolean_value(is_http_only), edit_elem);
+    return [this.http_only(is_http_only), this.edit_container(edit_elem)];
   },
   expires_0values: function() {
     return [

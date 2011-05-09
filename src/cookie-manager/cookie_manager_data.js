@@ -20,7 +20,7 @@ cls.CookieManager.Cookie = function(details, data)
     this.expires    = details.expires;
     this.isSecure   = details.isSecure;
     this.isHTTPOnly = details.isHTTPOnly;
-    this._objectref = (this.domain + "/" + this.path + "/" + this.name + "/" + this._rt_id).replace(/'/g,"")
+    this._objectref = this.domain + "/" + this.path + "/" + this.name + "/" + this._rt_id;
   }
   else
   {
@@ -54,9 +54,10 @@ cls.CookieManager.CookieDataBase = function()
 
   this.refetch = function()
   {
+    this._active_tab_counter++;
     this.cookie_list = [];
     for (var rt_id in this._rts) {
-      this._request_runtime_details(Number(rt_id));
+      this._request_runtime_details(Number(rt_id), this._active_tab_counter);
     };
   };
 
@@ -134,6 +135,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._on_active_tab = function(msg)
   {
+    this._active_tab_counter++;
     this.cookie_list = [];
     for (var i=0; i < msg.runtimes_with_dom.length; i++)
     {
@@ -142,7 +144,7 @@ cls.CookieManager.CookieDataBase = function()
       {
         this._rts[rt_id]={rt_id: rt_id};
       }
-      this._request_runtime_details(rt_id);
+      this._request_runtime_details(rt_id, this._active_tab_counter);
     };
 
     // cleanup runtimes directory
@@ -175,14 +177,14 @@ cls.CookieManager.CookieDataBase = function()
     return true;
   };
 
-  this._request_runtime_details = function(rt_id)
+  this._request_runtime_details = function(rt_id, active_tab_counter)
   {
     var script = "return JSON.stringify({protocol: location.protocol || '', hostname: location.hostname || '', pathname: location.pathname || ''})";
-    var tag = tagManager.set_callback(this, this._handle_runtime_details,[rt_id]);
+    var tag = tagManager.set_callback(this, this._handle_runtime_details,[rt_id, active_tab_counter]);
     services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
   };
 
-  this._handle_runtime_details = function(status, message, rt_id)
+  this._handle_runtime_details = function(status, message, rt_id, active_tab_counter)
   {
     const STATUS = 0;
     const DATA = 2;
@@ -198,7 +200,7 @@ cls.CookieManager.CookieDataBase = function()
       {
         // Add .local even in the GetCookie request, only for consistency reasons and to spot problems with it more easily
         var request_hostname = this._check_to_add_local_to_domain(rt.hostname);
-        var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id]);
+        var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id, active_tab_counter]);
         // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
         services['cookie-manager'].requestGetCookie(tag,[request_hostname]);
       }
@@ -210,99 +212,106 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
-  this._handle_cookies = function(status, message, rt_id)
+  this._handle_cookies = function(status, message, rt_id, active_tab_counter)
   {
-    var rt = this._rts[rt_id] || {};
-    if (status === 0)
-    {
-      const COOKIE = 0;
-      if (message.length > 0)
-      {
-        var cookies = message[COOKIE];
-        for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
-          // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
-          var is_secure = cookie_info[5];
-          if (is_secure && rt.protocol !== "https:")
-          {
-            continue;
-          }
-          // workaround: Check path to match if it's not root, CORE-37107
-          var path = cookie_info[1];
-          if (path && (path !== "/") && !rt.pathname.startswith(path))
-          {
-            /*
-             * In opera (and IE, checked IE8), the path value doesn't have to match
-             * with a trailing slash. Would be used with startswith(path+"/") in 
-             * other browsers, see http://people.opera.com/dherzog/cookie-path/
-             */
-            continue;
-          }
-          this.cookie_list.push(
-            new cls.CookieManager.Cookie({
-              domain:     cookie_info[0],
-              path:       cookie_info[1],
-              name:       cookie_info[2],
-              value:      decodeURIComponent(cookie_info[3]),
-              expires:    cookie_info[4],
-              isSecure:   cookie_info[5],
-              isHTTPOnly: cookie_info[6],
-
-              _rt_id:       rt_id,
-              _rt_hostname: rt.hostname,
-              _rt_path:     rt.pathname,
-              _rt_protocol: rt.protocol
-            }, this)
-          )
-        };
-      }
-      else
-      {
-        // In case no cookies come back, check via JS (workaround for CORE-35055)
-        var script = "return document.cookie";
-        var tag = tagManager.set_callback(this, this._handle_js_retrieved_cookies, [rt_id]);
-        services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
-      }
-    }
-    // add a placeholder per runtime to make the group show up even if there were no cookies
-    this.cookie_list.push(
-      new cls.CookieManager.Cookie({
-        _is_runtime_placeholder: true,
-        _rt_id:       rt_id,
-        _rt_protocol: rt.protocol,
-        _rt_hostname: rt.hostname,
-        _rt_path:     rt.pathname
-      }, this)
-    );
-    this._view.update();
-  };
-
-  this._handle_js_retrieved_cookies = function(status, message, rt_id)
-  {
-    const STATUS = 0;
-    const DATA = 2;
-    if (status === 0 && message[STATUS] == "completed")
+    if(this._active_tab_counter === active_tab_counter)
     {
       var rt = this._rts[rt_id] || {};
-      var cookie_string = message[DATA];
-      if (cookie_string && cookie_string.length > 0)
+      if (status === 0)
       {
-        var cookies = cookie_string.split(';');
-        for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
-          var pos = cookie_info.indexOf('=', 0);
-          this.cookie_list.push(
-            new cls.CookieManager.Cookie({
-              name:  cookie_info.slice(0, pos),
-              value: decodeURIComponent(cookie_info.slice(pos+1)),
-              _rt_id:       rt_id,
-              _rt_protocol: rt.protocol,
-              _rt_hostname: rt.hostname,
-              _rt_path:     rt.pathname
-            }, this)
-          );
-        };
+        const COOKIE = 0;
+        if (message.length > 0)
+        {
+          var cookies = message[COOKIE];
+          for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
+            // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
+            var is_secure = cookie_info[5];
+            if (is_secure && rt.protocol !== "https:")
+            {
+              continue;
+            }
+            // workaround: Check path to match if it's not root, CORE-37107
+            var path = cookie_info[1];
+            if (path && (path !== "/") && !rt.pathname.startswith(path))
+            {
+              /*
+               * In opera (and IE, checked IE8), the path value doesn't have to match
+               * with a trailing slash. Would be used with startswith(path+"/") in 
+               * other browsers, see http://people.opera.com/dherzog/cookie-path/
+               */
+              continue;
+            }
+            this.cookie_list.push(
+              new cls.CookieManager.Cookie({
+                domain:     cookie_info[0],
+                path:       cookie_info[1],
+                name:       cookie_info[2],
+                value:      decodeURIComponent(cookie_info[3]),
+                expires:    cookie_info[4],
+                isSecure:   cookie_info[5],
+                isHTTPOnly: cookie_info[6],
+
+                _rt_id:       rt_id,
+                _rt_hostname: rt.hostname,
+                _rt_path:     rt.pathname,
+                _rt_protocol: rt.protocol
+              }, this)
+            )
+          };
+        }
+        else
+        {
+          // In case no cookies come back, check via JS (workaround for CORE-35055)
+          var script = "return document.cookie";
+          var tag = tagManager.set_callback(this, this._handle_js_retrieved_cookies, [rt_id, active_tab_counter]);
+          services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
+        }
       }
+      // add a placeholder per runtime to make the group show up even if there were no cookies
+      this.cookie_list.push(
+        new cls.CookieManager.Cookie({
+          _is_runtime_placeholder: true,
+          _rt_id:       rt_id,
+          _rt_protocol: rt.protocol,
+          _rt_hostname: rt.hostname,
+          _rt_path:     rt.pathname
+        }, this)
+      );
+      this._view.update();
     }
-    this._view.update();
+  };
+
+  this._handle_js_retrieved_cookies = function(status, message, rt_id, active_tab_counter)
+  {
+    if(this._active_tab_counter === active_tab_counter)
+    {
+      const STATUS = 0;
+      const DATA = 2;
+      if (status === 0 && message[STATUS] == "completed")
+      {
+        var rt = this._rts[rt_id] || {};
+        var cookie_string = message[DATA];
+        if (cookie_string && cookie_string.length > 0)
+        {
+          var cookies = cookie_string.split('; ');
+          for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
+            var pos = cookie_info.indexOf('=', 0);
+            var has_value = pos !== -1;
+            this.cookie_list.push(
+              new cls.CookieManager.Cookie({
+                name:  has_value ? cookie_info.slice(0, pos) : cookie_info,
+                value: has_value ? decodeURIComponent(cookie_info.slice(pos+1)) : null,
+                _rt_id:       rt_id,
+                _rt_protocol: rt.protocol,
+                _rt_hostname: rt.hostname,
+                _rt_path:     rt.pathname
+              }, this);
+            );
+          };
+        }
+      }
+      this._view.update();
+    }
   };
 
   this._check_to_add_local_to_domain = function(domain)
@@ -323,6 +332,7 @@ cls.CookieManager.CookieDataBase = function()
     this._view = view;
     this.cookie_list = [];
     this._rts = {};
+    this._active_tab_counter = 0;
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   };
 };
