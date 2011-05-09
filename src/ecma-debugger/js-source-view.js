@@ -165,7 +165,8 @@ cls.JsSourceView = function(id, name, container_class)
     var bp_states = __current_script.breakpoint_states;
     if (bp_states)
     {
-      for (var i = 0, line, highlight_class, bp_state; line = lines[i]; i++)
+      var highlight_class, bp_state;
+      for (var i = 0, line; line = lines[i]; i++)
       {
         highlight_class = "";
         
