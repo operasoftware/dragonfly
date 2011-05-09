@@ -105,7 +105,6 @@ cls.StorageViewActions = function(id)
     return false;
   }.bind(this);
 
-  // nu
   this._handlers["add-key"] = function(event, target)
   {
     this.mode = MODE_EDIT;
@@ -155,14 +154,22 @@ cls.StorageViewActions = function(id)
         selected_node.removeClass("selected");
       };
     }
-    target.addClass("selected");
+    // unselect, works with multiple selection as ".selected" was removed otherwise
+    if(event.ctrlKey && target.hasClass("selected"))
+    {
+      target.removeClass("selected");
+    }
+    else
+    {
+      target.addClass("selected");
+    }
   };
 
   var broker = ActionBroker.get_instance();
   broker.register_handler(this);
 
   var contextmenu = ContextMenu.get_instance();
-  
+
   contextmenu.register("storage-view", [
     {
       label: ui_strings.S_LABEL_STORAGE_UPDATE,
@@ -171,7 +178,7 @@ cls.StorageViewActions = function(id)
       }
     }
   ]);
-  
+
   this._create_context_menu = function(event, target)
   {
     // this.check_to_exit_edit_mode(event, target); // todo, or possibly remove it from cookie view
@@ -228,31 +235,6 @@ cls.StorageViewActions = function(id)
   ]);
 };
 
-window.eventHandlers.click['storage-delete'] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "remove-item", event, target);
-};
-
-window.eventHandlers.click['storage-delete-all'] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "delete-all", event, target);
-};
-
-window.eventHandlers.click['storage-update'] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "update", event, target);
-};
-
-window.eventHandlers.click['storage-add-key'] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "add-key", event, target);
-};
-
-// nu
 window.eventHandlers.dblclick['storage-row'] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");

@@ -188,7 +188,7 @@ cls.StorageDataBase = new function()
 
   this._on_active_tab = function(msg)
   {
-    var i = 0, rt_id = 0, active_tab = msg.activeTab;
+    var i = 0, rt_id = 0, active_tab = msg.runtimes_with_dom;
     for ( ; i < active_tab.length; i++)
     {
       if (!this._rts[active_tab[i]])
@@ -304,11 +304,11 @@ cls.StorageDataBase = new function()
     // sub message Property
     PROPERTY_NAME = 0,
     PROPERTY_VALUE = 2;
- 
+
     var prop_list = null, i = 0, storage = [];
 
     if (message[OBJECT_LIST] &&
-        message[OBJECT_LIST][0] && 
+        message[OBJECT_LIST][0] &&
         (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
     {
       prop_list = prop_list.filter(this._is_digit);
@@ -351,6 +351,14 @@ cls.StorageDataBase = new function()
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
+      if(obj_a._is_runtime_placeholder)
+      {
+        return Infinity;
+      }
+      if(obj_b._is_runtime_placeholder)
+      {
+        return -Infinity;
+      }
       if (obj_a[prop] < obj_b[prop])
       {
         return 1;
@@ -408,7 +416,7 @@ cls.StorageDataBase = new function()
             return templates.storage.edit_mode_switch_container(obj.key, [input_text_container, hidden_rt]);
           },
           summer: function(values, groupname, getter) {
-            return ["button", "Add " + title, "class", "add_storage_button container-button", "handler", "storage-add-key"]; // todo: move to templates
+            return window.templates.storage.add_item_button(title);
           },
           sorter: this._make_sorter("key")
         },
@@ -598,9 +606,9 @@ cls.EcmascriptDebugger["6.0"].StorageDataBase =  function()
   {
     const
     OBJECT_CHAIN_LIST = 0,
-    // sub message ObjectList 
+    // sub message ObjectList
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     PROPERTY_LIST = 1,
     // sub message Property
     PROPERTY_VALUE = 2;
@@ -608,9 +616,9 @@ cls.EcmascriptDebugger["6.0"].StorageDataBase =  function()
     var prop_list = null, i = 0, storage = [];
 
     if (message[OBJECT_CHAIN_LIST] &&
-        message[OBJECT_CHAIN_LIST][0] && 
+        message[OBJECT_CHAIN_LIST][0] &&
         message[OBJECT_CHAIN_LIST][0][OBJECT_LIST] &&
-        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] && 
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] &&
         (prop_list = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0][PROPERTY_LIST]))
     {
       prop_list = prop_list.filter(this._is_digit);

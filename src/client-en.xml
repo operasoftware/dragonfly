@@ -374,7 +374,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./storage/data-storages.js"/>
 <script src="./storage/actions-storages.js"/>
-<script src="./storage/templates.js"/>
+<script src="./storage/templates-storages.js"/>
 <script src="./storage/views-storages.js"/>
 
 <script src="./http-logger/httplogger_service.js"/>

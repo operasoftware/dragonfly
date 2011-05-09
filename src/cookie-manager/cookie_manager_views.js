@@ -489,9 +489,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   }
 
-  this._before_table_render = function(message)
+  this._before_table_render = function()
   {
-    var message = message || {};
     // save selection
     if (this._table_elem)
     {
