@@ -305,7 +305,7 @@ cls.CookieManager.CookieDataBase = function()
                 _rt_protocol: rt.protocol,
                 _rt_hostname: rt.hostname,
                 _rt_path:     rt.pathname
-              }, this);
+              }, this)
             );
           };
         }
