@@ -165,22 +165,20 @@ cls.JsSourceView = function(id, name, container_class)
     var bp_states = __current_script.breakpoint_states;
     if (bp_states)
     {
-      //TODO Change variables naming style if needed
-      for (var i = 0, line, highlightClass, bpState; line = lines[i]; i++)
+      for (var i = 0, line, highlight_class, bp_state; line = lines[i]; i++)
       {
-        highlightClass = "";
+        highlight_class = "";
         
-        if (bpState = bp_states[__current_line + i])
+        if (bp_state = bp_states[__current_line + i])
         {
-          highlightClass = (LINE_HIGHLIGHT_CLASSNAMES[bpState % 3] + " " +
-                            BP_HIGHLIGHT_CLASSNAMES[bpState >> 3]);
+          highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
+                            BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
         }
         
-        line.className = highlightClass;
+        line.className = highlight_class;
       }
     }
-  
-  }
+  };
 
   var repaint_line_numbers = function()
   {
