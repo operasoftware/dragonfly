@@ -155,7 +155,6 @@ templates.cookie_manager = {
     return [this.path(path), this.edit_container(edit_elem)];
   },
   expires: function(date_in_seconds, objectref) {
-    console.log("rendering exp", date_in_seconds);
     if(date_in_seconds === undefined)
     {
       return this.value_container(this.unknown_value());
