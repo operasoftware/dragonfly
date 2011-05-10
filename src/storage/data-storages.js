@@ -428,7 +428,7 @@ cls.StorageDataBase = new function()
             {
               return;
             }
-            var input_text_container = templates.storage.input_text_container("value", obj.value);
+            var input_text_container = templates.storage.input_textarea_container("value", obj.value);
             return templates.storage.edit_mode_switch_container(obj.value, input_text_container);
           },
           sorter: this._make_sorter("value")

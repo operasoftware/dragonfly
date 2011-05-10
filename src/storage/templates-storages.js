@@ -41,6 +41,23 @@ window.templates.storage = {
       "handler", "storage-input-field"
     ]
   },
+  input_textarea_container: function(name, value) {
+    var elem = [
+      "textarea", value || "",
+      "type", "text",
+      "name", name,
+      "handler", "storage-input-field"
+    ];
+    // todo: do the smart stuff that _set_textarea_dimensions does
+    /*
+    var height = document.documentElement.render(elem.concat(["style", "height: 0"])).scrollHeight;
+    console.log("height", height);
+    // var height = getComputedStyle(document.documentElement.render(elem), null).getPropertyValue("height");
+    console.log("height", height);
+    return elem.concat(["style", "height: " + height + "px"]);
+    */
+    return elem;
+  },
   input_hidden: function(name, value) {
     return [
       "input",

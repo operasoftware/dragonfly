@@ -106,6 +106,16 @@ cls.StorageView = function(id, name, container_class, storage_name)
     this.data.remove_cookies(selected_cookie_objects);
     return false;
   }
+
+  this.on_storage_update = function(msg)
+  {
+    if (msg.storage_id == this.id)
+    {
+      this.update();
+    }
+  };
+
+  window.storages[id].addListener("storage-update", this.on_storage_update.bind(this));
   this.init(id, name, container_class, null, "storage-view");
 };
 cls.StorageView.prototype = ViewBase;

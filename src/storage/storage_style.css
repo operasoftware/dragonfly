@@ -1,6 +1,15 @@
-﻿.storage_view .sortable-table input[type=text] {
+﻿.storage_view .sortable-table input[type=text], .storage_view .sortable-table textarea {
   width: 100%;
   border: none;
+  border-radius: 0;
+}
+
+.storage_view .sortable-table textarea {
+  height: 13px;
+}
+
+.storage_view .sortable-table td {
+  vertical-align: top;
 }
 
 .storage_view .replaced-val {
@@ -15,12 +24,14 @@
 
 .storage_view .value_container {
   position: relative;
-  height: 15px;
+  height: 12px;
+  margin-top: 3px;
 }
 
 .storage_view .edit_container {
   display: none;
-  margin: -3px 0 -1px -1px;
+  margin: 1px 7px 0 -1px;
+  padding-bottom: 1px;
   position: relative;
 }
 
@@ -32,8 +43,8 @@
   display: none;
 }
 
-.storage_view .edit_container input[type=text] {
-  padding: 2px 3px 0 3px;
+.storage_view input[type=text], .storage_view textarea {
+  padding: 3px 3px 0 3px;
 }
 
 /* ellipsis */
