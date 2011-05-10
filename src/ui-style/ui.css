@@ -1467,6 +1467,11 @@ tab.active .close-tab-button {
     background-color: #ccc;
 }
 
+.container-button:disabled {
+    border-color: #aaa;
+    color: #aaa;
+}
+
 .container-button img {
     vertical-align: middle;
 }
