@@ -37,7 +37,7 @@ cls.ReplService = function(view, data)
      * 8 - console.dirxml
      * 9 - console.group
      * 10 - console.groupCollapsed
-     * 11 - console.groupEnded
+     * 11 - console.groupEnd
      * 12 - console.count
      */
 
@@ -146,16 +146,15 @@ cls.ReplService = function(view, data)
     }
     else
     {
-      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1;
+      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1, SEVERITY = 1;
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
       var pos = null;
       if (msg[POSITION])
       {
-        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]}
+        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]};
       }
 
-
-      this._data.add_output_valuelist(rt_id, values, pos);
+      this._data.add_output_valuelist(rt_id, values, pos, msg[SEVERITY]);
       if (is_unpacked)
       {
         this._msg_queue.continue_processing();

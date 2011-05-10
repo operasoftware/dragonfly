@@ -122,3 +122,15 @@ li > .repl-lines {
 .function-expression {
   color: #fff;
 }
+
+.severity-info {
+    color: #3c86d9;
+}
+
+.severity-warn {
+    color: #fdde8f;
+}
+
+.severity-error {
+    color: #fc6854;
+}

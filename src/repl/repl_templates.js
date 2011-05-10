@@ -18,15 +18,15 @@ templates.repl_main = function()
   ];
 };
 
-templates.repl_output_native = function(s)
+templates.repl_output_native = function(s, severity)
 {
   return ["span", s, "class", "repl-native"];
 };
 
-templates.repl_output_native_or_pobj = function(thing)
+templates.repl_output_native_or_pobj = function(thing, severity)
 {
   if (thing.type == "native") {
-    return templates.repl_output_native(thing.value);
+    return templates.repl_output_native(thing.value, severity);
   }
   else
   {

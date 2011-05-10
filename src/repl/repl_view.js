@@ -322,7 +322,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       tpl = [templates.repl_output_location_link(entry.pos.scriptid, entry.pos.scriptline), tpl];
     }
-    this._add_line(tpl);
+    var severity = entry.severity != null
+                 ? "severity-" + ["log", "debug", "info", "warn", "error"][entry.severity-1]
+                 : "";
+    this._add_line(tpl, severity);
   };
 
   this._render_completion = function(s)
@@ -368,9 +371,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template)
+  this._add_line = function(elem_or_template, class_name)
   {
     var line = document.createElement("li");
+    if (class_name)
+    {
+      line.className = class_name;
+    }
 
     if (elem_or_template.nodeType === undefined)
     {
