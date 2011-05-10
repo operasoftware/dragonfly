@@ -188,22 +188,22 @@ cls.StorageDataBase = new function()
 
   this._on_active_tab = function(msg)
   {
-    var i = 0, rt_id = 0, active_tab = msg.runtimes_with_dom;
-    for ( ; i < active_tab.length; i++)
+    var i = 0, rt_id = 0, runtimes_with_dom = msg.runtimes_with_dom;
+    for ( ; i < runtimes_with_dom.length; i++)
     {
-      if (!this._rts[active_tab[i]])
+      if (!this._rts[runtimes_with_dom[i]])
       {
-        this._rts[active_tab[i]] = {storage: [], rt_id: active_tab[i]};
+        this._rts[runtimes_with_dom[i]] = {storage: [], rt_id: runtimes_with_dom[i]};
         if (this.is_setup)
         {
-          this._setup_local_storage(active_tab[i]);
+          this._setup_local_storage(runtimes_with_dom[i]);
         }
       }
     }
 
     for (i in this._rts)
     {
-      if (active_tab.indexOf(parseInt(i)) == -1)
+      if (runtimes_with_dom.indexOf(parseInt(i)) == -1)
       {
         this._rts[i] = null;
       }
