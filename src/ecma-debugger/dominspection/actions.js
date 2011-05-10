@@ -322,7 +322,7 @@ cls.DOMInspectorActions = function(id)
     selection = getSelection();
     range = document.createRange();
     this.is_dom_type_tree = container.firstElementChild.firstElementChild.hasClass('tree-style');
-    if (event.type == 'click')
+    if (event.type == 'click' || event.type == 'contextmenu')
     {
       switch (event.target.nodeName.toLowerCase())
       {
