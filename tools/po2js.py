@@ -11,7 +11,7 @@ import optparse
 def make_js_from_po(path):
     strings = []
     for po in [p for p in dfstrings.get_po_strings(path) if "scope" in p and "dragonfly" in p["scope"] ]:
-        strings.append(u"""ui_strings.%s="%s";""" % (po["jsname"], po["msgstr"]))
+        strings.append(u"""ui_strings.%s="%s";""" % (po["jsname"], _safe_escape(po["msgstr"])))
     return """/* Generated from %s at %s */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "%s";
@@ -20,6 +20,8 @@ window.ui_strings.lang_code = "%s";
         unicode(os.path.splitext(os.path.basename(path))[0]),
         u"\n".join(strings))
 
+def _safe_escape(s):
+    return s.replace('"', '\\"')
 
 def _process_file(inpath, outfd):
     lines = [p["msgstr"] for p in dfstrings.get_po_strings(inpath)
@@ -27,12 +29,14 @@ def _process_file(inpath, outfd):
 
     bad_escaped = dfstrings.get_strings_with_bad_escaping(lines)
     if bad_escaped:
-        print "error: %s contains strings with bad escaping: %s" % (inpath, bad_escaped)
-        return 1
+        print "warning: %s contains strings with bad escaping: %s" % inpath
+        for e in bad_escaped: print e
+        print "Will try to automatically escape them."
 
     bad_format = dfstrings.get_strings_with_bad_format(lines)
     if bad_format:
-        print "error: %s contains strings with bad formatting: %s" % (inpath, bad_format)
+        print "error: %s contains strings with bad formatting:" % inpath
+        for e in bad_format: print e
         return 1
 
     data = make_js_from_po(inpath)
