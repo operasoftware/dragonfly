@@ -61,13 +61,92 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     "document"
   );
 
-  new ToolbarConfig('css-comp-style');;
+  new ToolbarConfig('css-comp-style');
 
   new Switches
   (
     'css-comp-style',
     [
       'show-initial-values'
+    ]
+  );
+
+  new Settings
+  (
+    // id
+    'css-inspector',
+    // key-value map
+    {
+      'link': false,
+      'visited': false,
+      'hover': false,
+      'active': false,
+      'focus': false
+    },
+    // key-label map
+    {
+      'link': ":link",
+      'visited': ":visited",
+      'hover': ":hover",
+      'active': ":active",
+      'focus': ":focus"
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'link',
+        'visited',
+        'hover',
+        'active',
+        'focus'
+      ]
+    },
+    null,
+    null,
+    {
+      "link": function(is_active) {
+        update_pseudo_class("link", is_active);
+      },
+      "visited": function(is_active) {
+        update_pseudo_class("visited", is_active);
+      },
+      "hover": function(is_active) {
+        update_pseudo_class("hover", is_active);
+      },
+      "active": function(is_active) {
+        update_pseudo_class("active", is_active);
+      },
+      "focus": function(is_active) {
+        update_pseudo_class("focus", is_active);
+      }
+    }
+  );
+
+  function update_pseudo_class(pseudo_class, is_active)
+  {
+    if (is_active)
+    {
+      window.elementStyle.add_pseudo_class(pseudo_class);
+    }
+    else
+    {
+      window.elementStyle.remove_pseudo_class(pseudo_class);
+    }
+    window.elementStyle.update();
+  }
+
+  new ToolbarConfig('css-inspector');
+
+  new CstSelectToolbarSettings
+  (
+    'css-inspector',
+    [
+      'link',
+      'visited',
+      'hover',
+      'active',
+      'focus'
     ]
   );
 

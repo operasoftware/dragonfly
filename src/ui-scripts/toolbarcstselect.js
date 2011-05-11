@@ -23,12 +23,8 @@
     // ui-actions.js can handle the toggle action
     return setting && [
         "cst-option",
-          ['label',
-            ['input',
-              'type', 'checkbox'
-            ].concat(setting.value ? ['checked', 'checked'] : []),
-          setting.label,
-          ],
+        ["span", "class", "menu-icon " + (setting.value ? "check" : "")],
+        setting.label,
         "unselectable", "on",
         "key", view_key_token,
         "is-active", setting.value && "true" || "false"

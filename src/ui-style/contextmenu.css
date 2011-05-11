@@ -49,16 +49,6 @@
   color: #aaa;
 }
 
-#contextmenu .contextmenu-icon {
-  display: inline-block;
-  vertical-align: middle;
-  text-align: center;
-  width: 10px;
-  height: 9px;
-  margin: 0 4px;
-  overflow: hidden;
-}
-
 #contextmenu li:not(.separator):not(.disabled):hover {
   background-color: #bbcef1;
   color: #000;
@@ -79,19 +69,31 @@
   box-shadow: 0 1px #fff;
 }
 
-#contextmenu .check {
+/* This is now general menu stuff, and should be moved to a menu.css */
+
+.menu .menu-icon {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  width: 10px;
+  height: 9px;
+  margin: 0 4px;
+  overflow: hidden;
+}
+
+.menu .check {
   background: transparent url("../ui-images/menu_check.png") 50% no-repeat;
 }
 
-#contextmenu li:not(.disabled):active .check {
+.menu li:not(.disabled):active .check {
   background: transparent url("../ui-images/menu_check_selected.png");
 }
 
-#contextmenu .radio {
+.menu .radio {
   background: transparent url("../ui-images/menu_bullet.png") 50% no-repeat;
 }
 
-#contextmenu li:not(.disabled):active .radio {
+.menu li:not(.disabled):active .radio {
   background-image: url("../ui-images/menu_bullet_selected.png");
 }
 

@@ -48,6 +48,19 @@ cls.ElementStyle = function()
   ORIGIN_AUTHOR = 3,
   ORIGIN_ELEMENT = 4;
 
+  // Pseudo classes/elements
+  const NONE = 0;
+  const HOVER = 1;
+  const ACTIVE = 2;
+  const FOCUS = 3;
+  const LINK = 4;
+  const VISITED = 5;
+  const FIRST_LINE = 6
+  const FIRST_LETTER = 7;
+  const BEFORE = 8;
+  const AFTER = 9;
+  const SELECTION = 10;
+
   var self = this;
   var categories_data = [];
   var __selectedElement = null;
@@ -58,6 +71,45 @@ cls.ElementStyle = function()
   var __setPriorities = [];
   var _rt_id;
   var _obj_id;
+  this._pseudo_list = [
+    NONE,
+    //HOVER,
+    //ACTIVE,
+    //FOCUS,
+    //LINK,
+    //VISITED,
+    FIRST_LINE,
+    FIRST_LETTER,
+    //BEFORE,
+    //AFTER,
+    SELECTION
+  ];
+
+  this._pseudo_class_map = {
+    "link": LINK,
+    "visited": VISITED,
+    "hover": HOVER,
+    "active": ACTIVE,
+    "focus": FOCUS
+  };
+
+  this.add_pseudo_class = function(pseduo_class)
+  {
+    var index = this._pseudo_list.indexOf(this._pseudo_class_map[pseduo_class]);
+    if (index == -1)
+    {
+      this._pseudo_list.push(this._pseudo_class_map[pseduo_class]);
+    }
+  };
+
+  this.remove_pseudo_class = function(pseduo_class)
+  {
+    var index = this._pseudo_list.indexOf(this._pseudo_class_map[pseduo_class]);
+    if (index != -1)
+    {
+      this._pseudo_list.splice(index, 1);
+    }
+  };
 
   var onResetState = function()
   {
@@ -381,7 +433,7 @@ cls.ElementStyle = function()
     if (stylesheets.hasStylesheetsRuntime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
-      services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
+      services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id, self._pseudo_list]);
     }
     else
     {

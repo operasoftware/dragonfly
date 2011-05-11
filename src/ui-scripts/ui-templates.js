@@ -67,7 +67,7 @@
       if (!item.separator)
       {
         ret.push(["li",
-            [["span", "class", "contextmenu-icon " + icon], ["span", item.label]],
+            [["span", "class", "menu-icon " + icon], ["span", item.label]],
             "data-handler-id", item.id,
             "data-menu-id", item.menu_id,
             "class", item.disabled ? "disabled" : ""
@@ -78,7 +78,7 @@
         ret.push(["li", ["hr"], "class", "separator"]);
       }
     }
-    return ["menu", ret, "id", "contextmenu"];
+    return ["menu", ret, "id", "contextmenu", "class", "menu"];
   };
 
   this.filters = function(filters)
@@ -184,7 +184,7 @@
 
   this.toolbar_settings = function(toolbar_settings)
   {
-    return ['cst-select-toolbar-setting', 'class', 'toolbar-settings', 'cst-id', toolbar_settings.id];
+    return ['cst-select-toolbar-setting', 'class', 'toolbar-settings ui-control', 'cst-id', toolbar_settings.id];
   }
 
   this.switches = function(switches)
