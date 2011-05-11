@@ -20,7 +20,7 @@ cls.DragState = function(screenshot, pixelmagnifier)
       this._event_target.style.removeProperty('cursor');
     }
     this.is_cursor_style_set = false;
-}.bind(this);
+  }.bind(this);
 
   this._updateondrag = function()
   {
@@ -229,7 +229,7 @@ cls.ScreenShotView = function(id, name, container_class)
                                          false,
                                          ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY)],
       'class', 'info-box']);
-  }
+  };
 
   /* implementation */
 
@@ -264,6 +264,8 @@ cls.ScreenShotView = function(id, name, container_class)
   {
     if(this.isvisible())
     {
+      this._pixel_magnifier.width = container.clientWidth;
+      this._pixel_magnifier.height = container.clientHeight;
       this._pixel_magnifier.draw();
     }
   };

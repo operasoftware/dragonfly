@@ -286,6 +286,10 @@
       this.toolbar.setup(view_id);
       var search = UI.get_instance().get_search(view_id);
       this.searchbar = search && search.get_searchbar() || null;
+      if (this.searchbar)
+      {
+        this.searchbar.cell = this;
+      }
       this.update(this.left, this.top, true);
       this.container.setup(view_id);
     }
