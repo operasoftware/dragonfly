@@ -77,3 +77,13 @@
   background-color: #23dc23; 
   color: #000;
 }
+
+.dom-searchbar-controls
+{
+  clear: both;
+  margin: 0 -3px;
+  margin-top: 3px;
+  background-color: hsl(0, 0%, 80%);
+  border-top: 1px solid hsl(0, 0%, 60%);
+  padding: 0 3px;
+}

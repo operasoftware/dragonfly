@@ -100,7 +100,7 @@ var SearchbarBase = function()
   this.attributes =
   {
     'focus-handler': 'focus',
-    'blur-handler': 'blur'
+    'blur-handler': 'blur',
   }
 
   // end common with toolbar  toolbar
@@ -121,5 +121,25 @@ var Searchbar = function()
   this.init();
 };
 
+/**
+ * @constructor
+ * @extends ModebarBase
+ */
+var AdvancedSearchbar = function(template)
+{
+  this.init();
+  this.template = template;
+  this.attributes =
+  {
+    'focus-handler': 'focus',
+    'blur-handler': 'blur',
+    'class': 'advanced-searchbar'
+  }
+};
+
 SearchbarBase.prototype = UIBase;
 Searchbar.prototype = new SearchbarBase();
+AdvancedSearchbar.prototype = new SearchbarBase();
+
+
+

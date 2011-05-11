@@ -21,6 +21,9 @@ Search.prototype = new function()
 
   this.update_search = function(){};
 
+  this.search_type;
+  this.ignore_case;
+
   /* constants */
   
   const 
@@ -75,7 +78,8 @@ Search.prototype = new function()
     if (ele && !ele.firstChild)
     {
       this._simple_text_search.set_container(this._container);
-      ele.render(window.templates.searchbar_content(this));
+      ele.render(window.templates[this._searchbar.template ||
+                                  'searchbar_content'](this));
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
       cur = ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0];
@@ -243,10 +247,14 @@ Search.prototype = new function()
     this._beforesearch_bound = this._beforesearch.bind(this);
     if (searchbarclass)
     {
-      this._searchbar = new searchbarclass();
+      this._searchbar = typeof searchbarclass == 'function' ?
+                        new searchbarclass() :
+                        searchbarclass;
       this._searchbar.add_listener("searchbar-created", 
                                    this._onsearchbar_created.bind(this));
-      this._simple_text_search = new simplesearchclass();
+      this._simple_text_search = typeof simplesearchclass == 'function' ?
+                                 new simplesearchclass() :
+                                 simplesearchclass;
       this._simple_text_search.add_listener('onbeforesearch',
                                             this._beforesearch_bound);
       this.controls.push({
@@ -398,6 +406,23 @@ Search.prototype = new function()
   {
     return this._is_active && this._searchbar && this._mode == MODE_SEARCHBAR;
   });
+
+  this.__defineGetter__('search_type', function()
+  {
+    return this._mode == MODE_SEARCHBAR ?
+           this._simple_text_search.search_type :
+           this._searchwindow.search_type;
+  });
+  this.__defineSetter__('search_type', function(){});
+
+  this.__defineGetter__('ignore_case', function()
+  {
+    return this._mode == MODE_SEARCHBAR ?
+           this._simple_text_search.ignore_case :
+           this._searchwindow.ignore_case;
+  });
+  this.__defineSetter__('ignore_case', function() {});
+
 
 };
 

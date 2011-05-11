@@ -519,6 +519,10 @@ searchbar {
   background: #eee;
 }
 
+.advanced-searchbar {
+  height: 43px;
+}
+
 window-select {
   position: relative;
   padding: 2px 0;

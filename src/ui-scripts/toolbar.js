@@ -212,7 +212,6 @@ var ToolbarBase = function()
       } 
       if(this.customs.length)
       {
-       
         var custom = null, i = 0;
         for( ; custom = this.customs[i]; i++)
         {

@@ -433,7 +433,8 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  var search = new Search('dom', [Searchbar]);
+  var searchbar = new AdvancedSearchbar('dom_search_bar_content');
+  var search = new Search('dom', [searchbar, new DOMSearch()]);
 
   window.messages.addListener('dom-view-updated', function(msg)
   {
