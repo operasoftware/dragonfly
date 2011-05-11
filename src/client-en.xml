@@ -307,8 +307,10 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
+<script src="./debug/po_tester.js"/>
 <script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
+<script src="./debug/poodle.js"/>
 
 <script src="./shortcutconfig/shortcutconfig.js"/>
 <script src="./shortcutconfig/templates.js"/>
