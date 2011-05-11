@@ -4,28 +4,21 @@
   border-radius: 0;
 }
 
-.storage_view .sortable-table textarea {
-  height: 13px;
-}
-
 .storage_view .sortable-table td {
   vertical-align: top;
+  word-wrap: break-word;
 }
 
 .storage_view .replaced-val {
   color: #AAA;
 }
 
-.storage_view .sortable-table tr {
-  height: 26px;
-}
-
 /* editing */
 
 .storage_view .value_container {
   position: relative;
-  height: 12px;
   margin-top: 3px;
+  word-wrap: break-word;
 }
 
 .storage_view .edit_container {

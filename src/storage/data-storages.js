@@ -411,9 +411,13 @@ cls.StorageDataBase = new function()
             {
               return;
             }
-            var input_text_container = templates.storage.input_text_container("key", obj.key);
-            var hidden_rt = templates.storage.input_hidden("rt_id", obj._rt_id);
-            return templates.storage.edit_mode_switch_container(obj.key, [input_text_container, hidden_rt]);
+            return templates.storage.edit_mode_switch_container(
+              templates.storage.wrap_ellipsis(obj.key),
+              [
+                templates.storage.input_text_container("key", obj.key),
+                templates.storage.input_hidden("rt_id", obj._rt_id)
+              ]
+            );
           },
           summer: function(values, groupname, getter) {
             return window.templates.storage.add_item_button(title);
@@ -428,8 +432,10 @@ cls.StorageDataBase = new function()
             {
               return;
             }
-            var input_text_container = templates.storage.input_textarea_container("value", obj.value);
-            return templates.storage.edit_mode_switch_container(obj.value, input_text_container);
+            return templates.storage.edit_mode_switch_container(
+              ["div", obj.value],
+              templates.storage.input_textarea_container("value", obj.value)
+            );
           },
           sorter: this._make_sorter("value")
         }

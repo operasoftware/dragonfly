@@ -27,6 +27,11 @@ cls.StorageViewActions = function(id)
     var tr = container.querySelector("tr[data-object-id='"+ref+"']")
     tr.addClass("edit_mode");
     this._handlers["select-row"](event, tr);
+    var textarea = tr.querySelector("textarea");
+    if(textarea)
+    {
+      this._handlers["textarea-autosize"](null, textarea);
+    }
   }.bind(this);
 
   this._handlers["submit"] = function(event, target)
@@ -165,6 +170,11 @@ cls.StorageViewActions = function(id)
     }
   };
 
+  this._handlers["textarea-autosize"] = function(event, target)
+  {
+    target.style.height = target.scrollHeight + "px";
+  };
+
   var broker = ActionBroker.get_instance();
   broker.register_handler(this);
 
@@ -235,13 +245,13 @@ cls.StorageViewActions = function(id)
   ]);
 };
 
-window.eventHandlers.dblclick['storage-row'] = function(event, target)
+window.eventHandlers.dblclick["storage-row"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
   this.broker.dispatch_action(data_storage_id, "edit", event, target);
 }
 
-window.eventHandlers.click['storage-row'] = function(event, target)
+window.eventHandlers.click["storage-row"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
   this.broker.dispatch_action(data_storage_id, "select-row", event, target);
@@ -253,15 +263,23 @@ window.eventHandlers.click["storage"] = function(event, target) // todo: make th
   this.broker.dispatch_action(data_storage_id, "submit", event, target);
 }
 
-window.eventHandlers.click['storage-add-key'] = function(event, target)
+window.eventHandlers.click["storage-add-key"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
   this.broker.dispatch_action(data_storage_id, "add-key", event, target);
 }
 
-window.eventHandlers.click['storage-input-field'] = function(event, target)
+window.eventHandlers.click["storage-input-field"] = function(event, target)
 {
   // Empty for now, but preventing click['storage-container']
   // which exits editing
 }
 
+window.eventHandlers.keyup["storage-input-field"] = function(event, target)
+{
+  if(target.nodeName === "textarea")
+  {
+    var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+    this.broker.dispatch_action(data_storage_id, "textarea-autosize", event, target);
+  }
+}

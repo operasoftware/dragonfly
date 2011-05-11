@@ -79,6 +79,13 @@ cls.StorageView = function(id, name, container_class, storage_name)
       row.setAttribute("handler", "storage-row");
       row.setAttribute("edit-handler", "storage-row");
     }
+    // textarea-autosize
+    var data_storage_id = table_elem.get_attr("parent-node-chain", "data-storage-id");
+    var autosize_elements = table_elem.querySelectorAll("textarea");
+    var broker = ActionBroker.get_instance();
+    for (var i=0, element; element = autosize_elements[i]; i++) {
+      broker.dispatch_action(data_storage_id, "textarea-autosize", null, element);
+    };
   }
 
   this._submit = function(event, target)
