@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
@@ -102,11 +102,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               return;
             }
-            if (typeof obj.path === "string")
-            {
-              return window.templates.cookie_manager.editable_path(obj.path);
-            }
-            return window.templates.cookie_manager.unknown_value();
+            return window.templates.cookie_manager.editable_path(obj.path);
           },
           sorter: this._make_sorter("path")
         },
@@ -118,11 +114,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             {
               return;
             }
-            if (typeof obj.expires === "number")
-            {
-              return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
-            }
-            return window.templates.cookie_manager.unknown_value();
+            return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
           },
           sorter: this._make_sorter("expires")
         },
@@ -310,7 +302,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
-    var row = document.querySelector("[data-object-id='"+objectref+"']");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var row = document.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
     if (row)
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
@@ -328,7 +321,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table.restore_columns(this._table_elem);
     // can't directly work with target because restore_columns has renewed it
     var objectref = target.getAttribute("data-object-id");
-    var target = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
     this.select_row(event, target);
     // todo: find input that is closest to the actual event.target and focus it
   }
@@ -510,7 +504,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     if (this._restore_selection)
     {
       for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
-        var elem = this._container.querySelector("[data-object-id='"+objectref+"']");
+        var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+        var elem = this._container.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
         if (elem)
         {
           elem.addClass("selected");
@@ -644,11 +639,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    if (obj.domain)
-    {
-      return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts, obj.domain);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts);
   }
 
   this._is_secure_renderer = function(obj)
@@ -657,11 +648,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    if (typeof obj.isSecure === "number")
-    {
-      return window.templates.cookie_manager.boolean_value(obj.isSecure);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -670,12 +657,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    if (typeof obj.isHTTPOnly === "number")
-    {
-      // this will depend on the service version, it gets editable with 1.1
-      return window.templates.cookie_manager.boolean_value(obj.isHTTPOnly);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.http_only(obj.isHTTPOnly);
   }
   // END DEPENDEND ON SERVICE VERSION
 };
@@ -708,11 +690,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (obj.domain)
-    {
-      return window.templates.cookie_manager.all_editable_domain(obj.domain);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.all_editable_domain(obj._rt_id, this.data._rts, obj.domain);
   }
 
   this._is_secure_renderer = function(obj)
@@ -721,11 +699,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (typeof obj.isSecure === "number")
-    {
-      return window.templates.cookie_manager.editable_secure(obj.isSecure);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.editable_secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -734,11 +708,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (typeof obj.isHTTPOnly === "number")
-    {
-      return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
   }
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
