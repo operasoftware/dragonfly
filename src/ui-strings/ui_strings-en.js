@@ -78,8 +78,14 @@ ui_strings.M_CONTEXTMENU_STORAGE_ADD = "Add item";
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = "Delete item";
 
+/* DESC: Context menu item for deleting multiple items in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
+
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
+
+/* DESC: Context menu item for editing an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
 
 /* DESC: Label for request body input in network crafter */
 ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";

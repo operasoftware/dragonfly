@@ -127,6 +127,7 @@ var ActionBroker = function()
   this._shortcuts = null;
   this._global_shortcuts = null;
   this._current_shortcuts = null;
+  this._current_inherited_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
   this._modal_click_handler_setter = null;
@@ -156,7 +157,9 @@ var ActionBroker = function()
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
           if (ui_obj)
+          {
             this._set_current_handler(ui_obj.view_id, event, container);
+          }
           break;
         }
         // TODO set according key handler, e.g. toolbar, tab
@@ -184,6 +187,7 @@ var ActionBroker = function()
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
+      this._current_inherited_shortcuts = this._shortcuts[this._action_context.inherited_shortcuts] || {};
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
       this._context_queue.push(handler_id);
@@ -316,8 +320,9 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event)
   {
-    var shortcuts = this._current_shortcuts[this._action_context.mode];
-    var action = shortcuts && shortcuts[key_id] || '';
+    var shortcuts = this._current_shortcuts[this._action_context.mode] || {};
+    var inherited_shortcuts = this._current_inherited_shortcuts[this._action_context.mode] || {};
+    var action = shortcuts[key_id] || inherited_shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
     {

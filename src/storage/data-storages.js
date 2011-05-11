@@ -8,7 +8,7 @@ cls.StorageDataBase = new function()
   this.set_item = function(rt_id, key, value){};
   this.remove_item = function(rt_id, key){};
   this.clear = function(rt_id){};
-  this.set_item_edit = function(rt_id, key, is_edit){};
+  this.set_item_edit = function(rt_id, key, is_edit){}; // deprecated
 
   this.get_storages = function()
   {
@@ -28,6 +28,32 @@ cls.StorageDataBase = new function()
       return null;
     }
   };
+
+  this.get_storages_plain = function()
+  {
+    var items = [];
+    var storages = this.get_storages();
+    if(storages)
+    {
+      for (var id in storages) {
+        var storage = storages[id];
+        if(storage)
+        {
+          for (var item, j=0; item = storage.storage[j]; j++) {
+            item._rt_id = storage.rt_id;
+            item._object_id = item.key + "/" + storage.rt_id;
+            items.push(item);
+          };
+          items.push({
+            _is_runtime_placeholder: true,
+            _rt_id: storage.rt_id,
+            _object_id: "runtime_placeholder_" + storage.rt_id
+          });
+        }
+      };
+      return items;
+    }
+  }
 
   this.update = function()
   {
@@ -127,7 +153,7 @@ cls.StorageDataBase = new function()
     }
   };
 
-  this.set_item_edit = function(rt_id, key, is_edit)
+  this.set_item_edit = function(rt_id, key, is_edit) // deprecated
   {
     var item = this.get_item(rt_id, key);
     if (item)
@@ -139,6 +165,7 @@ cls.StorageDataBase = new function()
   this._handle_clear = function(status, message, rt_id)
   {
     this._get_key_value_pairs(rt_id);
+    // todo: make this call a callback too, like _handle_remove
   };
 
   this._handle_remove = function(status, message, success_callback, info, rt_id, key)
@@ -161,22 +188,22 @@ cls.StorageDataBase = new function()
 
   this._on_active_tab = function(msg)
   {
-    var i = 0, rt_id = 0, active_tab = msg.activeTab;
-    for ( ; i < active_tab.length; i++)
+    var i = 0, rt_id = 0, runtimes_with_dom = msg.runtimes_with_dom;
+    for ( ; i < runtimes_with_dom.length; i++)
     {
-      if (!this._rts[active_tab[i]])
+      if (!this._rts[runtimes_with_dom[i]])
       {
-        this._rts[active_tab[i]] = {storage: [], rt_id: active_tab[i]};
+        this._rts[runtimes_with_dom[i]] = {storage: [], rt_id: runtimes_with_dom[i]};
         if (this.is_setup)
         {
-          this._setup_local_storage(active_tab[i]);
+          this._setup_local_storage(runtimes_with_dom[i]);
         }
       }
     }
 
     for (i in this._rts)
     {
-      if (active_tab.indexOf(parseInt(i)) == -1)
+      if (runtimes_with_dom.indexOf(parseInt(i)) == -1)
       {
         this._rts[i] = null;
       }
@@ -277,11 +304,11 @@ cls.StorageDataBase = new function()
     // sub message Property
     PROPERTY_NAME = 0,
     PROPERTY_VALUE = 2;
- 
+
     var prop_list = null, i = 0, storage = [];
 
     if (message[OBJECT_LIST] &&
-        message[OBJECT_LIST][0] && 
+        message[OBJECT_LIST][0] &&
         (prop_list = message[OBJECT_LIST][0][PROPERTY_LIST]))
     {
       prop_list = prop_list.filter(this._is_digit);
@@ -321,6 +348,29 @@ cls.StorageDataBase = new function()
     this.post('storage-update', {storage_id: this.id});
   };
 
+  this._make_sorter = function(prop)
+  {
+    return function(obj_a, obj_b) {
+      if(obj_a._is_runtime_placeholder)
+      {
+        return Infinity;
+      }
+      if(obj_b._is_runtime_placeholder)
+      {
+        return -Infinity;
+      }
+      if (obj_a[prop] < obj_b[prop])
+      {
+        return 1;
+      }
+      if (obj_a[prop] > obj_b[prop])
+      {
+        return -1;
+      }
+      return 0;
+    }
+  };
+
   this.init = function(id, update_event_name, title, storage_object)
   {
     this.id = id;
@@ -335,6 +385,62 @@ cls.StorageDataBase = new function()
     window.cls.MessageMixin.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
+    this.tabledef = {
+      groups: {
+        runtime: {
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME,
+          grouper: function(obj) {
+            return obj._rt_id;
+          },
+          renderer: function(groupvalue, obj) {
+            return runtimes.getRuntime(obj[0]._rt_id).uri;
+          },
+          idgetter: function(obj) {
+            return ""+obj[0]._rt_id;
+          }
+        }
+      },
+      column_order: ["key", "value"],
+      idgetter: function(res) { return res._object_id },
+      columns: {
+        key: {
+          label: "Key",
+          classname: "col_key",
+          renderer: function(obj) {
+            if (obj._is_runtime_placeholder)
+            {
+              return;
+            }
+            return templates.storage.edit_mode_switch_container(
+              templates.storage.wrap_ellipsis(obj.key),
+              [
+                templates.storage.input_text_container("key", obj.key),
+                templates.storage.input_hidden("rt_id", obj._rt_id)
+              ]
+            );
+          },
+          summer: function(values, groupname, getter) {
+            return window.templates.storage.add_item_button(title);
+          },
+          sorter: this._make_sorter("key")
+        },
+        value: {
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          classname: "col_value",
+          renderer: function(obj) {
+            if (obj._is_runtime_placeholder)
+            {
+              return;
+            }
+            return templates.storage.edit_mode_switch_container(
+              ["div", obj.value],
+              templates.storage.input_textarea_container("value", obj.value)
+            );
+          },
+          sorter: this._make_sorter("value")
+        }
+      }
+    }
   };
 }
 
@@ -506,9 +612,9 @@ cls.EcmascriptDebugger["6.0"].StorageDataBase =  function()
   {
     const
     OBJECT_CHAIN_LIST = 0,
-    // sub message ObjectList 
+    // sub message ObjectList
     OBJECT_LIST = 0,
-    // sub message ObjectInfo 
+    // sub message ObjectInfo
     PROPERTY_LIST = 1,
     // sub message Property
     PROPERTY_VALUE = 2;
@@ -516,9 +622,9 @@ cls.EcmascriptDebugger["6.0"].StorageDataBase =  function()
     var prop_list = null, i = 0, storage = [];
 
     if (message[OBJECT_CHAIN_LIST] &&
-        message[OBJECT_CHAIN_LIST][0] && 
+        message[OBJECT_CHAIN_LIST][0] &&
         message[OBJECT_CHAIN_LIST][0][OBJECT_LIST] &&
-        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] && 
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] &&
         (prop_list = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0][PROPERTY_LIST]))
     {
       prop_list = prop_list.filter(this._is_digit);

@@ -358,12 +358,17 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
   var tpl = [];
   if (render_header) {
     var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
-    tpl.push(["tr",
-              ["th", renderer(groupname, data),
-               "colspan", String(cols.length),
-               "class", "sortable-table-group-header"],
-              "class", "header"
-             ]);
+    var row = ["tr",
+                ["th", renderer(groupname, data),
+                 "colspan", String(cols.length),
+                 "class", "sortable-table-group-header"],
+                "class", "header"
+               ];
+    if(tabledef.groups[groupby].idgetter)
+    {
+      row.push("data-object-id", tabledef.groups[groupby].idgetter(data));
+    }
+    tpl.push(row);
   }
 
   var ret =  tpl.concat(data.map(function(item) {
