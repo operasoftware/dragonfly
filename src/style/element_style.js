@@ -476,13 +476,16 @@ cls.ElementStyle = function()
     style_dec[DISABLED_LIST] = [];
 
     var len = disabled_style_dec[INDEX_LIST].length;
-    for (var i = 0; i < len; i++) {
+    for (var i = 0; i < len; i++)
+    {
       var prop = index_map[disabled_style_dec[INDEX_LIST][i]];
 
-      if (this.has_property(style_dec, prop)) {
+      if (this.has_property(style_dec, prop))
+      {
         this.remove_property(disabled_style_dec, prop);
       }
-      else if (!(is_inherited && !(prop in window.css_inheritable_properties))) {
+      else if (!(is_inherited && !(prop in window.css_inheritable_properties)))
+      {
         var index = this.copy_property(disabled_style_dec, style_dec, prop);
         style_dec[DISABLED_LIST][index] = 1;
       }
@@ -544,7 +547,8 @@ cls.ElementStyle = function()
    *
    * @returns {Array} An empty StyleDeclaration
    */
-  this.get_new_style_dec = function get_new_style_dec() {
+  this.get_new_style_dec = function get_new_style_dec()
+  {
     return [3, [/*INDEX_LIST*/], [/*VALUE_LIST*/], [/*PRIORITY_LIST*/], [/*STATUS_LIST*/]];
   };
 
@@ -556,11 +560,14 @@ cls.ElementStyle = function()
    * @param {String} property The property to copy
    * @returns {Integer} The index where the property was inserted (the last index)
    */
-  this.copy_property = function copy_property(source, target, property) {
+  this.copy_property = function copy_property(source, target, property)
+  {
     var index_list = source[INDEX_LIST];
     var len = index_list.length;
-    for (var i = 0; i < len; i++) {
-      if (window.css_index_map[index_list[i]] == property) {
+    for (var i = 0; i < len; i++)
+    {
+      if (window.css_index_map[index_list[i]] == property)
+      {
          target[INDEX_LIST].push(source[INDEX_LIST][i]);
          target[VALUE_LIST].push(source[VALUE_LIST][i]);
          target[PRIORITY_LIST].push(source[PRIORITY_LIST][i]);
@@ -579,13 +586,16 @@ cls.ElementStyle = function()
    * @returns {Array|null} A StyleDeclaration with the removed property if it was
    *                       removed, otherwise null
    */
-  this.remove_property = function remove_property(style_dec, property) {
+  this.remove_property = function remove_property(style_dec, property)
+  {
     var new_style_dec = this.get_new_style_dec();
     var index_list = style_dec[INDEX_LIST];
     var len = index_list.length;
-    for (var i = 0; i < len; i++) {
-      if (window.css_index_map[index_list[i]] == property) {
-        this.copy_property(style_dec, new_style_dec, property)
+    for (var i = 0; i < len; i++)
+    {
+      if (window.css_index_map[index_list[i]] == property)
+      {
+        this.copy_property(style_dec, new_style_dec, property);
         style_dec[INDEX_LIST].splice(i, 1);
         style_dec[VALUE_LIST].splice(i, 1);
         style_dec[PRIORITY_LIST].splice(i, 1);
@@ -603,7 +613,8 @@ cls.ElementStyle = function()
    * @param {String} property The property to check for
    * @returns {Boolean} True if the StyleDeclaration has the property, false otherwise
    */
-  this.has_property = function has_property(style_dec, property) {
+  this.has_property = function has_property(style_dec, property)
+  {
     return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
   };
 
