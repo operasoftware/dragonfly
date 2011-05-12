@@ -59,8 +59,6 @@ cls.debug.PoTest = function(id, name, container_class)
         unhandled.push(entry);  
       }
     }
-    //opera.postError("unhandled " + JSON.stringify(unhandled, null, "    "))
-    this.update();
     client.setup();
   }
 
@@ -94,8 +92,6 @@ window.templates.po_main = function(podata)
     }
 
     if (missing_markers.length) {
-    opera.postError(JSON.stringify(missing_markers, false, "    "))
-
       errortpls.push(
         ["p", "Some translated strings interpolation markers do not match the English version: " +
               missing_markers.map(function(e) { return e.msgctxt }).join(", ")]
