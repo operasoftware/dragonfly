@@ -28,7 +28,7 @@ cls.debug.PoTest = function(id, name, container_class)
 
   this._on_loaded_po_bound = function(evt)
   {
-    data = window.poparser.parseString(evt.target.result, "dragonfly");
+    data = potools.parse(evt.target.result, "dragonfly");
     this._podata = data;
     this._update_uistrings();
   }.bind(this);
@@ -44,20 +44,6 @@ cls.debug.PoTest = function(id, name, container_class)
     this._file = null;
     this.update();
   }.bind(this);
-
-  this._find_missing_interpolation_markers = function(entries)
-  {
-    var re = /%\(\w+\)(?:[^s]|$)/g;
-    return entries.filter(function(e) { return e.msgstr.match(re) })
-  }
-
-  this._find_bad_interpolation_markers = function(entries)
-  {
-    var re = /%\((\w+\))s/g
-    return entries.filter(function(e) {
-      return (e.msgstr.match(re) || []).sort().join("") == (e.msgid.match(re) || []).sort().join("") ? null : e;
-    });
-  }
 
   this._update_uistrings = function()
   {
@@ -96,10 +82,32 @@ window.templates.po_main = function(podata)
 {
   if (podata)
   {
+    var bad_markers = potools.malformed_interpolation_markers(podata);
+    var missing_markers = potools.missing_interpolation_markers(podata);
+    var errortpls = [];
+
+    if (bad_markers.length) {
+      errortpls.push(
+        ["p", "Some translated strings contain bad interpolation markers! Missing s at the end: " +
+              bad_markers.map(function(e) { return e.msgctxt }).join(", ")]
+      )
+    }
+
+    if (missing_markers.length) {
+    opera.postError(JSON.stringify(missing_markers, false, "    "))
+
+      errortpls.push(
+        ["p", "Some translated strings interpolation markers do not match the English version: " +
+              missing_markers.map(function(e) { return e.msgctxt }).join(", ")]
+      )
+    }
+
+
    return ["div", [
             ["p", "Loaded a PO file with " + podata.length + " entries."],
             ["button", "Reload PO file", "handler", "reload-po-data"],
             ["button", "Load another PO file", "handler", "select-other-po"],
+            errortpls,
           "class", "padding"]
           ];
   }
