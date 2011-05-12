@@ -28,11 +28,27 @@ var DOMSearch = function(min_length)
   	window.eventHandlers.change['dom-search-type-changed'] = this._onsearchtypechange;
   };
 
-  
+  this._last_query = '';
+  this._last_search_type = 0;
+
+  this._handle_search = function()
+  {
+    window.views.dom.update();
+  }.bind(this);
 
   this.highlight_next = function()
   {
-  	alert(this._input.value)
+  	if (this._input.value != this._last_query ||
+        this.search_type != this._last_search_type)
+    {
+      this._last_query = this._input.value;
+      this._last_search_type = this.search_type;
+      window.dom_data.search(this._last_query,
+                             this.search_type,
+                             this.ignore_case,
+                             0,
+                             this._handle_search)
+    }
   };
 
   this.highlight_previous = function()

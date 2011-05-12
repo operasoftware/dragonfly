@@ -30,7 +30,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6, 
   PUBLIC_ID = 4,
-  SYSTEM_ID = 5;
+  SYSTEM_ID = 5,
+  TRAVERSE_SERACH = "search";
 
   this._set_mime = function()
   {
@@ -72,6 +73,20 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._get_dom(object_id, traverse_type || "children", cb);
   }
 
+  this.search = function(query, type, ignore_case, object_id, cb)
+  {
+    this._isprocessing = true;
+    var tag = window.tag_manager.set_callback(this, 
+                                              this.__handle_dom, 
+                                              [object_id, TRAVERSE_SERACH, cb]);
+    var msg = [this._data_runtime_id, 
+               query, 
+               type, 
+               object_id || null, 
+               ignore_case || 0];
+    services['ecmascript-debugger'].requestSearchDom(tag, msg);
+  }
+
   this._get_dom = function(object_id, traverse_type, cb)
   {
     this._isprocessing = true;
@@ -92,10 +107,14 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       switch (traverse_type)
       {
         // traverse_type 'node' so far not supported
+        case TRAVERSE_SERACH:
         case "parent-node-chain-with-children":
         {
-          this._data = _data;
-          break;
+          if (traverse_type != "search" || !object_id)
+          {            
+            this._data = _data;
+            break;
+          }
         }
         case "subtree":
         case "children":

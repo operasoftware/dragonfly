@@ -12,6 +12,7 @@
   ATTR_KEY = 1,
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6,
+  MATCH_REASON = 10,
   INDENT = "  ",
   LINEBREAK = '\n';
 
@@ -20,6 +21,11 @@
   const COMMENT_NODE = Node.COMMENT_NODE;
   const DOCUMENT_NODE = Node.DOCUMENT_NODE;
   const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
+
+  const
+  TRAVERSAL = 1,
+  SEARCH_PARENT = 2,
+  SEARCH_HIT = 3;
 
   /**
    * Generates the part of the document type declaration after the document
@@ -96,6 +102,7 @@
     var is_debug = ini.debug;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
+    var is_search = data[0] && data[0][MATCH_REASON] != TRAVERSAL;
 
     for ( ; node = data[i]; i += 1)
     {
@@ -173,6 +180,8 @@
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
                 one_child_text_content += "<text" +
+                  (is_search && data[child_pointer][MATCH_REASON] == SEARCH_PARENT ?
+                   " class='no-dom-search-match' " : "") +
                   (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
@@ -192,7 +201,9 @@
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
-                          "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                          "<node" + (is_search && node[MATCH_REASON] == SEARCH_PARENT ?
+                                     " class='no-dom-search-match' " : "") + 
+                                    ">&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
                           (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
@@ -208,7 +219,9 @@
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
-                          "<node>&lt;" + node_name + attrs + "&gt;</node>" +
+                          "<node" + (is_search && node[MATCH_REASON] == SEARCH_PARENT ?
+                                     " class='no-dom-search-match' " : "") + 
+                                    ">&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
 
@@ -228,13 +241,17 @@
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
-                          "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
+                          "<node" + (is_search && node[MATCH_REASON] == SEARCH_PARENT ?
+                                     " class='no-dom-search-match' " : "") + 
+                                    ">&lt;" + node_name + attrs + (children_length ? '' : '/') + 
+                                    "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
           }
           break;
         }
 
+        // TODO
         case PROCESSING_INSTRUCTION_NODE:
         {
           tree += "<div" + this._get_indent(node) +
@@ -244,6 +261,7 @@
 
         }
 
+        // TODO
         case COMMENT_NODE:
         {
           if (show_comments)
@@ -261,6 +279,7 @@
           // Don't show this in markup view
           break;
 
+        // TODO
         case DOCUMENT_TYPE_NODE:
         {
           tree += "<div" + this._get_indent(node) + "class='doctype'>" +
@@ -276,6 +295,8 @@
           {
             tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
                     "<text" +
+                    (is_search && data[child_pointer][MATCH_REASON] == SEARCH_PARENT ?
+                     " class='no-dom-search-match' " : "") +
                     (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
