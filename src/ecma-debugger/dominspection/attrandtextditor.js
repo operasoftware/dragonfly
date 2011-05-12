@@ -5,34 +5,6 @@
 
 var DOMAttrAndTextEditor = function(nav_filters)
 {
-  var re_encoded = /^(?:\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029)+$/;
-
-  var decode_escape = function(string)
-  {
-    var  
-    match = null, 
-    ret = '',
-    re = /\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029/g,
-    decode_map = 
-    {   
-      '\\t': '\t',
-      '\\v': '\v',
-      '\\f': '\f',
-      '\\u0020': '\u0020',
-      '\\u00A0': '\u00A0',
-      '\\r': '\r',
-      '\\n': '\n',
-      '\\u2028': '\u2028',
-      '\\u2029': '\u2029'
-    };
-
-    while( match = re.exec(string) )
-    {
-      ret += decode_map[match[0]];
-    }
-    return ret;
-  }
-
   var crlf_encode = function(str)
   {
     return helpers.escape_input(str).replace(/\r\n/g, "\\n");
@@ -131,9 +103,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
         enter_state.rt_id = parseInt(parent_parent.parentElement.getAttribute('rt-id')
           || parent_parent.parentElement.parentElement.getAttribute('rt-id'));
         enter_state.obj_id = parseInt(ele.getAttribute('ref-id'));
-        if( re_encoded.test(ele.textContent) )
+        if (ele.hasClass("only-whitespace"))
         {
-          enter_state.text = decode_escape(ele.textContent);
+          enter_state.text = helpers.unescape_whitespace(ele.textContent);
         }
         else
         {
@@ -265,10 +237,12 @@ var DOMAttrAndTextEditor = function(nav_filters)
             this.context_enter.model.expand(cb, state.obj_id, "node");
           if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
-            nav_target.textContent = helpers.escape_spaces(state.text);
+            nav_target.addClass("only-whitespace");
+            nav_target.textContent = helpers.escape_whitespace(state.text);
           }
           else
           {
+            nav_target.removeClass("only-whitespace");
             nav_target.textContent = state.text;
           }
           break;
@@ -334,7 +308,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
             if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
             {
-              nav_target.textContent = helpers.escape_spaces(state.text);
+              nav_target.textContent = helpers.escape_whitespace(state.text);
             }
             else
             {

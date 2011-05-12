@@ -218,7 +218,7 @@ rule:not(.non-editable) property:hover {
 
 .tree-style > div
 {
-  background-color: #fafafa;
+  background-color: #fefefe;
 }
 
 .tree-style > div > node:first-child:before

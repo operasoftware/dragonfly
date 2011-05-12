@@ -552,6 +552,11 @@ div.dom {
   padding-left: 1px;
   padding-right: 3px;
 }
+.only-whitespace {
+  border: 1px dotted #999;
+  border-radius: 2px;
+  margin-left: -1px;
+}
 
 .dom div:not(.info-box)
 {

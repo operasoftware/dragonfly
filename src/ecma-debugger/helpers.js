@@ -128,7 +128,7 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.escape_spaces = (function()
+  this.escape_whitespace = (function()
   {
     var map = {
       "\t": "\\t",
@@ -138,7 +138,7 @@ window.cls.Helpers = function()
       "\n": "\\n"
     };
 
-    return function(string)
+    return function escape_whitespace(string)
     {
       var chr = "";
       var ret = "";
@@ -151,6 +151,32 @@ window.cls.Helpers = function()
       return ret;
     }
   })();
+
+  this.unescape_whitespace = (function()
+  {
+    var re = /\\t|\\v|\\f|\\r|\\n|\\u[0-9A-fa-f]{4}/g;
+    var map = {
+      "\\t": "\t",
+      "\\v": "\v",
+      "\\f": "\f",
+      "\\r": "\r",
+      "\\n": "\n"
+    };
+
+    return function unescape_whitespace(string)
+    {
+      var match = null;
+      var ret = "";
+
+      while (match = re.exec(string))
+      {
+        ret += map[match[0]] || String.fromCharCode(parseInt(match[0].slice(2).toString(10), 16));
+      }
+
+      return ret;
+    }
+  })();
+
 
   this.setCookie = function(key, value, time) 
   {

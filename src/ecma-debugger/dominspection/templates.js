@@ -471,12 +471,14 @@
           }
           else
           {
+            var only_whitespace = /^\s*$/.test(node[VALUE]);
             tree += "<div" + this._get_indent(node) +
                     current_formatting + " data-menu='dom-element'>" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
-                        (/^\s*$/.test(node[VALUE]) ? helpers.escape_spaces(node[VALUE])
-                                                   : helpers.escapeTextHtml(node[VALUE])) +
+                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") +
+                        " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
+                        (only_whitespace ? helpers.escape_whitespace(node[VALUE])
+                                         : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }
