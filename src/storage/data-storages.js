@@ -77,7 +77,7 @@ cls.StorageDataBase = new function()
     return item;
   };
 
-  this._encode_new_line_chars = (function()
+  this._encode = (function()
   {
     /* from the ecma spec
       \u000A Line Feed <LF>
@@ -94,7 +94,7 @@ cls.StorageDataBase = new function()
 
     return function(str)
     {
-      return str.replace(re, fn);
+      return str.replace(re, fn).replace(/\"/g, "\\\"");
     }
   })();
 
@@ -117,7 +117,7 @@ cls.StorageDataBase = new function()
       );
     }
     var script = "local_storage.set_item(\"" + item.key + "\",\"" +
-      this._encode_new_line_chars(value) + "\",\"" + item.type + "\")";
+      this._encode(value) + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
       [success_callback, "failed set_item in LocalStorageData"]);
     services['ecmascript-debugger'].requestEval(tag,
