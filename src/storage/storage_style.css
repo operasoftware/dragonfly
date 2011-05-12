@@ -4,7 +4,12 @@
   border-radius: 0;
 }
 
-.storage_view .sortable-table td {
+input[type='datetime-local'] {
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+
+.storage_view .sortable-table td, .storage_view .sortable-table th {
   vertical-align: top;
   word-wrap: break-word;
 }
@@ -16,16 +21,12 @@
 /* editing */
 
 .storage_view .value_container {
-  position: relative;
-  margin-top: 3px;
   word-wrap: break-word;
 }
 
 .storage_view .edit_container {
   display: none;
-  margin: 1px 7px 0 -1px;
-  padding-bottom: 1px;
-  position: relative;
+  margin: -1px 0 2px -2px;
 }
 
 .storage_view .edit_mode .edit_container {
@@ -37,14 +38,34 @@
 }
 
 .storage_view input[type=text], .storage_view textarea {
-  padding: 3px 3px 0 3px;
+  padding: 3px 2px 1px 2px;
+}
+
+.storage_view .sortable-table .value_container > div {
+  /* extended with height for div.ellipsis_cont */
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 
 /* ellipsis */
 
 .storage_view .sortable-table .ellipsis_cont {
   position: relative;
-  height: 12px;
+}
+
+.storage_view .sortable-table td .ellipsis_cont {
+  /*
+    because .ellipsis is the only things that lives in this container,
+    height needs to be specified to take room
+  */
+  height: 13px;
+}
+
+.storage_view .sortable-table th .ellipsis_cont {
+  /* header row is lower */
+  height: 8px;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 .storage_view .sortable-table .ellipsis_cont .ellipsis {
@@ -63,7 +84,7 @@
 
 /* "check" values */
 
-.storage_view .storage_table_container .check {
+.storage_view .sortable_table_container .check {
   content: url("../ui-images/menu_check.png");
 }
 
@@ -73,12 +94,12 @@
 .storage_view .sortable-table .col_key {
   width: 25%;
 }
-.storage_view .storage_table_container .sortable-table .col_value {
+.storage_view .sortable-table .col_value {
   width: 75%;
 }
 
 /* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
-  it's just for the add_cookie button */
+  it's just for the add_cookie/add_storage button */
 .storage_view .sortable-table tr.sortable-table-summation-row td {
   border: none;
   background: none;
@@ -95,15 +116,12 @@
 
 /* other sortable-table stuff specific to storage */
 
-.storage_view .storage_table_container .sortable-table td {
+.storage_view .sortable-table .header td {
   padding: 6px 5px 2px 20px;
   position: relative;
 }
 
-.storage_view .storage_table_container .sortable-table td.align-center {
-  padding: 6px 5px 2px 5px;
-}
-
-.storage_view .storage_table_container .sortable-table td.align-right {
-  padding: 6px 5px 2px 5px;
+.storage_view .sortable-table td.align-center,
+.storage_view .sortable-table td.align-right {
+  padding: 0 5px 0 5px;
 }

@@ -26,7 +26,8 @@ cls.StorageView = function(id, name, container_class, storage_name)
         {
           this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
         }
-        container.clearAndRender(["div", this._sortable_table.render(), "class", "storage_table_container", "handler", "storage_table_container"]);
+        // container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container", "handler", "sortable_table_container"]); // todo: wonder what the handler was for?
+        container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
         this._after_table_render();
       }
       else
@@ -44,8 +45,8 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this._before_table_render = function()
   {
     // save selection
-    var table_elem = document.querySelector(".storage_table_container")
-                     && document.querySelector(".storage_table_container").firstChild;
+    var table_elem = document.querySelector(".sortable_table_container")
+                     && document.querySelector(".sortable_table_container").firstChild;
     if (table_elem)
     {
       var selection = table_elem.querySelectorAll(".selected");
@@ -59,8 +60,8 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this._after_table_render = function()
   {
     // restore selection
-    var table_elem = document.querySelector(".storage_table_container") 
-                     && document.querySelector(".storage_table_container").firstChild;
+    var table_elem = document.querySelector(".sortable_table_container") 
+                     && document.querySelector(".sortable_table_container").firstChild;
     if (this._restore_selection)
     {
       for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
@@ -103,7 +104,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
 
   this._remove_item = function(event, target)
   {
-    var table_elem = document.querySelector(".storage_table_container").firstChild;
+    var table_elem = document.querySelector(".sortable_table_container").firstChild;
     var selection = table_elem.querySelectorAll(".selected");
     var selected_cookie_objects = [];
     for (var i=0, selected_node; selected_node = selection[i]; i++) {

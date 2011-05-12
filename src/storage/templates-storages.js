@@ -2,8 +2,8 @@
 
 // todo: mostly to be merged with cookie_manager
 window.templates.storage = {
-  runtime_group_render: function(protocol, domain, path) {
-    return this.wrap_ellipsis(protocol + "//" + domain + path);
+  runtime_group_render: function(uri) {
+    return this.wrap_ellipsis(uri);
   },
   wrap_ellipsis: function(elem) {
     var template = [

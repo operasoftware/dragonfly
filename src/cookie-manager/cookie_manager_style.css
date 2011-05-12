@@ -1,6 +1,6 @@
 ﻿/*
  * This file is only for cookie_manager specifics.
- * General .storage_view things are in storage_style.css
+ * General .storage_view things are in storage/storage_style.css
  */
 .cookie_manager .sortable-table .add_cookie_dropdown {
   font-size: 11px;

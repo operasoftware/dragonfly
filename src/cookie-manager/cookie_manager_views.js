@@ -108,7 +108,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("path")
         },
         expires: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
           classname: "col_expires",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -120,14 +120,14 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("expires")
         },
         isSecure: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
           renderer: this._is_secure_renderer.bind(this),
           align: "center",
           sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
           renderer: this._is_http_only_renderer.bind(this),
           align: "center",
@@ -150,7 +150,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
     }
     this._before_table_render();
-    this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
+    this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
     this._after_table_render();
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };

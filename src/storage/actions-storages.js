@@ -121,7 +121,7 @@ cls.StorageViewActions = function(id)
     if (!document.querySelector(".add_storage_row")) // add multiple items at once
     {
       // todo: how to reach _sortable_table from actions?
-      // this._sortable_table.restore_columns(document.querySelector(".storage_table_container").firstChild);
+      // this._sortable_table.restore_columns(document.querySelector(".sortable_table_container").firstChild);
     }
     var header_row = row;
     while (!header_row.hasClass("header"))

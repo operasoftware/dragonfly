@@ -393,7 +393,7 @@ cls.StorageDataBase = new function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return runtimes.getRuntime(obj[0]._rt_id).uri;
+            return templates.storage.runtime_group_render(runtimes.getRuntime(obj[0]._rt_id).uri);
           },
           idgetter: function(obj) {
             return ""+obj[0]._rt_id;
