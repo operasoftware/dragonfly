@@ -45,6 +45,20 @@ cls.debug.PoTest = function(id, name, container_class)
     this.update();
   }.bind(this);
 
+  this._find_missing_interpolation_markers = function(entries)
+  {
+    var re = /%\(\w+\)(?:[^s]|$)/g;
+    return entries.filter(function(e) { return e.msgstr.match(re) })
+  }
+
+  this._find_bad_interpolation_markers = function(entries)
+  {
+    var re = /%\((\w+\))s/g
+    return entries.filter(function(e) {
+      return (e.msgstr.match(re) || []).sort().join("") == (e.msgid.match(re) || []).sort().join("") ? null : e;
+    });
+  }
+
   this._update_uistrings = function()
   {
     var unhandled = [];
@@ -71,8 +85,6 @@ cls.debug.PoTest = function(id, name, container_class)
   eh.click["reload-po-data"] = this._on_clicked_reload_po_bound;
   eh.click["select-other-po"] = this._on_clicked_select_po_bound;
 
-
-
   this.init(id, name, container_class);
 }
 cls.debug.PoTest.prototype = ViewBase;
@@ -95,6 +107,7 @@ window.templates.po_main = function(podata)
   {
     return [
       "div", [
+        ["label", "Select a po file to load: "],
         ["input", "Paste the contents of a po file", "type", "file", "handler", "po-file-selected"],
       "class", "padding"]
     ]
