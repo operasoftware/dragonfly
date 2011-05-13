@@ -79,6 +79,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     var tag = window.tag_manager.set_callback(this, 
                                               this.__handle_dom, 
                                               [object_id, TRAVERSE_SERACH, cb]);
+    this.search_type = type;
     var msg = [this._data_runtime_id, 
                query, 
                type, 
@@ -257,7 +258,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this.has_data = function()
   {
-    return Boolean(this._data.length);
+    return Boolean(this._data && this._data.length);
   }
 
   this.has_node = function(node_id)

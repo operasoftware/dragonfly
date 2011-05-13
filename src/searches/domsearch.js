@@ -24,30 +24,41 @@ var DOMSearch = function(min_length)
   	this._init_super(min_length);
   	this.search_type = DOMSearch.PLAIN_TEXT;
   	this.ignore_case = 1;
+    this._min_term_length = 1;
+    this._last_query = '';
+    this._last_search_type = 0;
+    this._last_ignore_case = this.ignore_case;
 
   	window.eventHandlers.change['dom-search-type-changed'] = this._onsearchtypechange;
+    this._query_selector = ".dom-search-match";
   };
-
-  this._last_query = '';
-  this._last_search_type = 0;
 
   this._handle_search = function()
   {
     window.views.dom.update();
+    this._search_term = '';
+    this.search(this._last_query); 
   }.bind(this);
 
+  this._super_highlight_next = this.highlight_next;
   this.highlight_next = function()
   {
   	if (this._input.value != this._last_query ||
-        this.search_type != this._last_search_type)
+        this.search_type != this._last_search_type ||
+        this.ignore_case != this._last_ignore_case)
     {
       this._last_query = this._input.value;
       this._last_search_type = this.search_type;
+      this._last_ignore_case = this.ignore_case;
       window.dom_data.search(this._last_query,
                              this.search_type,
                              this.ignore_case,
                              0,
                              this._handle_search)
+    }
+    else
+    {
+      this._super_highlight_next();
     }
   };
 
@@ -66,7 +77,7 @@ var DOMSearch = function(min_length)
 
 DOMSearch.prototype = TextSearch.prototype;
 
-DOMSearch.PLAIN_TEXT = 1;
-DOMSearch.REGEXP = 2;
+DOMSearch.PLAIN_TEXT = TextSearch.PLAIN_TEXT;
+DOMSearch.REGEXP = TextSearch.REGEXP;
 DOMSearch.XPATH = 3;
 DOMSearch.CSS = 4;
