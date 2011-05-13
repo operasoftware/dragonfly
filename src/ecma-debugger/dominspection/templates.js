@@ -16,10 +16,16 @@
   LINEBREAK = '\n';
 
   const ELEMENT_NODE = Node.ELEMENT_NODE;
+  const TEXT_NODE = Node.TEXT_NODE;
+  const CDATA_SECTION_NODE = Node.CDATA_SECTION_NODE;
   const PROCESSING_INSTRUCTION_NODE = Node.PROCESSING_INSTRUCTION_NODE;
   const COMMENT_NODE = Node.COMMENT_NODE;
   const DOCUMENT_NODE = Node.DOCUMENT_NODE;
   const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
+
+  this._node_name_map = {};
+  this._node_name_map[TEXT_NODE] = "<span class='text-node'>#text</span> ";
+  this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
 
   /**
    * Generates the part of the document type declaration after the document
@@ -156,7 +162,7 @@
             child_level = data[child_pointer][DEPTH];
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
                 has_only_one_child = 0;
                 one_child_text_content = '';
@@ -245,7 +251,6 @@
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
-
         }
 
         case COMMENT_NODE:
@@ -295,12 +300,6 @@
     tree += "</div>";
     return tree;
   }
-
-  var nodeNameMap =
-  {
-    3: "<span class='text-node'>#text</span> ",
-    4: "<span class='cdata-node'>#cdata-section</span>"
-  };
 
   this._inspected_dom_node_tree_style = function(model, target, editable)
   {
@@ -391,7 +390,7 @@
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
               one_child_value += data[child_pointer][VALUE];
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
                 has_only_one_child = 0;
                 one_child_value = '';
@@ -457,13 +456,13 @@
 
         default:
         {
-          if (!(show_white_space_nodes) && (node[TYPE] == 3))
+          if (!(show_white_space_nodes) && (node[TYPE] == TEXT_NODE))
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._get_indent(node) +
                        current_formatting + " data-menu='dom-element'>" +
-                       (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
+                       (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                        "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
@@ -474,7 +473,7 @@
             var only_whitespace = /^\s*$/.test(node[VALUE]);
             tree += "<div" + this._get_indent(node) +
                     current_formatting + " data-menu='dom-element'>" +
-                    (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
+                    (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                       "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") +
                         " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
                         (only_whitespace ? helpers.escape_whitespace(node[VALUE])
