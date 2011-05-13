@@ -9,7 +9,10 @@
 var TextSearch = function(min_length)
 {
   this._init(min_length);
-}
+};
+
+TextSearch.PLAIN_TEXT = 1;
+TextSearch.REGEXP = 2;
 
 TextSearch.prototype = new function()
 {
@@ -50,8 +53,8 @@ TextSearch.prototype = new function()
     this._curent_search_result = null;
     this._timeouts = new Timeouts();
     this._search_bound = this.search.bind(this);
-
-
+    this.ignore_case = 1;
+    this.search_type = TextSearch.PLAIN_TEXT;
   }
 
   this._set_default_style = function(span)
@@ -146,13 +149,24 @@ TextSearch.prototype = new function()
             if (this._current_match_index - this._consumed_total_length < node.nodeValue.length)
             {
               node.splitText(this._current_match_index - this._consumed_total_length);
-              this._current_match_index = this._search_target.indexOf(this._search_term, 
-                                                                      this._last_match_index)
+              this._to_consume_hit_length = this._search_term_length;
+              if (this._reg_exp)
+              {
+                this._reg_exp_match = this._reg_exp.exec(this._search_target);
+                this._current_match_index = this._reg_exp_match ? 
+                                            this._reg_exp_match.index : -1;
+                this._search_term_length = this._reg_exp_match ? 
+                                           this._reg_exp_match[0].length : 0;
+              }
+              else
+              {           
+                this._current_match_index = this._search_target.indexOf(this._search_term, 
+                                                                        this._last_match_index)
+              }
               if (this._current_match_index != -1)
               {
                 this._last_match_index = this._current_match_index + this._search_term_length;
               }
-              this._to_consume_hit_length = this._search_term_length;
               this._curent_search_result = this._hits[this._hits.length] = [];
             }
             this._consumed_total_length += node.nodeValue.length;
@@ -165,16 +179,31 @@ TextSearch.prototype = new function()
   
   this._search_node = function(node)
   {
-    this._search_target = this._container.textContent.toLowerCase();
-    this._search_term_length = this._search_term.length;
-    this._current_match_index = this._search_target.indexOf(this._search_term);
+    this._search_target = this.ignore_case && 
+                          this.search_type == TextSearch.PLAIN_TEXT ?
+                          node.textContent.toLowerCase() :
+                          node.textContent;
+    if (this._reg_exp)
+    {
+      this._reg_exp.lastIndex = 0;
+      this._reg_exp_match = this._reg_exp.exec(this._search_target);
+      this._current_match_index = this._reg_exp_match ? 
+                                  this._reg_exp_match.index : -1;
+      this._search_term_length = this._reg_exp_match ? 
+                                 this._reg_exp_match[0].length : 0;
+    }
+    else
+    {
+      this._search_term_length = this._search_term.length;
+      this._current_match_index = this._search_target.indexOf(this._search_term);
+    }
     this._last_match_index = this._current_match_index != -1 ?
                              this._current_match_index + this._search_term_length :
                              0;
     this._consumed_total_length = 0;
     this._to_consume_hit_length = 0;
     this._curent_search_result = null;
-    this._consume_node(this._container);
+    this._consume_node(node);
   };
 
   this._clear_search_results = function()
@@ -210,9 +239,21 @@ TextSearch.prototype = new function()
                                       this._search_term : ""});
       if (this._search_term.length >= this._min_term_length || force_search)
       {
+        this._reg_exp = this.search_type == TextSearch.REGEXP ?
+                        new RegExp(this._search_term, 
+                                   this.ignore_case ? 'gi' : 'g') :
+                        null;
         if(this._container)
         {
-          this._search_node(this._container);
+          if (this._query_selector)
+          {
+            var nodes = this._container.querySelectorAll(this._query_selector);
+            Array.prototype.forEach.call(nodes, this._search_node, this);
+          }
+          else
+          {
+            this._search_node(this._container);
+          }
           if( old_cursor && this._hits[old_cursor] )
           {
             this._match_cursor = old_cursor;
@@ -222,6 +263,7 @@ TextSearch.prototype = new function()
           else
           {
             this._update_info(NO_MATCH);
+            this._container.scrollTop = 0; 
             this.highlight(true);
           }
         }
