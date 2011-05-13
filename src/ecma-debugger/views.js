@@ -213,7 +213,7 @@ cls.GeneralView.create_ui_widgets = function()
       {
         return [
           ['setting-composite',
-            'User Interface Language' + ': ',
+            ui_strings.M_LABEL_UI_LANGUAGE + ': ',
             [
               'select',
               templates.uiLangOptions(),
