@@ -140,10 +140,9 @@ window.cls.Helpers = function()
 
     return function escape_whitespace(string)
     {
-      var chr = "";
       var ret = "";
 
-      for (var i = 0; chr = string[i]; i++)
+      for (var i = 0, chr; chr = string[i]; i++)
       {
         ret += map[chr] || "\\u" + chr.charCodeAt(0).toString(16).zfill(4);
       }
@@ -154,7 +153,7 @@ window.cls.Helpers = function()
 
   this.unescape_whitespace = (function()
   {
-    var re = /\\t|\\v|\\f|\\r|\\n|\\u[0-9A-fa-f]{4}/g;
+    var re = /\\[tvfrn]|\\u[0-9A-fa-f]{4}/g;
     var map = {
       "\\t": "\t",
       "\\v": "\v",
@@ -176,7 +175,6 @@ window.cls.Helpers = function()
       return ret;
     }
   })();
-
 
   this.setCookie = function(key, value, time) 
   {
