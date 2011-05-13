@@ -28,6 +28,10 @@
   word-wrap: normal;
 }
 
+.sortable-table tr:first-of-type th {
+  border-top-color: #fefefe;
+}
+
 .sortable-table  tr:nth-child(odd) {
   background-color: rgba(0,0,0,0.025);
 }
