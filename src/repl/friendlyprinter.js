@@ -211,6 +211,7 @@ window.cls.FriendlyPrinter = function()
     const ELEMENT = 1;
     const DATE = 2;
     const FUNCTION = 3;
+    const ERROR = 4;
     var ret = list.map(function(item)
     {
       var class_ = item === null ? "" : Object.prototype.toString.call(item);
@@ -238,6 +239,13 @@ window.cls.FriendlyPrinter = function()
         return [
           FUNCTION,
           item.toString()
+        ];
+      }
+      else if (/Error\]$/.test(class_))
+      {
+        return [
+          ERROR,
+          item.message
         ];
       }
       return null;
@@ -309,13 +317,20 @@ window.cls.FriendlyPrinter = function()
       return window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]).concat('class', 'function-expression');
     };
 
+    this._friendly_print_error = function(value_list)
+    {
+      const MESSAGE = 1;
+      return ["span", value_list[MESSAGE], "class", "severity-error"];
+    };
+
     this.friendly_print = function(value_list)
     {
       const
       TYPE = 0,
       ELEMENT = 1,
       DATE = 2,
-      FUNCTION = 3;
+      FUNCTION = 3,
+      ERROR = 4;
 
       switch (value_list[TYPE])
       {
@@ -327,6 +342,9 @@ window.cls.FriendlyPrinter = function()
 
       case FUNCTION:
         return this._friendly_print_function(value_list);
+
+      case ERROR:
+        return this._friendly_print_error(value_list);
       }
     };
   };
