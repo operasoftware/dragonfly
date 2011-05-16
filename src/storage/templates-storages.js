@@ -46,7 +46,9 @@ window.templates.storage = {
       "textarea", value || "",
       "type", "text",
       "name", name,
-      "handler", "storage-input-field"
+      "handler", "storage-input-field",
+      "focus-handler", "textarea-focus",
+      "blur-handler", "textarea-blur"
     ];
     return elem;
   },

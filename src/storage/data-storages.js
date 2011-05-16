@@ -116,7 +116,7 @@ cls.StorageDataBase = new function()
         }
       );
     }
-    var script = "local_storage.set_item(\"" + item.key + "\",\"" +
+    var script = "local_storage.set_item(\"" + this._encode(item.key) + "\",\"" +
       this._encode(value) + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
       [success_callback, "failed set_item in LocalStorageData"]);

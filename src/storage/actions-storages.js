@@ -1,10 +1,11 @@
-﻿var cls = window.cls || (window.cls = {});
+var cls = window.cls || (window.cls = {});
 
 cls.StorageViewActions = function(id)
 {
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit";
+  MODE_MULTI_LINE_EDIT = "multi-line-edit";
 
   this.id = id;
   this.inherited_shortcuts = "storage";
@@ -172,7 +173,19 @@ cls.StorageViewActions = function(id)
 
   this._handlers["textarea-autosize"] = function(event, target)
   {
+    target.style.overflow = "hidden";
     target.style.height = target.scrollHeight + "px";
+    target.style.overflow = "visible";
+  };
+
+  this._handlers["textarea-focus"] = function(event, target)
+  {
+    this.mode = MODE_MULTI_LINE_EDIT;
+  };
+
+  this._handlers["textarea-blur"] = function(event, target) // todo: or make focus on inputs do that?
+  {
+    this.mode = MODE_EDIT;
   };
 
   var broker = ActionBroker.get_instance();
@@ -257,7 +270,7 @@ window.eventHandlers.click["storage-row"] = function(event, target)
   this.broker.dispatch_action(data_storage_id, "select-row", event, target);
 }
 
-window.eventHandlers.click["storage"] = function(event, target) // todo: make this the view container instead
+window.eventHandlers.click["storage-view"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
   this.broker.dispatch_action(data_storage_id, "submit", event, target);
@@ -282,4 +295,16 @@ window.eventHandlers.keyup["storage-input-field"] = function(event, target)
     var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
     this.broker.dispatch_action(data_storage_id, "textarea-autosize", event, target);
   }
+}
+
+window.eventHandlers.focus["textarea-focus"] = function(event, target)
+{
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "textarea-focus", event, target);
+}
+
+window.eventHandlers.blur["textarea-blur"] = function(event, target)
+{
+  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
+  this.broker.dispatch_action(data_storage_id, "textarea-blur", event, target);
 }

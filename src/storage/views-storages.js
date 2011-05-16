@@ -26,7 +26,6 @@ cls.StorageView = function(id, name, container_class, storage_name)
         {
           this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
         }
-        // container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container", "handler", "sortable_table_container"]); // todo: wonder what the handler was for?
         container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
         this._after_table_render();
       }
@@ -64,7 +63,8 @@ cls.StorageView = function(id, name, container_class, storage_name)
                      && document.querySelector(".sortable_table_container").firstChild;
     if (this._restore_selection)
     {
-      for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
+      for (var i=0, objectref; objectref = this._restore_selection[i]; i++)
+      {
         var elem = table_elem.querySelector("[data-object-id='"+objectref+"']");
         if (elem)
         {
