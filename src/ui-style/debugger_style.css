@@ -1346,3 +1346,14 @@ property.disabled color-sample
   opacity: .35;
 }
 
+.dom-search-node-highlight::before
+{
+  width: 30px;
+  height: 100%;
+  margin-left: -30px;
+  content: "\00A0";
+  display: block;
+  float: left;
+  background: url("../ui-images/node-match-pointer.png") no-repeat 0 50%;
+}
+

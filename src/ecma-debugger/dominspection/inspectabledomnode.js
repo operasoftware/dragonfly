@@ -23,7 +23,6 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   NAME = 2, 
   DEPTH = 3,
 
-
   ATTRS = 5,
   ATTR_PREFIX = 0,
   ATTR_KEY = 1, 
@@ -31,7 +30,11 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   CHILDREN_LENGTH = 6, 
   PUBLIC_ID = 4,
   SYSTEM_ID = 5,
-  TRAVERSE_SERACH = "search";
+  MATCH_REASON = 10,
+  TRAVERSE_SERACH = "search",
+  TRAVERSAL = 1,
+  SEARCH_PARENT = 2,
+  SEARCH_HIT = 3;
 
   this._set_mime = function()
   {
@@ -86,7 +89,20 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
                object_id || null, 
                ignore_case || 0];
     services['ecmascript-debugger'].requestSearchDom(tag, msg);
-  }
+  };
+
+  this.get_match_count = function()
+  {
+    var i = 0, count = 0, length = this._data ? this._data.length : 0 
+    for (; i < length; i++)
+    {
+      if (this._data[i][MATCH_REASON] == SEARCH_HIT)
+      {
+        count++;
+      }
+    }
+    return count;
+  };
 
   this._get_dom = function(object_id, traverse_type, cb)
   {

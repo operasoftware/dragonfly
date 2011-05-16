@@ -81,13 +81,13 @@ TextSearch.prototype = new function()
         case NO_MATCH:
         {
           info = ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-                 replace("%(SEARCH_TERM)s", this._search_term);
+                 replace("%(SEARCH_TERM)s", this._orig_search_term);
           break;
         }
         default:
         {
           info = ui_strings.S_TEXT_STATUS_SEARCH.
-                 replace("%(SEARCH_TERM)s", this._search_term).
+                 replace("%(SEARCH_TERM)s", this._orig_search_term).
                  replace("%(SEARCH_COUNT_TOTAL)s", this._get_match_counts()).
                  replace("%(SEARCH_COUNT_INDEX)s", this._get_search_cursor());
         }
@@ -224,9 +224,15 @@ TextSearch.prototype = new function()
 
   this.search = function(new_search_term, old_cursor, force_search)
   {
+    var orig_search_term = new_search_term;
+    if (this.ignore_case)
+    {
+      new_search_term = new_search_term.toLowerCase();
+    }
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
+      this._orig_search_term = orig_search_term;
       this._search_forced = Boolean(force_search);
       if(this._hits)
       {
@@ -297,6 +303,7 @@ TextSearch.prototype = new function()
    */
   this.highlight = function(check_position, direction)
   {
+    debugger
     if (this._search_term && 
         this._search_term.length < this._min_term_length &&
         !this._search_forced)
@@ -338,6 +345,23 @@ TextSearch.prototype = new function()
       }
       this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
       var target = this._hits[this._match_cursor][0];
+      this._scroll_target_into_view(target, direction);
+      this._update_info();
+    }
+    else if (this._search_term)
+    {
+      this._update_info(NO_MATCH);
+    }
+    else
+    {
+      this._update_info(EMPTY);
+    }
+  };
+
+  this._scroll_target_into_view = function(target, direction)
+  {
+    if (this._container && target)
+    {
       this._scroll_into_margined_view(this._container.offsetHeight,
                                       target.offsetHeight,
                                       this.getRealOffsetTop(target),
@@ -350,15 +374,6 @@ TextSearch.prototype = new function()
                                       DEFAULT_SCROLL_MARGIN,
                                       direction,
                                       'scrollLeft');
-      this._update_info();
-    }
-    else if (this._search_term)
-    {
-      this._update_info(NO_MATCH);
-    }
-    else
-    {
-      this._update_info(EMPTY);
     }
   };
 
