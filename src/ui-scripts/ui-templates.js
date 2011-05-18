@@ -328,7 +328,7 @@
 
   this.setting = function(view_id, view_name, is_unfolded)
   {
-    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var ret = ['fieldset', ['legend', view_name]];
     var setting = settings[view_id];
     var settings_map = setting.setting_map;
     var cat_name = '';
@@ -338,12 +338,6 @@
       ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
-  }
-
-  this.settingsHeader = function(view_id, view_name, is_unfolded)
-  {
-    return ['legend',
-      view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 
   this.overlay = function(groups)

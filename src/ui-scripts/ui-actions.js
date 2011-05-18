@@ -168,15 +168,6 @@ eventHandlers.click['settings-tabs'] = function(event, target)
   windows.showWindow('window-3', 'Settings', templates.settings(tabs), 200, 200, 200, 200);
 }
 
-eventHandlers.click['toggle-setting'] = function(event, target)
-{
-  var old_setting = target.parentElement;
-  var view_id = target.getAttribute('view-id');
-  var view = views[view_id];
-  var setting = document.render(templates.setting( view_id, view.name, !target.firstChild.hasClass('unfolded') ));
-  old_setting.parentElement.replaceChild(setting, old_setting);
-}
-
 eventHandlers.click['show-search'] = function(event, target)
 {
   var toolbar = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
