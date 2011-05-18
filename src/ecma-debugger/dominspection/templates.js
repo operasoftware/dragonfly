@@ -25,7 +25,15 @@
   const
   TRAVERSAL = 1,
   SEARCH_PARENT = 2,
-  SEARCH_HIT = 3;
+  SEARCH_HIT = 3,
+  SEARCH_TYPE_TOKEN = 1, 
+  SEARCH_TYPE_NODE = 2;
+
+  var search_classes = {};
+  search_classes[SEARCH_HIT] = "dom-search-match";
+  search_classes[SEARCH_PARENT] = "no-dom-search-match";
+  search_classes[TRAVERSAL] = "";
+  search_classes[undefined] = "";
 
   /**
    * Generates the part of the document type declaration after the document
@@ -76,7 +84,7 @@
     var ret = "";
     if (class_2)
     {
-      class_1 += " " + class_2; 
+      class_1 += (class_1 ? " " : "") + class_2; 
     }
     if (class_1)
     {
@@ -116,8 +124,26 @@
     var is_debug = ini.debug;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
-    var is_search = data[0] && data[0][MATCH_REASON] != TRAVERSAL;
+    var is_search = data[0] && data[0][MATCH_REASON] && 
+                    data[0][MATCH_REASON] != TRAVERSAL || false;
+    var search_type = 0;
+
+
+    if (is_search)
+    {
+      if (model.search_type == DOMSearch.XPATH || 
+          model.search_type == DOMSearch.CSS)
+      {
+        
+        search_type = SEARCH_TYPE_NODE;
+      }
+      else
+      {
+        search_type = SEARCH_TYPE_TOKEN;
+      }
+    }
     var search_class = "";
+    var search_class_text = "";
 
     for ( ; node = data[i]; i += 1)
     {
@@ -147,18 +173,7 @@
         node_name = node_name.toLowerCase();
       }
 
-      if (is_search)
-      {
-        search_class = node[MATCH_REASON] == SEARCH_HIT ? "dom-search-match" : 
-                       (model.search_type == DOMSearch.XPATH || 
-                        model.search_type == DOMSearch.CSS) &&  
-                       node[MATCH_REASON] == SEARCH_PARENT ? 
-                       "no-dom-search-match" : "";
-      }
-      else
-      {
-        search_class = "";
-      }
+      search_class = is_search ? search_classes[node[MATCH_REASON]] : "";
 
       switch (node[TYPE])
       {
@@ -207,9 +222,11 @@
               // for exact DOM representation it is anyway better to use the DOM tree style.
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
+                search_class_text = is_search ? 
+                                    search_classes[data[child_pointer][MATCH_REASON]] : 
+                                    "";
                 one_child_text_content += "<text" +
-                  (is_search && data[child_pointer][MATCH_REASON] == SEARCH_PARENT ?
-                   " class='no-dom-search-match' " : "") +
+                  create_class_attr(search_class_text) +
                   (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }

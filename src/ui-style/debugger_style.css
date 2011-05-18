@@ -1343,7 +1343,7 @@ property.disabled color-sample
 
 .no-dom-search-match
 {
-  opacity: .35;
+  opacity: .5;
 }
 
 .dom-search-node-highlight::before

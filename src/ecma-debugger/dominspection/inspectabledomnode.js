@@ -76,21 +76,31 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._get_dom(object_id, traverse_type || "children", cb);
   }
 
+  // this method is only supported in ECMAScriptDebugger 6.5 and higher
   this.search = function(query, type, ignore_case, object_id, cb)
   {
-    this._isprocessing = true;
-    var tag = window.tag_manager.set_callback(this, 
-                                              this.__handle_dom, 
-                                              [object_id, TRAVERSE_SERACH, cb]);
-    this.search_type = type;
-    var msg = [this._data_runtime_id, 
-               query, 
-               type, 
-               object_id || null, 
-               ignore_case || 0];
-    services['ecmascript-debugger'].requestSearchDom(tag, msg);
+    if (services['ecmascript-debugger'].requestSearchDom)
+    {
+      this._isprocessing = true;
+      var tag = window.tag_manager.set_callback(this, 
+                                                this.__handle_dom, 
+                                                [object_id, TRAVERSE_SERACH, cb]);
+      this.search_type = type;
+      var msg = [this._data_runtime_id, 
+                 query, 
+                 type, 
+                 object_id || null, 
+                 ignore_case || 0];
+      services['ecmascript-debugger'].requestSearchDom(tag, msg);
+    }
+    else
+    {
+      opera.postError("Searching the DOM is only supported " +
+                      "in ECMAScriptDebugger 6.5 and higher.");
+    }
   };
 
+  // this method makes only sense with ECMAScriptDebugger 6.5 and higher
   this.get_match_count = function()
   {
     var i = 0, count = 0, length = this._data ? this._data.length : 0 

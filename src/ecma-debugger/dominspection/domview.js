@@ -447,12 +447,12 @@ cls.DOMView.create_ui_widgets = function()
       // Defaults to TextSearch.
       new DOMSearch()
     ];
-    var search = new Search('dom', searchbar);
   }
   else
   {
-    var search = new Search('dom', [Searchbar]);
+    var searchbar = [Searchbar];
   }
+  var search = new Search('dom', searchbar);
 
   window.messages.addListener('dom-view-updated', function(msg)
   {
