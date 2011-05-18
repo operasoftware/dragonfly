@@ -1,4 +1,4 @@
-﻿/* Generated from hu.po at Mon May 02 18:10:49 2011 */
+﻿/* Generated from hu.po at Tue May 03 11:41:09 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "hu";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Globális hatály automatikus frissítése";

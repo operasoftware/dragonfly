@@ -1,4 +1,4 @@
-﻿/* Generated from hi.po at Mon May 02 18:10:45 2011 */
+﻿/* Generated from hi.po at Tue May 03 11:41:04 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "hi";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="वैश्विक स्कोप को स्वतः ही अद्यतन करें";

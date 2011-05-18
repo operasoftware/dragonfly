@@ -1,4 +1,4 @@
-﻿/* Generated from sv.po at Mon May 02 18:11:38 2011 */
+﻿/* Generated from sv.po at Tue May 03 11:41:58 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "sv";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Uppdatera globalt omfång automatiskt";

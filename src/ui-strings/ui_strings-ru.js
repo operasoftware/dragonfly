@@ -1,4 +1,4 @@
-﻿/* Generated from ru.po at Mon May 02 18:11:30 2011 */
+﻿/* Generated from ru.po at Tue May 03 11:41:50 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "ru";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Обновлять глобальную область автоматически";
@@ -156,7 +156,7 @@ ui_strings.S_INPUT_DEFAULT_TEXT_FILTER="Фильтр";
 ui_strings.S_LABEL_TAB_SIZE="Размер отступов";
 ui_strings.S_LABEL_COLLAPSED_INSPECTED_PROTOTYPES="Объекты прототипов, свёрнутые по умолчанию (список прототипов, например, Object, Array и т.д. При выборе * будут свёрнуты все):";
 ui_strings.S_LABEL_REPL_BACKLOG_LENGTH="Количество записей в истории";
-ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW="Клавиатурные сокращения %s";
+ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW="%s";
 ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT="По умолчанию";
 ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT="Изменить";
 ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT="Правка атрибутов и текста";

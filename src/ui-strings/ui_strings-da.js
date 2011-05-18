@@ -1,4 +1,4 @@
-﻿/* Generated from da.po at Mon May 02 18:10:07 2011 */
+﻿/* Generated from da.po at Tue May 03 11:40:27 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "da";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Opdater automatisk globalt virkefelt";

@@ -1,4 +1,4 @@
-﻿/* Generated from id.po at Mon May 02 18:10:51 2011 */
+﻿/* Generated from id.po at Tue May 03 11:41:11 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "id";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Update lingkup global secara otomatis";

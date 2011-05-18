@@ -1,4 +1,4 @@
-﻿/* Generated from el.po at Mon May 02 18:10:12 2011 */
+﻿/* Generated from el.po at Tue May 03 11:40:31 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "el";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Αυτόματη ενημέρωση γενικής προβολής";

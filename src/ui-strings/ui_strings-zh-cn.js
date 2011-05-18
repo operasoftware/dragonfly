@@ -1,4 +1,4 @@
-﻿/* Generated from zh-cn.po at Mon May 02 18:11:57 2011 */
+﻿/* Generated from zh-cn.po at Tue May 03 11:42:18 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "zh-cn";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="自动更新全局环境";

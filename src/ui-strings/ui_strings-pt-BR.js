@@ -1,4 +1,4 @@
-﻿/* Generated from pt-BR.po at Mon May 02 18:11:23 2011 */
+﻿/* Generated from pt-BR.po at Tue May 03 11:41:43 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "pt-BR";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Atualizar escopo global automaticamente";

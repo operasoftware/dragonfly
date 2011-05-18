@@ -1,4 +1,4 @@
-﻿/* Generated from nl.po at Mon May 02 18:11:16 2011 */
+﻿/* Generated from nl.po at Tue May 03 11:41:36 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "nl";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="Globaal bereik automatisch bijwerken";

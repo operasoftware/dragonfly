@@ -1,4 +1,4 @@
-﻿/* Generated from zh-tw.po at Mon May 02 18:12:00 2011 */
+﻿/* Generated from zh-tw.po at Tue May 03 11:42:21 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "zh-tw";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="自動更新全域範圍 (global scope)";
@@ -230,7 +230,7 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE="內容(Body)";
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC="回應的內容未被追蹤。要追蹤回應的內容，請啟用「網路選項」頁籤裡關於回應內容的選項。若你只要這個回應的內容，請點選按鈕。";
 ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL="無法顯示 %s 這種型態的資料";
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED="快取: %s ms";
-ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL="總時間: %(total)s ms \n請求時間: %s ms \n回應時間: %s ms";
+ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL="總時間: %(total)s ms \n請求時間: %(request)s ms \n回應時間: %(response)s ms";
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW="暫停更新網路活動";
 ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW="調整網路圖表讓它適合視窗寬度";
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL="通訊協定";

@@ -1,4 +1,4 @@
-﻿/* Generated from te.po at Mon May 02 18:11:42 2011 */
+﻿/* Generated from te.po at Tue May 03 11:42:02 2011 */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "te";
 ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE="గ్లోబల్ స్కోప్‌ను ఆటోమేటిక్‌గా అప్‌డేట్ చేయి";
