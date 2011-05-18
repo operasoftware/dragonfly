@@ -27,28 +27,17 @@ def _process_file(inpath, outfd):
     entries = [e for e in dfstrings.get_po_strings(inpath) if "scope" in e and "dragonfly" in e["scope"]]
     lines = [e["msgstr"] for e in entries]
 
-    failed = False
-    bad_format = dfstrings.get_strings_with_bad_format(lines)
-    if bad_format:
-        failed = True
-        print "error: %s contains strings with bad formatting:\n" % inpath
-        for e in bad_format: print e
-
     bad_markers = dfstrings.get_strings_with_bad_markers(entries)
     if bad_markers:
-        failed = True
         print "error: Some interpolation markers are missing, or different from originals:\n"
         for e in bad_markers: 
             print e["msgid"]
             print e["msgstr"]
             print "---"
-
-    if failed:
         return 1
 
     data = make_js_from_po(inpath)
     outfd.write(data)
-
 
 def _process_dir(dirpath, destpath):
     files = _find_pofiles(dirpath)
