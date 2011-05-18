@@ -104,6 +104,7 @@ def get_po_strings(path):
             "desc": u"",
             "jsname": e.occurrences[0][0].decode(e.encoding),
             "msgstr": (e.msgstr or e.msgid).replace("\n", "\\n"),
+            "msgid": e.msgid.replace("\n", "\\n"),
             "scope": []
         }
         if e.comment:
@@ -142,3 +143,14 @@ def get_strings_with_bad_format(strings):
     formatre = re.compile(r"%\(.*?\)[^s]")
     return [e for e in strings if formatre.findall(e)]
 
+def get_strings_with_bad_markers(entries):
+    ret = []
+    replacement_re = re.compile(r"(%(?:\([^\)]*\))?s)")
+
+    for entry in entries:
+        orig = "".join(sorted(replacement_re.findall(entry["msgid"])))
+        trans = "".join(sorted(replacement_re.findall(entry["msgstr"])))
+
+        if orig != trans:
+            ret.append(entry)
+    return ret
