@@ -35,6 +35,19 @@ window.cls.Helpers = function()
   }
 
   /**
+   * Return the filename of the script with `script_id`.
+   */
+  this.get_script_name = function(script_id)
+  {
+    var script = runtimes.getScript(script_id);
+    if (!script)
+    {
+      return null;
+    }
+    return script.uri || runtimes.getRuntime(script.runtime_id).uri;
+  };
+
+  /**
    * Returns the file name in a path. If there is no filename, it returns
    * the last directory. Query string and fragment identifier is stripped.
    *

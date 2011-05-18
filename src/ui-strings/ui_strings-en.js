@@ -1236,3 +1236,11 @@ ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 /* DESC: Context menu item for enabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
 
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";

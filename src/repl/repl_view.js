@@ -288,7 +288,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_trace = function(data)
   {
-    this._add_line("console.trace:");
+    this._add_line(ui_strings.S_CONSOLE_TRACE_LABEL);
     this._add_line(templates.repl_output_trace(data));
   };
 
@@ -664,14 +664,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_frame_select_bound = function(event, target)
   {
+    if (event.target.getAttribute("data-script-id") == null)
+    {
+      return;
+    }
     var sourceview = window.views.js_source;
-    sourceview.highlight(parseInt(event.srcElement.getAttribute("script-id")),
-                         parseInt(event.srcElement.getAttribute("line-number")));
+    sourceview.highlight(parseInt(event.target.getAttribute("data-script-id")),
+                         parseInt(event.target.getAttribute("data-line-number")));
 
     messages.post("trace-frame-selected", {rt_id: parseInt(target.getAttribute("runtime-id")),
-                                           obj_id: parseInt(event.srcElement.getAttribute("scope-variable-object-id")),
-                                           this_id: parseInt(event.srcElement.getAttribute("this-object-id")),
-                                           arg_id: parseInt(event.srcElement.getAttribute("arguments-object-id"))
+                                           obj_id: parseInt(event.target.getAttribute("data-scope-variable-object-id")),
+                                           this_id: parseInt(event.target.getAttribute("data-this-object-id")),
+                                           arg_id: parseInt(event.target.getAttribute("data-arguments-object-id"))
                                           }
                  );
   }.bind(this);
