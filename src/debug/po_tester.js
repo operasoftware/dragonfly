@@ -62,8 +62,6 @@ cls.debug.PoTest = function(id, name, container_class)
     client.setup();
   }
 
-  this._on
-
   var eh = window.eventHandlers;
   eh.change["po-file-selected"] = this._on_selected_po_bound;
   eh.click["reload-po-data"] = this._on_clicked_reload_po_bound;

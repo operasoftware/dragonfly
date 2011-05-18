@@ -78,10 +78,6 @@ cls.debug.create_debug_environment = function(params)
         handler: 'find-strings',
         title: 'Find untranslated strings'
       },
-      {
-        handler: 'test-po',
-        title: 'Test a PO file'
-      }
     ]
   )
   new Switches
@@ -98,11 +94,6 @@ cls.debug.create_debug_environment = function(params)
       window.ui_strings[key] = "# " + key + " #";
     }
     client.setup();
-  }
-
-  eventHandlers.click['test-po'] = function(event, target)
-  {
-    UIWindowBase.showWindow('test-po-file');
   }
 
   eventHandlers.click['reload-dragonfly'] = function(event, target)

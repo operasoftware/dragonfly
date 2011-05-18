@@ -1235,3 +1235,6 @@ ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
+
+/* DESC: Button label to show window for loading a PO file */
+ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
