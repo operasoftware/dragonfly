@@ -45,45 +45,6 @@ def _db_parser(path):
         ret["scopes"] = scopes
         yield ret
 
-def _po_block_reader(path):
-    """Yield blocks of text from a po file at path. Blocks are delimited by a
-    newline"""
-    fp = codecs.open(path, "r", encoding="utf-8")
-    curblock = []
-    for line in fp:
-        if line.isspace() and curblock:
-            yield curblock
-            curblock = []
-        else:
-            curblock.append(line.strip())
-    if curblock: yield curblock
-    
-def _po_parser(path):
-    """Generator that yields dicts containing parsed po data from file at
-    path."""
-    for block in _po_block_reader(path):
-        entry = {}
-        for line in block:
-            if line.startswith("#. Scope: "):
-                entry["scope"] = line[10:].split(",")
-            elif line.startswith("#. "):
-                if not "desc" in entry: entry["desc"] = line[3:]
-                else: entry["desc"] += line[2:]
-            elif line.startswith("#: "):
-                cpos = line.rfind(":", 2)
-                if cpos != -1: entry["jsname"] = line[3:cpos]
-                else: entry["jsname"] = line[3:]
-            elif line.startswith("msgid"):
-                pos = line.index("::")
-                entry["msgid"] = line[6:pos]
-                entry["idstring"] = line[pos:-1]
-            elif line.startswith("msgstr"):
-                entry["msgstr"] = line[8:-1]
-        if "jsname" in entry and "msgstr" in entry:
-            if entry["msgstr"]  == "":
-                entry["msgstr"] = entry["msgid"]
-            yield entry
-
 def _js_block_reader(path):
     fp = open(path)
     curblock = []
@@ -154,10 +115,6 @@ def get_po_strings(path):
         ret.append(cur)
     return ret
 
-def get_po_strings_old(path):
-    """return a list of string dicts taken from po file at path.
-    Deprecated. New version is using polib module"""
-    return list(_po_parser(path))
 
 def get_js_strings(path):
     "return a list of string dicts taken from js file at path"
@@ -184,6 +141,4 @@ def get_strings_with_bad_format(strings):
     as "%(foo)s" has been changed to "%(foo)" """
     formatre = re.compile(r"%\(.*?\)[^s]")
     return [e for e in strings if formatre.findall(e)]
-
-
 
