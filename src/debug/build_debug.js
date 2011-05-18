@@ -24,7 +24,6 @@ cls.debug.create_debug_environment = function(params)
     'configure-message-filters', 'Message Filters', 'scroll filter-container');
   var test_messages = new cls.debug.TestScopeMessages(
     'test-messages', 'Test Messages', 'scroll test-messages');
-  new cls.debug.PoTest("test-po-file", "Test PO file", "scroll");
 
   eventHandlers.click['test-messages'] = test_messages.get_bound_click_handler();
   eventHandlers.change['test-messages'] = test_messages.get_bound_change_handler();
