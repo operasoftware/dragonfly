@@ -69,12 +69,12 @@ templates.network_request_crafter_main = function(url, loading, request, respons
            ["p", ["input", "type", "text",
             "value", url || "http://example.org",
             "handler", "request-crafter-url-change"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
+           ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST],
             ["p", ["_auto_height_textarea", request]],
            ["p", ["button", ui_strings.M_NETWORK_CRAFTER_SEND,
             "handler", "request-crafter-send",
             "class", "container-button"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
+           ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE],
            (loading ? ["p", ui_strings.M_NETWORK_CRAFTER_SEND] : ["p", ["textarea", response]]),
            "class", "padding request-crafter"
           ]
