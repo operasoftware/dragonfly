@@ -73,9 +73,8 @@
 {
   position: absolute;
   left: 259px;
-  top: 58px;
+  top: 54px;
   margin: 0;
-  padding: 0;
   border-collapse: collapse;
 }
 
@@ -91,13 +90,12 @@
 
 .color-picker-spacer
 {
-  height: 10px;
+  height: 6px;
 }
 .color-picker-number
 {
   width: 40px;
   margin: 0 0 1px 0;
-  padding: 1px 1px 0 1px;
 }
 
 .color-picker-text
