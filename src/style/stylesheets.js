@@ -584,8 +584,8 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "' />"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
-              (prop in __color_properties ? 
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
+              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
                   "<color-sample handler='show-color-picker' " +
                       "style='background-color:" + value +"'/>" : "") +
            "</value>;";
