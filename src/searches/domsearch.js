@@ -7,7 +7,8 @@ var DOMSearch = function(min_length)
 
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
-  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-node-highlight";
+  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-node-highlight",
+  NO_MATCH = 1;
 
   this._onsearchtypechange = function(event)
   {
@@ -17,11 +18,13 @@ var DOMSearch = function(min_length)
       {
         this.search_type = parseInt(event.target.value);
         this._set_highlight_handlers(event.target);
+        this._setting.set('dom-search-type', this.search_type);
         break;
       }
       case 'dom-search-ignore-case':
       {
         this.ignore_case = Number(event.target.checked);
+        this._setting.set('dom-search-ignore-case', this.ignore_case);
         break;
       }
     }
@@ -129,6 +132,10 @@ var DOMSearch = function(min_length)
                                       direction);
         this._update_info();
       }
+      else
+      {
+        this._update_info(NO_MATCH);
+      }
     }
   };
 
@@ -155,8 +162,9 @@ var DOMSearch = function(min_length)
   this._init = function(min_length)
   {
     this._init_super(min_length);
-    this.search_type = DOMSearch.PLAIN_TEXT;
-    this.ignore_case = 1;
+    this._setting = window.settings.dom;
+    this.search_type = this._setting.get('dom-search-type');
+    this.ignore_case = this._setting.get('dom-search-ignore-case');
     this._min_term_length = 1;
     this._last_query = '';
     this._last_search_type = 0;

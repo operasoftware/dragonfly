@@ -190,7 +190,9 @@ cls.DOMView.create_ui_widgets = function()
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
       'lock-selected-elements': false,
-      'spotlight-color': "3875d7"
+      'spotlight-color': "3875d7",
+      'dom-search-type': DOMSearch.PLAIN_TEXT,
+      'dom-search-ignore-case': 1,
     }, 
     // key-label map
     {
