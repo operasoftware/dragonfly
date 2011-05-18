@@ -90,7 +90,7 @@ cls.debug.create_debug_environment = function(params)
 
   eventHandlers.click['find-strings'] = function(event, target)
   {
-    for (key in window.ui_strings) {
+    for (var key in window.ui_strings) {
       window.ui_strings[key] = "# " + key + " #";
     }
     client.setup();
