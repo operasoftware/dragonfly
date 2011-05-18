@@ -1,6 +1,6 @@
 window.cls || (window.cls = {});
 
-cls.PoTest = function(id, name, container_class)
+cls.PoTestView = function(id, name, container_class)
 {
   this._podata = null;
   this._file = null;
@@ -68,10 +68,7 @@ cls.PoTest = function(id, name, container_class)
 
   this.init(id, name, container_class);
 }
-cls.PoTest.prototype = ViewBase;
-
-new cls.PoTest("test-po-file", "Test PO file", "scroll");
-
+cls.PoTestView.prototype = ViewBase;
 
 window.templates = window.templates || {};
 
