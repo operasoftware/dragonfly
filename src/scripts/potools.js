@@ -17,8 +17,12 @@ window.potools = {
       return (e.msgstr.match(re) || []).sort().join("") == (e.msgid.match(re) || []).sort().join("") ? null : e;
     });
   },
-
-  // compiled version of https://bitbucket.org/runeh/poodle
+  /**
+   * The following parser is originally written in coffeescript, and
+   * this is the compiled version. Thus the style is different from
+   * the rest of the dragonfly code. The original coffeescript version
+   * can be found here: https://bitbucket.org/runeh/poodle
+   */
   _parser: (function() {
     var parser;
     var __indexOf = Array.prototype.indexOf || function(item) {
