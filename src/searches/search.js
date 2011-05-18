@@ -1,4 +1,5 @@
-﻿var Search = function(view_id, searchbar, searchwindow)
+﻿
+var Search = function(view_id, searchbar, searchwindow)
 {
   this._init(view_id, searchbar, searchwindow);
 };
@@ -78,8 +79,10 @@ Search.prototype = new function()
     if (ele && !ele.firstChild)
     {
       this._simple_text_search.set_container(this._container);
-      ele.render(window.templates[this._searchbar.template ||
-                                  'searchbar_content'](this));
+      var tmpl = this._searchbar.template ?
+                 this._searchbar.template(this) :
+                 window.templates.searchbar_content(this);
+      ele.render(tmpl);
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
       cur = ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0];

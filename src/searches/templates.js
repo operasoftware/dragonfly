@@ -57,7 +57,7 @@
         'class', 'dom-searchbar-controls'
       ],
     ]);
-  };
+  }.bind(this);
 
   this.js_search_window = function()
   {

@@ -435,8 +435,24 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  var searchbar = new AdvancedSearchbar('dom_search_bar_content');
-  var search = new Search('dom', [searchbar, new DOMSearch()]);
+
+  if (window.services['ecmascript-debugger'].major_version > 5 &&
+      window.services['ecmascript-debugger'].minor_version > 4)
+  {
+    var searchbar =
+    [
+      // The ui widget, can be a class or an instantiation.
+      new AdvancedSearchbar(window.templates.dom_search_bar_content),
+      // The class or instantiation which performs the search.
+      // Defaults to TextSearch.
+      new DOMSearch()
+    ];
+    var search = new Search('dom', searchbar);
+  }
+  else
+  {
+    var search = new Search('dom', [Searchbar]);
+  }
 
   window.messages.addListener('dom-view-updated', function(msg)
   {

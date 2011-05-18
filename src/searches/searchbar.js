@@ -125,7 +125,7 @@ var Searchbar = function()
  * @constructor
  * @extends ModebarBase
  */
-var AdvancedSearchbar = function(template)
+var AdvancedSearchbar = function(template, html_class)
 {
   this.init();
   this.template = template;
@@ -133,7 +133,7 @@ var AdvancedSearchbar = function(template)
   {
     'focus-handler': 'focus',
     'blur-handler': 'blur',
-    'class': 'advanced-searchbar'
+    'class': html_class || 'advanced-searchbar',
   }
 };
 

@@ -303,7 +303,6 @@ TextSearch.prototype = new function()
    */
   this.highlight = function(check_position, direction)
   {
-    debugger
     if (this._search_term && 
         this._search_term.length < this._min_term_length &&
         !this._search_forced)
