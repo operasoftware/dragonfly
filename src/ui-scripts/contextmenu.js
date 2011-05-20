@@ -48,9 +48,6 @@ function ContextMenu() {
     // Hide the currently visible context menu, if any
     this.dismiss();
 
-    // Prevent scrolling by mouse wheel when menu is visible
-    window.onmousewheel = function(event) { event.preventDefault(); }
-
     if (/*!window.getSelection().isCollapsed ||*/ event.shiftKey) // Shift key overrides for debugging
     {
       return;
@@ -124,8 +121,8 @@ function ContextMenu() {
       }
     }
 
-    var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || 
-                         event.target.get_attr("parent-node-chain", "data-resource-url");
+    var res_id_or_url = event.target.get_attr("parent-node-chain", "data-resource-id") ||
+                        event.target.get_attr("parent-node-chain", "data-resource-url");
     if (res_id_or_url)
     {
       if (last_found_menu_id == "dom")
@@ -169,6 +166,9 @@ function ContextMenu() {
 
     if (all_items.length)
     {
+      // Prevent scrolling by mouse wheel when menu is visible
+      window.onmousewheel = function(event) { event.preventDefault(); }
+
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
       this.is_shown = true;
