@@ -193,6 +193,7 @@ cls.DOMView.create_ui_widgets = function()
       'spotlight-color': "3875d7",
       'dom-search-type': DOMSearch.PLAIN_TEXT,
       'dom-search-ignore-case': 1,
+      'dom-search-only-selected-node': 0,
     }, 
     // key-label map
     {
@@ -456,7 +457,7 @@ cls.DOMView.create_ui_widgets = function()
 
   window.messages.addListener('dom-view-updated', function(msg)
   {
-    if (msg.model == window.dominspections.active)
+    if (msg.model == window.dom_data)
     {
       search.update_search();
     }

@@ -115,6 +115,9 @@ var VirtualTextSearchBase = function()
 
   this.get_hit_count = function(){};
   
+  this.update_search = function(){};
+
+  // deprecated
   this.update = function(){};
   
   this.scroll_selected_hit_in_to_view = function(){};
@@ -532,7 +535,7 @@ var VirtualTextSearchBase = function()
   
   };
   
-  this.update = function()
+  this.update_search = function()
   {    
     if (!this._search_term && this._script)
     {
@@ -542,6 +545,8 @@ var VirtualTextSearchBase = function()
     this._search_term = '';
     this._search_bound(new_search_term);
   }
+
+  this.update = this.update_search;
 
 };
 

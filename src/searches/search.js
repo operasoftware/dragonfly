@@ -93,7 +93,7 @@ Search.prototype = new function()
   
   this._onsearchbar_remove = function(){};
 
-  this._onviewcreated = function(msg)
+  this._onshowview = function(msg)
   {
     if (msg.id == this._view_id)
     {
@@ -278,7 +278,7 @@ Search.prototype = new function()
                            title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
                          });
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
-      messages.addListener('show-view', this._onviewcreated.bind(this));
+      messages.addListener('show-view', this._onshowview.bind(this));
       eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
         this._onsearchfieldinput.bind(this)
       eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
@@ -393,7 +393,7 @@ Search.prototype = new function()
     {
       if (this._mode == MODE_SEARCHBAR)
       {
-        this._simple_text_search.update();
+        this._simple_text_search.update_search();
       }
       else
       {
@@ -410,22 +410,20 @@ Search.prototype = new function()
     return this._is_active && this._searchbar && this._mode == MODE_SEARCHBAR;
   });
 
-  this.__defineGetter__('search_type', function()
+  [
+    'search_type',
+    'ignore_case',
+    'search_only_selected_node',
+  ].forEach(function(prop)
   {
-    return this._mode == MODE_SEARCHBAR ?
-           this._simple_text_search.search_type :
-           this._searchwindow.search_type;
-  });
-  this.__defineSetter__('search_type', function(){});
-
-  this.__defineGetter__('ignore_case', function()
-  {
-    return this._mode == MODE_SEARCHBAR ?
-           this._simple_text_search.ignore_case :
-           this._searchwindow.ignore_case;
-  });
-  this.__defineSetter__('ignore_case', function() {});
-
+    this.__defineGetter__(prop, function()
+    {
+      return this._mode == MODE_SEARCHBAR ?
+             this._simple_text_search[prop] :
+             this._searchwindow[prop];
+    });
+    this.__defineSetter__(prop, function(){});
+  }, this);
 
 };
 
@@ -443,7 +441,7 @@ var JSSourceSearchBase = function()
     if (script)
     {
       this._simple_text_search.set_script(script);
-      this._simple_text_search.update();
+      this._simple_text_search.update_search();
     }
   };
 

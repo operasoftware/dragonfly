@@ -112,7 +112,7 @@ var ViewBase = new function()
       for( ; id = this.container_ids[i]; i++)
       {
         container = document.getElementById(id);
-        if( container )
+        if (container)
         {
           this.createView(container);
           messages.post('view-created', {id: this.id, container: container});

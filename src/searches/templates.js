@@ -52,6 +52,11 @@
                                  'ignore-case', 
                                  'ignore case',
                                  search.ignore_case),
+          this._dom_search_input('dom-search-only-selected-node', 
+                                 'checkbox', 
+                                 'only-selected-node', 
+                                 'search only in the selected node',
+                                 search.search_only_selected_node),
           'handler', 'dom-search-type-changed',
         ],
         'class', 'dom-searchbar-controls'

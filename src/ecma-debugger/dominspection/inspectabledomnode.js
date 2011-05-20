@@ -114,6 +114,14 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return count;
   };
 
+  this.clear_search = function()
+  {
+    for (var i = 0; this._data[i]; i++)
+    {
+      this._data[i][MATCH_REASON] = TRAVERSAL;
+    };
+  }
+
   this._get_dom = function(object_id, traverse_type, cb)
   {
     this._isprocessing = true;
@@ -124,7 +132,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   this.__handle_dom = function(status, message, object_id, traverse_type, cb)
   {
     var
-    _data = message[NODE_LIST],  
+    _data = message[NODE_LIST] || [],  
     error_ms = ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'this.__handle_dom failed in DOMBaseData',
     splice_args = null,
     i = 0;
@@ -150,10 +158,33 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           for (; this._data[i] && this._data[i][ID] != object_id; i++);
           if (this._data[i])
           {
+            // A search with an object_id searches only in the subtree 
+            // of that node, but returns a tree with the ancestor up 
+            // to the document.
+            // For the use case in Dragonfly we cut away the chain from 
+            // the object up to the document.
+            if (traverse_type == "search") 
+            {
+              this.clear_search();
+              for (var j = 0; _data[j] && _data[j][ID] != object_id; j++);
+              if (_data[j])
+              {
+                _data = _data.slice(j);
+              }
+            }
             // if object_id matches the one of the first node 
             // of the return data the traversal was subtree
-            splice_args = object_id == _data[0][ID] ? [i, 1] : [i + 1, 0];
-            Array.prototype.splice.apply(this._data, splice_args.concat(_data));
+            // a search can return no data 
+            if (_data[0])
+            { 
+              splice_args = [i + 1, 0];
+              if (object_id == _data[0][ID])
+              {
+                this.collapse(object_id);
+                splice_args = [i, 1]
+              }
+              Array.prototype.splice.apply(this._data, splice_args.concat(_data));
+            }
           }
           else if (!this._data.length)
             this._data = _data;
@@ -189,7 +220,10 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       j = i;
       while (this._data[j] && this._data[j][DEPTH] > level) 
         j++;
-      this._data.splice(i, j - i);
+      if (j - i)
+      {
+        this._data.splice(i, j - i);
+      }
     }
     else
     {

@@ -173,7 +173,7 @@
         node_name = node_name.toLowerCase();
       }
 
-      search_class = is_search ? search_classes[node[MATCH_REASON]] : "";
+      search_class = search_classes[node[MATCH_REASON]];
 
       switch (node[TYPE])
       {
@@ -222,9 +222,7 @@
               // for exact DOM representation it is anyway better to use the DOM tree style.
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
-                search_class_text = is_search ? 
-                                    search_classes[data[child_pointer][MATCH_REASON]] : 
-                                    "";
+                search_class_text = search_classes[data[child_pointer][MATCH_REASON]];
                 one_child_text_content += "<text" +
                   create_class_attr(search_class_text) +
                   (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +

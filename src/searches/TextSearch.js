@@ -36,7 +36,7 @@ TextSearch.prototype = new function()
   this._init = function(min_length)
   {
     this._search_term = '';
-    this._input_search_term = '';
+    this._orig_search_term = '';
     // collection of span elements. This is so because a hit may cross an
     // element border, so multiple elements needed for highlight.
     this._hits = [];
@@ -234,6 +234,10 @@ TextSearch.prototype = new function()
       this._search_term = new_search_term;
       this._orig_search_term = orig_search_term;
       this._search_forced = Boolean(force_search);
+      if (this._is_update_search)
+      {
+        old_cursor = this._match_cursor;
+      }
       if(this._hits)
       {
         this._clear_search_results();
@@ -260,10 +264,11 @@ TextSearch.prototype = new function()
           {
             this._search_node(this._container);
           }
-          if( old_cursor && this._hits[old_cursor] )
+          if (old_cursor && this._hits[old_cursor] &&
+              this._hits.length == this._old_hits_length)
           {
             this._match_cursor = old_cursor;
-            this._hits[this._match_cursor].style.cssText = this._match_style_highlight;
+            this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
             this._update_info();
           }
           else
@@ -272,29 +277,37 @@ TextSearch.prototype = new function()
             this._container.scrollTop = 0; 
             this.highlight(true);
           }
+          this._old_hits_length = this._hits.length;
         }
+        else if (this._is_update_search && old_cursor)
+        {
+          this._match_cursor = old_cursor;
+        }
+        
       }
       else
       {
         this._update_info(EMPTY);
       }
     }
+    this._is_update_search = false;
   };
 
   this.search_delayed = 
   this.searchDelayed = function(new_search_term)
   {
-    this._input_search_term = new_search_term;
-    this._timeouts.set(this._search_bound, SEARCH_DELAY, 
-                       new_search_term.toLowerCase());
+    this._timeouts.set(this._search_bound, SEARCH_DELAY, new_search_term);
   }
 
-  this.update = function()
+  this.update_search = function()
   {
     var new_search_term = this._search_term;
     this._search_term = '';
+    this._is_update_search = true;
     this.search(new_search_term);
-  }
+  };
+
+  this.update = this.update_search;
 
   /**
    * Highlight a search result. The result to highlight is kept in the
@@ -433,7 +446,7 @@ TextSearch.prototype = new function()
   this.set_container =
   this.setContainer = function(cont)
   {
-    if( this._container != cont )
+    if (this._container != cont)
     {
       this._container = cont;
     }
@@ -448,10 +461,10 @@ TextSearch.prototype = new function()
   this.setFormInput = function(input)
   {
     this._input = input;
-    if(this._search_term)
+    if (this._search_term)
     {
       var new_search_term = this._search_term;
-      this._input.value = this._input_search_term;
+      this._input.value = this._orig_search_term;
       this._input.parentNode.firstChild.textContent = '';
       this._search_term = '';
       this.searchDelayed(new_search_term);
@@ -465,7 +478,6 @@ TextSearch.prototype = new function()
   {
     this._clear_search_results();
     this._hits = [];
-    this._match_cursor = -1;
     this._input = this._container = this._info_ele = null;
   };
 
