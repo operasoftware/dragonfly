@@ -1139,6 +1139,7 @@ SpecLinks.specs = {
     // Selectors API
     "querySelector": "http://www.w3.org/TR/selectors-api/#queryselector",
     "querySelectorAll": "http://www.w3.org/TR/selectors-api/#queryselectorall",
+    "oMatchesSelector": "http://www.w3.org/TR/selectors-api2/#matchesselector",
 
     // XHR
     "XMLHttpRequest": "http://www.w3.org/TR/XMLHttpRequest/#the-xmlhttprequest-interface",
