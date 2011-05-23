@@ -836,22 +836,10 @@ String.prototype.endswith = function(str)
 
 String.prototype.zfill = function(width)
 {
-  var str = this;
-  var ret = "";
-
-  // Handle a sign prefix
-  if (/[+-]/.test(str[0]))
-  {
-    ret = str[0];
-    str = str.slice(1);
-  }
-
-  var n = width - str.length - ret.length;
-  while (n-- > 0) {
-    ret += "0";
-  }
-
-  return ret + str;
+  return this.replace(/(^[+-]?)(.+)/, function(str, sign, rest) {
+    var fill = Array(Math.max(width - str.length + 1, 0)).join(0);
+    return sign + fill + rest;
+  });
 };
 
 /**
