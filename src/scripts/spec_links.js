@@ -954,6 +954,12 @@ SpecLinks.specs = {
     "HTMLSourceElement": "http://www.w3.org/TR/html5/video.html#htmlsourceelement",
     "HTMLAudioElement": "http://www.w3.org/TR/html5/video.html#htmlaudioelement",
     "HTMLTimeElement": "http://www.w3.org/TR/html5/text-level-semantics.html#htmltimeelement",
+    "dateTime":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-datetime",
+    "pubDate":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-pubdate",
+    "valueAsDate":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-valueasdate",
     "HTMLProgressElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlprogresselement",
     "HTMLMeterElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlmeterelement",
     "HTMLKeygenElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlkeygenelement",
