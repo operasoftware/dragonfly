@@ -935,7 +935,7 @@ SpecLinks.specs = {
     "pageshow": "http://www.w3.org/TR/html5/history.html#event-pageshow",
     "popstate": "http://www.w3.org/TR/html5/history.html#event-popstate",
     "readystatechange": "http://www.w3.org/TR/html5/dom.html#event-readystatechange",
-
+    
     //HTML5 Browsing contexts
     "opener": "http://www.w3.org/TR/html5/browsers.html#dom-opener",
     //"close": "http://www.w3.org/TR/html5/browsers.html#dom-window-close",
@@ -948,7 +948,6 @@ SpecLinks.specs = {
     "undo": "http://www.w3.org/TR/html5/dnd.html#event-undo",
 
     // HTML5 Elements
-    "HTMLTimeElement": "http://www.w3.org/TR/html5/text-level-semantics.html#htmltimeelement",
     "HTMLVideoElement": "http://www.w3.org/TR/html5/video.html#htmlvideoelement",
     "HTMLMediaElement": "http://www.w3.org/TR/html5/video.html#htmlmediaelement",
     "HTMLSourceElement": "http://www.w3.org/TR/html5/video.html#htmlsourceelement",
@@ -969,6 +968,7 @@ SpecLinks.specs = {
     "Image": "http://www.w3.org/TR/html5/embedded-content-1.html#dom-image",
     "HTMLEmbedElement": "http://www.w3.org/TR/html5/the-iframe-element.html#htmlembedelement",
     "Option": "http://www.w3.org/TR/html5/the-button-element.html#dom-option-t",
+    "classList": "http://www.w3.org/TR/html5/elements.html#dom-classlist",
 
      // HTML5 Session History
     "History": "http://www.w3.org/TR/html5/history.html#history-0",
