@@ -847,6 +847,11 @@ suggest_values['max-width'] =
   'inherit'
 ];
 
+suggest_values['max-zoom'] =
+[
+  'auto'
+];
+
 suggest_values['min-height'] =
 [
   'inherit'
@@ -855,6 +860,11 @@ suggest_values['min-height'] =
 suggest_values['min-width'] =
 [
   'inherit'
+];
+
+suggest_values['min-zoom'] =
+[
+  'auto'
 ];
 
 suggest_values['orphans'] =
@@ -1103,6 +1113,12 @@ suggest_values['unicode-bidi'] =
   'inherit'
 ];
 
+suggest_values['user-zoom'] =
+[
+  'zoom',
+  'fixed'
+];
+
 suggest_values['vertical-align'] =
 [
   'baseline',
@@ -1172,6 +1188,11 @@ suggest_values['word-wrap'] =
   'normal',
   'break-word',
   'inherit'
+];
+
+suggest_values['zoom'] =
+[
+  'auto'
 ];
 
 suggest_values['z-index'] =
