@@ -81,9 +81,40 @@
 .dom-searchbar-controls
 {
   clear: both;
-  margin: 0 -3px;
-  margin-top: 3px;
+  xmargin: 0 -3px;
+  xmargin-top: 3px;
   background-color: hsl(0, 0%, 80%);
-  border-top: 1px solid hsl(0, 0%, 60%);
+  xborder-top: 1px solid hsl(0, 0%, 60%);
   padding: 0 3px;
+}
+
+.dom-search-controls
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: hsl(0, 0%, 90%);
+}
+
+.dom-search-controls label
+{
+  white-space: pre;
+  display: inline-block;
+}
+
+.dom-search-controls info
+{
+  display: inline-block;
+  min-width: 150px;
+  min-height: 22px;
+  line-height: 22px;
+}
+
+.dom-search-result-container
+{
+  box-sizing: border-box;
+  border-top: 80px solid hsl(0, 0%, 50%);
+  height: 100%;
+  overflow: auto;
 }

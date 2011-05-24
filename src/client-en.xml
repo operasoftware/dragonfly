@@ -366,6 +366,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/dominspection/inspectabledomnode.js"/>
 <script src="./ecma-debugger/dominspection/domdata.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
+<script src="./searches/domsearchview.js"/>
 
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>

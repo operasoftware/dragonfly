@@ -39,6 +39,7 @@ var DOMSearch = function(min_length)
 
   this._set_highlight_handlers = function(target)
   {
+
     if (TOKEN_HIGHLIGHT.indexOf(this.search_type) != -1)
     {
       this._initial_highlight = this._initial_highlight_token;
@@ -118,7 +119,7 @@ var DOMSearch = function(min_length)
    
   this._initial_highlight_node = function()
   {
-    this._match_count = this._dom_data.get_match_count();
+    this._match_count = this._model.get_match_count();
     this._orig_search_term = this._last_query;
     if (this._container)
     {
@@ -220,7 +221,8 @@ var DOMSearch = function(min_length)
     this._last_query = '';
     this._last_search_type = 0;
     this._last_ignore_case = this.ignore_case;
-    this._dom_data = window.dom_data;
+    this._tagman = window.tag_manager;
+    this._esdi = window.services['ecmascript-debugger'];
 
     window.eventHandlers.change['dom-search-type-changed'] = this._onsearchtypechange;
     this._query_selector = ".dom-search-match";
@@ -231,7 +233,7 @@ var DOMSearch = function(min_length)
 
   this._handle_search = function()
   {
-    window.views.dom.update();
+    // window.views.dom.update();
     // initial highlight is triggered by the 'dom-view-update' event
   }.bind(this);
 
@@ -254,17 +256,39 @@ var DOMSearch = function(min_length)
       this._last_selected_node = this._selected_node;
       this._match_node_cursor = -1;
       this._match_cursor = -1;
-      window.dom_data.search(this._last_query,
-                             this.search_type,
-                             this.ignore_case,
-                             this.search_only_selected_node ?
-                             this._selected_node : 
-                             0,
-                             this._handle_search);
+      this._model = new cls.InspectableDOMNode(this._selected_runtime,
+                                               this._selected_node);
+      this._is_processing = true;
+      this._queued_input = false;
+      this._model.search(this._last_query,
+                         this.search_type,
+                         this.ignore_case,
+                         this.search_only_selected_node ?
+                         this._selected_node : 
+                         0,
+                         this._handle_search);
+
       return false;
     }
     return true;
-  }
+  }.bind(this);
+
+  this._handle_search = function(status, message, rt_id, object_id)
+  {
+    var tmpl = window.templates.dom_search(this._model);
+    this._container.firstElementChild.clearAndRender(tmpl);
+    this._initial_highlight();
+    
+    if (this._queued_input)
+    {
+      setTimeout(this._validate_current_search, 100);
+    }
+    else
+    {
+      this._is_processing = false;
+    }
+  }.bind(this);
+
   this.highlight_next = function()
   {
     if (this._validate_current_search())
@@ -298,7 +322,14 @@ var DOMSearch = function(min_length)
 
   this.search_delayed = function(event)
   {
-    
+    if (this._is_processing)
+    {
+      this._queued_input = true;
+    }
+    else
+    {
+      this._validate_current_search();
+    }
   };
 
   this._init(min_length);

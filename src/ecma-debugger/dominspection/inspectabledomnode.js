@@ -11,7 +11,23 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode =
 cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id, obj_id)
 {
   this._init(rt_id, obj_id);
-}
+};
+
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.OBJECT_ID = 0;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.TYPE = 1;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.NAME = 2;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.DEPTH = 3;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.NAMESPACE_PREFIX = 4;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.ATTRIBUTE_LIST = 5;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CHILDREN_LENGTH = 6;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.VALUE = 7;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PUBLIC_ID = 8;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.SYSTEM_ID = 9;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.RUNTIME_ID = 10;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CONTENT_DOCUMENT = 11;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
@@ -30,7 +46,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   CHILDREN_LENGTH = 6, 
   PUBLIC_ID = 4,
   SYSTEM_ID = 5,
-  MATCH_REASON = 10,
+  MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
   TRAVERSE_SERACH = "search",
   TRAVERSAL = 1,
   SEARCH_PARENT = 2,
@@ -103,7 +119,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   // this method makes only sense with ECMAScriptDebugger 6.5 and higher
   this.get_match_count = function()
   {
-    var i = 0, count = 0, length = this._data ? this._data.length : 0 
+    var i = 0, count = 0, length = this._data ? this._data.length : 0;
     for (; i < length; i++)
     {
       if (this._data[i][MATCH_REASON] == SEARCH_HIT)
@@ -196,6 +212,11 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       this._mime = this._set_mime();
       if (cb)
         cb();
+    }
+    else if(traverse_type == "search")
+    {
+      this._data = [];
+      cb();
     }
     else
       opera.postError(error_ms + ' ' + JSON.stringify(message));
@@ -380,4 +401,3 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   };
 
 };
-

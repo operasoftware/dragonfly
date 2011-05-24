@@ -374,13 +374,13 @@ TextSearch.prototype = new function()
   {
     if (this._container && target)
     {
-      this._scroll_into_margined_view(this._container.offsetHeight,
+      this._scroll_into_margined_view(this._container.clientHeight,
                                       target.offsetHeight,
                                       this.getRealOffsetTop(target),
                                       DEFAULT_SCROLL_MARGIN,
                                       direction,
                                       'scrollTop');
-      this._scroll_into_margined_view(this._container.offsetWidth,
+      this._scroll_into_margined_view(this._container.clientWidth,
                                       target.offsetWidth,
                                       this.getRealOffsetLeft(target),
                                       DEFAULT_SCROLL_MARGIN,
@@ -425,7 +425,18 @@ TextSearch.prototype = new function()
    */
   this.getRealOffsetTop = function(ele)
   {
-    return ele.getBoundingClientRect().top - this._container.getBoundingClientRect().top;
+    if (!this._container_box_sizing_checked)
+    {
+      this._box_size_delta = 0;
+      this._container_box_sizing_checked = true;
+      var style = window.getComputedStyle(this._container, null);
+      if (style.getPropertyValue('box-sizing') == 'border-box')
+      {
+        this._box_size_delta = parseInt(style.getPropertyValue('border-top-width'));
+      }
+    }
+    return ele.getBoundingClientRect().top - 
+           (this._container.getBoundingClientRect().top + this._box_size_delta);
   };
 
   this.getRealOffsetLeft = function(ele)
@@ -446,6 +457,7 @@ TextSearch.prototype = new function()
   this.set_container =
   this.setContainer = function(cont)
   {
+    this._container_box_sizing_checked = false;
     if (this._container != cont)
     {
       this._container = cont;
@@ -479,6 +491,7 @@ TextSearch.prototype = new function()
     this._clear_search_results();
     this._hits = [];
     this._input = this._container = this._info_ele = null;
+    this._container_box_sizing_checked = false;
   };
 
   this.set_search_term = function(search_term)

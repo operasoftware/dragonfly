@@ -12,7 +12,7 @@
   ATTR_KEY = 1,
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6,
-  MATCH_REASON = 10,
+  MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
   INDENT = "  ",
   LINEBREAK = '\n';
 
@@ -93,7 +93,12 @@
     return ret;
   }
 
-  this._inspected_dom_node_markup_style= function(model, target, editable)
+  this.dom_search = function(model)
+  {
+    return this._inspected_dom_node_markup_style(model);
+  }
+
+  this._inspected_dom_node_markup_style = function(model, target, editable)
   {
     var data = model.getData();
     var tree = "<div class='padding dom'" +

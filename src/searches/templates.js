@@ -6,7 +6,7 @@
     return (
     [
       this.filters(search.controls),
-      ['info'],
+      ['info', '\u00A0'],
     ]);
   };
 
