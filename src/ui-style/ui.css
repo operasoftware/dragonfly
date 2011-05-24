@@ -1496,3 +1496,11 @@ info {
     text-decoration: underline;
 }
 
+.internal-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.internal-link:hover {
+    text-decoration: none;
+}

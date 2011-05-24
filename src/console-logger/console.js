@@ -271,12 +271,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this.addentry({
       id: "" + (++this._lastid),
       windowID: message.windowID,
-      time: new Date(),
+      time: +new Date,
       description: args,
       title:  args,
       line: "" + (message.position ? message.position.lineNumber : ""),
-      uri: method_names[message.type],
-      context: "",
+      uri: null,
+      context: method_names[message.type],
       source: "ecmascript",
       severity: severities[message.type] || "information"
     });
