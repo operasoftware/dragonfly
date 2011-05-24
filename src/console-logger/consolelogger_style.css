@@ -51,6 +51,7 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
+  -o-transition: all .2s;
 }
 
 .errors-table > tr.expanded button {
