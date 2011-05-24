@@ -94,7 +94,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._open_resource_tab = function(resource)
   {
     var type = resource.type;
-    viewclasses = {
+    var viewclasses = {
       image: cls.ImageResourceDetail,
       font: cls.FontResourceDetail,
       script: cls.JSResourceDetail,
