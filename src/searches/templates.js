@@ -59,7 +59,6 @@
                                  search.search_only_selected_node),
           'handler', 'dom-search-type-changed',
         ],
-        'class', 'dom-searchbar-controls'
       ],
     ]);
   }.bind(this);

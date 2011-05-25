@@ -91,14 +91,252 @@
       ret = " class='" + class_1 + "' ";
     }
     return ret;
-  }
+  };
 
-  this.dom_search = function(model)
+  var safe_escape_attr_key = function(attr, force_lower_case)
   {
-    return this._inspected_dom_node_markup_style(model);
+    return (
+    ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
+    /* regarding escaping "<". 
+       it happens that there are very starnge keys in broken html.
+       perhaps we will have to extend the escaping to other data 
+       tokens as well */
+    (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY]))
+    .replace(/</g, '&lt;'));
   }
 
-  this._inspected_dom_node_markup_style = function(model, target, editable)
+  this._dom_attrs = function(node, force_lower_case, is_search_hit)
+  {
+    for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
+    {
+      attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+      if (is_search_hit)
+      {
+        attrs += " <key>" + safe_escape_attr_key(attr) +
+                 "</key>=<value>\"" + attr_value + "\"</value>";
+      }
+      else
+      {
+        attrs += " " + safe_escape_attr_key(attr) + "=\"" + attr_value + "\"";
+      }
+    }
+    return attrs;
+  };
+
+  this.dom_search = function(model, target, editable)
+  {
+    var data = model.getData();
+    var tree = "<div class='padding dom'" +
+               " rt-id='" + model.getDataRuntimeId() + "'" +
+               " data-model-id='" + model.id + "'" +
+               ">";
+    var length = data.length;
+    var attrs = null, attr = null, k = 0, key = '', attr_value = '';
+    var is_open = 0;
+    var has_only_one_child = 0;
+    var one_child_text_content = '';
+    var current_depth = 0;
+    var child_pointer = 0;
+    var child_level = 0;
+    var j = 0;
+    var children_length = 0;
+    var closing_tags = [];
+    var force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+    var show_comments = window.settings.dom.get('show-comments');
+    var node_name = '';
+    var class_name = '';
+    var re_formatted = /script|style|#comment/i;
+    var style = null;
+
+
+    var disregard_force_lower_case_depth = 0;
+
+    var search_class = "";
+    var search_class_text = "";
+
+    for (var i = 0, node; node = data[i]; i++)
+    {
+      while (current_depth > node[DEPTH])
+      {
+        tree += closing_tags.pop();
+        current_depth--;
+      }
+      current_depth = node[DEPTH];
+      children_length = node[CHILDREN_LENGTH];
+      child_pointer = 0;
+      node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+      if (force_lower_case && disregard_force_lower_case(node))
+      {
+        disregard_force_lower_case_depth = node[DEPTH];
+        force_lower_case = false;
+      }
+      else if (disregard_force_lower_case_depth && 
+               disregard_force_lower_case_depth == node[DEPTH])
+      {
+        disregard_force_lower_case_depth = 0;
+        force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+      }
+      if (force_lower_case)
+      {
+        node_name = node_name.toLowerCase();
+      }
+      search_class = search_classes[node[MATCH_REASON]];
+      switch (node[TYPE])
+      {
+        case ELEMENT_NODE:
+        {
+          attrs = this._dom_attrs(node, force_lower_case,
+                                  node[MATCH_REASON] == SEARCH_HIT);
+          child_pointer = i + 1;
+          is_open = data[child_pointer] &&
+                    (node[DEPTH] < data[child_pointer][DEPTH]);
+          if (is_open)
+          {
+            has_only_one_child = true;
+            one_child_text_content = '';
+            child_level = data[child_pointer][DEPTH];
+            for (; data[child_pointer] &&
+                   data[child_pointer][DEPTH] == child_level; child_pointer++)
+            {
+              if (data[child_pointer][TYPE] != 3)
+              {
+                has_only_one_child = false;
+                one_child_text_content = '';
+                break;
+              }
+              // Perhaps this needs to be adjusted. A non-closed (e.g. p) tag
+              // will create an additional CRLF text node, that means the text 
+              // nodes are not normalized.
+              // In markup view it doesn't make sense to display such a node, s
+              // till we have to ensure that there is at least one text node.
+              // Perhaps there are other situation with none-normalized text nodes,
+              // with the following code each of them will be a single text node,
+              // if they contain more than just white space.
+              // For an exact DOM representation it is anyway better 
+              // to use the DOM tree style.
+              if (!one_child_text_content || 
+                  !/^\s*$/.test(data[child_pointer][VALUE]))
+              {
+                search_class_text = search_classes[data[child_pointer][MATCH_REASON]];
+                one_child_text_content += 
+                  "<text" + create_class_attr(search_class_text) + ">" + 
+                  helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
+              }
+            }
+          }
+          if (is_open)
+          {
+            if (has_only_one_child)
+            {
+              class_name = re_formatted.test(node_name) ? " class='pre-wrap' " : "";
+              tree += 
+                "<div " + this._get_indent(node) + " obj-id='" + node[ID] + "'" +
+                  " handler='inspect-node-link' " + class_name + ">" +
+                  "<node" + create_class_attr(search_class) + ">&lt;" + 
+                    node_name + attrs + "&gt;</node>" +
+                    one_child_text_content + 
+                  "<node" + create_class_attr(search_class) + ">&lt;/" +
+                    node_name + "&gt;</node>" +
+                "</div>";
+              i = child_pointer - 1;
+            }
+            else
+            {
+              tree += 
+                "<div " + this._get_indent(node) + "obj-id='" + node[ID] + "'" +
+                  " handler='inspect-node-link' >" +
+                  "<node" + create_class_attr(search_class) + ">&lt;" + 
+                    node_name + attrs + "&gt;</node>" +
+                "</div>";
+              closing_tags.push(
+                "<div" + this._get_indent(node) + "obj-id='" + node[ID] + "'" +
+                  " handler='inspect-node-link' >" +
+                  "<node" + create_class_attr(search_class) + ">" +
+                  "&lt;/" + node_name + "&gt;" + "</node>" +
+                "</div>");
+            }
+          }
+          else
+          {
+            tree += 
+              "<div " + this._get_indent(node) + "obj-id='" + node[ID] + "'" +
+                " handler='inspect-node-link' >" +
+                "<node" + create_class_attr(search_class) + ">&lt;" + 
+                  node_name + attrs + (children_length ? '' : '/') + 
+                  "&gt;</node>" +
+              "</div>";
+          }
+          break;
+        }
+        case PROCESSING_INSTRUCTION_NODE:
+        {
+          tree += 
+            "<div" + this._get_indent(node) +
+              create_class_attr("processing-instruction", search_class) + 
+              ">&lt;?" + node[NAME] + ' ' +
+              formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
+            "?&gt;</div>";
+          break;
+        }
+        case COMMENT_NODE:
+        {
+          if (show_comments && !/^\s*$/.test(node[VALUE]))
+          {
+            tree += 
+              "<div" + this._get_indent(node) +
+                create_class_attr("comment pre-wrap", search_class) +
+                "'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + 
+                "--&gt;</div>";
+          }
+          break;
+        }
+        case DOCUMENT_NODE:
+        {
+          // Don't show this in markup view
+          break;
+        }
+        case DOCUMENT_TYPE_NODE:
+        {
+          tree += 
+            "<div" + this._get_indent(node) + 
+              create_class_attr("doctype", search_class) + "'>" +
+              "&lt;!DOCTYPE " + node[NAME] +
+              this._get_doctype_external_identifier(node) + "&gt;</div>";
+          break;
+        }
+        default:
+        {
+          if (!/^\s*$/.test(node[ VALUE ]))
+          {
+            tree += 
+              "<div" + this._get_indent(node) + ">" +
+                "<text" + create_class_attr(search_class) + ">" + 
+                  helpers.escapeTextHtml(node[VALUE]) + "</text>" +
+              "</div>";
+          }
+        }
+      }
+    }
+    while (closing_tags.length)
+    {
+      tree += closing_tags.pop();
+    }
+    tree += "</div>";
+    return tree;
+  };
+
+  var disregard_force_lower_case_whitelist = 
+      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+
+  var disregard_force_lower_case = function(node)
+  {
+    return disregard_force_lower_case_whitelist
+           .indexOf(node[NAME].toLowerCase()) != -1;
+  };
+
+  this._inspected_dom_node_markup_style= function(model, target, editable)
   {
     var data = model.getData();
     var tree = "<div class='padding dom'" +
@@ -129,26 +367,6 @@
     var is_debug = ini.debug;
     var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
-    var is_search = data[0] && data[0][MATCH_REASON] && 
-                    data[0][MATCH_REASON] != TRAVERSAL || false;
-    var search_type = 0;
-
-
-    if (is_search)
-    {
-      if (model.search_type == DOMSearch.XPATH || 
-          model.search_type == DOMSearch.CSS)
-      {
-        
-        search_type = SEARCH_TYPE_NODE;
-      }
-      else
-      {
-        search_type = SEARCH_TYPE_TOKEN;
-      }
-    }
-    var search_class = "";
-    var search_class_text = "";
 
     for ( ; node = data[i]; i += 1)
     {
@@ -177,8 +395,6 @@
       {
         node_name = node_name.toLowerCase();
       }
-
-      search_class = search_classes[node[MATCH_REASON]];
 
       switch (node[TYPE])
       {
@@ -227,9 +443,7 @@
               // for exact DOM representation it is anyway better to use the DOM tree style.
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
-                search_class_text = search_classes[data[child_pointer][MATCH_REASON]];
                 one_child_text_content += "<text" +
-                  create_class_attr(search_class_text) +
                   (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
@@ -244,17 +458,14 @@
                          ? " class='pre-wrap " +
                            (is_script_node ? "non-editable" : "") + "'"
                          : '';
-
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
-                          "<node" + create_class_attr(search_class) + ">&lt;" + 
-                              node_name + attrs + "&gt;</node>" +
+                          "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
-                          "<node" + create_class_attr(search_class) + ">&lt;/" +
-                            node_name + "&gt;</node>" +
+                          "<node>&lt;/" + node_name + "&gt;</node>" +
                           (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
               i = child_pointer - 1;
@@ -268,15 +479,13 @@
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
-                          "<node" + create_class_attr(search_class) + ">&lt;" + 
-                              node_name + attrs + "&gt;</node>" +
+                          "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
 
               closing_tags.push("<div" + this._get_indent(node) +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                                "data-menu='dom-element'>" +
-                                "<node" + create_class_attr(search_class) + ">" +
+                                "data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
@@ -290,9 +499,7 @@
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
-                          "<node" + create_class_attr(search_class) + ">&lt;" + 
-                              node_name + attrs + (children_length ? '' : '/') + 
-                                    "&gt;</node>" +
+                          "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
           }
@@ -302,8 +509,7 @@
         case PROCESSING_INSTRUCTION_NODE:
         {
           tree += "<div" + this._get_indent(node) +
-                           create_class_attr("processing-instruction", search_class) + 
-                  ">&lt;?" + node[NAME] + ' ' +
+            "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
 
@@ -316,8 +522,7 @@
             if (!/^\s*$/.test(node[VALUE]))
             {
               tree += "<div" + this._get_indent(node) +
-                               create_class_attr("comment pre-wrap", search_class) +
-                      "'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
+                      "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
             }
           }
           break;
@@ -329,9 +534,7 @@
 
         case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div" + this._get_indent(node) + 
-                           create_class_attr("doctype", search_class) + 
-                      "'>" +
+          tree += "<div" + this._get_indent(node) + "class='doctype'>" +
                   "&lt;!DOCTYPE " + node[NAME] +
                     this._get_doctype_external_identifier(node) +
                   "&gt;</div>";
@@ -343,7 +546,7 @@
           if (!/^\s*$/.test(node[ VALUE ]))
           {
             tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
-                    "<text" + create_class_attr(search_class) +
+                    "<text" +
                     (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
@@ -358,7 +561,7 @@
     }
     tree += "</div>";
     return tree;
-  }
+  };
 
   var nodeNameMap =
   {

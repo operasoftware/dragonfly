@@ -509,10 +509,14 @@ cls.DOMInspectorActions = function(id)
   this._handlers["inspect-node-link"] = function(event, target)
   {
     var obj_id = parseInt(target.getAttribute('obj-id'));
-    var rt_id = parseInt(target.getAttribute('rt-id'));
-    window.dom_data.get_dom(rt_id, obj_id, true, true);
-    if (!window.views.dom.isvisible())
-      window.topCell.showView('dom');
+    var rt_id = parseInt(target.getAttribute('rt-id')) ||
+                parseInt(target.get_attr('parent-node-chain', 'rt-id'));
+    if (obj_id && rt_id)
+    {
+      window.dom_data.get_dom(rt_id, obj_id, true, true);
+      if (!window.views.dom.isvisible())
+        window.topCell.showView('dom');
+    }
   }.bind(this);
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)

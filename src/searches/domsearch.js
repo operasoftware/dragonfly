@@ -19,12 +19,14 @@ var DOMSearch = function(min_length)
         this.search_type = parseInt(event.target.value);
         this._set_highlight_handlers(event.target);
         this._setting.set('dom-search-type', this.search_type);
+        this._validate_current_search();
         break;
       }
       case 'dom-search-ignore-case':
       {
         this.ignore_case = Number(event.target.checked);
         this._setting.set('dom-search-ignore-case', this.ignore_case);
+        this._validate_current_search();
         break;
       }
       case 'dom-search-only-selected-node':
@@ -32,6 +34,7 @@ var DOMSearch = function(min_length)
         this.search_only_selected_node = Number(event.target.checked);
         this._setting.set('dom-search-only-selected-node',
                           this.search_only_selected_node);
+        this._validate_current_search();
         break;
       }
     }
@@ -231,11 +234,7 @@ var DOMSearch = function(min_length)
                                 this._onelementselected.bind(this));
   };
 
-  this._handle_search = function()
-  {
-    // window.views.dom.update();
-    // initial highlight is triggered by the 'dom-view-update' event
-  }.bind(this);
+
 
   this._super_highlight_next = this.highlight_next;
   this._super_highlight_previous = this.highlight_previous;
@@ -277,8 +276,10 @@ var DOMSearch = function(min_length)
   {
     var tmpl = window.templates.dom_search(this._model);
     this._container.firstElementChild.clearAndRender(tmpl);
-    this._initial_highlight();
-    
+    if (this._model.getData() && this._model.getData().length)
+    {
+      this._initial_highlight();
+    }
     if (this._queued_input)
     {
       setTimeout(this._validate_current_search, 100);
