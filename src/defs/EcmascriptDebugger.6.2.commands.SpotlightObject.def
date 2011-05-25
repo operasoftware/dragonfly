@@ -1,0 +1,11 @@
+message <span class="message">SpotlightObjectSelection</span>
+{
+  <span class="comment">/** 
+   * Using `0` clears the spotlight.
+   */</span>
+  required <span class="number">uint32</span> objectID       = 1; 
+  <span class="comment">/** 
+   * Chooses whether the given object should be scrolled into view or not.
+   */</span>
+  required <span class="bool">bool  </span> scrollIntoView = 2; 
+}

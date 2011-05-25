@@ -1,0 +1,8 @@
+message <span class="message">CloseWindowArg</span>
+{
+  <span class="comment">/** 
+   * Close window with the specified ID. If a window with that ID does
+   * not exist, an error is returned.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+}

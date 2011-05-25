@@ -1,0 +1,59 @@
+message <span class="message">GetResourceArg</span>
+{
+  message <span class="message">ContentMode</span>
+  {
+    enum Transport
+    {
+      <span class="comment">/** 
+       * Send the payload as a string.
+       * 
+       * Selecting this transport mode  will automatically enable decoding,
+       * and the string will automatically converted to the correct character
+       * encoding.
+       * 
+       * If this transport mode is used an unsuitable content type, the payload
+       * will not be sent (without errors).
+       */</span>
+      STRING = 1;
+      <span class="comment">/** 
+       * Send the payload as bytes. When this transport mode is chosen, character
+       * conversion will not be performed. If the payload contains text data, it
+       * will be sent in its original encoding.
+       */</span>
+      BYTES = 2;
+      <span class="comment">/** 
+       * Send the payload as a base64-encoded data URI in the string field. When
+       * this transport mode is chosen, character conversion will not be performed.
+       * If the payload contains text data, it will be sent in its original encoding.
+       */</span>
+      DATA_URI = 3;
+      <span class="comment">/** 
+       * Do not send the payload at all.
+       */</span>
+      OFF = 4;
+    }
+
+    <span class="comment">/** 
+     * Indicates how to send the payload.
+     */</span>
+    optional <span class="number">Transport</span> transport = 1; 
+    <span class="comment">/** 
+     * Decode the data (for instance, decompress it, decrypt it, etc). This is
+     * unrelated to character encoding.
+     */</span>
+    optional <span class="bool">bool     </span> decode    = 2; 
+    <span class="comment">/** 
+     * Even if other conditions are met, do not send the payload if it
+     * exceeds the specified amout (in bytes).
+     * 
+     * By default, only payloads under one megabyte are sent.
+     */</span>
+    optional <span class="number">uint32   </span> sizeLimit = 3; 
+  }
+  required <span class="number">uint32     </span> resourceID  = 1; 
+  <span class="comment">/** 
+   * Use this ContentMode instead of the one configured with
+   * SetResponseModeArg (if any).
+   */</span>
+  optional <span class="message">ContentMode</span> contentMode = 2; 
+}

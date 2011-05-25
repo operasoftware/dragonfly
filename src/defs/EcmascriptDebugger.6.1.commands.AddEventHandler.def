@@ -1,0 +1,25 @@
+<span class="comment">/** 
+ * Add an event handler. This will generate a HANDLE-EVENT event every time the XML event defined by the pair (NAMESPACE, EVENT-TYPE) reaches the object defined by OBJECT-ID in the capturing phase. XML events are defined in http://www.w3.org/TR/xml-events
+ */</span>
+message <span class="message">EventHandler</span>
+{
+  <span class="comment">/** 
+   * A nonzero ID chosen by the client. The host may also use this ID to refer to the
+   * event handler.
+   */</span>
+  required <span class="number">uint32</span> handlerID             = 1; 
+  required <span class="number">uint32</span> objectID              = 2; 
+  <span class="comment">/** 
+   * Namespace of the event. If empty, it will match any namespace.
+   */</span>
+  required <span class="string">string</span> namespace             = 3; 
+  required <span class="string">string</span> eventType             = 4; 
+  <span class="comment">/** 
+   * If `true` it prevents the default event handler from running.
+   */</span>
+  required <span class="bool">bool  </span> preventDefaultHandler = 5; 
+  <span class="comment">/** 
+   * If `true` it stops propagation of the event beyond this `objectID` (it will however run for all handlers on the object).
+   */</span>
+  required <span class="bool">bool  </span> stopPropagation       = 6; 
+}

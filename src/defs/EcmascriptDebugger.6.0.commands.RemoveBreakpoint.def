@@ -1,7 +1,8 @@
 message <span class="message">BreakpointID</span>
 {
   <span class="comment">/** 
-   * See Breakpoint.breakpointID.
+   * 
+   *  See Breakpoint.breakpointID.
    */</span>
   required <span class="number">uint32</span> breakpointID = 1; 
 }

@@ -2,11 +2,13 @@ message <span class="message">ConsoleTimeEndInfo</span>
 {
   required <span class="number">uint32</span> runtimeID = 1; 
   <span class="comment">/** 
-   * The title of the timer. See ConsoleTimeInfo.title.
+   * 
+   *  The title of the timer. See ConsoleTimeInfo.title.
    */</span>
   required <span class="string">string</span> title     = 2; 
   <span class="comment">/** 
-   * Elapsed time in microseconds.
+   * 
+   *  Elapsed time in microseconds.
    */</span>
   required <span class="number">uint32</span> elapsed   = 3; 
 }

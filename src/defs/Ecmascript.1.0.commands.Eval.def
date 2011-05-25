@@ -1,0 +1,44 @@
+message <span class="message">EvalArg</span>
+{
+  <span class="comment">/** 
+   * A variable to assign in the execution environment before evaluating
+   * the script.
+   */</span>
+  message <span class="message">Variable</span>
+  {
+    <span class="comment">/** 
+     * Name of variable to create.
+     */</span>
+    required <span class="string">string</span> name     = 1; 
+    <span class="comment">/** 
+     * ID of object to retrieve, the object is assigned to the specified
+     * name.
+     */</span>
+    required <span class="number">uint32</span> objectID = 2; 
+  }
+  <span class="comment">/** 
+   * ID of runtime to execute script in.
+   */</span>
+  required <span class="number">uint32  </span> runtimeID    = 1; 
+  <span class="comment">/** 
+   * The script data to execute, this can either be an expression or a
+   * statement. The semi-colon can be omitted.
+   * 
+   * Eval() will return the value of the last expression that is evaluated.
+   * 
+   * Some examples::
+   * 
+   *   "2 + 2"
+   *   "window" // returns the window object
+   *   "x = 5; x*x"
+   *   "my_function()"
+   */</span>
+  required <span class="string">string  </span> scriptData   = 2; 
+  <span class="comment">/** 
+   * A list of objects to place in the execution environment when evaluating
+   * **scriptData**.
+   * 
+   * Each object is assigned to variable specified in **Variable.name**.
+   */</span>
+  repeated <span class="message">Variable</span> variableList = 3; 
+}

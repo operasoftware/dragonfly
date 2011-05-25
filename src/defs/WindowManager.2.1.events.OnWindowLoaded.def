@@ -1,0 +1,4 @@
+message <span class="message">WindowID</span>
+{
+  required <span class="number">uint32</span> windowID = 1; 
+}

@@ -1,0 +1,8 @@
+message <span class="message">FunctionFilter</span>
+{
+  <span class="comment">/** 
+   * Match the function call if any of the class names appear in the
+   * prototype chain of a given 'this' object.
+   */</span>
+  repeated <span class="string">string</span> classList = 1; 
+}

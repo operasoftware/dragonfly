@@ -1,0 +1,9 @@
+message <span class="message">BacktraceSelection</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+  required <span class="number">uint32</span> threadID  = 2; 
+  <span class="comment">/** 
+   * If omitted (or 0) all frames are returned.
+   */</span>
+  optional <span class="number">uint32</span> maxFrames = 3; 
+}

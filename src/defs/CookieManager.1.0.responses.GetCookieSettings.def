@@ -1,0 +1,24 @@
+<span class="comment">/** 
+ * 
+ *  The current settings for the cookie manager in the opera host, these settings are read-only and may vary depending on the platform or device used.
+ */</span>
+message <span class="message">CookieSettings</span>
+{
+  <span class="comment">/** 
+   * 
+   *  The maximum number of cookies the host can store in total.
+   *  If there is no room for new cookies the host will remove the least recently used cookies to get enough space.
+   */</span>
+  required <span class="number">uint32</span> maxCookies          = 1; 
+  <span class="comment">/** 
+   * 
+   *  The maximum number of cookies allowed in one domain.
+   *  If there is no room for new cookies the host will remove the least recently used cookies in the domain to get enough space.
+   */</span>
+  required <span class="number">uint32</span> maxCookiesPerDomain = 2; 
+  <span class="comment">/** 
+   * 
+   *  The maxium byte length of a single cookie, if the cookie exceeds this length it will be discarded.
+   */</span>
+  required <span class="number">uint32</span> maxCookieLength     = 3; 
+}

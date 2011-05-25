@@ -1,0 +1,8 @@
+message <span class="message">RemoveHeaderOverridesArg</span>
+{
+  <span class="comment">/** 
+   * A list of header names to remove overrides for. If there is no override
+   * for a certain name, it will be ignored.
+   */</span>
+  repeated <span class="string">string</span> nameList = 1; 
+}
