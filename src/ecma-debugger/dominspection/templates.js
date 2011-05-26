@@ -126,7 +126,7 @@
   this.dom_search = function(model, target, editable)
   {
     var data = model.getData();
-    var tree = "<div class='padding dom'" +
+    var tree = "<div" +
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
                ">";
@@ -187,7 +187,7 @@
           attrs = this._dom_attrs(node, force_lower_case);
           tree += 
             "<div class='dom-search-match' "+
-              "obj-id='" + node[ID] + "'  handler='inspect-node-link' >" +
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "<node>&lt;" + node_name + attrs +
                 (node[CHILDREN_LENGTH] ?
                  "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
@@ -233,7 +233,9 @@
           if (!/^\s*$/.test(node[VALUE]))
           {
             tree += 
-              "<div class='dom-search-match' >" +
+              "<div class='dom-search-match' " +
+                "obj-id='" + node[ID] + "' " +
+                "handler='inspect-node-link' >" +
                 "<span class='dom-search-text-node'>&lt;#text&gt;</span>" + 
                 helpers.escapeTextHtml(node[VALUE]) + 
               "<span class='dom-search-text-node'>&lt;/#text&gt;</span></div>";

@@ -95,16 +95,19 @@ examine-objects key {
 
 .markup-tag,
 .dom node, /* TODO: use class */
+.dom-search node,
 .element-name {
     color: #338;
 }
 
 .markup-attribute,
-.dom key {
+.dom key,
+.dom-search key, {
     color: #55a;
 }
 
 .markup-attribute-value,
+.dom-search value,
 .dom value {
     color: #a54;
 }

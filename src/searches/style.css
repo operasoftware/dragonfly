@@ -78,6 +78,8 @@
   color: #000;
 }
 
+/* DOM search */
+
 .dom-search-controls
 {
   position: absolute;
@@ -108,7 +110,7 @@
   line-height: 22px;
 }
 
-.dom-search-result-container
+.dom-search-container
 {
   box-sizing: border-box;
   border-top: 80px solid hsl(0, 0%, 60%);
@@ -116,12 +118,13 @@
   overflow: auto;
 }
 
-#dom-search-result
+.dom-search
 {
-  padding: 0;
+  display: table;
+  min-width: 100%;
 }
 
-.dom .no-dom-search-match
+.dom-search .no-dom-search-match
 {
   color: hsl(0, 0%, 70%);
 }
@@ -140,7 +143,7 @@
 
 .dom-search-match
 {
-  padding: 5px !important;
+  padding: 5px;
 }
 
 .dom-search-match:nth-child(even)

@@ -21,9 +21,8 @@ cls.DOMSearchView = function(id, name, container_class)
         'blur-handler', 'blur',
         'class', 'dom-search-controls'],
       ['div',
-        ['div', 'class', 'dom mono'],
-        'id', 'dom-search-result',
-        'class', 'dom-search-result-container'],
+        ['div', 'class', 'dom-search mono'],
+        'class', 'dom-search-container'],
     ]);
   };
 
@@ -39,7 +38,7 @@ cls.DOMSearchView = function(id, name, container_class)
   this.createView = function(container)
   {
     container.clearAndRender(this._tmpl());
-    this._search_container = document.getElementById('dom-search-result');
+    this._search_container = container.childNodes[1];
     this._search.set_container(this._search_container);
     var input = container.querySelector('[handler="' + 
                                         this.controls[SEARCHFIELD].handler + 

@@ -115,7 +115,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
         service_interface.minor_version > 4)
     {
       cls.DOMSearchView.prototype = ViewBase;
-      new cls.DOMSearchView('dom-search', 'Search', 'dom-search');
+      new cls.DOMSearchView('dom-search', 'Search');
     }
 
     /* Stylesheets */
