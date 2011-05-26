@@ -231,7 +231,7 @@ window.cls.FriendlyPrinter = function()
       {
         return [
           DATE,
-          item.toISOString()
+          new Date(item.getTime() - item.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','')
         ];
       }
       else if (class_ == "[object Function]")
