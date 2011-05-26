@@ -86,7 +86,7 @@ cls.StorageViewActions = function(id)
     return false;
   };
 
-  this._handlers["delete-all"] = function(event, target) // todo: "remove" is the new "delete"
+  this._handlers["delete-all"] = function(event, target)
   {
     var container = target;
     while(!container.getAttribute("data-storage-id"))
@@ -96,7 +96,6 @@ cls.StorageViewActions = function(id)
     var storage_id = container.getAttribute("data-storage-id");
     var rt_id = +target.querySelector("[name=rt_id]").value;
     window.storages[storage_id].clear(rt_id);
-    // todo: use callback to update? OR, maybe even better, trigger the update after clear, remove_item, set_item
     window.storages[storage_id].update();
   }.bind(this);
 
@@ -119,17 +118,31 @@ cls.StorageViewActions = function(id)
     {
       row = row.parentElement;
     }
-    if (!document.querySelector(".add_storage_row")) // add multiple items at once
-    {
-      // todo: how to reach _sortable_table from actions?
-      // this._sortable_table.restore_columns(document.querySelector(".sortable_table_container").firstChild);
-    }
     var header_row = row;
-    while (!header_row.hasClass("header"))
+    while (header_row && !header_row.hasClass("header"))
     {
       header_row = header_row.previousElementSibling;
     }
     var runtime_id = header_row.getAttribute("data-object-id");
+    if (!document.querySelector(".add_storage_row")) // add multiple items at once
+    {
+      var container = target;
+      while(container && !container.getAttribute("data-storage-id"))
+      {
+        container = container.parentNode;
+      }
+      var table_elem = container.querySelector(".sortable-table");
+      var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
+      table.restore_columns(table_elem);
+
+      // header_row and row are now renewed. Need to find them again.
+      header_row = container.querySelector("[data-object-id='" + runtime_id + "']");
+      row = header_row;
+      while (row && !row.hasClass("sortable-table-summation-row"))
+      {
+        row = row.nextElementSibling;
+      }
+    }
     var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
     var inserted = row.parentElement.insertBefore(templ, row);
     this._handlers["select-row"](event, inserted);
@@ -150,7 +163,7 @@ cls.StorageViewActions = function(id)
       *   more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var container = target;
-    while (!container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -224,11 +237,10 @@ cls.StorageViewActions = function(id)
     {
       target = target.parentNode;
     }
-    var rt_id = +target.querySelector("[name=rt_id]").value;
     this._handlers["select-row"](event, target);
 
     var container = target;
-    while (!container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -238,7 +250,7 @@ cls.StorageViewActions = function(id)
     {
       remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL;
     }
-    return [
+    var options = [
       {
         label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
         handler: function(event, target) {
@@ -256,14 +268,20 @@ cls.StorageViewActions = function(id)
         handler: function(event, target) {
           broker.dispatch_action(id, "remove-item", event, target)
         }
-      },
-      {
+      }
+    ];
+
+    var rt_id = target.querySelector("[name=rt_id]") && +target.querySelector("[name=rt_id]").value;
+    if (rt_id)
+    {
+      options.push({
         label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM.replace(/%s/, runtimes.getRuntime(rt_id).uri),
         handler: function(event, target) {
           broker.dispatch_action(id, "delete-all", event, target)
         }
-      }
-    ]
+      });
+    }
+    return options;
   };
 
   contextmenu.register("storage-item", [
