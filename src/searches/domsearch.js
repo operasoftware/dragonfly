@@ -162,7 +162,7 @@ var DOMSearch = function(min_length)
         this._match_nodes[this._match_node_cursor]
             .addClass(MATCH_NODE_HIGHLIGHT_CLASS);
         this._scroll_target_into_view(this._match_nodes[this._match_node_cursor],
-                                      direction);
+                                      direction, null, 0);
         this._update_info();
       }
       else

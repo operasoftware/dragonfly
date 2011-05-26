@@ -370,22 +370,36 @@ TextSearch.prototype = new function()
     }
   };
 
-  this._scroll_target_into_view = function(target, direction)
+  this._scroll_target_into_view = function(target, direction, top, left)
   {
     if (this._container && target)
     {
-      this._scroll_into_margined_view(this._container.clientHeight,
-                                      target.offsetHeight,
-                                      this.getRealOffsetTop(target),
-                                      DEFAULT_SCROLL_MARGIN,
-                                      direction,
-                                      'scrollTop');
-      this._scroll_into_margined_view(this._container.clientWidth,
-                                      target.offsetWidth,
-                                      this.getRealOffsetLeft(target),
-                                      DEFAULT_SCROLL_MARGIN,
-                                      direction,
-                                      'scrollLeft');
+      if (typeof top == 'number')
+      {
+        this._container.scrollTop = top;
+      }
+      else
+      {
+        this._scroll_into_margined_view(this._container.clientHeight,
+                                        target.offsetHeight,
+                                        this.getRealOffsetTop(target),
+                                        DEFAULT_SCROLL_MARGIN,
+                                        direction,
+                                        'scrollTop');
+      }
+      if (typeof left == 'number')
+      {
+        this._container.scrollLeft = left
+      }
+      else
+      {
+        this._scroll_into_margined_view(this._container.clientWidth,
+                                        target.offsetWidth,
+                                        this.getRealOffsetLeft(target),
+                                        DEFAULT_SCROLL_MARGIN,
+                                        direction,
+                                        'scrollLeft');
+      }
     }
   };
 
@@ -397,7 +411,10 @@ TextSearch.prototype = new function()
                                              scroll_dim)
   {
     if (container_dim < 2 * scroll_margin + target_dim)
-      scroll_margin = (container_dim - target_dim) / 2;
+    {
+      scroll_margin = Math.max((container_dim - target_dim) / 2, 0);
+    }
+    target_dim = Math.min(target_dim, container_dim - 2 * scroll_margin);
     if (offset_dim < scroll_margin ||
         container_dim - scroll_margin - target_dim < offset_dim)
     {
