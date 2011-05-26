@@ -132,6 +132,7 @@ cls.StorageViewActions = function(id)
     var runtime_id = header_row.getAttribute("data-object-id");
     var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
     var inserted = row.parentElement.insertBefore(templ, row);
+    this._handlers["select-row"](event, inserted);
     inserted.querySelector("[name=key]").focus();
   }.bind(this);
 
@@ -161,7 +162,7 @@ cls.StorageViewActions = function(id)
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
-    if(event.ctrlKey && target.hasClass("selected"))
+    if (event.ctrlKey && target.hasClass("selected"))
     {
       target.removeClass("selected");
     }
@@ -173,9 +174,23 @@ cls.StorageViewActions = function(id)
 
   this._handlers["textarea-autosize"] = function(event, target)
   {
-    target.style.overflow = "hidden";
+    // todo: don't need to repeat max_height in the action.
+    var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
+    
+    // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
+    // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
+    target.style.height = null;
     target.style.height = target.scrollHeight + "px";
-    target.style.overflow = "visible";
+    if (target.scrollHeight > max_height) {
+      if(!target.style.overflow)
+      {
+        target.style.overflow = "visible";
+      }
+    }
+    else
+    if (target.style.overflow) {
+      target.style.overflow = null;
+    }
   };
 
   this._handlers["textarea-focus"] = function(event, target)
@@ -288,7 +303,7 @@ window.eventHandlers.click["storage-input-field"] = function(event, target)
   // which exits editing
 }
 
-window.eventHandlers.keyup["storage-input-field"] = function(event, target)
+window.eventHandlers.input["storage-input-field"] = function(event, target)
 {
   if(target.nodeName === "textarea")
   {
