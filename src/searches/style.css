@@ -118,7 +118,7 @@
 
 #dom-search-result
 {
-  padding-left: 10px;
+  padding: 0;
 }
 
 .dom .no-dom-search-match
@@ -136,5 +136,20 @@
   float: left;
   margin-bottom: -10px;
   background: url("../ui-images/node-match-pointer.png") no-repeat 0 50%;
+}
+
+.dom-search-match
+{
+  padding: 5px !important;
+}
+
+.dom-search-match:nth-child(even)
+{
+  background-color: hsl(0, 0%, 95%);
+}
+
+.dom-search-text-node
+{
+  color: hsl(0, 0%, 70%);
 }
 

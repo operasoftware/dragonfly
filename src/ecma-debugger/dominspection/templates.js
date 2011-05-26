@@ -110,7 +110,7 @@
     for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
     {
       attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
-      if (is_search_hit)
+      if (typeof is_search_hit != 'boolean' || is_search_hit)
       {
         attrs += " <key>" + safe_escape_attr_key(attr) +
                  "</key>=<value>\"" + attr_value + "\"</value>";
@@ -124,6 +124,129 @@
   };
 
   this.dom_search = function(model, target, editable)
+  {
+    var data = model.getData();
+    var tree = "<div class='padding dom'" +
+               " rt-id='" + model.getDataRuntimeId() + "'" +
+               " data-model-id='" + model.id + "'" +
+               ">";
+    var length = data.length;
+    var attrs = null, attr = null, k = 0, key = '', attr_value = '';
+    var is_open = 0;
+    var has_only_one_child = 0;
+    var one_child_text_content = '';
+    var current_depth = 0;
+    var child_pointer = 0;
+    var child_level = 0;
+    var j = 0;
+    var children_length = 0;
+    var closing_tags = [];
+    var force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+    var show_comments = window.settings.dom.get('show-comments');
+    var node_name = '';
+    var class_name = '';
+    var re_formatted = /script|style|#comment/i;
+    var style = null;
+
+
+    var disregard_force_lower_case_depth = 0;
+
+    var search_class = "";
+    var search_class_text = "";
+
+    for (var i = 0, node; node = data[i]; i++)
+    {
+      if (node[MATCH_REASON] == SEARCH_PARENT)
+      {
+        continue;
+      }
+
+      node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+
+      if (force_lower_case && disregard_force_lower_case(node))
+      {
+        disregard_force_lower_case_depth = node[DEPTH];
+        force_lower_case = false;
+      }
+      else if (disregard_force_lower_case_depth && 
+               disregard_force_lower_case_depth == node[DEPTH])
+      {
+        disregard_force_lower_case_depth = 0;
+        force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+      }
+      if (force_lower_case)
+      {
+        node_name = node_name.toLowerCase();
+      }
+      switch (node[TYPE])
+      {
+        case ELEMENT_NODE:
+        {
+          attrs = this._dom_attrs(node, force_lower_case);
+          tree += 
+            "<div class='dom-search-match' "+
+              "obj-id='" + node[ID] + "'  handler='inspect-node-link' >" +
+              "<node>&lt;" + node_name + attrs +
+                (node[CHILDREN_LENGTH] ?
+                 "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
+                 "/&gt;</node>") +
+            "</div>";
+          break;
+        }
+        case PROCESSING_INSTRUCTION_NODE:
+        {
+          tree += 
+            "<div class='dom-search-match processing-instruction'>" +
+              "&lt;?" + node[NAME] + ' ' +
+              formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
+            "?&gt;</div>";
+          break;
+        }
+        case COMMENT_NODE:
+        {
+          if (show_comments && !/^\s*$/.test(node[VALUE]))
+          {
+            tree += 
+              "<div class='dom-search-match comment pre-wrap' >" +
+                "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;" +
+              "</div>";
+          }
+          break;
+        }
+        case DOCUMENT_NODE:
+        {
+          break;
+        }
+        case DOCUMENT_TYPE_NODE:
+        {
+          tree += 
+            "<div class='dom-search-match doctype' >" +
+              "&lt;!DOCTYPE " + node[NAME] +
+              this._get_doctype_external_identifier(node) + "&gt;" +
+            "</div>";
+          break;
+        }
+        default:
+        {
+          if (!/^\s*$/.test(node[VALUE]))
+          {
+            tree += 
+              "<div class='dom-search-match' >" +
+                "<span class='dom-search-text-node'>&lt;#text&gt;</span>" + 
+                helpers.escapeTextHtml(node[VALUE]) + 
+              "<span class='dom-search-text-node'>&lt;/#text&gt;</span></div>";
+          }
+        }
+      }
+    }
+    tree += "</div>";
+    return tree;
+  };
+
+
+  this.dom_search_2 = function(model, target, editable)
   {
     var data = model.getData();
     var tree = "<div class='padding dom'" +
