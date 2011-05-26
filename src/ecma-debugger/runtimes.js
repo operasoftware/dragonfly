@@ -370,7 +370,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.runtime_has_dom = function(rt_id)
   {
-    // description is only available in never Core versions, so if it's undefined it has DOM
+    // description is only available in newer Core versions, so if it's undefined it has DOM
     return __runtimes[rt_id] && (__runtimes[rt_id].description == "document" ||
                                  __runtimes[rt_id].description === undefined);
   };
