@@ -320,6 +320,8 @@ var ErrorConsoleView = function(id, name, container_class, source)
   var _expand_all_state = null;
   var _table_ele = null;
 
+  this._prev_entries_length = 0;
+
   this.createView = function(container)
   {
     // Switch on whether we have a table element allready. If we do, just
@@ -337,10 +339,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
     }
     // but if not, check if there are new entries to show and just
     // update the list with them
-    else if (_table_ele.childNodes.length-1 < entries.length)
+    else if (this._prev_entries_length < entries.length)
     {
       this.renderUpdate(entries.slice(-1), expand_all);
     }
+
+    this._prev_entries_length = entries.length;
   };
 
 
