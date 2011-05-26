@@ -269,6 +269,10 @@ TextSearch.prototype = new function()
           {
             this._match_cursor = old_cursor;
             this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+            if (this._onhighlightstyle)
+            {
+              this._onhighlightstyle(this._hits[this._match_cursor]);
+            }
             this._update_info();
           }
           else
@@ -356,6 +360,10 @@ TextSearch.prototype = new function()
         this._match_cursor = this._hits.length - 1;
       }
       this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+      if (this._onhighlightstyle)
+      {
+        this._onhighlightstyle(this._hits[this._match_cursor]);
+      }
       var target = this._hits[this._match_cursor][0];
       this._scroll_target_into_view(target, direction);
       this._update_info();

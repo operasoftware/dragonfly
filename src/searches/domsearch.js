@@ -7,7 +7,7 @@ var DOMSearch = function(min_length)
 
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
-  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-node-highlight",
+  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-match-cursor",
   NO_MATCH = 1;
 
   this._onsearchtypechange = function(event)
@@ -101,6 +101,17 @@ var DOMSearch = function(min_length)
     return this._match_cursor + 1;
   };
 
+  this.inspect_selected_node = function()
+  {
+    if (this._highligh_node)
+    {
+      this._broker.dispatch_action("dom", 
+                                   "inspect-node-link",
+                                   null,
+                                   this._highligh_node);
+    }
+  }
+
   this.update_search_token = function()
   {
     this._search_term = this._last_query;
@@ -159,6 +170,7 @@ var DOMSearch = function(min_length)
       }
       if (this._match_nodes[this._match_node_cursor])
       {
+        this._highligh_node = this._match_nodes[this._match_node_cursor];
         this._match_nodes[this._match_node_cursor]
             .addClass(MATCH_NODE_HIGHLIGHT_CLASS);
         this._scroll_target_into_view(this._match_nodes[this._match_node_cursor],
@@ -213,6 +225,23 @@ var DOMSearch = function(min_length)
     this._selected_runtime = msg.rt_id;
   }
 
+  this._onhighlightstyle = function(span_list)
+  {
+    if (span_list.length)
+    {
+      var target = span_list[0].get_ancestor('.dom-search-match');
+      if (this._highligh_node && this._highligh_node != target)
+      {
+        this._highligh_node.removeClass('dom-search-match-cursor')
+      }
+      if (target)
+      {
+        this._highligh_node = target;
+        this._highligh_node.addClass('dom-search-match-cursor');
+      }
+    }
+  };
+
   this._init = function(min_length)
   {
     this._init_super(min_length);
@@ -226,6 +255,7 @@ var DOMSearch = function(min_length)
     this._last_ignore_case = this.ignore_case;
     this._tagman = window.tag_manager;
     this._esdi = window.services['ecmascript-debugger'];
+    this._broker = ActionBroker.get_instance();
 
     window.eventHandlers.change['dom-search-type-changed'] = this._onsearchtypechange;
     this._query_selector = ".dom-search-match";

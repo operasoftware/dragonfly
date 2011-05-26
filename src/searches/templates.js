@@ -3,11 +3,7 @@
   const MAX_LINE_CHARS = 4000;
   this.searchbar_content = function(search)
   {
-    return (
-    [
-      this.filters(search.controls),
-      ['info', '\u00A0'],
-    ]);
+    return this.filters(search.controls);
   };
 
   this._dom_search_input = function(name, type, value, label, is_selected)
@@ -52,11 +48,13 @@
                                  'ignore-case', 
                                  'ignore case',
                                  search.ignore_case),
+          /*
           this._dom_search_input('dom-search-only-selected-node', 
                                  'checkbox', 
                                  'only-selected-node', 
                                  'search only in the selected node',
                                  search.search_only_selected_node),
+          */
           'handler', 'dom-search-type-changed',
         ],
       ],

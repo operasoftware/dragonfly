@@ -23,6 +23,9 @@ cls.DOMSearchView = function(id, name, container_class)
       ['div',
         ['div', 'class', 'dom-search mono'],
         'class', 'dom-search-container'],
+      ['div',
+        ['info', '\u00A0'],
+        'class', 'dom-search-info'],
     ]);
   };
 
@@ -70,6 +73,11 @@ cls.DOMSearchView = function(id, name, container_class)
       {
         this._search.highlight_previous();
         return false;
+      }
+      case "show-script":
+      {
+        this._search.inspect_selected_node();
+        break;
       }
 
     }

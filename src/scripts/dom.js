@@ -614,6 +614,30 @@ Element.prototype.get_attr = function(traverse_type, name)
   return null;
 };
 
+if (!Element.prototype.matchesSelector)
+{
+  Element.prototype.matchesSelector = 
+    Element.prototype.oMatchesSelector ?
+    Element.prototype.oMatchesSelector :
+    function(selector)
+    {
+      var sel = this.parentNode.querySelectorAll(selector);
+      for (var i = 0; sel[i] && sel[i] != this; i++);
+      return Boolean(sel[i]);
+    }
+};
+
+Element.prototype.get_ancestor = function(selector)
+{
+  var ele = this.parentNode;
+  while (ele)
+  {
+    if (ele.nodeType == 1 && ele.matchesSelector(selector))
+      return ele;
+    ele = ele.parentNode;
+  }
+};
+
 
 /**
  * Make sure the element is visible in its scoll context.
