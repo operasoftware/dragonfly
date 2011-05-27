@@ -142,7 +142,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       switch(msg.key)
       {
         case 'expand-all-entries': {
-          toggled = [];
+          this._toggled = [];
           this._updateviews();
           break;
         }
