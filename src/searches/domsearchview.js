@@ -30,15 +30,6 @@ cls.DOMSearchView = function(id, name, container_class)
     ]);
   };
 
-  this._adjust_scroll_height = function()
-  {
-    if (this._search_container)
-    {
-      this._search_container.style.borderTopWidth = 
-        (this._search_container.parentNode.firstElementChild.offsetHeight + 1) + 'px';
-    }
-  };
-
   this.createView = function(container)
   {
     container.clearAndRender(this._tmpl());
@@ -49,14 +40,12 @@ cls.DOMSearchView = function(id, name, container_class)
                                         '"]');
     this._search.set_form_input(input);
     this._search.set_info_element(container.getElementsByTagName('info')[0]);
-    this._adjust_scroll_height();
-
+    this._search.show_last_search();
   };
 
   this.onresize = function()
   {
-    this._adjust_scroll_height();
-    this._search.set_container(this._search_container);
+
   };
 
   ActionHandlerInterface.apply(this);

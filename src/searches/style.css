@@ -83,7 +83,7 @@
 .dom-search-container
 {
   box-sizing: border-box;
-  border-top: 80px solid hsl(0, 0%, 60%);
+  border-top: 47px solid hsl(0, 0%, 60%);
   border-bottom: 23px solid hsl(0, 0%, 60%);
   height: 100%;
   overflow: auto;

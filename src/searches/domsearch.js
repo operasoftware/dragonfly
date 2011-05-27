@@ -8,7 +8,8 @@ var DOMSearch = function(min_length)
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
   MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-match-cursor",
-  NO_MATCH = 1;
+  NO_MATCH = TextSearch.NO_MATCH,
+  EMPTY = TextSearch.EMPTY;
 
   this._onsearchtypechange = function(event)
   {
@@ -110,7 +111,7 @@ var DOMSearch = function(min_length)
                                    null,
                                    this._highligh_node);
     }
-  }
+  };
 
   this.update_search_token = function()
   {
@@ -127,6 +128,11 @@ var DOMSearch = function(min_length)
       this._input.parentNode.firstChild.textContent = '';
       this.update_search_token();
     }
+  };
+
+  this.show_last_search = function()
+  {
+    this._handle_search();
   };
 
   /* methods for search type css and xpath */
@@ -283,24 +289,33 @@ var DOMSearch = function(min_length)
          this._selected_node != this._last_selected_node))
     {
       this._last_query = this._input.value;
+      this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
       this._last_search_only_selected_node = this.search_only_selected_node;
       this._last_selected_node = this._selected_node;
       this._match_node_cursor = -1;
       this._match_cursor = -1;
-      this._model = new cls.InspectableDOMNode(this._selected_runtime,
-                                               this._selected_node);
-      this._is_processing = true;
-      this._queued_input = false;
-      this._model.search(this._last_query,
-                         this.search_type,
-                         this.ignore_case,
-                         this.search_only_selected_node ?
-                         this._selected_node : 
-                         0,
-                         this._handle_search);
-
+      if (this._last_query)
+      {
+        this._model = new cls.InspectableDOMNode(this._selected_runtime,
+                                                 this._selected_node);
+        this._is_processing = true;
+        this._queued_input = false;
+        this._model.search(this._last_query,
+                           this.search_type,
+                           this.ignore_case,
+                           this.search_only_selected_node ?
+                           this._selected_node : 
+                           0,
+                           this._handle_search);
+      }
+      else
+      {
+        this._model = null;
+        this._handle_search();
+        this._update_info(EMPTY);
+      }
       return false;
     }
     return true;
@@ -308,11 +323,26 @@ var DOMSearch = function(min_length)
 
   this._handle_search = function(status, message, rt_id, object_id)
   {
-    var tmpl = window.templates.dom_search(this._model);
-    this._container.firstElementChild.clearAndRender(tmpl);
-    if (this._model.getData() && this._model.getData().length)
+    if (this._container)
     {
-      this._initial_highlight();
+      if (this._model)
+      {
+        var tmpl = window.templates.dom_search(this._model);
+        this._container.firstElementChild.clearAndRender(tmpl);
+        if (this._model.getData() && this._model.getData().length)
+        {
+          this._initial_highlight();
+        }
+        else
+        {
+          this._update_info(NO_MATCH);
+        }
+      }
+      else
+      {
+        this._container.firstElementChild.innerHTML = "";
+        this._update_info(EMPTY);
+      }
     }
     if (this._queued_input)
     {

@@ -13,6 +13,8 @@ var TextSearch = function(min_length)
 
 TextSearch.PLAIN_TEXT = 1;
 TextSearch.REGEXP = 2;
+TextSearch.NO_MATCH = 1;
+TextSearch.EMPTY = 2;
 
 TextSearch.prototype = new function()
 {
@@ -20,8 +22,8 @@ TextSearch.prototype = new function()
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
-  NO_MATCH = 1,
-  EMPTY = 2;
+  NO_MATCH = TextSearch.NO_MATCH,
+  EMPTY = TextSearch.EMPTY;
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   window.addEventListener('load', function()

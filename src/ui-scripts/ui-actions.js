@@ -292,6 +292,7 @@ eventHandlers.change['checkbox-setting'] = function(event)
 
 eventHandlers.focus['focus'] = function(event, target)
 {
+  /* TODO remove, placeholder is now implemented
   var parent = event.target.parentNode;
   if( parent.nodeName.toLowerCase() == 'filter' )
   {
@@ -304,10 +305,12 @@ eventHandlers.focus['focus'] = function(event, target)
 
     }
   }
+  */
 }
 
 eventHandlers.blur['blur'] = function(event, target)
 {
+  /* TODO remove, placeholder is now implemented
   var parent = event.target.parentNode;
   if( parent.nodeName.toLowerCase() == 'filter' )
   {
@@ -318,5 +321,6 @@ eventHandlers.blur['blur'] = function(event, target)
     }
     parent.removeClass('focus');
   }
+  */
 }
 

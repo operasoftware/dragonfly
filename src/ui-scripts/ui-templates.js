@@ -107,14 +107,14 @@
           'handler', filter.handler,
           'shortcuts', filter.shortcuts,
           'title', filter.title,
-          'default-text', default_text
+          'placeholder', default_text
         ];
         ['handler', 'shortcuts'].forEach(function(attr)
         {
           if (filter.hasOwnProperty(attr))
             tpl_input.push(attr, filter[attr]);
         });
-        ret.push(['filter', ['span', default_text], tpl_input, "class", filter.type || ""]);
+        ret.push(['filter', ['span', ''], tpl_input, "class", filter.type || ""]);
       }
     }
     return ret;
