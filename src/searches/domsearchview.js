@@ -22,7 +22,8 @@ cls.DOMSearchView = function(id, name, container_class)
         'class', 'dom-search-controls'],
       ['div',
         ['div', 'class', 'dom-search mono'],
-        'class', 'dom-search-container'],
+        'class', 'dom-search-container',
+        'handler', 'clear-style-highlight-node'],
       ['div',
         ['info', '\u00A0'],
         'class', 'dom-search-info'],
@@ -135,6 +136,8 @@ cls.DOMSearchView = function(id, name, container_class)
       this._onshortcut.bind(this, 'highlight-next-match');
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
       this._onshortcut.bind(this, 'highlight-previous-match');
+    eventHandlers.mouseover['clear-style-highlight-node'] =
+      this._search.clear_style_highlight_node.bind(this._search);
     ActionBroker.get_instance().get_global_handler().
     register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                this._onshortcut.bind(this), 

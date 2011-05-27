@@ -150,15 +150,20 @@ var DOMSearch = function(min_length)
     }
   };
 
+  this.clear_style_highlight_node = function()
+  {
+    if (this._highligh_node)
+    {
+      this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS);
+      this._highligh_node = null;
+    }
+  };
+
   this._highlight_match_node = function(direction)
   {
     if (this._match_nodes)
     {
-      if (this._match_nodes[this._match_node_cursor])
-      {
-        this._match_nodes[this._match_node_cursor]
-            .removeClass(MATCH_NODE_HIGHLIGHT_CLASS);
-      }
+      this.clear_style_highlight_node();
       this._match_node_cursor += direction;
       if (this._match_node_cursor >= this._match_nodes.length)
       {
@@ -171,8 +176,7 @@ var DOMSearch = function(min_length)
       if (this._match_nodes[this._match_node_cursor])
       {
         this._highligh_node = this._match_nodes[this._match_node_cursor];
-        this._match_nodes[this._match_node_cursor]
-            .addClass(MATCH_NODE_HIGHLIGHT_CLASS);
+        this._highligh_node.addClass(MATCH_NODE_HIGHLIGHT_CLASS);
         this._scroll_target_into_view(this._match_nodes[this._match_node_cursor],
                                       direction, null, 0);
         this._update_info();
