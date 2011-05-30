@@ -215,11 +215,11 @@ cls.StorageDataBase = new function()
   this._setup_local_storage = function(rt_id)
   {
     var script = this["return new _StorageHost()"];
-    var tag = tagManager.set_callback(this, this._register_loacal_storage, [rt_id]);
+    var tag = tagManager.set_callback(this, this._register_local_storage, [rt_id]);
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   };
 
-  this._register_loacal_storage = function(staus, message, rt_id)
+  this._register_local_storage = function(staus, message, rt_id)
   {
     const
     STATUS = 0,
@@ -382,6 +382,17 @@ cls.StorageDataBase = new function()
     this.is_setup = false;
     this["return new _StorageHost()"] =
       "return new " + this._StorageHost.toString() + "(\"" + storage_object + "\").check_storage_object()";
+
+    /**
+      * Would be great to update automatically, on any change of the storage object on the host side.
+      * requestSetFunctionFilter could almost work, but it won't catch some changes aka localStorage.foo = "bar".
+      * Also requestSetFunctionFilter should not be used directly in a data-model, since it's for all of the debug-context.
+      * Also it would listeners to functioncallstarted and functioncallcompleted and a mapping between the events they receive,
+      * since functioncallcompleted doesn't have much information on what function this is about.
+      *   window.services["ecmascript-debugger"].requestSetFunctionFilter(null, ["Storage"]);
+      *   window.services["ecmascript-debugger"].addListener("functioncallcompleted", this._handle_update);
+      */
+
     window.cls.MessageMixin.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
