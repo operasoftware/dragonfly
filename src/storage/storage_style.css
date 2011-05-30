@@ -22,6 +22,7 @@ input[type='datetime-local'] {
 
 .storage_view .value_container {
   word-wrap: break-word;
+  white-space: pre;
 }
 
 .storage_view .edit_container {
@@ -39,6 +40,7 @@ input[type='datetime-local'] {
 
 .storage_view input[type=text], .storage_view textarea {
   padding: 3px 2px 1px 2px;
+  max-height: 700px;
 }
 
 .storage_view .sortable-table .value_container > div {
@@ -68,6 +70,10 @@ input[type='datetime-local'] {
   height: 8px;
   margin-top: 0;
   margin-bottom: 4px;
+}
+
+.storage_view .sortable-table th, .storage_view .sortable-table td {
+  padding-right: 10px;
 }
 
 .storage_view .sortable-table .ellipsis_cont .ellipsis {
