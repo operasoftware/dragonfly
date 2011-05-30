@@ -249,7 +249,8 @@
     return tree;
   };
 
-
+  // TODO Remove if we decide to keep the version
+  // which shows only the matching nodes.
   this.dom_search_2 = function(model, target, editable)
   {
     var data = model.getData();
