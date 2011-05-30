@@ -91,13 +91,22 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._hscrollcontainer.scrollLeft = this._hscroll;
         container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
 
-        var scrollfun = function(evt) {
+        var hscrollfun = function(evt)
+        {
           var e = document.getElementById("right-side-container");
           var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
           e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
         }
-        scrollfun({target:this._hscrollcontainer});
-        this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
+        hscrollfun({target:this._hscrollcontainer});
+        this._hscrollcontainer.addEventListener("scroll", hscrollfun, false)
+
+        var vscrollfun = function()
+        {
+          this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
+        }.bind(this);
+
+        this._vscrollcontainer.addEventListener("scroll", vscrollfun, false);
+        this._hscrollcontainer.addEventListener("scroll", hscrollfun, false);
       }
     }
     else if (paused)
