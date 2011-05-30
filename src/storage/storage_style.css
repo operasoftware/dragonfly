@@ -22,6 +22,7 @@ input[type='datetime-local'] {
 
 .storage_view .value_container {
   word-wrap: break-word;
+  white-space: pre;
 }
 
 .storage_view .edit_container {

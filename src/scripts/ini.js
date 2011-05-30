@@ -198,11 +198,6 @@ var ini =
         {
           "enter": "submit",
           "escape": "cancel"
-        },
-        "multi-line-edit":
-        {
-          "ctrl enter": "submit",
-          "escape": "cancel"
         }
       }
     },
@@ -397,12 +392,6 @@ var ini =
         {
           "enter": "submit",
           "escape": "cancel"
-        },
-        "multi-line-edit":
-        {
-          "cmd enter": "submit",
-          "escape": "cancel",
-          "f6": "cancel"
         }
       }
     },

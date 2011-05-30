@@ -5,173 +5,221 @@ cls.StorageViewActions = function(id)
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit";
-  MODE_MULTI_LINE_EDIT = "multi-line-edit";
 
   this.id = id;
   this.inherited_shortcuts = "storage";
   ActionHandlerInterface.apply(this);
   this._handlers = {};
 
+  this._update = function(storage_id, success)
+  {
+    window.storages[storage_id].update();
+  }.bind(this, id);
+
   this._handlers["edit"] = function(event, target)
   {
-    this.mode = MODE_EDIT;
+    this.mode = MODE_EDIT; // todo: why doesn't this work?
+    ActionBroker.get_instance()._action_context.mode = MODE_EDIT;
+
     var container = target;
-    while(!container.getAttribute("data-storage-id"))
+    while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
-    var table_elem = container.querySelector(".sortable-table");
-    var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
-    table.restore_columns(table_elem);
-    // can't directly work with target because restore_columns has renewed it.
-    var ref = target.getAttribute("data-object-id");
-    var tr = container.querySelector("tr[data-object-id='"+ref+"']")
-    tr.addClass("edit_mode");
-    this._handlers["select-row"](event, tr);
-    var textarea = tr.querySelector("textarea");
-    if(textarea)
+    if (container)
     {
-      this._handlers["textarea-autosize"](null, textarea);
+      var table_elem = container.querySelector(".sortable-table");
+      var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
+      table.restore_columns(table_elem);
+      // can't directly work with target because restore_columns has renewed it.
+      var ref = target.getAttribute("data-object-id");
+      var tr = container.querySelector("tr[data-object-id='"+ref+"']")
+      tr.addClass("edit_mode");
+      this._handlers["select-row"](event, tr);
+      var textarea = tr.querySelector("textarea");
+      if(textarea)
+      {
+        this._handlers["textarea-autosize"](null, textarea);
+      }
     }
   }.bind(this);
 
   this._handlers["submit"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
-
     var container = target;
-    while(!container.getAttribute("data-storage-id"))
+    while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
 
-    var storage_id = container.getAttribute("data-storage-id");
-    var edit_trs = container.querySelectorAll("tr.edit_mode");
-    for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
+    if(container)
     {
-      var rt_id = +edit_tr.querySelector("[name=rt_id]").value;
-      var key   = edit_tr.querySelector("[name=key]").value;
-      var value = edit_tr.querySelector("[name=value]").value;
-
-      window.storages[storage_id].set_item(rt_id, key, value, function(storage_id, success)
+      var storage_id = container.getAttribute("data-storage-id");
+      var edit_trs = container.querySelectorAll("tr.edit_mode");
+      for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
-        window.storages[storage_id].update();
-      }.bind(this, storage_id))
+        var rt_id = +edit_tr.querySelector("[name=rt_id]").value;
+        var key   = edit_tr.querySelector("[name=key]").value;
+        var value = edit_tr.querySelector("[name=value]").value;
+        window.storages[storage_id].set_item(rt_id, key, value, this._update);
+      }
+      return false;
     }
   }.bind(this);
 
-  this._handlers["remove-item"] = function(event, target)
+  this._handlers["remove-item"] = function(event, target, object_ids)
   {
     var container = target;
-    while(!container.getAttribute("data-storage-id"))
+    while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
-    var storage_id = container.getAttribute("data-storage-id");
-    var selection = container.querySelectorAll("tr.selected");
-    for (var i=0, selected; selected = selection[i]; i++) {
-      selection[i]
-      var rt_id = +selected.querySelector("[name=rt_id]").value;
-      var key   = selected.querySelector("[name=key]").value;
-      var cb = function(){};
-      if(i === selection.length - 1)
+    if (container)
+    {
+      var storage_id = container.getAttribute("data-storage-id");
+      var selection = container.querySelectorAll("tr.selected");
+      for (var i=0, selected; selected = selection[i]; i++)
       {
-        cb = function(storage_id, success)
+        var rt_id = +selected.querySelector("[name=rt_id]").value;
+        var key   = selected.querySelector("[name=key]").value;
+        var cb = function(){};
+        if(i === selection.length - 1)
         {
-          window.storages[storage_id].update();
-        }.bind(this, storage_id);
-      }
-      window.storages[storage_id].remove_item(rt_id, key, cb);
-    };
-    return false;
+          cb = function(storage_id, success)
+          {
+            window.storages[storage_id].update();
+          }.bind(this, storage_id);
+        }
+        window.storages[storage_id].remove_item(rt_id, key, cb);
+      };
+      return false;
+    }
   };
 
   this._handlers["delete-all"] = function(event, target)
   {
     var container = target;
-    while(!container.getAttribute("data-storage-id"))
+    while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
-    var storage_id = container.getAttribute("data-storage-id");
-    var rt_id = +target.querySelector("[name=rt_id]").value;
-    window.storages[storage_id].clear(rt_id);
-    window.storages[storage_id].update();
+    if (container)
+    {
+      var storage_id = container.getAttribute("data-storage-id");
+      var rt_id = +target.querySelector("[name=rt_id]").value;
+      window.storages[storage_id].clear(rt_id);
+      window.storages[storage_id].update();
+    }
   }.bind(this);
 
   this._handlers["update"] = this._handlers["cancel"] = function(event, target)
   {
     var container = target;
-    while(!container.getAttribute("data-storage-id"))
+    while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
-    window.storages[container.getAttribute("data-storage-id")].update();
-    return false;
+    if (container)
+    {
+      window.storages[container.getAttribute("data-storage-id")].update();
+      return false;
+    }
   }.bind(this);
 
   this._handlers["add-key"] = function(event, target)
   {
     this.mode = MODE_EDIT;
+    ActionBroker.get_instance()._action_context.mode = MODE_EDIT;
+
     var row = target;
-    while (row.nodeName != "tr")
+    while (row && row.nodeName != "tr")
     {
       row = row.parentElement;
     }
+    var item_id = row && row.getAttribute("data-object-id");
+
     var header_row = row;
     while (header_row && !header_row.hasClass("header"))
     {
       header_row = header_row.previousElementSibling;
     }
-    var runtime_id = header_row.getAttribute("data-object-id");
-    if (!document.querySelector(".add_storage_row")) // add multiple items at once
-    {
-      var container = target;
-      while(container && !container.getAttribute("data-storage-id"))
-      {
-        container = container.parentNode;
-      }
-      var table_elem = container.querySelector(".sortable-table");
-      var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
-      table.restore_columns(table_elem);
+    var runtime_id = header_row && header_row.getAttribute("data-object-id");
 
-      // header_row and row are now renewed. Need to find them again.
-      header_row = container.querySelector("[data-object-id='" + runtime_id + "']");
-      row = header_row;
-      while (row && !row.hasClass("sortable-table-summation-row"))
+    var container = target;
+    while(container && !container.getAttribute("data-storage-id"))
+    {
+      container = container.parentNode;
+    }
+
+    if(container && runtime_id)
+    {
+      if (!container.querySelector(".add_storage_row")) // don't restore when adding multiple items at once
       {
-        row = row.nextElementSibling;
+        var table_elem = container.querySelector(".sortable-table");
+        if(table_elem)
+        {
+          var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
+          if (table)
+          {
+            table.restore_columns(table_elem);
+          }
+        }
+      }
+
+      var insert_before_row;
+      if (item_id) // came from context menu of an item
+      {
+        insert_before_row = container.querySelector("[data-object-id='" + item_id + "']");
+        if (insert_before_row && insert_before_row.nextElementSibling)
+        {
+          insert_before_row = insert_before_row.nextElementSibling;
+        }
+      }
+      else // came from add storage button
+      {
+        // find header row, traverse to summation_row
+        insert_before_row = container.querySelector("[data-object-id='" + runtime_id + "']");
+        while (insert_before_row && !insert_before_row.hasClass("sortable-table-summation-row"))
+        {
+          insert_before_row = insert_before_row.nextElementSibling;
+        }
+      }
+
+      if (insert_before_row)
+      {
+        var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
+        var inserted = insert_before_row.parentElement.insertBefore(templ, insert_before_row);
+        this._handlers["select-row"](event, inserted);
+        inserted.querySelector("[name=key]").focus();
       }
     }
-    var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
-    var inserted = row.parentElement.insertBefore(templ, row);
-    this._handlers["select-row"](event, inserted);
-    inserted.querySelector("[name=key]").focus();
   }.bind(this);
 
   this._handlers["select-row"] = function(event, target)
   {
-    // trigger safe if target is not in edit mode
-    if (!target.hasClass("edit_mode"))
-    {
-      ActionBroker.get_instance().dispatch_action(id, "submit", event, target);
-    }
-
     /**
-      * unselect everything while not doing multiple selection, which is when:
-      *   cmd / ctrl key is pressed OR
-      *   more than 1 item is already selected && event is right-click, clicked item was already selected
+      * unselect everything unless
+      *   it's a row that adds a storage item
+      *   doing multiple selection, which is when:
+      *     cmd / ctrl key is pressed OR
+      *     more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
+
     var selection = container.querySelectorAll(".sortable-table .selected");
     if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
     {
-      for (var i=0, selected_node; selected_node = selection[i]; i++) {
-        selected_node.removeClass("selected");
+      for (var i=0, selected_node; selected_node = selection[i]; i++)
+      {
+        if (!selected_node.hasClass("add_storage_row"))
+        {
+          selected_node.removeClass("selected");
+        }
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
@@ -189,7 +237,7 @@ cls.StorageViewActions = function(id)
   {
     // todo: don't need to repeat max_height in the action.
     var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
-    
+
     // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
     // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
     target.style.height = null;
@@ -206,21 +254,36 @@ cls.StorageViewActions = function(id)
     }
   };
 
-  this._handlers["textarea-focus"] = function(event, target)
+  this.onclick = function(event)
   {
-    this.mode = MODE_MULTI_LINE_EDIT;
-  };
-
-  this._handlers["textarea-blur"] = function(event, target) // todo: or make focus on inputs do that?
-  {
-    this.mode = MODE_EDIT;
+    var is_editing;
+    // was add_storage button clicked?
+    if (event.target.hasClass("add_storage_button"))
+    {
+      is_editing = true;
+    }
+    // was something in an edit-container clicked?
+    var edit_container = event.target;
+    while(edit_container && edit_container.parentNode)
+    {
+      if (edit_container.hasClass("edit_mode"))
+      {
+        is_editing = true;
+        break;
+      }
+      edit_container = edit_container.parentNode;
+    }
+    if (!is_editing && this.mode == MODE_EDIT)
+    {
+      this._handlers["submit"](event, event.target);
+      return false;
+    }
   };
 
   var broker = ActionBroker.get_instance();
   broker.register_handler(this);
 
   var contextmenu = ContextMenu.get_instance();
-
   contextmenu.register("storage-view", [
     {
       label: ui_strings.S_LABEL_STORAGE_UPDATE,
@@ -232,56 +295,49 @@ cls.StorageViewActions = function(id)
 
   this._create_context_menu = function(event, target)
   {
-    // this.check_to_exit_edit_mode(event, target); // todo, or possibly remove it from cookie view
-    while (target.nodeName !== "tr" || !target.parentNode)
+    while (target && target.nodeName !== "tr")
     {
       target = target.parentNode;
     }
-    this._handlers["select-row"](event, target);
-
-    var container = target;
-    while (container && !container.getAttribute("data-storage-id"))
+    if (target)
     {
-      container = container.parentNode;
-    }
-    var selection = container.querySelectorAll("tr.selected");
-    var remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE;
-    if(selection.length > 1)
-    {
-      remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL;
-    }
-    var options = [
+      this._handlers["select-row"](event, target);
+      var container = target;
+      while (container && !container.getAttribute("data-storage-id"))
       {
-        label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
-        handler: function(event, target) {
-          broker.dispatch_action(id, "add-key", event, target)
-        }
-      },
-      {
-        label: ui_strings.M_CONTEXTMENU_STORAGE_EDIT,
-        handler: function(event, target) {
-          broker.dispatch_action(id, "edit", event, target)
-        }
-      },
-      {
-        label: remove_label,
-        handler: function(event, target) {
-          broker.dispatch_action(id, "remove-item", event, target)
-        }
+        container = container.parentNode;
       }
-    ];
-
-    var rt_id = target.querySelector("[name=rt_id]") && +target.querySelector("[name=rt_id]").value;
-    if (rt_id)
-    {
-      options.push({
-        label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM.replace(/%s/, runtimes.getRuntime(rt_id).uri),
-        handler: function(event, target) {
-          broker.dispatch_action(id, "delete-all", event, target)
+      var selection = container.querySelectorAll("tr.selected");
+      var remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE;
+      if (selection.length > 1)
+      {
+        remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL;
+      }
+      var options = [
+        {
+          label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
+          handler: this._handlers["add-key"]
+        },
+        {
+          label: ui_strings.M_CONTEXTMENU_STORAGE_EDIT,
+          handler: this._handlers["edit"]
+        },
+        {
+          label: remove_label,
+          handler: this._handlers["remove-item"]
         }
-      });
+      ];
+
+      var rt_id = target.querySelector("[name=rt_id]") && +target.querySelector("[name=rt_id]").value;
+      if (rt_id)
+      {
+        options.push({
+          label: ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM.replace(/%s/, runtimes.getRuntime(rt_id).uri),
+          handler: this._handlers["delete-all"]
+        });
+      }
+      return options;
     }
-    return options;
   };
 
   contextmenu.register("storage-item", [

@@ -2,10 +2,6 @@ window.cls || (window.cls = {});
 
 cls.StorageView = function(id, name, container_class, storage_name)
 {
-  const
-  MODE_DEFAULT = "default",
-  MODE_EDIT = "edit";
-
   this.createView = function(container)
   {
     var storage = window.storages[id];
@@ -26,6 +22,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
         {
           this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
         }
+        this._before_table_render();
         container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
         this._after_table_render();
       }
@@ -87,33 +84,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
     for (var i=0, element; element = autosize_elements[i]; i++) {
       broker.dispatch_action(data_storage_id, "textarea-autosize", null, element);
     };
-  }
-
-  this._submit = function(event, target)
-  {
-    this.exit_edit_and_save();
-    return false;
-  }
-
-  this._cancel = function(event, target)
-  {
-    this.data.refetch();
-    this.mode = MODE_DEFAULT;
-    return false;
-  }
-
-  this._remove_item = function(event, target)
-  {
-    var table_elem = document.querySelector(".sortable_table_container").firstChild;
-    var selection = table_elem.querySelectorAll(".selected");
-    var selected_cookie_objects = [];
-    for (var i=0, selected_node; selected_node = selection[i]; i++) {
-      var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
-      selected_cookie_objects.push(sel_cookie_obj);
-    };
-    this.data.remove_cookies(selected_cookie_objects);
-    return false;
-  }
+  };
 
   this.on_storage_update = function(msg)
   {

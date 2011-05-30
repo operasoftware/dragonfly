@@ -263,15 +263,20 @@ cls.CookieManager.CookieManagerViewBase = function()
     var event = event || {};
     this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
-      * unselect everything while not doing multiple selection, which is when:
-      *   cmd / ctrl key is pressed OR
-      *   more than 1 item is already selected && event is right-click, clicked item was already selected
+      * unselect everything unless
+      *   it's a row that adds a storage item
+      *   doing multiple selection, which is when:
+      *     cmd / ctrl key is pressed OR
+      *     more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
     if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
-        selected_node.removeClass("selected");
+        if (!selected_node.hasClass("add_cookie_row"))
+        {
+          selected_node.removeClass("selected");
+        }
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
