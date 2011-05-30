@@ -13,6 +13,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
+  this._rendertime = 0;
+  this._rendertimer = null;
+
 
   this.createView = function(container)
   {
@@ -52,6 +55,22 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       }
       else if (!paused)
       {
+        var min_render_delay = 1200;
+        var timedelta = new Date().getTime() - this._rendertime;
+        if (timedelta < min_render_delay)
+        {
+          if (!this._rendertimer)
+          {
+            this._rendertimer = window.setTimeout(this.update.bind(this), min_render_delay/2);
+          }
+          return;
+        }
+        else
+        {
+          this._rendertimer = null;
+          this._rendertime = new Date().getTime();
+        }
+
         this._contentscroll = 0;
         container.className = "";
         var contheight = container.getBoundingClientRect().height - 2;
