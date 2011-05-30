@@ -221,11 +221,11 @@ templates.cookie_manager = {
   },
   add_cookie_row: function(current_runtime, runtimes) {
     return ["tr",
-        ["td", this.input_domain(current_runtime, runtimes)],
-        ["td", this.input_text_container("name")],
-        ["td", this.input_text_container("value")],
-        ["td", this.input_text_container("path")],
-        ["td", this.input_datetime_container("expires")],
+        ["td", this.edit_container(this.input_domain(current_runtime, runtimes))],
+        ["td", this.edit_container(this.input_text_container("name"))],
+        ["td", this.edit_container(this.input_text_container("value"))],
+        ["td", this.edit_container(this.input_text_container("path"))],
+        ["td", this.edit_container(this.input_datetime_container("expires"))],
         ["td"],
         ["td"],
       "class", "edit_mode add_cookie_row"
@@ -233,13 +233,13 @@ templates.cookie_manager = {
   },
   add_cookie_row_all_editable: function(default_domain) {
     return ["tr",
-        ["td", this.input_text_container("domain", default_domain)],
-        ["td", this.input_text_container("name")],
-        ["td", this.input_text_container("value")],
-        ["td", this.input_text_container("path")],
-        ["td", this.input_datetime_container("expires")],
-        ["td", this.input_checkbox_container("is_secure")],
-        ["td", this.input_checkbox_container("is_http_only")],
+        ["td", this.edit_container(this.input_text_container("domain", default_domain))],
+        ["td", this.edit_container(this.input_text_container("name"))],
+        ["td", this.edit_container(this.input_text_container("value"))],
+        ["td", this.edit_container(this.input_text_container("path"))],
+        ["td", this.edit_container(this.input_datetime_container("expires"))],
+        ["td", this.edit_container(this.input_checkbox_container("is_secure"))],
+        ["td", this.edit_container(this.input_checkbox_container("is_http_only"))],
       "class", "edit_mode add_cookie_row"
     ];
   }
