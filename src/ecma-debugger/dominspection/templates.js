@@ -198,7 +198,8 @@
         case PROCESSING_INSTRUCTION_NODE:
         {
           tree += 
-            "<div class='dom-search-match processing-instruction'>" +
+            "<div class='dom-search-match processing-instruction' " +
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "&lt;?" + node[NAME] + ' ' +
               formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
             "?&gt;</div>";
@@ -209,7 +210,8 @@
           if (show_comments && !/^\s*$/.test(node[VALUE]))
           {
             tree += 
-              "<div class='dom-search-match comment pre-wrap' >" +
+              "<div class='dom-search-match comment pre-wrap' " +
+                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
                 "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;" +
               "</div>";
           }
@@ -222,7 +224,8 @@
         case DOCUMENT_TYPE_NODE:
         {
           tree += 
-            "<div class='dom-search-match doctype' >" +
+            "<div class='dom-search-match doctype' " +
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "&lt;!DOCTYPE " + node[NAME] +
               this._get_doctype_external_identifier(node) + "&gt;" +
             "</div>";
@@ -234,8 +237,7 @@
           {
             tree += 
               "<div class='dom-search-match' " +
-                "obj-id='" + node[ID] + "' " +
-                "handler='inspect-node-link' >" +
+                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
                 "<span class='dom-search-text-node'>&lt;#text&gt;</span>" + 
                 helpers.escapeTextHtml(node[VALUE]) + 
               "<span class='dom-search-text-node'>&lt;/#text&gt;</span></div>";
