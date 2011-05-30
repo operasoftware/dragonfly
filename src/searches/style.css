@@ -180,7 +180,8 @@
 
 .dom-search-text-node
 {
-  color: hsl(0, 0%, 70%);
+  color: hsl(0, 0%, 60%);
+  margin-right: 8px;
 }
 
 

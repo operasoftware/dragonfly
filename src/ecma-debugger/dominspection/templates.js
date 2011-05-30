@@ -238,9 +238,9 @@
             tree += 
               "<div class='dom-search-match' " +
                 "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
-                "<span class='dom-search-text-node'>&lt;#text&gt;</span>" + 
+                "<span class='dom-search-text-node'>#text</span>" + 
                 helpers.escapeTextHtml(node[VALUE]) + 
-              "<span class='dom-search-text-node'>&lt;/#text&gt;</span></div>";
+              "</div>";
           }
         }
       }

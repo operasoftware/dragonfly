@@ -262,14 +262,6 @@ cls.DOMView.create_ui_widgets = function()
       }
     ], 
     null, 
-    /*
-    [
-      {
-        handler: 'dom-text-search',
-        shortcuts: 'dom-text-search',
-        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      }
-    ], */
     null,
     [
       {
@@ -436,32 +428,24 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-
-  if (window.services['ecmascript-debugger'].major_version > 5 &&
-      window.services['ecmascript-debugger'].minor_version > 4)
-  {
-    var searchbar =
-    [
-      // The ui widget, can be a class or an instantiation.
-      new AdvancedSearchbar(window.templates.dom_search_bar_content),
-      // The class or instantiation which performs the search.
-      // Defaults to TextSearch.
-      new DOMSearch()
-    ];
-  }
-  else
+  // If the ECMAScriptDebugger version is higher than 6.4
+  // the search will be in a sub view in the side panel.
+  if (window.services['ecmascript-debugger'].major_version < 6  ||
+      (window.services['ecmascript-debugger'].major_version < 7 &&
+      window.services['ecmascript-debugger'].minor_version < 5))
   {
     var searchbar = [Searchbar];
-  }
-  var search = new Search('dom', searchbar);
-
-  window.messages.addListener('dom-view-updated', function(msg)
-  {
-    if (msg.model == window.dom_data)
+    var search = new Search('dom', searchbar);
+    window.messages.addListener('dom-view-updated', function(msg)
     {
-      search.update_search();
-    }
-  });
+      if (msg.model == window.dom_data)
+      {
+        search.update_search();
+      }
+    });
+  }
+
+
 
 
 
