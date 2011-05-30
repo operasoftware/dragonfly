@@ -318,6 +318,8 @@ var DOMSearch = function(min_length)
       }
       return false;
     }
+    this._is_processing = false;
+    this._queued_input = false;
     return true;
   }.bind(this);
 
