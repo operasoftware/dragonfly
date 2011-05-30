@@ -296,10 +296,12 @@
       return (
       ['window-controls',
         ['button',
-          'handler', 'top-window-close',
+          'class', 'ui-control',
+          'id', 'top-window-close',
+          'onclick', 'window.close()',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ],
-        'class', 'attached'
+        'class', 'no-tabbar'
       ]);
     }
     return [];

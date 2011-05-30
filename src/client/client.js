@@ -223,17 +223,19 @@ window.cls.Client = function()
   var show_info = function(msg, port)
   {
     viewport.innerHTML =
-    "<div class='padding' id='waiting-for-connection'>" +
-      "<div class='info-box'>" + msg +
-          ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
-                " handler='cancel-remote-debug'></p>" : "") +
-      "</div>" +
-    "</div>";
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+      "<div class='padding' id='waiting-for-connection'>" +
+        "<div class='info-box'>" + msg +
+            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+                      ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
+                    "</button></p>"
+                  : "") +
+        "</div>" +
+      "</div>";
+    var window_controls = document.querySelector('window-controls');
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
     document.documentElement.render(templates.window_controls_close());
   }
 
