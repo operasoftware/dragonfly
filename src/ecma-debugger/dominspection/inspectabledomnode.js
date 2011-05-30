@@ -95,25 +95,17 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   // this method is only supported in ECMAScriptDebugger 6.5 and higher
   this.search = function(query, type, ignore_case, object_id, cb)
   {
-    if (services['ecmascript-debugger'].requestSearchDom)
-    {
-      this._isprocessing = true;
-      var tag = window.tag_manager.set_callback(this, 
-                                                this.__handle_dom, 
-                                                [object_id, TRAVERSE_SERACH, cb]);
-      this.search_type = type;
-      var msg = [this._data_runtime_id, 
-                 query, 
-                 type, 
-                 object_id || null, 
-                 ignore_case || 0];
-      services['ecmascript-debugger'].requestSearchDom(tag, msg);
-    }
-    else
-    {
-      opera.postError("Searching the DOM is only supported " +
-                      "in ECMAScriptDebugger 6.5 and higher.");
-    }
+    this._isprocessing = true;
+    var tag = window.tag_manager.set_callback(this, 
+                                              this.__handle_dom, 
+                                              [object_id, TRAVERSE_SERACH, cb]);
+    this.search_type = type;
+    var msg = [this._data_runtime_id, 
+               query, 
+               type, 
+               object_id || null, 
+               ignore_case || 0];
+    services['ecmascript-debugger'].requestSearchDom(tag, msg);
   };
 
   // this method makes only sense with ECMAScriptDebugger 6.5 and higher
@@ -130,6 +122,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return count;
   };
 
+  // this method makes only sense with ECMAScriptDebugger 6.5 and higher
   this.clear_search = function()
   {
     for (var i = 0; this._data[i]; i++)
@@ -219,7 +212,9 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       cb();
     }
     else
+    {
       opera.postError(error_ms + ' ' + JSON.stringify(message));
+    }
     this._isprocessing = false;
   };
 

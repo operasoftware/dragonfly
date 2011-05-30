@@ -430,9 +430,7 @@ cls.DOMView.create_ui_widgets = function()
 
   // If the ECMAScriptDebugger version is higher than 6.4
   // the search will be in a sub view in the side panel.
-  if (window.services['ecmascript-debugger'].major_version < 6  ||
-      (window.services['ecmascript-debugger'].major_version < 7 &&
-      window.services['ecmascript-debugger'].minor_version < 5))
+  if (window.services['ecmascript-debugger'].major_minor_version < 6.5)
   {
     var searchbar = [Searchbar];
     var search = new Search('dom', searchbar);
