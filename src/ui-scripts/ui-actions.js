@@ -289,38 +289,3 @@ eventHandlers.change['checkbox-setting'] = function(event)
     views.settings_view.syncSetting(view_id, ele.name, ele.checked);
   }
 }
-
-eventHandlers.focus['focus'] = function(event, target)
-{
-  /* TODO remove, placeholder is now implemented
-  var parent = event.target.parentNode;
-  if( parent.nodeName.toLowerCase() == 'filter' )
-  {
-    parent.firstChild.textContent = '';
-    parent.addClass('focus');
-    if(event.target.value)
-    {
-      event.target.selectionStart = 0;
-      event.target.selectionEnd = event.target.value.length;
-
-    }
-  }
-  */
-}
-
-eventHandlers.blur['blur'] = function(event, target)
-{
-  /* TODO remove, placeholder is now implemented
-  var parent = event.target.parentNode;
-  if( parent.nodeName.toLowerCase() == 'filter' )
-  {
-    if( !event.target.value )
-    {
-      parent.firstChild.textContent = event.target.getAttribute('default-text');
-      
-    }
-    parent.removeClass('focus');
-  }
-  */
-}
-

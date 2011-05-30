@@ -97,12 +97,6 @@ var SearchbarBase = function()
     }
   }
 
-  this.attributes =
-  {
-    'focus-handler': 'focus',
-    'blur-handler': 'blur',
-  }
-
   // end common with toolbar  toolbar
 
  
@@ -131,8 +125,6 @@ var AdvancedSearchbar = function(template, html_class)
   this.template = template;
   this.attributes =
   {
-    'focus-handler': 'focus',
-    'blur-handler': 'blur',
     'class': html_class || 'advanced-searchbar',
   }
 };

@@ -17,8 +17,6 @@ cls.DOMSearchView = function(id, name, container_class)
     [
       ['div',
         window.templates.dom_search_bar_content(this),
-        'focus-handler', 'focus',
-        'blur-handler', 'blur',
         'class', 'dom-search-controls'],
       ['div',
         ['div', 'class', 'dom-search mono'],
@@ -41,6 +39,7 @@ cls.DOMSearchView = function(id, name, container_class)
     this._search.set_form_input(input);
     this._search.set_info_element(container.getElementsByTagName('info')[0]);
     this._search.show_last_search();
+    input.focus();
   };
 
   this.onresize = function()

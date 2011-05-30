@@ -86,9 +86,7 @@
       {
         var toolbar = div.render(['panel-toolbar',
                                   'id', 'panel-toolbar-' + obj.id,
-                                  'ui-id', toolbars[view.id].id,
-                                  'focus-handler', 'focus',
-                                  'blur-handler', 'blur']);
+                                  'ui-id', toolbars[view.id].id]);
         toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
         this._toolbar.create_toolbar_content(view.id, toolbar)
       }
