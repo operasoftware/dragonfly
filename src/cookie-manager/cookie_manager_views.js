@@ -209,40 +209,43 @@ cls.CookieManager.CookieManagerViewBase = function()
       if (selected_cookie_objects.length === 1)
       {
         var sel_cookie_obj = selected_cookie_objects[0];
-        if (sel_cookie_obj._is_editable)
+        if (sel_cookie_obj)
         {
+          if (sel_cookie_obj._is_editable)
+          {
+            options.push(
+              {
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
+                handler: this.enter_edit_mode.bind(this)
+              }
+            );
+          }
           options.push(
             {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-              handler: this.enter_edit_mode.bind(this)
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+              handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
+            }
+          );
+          // Add "Remove all from protocol-domain-path"
+          var runtime_id = sel_cookie_obj._rt_id;
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+              handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
             }
           );
         }
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-            handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
-          }
-        );
-        // Add "Remove all from protocol-domain-path"
-        var runtime_id = sel_cookie_obj._rt_id;
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
-            handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
-          }
-        );
+        else
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
+              handler: this.data.remove_cookies.bind(this.data, selected_cookie_objects)
+            }
+          );
+        }
+        return options;
       }
-      else
-      {
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-            handler: this.data.remove_cookies.bind(this.data, selected_cookie_objects)
-          }
-        );
-      }
-      return options;
     }
   };
 
@@ -260,15 +263,20 @@ cls.CookieManager.CookieManagerViewBase = function()
     var event = event || {};
     this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
-      * unselect everything while not doing multiple selection, which is when:
-      *   cmd / ctrl key is pressed OR
-      *   more than 1 item is already selected && event is right-click, clicked item was already selected
+      * unselect everything unless
+      *   it's a row that adds a storage item
+      *   doing multiple selection, which is when:
+      *     cmd / ctrl key is pressed OR
+      *     more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
     if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
-        selected_node.removeClass("selected");
+        if (!selected_node.hasClass("add_cookie_row"))
+        {
+          selected_node.removeClass("selected");
+        }
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
