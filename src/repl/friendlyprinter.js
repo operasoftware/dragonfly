@@ -387,7 +387,7 @@ window.cls.FriendlyPrinter = function()
   {
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
-    this.templates.apply(window.templates || (window.tempoates = {}));
+    this.templates.apply(window.templates || (window.templates = {}));
     this._friendly_print_host_str = "(" +
                                     this._friendly_print_host.toString() +
                                     ")([%s])";
