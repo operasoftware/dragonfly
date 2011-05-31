@@ -426,6 +426,7 @@ cls.StorageDataBase = new function()
               templates.storage.wrap_ellipsis(obj.key),
               [
                 templates.storage.input_text_container("key", obj.key),
+                templates.storage.input_hidden("original_key", obj.key),
                 templates.storage.input_hidden("rt_id", obj._rt_id)
               ]
             );

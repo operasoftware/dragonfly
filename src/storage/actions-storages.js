@@ -59,9 +59,11 @@ cls.StorageViewActions = function(id)
       var edit_trs = container.querySelectorAll("tr.edit_mode");
       for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
-        var rt_id = +edit_tr.querySelector("[name=rt_id]").value;
-        var key   = edit_tr.querySelector("[name=key]").value;
-        var value = edit_tr.querySelector("[name=value]").value;
+        var rt_id        = +edit_tr.querySelector("[name=rt_id]").value;
+        var original_key = edit_tr.querySelector("[name=original_key]").value;
+        var key          = edit_tr.querySelector("[name=key]").value;
+        var value        = edit_tr.querySelector("[name=value]").value;
+        window.storages[storage_id].remove_item(rt_id, original_key, this._update);
         window.storages[storage_id].set_item(rt_id, key, value, this._update);
       }
       return false;
