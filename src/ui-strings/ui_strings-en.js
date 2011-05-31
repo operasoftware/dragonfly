@@ -30,12 +30,6 @@ ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
 
-/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
-
-/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
-
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -1244,3 +1238,9 @@ ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
 
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
