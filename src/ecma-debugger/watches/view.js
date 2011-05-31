@@ -61,17 +61,17 @@ cls.WatchesView = function(id, name, container_class)
 
   this.onclick = function(event)
   {
+    if (this._add_watches_button == event.target)
+    {
+      return false;
+    }
+
     if (this.mode == MODE_EDIT)
     {
-      if (this._add_watches_button == event.target)
-      {
-        return false;
-      }
       if (this._editor.onclick(event))
       {
         this.mode = MODE_DEFAULT;
         this._add_watches_button.disabled = false;
-        return true;
       }
       return false;
     }
