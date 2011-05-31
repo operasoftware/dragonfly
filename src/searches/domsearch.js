@@ -6,7 +6,6 @@ var DOMSearch = function(min_length)
   this._super_init = this._init;
   this._super_highlight_next = this.highlight_next;
   this._super_highlight_previous = this.highlight_previous;
-  this._super_update_search = this.update_search;
   this._super_set_form_input = this.set_form_input;
 
   /* interface */
@@ -15,8 +14,6 @@ var DOMSearch = function(min_length)
 
   this.highlight_previous = function() {};
   
-  this.update_search = function() {};
-
   this.set_form_input = function() {};
 
   this.search_delayed = function(event) {};
@@ -28,7 +25,6 @@ var DOMSearch = function(min_length)
   this.clear_style_highlight_node = function() {};
 
   // TODO clean up onview destroy
-  // TODO this.update_search, this.update (which one?), dependent on search type
 
   /* constants */
   const 
@@ -48,7 +44,6 @@ var DOMSearch = function(min_length)
       this._highlight_previous = this._highlight_previous_token;
       this._get_match_counts = this._get_match_counts_token;
       this._get_search_cursor = this._get_search_cursor_token;
-      this.update_search = this._update_search_token;
       this.set_form_input = this._set_form_input_token;
       if (target)
       {
@@ -62,7 +57,6 @@ var DOMSearch = function(min_length)
       this._highlight_previous = this._highlight_previous_node;
       this._get_match_counts = this._get_match_counts_node;
       this._get_search_cursor = this._get_search_cursor_node;
-      this.update_search = this._update_search_node;
       this.set_form_input = this._set_form_input_node;
       if (target)
       {
@@ -99,12 +93,6 @@ var DOMSearch = function(min_length)
     return this._match_cursor + 1;
   };
 
-  this._update_search_token = function()
-  {
-    this._search_term = this._last_query;
-    this._super_update_search();
-  };
-
   this._set_form_input_token = function(input)
   {
     this._input = input;
@@ -112,7 +100,6 @@ var DOMSearch = function(min_length)
     {
       this._input.value = this._orig_search_term;
       this._input.parentNode.firstChild.textContent = '';
-      this._update_search_token();
     }
   };
 
@@ -186,18 +173,12 @@ var DOMSearch = function(min_length)
     return this._match_node_cursor + 1;
   };
 
-  this._update_search_node = function()
-  {
-    this._initial_highlight_node();
-  };
-
   this._set_form_input_node = function(input)
   {
     this._input = input;
     if (this._last_query)
     {
       this._input.value = this._last_query;
-      this._update_search_node();
     }
   };
 
@@ -370,11 +351,6 @@ var DOMSearch = function(min_length)
     {
       this._highlight_previous();
     }
-  };
-  
-  this.update_search = function()
-  {
-    // set depending on the search type in this._set_highlight_handlers
   };
 
   this.set_form_input = function()

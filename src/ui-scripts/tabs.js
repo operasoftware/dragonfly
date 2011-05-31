@@ -142,8 +142,9 @@ var TabsBase = function()
     return tabs;
   }
 
-  this.setActiveTab = function(view_id, force_create)
+  this.setActiveTab = function(view_id, force_create, event)
   {
+    var is_user_selected = Boolean(event && view_id);
     var container_id = 'container-to-' + this.cell.id;
     var toolbar_id = 'toolbar-to-' + this.cell.id;
     if( this.activeTab != view_id || force_create)
@@ -217,8 +218,11 @@ var TabsBase = function()
       {
         global_state.ui_framework.last_selected_tab = view_id;
       }
+      if (is_user_selected && window.views[view_id].type == 'single-view')
+      {
+        ActionBroker.get_instance().focus_handler(view_id, event);
+      }
     }
-
   }
 
   this.navigate_to_next_or_previous_tab = function(backwards)

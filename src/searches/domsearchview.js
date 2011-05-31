@@ -9,11 +9,10 @@ cls.DOMSearchView = function(id, name, container_class)
     this._search_container = container.childNodes[1];
     this._search.set_container(this._search_container);
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
-    var input = container.querySelector(query);
-    this._search.set_form_input(input);
+    this._input = container.querySelector(query);
+    this._search.set_form_input(this._input);
     this._search.set_info_element(container.getElementsByTagName('info')[0]);
     this._search.show_last_search();
-    input.focus();
   };
 
   const 
@@ -39,6 +38,21 @@ cls.DOMSearchView = function(id, name, container_class)
   };
 
   ActionHandlerInterface.apply(this);
+
+  this.focus = function(event, container)
+  {
+    setTimeout(this._focus_input, 50);
+  };
+
+  this._focus_input = function()
+  {
+    if (this._input)
+    {
+      this._input.selectionStart = 0;
+      this._input.selectionEnd = this._input.value.length; 
+      this._input.focus();
+    }
+  }.bind(this);
 
   this._onshortcut = function(action_id, event, target)
   {
@@ -112,7 +126,9 @@ cls.DOMSearchView = function(id, name, container_class)
       this._onshortcut.bind(this, 'highlight-previous-match');
     eventHandlers.mouseover['clear-style-highlight-node'] =
       this._search.clear_style_highlight_node.bind(this._search);
-    ActionBroker.get_instance().get_global_handler()
+    var action_broker = ActionBroker.get_instance();
+    action_broker.register_handler(this);
+    action_broker.get_global_handler()
     .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                 this._onshortcut.bind(this), 
                                 ['highlight-next-match',
