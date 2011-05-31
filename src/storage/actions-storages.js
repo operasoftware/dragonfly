@@ -11,7 +11,7 @@ cls.StorageViewActions = function(id)
   ActionHandlerInterface.apply(this);
   this._handlers = {};
 
-  this._update = function(storage_id, success)
+  this._update_bound = function(storage_id, success)
   {
     window.storages[storage_id].update();
   }.bind(this, id);
@@ -64,27 +64,22 @@ cls.StorageViewActions = function(id)
         var key          = edit_tr.querySelector("[name=key]").value;
         var value        = edit_tr.querySelector("[name=value]").value;
 
-        var add_function = function(cb)
-        {
-          window.storages[storage_id].set_item(rt_id, key, value, cb);
-        };
-        var remove_old_function = function(cb)
-        {
-          window.storages[storage_id].remove_item(rt_id, original_key, cb);
-        };
-        
+        var context = window.storages[storage_id];
+        var set_item_bound = context.set_item.bind(context, rt_id, key, value, this._update_bound);
+        var remove_and_set_item_bound = context.remove_item.bind(context, rt_id, original_key, set_item_bound);
+
         if (key && original_key)
         {
-          remove_old_function(add_function.bind(this, this._update));
+          remove_and_set_item_bound();
         }
         else
         if (key)
         {
-          add_function(this._update);
+          set_item_bound();
         }
         else
         {
-          this._update();
+          this._update_bound();
         }
       }
       return false;
