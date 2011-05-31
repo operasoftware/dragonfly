@@ -191,7 +191,16 @@ cls.StorageViewActions = function(id)
         var templ = document.documentElement.render(window.templates.storage.add_storage_row(runtime_id));
         var inserted = insert_before_row.parentElement.insertBefore(templ, insert_before_row);
         this._handlers["select-row"](event, inserted);
-        inserted.querySelector("[name=key]").focus();
+        var textarea = inserted.querySelector("textarea");
+        if (textarea)
+        {
+          this._handlers["textarea-autosize"](null, textarea);
+        }
+        var key = inserted.querySelector("[name=key]");
+        if (key)
+        {
+          key.focus();
+        }
       }
     }
   }.bind(this);
@@ -235,22 +244,25 @@ cls.StorageViewActions = function(id)
 
   this._handlers["textarea-autosize"] = function(event, target)
   {
-    // todo: don't need to repeat max_height in the action.
-    var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
-
-    // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
-    // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
-    target.style.height = null;
-    target.style.height = target.scrollHeight + "px";
-    if (target.scrollHeight > max_height) {
-      if(!target.style.overflow)
+    if (target)
+    {
+      // todo: find a good place for this. will be the same for all textareas.
+      var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
+      // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
+      // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
+      target.style.height = null;
+      target.style.height = target.scrollHeight + "px";
+      if (target.scrollHeight > max_height)
       {
-        target.style.overflow = "visible";
+        if(!target.style.overflow)
+        {
+          target.style.overflow = "visible";
+        }
       }
-    }
-    else
-    if (target.style.overflow) {
-      target.style.overflow = null;
+      else
+      if (target.style.overflow) {
+        target.style.overflow = null;
+      }
     }
   };
 

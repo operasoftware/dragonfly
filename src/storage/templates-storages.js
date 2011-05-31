@@ -60,18 +60,10 @@ window.templates.storage = {
       "name",  name
     ]
   },
-  editable_key: function(key) {
-    var edit_elem = this.input_text_container("name", key);
-    return this.edit_mode_switch_container(key, edit_elem);
-  },
-  editable_value: function(value) {
-    var edit_elem = this.input_text_container("value", value);
-    return this.edit_mode_switch_container(value, edit_elem);
-  },
   add_storage_row: function(rt_id) {
     return ["tr",
         ["td", ["div", [this.input_text_container("key"), this.input_hidden("rt_id", rt_id)], "class", "edit_container"]],
-        ["td", ["div", this.input_text_container("value"), "class", "edit_container"]],
+        ["td", ["div", this.input_textarea_container("value"), "class", "edit_container"]],
       "class", "edit_mode add_storage_row"
     ];
   },
