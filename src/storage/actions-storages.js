@@ -60,11 +60,32 @@ cls.StorageViewActions = function(id)
       for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
         var rt_id        = +edit_tr.querySelector("[name=rt_id]").value;
-        var original_key = edit_tr.querySelector("[name=original_key]").value;
+        var original_key = edit_tr.querySelector("[name=original_key]") && edit_tr.querySelector("[name=original_key]").value;
         var key          = edit_tr.querySelector("[name=key]").value;
         var value        = edit_tr.querySelector("[name=value]").value;
-        window.storages[storage_id].remove_item(rt_id, original_key, this._update);
-        window.storages[storage_id].set_item(rt_id, key, value, this._update);
+
+        var add_function = function(cb)
+        {
+          window.storages[storage_id].set_item(rt_id, key, value, cb);
+        };
+        var remove_old_function = function(cb)
+        {
+          window.storages[storage_id].remove_item(rt_id, original_key, cb);
+        };
+        
+        if (key && original_key)
+        {
+          remove_old_function(add_function.bind(this, this._update));
+        }
+        else
+        if (key)
+        {
+          add_function(this._update);
+        }
+        else
+        {
+          this._update();
+        }
       }
       return false;
     }
