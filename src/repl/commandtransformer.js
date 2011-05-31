@@ -254,12 +254,12 @@ cls.HostCommandTransformer = function() {
   };
 
   this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "(window.keys || function(o) {var arr=[]; for (key in o) {arr.push(key)}; return arr})";
+    var funstr = "(window.keys || function(o) {var arr=[], key; for (key in o) {arr.push(key)}; return arr})";
     token.value = funstr;
   };
 
   this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "(window.values || function(o) {var arr=[]; for (key in o) {arr.push(o[key])}; return arr})";
+    var funstr = "(window.values || function(o) {var arr=[], key; for (key in o) {arr.push(o[key])}; return arr})";
     token.value = funstr;
   };
 
