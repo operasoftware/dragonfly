@@ -121,6 +121,7 @@ cls.ScreenShotView = function(id, name, container_class)
     {
       this._screenshot = message[PNG];
       this._pixel_magnifier.set_source_base_64(this._screenshot, "image/png");
+      this.update();
       window.messages.post('screenshot-scale',
                            {scale: 1});
     }
@@ -235,7 +236,7 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    if (this._take_screenshot)
+    if (this._take_screenshot || this._screenshot)
     {
       this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
       this._pixel_magnifier.width = container.clientWidth;
