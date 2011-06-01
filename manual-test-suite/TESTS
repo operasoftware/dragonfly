@@ -1897,7 +1897,6 @@ url: ./test-cases/network/img-js-css.html
 
 id: 00100
 label: Request table
-deprecated: true
 desc:
   - Go to the url above
   - Verify that the request table makes sense
@@ -1906,14 +1905,12 @@ desc:
 
 id: 00200
 label: Request and response detail
-deprecated: true
 desc:
   - Expand some of the entries
   - Verify that the info in 'Summary', 'Headers' and 'Raw' makes sense - TODO: N/A for the network tab?
 
 id: 00300
 label: Clear log
-deprecated: true
 desc:
   - Press the 'Clear log' button
   - Verify that the view gets cleared.

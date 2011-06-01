@@ -61,15 +61,18 @@ window.cls.NewScript.prototype = new function()
       {
         this.script_data_lower = this.script_data.toLowerCase();
       }
-      var pos = -1, line_cur = 0, line_arr_length = this.line_arr.length;
-      while ((pos = this.script_data_lower.indexOf(search_term, pos + 1)) != -1)
+      if (search_term)
       {
-        while (line_cur < line_arr_length && this.line_arr[line_cur] <= pos)
+        var pos = -1, line_cur = 0, line_arr_length = this.line_arr.length;
+        while ((pos = this.script_data_lower.indexOf(search_term, pos + 1)) != -1)
         {
-          ++line_cur;
+          while (line_cur < line_arr_length && this.line_arr[line_cur] <= pos)
+          {
+            ++line_cur;
+          }
+          this.line_matches[this.line_matches.length] = line_cur;
+          this.line_offsets[this.line_offsets.length] = pos - this.line_arr[line_cur - 1];
         }
-        this.line_matches[this.line_matches.length] = line_cur;
-        this.line_offsets[this.line_offsets.length] = pos - this.line_arr[line_cur - 1];
       }
     }
   };

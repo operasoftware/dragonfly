@@ -107,10 +107,13 @@ window.cls.Helpers = function()
 
   this.escapeAttributeHtml = (function()
   {
-    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
+    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g, re_s_quot = /'/g;
     return function(str)
     {
-      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;").replace(re_quot, "&quot;");
+      return str.replace(re_amp, "&amp;")
+                .replace(re_lt, "&lt;")
+                .replace(re_quot, "&quot;")
+                .replace(re_s_quot, "&#x27;");
     }
   })();
   

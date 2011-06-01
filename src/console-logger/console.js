@@ -63,7 +63,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._toggled = [];
     }
     this._updateviews();
-    this.current_error_count = 0;
+    this.current_error_count = this._msgs.length;
     window.messages.post("error-count-update", {current_error_count: this.current_error_count});
   };
 

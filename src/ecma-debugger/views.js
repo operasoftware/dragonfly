@@ -213,18 +213,24 @@ cls.GeneralView.create_ui_widgets = function()
       {
         return [
           ['setting-composite',
-            'User Interface Language' + ': ',
+            ui_strings.M_LABEL_UI_LANGUAGE + ': ',
             [
               'select',
               templates.uiLangOptions(),
               'handler', 'set-ui-language'
-            ]
+            ],
+            ["button", ui_strings.S_BUTTON_LOAD_PO_FILE, "handler", "show-po-selector"]
           ]
         ];
       }
     },
     "general"
   );
+
+  eventHandlers.click["show-po-selector"] = function(event)
+  {
+    UIWindowBase.showWindow('test-po-file');
+  }
 
   eventHandlers.change['set-ui-language'] = function(event)
   {

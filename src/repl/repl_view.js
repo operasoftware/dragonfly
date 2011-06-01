@@ -632,6 +632,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._be_singleline = function()
   {
+    if (this.mode == "autocomplete")
+    {
+      this._resolver.clear_cache();
+      this._highlight_completion();
+      this._recent_autocompletion = null;
+    }
     this.mode = "single-line-edit";
     if (this._textarea)
     {
@@ -644,9 +650,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     if (this.mode == "autocomplete")
     {
-      this._resolver.clear_cache();
-      this._highlight_completion();
-      this._recent_autocompletion = null;
       this._be_singleline();
     }
   }

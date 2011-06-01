@@ -26,7 +26,7 @@ cls.ResourceDetailBase = function()
   this.createView = function(container)
   {
     container.clearAndRender(this.drawer.render());
-    if (!this.resourcedata)
+    if (this.resourcedata === null)
     {
       var resptype = cls.ResourceUtil.mime_to_content_mode(this.resource.mime);
       this.service.fetch_resource_data(this.on_resource_data.bind(this),
@@ -52,7 +52,8 @@ cls.ResourceDetailBase = function()
   this.on_resource_data = function(type, data)
   {
     const CONTENT = 5, TEXTCONTENT = 3;
-    this.resourcedata = data[CONTENT] ? data[CONTENT][TEXTCONTENT] : null;
+    this.resourcedata = data[CONTENT] ? data[CONTENT][TEXTCONTENT] : "";
+
     this.update();
   }
 

@@ -53,7 +53,18 @@ cls.JsSourceView = function(id, name, container_class)
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
   LINE_POINTER = window.cls.NewScript.LINE_POINTER,
   BP_IMAGE_LINE_HEIGHT = 24,
-  BP_IMAGE_HEIGHT = 12;
+  BP_IMAGE_HEIGHT = 12,
+  
+  //TODO Add proper classes names.
+  //Add styles for all classes.
+  LINE_HIGHLIGHT_CLASSNAMES = ["", 
+                              "selected-js-source-line",
+                              "selected-js-redirected-line"],
+  BP_HIGHLIGHT_CLASSNAMES = ["",
+                            "selected-js-bp-disabled",
+                            "selected-js-bp-disabled-condition",
+                            "selected-js-bp",
+                            "selected-js-bp-condition"];
 
   templates.line_nummer_container = function(lines)
   {
@@ -144,6 +155,29 @@ cls.JsSourceView = function(id, name, container_class)
     if (force_repaint)
     {
       setTimeout(repaint_line_numbers, 0);
+    }
+    addLineHighlight();
+  };
+
+  var addLineHighlight = function()
+  {
+    var lines = source_content.getElementsByTagName('div');
+    var bp_states = __current_script.breakpoint_states;
+    if (bp_states)
+    {
+      var highlight_class, bp_state;
+      for (var i = 0, line; line = lines[i]; i++)
+      {
+        highlight_class = "";
+        
+        if (bp_state = bp_states[__current_line + i])
+        {
+          highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
+                            BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+        }
+        
+        line.className = highlight_class;
+      }
     }
   };
 
@@ -417,18 +451,12 @@ cls.JsSourceView = function(id, name, container_class)
     document.getElementById(horizontal_scoller).style.right = '0px';
   }
 
+  // deprecated. use this.show_and_flash_line instead.
   this.highlight = function(script_id, line_nr, highlight_line_start, highlight_line_end)
   {
     if (this.isvisible())
     {
-      highlight_line_start = highlight_line_start === undefined ? line_nr : highlight_line_start;
-      __highlight_line_start = highlight_line_start - 1;
-      __highlight_line_end = typeof highlight_line_end == "number" ?
-                              highlight_line_end - 1:
-                              __highlight_line_start;
-      // Reset the stored current line to ensure that the view gets updated
-      __current_line = 0;
-      this.showLine(script_id, line_nr, null, null, null, true);
+      this.show_and_flash_line(script_id, line_nr);
     }
   }
 
@@ -786,7 +814,7 @@ cls.JsSourceView = function(id, name, container_class)
         __disregard_scroll_event = true;
         document.getElementById(scroll_container_id).scrollTop =
           (target_line - 1) * context['line-height'];
-        this.showLine(__current_script.script_id, target_line, null, null, false, true);
+        this.showLine(__current_script.script_id, target_line, null, null, false);
       }
     }
     return false;
