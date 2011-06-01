@@ -255,11 +255,6 @@ cls.ScreenShotView = function(id, name, container_class)
     }
   };
 
-  this.ondestroy = function()
-  {
-    this._screenshot = "";
-  };
-
   this.onresize = function(container)
   {
     if(this.isvisible())
