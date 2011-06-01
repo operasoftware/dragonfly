@@ -9,6 +9,13 @@ cls.StorageViewActions = function(id)
   this.id = id;
   this.inherited_shortcuts = "storage";
   ActionHandlerInterface.apply(this);
+
+  this.mode_labels =
+  {
+    "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
+    "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
+  }
+
   this._handlers = {};
 
   this._update_bound = function(storage_id, success)
@@ -47,7 +54,8 @@ cls.StorageViewActions = function(id)
   this._handlers["submit"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
-    var container = target;
+    // todo: find a better way of knowing the container if no context is passed
+    var container = target || document.querySelector(".storage_view");
     while(container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
@@ -60,7 +68,8 @@ cls.StorageViewActions = function(id)
       for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
         var rt_id        = +edit_tr.querySelector("[name=rt_id]").value;
-        var original_key = edit_tr.querySelector("[name=original_key]") && edit_tr.querySelector("[name=original_key]").value;
+        var original_key = edit_tr.querySelector("[name=original_key]")
+                           && edit_tr.querySelector("[name=original_key]").value;
         var key          = edit_tr.querySelector("[name=key]").value;
         var value        = edit_tr.querySelector("[name=value]").value;
 
@@ -286,11 +295,11 @@ cls.StorageViewActions = function(id)
 
   this.onclick = function(event)
   {
-    var is_editing;
+    var is_within_edit;
     // was add_storage button clicked?
     if (event.target.hasClass("add_storage_button"))
     {
-      is_editing = true;
+      is_within_edit = true;
     }
     // was something in an edit-container clicked?
     var edit_container = event.target;
@@ -298,14 +307,15 @@ cls.StorageViewActions = function(id)
     {
       if (edit_container.hasClass("edit_mode"))
       {
-        is_editing = true;
+        is_within_edit = true;
         break;
       }
       edit_container = edit_container.parentNode;
     }
-    if (!is_editing && this.mode == MODE_EDIT)
+    if (!is_within_edit && this.mode == MODE_EDIT)
     {
-      this._handlers["submit"](event, event.target);
+      // don't pass event and target as the click is out of the context of the storage_view
+      this._handlers["submit"]();
       return false;
     }
   };

@@ -47,6 +47,8 @@
     var actions = [], key = '';
     for (key in this._handlers)
       actions.push(key);
+    for (key in this._inherited_handlers)
+      actions.push(key);
     return actions;
   };
   

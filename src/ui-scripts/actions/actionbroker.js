@@ -1,4 +1,4 @@
-﻿
+
 
 var ActionBroker = function()
 {
@@ -121,6 +121,7 @@ var ActionBroker = function()
   /* private */
 
   this._handlers = {};
+  this._inherited_handlers = {};
   this._action_context = null;
   this._action_context_id = '';
   this._container = null;
@@ -311,6 +312,10 @@ var ActionBroker = function()
     if (!(action_handler && action_handler.id))
       throw 'missing id on action_handler in ActionBroker.instance.register_handler';
     this._handlers[action_handler.id] = action_handler;
+    if(action_handler.inherited_shortcuts)
+    {
+      this._inherited_handlers[action_handler.inherited_shortcuts] = action_handler;
+    }
   }
 
   this.dispatch_action = function(action_handler_id, action_id, event, target)
@@ -387,7 +392,9 @@ var ActionBroker = function()
   {
     
     return (
-    this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort());
+      (this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort()) ||
+      (this._inherited_handlers[handler_id] && this._inherited_handlers[handler_id].get_action_list().sort())
+    );
   };
 
   this._get_shortcut_keys = function()
@@ -410,7 +417,8 @@ var ActionBroker = function()
 
   this.get_label_with_handler_id_and_mode = function(handler_id, mode)
   {
-    return this._handlers[handler_id].mode_labels[mode];
+    return (this._handlers[handler_id] && this._handlers[handler_id].mode_labels[mode]) ||
+           (this._inherited_handlers[handler_id] && this._inherited_handlers[handler_id].mode_labels[mode]);
   };
 
   this.get_global_handler = function()
