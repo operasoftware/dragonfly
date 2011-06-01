@@ -122,7 +122,7 @@ cls.ScreenShotView = function(id, name, container_class)
       this._screenshot = message[PNG];
       this._pixel_magnifier.set_source_base_64(this._screenshot, "image/png");
       window.messages.post('screenshot-scale',
-                           {scale: this._pixel_magnifier.scale});
+                           {scale: 1});
     }
   };
 
