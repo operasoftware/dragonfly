@@ -150,8 +150,8 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
     }
     this._before_table_render();
-    this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
-    this._after_table_render();
+    this._table_elem = container.clearAndRender(this._sortable_table.render());
+    this._after_table_render(this._table_elem);
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
@@ -504,10 +504,10 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   }
 
-  this._after_table_render = function()
+  this._after_table_render = function(table)
   {
     this._update_expiry();
-    this._table_elem = this._table_container.firstChild;
+    this._table_elem = table;
     // restore selection
     if (this._restore_selection)
     {
@@ -640,7 +640,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   };
 
-  // DEPENDEND ON SERVICE VERSION - those might get overwritten
+  // DEPENDENT ON SERVICE VERSION - those might get overwritten
   this._domain_renderer = function(obj)
   {
     if (obj._is_runtime_placeholder)
@@ -667,7 +667,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     return window.templates.cookie_manager.http_only(obj.isHTTPOnly);
   }
-  // END DEPENDEND ON SERVICE VERSION
+  // END DEPENDENT ON SERVICE VERSION
 };
 cls.CookieManager.CookieManagerViewBase.prototype = ViewBase;
 

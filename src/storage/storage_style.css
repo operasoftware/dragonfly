@@ -92,7 +92,7 @@ input[type='datetime-local'] {
 
 /* "check" values */
 
-.storage_view .sortable_table_container .check {
+.storage_view .sortable-table .check {
   content: url("../ui-images/menu_check.png");
 }
 

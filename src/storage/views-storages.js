@@ -5,7 +5,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this.createView = function(container)
   {
     var storage = window.storages[id];
-    this._sortable_table = new SortableTable(storage.tabledef, null, null, null, "runtime", true);
+    this._sortable_table = this._sortable_table || new SortableTable(storage.tabledef, null, null, null, "runtime", true);
     container.setAttribute("data-storage-id", storage_name);
     container.setAttribute("data-menu", "storage-view"); // local_storage/session_storage by default
 
@@ -22,9 +22,9 @@ cls.StorageView = function(id, name, container_class, storage_name)
         {
           this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
         }
-        this._before_table_render();
-        container.clearAndRender(["div", this._sortable_table.render(), "class", "sortable_table_container"]);
-        this._after_table_render();
+        this._before_table_render(document.querySelector(".sortable-table"));
+        table = container.clearAndRender(this._sortable_table.render());
+        this._after_table_render(table);
       }
       else
       {
@@ -38,14 +38,12 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   };
 
-  this._before_table_render = function()
+  this._before_table_render = function(table)
   {
-    // save selection
-    var table_elem = document.querySelector(".sortable_table_container")
-                     && document.querySelector(".sortable_table_container").firstChild;
-    if (table_elem)
+    if (table)
     {
-      var selection = table_elem.querySelectorAll(".selected");
+      // save selection
+      var selection = table.querySelectorAll(".selected");
       this._restore_selection = this._restore_selection || [];
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
         this._restore_selection.push(selected_node.getAttribute("data-object-id"));
@@ -53,37 +51,37 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   }
 
-  this._after_table_render = function()
+  this._after_table_render = function(table)
   {
-    // restore selection
-    var table_elem = document.querySelector(".sortable_table_container") 
-                     && document.querySelector(".sortable_table_container").firstChild;
-    if (this._restore_selection)
+    if(table)
     {
-      for (var i=0, objectref; objectref = this._restore_selection[i]; i++)
+      if (this._restore_selection)
       {
-        var elem = table_elem.querySelector("[data-object-id='"+objectref+"']");
-        if (elem)
+        for (var i=0, objectref; objectref = this._restore_selection[i]; i++)
         {
-          elem.addClass("selected");
-        }
+          var elem = table.querySelector("[data-object-id='"+objectref+"']");
+          if (elem)
+          {
+            elem.addClass("selected");
+          }
+        };
+        this._restore_selection = null;
+      }
+      // add context menus and handlers to rows
+      for (var i=0, row; row = table.childNodes[i]; i++)
+      {
+        row.setAttribute("data-menu", "storage-item");
+        row.setAttribute("handler", "storage-row");
+        row.setAttribute("edit-handler", "storage-row");
+      }
+      // textarea-autosize
+      var data_storage_id = table.get_attr("parent-node-chain", "data-storage-id");
+      var autosize_elements = table.querySelectorAll("textarea");
+      var broker = ActionBroker.get_instance();
+      for (var i=0, element; element = autosize_elements[i]; i++) {
+        broker.dispatch_action(data_storage_id, "textarea-autosize", null, element);
       };
-      this._restore_selection = null;
     }
-    // add context menus and handlers to rows
-    for (var i=0, row; row = table_elem.childNodes[i]; i++)
-    {
-      row.setAttribute("data-menu", "storage-item");
-      row.setAttribute("handler", "storage-row");
-      row.setAttribute("edit-handler", "storage-row");
-    }
-    // textarea-autosize
-    var data_storage_id = table_elem.get_attr("parent-node-chain", "data-storage-id");
-    var autosize_elements = table_elem.querySelectorAll("textarea");
-    var broker = ActionBroker.get_instance();
-    for (var i=0, element; element = autosize_elements[i]; i++) {
-      broker.dispatch_action(data_storage_id, "textarea-autosize", null, element);
-    };
   };
 
   this.on_storage_update = function(msg)
