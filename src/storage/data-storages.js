@@ -165,7 +165,6 @@ cls.StorageDataBase = new function()
   this._handle_clear = function(status, message, rt_id)
   {
     this._get_key_value_pairs(rt_id);
-    // todo: make this call a callback too, like _handle_remove
   };
 
   this._handle_remove = function(status, message, success_callback, info, rt_id, key)

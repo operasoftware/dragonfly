@@ -22,7 +22,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
         {
           this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
         }
-        this._before_table_render(document.querySelector(".sortable-table"));
+        this._before_table_render(container.querySelector(".sortable-table"));
         table = container.clearAndRender(this._sortable_table.render());
         this._after_table_render(table);
       }
