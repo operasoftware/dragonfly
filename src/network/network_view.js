@@ -45,11 +45,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       this._render_details_view(container);
     }
     else if (ctx && ctx.resources.length) {
+      var paused = settings.network_logger.get('paused-update');
+      if (paused && this._everrendered) { return }
       this._render_graph_view(container);
-    }
-    else if (paused)
-    {
-      this._render_paused_view(container);
     }
     else if (this._loading)
     {
@@ -96,82 +94,67 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     );
   }
 
-  this._render_paused_view = function(container)
-  {
-      container.clearAndRender(
-        ['div',
-         ['p', ui_strings.S_INFO_NETWORK_UPDATES_PAUSED],
-         'class', 'info-box'
-        ]
-      ); 
-  }
-
   this._render_graph_view = function(container)
   {
-    var paused = settings.network_logger.get('paused-update');
     var fit_to_width = settings.network_logger.get('fit-to-width');
     var url_list_width = 250;
     var ctx = this._service.get_request_context();
 
-    if (!paused || paused && this._everrendered)
+    this._everrendered = true;
+    var min_render_delay = 1200;
+    var timedelta = new Date().getTime() - this._rendertime;
+    if (timedelta < min_render_delay)
     {
-      this._everrendered = true;
-      var min_render_delay = 1200;
-      var timedelta = new Date().getTime() - this._rendertime;
-      if (timedelta < min_render_delay)
+      if (!this._rendertimer)
       {
-        if (!this._rendertimer)
-        {
-          this._rendertimer = window.setTimeout(this.update.bind(this), min_render_delay/2);
-        }
-        return;
+        this._rendertimer = window.setTimeout(this.update.bind(this), min_render_delay/2);
       }
-      else
-      {
-        this._rendertimer = null;
-        this._rendertime = new Date().getTime();
-      }
-
-      this._contentscroll = 0;
-      container.className = "";
-      var contheight = container.getBoundingClientRect().height - 2;
-      var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
-      var duration = ctx.get_duration();
-
-      if (!fit_to_width && duration > 3000)
-      {
-        graphwidth = Math.ceil(duration * 0.35);
-      }
-
-      container.clearAndRender(templates.network_log_main(ctx, graphwidth));
-      this._vscrollcontainer = container.querySelector("#main-scroll-container");
-      this._vscrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
-      this._vscrollcontainer.scrollTop = this._vscroll;
-
-      this._hscrollcontainer = container.querySelector("#scrollbar-container");
-      this._hscrollcontainer.scrollLeft = this._hscroll;
-      container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
-
-      var hscrollfun = function(evt)
-      {
-        var e = document.getElementById("right-side-container");
-        var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
-        e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
-        this._hscroll = e.scrollLeft;
-      }.bind(this);
-      hscrollfun({target:this._hscrollcontainer});
-      this._hscrollcontainer.addEventListener("scroll", hscrollfun, false)
-
-      var vscrollfun = function()
-      {
-        this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
-      }.bind(this);
-
-      this._vscrollcontainer.addEventListener("scroll", vscrollfun, false);
-      this._hscrollcontainer.addEventListener("scroll", hscrollfun, false);
+      return;
     }
-  }
+    else
+    {
+      this._rendertimer = null;
+      this._rendertime = new Date().getTime();
+    }
 
+    this._contentscroll = 0;
+    container.className = "";
+    var contheight = container.getBoundingClientRect().height - 2;
+    var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
+    var duration = ctx.get_duration();
+
+    if (!fit_to_width && duration > 3000)
+    {
+      graphwidth = Math.ceil(duration * 0.35);
+    }
+
+    container.clearAndRender(templates.network_log_main(ctx, graphwidth));
+    this._vscrollcontainer = container.querySelector("#main-scroll-container");
+    this._vscrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
+    this._vscrollcontainer.scrollTop = this._vscroll;
+
+    this._hscrollcontainer = container.querySelector("#scrollbar-container");
+    this._hscrollcontainer.scrollLeft = this._hscroll;
+    container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
+
+    var hscrollfun = function(evt)
+    {
+      var e = document.getElementById("right-side-container");
+      var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
+      e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
+      this._hscroll = e.scrollLeft;
+    }.bind(this);
+    hscrollfun({target:this._hscrollcontainer});
+    this._hscrollcontainer.addEventListener("scroll", hscrollfun, false)
+
+    var vscrollfun = function()
+    {
+      this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
+    }.bind(this);
+
+    this._vscrollcontainer.addEventListener("scroll", vscrollfun, false);
+    this._hscrollcontainer.addEventListener("scroll", hscrollfun, false);
+  }
 
   this._on_clicked_close_bound = function(evt, target)
   {
