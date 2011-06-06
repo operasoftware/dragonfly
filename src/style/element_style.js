@@ -71,19 +71,10 @@ cls.ElementStyle = function()
   var __setPriorities = [];
   var _rt_id;
   var _obj_id;
-  this._pseudo_list = [
-    NONE,
-    //HOVER,
-    //ACTIVE,
-    //FOCUS,
-    //LINK,
-    //VISITED,
-    FIRST_LINE,
-    FIRST_LETTER,
-    //BEFORE,
-    //AFTER,
-    SELECTION
-  ];
+
+  this._pseudo_class_list = [NONE];
+
+  this._default_pseudo_element_list = this._pseudo_element_list = [SELECTION]; // ::selection always applies
 
   this._pseudo_class_map = {
     "link": LINK,
@@ -93,21 +84,29 @@ cls.ElementStyle = function()
     "focus": FOCUS
   };
 
+  this._pseudo_element_map = {
+    "first-line": FIRST_LINE,
+    "first-letter": FIRST_LETTER,
+    "before": BEFORE,
+    "after": AFTER,
+    "selection": SELECTION
+  };
+
   this.add_pseudo_class = function(pseduo_class)
   {
-    var index = this._pseudo_list.indexOf(this._pseudo_class_map[pseduo_class]);
+    var index = this._pseudo_class_list.indexOf(this._pseudo_class_map[pseduo_class]);
     if (index == -1)
     {
-      this._pseudo_list.push(this._pseudo_class_map[pseduo_class]);
+      this._pseudo_class_list.push(this._pseudo_class_map[pseduo_class]);
     }
   };
 
   this.remove_pseudo_class = function(pseduo_class)
   {
-    var index = this._pseudo_list.indexOf(this._pseudo_class_map[pseduo_class]);
+    var index = this._pseudo_class_list.indexOf(this._pseudo_class_map[pseduo_class]);
     if (index != -1)
     {
-      this._pseudo_list.splice(index, 1);
+      this._pseudo_class_list.splice(index, 1);
     }
   };
 
@@ -398,6 +397,9 @@ cls.ElementStyle = function()
       for ( ; (view_id = __views[i]) && !(get_data = views[view_id].isvisible()); i++);
       if (get_data && __selectedElement.req_type)
       {
+        self._pseudo_element_list = msg.pseudo_element
+                                  ? [self._pseudo_element_map[msg.pseudo_element]].concat(self._default_pseudo_element_list)
+                                  : self._default_pseudo_element_list;
         getData(msg.rt_id, msg.obj_id);
       }
       else
@@ -433,7 +435,10 @@ cls.ElementStyle = function()
     if (stylesheets.hasStylesheetsRuntime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
-      services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id, self._pseudo_list]);
+      services['ecmascript-debugger'].requestCssGetStyleDeclarations(
+         tag,
+         [rt_id, obj_id, self._pseudo_class_list.concat(self._pseudo_element_list)]
+      );
     }
     else
     {

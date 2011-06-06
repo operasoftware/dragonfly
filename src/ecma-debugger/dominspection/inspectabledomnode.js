@@ -23,7 +23,6 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   NAME = 2, 
   DEPTH = 3,
 
-
   ATTRS = 5,
   ATTR_PREFIX = 0,
   ATTR_KEY = 1, 

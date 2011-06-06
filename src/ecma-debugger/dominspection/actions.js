@@ -94,6 +94,7 @@ cls.DOMInspectorActions = function(id)
     var
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
+    pseudo_element = target.getAttribute('data-pseudo-element'),
     inspections = window.dominspections,
     model = null,
     scroll_into_view = false,
@@ -115,7 +116,8 @@ cls.DOMInspectorActions = function(id)
       inspections.active = model;
       window.messages.post("element-selected", {model: model,
                                                 obj_id: obj_id,
-                                                rt_id: model.getDataRuntimeId()});
+                                                rt_id: model.getDataRuntimeId(),
+                                                pseudo_element: pseudo_element});
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
