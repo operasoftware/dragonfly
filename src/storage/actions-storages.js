@@ -54,7 +54,6 @@ cls.StorageViewActions = function(id)
   this._handlers["submit"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
-    // todo: find a better way of knowing the container if no context is passed
     var container = target || document.querySelector(".storage_view");
     while(container && !container.getAttribute("data-storage-id"))
     {
@@ -140,7 +139,15 @@ cls.StorageViewActions = function(id)
     }
   }.bind(this);
 
-  this._handlers["update"] = this._handlers["cancel"] = function(event, target)
+  this._handlers["cancel"] = function(event, target)
+  {
+    this.mode = MODE_DEFAULT;
+    ActionBroker.get_instance()._action_context.mode = MODE_DEFAULT;
+    this._handlers["update"](event, target);
+    return false;
+  }.bind(this);
+
+  this._handlers["update"] = function(event, target)
   {
     var container = target;
     while(container && !container.getAttribute("data-storage-id"))
