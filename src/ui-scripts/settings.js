@@ -101,7 +101,8 @@ var SettingsBase = function()
     for( key in stored_map)
     {
       val = window.localStorage.getItem(key);
-      this.map[key] = (val === undefined || val === null) ? key_map[key] : JSON.parse(val);
+      this.map[key] = (val === undefined || val === null) ? key_map[key] : 
+                      val === 'undefined' ? undefined : JSON.parse(val);
     }
     if(!window.settings)
     {
