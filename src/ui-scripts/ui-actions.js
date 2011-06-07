@@ -168,15 +168,6 @@ eventHandlers.click['settings-tabs'] = function(event, target)
   windows.showWindow('window-3', 'Settings', templates.settings(tabs), 200, 200, 200, 200);
 }
 
-eventHandlers.click['toggle-setting'] = function(event, target)
-{
-  var old_setting = target.parentElement;
-  var view_id = target.getAttribute('view-id');
-  var view = views[view_id];
-  var setting = document.render(templates.setting( view_id, view.name, !target.firstChild.hasClass('unfolded') ));
-  old_setting.parentElement.replaceChild(setting, old_setting);
-}
-
 eventHandlers.click['show-search'] = function(event, target)
 {
   var toolbar = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
@@ -185,7 +176,7 @@ eventHandlers.click['show-search'] = function(event, target)
     var search = UI.get_instance().get_search(toolbar.cell.container.view_id);
     if (search)
     {
-      target.getAttribute("is-active") == "true" ? search.hide() : search.show();
+      target.hasClass("is-active") ? search.hide() : search.show();
     }
   }
 }
@@ -200,11 +191,6 @@ eventHandlers.click['show-window'] = function(event)
   var view_id = target.getAttribute('view-id');
   target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
   UIWindowBase.showWindow(view_id);
-}
-
-eventHandlers.click['top-settings'] = function(event)
-{
-  UIWindowBase.showWindow('settings_view');
 }
 
 eventHandlers.click['documentation'] = function(event)
@@ -250,8 +236,8 @@ eventHandlers.click['toolbar-switch'] = function(event)
   var target = event.target;
   var arr = target.getAttribute('key').split('.');
   var setting = arr[0], key = arr[1];
-  var is_active = !( target.getAttribute('is-active') == 'true' && true || false );
-  target.setAttribute('is-active', is_active ? 'true' : 'false');
+  var is_active = !target.hasClass('is-active');
+  is_active ? target.addClass("is-active") : target.removeClass("is-active");
 
   settings[setting].set(key, is_active);
   views.settings_view.syncSetting(setting, key, is_active);

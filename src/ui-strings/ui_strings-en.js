@@ -30,12 +30,6 @@ ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
 
-/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
-
-/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
-
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -1233,14 +1227,26 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
-/* DESC: Label for request input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_REQUEST = "Request";
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
 
-/* DESC: Label for response input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_RESPONSE = "Response";
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
 
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";

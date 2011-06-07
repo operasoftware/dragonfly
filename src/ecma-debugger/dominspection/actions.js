@@ -322,7 +322,7 @@ cls.DOMInspectorActions = function(id)
     selection = getSelection();
     range = document.createRange();
     this.is_dom_type_tree = container.firstElementChild.firstElementChild.hasClass('tree-style');
-    if (event.type == 'click')
+    if (event.type == 'click' || event.type == 'contextmenu')
     {
       switch (event.target.nodeName.toLowerCase())
       {
@@ -385,7 +385,6 @@ cls.DOMInspectorActions = function(id)
       switch (new_target.nodeName.toLowerCase())
       {
         case 'node':
-        case 'value':
         {
           firstChild = new_target.firstChild;
           is_end_tag = firstChild.nodeValue[1] == "/";
@@ -393,6 +392,14 @@ cls.DOMInspectorActions = function(id)
           range.setEnd(firstChild,
                        firstChild.nodeValue.length -
                        (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
+          selection.addRange(range);
+          break;
+        }
+        case 'value':
+        {
+          firstChild = new_target.firstChild;
+          range.setStart(firstChild, 1);
+          range.setEnd(firstChild, firstChild.nodeValue.length - 1);
           selection.addRange(range);
           break;
         }

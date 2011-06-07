@@ -397,17 +397,18 @@ cls.ElementLayout = function()
         'class', __comp_style[layout_map[BOX_SIZING]]]],
         ['table',
           ['tr',
-            [['td', 'position', 'data-spec', 'css#position'],
+            [['th', 'position:', 'data-spec', 'css#position'],
              ['td', __comp_style[layout_map[POSITION]] || "–"]],
           ],
           ['tr',
-            [['td', 'z-index', 'data-spec', 'css#z-index'],
+            [['th', 'z-index:', 'data-spec', 'css#z-index'],
              ['td', __comp_style[layout_map[Z_INDEX]] || "–"]],
           ],
           ['tr',
-            [['td', 'box-sizing', 'data-spec', 'css#box-sizing'],
+            [['th', 'box-sizing:', 'data-spec', 'css#box-sizing'],
              ['td', __comp_style[layout_map[BOX_SIZING]] || "–"]],
           ],
+          'id', 'layout-info'
         ]
       ]
     );

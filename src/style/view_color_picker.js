@@ -51,10 +51,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
           break;
       }
 
-      context.ele_value.firstChild.nodeValue = color_value;
+      context.ele_value.firstChild.nodeValue = color_value + (context.is_important ? " !important" : "");
       context.ele_color_sample.style.backgroundColor = color_value;
-      var script = "rule.style.setProperty(\"" + context.prop_name + "\", " +
-                                          "\"" + color_value + "\", null)";
+      // Removing it first is a workaround for CORE-31191
+      var script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
+                   "rule.style.setProperty(\"" + context.prop_name + "\", " +
+                                          "\"" + color_value + "\", " +
+                                          "\"" + (context.is_important ? "important" : "null") + "\")";
       var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
       services['ecmascript-debugger'].requestEval(1, msg);
     }
@@ -89,6 +92,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
         prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
         rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
+        is_important: parent.innerText.endswith("!important")
       }
       if (this._edit_context.initial_color)
         this._finalize_show_color_picker();

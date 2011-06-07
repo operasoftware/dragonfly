@@ -211,6 +211,9 @@ window.cls.FriendlyPrinter = function()
     const ELEMENT = 1;
     const DATE = 2;
     const FUNCTION = 3;
+    const ERROR = 4;
+    const REGEXP = 5;
+
     var ret = list.map(function(item)
     {
       var class_ = item === null ? "" : Object.prototype.toString.call(item);
@@ -230,13 +233,27 @@ window.cls.FriendlyPrinter = function()
       {
         return [
           DATE,
-          item.toISOString()
+          new Date(item.getTime() - item.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','')
         ];
       }
       else if (class_ == "[object Function]")
       {
         return [
           FUNCTION,
+          item.toString()
+        ];
+      }
+      else if (/Error\]$/.test(class_))
+      {
+        return [
+          ERROR,
+          item.message
+        ];
+      }
+      else if (class_ == "[object RegExp]")
+      {
+        return [
+          REGEXP,
           item.toString()
         ];
       }
@@ -247,6 +264,14 @@ window.cls.FriendlyPrinter = function()
 
   this.templates = function()
   {
+    const
+    TYPE = 0,
+    ELEMENT = 1,
+    DATE = 2,
+    FUNCTION = 3,
+    ERROR = 4,
+    REGEXP = 5;
+
     const
     ELE_NAME = 1,
     ELE_ID = 2,
@@ -285,7 +310,14 @@ window.cls.FriendlyPrinter = function()
       }
     };
 
-    this._friendly_print_element = function(value_list)
+    this.friendly_print = function(value_list)
+    {
+      return this._friendly_print[value_list[TYPE]](value_list);
+    };
+
+    this._friendly_print = {};
+
+    this._friendly_print[ELEMENT] = function(value_list)
     {
       return value_list.reduce(function(list, prop, index)
       {
@@ -295,39 +327,30 @@ window.cls.FriendlyPrinter = function()
         }
         return list;
       }.bind(this), []);
-    };
+    }.bind(this);
 
-    this._friendly_print_date = function(value_list)
+    this._friendly_print[DATE] = function(value_list)
     {
       const DATE_STRING = 1;
       return ["span", value_list[DATE_STRING], "class", "datetime"];
     };
 
-    this._friendly_print_function = function(value_list)
+    this._friendly_print[FUNCTION] = function(value_list)
     {
       const FUNCTION_EXPRESSION = 1;
       return window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]).concat('class', 'function-expression');
     };
 
-    this.friendly_print = function(value_list)
+    this._friendly_print[ERROR] = function(value_list)
     {
-      const
-      TYPE = 0,
-      ELEMENT = 1,
-      DATE = 2,
-      FUNCTION = 3;
+      const MESSAGE = 1;
+      return ["span", value_list[MESSAGE], "class", "severity-error"];
+    };
 
-      switch (value_list[TYPE])
-      {
-      case ELEMENT:
-        return this._friendly_print_element(value_list);
-
-      case DATE:
-        return this._friendly_print_date(value_list);
-
-      case FUNCTION:
-        return this._friendly_print_function(value_list);
-      }
+    this._friendly_print[REGEXP] = function(value_list)
+    {
+      const REGEXP_STRING = 1;
+      return ["span", value_list[REGEXP_STRING], "class", "reg_exp"];
     };
   };
 
@@ -364,7 +387,7 @@ window.cls.FriendlyPrinter = function()
   {
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
-    this.templates.apply(window.templates || (window.tempoates = {}));
+    this.templates.apply(window.templates || (window.templates = {}));
     this._friendly_print_host_str = "(" +
                                     this._friendly_print_host.toString() +
                                     ")([%s])";

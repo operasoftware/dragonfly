@@ -164,7 +164,7 @@
                 "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
                   editable(prop) + ">" +
                   esc_name +
-                "</key> " +
+                "</key>\u00A0" +
                 "<value class='" + type + "'>" + value + "</value>" +
               "</item>"
             );
@@ -193,7 +193,7 @@
                 "<item>" +
                   "<input type='button' handler='expand-value' class='folder-key'/>" +
                   "<key data-spec='dom#" + esc_name + "'" +
-                    editable(prop) + ">" + esc_name + "</key> " +
+                    editable(prop) + ">" + esc_name + "</key>\u00A0" +
                   "<value class='" + type + "' data-value='\"" + value + "\"'>" +
                     "\"" + helpers.escapeTextHtml(short_val) + "\"" +
                   "</value>" +
@@ -212,7 +212,7 @@
                   "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
                     editable(prop) + ">" +
                     esc_name +
-                  "</key> " +
+                  "</key>\u00A0" +
                   "<value class='" + type + "'>\"" + value + "\"</value>" +
                 "</item>"
               );

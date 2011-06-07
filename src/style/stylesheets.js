@@ -584,8 +584,8 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "' />"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
-              (prop in __color_properties ? 
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
+              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
                   "<color-sample handler='show-color-picker' " +
                       "style='background-color:" + value +"'/>" : "") +
            "</value>;";
@@ -779,7 +779,7 @@ cls.Stylesheets = function()
           inherited_printed = true;
           ret += "<h2>" +
                 ui_strings.S_INHERITED_FROM +
-                " <code class='element-name'" +
+                " <code class='element-name inspect-node-link'" +
                 " handler='inspect-node-link'" +
                 " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
                 element_name +

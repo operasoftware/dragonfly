@@ -59,16 +59,6 @@ window.cls.DOMSerializer.prototype = new function()
     return ret;
   };
 
-  var getDoctypeName = function(data)
-  {
-    for (var node = null, i = 0; node = data[i]; i++)
-    {
-      if (node[TYPE] == 1)
-        return node[NAME];
-    }
-    return null;
-  }
-
   this['text/html'] = function(model, is_xml)
   {
     const LINEBREAK = '\r\n';
@@ -208,7 +198,7 @@ window.cls.DOMSerializer.prototype = new function()
         case 10:  // doctype
         {
           tree += LINEBREAK + getIndent(node[DEPTH] - start_depth) +
-                  "<!DOCTYPE " + getDoctypeName(data) +
+                  "<!DOCTYPE " + node[NAME] +
                   (node[PUBLIC_ID] ?
                     (" PUBLIC " + "\"" + node[PUBLIC_ID] + "\"") : "") +
                   (!node[PUBLIC_ID] && node[SYSTEM_ID] ?

@@ -16,10 +16,16 @@
   LINEBREAK = '\n';
 
   const ELEMENT_NODE = Node.ELEMENT_NODE;
+  const TEXT_NODE = Node.TEXT_NODE;
+  const CDATA_SECTION_NODE = Node.CDATA_SECTION_NODE;
   const PROCESSING_INSTRUCTION_NODE = Node.PROCESSING_INSTRUCTION_NODE;
   const COMMENT_NODE = Node.COMMENT_NODE;
   const DOCUMENT_NODE = Node.DOCUMENT_NODE;
   const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
+
+  this._node_name_map = {};
+  this._node_name_map[TEXT_NODE] = "<span class='text-node'>#text</span> ";
+  this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
 
   /**
    * Generates the part of the document type declaration after the document
@@ -141,7 +147,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                  ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
                 attr_value +
                 "\"</value>";
@@ -156,7 +162,7 @@
             child_level = data[child_pointer][DEPTH];
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
                 has_only_one_child = 0;
                 one_child_text_content = '';
@@ -190,6 +196,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -204,6 +211,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
@@ -214,6 +222,7 @@
 
               closing_tags.push("<div" + this._get_indent(node) +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                                "class='spotlight-node' " +
                                 "data-menu='dom-element'><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
@@ -224,6 +233,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
@@ -241,7 +251,6 @@
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
-
         }
 
         case COMMENT_NODE:
@@ -291,36 +300,6 @@
     tree += "</div>";
     return tree;
   }
-
-  var nodeNameMap =
-  {
-    3: "<span class='text-node'>#text</span> ",
-    4: "<span class='cdata-node'>#cdata-section</span>"
-  };
-
-  var _escape = function(string)
-  {
-    var 
-    _char = '', 
-    i = 0, 
-    map =
-    {
-      '\t': '\\t',
-      '\v': '\\v',
-      '\f': '\\f',
-      '\u0020': '\\u0020',
-      '\u00A0': '\\u00A0',
-      '\r': '\\r',
-      '\n': '\\n',
-      '\u2028': '\\u2028',
-      '\u2029': '\\u2029'
-    },
-    ret = '';
-
-    for ( ; _char = string.charAt(i); i++)
-      ret += map[_char];
-    return ret;
-  };
 
   this._inspected_dom_node_tree_style = function(model, target, editable)
   {
@@ -394,7 +373,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                    ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                     : "" ) + ">\"" +
                   attr_value +
               "\"</value>";
@@ -411,7 +390,7 @@
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
               one_child_value += data[child_pointer][VALUE];
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
                 has_only_one_child = 0;
                 one_child_value = '';
@@ -424,7 +403,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "class='spotlight-node' " +
+                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -434,7 +415,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "class='spotlight-node' " +
+                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -473,13 +456,13 @@
 
         default:
         {
-          if (!(show_white_space_nodes) && (node[TYPE] == 3))
+          if (!(show_white_space_nodes) && (node[TYPE] == TEXT_NODE))
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._get_indent(node) +
                        current_formatting + " data-menu='dom-element'>" +
-                       (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
+                       (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                        "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
@@ -487,11 +470,14 @@
           }
           else
           {
+            var only_whitespace = /^\s*$/.test(node[VALUE]);
             tree += "<div" + this._get_indent(node) +
                     current_formatting + " data-menu='dom-element'>" +
-                    (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
-                        (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
+                    (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
+                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") +
+                        " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
+                        (only_whitespace ? helpers.escape_whitespace(node[VALUE])
+                                         : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }
