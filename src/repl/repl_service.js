@@ -10,8 +10,19 @@ cls.ReplService = function(view, data)
   this._on_consolemessage_bound = function(msg)
   {
     var data = new cls.ConsoleLogger["2.0"].ConsoleMessage(msg);
-    if (data.source != "ecmascript") { return }
-    this._data.add_output_errorlog(data.description);
+
+    // Ignore these contexts to avoid duplicate messages in the console
+    // when we get the results from both the ecmascript service and th
+    // console logger service.
+    const CONTEXT_BLACKLIST = [ "console.log", "console.debug",
+      "console.info", "console.warn", "console.error", "console.assert",
+      "console.dir", "console.dirxml", "console.group",
+      "console.groupCollapsed", "console.groupEnded", "console.count"
+    ];
+
+    if (data.source != "ecmascript") { return; }
+    else if (CONTEXT_BLACKLIST.indexOf(data.context) != -1) { return; }
+    else { this._data.add_output_errorlog(data.description); }
   }.bind(this);
 
 
