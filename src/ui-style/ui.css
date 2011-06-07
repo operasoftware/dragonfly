@@ -1,4 +1,4 @@
-﻿/* Font stack defaults */
+/* Font stack defaults */
 viewport, .info-box, button {
   font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
@@ -292,6 +292,20 @@ button.ui-control::before,
 .container-button:empty::before {
     height: 18px;
     width: 18px;
+}
+
+button.text-button::before  {
+    display: none;
+}
+
+button.text-button {
+    width: auto;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+button.text-button:active {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
 }
 
 .ui-control
