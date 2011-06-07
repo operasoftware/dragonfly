@@ -103,6 +103,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       this._screenshot = window.views.screenshot;
     }
+    this._screenshot._take_screenshot = true;
     this._screenshot.update_screenshot();
   }.bind(this);
 
