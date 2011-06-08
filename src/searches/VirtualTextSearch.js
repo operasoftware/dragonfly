@@ -40,9 +40,9 @@ var JSSearchWindowHighlightPrototype = function()
     {
       if (hit.indexOf(target) != -1)
       {
-        this._hits[this._match_cursor].forEach(this._set_default_style);
+        this._hits[this._match_cursor].forEach(this._set_default_style, this);
         this._match_cursor = i;
-        this._hits[this._match_cursor].forEach(this._set_highlight_style);
+        this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
         break;
       }
     }

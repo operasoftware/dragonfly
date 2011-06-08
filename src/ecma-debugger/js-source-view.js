@@ -1112,7 +1112,10 @@ cls.JsSourceView.create_ui_widgets = function()
       exception: 0,
       error: 0,
       abort: 0,
-      'tab-size': 4
+      'tab-size': 4,
+      'js-search-type': DOMSearch.PLAIN_TEXT,
+      'js-search-ignore-case': true,
+      'js-search-all-files': false
     },
     // key-label map
     {
@@ -1183,12 +1186,12 @@ cls.JsSourceView.create_ui_widgets = function()
   new JSSourceSearch('js_source',
                      [Searchbar, VirtualTextSearch],
                      [cls.JSSearchWindow]);
-
+  /*
   eventHandlers.click['show-script'] = function(event, target)
   {
     this.broker.dispatch_action("js_source-search-window", "show-script", event, target);
   };
-
+  */
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var

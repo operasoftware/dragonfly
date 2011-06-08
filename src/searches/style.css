@@ -5,24 +5,30 @@
 
 .js-search-results-runtime h2
 {
-  background-color: hsl(0, 0%, 40%);
+  background-color: hsl(0, 0%, 95%);
   color: #fff;
+  color: hsl(0, 0%, 20%);
   margin: 0;
   font: inherit;
   padding: 2px 5px;
+  word-wrap: break-word;
+  margin: 2px;
+  border-radius: 2px;
+  border: 1px solid hsl(0, 0%, 85%);
 }
 
 .js-search-results-script h3
 {
-  background-color: hsl(0, 0%, 90%);
-  color: #000;
+  xbackground-color: hsl(0, 0%, 90%);
+  color: hsl(0, 0%, 20%);
   margin: 0;
   font: inherit;
-  line-height: 16px;
-  padding: 0px 5px;
-  white-space: nowrap;
-  border-bottom: 1px solid hsl(0, 0%, 70%);
-  border-top: 1px solid hsl(0, 0%, 70%);
+  xline-height: 16px;
+  padding: 5px;
+  xwhite-space: nowrap;
+  word-wrap: break-word;
+  xborder-bottom: 1px solid hsl(0, 0%, 70%);
+  xborder-top: 1px solid hsl(0, 0%, 70%);
 }
 
 .js-search-results-script
@@ -30,16 +36,28 @@
   margin-bottom: -1px;
 }
 
-.js-search-results-script div 
+.js-search-match
 {
   color: #000;
-  white-space: pre;
+  xwhite-space: pre-wrap;
   -o-tab-size: 4;
+  Xdisplay: table-row;
 }
 
+/*
 .js-search-results-script div:hover
 {
   background-color: #cce5f3;
+}
+*/
+.js-search-results-script code
+{
+  display: block;
+  word-wrap: break-word;
+  padding: 5px;
+  margin: -1px;
+  margin-left: 7.5ex;
+  border-left: 1px solid hsl(0, 0%, 85%);
 }
 
 .js-search-results-script code.wrap-long-lines
@@ -51,16 +69,23 @@
 
 .line-no
 {
-  background-color: hsla(0, 0%, 0%, .1);
-  color: hsl(0, 0%, 70%);
-  border-right: 1px solid hsl(0, 0%, 70%);
-  padding-right: 1ex;
-  margin-right: 1ex;
-  display: inline-block;
-  border-bottom: 1px solid hsl(0, 0%, 70%);
-  margin-top: -1px;
+  xbackground-color: hsla(0, 0%, 0%, .05);
+  color: hsl(0, 0%, 60%);
+  padding: 4px 0;
+  xpadding-right: 1ex;
+  xmargin: -5px;
+  xmargin-right: 1ex;
+  display: block;
+  float: left;
   vertical-align: top;
+  xheight: 100%;
+  xborder-radius: 2px 0 0 2px;
+  width: 7ex;
+  xwhite-space: pre;
+  text-align: right;
 }
+
+
 
 .info-is-searching
 {
@@ -158,22 +183,35 @@
   background: url("../ui-images/node-match-pointer.png") no-repeat 0 50%;
 }
 
-.dom-search-match
+.dom-search-match,
+.js-search-match
 {
   padding: 4px;
   margin: 0 2px;
   border-radius: 2px;
   border: 1px solid transparent;
+  xword-wrap: break-word;
+}
+
+.js-search-match
+{
+  padding: 0;
+}
+
+.dom-search-match
+{
   word-wrap: break-word;
 }
 
-.dom-search-match:nth-child(even)
+.dom-search-match:nth-child(even),
+.js-search-match:nth-child(even)
 {
   background-color: hsl(0, 0%, 97%);
   border-color: hsl(0, 0%, 97%);
 }
 .dom-search-match-cursor,
-.dom-search-match:hover
+.dom-search-match:hover,
+.js-search-match:hover
 {
   border-color: #e0eaf6 !important;
   background: #f2f5f9 !important;

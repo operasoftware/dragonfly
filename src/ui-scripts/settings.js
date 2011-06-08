@@ -69,7 +69,7 @@ var SettingsBase = function()
   { 
     var val = "";
     return (
-    typeof this.map[key] !== "undefined" ?
+    typeof this.map[key] !== 'undefined' ?
     this.map[key] :
     (this.map[key] = ((val = window.localStorage.getItem(key)) ? JSON.parse(val) : null)));
   }

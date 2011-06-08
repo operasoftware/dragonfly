@@ -188,7 +188,13 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                             ui_strings.M_VIEW_LABEL_BREAKPOINTS, 
                             'scroll breakpoints mono');
     cls.BreakpointsView.create_ui_widgets();
-    
+
+    /* JS Search */
+    cls.JSSearchView.prototype = ViewBase;
+    new cls.JSSearchView('js-search', 
+                         'Search', 
+                         'scroll js-search');
+                             
     /* adjust the base class */
 
     var StorageDataBase = new namespace.StorageDataBase();

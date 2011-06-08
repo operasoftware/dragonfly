@@ -521,7 +521,7 @@ TextSearch.prototype = new function()
 
   this.set_search_term = function(search_term)
   {
-    this._search_term = search_term;
+    this._orig_search_term = this._search_term = search_term;
   }
 
 };

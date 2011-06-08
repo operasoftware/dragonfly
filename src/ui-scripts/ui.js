@@ -43,6 +43,8 @@
 
   this.get_layout_box = function(view_id){};
 
+  this.get_container = function(view_id){};
+
   this.store_last_selected_view = function(view_id){};
 
   this.retrieve_last_selected_view = function(){};
@@ -72,6 +74,11 @@
   this.get_layout_box = function(view_id)
   {
     return window.topCell.get_cell(view_id);
+  };
+
+  this.get_container = function(view_id)
+  {
+    return window.views[view_id] && window.views[view_id].get_container() || null; 
   };
 
   this.register_tabbar = function(id, tabs)
