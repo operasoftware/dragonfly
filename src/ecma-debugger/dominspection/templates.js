@@ -421,6 +421,7 @@
           {
             node_name = node_name.toLowerCase();
           }
+          var pseudo_elements = this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)

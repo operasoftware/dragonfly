@@ -81,7 +81,8 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       'visited': false,
       'hover': false,
       'active': false,
-      'focus': false
+      'focus': false,
+      'selection': false
     },
     // key-label map
     {
@@ -89,7 +90,8 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       'visited': ":visited",
       'hover': ":hover",
       'active': ":active",
-      'focus': ":focus"
+      'focus': ":focus",
+      'selection': "::selection"
     },
     // settings map
     {
@@ -99,42 +101,53 @@ cls.DOMSidePanelView.create_ui_widgets = function()
         'visited',
         'hover',
         'active',
-        'focus'
+        'focus',
+        'selection'
       ]
     },
     null,
     null,
     {
       "link": function(is_active) {
-        update_pseudo_class("link", is_active);
+        update_pseudo_item("link", is_active);
       },
       "visited": function(is_active) {
-        update_pseudo_class("visited", is_active);
+        update_pseudo_item("visited", is_active);
       },
       "hover": function(is_active) {
-        update_pseudo_class("hover", is_active);
+        update_pseudo_item("hover", is_active);
       },
       "active": function(is_active) {
-        update_pseudo_class("active", is_active);
+        update_pseudo_item("active", is_active);
       },
       "focus": function(is_active) {
-        update_pseudo_class("focus", is_active);
+        update_pseudo_item("focus", is_active);
+      },
+      "selection": function(is_active) {
+        update_pseudo_item("selection", is_active);
       }
     }
   );
 
-  function update_pseudo_class(pseudo_class, is_active)
+  function update_pseudo_item(pseudo_item, is_active)
   {
     if (is_active)
     {
-      window.elementStyle.add_pseudo_class(pseudo_class);
+      window.elementStyle.add_pseudo_item(pseudo_item);
     }
     else
     {
-      window.elementStyle.remove_pseudo_class(pseudo_class);
+      window.elementStyle.remove_pseudo_item(pseudo_item);
     }
     window.elementStyle.update();
   }
+
+  ["link", "visited", "hover", "active", "focus", "selection"].forEach(function(pseudo_item) {
+    if (window.settings["css-inspector"].get(pseudo_item))
+    {
+      window.elementStyle.add_pseudo_item(pseudo_item);
+    }
+  });
 
   new ToolbarConfig('css-inspector');
 
@@ -146,7 +159,8 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       'visited',
       'hover',
       'active',
-      'focus'
+      'focus',
+      'selection'
     ]
   );
 
