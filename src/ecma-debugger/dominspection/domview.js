@@ -190,7 +190,8 @@ cls.DOMView.create_ui_widgets = function()
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
       'lock-selected-elements': false,
-      'spotlight-color': "3875d7"
+      'spotlight-color': "3875d7",
+      'show-pseudo-elements': true
     }, 
     // key-label map
     {
@@ -205,8 +206,8 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
       'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
       'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
-    
+      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS,
+      'show-pseudo-elements': ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS
     },
     // settings map
     {
@@ -221,7 +222,8 @@ cls.DOMView.create_ui_widgets = function()
         'update-on-dom-node-inserted',
         'show-id_and_classes-in-breadcrumb',
         'scroll-into-view-on-spotlight',
-        'lock-selected-elements'
+        'lock-selected-elements',
+        'show-pseudo-elements'
       ],
       contextmenu:
       [

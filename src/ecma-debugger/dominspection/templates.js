@@ -165,7 +165,8 @@
           {
             node_name = node_name.toLowerCase();
           }
-          var pseudo_elements = this._get_pseudo_elements(node);
+          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+          var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -248,11 +249,13 @@
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>" +
-                      pseudo_elements["before"] +
-                      pseudo_elements["first-letter"] +
-                      pseudo_elements["first-line"];
+                      (show_pseudo_elements
+                       ? (pseudo_elements["before"] +
+                          pseudo_elements["first-letter"] +
+                          pseudo_elements["first-line"])
+                       : "");
 
-              closing_tags.push(pseudo_elements["after"] +
+              closing_tags.push((show_pseudo_elements ? pseudo_elements["after"] : "") +
                                 "<div" + this._get_indent(node) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                                   "data-menu='dom-element'><node>" +

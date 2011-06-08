@@ -1233,3 +1233,6 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
+/* DESC: Show pseudo elements in the DOM view */
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+
