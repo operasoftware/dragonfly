@@ -358,7 +358,8 @@ cls.DOMInspectorActions = function(id)
 
   this.setSelected = function(new_target, scroll_into_view)
   {
-    var firstChild = null, raw_delta = 0, delta = 0, is_end_tag = false;
+    var raw_delta = 0,
+        delta = 0;
     if(new_target)
     {
       if(nav_target)
@@ -393,12 +394,32 @@ cls.DOMInspectorActions = function(id)
         case 'node':
         case 'value':
         {
-          firstChild = new_target.firstChild;
-          is_end_tag = firstChild.nodeValue[1] == "/";
-          range.setStart(firstChild, this.is_dom_type_tree ? 0 : is_end_tag ? 2 : 1);
-          range.setEnd(firstChild,
-                       firstChild.nodeValue.length -
-                       (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
+          var first_child = new_target.firstChild;
+          var start_offset = 0;
+          var end_offset = first_child.nodeValue.length;
+
+          if (!this.is_dom_type_tree)
+          {
+            start_offset += 1;
+            end_offset -= 1;
+          }
+          else if (first_child.nextSibling) // If it has attributes
+          {
+            end_offset -= 1;
+          }
+
+          if (first_child.nodeValue[1] == "/") // If it's an end-tag
+          {
+            start_offset += 1;
+          }
+
+          if (first_child.nodeValue.slice(-2, -1) == "/") // If it's an empty element tag
+          {
+            end_offset -= 1;
+          }
+
+          range.setStart(first_child, start_offset);
+          range.setEnd(first_child, end_offset);
           selection.addRange(range);
           break;
         }

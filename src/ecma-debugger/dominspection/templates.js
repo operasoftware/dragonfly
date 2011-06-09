@@ -76,7 +76,7 @@
                "data-pseudo-element='" + type + "'" +
                this._get_indent(element) +
           ">" +
-            "<span style='color:rgba(34,34,34,.5)'>&lt::" + type + "/></span>" +
+            "<node style='color:rgba(34,34,34,.5)'>&lt::" + type + "/></node>" +
           "</div>";
       }, this);
     }
