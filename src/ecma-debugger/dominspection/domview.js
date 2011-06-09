@@ -171,6 +171,24 @@ cls.DocumentSelect = function(id)
 
 cls.DOMView.create_ui_widgets = function()
 {
+  var settings_checkboxes = [
+    'force-lowercase',
+    'dom-tree-style',
+    'show-comments',
+    'show-whitespace-nodes',
+    'find-with-click',
+    'highlight-on-hover',
+    'update-on-dom-node-inserted',
+    'show-id_and_classes-in-breadcrumb',
+    'scroll-into-view-on-spotlight',
+    'lock-selected-elements'
+  ];
+
+  var service = window.services["ecmascript-debugger"];
+  if (service.major_version >= 6 && service.minor_version >= 5)
+  {
+    settings_checkboxes.push('show-pseudo-elements');
+  }
 
   new Settings
   (
@@ -211,20 +229,7 @@ cls.DOMView.create_ui_widgets = function()
     },
     // settings map
     {
-      checkboxes:
-      [
-        'force-lowercase',
-        'dom-tree-style',
-        'show-comments',
-        'show-whitespace-nodes',
-        'find-with-click',
-        'highlight-on-hover',
-        'update-on-dom-node-inserted',
-        'show-id_and_classes-in-breadcrumb',
-        'scroll-into-view-on-spotlight',
-        'lock-selected-elements',
-        'show-pseudo-elements'
-      ],
+      checkboxes: settings_checkboxes,
       contextmenu:
       [
         'dom-tree-style',
