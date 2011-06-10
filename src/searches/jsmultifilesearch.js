@@ -113,7 +113,7 @@ var JSMultifileSearchPrototype = function()
           }
         }
       }
-      else if(this._script)
+      else if(this._script && this._script.line_matches)
       {
         var tmpl = window.templates.search_result_script(this._script, false);
         var script_ele = this._container.firstElementChild.render(tmpl);
@@ -137,7 +137,11 @@ var JSMultifileSearchPrototype = function()
         line_no = cur_line;
         line_ele = line_eles[line_ele_index++];
       }
-      this.set_hit(line_ele, script.line_offsets[i], script.match_length);
+      this.set_hit(line_ele,
+                   script.line_offsets[i],
+                   this.search_type == TextSearch.PLAIN_TEXT ?
+                   script.match_length :
+                   script.line_offsets_length[i]);
     }
   };
 
@@ -170,7 +174,9 @@ var JSMultifileSearchPrototype = function()
             {
               var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
               {
-                script.search_source(this._last_query);
+                script.search_source(this._last_query,
+                                     this.ignore_case, 
+                                     this.search_type == TextSearch.REGEXP);
                 return script.line_matches.length;
               }, this);
               if (scripts.length)
@@ -184,7 +190,9 @@ var JSMultifileSearchPrototype = function()
         {
           if (this._script)
           {
-            this._script.search_source(this._last_query);
+            this._script.search_source(this._last_query,
+                                       this.ignore_case, 
+                                       this.search_type == TextSearch.REGEXP);
           }
         }
       }
@@ -307,9 +315,12 @@ var JSMultifileSearchPrototype = function()
       {
         this._clear_highlight_spans(this._source_file_hit);
       }
+      var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
+                         script.match_length :
+                         script.line_offsets_length[i]
       this._source_file_hit = this.set_hit(line_ele, 
                                            script.line_offsets[cursor],
-                                           script.match_length,
+                                           match_length,
                                            this._match_style_highlight,
                                            false);
       var target = this._source_file_hit && this._source_file_hit[0];

@@ -65,7 +65,7 @@
                              'checkbox', 
                              'reg-exp', 
                              'reg exp',
-                             DOMSearch.REGEXP == search.search_type),
+                             TextSearch.REGEXP == search.search_type),
           this._search_input('js-search-ignore-case', 
                              'checkbox', 
                              'ignore-case', 

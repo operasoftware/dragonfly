@@ -98,22 +98,22 @@ cls.JSSearchView = function(id, name, container_class)
     {
       case 'js-search-type':
       {
-        this._search.search_type = parseInt(event.target.checked) ?
-                                   DOMSearch.REGEXP :
-                                   DOMSearch.PLAIN_TEXT;
-        this._setting.set('js-search-type', this.search_type);
+        this._search.search_type = event.target.checked ?
+                                   TextSearch.REGEXP :
+                                   TextSearch.PLAIN_TEXT;
+        this._setting.set('js-search-type', this._search.search_type);
         break;
       }
       case 'js-search-ignore-case':
       {
         this._search.ignore_case = Number(event.target.checked);
-        this._setting.set('js-search-ignore-case', this.ignore_case);
+        this._setting.set('js-search-ignore-case', this._search.ignore_case);
         break;
       }
       case 'js-search-all-files':
       {
         this._search.search_all_files = Number(event.target.checked);
-        this._setting.set('js-search-all-files', this.search_all_files);
+        this._setting.set('js-search-all-files', this._search.search_all_files);
         break;
       }
     }
@@ -144,7 +144,7 @@ cls.JSSearchView = function(id, name, container_class)
     this._search = new JSMultifileSearch();
     this._search.ignore_case = this._setting.get('js-search-ignore-case');
     this._search.search_all_files = this._setting.get('js-search-all-files');
-    this._search._search_type = this._setting.get('js-search-type');
+    this._search.search_type = this._setting.get('js-search-type');
     
     this.controls =
     [
