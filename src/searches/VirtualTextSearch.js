@@ -522,13 +522,13 @@ var VirtualTextSearchBase = function()
   }
 
   /* search window */
-  this.set_hit = function(node, offset, length, style, do_not_store)
+  this.set_hit = function(node, offset, length, style, do_store)
   {
     this._offset = offset;
     this._length = length;
     this._highlight_style = style || this._match_style_default;
     this._hit = []
-    if (!do_not_store)
+    if (typeof do_store != 'boolean' || do_store)
     {
       this._hits.push(this._hit);
     }

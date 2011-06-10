@@ -225,12 +225,12 @@ var DOMSearch = function(min_length)
       var target = span_list[0].get_ancestor('.dom-search-match');
       if (this._highligh_node && this._highligh_node != target)
       {
-        this._highligh_node.removeClass('dom-search-match-cursor')
+        this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
       }
       if (target)
       {
         this._highligh_node = target;
-        this._highligh_node.addClass('dom-search-match-cursor');
+        this._highligh_node.addClass(MATCH_NODE_HIGHLIGHT_CLASS);
       }
     }
   };

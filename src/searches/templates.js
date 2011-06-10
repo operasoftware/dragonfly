@@ -62,13 +62,8 @@
       ['div', 
         ['form',
           this._search_input('js-search-type', 
-                             'radio', 
-                             DOMSearch.PLAIN_TEXT, 
-                             'text',
-                             DOMSearch.PLAIN_TEXT == search.search_type),
-          this._search_input('js-search-type', 
-                             'radio', 
-                             DOMSearch.REGEXP, 
+                             'checkbox', 
+                             'reg-exp', 
                              'reg exp',
                              DOMSearch.REGEXP == search.search_type),
           this._search_input('js-search-ignore-case', 
@@ -99,7 +94,7 @@
     {
       div = ['div'];
       div.push(this._search_result_header(rt_id));
-      div.extend(results[rt_id].map(this._search_result_script, this));
+      div.extend(results[rt_id].map(this.search_result_script, this));
       div.push('class', 'js-search-results-runtime');
       ret.push(div);
     }
@@ -120,9 +115,13 @@
     return  (padding[line_no.length] || '') + line_no;
   }
 
-  this._search_result_script = function(script)
+  this.search_result_script = function(script, show_script_uri)
   {
-    var ret = ['div', ['h3', (script.uri || script.script_type) + ':']];
+    var ret = ['div'];
+    if (typeof show_script_uri != 'boolean' || show_script_uri)
+    {
+      ret.push(['h3', (script.uri || script.script_type) + ':']);
+    }
     var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
     for (var i = 0; i < script.line_matches.length; i++)
     {

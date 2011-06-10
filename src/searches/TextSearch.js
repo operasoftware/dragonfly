@@ -368,7 +368,7 @@ TextSearch.prototype = new function()
       this._scroll_target_into_view(target, direction);
       this._update_info();
     }
-    else if (this._search_term)
+    else if (this._orig_search_term)
     {
       this._update_info(NO_MATCH);
     }
@@ -523,6 +523,5 @@ TextSearch.prototype = new function()
   {
     this._orig_search_term = this._search_term = search_term;
   }
-
 
 };
