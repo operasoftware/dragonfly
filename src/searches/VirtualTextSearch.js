@@ -362,7 +362,8 @@ var VirtualTextSearchBase = function()
     this._source_container.parentNode.scrollLeft = 0;
     this._hit = this._hits[this._script.match_cursor];
     if (this._hit && this._hit.length
-       && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft + this._source_container_parent.offsetWidth)
+       && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft + 
+                                    this._source_container_parent.offsetWidth)
     {
       this._source_container.parentNode.scrollLeft = this._hit[0].offsetLeft - 50;
     }
@@ -521,13 +522,18 @@ var VirtualTextSearchBase = function()
   }
 
   /* search window */
-  this.set_hit = function(node, offset, length, style)
+  this.set_hit = function(node, offset, length, style, do_not_store)
   {
     this._offset = offset;
     this._length = length;
     this._highlight_style = style || this._match_style_default;
-    this._hits.push(this._hit = []);
+    this._hit = []
+    if (!do_not_store)
+    {
+      this._hits.push(this._hit);
+    }
     this._search_node(node);
+    return this._hit;
   };
 
   this.highlight_matches = function(script)

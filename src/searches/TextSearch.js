@@ -524,4 +524,5 @@ TextSearch.prototype = new function()
     this._orig_search_term = this._search_term = search_term;
   }
 
+
 };

@@ -201,6 +201,7 @@ var JSMultifileSearchPrototype = function()
     this._last_search_type = 0;
     this._last_ignore_case = undefined;
     this._last_search_all_files = undefined;
+    this._source_file_hit = null;
     this._show_search_results_bound = this._show_search_results.bind(this);
     window.eventHandlers.click['show-script'] = this._show_script.bind(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
@@ -232,21 +233,31 @@ var JSMultifileSearchPrototype = function()
     if (script)
     {
       var js_source_view = window.views[JS_SOURCE_ID];
-      if (!js_source_view.isvisible())
+      var line_nr = script.line_matches[cursor];
+      js_source_view.showLine(script.script_id, line_nr - 10);
+      var line_ele = js_source_view.get_line_element(line_nr);
+      if (this._source_file_hit)
       {
-        this._ui.show_view(JS_SOURCE_ID);
+        this._clear_highlight_spans(this._source_file_hit);
       }
-      script.match_cursor = cursor;
-      js_source_view.show_and_flash_line(script.script_id, script.line_matches[cursor]);
-      /*
-      js_source_view.showLine(script.script_id, script.line_matches[cursor] - 10);
-      this._source_highlighter.set_container(js_source_view.get_container());
-      this._source_highlighter.set_script(script);
-      this._source_highlighter.update_hits(js_source_view.getTopLine(),
-                                           js_source_view.getBottomLine());
-      this._source_highlighter.scroll_selected_hit_in_to_view();
-      messages.addListener('view-scrolled', this._onviewscrolled_bound);
-      */
+      this._source_file_hit = this.set_hit(line_ele, 
+                                           script.line_offsets[cursor],
+                                           script.match_length,
+                                           this._match_style_highlight,
+                                           false);
+
+      var target = this._source_file_hit && this._source_file_hit[0];
+      if (target)
+      {
+        var scroll_container = js_source_view.get_scroll_container();
+        scroll_container.scrollLeft = 0;
+        if (target.offsetLeft + target.offsetWidth > scroll_container.offsetWidth)
+        {
+          scroll_container.scrollLeft = target.offsetLeft - 
+                                        scroll_container.offsetWidth +
+                                        target.offsetWidth + 100;
+        }
+      }
     }
   };
 
