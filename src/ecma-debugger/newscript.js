@@ -102,12 +102,13 @@ window.cls.NewScript.prototype = new function()
           {
             ++line_cur;
           }
-          this.line_matches[this.line_matches.length] = line_cur;
-          this.line_offsets[this.line_offsets.length] = pos - this.line_arr[line_cur - 1];
+          this.line_matches[index] = line_cur;
+          this.line_offsets[index] = pos - this.line_arr[line_cur - 1];
           if (is_reg_exp)
           {
-            this.line_offsets_length[index++] = match[0].length
+            this.line_offsets_length[index] = match[0].length
           }
+          index++;
         }
       }
     }
