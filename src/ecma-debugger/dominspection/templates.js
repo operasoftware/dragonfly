@@ -115,13 +115,12 @@
     var node = null;
     var length = data.length;
     var attrs = null, attr = null, k = 0, key = '', attr_value = '';
-    var is_open = 0;
+    var is_open = false;
     var has_only_text_content = false;
     var one_child_text_content = '';
     var current_depth = 0;
     var child_pointer = 0;
     var child_level = 0;
-    var j = 0;
     var children_length = 0;
     var closing_tags = [];
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
@@ -319,9 +318,17 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
+            var prev_pointer = i-1;
+            var prev_node = data[prev_pointer];
+            while (prev_node && prev_node[DEPTH] == current_depth) // Find parent
+            {
+              prev_node = data[prev_pointer--];
+            }
+            var class_attr = re_formatted.test(prev_node[NAME]) ? " class='pre-wrap' " : "";
+
             tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
                     "<text" +
-                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
+                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + class_attr +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -381,13 +388,12 @@
                "><div class='tree-style'>";
     var i = 0, node = null, length = data.length;
     var attrs = null, key = '', attr_value = '';
-    var is_open = 0;
+    var is_open = false;
     var has_only_text_content = false;
     var one_child_value = ''
     var current_depth = 0;
     var child_pointer = 0;
     var child_level = 0;
-    var j = 0;
     var k = 0;
     var children_length = 0;
     var closing_tags = [];
@@ -424,7 +430,6 @@
           {
             node_name = node_name.toLowerCase();
           }
-          var pseudo_elements = this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
