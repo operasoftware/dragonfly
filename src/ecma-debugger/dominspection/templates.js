@@ -58,6 +58,7 @@
 
   this._get_pseudo_elements = function(element)
   {
+    var is_tree_mode = window.settings.dom.get("dom-tree-style");
     var pseudo_element_list = element[PSEUDO_ELEMENT_LIST];
     var pseudo_elements = {
       "after": "",
@@ -76,7 +77,9 @@
                "data-pseudo-element='" + type + "'" +
                this._get_indent(element) +
           ">" +
-            "<node style='color:rgba(34,34,34,.5)'>&lt::" + type + "/></node>" +
+            "<node style='color:rgba(34,34,34,.5)'>" +
+              (is_tree_mode ? "::" + type : "&lt::" + type + "/>") +
+            "</node>" +
           "</div>";
       }, this);
     }
@@ -406,6 +409,11 @@
 
     for ( ; node = data[i]; i += 1)
     {
+      while (current_depth > node[DEPTH])
+      {
+        tree += closing_tags.pop();
+        current_depth--;
+      }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
@@ -430,6 +438,8 @@
           {
             node_name = node_name.toLowerCase();
           }
+          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+          var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -476,7 +486,14 @@
                     (children_length && !has_only_text_content ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    "</div>" +
+                    (show_pseudo_elements
+                     ? (pseudo_elements["before"] +
+                        pseudo_elements["first-letter"] +
+                        pseudo_elements["first-line"])
+                     : "");
+
+            closing_tags.push(show_pseudo_elements ? pseudo_elements["after"] : "");
           }
           else
           {
@@ -545,6 +562,10 @@
           }
         }
       }
+    }
+    while (closing_tags.length)
+    {
+      tree += closing_tags.pop();
     }
     tree += "</div></div>";
     return tree;
