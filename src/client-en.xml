@@ -208,6 +208,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/objectregistry.js"/>
 <script src="./scripts/spec_links.js"/>
 <script src="./scripts/queue.js"/>
+<script src="./scripts/potools.js"/>
 
 
 
@@ -307,6 +308,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./debug/debug.js"/>
 <script src="./debug/configure_message_filter.js"/>
+<script src="./debug/po_tester.js"/>
 <script src="./debug/test_messages.js"/>
 <script src="./debug/build_debug.js"/>
 
