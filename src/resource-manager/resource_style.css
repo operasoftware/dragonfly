@@ -32,25 +32,50 @@
     vertical-align: middle;
 }
 
-.resource-type-markup {
-    background-image: url(../ui-images/type_markup.png);
+.resource-type-audio {
+    background-image: url(../ui-images/audio.png);
 }
 
 .resource-type-css {
     background-image: url(../ui-images/type_style.png);
 }
 
-.resource-type-script {
-    background-image: url(../ui-images/type_script.png);
+.resource-type-data {
+    background-image: url(../ui-images/type_data.png);
+}
+
+.resource-type-feed {
+    background-image: url(../ui-images/type_feed.png);
 }
 
 .resource-type-flash {
     background-image: url(../ui-images/type_flash.png);
 }
 
+.resource-type-font {
+    background-image: url(../ui-images/type_font.png);
+}
+
 .resource-type-image {
     background-image: url(../ui-images/type_picture.png);
 }
+
+.resource-type-markup {
+    background-image: url(../ui-images/type_markup.png);
+}
+
+.resource-type-script {
+    background-image: url(../ui-images/type_script.png);
+}
+
+.resource-type-text {
+    background-image: url(../ui-images/type_text.png);
+}
+
+.resource-type-video {
+    background-image: url(../ui-images/type_video.png);
+}
+
 
 .resource-detail-container {
     display: block;

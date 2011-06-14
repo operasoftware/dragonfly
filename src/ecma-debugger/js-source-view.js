@@ -53,7 +53,18 @@ cls.JsSourceView = function(id, name, container_class)
   LINE_POINTER_TOP = window.cls.NewScript.LINE_POINTER_TOP,
   LINE_POINTER = window.cls.NewScript.LINE_POINTER,
   BP_IMAGE_LINE_HEIGHT = 24,
-  BP_IMAGE_HEIGHT = 12;
+  BP_IMAGE_HEIGHT = 12,
+  
+  //TODO Add proper classes names.
+  //Add styles for all classes.
+  LINE_HIGHLIGHT_CLASSNAMES = ["", 
+                              "selected-js-source-line",
+                              "selected-js-redirected-line"],
+  BP_HIGHLIGHT_CLASSNAMES = ["",
+                            "selected-js-bp-disabled",
+                            "selected-js-bp-disabled-condition",
+                            "selected-js-bp",
+                            "selected-js-bp-condition"];
 
   templates.line_nummer_container = function(lines)
   {
@@ -144,6 +155,29 @@ cls.JsSourceView = function(id, name, container_class)
     if (force_repaint)
     {
       setTimeout(repaint_line_numbers, 0);
+    }
+    addLineHighlight();
+  };
+
+  var addLineHighlight = function()
+  {
+    var lines = source_content.getElementsByTagName('div');
+    var bp_states = __current_script.breakpoint_states;
+    if (bp_states)
+    {
+      var highlight_class, bp_state;
+      for (var i = 0, line; line = lines[i]; i++)
+      {
+        highlight_class = "";
+        
+        if (bp_state = bp_states[__current_line + i])
+        {
+          highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
+                            BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+        }
+        
+        line.className = highlight_class;
+      }
     }
   };
 

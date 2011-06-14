@@ -1227,6 +1227,18 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
+/* DESC: Label for request input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_REQUEST = "Request";
+
+/* DESC: Label for response input in network crafter */
+ui_strings.M_NETWORK_CRAFTER_RESPONSE = "Response";
+
+/* DESC: Button label to show window for loading a PO file */
+ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
+
+/* DESC: Label for user interface language dropdown in settings */
+ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
+
 /* DESC: Context menu item for enabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
 

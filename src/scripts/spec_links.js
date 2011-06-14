@@ -44,7 +44,7 @@ SpecLinks.prototype.get_spec_link = function(spec_notation)
       // the keys to lowercase but that's information loss for some of the
       // spec types, so we wont for now.
 
-      for (key in props)
+      for (var key in props)
       {
         if (key.toLowerCase() == prop.toLowerCase())
         {

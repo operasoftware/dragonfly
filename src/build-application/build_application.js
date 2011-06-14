@@ -204,6 +204,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
   new cls.DebugRemoteSettingView('debug_remote_setting', ui_strings.S_SWITCH_REMOTE_DEBUG, '');
   cls.DebugRemoteSettingView.create_ui_widgets();
 
+  /* PO tester */
+  new cls.PoTestView("test-po-file", "Test PO file", "scroll");
+
   /* Shortcut config */
   var GlobalView = function(id, name)
   {

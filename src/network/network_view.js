@@ -19,6 +19,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._render_main_view(container);
   };
 
+  this.onresize = this.createView;
+
   this.ondestroy = function()
   {
     this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
