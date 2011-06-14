@@ -3,7 +3,10 @@
   const MAX_LINE_CHARS = 4000;
   this.searchbar_content = function(search)
   {
-    return this.filters(search.controls);
+    var content = this.filters(search.controls);
+    content[0] = 'div';
+    content.push('class', 'advanced-panel-search');
+    return content;
   };
 
   this._search_input = function(name, type, value, label, is_selected)
