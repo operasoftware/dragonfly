@@ -1,6 +1,14 @@
 ﻿em
 {
   font-style: normal;
+  display:inline-block;
+  border-radius: 3px;
+  padding-left: 1px;
+  padding-right: 1px;
+  border: 1px solid transparent;
+  margin-left: -1px;
+  margin-right: -1px;
+
 }
 
 .js-search-results-runtime h2
@@ -8,8 +16,10 @@
   background-color: hsl(0, 0%, 40%);
   color: #fff;
   margin: 0;
+  
+  
   font: inherit;
-  padding: 2px 5px;
+  padding: 3px;
 }
 
 .js-search-results-script h3
@@ -24,6 +34,7 @@
   border-bottom: 1px solid hsl(0, 0%, 70%);
   border-top: 1px solid hsl(0, 0%, 70%);
 }
+
 
 .js-search-results-script
 {
@@ -66,16 +77,23 @@
 {
   padding: 7px;
 }
-
 .search-highlight
 {
-  background-color: #ff00ff; 
-  color: #000;
+ background-color: rgba(0,0,0,0.13); 
 }
 .search-highlight-selected
 {
-  background-color: #ff00ff; 
-  color: #000;
+  background-color: #c8f7bd; 
+  background-image: -o-linear-gradient(90deg,#5fca70,#76e387);
+  border-color: #68d078;   
+  border-bottom-color: #58b166;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  color: #000000;
+  position:relative;
+  z-index: 98;
 }
 
 /* DOM search */

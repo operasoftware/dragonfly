@@ -240,14 +240,3 @@ rule:not(.non-editable) property:hover {
 {
   display:none;
 }
-
-.search-highlight
-{
-  background-color: #ff0;
-  color: #000;
-}
-.search-highlight-selected
-{
-  background-color: #0f0;
-  color: #000;
-}
