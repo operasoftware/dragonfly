@@ -1,11 +1,4 @@
 ﻿/* Expander cell */
-.errors-table > tr:not(.error-details) > th:nth-child(1),
-/* Icon cell */
-.errors-table > tr:not(.error-details) > th:nth-child(2) {
-    width: 16px;
-}
-
-/* Expander cell */
 .errors-table > tr:not(.error-details) > td:nth-child(1),
 /* Icon cell */
 .errors-table > tr:not(.error-details) > td:nth-child(2) {
