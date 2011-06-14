@@ -171,29 +171,10 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
-  this._extract_title = function(description)
-  {
-    var parts = description.split("\n");
-    if (parts.length)
-    {
-      return parts[0] == "Error:" ? parts[1].substr(6) : parts[0];
-    }
-    return "";
-  };
-
-  this._extract_line = function(description)
-  {
-    var matcher = /[lL]ine (\d*)/;
-    var linematch = matcher.exec(description);
-    return linematch ? linematch[1] : null;
-  };
-
   this._on_console_message = function(data)
   {
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
-    message.title =  this._extract_title(message.description);
-    message.line = this._extract_line(message.description);
     this.addentry(message);
     if (this._filter(message))
     {

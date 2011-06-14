@@ -419,6 +419,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./console-logger/console.js"/>
 <script src="./console-logger/console_templates.js"/>
 <script src="./console-logger/consolelogger.2.0.events.onconsolemessage.js"/>
+<script src="./console-logger/consolelogger.2.0.events.onconsolemessage_prototype.js"/>
 <script src="./console-logger/ecmascriptdebugger.6.0.events.onconsolelog.js"/>
 
 <script src="./storage/data-storages.js"/>
@@ -444,7 +445,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/repl_templates.js"/>
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 <script src="./repl/scope.1.0.responses.hostinfo.js"/>
-<script src="./repl/consolelogger.2.0.events.onconsolemessage.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>

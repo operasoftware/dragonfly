@@ -8,17 +8,7 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
   };
 
   return [
-    "table", [
-      "tr", [
-        ['th', ""],
-        ['th', ""],
-        ['th', ui_strings.S_COLUMN_LABEL_FILE],
-        ['th', ui_strings.S_COLUMN_LABEL_LINE],
-        ['th', ui_strings.S_COLUMN_LABEL_ERROR]
-      ],
-      "class", "header",
-    ],
-    entries.map(rowClosure),
+    "table", entries.map(rowClosure),
     "class", "sortable-table errors-table",
   ];
 };
@@ -39,25 +29,38 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
   }
 
   var severity = entry.severity || "information";
+  var title = entry.context;
+  if (entry.line && entry.uri)
+  {
+    title = "Line " + entry.line + " in " + entry.uri; // todo: strings
+  }
   var rows = [
     [
       "tr", [
-      ["td", ["button", "",
-                 "type", "button",
-                 //"handler", "error-log-list-expand-collapse",
-                 "data-logid", entry.id,
-                 "data-viewid", viewId,
-                 "unselectable", "on"
+        ["td", ["button", "",
+                   "type", "button",
+                   //"handler", "error-log-list-expand-collapse",
+                   "data-logid", entry.id,
+                   "data-viewid", viewId,
+                   "unselectable", "on"
                ]
+        ],
+        ["td", ["span", "class", "severity " + severity, "title", severity]],
+        ["td",
+           entry.title,
+           [
+             "span", (helpers.basename(entry.uri) || entry.context) + (entry.line==null ? "" : ":" + entry.line),
+             "title", title,
+             "class", "context " + (entry.uri ? "internal-link" : ""),
+             "handler", "open-resource-tab",
+             "data-resource-url", entry.uri
+           ]
+        ]
       ],
-      ["td", ["span", "class", "severity " + severity, "title", severity]],
-      ["td", helpers.basename(entry.uri) || entry.context, "title", entry.uri || entry.context],
-      ["td", (entry.line==null ? "–" : entry.line) ],
-      ["td", entry.title]
-     ],  "class", (expanded ? "expanded" : "collapsed"),
-     "handler", "error-log-list-expand-collapse",
-    "data-logid", entry.id,
-    "data-viewid", viewId
+      "class", (expanded ? "expanded" : "collapsed"),
+      "handler", "error-log-list-expand-collapse",
+      "data-logid", entry.id,
+      "data-viewid", viewId
     ]
   ];
 
@@ -77,19 +80,11 @@ window.templates.error_log_detail_row = function(entry)
       ["td",
         ["table",
           ["tr",
-            ["th", "Source:"],
-            ["td", ["span", entry.uri || entry.context, "class", (entry.uri ? "internal-link" : "")],
-             "handler", "open-resource-tab",
-             "data-resource-url", entry.uri
-            ],
-          ],
-          ["tr",
-            ["th", "Description:"],
-            ["td", ["pre", entry.description, "class", "mono"]]
+            ["td", ["pre", (entry.main || entry.description), "class", "mono"]]
           ],
           "class", "error-details-table"
         ],
-        "colspan", "4"
+        "colspan", "3"
       ],
       "class", "no-interaction error-details"
     ]

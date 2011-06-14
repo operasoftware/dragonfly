@@ -10,32 +10,23 @@
 /* Icon cell */
 .errors-table > tr:not(.error-details) > td:nth-child(2) {
     text-align: center;
+    width: 16px;
 }
 
-/* File cell */
-.errors-table > tr > th:nth-child(3),
-.errors-table > tr > td:nth-child(3) {
-    width: 30%;
-    max-width: 500px;
+.errors-table > tr .context {
+  display: block;
+  float: right;
+  max-width: 150px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  direction: rtl;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* File cell */
-.errors-table > tr > td:nth-child(3) {
-    overflow: hidden;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Line cell */
-.errors-table > tr > th:nth-child(4) {
-    width: 128px;
-    max-width: 32px;
-}
-
-/* Line cell */
-.errors-table > tr > td:nth-child(4) {
-    text-align: right;
+.errors-table .error-details-table {
+  margin-bottom: 15px;
+  margin-top: 5px;
 }
 
 .errors-table > tr:not(.header):not(.no-interaction):not([handler]):active {
