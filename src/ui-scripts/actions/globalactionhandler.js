@@ -41,6 +41,12 @@
   this.onclick = function(event){};
 
   /**
+    * To check and set the mode independent of the focused action handler.
+    * Special method for the global action handler.
+    */ 
+  this.check_mode = function(event){};
+
+  /**
     * To register a shortcut listener with a unique id token
     * on a global input element. Global as not being part of a view pane, e.g.
     * an input in a toolbar.
@@ -294,6 +300,8 @@
                                                 MODE_EDIT :
                                                 MODE_DEFAULT;
   };
+
+  this.check_mode = this.focus;
 
   this.register_shortcut_listener = function(listener_id, callback, action_list)
   {

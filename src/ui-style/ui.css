@@ -463,13 +463,6 @@ toolbar-filters input[type=button].search-move-highlight-down
   border-left: 0;
 }
 
-toolbar-filters span {
-  display: inline-block;
-  width: 140px;
-  color: #999;
-  vertical-align: top;
-}
-
 filter {
   margin: 0 2px;
   display: inline-block;
@@ -490,7 +483,6 @@ filter.filter {
 filter input {
   width: 138px;
   height: 19px;
-  margin-left: -140px !important;
   background: none;
   border: none;
   padding: 0;

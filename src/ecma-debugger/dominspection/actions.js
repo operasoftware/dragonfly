@@ -316,38 +316,43 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
+
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
     selection = getSelection();
     range = document.createRange();
-    this.is_dom_type_tree = container.firstElementChild.firstElementChild.hasClass('tree-style');
-    if (event.type == 'click')
+    if (container.firstElementChild)
     {
-      switch (event.target.nodeName.toLowerCase())
+      this.is_dom_type_tree = container.firstElementChild
+                              .firstElementChild.hasClass('tree-style');
+      if (event.type == 'click')
       {
-        case 'node':
-        case 'key':
-        case 'value':
-        case 'text':
-        case 'input':
+        switch (event.target.nodeName.toLowerCase())
         {
-          nav_target = event.target;
-          break;
-        }
-        case 'div':
-        {
-          if (event.target.getElementsByTagName('node')[0])
-            nav_target = event.target.getElementsByTagName('node')[0];
-          break;
+          case 'node':
+          case 'key':
+          case 'value':
+          case 'text':
+          case 'input':
+          {
+            nav_target = event.target;
+            break;
+          }
+          case 'div':
+          {
+            if (event.target.getElementsByTagName('node')[0])
+              nav_target = event.target.getElementsByTagName('node')[0];
+            break;
+          }
         }
       }
+      if (!nav_target)
+      {
+        nav_target = this.getFirstTarget();
+      }
+      this.setSelected(nav_target);
     }
-    if (!nav_target)
-    {
-      nav_target = this.getFirstTarget();
-    }
-    this.setSelected(nav_target);
   }
 
   this.setSelected = function(new_target, scroll_into_view)

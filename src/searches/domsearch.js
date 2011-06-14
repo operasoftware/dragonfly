@@ -1,49 +1,42 @@
 var DOMSearch = function(min_length)
 {
+
+  /* inherits from TextSearch */
+
+  this._super_init = this._init;
+  this._super_highlight_next = this.highlight_next;
+  this._super_highlight_previous = this.highlight_previous;
+  this._super_set_form_input = this.set_form_input;
+
+  /* interface */
+
+  this.highlight_next = function() {};
+
+  this.highlight_previous = function() {};
+  
+  this.set_form_input = function() {};
+
+  this.search_delayed = function(event) {};
+
+  this.inspect_selected_node = function() {};
+
+  this.show_last_search = function() {};
+
+  this.clear_style_highlight_node = function() {};
+
   // TODO clean up onview destroy
-  // TODO this.update_search, this.update (which one?), dependent on search type
 
-  this._init_super = this._init;
-
+  /* constants */
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
   MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-match-cursor",
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY;
 
-  this._onsearchtypechange = function(event)
-  {
-    switch (event.target.name)
-    {
-      case 'dom-search-type':
-      {
-        this.search_type = parseInt(event.target.value);
-        this._set_highlight_handlers(event.target);
-        this._setting.set('dom-search-type', this.search_type);
-        this._validate_current_search();
-        break;
-      }
-      case 'dom-search-ignore-case':
-      {
-        this.ignore_case = Number(event.target.checked);
-        this._setting.set('dom-search-ignore-case', this.ignore_case);
-        this._validate_current_search();
-        break;
-      }
-      case 'dom-search-only-selected-node':
-      {
-        this.search_only_selected_node = Number(event.target.checked);
-        this._setting.set('dom-search-only-selected-node',
-                          this.search_only_selected_node);
-        this._validate_current_search();
-        break;
-      }
-    }
-  }.bind(this);
+  /* private */
 
   this._set_highlight_handlers = function(target)
   {
-
     if (TOKEN_HIGHLIGHT.indexOf(this.search_type) != -1)
     {
       this._initial_highlight = this._initial_highlight_token;
@@ -51,8 +44,7 @@ var DOMSearch = function(min_length)
       this._highlight_previous = this._highlight_previous_token;
       this._get_match_counts = this._get_match_counts_token;
       this._get_search_cursor = this._get_search_cursor_token;
-      this.update_search = this.update_search_token;
-      this.set_form_input = this.set_form_input_token;
+      this.set_form_input = this._set_form_input_token;
       if (target)
       {
         target.form['dom-search-ignore-case'].disabled = false;
@@ -65,8 +57,7 @@ var DOMSearch = function(min_length)
       this._highlight_previous = this._highlight_previous_node;
       this._get_match_counts = this._get_match_counts_node;
       this._get_search_cursor = this._get_search_cursor_node;
-      this.update_search = this.update_search_node;
-      this.set_form_input = this.set_form_input_node;
+      this.set_form_input = this._set_form_input_node;
       if (target)
       {
         target.form['dom-search-ignore-case'].disabled = true;
@@ -102,37 +93,14 @@ var DOMSearch = function(min_length)
     return this._match_cursor + 1;
   };
 
-  this.inspect_selected_node = function()
-  {
-    if (this._highligh_node)
-    {
-      this._broker.dispatch_action("dom", 
-                                   "inspect-node-link",
-                                   null,
-                                   this._highligh_node);
-    }
-  };
-
-  this.update_search_token = function()
-  {
-    this._search_term = this._last_query;
-    this.update_search_super();
-  };
-
-  this.set_form_input_token = function(input)
+  this._set_form_input_token = function(input)
   {
     this._input = input;
     if (this._search_term)
     {
       this._input.value = this._orig_search_term;
       this._input.parentNode.firstChild.textContent = '';
-      this.update_search_token();
     }
-  };
-
-  this.show_last_search = function()
-  {
-    this._handle_search();
   };
 
   /* methods for search type css and xpath */
@@ -153,15 +121,6 @@ var DOMSearch = function(min_length)
         return list;
       }, []);
       this._highlight_match_node(this._match_node_cursor < 0 ? 1 : 0);
-    }
-  };
-
-  this.clear_style_highlight_node = function()
-  {
-    if (this._highligh_node)
-    {
-      this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS);
-      this._highligh_node = null;
     }
   };
 
@@ -214,26 +173,50 @@ var DOMSearch = function(min_length)
     return this._match_node_cursor + 1;
   };
 
-  this.update_search_node = function()
-  {
-    this._initial_highlight_node();
-  };
-
-  this.set_form_input_node = function(input)
+  this._set_form_input_node = function(input)
   {
     this._input = input;
     if (this._last_query)
     {
       this._input.value = this._last_query;
-      this.update_search_node();
     }
   };
+
+  this._onsearchtypechange = function(event)
+  {
+    switch (event.target.name)
+    {
+      case 'dom-search-type':
+      {
+        this.search_type = parseInt(event.target.value);
+        this._set_highlight_handlers(event.target);
+        this._setting.set('dom-search-type', this.search_type);
+        this._validate_current_search();
+        break;
+      }
+      case 'dom-search-ignore-case':
+      {
+        this.ignore_case = Number(event.target.checked);
+        this._setting.set('dom-search-ignore-case', this.ignore_case);
+        this._validate_current_search();
+        break;
+      }
+      case 'dom-search-only-selected-node':
+      {
+        this.search_only_selected_node = Number(event.target.checked);
+        this._setting.set('dom-search-only-selected-node',
+                          this.search_only_selected_node);
+        this._validate_current_search();
+        break;
+      }
+    }
+  }.bind(this);
 
   this._onelementselected = function(msg)
   {
     this._selected_node = msg.obj_id;
     this._selected_runtime = msg.rt_id;
-  }
+  };
 
   this._onhighlightstyle = function(span_list)
   {
@@ -242,23 +225,24 @@ var DOMSearch = function(min_length)
       var target = span_list[0].get_ancestor('.dom-search-match');
       if (this._highligh_node && this._highligh_node != target)
       {
-        this._highligh_node.removeClass('dom-search-match-cursor')
+        this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
       }
       if (target)
       {
         this._highligh_node = target;
-        this._highligh_node.addClass('dom-search-match-cursor');
+        this._highligh_node.addClass(MATCH_NODE_HIGHLIGHT_CLASS);
       }
     }
   };
 
   this._init = function(min_length)
   {
-    this._init_super(min_length);
+    this._super_init(min_length);
     this._setting = window.settings.dom;
     this.search_type = this._setting.get('dom-search-type');
     this.ignore_case = this._setting.get('dom-search-ignore-case');
-    this.search_only_selected_node = this._setting.get('dom-search-only-selected-node');
+    this.search_only_selected_node = this._setting
+                                     .get('dom-search-only-selected-node');
     this._min_term_length = 1;
     this._last_query = '';
     this._last_search_type = 0;
@@ -266,18 +250,13 @@ var DOMSearch = function(min_length)
     this._tagman = window.tag_manager;
     this._esdi = window.services['ecmascript-debugger'];
     this._broker = ActionBroker.get_instance();
-
-    window.eventHandlers.change['dom-search-type-changed'] = this._onsearchtypechange;
+    window.eventHandlers.change['dom-search-type-changed'] = 
+      this._onsearchtypechange;
     this._query_selector = ".dom-search-match";
     this._set_highlight_handlers();
     window.messages.addListener('element-selected', 
                                 this._onelementselected.bind(this));
   };
-
-
-
-  this._super_highlight_next = this.highlight_next;
-  this._super_highlight_previous = this.highlight_previous;
 
   this._validate_current_search = function()
   {
@@ -318,6 +297,8 @@ var DOMSearch = function(min_length)
       }
       return false;
     }
+    this._is_processing = false;
+    this._queued_input = false;
     return true;
   }.bind(this);
 
@@ -354,6 +335,8 @@ var DOMSearch = function(min_length)
     }
   }.bind(this);
 
+  /* implementation */
+
   this.highlight_next = function()
   {
     if (this._validate_current_search())
@@ -370,16 +353,6 @@ var DOMSearch = function(min_length)
     }
   };
 
-  // handler for a view update
-  this.update_search_super = this.update_search;
-  
-  this.update_search = function()
-  {
-    // set depending on the search type in this._set_highlight_handlers
-  };
-
-  this.set_form_input_super = this.set_form_input;
-
   this.set_form_input = function()
   {
     // set depending on the search type in this._set_highlight_handlers
@@ -394,6 +367,31 @@ var DOMSearch = function(min_length)
     else
     {
       this._validate_current_search();
+    }
+  };
+
+  this.inspect_selected_node = function()
+  {
+    if (this._highligh_node)
+    {
+      this._broker.dispatch_action("dom", 
+                                   "inspect-node-link",
+                                   null,
+                                   this._highligh_node);
+    }
+  };
+
+  this.show_last_search = function()
+  {
+    this._handle_search();
+  };
+
+  this.clear_style_highlight_node = function()
+  {
+    if (this._highligh_node)
+    {
+      this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS);
+      this._highligh_node = null;
     }
   };
 

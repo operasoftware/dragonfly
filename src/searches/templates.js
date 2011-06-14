@@ -6,7 +6,7 @@
     return this.filters(search.controls);
   };
 
-  this._dom_search_input = function(name, type, value, label, is_selected)
+  this._search_input = function(name, type, value, label, is_selected)
   {
     var input = ['input', 'type', type, 'value', value, 'name', name];
     if (is_selected)
@@ -23,39 +23,60 @@
       this.searchbar_content(search),
       ['div', 
         ['form',
-          this._dom_search_input('dom-search-type', 
-                                 'radio', 
-                                 DOMSearch.PLAIN_TEXT, 
-                                 'text',
-                                 DOMSearch.PLAIN_TEXT == search.search_type),
-          this._dom_search_input('dom-search-type', 
-                                 'radio', 
-                                 DOMSearch.REGEXP, 
-                                 'reg exp',
-                                 DOMSearch.REGEXP == search.search_type),
-          this._dom_search_input('dom-search-type', 
-                                 'radio', 
-                                 DOMSearch.CSS, 
-                                 'css',
-                                 DOMSearch.CSS == search.search_type),
-          this._dom_search_input('dom-search-type', 
-                                 'radio', 
-                                 DOMSearch.XPATH, 
-                                 'x-path',
-                                 DOMSearch.XPATH == search.search_type),
-          this._dom_search_input('dom-search-ignore-case', 
-                                 'checkbox', 
-                                 'ignore-case', 
-                                 'ignore case',
-                                 search.ignore_case),
-          /*
-          this._dom_search_input('dom-search-only-selected-node', 
-                                 'checkbox', 
-                                 'only-selected-node', 
-                                 'search only in the selected node',
-                                 search.search_only_selected_node),
-          */
+          this._search_input('dom-search-type', 
+                             'radio', 
+                             DOMSearch.PLAIN_TEXT, 
+                             'text',
+                             DOMSearch.PLAIN_TEXT == search.search_type),
+          this._search_input('dom-search-type', 
+                             'radio', 
+                             DOMSearch.REGEXP, 
+                             'reg exp',
+                             DOMSearch.REGEXP == search.search_type),
+          this._search_input('dom-search-type', 
+                             'radio', 
+                             DOMSearch.CSS, 
+                             'css',
+                             DOMSearch.CSS == search.search_type),
+          this._search_input('dom-search-type', 
+                             'radio', 
+                             DOMSearch.XPATH, 
+                             'x-path',
+                             DOMSearch.XPATH == search.search_type),
+          this._search_input('dom-search-ignore-case', 
+                             'checkbox', 
+                             'ignore-case', 
+                             'ignore case',
+                             search.ignore_case),
           'handler', 'dom-search-type-changed',
+        ],
+      ],
+    ]);
+  }.bind(this);
+
+  this.js_search_bar_content = function(search)
+  {
+    return (
+    [
+      this.searchbar_content(search),
+      ['div', 
+        ['form',
+          this._search_input('js-search-type', 
+                             'checkbox', 
+                             'reg-exp', 
+                             'reg exp',
+                             TextSearch.REGEXP == search.search_type),
+          this._search_input('js-search-ignore-case', 
+                             'checkbox', 
+                             'ignore-case', 
+                             'ignore case',
+                             search.ignore_case),
+          this._search_input('js-search-all-files', 
+                             'checkbox', 
+                             'search-all-files', 
+                             'all files',
+                             search.search_all_files),
+          'handler', 'js-search-type-changed',
         ],
       ],
     ]);
@@ -73,7 +94,7 @@
     {
       div = ['div'];
       div.push(this._search_result_header(rt_id));
-      div.extend(results[rt_id].map(this._search_result_script, this));
+      div.extend(results[rt_id].map(this.search_result_script, this));
       div.push('class', 'js-search-results-runtime');
       ret.push(div);
     }
@@ -94,9 +115,13 @@
     return  (padding[line_no.length] || '') + line_no;
   }
 
-  this._search_result_script = function(script)
+  this.search_result_script = function(script, show_script_uri)
   {
-    var ret = ['div', ['h3', 'script ' + (script.uri || script.script_type)]];
+    var ret = ['div'];
+    if (typeof show_script_uri != 'boolean' || show_script_uri)
+    {
+      ret.push(['h3', (script.uri || script.script_type) + ':']);
+    }
     var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
     for (var i = 0; i < script.line_matches.length; i++)
     {
@@ -115,9 +140,10 @@
           script_tmpl.push('class', 'wrap-long-lines');
         }
         ret.push(['div', 
-                   ['span', this._format_line_no(line), 'class', 'line-no'],
+                   ['span', String(line), 'class', 'line-no'],
                    script_tmpl,
-                   'data-line-no', String(line)]);
+                   'data-line-no', String(line),
+                   'class', 'js-search-match']);
       }
     }
     ret.push('class', 'js-search-results-script js-source',

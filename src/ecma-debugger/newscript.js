@@ -42,19 +42,30 @@ window.cls.NewScript.prototype = new function()
     *   - match_cursor, pointing to the selected match
     *   _ match_length, the length of the search term
     */
-  this.search_source = function(search_term)
+  this.search_source = function(search_term, is_ignore_case, is_reg_exp)
   {
-    // so far only text ignore case supported
-    search_term = search_term.toLowerCase();
-    if (this.search_term != search_term)
+    if (is_ignore_case && !is_reg_exp)
+    {
+      search_term = search_term.toLowerCase();
+    }
+    if (is_reg_exp)
+    {
+      search_term = new RegExp(search_term, is_ignore_case ? 'ig' : 'g');
+    }
+    if (this.search_term != search_term ||
+        this.is_ignore_case != is_ignore_case ||
+        this.is_reg_exp != is_reg_exp)
     {
       if (!this.line_arr)
       {
         this.set_line_states();
       }
       this.search_term = search_term;
+      this.is_ignore_case = is_ignore_case;
+      this.is_reg_exp = is_reg_exp;
       this.line_matches = [];
       this.line_offsets = [];
+      this.line_offsets_length = [];
       this.match_cursor = -1;
       this.match_length = search_term.length;
       if (!this.script_data_lower)
@@ -63,15 +74,41 @@ window.cls.NewScript.prototype = new function()
       }
       if (search_term)
       {
-        var pos = -1, line_cur = 0, line_arr_length = this.line_arr.length;
-        while ((pos = this.script_data_lower.indexOf(search_term, pos + 1)) != -1)
+        var pos = -1;
+        var line_cur = 0;
+        var index = 0;
+        var line_arr_length = this.line_arr.length;
+        var match = null;
+        while (true)
         {
+          if (is_reg_exp)
+          {
+            match = search_term.exec(this.script_data);
+            pos = match ? match.index : -1;
+          }
+          else if(is_ignore_case)
+          {
+            pos = this.script_data_lower.indexOf(search_term, pos + 1);
+          }
+          else
+          {
+            pos = this.script_data.indexOf(search_term, pos + 1);
+          }
+          if (pos == -1)
+          {
+            break;
+          }
           while (line_cur < line_arr_length && this.line_arr[line_cur] <= pos)
           {
             ++line_cur;
           }
-          this.line_matches[this.line_matches.length] = line_cur;
-          this.line_offsets[this.line_offsets.length] = pos - this.line_arr[line_cur - 1];
+          this.line_matches[index] = line_cur;
+          this.line_offsets[index] = pos - this.line_arr[line_cur - 1];
+          if (is_reg_exp)
+          {
+            this.line_offsets_length[index] = match[0].length
+          }
+          index++;
         }
       }
     }

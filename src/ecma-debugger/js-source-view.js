@@ -463,14 +463,25 @@ cls.JsSourceView = function(id, name, container_class)
   this.show_and_flash_line = function(script_id, line_nr)
   {
     this.showLine(script_id, line_nr - 10);
-    var source_content = document.getElementById(container_id);
-    var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_nr - __current_line];
+    var line = this.get_line_element(line_nr);
     if (line)
     {
       line.addClass('selected-js-source-line');
       setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
     }
+  }
+
+  this.get_line_element = function(line_nr)
+  {
+    var source_content = document.getElementById(container_id);
+    var lines = source_content && source_content.getElementsByTagName('div');
+    var line = lines && lines[line_nr - __current_line];
+    return line;
+  }
+
+  this.get_scroll_container = function()
+  {
+    return document.getElementById(horizontal_scoller);
   }
 
   // return boolean for the visibility of this view
@@ -1112,7 +1123,10 @@ cls.JsSourceView.create_ui_widgets = function()
       exception: 0,
       error: 0,
       abort: 0,
-      'tab-size': 4
+      'tab-size': 4,
+      'js-search-type': DOMSearch.PLAIN_TEXT,
+      'js-search-ignore-case': true,
+      'js-search-all-files': false
     },
     // key-label map
     {
@@ -1183,12 +1197,12 @@ cls.JsSourceView.create_ui_widgets = function()
   new JSSourceSearch('js_source',
                      [Searchbar, VirtualTextSearch],
                      [cls.JSSearchWindow]);
-
+  /*
   eventHandlers.click['show-script'] = function(event, target)
   {
     this.broker.dispatch_action("js_source-search-window", "show-script", event, target);
   };
-
+  */
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var

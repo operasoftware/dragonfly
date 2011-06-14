@@ -152,23 +152,7 @@ TextSearch.prototype = new function()
             {
               node.splitText(this._current_match_index - this._consumed_total_length);
               this._to_consume_hit_length = this._search_term_length;
-              if (this._reg_exp)
-              {
-                this._reg_exp_match = this._reg_exp.exec(this._search_target);
-                this._current_match_index = this._reg_exp_match ? 
-                                            this._reg_exp_match.index : -1;
-                this._search_term_length = this._reg_exp_match ? 
-                                           this._reg_exp_match[0].length : 0;
-              }
-              else
-              {           
-                this._current_match_index = this._search_target.indexOf(this._search_term, 
-                                                                        this._last_match_index)
-              }
-              if (this._current_match_index != -1)
-              {
-                this._last_match_index = this._current_match_index + this._search_term_length;
-              }
+              this._search_next_match();
               this._curent_search_result = this._hits[this._hits.length] = [];
             }
             this._consumed_total_length += node.nodeValue.length;
@@ -185,9 +169,26 @@ TextSearch.prototype = new function()
                           this.search_type == TextSearch.PLAIN_TEXT ?
                           node.textContent.toLowerCase() :
                           node.textContent;
+    this._last_match_index = 0;
     if (this._reg_exp)
     {
       this._reg_exp.lastIndex = 0;
+    }
+    else
+    {
+      this._search_term_length = this._search_term.length;
+    }
+    this._search_next_match();
+    this._consumed_total_length = 0;
+    this._to_consume_hit_length = 0;
+    this._curent_search_result = null;
+    this._consume_node(node);
+  };
+
+  this._search_next_match = function()
+  {
+    if (this._reg_exp)
+    {
       this._reg_exp_match = this._reg_exp.exec(this._search_target);
       this._current_match_index = this._reg_exp_match ? 
                                   this._reg_exp_match.index : -1;
@@ -196,16 +197,13 @@ TextSearch.prototype = new function()
     }
     else
     {
-      this._search_term_length = this._search_term.length;
-      this._current_match_index = this._search_target.indexOf(this._search_term);
+      this._current_match_index = this._search_target.indexOf(this._search_term, 
+                                                              this._last_match_index);
     }
-    this._last_match_index = this._current_match_index != -1 ?
-                             this._current_match_index + this._search_term_length :
-                             0;
-    this._consumed_total_length = 0;
-    this._to_consume_hit_length = 0;
-    this._curent_search_result = null;
-    this._consume_node(node);
+    if (this._current_match_index != -1)
+    {
+      this._last_match_index = this._current_match_index + this._search_term_length;
+    }
   };
 
   this._clear_search_results = function()
@@ -370,7 +368,7 @@ TextSearch.prototype = new function()
       this._scroll_target_into_view(target, direction);
       this._update_info();
     }
-    else if (this._search_term)
+    else if (this._orig_search_term)
     {
       this._update_info(NO_MATCH);
     }
@@ -523,7 +521,7 @@ TextSearch.prototype = new function()
 
   this.set_search_term = function(search_term)
   {
-    this._search_term = search_term;
+    this._orig_search_term = this._search_term = search_term;
   }
 
 };

@@ -93,7 +93,7 @@ eventHandlers.mousedown['tab'] = function(event, target)
   var view_id = target.get_attr('parent-node-chain', 'ref-id');
   if( tabs )
   {
-    tabs.setActiveTab(view_id);
+    tabs.setActiveTab(view_id, null, event);
   }
   else
   {
