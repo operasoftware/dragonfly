@@ -114,7 +114,8 @@
           if (filter.hasOwnProperty(attr))
             tpl_input.push(attr, filter[attr]);
         });
-        ret.push(['filter', tpl_input, "class", filter.type || ""]);
+        ret.push(["filter", tpl_input, 
+                  "class", filter.type || filter.class || ""]);
       }
     }
     return ret;
@@ -123,7 +124,7 @@
   this.search_control = function(button)
   {
     var ret = 
-    ['input',
+    ['button',
         'type', 'button',
         'class', button.class,
         'handler', button.handler,

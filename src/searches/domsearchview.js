@@ -16,9 +16,9 @@ cls.DOMSearchView = function(id, name, container_class)
   };
 
   const 
-  MOVE_HIGHLIGHT_UP = 0,
-  MOVE_HIGHLIGHT_DOWN = 1,  
-  SEARCHFIELD = 2;
+  SEARCHFIELD = 0,
+  MOVE_HIGHLIGHT_UP = 1,
+  MOVE_HIGHLIGHT_DOWN = 2;  
 
   this._tmpl = function()
   {
@@ -90,6 +90,7 @@ cls.DOMSearchView = function(id, name, container_class)
     [
       {
         handler: this.id + '-simple-text-search',
+        class: 'panel-search-input-container',
         shortcuts: this.id + '-simple-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       },

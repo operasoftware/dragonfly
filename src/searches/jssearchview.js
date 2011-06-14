@@ -14,9 +14,9 @@ cls.JSSearchView = function(id, name, container_class)
   JS_SOURCE_ID = 'js_source',
   ALL_FILES = 1,
   SINGLE_FILE = 0,
-  MOVE_HIGHLIGHT_UP = 0,
-  MOVE_HIGHLIGHT_DOWN = 1,  
-  SEARCHFIELD = 2;
+  SEARCHFIELD = 0,
+  MOVE_HIGHLIGHT_UP = 1,
+  MOVE_HIGHLIGHT_DOWN = 2;  
 
   this.createView = function(container)
   {
@@ -150,6 +150,7 @@ cls.JSSearchView = function(id, name, container_class)
     [
       {
         handler: this.id + '-simple-text-search',
+        class: 'panel-search-input-container',
         shortcuts: this.id + '-simple-text-search',
         title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       },

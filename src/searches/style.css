@@ -242,5 +242,27 @@
   margin-right: 8px;
 }
 
+.panel-search-input-container {
+  box-sizing: border-box;
+  border: 0px solid;
+  border-right: 100px solid transparent;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 19px;
+  line-height: 19px;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.panel-search-input-container > input {
+  width: 100%;
+}
+
+.advanced-panel-search .search-move-highlight-up {
+  margin-left: -100px;
+}
+
 
 

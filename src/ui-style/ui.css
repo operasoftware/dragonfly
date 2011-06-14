@@ -463,9 +463,8 @@ toolbar-filters input[type=button].search-move-highlight-down
   border-left: 0;
 }
 
-filter {
+filter, .advanced-panel-search {
   margin: 0 2px;
-  display: inline-block;
   padding-left: 20px;
   height: 19px;
   line-height: 19px;
@@ -474,6 +473,10 @@ filter {
   background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
   box-shadow: 0 1px #fff,
               inset 0 1px 1px #d5d5d5;
+}
+
+filter {
+  display: inline-block;
 }
 
 filter.filter {
