@@ -77,11 +77,6 @@ cls.DOMSearchView = function(id, name, container_class)
     }
   };
 
-  this._onsearchfieldinput = function(event)
-  {
-    this._search.search_delayed();
-  };
-
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -120,8 +115,6 @@ cls.DOMSearchView = function(id, name, container_class)
       });
       this.__defineSetter__(prop, function(){});
     }, this);
-    eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
-      this._onsearchfieldinput.bind(this)
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
       this._onshortcut.bind(this, 'highlight-next-match');
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
