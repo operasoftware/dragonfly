@@ -211,8 +211,9 @@ templates.network_response_body = function(req)
   }
   else if (!req.responsebody)
   {
-    return ["p",
+    return [["p",
             ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
+            "class", "response-view-body-container"],
             ["p", ["button",
              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
              "data-resource-id", String(req.id),
@@ -220,8 +221,7 @@ templates.network_response_body = function(req)
              "unselectable", "on",
              "handler", "get-response-body",
              "class", "container-button"
-            ]],
-            "class", "response-view-body-container"
+            ]]
            ];
   }
   else

@@ -181,7 +181,7 @@
 
 .network-details-request p
 {
-  margin: 0;
+  margin-top: 0;
   max-width: 60em;
   line-height: 150%;
 }
