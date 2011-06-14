@@ -161,22 +161,25 @@ cls.JsSourceView = function(id, name, container_class)
 
   var addLineHighlight = function()
   {
-    var lines = source_content.getElementsByTagName('div');
-    var bp_states = __current_script.breakpoint_states;
-    if (bp_states)
+    if (source_content && __current_script)
     {
-      var highlight_class, bp_state;
-      for (var i = 0, line; line = lines[i]; i++)
+      var lines = source_content.getElementsByTagName('div');
+      var bp_states = __current_script.breakpoint_states;
+      if (bp_states)
       {
-        highlight_class = "";
-        
-        if (bp_state = bp_states[__current_line + i])
+        var highlight_class, bp_state;
+        for (var i = 0, line; line = lines[i]; i++)
         {
-          highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
-                            BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+          highlight_class = "";
+          
+          if (bp_state = bp_states[__current_line + i])
+          {
+            highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
+                              BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+          }
+          
+          line.className = highlight_class;
         }
-        
-        line.className = highlight_class;
       }
     }
   };
