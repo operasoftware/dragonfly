@@ -1196,16 +1196,6 @@ cls.JsSourceView.create_ui_widgets = function()
     ]
   );
 
-
-  new JSSourceSearch('js_source',
-                     [Searchbar, VirtualTextSearch],
-                     [cls.JSSearchWindow]);
-  /*
-  eventHandlers.click['show-script'] = function(event, target)
-  {
-    this.broker.dispatch_action("js_source-search-window", "show-script", event, target);
-  };
-  */
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
