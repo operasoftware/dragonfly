@@ -111,7 +111,7 @@
   this._hide_view = function(obj, div)
   {
     var view = window.views[obj.view_id];
-    if (view)
+    if (view && div)
     {
       div.removeClass('unfolded');
       var container = div.getElementsByTagName('panel-container')[0];
