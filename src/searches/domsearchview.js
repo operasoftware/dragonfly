@@ -89,6 +89,11 @@ cls.DOMSearchView = function(id, name, container_class)
     this.controls =
     [
       {
+        handler: this.id + '-simple-text-search',
+        shortcuts: this.id + '-simple-text-search',
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+      },
+      {
         handler: this.id + '-move-highlight-up',
         type: "search_control",
         class: "search-move-highlight-up",
@@ -100,11 +105,7 @@ cls.DOMSearchView = function(id, name, container_class)
         class: "search-move-highlight-down",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
       },
-      {
-        handler: this.id + '-simple-text-search',
-        shortcuts: this.id + '-simple-text-search',
-        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      },
+
     ];
     [
       'search_type',
