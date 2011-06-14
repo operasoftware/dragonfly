@@ -11,7 +11,7 @@ import optparse
 def make_js_from_po(path):
     strings = []
     for po in [p for p in dfstrings.get_po_strings(path) if "scope" in p and "dragonfly" in p["scope"] ]:
-        strings.append(u"""ui_strings.%s="%s";""" % (po["jsname"], po["msgstr"]))
+        strings.append(u"""ui_strings.%s="%s";""" % (po["jsname"], _escape_quotes(po["msgstr"])))
     return """/* Generated from %s at %s */
 window.ui_strings || ( window.ui_strings  = {} )
 window.ui_strings.lang_code = "%s";
@@ -20,24 +20,24 @@ window.ui_strings.lang_code = "%s";
         unicode(os.path.splitext(os.path.basename(path))[0]),
         u"\n".join(strings))
 
+def _escape_quotes(s):
+    return s.replace('"', '\\"')
 
 def _process_file(inpath, outfd):
-    lines = [p["msgstr"] for p in dfstrings.get_po_strings(inpath)
-        if "scope" in p and "dragonfly" in p["scope"] ]
+    entries = [e for e in dfstrings.get_po_strings(inpath) if "scope" in e and "dragonfly" in e["scope"]]
+    lines = [e["msgstr"] for e in entries]
 
-    bad_escaped = dfstrings.get_strings_with_bad_escaping(lines)
-    if bad_escaped:
-        print "error: %s contains strings with bad escaping: %s" % (inpath, bad_escaped)
-        return 1
-
-    bad_format = dfstrings.get_strings_with_bad_format(lines)
-    if bad_format:
-        print "error: %s contains strings with bad formatting: %s" % (inpath, bad_format)
+    bad_markers = dfstrings.get_strings_with_bad_markers(entries)
+    if bad_markers:
+        print "error: Some interpolation markers are missing, or different from originals:\n"
+        for e in bad_markers: 
+            print e["msgid"]
+            print e["msgstr"]
+            print "---"
         return 1
 
     data = make_js_from_po(inpath)
     outfd.write(data)
-
 
 def _process_dir(dirpath, destpath):
     files = _find_pofiles(dirpath)
