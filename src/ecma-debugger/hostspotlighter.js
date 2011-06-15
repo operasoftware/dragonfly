@@ -379,19 +379,6 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     return "";
   }
 
-  /* map function to copy an array of arrays */
-  var copy_array = function(item)
-  {
-    if( Object.prototype.toString.call(item) == "[object Array]" )
-    {
-      return item.map(copy_array);
-    }
-    else
-    {
-      return item;
-    }
-  };
-
   this._oneditcolor = function(color)
   {
     this._edit_context.ele_container.style.backgroundColor = color.hhex;

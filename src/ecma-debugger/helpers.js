@@ -252,16 +252,9 @@ window.cls.Helpers = function()
     return target && container;
   }
 
-  this.copy_array = function copy_array(item)
+  this.copy_array = function(array)
   {
-    if (Array.isArray(item))
-    {
-      return item.map(copy_array);
-    }
-    else
-    {
-      return item;
-    }
+    return array.concat();
   };
 
   this.copy_object = function(obj)
@@ -311,7 +304,7 @@ window.cls.Helpers = function()
   /**
    * Aligns SVG lines to the pixel grid.
    */
-  this.crispifySvgValue = function(value)
+  this.crispify_svg_value = function(value)
   {
     return Math.floor(value) + .5;
   };

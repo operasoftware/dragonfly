@@ -351,7 +351,7 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
 {
   return [
           ["rect", "x", "0",
-           "y", String(helpers.crispifySvgValue(index * rowheight)),
+           "y", String(helpers.crispify_svg_value(index * rowheight)),
            "width", "100%",
            "height", String(rowheight),
            "fill", (index % 2 ? "rgba(0,0,0,0.025)" : "white"),
@@ -359,9 +359,9 @@ templates.network_graph_row_background = function(resource, rowheight, width, in
           ],
           ["line",
            "x1", "0",
-           "y1", String(helpers.crispifySvgValue(index * rowheight)),
+           "y1", String(helpers.crispify_svg_value(index * rowheight)),
            "x2", "100%",
-           "y2", String(helpers.crispifySvgValue(index * rowheight)),
+           "y2", String(helpers.crispify_svg_value(index * rowheight)),
            "stroke", "rgba(0, 0, 0, 0.1)",
            "stroke-width", "1",
            "pointer-events", "none",
@@ -428,8 +428,8 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
   var tpl = [
     ["rect", 
       ["title", title],
-      "x", String(helpers.crispifySvgValue(start)),
-      "y", String(helpers.crispifySvgValue(bary)),
+      "x", String(helpers.crispify_svg_value(start)),
+      "y", String(helpers.crispify_svg_value(bary)),
       "width", String(Math.round(reqwidth)),
       "height", String(barheight),
       "rx", "4",
@@ -440,8 +440,8 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
     ],
 
     ["rect",
-      "x", String(helpers.crispifySvgValue(resstart)),
-      "y", String(helpers.crispifySvgValue(bary)),
+      "x", String(helpers.crispify_svg_value(resstart)),
+      "y", String(helpers.crispify_svg_value(bary)),
       "width", String(Math.round(reswidth)),
       "height", String(barheight),
       "rx", "4",
@@ -490,10 +490,10 @@ templates.grid_lines = function(ctx, width, height, topoffset)
 
     if (color) {
       ret.push(["line",
-                "x1", String(helpers.crispifySvgValue(n*multiplier)),
+                "x1", String(helpers.crispify_svg_value(n*multiplier)),
                 "y1", topoffset,
-                "x2", String(helpers.crispifySvgValue(n*multiplier)),
-                "y2", String(helpers.crispifySvgValue(height)),
+                "x2", String(helpers.crispify_svg_value(n*multiplier)),
+                "y2", String(helpers.crispify_svg_value(height)),
                 "stroke", color,
                 "stroke-width", "1.0",
                 "pointer-events", "none",
@@ -503,7 +503,7 @@ templates.grid_lines = function(ctx, width, height, topoffset)
       {
         ret.push([
           "text", "" + (n/1000) + "s",
-          "x", String(helpers.crispifySvgValue(n*multiplier)) + "px",
+          "x", String(helpers.crispify_svg_value(n*multiplier)) + "px",
           "y", "20px",
         ]);
       }
