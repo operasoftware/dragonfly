@@ -191,12 +191,11 @@
             {
               class_name = re_formatted.test(node_name)
                          ? " class='pre-wrap " +
-                           (is_script_node ? "non-editable" : "") + "'"
+                           (is_script_node ? "non-editable" : "") + " spotlight-node'"
                          : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "class='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -211,9 +210,8 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
-                      (is_script_node ? "class='non-editable'" : "") + ">" +
+                      "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -233,9 +231,8 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
-                      (is_script_node ? "class='non-editable'" : "") + ">" +
+                      "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -404,8 +401,8 @@
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
-                    "class='spotlight-node' " +
-                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "data-menu='dom-element' " +
+                    "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -416,8 +413,8 @@
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
-                    "class='spotlight-node' " +
-                    "data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "data-menu='dom-element' " +
+                    "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
