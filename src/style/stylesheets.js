@@ -117,7 +117,8 @@ cls.Stylesheets = function()
   SPECIFICITY = 6,
   STYLESHEET_ID = 7,
   RULE_ID = 8,
-  RULE_TYPE = 9;
+  RULE_TYPE = 9,
+  LINE_NUMBER = 10;
 
   var
   SHORTHAND = [];
@@ -905,13 +906,17 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
+      var line_number = style_dec[LINE_NUMBER];
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
-           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'>" + helpers.basename(sheet.href) +
-         "</stylesheet-link>" : 
-        "")+
+           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
+           " data-resource-line-number='" + (line_number || 0) + "'" +
+         ">" +
+           helpers.basename(sheet.href) + (line_number ? ":" + line_number : "") +
+         "</stylesheet-link>" :
+         "") +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +
