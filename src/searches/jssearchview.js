@@ -157,13 +157,13 @@ cls.JSSearchView = function(id, name, container_class)
       {
         handler: this.id + '-move-highlight-up',
         type: "search_control",
-        class: "search-move-highlight-up",
+        class: "search-move-highlight-up container-button",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP
       },
       {
         handler: this.id + '-move-highlight-down',
         type: "search_control",
-        class: "search-move-highlight-down",
+        class: "search-move-highlight-down container-button ",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
       },
     ];
