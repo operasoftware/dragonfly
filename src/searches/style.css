@@ -262,25 +262,24 @@
 }
 
 .advanced-panel-search .search-move-highlight-up {
-    margin-left: -66px;
+  margin-left: -66px;
 }
 .advanced-panel-search .container-button{
-    height: 19px;
-	xmargin-top: -1px;
-    border-radius: 0px;
-	padding: 1px 7px;
-	border-right: none;
-	border-top: none;
-	border-bottom: none;
+  height: 19px;
+  border-radius: 0px;
+  padding: 1px 7px;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
 }
 .advanced-panel-search .search-move-highlight-down {
-	border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 .advanced-panel-search .search-move-highlight-up::before {
-    background-image: url("../ui-images/icons/icon_arrow_left.png");
+  background-image: url("../ui-images/icons/icon_arrow_left.png");
 }
 .advanced-panel-search .search-move-highlight-down::before {
-	background-image: url("../ui-images/icons/icon_arrow_right.png");
+  background-image: url("../ui-images/icons/icon_arrow_right.png");
 }
