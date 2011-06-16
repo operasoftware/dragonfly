@@ -948,6 +948,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var line = target.getAttribute("data-scriptline");
     var script = target.getAttribute("data-scriptid");
     var sourceview = window.views.js_source;
+
+    // This will also be set from show_and_flash_line, but setting it before showing
+    // the view prevents the old script from flashing.
+    window.runtimes.setSelectedScript(script);
     UI.get_instance().show_view("js_mode");
     if (sourceview)
     {
