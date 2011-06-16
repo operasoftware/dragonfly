@@ -5,7 +5,6 @@
   border-radius: 3px;
   padding-left: 1px;
   padding-right: 1px;
-  border: 1px solid transparent;
   margin-left: -1px;
   margin-right: -1px;
 
@@ -109,13 +108,12 @@
 .search-highlight-selected
 {
   background-color: #c8f7bd; 
-  background-image: -o-linear-gradient(90deg,#5fca70,#76e387);
-  border-color: #68d078;   
-  border-bottom-color: #58b166;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  margin-top: -1px;
-  margin-bottom: -1px;
+  background-image: -o-linear-gradient(90deg,#e8cf7a,#fef4c6);
+  box-decoration-break: clone;
+  border: 1px solid #ceba73;   
+  border-top-color: #dbd3ad;
+  border-bottom-color: #c7b267;
+  margin: -1px -2px;
   color: #000000;
   position:relative;
   z-index: 98;
