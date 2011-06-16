@@ -1129,7 +1129,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'tab-size': 4,
       'js-search-type': DOMSearch.PLAIN_TEXT,
       'js-search-ignore-case': true,
-      'js-search-all-files': false
+      'js-search-all-files': false,
+      'max-displayed-search-hits': 1000
     },
     // key-label map
     {
@@ -1137,7 +1138,8 @@ cls.JsSourceView.create_ui_widgets = function()
       exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION,
       error: ui_strings.S_BUTTON_LABEL_AT_ERROR,
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
-      'tab-size': ui_strings.S_LABEL_TAB_SIZE
+      'tab-size': ui_strings.S_LABEL_TAB_SIZE,
+      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS
     },
     // settings map
     {
@@ -1151,7 +1153,8 @@ cls.JsSourceView.create_ui_widgets = function()
       customSettings:
       [
         'hr',
-        'tab-size'
+        'tab-size',
+        'max-displayed-search-hits'
       ],
       contextmenu:
       [
@@ -1182,7 +1185,25 @@ cls.JsSourceView.create_ui_widgets = function()
             ]
           ]
         ] );
-      }
+      },
+      'max-displayed-search-hits':
+      function(setting)
+      {
+        return (
+        [
+          'setting-composite',
+          ['label',
+            setting.label_map['max-displayed-search-hits'] + ': ',
+            ['input',
+              'type', 'number',
+              'handler', 'set-max-search-hits',
+              'max', '10000',
+              'min', '100',
+              'value', setting.get('max-displayed-search-hits')
+            ]
+          ]
+        ] );
+      },
     },
     "script"
   );
@@ -1206,6 +1227,15 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       style.setProperty('-o-tab-size', tab_size, 0);
       settings.js_source.set('tab-size', tab_size);
+    }
+  }
+
+  eventHandlers.change['set-max-search-hits'] = function(event, target)
+  {
+    var max_search_hits = Number(event.target.value);
+    if (100 < max_search_hits && max_search_hits < 10000)
+    {
+      settings.js_source.set('max-displayed-search-hits', max_search_hits);
     }
   }
 

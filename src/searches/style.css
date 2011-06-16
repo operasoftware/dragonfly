@@ -8,7 +8,11 @@
   border: 1px solid transparent;
   margin-left: -1px;
   margin-right: -1px;
+}
 
+.js-search-results-runtime
+{
+  width: 100%;
 }
 
 .js-search-results-runtime h2
@@ -29,18 +33,12 @@
 
 .js-search-results-script h3
 {
-  xbackground-color: hsl(0, 0%, 90%);
   color: hsl(0, 0%, 20%);
   margin: 0;
   font: inherit;
-  xline-height: 16px;
   padding: 5px;
-  xwhite-space: nowrap;
   word-wrap: break-word;
-  xborder-bottom: 1px solid hsl(0, 0%, 70%);
-  xborder-top: 1px solid hsl(0, 0%, 70%);
 }
-
 
 .js-search-results-script
 {
@@ -50,17 +48,8 @@
 .js-search-match
 {
   color: #000;
-  xwhite-space: pre-wrap;
-  -o-tab-size: 4;
-  Xdisplay: table-row;
 }
 
-/*
-.js-search-results-script div:hover
-{
-  background-color: #cce5f3;
-}
-*/
 .js-search-results-script code
 {
   display: block;
@@ -71,45 +60,34 @@
   border-left: 1px solid hsl(0, 0%, 85%);
 }
 
-.js-search-results-script code.wrap-long-lines
-{
-  display: inline-block;
-  width: 32000px;
-  white-space: pre-wrap;
-}
-
 .line-no
 {
-  xbackground-color: hsla(0, 0%, 0%, .05);
+  
   color: hsl(0, 0%, 60%);
   padding: 4px 0;
-  xpadding-right: 1ex;
-  xmargin: -5px;
-  xmargin-right: 1ex;
   display: block;
   float: left;
   vertical-align: top;
-  xheight: 100%;
-  xborder-radius: 2px 0 0 2px;
   width: 7ex;
-  xwhite-space: pre;
   text-align: right;
+  
 }
-
-
 
 .info-is-searching
 {
   padding: 7px;
 }
+
 .search-highlight
 {
  background-color: rgba(0,0,0,0.13); 
 }
+
 .search-highlight-selected
 {
   background-color: #c8f7bd; 
-  background-image: -o-linear-gradient(90deg,#5fca70,#76e387);
+  background-image: -o-linear-gradient(90deg, #5fca70, #76e387);
+
   border-color: #68d078;   
   border-bottom-color: #58b166;
   padding-top: 1px;
@@ -180,8 +158,7 @@
 
 .dom-search
 {
-  display: table;
-  min-width: 100%;
+
 }
 
 .dom-search .no-dom-search-match
@@ -202,13 +179,18 @@
 }
 
 .dom-search-match,
-.js-search-match
+.js-search-match,
+.search-summary
 {
   padding: 4px;
   margin: 0 2px;
   border-radius: 2px;
   border: 1px solid transparent;
-  xword-wrap: break-word;
+}
+
+.search-summary
+{
+  background-color: hsl(0, 0%, 97%);
 }
 
 .js-search-match
@@ -264,5 +246,7 @@
   margin-left: -100px;
 }
 
-
-
+.dom-search .info-box
+{
+  margin: 10px;
+}

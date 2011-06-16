@@ -1,6 +1,7 @@
 ﻿(function()
 {
   const MAX_LINE_CHARS = 4000;
+
   this.searchbar_content = function(search)
   {
     var content = this.filters(search.controls);
@@ -90,9 +91,10 @@
     return ['div', 'class', 'js-search-results', 'handler', 'show-script'];
   };
 
-  this.js_search_results = function(results)
+  this.js_search_results = function(results, result_count, max_count)
   {
-    var ret = ['div'], div = null;
+    var ret = this._search_result_init(result_count, max_count);
+    var div = null;
     for (var rt_id in results)
     {
       div = ['div'];
@@ -100,6 +102,31 @@
       div.extend(results[rt_id].map(this.search_result_script, this));
       div.push('class', 'js-search-results-runtime');
       ret.push(div);
+      if (this._js_search_ctx.count > this._js_search_ctx.max_count)
+      {
+        break;
+      }
+    }
+    return ret;
+  };
+
+  this.js_search_result_single_file = function(script, result_count, max_count)
+  {
+    var ret = this._search_result_init(result_count, max_count);
+    ret.push(this.search_result_script(script));
+    return ret;
+  };
+
+  this._search_result_init = function(result_count, max_count)
+  {
+    var ret = ['div'];
+    this._js_search_ctx = {count: 0, max_count: max_count};
+    if (result_count > max_count)
+    {
+      ret.push(['div', ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS
+                       .replace('%(COUNT)s', result_count)
+                       .replace('%(MAX)s', max_count),
+                       'class', 'info-box']);
     }
     return ret;
   };
@@ -121,37 +148,43 @@
   this.search_result_script = function(script, show_script_uri)
   {
     var ret = ['div'];
-    if (typeof show_script_uri != 'boolean' || show_script_uri)
+    if (this._js_search_ctx.count < this._js_search_ctx.max_count)
     {
-      ret.push(['h3', (script.uri || script.script_type) + ':']);
-    }
-    var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
-    for (var i = 0; i < script.line_matches.length; i++)
-    {
-      cur_line = script.line_matches[i];
-      if (cur_line != line)
+      if (typeof show_script_uri != 'boolean' || show_script_uri)
       {
-        line = cur_line;
-        script_data = script.script_data.slice(script.line_arr[line - 1], 
-                                               script.line_arr[line]);
-        script_tmpl = this.highlight_js_source(script_data, 
-                                               null, 
-                                               script.state_arr[line - 1], 
-                                               ['code']);
-        if (script_data.length > MAX_LINE_CHARS)
-        {
-          script_tmpl.push('class', 'wrap-long-lines');
-        }
-        ret.push(['div', 
-                   ['span', String(line), 'class', 'line-no'],
-                   script_tmpl,
-                   'data-line-no', String(line),
-                   'class', 'js-search-match']);
+        ret.push(['h3', (script.uri || script.script_type) + ':']);
       }
+      var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
+      for (var i = 0; i < script.line_matches.length; i++)
+      {
+        if (this._js_search_ctx.count++ < this._js_search_ctx.max_count)
+        {
+          cur_line = script.line_matches[i];
+          if (cur_line != line)
+          {
+            line = cur_line;
+            script_data = script.script_data.slice(script.line_arr[line - 1], 
+                                                   script.line_arr[line]);
+            
+            script_tmpl = this.highlight_js_source(script_data, 
+                                                   null, 
+                                                   script.state_arr[line - 1], 
+                                                   ['code'],
+                                                   true);
+            ret.push(['div', 
+                       ['span', String(line), 'class', 'line-no'],
+                       script_tmpl,
+                       'data-line-no', String(line),
+                       'class', 'js-search-match']);
+          }
+        }
+      }
+      ret.push('class', 'js-search-results-script js-source',
+               'data-script-id', String(script.script_id));
     }
-    ret.push('class', 'js-search-results-script js-source',
-             'data-script-id', String(script.script_id));
     return ret;
   };
+
+
 
 }).apply(window.templates || (window.templates = {}));

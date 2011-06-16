@@ -58,6 +58,11 @@ var JSMultifileSearchPrototype = function()
     this._show_search_results();
   };
 
+  this._get_match_counts = function()
+  {
+    return this._search_result_count;
+  };
+
   // duplicated code domsearch
   this._onhighlightstyle = function(span_list)
   {
@@ -88,34 +93,57 @@ var JSMultifileSearchPrototype = function()
     this.highlight_next();
   };
 
+  this._count_search_hits = function()
+  {
+    var count = 0;
+    for (var rt_id in this.searchresults)
+    {
+      count += this.searchresults[rt_id].reduce(function(sum, script)
+      {
+          return sum + script.line_matches.length;
+      }, 0);
+    }
+    return count;
+  }
+
   this._create_search_results_view = function()
   {
     if (this._container)
     {
       this._clear_hits();
       this._container.firstElementChild.innerHTML = "";
-      if (this.search_all_files)
+      if (this.search_all_files && this.searchresults)
       {
-        var tmpl = window.templates.js_search_results(this.searchresults);
+        this._search_result_count = this._count_search_hits();
+        var tmpl = window.templates.js_search_results(this.searchresults,
+                                                      this._search_result_count,
+                                                      this._max_hits_display_count);
         this._container.firstElementChild.render(tmpl);
         // .js-search-results-runtime
         //   .js-search-results-script
         //     div (for each line)
         var rts = this._container.getElementsByClassName('js-search-results-runtime');
         var rt_index = 0;
-        var script_eles = null, script_ele = null, i = 0;
+        var script_eles = null, script_ele = null, i = 0, rt = null;
         for (var rt_id in this.searchresults)
         {
-          script_eles = rts[rt_index++].getElementsByClassName('js-search-results-script');
-          for (i = 0; script_ele = script_eles[i]; i++)
+          rt = rts[rt_index++];
+          if (rt)
           {
-            this._set_hits(this.searchresults[rt_id][i], script_ele);
+            script_eles = rt.getElementsByClassName('js-search-results-script');
+            for (i = 0; script_ele = script_eles[i]; i++)
+            {
+              this._set_hits(this.searchresults[rt_id][i], script_ele);
+            }
           }
         }
       }
       else if(this._script && this._script.line_matches)
       {
-        var tmpl = window.templates.search_result_script(this._script, false);
+        this._search_result_count = this._script.line_matches.length;
+        var tmpl = window.templates.js_search_result_single_file(this._script,
+                                                                 this._search_result_count,
+                                                                 this._max_hits_display_count);
         var script_ele = this._container.firstElementChild.render(tmpl);
         this._set_hits(this._script, script_ele);
       }
@@ -137,11 +165,15 @@ var JSMultifileSearchPrototype = function()
         line_no = cur_line;
         line_ele = line_eles[line_ele_index++];
       }
+      if (line_ele && line_ele.textContent.length >= script.line_offsets[i])
+      {
+        
       this.set_hit(line_ele,
                    script.line_offsets[i],
                    this.search_type == TextSearch.PLAIN_TEXT ?
                    script.match_length :
                    script.line_offsets_length[i]);
+      }
     }
   };
 
@@ -251,6 +283,9 @@ var JSMultifileSearchPrototype = function()
   this._init = function()
   {
     this._super_init();
+    this._search_result_count = 0;
+    this._setting = window.settings.js_source;
+    this._max_hits_display_count = this._setting.get('max-displayed-search-hits');
     this._rt_ids = null;
     this._last_search_type = undefined;
     this._last_ignore_case = undefined;
@@ -264,6 +299,14 @@ var JSMultifileSearchPrototype = function()
     window.eventHandlers.mouseover['show-script'] =
       this.clear_style_highlight_node.bind(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+    window.messages.addListener('setting-changed', function(msg)
+    {
+      if (msg.id == 'js_source' && msg.key == 'max-displayed-search-hits')
+      {
+        this._max_hits_display_count = this._setting.get('max-displayed-search-hits');
+      }
+    }.bind(this));
+
   };
 
   this.clear_style_highlight_node = function()
