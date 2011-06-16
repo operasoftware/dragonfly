@@ -948,7 +948,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var line = target.getAttribute("data-scriptline");
     var script = target.getAttribute("data-scriptid");
     var sourceview = window.views.js_source;
-    if (sourceview) { sourceview.highlight(script, line) }
+    UI.get_instance().show_view("js_mode");
+    if (sourceview)
+    {
+      sourceview.show_and_flash_line(script, line);
+    }
   }.bind(this);
 
   this.mode_labels = {
