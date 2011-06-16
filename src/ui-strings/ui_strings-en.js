@@ -1244,3 +1244,6 @@ ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
+
+/* DESC: Tab heading for the search panel. */
+ui_strings.M_VIEW_LABEL_SEARCH = "Search";

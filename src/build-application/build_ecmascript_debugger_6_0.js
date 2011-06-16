@@ -114,7 +114,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     if (service_interface.major_minor_version > 6.4)
     {
       cls.DOMSearchView.prototype = ViewBase;
-      new cls.DOMSearchView('dom-search', 'Search');
+      new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
     }
     else
     {
@@ -192,7 +192,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* JS Search */
     cls.JSSearchView.prototype = ViewBase;
     new cls.JSSearchView('js-search', 
-                         'Search', 
+                         ui_strings.M_VIEW_LABEL_SEARCH, 
                          'scroll js-search');
                              
     /* adjust the base class */
