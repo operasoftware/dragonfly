@@ -137,8 +137,6 @@
     {
       is_invalid = invalid_shortcuts && 
                    invalid_shortcuts.indexOf(shortcut) != -1;
-      if (is_invalid)
-        ret.push(this.ssc_invalid_shortcut());
       tr =
       ['tr', 
         ['td',
@@ -151,6 +149,8 @@
       if (shortcuts_match && !(shortcut in shortcuts_match))
         tr.push('class', 'scc-no-match');
       ret.push(tr);
+      if (is_invalid)
+        ret.push(this.ssc_invalid_shortcut());
     }
     return ret;
   };

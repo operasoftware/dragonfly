@@ -75,6 +75,9 @@
   font-weight: bold;
   padding: 2px 7px;
 }
+.invalid-shortcut input, .invalid-shortcut input:focus {
+  border-color: #fc6854;
+}
 .scc-input,
 .scc-select
 {
