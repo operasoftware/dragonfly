@@ -1249,7 +1249,7 @@ ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
 ui_strings.M_VIEW_LABEL_SEARCH = "Search";
 
 /* DESC: The info text to notify the user that only a part of the search results are displayed. */
-ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s search hits";
+ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
 
 /* DESC: Settings label for tyhe maximum number of search hits in the search panel. */
 ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";

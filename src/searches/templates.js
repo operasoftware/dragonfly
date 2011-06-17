@@ -123,10 +123,12 @@
     this._js_search_ctx = {count: 0, max_count: max_count};
     if (result_count > max_count)
     {
-      ret.push(['div', ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS
+      ret.push(['div', 
+                  ['div', ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS
                        .replace('%(COUNT)s', result_count)
                        .replace('%(MAX)s', max_count),
-                       'class', 'info-box']);
+                       'class', 'info-box'],
+                       'class', 'info-box-container']);
     }
     return ret;
   };
