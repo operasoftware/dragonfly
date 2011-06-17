@@ -633,9 +633,12 @@ Element.prototype.get_ancestor = function(selector)
   while (ele)
   {
     if (ele.nodeType == 1 && ele.matchesSelector(selector))
+    {
       return ele;
+    }
     ele = ele.parentNode;
   }
+  return null;
 };
 
 
