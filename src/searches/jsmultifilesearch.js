@@ -18,7 +18,7 @@ var JSMultifileSearchPrototype = function()
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY,
   // duplicated code domsearch
-  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-match-cursor";
+  MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor";
 
   this.set_form_input = function(input)
   {
@@ -58,6 +58,34 @@ var JSMultifileSearchPrototype = function()
     this._show_search_results();
   };
 
+  // overwritten methods
+
+  this._update_info = function(type)
+  {
+    if(this._info_ele)
+    {
+      var info = "\u00A0";
+      switch (type)
+      {
+        case EMPTY:
+        {
+          break;
+        }
+        case NO_MATCH:
+        {
+          info = "0";
+          break;
+        }
+        default:
+        {
+          info = String(this._get_search_cursor()) + "/" +
+                 String(this._get_match_counts());
+        }
+      }
+      this._info_ele.textContent = info;
+    }
+  };
+
   this._get_match_counts = function()
   {
     return this._search_result_count;
@@ -68,7 +96,7 @@ var JSMultifileSearchPrototype = function()
   {
     if (span_list.length)
     {
-      var target = span_list[0].get_ancestor('.js-search-match');
+      var target = span_list[0].get_ancestor('.search-match');
       if (this._highligh_node && this._highligh_node != target)
       {
         this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
@@ -236,7 +264,7 @@ var JSMultifileSearchPrototype = function()
 
   this._update_match_highlight = function(event, target)
   {
-    var line = event.target.get_ancestor('.js-search-match');
+    var line = event.target.get_ancestor('.search-match');
     if (line)
     {
       var matches = line.getElementsByTagName('em');

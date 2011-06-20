@@ -11,7 +11,8 @@ cls.DOMSearchView = function(id, name, container_class)
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
     this._input = container.querySelector(query);
     this._search.set_form_input(this._input);
-    this._search.set_info_element(container.getElementsByTagName('info')[0]);
+    var info_ele = container.getElementsByClassName('search-info-badge')[0];
+    this._search.set_info_element(info_ele);
     this._search.show_last_search();
   };
 
@@ -25,15 +26,12 @@ cls.DOMSearchView = function(id, name, container_class)
     return (
     [
       ['div',
-        window.templates.dom_search_bar_content(this),
-        'class', 'dom-search-controls'],
+        window.templates.advanced_dom_search(this),
+        'class', 'advanced-search-controls'],
       ['div',
-        ['div', 'class', 'dom-search mono'],
-        'class', 'dom-search-container',
+        ['div', 'class', 'panel-search mono'],
+        'class', 'panel-search-container',
         'handler', 'clear-style-highlight-node'],
-      ['div',
-        ['info', '\u00A0'],
-        'class', 'dom-search-info'],
     ]);
   };
 

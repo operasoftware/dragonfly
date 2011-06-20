@@ -25,8 +25,8 @@ cls.JSSearchView = function(id, name, container_class)
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
     this._input = container.querySelector(query);
     var search_container = this._container
-                           .getElementsByClassName('dom-search-container')[0];
-    var info = this._container.getElementsByTagName('info')[0];
+                           .getElementsByClassName('panel-search-container')[0];
+    var info = this._container.getElementsByClassName('search-info-badge')[0];
     this._search.set_container(search_container);
     this._search.set_info_element(info);
     this._search.set_form_input(this._input);
@@ -39,15 +39,12 @@ cls.JSSearchView = function(id, name, container_class)
     return (
     [
       ['div',
-        window.templates.js_search_bar_content(this),
-        'class', 'dom-search-controls'],
+        window.templates.advanced_js_search(this),
+        'class', 'advanced-search-controls'],
       ['div',
-        ['div', 'class', 'dom-search mono'],
-        'class', 'dom-search-container',
+        ['div', 'class', 'panel-search mono'],
+        'class', 'panel-search-container',
         'handler', 'show-script'],
-      ['div',
-        ['info', '\u00A0'],
-        'class', 'dom-search-info'],
     ]);
   };
 

@@ -148,7 +148,7 @@
         {
           attrs = this._dom_attrs(node, force_lower_case);
           tree += 
-            "<div class='dom-search-match' "+
+            "<div class='search-match dom-search' "+
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "<node>&lt;" + node_name + attrs +
                 (node[CHILDREN_LENGTH] ?
@@ -160,7 +160,7 @@
         case PROCESSING_INSTRUCTION_NODE:
         {
           tree += 
-            "<div class='dom-search-match processing-instruction' " +
+            "<div class='search-match dom-search processing-instruction' " +
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "&lt;?" + node[NAME] + ' ' +
               formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
@@ -172,7 +172,7 @@
           if (show_comments && !/^\s*$/.test(node[VALUE]))
           {
             tree += 
-              "<div class='dom-search-match comment pre-wrap' " +
+              "<div class='search-match dom-search comment pre-wrap' " +
                 "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
                 "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;" +
               "</div>";
@@ -186,7 +186,7 @@
         case DOCUMENT_TYPE_NODE:
         {
           tree += 
-            "<div class='dom-search-match doctype' " +
+            "<div class='search-match dom-search doctype' " +
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
               "&lt;!DOCTYPE " + node[NAME] +
               this._get_doctype_external_identifier(node) + "&gt;" +
@@ -198,7 +198,7 @@
           if (!/^\s*$/.test(node[VALUE]))
           {
             tree += 
-              "<div class='dom-search-match' " +
+              "<div class='search-match dom-search' " +
                 "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
                 "<span class='dom-search-text-node'>#text</span>" + 
                 helpers.escapeTextHtml(node[VALUE]) + 

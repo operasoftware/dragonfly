@@ -18,13 +18,29 @@
       input.push('checked', 'checked');
     }
     return ['label', input, label];
-  }
+  };
 
-  this.dom_search_bar_content = function(search)
+  this.advanced_search_field = function(search)
+  {
+    return (
+    ['div',
+        ['table',
+          ['tr',
+            ['td', this.default_filter(search.controls[0])],
+            ['td', 
+              ['span', '\u00A0', 'class', 'search-info-badge'], 
+              'width', '1px'],
+            ['td', this.search_control(search.controls[1]), 'width', '1px'],
+            ['td', this.search_control(search.controls[2]), 'width', '1px']],
+          'class', 'advanced-search-table'],
+        'class', 'advanced-search']);
+  };
+
+  this.advanced_dom_search = function(search)
   {
     return (
     [
-      this.searchbar_content(search),
+      this.advanced_search_field(search),
       ['div', 
         ['form',
           this._search_input('dom-search-type', 
@@ -58,11 +74,13 @@
     ]);
   }.bind(this);
 
-  this.js_search_bar_content = function(search)
+
+
+  this.advanced_js_search = function(search)
   {
     return (
     [
-      this.searchbar_content(search),
+      this.advanced_search_field(search),
       ['div', 
         ['form',
           this._search_input('js-search-type', 
@@ -177,7 +195,7 @@
                        ['span', String(line), 'class', 'line-no'],
                        script_tmpl,
                        'data-line-no', String(line),
-                       'class', 'js-search-match']);
+                       'class', 'search-match js-search']);
           }
         }
       }

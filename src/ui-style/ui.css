@@ -463,7 +463,7 @@ toolbar-filters input[type=button].search-move-highlight-down
   border-left: 0;
 }
 
-filter, .advanced-panel-search {
+filter, .advanced-search {
   margin: 0 2px;
   padding-left: 20px;
   height: 19px;

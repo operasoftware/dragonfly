@@ -24,12 +24,40 @@ var DOMSearch = function(min_length)
 
   this.clear_style_highlight_node = function() {};
 
+  // overwritten methods
+  // duplicated code, common with jsmultifile search
+  this._update_info = function(type)
+  {
+    if(this._info_ele)
+    {
+      var info = "\u00A0";
+      switch (type)
+      {
+        case EMPTY:
+        {
+          break;
+        }
+        case NO_MATCH:
+        {
+          info = "0";
+          break;
+        }
+        default:
+        {
+          info = String(this._get_search_cursor()) + "/" +
+                 String(this._get_match_counts());
+        }
+      }
+      this._info_ele.textContent = info;
+    }
+  };
+
   // TODO clean up onview destroy
 
   /* constants */
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
-  MATCH_NODE_HIGHLIGHT_CLASS = "dom-search-match-cursor",
+  MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor",
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY;
 
@@ -111,7 +139,7 @@ var DOMSearch = function(min_length)
     this._orig_search_term = this._last_query;
     if (this._container)
     {
-      var nodes = this._container.getElementsByClassName('dom-search-match');
+      var nodes = this._container.getElementsByClassName('search-match');
       this._match_nodes = Array.prototype.reduce.call(nodes, function(list, node)
       {
         if (!/^<\//.test(node.textContent))
@@ -222,7 +250,7 @@ var DOMSearch = function(min_length)
   {
     if (span_list.length)
     {
-      var target = span_list[0].get_ancestor('.dom-search-match');
+      var target = span_list[0].get_ancestor('.search-match');
       if (this._highligh_node && this._highligh_node != target)
       {
         this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
@@ -252,7 +280,7 @@ var DOMSearch = function(min_length)
     this._broker = ActionBroker.get_instance();
     window.eventHandlers.change['dom-search-type-changed'] = 
       this._onsearchtypechange;
-    this._query_selector = ".dom-search-match";
+    this._query_selector = ".search-match";
     this._set_highlight_handlers();
     window.messages.addListener('element-selected', 
                                 this._onelementselected.bind(this));
