@@ -48,7 +48,7 @@ cls.DOMInspectorActions = function(id)
   });
 
   // traversal 'subtree' or 'children'
-  this._expand_collapse_node = function(event, target, traversal)
+  this._expand_collapse_node = function(event, target, traversal, force_expand)
   {
     var container = event.target.parentNode;
     var level = parseInt(container.style.marginLeft) || 0;
@@ -67,13 +67,17 @@ cls.DOMInspectorActions = function(id)
       {
         if (container.contains(target))
           target_id = parseInt(target.getAttribute('ref-id'));
-        if (level_next > level)
+        if (!force_expand && level_next > level)
         {
           model.collapse(ref_id);
           this._get_children_callback(container, model, target_id, is_editable);
         }
         else
         {
+          if (force_expand)
+          {
+            model.collapse(ref_id);
+          }
           cb = this._get_children_callback.bind(this, container, model,
                                                 target_id, is_editable);
           model.expand(cb, ref_id, traversal);
@@ -484,6 +488,11 @@ cls.DOMInspectorActions = function(id)
   this._handlers["expand-collapse-whole-node"] = function(event, target)
   {
     this._expand_collapse_node(event, target, 'subtree');
+  }.bind(this);
+
+  this._handlers["expand-node"] = function(event, target)
+  {
+    this._expand_collapse_node(event, target, 'subtree', true);
   }.bind(this);
 
   this._handlers["spotlight-node"] = function(event, target)
