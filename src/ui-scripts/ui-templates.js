@@ -184,7 +184,10 @@
 
   this.toolbar_settings = function(toolbar_settings)
   {
-    return ['cst-select-toolbar-setting', 'class', 'toolbar-settings ui-control', 'cst-id', toolbar_settings.id];
+    return ['cst-select-toolbar-setting',
+             [['cst-icon'], ['cst-drop-down']],
+            'class', 'toolbar-settings ui-control dropdown ' + toolbar_settings.class_name,
+            'cst-id', toolbar_settings.id];
   }
 
   this.switches = function(switches)

@@ -161,7 +161,8 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       'active',
       'focus',
       'selection'
-    ]
+    ],
+    'pseudo-items'
   );
 
   var broker = ActionBroker.get_instance();
