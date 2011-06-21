@@ -382,13 +382,12 @@ window.cls.Client = function()
       is_disbaled = null,
       tabs = ui_framework.layouts.console_rough_layout.children[0].tabs,
       tab = '',
-      i = 0;
+      i = 1;
 
-      for( i = 0; tab = tabs[i]; i++ )
+      for( i = 1; tab = tabs[i]; i++ )
       {
-        is_disbaled = !settings.console.get(tab);
-        views[tab].ishidden_in_menu = is_disbaled;
-        topCell.disableTab(tab, is_disbaled);
+        views[tab].ishidden_in_menu = true;
+        topCell.disableTab(tab, true);
       }
       arguments.callee._called_once = true;
     }
@@ -469,8 +468,8 @@ ui_framework.layouts.console_rough_layout =
         'console-css',
         'console-html',
         'console-svg',
-        'console-storage'
-        // ,'console-other'
+        'console-storage',
+        'console-other'
       ]
     }
   ]

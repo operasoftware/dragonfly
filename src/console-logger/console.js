@@ -47,6 +47,23 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._msgs.push(entry);
     }
 
+    // before calling updateviews, need to make sure the respective view is not hidden.
+    // can't so that in it's createView method, as it's not called if there is no container.
+    if (entry.source)
+    {
+      var corresponding_tab = "console-other";
+      for (var i=0; i < ErrorConsoleView.roughViews.length; i++) {
+        if (ErrorConsoleView.roughViews[i].source === entry.source)
+        {
+          corresponding_tab = ErrorConsoleView.roughViews[i].id;
+        }
+      };
+      if(views[corresponding_tab].ishidden_in_menu)
+      {
+        views[corresponding_tab].ishidden_in_menu = false;
+        topCell.disableTab(corresponding_tab, false); // means enable
+      }
+    }
     this._updateviews();
   };
 
@@ -111,7 +128,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this.get_messages = function(source, filter)
   {
-    var messages = filter || settings.console.get('use-selected-runtime-as-filter')
+    var messages = filter
       ? this._get_msgs_with_filter(source, filter)
       : this._get_msgs_without_filter(source);
     return messages.filter(this._filter, this);
@@ -152,10 +169,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           }
           break;
         }
-        case 'use-selected-runtime-as-filter': { // todo: remove this
-          this._updateviews();
-          break;
-        }
         case 'css-filter':
         case 'use-css-filter':
         {
@@ -166,17 +179,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           this.filter_updated = false;
           break;
         }
-        default: { // these settings are names of tabs to show.
-          var is_disabled = !settings[msg.id].get(msg.key);
-          views[msg.key].ishidden_in_menu = is_disabled;
-          topCell.disableTab(msg.key, is_disabled);
-        }
       }
     }
   };
 
   this._on_console_message = function(data)
   {
+    // todo: will only take console messages from ECMAScriptDebugger, right?
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
     this.addentry(message);
@@ -398,14 +407,11 @@ ErrorConsoleView.roughViews =
     id: 'console-storage',
     name: "Storage", // todo: string
     source: 'persistent_storage'
-  }
-  /*
-  ,{
+  },
+  {
     id: 'console-other',
-    name: "Other", // todo: string, implement
-    source: 'other'
+    name: "Other" // todo: string
   }
-  */
 ];
 
 ErrorConsoleView.roughViews.bindClearSource = function(source)
@@ -448,7 +454,6 @@ ErrorConsoleView.roughViews.createViews = function()
       r_v.id,
       [
         'console.expand-all-entries'
-        //'console.use-selected-runtime-as-filter' // Not in use
       ]
     );
     eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
@@ -529,13 +534,6 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     'console',
     // key-value map
     {
-      'console-all': true,
-      'console-script': true,
-      'console-css': true,
-      'console-html': false,
-      'console-svg': false,
-      'console-storage': false,
-      'use-selected-runtime-as-filter': false,
       'expand-all-entries': false,
       'use-css-filter': false,
       'css-filter': 
@@ -551,28 +549,10 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     },
     // key-label map
     {
-      'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
-      'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
-      'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
-      'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
-      'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
-      'console-storage': "Storage", // todo: string me
-      // 'console-other': "Other", // todo: string me, implement
-      'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
       'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
     },
     // settings map
     {
-      checkboxes: // todo: remove from settings
-      [
-        'console-all',
-        'console-script',
-        'console-css',
-        'console-html',
-        'console-svg',
-        'console-storage',
-        // 'console-other' todo: implement
-      ],
       customSettings:
       [
         'css_error_filters'
