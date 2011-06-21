@@ -800,6 +800,7 @@ cls.Stylesheets = function()
   ORIGIN_LOCAL = 2, // user
   ORIGIN_AUTHOR = 3, // author
   ORIGIN_ELEMENT = 4; // inline
+  ORIGIN_SVG = 5; // SVG presentation attribute
 
   var prettyPrintStyleDec = [];
 
@@ -938,8 +939,24 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
-      return "<rule rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
+      return "<rule rule-id='element-style' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
         "<inline-style>element.style</inline-style>" +
+        " {\n" +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
+        "\n}</rule>";
+    }
+    return "";
+  };
+
+  prettyPrintStyleDec[ORIGIN_SVG] =
+  function(rt_id, obj_id, element_name, style_dec, search_active)
+  {
+    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
+
+    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
+    {
+      return "<rule rule-id='element-svg' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
+        "<span style='font-style: italic;'>presentation attributes</span>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +
         "\n}</rule>";

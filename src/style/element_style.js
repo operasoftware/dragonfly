@@ -477,7 +477,7 @@ cls.ElementStyle = function()
           {
             if (disabled_style_dec_list)
             {
-              var disabled_style_dec = style_dec[ORIGIN] != ORIGIN_ELEMENT
+              var disabled_style_dec = (style_dec[ORIGIN] != ORIGIN_ELEMENT && style_dec[ORIGIN] != ORIGIN_SVG)
                                      ? disabled_style_dec_list[style_dec[RULE_ID]]
                                      : disabled_style_dec_list[self.get_inline_obj_id(node_style_cascade[0])];
               if (disabled_style_dec)
@@ -582,7 +582,7 @@ cls.ElementStyle = function()
     {
       for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
       {
-        if (style_dec[ORIGIN] == ORIGIN_ELEMENT && node_style[OBJECT_ID] == id)
+        if ((style_dec[ORIGIN] == ORIGIN_ELEMENT || style_dec[ORIGIN] == ORIGIN_SVG) && node_style[OBJECT_ID] == id)
         {
           return style_dec;
         }
