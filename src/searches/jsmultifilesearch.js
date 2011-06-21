@@ -302,8 +302,11 @@ var JSMultifileSearchPrototype = function()
 
   this._show_script = function(event, target)
   {
-    this._update_match_highlight(event, target);
-    this.show_script_of_search_match(event, target)
+    if (event.target.get_ancestor('.search-match'))
+    {
+      this._update_match_highlight(event, target);
+      this.show_script_of_search_match(event, target)
+    }
   };
 
   this._super_init = this._init;
