@@ -128,6 +128,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       graphwidth = Math.ceil(duration * 0.35);
     }
 
+
     container.clearAndRender(templates.network_log_main(ctx, graphwidth));
     this._vscrollcontainer = container.querySelector("#main-scroll-container");
     this._vscrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";

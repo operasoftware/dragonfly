@@ -146,12 +146,18 @@ window.cls.PropertyFinder = function(rt_id) {
     if (msg && msg[EVALRESULT] == "completed" && msg[OBJVALUE])
     { 
       objid = msg[OBJVALUE][OBJID];
+      this._get_object_props(callback, frameinfo, [objid], parts)
     }
-    else if (msg && msg[EVALRESULT] == "unhandled-exception")
+    else
     {
-      return
+      var ret = {
+        props: [],
+        scope: parts.scope,
+        input: parts.input,
+        identifier: parts.identifier,
+      };
+      callback(ret);
     }
-    this._get_object_props(callback, frameinfo, [objid], parts)
   }
 
   this._get_object_props = function(callback, frameinfo, objids, parts)

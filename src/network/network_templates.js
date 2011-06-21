@@ -456,12 +456,17 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
 
 templates.grid_lines = function(ctx, width, height, topoffset)
 {
+
   topoffset = String(topoffset || 25);
   var ret = [];
   var millis = ctx.get_duration();
   millis = Math.ceil(millis / 1000) * 1000
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
+
+
+  //opera.postError("a " + width + " " + millis)
+
 
   // Thresholds for whether or not to render grid for every 100 and 500ms.
   // The number is how many pixels per second. So if every second is
