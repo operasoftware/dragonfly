@@ -1,30 +1,25 @@
-﻿/* Expander cell */
-.errors-table > tr:not(.error-details) > td:nth-child(1),
+﻿.errors-table tr {
+  vertical-align: top;
+}
+
 /* Icon cell */
-.errors-table > tr:not(.error-details) > td:nth-child(2) {
+.errors-table tr td.icon {
     text-align: center;
     width: 16px;
 }
 
-.errors-table > tr .context {
-  display: block;
-  float: right;
+.errors-table td.location {
   max-width: 150px;
   overflow-x: hidden;
   overflow-y: hidden;
-  direction: rtl;
+  /* direction: rtl; does funny things with trailing slashes, see http://jsfiddle.net/aEbSW/ */
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.errors-table .error-details-table {
-  margin-bottom: 15px;
-  margin-top: 5px;
-}
-
-.errors-table > tr:not(.header):not(.no-interaction):not([handler]):active {
-    background-color: rgba(55,115,211,0.2);
-    color: #000;
+.errors-table td.main > pre {
+  /* doesn't have a button to expand, needs to align to those lines though */
+  margin-left: 15px;
 }
 
 .errors-table button {
@@ -32,40 +27,27 @@
   width: 5px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
-  margin: 0;
+  margin: 0 6px 0 2px;
   padding: 0;
   cursor: pointer;
-  -o-transition: all .2s;
+  -o-transition: -o-transform .2s;
 }
 
 .errors-table > tr.expanded button {
     -o-transform: rotate(90deg);
 }
 
-.errors-table > tr.error-details > td:nth-child(1) {
-    border-right: 0;
+.errors-table .error-details {
+  display: none;
 }
 
-.errors-table > tr.error-details > td:nth-child(2) {
-    border-left: 0;
-}
-
-.errors-table pre {
-    margin: 0;
-}
-
-.error-details-table th {
-    text-align: right;
-    padding-right: 5px;
-    vertical-align: top;
+.errors-table tr.expanded .error-details {
+  display: table-row;
 }
 
 .errors-table .severity {
   width: 16px;
-  height: 16px;
-  vertical-align: middle;
-  display: inline-block;
-  background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
+  background: url('../ui-images/error-console-info.png') no-repeat 5px 3px;
 }
 
 .errors-table .severity.debug {
@@ -107,3 +89,10 @@ button[key="request_list.expand-all-entries"]:before
   margin: 3px 0;
 }
 
+.errors-table .mono {
+  margin: 0;
+}
+
+.error-details.mono {
+  margin: 4px 0 0 0;
+}

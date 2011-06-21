@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @fileoverview
  * This file contains most of the code implementing the console view in
  * Dragonfly
@@ -144,11 +144,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       switch(msg.key)
       {
         case 'expand-all-entries': {
-          this._toggled = [];
-          this._updateviews();
+          this._toggled = []; // clears _toggled, triggers update
+          var entries = document.querySelectorAll("[data-logid]");
+          for (var i = 0 ; i < entries.length; i++)
+          {
+            eventHandlers.click['error-log-list-expand-collapse'](null, entries[i]);
+          }
           break;
         }
-        case 'use-selected-runtime-as-filter': {
+        case 'use-selected-runtime-as-filter': { // todo: remove this
           this._updateviews();
           break;
         }
@@ -381,34 +385,9 @@ ErrorConsoleView.roughViews =
     source: 'css'
   },
   {
-    id: 'console-java',
-    name: ui_strings.M_VIEW_LABEL_ERROR_JAVA,
-    source: 'java'
-  },
-  {
-    id: 'console-m2',
-    name: ui_strings.M_VIEW_LABEL_ERROR_M2,
-    source: 'm2'
-  },
-  {
-    id: 'console-network',
-    name: ui_strings.M_VIEW_LABEL_ERROR_NETWORK,
-    source: 'network'
-  },
-  {
-    id: 'console-xml',
-    name: ui_strings.M_VIEW_LABEL_ERROR_XML,
-    source: 'xml'
-  },
-  {
     id: 'console-html',
     name: ui_strings.M_VIEW_LABEL_ERROR_HTML,
     source: 'html'
-  },
-  {
-    id: 'console-xslt',
-    name: ui_strings.M_VIEW_LABEL_ERROR_XSLT,
-    source: 'xslt'
   },
   {
     id: 'console-svg',
@@ -416,20 +395,17 @@ ErrorConsoleView.roughViews =
     source: 'svg'
   },
   {
-    id: 'console-bittorrent',
-    name: ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT,
-    source: 'bittorrent'
-  },
-  {
-    id: 'console-voice',
-    name: ui_strings.M_VIEW_LABEL_ERROR_VOICE,
-    source: 'ecmascript'
-  },
-  {
-    id: 'console-widget',
-    name: ui_strings.M_VIEW_LABEL_ERROR_WIDGET,
-    source: 'widget'
+    id: 'console-storage',
+    name: "Storage", // todo: string
+    source: 'persistent_storage'
   }
+  /*
+  ,{
+    id: 'console-other',
+    name: "Other", // todo: string, implement
+    source: 'other'
+  }
+  */
 ];
 
 ErrorConsoleView.roughViews.bindClearSource = function(source)
@@ -522,16 +498,12 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
   window.error_console_data.toggle_entry(logid);
   if (target.hasClass("expanded"))
   {
-    target.parentNode.removeChild(target.nextSibling);
     target.swapClass("expanded", "collapsed");
   }
   else
   {
-    var entry = window.error_console_data.get_message(logid);
-    var row = document.render(templates.error_log_detail_row(entry));
-    target.parentNode.insertAfter(row, target);
     target.swapClass("collapsed", "expanded");
-    row.scrollSoftIntoContainerView();
+    target.scrollSoftIntoContainerView();
   }
 };
 
@@ -560,16 +532,9 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'console-all': true,
       'console-script': true,
       'console-css': true,
-      'console-xml': false,
-      'console-java': false,
-      'console-m2': false,
-      'console-network': false,
       'console-html': false,
-      'console-xslt': false,
       'console-svg': false,
-      'console-bittorrent': false,
-      'console-voice': false,
-      'console-widget': false,
+      'console-storage': false,
       'use-selected-runtime-as-filter': false,
       'expand-all-entries': false,
       'use-css-filter': false,
@@ -589,36 +554,24 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
       'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
       'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
-      'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
-      'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
-      'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
-      'console-network': ui_strings.S_SWITCH_SHOW_TAB_NETWORK,
       'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
-      'console-xslt': ui_strings.S_SWITCH_SHOW_TAB_XSLT,
       'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
-      'console-bittorrent': ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT,
-      'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
-      'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
+      'console-storage': "Storage", // todo: string me
+      // 'console-other': "Other", // todo: string me, implement
       'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
       'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
     },
     // settings map
     {
-      checkboxes:
+      checkboxes: // todo: remove from settings
       [
         'console-all',
         'console-script',
         'console-css',
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
         'console-html',
-        'console-xslt',
         'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget'
+        'console-storage',
+        // 'console-other' todo: implement
       ],
       customSettings:
       [

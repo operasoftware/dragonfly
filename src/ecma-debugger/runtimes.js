@@ -605,6 +605,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.onParseError = function(status, message)
   {
+    console.log("onparseError runtimes.js", message);
     const
     RUNTIME_ID = 0,
     SCRIPT_ID = 1,

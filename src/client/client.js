@@ -1,4 +1,4 @@
-﻿/**
+/**
   * @constructor
   */
 
@@ -467,16 +467,10 @@ ui_framework.layouts.console_rough_layout =
         'console-all',
         'console-script',
         'console-css',
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
         'console-html',
-        'console-xslt',
         'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget'
+        'console-storage'
+        // ,'console-other'
       ]
     }
   ]
