@@ -129,7 +129,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     {
       this._data[i][MATCH_REASON] = TRAVERSAL;
     };
-  }
+  };
 
   this._get_dom = function(object_id, traverse_type, cb)
   {

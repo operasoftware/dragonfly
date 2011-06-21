@@ -24,40 +24,13 @@ var DOMSearch = function(min_length)
 
   this.clear_style_highlight_node = function() {};
 
-  // overwritten methods
-  // duplicated code, common with jsmultifile search
-  this._update_info = function(type)
-  {
-    if(this._info_ele)
-    {
-      var info = "\u00A0";
-      switch (type)
-      {
-        case EMPTY:
-        {
-          break;
-        }
-        case NO_MATCH:
-        {
-          info = "0";
-          break;
-        }
-        default:
-        {
-          info = String(this._get_search_cursor()) + "/" +
-                 String(this._get_match_counts());
-        }
-      }
-      this._info_ele.textContent = info;
-    }
-  };
-
-  // TODO clean up onview destroy
+  // overwrites _update_info
+  PanelSearch.apply(this);
 
   /* constants */
   const 
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
-  MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor",
+  MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY;
 
@@ -244,23 +217,6 @@ var DOMSearch = function(min_length)
   {
     this._selected_node = msg.obj_id;
     this._selected_runtime = msg.rt_id;
-  };
-
-  this._onhighlightstyle = function(span_list)
-  {
-    if (span_list.length)
-    {
-      var target = span_list[0].get_ancestor('.search-match');
-      if (this._highligh_node && this._highligh_node != target)
-      {
-        this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
-      }
-      if (target)
-      {
-        this._highligh_node = target;
-        this._highligh_node.addClass(MATCH_NODE_HIGHLIGHT_CLASS);
-      }
-    }
   };
 
   this._init = function(min_length)

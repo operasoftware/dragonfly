@@ -1,7 +1,6 @@
 var JSMultifileSearch = function()
 {
   this._init();
-
 };
 
 var JSMultifileSearchPrototype = function()
@@ -17,96 +16,14 @@ var JSMultifileSearchPrototype = function()
   SINGLE_FILE = 0,
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY,
-  // duplicated code domsearch
-  MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor";
+  MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS;
 
-  this.set_form_input = function(input)
-  {
-    if(input)
-    {
-      this._input = input;
-    }
-  };
-
-  this.highlight_previous = function()
-  {
-    if (this._validate_current_search())
-    {
-      this._highlight_previous();
-    }
-  };
-
-  this.highlight_next = function()
-  {
-    if (this._validate_current_search())
-    {
-      this._highlight_next();
-    }
-  };
-
-  this.update_search = function()
-  {    
-    this._validate_current_search();
-  };
-
-  this.show_last_search = function()
-  {
-    if (typeof this._last_query == 'string')
-    {
-      this._input.value = this._last_query;
-    }
-    this._show_search_results();
-  };
-
-  // overwritten methods
-
-  this._update_info = function(type)
-  {
-    if(this._info_ele)
-    {
-      var info = "\u00A0";
-      switch (type)
-      {
-        case EMPTY:
-        {
-          break;
-        }
-        case NO_MATCH:
-        {
-          info = "0";
-          break;
-        }
-        default:
-        {
-          info = String(this._get_search_cursor()) + "/" +
-                 String(this._get_match_counts());
-        }
-      }
-      this._info_ele.textContent = info;
-    }
-  };
+  // overwrites _update_info
+  PanelSearch.apply(this);
 
   this._get_match_counts = function()
   {
     return this._search_result_count;
-  };
-
-  // duplicated code domsearch
-  this._onhighlightstyle = function(span_list)
-  {
-    if (span_list.length)
-    {
-      var target = span_list[0].get_ancestor('.search-match');
-      if (this._highligh_node && this._highligh_node != target)
-      {
-        this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS)
-      }
-      if (target)
-      {
-        this._highligh_node = target;
-        this._highligh_node.addClass(MATCH_NODE_HIGHLIGHT_CLASS);
-      }
-    }
   };
 
   this._on_active_tab = function(msg)
@@ -128,7 +45,7 @@ var JSMultifileSearchPrototype = function()
     {
       count += this.searchresults[rt_id].reduce(function(sum, script)
       {
-          return sum + script.line_matches.length;
+        return sum + script.line_matches.length;
       }, 0);
     }
     return count;
@@ -337,7 +254,44 @@ var JSMultifileSearchPrototype = function()
         this._max_hits_display_count = this._setting.get('max-displayed-search-hits');
       }
     }.bind(this));
+  };
 
+  this.set_form_input = function(input)
+  {
+    if(input)
+    {
+      this._input = input;
+    }
+  };
+
+  this.highlight_previous = function()
+  {
+    if (this._validate_current_search())
+    {
+      this._highlight_previous();
+    }
+  };
+
+  this.highlight_next = function()
+  {
+    if (this._validate_current_search())
+    {
+      this._highlight_next();
+    }
+  };
+
+  this.update_search = function()
+  {    
+    this._validate_current_search();
+  };
+
+  this.show_last_search = function()
+  {
+    if (typeof this._last_query == 'string')
+    {
+      this._input.value = this._last_query;
+    }
+    this._show_search_results();
   };
 
   this.clear_style_highlight_node = function()
@@ -411,7 +365,6 @@ var JSMultifileSearchPrototype = function()
       }
     }
   };
-
   
   this.reset_match_cursor = function()
   {

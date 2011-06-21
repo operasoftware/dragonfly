@@ -2,6 +2,20 @@
 {
   const MAX_LINE_CHARS = 4000;
 
+  this.search_panel = function(search, type)
+  {
+    return (
+    [
+      ['div',
+        this['advanced_' + type + '_search'](search),
+        'class', 'advanced-search-controls'],
+      ['div',
+        ['div', 'class', 'panel-search mono'],
+        'class', 'panel-search-container',
+        'handler', 'show-script'],
+    ]);
+  };
+
   this.searchbar_content = function(search)
   {
     var content = this.filters(search.controls);
@@ -163,7 +177,7 @@
     line_no = String(line_no);
     var padding = ['      ', '     ', '    ', '   ', '  ', ' '];
     return  (padding[line_no.length] || '') + line_no;
-  }
+  };
 
   this.search_result_script = function(script, show_script_uri)
   {
@@ -185,7 +199,6 @@
             line = cur_line;
             script_data = script.script_data.slice(script.line_arr[line - 1], 
                                                    script.line_arr[line]);
-            
             script_tmpl = this.highlight_js_source(script_data, 
                                                    null, 
                                                    script.state_arr[line - 1], 
@@ -204,7 +217,5 @@
     }
     return ret;
   };
-
-
 
 }).apply(window.templates || (window.templates = {}));

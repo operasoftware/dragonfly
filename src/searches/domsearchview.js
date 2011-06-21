@@ -3,9 +3,14 @@ window.cls || (window.cls = {});
 cls.DOMSearchView = function(id, name, container_class)
 {
 
+  const 
+  SEARCHFIELD = 0,
+  MOVE_HIGHLIGHT_UP = 1,
+  MOVE_HIGHLIGHT_DOWN = 2; 
+
   this.createView = function(container)
   {
-    container.clearAndRender(this._tmpl());
+    container.clearAndRender(window.templates.search_panel(this, 'dom'));
     this._search_container = container.childNodes[1];
     this._search.set_container(this._search_container);
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
@@ -14,25 +19,6 @@ cls.DOMSearchView = function(id, name, container_class)
     var info_ele = container.getElementsByClassName('search-info-badge')[0];
     this._search.set_info_element(info_ele);
     this._search.show_last_search();
-  };
-
-  const 
-  SEARCHFIELD = 0,
-  MOVE_HIGHLIGHT_UP = 1,
-  MOVE_HIGHLIGHT_DOWN = 2;  
-
-  this._tmpl = function()
-  {
-    return (
-    [
-      ['div',
-        window.templates.advanced_dom_search(this),
-        'class', 'advanced-search-controls'],
-      ['div',
-        ['div', 'class', 'panel-search mono'],
-        'class', 'panel-search-container',
-        'handler', 'clear-style-highlight-node'],
-    ]);
   };
 
   ActionHandlerInterface.apply(this);
@@ -99,8 +85,8 @@ cls.DOMSearchView = function(id, name, container_class)
         class: "search-move-highlight-down container-button",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
       },
-
     ];
+
     [
       'search_type',
       'ignore_case',
@@ -113,6 +99,7 @@ cls.DOMSearchView = function(id, name, container_class)
       });
       this.__defineSetter__(prop, function(){});
     }, this);
+
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
       this._onshortcut.bind(this, 'highlight-next-match');
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 

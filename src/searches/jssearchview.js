@@ -21,7 +21,7 @@ cls.JSSearchView = function(id, name, container_class)
   this.createView = function(container)
   {
     this._container = container;
-    container.clearAndRender(this._tmpl());
+    container.clearAndRender(window.templates.search_panel(this, 'js'));
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
     this._input = container.querySelector(query);
     var search_container = this._container
@@ -33,22 +33,6 @@ cls.JSSearchView = function(id, name, container_class)
     this._search.show_last_search();
   };
 
-  // duplicated code domsearch
-  this._tmpl = function()
-  {
-    return (
-    [
-      ['div',
-        window.templates.advanced_js_search(this),
-        'class', 'advanced-search-controls'],
-      ['div',
-        ['div', 'class', 'panel-search mono'],
-        'class', 'panel-search-container',
-        'handler', 'show-script'],
-    ]);
-  };
-
-  // DOMSearchView
   ActionHandlerInterface.apply(this);
   
   this.focus = function(event, container)
@@ -142,7 +126,6 @@ cls.JSSearchView = function(id, name, container_class)
     this._search.ignore_case = this._setting.get('js-search-ignore-case');
     this._search.search_all_files = this._setting.get('js-search-all-files');
     this._search.search_type = this._setting.get('js-search-type');
-    
     this.controls =
     [
       {
@@ -164,7 +147,7 @@ cls.JSSearchView = function(id, name, container_class)
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
       },
     ];
-  
+
     [
       'search_type',
       'ignore_case',
@@ -179,7 +162,6 @@ cls.JSSearchView = function(id, name, container_class)
     }, this);
     
     this._onscriptselected_bound = this._onscriptselected.bind(this);
-    
     window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
       this._onshortcut.bind(this, 'highlight-next-match');
     window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
