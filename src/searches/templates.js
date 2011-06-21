@@ -154,8 +154,8 @@
   this._search_result_header = function(rt_id)
   {
     var runtime = window.runtimes.getRuntime(rt_id);
-    var display_uri = helpers.shortenURI(runtime.uri);
-    return ['h2', runtime.title || display_uri.uri];
+    var display_uri = runtime && helpers.shortenURI(runtime.uri);
+    return ['h2', runtime && (runtime.title || display_uri.uri) || ''];
   };
 
   this._format_line_no = function(line_no)
