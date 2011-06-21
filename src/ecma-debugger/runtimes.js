@@ -124,12 +124,14 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var registerRuntime = function(id)
   {
+
     if (!(id in __runtimes))
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'runtime id does not exist');
       __runtimes[id] = null;
-      services['ecmascript-debugger'].getRuntime(tagManager.set_callback(null, parseRuntime), id);
+      var tag = tagManager.set_callback(this, this.handleListRuntimes);
+      services['ecmascript-debugger'].requestListRuntimes([id]);
     }
   }
 
