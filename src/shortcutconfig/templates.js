@@ -54,7 +54,7 @@
         'type', 'button', 
         'class', section.has_match ? 'unfolded' : ''
       ],
-      ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW.replace("%s", section.name),
+      section.name,
     ];
     if (!section.is_search)
       header.push('handler', 'scc-expand-section');
