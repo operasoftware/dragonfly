@@ -25,42 +25,6 @@ window.cls.PropertyFinder = function(rt_id) {
   this._cache = {};
 
   /**
-   * Method that does The Right Thing with regards to what method is
-   * available for requesting an eval() in a connected Opera instance.
-   *
-   * Subclasses that adds support for never ecma service versions can
-   * override this method
-   *
-   */
-  this._requestEval = function(callback, js, scope, identifier, input, frameinfo, context) {
-    context = context || [];
-
-    var tag = tagManager.set_callback(this, this._onRequestEval,
-                                      [callback, scope, identifier, input, frameinfo]);
-
-    this._service.requestEval(
-      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js, context]
-    );
-  };
-
-  this._requestExamineObjects = function(callback, scope, identifier, input, frameinfo) {
-    var tag = tagManager.set_callback(this, this._onRequestExamineObjects,
-                                      [callback, scope, identifier, input, frameinfo]);
-
-    var scopes = [frameinfo.scope_id];
-    if (frameinfo.scope_list)
-    {
-      // Skip last scope in list, it's t global one which
-      // isn't in completer (for now. should be an option)
-      scopes = frameinfo.scope_list.slice(0, -1);
-    }
-
-    this._service.requestExamineObjects(
-      tag, [frameinfo.runtime_id, scopes, 0, 1]
-    );
-  };
-
-  /**
    * Figure out the object to which input belongs.
    * foo.bar -> foo
    * window.bleh.meh -> window.bleh
@@ -98,104 +62,46 @@ window.cls.PropertyFinder = function(rt_id) {
       new_id = input;
     }
 
-    return {scope: new_path, identifier: new_id};
+    return {scope: new_path, identifier: new_id, input: input};
   };
 
-  this._onRequestEval = function(status, message, callback, scope, identifier, input, frameinfo) {
-    var ret = {
-      props: [],
-      scope: scope,
-      input: input,
-      identifier: identifier,
-      frameinfo: frameinfo
-    };
-
-    if (status == 0) {
-      const STATUS = 0, TYPE = 1, VALUE = 2, OBJECT_VALUE = 3;
-      if(message[STATUS] == 'completed')
-      {
-        if(message[VALUE])
-        {
-          ret.props = message[VALUE].split('_,_').filter(
-                        function(e) { return e != ""; }
-          );
-        }
-
-        if (!ret.scope && ret.props.indexOf("this") == -1)
-        {
-          ret.props.push("this");
-        }
-      }
-    }
-
-    this._cache_put(ret);
-    callback(ret);
-  };
-
-  this._onRequestExamineObjects = function(status, message, callback, scope, identifier, input, frameinfo) {
-    var ret = {
-      props: [],
-      scope: scope,
-      input: input,
-      identifier: identifier,
-      frameinfo: frameinfo
-    };
-
-    if (status == 0) {
-      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
-      var names = [];
-      (message[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
-        var objectlist = chain[OBJECT_LIST] || [];
-        objectlist.forEach(function(obj) {
-          names = names.concat((obj[PROPERTY_LIST] || []).map(function(prop) {
-            return prop[NAME];
-          }));
-        });
-      });
-
-      ret.props = names;
-
-      if (ret.props.indexOf("this") == -1)
-      {
-        ret.props.push("this");
-      }
-
-      if (ret.frameinfo.argument_id !== undefined && ret.props.indexOf("arguments"))
-      {
-        ret.props.push("arguments");
-      }
-    }
-    this._cache_put(ret);
-    callback(ret);
-  };
-
+ 
   /**
    * Returns a list of properties that match the input string in the given
    * runtime.
    *
    */
-  this.find_props = function(callback, input, frameinfo, context) {
+  this.find_props = function(callback, input, frameinfo, context)
+  {
     frameinfo = frameinfo ||
     {
       runtime_id: runtimes.getSelectedRuntimeId(),
       thread_id: 0,
       scope_id: runtimes.getRuntime(runtimes.getSelectedRuntimeId()).object_id,
-      index: 0
+      index: 0,
+      scope_list: []
     };
 
     frameinfo.stopped = Boolean(frameinfo.thread_id);
-
     var parts = this._find_input_parts(input);
-
     var props = this._cache_get(parts.scope, frameinfo);
+
+
     if (props) {
       props.input = input;
       props.identifier = parts.identifier;
       callback(props);
     }
     else {
-      this._get_scope_contents(callback, parts.scope, parts.identifier, input,
-                               frameinfo, context);
+      if (parts.scope)
+      {
+        this._get_subject_id(callback, parts.scope, frameinfo, parts);
+      }
+      else
+      {
+        var scopes = frameinfo.scope_list.concat(frameinfo.scope_id);
+        this._get_object_props(callback, frameinfo, scopes, parts);
+      }
     }
   };
 
@@ -223,26 +129,72 @@ window.cls.PropertyFinder = function(rt_id) {
     return this._cache[key];
   };
 
-  this._get_scope_contents = function(callback, scope, identifier, input, frameinfo, context) {
-    if (!scope) { // if there is no scope, use examineObject call
-      this._requestExamineObjects(callback, scope, identifier, input, frameinfo);
+  this._get_subject_id = function(callback, scope, frameinfo, parts)
+  {
+    var js = "" + scope;
+    var tag = tagManager.set_callback(this, this._got_subject_id,
+                                      [callback, frameinfo, parts]);
+    this._service.requestEval(
+      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js]
+    );
+  }
+
+  this._got_subject_id = function(status, msg, callback, frameinfo, parts)
+  {
+    const EVALRESULT = 0; OBJVALUE = 3, OBJID = 0;
+    var objid = null;
+    if (msg && msg[EVALRESULT] == "completed" && msg[OBJVALUE])
+    { 
+      objid = msg[OBJVALUE][OBJID];
     }
-    else
+    else if (msg && msg[EVALRESULT] == "unhandled-exception")
     {
-      var script = "(function(scope){var a = '', b= ''; for( a in scope ){ b += a + '_,_'; }; return b;})(%s)";
-      var eval_str = script.replace("%s", scope || "this");
-
-      var magicvars = [];
-      if (context) {
-        for (var key in context) { magicvars.push([key, context[key]]) }
-      }
-
-      if (frameinfo.index !== undefined) {
-        this._requestEval(callback, eval_str, scope, identifier, input,
-                          frameinfo, magicvars);
-      }
+      return
     }
-  };
+    this._get_object_props(callback, frameinfo, [objid], parts)
+  }
+
+  this._get_object_props = function(callback, frameinfo, objids, parts)
+  {
+    var tag = tagManager.set_callback(this, this._got_object_props, [callback, parts]);
+    this._service.requestExamineObjects(tag, [frameinfo.runtime_id, objids, 1, 0]);
+  }
+
+  this._got_object_props = function(status, msg, callback, parts)
+  {
+    var ret = {
+      props: this._parse_prop_list(msg) || [],
+      scope: parts.scope,
+      input: parts.input,
+      identifier: parts.identifier,
+    };
+
+    if (ret.props.indexOf("this") == -1)
+    {
+        ret.props.push("this");
+    }
+
+    // fixme: is "arguments" in the props when stopped?
+    //this._cache_put(ret);
+    callback(ret);
+  }
+
+  this._parse_prop_list = function(msg)
+  {
+    var names = [];
+    if (status == 0) {
+      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
+      (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
+        var objectlist = chain[OBJECT_LIST] || [];
+        objectlist.forEach(function(obj) {
+          names = names.concat((obj[PROPERTY_LIST] || []).map(function(prop) {
+            return prop[NAME];
+          }));
+        });
+      });
+    }
+    return names;
+  }
 
   this.toString = function() {
     return "[PropertyFinder singleton instance]";
