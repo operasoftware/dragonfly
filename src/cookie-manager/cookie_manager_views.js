@@ -96,7 +96,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("value")
         },
         path: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
           classname: "col_path",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -108,7 +108,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("path")
         },
         expires: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
           classname: "col_expires",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)

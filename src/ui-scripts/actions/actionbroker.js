@@ -312,7 +312,7 @@ var ActionBroker = function()
     if (!(action_handler && action_handler.id))
       throw 'missing id on action_handler in ActionBroker.instance.register_handler';
     this._handlers[action_handler.id] = action_handler;
-    if(action_handler.inherited_shortcuts)
+    if (action_handler.inherited_shortcuts)
     {
       this._inherited_handlers[action_handler.inherited_shortcuts] = action_handler;
     }
