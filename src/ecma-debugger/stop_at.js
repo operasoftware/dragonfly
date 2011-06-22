@@ -218,7 +218,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         {
           fn_name : is_all_frames && i == _frames_length - 1
                     ? 'global scope'
-                    : frame[OBJECT_VALUE][NAME] || 'anonymous',
+                    : frame[OBJECT_VALUE] && frame[OBJECT_VALUE][NAME] ||
+                      'anonymous',
           line : line_number,
           script_id : frame[SCRIPT_ID],
           argument_id : frame[ARGUMENT_OBJECT],
