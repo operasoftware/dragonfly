@@ -21,7 +21,7 @@ cls.PoTestView = function(id, name, container_class)
   {
     var reader = new FileReader();
     reader.onload = this._on_loaded_po_bound;
-    reader.onerror = function() { opera.postError("arrar!") } // fixme
+    reader.onerror = function() { opera.postError("Error reloading current file") };
     reader.readAsText(this._file);
   }
 
