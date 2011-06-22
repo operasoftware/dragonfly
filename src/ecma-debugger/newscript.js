@@ -86,7 +86,7 @@ window.cls.NewScript.prototype = new function()
             match = search_term.exec(this.script_data);
             pos = match ? match.index : -1;
           }
-          else if(is_ignore_case)
+          else if (is_ignore_case)
           {
             pos = this.script_data_lower.indexOf(search_term, pos + 1);
           }
@@ -94,14 +94,17 @@ window.cls.NewScript.prototype = new function()
           {
             pos = this.script_data.indexOf(search_term, pos + 1);
           }
+
           if (pos == -1)
           {
             break;
           }
+
           while (line_cur < line_arr_length && this.line_arr[line_cur] <= pos)
           {
             ++line_cur;
           }
+          
           this.line_matches[index] = line_cur;
           this.line_offsets[index] = pos - this.line_arr[line_cur - 1];
           if (is_reg_exp)

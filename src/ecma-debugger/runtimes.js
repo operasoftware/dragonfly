@@ -131,7 +131,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
                       'runtime id does not exist');
       __runtimes[id] = null;
       var tag = tagManager.set_callback(this, this.handleListRuntimes);
-      services['ecmascript-debugger'].requestListRuntimes([id]);
+      services['ecmascript-debugger'].requestListRuntimes(tag, [id]);
     }
   }
 

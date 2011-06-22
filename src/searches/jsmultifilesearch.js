@@ -83,7 +83,7 @@ var JSMultifileSearchPrototype = function()
           }
         }
       }
-      else if(this._script && this._script.line_matches)
+      else if (this._script && this._script.line_matches)
       {
         this._search_result_count = this._script.line_matches.length;
         var tmpl = window.templates.js_search_result_single_file(this._script,
@@ -112,12 +112,11 @@ var JSMultifileSearchPrototype = function()
       }
       if (line_ele && line_ele.textContent.length >= script.line_offsets[i])
       {
-        
-      this.set_hit(line_ele,
-                   script.line_offsets[i],
-                   this.search_type == TextSearch.PLAIN_TEXT ?
-                   script.match_length :
-                   script.line_offsets_length[i]);
+        this.set_hit(line_ele,
+                     script.line_offsets[i],
+                     this.search_type == TextSearch.PLAIN_TEXT ?
+                     script.match_length :
+                     script.line_offsets_length[i]);
       }
     }
   };
@@ -139,7 +138,8 @@ var JSMultifileSearchPrototype = function()
       this._match_cursor = -1;
       this.searchresults = {};
       this.reset_match_cursor();
-      var tmpl = ['div', 'searching …', 'class', 'info-is-searching'];
+      var tmpl = ['div', ui_strings.S_INFO_IS_SEARCHING, 
+                         'class', 'info-is-searching'];
       this._container.firstElementChild.clearAndRender(tmpl);
       if (this._last_query)
       {
@@ -173,7 +173,7 @@ var JSMultifileSearchPrototype = function()
           }
         }
       }
-      setTimeout(this._show_search_results_bound, 5);
+      setTimeout(this._show_search_results_bound, 0);
       return false;
     }
     return true;
@@ -258,7 +258,7 @@ var JSMultifileSearchPrototype = function()
 
   this.set_form_input = function(input)
   {
-    if(input)
+    if (input)
     {
       this._input = input;
     }
@@ -332,6 +332,7 @@ var JSMultifileSearchPrototype = function()
     {
       script = this._script;
     }
+
     if (script)
     {
       var js_source_view = window.views[JS_SOURCE_ID];
@@ -375,7 +376,6 @@ var JSMultifileSearchPrototype = function()
   
   this.set_match_cursor = function(target)
   {
-    var hit = null;
     for (var i = 0, hit = null; hit = this._hits[i]; i++)
     {
       if (hit.indexOf(target) != -1)

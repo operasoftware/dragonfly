@@ -47,7 +47,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   PUBLIC_ID = 4,
   SYSTEM_ID = 5,
   MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
-  TRAVERSE_SERACH = "search",
+  TRAVERSE_SEARCH = "search",
   TRAVERSAL = 1,
   SEARCH_PARENT = 2,
   SEARCH_HIT = 3;
@@ -98,7 +98,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._isprocessing = true;
     var tag = window.tag_manager.set_callback(this, 
                                               this.__handle_dom, 
-                                              [object_id, TRAVERSE_SERACH, cb]);
+                                              [object_id, TRAVERSE_SEARCH, cb]);
     this.search_type = type;
     var msg = [this._data_runtime_id, 
                query, 
@@ -151,7 +151,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       switch (traverse_type)
       {
         // traverse_type 'node' so far not supported
-        case TRAVERSE_SERACH:
+        case TRAVERSE_SEARCH:
         case "parent-node-chain-with-children":
         {
           if (traverse_type != "search" || !object_id)
