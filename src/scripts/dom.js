@@ -737,6 +737,13 @@ Array.prototype.sum = function(selectorfun)
   }
 };
 
+Array.prototype.unique = function()
+{
+  var ret = [];
+  this.forEach(function(e) { if (ret.indexOf(e) == -1) {ret.push(e) }});
+  return ret;
+}
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
