@@ -1,47 +1,39 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.NewStyle = function(id, name, container_class)
 {
+  this._rt_id = 0;
+  this._rt_style_map = {};
+  this._textarea = null;
 
   this.createView = function(container)
   {
-    var textarea = container.clearAndRender(this._tmpl_edit(this._current_style));
-    textarea.value = this._current_style;
+    var css_text = this._rt_style_map[this._rt_id] ? this._rt_style_map[this._rt_id].css_text : "";
+    var ele = container.clearAndRender(cls.NewStyle._template(css_text));
+    this._textarea = ele.querySelector("textarea");
+    this._textarea.value = css_text;
     setTimeout(function() {
-      textarea.focus();
-      textarea.selectionEnd = textarea.value.length;
-    }, 1);
-  };
-
-  this._tmpl_edit = function(value)
-  {
-    return (
-        ['div',
-          ['_auto_height_textarea',
-            value || '',
-            'handler', 'css-update-new-style',
-            'class', 'css-new-style-sheet'],
-           ['button', ui_strings.S_BUTTON_TEXT_APPLY,
-             'class', 'container-button',
-             'handler', 'apply-new-style'],
-        'class', 'padding']);
+      this._textarea.focus();
+      this._textarea.selectionEnd = this._textarea.value.length;
+    }.bind(this), 0);
   };
 
   this._update_style = function()
   {
-    if (this._stylesheet)
+    var rt_style = this._rt_style_map[this._rt_id];
+    if (rt_style && rt_style.stylesheet_id)
     {
-      var script = "try{style.textContent = \"" + 
-                   helpers.escape_input(this._new_style).replace(/\r?\n/g, "") +
+      rt_style.css_text = this._textarea.value;
+      var script = "try{style.textContent = \"" +
+                     helpers.escape_input(rt_style.css_text).replace(/\r?\n/g, "") +
                    "\";}catch(e){};";
-      this._esdb.requestEval(0, [this._top_rt_id, 0, 0, script, 
-                                 [['style', this._stylesheet]]]);
-      this._current_style = this._new_style;
+      var tag = window.tag_manager.set_callback(this, window.elementStyle.update);
+      window.services['ecmascript-debugger'].requestEval(tag,
+          [this._rt_id, 0, 0, script, [['style', rt_style.stylesheet_id]]]);
     }
     else
     {
@@ -49,71 +41,71 @@ cls.NewStyle = function(id, name, container_class)
     }
   };
 
+  this._create_new_stylesheet = function(event, target)
+  {
+    var tag = window.tag_manager.set_callback(this, this._handle_new_style);
+    var script =
+      "(function() {" +
+      "  return (document.head || document.body || document.documentElement)." +
+      "    appendChild(document.createElement('style'));" +
+      "})();";
+    window.services['ecmascript-debugger'].requestEval(tag, [this._rt_id, 0, 0, script]);
+  };
+
   this._handle_new_style = function(status, message)
   {
-    const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
+    const STATUS = 0;
+    const OBJECT_VALUE = 3;
+    const OBJECT_ID = 0;
     if (status || message[STATUS] != 'completed' || !message[OBJECT_VALUE])
     {
       opera.postError("Not possible to add a new style elment.")
     }
     else
     {
-      this._stylesheet = message[OBJECT_VALUE][OBJECT_ID];
+      this._rt_style_map[this._rt_id].stylesheet_id = message[OBJECT_VALUE][OBJECT_ID];
       this._update_style();
     }
   };
 
-  this._create_new_stylesheet_element = function()
+  this._on_element_selected = function(msg)
   {
-    return (document.head || document.body || document.documentElement).
-           appendChild(document.createElement('style'));
-  };
-
-  this._on_active_tab = function(msg)
-  {
-    if (msg.activeTab[0] && msg.activeTab[0] != this._top_rt_id)
+    if (msg.rt_id != this._rt_id)
     {
-      this._reset();
-      this._top_rt_id = msg.activeTab[0];
+      this._rt_id = msg.rt_id;
+
+      if (!this._rt_style_map[msg.rt_id])
+      {
+        this._rt_style_map[msg.rt_id] = {
+          stylesheet_id: 0,
+          css_text: ""
+        };
+      }
+
+      if (this._textarea)
+      {
+        this._textarea.value = this._rt_style_map[this._rt_id].css_text;
+      }
     }
   };
 
-  this._reset = function()
-  {
-    this._stylesheet = 0;
-    this._new_style = '';
-    this._current_style = '';
-    this._top_rt_id = 0;
-  };
+  window.messages.addListener('element-selected', this._on_element_selected.bind(this));
+  window.eventHandlers.click['apply-new-style'] = this._update_style.bind(this);
 
-  this._create_new_stylesheet = function(event, target)
-  {
-    var tag = this._tagman.set_callback(this, this._handle_new_style);
-    var script = "(" + this._create_new_stylesheet_element.toString() + ")();";
-    this._esdb.requestEval(tag, [this._top_rt_id, 0, 0, script]);
-  };
-
-  this._update_new_style = function(event, target)
-  {
-    this._new_style = target.value;
-  };
-
-  this._init = function(id, name, container_class)
-  {
-    this.init(id, name, container_class);
-    this._esdb = window.services['ecmascript-debugger'];
-    this._tagman = window.tag_manager;
-    this._stylesheet = 0;
-    this._new_style = '';
-    this._current_style = '';
-    this._top_rt_id = 0;
-    window.messages.addListener('active-tab', this._on_active_tab.bind(this));
-    window.eventHandlers.input['css-update-new-style'] =
-      this._update_new_style.bind(this);
-    window.eventHandlers.click['apply-new-style'] =
-      this._update_style.bind(this);
-  };
-
-  this._init(id, name, container_class);
-
+  this.init(id, name, container_class);
 };
+
+cls.NewStyle._template = function(value)
+{
+  return (
+      ['div',
+        ['_auto_height_textarea',
+          value || '',
+          'handler', 'css-update-new-style',
+          'class', 'css-new-style-sheet'],
+         ['button', ui_strings.S_BUTTON_TEXT_APPLY,
+           'class', 'container-button',
+           'handler', 'apply-new-style'],
+      'class', 'padding']);
+};
+
