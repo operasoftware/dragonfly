@@ -8,18 +8,17 @@
     width: 16px;
 }
 
-.errors-table td.location {
+.errors-table tr td.location {
   max-width: 150px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  /* direction: rtl; does funny things with trailing slashes, see http://jsfiddle.net/aEbSW/ */
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.errors-table td.main > pre {
-  /* doesn't have a button to expand, needs to align to those lines though */
-  margin-left: 15px;
+.errors-table tr td.context {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .errors-table button {
@@ -37,12 +36,26 @@
     -o-transform: rotate(90deg);
 }
 
-.errors-table .error-details {
-  display: none;
+.errors-table .expand_cell {
+  border-right: none;
+  padding-right: 0;
 }
 
-.errors-table tr.expanded .error-details {
-  display: table-row;
+.errors-table .main {
+  border-left: none;
+  padding-left: 3px;
+}
+
+/* collapsed */
+.main .mono {
+  height: 16px;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* expanded */
+.expanded .main .mono {
+  height: auto;
 }
 
 .errors-table .severity {
@@ -87,12 +100,4 @@ button[key="request_list.expand-all-entries"]:before
   width: 99%;
   display: block;
   margin: 3px 0;
-}
-
-.errors-table .mono {
-  margin: 0;
-}
-
-.error-details.mono {
-  margin: 4px 0 0 0;
 }

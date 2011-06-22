@@ -185,14 +185,18 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._on_console_message = function(data)
   {
-    // todo: will only take console messages from ECMAScriptDebugger, right?
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
-    this.addentry(message);
-    if (this._filter(message))
+
+    // only take console messages over ECMAScriptDebugger, setting dependend
+    if (!message.context.startswith("console."))
     {
-      this.current_error_count++;
-      window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+      this.addentry(message);
+      if (this._filter(message))
+      {
+        this.current_error_count++;
+        window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+      }
     }
   };
 
@@ -243,7 +247,11 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._on_consolelog = function(data)
   {
+    // todo: this will be replaced by listening to a Dragonfly message.
+    // It will probably only be displayed depending on a setting.
+    /*
     var message = new cls.EcmascriptDebugger["6.0"].ConsoleLogInfo(data);
+    console.log("EcmascriptDebugger ConsoleLogInfo", message, data);
 
     var severities = {
       1: "information",
@@ -280,6 +288,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       source: "ecmascript",
       severity: severities[message.type] || "information"
     });
+    */
   };
 
   this._on_runtime_selected = function(msg)

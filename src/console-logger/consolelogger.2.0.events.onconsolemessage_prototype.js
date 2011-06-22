@@ -4,7 +4,6 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
   {
     this.title = (function()
     {
-      // console.log(this,  this.description);
       var parts = this.description.split("\n");
       if (parts.length)
       {
@@ -27,15 +26,11 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
       return linematch ? linematch[0] : null;
     }).bind(this)();
     
-    this.main = (function()
+    this.desc_without_linenumber_line = (function()
     {
       var main = this.description;
-      if(main)
+      if (main)
       {
-        if (this.title)
-        {
-          main = main.replace(this.title, "");
-        }
         if (this.line_str)
         {
           // remove the line_str if it's followed by a line-break. can probably be solved in the regexp. applies mostly to css errors, not js_errors.

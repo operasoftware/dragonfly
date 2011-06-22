@@ -46,35 +46,10 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
   }
   
   var expandable = true;
-  if (entry.title === (entry.main || entry.description))
+  if (entry.title === entry.description)
   {
     expandable = false;
   }
-
-  var main_column_content = ["pre", entry.title, "class", "mono"];
-  var expandable_main_column_content = [
-    "table",
-      ["tr",
-        [
-          ["td", ["button", "",
-                 "type", "button",
-                 "data-logid", entry.id,
-                 "data-viewid", viewId,
-                 "unselectable", "on"],
-          "class", "expander"],
-          ["td", main_column_content]
-        ]
-      ],
-      ["tr",
-        [
-          ["td"],
-          ["td",
-            ["pre", entry.main]
-          ]
-        ],
-        "class", "mono error-details"
-      ]
-  ];
 
   var source_map = {
     "svg": {
@@ -100,14 +75,25 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     // todo: "persistent_storage"
   };
   
-  var source = source_map[entry.source]
+  var source = source_map[entry.source];
+
+  var expand_button = [
+    ["button", "",
+       "type", "button",
+       "data-logid", entry.id,
+       "data-viewid", viewId,
+       "unselectable", "on",
+       "class", "expander"
+    ]
+  ];
 
   var rows = [
     [
       "tr", [
         ["td", ["span", "class", "resource-icon resource-type-" + (source && source.icon), "title", (source && source.title) || entry.source], "class", "icon"],
+        ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
         ["td",
-          (expandable ? expandable_main_column_content : main_column_content),
+          ["pre", entry.desc_without_linenumber_line, "class", "mono"],
           "class", "main"
         ],
         ["td", entry.context, "class", "context"],
