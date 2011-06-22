@@ -199,7 +199,7 @@ window.cls.PropertyFinder = function(rt_id) {
         });
       });
     }
-    return names;
+    return names.unique();
   }
 
   this.toString = function() {
