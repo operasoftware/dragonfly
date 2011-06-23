@@ -99,7 +99,7 @@
     window.views.js_source.clearLinePointer();
     window.views.callstack.clearView();
     window.views.inspection.clearView();
-    window.stop_at.continue_thread(mode);
+    window.stop_at.continue_thread(mode, true);
     return false;
   };
 
