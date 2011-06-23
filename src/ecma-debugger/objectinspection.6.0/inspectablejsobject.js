@@ -233,7 +233,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + ' failed to examine object');
     }
-    else
+    // This is a async callback. The tree could already be collapsed.
+    else if(tree)
     {
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
       for (i = 0; proto = proto_chain[i]; i++)

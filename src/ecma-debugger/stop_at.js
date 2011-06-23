@@ -176,7 +176,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   var parseBacktrace = function(status, message, stop_at)
   {
-
     const
     FRAME_LIST = 0,
     // sub message BacktraceFrame
@@ -273,9 +272,11 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
   }
 
-  this.__continue = function (mode) //
+  this.__continue = function (mode, clear_disabled_state) //
   {
-    var tag = tag_manager.set_callback(this, this._handle_continue, [mode]);
+    var tag = tag_manager.set_callback(this, 
+                                       this._handle_continue,
+                                       [mode, clear_disabled_state]);
     var msg = [stopAt.runtime_id, stopAt.thread_id, mode];
     services['ecmascript-debugger'].requestContinueThread(tag, msg);
   }
@@ -284,18 +285,21 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   {
     if (this.is_stopped)
     {
-      this.__continue(mode);
+      this.__continue(mode, true);
     }
   }
   
-  this._handle_continue = function(status, message, mode)
+  this._handle_continue = function(status, message, mode, clear_disabled_state)
   {
-    __controls_enabled = false;
     callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
-    toolbars.js_source.disableButtons('continue');
+    if (clear_disabled_state)
+    {
+      __controls_enabled = false;
+      toolbars.js_source.disableButtons('continue');
+    }
     messages.post('host-state', {state: 'ready'});
   }
 
@@ -387,7 +391,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
     else
     {
-      throw 'not a line number: '+stopAt.line_number;
+      opera.postError('not a line number: ' + stopAt.line_number + '\n' + 
+                      JSON.stringify(stopAt))
     }
   }
 
