@@ -248,6 +248,40 @@ cls.CSSInspectorActions = function(id)
   };
 
   /**
+   * Restores all properties, except `exception`.
+   *
+   * @param {String} exception Do not restore a property with this name. Useful when
+   *                           restoring all properties except an overwritten one
+   */
+  this.restore_all_properties = function(exception, callback)
+  {
+    var style_dec = this.editor.saved_style_dec;
+    var rule_id = this.editor.context_rule_id;
+    var length = style_dec[INDEX_LIST].length;
+    var script = "object.style.cssText = '';";
+
+    for (var i = 0; i < length; i++)
+    {
+      var prop = window.css_index_map[style_dec[INDEX_LIST][i]];
+      if (prop != exception)
+      {
+        script += "object.style.setProperty(\"" +
+                     prop + "\", \"" +
+                     helpers.escape_input(style_dec[VALUE_LIST][i]) + "\", " +
+                     (style_dec[PRIORITY_LIST][i] ? "\"important\"" : null) +
+                  ");";
+      }
+    }
+
+    if (script)
+    {
+      var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+      services['ecmascript-debugger'].requestEval(tag,
+        [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+    }
+  };
+
+  /**
    * Enables one property.
    *
    * @param {String} property The property to enable
