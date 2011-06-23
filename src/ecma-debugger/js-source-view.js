@@ -129,12 +129,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateBreakpoints = function(force_repaint)
   {
-    if (force_repaint)
+    if (force_repaint && line_numbers)
     {
       line_numbers.style.visibility = "hidden";
     }
-    var lines = line_numbers.getElementsByTagName('span');
-    var bp_states = __current_script.breakpoint_states;
+    var lines = line_numbers && line_numbers.getElementsByTagName('span');
+    var bp_states = __current_script && __current_script.breakpoint_states;
     var default_y = context['bp-line-pointer-default'];
     var line_height = context['line-height'];
     if (bp_states)
