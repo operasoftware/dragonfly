@@ -276,6 +276,9 @@ var DOMSearch = function(min_length)
       else
       {
         this._model = null;
+        this._match_nodes = null;
+        this._match_count = 0;
+        this._hits = [];
         this._handle_search();
         this._update_info(EMPTY);
       }
