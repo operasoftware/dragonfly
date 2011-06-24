@@ -64,6 +64,15 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
+if (typeof document.createElement('div').classList == 'undefined')
+{
+  Element.prototype.__defineGetter__('classList', function()
+  {
+    return this.className.split(/\s+/);
+  });
+  Element.prototype.__defineSetter__('classList', function(){});
+}
+
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM

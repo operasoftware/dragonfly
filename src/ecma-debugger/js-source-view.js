@@ -170,6 +170,10 @@ cls.JsSourceView = function(id, name, container_class)
         var highlight_class, bp_state;
         for (var i = 0, line; line = lines[i]; i++)
         {
+          if (line.parentNode != source_content)
+          {
+            continue;
+          }
           highlight_class = "";
           
           if (bp_state = bp_states[__current_line + i])
@@ -177,8 +181,18 @@ cls.JsSourceView = function(id, name, container_class)
             highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
                               BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
           }
-          
-          line.className = highlight_class;
+          if (line.className.indexOf('error') > -1)
+          {
+            line.className = Array.prototype.filter.call(line.classList, 
+                                                         function(cl_name)
+            {
+              return cl_name.indexOf('error') > -1;
+            }).join(' ') + ' ' + highlight_class;
+          }
+          else
+          {
+            line.className = highlight_class;
+          }
         }
       }
     }
@@ -516,7 +530,8 @@ cls.JsSourceView = function(id, name, container_class)
     {
       is_parse_error = true;
     }
-    if (__current_script.script_id != script_id || is_parse_error)
+    var is_current_script = __current_script.script_id == script_id;
+    if (!is_current_script || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
 
@@ -539,7 +554,7 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.parse_error.error_line_offset =
             script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
         }
-        if (is_visible)
+        if (is_visible && !is_current_script)
         {
           setScriptContext(script_id, line_nr);
         }
@@ -596,7 +611,7 @@ cls.JsSourceView = function(id, name, container_class)
             __current_line / __current_script.line_arr.length * scroll_container.scrollHeight;
         }
       }
-      if(__current_script.parse_error)
+      if (__current_script.parse_error)
       {
         views.js_source.showLinePointer(__current_script.parse_error.error_line + 1, true )
       }
