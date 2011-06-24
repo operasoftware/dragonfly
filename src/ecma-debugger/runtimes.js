@@ -546,6 +546,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   this.createAllRuntimesOnDebugContextChange = function(win_id)
   {
     debug_context_frame_path = '';
+    __windows_reloaded = {};
     __selected_script = '';
     /*
     if( _is_first_call_create_all_runtimes_on_debug_context_change )
