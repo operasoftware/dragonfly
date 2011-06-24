@@ -241,11 +241,14 @@
   
   this._handlers["show-search"] = function(action_id, event, target)
   {
-    var action_id = ActionBroker.get_instance().get_current_handler_id();
-    var search = UI.get_instance().get_search(action_id);
+    var ui = UI.get_instance();
+    var search = ui.get_visible_tabs().filter(function(view_id)
+    {
+      return view_id.indexOf('search') > -1;
+    })[0];
     if (search)
     {
-      search.show();
+      ui.show_view(search).focus_search_field();
       return false;
     }
   }

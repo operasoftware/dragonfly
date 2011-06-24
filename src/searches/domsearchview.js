@@ -28,6 +28,11 @@ cls.DOMSearchView = function(id, name, container_class)
     setTimeout(this._focus_input, 50);
   };
 
+  this.focus_search_field = function()
+  {
+    this._focus_input();
+  }
+
   this._focus_input = function()
   {
     if (this._input)
