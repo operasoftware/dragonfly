@@ -176,6 +176,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
 <link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
+<link rel="stylesheet" href="./ui-scripts/ruler/style.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 <link rel="stylesheet" href="./network/network_style.css"/>
@@ -254,6 +255,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/editor.js"/>
+<script src="./ui-scripts/ruler/ruler.js"/>
+<script src="./ui-scripts/ruler/templates.js"/>
 <script src="./searches/TextSearch.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>

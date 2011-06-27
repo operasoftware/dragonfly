@@ -42,7 +42,7 @@
 
 	this._get_scales = function(label_width, scale)
 	{
-		return SCALES[label_width].map(function(s){return ruler.scale * s});
+		return SCALES[label_width].map(function(s){return scale * s});
 	};
 
 	this._ruler_top_scale = function(scales)

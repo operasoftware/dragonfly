@@ -12,6 +12,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     if (this._scale_control)
     {
       this._scale_control.value = msg.scale;
+      this._ruler.scale = msg.scale;
     }
   };
 
@@ -23,6 +24,32 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
       var tmpl = this._sample_color_template(this._sample_color.setRGB(msg.color));
       this._sample_color_container.clearAndRender(tmpl);
       this._update_sample_colors();
+    }
+  };
+
+  this._onviewcreated = function(msg)
+  {
+    if (msg.id == "screenshot")
+    {
+      this._ruler.set_container(msg.container);
+    }
+  };
+
+  this._onrulerdimesions = function(ruler)
+  {
+    if (this._ruler_dimensions)
+    {
+      this._ruler_dimensions.textContent = 
+        "width: " + ruler.w +"px\n" +
+        "height: " + ruler.h +"px";
+    }
+  };
+
+  this._onrulerclose = function(ruler)
+  {
+    if (this._ruler_dimensions)
+    {
+      this._ruler_dimensions.textContent = "";
     }
   };
 
@@ -65,6 +92,9 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color_container = null;
     this._sample_colors = null;
     this._sample_color_template = window.templates.sample_color;
+    this._ruler = new cls.Ruler();
+    this._ruler.callback = this._onrulerdimesions.bind(this);
+    this._ruler.onclose = this._onrulerclose.bind(this);
     var setting_map = 
     {
       'sample-size': 3, 
@@ -84,10 +114,12 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._screenshot = new cls.ScreenShotView('screenshot', "Screen Shot", "screenshot");
     window.eventHandlers.click['screenshot-update'] = this._handlers['screenshot-update'];
     window.eventHandlers.click['screenshot-store-color'] = this._handlers['screenshot-store-color'];
+    window.eventHandlers.click['screenshot-show-ruler'] = this._handlers['screenshot-show-ruler'];
     window.eventHandlers.input['screenshot-zoom'] = this._handlers['screenshot-zoom'];
     window.eventHandlers.input['screenshot-sample-size'] = this._handlers['screenshot-sample-size'];
     window.messages.addListener('screenshot-scale', this._onscalechange.bind(this));
     window.messages.addListener('sceenshot-sample-color', this._onsamplecolor.bind(this));
+    window.messages.addListener('view-created', this._onviewcreated.bind(this));
     this._screenshot.set_sample_size(this._settings.get('sample-size'));
   };
 
@@ -110,7 +142,9 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       this._screenshot = window.views.screenshot;
     }
-    this._screenshot.zoom_center(parseInt(event.target.value));
+    var scale = parseInt(event.target.value);
+    this._screenshot.zoom_center(scale);
+    this._ruler.scale = scale;
   }.bind(this);
 
   this._handlers['screenshot-sample-size'] = function(event, target)
@@ -129,15 +163,24 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     cls.ColorPalette.get_instance().store_color(event.target.getAttribute('data-color'));
   };
 
+  this._handlers['screenshot-show-ruler'] = function(event, target)
+  {
+    this._ruler.show_ruler(window.views.screenshot.get_container());;
+  }.bind(this);
+
   /* implementation */
 
   this.createView = function(container)
   {
-    container.clearAndRender(window.templates.scrennshot_controls(this._sample_color));
+    var tmpl = window.templates.scrennshot_controls(this._sample_color);
+    container.clearAndRender(tmpl);
     this._scale_control = container.getElementsByTagName('input')[0];
     this._sample_size_control = container.getElementsByTagName('input')[1];
     this._sample_size_control.value = this._settings.get('sample-size');
-    this._sample_color_container = container.getElementsByClassName('screenshot-sample-container')[0];
+    this._sample_color_container = 
+      container.getElementsByClassName('screenshot-sample-container')[0];
+    this._ruler_dimensions = 
+      container.getElementsByClassName('screenshot-ruler-dimensions')[0];
     this._update_sample_colors();
   };
 
@@ -146,6 +189,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._scale_control = null;
     this._sample_size_control = null;
     this._sample_color_container = null;
+    this._ruler_dimensions = null;
     UIWindowBase.closeWindow('color-selector');
   }
 
