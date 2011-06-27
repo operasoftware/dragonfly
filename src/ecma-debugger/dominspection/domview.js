@@ -22,6 +22,9 @@ cls.DOMView = function(id, name, container_class)
       container.clearAndRender(window.templates.inspected_dom_node(window.dom_data, 
                                                                    model && model.target, 
                                                                    true));
+      container.firstElementChild.addEventListener('mouseleave',
+                                                   this._clear_soft_spotlight,
+                                                   false);
       if (!window.helpers.scroll_dom_target_into_view())
       {
         container.scrollTop = scrollTop;
@@ -45,6 +48,11 @@ cls.DOMView = function(id, name, container_class)
     {
       this._create_view_no_data_timeout = setTimeout(this._create_view_no_data, 100, container);
     }
+  };
+
+  this._clear_soft_spotlight = function()
+  {
+    window.hostspotlighter.spotlight(window.dom_data.target);
   };
 
   this._create_view_no_data_timeout = 0;
