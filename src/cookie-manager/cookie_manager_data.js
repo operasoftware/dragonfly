@@ -169,7 +169,7 @@ cls.CookieManager.CookieDataBase = function()
       {
         return false;
       }
-      else if(service_version[i] > compare_version[i])
+      else if (service_version[i] > compare_version[i])
       {
         return true;
       }
@@ -214,7 +214,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._handle_cookies = function(status, message, rt_id, active_tab_counter)
   {
-    if(this._active_tab_counter === active_tab_counter)
+    if (this._active_tab_counter === active_tab_counter)
     {
       var rt = this._rts[rt_id] || {};
       if (status === 0)
@@ -283,7 +283,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._handle_js_retrieved_cookies = function(status, message, rt_id, active_tab_counter)
   {
-    if(this._active_tab_counter === active_tab_counter)
+    if (this._active_tab_counter === active_tab_counter)
     {
       const STATUS = 0;
       const DATA = 2;
@@ -317,7 +317,7 @@ cls.CookieManager.CookieDataBase = function()
   this._check_to_add_local_to_domain = function(domain)
   {
     // work around CORE-37379 by adding ".local" to domain names if they seem local
-    if(domain && domain.indexOf(".") === -1 || domain.match(/^[0-9]+$/))
+    if (domain && domain.indexOf(".") === -1 || domain.match(/^[0-9]+$/))
     {
       domain += ".local";
     }

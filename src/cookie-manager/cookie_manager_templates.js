@@ -56,7 +56,7 @@ templates.cookie_manager = {
   input_datetime_container: function(name, value) {
     var lz = helpers.make_leading_zero_string;
     var datetime_local_val;
-    if(value)
+    if (value)
     {
       datetime_local_val= new Date(value).toLocaleISOString();
     }
@@ -112,9 +112,8 @@ templates.cookie_manager = {
       return [
         "select", option_arr,
         "name", "add_cookie_runtime",
-        "handler", "cookiemanager-add-cookie-domain-select",
         "class", "add_cookie_dropdown",
-        "handler", "cookiemanager-input-field" // <<< Todo: handler set twice? wtf?
+        "handler", "cookiemanager-input-field"
       ];
     }
   },
@@ -155,11 +154,11 @@ templates.cookie_manager = {
     return [this.path(path), this.edit_container(edit_elem)];
   },
   expires: function(date_in_seconds, objectref) {
-    if(date_in_seconds === undefined)
+    if (date_in_seconds === undefined)
     {
       return this.value_container(this.unknown_value());
     }
-    if(date_in_seconds === 0)
+    if (date_in_seconds === 0)
     {
       return this.value_container(this.expires_0values());
     }
@@ -168,7 +167,7 @@ templates.cookie_manager = {
   },
   editable_expires: function(date_in_seconds, objectref) {
     var editing_default = date_in_seconds;
-    if(date_in_seconds === undefined)
+    if (date_in_seconds === undefined)
     {
        editing_default = new Date().getTime() / 1000 + 60 * 60; // if expiry is unknown, editing default is in one hour
     }

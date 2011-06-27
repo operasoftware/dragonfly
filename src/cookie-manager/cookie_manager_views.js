@@ -55,7 +55,7 @@ cls.CookieManager.CookieManagerViewBase = function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return window.templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
+            return templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
           }
         }
       },
@@ -63,7 +63,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       idgetter: function(res) { return res._objectref },
       columns: {
         domain: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN),
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
@@ -72,62 +72,62 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("domain")
         },
         name: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME),
           classname: "col_name",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_name(obj.name);
+            return templates.cookie_manager.editable_name(obj.name);
           },
           sorter: this._make_sorter("name")
         },
         value: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE),
           classname: "col_value",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_value(obj.value);
+            return templates.cookie_manager.editable_value(obj.value);
           },
           sorter: this._make_sorter("value")
         },
         path: {
-          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
           classname: "col_path",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_path(obj.path);
+            return templates.cookie_manager.editable_path(obj.path);
           },
           sorter: this._make_sorter("path")
         },
         expires: {
-          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
           classname: "col_expires",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
+            return templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
           },
           sorter: this._make_sorter("expires")
         },
         isSecure: {
-          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
           renderer: this._is_secure_renderer.bind(this),
           align: "center",
           sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
-          label: window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
           renderer: this._is_http_only_renderer.bind(this),
           align: "center",
@@ -158,11 +158,11 @@ cls.CookieManager.CookieManagerViewBase = function()
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
-      if(obj_a._is_runtime_placeholder)
+      if (obj_a._is_runtime_placeholder)
       {
         return Infinity;
       }
-      if(obj_b._is_runtime_placeholder)
+      if (obj_b._is_runtime_placeholder)
       {
         return -Infinity;
       }
@@ -280,7 +280,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
-    if(event.ctrlKey && target.hasClass("selected"))
+    if (event.ctrlKey && target.hasClass("selected"))
     {
       target.removeClass("selected");
     }
@@ -317,7 +317,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
       var runtime_id = (cookie_object && cookie_object._rt_id) || null;
-      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
+      var templ = document.documentElement.render(templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted); // todo: check if it's nicer if a added row does not get selected, but the class gives it a selection-like style
@@ -485,7 +485,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._clear_container = function()
   {
-    if(this._container)
+    if (this._container)
     {
       this._container.innerHTML = "";
     }
@@ -647,7 +647,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts);
+    return templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts);
   }
 
   this._is_secure_renderer = function(obj)
@@ -656,7 +656,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    return window.templates.cookie_manager.secure(obj.isSecure);
+    return templates.cookie_manager.secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -665,7 +665,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    return window.templates.cookie_manager.http_only(obj.isHTTPOnly);
+    return templates.cookie_manager.http_only(obj.isHTTPOnly);
   }
   // END DEPENDENT ON SERVICE VERSION
 };
@@ -698,7 +698,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    return window.templates.cookie_manager.all_editable_domain(obj._rt_id, this.data._rts, obj.domain);
+    return templates.cookie_manager.all_editable_domain(obj._rt_id, this.data._rts, obj.domain);
   }
 
   this._is_secure_renderer = function(obj)
@@ -707,7 +707,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    return window.templates.cookie_manager.editable_secure(obj.isSecure);
+    return templates.cookie_manager.editable_secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -716,7 +716,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
+    return templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
   }
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
@@ -731,7 +731,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
       var default_domain = (cookie_object && cookie_object._rt_hostname) || "";
-      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
+      var templ = document.documentElement.render(templates.cookie_manager.add_cookie_row_all_editable(default_domain));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted);

@@ -53,7 +53,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
 
   this._after_table_render = function(table)
   {
-    if(table)
+    if (table)
     {
       if (this._restore_selection)
       {

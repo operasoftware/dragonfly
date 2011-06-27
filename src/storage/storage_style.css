@@ -12,6 +12,7 @@ input[type='datetime-local'] {
 .storage_view .sortable-table td, .storage_view .sortable-table th {
   vertical-align: top;
   word-wrap: break-word;
+  min-width: 18px;
 }
 
 .storage_view .replaced-val {

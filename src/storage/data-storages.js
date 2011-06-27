@@ -33,11 +33,11 @@ cls.StorageDataBase = new function()
   {
     var items = [];
     var storages = this.get_storages();
-    if(storages)
+    if (storages)
     {
       for (var id in storages) {
         var storage = storages[id];
-        if(storage)
+        if (storage)
         {
           for (var item, j=0; item = storage.storage[j]; j++) {
             item._rt_id = storage.rt_id;
@@ -350,11 +350,11 @@ cls.StorageDataBase = new function()
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
-      if(obj_a._is_runtime_placeholder)
+      if (obj_a._is_runtime_placeholder)
       {
         return Infinity;
       }
-      if(obj_b._is_runtime_placeholder)
+      if (obj_b._is_runtime_placeholder)
       {
         return -Infinity;
       }
