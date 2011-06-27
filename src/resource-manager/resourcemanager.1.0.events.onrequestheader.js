@@ -13,7 +13,6 @@ cls.ResourceManager["1.0"].RequestHeader = function(arr)
   {
     return new cls.ResourceManager["1.0"].Header(item);
   });
-  this.toString = function() { return "[message RequestHeader]"; }
 };
 
 cls.ResourceManager["1.0"].Header = function(arr)
