@@ -198,6 +198,8 @@ var TabsBase = function()
 
       }
 
+      messages.post("before-show-view", {id: view_id});
+
       this.cell.setup();
 
       this._history[this._history.length] = this.activeTab;

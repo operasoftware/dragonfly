@@ -278,6 +278,9 @@ cst-icon[class="debugger-menu"] {
 .utils {
     background: url("../ui-images/mode_utilities.png");
 }
+.console_panel {
+    background: url("../ui-images/mode_console.png");
+}
 
 button.ui-control::before,
 .container-button:empty::before {

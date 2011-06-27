@@ -95,6 +95,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._create_structure(container);
     }
 
+    this.focus();
+
     // Always render the lines of data
     this._update_runtime_selector_bound();
     this._update();

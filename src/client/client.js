@@ -306,7 +306,7 @@ window.cls.Client = function()
                       services);
     new CompositeView('console_mode',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
-                      layouts.console_rough_layout,
+                      layouts.error_console_rough_layout,
                       null,
                       services);
     new CompositeView('utils',
@@ -317,6 +317,9 @@ window.cls.Client = function()
     new CompositeView('resource_panel',
                       ui_strings.M_VIEW_LABEL_RESOURCES,
                       layouts.resource_rough_layout);
+    new CompositeView('console_panel',
+                      ui_strings.M_VIEW_LABEL_COMMAND_LINE,
+                      layouts.console_rough_layout);
   }
 
   this.create_window_controls = function()
@@ -380,7 +383,7 @@ window.cls.Client = function()
       // a short workwround to hide some tabs as long as we don't have the dynamic tabs
       var
       is_disbaled = null,
-      tabs = ui_framework.layouts.console_rough_layout.children[0].tabs,
+      tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
       i = 0;
 
@@ -457,7 +460,7 @@ window.cls.Client = function()
 
 }
 
-ui_framework.layouts.console_rough_layout =
+ui_framework.layouts.error_console_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
   children:
@@ -610,6 +613,14 @@ ui_framework.layouts.storage_rough_layout =
     } ]
 }
 
+ui_framework.layouts.console_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
@@ -629,7 +640,8 @@ ui_framework.layouts.main_layout =
       'resource_panel',
       'storage',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
-      'utils'
+      'utils',
+      'console_panel'
     ];
   }
 };

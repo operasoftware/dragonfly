@@ -152,13 +152,6 @@
       UIWindowBase.showWindow('command_line',
                               Math.ceil(innerHeight/2), 0,
                               innerWidth, Math.floor(innerHeight/2));
-      setTimeout(function() {
-        var ele = window.views.command_line.get_container();
-        if (ele)
-        {
-          (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
-        }
-      }, 0);
     }
     else
     {
@@ -309,6 +302,20 @@
   /* instatiation */
 
 
+  /* message handling */
+
+  messages.addListener("before-show-view", function(msg) {
+    if (msg.id == "console_panel")
+    {
+      var is_visible = (window.views.command_line && window.views.command_line.isvisible());
+      if (is_visible)
+      {
+        var button = UI.get_instance().get_button("toggle-console");
+        is_visible ? button.removeClass("is-active") : button.addClass("is-active");
+        UIWindowBase.closeWindow('command_line');
+      }
+    }
+  });
 }
 
 

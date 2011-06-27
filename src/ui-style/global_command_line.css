@@ -1,5 +1,9 @@
 ﻿/* TODO: some of this should be merged into syntax-highlight.css */
 
+container.console {
+    background: #262626;
+}
+
 .console textarea {
     background: transparent;
     color: #fff;
@@ -51,3 +55,6 @@
   background: #000;
 }
 
+.console .inspect-object-link:hover {
+  background: #000;
+}

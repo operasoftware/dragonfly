@@ -593,10 +593,6 @@ pre.inspect-object-link {
   color: blue;
   }
 
-.inspect-object-link:hover {
-  background: #000;
-  }
-
 breadcrumb span
 {
   display:inline-block;
