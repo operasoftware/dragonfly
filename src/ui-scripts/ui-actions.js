@@ -2,8 +2,12 @@
   * @constructor 
   */
 
-var EventHandler = function(type, is_capturing, handler_key)
+var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
 {
+  if (typeof cancel_bubble != 'boolean')
+  {
+    cancel_bubble = true;
+  }
   handler_key = handler_key ? handler_key : 'handler';
   if(!window.eventHandlers)
   {
@@ -35,21 +39,23 @@ var EventHandler = function(type, is_capturing, handler_key)
       return;
     }
 
-    handler = ele.getAttribute(handler_key);
-
-    while( !(handler && eventHandlers[type][handler]) && (ele = ele.parentNode) )
+    while (ele)
     {
-      handler = ele.nodeType == 1 ? ele.getAttribute(handler_key) : null;
-    }
-
-    if( handler && ele )
-    {
-      if( type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName) )
+      handler = ele.getAttribute(handler_key);
+      while (!(handler && eventHandlers[type][handler]) && (ele = ele.parentNode))
       {
-        container = 
-          document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
+        handler = ele.nodeType == 1 ? ele.getAttribute(handler_key) : null;
       }
-      eventHandlers[type][handler](event, ele, container);
+      if (handler && ele)
+      {
+        if (type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName))
+        {
+          container = 
+            document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
+        }
+        eventHandlers[type][handler](event, ele, container);
+      }
+      ele = cancel_bubble ? null : ele && ele.parentNode;
     }
   }
 
@@ -74,7 +80,7 @@ new EventHandler('keypress', true);
 new EventHandler('mousedown');
 new EventHandler('mouseup');
 new EventHandler('mouseout');
-new EventHandler('mouseover');
+new EventHandler('mouseover', null, null, false);
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
 new EventHandler('mousewheel');
@@ -87,7 +93,7 @@ eventHandlers.mousedown['tab'] = function(event, target)
   var view_id = target.get_attr('parent-node-chain', 'ref-id');
   if( tabs )
   {
-    tabs.setActiveTab(view_id);
+    tabs.setActiveTab(view_id, null, event);
   }
   else
   {
@@ -283,34 +289,3 @@ eventHandlers.change['checkbox-setting'] = function(event)
     views.settings_view.syncSetting(view_id, ele.name, ele.checked);
   }
 }
-
-eventHandlers.focus['focus'] = function(event, target)
-{
-  var parent = event.target.parentNode;
-  if( parent.nodeName.toLowerCase() == 'filter' )
-  {
-    parent.firstChild.textContent = '';
-    parent.addClass('focus');
-    if(event.target.value)
-    {
-      event.target.selectionStart = 0;
-      event.target.selectionEnd = event.target.value.length;
-
-    }
-  }
-}
-
-eventHandlers.blur['blur'] = function(event, target)
-{
-  var parent = event.target.parentNode;
-  if( parent.nodeName.toLowerCase() == 'filter' )
-  {
-    if( !event.target.value )
-    {
-      parent.firstChild.textContent = event.target.getAttribute('default-text');
-      
-    }
-    parent.removeClass('focus');
-  }
-}
-

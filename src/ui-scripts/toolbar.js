@@ -23,12 +23,6 @@ var ToolbarBase = function()
       style.display = "none";
   }
 
-  this.attributes =
-  {
-    'focus-handler': 'focus',
-    'blur-handler': 'blur'
-  }
-
   this.getTopPosition = function()
   {
     return this.cell.top + (this.cell.tab ? this.cell.tab.offsetHeight : 0);
@@ -212,7 +206,6 @@ var ToolbarBase = function()
       } 
       if(this.customs.length)
       {
-       
         var custom = null, i = 0;
         for( ; custom = this.customs[i]; i++)
         {

@@ -86,9 +86,7 @@
       {
         var toolbar = div.render(['panel-toolbar',
                                   'id', 'panel-toolbar-' + obj.id,
-                                  'ui-id', toolbars[view.id].id,
-                                  'focus-handler', 'focus',
-                                  'blur-handler', 'blur']);
+                                  'ui-id', toolbars[view.id].id]);
         toolbars[view.id].addContainerId('panel-toolbar-' + obj.id);
         this._toolbar.create_toolbar_content(view.id, toolbar)
       }
@@ -113,7 +111,7 @@
   this._hide_view = function(obj, div)
   {
     var view = window.views[obj.view_id];
-    if (view)
+    if (view && div)
     {
       div.removeClass('unfolded');
       var container = div.getElementsByTagName('panel-container')[0];

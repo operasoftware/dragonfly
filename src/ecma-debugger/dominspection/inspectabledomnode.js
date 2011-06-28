@@ -11,7 +11,23 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode =
 cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id, obj_id)
 {
   this._init(rt_id, obj_id);
-}
+};
+
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.OBJECT_ID = 0;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.TYPE = 1;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.NAME = 2;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.DEPTH = 3;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.NAMESPACE_PREFIX = 4;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.ATTRIBUTE_LIST = 5;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CHILDREN_LENGTH = 6;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.VALUE = 7;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PUBLIC_ID = 8;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.SYSTEM_ID = 9;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.RUNTIME_ID = 10;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CONTENT_DOCUMENT = 11;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
@@ -23,14 +39,18 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   NAME = 2, 
   DEPTH = 3,
 
-
   ATTRS = 5,
   ATTR_PREFIX = 0,
   ATTR_KEY = 1, 
   ATTR_VALUE = 2,
   CHILDREN_LENGTH = 6, 
   PUBLIC_ID = 4,
-  SYSTEM_ID = 5;
+  SYSTEM_ID = 5,
+  MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
+  TRAVERSE_SEARCH = "search",
+  TRAVERSAL = 1,
+  SEARCH_PARENT = 2,
+  SEARCH_HIT = 3;
 
   this._set_mime = function()
   {
@@ -72,6 +92,45 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._get_dom(object_id, traverse_type || "children", cb);
   }
 
+  // this method is only supported in ECMAScriptDebugger 6.5 and higher
+  this.search = function(query, type, ignore_case, object_id, cb)
+  {
+    this._isprocessing = true;
+    var tag = window.tag_manager.set_callback(this, 
+                                              this.__handle_dom, 
+                                              [object_id, TRAVERSE_SEARCH, cb]);
+    this.search_type = type;
+    var msg = [this._data_runtime_id, 
+               query, 
+               type, 
+               object_id || null, 
+               ignore_case || 0];
+    services['ecmascript-debugger'].requestSearchDom(tag, msg);
+  };
+
+  // this method makes only sense with ECMAScriptDebugger 6.5 and higher
+  this.get_match_count = function()
+  {
+    var i = 0, count = 0, length = this._data ? this._data.length : 0;
+    for (; i < length; i++)
+    {
+      if (this._data[i][MATCH_REASON] == SEARCH_HIT)
+      {
+        count++;
+      }
+    }
+    return count;
+  };
+
+  // this method makes only sense with ECMAScriptDebugger 6.5 and higher
+  this.clear_search = function()
+  {
+    for (var i = 0; this._data[i]; i++)
+    {
+      this._data[i][MATCH_REASON] = TRAVERSAL;
+    };
+  };
+
   this._get_dom = function(object_id, traverse_type, cb)
   {
     this._isprocessing = true;
@@ -82,7 +141,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   this.__handle_dom = function(status, message, object_id, traverse_type, cb)
   {
     var
-    _data = message[NODE_LIST],  
+    _data = message[NODE_LIST] || [],  
     error_ms = ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'this.__handle_dom failed in DOMBaseData',
     splice_args = null,
     i = 0;
@@ -92,10 +151,14 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       switch (traverse_type)
       {
         // traverse_type 'node' so far not supported
+        case TRAVERSE_SEARCH:
         case "parent-node-chain-with-children":
         {
-          this._data = _data;
-          break;
+          if (traverse_type != "search" || !object_id)
+          {            
+            this._data = _data;
+            break;
+          }
         }
         case "subtree":
         case "children":
@@ -104,10 +167,33 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           for (; this._data[i] && this._data[i][ID] != object_id; i++);
           if (this._data[i])
           {
+            // A search with an object_id searches only in the subtree 
+            // of that node, but returns a tree with the ancestor up 
+            // to the document.
+            // For the use case in Dragonfly we cut away the chain from 
+            // the object up to the document.
+            if (traverse_type == "search") 
+            {
+              this.clear_search();
+              for (var j = 0; _data[j] && _data[j][ID] != object_id; j++);
+              if (_data[j])
+              {
+                _data = _data.slice(j);
+              }
+            }
             // if object_id matches the one of the first node 
             // of the return data the traversal was subtree
-            splice_args = object_id == _data[0][ID] ? [i, 1] : [i + 1, 0];
-            Array.prototype.splice.apply(this._data, splice_args.concat(_data));
+            // a search can return no data 
+            if (_data[0])
+            { 
+              splice_args = [i + 1, 0];
+              if (object_id == _data[0][ID])
+              {
+                this.collapse(object_id);
+                splice_args = [i, 1]
+              }
+              Array.prototype.splice.apply(this._data, splice_args.concat(_data));
+            }
           }
           else if (!this._data.length)
             this._data = _data;
@@ -120,8 +206,15 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       if (cb)
         cb();
     }
+    else if(traverse_type == "search")
+    {
+      this._data = [];
+      cb();
+    }
     else
+    {
       opera.postError(error_ms + ' ' + JSON.stringify(message));
+    }
     this._isprocessing = false;
   };
 
@@ -143,7 +236,10 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       j = i;
       while (this._data[j] && this._data[j][DEPTH] > level) 
         j++;
-      this._data.splice(i, j - i);
+      if (j - i)
+      {
+        this._data.splice(i, j - i);
+      }
     }
     else
     {
@@ -238,7 +334,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this.has_data = function()
   {
-    return Boolean(this._data.length);
+    return Boolean(this._data && this._data.length);
   }
 
   this.has_node = function(node_id)
@@ -300,4 +396,3 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   };
 
 };
-

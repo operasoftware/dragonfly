@@ -1,4 +1,5 @@
-﻿var Search = function(view_id, searchbar, searchwindow)
+﻿
+var Search = function(view_id, searchbar, searchwindow)
 {
   this._init(view_id, searchbar, searchwindow);
 };
@@ -20,6 +21,9 @@ Search.prototype = new function()
   this.get_searchbar = function(){};
 
   this.update_search = function(){};
+
+  this.search_type;
+  this.ignore_case;
 
   /* constants */
   
@@ -75,7 +79,10 @@ Search.prototype = new function()
     if (ele && !ele.firstChild)
     {
       this._simple_text_search.set_container(this._container);
-      ele.render(window.templates.searchbar_content(this));
+      var tmpl = this._searchbar.template ?
+                 this._searchbar.template(this) :
+                 window.templates.searchbar_content(this);
+      ele.render(tmpl);
       cur = ele.getElementsByTagName('info')[0];
       this._simple_text_search.set_info_element(cur);
       cur = ele.getElementsByTagName('filter')[0].getElementsByTagName('input')[0];
@@ -86,7 +93,7 @@ Search.prototype = new function()
   
   this._onsearchbar_remove = function(){};
 
-  this._onviewcreated = function(msg)
+  this._onshowview = function(msg)
   {
     if (msg.id == this._view_id)
     {
@@ -243,10 +250,14 @@ Search.prototype = new function()
     this._beforesearch_bound = this._beforesearch.bind(this);
     if (searchbarclass)
     {
-      this._searchbar = new searchbarclass();
+      this._searchbar = typeof searchbarclass == 'function' ?
+                        new searchbarclass() :
+                        searchbarclass;
       this._searchbar.add_listener("searchbar-created", 
                                    this._onsearchbar_created.bind(this));
-      this._simple_text_search = new simplesearchclass();
+      this._simple_text_search = typeof simplesearchclass == 'function' ?
+                                 new simplesearchclass() :
+                                 simplesearchclass;
       this._simple_text_search.add_listener('onbeforesearch',
                                             this._beforesearch_bound);
       this.controls.push({
@@ -267,7 +278,7 @@ Search.prototype = new function()
                            title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
                          });
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
-      messages.addListener('show-view', this._onviewcreated.bind(this));
+      messages.addListener('show-view', this._onshowview.bind(this));
       eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
         this._onsearchfieldinput.bind(this)
       eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
@@ -382,7 +393,7 @@ Search.prototype = new function()
     {
       if (this._mode == MODE_SEARCHBAR)
       {
-        this._simple_text_search.update();
+        this._simple_text_search.update_search();
       }
       else
       {
@@ -398,6 +409,21 @@ Search.prototype = new function()
   {
     return this._is_active && this._searchbar && this._mode == MODE_SEARCHBAR;
   });
+
+  [
+    'search_type',
+    'ignore_case',
+    'search_only_selected_node',
+  ].forEach(function(prop)
+  {
+    this.__defineGetter__(prop, function()
+    {
+      return this._mode == MODE_SEARCHBAR ?
+             this._simple_text_search[prop] :
+             this._searchwindow[prop];
+    });
+    this.__defineSetter__(prop, function(){});
+  }, this);
 
 };
 
@@ -415,7 +441,7 @@ var JSSourceSearchBase = function()
     if (script)
     {
       this._simple_text_search.set_script(script);
-      this._simple_text_search.update();
+      this._simple_text_search.update_search();
     }
   };
 

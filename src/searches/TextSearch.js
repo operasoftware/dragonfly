@@ -9,7 +9,12 @@
 var TextSearch = function(min_length)
 {
   this._init(min_length);
-}
+};
+
+TextSearch.PLAIN_TEXT = 1;
+TextSearch.REGEXP = 2;
+TextSearch.NO_MATCH = 1;
+TextSearch.EMPTY = 2;
 
 TextSearch.prototype = new function()
 {
@@ -17,8 +22,8 @@ TextSearch.prototype = new function()
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
-  NO_MATCH = 1,
-  EMPTY = 2;
+  NO_MATCH = TextSearch.NO_MATCH,
+  EMPTY = TextSearch.EMPTY;
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   window.addEventListener('load', function()
@@ -33,7 +38,7 @@ TextSearch.prototype = new function()
   this._init = function(min_length)
   {
     this._search_term = '';
-    this._input_search_term = '';
+    this._orig_search_term = '';
     // collection of span elements. This is so because a hit may cross an
     // element border, so multiple elements needed for highlight.
     this._hits = [];
@@ -50,8 +55,8 @@ TextSearch.prototype = new function()
     this._curent_search_result = null;
     this._timeouts = new Timeouts();
     this._search_bound = this.search.bind(this);
-
-
+    this.ignore_case = 1;
+    this.search_type = TextSearch.PLAIN_TEXT;
   }
 
   this._set_default_style = function(span)
@@ -78,13 +83,13 @@ TextSearch.prototype = new function()
         case NO_MATCH:
         {
           info = ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH.
-                 replace("%(SEARCH_TERM)s", this._search_term);
+                 replace("%(SEARCH_TERM)s", this._orig_search_term);
           break;
         }
         default:
         {
           info = ui_strings.S_TEXT_STATUS_SEARCH.
-                 replace("%(SEARCH_TERM)s", this._search_term).
+                 replace("%(SEARCH_TERM)s", this._orig_search_term).
                  replace("%(SEARCH_COUNT_TOTAL)s", this._get_match_counts()).
                  replace("%(SEARCH_COUNT_INDEX)s", this._get_search_cursor());
         }
@@ -146,13 +151,8 @@ TextSearch.prototype = new function()
             if (this._current_match_index - this._consumed_total_length < node.nodeValue.length)
             {
               node.splitText(this._current_match_index - this._consumed_total_length);
-              this._current_match_index = this._search_target.indexOf(this._search_term, 
-                                                                      this._last_match_index)
-              if (this._current_match_index != -1)
-              {
-                this._last_match_index = this._current_match_index + this._search_term_length;
-              }
               this._to_consume_hit_length = this._search_term_length;
+              this._search_next_match();
               this._curent_search_result = this._hits[this._hits.length] = [];
             }
             this._consumed_total_length += node.nodeValue.length;
@@ -165,16 +165,45 @@ TextSearch.prototype = new function()
   
   this._search_node = function(node)
   {
-    this._search_target = this._container.textContent.toLowerCase();
-    this._search_term_length = this._search_term.length;
-    this._current_match_index = this._search_target.indexOf(this._search_term);
-    this._last_match_index = this._current_match_index != -1 ?
-                             this._current_match_index + this._search_term_length :
-                             0;
+    this._search_target = this.ignore_case && 
+                          this.search_type == TextSearch.PLAIN_TEXT ?
+                          node.textContent.toLowerCase() :
+                          node.textContent;
+    this._last_match_index = 0;
+    if (this._reg_exp)
+    {
+      this._reg_exp.lastIndex = 0;
+    }
+    else
+    {
+      this._search_term_length = this._search_term.length;
+    }
+    this._search_next_match();
     this._consumed_total_length = 0;
     this._to_consume_hit_length = 0;
     this._curent_search_result = null;
-    this._consume_node(this._container);
+    this._consume_node(node);
+  };
+
+  this._search_next_match = function()
+  {
+    if (this._reg_exp)
+    {
+      this._reg_exp_match = this._reg_exp.exec(this._search_target);
+      this._current_match_index = this._reg_exp_match ? 
+                                  this._reg_exp_match.index : -1;
+      this._search_term_length = this._reg_exp_match ? 
+                                 this._reg_exp_match[0].length : 0;
+    }
+    else
+    {
+      this._current_match_index = this._search_target.indexOf(this._search_term, 
+                                                              this._last_match_index);
+    }
+    if (this._current_match_index != -1)
+    {
+      this._last_match_index = this._current_match_index + this._search_term_length;
+    }
   };
 
   this._clear_search_results = function()
@@ -195,10 +224,20 @@ TextSearch.prototype = new function()
 
   this.search = function(new_search_term, old_cursor, force_search)
   {
+    var orig_search_term = new_search_term;
+    if (this.ignore_case)
+    {
+      new_search_term = new_search_term.toLowerCase();
+    }
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
+      this._orig_search_term = orig_search_term;
       this._search_forced = Boolean(force_search);
+      if (this._is_update_search)
+      {
+        old_cursor = this._match_cursor;
+      }
       if(this._hits)
       {
         this._clear_search_results();
@@ -210,43 +249,69 @@ TextSearch.prototype = new function()
                                       this._search_term : ""});
       if (this._search_term.length >= this._min_term_length || force_search)
       {
+        this._reg_exp = this.search_type == TextSearch.REGEXP ?
+                        new RegExp(this._search_term, 
+                                   this.ignore_case ? 'gi' : 'g') :
+                        null;
         if(this._container)
         {
-          this._search_node(this._container);
-          if( old_cursor && this._hits[old_cursor] )
+          if (this._query_selector)
+          {
+            var nodes = this._container.querySelectorAll(this._query_selector);
+            Array.prototype.forEach.call(nodes, this._search_node, this);
+          }
+          else
+          {
+            this._search_node(this._container);
+          }
+          if (old_cursor && this._hits[old_cursor] &&
+              this._hits.length == this._old_hits_length)
           {
             this._match_cursor = old_cursor;
-            this._hits[this._match_cursor].style.cssText = this._match_style_highlight;
+            this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+            if (this._onhighlightstyle)
+            {
+              this._onhighlightstyle(this._hits[this._match_cursor]);
+            }
             this._update_info();
           }
           else
           {
             this._update_info(NO_MATCH);
+            this._container.scrollTop = 0; 
             this.highlight(true);
           }
+          this._old_hits_length = this._hits.length;
         }
+        else if (this._is_update_search && old_cursor)
+        {
+          this._match_cursor = old_cursor;
+        }
+        
       }
       else
       {
         this._update_info(EMPTY);
       }
     }
+    this._is_update_search = false;
   };
 
   this.search_delayed = 
   this.searchDelayed = function(new_search_term)
   {
-    this._input_search_term = new_search_term;
-    this._timeouts.set(this._search_bound, SEARCH_DELAY, 
-                       new_search_term.toLowerCase());
+    this._timeouts.set(this._search_bound, SEARCH_DELAY, new_search_term);
   }
 
-  this.update = function()
+  this.update_search = function()
   {
     var new_search_term = this._search_term;
     this._search_term = '';
+    this._is_update_search = true;
     this.search(new_search_term);
-  }
+  };
+
+  this.update = this.update_search;
 
   /**
    * Highlight a search result. The result to highlight is kept in the
@@ -295,28 +360,54 @@ TextSearch.prototype = new function()
         this._match_cursor = this._hits.length - 1;
       }
       this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+      if (this._onhighlightstyle)
+      {
+        this._onhighlightstyle(this._hits[this._match_cursor]);
+      }
       var target = this._hits[this._match_cursor][0];
-      this._scroll_into_margined_view(this._container.offsetHeight,
-                                      target.offsetHeight,
-                                      this.getRealOffsetTop(target),
-                                      DEFAULT_SCROLL_MARGIN,
-                                      direction,
-                                      'scrollTop');
-      this._scroll_into_margined_view(this._container.offsetWidth,
-                                      target.offsetWidth,
-                                      this.getRealOffsetLeft(target),
-                                      DEFAULT_SCROLL_MARGIN,
-                                      direction,
-                                      'scrollLeft');
+      this._scroll_target_into_view(target, direction);
       this._update_info();
     }
-    else if (this._search_term)
+    else if (this._orig_search_term)
     {
       this._update_info(NO_MATCH);
     }
     else
     {
       this._update_info(EMPTY);
+    }
+  };
+
+  this._scroll_target_into_view = function(target, direction, top, left)
+  {
+    if (this._container && target)
+    {
+      if (typeof top == 'number')
+      {
+        this._container.scrollTop = top;
+      }
+      else
+      {
+        this._scroll_into_margined_view(this._container.clientHeight,
+                                        target.offsetHeight,
+                                        this.getRealOffsetTop(target),
+                                        DEFAULT_SCROLL_MARGIN,
+                                        direction,
+                                        'scrollTop');
+      }
+      if (typeof left == 'number')
+      {
+        this._container.scrollLeft = left
+      }
+      else
+      {
+        this._scroll_into_margined_view(this._container.clientWidth,
+                                        target.offsetWidth,
+                                        this.getRealOffsetLeft(target),
+                                        DEFAULT_SCROLL_MARGIN,
+                                        direction,
+                                        'scrollLeft');
+      }
     }
   };
 
@@ -328,7 +419,10 @@ TextSearch.prototype = new function()
                                              scroll_dim)
   {
     if (container_dim < 2 * scroll_margin + target_dim)
-      scroll_margin = (container_dim - target_dim) / 2;
+    {
+      scroll_margin = Math.max((container_dim - target_dim) / 2, 0);
+    }
+    target_dim = Math.min(target_dim, container_dim - 2 * scroll_margin);
     if (offset_dim < scroll_margin ||
         container_dim - scroll_margin - target_dim < offset_dim)
     {
@@ -356,7 +450,18 @@ TextSearch.prototype = new function()
    */
   this.getRealOffsetTop = function(ele)
   {
-    return ele.getBoundingClientRect().top - this._container.getBoundingClientRect().top;
+    if (!this._container_box_sizing_checked)
+    {
+      this._box_size_delta = 0;
+      this._container_box_sizing_checked = true;
+      var style = window.getComputedStyle(this._container, null);
+      if (style.getPropertyValue('box-sizing') == 'border-box')
+      {
+        this._box_size_delta = parseInt(style.getPropertyValue('border-top-width'));
+      }
+    }
+    return ele.getBoundingClientRect().top - 
+           (this._container.getBoundingClientRect().top + this._box_size_delta);
   };
 
   this.getRealOffsetLeft = function(ele)
@@ -377,7 +482,8 @@ TextSearch.prototype = new function()
   this.set_container =
   this.setContainer = function(cont)
   {
-    if( this._container != cont )
+    this._container_box_sizing_checked = false;
+    if (this._container != cont)
     {
       this._container = cont;
     }
@@ -392,10 +498,10 @@ TextSearch.prototype = new function()
   this.setFormInput = function(input)
   {
     this._input = input;
-    if(this._search_term)
+    if (this._search_term)
     {
       var new_search_term = this._search_term;
-      this._input.value = this._input_search_term;
+      this._input.value = this._orig_search_term;
       this._input.parentNode.firstChild.textContent = '';
       this._search_term = '';
       this.searchDelayed(new_search_term);
@@ -409,13 +515,13 @@ TextSearch.prototype = new function()
   {
     this._clear_search_results();
     this._hits = [];
-    this._match_cursor = -1;
     this._input = this._container = this._info_ele = null;
+    this._container_box_sizing_checked = false;
   };
 
   this.set_search_term = function(search_term)
   {
-    this._search_term = search_term;
+    this._orig_search_term = this._search_term = search_term;
   }
 
 };

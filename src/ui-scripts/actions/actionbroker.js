@@ -113,6 +113,8 @@ var ActionBroker = function()
 
   this.get_current_handler_id = function(){};
 
+  this.focus_handler = function(handler_id, event){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -140,6 +142,10 @@ var ActionBroker = function()
     {
       this._contextmenu.modal_click_handler(event);
       return true;
+    }
+    if (event.target == this._last_event_target)
+    {
+      return;
     }
     if (!(this._action_context && this._action_context.onclick(event) === false))
     {
@@ -339,6 +345,9 @@ var ActionBroker = function()
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
     {
+      // to ensure that the global action handler uses the correct mode
+      // even if it's not the current action handler
+      this._global_handler.check_mode(event);
       shortcuts = this._global_shortcuts[this._global_handler.mode];
       action = shortcuts && shortcuts[key_id] || '';
       if (action)
@@ -471,6 +480,16 @@ var ActionBroker = function()
   this.get_current_handler_id = function()
   {
     return this._action_context_id;
+  };
+
+  this.focus_handler = function(handler_id, event)
+  {
+    var view = window.views[handler_id]; 
+    if (view && view.isvisible() && this._handlers[handler_id])
+    {
+      this._last_event_target = event.target;
+      this._set_current_handler(handler_id, event, view.get_container());
+    }
   };
 
   if (document.readyState == "complete")

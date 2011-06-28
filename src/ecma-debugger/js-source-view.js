@@ -161,22 +161,25 @@ cls.JsSourceView = function(id, name, container_class)
 
   var addLineHighlight = function()
   {
-    var lines = source_content.getElementsByTagName('div');
-    var bp_states = __current_script.breakpoint_states;
-    if (bp_states)
+    if (source_content && __current_script)
     {
-      var highlight_class, bp_state;
-      for (var i = 0, line; line = lines[i]; i++)
+      var lines = source_content.getElementsByTagName('div');
+      var bp_states = __current_script.breakpoint_states;
+      if (bp_states)
       {
-        highlight_class = "";
-        
-        if (bp_state = bp_states[__current_line + i])
+        var highlight_class, bp_state;
+        for (var i = 0, line; line = lines[i]; i++)
         {
-          highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
-                            BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+          highlight_class = "";
+          
+          if (bp_state = bp_states[__current_line + i])
+          {
+            highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
+                              BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
+          }
+          
+          line.className = highlight_class;
         }
-        
-        line.className = highlight_class;
       }
     }
   };
@@ -463,14 +466,25 @@ cls.JsSourceView = function(id, name, container_class)
   this.show_and_flash_line = function(script_id, line_nr)
   {
     this.showLine(script_id, line_nr - 10);
-    var source_content = document.getElementById(container_id);
-    var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_nr - __current_line];
+    var line = this.get_line_element(line_nr);
     if (line)
     {
       line.addClass('selected-js-source-line');
       setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
     }
+  }
+
+  this.get_line_element = function(line_nr)
+  {
+    var source_content = document.getElementById(container_id);
+    var lines = source_content && source_content.getElementsByTagName('div');
+    var line = lines && lines[line_nr - __current_line];
+    return line;
+  }
+
+  this.get_scroll_container = function()
+  {
+    return document.getElementById(horizontal_scoller);
   }
 
   // return boolean for the visibility of this view
@@ -1112,7 +1126,11 @@ cls.JsSourceView.create_ui_widgets = function()
       exception: 0,
       error: 0,
       abort: 0,
-      'tab-size': 4
+      'tab-size': 4,
+      'js-search-type': DOMSearch.PLAIN_TEXT,
+      'js-search-ignore-case': true,
+      'js-search-all-files': false,
+      'max-displayed-search-hits': 1000
     },
     // key-label map
     {
@@ -1120,7 +1138,8 @@ cls.JsSourceView.create_ui_widgets = function()
       exception: ui_strings.S_BUTTON_LABEL_AT_EXCEPTION,
       error: ui_strings.S_BUTTON_LABEL_AT_ERROR,
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
-      'tab-size': ui_strings.S_LABEL_TAB_SIZE
+      'tab-size': ui_strings.S_LABEL_TAB_SIZE,
+      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS
     },
     // settings map
     {
@@ -1134,7 +1153,8 @@ cls.JsSourceView.create_ui_widgets = function()
       customSettings:
       [
         'hr',
-        'tab-size'
+        'tab-size',
+        'max-displayed-search-hits'
       ],
       contextmenu:
       [
@@ -1165,7 +1185,25 @@ cls.JsSourceView.create_ui_widgets = function()
             ]
           ]
         ] );
-      }
+      },
+      'max-displayed-search-hits':
+      function(setting)
+      {
+        return (
+        [
+          'setting-composite',
+          ['label',
+            setting.label_map['max-displayed-search-hits'] + ': ',
+            ['input',
+              'type', 'number',
+              'handler', 'set-max-search-hits',
+              'max', '10000',
+              'min', '100',
+              'value', setting.get('max-displayed-search-hits')
+            ]
+          ]
+        ] );
+      },
     },
     "script"
   );
@@ -1179,16 +1217,6 @@ cls.JsSourceView.create_ui_widgets = function()
     ]
   );
 
-
-  new JSSourceSearch('js_source',
-                     [Searchbar, VirtualTextSearch],
-                     [cls.JSSearchWindow]);
-
-  eventHandlers.click['show-script'] = function(event, target)
-  {
-    this.broker.dispatch_action("js_source-search-window", "show-script", event, target);
-  };
-
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
@@ -1199,6 +1227,15 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       style.setProperty('-o-tab-size', tab_size, 0);
       settings.js_source.set('tab-size', tab_size);
+    }
+  }
+
+  eventHandlers.change['set-max-search-hits'] = function(event, target)
+  {
+    var max_search_hits = Number(event.target.value);
+    if (100 < max_search_hits && max_search_hits < 10000)
+    {
+      settings.js_source.set('max-displayed-search-hits', max_search_hits);
     }
   }
 

@@ -463,16 +463,8 @@ toolbar-filters input[type=button].search-move-highlight-down
   border-left: 0;
 }
 
-toolbar-filters span {
-  display: inline-block;
-  width: 140px;
-  color: #999;
-  vertical-align: top;
-}
-
-filter {
+filter, .advanced-search {
   margin: 0 2px;
-  display: inline-block;
   padding-left: 20px;
   height: 19px;
   line-height: 19px;
@@ -483,6 +475,10 @@ filter {
               inset 0 1px 1px #d5d5d5;
 }
 
+filter {
+  display: inline-block;
+}
+
 filter.filter {
     background-image: url("../ui-images/filter.png");
 }
@@ -490,7 +486,6 @@ filter.filter {
 filter input {
   width: 138px;
   height: 19px;
-  margin-left: -140px !important;
   background: none;
   border: none;
   padding: 0;
@@ -517,6 +512,10 @@ searchbar {
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   line-height: 21px;
   background: #eee;
+}
+
+.advanced-searchbar {
+  height: 43px;
 }
 
 window-select {

@@ -190,7 +190,10 @@ cls.DOMView.create_ui_widgets = function()
       'show-id_and_classes-in-breadcrumb': true,
       'scroll-into-view-on-spotlight': true,
       'lock-selected-elements': false,
-      'spotlight-color': "3875d7"
+      'spotlight-color': "3875d7",
+      'dom-search-type': DOMSearch.PLAIN_TEXT,
+      'dom-search-ignore-case': 1,
+      'dom-search-only-selected-node': 0,
     }, 
     // key-label map
     {
@@ -259,14 +262,6 @@ cls.DOMView.create_ui_widgets = function()
       }
     ], 
     null, 
-    /*
-    [
-      {
-        handler: 'dom-text-search',
-        shortcuts: 'dom-text-search',
-        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      }
-    ], */
     null,
     [
       {
@@ -433,15 +428,22 @@ cls.DOMView.create_ui_widgets = function()
     ]
   );
 
-  var search = new Search('dom', [Searchbar]);
-
-  window.messages.addListener('dom-view-updated', function(msg)
+  // If the ECMAScriptDebugger version is higher than 6.4
+  // the search will be in a sub view in the side panel.
+  if (window.services['ecmascript-debugger'].major_minor_version < 6.5)
   {
-    if (msg.model == window.dominspections.active)
+    var searchbar = [Searchbar];
+    var search = new Search('dom', searchbar);
+    window.messages.addListener('dom-view-updated', function(msg)
     {
-      search.update_search();
-    }
-  });
+      if (msg.model == window.dom_data)
+      {
+        search.update_search();
+      }
+    });
+  }
+
+
 
 
 
