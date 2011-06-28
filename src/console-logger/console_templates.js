@@ -71,8 +71,11 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     "ecmascript": {
       icon: "script",
       title: "Ecmascript"
+    },
+    "persistent_storage": {
+      icon: "storage",
+      title: "Persistent Storage"
     }
-    // todo: "persistent_storage"
   };
   
   var source = source_map[entry.source];
@@ -102,7 +105,8 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
            "title", title,
            "class", "location " + (entry.uri ? "internal-link" : ""),
            "handler", "open-resource-tab",
-           "data-resource-url", entry.uri
+           "data-resource-url", entry.uri,
+           "data-resource-line-number", entry.line ? entry.line : ""
         ]
       ],
       "class", (expandable ? "expandable" : "") + (expanded ? " expanded" : " collapsed"),
