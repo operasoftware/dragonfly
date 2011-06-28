@@ -611,10 +611,6 @@ cls.JsSourceView = function(id, name, container_class)
             __current_line / __current_script.line_arr.length * scroll_container.scrollHeight;
         }
       }
-      if (__current_script.parse_error)
-      {
-        views.js_source.showLinePointer(__current_script.parse_error.error_line + 1, true )
-      }
     }
     __current_line = line_nr;
     view_invalid = false;

@@ -626,17 +626,20 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         context: message[CONTEXT],
         description: message[DESCRIPTION]
       };
-      if(settings['js_source'].get('error'))
+      if (settings['js_source'].get('error') ||
+          (views.js_source.isvisible() && 
+           views.js_source.getCurrentScriptId() == message[SCRIPT_ID]))
       {
-        if(  !views['js_source'].isvisible())
+        if (!views.js_source.isvisible())
         {
           window.topCell.showView('js_source');
         }
         var plus_lines = views.js_source.getMaxLines() <= 10
-          ? views.js_source.getMaxLines() / 2 >> 0
-          : 10;
+                         ? views.js_source.getMaxLines() / 2 >> 0
+                         : 10;
         runtimes.setSelectedScript(error.script_id);
-        views.js_source.showLine(error.script_id, error.line_nr - plus_lines, false, true);
+        views.js_source.showLine(error.script_id, 
+                                 error.line_nr - plus_lines, false, true);
       }
     }
     else

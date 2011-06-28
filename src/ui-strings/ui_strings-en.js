@@ -343,7 +343,7 @@ ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 ui_strings.S_BUTTON_LABEL_AT_ABORT = "Stop when encountering an abort message";
 
 /* DESC: Execution stops when encountering an error. */
-ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show where a JavaScript error occurs";
+ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show parse errors and break on exceptions";
 
 /* DESC: Execution stops when encountering an exception. */
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
