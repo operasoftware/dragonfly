@@ -375,7 +375,7 @@ cls.ElementLayout = function()
                   ['li', convert_to_unitless(__comp_style[layout_map[PADDING_LEFT]])],
                   ['li',
                     ['ul', ['li', '\u00a0']],
-                    ['ul', ['li', '↔' + convert_to_unitless(__comp_style[layout_map[WIDTH]], true) + ' × ↕' + convert_to_unitless(__comp_style[layout_map[HEIGHT]], true)]],
+                    ['ul', ['li', convert_to_unitless(__comp_style[layout_map[WIDTH]], true) + ' × ' + convert_to_unitless(__comp_style[layout_map[HEIGHT]], true)]],
                     ['ul', ['li', '\u00a0']],
                     'class', 'dimension'],
                   ['li', convert_to_unitless(__comp_style[layout_map[PADDING_RIGHT]])]
