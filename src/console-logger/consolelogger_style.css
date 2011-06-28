@@ -3,7 +3,7 @@
 }
 
 /* Icon cell */
-.errors-table tr td.icon {
+.errors-table tr td.icon_cell {
     text-align: center;
     width: 16px;
 }
@@ -26,7 +26,7 @@
   width: 5px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
-  margin: 0 6px 0 2px;
+  margin: 0 0 0 2px;
   padding: 0;
   cursor: pointer;
   -o-transition: -o-transform .2s;
@@ -39,6 +39,7 @@
 .errors-table .expand_cell {
   border-right: none;
   padding-right: 0;
+  width: 16px;
 }
 
 .errors-table .main {
@@ -59,8 +60,10 @@
 }
 
 .errors-table .severity {
+  display: inline-block;
   width: 16px;
-  background: url('../ui-images/error-console-info.png') no-repeat 5px 3px;
+  height: 16px;
+  background: url('../ui-images/error-console-info.png') no-repeat;
 }
 
 .errors-table .severity.debug {

@@ -1,10 +1,11 @@
 ﻿window.templates = window.templates || {};
+window.templates.errors = window.templates.errors || {};
 
-window.templates.error_log_table = function(entries, allExpanded, expandedList, viewId)
+window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId)
 {
   var rowClosure = function(e)
   {
-    return window.templates.error_log_row(e, allExpanded, expandedList, viewId);
+    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId);
   };
 
   return [
@@ -13,7 +14,34 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
   ];
 };
 
-window.templates.error_log_row = function(entry, allExpanded, toggledList, viewId)
+window.templates.errors._source_map = {
+  "svg": {
+    icon: "markup", // or "image"?
+    title: "SVG"
+  },
+  "html": {
+    icon: "markup",
+    title: "HTML"
+  },
+  "xml": {
+    icon: "markup",
+    title: "XML"
+  },
+  "css": {
+    icon: "css",
+    title: "CSS"
+  },
+  "ecmascript": {
+    icon: "script",
+    title: "Ecmascript"
+  },
+  "persistent_storage": {
+    icon: "storage",
+    title: "Persistent Storage"
+  }
+};
+
+window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId)
 {
   var expanded;
   if (allExpanded)
@@ -29,7 +57,6 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     expanded = toggledList.indexOf(entry.id) != -1;
   }
 
-  var severity = entry.severity || "information";
   var title = entry.context;
   if (entry.line && entry.uri)
   {
@@ -50,35 +77,7 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
   {
     expandable = false;
   }
-
-  var source_map = {
-    "svg": {
-      icon: "markup", // or "image"?
-      title: "SVG"
-    },
-    "html": {
-      icon: "markup",
-      title: "HTML"
-    },
-    "xml": {
-      icon: "markup",
-      title: "XML"
-    },
-    "css": {
-      icon: "css",
-      title: "CSS"
-    },
-    "ecmascript": {
-      icon: "script",
-      title: "Ecmascript"
-    },
-    "persistent_storage": {
-      icon: "storage",
-      title: "Persistent Storage"
-    }
-  };
   
-  var source = source_map[entry.source];
 
   var expand_button = [
     ["button", "",
@@ -90,10 +89,26 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
     ]
   ];
 
+  var severity = entry.severity || "information";
+  var icon_cell = [
+    "span",
+    "class", "severity " + severity,
+    "title", severity
+  ];
+
+  if (viewId == "console-all")
+  {
+    var source = templates.errors._source_map[entry.source];
+    icon_cell = ["span",
+      "class", "resource-icon resource-type-" + (source && source.icon),
+      "title", (source && source.title) || entry.source
+    ];
+  }
+
   var rows = [
     [
       "tr", [
-        ["td", ["span", "class", "resource-icon resource-type-" + (source && source.icon), "title", (source && source.title) || entry.source], "class", "icon"],
+        ["td", icon_cell, "class", "icon_cell"],
         ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
         ["td",
           ["pre", entry.desc_without_linenumber_line, "class", "mono"],
@@ -118,7 +133,7 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
   return rows;
 };
 
-window.templates.error_log_settings_css_filter = function(setting)
+window.templates.errors.log_settings_css_filter = function(setting)
 {
   return (
   [

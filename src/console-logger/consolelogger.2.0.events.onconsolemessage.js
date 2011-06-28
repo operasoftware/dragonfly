@@ -58,10 +58,5 @@ cls.ConsoleLogger["2.0"].ConsoleMessage = function(arr)
     * - "critical"
     */
   this.severity = arr[6];
-
-  if (this._init)
-  {
-    this._init();
-  }
 };
 

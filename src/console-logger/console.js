@@ -357,10 +357,9 @@ var ErrorConsoleView = function(id, name, container_class, source)
     this._prev_entries_length = entries.length;
   };
 
-
   this._render_full = function(container, messages, expand_all)
   {
-    container.clearAndRender(templates.error_log_table(messages,
+    container.clearAndRender(templates.errors.log_table(messages,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id)
@@ -373,7 +372,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-      this._table_ele.render(templates.error_log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id));
+      this._table_ele.render(templates.errors.log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id));
     }
   };
 
@@ -568,7 +567,7 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
       ]
     },
     {
-      css_error_filters: window.templates.error_log_settings_css_filter,
+      css_error_filters: window.templates.errors.log_settings_css_filter,
     },
     "console"  
   );
