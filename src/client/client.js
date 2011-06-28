@@ -510,7 +510,13 @@ ui_framework.layouts.dom_rough_layout =
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
-      width: 250, tabs: ['dom-side-panel', 'dom_attrs', 'css-layout']
+      width: 250, 
+      tabs: function(services)
+      {
+        return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
+               ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'] :
+               ['dom-side-panel', 'dom_attrs', 'css-layout']);
+      }
     }
   ]
 }
@@ -539,8 +545,8 @@ ui_framework.layouts.js_rough_layout =
           tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ? 
-                   ['scripts-side-panel', 'breakpoints-side-panel'] :
-                   ['scripts-side-panel'];
+                   ['scripts-side-panel', 'breakpoints-side-panel', 'js-search'] :
+                   ['scripts-side-panel', 'js-search'];
           }
         }
       ]

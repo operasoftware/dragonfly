@@ -322,38 +322,43 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
+
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
     selection = getSelection();
     range = document.createRange();
-    this.is_dom_type_tree = container.firstElementChild.firstElementChild.hasClass('tree-style');
-    if (event.type == 'click')
+    if (container.firstElementChild)
     {
-      switch (event.target.nodeName.toLowerCase())
+      this.is_dom_type_tree = container.firstElementChild
+                              .firstElementChild.hasClass('tree-style');
+      if (event.type == 'click')
       {
-        case 'node':
-        case 'key':
-        case 'value':
-        case 'text':
-        case 'input':
+        switch (event.target.nodeName.toLowerCase())
         {
-          nav_target = event.target;
-          break;
-        }
-        case 'div':
-        {
-          if (event.target.getElementsByTagName('node')[0])
-            nav_target = event.target.getElementsByTagName('node')[0];
-          break;
+          case 'node':
+          case 'key':
+          case 'value':
+          case 'text':
+          case 'input':
+          {
+            nav_target = event.target;
+            break;
+          }
+          case 'div':
+          {
+            if (event.target.getElementsByTagName('node')[0])
+              nav_target = event.target.getElementsByTagName('node')[0];
+            break;
+          }
         }
       }
+      if (!nav_target)
+      {
+        nav_target = this.getFirstTarget();
+      }
+      this.setSelected(nav_target);
     }
-    if (!nav_target)
-    {
-      nav_target = this.getFirstTarget();
-    }
-    this.setSelected(nav_target);
   }
 
   this.setSelected = function(new_target, scroll_into_view)
@@ -536,10 +541,14 @@ cls.DOMInspectorActions = function(id)
   this._handlers["inspect-node-link"] = function(event, target)
   {
     var obj_id = parseInt(target.getAttribute('obj-id'));
-    var rt_id = parseInt(target.getAttribute('rt-id'));
-    window.dom_data.get_dom(rt_id, obj_id, true, true);
-    if (!window.views.dom.isvisible())
-      window.topCell.showView('dom');
+    var rt_id = parseInt(target.getAttribute('rt-id')) ||
+                parseInt(target.get_attr('parent-node-chain', 'rt-id'));
+    if (obj_id && rt_id)
+    {
+      window.dom_data.get_dom(rt_id, obj_id, true, true);
+      if (!window.views.dom.isvisible())
+        window.topCell.showView('dom');
+    }
   }.bind(this);
 
   this._handlers["select-node-in-breadcrumb"] = function(event, target)

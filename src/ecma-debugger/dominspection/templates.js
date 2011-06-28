@@ -1,19 +1,20 @@
 ﻿(function()
 {
-  const
-  ID = 0,
-  TYPE = 1,
-  NAME = 2,
-  DEPTH = 3,
-  NAMESPACE = 4,
-  VALUE = 7,
-  ATTRS = 5,
-  ATTR_PREFIX = 0,
-  ATTR_KEY = 1,
-  ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6,
-  INDENT = "  ",
-  LINEBREAK = '\n';
+  const ID = 0;
+  const TYPE = 1;
+  const NAME = 2;
+  const DEPTH = 3;
+  const NAMESPACE = 4;
+  const VALUE = 7;
+  const ATTRS = 5;
+  const ATTR_PREFIX = 0;
+  const ATTR_KEY = 1;
+  const ATTR_VALUE = 2;
+  const CHILDREN_LENGTH = 6;
+  const MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON;
+  const INDENT = "  ";
+  const LINEBREAK = '\n';
+  const SEARCH_PARENT = 2;
 
   const ELEMENT_NODE = Node.ELEMENT_NODE;
   const PROCESSING_INSTRUCTION_NODE = Node.PROCESSING_INSTRUCTION_NODE;
@@ -30,6 +31,15 @@
   this._pseudo_element_map[2] = "after";
   this._pseudo_element_map[3] = "first-letter";
   this._pseudo_element_map[4] = "first-line";
+
+  var disregard_force_lower_case_whitelist = 
+      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+
+  var disregard_force_lower_case = function(node)
+  {
+    return disregard_force_lower_case_whitelist
+           .indexOf(node[NAME].toLowerCase()) != -1;
+  };
 
   /**
    * Generates the part of the document type declaration after the document
@@ -104,6 +114,143 @@
       }
     }
     return attrs;
+  };
+
+  var safe_escape_attr_key = function(attr, force_lower_case)
+  {
+    return (
+    ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
+    /* regarding escaping "<". 
+       it happens that there are very starnge keys in broken html.
+       perhaps we will have to extend the escaping to other data 
+       tokens as well */
+    (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY]))
+    .replace(/</g, '&lt;'));
+  }
+
+  this._dom_attrs = function(node, force_lower_case, is_search_hit)
+  {
+    for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
+    {
+      attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+      if (typeof is_search_hit != 'boolean' || is_search_hit)
+      {
+        attrs += " <key>" + safe_escape_attr_key(attr) +
+                 "</key>=<value>\"" + attr_value + "\"</value>";
+      }
+      else
+      {
+        attrs += " " + safe_escape_attr_key(attr) + "=\"" + attr_value + "\"";
+      }
+    }
+    return attrs;
+  };
+
+  this.dom_search = function(model, target, editable)
+  {
+    var data = model.getData();
+    var tree = "<div" +
+               " rt-id='" + model.getDataRuntimeId() + "'" +
+               " data-model-id='" + model.id + "'" +
+               ">";
+    var length = data.length;
+    var attrs = null; 
+    var force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+    var show_comments = window.settings.dom.get('show-comments');
+    var node_name = '';
+    var disregard_force_lower_case_depth = 0;
+
+    for (var i = 0, node; node = data[i]; i++)
+    {
+      if (node[MATCH_REASON] == SEARCH_PARENT)
+      {
+        continue;
+      }
+      node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+      if (force_lower_case && disregard_force_lower_case(node))
+      {
+        disregard_force_lower_case_depth = node[DEPTH];
+        force_lower_case = false;
+      }
+      else if (disregard_force_lower_case_depth && 
+               disregard_force_lower_case_depth == node[DEPTH])
+      {
+        disregard_force_lower_case_depth = 0;
+        force_lower_case = model.isTextHtml() && 
+                           window.settings.dom.get('force-lowercase');
+      }
+      if (force_lower_case)
+      {
+        node_name = node_name.toLowerCase();
+      }
+      switch (node[TYPE])
+      {
+        case ELEMENT_NODE:
+        {
+          attrs = this._dom_attrs(node, force_lower_case);
+          tree += 
+            "<div class='search-match dom-search' "+
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "<node>&lt;" + node_name + attrs +
+                (node[CHILDREN_LENGTH] ?
+                 "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
+                 "/&gt;</node>") +
+            "</div>";
+          break;
+        }
+        case PROCESSING_INSTRUCTION_NODE:
+        {
+          tree += 
+            "<div class='search-match dom-search processing-instruction' " +
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "&lt;?" + node[NAME] + ' ' +
+              formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
+            "?&gt;</div>";
+          break;
+        }
+        case COMMENT_NODE:
+        {
+          if (show_comments && !/^\s*$/.test(node[VALUE]))
+          {
+            tree += 
+              "<div class='search-match dom-search comment pre-wrap' " +
+                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+                "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;" +
+              "</div>";
+          }
+          break;
+        }
+        case DOCUMENT_NODE:
+        {
+          break;
+        }
+        case DOCUMENT_TYPE_NODE:
+        {
+          tree += 
+            "<div class='search-match dom-search doctype' " +
+              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "&lt;!DOCTYPE " + node[NAME] +
+              this._get_doctype_external_identifier(node) + "&gt;" +
+            "</div>";
+          break;
+        }
+        default:
+        {
+          if (!/^\s*$/.test(node[VALUE]))
+          {
+            tree += 
+              "<div class='search-match dom-search' " +
+                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+                "<span class='dom-search-text-node'>#text</span>" + 
+                helpers.escapeTextHtml(node[VALUE]) + 
+              "</div>";
+          }
+        }
+      }
+    }
+    tree += "</div>";
+    return tree;
   };
 
   this._inspected_dom_node_markup_style= function(model, target, editable)
@@ -278,7 +425,6 @@
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
           }
-
           break;
         }
 
@@ -345,7 +491,7 @@
     }
     tree += "</div>";
     return tree;
-  }
+  };
 
   var nodeNameMap =
   {

@@ -93,37 +93,44 @@
     for (; filter = filters[i]; i++)
     {
       if (filter.type && this[filter.type])
+      {
         ret.push(this[filter.type](filter));
+      }
       else
       {
-        default_text = filter.label ?
-                       filter.label :
-                       ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;
-        tpl_input =
-        [
-          'input',
-          'autocomplete', 'off',
-          'type', 'text',
-          'handler', filter.handler,
-          'shortcuts', filter.shortcuts,
-          'title', filter.title,
-          'default-text', default_text
-        ];
-        ['handler', 'shortcuts'].forEach(function(attr)
-        {
-          if (filter.hasOwnProperty(attr))
-            tpl_input.push(attr, filter[attr]);
-        });
-        ret.push(['filter', ['span', default_text], tpl_input, "class", filter.type || ""]);
+        ret.push(this.default_filter(filter));
       }
     }
     return ret;
   }
 
+  this.default_filter = function(filter)
+  {
+    var default_text = filter.label ?
+                       filter.label :
+                       ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;
+    var tpl_input =
+    [
+      'input',
+      'autocomplete', 'off',
+      'type', 'text',
+      'handler', filter.handler,
+      'shortcuts', filter.shortcuts,
+      'title', filter.title,
+      'placeholder', default_text
+    ];
+    ['handler', 'shortcuts'].forEach(function(attr)
+    {
+      if (filter.hasOwnProperty(attr))
+        tpl_input.push(attr, filter[attr]);
+    });
+    return ["filter", tpl_input, "class", filter.type || filter.class || ""];
+  }
+
   this.search_control = function(button)
   {
     var ret = 
-    ['input',
+    ['button',
         'type', 'button',
         'class', button.class,
         'handler', button.handler,

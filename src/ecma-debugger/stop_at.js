@@ -320,18 +320,21 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     };
 
     var line = stopAt.line_number;
-    if( typeof line == 'number' )
+    if (typeof line == 'number')
     {
       /**
       * This event is enabled by default to reassign breakpoints.
       * Here it must be checked if the user likes actually to stop or not.
       * At the moment this is a hack because the stop reason is not set for that case.
-      * The check is if the stop reason is 'unknown' ( should be 'new script')
+      * The check is if the stop reason is 'unknown' (should be 'new script')
+      *
+      * In version 6.6 and higher the stop reason is 'new script'.
       */
-      if(stopAt.stopped_reason == 'unknown')
+      if (stopAt.stopped_reason == 'unknown' ||
+          stopAt.stopped_reason == 'new script')
       {
         runtime_id = stopAt.runtime_id;
-        if(  settings['js_source'].get('script')
+        if (settings['js_source'].get('script')
              || runtimes.getObserve(runtime_id)
               // this is a workaround for Bug 328220
               // if there is a breakpoint at the first statement of a script

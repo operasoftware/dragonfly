@@ -71,6 +71,12 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     new cls.ScriptSelect('js-script-select', 'script-options');
     cls.JsSourceView.create_ui_widgets();
 
+    /* JS Search */
+    cls.JSSearchView.prototype = ViewBase;
+    new cls.JSSearchView('js-search', 
+                         ui_strings.M_VIEW_LABEL_SEARCH, 
+                         'scroll js-search');
+
     /* Runtime State */
     new SidePanelView('scripts-side-panel',
                       ui_strings.M_VIEW_LABEL_RUNTIME_STATE,

@@ -19,8 +19,6 @@
         ],
         this.filters([quick_find]),
         'style', 'position: static;',
-        'focus-handler', 'focus',
-        'blur-handler', 'blur'
       ],
       this.scc_sections(shortcuts),
       'class', 'shortcuts-config'

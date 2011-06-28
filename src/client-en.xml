@@ -258,9 +258,11 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>
 <script src="./searches/searchwindow.js"/>
-<script src="./searches/jssearchwindow.js"/>
 <script src="./searches/search.js"/>
+<script src="./searches/panelsearch.js"/>
+<script src="./searches/jsmultifilesearch.js"/>
 <script src="./searches/templates.js"/>
+<script src="./searches/domsearch.js"/>
 <script src="./ui-scripts/overlay.js"/>
 <script src="./ui-scripts/horizontal_navigation.js"/>
 <script src="./ui-scripts/tabs.js"/>
@@ -367,6 +369,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/dominspection/inspectabledomnode.js"/>
 <script src="./ecma-debugger/dominspection/domdata.js"/>
 <script src="./ecma-debugger/js_object_filters.js"/>
+<script src="./searches/domsearchview.js"/>
 
 <script src="./ecma-debugger/js-source-view.js"/>
 <script src="./ecma-debugger/view-commandline.js"/>
@@ -396,6 +399,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/watches/watches.js"/>
 <script src="./ecma-debugger/watches/view.js"/>
 <script src="./ecma-debugger/watches/propertyeditor.js"/>
+
+<script src="./searches/jssearchview.js"/>
 
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>

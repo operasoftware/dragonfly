@@ -126,11 +126,16 @@
     return token;
   };
 
-  this.highlight_js_source = function(script, online, start_state, context)
+  this.highlight_js_source = function(script, online, start_state,
+                                      ext_context, ignore_max_width)
   {
+    if (typeof ignore_max_width != 'boolean')
+    {
+      ignore_max_width = false;
+    }
     var context =
     {
-      template: context || ["pre"],
+      template: ext_context || ["pre"],
       text: "",
       online: online,
       test_char_count: 0,
@@ -151,7 +156,7 @@
     {
       context.max_char_count = context.test_char_count;
     }
-    if (window.defaults['js-source-char-width'] && 
+    if (!ignore_max_width && window.defaults['js-source-char-width'] && 
         context.max_char_count * window.defaults['js-source-char-width'] > 32000)
     {
       context.template.push('style', 'white-space:pre-wrap; width: 32000px');

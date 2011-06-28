@@ -95,16 +95,19 @@ examine-objects key {
 
 .markup-tag,
 .dom node, /* TODO: use class */
+.dom-search node,
 .element-name {
     color: #338;
 }
 
 .markup-attribute,
-.dom key {
+.dom key,
+.dom-search key, {
     color: #55a;
 }
 
 .markup-attribute-value,
+.dom-search value,
 .dom value {
     color: #a54;
 }
@@ -236,15 +239,4 @@ rule:not(.non-editable) property:hover {
 .tree-style > div:first-child > span:first-child:before
 {
   display:none;
-}
-
-.search-highlight
-{
-  background-color: #ff0;
-  color: #000;
-}
-.search-highlight-selected
-{
-  background-color: #0f0;
-  color: #000;
 }

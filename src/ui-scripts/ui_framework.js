@@ -43,6 +43,12 @@ var ui_framework = new function()
       properties: resolve_map_properties
     },
     {
+      source: 'searchbar',
+      source_attrs: {'class': 'advanced-searchbar'},
+      target: AdvancedSearchbar.prototype,
+      properties: resolve_map_properties
+    },
+    {
       source: 'tabs',
       target: Tabs.prototype,
       properties: resolve_map_properties

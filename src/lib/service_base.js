@@ -33,6 +33,7 @@ window.cls.ServiceBase = function ()
       version = version.split('.').map(Number);
       this.major_version = version[0];
       this.minor_version = version[1] || 0;
+      this.major_minor_version = this.major_version + .1 * this.minor_version;
       this.patch_version = version[2] || 0;
       for (var cmd_id in map)
       {

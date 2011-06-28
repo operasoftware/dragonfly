@@ -178,6 +178,13 @@ var UIBase = new function()
     {
       container.innerHTML = '';
       source = container.appendChild(document.createElement(item.source));
+      if (item.source_attrs)
+      {
+        for (var key in item.source_attrs)
+        {
+          source.setAttribute(key, item.source_attrs[key]);
+        }
+      }
       target = item.target.style = {};
       properties = item.properties;
       if( source && target )
