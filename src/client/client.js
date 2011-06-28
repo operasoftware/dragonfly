@@ -1,4 +1,4 @@
-﻿/**
+/**
   * @constructor
   */
 
@@ -223,17 +223,19 @@ window.cls.Client = function()
   var show_info = function(msg, port)
   {
     viewport.innerHTML =
-    "<div class='padding' id='waiting-for-connection'>" +
-      "<div class='info-box'>" + msg +
-          ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
-                " handler='cancel-remote-debug'></p>" : "") +
-      "</div>" +
-    "</div>";
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+      "<div class='padding' id='waiting-for-connection'>" +
+        "<div class='info-box'>" + msg +
+            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+                      ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
+                    "</button></p>"
+                  : "") +
+        "</div>" +
+      "</div>";
+    var window_controls = document.querySelector('window-controls');
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
     document.documentElement.render(templates.window_controls_close());
   }
 
@@ -380,13 +382,12 @@ window.cls.Client = function()
       is_disbaled = null,
       tabs = ui_framework.layouts.console_rough_layout.children[0].tabs,
       tab = '',
-      i = 0;
+      i = 1;
 
-      for( i = 0; tab = tabs[i]; i++ )
+      for( i = 1; tab = tabs[i]; i++ )
       {
-        is_disbaled = !settings.console.get(tab);
-        views[tab].ishidden_in_menu = is_disbaled;
-        topCell.disableTab(tab, is_disbaled);
+        views[tab].ishidden_in_menu = true;
+        topCell.disableTab(tab, true);
       }
       arguments.callee._called_once = true;
     }
@@ -465,16 +466,10 @@ ui_framework.layouts.console_rough_layout =
         'console-all',
         'console-script',
         'console-css',
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
         'console-html',
-        'console-xslt',
         'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget'
+        'console-storage',
+        'console-other'
       ]
     }
   ]
@@ -488,17 +483,6 @@ ui_framework.layouts.environment_rough_layout =
     { height: 200, tabs: ['environment'] }
   ]
 }
-
-ui_framework.layouts.settings_rough_layout =
-{
-  dir: 'v', width: 700, height: 700,
-  children:
-  [
-    { height: 200, tabs: ['settings_view'] }
-  ]
-}
-
-
 
 ui_framework.layouts.dom_rough_layout =
 {

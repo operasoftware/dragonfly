@@ -1458,7 +1458,7 @@ id: 02400
 label: Command line API: $() on sites using jquery/other libs
 desc:
   - Navigate to a site that uses jquery, like http://jquery.com
-  - Enter $("i") in the command line
+  - Enter $("body") in the command line
   - Verify that a jQuery object with the body element is printed in the view
 
 id: 02500
@@ -1515,6 +1515,7 @@ desc:
 id: 03000
 label: ctrl-w
 desc:
+  - (test not valid on mac)
   - Enter some text.
   - Press ctrl-w
   - Verify that all text up to the closest whitespace is deleted

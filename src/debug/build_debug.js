@@ -63,19 +63,23 @@ cls.debug.create_debug_environment = function(params)
     [
       {
         handler: 'debug-clear-log',
-        title: 'Clear debug log'
+        title: 'Clear debug log',
+        text: 'Clear'
       },
       {
         handler: 'configure-message-filters',
-        title: 'Configure Message Filters'
+        title: 'Configure Message Filters',
+        text: 'Configure'
       },
       {
         handler: 'reload-dragonfly',
-        title: 'Reload Dragonfly'
+        title: 'Reload Dragonfly',
+        text: 'Reload'
       },
       {
         handler: 'find-strings',
-        title: 'Find untranslated strings'
+        title: 'Find untranslated strings',
+        text: 'Find untranslated'
       },
     ]
   )

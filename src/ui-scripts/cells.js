@@ -161,6 +161,8 @@
 
   this.disableTab = function(ref_id , bool)
   {
+    // console.log("disableTab", ref_id);
+    // debugger; // this is called and re-calls itself ca 4 times per error 
     var tab = null, view = null, child = null, i = 0;
     if( this.tab )
     {
@@ -169,6 +171,7 @@
         if( ( view = views[tab.ref_id] )  && view.type == 'composite-view' )
         {
           view.cell.disableTab(ref_id , bool);
+          // debugger;
         }
         else if( tab.ref_id == ref_id )
         {

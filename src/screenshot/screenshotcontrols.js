@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 
 window.cls.ScreenShotControlsView = function(id, name, container_class)
 {
@@ -13,6 +13,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       this._scale_control.value = msg.scale;
     }
+    this._scale = msg.scale;
   };
 
   this._onsamplecolor = function(msg)
@@ -65,6 +66,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._sample_color_container = null;
     this._sample_colors = null;
     this._sample_color_template = window.templates.sample_color;
+    this._scale = 1;
     var setting_map = 
     {
       'sample-size': 3, 
@@ -101,6 +103,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       this._screenshot = window.views.screenshot;
     }
+    this._screenshot._take_screenshot = true;
     this._screenshot.update_screenshot();
   }.bind(this);
 
@@ -110,7 +113,8 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       this._screenshot = window.views.screenshot;
     }
-    this._screenshot.zoom_center(parseInt(event.target.value));
+    this._scale = parseInt(event.target.value);
+    this._screenshot.zoom_center(this._scale);
   }.bind(this);
 
   this._handlers['screenshot-sample-size'] = function(event, target)
@@ -135,6 +139,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
   {
     container.clearAndRender(window.templates.scrennshot_controls(this._sample_color));
     this._scale_control = container.getElementsByTagName('input')[0];
+    this._scale_control.value = this._scale;
     this._sample_size_control = container.getElementsByTagName('input')[1];
     this._sample_size_control.value = this._settings.get('sample-size');
     this._sample_color_container = container.getElementsByClassName('screenshot-sample-container')[0];

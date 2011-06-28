@@ -1,82 +1,85 @@
-﻿/* Expander cell */
-.error-console td:nth-child(1) {
-    width: 22px;
+﻿.errors-table tr {
+  vertical-align: top;
 }
 
 /* Icon cell */
-.error-console td:nth-child(2) {
-    width: 22px;
+.errors-table tr td.icon {
+    text-align: center;
+    width: 16px;
 }
 
-/* File cell */
-.error-console td:nth-child(3) {
-    width: 30%;
-    overflow: hidden;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 500px;
+.errors-table tr td.location {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Line cell */
-.error-console td:nth-child(4) {
-    width: 128px;
-    text-align: right;
-    max-width: 32px;
+.errors-table tr td.context {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
-.error-console .sortable-table tr:not(.header):not([handler]):active {
-    background-color: rgba(55,115,211,0.2);
-    color: #000;
-}
-
-.error-console button {
-  height: 15px;
-  width: 19px;
-  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+.errors-table button {
+  height: 9px;
+  width: 5px;
+  background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
-  margin: 0;
+  margin: 0 6px 0 2px;
   padding: 0;
   cursor: pointer;
+  -o-transition: -o-transform .2s;
 }
 
-.error-console tr.expanded button {
-  background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
+.errors-table > tr.expanded button {
+    -o-transform: rotate(90deg);
 }
 
-.error-console pre {
-    padding: 6px;
-    margin: 6px;
-    border: dashed 1px #b3b3b3;
-    font-family: monospace;
-    font-size: 12px;
-    background-color: white;
+.errors-table .expand_cell {
+  border-right: none;
+  padding-right: 0;
 }
 
-.error-console .severity {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
+.errors-table .main {
+  border-left: none;
+  padding-left: 3px;
 }
 
-.error-console .severity.debug {
+/* collapsed */
+.main .mono {
+  height: 16px;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* expanded */
+.expanded .main .mono {
+  height: auto;
+}
+
+.errors-table .severity {
+  width: 16px;
+  background: url('../ui-images/error-console-info.png') no-repeat 5px 3px;
+}
+
+.errors-table .severity.debug {
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.error-console .severity.information {
+.errors-table .severity.information {
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.error-console .severity.verbose {
+.errors-table .severity.verbose {
   background-image: url('../ui-images/error-console-warning.png');
 }
 
-.error-console .severity.error {
+.errors-table .severity.error {
   background-image: url('../ui-images/error-console-error.png');
 }
 
-.error-console .severity.critical {
+.errors-table .severity.critical {
   background-image: url('../ui-images/error-console-error.png');
 }
 
@@ -98,4 +101,3 @@ button[key="request_list.expand-all-entries"]:before
   display: block;
   margin: 3px 0;
 }
-

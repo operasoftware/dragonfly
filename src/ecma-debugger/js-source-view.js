@@ -1287,35 +1287,47 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
 
-          if (breakpoints.script_has_breakpoint_on_line(script_id, line))
+          var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
+          if (bp)
           {
-            var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
-            items.push({
-              label: !bp.condition ?
-                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
-                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
-              handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
-            },
+            if (bp.is_enabled)
             {
-              label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
-              handler: function(event, target) {
-                breakpoints.set_condition("", bp.id);
+              items.push({
+                label: !bp.condition ?
+                       ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                       ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
+                handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
               },
-              disabled: !bp.condition
-            },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+                handler: function(event, target) {
+                  breakpoints.set_condition("", bp.id);
+                },
+                disabled: !bp.condition
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.remove_breakpoint(script_id, line);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
+                handler: function(event, target) {
+                  var bp_id = breakpoints.remove_breakpoint(script_id, line);
+                  breakpoints.delete_breakpoint(bp_id);
+                }
+              });
+            }
+            else
             {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
-              handler: function(event, target) {
-                breakpoints.remove_breakpoint(script_id, line);
-              }
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
-              handler: function(event, target) {
-                var bp_id = breakpoints.remove_breakpoint(script_id, line);
-                breakpoints.delete_breakpoint(bp_id);
-              }
-            });
+              items.push({
+                label: ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.add_breakpoint(script_id, line);
+                }
+              });
+            }
           }
           else
           {

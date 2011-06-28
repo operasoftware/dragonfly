@@ -148,10 +148,9 @@
     return (
     ['toolbar-search', 
       ['button', 
-        'class', 'search ui-control', 
+        'class', 'search ui-control ' + (search.is_active ? "is-active" : ""),
         'handler', 'show-search',
-        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH,
-        'is-active', String(search.is_active)
+        'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       ]
      ]);
   }
@@ -177,9 +176,10 @@
     {
       ret[ret.length] =
         ['button',
+          button.text || "",
           'handler', button.handler,
           'title', button.title,
-          'class', button.handler + ' ui-control' + (button.class_name ? ' ' + button.class_name : '')
+          'class', button.handler + ' ui-control' + (button.class_name ? ' ' + button.class_name : '') + (button.text ? ' text-button' : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
@@ -211,8 +211,7 @@
             'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
-            'is-active', setting.value ? 'true' : 'false',
-            'class', _switch + ' ui-control switch'
+            'class', _switch + ' ui-control switch ' + (setting.value ? "is-active" : "")
           ];
       }
       else
@@ -305,10 +304,12 @@
       return (
       ['window-controls',
         ['button',
-          'handler', 'top-window-close',
+          'class', 'ui-control',
+          'id', 'top-window-close',
+          'onclick', 'window.close()',
           'title', ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW
         ],
-        'class', 'attached'
+        'class', 'no-tabbar'
       ]);
     }
     return [];
@@ -337,7 +338,7 @@
 
   this.setting = function(view_id, view_name, is_unfolded)
   {
-    var ret = ['fieldset', self.settingsHeader(view_id, view_name, is_unfolded)];
+    var ret = ['fieldset', ['legend', view_name]];
     var setting = settings[view_id];
     var settings_map = setting.setting_map;
     var cat_name = '';
@@ -347,12 +348,6 @@
       ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
     }
     return ret;
-  }
-
-  this.settingsHeader = function(view_id, view_name, is_unfolded)
-  {
-    return ['legend',
-      view_name, 'handler', 'toggle-setting', 'view-id', view_id];
   }
 
   this.overlay = function(groups)
@@ -463,14 +458,14 @@
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?
         [
-          ['window-control', 'handler', 'window-scale-top-left'],
-          ['window-control', 'handler', 'window-scale-top'],
-          ['window-control', 'handler', 'window-scale-top-right'],
-          ['window-control', 'handler', 'window-scale-right'],
-          ['window-control', 'handler', 'window-scale-bottom'],
-          ['window-control', 'handler', 'window-scale-bottom-right'],
-          ['window-control', 'handler', 'window-scale-bottom-left'],
-          ['window-control', 'handler', 'window-scale-left'],
+          ['window-control', 'handler', 'window-scale-top-left', 'class', 'window-scale-top-left'],
+          ['window-control', 'handler', 'window-scale-top', 'class', 'window-scale-top'],
+          ['window-control', 'handler', 'window-scale-top-right', 'class', 'window-scale-top-right'],
+          ['window-control', 'handler', 'window-scale-right', 'class', 'window-scale-right'],
+          ['window-control', 'handler', 'window-scale-bottom', 'class', 'window-scale-bottom'],
+          ['window-control', 'handler', 'window-scale-bottom-right', 'class', 'window-scale-bottom-right'],
+          ['window-control', 'handler', 'window-scale-bottom-left', 'class', 'window-scale-bottom-left'],
+          ['window-control', 'handler', 'window-scale-left', 'class', 'window-scale-left'],
         ] : [],
       'id', win.id,
       'style',
@@ -491,7 +486,7 @@
   {
     return (
     ['window',
-      ['window-control', 'handler', 'window-scale-top'],
+      ['window-control', 'handler', 'window-scale-top', 'class', 'window-scale-top'],
       'id', win.id,
       'style',
       'top:' + win.top + 'px;' +
@@ -506,9 +501,10 @@
   this.window_header = function(name)
   {
     return ['window-header',
-        ['window-control', 'handler', 'window-close'],
+        ['window-control', 'handler', 'window-close', 'class', 'window-close'],
         name,
-      'handler', 'window-move'
+      'handler', 'window-move',
+      'class', 'window-move'
     ]
   }
 }).apply(window.templates);

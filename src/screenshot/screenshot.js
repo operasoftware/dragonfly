@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 
 cls.DragState = function(screenshot, pixelmagnifier)
 {
@@ -121,8 +121,7 @@ cls.ScreenShotView = function(id, name, container_class)
     {
       this._screenshot = message[PNG];
       this._pixel_magnifier.set_source_base_64(this._screenshot, "image/png");
-      window.messages.post('screenshot-scale',
-                           {scale: this._pixel_magnifier.scale});
+      this.update();
     }
   };
 
@@ -131,6 +130,9 @@ cls.ScreenShotView = function(id, name, container_class)
     this._top_rt_id = msg.runtimes_with_dom[0];
     if (this._take_screenshot && this.isvisible())
     {
+      this._pixel_magnifier.scale = 1;
+      window.messages.post('screenshot-scale',
+                             {scale: this._pixel_magnifier.scale});
       this._get_window_size();
     }
   };
@@ -255,11 +257,6 @@ cls.ScreenShotView = function(id, name, container_class)
     }
   };
 
-  this.ondestroy = function()
-  {
-    this._screenshot = "";
-  };
-
   this.onresize = function(container)
   {
     if(this.isvisible())
@@ -272,6 +269,10 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this.update_screenshot = function()
   {
+    // todo: maybe screenshot updating should not reset scale.
+    this._pixel_magnifier.scale = 1;
+    window.messages.post('screenshot-scale',
+                           {scale: this._pixel_magnifier.scale});
     this._get_window_size();
   };
 

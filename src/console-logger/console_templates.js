@@ -8,26 +8,17 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
   };
 
   return [
-    "table", [
-      "tr", [
-        ['th', ""],
-        ['th', ""],
-        ['th', ui_strings.S_COLUMN_LABEL_FILE],
-        ['th', ui_strings.S_COLUMN_LABEL_LINE],
-        ['th', ui_strings.S_COLUMN_LABEL_ERROR]
-      ],
-      "class", "header",
-    ],
-    entries.map(rowClosure),
-    "class", "sortable-table",
+    "table", entries.map(rowClosure),
+    "class", "sortable-table errors-table",
   ];
 };
 
 window.templates.error_log_row = function(entry, allExpanded, toggledList, viewId)
 {
+  var expanded;
   if (allExpanded)
   {
-    var expanded = true;
+    expanded = true;
     if (toggledList.indexOf(entry.id)!=-1)
     {
       expanded = false;
@@ -35,54 +26,92 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
   }
   else
   {
-    var expanded = toggledList.indexOf(entry.id) != -1;
+    expanded = toggledList.indexOf(entry.id) != -1;
   }
 
   var severity = entry.severity || "information";
+  var title = entry.context;
+  if (entry.line && entry.uri)
+  {
+    title = "Line " + entry.line + " in " + entry.uri; // todo: strings
+  }
+  var location_string = helpers.basename(entry.uri);
+  if (!location_string)
+  {
+    location_string = entry.context;
+  }
+  if (entry.line)
+  {
+    location_string += ":" + entry.line;
+  }
+  
+  var expandable = true;
+  if (entry.title === entry.description)
+  {
+    expandable = false;
+  }
+
+  var source_map = {
+    "svg": {
+      icon: "markup", // or "image"?
+      title: "SVG"
+    },
+    "html": {
+      icon: "markup",
+      title: "HTML"
+    },
+    "xml": {
+      icon: "markup",
+      title: "XML"
+    },
+    "css": {
+      icon: "css",
+      title: "CSS"
+    },
+    "ecmascript": {
+      icon: "script",
+      title: "Ecmascript"
+    }
+    // todo: "persistent_storage"
+  };
+  
+  var source = source_map[entry.source];
+
+  var expand_button = [
+    ["button", "",
+       "type", "button",
+       "data-logid", entry.id,
+       "data-viewid", viewId,
+       "unselectable", "on",
+       "class", "expander"
+    ]
+  ];
+
   var rows = [
     [
       "tr", [
-      ["td", ["button", "",
-                 "type", "button",
-                 //"handler", "error-log-list-expand-collapse",
-                 "data-logid", entry.id,
-                 "data-viewid", viewId,
-                 "unselectable", "on"
-               ]
+        ["td", ["span", "class", "resource-icon resource-type-" + (source && source.icon), "title", (source && source.title) || entry.source], "class", "icon"],
+        ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
+        ["td",
+          ["pre", entry.desc_without_linenumber_line, "class", "mono"],
+          "class", "main"
+        ],
+        ["td", entry.context, "class", "context"],
+        ["td",
+           location_string,
+           "title", title,
+           "class", "location " + (entry.uri ? "internal-link" : ""),
+           "handler", "open-resource-tab",
+           "data-resource-url", entry.uri
+        ]
       ],
-      ["td", ["span", "class", "severity " + severity, "title", severity]],
-      ["td", entry.uri],
-      ["td", (entry.line==null ? "?" : entry.line) ],
-      ["td", entry.title]
-     ],  "class", (expanded ? "expanded" : "collapsed"),
-     "handler", "error-log-list-expand-collapse",
-    "data-logid", entry.id,
-    "data-viewid", viewId
+      "class", (expandable ? "expandable" : "") + (expanded ? " expanded" : " collapsed"),
+      "handler", expandable ? "error-log-list-expand-collapse" : "",
+      "data-logid", entry.id,
+      "data-viewid", viewId
     ]
   ];
-
-  if (expanded)
-  {
-    rows.push(templates.error_log_detail_row(entry));
-  }
-
   return rows;
-};
-
-window.templates.error_log_detail_row = function(entry)
-{
-  return [
-    "tr", [
-      ["td",
-       [ "span", entry.uri,
-         "handler", "open-resource-tab",
-         "data-resource-url", entry.uri
-       ],
-       [ "pre", entry.description ],
-                 "colspan", "5"
-      ]
-    ]
-  ];
 };
 
 window.templates.error_log_settings_css_filter = function(setting)

@@ -66,7 +66,7 @@ var TabBase = new function()
     var tab = this._get_top_tab_element();
     if (tab)
     {
-      tab.setAttribute("data-state", state)
+      tab.setAttribute("data-state", state);
     }
   };
 

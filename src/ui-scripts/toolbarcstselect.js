@@ -31,7 +31,7 @@
           ],
         "unselectable", "on",
         "key", view_key_token,
-        "is-active", setting.value && "true" || "false"
+        "class", setting.value ? "is-active" : ""
       ] || [];
   }
 

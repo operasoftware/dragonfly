@@ -1,4 +1,4 @@
-﻿var PixelMagnifier = function()
+var PixelMagnifier = function()
 {
   this._init();
 };
@@ -129,9 +129,8 @@ PixelMagnifier.prototype = new function()
         this._src_area.max_width = this._src.width;
         this._src_area.max_height = this._src.height;
       }
-      this._src_area.width = this.width;
-      this._src_area.height = this.height;
-      this._scale = 1;
+      this._src_area.width = Math.round(this.width / this._scale);
+      this._src_area.height = Math.round(this.height / this._scale);
       this._check_src_area_dimesions();
       this._check_src_area_position();
       this._has_source = true;

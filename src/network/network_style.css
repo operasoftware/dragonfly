@@ -81,6 +81,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .network-log-url-list .log-url-list-status {

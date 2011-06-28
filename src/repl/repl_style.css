@@ -91,6 +91,12 @@ li > .repl-lines {
 .repl-output-go-to-source {
   text-decoration: underline;
   color: white;
+  float: right;
+  cursor: pointer;
+}
+
+.repl-output-go-to-source:hover {
+  text-decoration: none;
 }
 
 .repl-input span, .repl-input div {
@@ -121,4 +127,16 @@ li > .repl-lines {
 
 .function-expression {
   color: #fff;
+}
+
+.severity-info {
+    color: #3c86d9;
+}
+
+.severity-warn {
+    color: #fdde8f;
+}
+
+.severity-error {
+    color: #fc6854;
 }

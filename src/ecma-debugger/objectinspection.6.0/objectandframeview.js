@@ -310,13 +310,25 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         }
 
         var ele = target.parentNode;
-        var props = [target.parentNode.querySelector("key").textContent];
-        while (ele = ele.parentNode)
+        var props = [];
+        while (ele)
         {
           if (ele.nodeName.toLowerCase() == "item")
           {
             props.unshift(ele.querySelector("key").textContent);
           }
+          ele = ele.parentNode;
+        }
+
+        if (!props.length)
+        {
+          return;
+        }
+
+        // If the leftmost part is not a valid identifier, we append `this`
+        if (!JSSyntax.is_valid_identifier(props[0]))
+        {
+          props.unshift("this");
         }
 
         var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;

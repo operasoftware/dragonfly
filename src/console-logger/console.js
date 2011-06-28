@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @fileoverview
  * This file contains most of the code implementing the console view in
  * Dragonfly
@@ -21,6 +21,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
   this.current_error_count = 0;
+  this.filter_updated = false;
 
   this._updateviews = function()
   {
@@ -46,6 +47,23 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._msgs.push(entry);
     }
 
+    // before calling updateviews, need to make sure the respective view is not hidden.
+    // can't so that in it's createView method, as it's not called if there is no container.
+    if (entry.source)
+    {
+      var corresponding_tab = "console-other";
+      for (var i=0; i < ErrorConsoleView.roughViews.length; i++) {
+        if (ErrorConsoleView.roughViews[i].source === entry.source)
+        {
+          corresponding_tab = ErrorConsoleView.roughViews[i].id;
+        }
+      };
+      if(views[corresponding_tab].ishidden_in_menu)
+      {
+        views[corresponding_tab].ishidden_in_menu = false;
+        topCell.disableTab(corresponding_tab, false); // means enable
+      }
+    }
     this._updateviews();
   };
 
@@ -105,14 +123,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     var fun = function(e) { return e.uri == this._selected_rt_url &&
                             (!source || e.source==source);
     };
-  return this._msgs.filter(fun);
+    return this._msgs.filter(fun);
   };
 
   this.get_messages = function(source, filter)
   {
-    return filter || settings.console.get('use-selected-runtime-as-filter')
+    var messages = filter
       ? this._get_msgs_with_filter(source, filter)
       : this._get_msgs_without_filter(source);
+    return messages.filter(this._filter, this);
   };
 
   this.get_message = function(id)
@@ -142,57 +161,42 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       switch(msg.key)
       {
         case 'expand-all-entries': {
-          toggled = [];
-          this._updateviews();
+          this._toggled = []; // clears _toggled, triggers update
+          var entries = document.querySelectorAll("[data-logid]");
+          for (var i = 0 ; i < entries.length; i++)
+          {
+            eventHandlers.click['error-log-list-expand-collapse'](null, entries[i]);
+          }
           break;
         }
-        case 'use-selected-runtime-as-filter': {
-          this._updateviews();
-          break;
-        }
-        case 'css-filter': 
-        case 'use-css-filter': 
+        case 'css-filter':
+        case 'use-css-filter':
         {
           this._set_css_filter();
+          window.messages.post("error-count-update", {current_error_count: this.get_messages().length});
+          this.filter_updated = true;
+          this._updateviews();
+          this.filter_updated = false;
           break;
-        }
-        default: { // these settings are names of tabs to show.
-          var is_disabled = !settings[msg.id].get(msg.key);
-          views[msg.key].ishidden_in_menu = is_disabled;
-          topCell.disableTab(msg.key, is_disabled);
         }
       }
     }
-  };
-
-  this._extract_title = function(description)
-  {
-    var parts = description.split("\n");
-    if (parts.length)
-    {
-      return parts[0] == "Error:" ? parts[1].substr(6) : parts[0];
-    }
-    return "";
-  };
-
-  this._extract_line = function(description)
-  {
-    var matcher = /[lL]ine (\d*)/;
-    var linematch = matcher.exec(description);
-    return linematch ? linematch[1] : null;
   };
 
   this._on_console_message = function(data)
   {
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
-    message.title =  this._extract_title(message.description);
-    message.line = this._extract_line(message.description);
-    if (this._filter(message))
+
+    // only take console messages over ECMAScriptDebugger, setting dependend
+    if (!message.context.startswith("console."))
     {
       this.addentry(message);
-      this.current_error_count++;
-      window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+      if (this._filter(message))
+      {
+        this.current_error_count++;
+        window.messages.post("error-count-update", {current_error_count: this.current_error_count});
+      }
     }
   };
 
@@ -243,7 +247,11 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._on_consolelog = function(data)
   {
+    // todo: this will be replaced by listening to a Dragonfly message.
+    // It will probably only be displayed depending on a setting.
+    /*
     var message = new cls.EcmascriptDebugger["6.0"].ConsoleLogInfo(data);
+    console.log("EcmascriptDebugger ConsoleLogInfo", message, data);
 
     var severities = {
       1: "information",
@@ -271,15 +279,16 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this.addentry({
       id: "" + (++this._lastid),
       windowID: message.windowID,
-      time: new Date(),
+      time: +new Date,
       description: args,
       title:  args,
       line: "" + (message.position ? message.position.lineNumber : ""),
-      uri: method_names[message.type],
-      context: "",
+      uri: null,
+      context: method_names[message.type],
       source: "ecmascript",
       severity: severities[message.type] || "information"
     });
+    */
   };
 
   this._on_runtime_selected = function(msg)
@@ -317,8 +326,9 @@ var ErrorConsoleView = function(id, name, container_class, source)
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
 
-  var _expand_all_state = null;
-  var _table_ele = null;
+  this._expand_all_state = null;
+  this._table_ele = null;
+  this._prev_entries_length = 0;
 
   this.createView = function(container)
   {
@@ -328,44 +338,48 @@ var ErrorConsoleView = function(id, name, container_class, source)
     var expand_all = settings.console.get('expand-all-entries');
 
     // If there is no table, it's empty or expand state changed, render all
-    if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
+    if (! this._table_ele || ! entries.length || expand_all != this._expand_all_state ||
+        window.error_console_data.filter_updated)
     {
       // The expand all state thingy is to make sure we handle switching
       // between expand all/collapse all properly.
-      _expand_all_state = expand_all;
-      this.renderFull(container, entries, expand_all);
+      this._expand_all_state = expand_all;
+      this._render_full(container, entries, expand_all);
     }
     // but if not, check if there are new entries to show and just
     // update the list with them
-    else if (_table_ele.childNodes.length-1 < entries.length)
+    else if (this._prev_entries_length < entries.length)
     {
-      this.renderUpdate(entries.slice(-1), expand_all);
+      this._render_update(entries.slice(-1), expand_all);
     }
+
+    window.messages.post("error-count-update", {current_error_count: entries.length});
+    this._prev_entries_length = entries.length;
   };
 
 
-  this.renderFull = function(container, messages, expand_all)
+  this._render_full = function(container, messages, expand_all)
   {
     container.clearAndRender(templates.error_log_table(messages,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id)
                              );
-    _table_ele = container.getElementsByTagName("table")[0];
+    this._table_ele = container.getElementsByTagName("table")[0];
     //container.scrollTop = container.scrollHeight;
   };
 
-  this.renderUpdate = function(entries, expandAll)
+  this._render_update = function(entries, expand_all)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-      _table_ele.render(templates.error_log_row(cur, expandAll, window.error_console_data.get_toggled(), this.id));
+      this._table_ele.render(templates.error_log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id));
     }
   };
 
   this.ondestroy = function() {
-    delete _table_ele;
-    _table_ele = null;
+    delete this._table_ele;
+    this._table_ele = null;
   };
 
   this.init(id, name, container_class );
@@ -389,34 +403,9 @@ ErrorConsoleView.roughViews =
     source: 'css'
   },
   {
-    id: 'console-java',
-    name: ui_strings.M_VIEW_LABEL_ERROR_JAVA,
-    source: 'java'
-  },
-  {
-    id: 'console-m2',
-    name: ui_strings.M_VIEW_LABEL_ERROR_M2,
-    source: 'm2'
-  },
-  {
-    id: 'console-network',
-    name: ui_strings.M_VIEW_LABEL_ERROR_NETWORK,
-    source: 'network'
-  },
-  {
-    id: 'console-xml',
-    name: ui_strings.M_VIEW_LABEL_ERROR_XML,
-    source: 'xml'
-  },
-  {
     id: 'console-html',
     name: ui_strings.M_VIEW_LABEL_ERROR_HTML,
     source: 'html'
-  },
-  {
-    id: 'console-xslt',
-    name: ui_strings.M_VIEW_LABEL_ERROR_XSLT,
-    source: 'xslt'
   },
   {
     id: 'console-svg',
@@ -424,19 +413,13 @@ ErrorConsoleView.roughViews =
     source: 'svg'
   },
   {
-    id: 'console-bittorrent',
-    name: ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT,
-    source: 'bittorrent'
+    id: 'console-storage',
+    name: "Storage", // todo: string
+    source: 'persistent_storage'
   },
   {
-    id: 'console-voice',
-    name: ui_strings.M_VIEW_LABEL_ERROR_VOICE,
-    source: 'ecmascript'
-  },
-  {
-    id: 'console-widget',
-    name: ui_strings.M_VIEW_LABEL_ERROR_WIDGET,
-    source: 'widget'
+    id: 'console-other',
+    name: "Other" // todo: string
   }
 ];
 
@@ -480,7 +463,6 @@ ErrorConsoleView.roughViews.createViews = function()
       r_v.id,
       [
         'console.expand-all-entries'
-        //'console.use-selected-runtime-as-filter' // Not in use
       ]
     );
     eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
@@ -530,16 +512,12 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
   window.error_console_data.toggle_entry(logid);
   if (target.hasClass("expanded"))
   {
-    target.parentNode.removeChild(target.nextSibling);
     target.swapClass("expanded", "collapsed");
   }
   else
   {
-    var entry = window.error_console_data.get_message(logid);
-    var row = document.render(templates.error_log_detail_row(entry));
-    target.parentNode.insertAfter(row, target);
     target.swapClass("collapsed", "expanded");
-    row.scrollSoftIntoContainerView();
+    target.scrollSoftIntoContainerView();
   }
 };
 
@@ -565,20 +543,6 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     'console',
     // key-value map
     {
-      'console-all': true,
-      'console-script': true,
-      'console-css': true,
-      'console-xml': false,
-      'console-java': false,
-      'console-m2': false,
-      'console-network': false,
-      'console-html': false,
-      'console-xslt': false,
-      'console-svg': false,
-      'console-bittorrent': false,
-      'console-voice': false,
-      'console-widget': false,
-      'use-selected-runtime-as-filter': false,
       'expand-all-entries': false,
       'use-css-filter': false,
       'css-filter': 
@@ -594,40 +558,10 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     },
     // key-label map
     {
-      'console-all': ui_strings.S_SWITCH_SHOW_TAB_ALL,
-      'console-script': ui_strings.S_SWITCH_SHOW_TAB_SCRIPT,
-      'console-css': ui_strings.S_SWITCH_SHOW_TAB_CSS,
-      'console-xml': ui_strings.S_SWITCH_SHOW_TAB_XML,
-      'console-java': ui_strings.S_SWITCH_SHOW_TAB_JAVA,
-      'console-m2': ui_strings.S_SWITCH_SHOW_TAB_M2,
-      'console-network': ui_strings.S_SWITCH_SHOW_TAB_NETWORK,
-      'console-html': ui_strings.S_SWITCH_SHOW_TAB_HTML,
-      'console-xslt': ui_strings.S_SWITCH_SHOW_TAB_XSLT,
-      'console-svg': ui_strings.S_SWITCH_SHOW_TAB_SVG,
-      'console-bittorrent': ui_strings.S_SWITCH_SHOW_TAB_BITTORRENT,
-      'console-voice': ui_strings.S_SWITCH_SHOW_TAB_VOICE,
-      'console-widget': ui_strings.S_SWITCH_SHOW_TAB_WIDGET,
-      'use-selected-runtime-as-filter': ' use selected runtime as filter', // Not in use!
       'expand-all-entries': ui_strings.S_SWITCH_EXPAND_ALL
     },
     // settings map
     {
-      checkboxes:
-      [
-        'console-all',
-        'console-script',
-        'console-css',
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
-        'console-html',
-        'console-xslt',
-        'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget'
-      ],
       customSettings:
       [
         'css_error_filters'
