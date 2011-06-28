@@ -142,7 +142,7 @@ templates.network_log_request_detail = function(ctx, selected)
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
-    ["h2", "reqbody"],
+    ["h2", "Request body"],
     templates.network_request_body(req),
     req.touched_network ? [
       ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
@@ -215,23 +215,22 @@ templates.network_request_body = function(req)
   }
   else if (!req.requestbody.content) // There is content, but we're not tracking
   {
-    return ["p", "Enable content tracking"];
+    return ["p", "Enable content tracking in the network options tab to be able to see request bodies"];
   }
   else
   {
- 
     if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
     {
       parts = req.requestbody.content.stringData.split("&");
 
       var tab = ["table",
                ["tr", ["th", "name"], ["th", "value"]]
-      ].concat(parts.map(function(e) { return ["tr", ["td", e[0]], ["td", e[1]]]}));
+      ].concat(parts.map(function(e) { return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
       return tab;
     }
-    else // fixme
+    else
     {
-      return ["p", "i don't even know"];
+      return ["p", "Unknown post type or multipart"];
     }
   }
 }
