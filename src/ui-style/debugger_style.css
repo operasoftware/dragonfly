@@ -24,24 +24,6 @@ ul {
   list-style:none;
   }
 
-#debug-container {
-  /*background-color:#ccc;*/
-  /*overflow: hidden;*/
-}
-
-/*#debug {*/
-/*  position:absolute;*/
-/*  overflow:auto;*/
-/*  border:1px solid #666;*/
-/*  background-color:#fff;*/
-/*  top:25px;*/
-/*  left:5px;*/
-/*  right:5px;*/
-/*  bottom:5px;*/
-/*  padding:.5em;*/
-/*  margin:0;*/
-/*  }*/
-
 #source-view #line-pointer, #source-view .breakpoint {
   position:absolute;
   content: '\25B6';
@@ -189,37 +171,6 @@ input[type="text"] {
   font-weight:bold;
   }
 
-
-[handler="display-script"].selected {
-  color:#333;
-  font-weight:bold;
-  }
-
-[handler="display-script"].selected:before {
-  content:'[';
-  padding-right:.3em;
-  }
-
-[handler="display-script"].selected:after {
-  content:']';
-  padding-left:.3em;
-  }
-
-[handler="display-stylesheet"].selected {
-  color:#333;
-  font-weight:bold;
-  }
-
-[handler="display-stylesheet"].selected:before {
-  content:'[';
-  padding-right:.3em;
-  }
-
-[handler="display-stylesheet"].selected:after {
-  content:']';
-  padding-left:.3em;
-  }
-
 .window-container {
   position:absolute;
   top:22px;
@@ -251,12 +202,6 @@ cst-option.selected-runtime {
 
 .thread-stopped-event {
   background-color: #09f;
-  }
-
-.folder li[handler="display-script"] {
-  margin-left: -2px;
-  padding-left: 20px;
-  background: transparent url('../ui-images/selected_frame_top.png') no-repeat 0 -16px;
   }
 
 .info {
@@ -316,18 +261,6 @@ cst-option.selected-runtime {
   white-space: pre-wrap;
   }
 
-p[handler="update-global-scope"] {
-  padding:0;
-  margin:0;
-  color: #999;
-  text-decoration: underline;
-  text-align: center;
-  }
-
-p[handler="update-global-scope"]:hover {
-  color: #333;
-  }
-
 .export-data pre {
   padding: 0;
   margin: 0;
@@ -363,22 +296,11 @@ property:hover .enable-disable,
 
 rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   display:block;
-  /*xxwhite-space: pre-wrap;*/
   margin: 5px 0;
   }
 
-/* This selectors are super slow, find replacement
-stylesheet :last-child {
-    margin-bottom: 0;
-}
-*/
-
 .stylesheets pre {
   background:red;
-  }
-
-media {
-  /*xxwhite-space: pre-wrap;*/
   }
 
 media-rule rules {
@@ -387,7 +309,7 @@ media-rule rules {
 
 /* css inspector class css-inspector */
 
-.css-inspector rule[rule-id] property {
+.css-inspector rule:not(.non-editable) property {
   cursor: text;
   }
 
@@ -402,7 +324,7 @@ stylesheet-link {
   float: right;
   margin-left: 10px;
   }
-stylesheet-link[handler], [handler="dom-resource-link"] {
+stylesheet-link:not(.pseudo), .dom-resource-link {
     cursor: pointer;
 }
 
@@ -416,7 +338,6 @@ stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
 }
 
 styles {
-  /*xxwhite-space: pre-wrap;*/
   padding: 8px 4px;
   }
 
@@ -432,7 +353,7 @@ header {
   }
 
 div.unfolded {
-  border-bottom: 1px solid #ccc;;
+  border-bottom: 1px solid #ccc;
 }
 
 header:hover {
@@ -631,6 +552,11 @@ div.dom {
   padding-left: 1px;
   padding-right: 3px;
 }
+.only-whitespace {
+  border: 1px dotted #999;
+  border-radius: 2px;
+  margin-left: -1px;
+}
 
 .dom div:not(.info-box)
 {
@@ -663,12 +589,8 @@ div.dom {
   margin-top: -9px;
   }
 
-pre[handler="inspect-object-link"] {
+pre.inspect-object-link {
   color: blue;
-  }
-
-[handler="inspect-object-link"]:hover {
-  background: #000;
   }
 
 breadcrumb span
@@ -789,7 +711,7 @@ d
   color: #999;
 }
 
-[handler="dom-resource-link"]:hover
+.dom-resource-link:hover
 {
   text-decoration: underline;
   color: #4d1100;
@@ -991,7 +913,7 @@ d
   margin-top: 3px;
 }
 
-.filter-container input[type='button']
+.filter-container button
 {
   border: 0;
   margin: 0;
@@ -1007,7 +929,7 @@ d
   border-color: #999;
 }
 
-.filter-container li.open > input[type='button'] {
+.filter-container li.open > button {
   background-position: 4px -13px;
   }
 

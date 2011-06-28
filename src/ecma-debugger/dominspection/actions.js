@@ -48,7 +48,7 @@ cls.DOMInspectorActions = function(id)
   });
 
   // traversal 'subtree' or 'children'
-  this._expand_collapse_node = function(event, target, traversal)
+  this._expand_collapse_node = function(event, target, traversal, force_expand)
   {
     var container = event.target.parentNode;
     var level = parseInt(container.style.marginLeft) || 0;
@@ -67,13 +67,17 @@ cls.DOMInspectorActions = function(id)
       {
         if (container.contains(target))
           target_id = parseInt(target.getAttribute('ref-id'));
-        if (level_next > level)
+        if (!force_expand && level_next > level)
         {
           model.collapse(ref_id);
           this._get_children_callback(container, model, target_id, is_editable);
         }
         else
         {
+          if (force_expand)
+          {
+            model.collapse(ref_id);
+          }
           cb = this._get_children_callback.bind(this, container, model,
                                                 target_id, is_editable);
           model.expand(cb, ref_id, traversal);
@@ -316,7 +320,6 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
-
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
@@ -326,7 +329,7 @@ cls.DOMInspectorActions = function(id)
     {
       this.is_dom_type_tree = container.firstElementChild
                               .firstElementChild.hasClass('tree-style');
-      if (event.type == 'click')
+      if (event.type == 'click' || event.type == 'contextmenu')
       {
         switch (event.target.nodeName.toLowerCase())
         {
@@ -390,7 +393,6 @@ cls.DOMInspectorActions = function(id)
       switch (new_target.nodeName.toLowerCase())
       {
         case 'node':
-        case 'value':
         {
           firstChild = new_target.firstChild;
           is_end_tag = firstChild.nodeValue[1] == "/";
@@ -398,6 +400,14 @@ cls.DOMInspectorActions = function(id)
           range.setEnd(firstChild,
                        firstChild.nodeValue.length -
                        (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
+          selection.addRange(range);
+          break;
+        }
+        case 'value':
+        {
+          firstChild = new_target.firstChild;
+          range.setStart(firstChild, 1);
+          range.setEnd(firstChild, firstChild.nodeValue.length - 1);
           selection.addRange(range);
           break;
         }
@@ -482,6 +492,11 @@ cls.DOMInspectorActions = function(id)
   this._handlers["expand-collapse-whole-node"] = function(event, target)
   {
     this._expand_collapse_node(event, target, 'subtree');
+  }.bind(this);
+
+  this._handlers["expand-node"] = function(event, target)
+  {
+    this._expand_collapse_node(event, target, 'subtree', true);
   }.bind(this);
 
   this._handlers["spotlight-node"] = function(event, target)

@@ -427,7 +427,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./console-logger/ecmascriptdebugger.6.0.events.onconsolelog.js"/>
 
 <script src="./storage/data-storages.js"/>
-<script src="./storage/actions-stoarges.js"/>
+<script src="./storage/actions-storages.js"/>
 <script src="./storage/templates.js"/>
 <script src="./storage/views-storages.js"/>
 

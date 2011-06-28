@@ -35,6 +35,19 @@ window.cls.Helpers = function()
   }
 
   /**
+   * Return the filename of the script with `script_id`.
+   */
+  this.get_script_name = function(script_id)
+  {
+    var script = runtimes.getScript(script_id);
+    if (!script)
+    {
+      return null;
+    }
+    return script.uri || runtimes.getRuntime(script.runtime_id).uri;
+  };
+
+  /**
    * Returns the file name in a path. If there is no filename, it returns
    * the last directory. Query string and fragment identifier is stripped.
    *
@@ -116,7 +129,66 @@ window.cls.Helpers = function()
                 .replace(re_s_quot, "&#x27;");
     }
   })();
-  
+
+  this.escape_input = (function()
+  {
+    var re_escape_char = /\\/g;
+    var re_quot_mark = /"/g;
+    return function(str)
+    {
+      return str.replace(re_escape_char, "\\\\")
+                .replace(re_quot_mark, "\\\"");
+    }
+  })();
+
+  this.escape_whitespace = (function()
+  {
+    var map = {
+      "\t": "\\t",
+      "\v": "\\v",
+      "\f": "\\f",
+      "\r": "\\r",
+      "\n": "\\n"
+    };
+
+    return function escape_whitespace(string)
+    {
+      var ret = "";
+
+      for (var i = 0, chr; chr = string[i]; i++)
+      {
+        ret += map[chr] || "\\u" + chr.charCodeAt(0).toString(16).zfill(4);
+      }
+
+      return ret;
+    }
+  })();
+
+  this.unescape_whitespace = (function()
+  {
+    var re = /\\[tvfrn]|\\u[0-9A-fa-f]{4}/g;
+    var map = {
+      "\\t": "\t",
+      "\\v": "\v",
+      "\\f": "\f",
+      "\\r": "\r",
+      "\\n": "\n"
+    };
+
+    return function unescape_whitespace(string)
+    {
+      var match = null;
+      var ret = "";
+
+      while (match = re.exec(string))
+      {
+        ret += map[match[0]] || String.fromCharCode(parseInt(match[0].slice(2).toString(10), 16));
+      }
+
+      return ret;
+    }
+  })();
+
   this.setCookie = function(key, value, time) 
   {
     document.cookie = (
@@ -180,16 +252,9 @@ window.cls.Helpers = function()
     return target && container;
   }
 
-  this.copy_array = function copy_array(item)
+  this.copy_array = function(array)
   {
-    if (Array.isArray(item))
-    {
-      return item.map(copy_array);
-    }
-    else
-    {
-      return item;
-    }
+    return array.concat();
   };
 
   this.copy_object = function(obj)
@@ -239,7 +304,7 @@ window.cls.Helpers = function()
   /**
    * Aligns SVG lines to the pixel grid.
    */
-  this.crispifySvgValue = function(value)
+  this.crispify_svg_value = function(value)
   {
     return Math.floor(value) + .5;
   };

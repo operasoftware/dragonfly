@@ -156,23 +156,6 @@ window.eventHandlers.click['show-stylesheets'] = function(event, target)
   }
 };
 
-window.eventHandlers.click['display-stylesheet'] = function(event, target)
-{
-  var index = parseInt(target.getAttribute('index'));
-  var rt_id = target.parentNode.getAttribute('runtime-id');
-  // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
-  // handleGetRulesWithIndex in stylesheets will
-  // set for this reason __call_count on the event object
-  var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-
-  if (rules)
-  {
-    stylesheets.setSelectedSheet(rt_id, index, rules);
-    topCell.showView(views.stylesheets.id);
-    helpers.setSelected(event.target);
-  }
-};
-
 window.eventHandlers.click['show-runtimes'] = function(event)
 {
   var window_id = event.target.parentNode.getAttribute('window_id');
@@ -192,23 +175,6 @@ window.eventHandlers.click['show-runtimes'] = function(event)
     event.target.parentNode.render(templates.runtimes(rts, template_type));
     event.target.style.backgroundPosition = '0 -11px';
     runtimes.setWindowUnfolded(window_id, true);
-  }
-};
-
-window.eventHandlers.click['display-script'] = function(event)
-{
-  var script_id = event.target.getAttribute('script-id');
-
-  if (script_id)
-  {
-    runtimes.setSelectedScript(script_id);
-    views.runtimes.updateSelectedScript(event.target, script_id);
-    topCell.showView(views.js_source.id);
-  }
-  else
-  {
-    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-      "missing script id in window.eventHandlers.click['display-script']")
   }
 };
 

@@ -1,82 +1,106 @@
 ﻿/* Expander cell */
-.error-console td:nth-child(1) {
-    width: 22px;
+.errors-table > tr:not(.error-details) > th:nth-child(1),
+/* Icon cell */
+.errors-table > tr:not(.error-details) > th:nth-child(2) {
+    width: 16px;
 }
 
+/* Expander cell */
+.errors-table > tr:not(.error-details) > td:nth-child(1),
 /* Icon cell */
-.error-console td:nth-child(2) {
-    width: 22px;
+.errors-table > tr:not(.error-details) > td:nth-child(2) {
+    text-align: center;
 }
 
 /* File cell */
-.error-console td:nth-child(3) {
+.errors-table > tr > th:nth-child(3),
+.errors-table > tr > td:nth-child(3) {
     width: 30%;
+    max-width: 500px;
+}
+
+/* File cell */
+.errors-table > tr > td:nth-child(3) {
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 500px;
 }
 
 /* Line cell */
-.error-console td:nth-child(4) {
+.errors-table > tr > th:nth-child(4) {
     width: 128px;
-    text-align: right;
     max-width: 32px;
 }
 
-.error-console .sortable-table tr:not(.header):not([handler]):active {
+/* Line cell */
+.errors-table > tr > td:nth-child(4) {
+    text-align: right;
+}
+
+.errors-table > tr:not(.header):not(.no-interaction):not([handler]):active {
     background-color: rgba(55,115,211,0.2);
     color: #000;
 }
 
-.error-console button {
-  height: 15px;
-  width: 19px;
-  background: transparent url('../ui-images/expand-collapse.png') 4px 2px no-repeat;
+.errors-table button {
+  height: 9px;
+  width: 5px;
+  background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
   margin: 0;
   padding: 0;
   cursor: pointer;
+  -o-transition: all .2s;
 }
 
-.error-console tr.expanded button {
-  background: transparent url('../ui-images/expand-collapse.png') 4px -13px no-repeat;
+.errors-table > tr.expanded button {
+    -o-transform: rotate(90deg);
 }
 
-.error-console pre {
-    padding: 6px;
-    margin: 6px;
-    border: dashed 1px #b3b3b3;
-    font-family: monospace;
-    font-size: 12px;
-    background-color: white;
+.errors-table > tr.error-details > td:nth-child(1) {
+    border-right: 0;
 }
 
-.error-console .severity {
-  width: 20px;
-  height: 20px;
+.errors-table > tr.error-details > td:nth-child(2) {
+    border-left: 0;
+}
+
+.errors-table pre {
+    margin: 0;
+}
+
+.error-details-table th {
+    text-align: right;
+    padding-right: 5px;
+    vertical-align: top;
+}
+
+.errors-table .severity {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
   display: inline-block;
   background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
 }
 
-.error-console .severity.debug {
+.errors-table .severity.debug {
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.error-console .severity.information {
+.errors-table .severity.information {
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.error-console .severity.verbose {
+.errors-table .severity.verbose {
   background-image: url('../ui-images/error-console-warning.png');
 }
 
-.error-console .severity.error {
+.errors-table .severity.error {
   background-image: url('../ui-images/error-console-error.png');
 }
 
-.error-console .severity.critical {
+.errors-table .severity.critical {
   background-image: url('../ui-images/error-console-error.png');
 }
 

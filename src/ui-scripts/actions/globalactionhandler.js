@@ -158,20 +158,13 @@
       UIWindowBase.showWindow('command_line',
                               Math.ceil(innerHeight/2), 0,
                               innerWidth, Math.floor(innerHeight/2));
-      setTimeout(function() {
-        var ele = window.views.command_line.get_container();
-        if (ele)
-        {
-          (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
-        }
-      }, 0);
     }
     else
     {
       UIWindowBase.closeWindow('command_line');
     }
-    UI.get_instance().get_button("toggle-console")
-                     .setAttribute("is-active", !visible);
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
     return false;
   }.bind(this);
 
@@ -185,7 +178,7 @@
     var ui = UI.get_instance();
     var overlay_id = target.getAttribute("data-overlay-id");
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "true");
+    ui.get_button("toggle-" + overlay_id).addClass("is-active");
 
     overlay.show(overlay_id);
 
@@ -214,7 +207,7 @@
     var client = window.client.current_client;
     var overlay_id = overlay.active_overlay;
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "false");
+    ui.get_button("toggle-" + overlay_id).removeClass("is-active");
 
     if (overlay_id == "remote-debug-overlay" && (!client || !client.connected))
     {
@@ -317,6 +310,20 @@
   /* instatiation */
 
 
+  /* message handling */
+
+  messages.addListener("before-show-view", function(msg) {
+    if (msg.id == "console_panel")
+    {
+      var is_visible = (window.views.command_line && window.views.command_line.isvisible());
+      if (is_visible)
+      {
+        var button = UI.get_instance().get_button("toggle-console");
+        is_visible ? button.removeClass("is-active") : button.addClass("is-active");
+        UIWindowBase.closeWindow('command_line');
+      }
+    }
+  });
 }
 
 

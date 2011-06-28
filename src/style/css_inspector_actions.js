@@ -167,7 +167,7 @@ cls.CSSInspectorActions = function(id)
 
     script += "object.style.setProperty(\"" +
                   prop + "\", \"" +
-                  declaration[1].replace(/"/g, "\\\"") + "\", " +
+                  helpers.escape_input(declaration[1]) + "\", " +
                   (declaration[2] ? "\"important\"" : null) +
               ");";
 
@@ -225,7 +225,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                    initial_property + "\", \"" +
-                   this.editor.context_cur_value.replace(/"/g, "'") + "\", " +
+                   helpers.escape_input(this.editor.context_cur_value) + "\", " +
                    (this.editor.context_cur_priority ? "\"important\"" : null) +
                 ");";
     }
@@ -235,7 +235,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                    new_property + "\", \"" +
-                   rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
+                   helpers.escape_input(rule[VALUE_LIST][index]) + "\", " +
                    (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
                 ");";
     }
@@ -243,6 +243,40 @@ cls.CSSInspectorActions = function(id)
     if (script)
     {
       services['ecmascript-debugger'].requestEval(null,
+        [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+    }
+  };
+
+  /**
+   * Restores all properties, except `exception`.
+   *
+   * @param {String} exception Do not restore a property with this name. Useful when
+   *                           restoring all properties except an overwritten one
+   */
+  this.restore_all_properties = function(exception, callback)
+  {
+    var style_dec = this.editor.saved_style_dec;
+    var rule_id = this.editor.context_rule_id;
+    var length = style_dec[INDEX_LIST].length;
+    var script = "object.style.cssText = '';";
+
+    for (var i = 0; i < length; i++)
+    {
+      var prop = window.css_index_map[style_dec[INDEX_LIST][i]];
+      if (prop != exception)
+      {
+        script += "object.style.setProperty(\"" +
+                     prop + "\", \"" +
+                     helpers.escape_input(style_dec[VALUE_LIST][i]) + "\", " +
+                     (style_dec[PRIORITY_LIST][i] ? "\"important\"" : null) +
+                  ");";
+      }
+    }
+
+    if (script)
+    {
+      var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+      services['ecmascript-debugger'].requestEval(tag,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
   };

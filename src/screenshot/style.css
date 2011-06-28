@@ -69,6 +69,7 @@
   vertical-align: middle;
   margin-right: 7px;
   border-radius: 3px;
+  border: 1px solid rgba(34, 34, 34, .4);
 }
 
 .color-palette-item

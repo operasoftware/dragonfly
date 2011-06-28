@@ -21,6 +21,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
   this.current_error_count = 0;
+  this.filter_updated = false;
 
   this._updateviews = function()
   {
@@ -105,14 +106,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     var fun = function(e) { return e.uri == this._selected_rt_url &&
                             (!source || e.source==source);
     };
-  return this._msgs.filter(fun);
+    return this._msgs.filter(fun);
   };
 
   this.get_messages = function(source, filter)
   {
-    return filter || settings.console.get('use-selected-runtime-as-filter')
+    var messages = filter || settings.console.get('use-selected-runtime-as-filter')
       ? this._get_msgs_with_filter(source, filter)
       : this._get_msgs_without_filter(source);
+    return messages.filter(this._filter, this);
   };
 
   this.get_message = function(id)
@@ -142,7 +144,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       switch(msg.key)
       {
         case 'expand-all-entries': {
-          toggled = [];
+          this._toggled = [];
           this._updateviews();
           break;
         }
@@ -150,10 +152,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           this._updateviews();
           break;
         }
-        case 'css-filter': 
-        case 'use-css-filter': 
+        case 'css-filter':
+        case 'use-css-filter':
         {
           this._set_css_filter();
+          window.messages.post("error-count-update", {current_error_count: this.get_messages().length});
+          this.filter_updated = true;
+          this._updateviews();
+          this.filter_updated = false;
           break;
         }
         default: { // these settings are names of tabs to show.
@@ -188,9 +194,9 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     message.id = "" + (++this._lastid);
     message.title =  this._extract_title(message.description);
     message.line = this._extract_line(message.description);
+    this.addentry(message);
     if (this._filter(message))
     {
-      this.addentry(message);
       this.current_error_count++;
       window.messages.post("error-count-update", {current_error_count: this.current_error_count});
     }
@@ -271,12 +277,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this.addentry({
       id: "" + (++this._lastid),
       windowID: message.windowID,
-      time: new Date(),
+      time: +new Date,
       description: args,
       title:  args,
       line: "" + (message.position ? message.position.lineNumber : ""),
-      uri: method_names[message.type],
-      context: "",
+      uri: null,
+      context: method_names[message.type],
       source: "ecmascript",
       severity: severities[message.type] || "information"
     });
@@ -317,8 +323,9 @@ var ErrorConsoleView = function(id, name, container_class, source)
   container_class = container_class ? container_class : 'scroll error-console';
   name = name ? name : 'missing name ' + id;
 
-  var _expand_all_state = null;
-  var _table_ele = null;
+  this._expand_all_state = null;
+  this._table_ele = null;
+  this._prev_entries_length = 0;
 
   this.createView = function(container)
   {
@@ -328,44 +335,48 @@ var ErrorConsoleView = function(id, name, container_class, source)
     var expand_all = settings.console.get('expand-all-entries');
 
     // If there is no table, it's empty or expand state changed, render all
-    if (! _table_ele || ! entries.length || expand_all != _expand_all_state)
+    if (! this._table_ele || ! entries.length || expand_all != this._expand_all_state ||
+        window.error_console_data.filter_updated)
     {
       // The expand all state thingy is to make sure we handle switching
       // between expand all/collapse all properly.
-      _expand_all_state = expand_all;
-      this.renderFull(container, entries, expand_all);
+      this._expand_all_state = expand_all;
+      this._render_full(container, entries, expand_all);
     }
     // but if not, check if there are new entries to show and just
     // update the list with them
-    else if (_table_ele.childNodes.length-1 < entries.length)
+    else if (this._prev_entries_length < entries.length)
     {
-      this.renderUpdate(entries.slice(-1), expand_all);
+      this._render_update(entries.slice(-1), expand_all);
     }
+
+    window.messages.post("error-count-update", {current_error_count: entries.length});
+    this._prev_entries_length = entries.length;
   };
 
 
-  this.renderFull = function(container, messages, expand_all)
+  this._render_full = function(container, messages, expand_all)
   {
     container.clearAndRender(templates.error_log_table(messages,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id)
                              );
-    _table_ele = container.getElementsByTagName("table")[0];
+    this._table_ele = container.getElementsByTagName("table")[0];
     //container.scrollTop = container.scrollHeight;
   };
 
-  this.renderUpdate = function(entries, expandAll)
+  this._render_update = function(entries, expand_all)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-      _table_ele.render(templates.error_log_row(cur, expandAll, window.error_console_data.get_toggled(), this.id));
+      this._table_ele.render(templates.error_log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id));
     }
   };
 
   this.ondestroy = function() {
-    delete _table_ele;
-    _table_ele = null;
+    delete this._table_ele;
+    this._table_ele = null;
   };
 
   this.init(id, name, container_class );
