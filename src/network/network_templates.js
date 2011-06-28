@@ -225,7 +225,7 @@ templates.network_request_body = function(req)
 
       var tab = ["table",
                ["tr", ["th", "name"], ["th", "value"]]
-      ].concat(parts.map(function(e) { return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
+      ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
       return tab;
     }
     else
