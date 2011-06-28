@@ -265,6 +265,8 @@ cls.Request = function(id)
   this.touched_network = false;
   this.duration = null;
   this.request_headers = null;
+  this.request_type = null;
+  this.requestbody = null;
   this.response_headers = null;
   this.request_raw = null;
   this.response_raw = null;
@@ -325,11 +327,27 @@ cls.Request = function(id)
   {
     this.request_headers = event.headerList;
     this.request_raw = event.raw;
+    for (var n=0, header; header = this.request_headers[n]; n++)
+    {
+      if (header.name.toLowerCase() == "content-type")
+      {
+        this.request_type = header.value;
+        break;
+      }
+    }
   }
 
   this._update_event_requestfinished = function(event)
   {
-    this.requesttime = Math.round(event.time)
+    if (event.data)
+    {
+      opera.postError(JSON.stringify(event, null, "    "));
+      this.requestbody = event.data;
+      // in time we can use the mime-type member here rather than grabbing it
+      // from the headers. See CORE-39597
+      this.requestbody.mimeType = this.request_type;
+    }
+    this.requesttime = Math.round(event.time);
   }
 
   this._update_event_response = function(event)

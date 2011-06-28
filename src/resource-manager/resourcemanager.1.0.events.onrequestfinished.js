@@ -3,19 +3,16 @@ window.cls || (window.cls = {});
 cls.ResourceManager || (cls.ResourceManager = {});
 cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 
-cls.ResourceManager["1.0"].RequestFinished = function(arr, parent)
+cls.ResourceManager["1.0"].RequestFinished = function(arr)
 {
-  this.parent = parent || null;
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.time = arr[2];
   this.data = arr[3] ? new cls.ResourceManager["1.0"].RequestData(arr[3], this) : null;
-  this.toString = function() { return "[message RequestFinished]"; }
 };
 
-cls.ResourceManager["1.0"].RequestData = function(arr, parent)
+cls.ResourceManager["1.0"].RequestData = function(arr)
 {
-  this.parent = parent || null;
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.mimeType = arr[2];
@@ -35,12 +32,10 @@ cls.ResourceManager["1.0"].RequestData = function(arr, parent)
   {
     return new cls.ResourceManager["1.0"].Part(item, self);
   });
-  this.toString = function() { return "[message RequestData]"; }
 };
 
-cls.ResourceManager["1.0"].Content = function(arr, parent)
+cls.ResourceManager["1.0"].Content = function(arr)
 {
-  this.parent = parent || null;
   /** 
     * If BYTES or DATA_URI was chosen as the transport mode, this field
     * contains the size of the data. (If, in addition, decoding was enabled,
@@ -69,12 +64,10 @@ cls.ResourceManager["1.0"].Content = function(arr, parent)
     * @ee ContentMode::Transport
     */
   this.stringData = arr[3];
-  this.toString = function() { return "[message Content]"; }
 };
 
-cls.ResourceManager["1.0"].Part = function(arr, parent)
+cls.ResourceManager["1.0"].Part = function(arr)
 {
-  this.parent = parent || null;
   /** 
     * In multi-part, each part may have its own headers.
     */
@@ -88,12 +81,10 @@ cls.ResourceManager["1.0"].Part = function(arr, parent)
     */
   this.contentLength = arr[1];
   this.content = arr[2] ? new cls.ResourceManager["1.0"].Content(arr[2], this) : null;
-  this.toString = function() { return "[message Part]"; }
 };
 
-cls.ResourceManager["1.0"].Header = function(arr, parent)
+cls.ResourceManager["1.0"].Header = function(arr)
 {
-  this.parent = parent || null;
   /** 
     * The name of the HTTP header, for instance "Accept-Charset".
     */
@@ -103,6 +94,5 @@ cls.ResourceManager["1.0"].Header = function(arr, parent)
     * Accept-Charset, or "text/html; charset=utf8" for Content-Type.
     */
   this.value = arr[1];
-  this.toString = function() { return "[message Header]"; }
 };
 

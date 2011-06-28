@@ -142,9 +142,12 @@ templates.network_log_request_detail = function(ctx, selected)
     ],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
+    ["h2", "reqbody"],
+    templates.network_request_body(req),
     req.touched_network ? [
       ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
       templates.response_details(req),
+      ["h2", ]
     ] : [],
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
@@ -201,6 +204,38 @@ templates.network_headers_list = function(headers, firstline)
   }
   return ["ol", lis, "class", "network-details-header-list mono"]
 }
+
+
+templates.network_request_body = function(req)
+{
+  // when this is undefined/null the request was one that did not send data
+  if (!req.requestbody) 
+  {
+    return ["p", "No request data"];
+  }
+  else if (!req.requestbody.content) // There is content, but we're not tracking
+  {
+    return ["p", "Enable content tracking"];
+  }
+  else
+  {
+ 
+    if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
+    {
+      parts = req.requestbody.content.stringData.split("&");
+
+      var tab = ["table",
+               ["tr", ["th", "name"], ["th", "value"]]
+      ].concat(parts.map(function(e) { return ["tr", ["td", e[0]], ["td", e[1]]]}));
+      return tab;
+    }
+    else // fixme
+    {
+      return ["p", "i don't even know"];
+    }
+  }
+}
+
 
 templates.network_response_body = function(req)
 {
@@ -456,12 +491,17 @@ templates.network_graph_row_bar = function(request, rowheight, width, index, bas
 
 templates.grid_lines = function(ctx, width, height, topoffset)
 {
+
   topoffset = String(topoffset || 25);
   var ret = [];
   var millis = ctx.get_duration();
   millis = Math.ceil(millis / 1000) * 1000
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
+
+
+  //opera.postError("a " + width + " " + millis)
+
 
   // Thresholds for whether or not to render grid for every 100 and 500ms.
   // The number is how many pixels per second. So if every second is
