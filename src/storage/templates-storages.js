@@ -1,6 +1,5 @@
 ﻿window.templates || (window.templates = {});
 
-// todo: mostly to be merged with cookie_manager
 window.templates.storage = {
   runtime_group_render: function(uri) {
     return this.wrap_ellipsis(uri);
@@ -36,8 +35,8 @@ window.templates.storage = {
     return [
       "input",
       "value", value || "",
-      "type",  "text",
-      "name",  name,
+      "type", "text",
+      "name", name,
       "handler", "storage-input-field"
     ]
   },
@@ -56,8 +55,8 @@ window.templates.storage = {
     return [
       "input",
       "value", value || "",
-      "type",  "hidden",
-      "name",  name
+      "type", "hidden",
+      "name", name
     ]
   },
   add_storage_row: function(rt_id) {
@@ -69,19 +68,19 @@ window.templates.storage = {
   },
   add_item_button: function(storage_name) {
     return [
-      "button",       "Add " + storage_name,
-      "class",        "add_storage_button container-button",
-      "handler",      "storage-add-key",
+      "button", ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE.replace("%s", storage_name),
+      "class", "add_storage_button container-button",
+      "handler", "storage-add-key",
       "unselectable", "on"
     ];
   },
   not_existing: function(storage_id) {
-    return ['div',
-      ['div',
-        ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST.replace("%s", 'window.' + storage_id),
-        'class', 'info-box'
+    return ["div",
+      ["div",
+        ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST.replace("%s", "window." + storage_id),
+        "class", "info-box"
       ],
-      'class', 'padding'
+      "class", "padding"
     ];
   }
 };

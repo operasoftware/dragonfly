@@ -63,7 +63,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       idgetter: function(res) { return res._objectref },
       columns: {
         domain: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN),
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
@@ -72,7 +72,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("domain")
         },
         name: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME),
           classname: "col_name",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -84,7 +84,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("name")
         },
         value: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE),
           classname: "col_value",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -96,7 +96,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("value")
         },
         path: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
           classname: "col_path",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -108,7 +108,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("path")
         },
         expires: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
           classname: "col_expires",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -120,14 +120,14 @@ cls.CookieManager.CookieManagerViewBase = function()
           sorter: this._make_sorter("expires")
         },
         isSecure: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
           renderer: this._is_secure_renderer.bind(this),
           align: "center",
           sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
-          label: templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
           renderer: this._is_http_only_renderer.bind(this),
           align: "center",

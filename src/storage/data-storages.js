@@ -414,7 +414,7 @@ cls.StorageDataBase = new function()
       idgetter: function(res) { return res._object_id },
       columns: {
         key: {
-          label: "Key",
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_STORAGE_KEY),
           classname: "col_key",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -436,7 +436,7 @@ cls.StorageDataBase = new function()
           sorter: this._make_sorter("key")
         },
         value: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE),
           classname: "col_value",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
@@ -546,6 +546,7 @@ cls.CookiesData = function(id, update_event_name, title)
   /**
     * This is very basic. HTTP only cookies are not exposed.
     * Also delete cookies is not expected to work reliable.
+    * This is only used if the Cookie Service is not available
     */
 
   this._StorageHost = function()

@@ -2,26 +2,11 @@
 
 templates.cookie_manager = {
   runtime_group_render: function(protocol, domain, path) {
-    return this.wrap_ellipsis(protocol + "//" + domain + path);
-  },
-  wrap_ellipsis: function(elem) {
-    var template = [
-      "div",
-        [
-          "div", elem,
-          "class", "ellipsis"
-        ],
-      "class", "ellipsis_cont"
-    ];
-    if (typeof elem === "string")
-    {
-      template.push("title", elem);
-    }
-    return template;
+    return templates.storage.wrap_ellipsis(protocol + "//" + domain + path);
   },
   value_container: function(content) {
     return [
-      "div", this.wrap_ellipsis(content),
+      "div", templates.storage.wrap_ellipsis(content),
       "class", "value_container"
     ]
   },

@@ -633,6 +633,9 @@ ui_strings.S_LABEL_COLOR_SATURATION = "Saturation";
 /* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
 ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
 
+/* DESC: Label for "Add storage_type" button */
+ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE = "Add %s";
+
 /* DESC: Label for the domain that is set for a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN = "Domain";
 
@@ -654,7 +657,7 @@ ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME = "Name";
 /* DESC: Label for the value of a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH = "Path";
 
-/* DESC: Label for the value of a cookie */
+/* DESC: Label for the value of a cookie or storage item */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE = "Value";
 
 /* DESC: Context menu entry that brings up "Edit cookie" UI */
@@ -677,6 +680,9 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Delete cookies from %s";
 
 /* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
+
+/* DESC: Label for the key (identifier) of a storage item */
+ui_strings.S_LABEL_STORAGE_KEY = "Key";
 
 /* DESC: Context menu entry that removes watch */
 ui_strings.S_LABEL_DELETE_WATCH = "Delete watch";

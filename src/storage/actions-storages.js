@@ -29,7 +29,7 @@ cls.StorageViewActions = function(id)
     ActionBroker.get_instance()._action_context.mode = MODE_EDIT;
 
     var container = target;
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -44,7 +44,7 @@ cls.StorageViewActions = function(id)
       tr.addClass("edit_mode");
       this._handlers["select-row"](event, tr);
       var textarea = tr.querySelector("textarea");
-      if(textarea)
+      if (textarea)
       {
         this._handlers["textarea-autosize"](null, textarea);
       }
@@ -55,12 +55,12 @@ cls.StorageViewActions = function(id)
   {
     this.mode = MODE_DEFAULT;
     var container = target || document.querySelector(".storage_view");
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
 
-    if(container)
+    if (container)
     {
       var storage_id = container.getAttribute("data-storage-id");
       var edit_trs = container.querySelectorAll("tr.edit_mode");
@@ -97,7 +97,7 @@ cls.StorageViewActions = function(id)
   this._handlers["remove-item"] = function(event, target, object_ids)
   {
     var container = target;
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -110,7 +110,7 @@ cls.StorageViewActions = function(id)
         var rt_id = +selected.querySelector("[name=rt_id]").value;
         var key   = selected.querySelector("[name=key]").value;
         var cb = function(){};
-        if(i === selection.length - 1)
+        if (i === selection.length - 1)
         {
           cb = function(storage_id, success)
           {
@@ -126,7 +126,7 @@ cls.StorageViewActions = function(id)
   this._handlers["delete-all"] = function(event, target)
   {
     var container = target;
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -150,7 +150,7 @@ cls.StorageViewActions = function(id)
   this._handlers["update"] = function(event, target)
   {
     var container = target;
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
@@ -181,17 +181,17 @@ cls.StorageViewActions = function(id)
     var runtime_id = header_row && header_row.getAttribute("data-object-id");
 
     var container = target;
-    while(container && !container.getAttribute("data-storage-id"))
+    while (container && !container.getAttribute("data-storage-id"))
     {
       container = container.parentNode;
     }
 
-    if(container && runtime_id)
+    if (container && runtime_id)
     {
       if (!container.querySelector(".add_storage_row")) // don't restore when adding multiple items at once
       {
         var table_elem = container.querySelector(".sortable-table");
-        if(table_elem)
+        if (table_elem)
         {
           var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
           if (table)
@@ -280,7 +280,6 @@ cls.StorageViewActions = function(id)
   {
     if (target)
     {
-      // todo: find a good place for this. will be the same for all textareas.
       var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
       // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
       // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
@@ -288,13 +287,14 @@ cls.StorageViewActions = function(id)
       target.style.height = target.scrollHeight + "px";
       if (target.scrollHeight > max_height)
       {
-        if(!target.style.overflow)
+        if (!target.style.overflow)
         {
           target.style.overflow = "visible";
         }
       }
       else
-      if (target.style.overflow) {
+      if (target.style.overflow)
+      {
         target.style.overflow = null;
       }
     }
@@ -302,20 +302,15 @@ cls.StorageViewActions = function(id)
 
   this.onclick = function(event)
   {
-    var is_within_edit;
     // was add_storage button clicked?
-    if (event.target.hasClass("add_storage_button"))
-    {
-      is_within_edit = true;
-    }
+    var is_within_edit = event.target.hasClass("add_storage_button");
     // was something in an edit-container clicked?
     var edit_container = event.target;
-    while(edit_container && edit_container.parentNode)
+    while (!is_within_edit && edit_container && edit_container.parentNode)
     {
       if (edit_container.hasClass("edit_mode"))
       {
         is_within_edit = true;
-        break;
       }
       edit_container = edit_container.parentNode;
     }
@@ -418,15 +413,9 @@ window.eventHandlers.click["storage-add-key"] = function(event, target)
   this.broker.dispatch_action(data_storage_id, "add-key", event, target);
 }
 
-window.eventHandlers.click["storage-input-field"] = function(event, target)
-{
-  // Empty for now, but preventing click['storage-container']
-  // which exits editing
-}
-
 window.eventHandlers.input["storage-input-field"] = function(event, target)
 {
-  if(target.nodeName === "textarea")
+  if (target.nodeName === "textarea")
   {
     var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
     this.broker.dispatch_action(data_storage_id, "textarea-autosize", event, target);
