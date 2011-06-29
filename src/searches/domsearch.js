@@ -385,7 +385,7 @@ var DOMSearch = function(min_length)
   this._init(min_length);
 };
 
-DOMSearch.prototype = TextSearch.prototype;
+DOMSearch.prototype = SearchSingleNodes.prototype;
 
 DOMSearch.PLAIN_TEXT = TextSearch.PLAIN_TEXT;
 DOMSearch.REGEXP = TextSearch.REGEXP;

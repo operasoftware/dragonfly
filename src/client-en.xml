@@ -258,6 +258,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/ruler/ruler.js"/>
 <script src="./ui-scripts/ruler/templates.js"/>
 <script src="./searches/TextSearch.js"/>
+<script src="./searches/searchsinglenodes.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>
 <script src="./searches/searchwindow.js"/>
