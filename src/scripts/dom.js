@@ -650,7 +650,6 @@ Element.prototype.get_ancestor = function(selector)
   return null;
 };
 
-
 /**
  * Make sure the element is visible in its scoll context.
  * @see Element.prototype.scrollSoftIntoContainerView

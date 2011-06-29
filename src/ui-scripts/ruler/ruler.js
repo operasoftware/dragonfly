@@ -343,12 +343,12 @@ window.addEventListener('load', function()
     {
       this._ruler_ele = ruler_ele;
       this._set_max_dimensions();
-      this._container.addEventListener('mousedown',
-                                        this._onmousedown_bound,
-                                        false);
-      this._container.addEventListener('click',
-                                        this._onclick_bound,
-                                        false);
+      ruler_ele.addEventListener('mousedown',
+                                 this._onmousedown_bound,
+                                 false);
+      ruler_ele.addEventListener('click',
+                                 this._onclick_bound,
+                                 false);
       this._call_callback(true);
     };
 
@@ -378,8 +378,7 @@ window.addEventListener('load', function()
 
       if (is_dirty || force_redraw)
       {
-        this._ruler_ele.re_render(window.templates.ruler(this))
-        this._ruler_ele = this._container.getElementsByClassName(this.base_class)[0];
+        this._ruler_ele.clearAndRender(window.templates.ruler_body(this));
       }
     };
 
