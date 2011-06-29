@@ -88,7 +88,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
         ele_container: parent.parentNode,
         prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
-        rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
+        rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||
+                 parseInt(parent.get_attr('parent-node-chain', 'obj-id'))
       }
       if (this._edit_context.initial_color)
         this._finalize_show_color_picker();
