@@ -52,7 +52,10 @@ cls.DOMView = function(id, name, container_class)
 
   this._clear_soft_spotlight = function()
   {
-    window.hostspotlighter.spotlight(window.dom_data.target);
+    if (window.settings.dom.get('highlight-on-hover'))
+    {
+      window.hostspotlighter.spotlight(window.dom_data.target);
+    }
   };
 
   this._create_view_no_data_timeout = 0;
