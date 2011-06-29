@@ -130,7 +130,7 @@ var ActionBroker = function()
   this._shortcuts = null;
   this._global_shortcuts = null;
   this._current_shortcuts = null;
-  this._current_inherited_shortcuts = null;
+  this._current_shared_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
   this._modal_click_handler_setter = null;
@@ -194,7 +194,7 @@ var ActionBroker = function()
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
-      this._current_inherited_shortcuts = this._shortcuts[this._action_context.inherited_shortcuts] || {};
+      this._current_shared_shortcuts = this._shortcuts[this._action_context.shared_shortcuts] || {};
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
       this._context_queue.push(handler_id);
@@ -318,9 +318,9 @@ var ActionBroker = function()
     if (!(action_handler && action_handler.id))
       throw 'missing id on action_handler in ActionBroker.instance.register_handler';
     this._handlers[action_handler.id] = action_handler;
-    if (action_handler.inherited_shortcuts)
+    if (action_handler.shared_shortcuts)
     {
-      this._inherited_handlers[action_handler.inherited_shortcuts] = action_handler;
+      this._inherited_handlers[action_handler.shared_shortcuts] = action_handler;
     }
   }
 
@@ -332,8 +332,8 @@ var ActionBroker = function()
   this.dispatch_key_input = function(key_id, event)
   {
     var shortcuts = this._current_shortcuts[this._action_context.mode] || {};
-    var inherited_shortcuts = this._current_inherited_shortcuts[this._action_context.mode] || {};
-    var action = shortcuts[key_id] || inherited_shortcuts[key_id] || '';
+    var shared_shortcuts = this._current_shared_shortcuts[this._action_context.mode] || {};
+    var action = shortcuts[key_id] || shared_shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
     {

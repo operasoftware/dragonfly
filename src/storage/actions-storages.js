@@ -7,7 +7,7 @@ cls.StorageViewActions = function(id)
   MODE_EDIT = "edit";
 
   this.id = id;
-  this.inherited_shortcuts = "storage";
+  this.shared_shortcuts = "storage";
   ActionHandlerInterface.apply(this);
 
   this.mode_labels =
