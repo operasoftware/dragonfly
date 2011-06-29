@@ -310,7 +310,6 @@
     var palette = cls.ColorPalette.get_instance().get_color_palette();
     return (
     ['div',
-      ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT + ':',
       palette.map(this.color_picker_palette_item, this),
       'class', 'color-picker-palette']);
   };

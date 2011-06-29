@@ -17,9 +17,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this.window_left = 20;
   this.window_width_with_alpha = 523;
   this.window_width = 376;
-  this.window_height = 270;
+  this.window_height = 244;
   this.window_resizable = false;
   this.window_statusbar = false;
+
+  // TODO: this should be calculated
+  const PALETTE_HEIGHT = 24;
+  const MAX_SWATCHES = 15;
 
   /* private */
   const CSS_CLASS_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
@@ -138,13 +142,26 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     this._edit_context.ele_container.addClass(this._edit_context.edit_class ||
                                               CSS_CLASS_TARGET);
+    var height = this.window_height;
+    var palette = cls.ColorPalette.get_instance().get_color_palette();
+
+    if (palette.length > 0)
+    {
+      height += PALETTE_HEIGHT;
+    }
+
+    if (palette.length > MAX_SWATCHES)
+    {
+      height += defaults["scrollbar-width"];
+    }
+
     UIWindowBase.showWindow(this.id,
                             this.window_top,
                             this.window_left,
                             typeof this._edit_context.initial_color.alpha == 'number' ?
                             this.window_width_with_alpha :
                             this.window_width,
-                            this.window_height);
+                            height);
   }
 
   this.ondestroy = function()
