@@ -320,6 +320,11 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           ele = ele.parentNode;
         }
 
+        // If we're in the scope chain, remove "scope <n>"
+        if (target.get_ancestor(".scope-chain")) {
+          props.shift();
+        }
+
         if (!props.length)
         {
           return;
