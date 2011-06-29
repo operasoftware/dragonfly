@@ -341,7 +341,6 @@ cls.Request = function(id)
   {
     if (event.data)
     {
-      opera.postError(JSON.stringify(event, null, "    "));
       this.requestbody = event.data;
       // in time we can use the mime-type member here rather than grabbing it
       // from the headers. See CORE-39597

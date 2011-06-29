@@ -140,17 +140,24 @@ templates.network_log_request_detail = function(ctx, selected)
      ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network && req.duration ? "" + req.duration + " ms" : "0"]],
      "class", "resource-detail"
     ],
+
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
+
+
     ["h2", "Request body"],
     templates.network_request_body(req),
+
+
     req.touched_network ? [
       ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
       templates.response_details(req),
       ["h2", ]
     ] : [],
+
     ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
+
     ],
     "data-resource-id", String(req.id),
     "class", "request-details"
@@ -208,6 +215,7 @@ templates.network_headers_list = function(headers, firstline)
 
 templates.network_request_body = function(req)
 {
+      opera.postError(JSON.stringify(req.requestbody, null, "    "));
   // when this is undefined/null the request was one that did not send data
   if (!req.requestbody) 
   {
@@ -228,9 +236,15 @@ templates.network_request_body = function(req)
       ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
       return tab;
     }
-    else
+    else if (req.requestbody.partList.length)
     {
-      return ["p", "Unknown post type or multipart"];
+      var ret = [["h3", "Multipart data"]];
+      for (var n=0, part; part=req.requestbody.partList[n]; n++)
+      {
+        ret.push(["h4", "part " + (n+1), ["p", part.headerList.map(function(e) {return ["span", e.name + ": " + unescape(e.value)] })]]);
+      }
+
+      return ret;
     }
   }
 }
