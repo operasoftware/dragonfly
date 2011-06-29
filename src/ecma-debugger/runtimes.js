@@ -846,10 +846,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     const
     RUNTIME_ID = 0,
     THREAD_ID = 1,
-    SCRIPT_ID = 2,
-    LINE_NUMBER = 3,
-    STOPPED_REASON = 4,
-    BREAKPOINT_ID = 5;
+    STATUS = 2;
 
     var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering
@@ -857,6 +854,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     {
       var thread_id = message[THREAD_ID];
       clear_thread_id(rt_id, thread_id);
+
+      if (message[STATUS] == "cancelled-by-scheduler" && stop_at.is_stopped)
+      {
+        stop_at.on_thread_cancelled(message);
+      }
+      
       if (!stop_at.is_stopped && runtime_stopped_queue.length)
       {
         stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());

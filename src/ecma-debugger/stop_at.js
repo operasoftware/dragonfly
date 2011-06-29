@@ -303,6 +303,19 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     messages.post('host-state', {state: 'ready'});
   }
 
+  this.on_thread_cancelled = function(message)
+  {
+    const THREAD_ID = 1;
+    if (message[THREAD_ID] == stopAt.thread_id)
+    {
+      callstack = [];
+      messages.post('frame-selected', {frame_index: -1});
+      __controls_enabled = false;
+      toolbars.js_source.disableButtons('continue');
+      messages.post('host-state', {state: 'ready'});
+    }
+  };
+
   this.handle = function(message)
   {
     const
