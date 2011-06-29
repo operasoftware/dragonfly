@@ -4,8 +4,8 @@
 
 /* Icon cell */
 .errors-table tr td.icon_cell {
-    text-align: center;
-    width: 16px;
+  text-align: center;
+  width: 16px;
 }
 
 .errors-table tr td.location {
@@ -61,6 +61,7 @@
 
 .errors-table .severity {
   display: inline-block;
+  vertical-align: middle;
   width: 16px;
   height: 16px;
   background: url('../ui-images/error-console-info.png') no-repeat;

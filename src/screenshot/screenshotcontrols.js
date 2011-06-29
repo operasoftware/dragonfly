@@ -99,12 +99,13 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
 
   this._handlers['screenshot-update'] = function(event, target)
   {
+    console.log("screenshot-update", event.shiftKey);
     if (!this._screenshot)
     {
       this._screenshot = window.views.screenshot;
     }
     this._screenshot._take_screenshot = true;
-    this._screenshot.update_screenshot();
+    this._screenshot.update_screenshot(event.shiftKey);
   }.bind(this);
 
   this._handlers['screenshot-zoom'] = function(event, target)

@@ -267,10 +267,12 @@ cls.ScreenShotView = function(id, name, container_class)
     }
   };
 
-  this.update_screenshot = function()
+  this.update_screenshot = function(keep_zoom_level)
   {
-    // todo: maybe screenshot updating should not reset scale.
-    this._pixel_magnifier.scale = 1;
+    if (!keep_zoom_level)
+    {
+      this._pixel_magnifier.scale = 1;
+    }
     window.messages.post('screenshot-scale',
                            {scale: this._pixel_magnifier.scale});
     this._get_window_size();
