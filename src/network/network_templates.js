@@ -141,13 +141,9 @@ templates.network_log_request_detail = function(ctx, selected)
      "class", "resource-detail"
     ],
 
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
     templates.request_details(req),
 
-
-    ["h2", "Request body"],
     templates.network_request_body(req),
-
 
     req.touched_network ? [
       ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
@@ -155,7 +151,6 @@ templates.network_log_request_detail = function(ctx, selected)
       ["h2", ]
     ] : [],
 
-    ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE],
     templates.network_response_body(req),
 
     ],
@@ -178,7 +173,10 @@ templates.request_details = function(req)
       ["span", parts[2] + " "]
     ]
   }
-  return templates.network_headers_list(req.request_headers, firstline);
+
+  return [["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
+          templates.network_headers_list(req.request_headers, firstline)
+         ];
 }
 
 templates.response_details = function(req)
@@ -215,15 +213,15 @@ templates.network_headers_list = function(headers, firstline)
 
 templates.network_request_body = function(req)
 {
-      opera.postError(JSON.stringify(req.requestbody, null, "    "));
+  var ret = [["h2", "Request body"]];
   // when this is undefined/null the request was one that did not send data
   if (!req.requestbody) 
   {
-    return ["p", "No request data"];
+    ret.push(["p", "No request data"]);
   }
   else if (!req.requestbody.content) // There is content, but we're not tracking
   {
-    return ["p", "Enable content tracking in the network options tab to be able to see request bodies"];
+    ret.push(["p", "Enable content tracking in the network options tab to be able to see request bodies"]);
   }
   else
   {
@@ -234,42 +232,76 @@ templates.network_request_body = function(req)
       var tab = ["table",
                ["tr", ["th", "name"], ["th", "value"]]
       ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
-      return tab;
+      ret.push(tab);
     }
     else if (req.requestbody.partList.length)
     {
-      var ret = [["h3", "Multipart data"]];
+      ret = [["h2", "Request body - multipart"]];
       for (var n=0, part; part=req.requestbody.partList[n]; n++)
       {
-        ret.push(["h4", "part " + (n+1), ["p", part.headerList.map(function(e) {return ["span", e.name + ": " + unescape(e.value)] })]]);
+        ret.push(["h4", "part " + (n+1)]);
+        ret.push(templates.network_headers_list(part.headerList));
+        ret.push(["pre", part.content.stringData]);
       }
 
-      return ret;
+    }
+    else // not multipart or form.
+    {
+      var tpl = [];
+      var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
+      if (type == "markup")
+      {
+        tpl = window.templates.highlight_markup(req.requestbody.content.stringData);
+      }
+      else if (type == "script")
+      {
+        tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
+      }
+      else if (type == "css" || type == "text")
+      {
+        tpl = ["p", req.requestbody.content.stringData];        
+      }
+      else
+      {
+        if (req.requestbody.mimeType)
+        {
+          ret.push(["p", "Can't display stuff type " + req.requestbody.mimeType]);
+        }
+        else
+        {
+          ret.push(["p", "No MIME type known for request data"]);
+        }
+      }
+
+      ret.push(tpl)
     }
   }
+  return ret;
 }
 
 
 templates.network_response_body = function(req)
 {
+  var ret = [["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE]];
+
   if (req.body_unavailable)
   {
     return ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY];
   }
   else if (!req.responsebody)
   {
-    return ["p",
-            ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-            ["p", ["button",
-             ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-             "data-resource-id", String(req.id),
-             // unselectable attribute works around bug CORE-35118
-             "unselectable", "on",
-             "handler", "get-response-body",
-             "class", "container-button"
-            ]],
-            "class", "response-view-body-container"
-           ];
+    ret.push(["p",
+      ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
+      ["p", ["button",
+          ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
+          "data-resource-id", String(req.id),
+          // unselectable attribute works around bug CORE-35118
+          "unselectable", "on",
+          "handler", "get-response-body",
+          "class", "container-button"
+      ]],
+      "class", "response-view-body-container"
+    ]);
   }
   else
   {
@@ -287,11 +319,12 @@ templates.network_response_body = function(req)
       bodytpl = ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", req.mime)];
     }
 
-    return ["div",
-            bodytpl,
-            "class", "response-body-content"
-           ];
+    ret.push(["div",
+                bodytpl,
+               "class", "response-body-content"
+             ]);
   }
+  return ret;
 }
 
 templates.network_header_table = function(headers)
@@ -511,9 +544,6 @@ templates.grid_lines = function(ctx, width, height, topoffset)
   millis = Math.ceil(millis / 1000) * 1000
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
-
-
-  //opera.postError("a " + width + " " + millis)
 
 
   // Thresholds for whether or not to render grid for every 100 and 500ms.
