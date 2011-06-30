@@ -67,6 +67,7 @@ var SearchSingleNodesPrototype = function(min_length)
           else
           {
             this._search_term_length = this._search_term.length;
+            this._last_match_index = 0;
           }
           this._search_next_match();
           node = this._consume_node(node);
