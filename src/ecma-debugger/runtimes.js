@@ -658,6 +658,17 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   var runtime_stopped_queue = [];
   var stopped_threads = {};
 
+  // for debug purpose
+  var print_threads = function(label, msg)
+  {
+    var log = label + ': ' + JSON.stringify(msg) + '\n' +
+      'thread_queues: ' + JSON.stringify(thread_queues) + '\n' +
+      'current_threads: ' + JSON.stringify(current_threads) + '\n' +
+      'runtime_stopped_queue: ' + JSON.stringify(runtime_stopped_queue) + '\n' +
+      'stopped_threads: ' + JSON.stringify(stopped_threads) + '\n';
+    opera.postError(log);
+  };
+
   var cleanUpThreadOnContextChange = function()
   {
     const THREAD_ID = 1;
@@ -782,11 +793,15 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         views.threads.update();
       }
     }
+    else
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread started not debug context')
+    }
   }
 
   this.onThreadStoppedAt = function(status, message)
   {
-
     const
     RUNTIME_ID = 0,
     THREAD_ID = 1,
@@ -825,6 +840,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
     else
     {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread stopped not in debug context ')
       services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
                                                                 thread_id, 
                                                                 'run']);
@@ -870,6 +887,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         log_thread(THREAD_FINISHED, message, rt_id, thread_id);
         views.threads.update();
       }
+    }
+    else
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread finished not in debug context')
     }
   }
 
