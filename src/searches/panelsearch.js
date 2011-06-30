@@ -28,6 +28,14 @@ PanelSearch = function()
         }
       }
       this._info_ele.textContent = info;
+      if (type == EMPTY)
+      {
+        this._info_ele.style.backgroundColor = "transparent";
+      }
+      else
+      {
+        this._info_ele.style.removeProperty("background-color");
+      }
     }
   };
 

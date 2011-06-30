@@ -1256,3 +1256,18 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
+
+/* DESC: Radio label for the search type 'Text' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
+
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
+
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
+
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
+
+/* DESC: Checkbox label to set the 'ignore case' flag search panel  */
+ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";

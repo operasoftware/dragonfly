@@ -43,9 +43,8 @@
   border-radius: 3px;
   background-color: hsl(0, 0%, 90%);
   margin: 2px 3px;
-  padding: 0 2px;
+  padding: 0 3px;
   line-height: 15px;
-  min-width: 2em;
   text-align: right;
 }
 
