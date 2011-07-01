@@ -243,7 +243,7 @@ window.cls.FriendlyPrinter = function()
           item.toString()
         ];
       }
-      else if (/Error\]$/.test(class_))
+      else if (/(Error|Exception)\]$/.test(class_))
       {
         return [
           ERROR,
