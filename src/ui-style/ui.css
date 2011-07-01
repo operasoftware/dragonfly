@@ -494,7 +494,8 @@ filter {
 }
 
 filter.filter {
-    background-image: url("../ui-images/filter.png");
+  background-image: url("../ui-images/filter.png");
+  background-position: 5px 50%;
 }
 
 filter input {

@@ -272,9 +272,9 @@ cls.ScreenShotView = function(id, name, container_class)
     if (!keep_zoom_level)
     {
       this._pixel_magnifier.scale = 1;
+      window.messages.post('screenshot-scale',
+                             {scale: this._pixel_magnifier.scale});
     }
-    window.messages.post('screenshot-scale',
-                           {scale: this._pixel_magnifier.scale});
     this._get_window_size();
   };
 

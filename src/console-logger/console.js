@@ -460,10 +460,11 @@ ErrorConsoleView.roughViews.createViews = function()
         {
           handler: 'console-text-search-' + r_v.id,
           shortcuts: 'console-text-search-' + r_v.id,
-          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+          title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+          label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+          type: "filter"
         }
-    ]
-
+      ]
     );
     new Switches
     (
