@@ -48,6 +48,8 @@ function ContextMenu() {
     // Hide the currently visible context menu, if any
     this.dismiss();
 
+    CstSelectBase.close_opened_select();
+
     if (/*!window.getSelection().isCollapsed ||*/ event.shiftKey) // Shift key overrides for debugging
     {
       return;
@@ -171,7 +173,7 @@ function ContextMenu() {
 
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
-      this.is_shown = true;
+      this.is_visible = true;
     }
   };
 
@@ -242,7 +244,7 @@ function ContextMenu() {
     {
       contextmenu.parentElement.removeChild(contextmenu);
     }
-    this.is_shown = false;
+    this.is_visible = false;
   };
 
   this._expand_all_items = function(items, event, menu_id)

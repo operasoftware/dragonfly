@@ -129,11 +129,26 @@
     return false;
   };
 
+  this._close_open_menus = function()
+  {
+    var contextmenu = ContextMenu.get_instance();
+    if (contextmenu.is_visible)
+    {
+      contextmenu.dismiss();
+      return true;
+    }
+    var has_opened_select = CstSelectBase.close_opened_select();
+    return has_opened_select;
+  };
+
   this._handlers["toggle-console"] = function(action_id, event, target)
   {
-    // escape does much more than just toggle-console,
-    // perhaps we should reflect that
-    
+    var has_open_menus = this._close_open_menus();
+    if (has_open_menus)
+    {
+      return;
+    }
+
     if (this.mode == MODE_EDIT)
     {
       var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');

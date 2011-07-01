@@ -36,6 +36,7 @@
 
   var modal_box = null;
   var select_obj = null;
+  var self = this;
 
   var modal_click_handler = function(event)
   {
@@ -79,12 +80,22 @@
         case 2: return
       }
     }
-    document.removeEventListener('click', modal_click_handler, true);
-    modal_box.parentElement.removeChild(modal_box);
-    modal_box = null;
-    select_obj = null;
-    delete EventHandler.__modal_mode;
+    self.remove_select();
   }
+
+  this.remove_select = function()
+  {
+    if (modal_box)
+    {
+      document.removeEventListener('click', modal_click_handler, true);
+      modal_box.parentElement.removeChild(modal_box);
+      modal_box = null;
+      select_obj = null;
+      delete EventHandler.__modal_mode;
+      return true;
+    }
+    return false;
+  };
 
   var click_handler = function(event)
   {
@@ -265,6 +276,14 @@
   }
 
   document.addEventListener('click', click_handler, false);
+}
+
+/**
+ * Returns true if there is an open dropdown
+ */
+CstSelectBase.close_opened_select = function()
+{
+  return this.remove_select();
 }
 
 
