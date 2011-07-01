@@ -120,7 +120,12 @@ cls.WatchesView = function(id, name, container_class)
   {
     if (this.mode == MODE_EDIT)
     {
-      this._editor.cancel();
+      var ele = this._editor.cancel();
+      if (!this._editor.context_enter.value)
+      {
+        var item = ele.parentNode;
+        item.parentNode.removeChild(item);
+      }
       this._check_no_content();
       this._add_watches_button.disabled = false;
       return false;
