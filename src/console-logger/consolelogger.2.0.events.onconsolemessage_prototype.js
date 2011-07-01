@@ -40,5 +40,10 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     }
     return main;
   });
+
+  this.__defineGetter__("expanding_part", function()
+  {
+    return this.desc_without_linenumber_line.replace(this.title, "");
+  });
 };
 

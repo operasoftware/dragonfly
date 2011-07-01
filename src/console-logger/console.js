@@ -48,7 +48,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
 
     // before calling updateviews, need to make sure the respective view is not hidden.
-    // can't so that in it's createView method, as it's not called if there is no container.
+    // can't do that in it's createView method, as it's not called if there is no container.
     if (entry.source)
     {
       var corresponding_tab = "console-other";
@@ -324,7 +324,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class = container_class ? container_class : 'scroll error-console';
-  name = name ? name : 'missing name ' + id;
+  // name = name ? name : 'missing name ' + id;
 
   this._expand_all_state = null;
   this._table_ele = null;
@@ -339,12 +339,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
     // If there is no table, it's empty or expand state changed, render all
     if (! this._table_ele || ! entries.length || expand_all != this._expand_all_state ||
-        window.error_console_data.filter_updated)
+        window.error_console_data.filter_updated || this._query != this._old_query)
     {
       // The expand all state thingy is to make sure we handle switching
       // between expand all/collapse all properly.
       this._expand_all_state = expand_all;
-      this._render_full(container, entries, expand_all);
+      this._render_full(container, entries, expand_all, this._query);
     }
     // but if not, check if there are new entries to show and just
     // update the list with them
@@ -353,16 +353,18 @@ var ErrorConsoleView = function(id, name, container_class, source)
       this._render_update(entries.slice(-1), expand_all);
     }
 
+    this._old_query = this._query;
     window.messages.post("error-count-update", {current_error_count: entries.length});
     this._prev_entries_length = entries.length;
   };
 
-  this._render_full = function(container, messages, expand_all)
+  this._render_full = function(container, messages, expand_all, search_term)
   {
     container.clearAndRender(templates.errors.log_table(messages,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
-                                                       this.id)
+                                                       this.id,
+                                                       this._query)
                              );
     this._table_ele = container.getElementsByTagName("table")[0];
     //container.scrollTop = container.scrollHeight;
@@ -372,7 +374,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     for (var n=0, cur; cur=entries[n]; n++)
     {
-      this._table_ele.render(templates.errors.log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id));
+      this._table_ele.render(templates.errors.log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id, this._query));
     }
   };
 
@@ -380,6 +382,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
     delete this._table_ele;
     this._table_ele = null;
   };
+
+  this._on_before_search_bound = (function(message)
+  {
+    this._query = message.search_term;
+    this.update();
+  }).bind(this);
 
   this.init(id, name, container_class );
 };
@@ -472,12 +480,13 @@ ErrorConsoleView.roughViews.createViews = function()
       var textSearch = new TextSearch();
 
       var view_id = r_v.id;
-      var onViewCreated = function(msg)
+      var onShowView = function(msg)
       {
         if( msg.id == view_id )
         {
-          textSearch.setContainer(msg.container);
-          textSearch.setFormInput(views.console.getToolbarControl( msg.container, 'console-text-search-' + view_id));
+          var container = UI.get_instance().get_container(view_id);
+          textSearch.setContainer(container);
+          textSearch.setFormInput(views.console.getToolbarControl( container, 'console-text-search-' + view_id));
         }
       };
 
@@ -489,8 +498,9 @@ ErrorConsoleView.roughViews.createViews = function()
         }
       };
 
-      messages.addListener('view-created', onViewCreated);
+      messages.addListener('show-view', onShowView);
       messages.addListener('view-destroyed', onViewDestroyed);
+      textSearch.add_listener("onbeforesearch", window.views[view_id]._on_before_search_bound);
 
       eventHandlers.input['console-text-search-'+ view_id] = function(event, target)
       {

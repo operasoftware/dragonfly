@@ -1,11 +1,11 @@
 ﻿window.templates = window.templates || {};
 window.templates.errors = window.templates.errors || {};
 
-window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId)
+window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId, query, query_options)
 {
   var rowClosure = function(e)
   {
-    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId);
+    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId, query, query_options);
   };
 
   return [
@@ -41,8 +41,37 @@ window.templates.errors._source_map = {
   }
 };
 
-window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId)
+window.templates.errors._matchables = [
+  {
+    id: "title"
+  },
+  {
+    id: "description"
+  },
+  {
+    id: "expanding_part",
+    needs_expansion: true
+  },
+  {
+    id: "context"
+  },
+  {
+    id: "line"
+  },
+  {
+    id: "uri"
+  },
+  {
+    id: "source"
+  },
+  {
+    id: "severity"
+  }
+];
+
+window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId, query, query_options)
 {
+  // todo: implement query_options
   var expanded;
   if (allExpanded)
   {
@@ -55,6 +84,34 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   else
   {
     expanded = toggledList.indexOf(entry.id) != -1;
+  }
+
+  var hidden = false;
+  var match_needs_expansion = false;
+
+  var matchables = window.templates.errors._matchables
+  if (query)
+  {
+    hidden = true;
+    for (var i=0, matchable; matchable = matchables[i]; i++)
+    {
+      if (matchable.id && entry[matchable.id] && (entry[matchable.id].toLowerCase().indexOf(query.toLowerCase()) !== -1))
+      {
+        hidden = false;
+        if (matchable.needs_expansion)
+        {
+          match_needs_expansion = true;
+        }
+      }
+    };
+  }
+  if (hidden)
+  {
+    return [];
+  }
+  if (match_needs_expansion)
+  {
+    expanded = true;
   }
 
   var title = entry.context;
@@ -105,32 +162,29 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
     ];
   }
 
-  var rows = [
-    [
-      "tr", [
-        ["td", icon_cell, "class", "icon_cell"],
-        ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
-        ["td",
-          ["pre", entry.desc_without_linenumber_line, "class", "mono"],
-          "class", "main"
-        ],
-        ["td", entry.context, "class", "context"],
-        ["td",
-           location_string,
-           "title", title,
-           "class", "location " + (entry.uri ? "internal-link" : ""),
-           "handler", "open-resource-tab",
-           "data-resource-url", entry.uri,
-           "data-resource-line-number", entry.line ? entry.line : ""
-        ]
+  return [
+    "tr", [
+      ["td", icon_cell, "class", "icon_cell"],
+      ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
+      ["td",
+        ["pre", entry.desc_without_linenumber_line, "class", "mono"],
+        "class", "main"
       ],
-      "class", (expandable ? "expandable" : "") + (expanded ? " expanded" : " collapsed"),
-      "handler", expandable ? "error-log-list-expand-collapse" : "",
-      "data-logid", entry.id,
-      "data-viewid", viewId
-    ]
+      ["td", entry.context, "class", "context"],
+      ["td",
+         location_string,
+         "title", title,
+         "class", "location " + (entry.uri ? "internal-link" : ""),
+         "handler", "open-resource-tab",
+         "data-resource-url", entry.uri,
+         "data-resource-line-number", entry.line ? entry.line : ""
+      ]
+    ],
+    "class", (expandable ? "expandable" : "") + (expanded ? " expanded" : " collapsed"),
+    "handler", expandable ? "error-log-list-expand-collapse" : "",
+    "data-logid", entry.id,
+    "data-viewid", viewId
   ];
-  return rows;
 };
 
 window.templates.errors.log_settings_css_filter = function(setting)
