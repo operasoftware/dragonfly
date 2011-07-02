@@ -173,6 +173,26 @@ var JSMultifileSearchPrototype = function()
           }
         }
       }
+      else
+      {
+        if (this._rt_ids)
+        {
+          this._rt_ids.forEach(function(rt_id)
+          {
+            window.runtimes.getScripts(rt_id).forEach(function(script)
+            {
+              script.clear_search();
+            });
+          }, this);
+        }
+        else 
+        {
+          if (this._script)
+          {
+            this._script.clear_search();
+          }
+        }
+      }
       setTimeout(this._show_search_results_bound, 0);
       return false;
     }

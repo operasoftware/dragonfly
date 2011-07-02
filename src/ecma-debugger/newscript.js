@@ -60,13 +60,10 @@ window.cls.NewScript.prototype = new function()
       {
         this.set_line_states();
       }
+      this.clear_search();
       this.search_term = search_term;
       this.is_ignore_case = is_ignore_case;
       this.is_reg_exp = is_reg_exp;
-      this.line_matches = [];
-      this.line_offsets = [];
-      this.line_offsets_length = [];
-      this.match_cursor = -1;
       this.match_length = search_term.length;
       if (!this.script_data_lower)
       {
@@ -116,6 +113,16 @@ window.cls.NewScript.prototype = new function()
       }
     }
   };
+
+  this.clear_search = function()
+  {
+    this.search_term = "";
+    this.line_matches = [];
+    this.line_offsets = [];
+    this.line_offsets_length = [];
+    this.match_cursor = -1;
+    this.match_length = 0;
+  }
   
   this.set_line_states = function()
   {
