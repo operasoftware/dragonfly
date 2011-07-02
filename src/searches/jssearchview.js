@@ -176,6 +176,8 @@ cls.JSSearchView = function(id, name, container_class)
     messages.addListener('script-selected', this._onscriptselected.bind(this));
   };
 
+  this.focus_search_field = this._focus_input;
+
   this._init(id, name, container_class);
 
 };
