@@ -147,7 +147,14 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
         ['mouseover', '_spotlight_bound'],
         ['mouseout', '_set_reset_spotlight_bound']
       ],
-      off: function(){window.hostspotlighter.clearSpotlight();}
+      off: function(){window.hostspotlighter.clearSpotlight();},
+      on: function()
+      {
+        if (window.dom_data.target)
+        {
+          window.hostspotlighter.spotlight(window.dom_data.target);
+        }
+      }
     },
     'find-with-click':
     {
