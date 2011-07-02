@@ -305,7 +305,7 @@ window.addEventListener('load', function()
         // move
         if ((evx >= this._rx0 && evx < this._rx1 &&
              evy > this._ry0 && evy < this._ry0 + BORDER_TOP) ||
-            (evx >= this._rx0 && evx <= this._rx0 + BORDER_RIGHT &&
+            (evx >= this._rx0 && evx <= this._rx0 + BORDER_LEFT &&
              evy >= this._ry0 + BORDER_TOP && evy <= this._ry1))
         {
           this._ev_delta_x = event.clientX - this._rx0;
