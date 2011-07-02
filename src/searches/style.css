@@ -169,7 +169,7 @@
   text-align: center;
 }
 
-.panel-search .info-box
+.info-box-container .info-box
 {
   margin: 0;
   background: transparent url("../ui-images/error-console-info.png") no-repeat 0 50%;

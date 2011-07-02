@@ -56,6 +56,12 @@ PanelSearch = function()
     }
   };
 
+  this._validate_reg_exp = function()
+  {
+    var re = new RegExp(this._last_query, this.ignore_case ? 'ig' : 'g');
+    return !re.test("");
+  };
+
 };
 
 PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor";

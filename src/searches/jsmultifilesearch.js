@@ -83,7 +83,8 @@ var JSMultifileSearchPrototype = function()
           }
         }
       }
-      else if (this._script && this._script.line_matches)
+      else if (this._script && this._script.line_matches &&
+               this._script.line_matches.length)
       {
         this._search_result_count = this._script.line_matches.length;
         var tmpl = window.templates.js_search_result_single_file(this._script,
@@ -138,65 +139,82 @@ var JSMultifileSearchPrototype = function()
       this._match_cursor = -1;
       this.searchresults = {};
       this.reset_match_cursor();
+      
       var tmpl = ['div', ui_strings.S_INFO_IS_SEARCHING, 
                          'class', 'info-is-searching'];
       this._container.firstElementChild.clearAndRender(tmpl);
       if (this._last_query)
       {
-        if (this.search_all_files)
+        if (this.search_type == TextSearch.REGEXP && !this._validate_reg_exp())
         {
-          if (this._rt_ids)
-          {
-            this._rt_ids.forEach(function(rt_id)
-            {
-              var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
-              {
-                script.search_source(this._last_query,
-                                     this.ignore_case, 
-                                     this.search_type == TextSearch.REGEXP);
-                return script.line_matches.length;
-              }, this);
-              if (scripts.length)
-              {
-                this.searchresults[rt_id] = scripts;
-              }
-            }, this);
-          }
+          this._clear_search_results();
+          var tmpl = ['div', ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING, 
+                             'class', 'info-box'];
+          this._container.firstElementChild.clearAndRender(tmpl);
         }
-        else 
+        else
         {
-          if (this._script)
+          if (this.search_all_files)
           {
-            this._script.search_source(this._last_query,
+            if (this._rt_ids)
+            {
+              this._rt_ids.forEach(function(rt_id)
+              {
+                var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
+                {
+                  script.search_source(this._last_query,
                                        this.ignore_case, 
                                        this.search_type == TextSearch.REGEXP);
+                  return script.line_matches.length;
+                }, this);
+                if (scripts.length)
+                {
+                  this.searchresults[rt_id] = scripts;
+                }
+              }, this);
+            }
           }
+          else 
+          {
+            if (this._script)
+            {
+              this._script.search_source(this._last_query,
+                                         this.ignore_case, 
+                                         this.search_type == TextSearch.REGEXP);
+            }
+          }
+          setTimeout(this._show_search_results_bound, 0);
         }
       }
       else
       {
-        if (this._rt_ids)
-        {
-          this._rt_ids.forEach(function(rt_id)
-          {
-            window.runtimes.getScripts(rt_id).forEach(function(script)
-            {
-              script.clear_search();
-            });
-          }, this);
-        }
-        else 
-        {
-          if (this._script)
-          {
-            this._script.clear_search();
-          }
-        }
+        this._clear_search_results();
+        this._show_search_results();
       }
-      setTimeout(this._show_search_results_bound, 0);
       return false;
     }
     return true;
+  };
+
+  this._clear_search_results = function()
+  {
+    if (this._rt_ids)
+    {
+      this._rt_ids.forEach(function(rt_id)
+      {
+        window.runtimes.getScripts(rt_id).forEach(function(script)
+        {
+          script.clear_search();
+        });
+      }, this);
+    }
+    else 
+    {
+      if (this._script)
+      {
+        this._script.clear_search();
+      }
+    }
   };
 
   this._update_match_highlight = function(event, target)
