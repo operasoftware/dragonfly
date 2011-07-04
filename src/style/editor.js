@@ -18,6 +18,10 @@ var Editor = function(actions)
   MINUS = -1,
   PLUS = 1;
 
+  // Edit modes
+  this.MODE_CSS = 1;
+  this.MODE_SVG = 2;
+
   this.base_style =
   {
     'font-family': '',
@@ -41,6 +45,7 @@ var Editor = function(actions)
   this.context_cur_value = '';
   this.context_cur_priority = '';
   this.context_cur_text_content = '';
+  this.context_edit_mode = this.MODE_CSS;
 
   this.last_suggest_type = null;
   this.suggest_count = 0;
@@ -371,6 +376,9 @@ var Editor = function(actions)
       this.submit();
     }
 
+    this.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
+                           ? this.MODE_SVG
+                           : this.MODE_CSS;
     this.context_rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id'));
     this.context_rule_id = parseInt(ele.parentElement.getAttribute('rule-id'));
     this.context_stylesheet_index =

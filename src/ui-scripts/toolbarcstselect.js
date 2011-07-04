@@ -1,4 +1,4 @@
-﻿var CstSelectToolbarSettings = function(view_id, settings_arr)
+﻿var CstSelectToolbarSettings = function(view_id, settings_arr, class_name)
 {
 
   this._add_view_to_key = function(key)
@@ -6,6 +6,7 @@
     return ( !/\./.test(key) && view_id + '.' || '') + key;
   }
   this.id = view_id;
+  this.class_name = class_name;
   this._settings_arr = (settings_arr || []).map(this._add_view_to_key);
   
   // base init params: id, class_name, type, handler
@@ -23,12 +24,8 @@
     // ui-actions.js can handle the toggle action
     return setting && [
         "cst-option",
-          ['label',
-            ['input',
-              'type', 'checkbox'
-            ].concat(setting.value ? ['checked', 'checked'] : []),
-          setting.label,
-          ],
+        ["span", "class", "menu-icon " + (setting.value ? "check" : "")],
+        setting.label,
         "unselectable", "on",
         "key", view_key_token,
         "is-active", setting.value && "true" || "false"
@@ -55,7 +52,7 @@
   };
 
   this.init();
-  this.base_init(view_id);
+  this.base_init(view_id, class_name);
 }
 
 CstSelectToolbarSettings.prototype = CstSelectBase;

@@ -1245,6 +1245,9 @@ ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
 
+/* DESC: Show pseudo elements in the DOM view */
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+
 /* DESC: Tab heading for the search panel. */
 ui_strings.M_VIEW_LABEL_SEARCH = "Search";
 

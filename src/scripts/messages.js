@@ -67,7 +67,7 @@
  *     <dd>A runtime was selected. Payload: msg.rt_id, msg.script_id</dd>
  *
  *     <dt>element-selected</dt>
- *     <dd>An element was selected. Payload: msg.obj_id, msg.rf_id</dd>
+ *     <dd>An element was selected. Payload: msg.model, msg.obj_id, msg.rt_id, msg.pseudo_element</dd>
  *
  *     <dt>setting-changed</dt>
  *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>

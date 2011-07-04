@@ -251,6 +251,9 @@ button[handler="reload-window"]::before {
 .network_logger\.fit-to-width::before {
     background-image: url("../ui-images/icons/icon_constrain.png");
 }
+.pseudo-items cst-icon {
+    background-image: url("../ui-images/icons/icon_hidedefaults.png");
+}
 
 cst-icon[class="debugger-menu"] {
     background-image: url("../ui-images/icons/icon_tabs.png");
@@ -392,6 +395,7 @@ button.ui-control::before,
                 0 0 4px #ff0000;
 }
 
+.ui-control.dropdown,
 cst-select[cst-id="debugger-menu"] {
     width: 28px;
 }
@@ -993,9 +997,6 @@ textarea-container-inline textarea
 }
 cst-select-toolbar-setting
 {
-    display: inline-block;
-    width: 26px;
-    height: 17px;
     float: left;
 }
 

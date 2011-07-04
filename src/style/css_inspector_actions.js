@@ -148,7 +148,26 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property = function set_property(rt_id, rule_id, declaration, prop_to_remove, callback)
+  this.set_property = function(rt_id, rule_id, declaration, prop_to_remove, callback)
+  {
+    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    {
+      this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
+    }
+    else
+    {
+      this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
+    }
+  };
+
+  /**
+   * Sets a single CSS property (and optionally removes another one, resulting in an overwrite).
+   *
+   * @param {Array} declaration An array according to [prop, value, is_important]
+   * @param {String} prop_to_remove An optional property to remove
+   * @param {Function} callback Callback to execute when the proeprty has been added
+   */
+  this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
     var script = "";
@@ -183,12 +202,57 @@ cls.CSSInspectorActions = function(id)
   };
 
   /**
+   * Sets a single SVG property (and optionally removes another one, resulting in an overwrite).
+   *
+   * @param {Array} declaration An array according to [prop, value, is_important]
+   * @param {String} prop_to_remove An optional property to remove
+   * @param {Function} callback Callback to execute when the proeprty has been added
+   */
+  this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
+  {
+    var prop = this.normalize_property(declaration[0]);
+
+    var script = "object.setAttribute(\"" +
+                     prop + "\", \"" +
+                     declaration[1].replace(/"/g, "\\\"") + "\"" +
+                 ");";
+
+    // If a property is added by overwriting another one, remove the other property
+    if (prop_to_remove && prop != prop_to_remove)
+    {
+      script += "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
+    }
+
+    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    services['ecmascript-debugger'].requestEval(tag,
+      [rt_id, 0, 0, script, [["object", rule_id]]]);
+  };
+
+  /**
    * Removes a single property.
    *
    * @param {String} property The property to remove
    * @param {Function} callback Callback to execute when the property has been added
    */
-  this.remove_property = function remove_property(rt_id, rule_id, property, callback)
+  this.remove_property = function(rt_id, rule_id, property, callback)
+  {
+    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    {
+      this.remove_property_css(rt_id, rule_id, property, callback);
+    }
+    else
+    {
+      this.remove_property_svg(rt_id, rule_id, property, callback);
+    }
+  };
+
+  /**
+   * Removes a single CSS property.
+   *
+   * @param {String} property The property to remove
+   * @param {Function} callback Callback to execute when the property has been added
+   */
+  this.remove_property_css = function(rt_id, rule_id, property, callback)
   {
     property = this.normalize_property(property);
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
@@ -204,9 +268,45 @@ cls.CSSInspectorActions = function(id)
   };
 
   /**
+   * Removes a single SVG property.
+   *
+   * @param {String} property The property to remove
+   * @param {Function} callback Callback to execute when the property has been added
+   */
+  this.remove_property_svg = function(rt_id, rule_id, property, callback)
+  {
+    property = this.normalize_property(property);
+    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    if (disabled_style_dec)
+    {
+      window.elementStyle.remove_property(disabled_style_dec, property);
+    }
+    var script = "object.removeAttribute(\"" + property + "\");";
+
+    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    services['ecmascript-debugger'].requestEval(tag,
+      [rt_id, 0, 0, script, [["object", rule_id]]]);
+  };
+
+  /**
    * Restores the currently edited property
    */
   this.restore_property = function()
+  {
+    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    {
+      this.restore_property_css();
+    }
+    else
+    {
+      this.restore_property_svg();
+    }
+  };
+
+  /**
+   * Restores the currently edited CSS property
+   */
+  this.restore_property_css = function()
   {
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
@@ -237,6 +337,48 @@ cls.CSSInspectorActions = function(id)
                    new_property + "\", \"" +
                    rule[VALUE_LIST][index].replace(/"/g, "'") + "\", " +
                    (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
+                ");";
+    }
+
+    if (script)
+    {
+      services['ecmascript-debugger'].requestEval(null,
+        [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
+    }
+  };
+
+  /**
+   * Restores the currently edited SVG property
+   */
+  this.restore_property_svg = function()
+  {
+    var rule = this.editor.saved_style_dec;
+    var rule_id = this.editor.context_rule_id;
+    var initial_property = this.editor.context_cur_prop;
+    var new_property = this.editor.getProperties()[0];
+    var script = "";
+
+    var prop_enum = window.css_index_map.indexOf(new_property);
+    // Check if it's a real property. If not, we don't have to set something back.
+    if (prop_enum != -1)
+    {
+      var script = "object.removeAttribute(\"" + new_property + "\");";
+    }
+
+    if (initial_property)
+    {
+      script += "object.setAttribute(\"" +
+                   initial_property + "\", \"" +
+                   this.editor.context_cur_value.replace(/"/g, "'") + "\"" +
+                ");";
+    }
+
+    var index = rule[INDEX_LIST].indexOf(prop_enum);
+    if (index != -1)
+    {
+      script += "object.setAttribute(\"" +
+                   new_property + "\", \"" +
+                   rule[VALUE_LIST][index].replace(/"/g, "'") + "\"" +
                 ");";
     }
 
@@ -439,6 +581,9 @@ cls.CSSInspectorActions = function(id)
     var rule_id = parseInt(target.getAttribute("data-rule-id"));
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
+    this.editor.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
+                                  ? this.editor.MODE_SVG
+                                  : this.editor.MODE_CSS;
 
     if (is_disabled)
     {

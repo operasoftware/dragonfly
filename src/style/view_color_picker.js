@@ -53,8 +53,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
       context.ele_value.firstChild.nodeValue = color_value;
       context.ele_color_sample.style.backgroundColor = color_value;
-      var script = "rule.style.setProperty(\"" + context.prop_name + "\", " +
-                                          "\"" + color_value + "\", null)";
+      var script = "";
+      if (!context.is_svg)
+      {
+        script = "rule.style.setProperty(\"" + context.prop_name + "\", " +
+                                        "\"" + color_value + "\", null)";
+      }
+      else
+      {
+        script = "rule.setAttribute(\"" + context.prop_name + "\", " +
+                                   "\"" + color_value + "\")";
+      }
       var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
       services['ecmascript-debugger'].requestEval(1, msg);
     }
@@ -88,7 +97,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
         ele_container: parent.parentNode,
         prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
-        rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')),
+        rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||
+                 parseInt(parent.get_attr('parent-node-chain', 'obj-id')),
+        is_svg: parent.get_attr('parent-node-chain', 'rule-id') == "element-svg"
       }
       if (this._edit_context.initial_color)
         this._finalize_show_color_picker();

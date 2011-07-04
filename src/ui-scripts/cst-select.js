@@ -676,5 +676,5 @@ templates['cst-select-option-list'] = function(select_obj, select_ele)
   ['cst-select-option-list-container',
     ['cst-select-option-list', select_obj.templateOptionList(select_obj)],
     'style', 'top: -1000px; left: -1000px;'
-  ].concat( select_obj.class_name ? ['class', select_obj.class_name] : [] ) );
+  ].concat('class', 'menu ' + (select_obj.class_name ? select_obj.class_name : "")));
 }
