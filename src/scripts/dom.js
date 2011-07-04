@@ -89,10 +89,10 @@ if (typeof document.createElement('div').classList == 'undefined')
 
 Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
-
-  if (typeof args == 'string' && this.nodeType == 1)
+  var args_is_string = typeof args == 'string';
+  if (this.nodeType == 1 && args_is_string || (args.length == 1 && args[0][0] == "<"))
   {
-    this.insertAdjacentHTML('beforeend', args);
+    this.insertAdjacentHTML('beforeend', args_is_string ? args : args[0]);
     return this.firstElementChild;
   }
 
