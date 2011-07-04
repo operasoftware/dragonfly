@@ -123,6 +123,7 @@ function ContextMenu() {
 
     var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || 
                          event.target.get_attr("parent-node-chain", "data-resource-url");
+    var line_number =    event.target.get_attr('parent-node-chain', 'data-resource-line-number')||null;
     if (res_id_or_url)
     {
       if (last_found_menu_id == "dom")
@@ -134,16 +135,17 @@ function ContextMenu() {
       var rid = parseInt(res_id_or_url, 10);
       if (rid)
       {
+        // data-resource-line-number
         var fun = function()
         {
-          broker.show_resource_for_id(rid);
+          broker.show_resource_for_id(rid, line_number);
         }
       }
       else
       {
         var fun = function()
         {
-          broker.show_resource_for_url(res_id_or_url);
+          broker.show_resource_for_url(res_id_or_url, line_number);
         }
       }
 

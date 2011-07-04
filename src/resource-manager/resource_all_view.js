@@ -18,6 +18,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._loading = false;
   this._container = null;
   this._scrollpos = 0;
+  this._view = null;
 
 
   this.ondestroy = function()
@@ -31,23 +32,23 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     this._render_main_view(container);
   };
 
-  this.show_resource_for_id = function(rid)
+  this.show_resource_for_id = function(rid, data)
   {
     var res = this._service.get_resource_for_id(rid);
     if (res)
     {
-      this._open_resource_tab(res);
+      this._view = this._open_resource_tab(res, data);
       return true;
     }
     return false;
   };
 
-  this.show_resource_for_url = function(url)
+  this.show_resource_for_url = function(url, data)
   {
     var res = this._service.get_resource_for_url(url);
     if (res)
     {
-      this._open_resource_tab(res);
+      this._view = this._open_resource_tab(res, data);
       return true
     }
     return false;
@@ -91,7 +92,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }
   };
 
-  this._open_resource_tab = function(resource)
+  this._open_resource_tab = function(resource, data)
   {
     var type = resource.type;
     viewclasses = {
@@ -107,6 +108,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     var ui = UI.get_instance();
     ui.get_tabbar("resources").add_tab(view.id);
     ui.show_view(view.id);
+    view._data = data;
+    return view;
   }
 
   this.open_resource_tab = this._open_resource_tab;

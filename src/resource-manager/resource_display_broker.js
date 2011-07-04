@@ -8,20 +8,33 @@ cls.ResourceDisplayBroker = function()
   }
   cls.ResourceDisplayBroker.instance = this;
 
-  this.show_resource_for_id = function(id)
+  this.show_resource_for_id = function(id, line)
   {
+      if (line)
+      {
+        var data = {"lines":[line]}
+      }    
     if (window.services["resource-manager"] && window.views.resource_all)
     {
       var view = window.views.resource_all;
-      view.show_resource_for_id(id);
+      view.show_resource_for_id(id, data);
     }
   }
 
-  this.show_resource_for_url = function(url)
+  this.show_resource_for_url = function(url, line)
   {
+
     if (window.services["resource-manager"] && window.views.resource_all)
     {
-      new cls.OpenSingleResource(window.views.resource_all, url);
+      if (line)
+      {
+        var data = {"lines":[line]}
+      }
+      else
+      {
+        var data = {}
+      }
+      new cls.OpenSingleResource(window.views.resource_all, url, data);
     }
     else
     {
@@ -37,8 +50,10 @@ cls.ResourceDisplayBroker = function()
   this.show_resource_for_ele = function(ele)
   {
     var rid, url;
-    if (rid = ele.getAttribute("data-resource-id")) { this.show_resource_for_id(rid) }
-    else if (url = ele.getAttribute("data-resource-url")) { this.show_resource_for_url(url) }
+    var data = {}
+    var line = ele.getAttribute('data-resource-line-number')||null;
+    if (rid = ele.getAttribute("data-resource-id")) { this.show_resource_for_id(rid, line) }
+    else if (url = ele.getAttribute("data-resource-url")) { this.show_resource_for_url(url, line) }
   }
 
 }

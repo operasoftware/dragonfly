@@ -93,7 +93,12 @@
 .line-numbered-resource pre {
     padding-top: 0;
     margin-top: 0;
-    margin-left: 10ex;
+    padding-left: 10ex;
+}
+
+.highlighted-line {
+    background-image: -o-linear-gradient(90deg,hsl(220, 100%, 85%),hsl(220, 100%, 85%));
+    background-repeat: no-repeat;
 }
 
 .resource-line-numbers {
