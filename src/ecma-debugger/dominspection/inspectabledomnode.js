@@ -343,7 +343,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return Boolean(this._data[i]);
   }
 
-  this.getData = function()
+  this.get_data = this.getData = function()
   {
     return this._data;
   }

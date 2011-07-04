@@ -122,3 +122,7 @@ li > .repl-lines {
 .function-expression {
   color: #fff;
 }
+
+.repl-inline-expandable {
+  display: inline-block;
+}

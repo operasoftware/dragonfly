@@ -111,12 +111,16 @@ cls.ReplService = function(view, data)
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
+  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed, is_inline_expanded)
   {
     const VALUELIST = 2;
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
                     !is_unpacked &&
                     msg[VALUELIST];
+
+    var do_inline_expand = true && // TODO setting
+                           !is_inline_expanded &&
+                           !do_unpack;
 
     var do_friendly_print = !do_unpack &&
                             settings.command_line.get("do-friendly-print") &&
@@ -135,6 +139,15 @@ cls.ReplService = function(view, data)
       this._msg_queue.stop_processing();
       this._list_unpacker.unpack_list_alikes(msg, rt_id, callback, callback);
     }
+    else if (do_inline_expand && obj_list.length)
+    {
+      // the callback works as error and success callback
+      // the _inline_expand adds a model to each JS or DOM object 
+      var callback = this._handle_log.bind(this, msg, rt_id, true, true, true);
+      this._msg_queue.stop_processing();
+      this._inline_expand.expand(msg, rt_id, callback, callback);
+    }
+    /* TODO
     else if (do_friendly_print && obj_list.length)
     {
       this._msg_queue.stop_processing();
@@ -144,6 +157,7 @@ cls.ReplService = function(view, data)
       // that means the callback is an error and success callback
       this._friendly_printer._friendly_print(obj_list, rt_id, 0, 0, cb);
     }
+    */
     else
     {
       const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1;
@@ -197,6 +211,8 @@ cls.ReplService = function(view, data)
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
     const DF_INTERN_TYPE = 3;
     const FRIENDLY_PRINTED = 6;
+    const INLINE_MODEL = 7;
+    const INLINE_MODEL_TMPL = 8;
 
     var ret = {
       df_intern_type: value[DF_INTERN_TYPE] || "",
@@ -210,6 +226,10 @@ cls.ReplService = function(view, data)
       ret.type = object[OTYPE];
       ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
       ret.friendly_printed = object[FRIENDLY_PRINTED];
+      // TODO check setting
+      // move that to a new class InlineExpandObjects
+      ret.model = object[INLINE_MODEL];
+      ret.model_template = object[INLINE_MODEL_TMPL];
     }
     else
     {
@@ -500,6 +520,7 @@ cls.ReplService = function(view, data)
     this._msg_queue = new Queue(this);
     this._friendly_printer = new cls.FriendlyPrinter();
     this._list_unpacker = new cls.ListUnpacker();
+    this._inline_expand = new cls.InlineExpand();
     this._on_consolelog_bound = this._msg_queue.queue(this._process_on_consolelog);
     this._on_eval_done_bound = this._msg_queue.queue(this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton

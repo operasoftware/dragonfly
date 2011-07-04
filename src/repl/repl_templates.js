@@ -38,6 +38,15 @@ templates.repl_output_pobj = function(data)
 {
   var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
                         /(?:Element)$/.test(data.name)
+  if (data.model)
+  {
+    var tmpl = window.templates[data.model_template](data.model);
+    // the returned template is a innerHTML
+    // the render call can handle that if the innerHTML is passed 
+    // as a single field in an array 
+    return ['span', [tmpl], 'class', 'repl-inline-expandable'];
+  }
+
   return [
     'code',
     data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,
