@@ -18,13 +18,14 @@ cls.ResourceDetailBase = function()
   this._line_count = 0;
   this._line_found = false;
   this._line = 0;
+  this._root_ele = null;
+  this._tops = [];
 
   this._traverse_ele = function(ele)
   {
     const CR = "\r";
     const LF = "\n";
     var child = ele.firstChild;
-    var tops = [];
     while (child && !this._line_found)
     {
       if (child.nodeType == ELE)
@@ -45,9 +46,9 @@ cls.ResourceDetailBase = function()
             {
               var target_pos = child.splitText(pos);
               child.parentNode.insertBefore(this._span, target_pos);
-              tops.push(this._span.getBoundingClientRect().top);
+              this._tops.push(this._span.getBoundingClientRect().top);
               child.parentNode.removeChild(this._span);
-              if (tops.length < 2)
+              if (this._tops.length < 2)
               {
                 this._line+=2;
               }
@@ -55,14 +56,18 @@ cls.ResourceDetailBase = function()
               {
                 var scroll_container = ele;
                 var container_top = scroll_container.getBoundingClientRect().top;
-                var delta = tops[1] - tops[0];
+                var delta = this._tops[1] - this._tops[0];
                 var scroll_top = scroll_container.scrollTop;
                 ele.addClass('highlighted-line');
                 ele.style.cssText = 
                   "background-size: 100% " + delta + "px;" +
                   "background-position: 0 " + 
-                    (tops[0] - container_top + scroll_top) + "px;";
-                  scroll_container.scrollTop = scroll_top + tops[0] - container_top;
+                    (this._tops[0] - container_top + scroll_top) + "px;";
+                
+                var _to = scroll_top + this._tops[0] - container_top;
+                if (_to <= this._root_ele.parentNode.clientHeight) _to = _to-64;
+                this._root_ele.scrollTop = _to;
+
                 child.parentNode.normalize();
                 this._line_found = true;
                 return;
@@ -81,10 +86,10 @@ cls.ResourceDetailBase = function()
   }
   this.clear_line_numbers = function(container)
   {
-    var ele = container.querySelectorAll('.highlighted-line')[0];
-    if (ele)
+    this._root_ele = container.querySelectorAll('.highlighted-line')[0];
+    if (this._root_ele)
     {
-      ele.removeClass('')
+      this._root_ele.removeClass('')
     }
   }
 
@@ -92,11 +97,11 @@ cls.ResourceDetailBase = function()
   {
     if (!data || !data.lines[0]) return;
     this._line = parseInt(data.lines[0]);
-    var ele = container.getElementsByClassName('resource-detail-container')[0];
-    if (ele)
+    this._root_ele = container.getElementsByClassName('resource-detail-container')[0];
+    if (this._root_ele)
     {
       this._current_line = 1;
-      this._traverse_ele(ele)
+      this._traverse_ele(this._root_ele)
     }
 
   }
