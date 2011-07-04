@@ -194,6 +194,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this.addentry(message);
       if (this._filter(message))
       {
+        // todo: this always increases, even if the current tab does not math the error type
         this.current_error_count++;
         window.messages.post("error-count-update", {current_error_count: this.current_error_count});
       }
@@ -249,46 +250,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     // todo: this will be replaced by listening to a Dragonfly message.
     // It will probably only be displayed depending on a setting.
-    /*
-    var message = new cls.EcmascriptDebugger["6.0"].ConsoleLogInfo(data);
-    console.log("EcmascriptDebugger ConsoleLogInfo", message, data);
-
-    var severities = {
-      1: "information",
-      2: "debug",
-      3: "information",
-      4: "information",
-      5: "error",
-      6: "debug"
-    };
-
-    var method_names = {
-      1: "console.log",
-      2: "console.debug",
-      3: "console.info",
-      4: "console.error",
-      5: "console.assert"
-    };
-
-    if (! (message.type in method_names)) {
-      return;
-    }
-
-    var args = this._stringify_log_args(message);
-
-    this.addentry({
-      id: "" + (++this._lastid),
-      windowID: message.windowID,
-      time: +new Date,
-      description: args,
-      title:  args,
-      line: "" + (message.position ? message.position.lineNumber : ""),
-      uri: null,
-      context: method_names[message.type],
-      source: "ecmascript",
-      severity: severities[message.type] || "information"
-    });
-    */
   };
 
   this._on_runtime_selected = function(msg)
@@ -332,31 +293,34 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this.createView = function(container)
   {
-    // Switch on whether we have a table element allready. If we do, just
-    // render the latest log entry
-    var entries = window.error_console_data.get_messages(source);
-    var expand_all = settings.console.get('expand-all-entries');
-
-    // If there is no table, it's empty or expand state changed, render all
-    if (! this._table_ele || ! entries.length || expand_all != this._expand_all_state ||
-        window.error_console_data.filter_updated || this._query != this._old_query)
+    this._container = container;
+    if (this._query)
     {
-      // The expand all state thingy is to make sure we handle switching
-      // between expand all/collapse all properly.
-      this._expand_all_state = expand_all;
-      this._render_full(container, entries, expand_all, this._query);
+      this._text_search.update_search();
+      // todo: scroll to a scroll-position that was kept
     }
-    // but if not, check if there are new entries to show and just
-    // update the list with them
-    else if (this._prev_entries_length < entries.length)
+    else
     {
-      this._render_update(entries.slice(-1), expand_all);
+      this._create();
     }
 
     this._old_query = this._query;
-    window.messages.post("error-count-update", {current_error_count: entries.length});
-    this._prev_entries_length = entries.length;
+    
   };
+
+  this._create = function()
+  {
+    if (this._container)
+    {
+      var entries = window.error_console_data.get_messages(source);
+      var expand_all = settings.console.get('expand-all-entries');
+      this._expand_all_state = expand_all;
+      this._render_full(this._container, entries, expand_all, this._query);
+      
+      window.messages.post("error-count-update", {current_error_count: entries.length});
+      this._prev_entries_length = entries.length;
+    }
+  }
 
   this._render_full = function(container, messages, expand_all, search_term)
   {
@@ -370,14 +334,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
     //container.scrollTop = container.scrollHeight;
   };
 
-  this._render_update = function(entries, expand_all)
-  {
-    for (var n=0, cur; cur=entries[n]; n++)
-    {
-      this._table_ele.render(templates.errors.log_row(cur, expand_all, window.error_console_data.get_toggled(), this.id, this._query));
-    }
-  };
-
   this.ondestroy = function() {
     delete this._table_ele;
     this._table_ele = null;
@@ -386,7 +342,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   this._on_before_search_bound = (function(message)
   {
     this._query = message.search_term;
-    this.update();
+    this._create();
   }).bind(this);
 
   this.init(id, name, container_class );
@@ -478,16 +434,16 @@ ErrorConsoleView.roughViews.createViews = function()
     /* create the handler code for the text search box
        We make a function here so we close around the view id */
     (function() {
-      var textSearch = new TextSearch();
-
       var view_id = r_v.id;
+
+      var text_search = window.views[view_id]._text_search = new TextSearch(); // or pass (1) to make it search on 1 char
       var onShowView = function(msg)
       {
         if( msg.id == view_id )
         {
           var container = UI.get_instance().get_container(view_id);
-          textSearch.setContainer(container);
-          textSearch.setFormInput(views.console.getToolbarControl( container, 'console-text-search-' + view_id));
+          text_search.setContainer(container);
+          text_search.setFormInput(views.console.getToolbarControl( container, 'console-text-search-' + view_id));
         }
       };
 
@@ -495,22 +451,23 @@ ErrorConsoleView.roughViews.createViews = function()
       {
         if( msg.id == view_id )
         {
-          textSearch.cleanup();
+          text_search.cleanup();
+          window.views[view_id]._query = null;
+          window.views[view_id]._old_query = null;
         }
       };
 
       messages.addListener('show-view', onShowView);
       messages.addListener('view-destroyed', onViewDestroyed);
-      textSearch.add_listener("onbeforesearch", window.views[view_id]._on_before_search_bound);
+      text_search.add_listener("onbeforesearch", window.views[view_id]._on_before_search_bound);
 
       eventHandlers.input['console-text-search-'+ view_id] = function(event, target)
       {
-        textSearch.searchDelayed(target.value);
+        text_search.searchDelayed(target.value);
       };
 
       ActionBroker.get_instance().get_global_handler().
-      register_shortcut_listener('console-text-search-'+ view_id, 
-                                 cls.Helpers.shortcut_search_cb.bind(textSearch));
+        register_shortcut_listener('console-text-search-'+ view_id, cls.Helpers.shortcut_search_cb.bind(text_search));
     })();
 
   }

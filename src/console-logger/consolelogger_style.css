@@ -26,7 +26,7 @@
   width: 5px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
-  margin: 0 0 0 2px;
+  margin: 0 5px 0 2px;
   padding: 0;
   cursor: pointer;
   -o-transition: -o-transform .2s;
@@ -47,16 +47,25 @@
   padding-left: 3px;
 }
 
-/* collapsed */
-.main .mono {
-  height: 16px;
-  overflow: hidden;
+.errors-table .sortable-table > tr > td, .errors-table .sortable-table > tr > th {
+  /* no sure why yet, but in errors this needs to be 5 instead of 4 to match the resource view's line-height */
+  padding-top: 5px;
+}
+
+/* pre elements in main */
+
+.errors-table .main pre {
   margin: 0;
 }
 
+/* collapsed */
+.errors-table .main .details {
+  display: none;
+}
+
 /* expanded */
-.expanded .main .mono {
-  height: auto;
+.errors-table .expanded .main .details {
+  display: block;
 }
 
 .errors-table .severity {

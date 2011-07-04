@@ -49,7 +49,7 @@ window.templates.errors._matchables = [
     id: "description"
   },
   {
-    id: "expanding_part",
+    id: "details",
     needs_expansion: true
   },
   {
@@ -167,7 +167,9 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
       ["td", icon_cell, "class", "icon_cell"],
       ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
       ["td",
-        ["pre", entry.desc_without_linenumber_line, "class", "mono"],
+        [
+          ["pre", entry.title, "class", "mono title"],
+          ["pre", entry.details, "class", "mono details"]],
         "class", "main"
       ],
       ["td", entry.context, "class", "context"],
