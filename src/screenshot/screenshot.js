@@ -119,9 +119,9 @@ cls.ScreenShotView = function(id, name, container_class)
     }
     else
     {
+      this._set_canvas_and_px_magnifier_size(this.get_container());
       this._screenshot = message[PNG];
       this._pixel_magnifier.set_source_base_64(this._screenshot, "image/png");
-      this.update();
     }
   };
 
@@ -235,13 +235,21 @@ cls.ScreenShotView = function(id, name, container_class)
 
   /* implementation */
 
-  this.createView = function(container)
+  this._set_canvas_and_px_magnifier_size = function(container)
   {
-    if (this._take_screenshot)
+    if (this._pixel_magnifier)
     {
       this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
       this._pixel_magnifier.width = container.clientWidth;
       this._pixel_magnifier.height = container.clientHeight;
+    }
+  }
+
+  this.createView = function(container)
+  {
+    if (this._take_screenshot)
+    {
+      this._set_canvas_and_px_magnifier_size(container);
       if (!this._screenshot)
       {
         this._get_window_size();
