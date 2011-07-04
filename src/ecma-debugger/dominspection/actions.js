@@ -513,7 +513,7 @@ cls.DOMInspectorActions = function(id)
   {
     var obj_id = parseInt(target.getAttribute('ref-id'));
     if (!window.settings.dom.get('dom-tree-style') &&
-        /<\//.test(target.firstChild.textContent))
+        target.firstChild && /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
               target.getAttribute('ref-id') != obj_id);
     if (target)
