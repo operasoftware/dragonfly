@@ -274,18 +274,20 @@ var DOMSearch = function(min_length)
         }
         else
         {
-          
-        this._model = new cls.InspectableDOMNode(this._selected_runtime,
-                                                 this._selected_node);
-        this._is_processing = true;
-        this._queued_input = false;
-        this._model.search(this._last_query,
-                           this.search_type,
-                           this.ignore_case,
-                           this.search_only_selected_node ?
-                           this._selected_node : 
-                           0,
-                           this._handle_search);
+          this._match_nodes = null;
+          this._match_count = 0;
+          this._hits = [];
+          this._model = new cls.InspectableDOMNode(this._selected_runtime,
+                                                   this._selected_node);
+          this._is_processing = true;
+          this._queued_input = false;
+          this._model.search(this._last_query,
+                             this.search_type,
+                             this.ignore_case,
+                             this.search_only_selected_node ?
+                             this._selected_node : 
+                             0,
+                             this._handle_search);
         }
       }
       else
