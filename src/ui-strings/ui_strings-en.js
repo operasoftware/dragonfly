@@ -1274,3 +1274,6 @@ ui_strings.S_SCOPE_GLOBAL = "Global";
 
 /* DESC: Label for the scopes other than local and global in the Scope Chain. */
 ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";

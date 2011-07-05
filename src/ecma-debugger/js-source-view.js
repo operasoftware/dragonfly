@@ -551,6 +551,20 @@ cls.JsSourceView = function(id, name, container_class)
         document.getElementById(scroll_id).innerHTML = "";
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "script source is missing for given id in views.js_source.showLine");
+
+        new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
+          {
+            label: ui_strings.S_BUTTON_OK,
+            handler: function() {
+              runtimes.reloadWindow();
+              return true;
+            }
+          },
+          {
+            label: ui_strings.S_BUTTON_CANCEL
+          }
+        ).show();
+
         return;
       }
       // reset the stored current line to ensure
