@@ -125,4 +125,16 @@ li > .repl-lines {
 
 .repl-inline-expandable {
   display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
 }
+
+.repl-inline-expandable > examine-objects {
+  padding: 0 1px;
+}
+
+.repl-inline-expandable > .dom {
+  padding: 0 1px;
+  padding-left: 10px;
+}
+

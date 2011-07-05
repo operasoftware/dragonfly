@@ -4,8 +4,10 @@ cls.ReplService = function(view, data)
 {
   this._count_map = {};
 
-  
-  //this._is_processing = false;
+  const DF_INTERN_TYPE = cls.ReplService.DF_INTERN_TYPE;
+  const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
+  const INLINE_MODEL = cls.ReplService.INLINE_MODEL;
+  const INLINE_MODEL_TMPL = cls.ReplService.INLINE_MODEL_TMPL;
 
   this._on_consolemessage_bound = function(msg)
   {
@@ -209,10 +211,6 @@ cls.ReplService = function(view, data)
     const TYPE = 0;
     const VALUE = 0, OBJECTVALUE = 1;
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
-    const DF_INTERN_TYPE = 3;
-    const FRIENDLY_PRINTED = 6;
-    const INLINE_MODEL = 7;
-    const INLINE_MODEL_TMPL = 8;
 
     var ret = {
       df_intern_type: value[DF_INTERN_TYPE] || "",
@@ -269,7 +267,6 @@ cls.ReplService = function(view, data)
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
     const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
-    const FRIENDLY_PRINTED = 4;
     const VALUELIST = 2;
 
     if (status == BAD_REQUEST || status == INTERNAL_ERROR)
@@ -369,7 +366,6 @@ cls.ReplService = function(view, data)
   {
     const TYPE = 1, OBJVALUE = 3;
     const OBJID = 0, CLASS = 4; FUNCTION = 5;
-    const FRIENDLY_PRINTED = 6;
 
     var obj = msg[OBJVALUE];
     this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION],
@@ -554,3 +550,11 @@ cls.ReplServicePre6_3 = function(view, data) {
 }
 
 cls.ReplServicePre6_3.prototype = cls.ReplService;
+
+// custom fields in the scope messages
+cls.ReplService.DF_INTERN_TYPE = 3;
+cls.ReplService.FRIENDLY_PRINTED = 6;
+cls.ReplService.INLINE_MODEL = 7;
+cls.ReplService.INLINE_MODEL_TMPL = 8;
+cls.ReplService.INLINE_MODEL_TMPL_JS = "inspected_js_object",
+cls.ReplService.INLINE_MODEL_TMPL_DOM = "inspected_dom_node";

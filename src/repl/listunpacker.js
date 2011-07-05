@@ -3,6 +3,8 @@
 window.cls.ListUnpacker = function()
 {
 
+  const DF_INTERN_TYPE = cls.ReplService.DF_INTERN_TYPE;
+
   this.unpack_list_alikes = function(msg, rt_id, error_callback, success_callback)
   {
     const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
@@ -157,7 +159,7 @@ window.cls.ListUnpacker = function()
   this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log,
                                         error_callback, success_callback)
   {
-    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
+    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2;
     if (status || !msg[OBJECT_CHAIN_LIST])
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
