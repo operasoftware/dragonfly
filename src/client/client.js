@@ -386,7 +386,7 @@ window.cls.Client = function()
 
       for( i = 1; tab = tabs[i]; i++ )
       {
-        views[tab].ishidden_in_menu = true;
+        views[tab].is_hidden = true;
         topCell.disableTab(tab, true);
       }
       arguments.callee._called_once = true;
@@ -446,6 +446,15 @@ window.cls.Client = function()
       const OBJECT_ID = 0;
       if (!message[OBJECT_ID])
       {
+        // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
+        if (
+          views[last_selected_view] &&
+          views[last_selected_view].is_hidden &&
+          views[last_selected_view].fallback_view_id
+        )
+        {
+          last_selected_view = views[last_selected_view].fallback_view_id;
+        }
         UI.get_instance().show_view(last_selected_view);
       }
     });

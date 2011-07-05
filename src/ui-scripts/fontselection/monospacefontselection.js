@@ -2,7 +2,7 @@
 
 cls.MonospaceFontView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container){};
   this.set_font_style = function(){};
   this.set_default_font_style = function(){};

@@ -58,9 +58,9 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           corresponding_tab = ErrorConsoleView.roughViews[i].id;
         }
       };
-      if(views[corresponding_tab].ishidden_in_menu)
+      if(views[corresponding_tab].is_hidden)
       {
-        views[corresponding_tab].ishidden_in_menu = false;
+        views[corresponding_tab].is_hidden = false;
         topCell.disableTab(corresponding_tab, false); // means enable
       }
     }
@@ -188,13 +188,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
 
-    // only take console messages over ECMAScriptDebugger, setting dependend
+    // only take console messages over ECMAScriptDebugger, will be setting dependend
     if (!message.context.startswith("console."))
     {
       this.addentry(message);
       if (this._filter(message))
       {
-        // todo: this always increases, even if the current tab does not math the error type
+        // todo: this always increases, even if the current tab does not match the error type
         this.current_error_count++;
         window.messages.post("error-count-update", {current_error_count: this.current_error_count});
       }
@@ -272,7 +272,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     esdebug.add_listener("consolelog", this._on_consolelog.bind(this));
 
   };
-
   this.init();
 };
 
@@ -290,6 +289,11 @@ var ErrorConsoleView = function(id, name, container_class, source)
   this._expand_all_state = null;
   this._table_ele = null;
   this._prev_entries_length = 0;
+  
+  if (id !== "console-all")
+  {
+    this.fallback_view_id = "console-all";
+  }
 
   this.createView = function(container)
   {
@@ -496,7 +500,7 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
   */
 cls.ConsoleLogger["2.0"].ConsoleView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container){};
   this.init(id, name, container_class);
 };
