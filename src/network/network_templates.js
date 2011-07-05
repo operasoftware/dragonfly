@@ -36,7 +36,7 @@ templates.network_options_main = function(nocaching, tracking, headers, override
 
 templates.network_options_override_list = function(headers, overrides)
 {
-  var tpl = ["_auto_height_textarea", 
+  var tpl = ["_auto_height_textarea",
              headers.map(function(e) {return e.name + ": " + e.value}).join("\n"),
              "class", "header-override-input",
             ].concat(overrides ? [] : ["disabled", "disabled"]);
@@ -44,8 +44,8 @@ templates.network_options_override_list = function(headers, overrides)
           ["br"],
           ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.network_options_override_presets(overrides),
           ["br"],
-          tpl, 
-          ["br"], 
+          tpl,
+          ["br"],
           ["button", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
            "handler", "update-header-overrides", "class", "container-button"
           ].concat(overrides ? [] : ["disabled", "disabled"])
@@ -54,7 +54,7 @@ templates.network_options_override_list = function(headers, overrides)
 
 templates.network_options_override_presets = function(overrides)
 {
-    return ["select", 
+    return ["select",
             cls.ResourceUtil.header_presets.map(function(e) { return ["option", e.name, "value", e.headers] }),
             "handler", "network-options-select-preset",
             ].concat(overrides ? [] : ["disabled", "disabled"]);
@@ -215,7 +215,7 @@ templates.network_request_body = function(req)
 {
   var ret = [["h2", "Request body"]];
   // when this is undefined/null the request was one that did not send data
-  if (!req.requestbody) 
+  if (!req.requestbody)
   {
     ret.push(["p", "No request data"]);
   }
@@ -259,7 +259,7 @@ templates.network_request_body = function(req)
       }
       else if (type == "css" || type == "text")
       {
-        tpl = ["p", req.requestbody.content.stringData];        
+        tpl = ["p", req.requestbody.content.stringData];
       }
       else
       {
@@ -363,7 +363,7 @@ templates.network_log_url_list = function(ctx, selected)
       statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
     }
 
-    if (res.cached) { statusclass = "status-cached" } 
+    if (res.cached) { statusclass = "status-cached" }
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
@@ -391,17 +391,10 @@ templates.network_log_graph = function(ctx, width)
   var rowheight = 25;
   var height = (ctx.resources.length + 1) * rowheight; // +1 accounts for time line in graph. Takes up a row
 
-  var gradients = templates.network_graph_gradient_defs();
   var rows = templates.network_graph_rows(ctx, rowheight, width)
-  var grid = templates.grid_lines(ctx, width, height, rowheight);
+  //var grid = templates.grid_lines(ctx, width, height, rowheight);
 
-  var tpl = ["svg:svg",
-             gradients,
-             rows,
-             grid,
-             "xmlns", "http://www.w3.org/2000/svg",
-             "class", "resource-graph"];
-    return tpl;
+  return ["div", rows, "id", "graph", "style", "width: " + width + "px;"]
 }
 
 templates.network_graph_rows = function(ctx, rowheight, width)
@@ -412,128 +405,69 @@ templates.network_graph_rows = function(ctx, rowheight, width)
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
-    tpls.push(templates.network_graph_row(res, rowheight, width, n+1, basetime, duration));
+    tpls.push(templates.network_graph_row_bar(res, rowheight, width, basetime, duration));
   }
   return tpls;
-}
+};
 
-templates.network_graph_row = function(resource, rowheight, width, index, basetime, duration)
+
+templates.network_graph_row_bar = function(request, rowheight, width, basetime, duration)
 {
-  return ["g",
-          templates.network_graph_row_background(resource, rowheight, width, index),
-          templates.network_graph_row_bar(resource, rowheight, width, index, basetime, duration),
-          "handler", "select-network-request-graph",
-          "data-resource-id", String(resource.id)
-  ];
-}
+  var scale = width / duration;
+  var ret = ["div"]
 
-templates.network_graph_row_background = function(resource, rowheight, width, index)
-{
-  return [
-          ["rect", "x", "0",
-           "y", String(helpers.crispifySvgValue(index * rowheight)),
-           "width", "100%",
-           "height", String(rowheight),
-           "fill", (index % 2 ? "rgba(0,0,0,0.025)" : "white"),
-           "class", "network-graph-bg-row",
-          ],
-          ["line",
-           "x1", "0",
-           "y1", String(helpers.crispifySvgValue(index * rowheight)),
-           "x2", "100%",
-           "y2", String(helpers.crispifySvgValue(index * rowheight)),
-           "stroke", "rgba(0, 0, 0, 0.1)",
-           "stroke-width", "1",
-           "pointer-events", "none",
-          ]
-        ];
-}
-
-templates.network_graph_row_bar = function(request, rowheight, width, index, basetime, duration)
-{
-  var y = (rowheight * index);
-  var barheight = 12;
-  var min_bar_width = barheight;
-  var bary = y + (rowheight / 2) - (barheight / 2);
-  var multiplier = width / duration;
-
-  if (!request.duration) {
-    // fixme: request not done, so emit something saner here.
-    return [];
-  }
-
-  var start = (request.starttime - basetime) * multiplier;
-  var reqwidth = request.duration * multiplier;
-  var resstart = ((request.requesttime || start) - basetime) * multiplier;
-  var reswidth = (request.duration - (request.requesttime - request.starttime)) * multiplier;
-
-  var gradientmap = {
-    css: "blue",
-    script: "yellow",
-    markup: "purple",
-    image: "red",
-    audio: "green",
-    video: "green"
-  }
-
-  var texture = "gradient-" + (gradientmap[request.type] || "gray");
-  var stroke = templates.network_graph_stroke_defs[request.type || "unknown"];
-
-  if (reqwidth < min_bar_width) // too small bar looks ugly
+  if (request.duration)
   {
-    reqwidth = barheight;
-    resstart = start;
-    reswidth = reqwidth;
+    var reqwidth = (request.endtime - request.starttime) * scale;
+    var start = (request.starttime - basetime) * scale;
+    var latency = (request.responsestart - request.requesttime) * scale;
+    var req_duration = reqwidth - latency;
+
+    var gradientmap = {
+      css: "blue",
+      script: "yellow",
+      markup: "purple",
+      image: "red",
+      audio: "green",
+      video: "green"
+    }
+
+    var min_bar_width = 14;
+    if (req_duration < min_bar_width)
+    {
+      req_duration = min_bar_width;
+      //latency to 0 ?
+      //resstart = start + reqwidth - reswidth;
+    }
+
+    var title = "";
+    if (request.cached)
+    {
+      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED.replace("%s", request.duration || 0);
+    }
+    else
+    {
+      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL;
+      title = title.replace("%(total)s", request.duration);
+      title = title.replace("%(request)s", (request.requesttime - request.starttime));
+      title = title.replace("%(response)s", (request.endtime - request.requesttime));
+    }
+
+    var type = request.type in gradientmap ? request.type : 'unknown';
+
+    var ret = [];
+    ret.push([
+              ["span",
+                ["span", "class", "network-graph-time network-" + type,
+                          "style", "margin-left:" + latency + "px; width: " + req_duration + "px;"],
+                "class", "network-graph-latency", "style", "margin-left:" + start + "px;", "title", title
+              ]
+      ]);
   }
 
-  if (reswidth < min_bar_width)
-  {
-    reswidth = barheight;
-    resstart = start + reqwidth - reswidth;
-  }
+  return ["div", ret, "class", "network-graph-row"];
+};
 
-  var title = "";
-  if (request.cached)
-  {
-    title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED.replace("%s", request.duration || 0)
-  }
-  else
-  {
-    title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL;
-    title = title.replace("%(total)s", request.duration);
-    title = title.replace("%(request)s", (request.requesttime - request.starttime));
-    title = title.replace("%(response)s", (request.endtime - request.requesttime));
-  }
-
-  var tpl = [
-    ["rect", 
-      ["title", title],
-      "x", String(helpers.crispifySvgValue(start)),
-      "y", String(helpers.crispifySvgValue(bary)),
-      "width", String(Math.round(reqwidth)),
-      "height", String(barheight),
-      "rx", "4",
-      "ry", "4",
-      "fill", "rgba(0,0,0,.1)",
-      "stroke", "rgba(0,0,0,.2)",
-      "stroke-width", "1.0",
-    ],
-
-    ["rect",
-      "x", String(helpers.crispifySvgValue(resstart)),
-      "y", String(helpers.crispifySvgValue(bary)),
-      "width", String(Math.round(reswidth)),
-      "height", String(barheight),
-      "rx", "4",
-      "ry", "4",
-      "fill", "url(#" + texture + ")",
-      "stroke", stroke,
-      "stroke-width", "1.0",
-      "pointer-events", "none"
-    ]
-  ];
-  return tpl;
-}
 
 templates.grid_lines = function(ctx, width, height, topoffset)
 {
@@ -592,39 +526,4 @@ templates.grid_lines = function(ctx, width, height, topoffset)
     }
   }
   return ret;
-};
-
-templates.network_graph_stroke_defs = {
-   "image": "#922424",
-   "script": "#807040",
-   "css": "#266099",
-   "markup": "#383f77",
-   "unknown": "#333"
-};
-
-templates.network_graph_gradient_defs = function()
-{
-  return ["defs",
-            templates.network_graph_gradient("purple", "#c9c9ff", "#a7a5d6", "#b0b0d6"),
-            templates.network_graph_gradient("blue", "#b8d4ff", "#8bafe0", "#a6c5f3"),
-            templates.network_graph_gradient("red", "#ed9696", "#d46868", "#e78989"),
-            templates.network_graph_gradient("yellow", "#f7f2d5", "#e3d696", "#f4edc9"),
-            templates.network_graph_gradient("gray", "#d9d9d9", "#adadad", "#bfbfbf"),
-            templates.network_graph_gradient("green", "#cae6ca", "#9ec59e", "#b5d6b5"),
-         ];
-};
-
-
-templates.network_graph_gradient = function(id, c1, c2, c3)
-{
-  return ["linearGradient",
-          ["stop", "offset", "1%", "stop-color", c1],
-          ["stop", "offset", "60%", "stop-color", c2],
-          ["stop", "offset", "100%", "stop-color", c3],
-          "x1", "0",
-          "x2", "0",
-          "y1", "0",
-          "y2", "100%",
-          "id", "gradient-" + id
-         ];
 };
