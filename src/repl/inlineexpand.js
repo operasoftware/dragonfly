@@ -12,16 +12,10 @@ window.cls.InlineExpand = function()
   FUNCTION_NAME = 5,
   MAX_ARGS = 60,
   RE_DOM_OBJECT = /Element$/,
-  // TODO one place for custom fields
-  INLINE_MODEL = 7,
-  INLINE_MODEL_TMPL = 8,
-  INLINE_MODEL_TMPL_JS = "inspected_js_object",
-  INLINE_MODEL_TMPL_DOM = "inspected_dom_node";
-
-
-  /*
-
-  */
+  INLINE_MODEL = cls.ReplService.INLINE_MODEL,
+  INLINE_MODEL_TMPL = cls.ReplService.INLINE_MODEL_TMPL,
+  INLINE_MODEL_TMPL_JS = cls.ReplService.INLINE_MODEL_TMPL_JS,
+  INLINE_MODEL_TMPL_DOM = cls.ReplService.INLINE_MODEL_TMPL_DOM;
 
   this.expand = function(obj_list, rt_id, successcb, errorcb)
   {

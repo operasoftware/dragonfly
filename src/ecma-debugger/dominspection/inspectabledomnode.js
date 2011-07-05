@@ -366,6 +366,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return this._data[i] && this._data[i][ID] || 0;
   }
 
+  this.get_depth_of_first_element = function()
+  {
+    for (var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++);
+    return this._data[i] && this._data[i][DEPTH] || 0;
+  }
+
   this.getDataRuntimeId = function()
   {
     return this._data_runtime_id;
