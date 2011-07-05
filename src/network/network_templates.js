@@ -388,16 +388,31 @@ templates.network_request_icon = function(request)
 
 templates.network_log_graph = function(ctx, width)
 {
-  var rowheight = 25;
-  var height = (ctx.resources.length + 1) * rowheight; // +1 accounts for time line in graph. Takes up a row
+  var rows = templates.network_graph_rows(ctx, width)
 
-  var rows = templates.network_graph_rows(ctx, rowheight, width)
-  //var grid = templates.grid_lines(ctx, width, height, rowheight);
-
-  return ["div", rows, "id", "graph", "style", "width: " + width + "px;"]
+  var duration = Math.ceil(ctx.get_duration() / 1000) * 1000;
+  var stepsize = templates.grid_info(duration, width);
+  var gridwidth = Math.round((width / duration) * stepsize);
+  var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
+  return ["div", headerrow, rows, "id", "graph", "style", "width: " + width + "px; background-size: " + gridwidth + "px 100%, 50px 50px;"]
 }
 
-templates.network_graph_rows = function(ctx, rowheight, width)
+templates.network_timeline_row = function(width, stepsize, gridwidth)
+{
+  var labels = [];
+  var cur = gridwidth;
+  var curtime = stepsize;
+
+  while (cur < width)
+  {
+    labels.push(["span", " " + cur + " "])
+    cur += stepsize;
+  }
+  labels.pop();
+  return ["div", labels, "class", "network-graph-row"];
+}
+
+templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
   var duration = ctx.get_duration();
@@ -405,13 +420,12 @@ templates.network_graph_rows = function(ctx, rowheight, width)
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
-    tpls.push(templates.network_graph_row_bar(res, rowheight, width, basetime, duration));
+    tpls.push(templates.network_graph_row_bar(res, width, basetime, duration));
   }
   return tpls;
 };
 
-
-templates.network_graph_row_bar = function(request, rowheight, width, basetime, duration)
+templates.network_graph_row_bar = function(request, width, basetime, duration)
 {
   var scale = width / duration;
   var ret = ["div"]
@@ -469,16 +483,38 @@ templates.network_graph_row_bar = function(request, rowheight, width, basetime, 
 };
 
 
+templates.grid_info = function(duration, width)
+{
+  var density = (width / duration) * 1000;
+
+  var step = 100;
+  if (density > 1000) {
+    step = 100;
+  }
+  else if (density > 600)
+  {
+    step = 200;
+  }
+  else if (density > 400)
+  {
+    step = 500;
+  }
+  else if (density > 180)
+  {
+    step = 1000;
+  }
+
+  return step
+}
+
 templates.grid_lines = function(ctx, width, height, topoffset)
 {
-
   topoffset = String(topoffset || 25);
   var ret = [];
   var millis = ctx.get_duration();
   millis = Math.ceil(millis / 1000) * 1000
   var secondwidth = width / (millis / 1000);
   var multiplier = width / millis;
-
 
   // Thresholds for whether or not to render grid for every 100 and 500ms.
   // The number is how many pixels per second. So if every second is

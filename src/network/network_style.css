@@ -263,28 +263,17 @@
   margin: 10px 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #graph
 {
   position: absolute;
-  top: 25px;
+  xxtop: 25px;
   left: 0;
   padding-top: 1px;
-  background-image: -o-linear-gradient(top,
+  background-image: -o-linear-gradient(0deg,
+                                       #e5e5e5 0px,
+                                       #e5e5e5 1px,
+                                       transparent 1px),
+                    -o-linear-gradient(top,
                                        #dedede 0px,
                                        #dedede 1px,
                                        #f8f8f8 1px,
@@ -293,17 +282,16 @@
                                        #dedede 26px,
                                        #fefefe 26px,
                                        #fefefe 51px,
-                                       red 51px
-                                       );
+                                       red 51px);
 
-
-  background-size: 50px 50px;
+  background-size: 41px 100%, 50px 50px;
   background-repeat: repeat;
 }
+
 .network-graph-row
 {
   height: 25px;
-line-height: 25px;
+  line-height: 25px;
 }
 .network-graph-latency
 {
