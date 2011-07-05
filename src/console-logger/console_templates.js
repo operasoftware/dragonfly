@@ -1,19 +1,6 @@
 ﻿window.templates = window.templates || {};
 window.templates.errors = window.templates.errors || {};
 
-window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId, query, query_options)
-{
-  var rowClosure = function(e)
-  {
-    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId, query, query_options);
-  };
-
-  return [
-    "table", entries.map(rowClosure),
-    "class", "sortable-table errors-table",
-  ];
-};
-
 window.templates.errors._source_map = {
   "svg": {
     icon: "markup", // or "image"?
@@ -69,6 +56,19 @@ window.templates.errors._matchables = [
   }
 ];
 
+window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId, query, query_options)
+{
+  var rowClosure = function(e)
+  {
+    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId, query, query_options);
+  };
+
+  return [
+    "table", entries.map(rowClosure),
+    "class", "sortable-table errors-table",
+  ];
+};
+
 window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId, query, query_options)
 {
   // todo: implement query_options
@@ -86,18 +86,18 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
     expanded = toggledList.indexOf(entry.id) != -1;
   }
 
-  var hidden = false;
+  entry.is_hidden_from_view = false;
   var match_needs_expansion = false;
 
   var matchables = window.templates.errors._matchables
   if (query)
   {
-    hidden = true;
+    entry.is_hidden_from_view = true;
     for (var i=0, matchable; matchable = matchables[i]; i++)
     {
       if (matchable.id && entry[matchable.id] && (entry[matchable.id].toLowerCase().indexOf(query.toLowerCase()) !== -1))
       {
-        hidden = false;
+        entry.is_hidden_from_view = false;
         if (matchable.needs_expansion)
         {
           match_needs_expansion = true;
@@ -105,7 +105,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
       }
     };
   }
-  if (hidden)
+  if (entry.is_hidden_from_view)
   {
     return [];
   }
@@ -128,7 +128,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   {
     location_string += ":" + entry.line;
   }
-  
+
   var expandable = true;
   if (entry.title === entry.description)
   {

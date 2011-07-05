@@ -23,12 +23,19 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this.current_error_count = 0;
   this.filter_updated = false;
 
-  this._updateviews = function()
+  this._update_views = function()
   {
     var view = '', i = 0;
     for( ; view = this._views[i]; i++)
     {
       window.views[view].update();
+    }
+    // view.update() won't call createView when the view is hidden.
+    // would be good to have a feedback if the update() did anything, because only if none did, should call update_error_count manually.
+    // console.log("last_shown_error_panel", this.last_shown_error_panel, window.views[this.last_shown_error_panel]);
+    if (this.last_shown_error_panel) // todo: could probably use some history object for this? how to access that?
+    {
+      window.views[this.last_shown_error_panel].update_error_count();
     }
   };
 
@@ -64,7 +71,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
         topCell.disableTab(corresponding_tab, false); // means enable
       }
     }
-    this._updateviews();
+    this._update_views();
   };
 
   /**
@@ -80,8 +87,9 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._msgs = [];
       this._toggled = [];
     }
-    this._updateviews();
-    this.current_error_count = this._msgs.length;
+    // todo: should instead only clear what is currently shown. so should get_messages, clear from _msgs array id by id.
+    this._update_views();
+    this.current_error_count = this.get_messages(source).length;
     window.messages.post("error-count-update", {current_error_count: this.current_error_count});
   };
 
@@ -101,37 +109,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
-  /**
-   * Return all the messages. If souce is set, return only messages for
-   * that source.
-   */
-  this._get_msgs_without_filter = function(source)
+  this.get_messages = function(source)
   {
-    if( source ) {
-        var fun = function(e) {return e.source==source;};
-        return this._msgs.filter(fun);
+    var messages = this._msgs.filter(function(e) {return !e.is_hidden_from_view;});
+    if (source)
+    {
+      messages = messages.filter(function(e) {return e.source==source;});
     }
-    return this._msgs;
-  };
-
-  /**
-   * Return all the messages whose uri is the same as __selected_rt_url.
-   * If souce is set, return only messages for that source.
-   */
-  this._get_msgs_with_filter = function(source)
-  {
-    var fun = function(e) { return e.uri == this._selected_rt_url &&
-                            (!source || e.source==source);
-    };
-    return this._msgs.filter(fun);
-  };
-
-  this.get_messages = function(source, filter)
-  {
-    var messages = filter
-      ? this._get_msgs_with_filter(source, filter)
-      : this._get_msgs_without_filter(source);
-    return messages.filter(this._filter, this);
+    return messages;
   };
 
   this.get_message = function(id)
@@ -175,7 +160,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
           this._set_css_filter();
           window.messages.post("error-count-update", {current_error_count: this.get_messages().length});
           this.filter_updated = true;
-          this._updateviews();
+          this._update_views();
           this.filter_updated = false;
           break;
         }
@@ -192,12 +177,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     if (!message.context.startswith("console."))
     {
       this.addentry(message);
-      if (this._filter(message))
-      {
-        // todo: this always increases, even if the current tab does not match the error type
-        this.current_error_count++;
-        window.messages.post("error-count-update", {current_error_count: this.current_error_count});
-      }
     }
   };
 
@@ -288,7 +267,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this._expand_all_state = null;
   this._table_ele = null;
-  this._prev_entries_length = 0;
   
   if (id !== "console-all")
   {
@@ -307,36 +285,41 @@ var ErrorConsoleView = function(id, name, container_class, source)
     {
       this._create();
     }
-
     this._old_query = this._query;
-    
   };
 
   this._create = function()
   {
     if (this._container)
     {
+      window.error_console_data.last_shown_error_panel = id;
       var entries = window.error_console_data.get_messages(source);
       var expand_all = settings.console.get('expand-all-entries');
       this._expand_all_state = expand_all;
-      this._render_full(this._container, entries, expand_all, this._query);
-      
-      window.messages.post("error-count-update", {current_error_count: entries.length});
-      this._prev_entries_length = entries.length;
+      var template = templates.errors.log_table(entries, 
+                                                  expand_all,
+                                                  window.error_console_data.get_toggled(),
+                                                  this.id,
+                                                  this._query);
+      this._container.clearAndRender(template);
+      this._table_ele = this._container.getElementsByTagName("table")[0];
+      this.update_error_count();
     }
   }
 
-  this._render_full = function(container, messages, expand_all, search_term)
+  this.update_error_count = function()
   {
-    container.clearAndRender(templates.errors.log_table(messages,
-                                                       expand_all,
-                                                       window.error_console_data.get_toggled(),
-                                                       this.id,
-                                                       this._query)
-                             );
-    this._table_ele = container.getElementsByTagName("table")[0];
-    //container.scrollTop = container.scrollHeight;
-  };
+    var entries = window.error_console_data.get_messages(source);
+    // the template has added a is_hidden_from_view flag on entries.
+    // todo: move that to data, doesn't make sense to create a full template just to filter.
+    templates.errors.log_table(entries, 
+                                                  null, // _expand_all_state is not interesting..
+                                                  window.error_console_data.get_toggled(),
+                                                  this.id,
+                                                  this._query);
+    entries = entries.filter( function(e){return !e.is_hidden_from_view} ); // todo: this is done in get_messages already, but the template has maybe not been used on it.
+    window.messages.post("error-count-update", {current_error_count: entries.length});
+  }
 
   this.ondestroy = function() {
     delete this._table_ele;
@@ -456,8 +439,7 @@ ErrorConsoleView.roughViews.createViews = function()
         if( msg.id == view_id )
         {
           text_search.cleanup();
-          window.views[view_id]._query = null;
-          window.views[view_id]._old_query = null;
+          window.views[view_id]._old_query = null; // _query itsef won't be cleared to keep error count working
         }
       };
 
