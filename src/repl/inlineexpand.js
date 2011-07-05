@@ -1,8 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
-window.cls.InlineExpand = function()
+cls.InlineExpander = function()
 {
-
 
   const
   VALUE_LIST = 2,
@@ -11,15 +10,16 @@ window.cls.InlineExpand = function()
   CLASS_NAME = 4,
   FUNCTION_NAME = 5,
   MAX_ARGS = 60,
-  RE_DOM_OBJECT = /Element$/,
+  RE_DOM_OBJECT = cls.InlineExpander.RE_DOM_OBJECT,
   INLINE_MODEL = cls.ReplService.INLINE_MODEL,
   INLINE_MODEL_TMPL = cls.ReplService.INLINE_MODEL_TMPL,
   INLINE_MODEL_TMPL_JS = cls.ReplService.INLINE_MODEL_TMPL_JS,
-  INLINE_MODEL_TMPL_DOM = cls.ReplService.INLINE_MODEL_TMPL_DOM;
+  INLINE_MODEL_TMPL_DOM = cls.ReplService.INLINE_MODEL_TMPL_DOM,
+  FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED,
+  IS_EXPANDABLE = cls.ReplService.IS_EXPANDABLE;
 
   this.expand = function(obj_list, rt_id, successcb, errorcb)
   {
-
     var value_list = obj_list[VALUE_LIST];
     var dom_obj_list = [];
     var has_dom_objects = false;
@@ -28,7 +28,8 @@ window.cls.InlineExpand = function()
     // split JS and DOM objects
     for (var i = 0, value, object; value = value_list[i]; i++)
     {
-      if (object = value[OBJECT_VALUE])
+      if ((object = value[OBJECT_VALUE]) &&
+          (!object[FRIENDLY_PRINTED] || object[FRIENDLY_PRINTED][IS_EXPANDABLE]))
       {
         if (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]))
         {
@@ -45,12 +46,14 @@ window.cls.InlineExpand = function()
         }
         else
         {
-          object[INLINE_MODEL] = 
-            new cls.InspectableJSObject(rt_id,
-                                        object[OBJECT_ID],
-                                        //object[FRIENDLY_PRINTED] ||
-                                        object[CLASS_NAME] || 
-                                        object[FUNCTION_NAME]);
+          var prop_name = object[CLASS_NAME] || object[FUNCTION_NAME];
+          if (object[FRIENDLY_PRINTED])
+          {
+            prop_name = this._friendly_printer.friendly_string(object[FRIENDLY_PRINTED]);
+          }
+          object[INLINE_MODEL] = new cls.InspectableJSObject(rt_id, 
+                                                             object[OBJECT_ID],
+                                                             prop_name);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_JS;
         }
       }
@@ -60,7 +63,6 @@ window.cls.InlineExpand = function()
     {
       successcb();
     }
-
 
   };
 
@@ -78,8 +80,11 @@ window.cls.InlineExpand = function()
   {
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
+    this._friendly_printer = cls.FriendlyPrinter.get_instance();
   };
 
   this.init();
 
-}
+};
+
+cls.InlineExpander.RE_DOM_OBJECT = /Element$/;

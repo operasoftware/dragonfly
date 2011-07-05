@@ -74,9 +74,12 @@ cls.ReplData = function(view)
   /**
    * Pointer to object, like when evaluating an object without using dir etc.
    */
-  this.add_output_pobj = function(rt, objid, name, friendly_printed)
+  this.add_output_pobj = function(rt, objid, name, friendly_printed, model, model_template)
   {
-    this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name, friendly_printed: friendly_printed});
+    this._add_entry("pobj", {rt_id: rt, obj_id: objid, name: name,
+                             friendly_printed: friendly_printed,
+                             model: model,
+                             model_template: model_template});
   };
 
   this.add_output_valuelist = function(rt, values, pos)
