@@ -370,6 +370,7 @@ var JSMultifileSearchPrototype = function()
     else
     {
       script = this._script;
+      i = cursor;
     }
 
     if (script)
@@ -384,7 +385,7 @@ var JSMultifileSearchPrototype = function()
       }
       var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
                          script.match_length :
-                         script.line_offsets_length[i]
+                         script.line_offsets_length[i];
       this._source_file_hit = this.set_hit(line_ele, 
                                            script.line_offsets[cursor],
                                            match_length,
