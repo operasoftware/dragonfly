@@ -490,8 +490,8 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 templates.grid_info = function(duration, width)
 {
   var density = (width / duration) * 1000;
+  var step = 2000;
 
-  var step = 100;
   if (density > 1000) {
     step = 100;
   }
@@ -503,10 +503,17 @@ templates.grid_info = function(duration, width)
   {
     step = 500;
   }
-  else if (density > 180)
+  else if (density > 160)
   {
     step = 1000;
   }
-
+  else if (density > 120)
+  {
+    step = 2000;
+  }
+  else if (density > 90)
+  {
+    step = 5000;
+  }
   return step
 }
