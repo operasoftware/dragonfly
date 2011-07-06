@@ -111,13 +111,6 @@
   height: 300px;
 }
 
-.resource-graph text
-{
-  font-size: 10px;
-  text-anchor: middle;
-}
-
-
 /* Network log / Detail view */
 
 .close-request-detail::before
@@ -267,7 +260,6 @@
 #graph
 {
   position: absolute;
-  xxtop: 25px;
   left: 0;
   padding-top: 1px;
   background-image: -o-linear-gradient(0deg,
