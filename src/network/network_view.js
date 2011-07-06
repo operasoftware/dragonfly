@@ -177,36 +177,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
-  this._get_hover_eles = function(rid)
-  {
-    var rule = "li[data-resource-id='" + rid + "'], g[data-resource-id='" + rid + "']";
-    var eles = this._container.querySelectorAll(rule);
-    return eles.length ? {li: eles[0], g: eles[1]} : null;
-  }
-
   this._on_hover_request_bound = function(evt, target)
   {
-    var rid = target.getAttribute("data-resource-id");
-    if (rid && this._prev_hovered && rid == this._prev_hovered) { return }
-
-    if (this._prev_hovered)
-    {
-      var eles = this._get_hover_eles(this._prev_hovered)
-      if (eles)
-      {
-        eles.li.removeClass("hovered");
-        if(eles.g) { eles.g.removeClass("hovered"); }
-      }
-    }
-
-    if (rid) { this._prev_hovered = rid }
-
-    var eles = this._get_hover_eles(this._prev_hovered)
-    if (eles)
-    {
-        eles.li.addClass("hovered");
-        if (eles.g) { eles.g.addClass("hovered") }
-    }
+    rid = target.getAttribute("data-resource-id");
+    var oldhovered = this._container.querySelectorAll(".hovered");
+    var newhovered = this._container.querySelectorAll("li[data-resource-id='" + rid + "'], div[data-resource-id='" + rid + "']");
+    for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered") }
+    for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered") }
   }.bind(this);
 
 
@@ -262,9 +239,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
-
-  eh.click["select-network-request-graph"] = this._on_clicked_request_bound;
-  eh.mouseover["select-network-request-graph"] = this._on_hover_request_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;

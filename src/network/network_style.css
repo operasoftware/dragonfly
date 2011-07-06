@@ -62,13 +62,10 @@
   background-color: #fefefe;
 }
 
-.network-log-url-list li.hovered {
+.network-log-url-list li.hovered,
+#graph div.hovered {
   background-color: rgba(55,115,211,0.2);
   color: #000;
-}
-
-.hovered > rect.network-graph-bg-row {
-  fill: rgba(55,115,211,0.2);
 }
 
 .network-log-url-list li span {

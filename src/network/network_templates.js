@@ -474,12 +474,16 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
               ["span",
                 ["span", "class", "network-graph-time network-" + type,
                           "style", "margin-left:" + latency + "px; width: " + req_duration + "px;"],
-                "class", "network-graph-latency", "style", "margin-left:" + start + "px;", "title", title
+                "class", "network-graph-latency",
+                "style", "margin-left:" + start + "px;", "title", title
               ]
       ]);
   }
 
-  return ["div", ret, "class", "network-graph-row"];
+  return ["div", ret,
+          "class", "network-graph-row",
+          "data-resource-id", String(request.id),
+          "handler", "select-network-request"];
 };
 
 
