@@ -111,7 +111,9 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this.get_messages = function(source)
   {
-    var messages = this._msgs.filter(function(e) {return !e.is_hidden_from_view;});
+    var messages = this._msgs
+                      .filter(function(e) {return !e.is_hidden_from_view;})
+                      .filter(this._filter_bound);
     if (source)
     {
       messages = messages.filter(function(e) {return e.source==source;});
@@ -182,7 +184,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._filter = function(message)
   {
-    if (!this._filters.hasOwnProperty('css'))
+    if (!this._filters || !this._filters.hasOwnProperty('css'))
     {
       this._set_css_filter();
     }
@@ -198,13 +200,19 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
     return true;
   };
+  this._filter_bound = this._filter.bind(this);
 
   this._set_css_filter = function()
   {
+    if (!this._filters)
+    {
+      this._filters = {};
+    }
     if (!this._setting)
     {
       this._setting = window.settings.console;
     }
+    
     this._filters.css = null;
     if (this._setting.get('use-css-filter'))
     {
