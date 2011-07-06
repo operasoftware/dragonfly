@@ -58,6 +58,10 @@
   padding: 4px 0px 1px 8px;
 }
 
+.network-log-url-list:last-child {
+  border-bottom: 1px solid #dedede;
+}
+
 .network-log-url-list li:nth-child(odd) {
   background-color: #fefefe;
 }
