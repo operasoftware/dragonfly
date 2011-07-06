@@ -63,7 +63,7 @@
 }
 
 .network-log-url-list li:nth-child(odd) {
-  background-color: #fefefe;
+  background-color: #f8f8f8;
 }
 
 .network-log-url-list li.hovered,
@@ -269,12 +269,12 @@
                     -o-linear-gradient(top,
                                        #dedede 0px,
                                        #dedede 1px,
-                                       #f8f8f8 1px,
-                                       #f8f8f8 25px,
+                                       #fefefe 1px,
+                                       #fefefe 25px,
                                        #dedede 25px,
                                        #dedede 26px,
-                                       #fefefe 26px,
-                                       #fefefe 51px,
+                                       #f8f8f8 26px,
+                                       #f8f8f8 51px,
                                        red 51px);
 
   background-size: 41px 100%, 50px 50px;
