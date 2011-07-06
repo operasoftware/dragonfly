@@ -21,7 +21,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
   this.current_error_count = 0;
-  this.filter_updated = false;
 
   this._update_views = function()
   {
@@ -75,22 +74,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   };
 
   /**
-   * Clear the log. If source is set, clear only the entries with that source
+   * Clear the log. If source is set, clear only the entries with that source. Uses get_messages, so filters will also be applied.
    */
   this.clear = function(source)
   {
-    if( source ) {
-      var fun = function(e) {return e.source!=source;};
-      this._msgs = this._msgs.filter(fun);
-    }
-    else {
-      this._msgs = [];
-      this._toggled = [];
-    }
-    // todo: should instead only clear what is currently shown. so should get_messages, clear from _msgs array id by id.
+    var message_ids_to_be_cleared = this.get_messages(source).map( function(e){return e.id} );
+    this._msgs = this._msgs.filter( function(e){return message_ids_to_be_cleared.indexOf(e.id) == -1} );
     this._update_views();
-    this.current_error_count = this.get_messages(source).length;
-    window.messages.post("error-count-update", {current_error_count: this.current_error_count});
   };
 
   /**
@@ -111,6 +101,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this.get_messages = function(source)
   {
+    var last_shown_error_panel = window.views[this.last_shown_error_panel];
+    var query = last_shown_error_panel._query;
+    // call template once to update .is_hidden_from_view property on entries. todo: use separate func to do that.
+    templates.errors.log_table(this._msgs, 
+                                null, // _expand_all_state
+                                window.error_console_data.get_toggled(),
+                                this.id,
+                                query);
     var messages = this._msgs
                       .filter(function(e) {return !e.is_hidden_from_view;})
                       .filter(this._filter_bound);
@@ -160,10 +158,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
         case 'use-css-filter':
         {
           this._set_css_filter();
-          window.messages.post("error-count-update", {current_error_count: this.get_messages().length});
-          this.filter_updated = true;
           this._update_views();
-          this.filter_updated = false;
           break;
         }
       }
@@ -318,14 +313,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
   this.update_error_count = function()
   {
     var entries = window.error_console_data.get_messages(source);
-    // the template has added a is_hidden_from_view flag on entries.
-    // todo: move that to data, doesn't make sense to create a full template just to filter.
-    templates.errors.log_table(entries, 
-                                                  null, // _expand_all_state is not interesting..
-                                                  window.error_console_data.get_toggled(),
-                                                  this.id,
-                                                  this._query);
-    entries = entries.filter( function(e){return !e.is_hidden_from_view} ); // todo: this is done in get_messages already, but the template has maybe not been used on it.
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
 
