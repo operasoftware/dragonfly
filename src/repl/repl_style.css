@@ -133,7 +133,7 @@ li > .repl-lines {
   padding: 0 1px;
 }
 
-.repl-inline-expandable > .dom {
+.repl-inline-expandable > .dom-tree {
   padding: 0 1px;
   padding-left: 10px;
 }
