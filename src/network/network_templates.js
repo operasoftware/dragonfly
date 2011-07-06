@@ -400,15 +400,15 @@ templates.network_log_graph = function(ctx, width)
 templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
-  var cur = gridwidth;
-  var curtime = stepsize;
-
-  while (cur < width)
+  var cnt = Math.round(width / gridwidth);
+  while (--cnt) // skips last one on purpose
   {
-    labels.push(["span", " " + cur + " "])
-    cur += stepsize;
+    labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
+                 "style", "left: " + ((gridwidth * cnt)-30) + "px;",
+                 "class", "timeline-marker"
+                 ]);
   }
-  labels.pop();
+
   return ["div", labels, "class", "network-graph-row"];
 }
 

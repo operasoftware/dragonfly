@@ -354,4 +354,9 @@
                                        #bfbfbf 100%);
 }
 
-
+.timeline-marker {
+  display: inline-block;
+  width: 60px;
+  position: absolute;
+  text-align: center;
+}
