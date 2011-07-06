@@ -211,7 +211,7 @@
     return tree;
   };
 
-  this._inspected_dom_node_markup_style= function(model, target, editable)
+  this._inspected_dom_node_markup_style= function(model, target, editable, no_contextmenu)
   {
     var data = model.getData();
     var tree = "<div class='padding dom'" +
@@ -337,7 +337,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "data-menu='dom-element'" +
+                      (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
@@ -351,7 +351,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "data-menu='dom-element' " +
+                      (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (node[CHILDREN_LENGTH] ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
@@ -361,7 +361,8 @@
 
               closing_tags.push("<div" + this._get_indent(node, depth_first_ele) +
                                 "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                                "data-menu='dom-element'><node>" +
+                                (no_contextmenu ? "" : "data-menu='dom-element' ") +
+                                "><node>" +
                                 "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
@@ -371,7 +372,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                      "data-menu='dom-element' " +
+                      (no_contextmenu ? "" : "data-menu='dom-element' ")  +
                       (is_script_node ? "class='non-editable'" : "") + ">" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
@@ -421,7 +422,9 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            tree += "<div" + this._get_indent(node, depth_first_ele) + "data-menu='dom-element'>" +
+            tree += "<div" + this._get_indent(node, depth_first_ele) + 
+                             (no_contextmenu ? "" : "data-menu='dom-element' ") + 
+                             ">" +
                     "<text" +
                     (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -469,7 +472,7 @@
     return ret;
   };
 
-  this._inspected_dom_node_tree_style = function(model, target, editable)
+  this._inspected_dom_node_tree_style = function(model, target, editable, no_contextmenu)
   {
 
     var data = model.getData();
@@ -572,7 +575,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node, depth_first_ele) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    (no_contextmenu ? "" : "data-menu='dom-element' ")  + 
+                    (is_script_node ? "class='non-editable'" : "") + ">" +
                     (children_length && !has_only_one_child ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -582,7 +587,9 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node, depth_first_ele) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    (no_contextmenu ? "" : "data-menu='dom-element' ")  + 
+                    (is_script_node ? "class='non-editable'" : "") + ">" +
                     (node[CHILDREN_LENGTH] ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
@@ -626,7 +633,9 @@
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._get_indent(node, depth_first_ele) +
-                       current_formatting + " data-menu='dom-element'>" +
+                                current_formatting + 
+                                (no_contextmenu ? "" : "data-menu='dom-element' ") +
+                                ">" +
                        (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                        "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
@@ -636,7 +645,9 @@
           else
           {
             tree += "<div" + this._get_indent(node, depth_first_ele) +
-                    current_formatting + " data-menu='dom-element'>" +
+                             current_formatting + 
+                             (no_contextmenu ? "" : "data-menu='dom-element' ") + 
+                             ">" +
                     (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
                       "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
                         (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
@@ -650,11 +661,11 @@
     return tree;
   }
 
-  this.inspected_dom_node = function(model, target, editable)
+  this.inspected_dom_node = function(model, target, editable, no_contextmenu)
   {
     return (window.settings.dom.get('dom-tree-style') ?
-           this._inspected_dom_node_tree_style(model, target, editable) :
-           this._inspected_dom_node_markup_style(model, target, editable));
+           this._inspected_dom_node_tree_style(model, target, editable, no_contextmenu) :
+           this._inspected_dom_node_markup_style(model, target, editable, no_contextmenu));
   }
 
   this._get_indent = function(node, start_depth)
