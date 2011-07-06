@@ -1509,6 +1509,9 @@ info {
 
 .badge.paused {
     content: url("../ui-images/pause.png");
+    background-color: transparent;
+    top: -2px;
+    left: 21px;
 }
 
 [handler="inspect-node-link"] {
@@ -1518,4 +1521,15 @@ info {
 [handler="inspect-node-link"]:hover {
     text-decoration: underline;
 }
+
+.inline-block {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.block-content {
+  display: block;
+  line-height: 1.1;
+  text-align: center;
+} 
 
