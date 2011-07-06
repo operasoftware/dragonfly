@@ -128,14 +128,14 @@ var JSMultifileSearchPrototype = function()
         this.search_type != this._last_search_type ||
         this.ignore_case != this._last_ignore_case ||
         this.search_all_files != this._last_search_all_files ||
-        this._script != this._last_script)
+        this._last_selected_script != this._last_script)
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
       this._last_search_all_files = this.search_all_files;
-      this._last_script = this._script;
+      this._last_script = this._last_selected_script;
       this._match_cursor = -1;
       this.searchresults = {};
       this.reset_match_cursor();
@@ -176,8 +176,9 @@ var JSMultifileSearchPrototype = function()
           }
           else 
           {
-            if (this._script)
+            if (this._last_selected_script)
             {
+              this._script = this._last_selected_script;
               this._script.search_source(this._last_query,
                                          this.ignore_case, 
                                          this.search_type == TextSearch.REGEXP);
@@ -376,7 +377,6 @@ var JSMultifileSearchPrototype = function()
       var js_source_view = window.views[JS_SOURCE_ID];
       var line_nr = script.line_matches[cursor];
       js_source_view.showLine(script.script_id, line_nr - 10);
-      this._last_script = this._script;
       var line_ele = js_source_view.get_line_element(line_nr);
       if (this._source_file_hit)
       {
@@ -430,6 +430,11 @@ var JSMultifileSearchPrototype = function()
   {
     return this._match_cursor;
   };
+
+  this.set_script = function(script)
+  {
+    this._last_selected_script = script;
+  }
 
 };
 
