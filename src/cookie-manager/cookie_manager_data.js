@@ -246,7 +246,7 @@ cls.CookieManager.CookieDataBase = function()
                 domain:     cookie_info[0],
                 path:       cookie_info[1],
                 name:       cookie_info[2],
-                value:      decodeURIComponent(cookie_info[3]),
+                value:      cookie_info[3],
                 expires:    cookie_info[4],
                 isSecure:   cookie_info[5],
                 isHTTPOnly: cookie_info[6],
