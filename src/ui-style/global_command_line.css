@@ -5,9 +5,7 @@
     color: #fff;
     vertical-align: text-top;
 }
-.console examine-objects {
-    background-image: none !important;
-}
+
 .console .dom node,
 .console key,
 .console text,
@@ -23,12 +21,12 @@
   color: #fff;
 }
 .console .prototype-chain-object {
-  background-color: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .console #target-element,
 .console .dom [handler="spotlight-node"]:hover {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.20);
 }
 .console ::selection {
   color: #f33;
@@ -49,5 +47,20 @@
 .console [handler="inspect-node-link"]:hover {
   text-decoration: none;
   background: #000;
+}
+
+.console .dom input
+{
+  background-image: url('../ui-images/expand-collapse-inverted.png');
+}
+
+.console .folder-key
+{
+  background-image: url('../ui-images/expand-collapse-inverted.gif');
+}
+
+.console examine-objects examine-objects
+{
+  background-image: url('../ui-images/dom-tree-style-inverted.png');
 }
 

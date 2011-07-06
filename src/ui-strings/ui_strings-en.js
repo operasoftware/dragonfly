@@ -1275,3 +1275,7 @@ ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
 
+/* DESC: If enabled objects can be expanded inline in the console  */
+ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
+
+
