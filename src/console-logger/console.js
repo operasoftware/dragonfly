@@ -24,17 +24,23 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._update_views = function()
   {
+    var updated = false;
     var view = '', i = 0;
     for( ; view = this._views[i]; i++)
     {
-      window.views[view].update();
+      if (window.views[view].update())
+      {
+        updated = true;
+      }
     }
-    // view.update() won't call createView when the view is hidden.
-    // would be good to have a feedback if the update() did anything, because only if none did, should call update_error_count manually.
-    // console.log("last_shown_error_panel", this.last_shown_error_panel, window.views[this.last_shown_error_panel]);
-    if (this.last_shown_error_panel) // todo: could probably use some history object for this? how to access that?
+    // this could be done anyway, like when update() didn't return anything. but it saves a little.
+    if (!updated)
     {
-      window.views[this.last_shown_error_panel].update_error_count();
+      var last_shown_error_view = this.last_shown_error_view || "console-all";
+      if (last_shown_error_view && window.views[last_shown_error_view]) // todo: could probably use some history object for this? how to access that?
+      {
+        window.views[last_shown_error_view].update_error_count();
+      }
     }
   };
 
@@ -78,8 +84,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
    */
   this.clear = function(source)
   {
-    var message_ids_to_be_cleared = this.get_messages(source).map( function(e){return e.id} );
-    this._msgs = this._msgs.filter( function(e){return message_ids_to_be_cleared.indexOf(e.id) == -1} );
+    var ids_to_be_cleared = this.get_messages(source).map( function(e){return e.id} );
+    this._msgs = this._msgs.filter( function(e){return ids_to_be_cleared.indexOf(e.id) == -1} );
     this._update_views();
   };
 
@@ -99,19 +105,72 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
+  this._matchable_fields = [
+    {
+      id: "title"
+    },
+    {
+      id: "description"
+    },
+    {
+      id: "details",
+      needs_expansion: true
+    },
+    {
+      id: "context"
+    },
+    {
+      id: "line"
+    },
+    {
+      id: "uri"
+    },
+    {
+      id: "source"
+    },
+    {
+      id: "severity"
+    }
+  ];
+
+  this._do_query_matching = function (messages, query, matchable_fields)
+  {
+    // add is_hidden and require_expansion flag to all messages.
+    return messages.map( function(message)
+      {
+        message.is_hidden = false;
+        message.requires_expansion = false;
+        if (query)
+        {
+          message.is_hidden = true;
+          for (var i = 0, matchable; matchable = matchable_fields[i]; i++)
+          {
+            if (
+              matchable.id &&
+              message[matchable.id] &&
+              (message[matchable.id].toLowerCase().indexOf(query.toLowerCase()) !== -1)
+            )
+            {
+              message.is_hidden = false;
+              if (matchable.needs_expansion)
+              {
+                message.requires_expansion = true;
+              }
+            }
+          }
+        }
+        return message;
+      }
+    );
+  }
+
   this.get_messages = function(source)
   {
-    var last_shown_error_panel = window.views[this.last_shown_error_panel];
-    var query = last_shown_error_panel._query;
-    // call template once to update .is_hidden_from_view property on entries. todo: use separate func to do that.
-    templates.errors.log_table(this._msgs, 
-                                null, // _expand_all_state
-                                window.error_console_data.get_toggled(),
-                                this.id,
-                                query);
-    var messages = this._msgs
-                      .filter(function(e) {return !e.is_hidden_from_view;})
-                      .filter(this._filter_bound);
+    var last_shown_error_view = window.views[this.last_shown_error_view];
+    var query = last_shown_error_view && last_shown_error_view._query;
+    var messages = 
+      this._do_query_matching(this._msgs, query, this._matchable_fields)
+        .filter(function(e) {return !e.is_hidden;}).filter(this._filter_bound);
     if (source)
     {
       messages = messages.filter(function(e) {return e.source==source;});
@@ -146,12 +205,8 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       switch(msg.key)
       {
         case 'expand-all-entries': {
-          this._toggled = []; // clears _toggled, triggers update
-          var entries = document.querySelectorAll("[data-logid]");
-          for (var i = 0 ; i < entries.length; i++)
-          {
-            eventHandlers.click['error-log-list-expand-collapse'](null, entries[i]);
-          }
+          this._toggled = [];
+          this._update_views();
           break;
         }
         case 'css-filter':
@@ -243,7 +298,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this.init = function()
   {
     this._filters = {};
-    
+
     window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
     window.messages.addListener('runtime-selected', this._on_runtime_selected.bind(this));
 
@@ -295,10 +350,9 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     if (this._container)
     {
-      window.error_console_data.last_shown_error_panel = id;
+      window.error_console_data.last_shown_error_view = id;
       var entries = window.error_console_data.get_messages(source);
       var expand_all = settings.console.get('expand-all-entries');
-      this._expand_all_state = expand_all;
       var template = templates.errors.log_table(entries, 
                                                   expand_all,
                                                   window.error_console_data.get_toggled(),
@@ -306,13 +360,13 @@ var ErrorConsoleView = function(id, name, container_class, source)
                                                   this._query);
       this._container.clearAndRender(template);
       this._table_ele = this._container.getElementsByTagName("table")[0];
-      this.update_error_count();
+      this.update_error_count(entries);
     }
   }
 
-  this.update_error_count = function()
+  this.update_error_count = function(entries)
   {
-    var entries = window.error_console_data.get_messages(source);
+    entries || (entries = window.error_console_data.get_messages(source));
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
 

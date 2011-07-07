@@ -28,34 +28,6 @@ window.templates.errors._source_map = {
   }
 };
 
-window.templates.errors._matchables = [
-  {
-    id: "title"
-  },
-  {
-    id: "description"
-  },
-  {
-    id: "details",
-    needs_expansion: true
-  },
-  {
-    id: "context"
-  },
-  {
-    id: "line"
-  },
-  {
-    id: "uri"
-  },
-  {
-    id: "source"
-  },
-  {
-    id: "severity"
-  }
-];
-
 window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId, query, query_options)
 {
   var rowClosure = function(e)
@@ -71,6 +43,10 @@ window.templates.errors.log_table = function(entries, allExpanded, expandedList,
 
 window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId, query, query_options)
 {
+  if (entry.is_hidden)
+  {
+    return [];
+  }
   // todo: implement query_options
   var expanded;
   if (allExpanded)
@@ -85,31 +61,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   {
     expanded = toggledList.indexOf(entry.id) != -1;
   }
-
-  entry.is_hidden_from_view = false;
-  var match_needs_expansion = false;
-
-  var matchables = window.templates.errors._matchables
-  if (query)
-  {
-    entry.is_hidden_from_view = true;
-    for (var i=0, matchable; matchable = matchables[i]; i++)
-    {
-      if (matchable.id && entry[matchable.id] && (entry[matchable.id].toLowerCase().indexOf(query.toLowerCase()) !== -1))
-      {
-        entry.is_hidden_from_view = false;
-        if (matchable.needs_expansion)
-        {
-          match_needs_expansion = true;
-        }
-      }
-    };
-  }
-  if (entry.is_hidden_from_view)
-  {
-    return [];
-  }
-  if (match_needs_expansion)
+  if (entry.requires_expansion)
   {
     expanded = true;
   }

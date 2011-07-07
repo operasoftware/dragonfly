@@ -101,9 +101,11 @@ var ViewBase = new function()
 
   this.update = function(ele) // for testing
   {
+    var success = false;
     if( ele )
     {
       this.createView(ele);
+      success = true;
     }
     else
     {
@@ -116,12 +118,12 @@ var ViewBase = new function()
         {
           this.createView(container);
           messages.post('view-created', {id: this.id, container: container});
+          success = true;
         }
         // if actions[this.id] actions[this.id].onViewUpdate(cotainer)
       }
-
-      
     }
+    return success;
   }
 
   this.applyToContainers = function(fn) // for testing
