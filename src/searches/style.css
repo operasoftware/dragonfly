@@ -1,28 +1,29 @@
 ﻿em
 {
   font-style: normal;
-  display: inline-block;
   border-radius: 3px;
-  padding-left: 1px;
-  padding-right: 1px;
-  border: 1px solid transparent;
+  padding: 1px;
+  xborder: 1px solid transparent;
+  box-decoration-break: clone;
+  word-wrap: break-word;
 }
 
 .search-highlight
 {
   background-color: rgba(0,0,0,0.13); 
+  background-color: hsl(0, 0%, 87%); 
 }
 
 .search-highlight-selected
 {
   background-color: #c8f7bd; 
   background-image: -o-linear-gradient(-90deg, #fce703 30%, #fcbe03 100%);
-  border: 1px solid #ceba73;   
-  border-top-color: #dbd3ad;
-  border-bottom-color: #c7b267;
+  xborder-color: #ceba73;   
+  xborder-top-color: #dbd3ad;
+  xborder-bottom-color: #c7b267;
   color: #000000;
-  position: relative;
-  z-index: 98;
+  xposition: relative;
+  xz-index: 98;
 }
 
 .advanced-search-table

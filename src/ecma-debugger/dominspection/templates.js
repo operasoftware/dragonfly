@@ -104,6 +104,20 @@
     return attrs;
   };
 
+  this._dom_attrs_search = function(node, force_lower_case)
+  {
+    for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
+    {
+      attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+      attrs += " <key>" +
+                 "<match-token>" + safe_escape_attr_key(attr) + "</match-token>" +
+               "</key>=<value>\"" +
+                 "<match-token>" + attr_value + "</match-token>" +
+               "\"</value>";
+    }
+    return attrs;
+  };
+
   this.dom_search = function(model, target, editable)
   {
     var data = model.getData();
@@ -146,11 +160,13 @@
       {
         case ELEMENT_NODE:
         {
-          attrs = this._dom_attrs(node, force_lower_case);
+          attrs = this._dom_attrs_search(node, force_lower_case);
           tree += 
             "<div class='search-match dom-search' "+
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
-              "<node>&lt;" + node_name + attrs +
+              "<node>&lt;" + 
+                "<match-token>" + node_name + "</match-token>" +
+                attrs +
                 (node[CHILDREN_LENGTH] ?
                  "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
                  "/&gt;</node>") +
@@ -159,6 +175,7 @@
         }
         case PROCESSING_INSTRUCTION_NODE:
         {
+          // TODO <match-token>
           tree += 
             "<div class='search-match dom-search processing-instruction' " +
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
@@ -174,7 +191,9 @@
             tree += 
               "<div class='search-match dom-search comment pre-wrap' " +
                 "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
-                "&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;" +
+                "&lt;!--" + 
+                "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
+                "--&gt;" +
               "</div>";
           }
           break;
@@ -185,6 +204,8 @@
         }
         case DOCUMENT_TYPE_NODE:
         {
+          // TODO <match-token> 
+          // currently we don't earch in doctype nodes on the host side
           tree += 
             "<div class='search-match dom-search doctype' " +
               "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
@@ -201,7 +222,7 @@
               "<div class='search-match dom-search' " +
                 "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
                 "<span class='dom-search-text-node'>#text</span>" + 
-                helpers.escapeTextHtml(node[VALUE]) + 
+                "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
               "</div>";
           }
         }

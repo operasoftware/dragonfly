@@ -43,10 +43,10 @@ var SearchSingleNodesPrototype = function(min_length)
 
   this._search_node = function(node, index, arr)
   {
-    this._search_node_recursive(node.firstChild);
+    this._search_node_recursive(node.firstChild, false);
   };
 
-  this._search_node_recursive = function(node)
+  this._search_node_recursive = function(node, is_match_token)
   {
     while (node)
     {
@@ -54,23 +54,28 @@ var SearchSingleNodesPrototype = function(min_length)
       {
         case ELEMENT:
         {
-          this._search_node_recursive(node.firstChild);
+          this._search_node_recursive(node.firstChild,
+                                      !this._re_match_target ||
+                                      this._re_match_target.test(node.nodeName));
           break;
         }
         case TEXT:
         {
-          this._search_target = node.nodeValue;
-          if (this._reg_exp)
+          if (is_match_token)
           {
-            this._reg_exp.lastIndex = 0;
+            this._search_target = node.nodeValue;
+            if (this._reg_exp)
+            {
+              this._reg_exp.lastIndex = 0;
+            }
+            else
+            {
+              this._search_term_length = this._search_term.length;
+              this._last_match_index = 0;
+            }
+            this._search_next_match();
+            node = this._consume_node(node);
           }
-          else
-          {
-            this._search_term_length = this._search_term.length;
-            this._last_match_index = 0;
-          }
-          this._search_next_match();
-          node = this._consume_node(node);
           break;
         }
       }
