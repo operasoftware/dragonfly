@@ -1002,27 +1002,21 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
-
-    if(script_id)
+    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
+    var script_id = script_id_str && parseInt(script_id_str);
+    if (script_id)
     {
       // TODO is this needed?
-      if(script_id != selected_script_id)
+      if (script_id != selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
         topCell.showView(views.js_source.id);
         selected_script_id = script_id;
       }
+      selected_value = target_ele.textContent;
+      return true;
     }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "missing script id in handlers['display-script']")
-    }
-    selected_value = target_ele.textContent;
-    // TODO
-
-    return true;
+    return false;
   }
 
   // this.updateElement

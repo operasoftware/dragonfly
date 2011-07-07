@@ -27,10 +27,17 @@
 
   this.top_tab = function(obj, is_active_tab)
   {
-    return ['tab', [['span', "class", "icon " + obj.ref_id], ['span', "class", "badge"], obj.name],
-            'handler', 'tab',
-            'ref-id', obj.ref_id
-    ].concat(is_active_tab ? ['class', 'active'] : [] );
+    return (
+    ['tab', 
+      ['span', "class", "icon " + obj.ref_id],
+      ['span', "class", "badge"],
+      ['span',
+        ['span', obj.name, 'class', 'block-content'],
+        'class', 'inline-block'
+      ],
+      'handler', 'tab',
+      'ref-id', obj.ref_id
+    ].concat(is_active_tab ? ['class', 'active'] : [] ));
   };
 
   this.horizontal_navigation_content = function()

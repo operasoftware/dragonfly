@@ -56,6 +56,21 @@ var TabBase = new function()
     }
   };
 
+  this.set_legend_info = function(text)
+  {
+    var tab = this._get_top_tab_element();
+    var legends = tab.getElementsByClassName('block-content');
+    var legend = legends[1];
+    if (!legend)
+    {
+      legend = legends[0].parentNode.render(['span', '', 'class', 'block-content']);
+    }
+    if (legend)
+    {
+      legend.textContent = text;
+    }
+  }
+
   this.clear_badge = function()
   {
     this.set_badge("", null);
@@ -120,9 +135,10 @@ var ErrorConsoleTab = function(ref_id, name, has_close_button)
   this.init(ref_id, name, has_close_button)
 
   window.messages.addListener("error-count-update", function(msg) {
-    (msg.current_error_count == 0) ?
-      this.clear_badge() :
-      this.set_badge("", msg.current_error_count);
+    var text = msg.current_error_count == 0 ? 
+              "" : 
+              "(" + msg.current_error_count + ")";
+    this.set_legend_info(text);
   }.bind(this));
 };
 

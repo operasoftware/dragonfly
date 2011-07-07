@@ -985,6 +985,7 @@ cls.ReplView.create_ui_widgets = function()
       'do-friendly-print': true,
       'is-element-type-sensitive': true,
       'show-js-errors-in-repl': true,
+      'expand-objects-inline': true,
     },
     { // key/label
       'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
@@ -992,6 +993,7 @@ cls.ReplView.create_ui_widgets = function()
       'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
       'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
+      'expand-objects-inline': ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE,
     },
     { // settings map
       checkboxes:
@@ -1000,6 +1002,7 @@ cls.ReplView.create_ui_widgets = function()
         'do-friendly-print',
         'is-element-type-sensitive',
         'show-js-errors-in-repl',
+        'expand-objects-inline',
       ],
       customSettings:
       [
