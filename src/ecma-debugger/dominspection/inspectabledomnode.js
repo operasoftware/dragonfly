@@ -271,7 +271,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   }
 
   this.get_css_path =
-  this._get_css_path = function(object_id, parent_offset_chain, 
+  this._get_css_path = function(object_id, parent_offset_chain,
                                 force_lower_case, show_id_and_classes, show_siblings)
   {
     var i = 0, j = 0, path = [];
@@ -284,41 +284,45 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       for ( ; this._data[i] && this._data[i][ID] != object_id; i++);
       if (this._data[i])
       {
-        path.push({
-          name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes), 
-          id: this._data[i][ID],
-          combinator: "", 
-          is_parent_offset: this._parse_parent_offset(parent_offset_chain) 
-        });
+        if (this._data[i][TYPE] == 1)
+        {
+          path.unshift({
+            name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes),
+            id: this._data[i][ID],
+            combinator: "",
+            is_parent_offset: this._parse_parent_offset(parent_offset_chain)
+          });
+        }
         j = i;
         i--;
-        for (  ; this._data[i]; i--)
+        for ( ; this._data[i]; i--)
         {
-          if(this._data[i][TYPE] == 1)
+          if (this._data[i][TYPE] == 1 && this._data[i][DEPTH] <= this._data[j][DEPTH])
           {
-            if(this._data[i][DEPTH] <= this._data[j][DEPTH])
+            if (this._data[i][DEPTH] < this._data[j][DEPTH])
             {
-              if (this._data[i][DEPTH] < this._data[j][DEPTH])
-                path.push({
-                  name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes), 
-                  id: this._data[i][ID], 
-                  combinator: ">" ,
-                  is_parent_offset: this._parse_parent_offset(parent_offset_chain) 
-                });
-              else if (show_siblings)
-                path.push({
-                  name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes), 
-                  id: this._data[i][ID], 
-                  combinator: "+",
-                  is_parent_offset: false
-                });
-              j = i;
+              path.unshift({
+                name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes),
+                id: this._data[i][ID],
+                combinator: ">",
+                is_parent_offset: this._parse_parent_offset(parent_offset_chain)
+              });
             }
-          } 
+            else if (show_siblings)
+            {
+              path.unshift({
+                name: this._get_element_name(this._data[i], force_lower_case, show_id_and_classes),
+                id: this._data[i][ID],
+                combinator: "+",
+                is_parent_offset: false
+              });
+            }
+            j = i;
+          }
         }
       }
     }
-    return path.reverse();
+    return path;
   }
 
   this.has_data = function()

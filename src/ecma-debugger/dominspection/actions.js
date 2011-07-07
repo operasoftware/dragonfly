@@ -136,6 +136,12 @@ cls.DOMInspectorActions = function(id)
         }
         if (this._modebar)
         {
+          // If target is a text node, use the parent element node's id as
+          // obj_id for the breadcrumbs
+          if (target.nodeName.toLowerCase() == "text")
+          {
+            obj_id = target.parentNode.get_attr("parent-node-chain", "ref-id");
+          }
           this._modebar.set_content(model.id, 
                                     window.templates.breadcrumb(model, obj_id), 
                                     true);
