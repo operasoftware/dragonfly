@@ -213,7 +213,7 @@ templates.network_headers_list = function(headers, firstline)
 
 templates.network_request_body = function(req)
 {
-  var ret = [["h2", "Request body"]];
+  var ret = [["h2", ui_strings.S_NETWORK_REQUEST_BODY_TITLE]];
   // when this is undefined/null the request was one that did not send data
   if (!req.requestbody)
   {
@@ -221,7 +221,7 @@ templates.network_request_body = function(req)
   }
   else if (!req.requestbody.content) // There is content, but we're not tracking
   {
-    ret.push(["p", "Enable content tracking in the network options tab to be able to see request bodies"]);
+    ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
   }
   else
   {
@@ -236,10 +236,10 @@ templates.network_request_body = function(req)
     }
     else if (req.requestbody.partList.length)
     {
-      ret = [["h2", "Request body - multipart"]];
+      ret = [["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]];
       for (var n=0, part; part=req.requestbody.partList[n]; n++)
       {
-        ret.push(["h4", "part " + (n+1)]);
+        ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n+1))]);
         ret.push(templates.network_headers_list(part.headerList));
         ret.push(["pre", part.content.stringData]);
       }

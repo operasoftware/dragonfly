@@ -1256,3 +1256,18 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
+
+/* DESC: Title of request body section of the request details view. */
+ui_strings.S_NETWORK_REQUEST_BODY_TITLE = "Request body";
+
+/* DESC: Title of request body section when the body is multpart encoded */
+ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE = "Request body - multipart";
+
+/* DESC: String used when a request has no data. */
+ui_strings.S_NETWORK_NO_REQUEST_DATA = "No request data";
+
+/* DESC: Explanation of how to enable content tracking. */
+ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the network options tab to be able to see request bodies";
+
+/* DESC: Part number label */
+ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
