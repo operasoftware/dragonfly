@@ -367,7 +367,8 @@
           ["overlay-info"],
           ["overlay-content"],
         ]
-      ]
+      ],
+      "class", "overlay"
     ];
   };
 

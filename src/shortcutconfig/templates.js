@@ -178,9 +178,8 @@
   {
     const LABEL = 0, HANDLER = 1;
     return (
-    ['input',
-      'type', 'button',
-      'value', label_handler[LABEL],
+    ['button',
+      label_handler[LABEL],
       'handler', label_handler[HANDLER]
     ]);
   };

@@ -595,38 +595,6 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-settings-container input[type=text]:not([default-text]), 
-settings-container input[type=number], 
-settings-container button, 
-settings-container input[type=button] {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 3px;
-  padding: 3px;
-  margin: 2px;
-  color: #fff;
-}
-
-settings-container input[type=text]:not([default-text]):focus, settings-container input[type=number]:focus {
-  border: 1px solid rgba(255,255,255,1.0);
-}
-
-settings-container button, settings-container input[type=button] {
-  background-color: rgba(255,255,255,0.1);
-  padding: 3px 12px 3px 12px;
-}
-
-settings-container button:hover, settings-container input[type=button]:hover {
-  background-color: rgba(255,255,255,0.15);
-}
-
-settings-container button:active, settings-container input[type=button]:active {
-  background-color: rgba(255,255,255,0.3);
-}
-
-settings-container checkbox label:hover {
-  color: #fff;
-}
 
 setting-composite select
 {

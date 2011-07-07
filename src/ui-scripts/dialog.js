@@ -62,7 +62,7 @@ BaseDialog.prototype = new function()
                            return ["button",
                                      button.label,
                                    "data-handler-id", "" + button.id,
-                                   "class", "container-button"];
+                                  ];
                          });
     return ["div",
               ["div",
@@ -75,7 +75,9 @@ BaseDialog.prototype = new function()
                  ],
                "id", "ui-dialog"
               ],
-            "id", "ui-dialog-background"];
+            "id", "ui-dialog-background",
+            "class", "overlay"
+           ];
   };
 
   this._init = function(template, buttons)
