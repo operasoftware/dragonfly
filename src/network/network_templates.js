@@ -215,66 +215,69 @@ templates.network_request_body = function(req)
 {
   var ret = [["h2", ui_strings.S_NETWORK_REQUEST_BODY_TITLE]];
   // when this is undefined/null the request was one that did not send data
+
   if (!req.requestbody)
   {
     ret.push(["p", "No request data"]);
   }
-  else if (!req.requestbody.content) // There is content, but we're not tracking
+  else if (req.requestbody.partList.length)
   {
-    ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
-  }
-  else
-  {
-    if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
+    ret = [["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]];
+    for (var n=0, part; part=req.requestbody.partList[n]; n++)
     {
-      parts = req.requestbody.content.stringData.split("&");
-
-      var tab = ["table",
-               ["tr", ["th", "name"], ["th", "value"]]
-      ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
-      ret.push(tab);
-    }
-    else if (req.requestbody.partList.length)
-    {
-      ret = [["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]];
-      for (var n=0, part; part=req.requestbody.partList[n]; n++)
+      ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n+1))]);
+      ret.push(templates.network_headers_list(part.headerList));
+      if (part.content && part.content.stringData)
       {
-        ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n+1))]);
-        ret.push(templates.network_headers_list(part.headerList));
         ret.push(["pre", part.content.stringData]);
-      }
-
-    }
-    else // not multipart or form.
-    {
-      var tpl = [];
-      var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
-      if (type == "markup")
-      {
-        tpl = window.templates.highlight_markup(req.requestbody.content.stringData);
-      }
-      else if (type == "script")
-      {
-        tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
-      }
-      else if (type == "css" || type == "text")
-      {
-        tpl = ["p", req.requestbody.content.stringData];
       }
       else
       {
-        if (req.requestbody.mimeType)
-        {
-          ret.push(["p", "Can't display stuff type " + req.requestbody.mimeType]);
-        }
-        else
-        {
-          ret.push(["p", "No MIME type known for request data"]);
-        }
+        ret.push(["pre", "<%s bytes binary payload>".replace("%s", part.contentLength)])
       }
-
-      ret.push(tpl)
     }
+  }
+  else if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
+  {
+    parts = req.requestbody.content.stringData.split("&");
+    var tab = ["table",
+             ["tr", ["th", "name"], ["th", "value"]]
+    ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
+    ret.push(tab);
+  }
+  // else // There is content, but we're not tracking
+  // {
+  //   ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
+  // }
+  else // not multipart or form.
+  {
+    var tpl = [];
+    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
+    if (type == "markup")
+    {
+      tpl = window.templates.highlight_markup(req.requestbody.content.stringData);
+    }
+    else if (type == "script")
+    {
+      tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
+    }
+    else if (type == "css" || type == "text")
+    {
+      tpl = ["p", req.requestbody.content.stringData];
+    }
+    else
+    {
+      if (req.requestbody.mimeType)
+      {
+        ret.push(["p", "Can't display stuff type " + req.requestbody.mimeType]);
+      }
+      else
+      {
+        ret.push(["p", "No MIME type known for request data"]);
+      }
+    }
+
+    ret.push(tpl)
   }
   return ret;
 }
