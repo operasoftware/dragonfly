@@ -2,7 +2,7 @@
 {
   const MAX_LINE_CHARS = 4000;
 
-  this.search_panel = function(search, type)
+  this.search_panel = function(search, type, handler)
   {
     return (
     [
@@ -12,7 +12,7 @@
       ['div',
         ['div', 'class', 'panel-search mono'],
         'class', 'panel-search-container',
-        'handler', 'show-script'],
+        'handler', handler],
     ]);
   };
 
