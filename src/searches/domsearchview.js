@@ -67,6 +67,12 @@ cls.DOMSearchView = function(id, name, container_class)
     }
   };
 
+  this._show_search = function(event, target)
+  {
+    this._search.update_match_highlight(event, target);
+    eventHandlers.click['inspect-node-link'](event, target);
+  };
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -112,9 +118,12 @@ cls.DOMSearchView = function(id, name, container_class)
       this._onshortcut.bind(this, 'highlight-previous-match');
     eventHandlers.mouseover[HANDLER] =
       this._search.clear_style_highlight_node.bind(this._search);
-    var action_broker = ActionBroker.get_instance();
-    action_broker.register_handler(this);
-    action_broker.get_global_handler()
+    eventHandlers.click['show-search-match'] = this._show_search.bind(this);
+    eventHandlers.mouseover['show-search-match'] = 
+      eventHandlers.mouseover['inspect-node-link'];
+    this._broker = ActionBroker.get_instance();
+    this._broker.register_handler(this);
+    this._broker.get_global_handler()
     .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                 this._onshortcut.bind(this), 
                                 ['highlight-next-match',

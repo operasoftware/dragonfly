@@ -637,9 +637,11 @@ if (!Element.prototype.matchesSelector)
     }
 };
 
+/* The naming is not precise, it can return the element itself. */
+
 Element.prototype.get_ancestor = function(selector)
 {
-  var ele = this.parentNode;
+  var ele = this;
   while (ele)
   {
     if (ele.nodeType == 1 && ele.matchesSelector(selector))

@@ -237,7 +237,7 @@ var DOMSearch = function(min_length)
     this._broker = ActionBroker.get_instance();
     window.eventHandlers.change['dom-search-type-changed'] = 
       this._onsearchtypechange;
-    this._query_selector = ".search-match";
+    this._query_selector = "." + PanelSearch.MATCH_NODE_CLASS;
     this._set_highlight_handlers();
     window.messages.addListener('element-selected', 
                                 this._onelementselected.bind(this));
@@ -399,6 +399,9 @@ var DOMSearch = function(min_length)
       this._highligh_node = null;
     }
   };
+
+
+  this.update_match_highlight = this._update_match_highlight;
 
   this._init(min_length);
 };

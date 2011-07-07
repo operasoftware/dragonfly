@@ -218,47 +218,11 @@ var JSMultifileSearchPrototype = function()
     }
   };
 
-  this._update_match_highlight = function(event, target)
-  {
-    var line = event.target.get_ancestor('.search-match');
-    if (line)
-    {
-      var matches = line.getElementsByTagName('em');
-      var ev_left = event.clientX;
-      var ev_top = event.clientY;
-      var min_dist = Infinity;
-      var match = null;
-      for (var i = 0, cur, box, d, dx, dy; cur = matches[i]; i++)
-      {
-        box = cur.getBoundingClientRect();
-        dx = ev_left < box.left ?
-             box.left - ev_left :
-             ev_left > box.right ?
-             ev_left - box.right :
-             0;
-        dy = ev_top < box.top ?
-             box.top - ev_top :
-             ev_top > box.bottom ?
-             ev_top - box.bottom :
-             0;
-        dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        if (dist < min_dist)
-        {
-          min_dist = dist;
-          match = cur;
-        }
-      }
-      if (match)
-      {
-        this.set_match_cursor(match);
-        this._update_info();
-      }
-    }
-  };
+
 
   this._show_script = function(event, target)
   {
-    if (event.target.get_ancestor('.search-match'))
+    if (event.target.get_ancestor('.' + PanelSearch.MATCH_NODE_CLASS))
     {
       this._update_match_highlight(event, target);
       this.show_script_of_search_match(event, target)
@@ -413,19 +377,7 @@ var JSMultifileSearchPrototype = function()
     this._hit = null;
   };
   
-  this.set_match_cursor = function(target)
-  {
-    for (var i = 0, hit = null; hit = this._hits[i]; i++)
-    {
-      if (hit.indexOf(target) != -1)
-      {
-        this._hits[this._match_cursor].forEach(this._set_default_style, this);
-        this._match_cursor = i;
-        this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
-        break;
-      }
-    }
-  };
+
 
   this.get_match_cursor = function()
   {

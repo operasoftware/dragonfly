@@ -118,7 +118,7 @@
     return attrs;
   };
 
-  this.dom_search = function(model, target, editable)
+  this.dom_search = function(model)
   {
     var data = model.getData();
     var tree = "<div" +
@@ -163,7 +163,7 @@
           attrs = this._dom_attrs_search(node, force_lower_case);
           tree += 
             "<div class='search-match dom-search' "+
-              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "obj-id='" + node[ID] + "' handler='show-search-match' >" +
               "<node>&lt;" + 
                 "<match-token>" + node_name + "</match-token>" +
                 attrs +
@@ -178,7 +178,7 @@
           // TODO <match-token>
           tree += 
             "<div class='search-match dom-search processing-instruction' " +
-              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "obj-id='" + node[ID] + "' handler='show-search-match' >" +
               "&lt;?" + node[NAME] + ' ' +
               formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
             "?&gt;</div>";
@@ -190,7 +190,7 @@
           {
             tree += 
               "<div class='search-match dom-search comment pre-wrap' " +
-                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+                "obj-id='" + node[ID] + "' handler='show-search-match' >" +
                 "&lt;!--" + 
                 "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
                 "--&gt;" +
@@ -208,7 +208,7 @@
           // currently we don't earch in doctype nodes on the host side
           tree += 
             "<div class='search-match dom-search doctype' " +
-              "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+              "obj-id='" + node[ID] + "' handler='show-search-match' >" +
               "&lt;!DOCTYPE " + node[NAME] +
               this._get_doctype_external_identifier(node) + "&gt;" +
             "</div>";
@@ -220,7 +220,7 @@
           {
             tree += 
               "<div class='search-match dom-search' " +
-                "obj-id='" + node[ID] + "' handler='inspect-node-link' >" +
+                "obj-id='" + node[ID] + "' handler='show-search-match' >" +
                 "<span class='dom-search-text-node'>#text</span>" + 
                 "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
               "</div>";
