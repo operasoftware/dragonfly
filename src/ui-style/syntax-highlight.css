@@ -102,7 +102,7 @@ examine-objects key {
 
 .markup-attribute,
 .dom key,
-.dom-search key, {
+.dom-search key {
     color: #55a;
 }
 
