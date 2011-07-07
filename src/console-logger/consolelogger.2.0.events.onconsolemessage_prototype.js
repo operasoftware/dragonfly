@@ -5,6 +5,13 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     var parts = this.description.split("\n");
     if (parts.length)
     {
+              // todo: remove
+              if (parts[0] == "Error:")
+              {
+                // todo: can probably remove the special "Error:" treatment? haven't seen that anywhere?
+                window.___MESSAGE_THAT_STARTS_WITH_ERROR = this;
+                console.log("Info: Logged error message that starts with an \"Error:\" line. Stored as ___MESSAGE_THAT_STARTS_WITH_ERROR");
+              }
       return parts[0] == "Error:" ? parts[1].substr(6) : parts[0];
     }
     return "";
@@ -43,7 +50,17 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
 
   this.__defineGetter__("details", function()
   {
-    return this.desc_without_linenumber_line.replace(this.title, "");
+    var details = this.desc_without_linenumber_line.replace(this.title, "");
+    if (details.startswith("\r\n"))
+    {
+      details = details.replace("\r\n", "");
+    }
+    else
+    if (details.startswith("\n"))
+    {
+      details = details.replace("\n", "");
+    }
+    return details;
   });
 };
 
