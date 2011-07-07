@@ -108,9 +108,9 @@ cls.ElementStyle = function()
        (__search_is_active || search_term.length >= MIN_SEARCH_TERM_LENGTH))
     {
       doSearch(search_term);
+      __old_search_term = search_term;
       views['css-inspector'].update();
       views['css-comp-style'].update();
-      __old_search_term = search_term;
     }
   };
 
@@ -123,17 +123,9 @@ cls.ElementStyle = function()
   {
     if (search_term.length >= MIN_SEARCH_TERM_LENGTH)
     {
-      __searchMap = [];
-      var i = 0, length = css_index_map.length;
-
-      for ( ; i < length; i++)
-      {
-        __searchMap[i] = css_index_map[i].indexOf(search_term) != -1;
-      }
-
       for (i = 0, length = categories_data[CSS].length; i < length; i++)
       {
-        searchNodeCascade(categories_data[CSS][i], __searchMap);
+        searchNodeCascade(categories_data[CSS][i], search_term);
       }
 
       __search_is_active = true;
@@ -186,49 +178,35 @@ cls.ElementStyle = function()
 
   */
 
-  var searchNodeCascade = function(node_cascade, search_list)
+  var searchNodeCascade = function(node_cascade, search_term)
   {
-    // search_list is an array which has either 0 or 1 for the whole index_ map
-    var
-    dec = null,
-    i = 0,
-    declaration_list = node_cascade[STYLE_LIST],
-    has_matching_search_props = false;
+    var declaration_list = node_cascade[STYLE_LIST];
+    var node_cascade_has_matching_search_props = false;
 
-    for ( ; dec = declaration_list[i]; i++)
+    for (var i = 0, declaration; declaration = declaration_list[i]; i++)
     {
-      searchStyleDeclaration(dec, search_list);
-      has_matching_search_props =
-        has_matching_search_props || dec[HAS_MATCHING_SEARCH_PROPS];
-    }
-
-    node_cascade[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
-  };
-
-  var searchStyleDeclaration = function(declaration, search_list)
-  {
-    // updates a styleDeclaration
-    // checks if the declaration actually has matchin property
-    // search_list is a list with matching properties indexes
-
-    if (declaration[PROP_LIST])
-    {
-      var
-      i = 0,
-      length = declaration[PROP_LIST].length,
-      has_matching_search_props = false;
-
-      declaration[SEARCH_LIST] = [];
-      for ( ; i < length; i++)
+      if (declaration[PROP_LIST])
       {
-        if (search_list[declaration[PROP_LIST][i]])
+        var length = declaration[PROP_LIST].length;
+        var has_matching_search_props = false;
+
+        declaration[SEARCH_LIST] = [];
+
+        for (var j = 0; j < length; j++)
         {
-          declaration[SEARCH_LIST][i] = 1;
-          has_matching_search_props = true;
+          if (window.css_index_map[declaration[PROP_LIST][j]].indexOf(search_term) != -1 ||
+              declaration[VALUE_LIST][j].indexOf(search_term) != -1)
+          {
+            declaration[SEARCH_LIST][j] = 1;
+            has_matching_search_props = true;
+            node_cascade_has_matching_search_props = true;
+          }
         }
+        declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
       }
-      declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
     }
+
+    node_cascade[HAS_MATCHING_SEARCH_PROPS] = node_cascade_has_matching_search_props;
   };
 
   var clearNodeCascade = function(node_cascade, search_list)
