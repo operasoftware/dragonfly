@@ -63,7 +63,9 @@ var SearchSingleNodesPrototype = function(min_length)
         {
           if (is_match_token)
           {
-            this._search_target = node.nodeValue;
+            this._search_target = this.ignore_case ?
+                                  node.nodeValue.toLowerCase() :
+                                  node.nodeValue;
             if (this._reg_exp)
             {
               this._reg_exp.lastIndex = 0;
