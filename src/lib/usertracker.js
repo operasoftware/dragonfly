@@ -1,0 +1,51 @@
+window.cls || ( window.cls = {} );
+
+cls.UserTracker = function(url, storagekey)
+{
+
+  this._make_id = function(length)
+  {
+    length = length || 16;
+    var chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+    var ret = "";
+    while (length--) 
+    { 
+        ret += chars.charAt(Math.floor(Math.random() * chars.length)) }
+    return ret;
+  }
+
+  this.call_home = function(callback)
+  {
+    callback = callback || function() {};
+    var conn = new XMLHttpRequest();
+    var url = this.url + "?uid=" + this.id + "&timestamp=" + (new Date().getTime());
+
+    var rshandler = function()
+    {
+      if (conn.readyState == 4)
+      {
+        callback(conn.status);
+      }
+    }
+
+    conn.onreadystatechange = rshandler;
+    conn.open("GET", url, true);
+    conn.send(null);
+  }
+
+  if (!window.localStorage)
+  {
+    throw "Error: localStorage api not available";
+  }
+
+  this.url = url;
+  this.storagekey = "usertracker_id";
+  this.id = window.localStorage.getItem(this.storagekey);
+  if (!this.id)
+  {
+    this.id = this._make_id(64);
+    window.localStorage.setItem(this.storagekey, this.id);
+  }
+
+
+}
