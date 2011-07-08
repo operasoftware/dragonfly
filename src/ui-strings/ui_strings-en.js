@@ -1271,3 +1271,6 @@ ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content track
 
 /* DESC: Part number label */
 ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
+
+/* DESC: Settings checkbox label for toggling usage tracking */
+ui_strings.S_SWITCH_TRACK_USAGE = "Track usage";

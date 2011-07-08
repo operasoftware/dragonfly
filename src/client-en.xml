@@ -226,6 +226,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/namespace.js"></script>
 <script src="./lib/stp_0_wrapper.js"></script>
 <script src="./lib/http_interface.js"></script>
+<script src="./lib/usertracker.js"></script>
 
 <script src="lib/scope_1_1.js"></script>
 
