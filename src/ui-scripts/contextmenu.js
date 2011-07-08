@@ -123,7 +123,7 @@ function ContextMenu() {
 
     var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || 
                          event.target.get_attr("parent-node-chain", "data-resource-url");
-    var line_number =    event.target.get_attr('parent-node-chain', 'data-resource-line-number')||null;
+    var line_number =    event.target.get_attr('parent-node-chain', 'data-resource-line-number');
     if (res_id_or_url)
     {
       if (last_found_menu_id == "dom")

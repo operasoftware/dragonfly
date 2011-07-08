@@ -11,6 +11,8 @@ cls.ResourceDetailBase = function()
   this.drawer = null;
   this.title = null
 
+  const HIGHLIGHTED_LINE_CLASSNAME = 'higlighted-line';
+  const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container'
   const TEXT = document.TEXT_NODE;
   const ELE  = document.ELEMENT_NODE;
   this._span = document.createElement('span');
@@ -39,7 +41,7 @@ cls.ResourceDetailBase = function()
         {
           var c = child.nodeValue.charAt(pos);
           // Linefeed recognition will not support Acorn BBC spooled text output 
-          if ((c == CR )|| (c == LF))
+          if ((c == CR ) || (c == LF))
           {
             this._line_count++;
             if (this._line_count == this._line)
@@ -58,7 +60,7 @@ cls.ResourceDetailBase = function()
                 var container_top = scroll_container.getBoundingClientRect().top;
                 var delta = this._tops[1] - this._tops[0];
                 var scroll_top = scroll_container.scrollTop;
-                ele.addClass('highlighted-line');
+                ele.addClass(HIGHLIGHTED_LINE_CLASSNAME);
                 ele.style.cssText = 
                   "background-size: 100% " + delta + "px;" +
                   "background-position: 0 " + 
@@ -91,20 +93,18 @@ cls.ResourceDetailBase = function()
     this._line_found = false;
     this._line = 0;
     this._tops = [];
-    var _ele = container.querySelectorAll('.highlighted-line')[0];
+    var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
     if (_ele)
     {
-      _ele.removeClass('highlighted-line')
+      _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
     }
   }
-
-  var x = 0
 
   this.go_to_line = function(container, data)
   {
 
     if (!data || !data.lines[0]) return;
-    this._root_ele = container.getElementsByClassName('resource-detail-container')[0];
+    this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
     this.clear_line_numbers(this._root_ele)
     this._line = parseInt(data.lines[0]);
     if (this._root_ele)
