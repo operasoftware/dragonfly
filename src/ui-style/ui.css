@@ -955,7 +955,6 @@ cst-value
   height: 17px;
   line-height: 17px;
   white-space: nowrap;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   width: 95%; /* TODO: this is ugly, might push down the dropdown */
   box-sizing: border-box;

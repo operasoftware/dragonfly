@@ -1068,7 +1068,6 @@ d
 {
   overflow: hidden;
   white-space: nowrap;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   border: 1px solid #ccc;
   padding: 0px 5px;

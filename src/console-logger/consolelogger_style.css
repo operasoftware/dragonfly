@@ -22,7 +22,6 @@
 /* File cell */
 .errors-table > tr > td:nth-child(3) {
     overflow: hidden;
-    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
