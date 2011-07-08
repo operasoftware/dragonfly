@@ -159,6 +159,11 @@ cls.NetworkLoggerService = function(view)
     return this._current_context;
   };
 
+  this.clear_resources = function()
+  {
+    this._current_context.resources = [];
+  };
+
   this.get_resource = function(rid)
   {
     if (this._current_context)

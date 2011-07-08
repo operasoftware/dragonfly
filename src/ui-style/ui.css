@@ -216,6 +216,9 @@ button[handler="reload-window"]::before {
 .clear-request-list::before {
     background-image: url("../ui-images/icons/icon_clear.png");
 }
+.clear-log-network-view::before {
+    background-image: url("../ui-images/icons/icon_clear.png");
+}
 .request_list\.clear-log-on-runtime-switch::before {
     background-image: url("../ui-images/icons/icon_clearonreload.png");
 }

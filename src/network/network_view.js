@@ -53,6 +53,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._render_loading_view(container);
     }
+    else if (this._everrendered)
+    {
+      container.innerHTML = "";
+    }
     else
     {
       this._render_click_to_fetch_view(container);
@@ -179,13 +183,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_hover_request_bound = function(evt, target)
   {
-    rid = target.getAttribute("data-resource-id");
+    var rid = target.getAttribute("data-resource-id");
     var oldhovered = this._container.querySelectorAll(".hovered");
     var newhovered = this._container.querySelectorAll("li[data-resource-id='" + rid + "'], div[data-resource-id='" + rid + "']");
     for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered") }
     for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered") }
   }.bind(this);
-
 
   this._on_clicked_get_body = function(evt, target)
   {
@@ -230,6 +233,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
+  this._on_clear_log_bound = function(evt, target)
+  {
+    this._service.clear_resources();
+    this.update();
+  }.bind(this);
+
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
   // did, the event handler doesn't get added until the view is created
@@ -256,8 +265,24 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
   res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
+  eh.click["clear-log-network-view"] = this._on_clear_log_bound;
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
   eh.click["toggle-fit-graph-to-network-view"] = this._on_toggle_fit_graph_to_width;
+
+  new ToolbarConfig
+  (
+    'network_logger',
+    [
+      {
+        handler: 'clear-log-network-view',
+        title: "Clear log"
+      }
+    ],
+    null,
+    null,
+    null,
+    true
+  );
 
   new Settings
   (
@@ -289,8 +314,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       'fit-to-width',
     ]
   );
-
-
 
   this.init(id, name, container_class, html, default_handler);
 };
