@@ -72,25 +72,27 @@ PanelSearch = function()
       var ev_top = event.clientY;
       var min_dist = Infinity;
       var match = null;
-      for (var i = 0, cur, box, d, dx, dy; cur = matches[i]; i++)
+      for (var i = 0, cur; cur = matches[i]; i++)
       {
-        box = cur.getBoundingClientRect();
-        dx = ev_left < box.left ?
-             box.left - ev_left :
-             ev_left > box.right ?
-             ev_left - box.right :
-             0;
-        dy = ev_top < box.top ?
-             box.top - ev_top :
-             ev_top > box.bottom ?
-             ev_top - box.bottom :
-             0;
-        dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        if (dist < min_dist)
+        Array.prototype.forEach.call(cur.getClientRects(), function(box)
         {
-          min_dist = dist;
-          match = cur;
-        }
+          var dx = ev_left < box.left ?
+                   box.left - ev_left :
+                   ev_left > box.right ?
+                   ev_left - box.right :
+                   0;
+          var dy = ev_top < box.top ?
+                   box.top - ev_top :
+                   ev_top > box.bottom ?
+                   ev_top - box.bottom :
+                   0;
+          var dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy * 100, 2));
+          if (dist < min_dist)
+          {
+            min_dist = dist;
+            match = cur;
+          }
+        });
       }
       if (match)
       {
