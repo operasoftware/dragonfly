@@ -18,7 +18,7 @@ cls.UserTracker = function(url, storagekey)
   {
     callback = callback || function() {};
     var conn = new XMLHttpRequest();
-    var url = this.url + "?uid=" + this.id + "&timestamp=" + (new Date().getTime());
+    var url = this.url + "?user=" + this.id + "&timestamp=" + (new Date().getTime());
 
     var rshandler = function()
     {
