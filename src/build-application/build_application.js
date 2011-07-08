@@ -153,13 +153,13 @@ window.app.build_application = function(on_services_created, on_services_enabled
   {
     if (settings.general.get("track-usage"))
     {
-      var trackerurl = "/"; // "http://dragonfly.opera.com/"; fixme
-      var tracker = new cls.UserTracker();
-      var cb = function(status)
+      var trackerurl = "/app/user-count"
+      var tracker = new cls.UserTracker(trackerurl);
+      var cb = function(status, url)
       {
         if (status != 200)
         {
-          opera.postError("Usertracker could not send heartbeat to tracker server. Got status " + status);
+          opera.postError("Usertracker could not send heartbeat to tracker server at " + url + ". Got status " + status);
         }
       };
       tracker.call_home(cb);

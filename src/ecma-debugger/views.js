@@ -183,7 +183,7 @@ cls.GeneralView.create_ui_widgets = function()
       "show-only-normal-and-gadget-type-windows": true,
       "shortcuts": null,
       "shortcuts-hash": "",
-      "track-usage": false,
+      "track-usage": true,
     },
     // key-label map
     {

@@ -1273,4 +1273,4 @@ ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content track
 ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
 
 /* DESC: Settings checkbox label for toggling usage tracking */
-ui_strings.S_SWITCH_TRACK_USAGE = "Track usage";
+ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to the Opera Dragonfly servers whenever Dragonfly is started";

@@ -24,7 +24,7 @@ cls.UserTracker = function(url, storagekey)
     {
       if (conn.readyState == 4)
       {
-        callback(conn.status);
+        callback(conn.status, url);
       }
     }
 
