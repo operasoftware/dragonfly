@@ -153,7 +153,7 @@ ui_strings.M_VIEW_LABEL_ENVIRONMENT = "Environment";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all errors. */
 ui_strings.M_VIEW_LABEL_ERROR_ALL = "All";
 
-/* DESC: See Opera Error console: Error view filter for showing all Bittorrent errors. */
+/* DESC: See Opera Error console: Error view filter for showing all Bittorrent errors. // TODO: REMOVE? */
 ui_strings.M_VIEW_LABEL_ERROR_BITTORRENT = "BitTorrent";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all CSS errors. */
@@ -168,7 +168,7 @@ ui_strings.M_VIEW_LABEL_ERROR_JAVA = "Java";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Mail errors. */
 ui_strings.M_VIEW_LABEL_ERROR_M2 = "Mail";
 
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Network errors. */
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Network errors. // TODO: REMOVE? */
 ui_strings.M_VIEW_LABEL_ERROR_NETWORK = "Network";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all JS errors. */
@@ -177,17 +177,20 @@ ui_strings.M_VIEW_LABEL_ERROR_SCRIPT = "JavaScript";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all SVG errors. */
 ui_strings.M_VIEW_LABEL_ERROR_SVG = "SVG";
 
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Voice errors. */
-ui_strings.M_VIEW_LABEL_ERROR_VOICE = "Voice";
-
-/* DESC: See Opera Error console: Error view filter for showing all Widget errors. */
+/* DESC: See Opera Error console: Error view filter for showing all Widget errors. // TODO: REMOVE? */
 ui_strings.M_VIEW_LABEL_ERROR_WIDGET = "Widgets";
 
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XML errors. */
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XML errors. // TODO: REMOVE? */
 ui_strings.M_VIEW_LABEL_ERROR_XML = "XML";
 
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XSLT errors. */
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XSLT errors. // TODO: REMOVE? */
 ui_strings.M_VIEW_LABEL_ERROR_XSLT = "XSLT";
+
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Storage errors. */
+ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
+
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing errors that we don't have a dedicated tab for. */
+ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
 
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";

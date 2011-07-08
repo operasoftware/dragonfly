@@ -84,6 +84,7 @@ new EventHandler('mouseover', null, null, false);
 new EventHandler('focus', true, 'focus-handler');
 new EventHandler('blur', true, 'blur-handler');
 new EventHandler('mousewheel');
+new EventHandler('scroll', true);
 
 /***** general ui click handler *****/
 

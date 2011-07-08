@@ -121,7 +121,8 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
       ["td",
         [
           ["pre", entry.title, "class", "mono title"],
-          ["pre", entry.details, "class", "mono details"]],
+          ["pre", entry.details, "class", "mono details"]
+        ],
         "class", "main"
       ],
       ["td", entry.context, "class", "context"],

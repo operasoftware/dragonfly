@@ -320,7 +320,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
 var ErrorConsoleView = function(id, name, container_class, source)
 {
-  container_class = container_class ? container_class : 'scroll error-console';
+  container_class || (container_class = "scroll error-console");
   // name = name ? name : 'missing name ' + id;
 
   this._expand_all_state = null;
@@ -333,7 +333,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this.createView = function(container)
   {
-    this._container = container;
     if (this._query)
     {
       this._text_search.update_search();
@@ -341,16 +340,17 @@ var ErrorConsoleView = function(id, name, container_class, source)
     }
     else
     {
-      this._create();
+      this._create(container);
     }
     this._old_query = this._query;
   };
 
-  this._create = function()
+  this._create = function(container)
   {
-    if (this._container)
+    if (container)
     {
       window.error_console_data.last_shown_error_view = id;
+      container.setAttribute("data-error-log-id", id);
       var entries = window.error_console_data.get_messages(source);
       var expand_all = settings.console.get('expand-all-entries');
       var template = templates.errors.log_table(entries, 
@@ -358,8 +358,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
                                                   window.error_console_data.get_toggled(),
                                                   this.id,
                                                   this._query);
-      this._container.clearAndRender(template);
-      this._table_ele = this._container.getElementsByTagName("table")[0];
+      container.clearAndRender(template);
+      if (this._scrollTop)
+      {
+        container.scrollTop = this._scrollTop;
+      }
+      this._table_ele = container.getElementsByTagName("table")[0];
       this.update_error_count(entries);
     }
   }
@@ -381,7 +385,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
     this._create();
   }).bind(this);
 
-  this.init(id, name, container_class );
+  this.init(id, name, container_class, null, "error-view");
 };
 ErrorConsoleView.prototype = ViewBase;
 
@@ -413,12 +417,12 @@ ErrorConsoleView.roughViews =
   },
   {
     id: 'console-storage',
-    name: "Storage", // todo: string
+    name: ui_strings.M_VIEW_LABEL_ERROR_STORAGE,
     source: 'persistent_storage'
   },
   {
     id: 'console-other',
-    name: "Other" // todo: string
+    name: ui_strings.M_VIEW_LABEL_ERROR_OTHER
   }
 ];
 
@@ -488,7 +492,7 @@ ErrorConsoleView.roughViews.createViews = function()
         if( msg.id == view_id )
         {
           text_search.cleanup();
-          window.views[view_id]._old_query = null; // _query itsef won't be cleared to keep error count working
+          window.views[view_id]._old_query = null;
         }
       };
 
@@ -580,5 +584,19 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
 eventHandlers.input['error-console-css-filter'] = function(event, target)
 {
   window.settings.console.set('css-filter', event.target.value);
+};
+
+eventHandlers.scroll["error-view"] = function(event, target)
+{
+  var container = target;
+  while (container.nodeName.toLowerCase() != "container" && container.parentNode)
+  {
+    container = container.parentNode;
+  }
+  if (container)
+  {
+    var id = container.getAttribute("data-error-log-id");
+    window.views[id]._scrollTop = container.scrollTop; // todo: this is before the mousewheel had effect
+  }
 };
 
