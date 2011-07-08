@@ -73,6 +73,14 @@ cls.DOMSearchView = function(id, name, container_class)
     eventHandlers.click['inspect-node-link'](event, target);
   };
 
+  this._onsettingchange = function(msg)
+  {
+    if (msg.id == "dom" && msg.key == "dom-tree-style")
+    {
+      this.update();
+    }
+  };
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -129,6 +137,7 @@ cls.DOMSearchView = function(id, name, container_class)
                                 ['highlight-next-match',
                                  'highlight-previous-match',
                                  'hide-search']);
+    messages.addListener('setting-changed', this._onsettingchange.bind(this));
   };
 
   this._init(id, name, container_class);

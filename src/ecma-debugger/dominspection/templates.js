@@ -121,6 +121,7 @@
   this.dom_search = function(model)
   {
     var data = model.getData();
+    var is_tree_style = window.settings.dom.get('dom-tree-style');
     var tree = "<div" +
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
@@ -132,6 +133,8 @@
     var show_comments = window.settings.dom.get('show-comments');
     var node_name = '';
     var disregard_force_lower_case_depth = 0;
+    var open_tag = is_tree_style ? "" : "&lt;";
+    var close_tag =  is_tree_style ? "" : "&gt;";
 
     for (var i = 0, node; node = data[i]; i++)
     {
@@ -161,16 +164,24 @@
         case ELEMENT_NODE:
         {
           attrs = this._dom_attrs_search(node, force_lower_case);
-          tree += 
-            "<div class='search-match dom-search' "+
-              "obj-id='" + node[ID] + "' handler='show-search-match' >" +
-              "<node>&lt;" + 
-                "<match-token>" + node_name + "</match-token>" +
-                attrs +
-                (node[CHILDREN_LENGTH] ?
-                 "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
-                 "/&gt;</node>") +
-            "</div>";
+          tree += "<div class='search-match dom-search' "+
+                       "obj-id='" + node[ID] + "' " +
+                       "handler='show-search-match' " +
+                       ">" +
+                    "<node>" + open_tag +
+                      "<match-token>" + node_name + "</match-token>" +
+                      attrs;
+          if (close_tag)
+          {
+            tree += node[CHILDREN_LENGTH] ?
+                    "&gt;</node>…<node>&lt;/" + node_name + "&gt;</node>" :
+                    "/&gt;</node>";
+          }
+          else
+          {
+            tree += "</node>";
+          }
+          tree += "</div>";
           break;
         }
         case PROCESSING_INSTRUCTION_NODE:
@@ -191,9 +202,9 @@
             tree += 
               "<div class='search-match dom-search comment pre-wrap' " +
                 "obj-id='" + node[ID] + "' handler='show-search-match' >" +
-                "&lt;!--" + 
+                (open_tag ? open_tag + "!--" : "#comment") + 
                 "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
-                "--&gt;" +
+                (close_tag ? "--" + close_tag : "") +
               "</div>";
           }
           break;
