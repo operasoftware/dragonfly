@@ -70,9 +70,7 @@ offsets value { /* TODO: use class */
     background-color: yellow;
 }
 
-.selected-js-source-line {
-  background-color: #d4e3f4;
-}
+
 
 /* Property inspector */
 
@@ -202,10 +200,12 @@ rule:not(.non-editable) property:hover {
     background: #f2f5f9;
 }
 
-#target-element,
-[handler="spotlight-node"]:active {
+#target-element, [handler="spotlight-node"]:active {
     border-color: #c5daf1;
-    background: #d4e3f4;
+}
+
+.selected-js-source-line, #target-element, [handler="spotlight-node"]:active {
+  background-color: #d4e3f4;
 }
 
 .dom ::selection {

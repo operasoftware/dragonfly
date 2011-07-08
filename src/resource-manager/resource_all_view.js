@@ -19,7 +19,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._container = null;
   this._scrollpos = 0;
   this._view = null;
-
+  this._open_resource_views = [];
 
   this.ondestroy = function()
   {
@@ -103,13 +103,18 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       css: cls.CSSResourceDetail,
       text: cls.TextResourceDetail
     }
-    var viewclass = viewclasses[type] || cls.GenericResourceDetail;
-    var view = new viewclass(resource, this._service);
     var ui = UI.get_instance();
-    ui.get_tabbar("resources").add_tab(view.id);
-    ui.show_view(view.id);
-    view._data = data;
-    return view;
+
+    if (!this._open_resource_views[resource.id])
+    {
+      var viewclass = viewclasses[type] || cls.GenericResourceDetail;
+      var view = new viewclass(resource, this._service);
+      this._open_resource_views[resource.id] = view.id;
+    }
+    window.views[this._open_resource_views[resource.id]].data = data
+
+    ui.get_tabbar("resources").add_tab(this._open_resource_views[resource.id]);
+    ui.show_view(this._open_resource_views[resource.id]);
   }
 
   this.open_resource_tab = this._open_resource_tab;

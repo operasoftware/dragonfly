@@ -1,4 +1,8 @@
-﻿.resource-main {
+﻿.faen {
+  text-decoration: blink;
+}
+
+.resource-main {
     padding: 0;
     margin: 0;
 }
@@ -97,7 +101,7 @@
 }
 
 .highlighted-line {
-    background-image: -o-linear-gradient(90deg,hsl(220, 100%, 85%),hsl(220, 100%, 85%));
+    background-image: -o-linear-gradient(90deg, #d4e3f4, #d4e3f4);
     background-repeat: no-repeat;
 }
 

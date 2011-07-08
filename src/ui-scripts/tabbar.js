@@ -58,7 +58,10 @@ var Tabbar = function(id, tabs)
       var tab = new Tab(view_id, window.views[view_id].name, true);
       this._ui_tabs.forEach(function(tabs)
       {
-        tabs.addTab(tab);
+        if (!tabs.hasTab(view_id))
+        {
+          tabs.addTab(tab);
+        }
       });
     }
   };

@@ -86,22 +86,31 @@ cls.ResourceDetailBase = function()
   }
   this.clear_line_numbers = function(container)
   {
-    this._root_ele = container.querySelectorAll('.highlighted-line')[0];
-    if (this._root_ele)
+    // reset all properties
+    this._line_count = 0;
+    this._line_found = false;
+    this._line = 0;
+    this._tops = [];
+    var _ele = container.querySelectorAll('.highlighted-line')[0];
+    if (_ele)
     {
-      this._root_ele.removeClass('')
+      _ele.removeClass('highlighted-line')
     }
   }
 
+  var x = 0
+
   this.go_to_line = function(container, data)
   {
+
     if (!data || !data.lines[0]) return;
-    this._line = parseInt(data.lines[0]);
     this._root_ele = container.getElementsByClassName('resource-detail-container')[0];
+    this.clear_line_numbers(this._root_ele)
+    this._line = parseInt(data.lines[0]);
     if (this._root_ele)
     {
       this._current_line = 1;
-      this._traverse_ele(this._root_ele)
+      this._traverse_ele(this._root_ele);
     }
 
   }
@@ -135,7 +144,7 @@ cls.ResourceDetailBase = function()
       {
         container.render(tpl);
         cls.ResourceDetailBase.sync_dimensions(container);
-        this.go_to_line(container, this._data)
+        this.go_to_line(container, this.data);
       }
     }
 
