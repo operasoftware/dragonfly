@@ -66,9 +66,12 @@ cls.ResourceDetailBase = function()
                   "background-position: 0 " + 
                     (this._tops[0] - container_top + scroll_top) + "px;";
                 
-                var _to = scroll_top + this._tops[0] - container_top;
-                if (_to <= this._root_ele.parentNode.clientHeight) _to = _to-64;
-                this._root_ele.scrollTop = _to;
+                var scroll_position = scroll_top + this._tops[0] - container_top;
+                if (scroll_position <= this._root_ele.parentNode.clientHeight)
+                {
+                  scroll_position-=64;
+                }
+                this._root_ele.scrollTop = scroll_position;
 
                 child.parentNode.normalize();
                 this._line_found = true;

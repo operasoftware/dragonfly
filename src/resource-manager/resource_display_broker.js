@@ -28,11 +28,11 @@ cls.ResourceDisplayBroker = function()
     {
       if (line)
       {
-        var data = {"lines":[line]}
+        var data = {"lines":[line]};
       }
       else
       {
-        var data = {}
+        var data = {};
       }
       new cls.OpenSingleResource(window.views.resource_all, url, data);
     }
