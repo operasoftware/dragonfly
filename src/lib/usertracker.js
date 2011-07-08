@@ -8,8 +8,8 @@ cls.UserTracker = function(url, storagekey)
     length = length || 16;
     var chars = "0123456789abcdefghijklmnopqrstuvwxyz";
     var ret = "";
-    while (length--) 
-    { 
+    while (length--)
+    {
         ret += chars.charAt(Math.floor(Math.random() * chars.length)) }
     return ret;
   }
@@ -33,19 +33,21 @@ cls.UserTracker = function(url, storagekey)
     conn.send(null);
   }
 
-  if (!window.localStorage)
-  {
-    throw "Error: localStorage api not available";
-  }
 
   this.url = url;
   this.storagekey = "usertracker_id";
-  this.id = window.localStorage.getItem(this.storagekey);
-  if (!this.id)
+
+  if (window.localStorage)
   {
-    this.id = this._make_id(64);
-    window.localStorage.setItem(this.storagekey, this.id);
+    this.id = window.localStorage.getItem(this.storagekey);
+    if (!this.id)
+    {
+      this.id = this._make_id(64);
+      window.localStorage.setItem(this.storagekey, this.id);
+    }
   }
-
-
+  else
+  {
+    this.id = "client-without-localstorage";
+  }
 }
