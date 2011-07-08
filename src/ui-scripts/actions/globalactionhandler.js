@@ -157,6 +157,13 @@
       {
          return false;
       }
+
+      // Prevent ESC from opening/closing console when in edit mode,
+      // except if we're actually in the console
+      if (this._broker.get_current_handler_id() != "command_line")
+      {
+        return;
+      }
     }
 
     var overlay = Overlay.get_instance();
@@ -304,9 +311,18 @@
 
   this.focus = function(event, container)
   {
-    this.mode = event && /input|textarea/i.test(event.target.nodeName) ?
-                                                MODE_EDIT :
-                                                MODE_DEFAULT;
+    var text_inputs = /text|search|tel|url|email|password|datetime|date|month|week|time|datetime-local|number|file/i;
+    var node_name = event && event.target.nodeName.toLowerCase();
+    if (event && (node_name == "input" && text_inputs.test(event.target.type))
+              || node_name == "textarea"
+    )
+    {
+      this.mode = MODE_EDIT;
+    }
+    else
+    {
+      this.mode = MODE_DEFAULT;
+    }
   };
 
   this.check_mode = this.focus;
