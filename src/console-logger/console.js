@@ -17,7 +17,6 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._msgs = [];
   this._toggled = [];
   this._views = [];
-  this._selected_rt_url = '';
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
   this.current_error_count = 0;
@@ -25,8 +24,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   this._update_views = function()
   {
     var updated = false;
-    var view = '', i = 0;
-    for( ; view = this._views[i]; i++)
+    for (view = '', i = 0; view = this._views[i]; i++)
     {
       if (window.views[view].update())
       {
@@ -36,7 +34,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // this could be done anyway, like when update() didn't return anything. but it saves a little.
     if (!updated)
     {
-      var last_shown_error_view = this.last_shown_error_view || "console-all";
+      var last_shown_error_view = this.last_shown_error_view || ErrorConsoleView.roughViews[0].id;
       if (last_shown_error_view && window.views[last_shown_error_view]) // todo: could probably use some history object for this? how to access that?
       {
         window.views[last_shown_error_view].update_error_count();
@@ -59,12 +57,12 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
       this._msgs.push(entry);
     }
 
-    // before calling updateviews, need to make sure the respective view is not hidden.
-    // can't do that in it's createView method, as it's not called if there is no container.
+    // before calling update_views, need to make sure the respective view is not hidden.
     if (entry.source)
     {
-      var corresponding_tab = "console-other";
-      for (var i=0; i < ErrorConsoleView.roughViews.length; i++) {
+      var corresponding_tab = ErrorConsoleView.roughViews[0].id;
+      for (var i=0; i < ErrorConsoleView.roughViews.length; i++)
+      {
         if (ErrorConsoleView.roughViews[i].source === entry.source)
         {
           corresponding_tab = ErrorConsoleView.roughViews[i].id;
@@ -90,10 +88,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   };
 
   /**
-   * Toggle an entry. This is context sensitive.
-   * Whatever is in the list behaves opposite of the default. In other words,
-   * when items are expanded by default, items in the toggled list are not
-   * expanded and vice-versa.
+   * Toggle an entry.
    */
   this.toggle_entry = function(logid)
   {
@@ -105,72 +100,9 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
-  this._matchable_fields = [
-    {
-      id: "title"
-    },
-    {
-      id: "description"
-    },
-    {
-      id: "details",
-      needs_expansion: true
-    },
-    {
-      id: "context"
-    },
-    {
-      id: "line"
-    },
-    {
-      id: "uri"
-    },
-    {
-      id: "source"
-    },
-    {
-      id: "severity"
-    }
-  ];
-
-  this._do_query_matching = function (messages, query, matchable_fields)
-  {
-    // add is_hidden and require_expansion flag to all messages.
-    return messages.map( function(message)
-      {
-        message.is_hidden = false;
-        message.requires_expansion = false;
-        if (query)
-        {
-          message.is_hidden = true;
-          for (var i = 0, matchable; matchable = matchable_fields[i]; i++)
-          {
-            if (
-              matchable.id &&
-              message[matchable.id] &&
-              (message[matchable.id].toLowerCase().indexOf(query.toLowerCase()) !== -1)
-            )
-            {
-              message.is_hidden = false;
-              if (matchable.needs_expansion)
-              {
-                message.requires_expansion = true;
-              }
-            }
-          }
-        }
-        return message;
-      }
-    );
-  }
-
   this.get_messages = function(source)
   {
-    var last_shown_error_view = window.views[this.last_shown_error_view];
-    var query = last_shown_error_view && last_shown_error_view._query;
-    var messages = 
-      this._do_query_matching(this._msgs, query, this._matchable_fields)
-        .filter(function(e) {return !e.is_hidden;}).filter(this._filter_bound);
+    var messages = this._msgs;
     if (source)
     {
       messages = messages.filter(function(e) {return e.source==source;});
@@ -178,7 +110,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     return messages;
   };
 
-  this.get_message = function(id)
+  this.get_message = function(id) // todo: check how this is used
   {
     if (! this._msgs)
     {
@@ -289,10 +221,15 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // It will probably only be displayed depending on a setting.
   };
 
-  this._on_runtime_selected = function(msg)
+  this._new_top_runtime = function(msg)
   {
-    var rt = window.runtimes.getRuntime(msg.id);
-    this._selected_rt_url = rt && rt.uri || '';
+    this._msgs = [];
+    for (var i = 1, view; view = this._views[i]; i++)
+    {
+      window.views[view].is_hidden = true;
+      topCell.disableTab(view, true);
+    };
+    this._update_views();
   };
 
   this.init = function()
@@ -300,14 +237,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this._filters = {};
 
     window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
-    window.messages.addListener('runtime-selected', this._on_runtime_selected.bind(this));
+    window.messages.addListener("new-top-runtime", this._new_top_runtime.bind(this));
 
     var logger = window.services['console-logger'];
     logger.add_listener("consolemessage", this._on_console_message.bind(this));
-
+/*
     var esdebug = window.services['ecmascript-debugger'];
     esdebug.add_listener("consolelog", this._on_consolelog.bind(this));
-
+*/
   };
   this.init();
 };
@@ -321,63 +258,132 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 var ErrorConsoleView = function(id, name, container_class, source)
 {
   container_class || (container_class = "scroll error-console");
-  // name = name ? name : 'missing name ' + id;
 
   this._expand_all_state = null;
   this._table_ele = null;
-  
-  if (id !== "console-all")
+
+  if (id !== ErrorConsoleView.roughViews[0].id)
   {
-    this.fallback_view_id = "console-all";
+    this.fallback_view_id = ErrorConsoleView.roughViews[0].id;
   }
 
   this.createView = function(container)
   {
+    this._container = container;
+    this._container.setAttribute("data-error-log-id", id);
+    this._container.setAttribute("data-menu", "error-console");
     if (this._query)
     {
+      // this triggers _create via on_before_search
       this._text_search.update_search();
-      // todo: scroll to a scroll-position that was kept
     }
     else
     {
-      this._create(container);
+      this._create();
     }
     this._old_query = this._query;
   };
 
-  this._create = function(container)
+  this._create = function()
   {
-    if (container)
+    if (this._container)
     {
       window.error_console_data.last_shown_error_view = id;
-      container.setAttribute("data-error-log-id", id);
-      var entries = window.error_console_data.get_messages(source);
+      var query_filter = this._get_string_filter(this._query, string_filter_config);
+      var entries = window.error_console_data.get_messages(source)
+                      .filter(query_filter)
+                      .filter(window.error_console_data._filter_bound);
+      this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
       var template = templates.errors.log_table(entries, 
                                                   expand_all,
                                                   window.error_console_data.get_toggled(),
-                                                  this.id,
-                                                  this._query);
-      container.clearAndRender(template);
+                                                  this.id);
+      this._container.clearAndRender(template);
       if (this._scrollTop)
       {
-        container.scrollTop = this._scrollTop;
+        this._container.scrollTop = this._scrollTop;
       }
-      this._table_ele = container.getElementsByTagName("table")[0];
-      this.update_error_count(entries);
+      this._table_ele = this._container.getElementsByTagName("table")[0];
     }
   }
 
   this.update_error_count = function(entries)
   {
-    entries || (entries = window.error_console_data.get_messages(source));
+    if (!entries)
+    {
+      entries = window.error_console_data.get_messages(source)
+      var query_filter = this._get_string_filter(this._query, string_filter_config);
+      var entries = window.error_console_data.get_messages(source)
+                      .filter(query_filter)
+                      .filter(window.error_console_data._filter_bound);
+    }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
 
-  this.ondestroy = function() {
+  this.ondestroy = function()
+  {
     delete this._table_ele;
     this._table_ele = null;
   };
+
+   var string_filter_config = [
+    {
+      id: "title"
+    },
+    {
+      id: "description"
+    },
+    {
+      id: "details",
+      requires_expansion: true
+    },
+    {
+      id: "context"
+    },
+    {
+      id: "line"
+    },
+    {
+      id: "uri"
+    },
+    {
+      id: "source"
+    },
+    {
+      id: "severity"
+    }
+  ];
+
+  this._get_string_filter = function (query, string_filter_config)
+  {
+    // add require_expansion flag, return false for hidden fields 
+    return (function(entry)
+    {
+      var is_hidden = true;
+      entry.requires_expansion = false;
+      if (query)
+      {
+        for (var i = 0, filter_config; filter_config = string_filter_config[i]; i++)
+        {
+          if (
+            filter_config.id &&
+            entry[filter_config.id] &&
+            (entry[filter_config.id].toLowerCase().indexOf(query.toLowerCase()) !== -1)
+          )
+          {
+            is_hidden = false;
+            if (filter_config.requires_expansion)
+            {
+              entry.requires_expansion = true;
+            }
+          }
+        }
+        return !is_hidden;
+      }
+      return true;
+    })
+  }
 
   this._on_before_search_bound = (function(message)
   {
@@ -578,8 +584,19 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     },
     "console"  
   );
-};
 
+  // todo: implement
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("error-console", [
+    {
+      label: "Clear all errors",
+      handler: function(event, target) {
+        broker.dispatch_action(id, "update", event, target)
+      }
+    }
+  ]);
+
+};
 
 eventHandlers.input['error-console-css-filter'] = function(event, target)
 {
@@ -596,7 +613,7 @@ eventHandlers.scroll["error-view"] = function(event, target)
   if (container)
   {
     var id = container.getAttribute("data-error-log-id");
-    window.views[id]._scrollTop = container.scrollTop; // todo: this is before the mousewheel had effect
+    window.views[id]._scrollTop = container.scrollTop;
   }
 };
 

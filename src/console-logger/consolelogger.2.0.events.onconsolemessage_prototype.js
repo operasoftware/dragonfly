@@ -2,6 +2,10 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
 {
   this.__defineGetter__("title", function()
   {
+    if (this._cached_title)
+    {
+      return this._cached_title;
+    }
     var parts = this.description.split("\n");
     if (parts.length)
     {
@@ -12,27 +16,39 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
                 window.___MESSAGE_THAT_STARTS_WITH_ERROR = this;
                 console.log("Info: Logged error message that starts with an \"Error:\" line. Stored as ___MESSAGE_THAT_STARTS_WITH_ERROR");
               }
-      return parts[0] == "Error:" ? parts[1].substr(6) : parts[0];
+      return this._cached_title = (parts[0] == "Error:" ? parts[1].substr(6) : parts[0]);
     }
-    return "";
+    return this._cached_title = "";
   });
 
   this.__defineGetter__("line", function()
   {
+    if (this._cached_line)
+    {
+      return this._cached_line;
+    }
     var matcher = /[lL]ine (\d+)[:,]/;
     var linematch = matcher.exec(this.description);
-    return linematch ? linematch[1] : null;
+    return this._cached_line = (linematch ? linematch[1] : null);
   });
 
   this.__defineGetter__("line_str", function()
   {
+    if (this._cached_line_str)
+    {
+      return this._cached_line_str;
+    }
     var matcher = /[lL]ine (\d+)[:,][\r\n]/;
     var linematch = matcher.exec(this.description);
-    return linematch ? linematch[0] : null;
+    return this._cached_line_str = (linematch ? linematch[0] : null);
   });
 
   this.__defineGetter__("desc_without_linenumber_line", function()
   {
+    if (this._cached_desc_without_linenumber_line)
+    {
+      return this._cached_desc_without_linenumber_line;
+    }
     var main = this.description;
     if (main)
     {
@@ -45,11 +61,15 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
         main = main.replace("\n", "");
       }
     }
-    return main;
+    return this._cached_desc_without_linenumber_line = main;
   });
 
   this.__defineGetter__("details", function()
   {
+    if (this._cached_details)
+    {
+      return this._cached_details;
+    }
     var details = this.desc_without_linenumber_line.replace(this.title, "");
     if (details.startswith("\r\n"))
     {
@@ -60,7 +80,7 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     {
       details = details.replace("\n", "");
     }
-    return details;
+    return this._cached_details = details;
   });
 };
 

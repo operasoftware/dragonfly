@@ -28,11 +28,11 @@ window.templates.errors._source_map = {
   }
 };
 
-window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId, query, query_options)
+window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId)
 {
   var rowClosure = function(e)
   {
-    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId, query, query_options);
+    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId);
   };
 
   return [
@@ -41,13 +41,13 @@ window.templates.errors.log_table = function(entries, allExpanded, expandedList,
   ];
 };
 
-window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId, query, query_options)
+window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId)
 {
   if (entry.is_hidden)
   {
     return [];
   }
-  // todo: implement query_options
+
   var expanded;
   if (allExpanded)
   {
