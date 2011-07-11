@@ -40,7 +40,15 @@ templates.repl_output_pobj = function(data)
                         /(?:Element)$/.test(data.name)
   if (data.model)
   {
-    var tmpl = window.templates[data.model_template](data.model);
+    var tmpl = null;
+    if (data.model_template == cls.ReplService.INLINE_MODEL_TMPL_DOM)
+    {
+      tmpl = window.templates[data.model_template](data.model, null, false, true);
+    }
+    else
+    {
+      tmpl = window.templates[data.model_template](data.model);
+    }
     // the returned template is a innerHTML
     // the render call can handle that if the innerHTML is passed 
     // as a single field in an array 

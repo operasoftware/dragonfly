@@ -227,6 +227,7 @@ var DOMSearch = function(min_length)
     this.ignore_case = this._setting.get('dom-search-ignore-case');
     this.search_only_selected_node = this._setting
                                      .get('dom-search-only-selected-node');
+    this._re_match_target = /match-token/i;
     this._min_term_length = 1;
     this._last_query = '';
     this._last_search_type = 0;
@@ -236,7 +237,7 @@ var DOMSearch = function(min_length)
     this._broker = ActionBroker.get_instance();
     window.eventHandlers.change['dom-search-type-changed'] = 
       this._onsearchtypechange;
-    this._query_selector = ".search-match";
+    this._query_selector = "." + PanelSearch.MATCH_NODE_CLASS;
     this._set_highlight_handlers();
     window.messages.addListener('element-selected', 
                                 this._onelementselected.bind(this));
@@ -398,6 +399,9 @@ var DOMSearch = function(min_length)
       this._highligh_node = null;
     }
   };
+
+
+  this.update_match_highlight = this._update_match_highlight;
 
   this._init(min_length);
 };

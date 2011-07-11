@@ -128,14 +128,14 @@ var JSMultifileSearchPrototype = function()
         this.search_type != this._last_search_type ||
         this.ignore_case != this._last_ignore_case ||
         this.search_all_files != this._last_search_all_files ||
-        this._script != this._last_script)
+        this._last_selected_script != this._last_script)
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
       this._last_search_all_files = this.search_all_files;
-      this._last_script = this._script;
+      this._last_script = this._last_selected_script;
       this._match_cursor = -1;
       this.searchresults = {};
       this.reset_match_cursor();
@@ -176,8 +176,9 @@ var JSMultifileSearchPrototype = function()
           }
           else 
           {
-            if (this._script)
+            if (this._last_selected_script)
             {
+              this._script = this._last_selected_script;
               this._script.search_source(this._last_query,
                                          this.ignore_case, 
                                          this.search_type == TextSearch.REGEXP);
@@ -217,47 +218,11 @@ var JSMultifileSearchPrototype = function()
     }
   };
 
-  this._update_match_highlight = function(event, target)
-  {
-    var line = event.target.get_ancestor('.search-match');
-    if (line)
-    {
-      var matches = line.getElementsByTagName('em');
-      var ev_left = event.clientX;
-      var ev_top = event.clientY;
-      var min_dist = Infinity;
-      var match = null;
-      for (var i = 0, cur, box, d, dx, dy; cur = matches[i]; i++)
-      {
-        box = cur.getBoundingClientRect();
-        dx = ev_left < box.left ?
-             box.left - ev_left :
-             ev_left > box.right ?
-             ev_left - box.right :
-             0;
-        dy = ev_top < box.top ?
-             box.top - ev_top :
-             ev_top > box.bottom ?
-             ev_top - box.bottom :
-             0;
-        dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        if (dist < min_dist)
-        {
-          min_dist = dist;
-          match = cur;
-        }
-      }
-      if (match)
-      {
-        this.set_match_cursor(match);
-        this._update_info();
-      }
-    }
-  };
+
 
   this._show_script = function(event, target)
   {
-    if (event.target.get_ancestor('.search-match'))
+    if (event.target.get_ancestor('.' + PanelSearch.MATCH_NODE_CLASS))
     {
       this._update_match_highlight(event, target);
       this.show_script_of_search_match(event, target)
@@ -369,6 +334,7 @@ var JSMultifileSearchPrototype = function()
     else
     {
       script = this._script;
+      i = cursor;
     }
 
     if (script)
@@ -376,7 +342,6 @@ var JSMultifileSearchPrototype = function()
       var js_source_view = window.views[JS_SOURCE_ID];
       var line_nr = script.line_matches[cursor];
       js_source_view.showLine(script.script_id, line_nr - 10);
-      this._last_script = this._script;
       var line_ele = js_source_view.get_line_element(line_nr);
       if (this._source_file_hit)
       {
@@ -384,7 +349,7 @@ var JSMultifileSearchPrototype = function()
       }
       var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
                          script.match_length :
-                         script.line_offsets_length[i]
+                         script.line_offsets_length[i];
       this._source_file_hit = this.set_hit(line_ele, 
                                            script.line_offsets[cursor],
                                            match_length,
@@ -412,24 +377,17 @@ var JSMultifileSearchPrototype = function()
     this._hit = null;
   };
   
-  this.set_match_cursor = function(target)
-  {
-    for (var i = 0, hit = null; hit = this._hits[i]; i++)
-    {
-      if (hit.indexOf(target) != -1)
-      {
-        this._hits[this._match_cursor].forEach(this._set_default_style, this);
-        this._match_cursor = i;
-        this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
-        break;
-      }
-    }
-  };
+
 
   this.get_match_cursor = function()
   {
     return this._match_cursor;
   };
+
+  this.set_script = function(script)
+  {
+    this._last_selected_script = script;
+  }
 
 };
 
