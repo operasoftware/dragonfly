@@ -429,14 +429,21 @@ header {
   background-color: #fff;
   border-bottom: 1px solid #fff;
   border-bottom-color: #ccc;
-  }
-
-div.unfolded {
-  border-bottom: 1px solid #ccc;;
 }
 
+container > div > header {
+  line-height: 20px;
+  background-color: #ebebeb;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255,255,255,0.90) 0,
+                                       rgba(255,255,255,0.30) 100%);
+}
+
+div.unfolded {
+  border-bottom: 1px solid #ccc;
+}
 header:hover {
-  background-color: #eee;
+  background-color: #efefef;
   color: #000;
 }
 
@@ -445,13 +452,16 @@ category header:hover input {
 }
 
 header input {
-  background:transparent url('../ui-images/toggle.png') scroll no-repeat 50% 100%;
+  background:transparent url('../ui-images/icons/icon_arrow_right.png') scroll no-repeat 50% 100%;
   border:none;
-  width:5px;
-  height:9px;
-  opacity: 0.66;
+  width:17px;
+  height:17px;
   -o-transition: .2s;
   }
+
+.unfolded > header{
+  border-bottom-color: #d7d7d7;
+}
 
 .unfolded > header input,
 input.unfolded {
