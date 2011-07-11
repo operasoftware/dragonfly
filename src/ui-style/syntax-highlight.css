@@ -119,6 +119,10 @@ examine-objects key {
     font-style: italic;
 }
 
+.dom .pseudo-element {
+    color: rgba(34, 34, 34, .5);
+}
+
 /* CSS */
 
 .css-selector,

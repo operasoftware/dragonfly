@@ -192,7 +192,8 @@
   this.toolbar_settings = function(toolbar_settings)
   {
     return ['cst-select-toolbar-setting',
-             [['cst-icon'], ['cst-drop-down']],
+              ['cst-icon'],
+              ['cst-drop-down'],
             'class', 'toolbar-settings ui-control dropdown ' + toolbar_settings.class_name,
             'cst-id', toolbar_settings.id];
   }

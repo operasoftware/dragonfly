@@ -26,11 +26,16 @@
   const PSEUDO_ELEMENT_TYPE = 0;
   const PSEUDO_ELEMENT_CONTENT = 1;
 
+  const PSEUDO_ELEMENT_BEFORE = 1;
+  const PSEUDO_ELEMENT_AFTER = 2;
+  const PSEUDO_ELEMENT_FIRST_LETTER = 3;
+  const PSEUDO_ELEMENT_FIRST_LINE = 4;
+
   this._pseudo_element_map = {};
-  this._pseudo_element_map[1] = "before";
-  this._pseudo_element_map[2] = "after";
-  this._pseudo_element_map[3] = "first-letter";
-  this._pseudo_element_map[4] = "first-line";
+  this._pseudo_element_map[PSEUDO_ELEMENT_BEFORE] = "before";
+  this._pseudo_element_map[PSEUDO_ELEMENT_AFTER] = "after";
+  this._pseudo_element_map[PSEUDO_ELEMENT_FIRST_LETTER] = "first-letter";
+  this._pseudo_element_map[PSEUDO_ELEMENT_FIRST_LINE] = "first-line";
 
   var disregard_force_lower_case_whitelist = 
       cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
@@ -70,24 +75,19 @@
   {
     var is_tree_mode = window.settings.dom.get("dom-tree-style");
     var pseudo_element_list = element[PSEUDO_ELEMENT_LIST];
-    var pseudo_elements = {
-      "after": "",
-      "before": "",
-      "first-letter": "",
-      "first-line": ""
-    };
+    var pseudo_elements = {};
 
     if (pseudo_element_list)
     {
       pseudo_element_list.forEach(function(pseudo_element) {
         var type = this._pseudo_element_map[pseudo_element[PSEUDO_ELEMENT_TYPE]];
-        pseudo_elements[type] =
+        pseudo_elements[pseudo_element[PSEUDO_ELEMENT_TYPE]] =
           "<div handler='spotlight-node' " +
                "ref-id='" + element[ID] + "'" +
                "data-pseudo-element='" + type + "'" +
                this._get_indent(element) +
           ">" +
-            "<node style='color:rgba(34,34,34,.5)'>" +
+            "<node class='pseudo-element'>" +
               (is_tree_mode ? "::" + type : "&lt::" + type + "/>") +
             "</node>" +
           "</div>";
@@ -263,6 +263,7 @@
                ">";
     var i = 0;
     var node = null;
+    var parent_node = null;
     var length = data.length;
     var attrs = null, attr = null, k = 0, key = '', attr_value = '';
     var is_open = false;
@@ -280,11 +281,15 @@
     var style = null;
     var is_script_node = true;
     var is_debug = ini.debug;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
 
     for ( ; node = data[i]; i += 1)
     {
+      if (data[i-1] && data[i-1][DEPTH] < node[DEPTH])
+      {
+        parent_node = data[i-1];
+      }
+
       while(current_depth > node[DEPTH])
       {
         tree += closing_tags.pop();
@@ -399,12 +404,12 @@
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>" +
                       (show_pseudo_elements
-                       ? (pseudo_elements["before"] +
-                          pseudo_elements["first-letter"] +
-                          pseudo_elements["first-line"])
+                       ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
+                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
+                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
                        : "");
 
-              closing_tags.push((show_pseudo_elements ? pseudo_elements["after"] : "") +
+              closing_tags.push((show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "") +
                                 "<div" + this._get_indent(node) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                                   "data-menu='dom-element'><node>" +
@@ -467,13 +472,7 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            var prev_pointer = i-1;
-            var prev_node = data[prev_pointer];
-            while (prev_node && prev_node[DEPTH] == current_depth) // Find parent
-            {
-              prev_node = data[prev_pointer--];
-            }
-            var class_attr = re_formatted.test(prev_node[NAME]) ? " class='pre-wrap' " : "";
+            var class_attr = re_formatted.test(parent_node[NAME]) ? " class='pre-wrap' " : "";
 
             tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
                     "<text" +
@@ -550,7 +549,6 @@
     var re_formatted = /script|style/i;
     var style = null;
     var is_script_node = true;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
 
     for ( ; node = data[i]; i += 1)
@@ -634,12 +632,12 @@
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>" +
                     (show_pseudo_elements
-                     ? (pseudo_elements["before"] +
-                        pseudo_elements["first-letter"] +
-                        pseudo_elements["first-line"])
+                     ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
+                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
+                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
                      : "");
 
-            closing_tags.push(show_pseudo_elements ? pseudo_elements["after"] : "");
+            closing_tags.push(show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "");
           }
           else
           {

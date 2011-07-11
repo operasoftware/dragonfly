@@ -17,6 +17,8 @@ cls.CSSInspectorActions = function(id)
   const VALUE_LIST = 2;
   const PRIORITY_LIST = 3;
 
+  const PROPERTY = 0;
+
   this.editor = new Editor(this);
 
   this.getFirstTarget = function()
@@ -150,13 +152,13 @@ cls.CSSInspectorActions = function(id)
    */
   this.set_property = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
-    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
+      this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
     }
     else
     {
-      this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
+      this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
     }
   };
 
@@ -236,13 +238,13 @@ cls.CSSInspectorActions = function(id)
    */
   this.remove_property = function(rt_id, rule_id, property, callback)
   {
-    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.remove_property_css(rt_id, rule_id, property, callback);
+      this.remove_property_svg(rt_id, rule_id, property, callback);
     }
     else
     {
-      this.remove_property_svg(rt_id, rule_id, property, callback);
+      this.remove_property_css(rt_id, rule_id, property, callback);
     }
   };
 
@@ -293,13 +295,13 @@ cls.CSSInspectorActions = function(id)
    */
   this.restore_property = function()
   {
-    if (this.editor.context_edit_mode != this.editor.MODE_SVG)
+    if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.restore_property_css();
+      this.restore_property_svg();
     }
     else
     {
-      this.restore_property_svg();
+      this.restore_property_css();
     }
   };
 
@@ -355,7 +357,7 @@ cls.CSSInspectorActions = function(id)
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var initial_property = this.editor.context_cur_prop;
-    var new_property = this.editor.getProperties()[0];
+    var new_property = this.editor.getProperties()[PROPERTY];
     var script = "";
 
     var prop_enum = window.css_index_map.indexOf(new_property);
