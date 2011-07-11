@@ -352,6 +352,9 @@ var ErrorConsoleView = function(id, name, container_class, source)
     },
     {
       id: "severity"
+    },
+    {
+      id: "location_string"
     }
   ];
 

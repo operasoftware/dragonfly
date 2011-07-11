@@ -43,25 +43,18 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     return this._cached_line_str = (linematch ? linematch[0] : null);
   });
 
-  this.__defineGetter__("desc_without_linenumber_line", function()
+  this.__defineGetter__("location_string", function()
   {
-    if (this._cached_desc_without_linenumber_line)
+    if (this._cached_location_string)
     {
-      return this._cached_desc_without_linenumber_line;
+      return this._cached_location_string;
     }
-    var main = this.description;
-    if (main)
+    var location_string = (this.uri ? helpers.basename(this.uri) : this.context);
+    if (this.line)
     {
-      if (this.line_str)
-      {
-        main = main.replace(this.line_str, "");
-      }
-      while (main.startswith("\n"))
-      {
-        main = main.replace("\n", "");
-      }
+      location_string += ":" + this.line;
     }
-    return this._cached_desc_without_linenumber_line = main;
+    return this._cached_location_string = location_string;
   });
 
   this.__defineGetter__("details", function()
@@ -70,16 +63,27 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     {
       return this._cached_details;
     }
-    var details = this.desc_without_linenumber_line.replace(this.title, "");
-    if (details.startswith("\r\n"))
+    var details = this.description;
+    // remove line_str
+    if (this.line_str)
     {
-      details = details.replace("\r\n", "");
+      details = details.replace(this.line_str, "");
     }
-    else
-    if (details.startswith("\n"))
+    // remove title
+    if (this.title)
+    {
+      details = details.replace(this.title, "");
+    }
+    // remove all but the last leading newline
+    while (details.startswith("\n\n"))
     {
       details = details.replace("\n", "");
     }
+    while (details.startswith("\r\n\r\n"))
+    {
+      details = details.replace("\r\n", "");
+    }
+
     return this._cached_details = details;
   });
 };

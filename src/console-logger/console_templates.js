@@ -66,19 +66,12 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
     expanded = true;
   }
 
-  var title = entry.context;
+  var location_title = entry.context;
   if (entry.line && entry.uri)
   {
-    title = "Line " + entry.line + " in " + entry.uri; // todo: strings
-  }
-  var location_string = helpers.basename(entry.uri);
-  if (!location_string)
-  {
-    location_string = entry.context;
-  }
-  if (entry.line)
-  {
-    location_string += ":" + entry.line;
+    location_title = ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE
+                                        .replace("%(LINE)", entry.line)
+                                        .replace("%(URI)", entry.uri)
   }
 
   var expandable = true;
@@ -127,8 +120,8 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
       ],
       ["td", entry.context, "class", "context"],
       ["td",
-         location_string,
-         "title", title,
+         entry.location_string,
+         "title", location_title,
          "class", "location " + (entry.uri ? "internal-link" : ""),
          "handler", "open-resource-tab",
          "data-resource-url", entry.uri,

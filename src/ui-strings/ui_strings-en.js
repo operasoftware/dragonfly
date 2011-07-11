@@ -192,6 +192,9 @@ ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing errors that we don't have a dedicated tab for. */
 ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
 
+/* DESC: Tooltip that explains File:Line notation (e.g. in Error Log) */
+ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE ="Line %(LINE) in %(URI)";
+
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";
 
