@@ -385,7 +385,7 @@ desc:
 url: ./test-cases/dom/nodes.html
 
 # TODO: unsure of what this is supposed to test, headline doesn't match desc
-# 
+#
 # id: 00200
 # label: Represent the DOM as a node tree
 # desc:
@@ -459,7 +459,7 @@ desc:
 url: ./test-cases/dom/searchbar/long-document.html
 id: 00400
 label: Move the search highlight
-desc: 
+desc:
  - Open the test case, select the 'Document' tab and expand the whole DOM tree
  - Open the search-bar by hitting the search button
  - Search for 'class' and verify that you get 7 hits
@@ -987,7 +987,7 @@ desc:
   - Verify that for each match the according source line including line number is displayed
   - Hit 'Enter'
   - Verify that the match highlight moves down
-  - Hit 'Shift Enter' 
+  - Hit 'Shift Enter'
   - Verify that the match highlight moves in the other direction
   - Verify that the match highlight can be moved in the same way with 'F3' and 'Shift F3'
   - Verify that the match highlight can be moved in the same way with the buttons close to the search field
@@ -1618,6 +1618,29 @@ desc:
   - Verify that the highlighted word is entered in the console
   - Verify that the keys [, ], (, ) have the samme effect as "."
 
+url: ./test-cases/repl/autocomplete_stopped.html
+
+label: Autocomplete, stopped
+desc:
+  - Navigate to url
+  - Verify that debugger has stopped
+  - Type "f"
+  - Press tab
+  - Verify a list of expansions are displayed, and that "foo" is one of the entries
+  - Clear input
+  - Type "w"
+  - Press tab
+  - Verify that the input The list of completions include contents of the global scope. "window" should be one of the entries.
+  - Press continue, to resume running script
+  - Verify that debugger has stopped
+  - Type "p"
+  - Press tab
+  - Verify that phlebotinum is in the tab completion list
+  - type c
+  - press tab
+  - verify that closure is in the autocomplete list
+
+
 url: ./test-cases/repl/unpack-list-alikes.html
 
 id: 04100
@@ -1634,7 +1657,7 @@ desc:
   - Verify that you get 'HTMLCollection[HTMLHtmlElement, HTMLHeadElement, HTMLBodyElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement]' (ignore a '[object HTMLCollection]' before that)
   - Verify that 'HTMLCollection' is clickable and opens the 'Inspection' view with the HTMLCollection
   - Verify that each element in the list is clickable and shows the according element in the DOM tree
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that you get 'NodeList[DocumentType, HTMLHtmlElement]' in the command line (ignore a '[object HTMLCollection]' before that)
   - Verify that each object of type Element is clickable and shows the according element in the DOM tree
   - Verify that other objects are clickable too and open the according 'Inspection' view
@@ -1656,7 +1679,7 @@ desc:
   - Verify that the output is now only a clickable 'Array' (ignore a '[object Array]' before that)
   - Hit 'console.log(document.all)' button
   - Verify that the ourtput is now only a clickable 'HTMLCollection' (ignore a '[object HTMLCollection]' before that)
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that the output is now only a clickable 'NodeList' (ignore a '[object HTMLCollection]' before that)
   - Hit the 'console.log(xPathResult)' button
   - Verify that the output is now only a clickable 'XPathResult'
@@ -1671,7 +1694,7 @@ desc:
   - Hit 'console.log(document.all)' button
   - Verify that you get 'HTMLCollection[html, head, body, p, input.foo, p, input#bar, p, input, p, input]'
   - Verify that all objects are clickable and open the appropriated view
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that you get 'NodeList[DocumentType, html]' in the command line
   - Verify clickability
   - Hit the 'console.log(xPathResult)' button
@@ -1757,17 +1780,17 @@ desc:
   - Hit the 'test' button
   - Verify that the engine stops in each script exactly once (use the 'Continue' button or 'F8' ('F5' on Mac) to continue)
   - Right click the breakpoint panel and select 'Disable all'
-  - Verify that all breakpoints are unchecked 
+  - Verify that all breakpoints are unchecked
   - Verify that in each script in the source view the breakpoints look like disabled conditional breakpoints
   - Hit the 'test' button again
   - Verify that none breakpoint stops the engine
   - Enable all breakpoints again and verify that they stop properly
   - Right click the breakpoint panel and select 'Delete all'
   - Verify that all breakpoints are removed from the panel
-  - Verify for each script that all breakpoints are removed in the source view 
+  - Verify for each script that all breakpoints are removed in the source view
   - Hit the 'test' button
   - Verify that no breakpoint stops the execution
-  
+
 Scripts.Event Breakpoints
 *************************
 
@@ -1885,7 +1908,7 @@ desc:
   - Verify that the entry is now an expandable 'Window' object
   - Right click the watch and select 'Delete'
   - Verify that the watch is removed from the view
-  - Right click the panel, select 'Add' and verify that you can some watch  
+  - Right click the panel, select 'Add' and verify that you can some watch
 
 
 
@@ -2006,7 +2029,7 @@ desc:
   In case the host has the cookie-service:
   - Switch to 'No grouping' in the context menu
   - Verify that the group headers are gone
-  
+
 url: ./test-cases/storages/cookie-expiry.html
 
 id: 00900
@@ -2177,7 +2200,7 @@ url: http://www.nzz.ch
 # TODO: test completely outdated
 # id: 00100
 # label: Pixel Magnifier
-# desc: 
+# desc:
 #   - Hover over the page
 #   - Verify that the screenshot area is updated accordingly
 #   - Click some where on a image
@@ -2498,7 +2521,7 @@ desc:
 
 id: 00800
 label: Image detail view
-desc: 
+desc:
   - load a page that contains an image
   - click the image in the resource table
   - verify that a temporary tab is opened and focused
@@ -2507,7 +2530,7 @@ desc:
 
 id: 00900
 label: Markup detail view
-desc: 
+desc:
   - load a page
   - click the html resource in the resource table
   - verify that a temporary tab is opened and focused
@@ -2516,7 +2539,7 @@ desc:
 
 id: 01000
 label: Javascript detail view
-desc: 
+desc:
   - load a page that contains a javascriptfile
   - click the javascript resource in the resource table
   - verify that a temporary tab is opened and focused
