@@ -35,7 +35,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     if (!updated)
     {
       var last_shown_error_view = this.last_shown_error_view || this._views[0];
-      if (last_shown_error_view && window.views[last_shown_error_view]) // todo: could probably use some history object for this? how to access that?
+      if (last_shown_error_view && window.views[last_shown_error_view])
       {
         window.views[last_shown_error_view].update_error_count();
       }
@@ -78,14 +78,30 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   };
 
   /**
-   * Clear the log. If source is set, clear only the entries with that source. Uses get_messages, so filters will also be applied.
+   * Clear the visible items in the log, based on source and query, both optional.
    */
-  this.clear = function(source)
+  this.clear = function(source, query)
   {
-    var ids_to_be_cleared = this.get_messages(source).map( function(e){return e.id} );
-    this._msgs = this._msgs.filter( function(e){return ids_to_be_cleared.indexOf(e.id) == -1} );
+    var messages = this.get_messages(source, query);
+    if (this._filter_bound)
+    {
+      messages = messages.filter(this._filter_bound);
+    }
+    var message_ids = messages.map( function(e){return e.id} );
+    this._msgs = this._msgs.filter( function(e){return message_ids.indexOf(e.id) == -1} );
     this._update_views();
   };
+
+  this.clear_all_and_hide_tabs = function()
+  {
+    this._msgs = [];
+    for (var i = 1, view_id; view_id = this._views[i]; i++)
+    {
+      window.views[view_id].is_hidden = true;
+      topCell.disableTab(view_id, true);
+    };
+    this._update_views();
+  }
 
   /**
    * Toggle an entry.
@@ -100,29 +116,19 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
-  this.get_messages = function(source)
+  this.get_messages = function(source, query)
   {
     var messages = this._msgs;
     if (source)
     {
       messages = messages.filter(function(e) {return e.source==source;});
     }
+    if (query)
+    {
+      var query_filter = this._get_string_filter(query);
+      messages = messages.filter(query_filter);
+    }
     return messages;
-  };
-
-  this.get_message = function(id) // todo: check how this is used
-  {
-    if (! this._msgs)
-    {
-      return null;
-    }
-    else
-    {
-      var fun = function(e) {
-        return e.id == id;
-      };
-      return this._msgs.filter(fun)[0] || null;
-    }
   };
 
   this.get_toggled = function()
@@ -206,118 +212,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     }
   };
 
-  this._stringify_log_args = function(message)
-  {
-    var strings = message.valueList.map(function(e) {
-      return (e.objectValue ? ("[" + (e.objectValue.functionName || e.objectValue.className) + "]") : e.value);
-    });
-
-    return strings.join(", ");
-  };
-
-  this._debug_context_selected = function(msg)
-  {
-    this._msgs = [];
-    for (var i = 1, view_id; view_id = this._views[i]; i++)
-    {
-      window.views[view_id].is_hidden = true;
-      topCell.disableTab(view_id, true);
-    };
-    this._update_views();
-  };
-
-  this.init = function()
-  {
-    this._filters = {};
-
-    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
-    window.messages.addListener("debug-context-selected", this._debug_context_selected.bind(this));
-
-    var logger = window.services["console-logger"];
-    logger.add_listener("consolemessage", this._on_console_message.bind(this));
-  };
-  this.init();
-};
-
-/**
- * Error Console view
- * @constructor
- * @extends ViewBase
- */
-
-var ErrorConsoleView = function(id, name, container_class, source)
-{
-  container_class || (container_class = "scroll error-console");
-
-  this._expand_all_state = null;
-  this._table_ele = null;
-
-  if (id !== ErrorConsoleView.roughViews[0].id)
-  {
-    this.fallback_view_id = ErrorConsoleView.roughViews[0].id;
-  }
-
-  this.createView = function(container)
-  {
-    this._container = container;
-    this._container.setAttribute("data-error-log-id", id);
-    this._container.setAttribute("data-menu", "error-console");
-    if (this._query)
-    {
-      // this triggers _create via on_before_search
-      this._text_search.update_search();
-    }
-    else
-    {
-      this._create();
-    }
-    this._old_query = this._query;
-  };
-
-  this._create = function()
-  {
-    if (this._container)
-    {
-      window.error_console_data.last_shown_error_view = id;
-      var query_filter = this._get_string_filter(this._query, string_filter_config);
-      var entries = window.error_console_data.get_messages(source)
-                      .filter(query_filter)
-                      .filter(window.error_console_data._filter_bound);
-      this.update_error_count(entries);
-      var expand_all = settings.console.get('expand-all-entries');
-      var template = templates.errors.log_table(entries, 
-                                                  expand_all,
-                                                  window.error_console_data.get_toggled(),
-                                                  this.id);
-      this._container.clearAndRender(template);
-      if (this._scrollTop)
-      {
-        this._container.scrollTop = this._scrollTop;
-      }
-      this._table_ele = this._container.getElementsByTagName("table")[0];
-    }
-  }
-
-  this.update_error_count = function(entries)
-  {
-    if (!entries)
-    {
-      entries = window.error_console_data.get_messages(source)
-      var query_filter = this._get_string_filter(this._query, string_filter_config);
-      var entries = window.error_console_data.get_messages(source)
-                      .filter(query_filter)
-                      .filter(window.error_console_data._filter_bound);
-    }
-    window.messages.post("error-count-update", {current_error_count: entries.length});
-  }
-
-  this.ondestroy = function()
-  {
-    delete this._table_ele;
-    this._table_ele = null;
-  };
-
-   var string_filter_config = [
+  this._string_filter_config = [
     {
       id: "title"
     },
@@ -350,9 +245,10 @@ var ErrorConsoleView = function(id, name, container_class, source)
 
   this._get_string_filter = function (query, string_filter_config)
   {
-    // add require_expansion flag, return false for hidden fields 
+    string_filter_config || (string_filter_config = this._string_filter_config);
     return (function(entry)
     {
+      // adds require_expansion flag, returns false for hidden fields
       var is_hidden = true;
       entry.requires_expansion = false;
       if (query)
@@ -378,9 +274,96 @@ var ErrorConsoleView = function(id, name, container_class, source)
     })
   }
 
+  this.init = function()
+  {
+    this._filters = {};
+
+    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
+    window.messages.addListener("debug-context-selected", this.clear_all_and_hide_tabs.bind(this));
+
+    var logger = window.services["console-logger"];
+    logger.add_listener("consolemessage", this._on_console_message.bind(this));
+  };
+  this.init();
+};
+
+/**
+ * Error Console view
+ * @constructor
+ * @extends ViewBase
+ */
+
+var ErrorConsoleView = function(id, name, container_class, source)
+{
+  container_class || (container_class = "scroll error-console");
+
+  this._expand_all_state = null;
+  this._table_ele = null;
+
+  if (id !== ErrorConsoleView.roughViews[0].id)
+  {
+    this.fallback_view_id = ErrorConsoleView.roughViews[0].id;
+  }
+
+  this.createView = function(container)
+  {
+    this._container = container;
+    this._container.setAttribute("data-error-log-id", id);
+    this._container.setAttribute("data-menu", "error-console");
+    if (this.query)
+    {
+      // this triggers _create via on_before_search
+      this._text_search.update_search();
+    }
+    else
+    {
+      this._create();
+    }
+  };
+
+  this._create = function()
+  {
+    if (this._container)
+    {
+      window.error_console_data.last_shown_error_view = id;
+      var entries = window.error_console_data
+                      .get_messages(source, this.query)
+                      .filter(window.error_console_data._filter_bound);
+      this.update_error_count(entries);
+      var expand_all = settings.console.get('expand-all-entries');
+      var template = templates.errors.log_table(entries, 
+                                                  expand_all,
+                                                  window.error_console_data.get_toggled(),
+                                                  this.id);
+      this._container.clearAndRender(template);
+      if (this._scrollTop)
+      {
+        this._container.scrollTop = this._scrollTop;
+      }
+      this._table_ele = this._container.getElementsByTagName("table")[0];
+    }
+  }
+
+  this.update_error_count = function(entries)
+  {
+    if (!entries)
+    {
+      entries = window.error_console_data
+                    .get_messages(source, this.query)
+                    .filter(window.error_console_data._filter_bound);
+    }
+    window.messages.post("error-count-update", {current_error_count: entries.length});
+  }
+
+  this.ondestroy = function()
+  {
+    delete this._table_ele;
+    this._table_ele = null;
+  };
+
   this._on_before_search_bound = (function(message)
   {
-    this._query = message.search_term;
+    this.query = message.search_term;
     this._create();
   }).bind(this);
 
@@ -425,11 +408,12 @@ ErrorConsoleView.roughViews =
   }
 ];
 
-ErrorConsoleView.roughViews.bindClearSource = function(source)
+ErrorConsoleView.roughViews.bindClearSource = function(source, view_id)
 {
   return function(event, target)
   {
-    window.error_console_data.clear(source);
+    var query = window.views[view_id] && window.views[view_id].query;
+    window.error_console_data.clear(source, query);
   };
 };
 
@@ -468,7 +452,7 @@ ErrorConsoleView.roughViews.createViews = function()
         'console.expand-all-entries'
       ]
     );
-    eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '' );
+    eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '', r_v.id);
 
     /* create the handler code for the text search box
        We make a function here so we close around the view id */
@@ -491,7 +475,6 @@ ErrorConsoleView.roughViews.createViews = function()
         if( msg.id == view_id )
         {
           text_search.cleanup();
-          window.views[view_id]._old_query = null;
         }
       };
 
@@ -578,17 +561,15 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     "console"  
   );
 
-  // todo: implement
   var contextmenu = ContextMenu.get_instance();
   contextmenu.register("error-console", [
     {
       label: "Clear all errors",
       handler: function(event, target) {
-        window.error_console_data.clear();
+        window.error_console_data.clear_all_and_hide_tabs();
       }
     }
   ]);
-
 };
 
 eventHandlers.input['error-console-css-filter'] = function(event, target)
