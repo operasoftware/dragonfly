@@ -180,6 +180,7 @@
       UIWindowBase.showWindow('command_line',
                               Math.ceil(innerHeight/2), 0,
                               innerWidth, Math.floor(innerHeight/2));
+      ActionBroker.get_instance().focus_handler("command_line", event);
     }
     else
     {
