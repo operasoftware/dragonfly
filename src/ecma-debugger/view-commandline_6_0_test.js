@@ -44,6 +44,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
             entry.value,
             ['d', ' [' + entry.obj_id + ']'],
             'handler', 'inspect-object-link',
+            'class', 'inspect-object-link',
             'rt-id', entry.runtime_id.toString(),
             'obj-id', entry.obj_id.toString()
           ]
@@ -74,6 +75,7 @@ cls.CommandLineViewTest = function(id, name, container_class, html, default_hand
                 entry.value,
                 // ['d', ' [' + entry.obj_id + ']'],
                 'handler', 'inspect-object-link',
+                'class', 'inspect-object-link',
                 'rt-id', entry.runtime_id.toString(),
                 'obj-id', entry.obj_id.toString()
               ]

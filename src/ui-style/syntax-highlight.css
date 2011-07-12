@@ -70,7 +70,9 @@ offsets value { /* TODO: use class */
     background-color: yellow;
 }
 
-
+.selected-js-source-line {
+  background-color: #d4e3f4;
+}
 
 /* Property inspector */
 
@@ -100,7 +102,7 @@ examine-objects key {
 
 .markup-attribute,
 .dom key,
-.dom-search key, {
+.dom-search key {
     color: #55a;
 }
 
@@ -192,24 +194,22 @@ media, at { /* TODO: Use classes */
 
 /* dom */
 
-[handler="spotlight-node"] { /* TODO: Use same highlighting in CSS inspector */
+.spotlight-node { /* TODO: Use same highlighting in CSS inspector */
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 2px;
 }
 
-[handler="spotlight-node"]:hover,
+.spotlight-node:hover,
 rule:not(.non-editable) property:hover {
     border-color: #e0eaf6;
     background: #f2f5f9;
 }
 
-#target-element, [handler="spotlight-node"]:active {
+#target-element,
+.spotlight-node:active {
     border-color: #c5daf1;
-}
-
-.selected-js-source-line, #target-element, [handler="spotlight-node"]:active {
-  background-color: #d4e3f4;
+    background: #d4e3f4;
 }
 
 .dom ::selection {
@@ -225,7 +225,7 @@ rule:not(.non-editable) property:hover {
 
 .tree-style > div
 {
-  background-color: #fafafa;
+  background-color: #fefefe;
 }
 
 .tree-style > div > node:first-child:before

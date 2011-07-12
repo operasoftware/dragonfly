@@ -9,9 +9,9 @@ window.app.builders.Exec["2.0"] = function(service)
   var namespace = cls.Exec && cls.Exec["2.0"];
   new cls.ScreenShotControlsView("screenshot-controls",
                                  ui_strings.M_VIEW_LABEL_COLOR_PICKER,
-                                 "screenshot-controls");
+                                 "screenshot-controls scroll");
   new cls.ColorPaletteView("color-palette",
                            ui_strings.M_VIEW_LABEL_COLOR_PALETTE,
-                           "color-palette");
+                           "color-palette scroll");
   return true;
 }

@@ -332,11 +332,17 @@ cls.DOMView.create_ui_widgets = function()
             menu.extend([
               ContextMenu.separator,
               {
-                label: is_open ? ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE
-                               : ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                label: ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                handler: function contextmenu_expand_collapse_subtree(event, target) {
+                  broker.dispatch_action("dom", "expand-node", event, event.target);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE,
                 handler: function contextmenu_expand_collapse_subtree(event, target) {
                   broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
-                }
+                },
+                disabled: !is_open
               }
             ]);
           }

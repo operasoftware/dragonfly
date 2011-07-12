@@ -1,5 +1,9 @@
 ﻿/* TODO: some of this should be merged into syntax-highlight.css */
 
+container.console {
+    background: #262626;
+}
+
 .console textarea {
     background: transparent;
     color: #fff;
@@ -27,7 +31,7 @@
   border: 1px solid rgba(255,255,255,0.2);
 }
 .console #target-element,
-.console .dom [handler="spotlight-node"]:hover {
+.console .spotlight-node:hover {
   background-color: rgba(255,255,255,0.2);
 }
 .console ::selection {
@@ -42,12 +46,15 @@
   color: #88f;
 }
 
-.console [handler="inspect-object-link"]:hover {
+.console .inspect-object-link:hover {
   text-decoration: none;
 }
 
-.console [handler="inspect-node-link"]:hover {
+.console .inspect-node-link:hover {
   text-decoration: none;
   background: #000;
 }
 
+.console .inspect-object-link:hover {
+  background: #000;
+}

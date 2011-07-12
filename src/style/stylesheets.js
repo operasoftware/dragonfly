@@ -585,8 +585,8 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "' />"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
-              (prop in __color_properties ? 
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
+              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
                   "<color-sample handler='show-color-picker' " +
                       "style='background-color:" + value +"'/>" : "") +
            "</value>;";
@@ -716,7 +716,7 @@ cls.Stylesheets = function()
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = !settings['css-comp-style'].get('show-initial-values');
     var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
-    var search_map = search_active && elementStyle.getSearchMap() || [];
+    var search_term = elementStyle.getSearchTerm();
     var is_not_initial_value = false;
     var display = false;
 
@@ -738,7 +738,8 @@ cls.Stylesheets = function()
           || is_not_initial_value
         )
         && !(hide_shorthands && short_hand_props[prop])
-        && !(search_active && !search_map[index]);
+        && !(search_term && !(prop.indexOf(search_term) != -1 ||
+                              value.indexOf(search_term) != -1));
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +
@@ -780,7 +781,7 @@ cls.Stylesheets = function()
           inherited_printed = true;
           ret += "<h2>" +
                 ui_strings.S_INHERITED_FROM +
-                " <code class='element-name'" +
+                " <code class='element-name inspect-node-link'" +
                 " handler='inspect-node-link'" +
                 " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
                 element_name +

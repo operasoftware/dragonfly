@@ -313,6 +313,7 @@ cls.Breakpoints = function()
         this.add_breakpoint(new_script.script_id, line_nr, old_bps[line_nr]);
       }
     }
+    window.views.breakpoints.update();
   };
 
   this.script_has_breakpoint_on_line = function(script_id, line_nr)

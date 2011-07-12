@@ -29,6 +29,7 @@
     width: 16px;
     height: 16px;
     background-image: url(../ui-images/type_other.png);
+    vertical-align: middle;
 }
 
 .resource-type-audio {
@@ -126,4 +127,9 @@
 .font-preview {
   font-size: 400%;
   text-align: center;
+}
+
+/* Expander cell */
+.resource-manager td:nth-child(1) {
+    width: 16px;
 }

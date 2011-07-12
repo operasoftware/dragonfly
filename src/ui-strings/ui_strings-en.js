@@ -30,12 +30,6 @@ ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
 
-/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
-
-/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
-ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
-
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -1259,3 +1253,30 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
+
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
+
+/* DESC: Label for the global scope in the Scope Chain. */
+ui_strings.S_SCOPE_GLOBAL = "Global";
+
+/* DESC: Label for the scopes other than local and global in the Scope Chain. */
+ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
