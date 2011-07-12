@@ -34,7 +34,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // this could be done anyway, like when update() didn't return anything. but it saves a little.
     if (!updated)
     {
-      var last_shown_error_view = this.last_shown_error_view || ErrorConsoleView.roughViews[0].id;
+      var last_shown_error_view = this.last_shown_error_view || this._views[0];
       if (last_shown_error_view && window.views[last_shown_error_view]) // todo: could probably use some history object for this? how to access that?
       {
         window.views[last_shown_error_view].update_error_count();
@@ -60,7 +60,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // before calling update_views, need to make sure the respective view is not hidden.
     if (entry.source)
     {
-      var corresponding_tab = ErrorConsoleView.roughViews[0].id;
+      var corresponding_tab = this._views[0];
       for (var i=0; i < ErrorConsoleView.roughViews.length; i++)
       {
         if (ErrorConsoleView.roughViews[i].source === entry.source)
@@ -215,19 +215,13 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     return strings.join(", ");
   };
 
-  this._on_consolelog = function(data)
-  {
-    // todo: this will be replaced by listening to a Dragonfly message.
-    // It will probably only be displayed depending on a setting.
-  };
-
-  this._new_top_runtime = function(msg)
+  this._debug_context_selected = function(msg)
   {
     this._msgs = [];
-    for (var i = 1, view; view = this._views[i]; i++)
+    for (var i = 1, view_id; view_id = this._views[i]; i++)
     {
-      window.views[view].is_hidden = true;
-      topCell.disableTab(view, true);
+      window.views[view_id].is_hidden = true;
+      topCell.disableTab(view_id, true);
     };
     this._update_views();
   };
@@ -236,15 +230,11 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     this._filters = {};
 
-    window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
-    window.messages.addListener("new-top-runtime", this._new_top_runtime.bind(this));
+    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
+    window.messages.addListener("debug-context-selected", this._debug_context_selected.bind(this));
 
-    var logger = window.services['console-logger'];
+    var logger = window.services["console-logger"];
     logger.add_listener("consolemessage", this._on_console_message.bind(this));
-/*
-    var esdebug = window.services['ecmascript-debugger'];
-    esdebug.add_listener("consolelog", this._on_consolelog.bind(this));
-*/
   };
   this.init();
 };
@@ -594,7 +584,7 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     {
       label: "Clear all errors",
       handler: function(event, target) {
-        broker.dispatch_action(id, "update", event, target)
+        window.error_console_data.clear();
       }
     }
   ]);
