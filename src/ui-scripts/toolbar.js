@@ -121,18 +121,13 @@ var ToolbarBase = function()
                        parseInt(filter_style.marginRight);
           width -= filter.offsetWidth + margin;
         }
-        else
-        {
-          // TODO: this is magic, check what this really is
-          width -= 3;
-        }
 
         if( previousEle )
         {
-          width -= (previousEle.offsetLeft + previousEle.offsetWidth);
+          width -= (previousEle.offsetLeft + previousEle.offsetWidth) - this.left_border_padding;
         }
 
-        cst_select.style.width = ( width - defaults['cst-select-margin-border-padding'] ) + 'px';
+        cst_select.style.width = (width - defaults['cst-select-margin-border-padding']) + 'px';
       }
     }
   }
