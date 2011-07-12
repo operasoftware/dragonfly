@@ -67,9 +67,19 @@ cls.DOMSearchView = function(id, name, container_class)
     }
   };
 
+  this._ondomviewupdated = function(msg)
+  {
+    if (this._search_hit)
+    {
+      window.views.dom.highligh_search_hit(this._search_hit);
+      this._search_hit = null;
+    }
+  };
+
   this._show_search = function(event, target)
   {
     this._search.update_match_highlight(event, target);
+    this._search_hit = this._search.get_search_hit();
     eventHandlers.click['inspect-node-link'](event, target);
   };
 
@@ -138,6 +148,7 @@ cls.DOMSearchView = function(id, name, container_class)
                                  'highlight-previous-match',
                                  'hide-search']);
     messages.addListener('setting-changed', this._onsettingchange.bind(this));
+    messages.addListener('dom-view-updated', this._ondomviewupdated.bind(this));
   };
 
   this._init(id, name, container_class);

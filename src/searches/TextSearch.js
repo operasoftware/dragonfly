@@ -524,4 +524,11 @@ TextSearch.prototype = new function()
     this._orig_search_term = this._search_term = search_term;
   }
 
+  this.get_match_style = function(type) 
+  {
+    return type == 'highlight' ?
+           this._match_style_highlight :
+           this._match_style_default;
+  }
+
 };

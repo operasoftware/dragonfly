@@ -42,7 +42,10 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
-      window.messages.post('dom-view-updated', {model: model});
+      // to dispatch any scroll event before the message is sent
+      setTimeout(function(){
+        window.messages.post('dom-view-updated', {model: model});
+      }, 0);
     }
     else
     {
@@ -78,6 +81,50 @@ cls.DOMView = function(id, name, container_class)
   this.ondestroy = function()
   {
     window.hostspotlighter.clearSpotlight();
+  };
+
+  this.highligh_search_hit = function(hit)
+  {
+    // hit created in DOMSearch get_search_hit.
+    // hit has offset, length, object_id, node_type and text_content.
+    var container = this.get_container();
+    if (container)
+    {
+      var node = container.querySelector('[ref-id="' + hit.object_id + '"]');
+      if (!node && hit.node_type == document.TEXT_NODE)
+      {
+        node = container.getNextWithFilter(container, function(node)
+        {
+          return node.nodeName.toLowerCase() == 'text' && 
+                 node.textContent == hit.text_content;
+        });
+      }
+      if (!node && hit.node_type == document.COMMENT_NODE)
+      {
+        node = container.getNextWithFilter(container, function(node)
+        {
+          return node.hasClass('comment') && 
+                 node.textContent == hit.text_content;
+        });
+      }
+      if (node)
+      {
+        this._search_hit = this._highlighter.set_hit(node, 
+                                                     hit.offset, 
+                                                     hit.length, 
+                                                     this._highlight_style, 
+                                                     true);
+      }
+    }
+  };
+
+  this._onscroll = function(event, target)
+  {
+    if (this._search_hit)
+    {
+      this._highlighter.cleanup();
+      this._search_hit = null;
+    }
   }
 
   this._on_setting_change = function(msg)
@@ -96,7 +143,15 @@ cls.DOMView = function(id, name, container_class)
   }
 
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
-  this.init(id, name, container_class);
+  this._init = function(id, name, container_class)
+  {
+    this._highlighter = new VirtualTextSearch();
+    this._highlight_style = this._highlighter.get_match_style('highlight');
+    this.init(id, name, container_class, '', 'clear-search-hit');
+    eventHandlers.scroll['clear-search-hit'] = this._onscroll.bind(this);
+  }
+
+  this._init(id, name, container_class);
 
 }
 

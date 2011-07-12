@@ -24,6 +24,9 @@ var DOMSearch = function(min_length)
 
   this.clear_style_highlight_node = function() {};
 
+  // returns an object with object_id, node_type, offset, and length. 
+  this.get_search_hit = function() {};
+
   // overwrites _update_info
   PanelSearch.apply(this);
 
@@ -398,6 +401,65 @@ var DOMSearch = function(min_length)
       this._highligh_node.removeClass(MATCH_NODE_HIGHLIGHT_CLASS);
       this._highligh_node = null;
     }
+  };
+
+  this._get_match_offset = function(node, ctx)
+  {
+    const ELEMENT = document.ELEMENT_NODE;
+    const TEXT = document.TEXT_NODE;
+
+    while (node && !ctx.is_target && !(ctx.is_target = node == ctx.target))
+    {
+      if (node.nodeType == ELEMENT)
+      {
+        this._get_match_offset(node.firstChild, ctx);
+      }
+      if (!ctx.is_target && node.nodeType == TEXT)
+      {
+        ctx.offset += node.nodeValue.length;
+      }
+      node = node.nextSibling;
+    }
+  };
+
+  this.get_search_hit = function()
+  {
+    var hit = this._hits[this._match_cursor];
+    var ret = {};
+    if (hit)
+    {
+      var search_hit_ele = hit[0].get_ancestor(this._query_selector);
+      if (search_hit_ele)
+      {
+        var text = search_hit_ele.textContent;
+        var node_type = document.ELEMENT_NODE;
+        if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
+        {
+          node_type = document.TEXT_NODE;
+        }
+        else if (search_hit_ele.hasClass('comment'))
+        {
+          node_type = document.COMMENT_NODE;
+        }
+        var ctx = {is_target: false, offset: 0, target: hit[0]};
+        var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
+        if (!window.settings.dom.get('dom-tree-style') &&
+            node_type == document.TEXT_NODE)
+        {
+          text = text.slice('#text'.length);
+          ctx.offset -= '#text'.length;
+        }
+        return (
+        {
+          offset: ctx.offset,
+          length: hit[0].textContent.length,
+          object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
+          node_type: node_type,
+          text_content: text,
+        });
+      }
+    }
+    return null;
   };
 
 
