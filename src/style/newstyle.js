@@ -6,20 +6,30 @@
  */
 cls.NewStyle = function(id, name, container_class)
 {
-  this._rt_id = 0;
-  this._rt_style_map = {};
-  this._textarea = null;
+  this._template = function(value)
+  {
+    return (
+        ['div',
+           ['_auto_height_textarea',
+              value || '',
+            'handler', 'css-update-new-style',
+            'class', 'css-new-style-sheet'
+           ],
+           ['button',
+              ui_strings.S_BUTTON_TEXT_APPLY,
+            'class', 'container-button',
+            'handler', 'apply-new-style'
+           ],
+         'class', 'padding'
+        ]);
+  };
 
   this.createView = function(container)
   {
     var css_text = this._rt_style_map[this._rt_id] ? this._rt_style_map[this._rt_id].css_text : "";
-    var ele = container.clearAndRender(cls.NewStyle._template(css_text));
+    var ele = container.clearAndRender(this._template(css_text));
     this._textarea = ele.querySelector("textarea");
     this._textarea.value = css_text;
-    setTimeout(function() {
-      this._textarea.focus();
-      this._textarea.selectionEnd = this._textarea.value.length;
-    }.bind(this), 0);
   };
 
   this._update_style = function()
@@ -89,23 +99,21 @@ cls.NewStyle = function(id, name, container_class)
     }
   };
 
-  window.messages.addListener('element-selected', this._on_element_selected.bind(this));
-  window.eventHandlers.click['apply-new-style'] = this._update_style.bind(this);
+  // ViewBase init
+  this._super_init = this.init;
 
-  this.init(id, name, container_class);
-};
+  this._init = function(id, name, container_class)
+  {
+    this._rt_id = 0;
+    this._rt_style_map = {};
+    this._textarea = null;
 
-cls.NewStyle._template = function(value)
-{
-  return (
-      ['div',
-        ['_auto_height_textarea',
-          value || '',
-          'handler', 'css-update-new-style',
-          'class', 'css-new-style-sheet'],
-         ['button', ui_strings.S_BUTTON_TEXT_APPLY,
-           'class', 'container-button',
-           'handler', 'apply-new-style'],
-      'class', 'padding']);
+    window.messages.addListener('element-selected', this._on_element_selected.bind(this));
+    window.eventHandlers.click['apply-new-style'] = this._update_style.bind(this);
+
+    this._super_init(id, name, container_class);
+  };
+
+  this._init(id, name, container_class);
 };
 

@@ -91,7 +91,7 @@
       modal_box.parentElement.removeChild(modal_box);
       modal_box = null;
       select_obj = null;
-      delete EventHandler.__modal_mode;
+      EventHandler.__modal_mode = false;
       return true;
     }
     return false;

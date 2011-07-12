@@ -670,7 +670,7 @@
                            model.breadcrumbhead == model.target;
       if (target_is_head)
       {
-        model.breadcrumb_offsets = window.helpers.copy_array(offsets_values[0]);
+        model.breadcrumb_offsets = window.helpers.copy_object(offsets_values[0]);
       }
       ret =
       [

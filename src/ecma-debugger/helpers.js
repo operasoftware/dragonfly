@@ -130,12 +130,17 @@ window.cls.Helpers = function()
     }
   })();
 
+  /**
+   * Escapes user input that is to be sent with Eval
+   */
   this.escape_input = (function()
   {
     var re_escape_char = /\\/g;
     var re_quot_mark = /"/g;
-    return function(str)
+
+    return function escape_input(str)
     {
+      // Need to double escape since this is a string inside a string
       return str.replace(re_escape_char, "\\\\")
                 .replace(re_quot_mark, "\\\"");
     }
@@ -251,11 +256,6 @@ window.cls.Helpers = function()
     }
     return target && container;
   }
-
-  this.copy_array = function(array)
-  {
-    return array.concat();
-  };
 
   this.copy_object = function(obj)
   {

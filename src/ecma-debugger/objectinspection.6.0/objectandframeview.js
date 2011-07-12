@@ -329,7 +329,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           return;
         }
 
-        // If the leftmost part is not a valid identifier, and not 'this', we append 'this'
+        // If the leftmost part is not a valid identifier, and not 'this', we prepend 'this'
         if (!JSSyntax.is_valid_identifier(props[0]) && props[0] != "this")
         {
           props.unshift("this");

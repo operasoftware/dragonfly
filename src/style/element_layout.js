@@ -297,7 +297,7 @@ cls.ElementLayout = function()
       cb(null);
     else if(__offsets_values)
     {
-      cb(window.helpers.copy_array(__offsets_values));
+      cb(window.helpers.copy_object(__offsets_values));
     }
     else
     {
@@ -325,7 +325,7 @@ cls.ElementLayout = function()
     {
       __offsets_values = parse_offset_values(message[VALUE]);
       if (cb)
-        cb(window.helpers.copy_array(__offsets_values));
+        cb(window.helpers.copy_object(__offsets_values));
     }
     else
     {

@@ -19,7 +19,7 @@ BaseDialog.prototype = new function()
     this._dialog.style.width = dialog_style.width;
     this._dialog.style.height = dialog_style.height;
     this._dialog.className = "visible";
-    document.addEventListener("click", this._modal_click_handler_bound, false);
+    document.addEventListener("click", this._modal_click_handler_bound, true);
     BaseDialog.is_visible = true;
   };
 
@@ -31,7 +31,7 @@ BaseDialog.prototype = new function()
     if (this._dialog_ele)
     {
       this._dialog_ele.parentNode.removeChild(this._dialog_ele);
-      document.removeEventListener("click", this._modal_click_handler_bound, false);
+      document.removeEventListener("click", this._modal_click_handler_bound, true);
     }
     BaseDialog.is_visible = false;
   };
@@ -58,25 +58,27 @@ BaseDialog.prototype = new function()
 
   this._get_template = function(template, buttons)
   {
-    buttons = buttons.map(function(button) {
-                           return ["button",
-                                     button.label,
-                                   "data-handler-id", "" + button.id,
-                                  ];
-                         });
     return ["div",
               ["div",
                  ["div",
                     template
                  ],
                  ["div",
-                    buttons,
+                    buttons.map(this._get_button_template),
                   "id", "ui-dialog-buttons"
                  ],
                "id", "ui-dialog"
               ],
             "id", "ui-dialog-background",
             "class", "overlay"
+           ];
+  };
+
+  this._get_button_template = function(button)
+  {
+    return ["button",
+              button.label,
+            "data-handler-id", "" + button.id,
            ];
   };
 

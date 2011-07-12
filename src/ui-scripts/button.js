@@ -36,7 +36,7 @@ var Button = function(id, class_name, title, handler, attributes)
 
   this.set_active = function(active)
   {
-    !!active ? this._element.addClass("is-active") : this._element.removeClass("is-active");
+    Boolean(active) ? this._element.addClass("is-active") : this._element.removeClass("is-active");
   };
 
   this.get_template = function()
