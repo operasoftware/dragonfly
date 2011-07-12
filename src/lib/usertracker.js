@@ -10,7 +10,8 @@ cls.UserTracker = function(url, storagekey)
     var ret = "";
     while (length--)
     {
-        ret += chars.charAt(Math.floor(Math.random() * chars.length)) }
+        ret += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
     return ret;
   }
 
@@ -42,7 +43,7 @@ cls.UserTracker = function(url, storagekey)
     this.id = window.localStorage.getItem(this.storagekey);
     if (!this.id)
     {
-      this.id = this._make_id(64);
+      this.id = this._make_id(8);
       window.localStorage.setItem(this.storagekey, this.id);
     }
   }
