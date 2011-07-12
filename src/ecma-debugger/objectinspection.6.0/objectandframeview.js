@@ -192,14 +192,12 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
               ],
             ],
             ['span', '  '],
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_TEXT_APPLY,
+            ['button',
+              ui_strings.S_BUTTON_TEXT_APPLY,
               'handler', 'apply-collapsed-prototypes'
             ],
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_SET_DEFAULT_VALUE,
+            ['button',
+              ui_strings.S_BUTTON_SET_DEFAULT_VALUE,
               'handler', 'default-collapsed-prototypes'
             ],
             'class', ' '
@@ -310,13 +308,31 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         }
 
         var ele = target.parentNode;
-        var props = [target.parentNode.querySelector("key").textContent];
-        while (ele = ele.parentNode)
+        var props = [];
+        while (ele)
         {
           if (ele.nodeName.toLowerCase() == "item")
           {
             props.unshift(ele.querySelector("key").textContent);
           }
+          ele = ele.parentNode;
+        }
+
+        // If we're in the scope chain, remove "scope <n>"
+        if (target.get_ancestor(".scope-chain"))
+        {
+          props.shift();
+        }
+
+        if (!props.length)
+        {
+          return;
+        }
+
+        // If the leftmost part is not a valid identifier, and not 'this', we prepend 'this'
+        if (!JSSyntax.is_valid_identifier(props[0]) && props[0] != "this")
+        {
+          props.unshift("this");
         }
 
         var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;

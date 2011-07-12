@@ -117,7 +117,8 @@ cls.Stylesheets = function()
   SPECIFICITY = 6,
   STYLESHEET_ID = 7,
   RULE_ID = 8,
-  RULE_TYPE = 9;
+  RULE_TYPE = 9,
+  LINE_NUMBER = 10;
 
   var
   SHORTHAND = [];
@@ -584,8 +585,8 @@ cls.Stylesheets = function()
                  " data-rule-id='" + rule_id + "' />"
                : "") +
            "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") + 
-              (prop in __color_properties ? 
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
+              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
                   "<color-sample handler='show-color-picker' " +
                       "style='background-color:" + value +"'/>" : "") +
            "</value>;";
@@ -715,7 +716,7 @@ cls.Stylesheets = function()
     var setProps = elementStyle.getSetProps();
     var hideInitialValue = !settings['css-comp-style'].get('show-initial-values');
     var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
-    var search_map = search_active && elementStyle.getSearchMap() || [];
+    var search_term = elementStyle.getSearchTerm();
     var is_not_initial_value = false;
     var display = false;
 
@@ -737,7 +738,8 @@ cls.Stylesheets = function()
           || is_not_initial_value
         )
         && !(hide_shorthands && short_hand_props[prop])
-        && !(search_active && !search_map[index]);
+        && !(search_term && !(prop.indexOf(search_term) != -1 ||
+                              value.indexOf(search_term) != -1));
       if (display)
       {
         ret += (ret ? MARKUP_PROP_NL : "") +
@@ -779,7 +781,7 @@ cls.Stylesheets = function()
           inherited_printed = true;
           ret += "<h2>" +
                 ui_strings.S_INHERITED_FROM +
-                " <code class='element-name'" +
+                " <code class='element-name inspect-node-link'" +
                 " handler='inspect-node-link'" +
                 " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
                 element_name +
@@ -799,6 +801,7 @@ cls.Stylesheets = function()
   ORIGIN_LOCAL = 2, // user
   ORIGIN_AUTHOR = 3, // author
   ORIGIN_ELEMENT = 4; // inline
+  ORIGIN_SVG = 5; // SVG presentation attribute
 
   var prettyPrintStyleDec = [];
 
@@ -905,13 +908,17 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
+      var line_number = style_dec[LINE_NUMBER];
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
            " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
-           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'>" + sheet.name +
-         "</stylesheet-link>" : 
-        "")+
+           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
+           " data-resource-line-number='" + (line_number || 0) + "'" +
+         ">" +
+           helpers.basename(sheet.href) + (line_number ? ":" + line_number : "") +
+         "</stylesheet-link>" :
+         "") +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +
@@ -933,8 +940,24 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
-      return "<rule rule-id='change-this' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
+      return "<rule rule-id='element-style' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
         "<inline-style>element.style</inline-style>" +
+        " {\n" +
+            prettyPrintRuleInInspector(style_dec, false, search_active) +
+        "\n}</rule>";
+    }
+    return "";
+  };
+
+  prettyPrintStyleDec[ORIGIN_SVG] =
+  function(rt_id, obj_id, element_name, style_dec, search_active)
+  {
+    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
+
+    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
+    {
+      return "<rule rule-id='element-svg' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
+        "<span style='font-style: italic;'>presentation attributes</span>" +
         " {\n" +
             prettyPrintRuleInInspector(style_dec, false, search_active) +
         "\n}</rule>";

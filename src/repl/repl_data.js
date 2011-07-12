@@ -15,13 +15,14 @@ cls.ReplData = function(view)
   };
 
   this._entry_count = 0;
-  this._add_entry = function(type, data, pos)
+  this._add_entry = function(type, data, pos, severity)
   {
     var entry = {
       time: ++this._entry_count,
       type: type,
       data: data,
-      pos: pos
+      pos: pos,
+      severity: severity
     };
     this._repllog.push(entry);
     this._view.update();
@@ -82,9 +83,9 @@ cls.ReplData = function(view)
                              model_template: model_template});
   };
 
-  this.add_output_valuelist = function(rt, values, pos)
+  this.add_output_valuelist = function(rt, values, pos, severity)
   {
-    this._add_entry("valuelist", values, pos);
+    this._add_entry("valuelist", values, pos, severity);
   };
 
   this.add_output_exception = function(message, trace)

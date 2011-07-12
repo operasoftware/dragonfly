@@ -1245,6 +1245,9 @@ ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
 
+/* DESC: Show pseudo elements in the DOM view */
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+
 /* DESC: Tab heading for the search panel. */
 ui_strings.M_VIEW_LABEL_SEARCH = "Search";
 
@@ -1256,6 +1259,33 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
+
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
+
+/* DESC: Label for the global scope in the Scope Chain. */
+ui_strings.S_SCOPE_GLOBAL = "Global";
+
+/* DESC: Label for the scopes other than local and global in the Scope Chain. */
+ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
 
 /* DESC: Radio label for the search type 'Text' in the DOM search panel  */
 ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";

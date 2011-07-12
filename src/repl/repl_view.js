@@ -288,7 +288,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_trace = function(data)
   {
-    this._add_line("console.trace:");
+    this._add_line(ui_strings.S_CONSOLE_TRACE_LABEL);
     this._add_line(templates.repl_output_trace(data));
   };
 
@@ -322,7 +322,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       tpl = [templates.repl_output_location_link(entry.pos.scriptid, entry.pos.scriptline), tpl];
     }
-    this._add_line(tpl);
+    var severity = entry.severity != null
+                 ? "severity-" + ["log", "debug", "info", "warn", "error"][entry.severity-1]
+                 : "";
+    this._add_line(tpl, severity);
   };
 
   this._render_completion = function(s)
@@ -368,9 +371,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template)
+  this._add_line = function(elem_or_template, class_name)
   {
     var line = document.createElement("li");
+    if (class_name)
+    {
+      line.className = class_name;
+    }
 
     if (elem_or_template.nodeType === undefined)
     {
@@ -642,6 +649,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (this._textarea)
     {
       this._textarea.removeClass("multiline");
+      this._textarea.rows = "1";
       this._textarea.focus();
     }
   };
@@ -656,14 +664,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_frame_select_bound = function(event, target)
   {
+    if (event.target.getAttribute("data-script-id") == null)
+    {
+      return;
+    }
     var sourceview = window.views.js_source;
-    sourceview.highlight(parseInt(event.srcElement.getAttribute("script-id")),
-                         parseInt(event.srcElement.getAttribute("line-number")));
+    sourceview.highlight(parseInt(event.target.getAttribute("data-script-id")),
+                         parseInt(event.target.getAttribute("data-line-number")));
 
     messages.post("trace-frame-selected", {rt_id: parseInt(target.getAttribute("runtime-id")),
-                                           obj_id: parseInt(event.srcElement.getAttribute("scope-variable-object-id")),
-                                           this_id: parseInt(event.srcElement.getAttribute("this-object-id")),
-                                           arg_id: parseInt(event.srcElement.getAttribute("arguments-object-id"))
+                                           obj_id: parseInt(event.target.getAttribute("data-scope-variable-object-id")),
+                                           this_id: parseInt(event.target.getAttribute("data-this-object-id")),
+                                           arg_id: parseInt(event.target.getAttribute("data-arguments-object-id"))
                                           }
                  );
   }.bind(this);
@@ -936,7 +948,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var line = target.getAttribute("data-scriptline");
     var script = target.getAttribute("data-scriptid");
     var sourceview = window.views.js_source;
-    if (sourceview) { sourceview.highlight(script, line) }
+
+    // This will also be set from show_and_flash_line, but setting it before showing
+    // the view prevents the old script from flashing.
+    window.runtimes.setSelectedScript(script);
+    UI.get_instance().show_view("js_mode");
+    if (sourceview)
+    {
+      sourceview.show_and_flash_line(script, line);
+    }
   }.bind(this);
 
   this.mode_labels = {

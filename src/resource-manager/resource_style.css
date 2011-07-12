@@ -29,6 +29,7 @@
     width: 16px;
     height: 16px;
     background-image: url(../ui-images/type_other.png);
+    vertical-align: middle;
 }
 
 .resource-type-audio {
@@ -93,7 +94,12 @@
 .line-numbered-resource pre {
     padding-top: 0;
     margin-top: 0;
-    margin-left: 10ex;
+    padding-left: 10ex;
+}
+
+.highlighted-line {
+    background-image: -o-linear-gradient(90deg, #d4e3f4, #d4e3f4);
+    background-repeat: no-repeat;
 }
 
 .resource-line-numbers {
@@ -121,4 +127,9 @@
 .font-preview {
   font-size: 400%;
   text-align: center;
+}
+
+/* Expander cell */
+.resource-manager td:nth-child(1) {
+    width: 16px;
 }

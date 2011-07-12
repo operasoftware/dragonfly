@@ -1,9 +1,11 @@
 ﻿window.cls || (window.cls = {});
 
-cls.OpenSingleResource = function(resource_manager, url)
+cls.OpenSingleResource = function(resource_manager, url, data)
 {
   this._resman = resource_manager;
   this._url = url;
+  this._data = data;
+  
   if (!this._tagman)
   {
     this._init_prototype();
@@ -22,7 +24,7 @@ cls.OpenSingleResource.prototype = new function()
 
   this._show_resource = function()
   {
-    if (!this._resman.show_resource_for_url(this._url))
+    if (!this._resman.show_resource_for_url(this._url, this._data))
     {
       if (this._service.requestGetResourceID)
       {
@@ -88,7 +90,7 @@ cls.OpenSingleResource.prototype = new function()
     else
     {
       this._res.update("urlfinished", new this._ResourceData(message));
-      this._resman.open_resource_tab(this._res);
+      this._resman.open_resource_tab(this._res, this._data);
     }
   };
 

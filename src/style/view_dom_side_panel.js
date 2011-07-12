@@ -61,7 +61,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     "document"
   );
 
-  new ToolbarConfig('css-comp-style');;
+  new ToolbarConfig('css-comp-style');
 
   new Switches
   (
@@ -69,6 +69,100 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     [
       'show-initial-values'
     ]
+  );
+
+  new Settings
+  (
+    // id
+    'css-inspector',
+    // key-value map
+    {
+      'link': false,
+      'visited': false,
+      'hover': false,
+      'active': false,
+      'focus': false,
+      'selection': false
+    },
+    // key-label map
+    {
+      'link': ":link",
+      'visited': ":visited",
+      'hover': ":hover",
+      'active': ":active",
+      'focus': ":focus",
+      'selection': "::selection"
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        'link',
+        'visited',
+        'hover',
+        'active',
+        'focus',
+        'selection'
+      ]
+    },
+    null,
+    null,
+    {
+      "link": function(is_active) {
+        update_pseudo_item("link", is_active);
+      },
+      "visited": function(is_active) {
+        update_pseudo_item("visited", is_active);
+      },
+      "hover": function(is_active) {
+        update_pseudo_item("hover", is_active);
+      },
+      "active": function(is_active) {
+        update_pseudo_item("active", is_active);
+      },
+      "focus": function(is_active) {
+        update_pseudo_item("focus", is_active);
+      },
+      "selection": function(is_active) {
+        update_pseudo_item("selection", is_active);
+      }
+    }
+  );
+
+  function update_pseudo_item(pseudo_item, is_active)
+  {
+    if (is_active)
+    {
+      window.elementStyle.add_pseudo_item(pseudo_item);
+    }
+    else
+    {
+      window.elementStyle.remove_pseudo_item(pseudo_item);
+    }
+    window.elementStyle.update();
+  }
+
+  ["link", "visited", "hover", "active", "focus", "selection"].forEach(function(pseudo_item) {
+    if (window.settings["css-inspector"].get(pseudo_item))
+    {
+      window.elementStyle.add_pseudo_item(pseudo_item);
+    }
+  });
+
+  new ToolbarConfig('css-inspector');
+
+  new CstSelectToolbarSettings
+  (
+    'css-inspector',
+    [
+      'link',
+      'visited',
+      'hover',
+      'active',
+      'focus',
+      'selection'
+    ],
+    'pseudo-items'
   );
 
   var broker = ActionBroker.get_instance();

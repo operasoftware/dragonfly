@@ -89,7 +89,7 @@ var DOMMarkupEditor = function()
     {
       this.set_textarea_dimensions();
       state.outerHTML = this.textarea.value;
-      var script = "host_target.outerHTML = '" + encode(state.outerHTML) + "';";
+      var script = "host_target.outerHTML = \"" + encode(state.outerHTML) + "\";";
       services['ecmascript-debugger'].requestEval
       (
         0, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
@@ -206,7 +206,7 @@ var DOMMarkupEditor = function()
 
   var encode = function(str)
   {
-    return str.replace(/\r\n/g, "\\n").replace(/'/g, "\\'"); 
+    return helpers.escape_input(str).replace(/\r\n/g, "\\n");
   };
 
   // class on the host side to update the given DOM range

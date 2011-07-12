@@ -19,7 +19,7 @@ window.templates.error_log_table = function(entries, allExpanded, expandedList, 
       "class", "header",
     ],
     entries.map(rowClosure),
-    "class", "sortable-table",
+    "class", "sortable-table errors-table",
   ];
 };
 
@@ -51,8 +51,8 @@ window.templates.error_log_row = function(entry, allExpanded, toggledList, viewI
                ]
       ],
       ["td", ["span", "class", "severity " + severity, "title", severity]],
-      ["td", entry.uri],
-      ["td", (entry.line==null ? "?" : entry.line) ],
+      ["td", helpers.basename(entry.uri) || entry.context, "title", entry.uri || entry.context],
+      ["td", (entry.line==null ? "–" : entry.line) ],
       ["td", entry.title]
      ],  "class", (expanded ? "expanded" : "collapsed"),
      "handler", "error-log-list-expand-collapse",
@@ -73,14 +73,25 @@ window.templates.error_log_detail_row = function(entry)
 {
   return [
     "tr", [
+      ["td"],
       ["td",
-       [ "span", entry.uri,
-         "handler", "open-resource-tab",
-         "data-resource-url", entry.uri
-       ],
-       [ "pre", entry.description ],
-                 "colspan", "5"
-      ]
+        ["table",
+          ["tr",
+            ["th", "Source:"],
+            ["td", ["span", entry.uri || entry.context, "class", (entry.uri ? "internal-link" : "")],
+             "handler", "open-resource-tab",
+             "data-resource-url", entry.uri
+            ],
+          ],
+          ["tr",
+            ["th", "Description:"],
+            ["td", ["pre", entry.description, "class", "mono"]]
+          ],
+          "class", "error-details-table"
+        ],
+        "colspan", "4"
+      ],
+      "class", "no-interaction error-details"
     ]
   ];
 };

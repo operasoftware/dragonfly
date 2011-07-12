@@ -11,6 +11,113 @@ cls.ResourceDetailBase = function()
   this.drawer = null;
   this.title = null
 
+  const HIGHLIGHTED_LINE_CLASSNAME = 'higlighted-line';
+  const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container'
+  const TEXT = document.TEXT_NODE;
+  const ELE  = document.ELEMENT_NODE;
+  this._span = document.createElement('span');
+  this._span.textContent = ' ';
+  this._line_count = 0;
+  this._line_found = false;
+  this._line = 0;
+  this._root_ele = null;
+  this._tops = [];
+
+  this._traverse_ele = function(ele)
+  {
+    const CR = "\r";
+    const LF = "\n";
+    var child = ele.firstChild;
+    while (child && !this._line_found)
+    {
+      if (child.nodeType == ELE)
+      {
+        this._traverse_ele(child);
+      }
+      else if (child.nodeType == TEXT)
+      {
+        var pos;
+        for (pos = 0; pos < child.nodeValue.length; pos++)
+        {
+          var c = child.nodeValue.charAt(pos);
+          // Linefeed recognition will not support Acorn BBC spooled text output 
+          if ((c == CR ) || (c == LF))
+          {
+            this._line_count++;
+            if (this._line_count == this._line)
+            {
+              var target_pos = child.splitText(pos);
+              child.parentNode.insertBefore(this._span, target_pos);
+              this._tops.push(this._span.getBoundingClientRect().top);
+              child.parentNode.removeChild(this._span);
+              if (this._tops.length < 2)
+              {
+                this._line+=2;
+              }
+              else
+              {
+                var scroll_container = ele;
+                var container_top = scroll_container.getBoundingClientRect().top;
+                var delta = this._tops[1] - this._tops[0];
+                var scroll_top = scroll_container.scrollTop;
+                ele.addClass(HIGHLIGHTED_LINE_CLASSNAME);
+                ele.style.cssText = 
+                  "background-size: 100% " + delta + "px;" +
+                  "background-position: 0 " + 
+                    (this._tops[0] - container_top + scroll_top) + "px;";
+                
+                var scroll_position = scroll_top + this._tops[0] - container_top;
+                if (scroll_position <= this._root_ele.parentNode.clientHeight)
+                {
+                  scroll_position-=64;
+                }
+                this._root_ele.scrollTop = scroll_position;
+
+                child.parentNode.normalize();
+                this._line_found = true;
+                return;
+              }
+            }
+            if ((c == CR) && (child.nodeValue.charAt(pos+1) == LF))
+            {
+              pos++;
+            }
+          }
+        }
+      }
+      child = child && child.nextSibling;
+    }
+
+  }
+  this.clear_line_numbers = function(container)
+  {
+    // reset all properties
+    this._line_count = 0;
+    this._line_found = false;
+    this._line = 0;
+    this._tops = [];
+    var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
+    if (_ele)
+    {
+      _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
+    }
+  }
+
+  this.go_to_line = function(container, data)
+  {
+
+    if (!data || !data.lines[0]) return;
+    this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
+    this.clear_line_numbers(this._root_ele)
+    this._line = parseInt(data.lines[0]);
+    if (this._root_ele)
+    {
+      this._current_line = 1;
+      this._traverse_ele(this._root_ele);
+    }
+
+  }
+
   // interface:
 
   /**
@@ -21,6 +128,7 @@ cls.ResourceDetailBase = function()
    * has inserted the approprate content into the container itself.
    */
   this.render_type_details = function(container, resource, resourcedata) {}
+
 
 
   this.createView = function(container)
@@ -39,6 +147,7 @@ cls.ResourceDetailBase = function()
       {
         container.render(tpl);
         cls.ResourceDetailBase.sync_dimensions(container);
+        this.go_to_line(container, this.data);
       }
     }
 
@@ -214,6 +323,7 @@ window.templates.css_resource_view = function(resource, resourcedata)
 {
   var line_count = 1;
   var lines = [line_count++];
+
   var source = this.highlight_css(resourcedata, function()
   {
     lines.push(line_count++);

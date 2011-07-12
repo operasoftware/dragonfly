@@ -5,64 +5,9 @@
 
 var DOMAttrAndTextEditor = function(nav_filters)
 {
-  // TODO move this to an helper, this is duplicated code from DOM_tree_style
-  var map = 
-  {   
-    '\t': '\\t',
-    '\v': '\\v',
-    '\f': '\\f',
-    '\u0020': '\\u0020',
-    '\u00A0': '\\u00A0',
-    '\r': '\\r',
-    '\n': '\\n',
-    '\u2028': '\\u2028',
-    '\u2029': '\\u2029'
-  };
-
-  var _escape = function(string)
-  {
-    string = new String(string);
-    var _char = '', i = 0, ret = '';
-    for( ; _char = string.charAt(i); i++ )
-    {
-      ret += map[_char];
-    }
-    return ret;
-  }
-
-  var re_encoded = /^(?:\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029)+$/;
-
-  var decode_escape = function(string)
-  {
-    var  
-    match = null, 
-    ret = '',
-    re = /\\t|\\v|\\f|\\u0020|\\u00A0|\\r|\\n|\\u2028|\\u2029/g,
-    decode_map = 
-    {   
-      '\\t': '\t',
-      '\\v': '\v',
-      '\\f': '\f',
-      '\\u0020': '\u0020',
-      '\\u00A0': '\u00A0',
-      '\\r': '\r',
-      '\\n': '\n',
-      '\\u2028': '\u2028',
-      '\\u2029': '\u2029'
-    };
-
-    while( match = re.exec(string) )
-    {
-      ret += decode_map[match[0]];
-    }
-    return ret;
-  }
-
   var crlf_encode = function(str)
   {
-    return str.replace("\\", "\\\\")
-              .replace(/\r\n/g, "\\n")
-              .replace(/"/g, "\\\"");
+    return helpers.escape_input(str).replace(/\r\n/g, "\\n");
   }
 
   this._onmonospacefontchange = function(msg)
@@ -158,9 +103,9 @@ var DOMAttrAndTextEditor = function(nav_filters)
         enter_state.rt_id = parseInt(parent_parent.parentElement.getAttribute('rt-id')
           || parent_parent.parentElement.parentElement.getAttribute('rt-id'));
         enter_state.obj_id = parseInt(ele.getAttribute('ref-id'));
-        if( re_encoded.test(ele.textContent) )
+        if (ele.hasClass("only-whitespace"))
         {
-          enter_state.text = decode_escape(ele.textContent);
+          enter_state.text = helpers.unescape_whitespace(ele.textContent);
         }
         else
         {
@@ -207,19 +152,19 @@ var DOMAttrAndTextEditor = function(nav_filters)
           state.oldkey = state.key;
           state.key = this.textarea.value;
           pos = state.key.indexOf('=');
-          if(state.value)
+          if (pos > -1)
+          {
+            state.value = state.key.slice(pos + 1);
+            state.key = state.key.slice(0, pos);
+            this.nav_next();
+          }
+          if (state.value != null)
           {
             script = (state.oldkey ? 'node.removeAttribute("' + crlf_encode(state.oldkey) + '");' : '') +
                      'node.setAttribute("' + crlf_encode(state.key) + '",' +
                                        '"' + crlf_encode(state.value) + '")';
             services['ecmascript-debugger'].requestEval(0, 
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
-          }
-          if (pos > -1)
-          {
-            state.value = state.key.slice(pos + 1);
-            state.key = state.key.slice(0, pos);
-            this.nav_next();
           }
           break;
         }
@@ -255,6 +200,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 
     if( nav_target )
     {
+      var cb = this._select_node.bind(this, nav_target.has_attr("parent-node-chain", "ref-id"));
       switch(state.type)
       {
         case "key":
@@ -262,7 +208,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           if(state.key && ( !check_value || state.value ) )
           {
             if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
-              this.context_enter.model.expand(null, state.obj_id, "node");
+              this.context_enter.model.expand(cb, state.obj_id, "node");
             nav_target.textContent = state.key;
           }
           else 
@@ -273,10 +219,10 @@ var DOMAttrAndTextEditor = function(nav_filters)
         }
         case "value":
         {
-          if(state.key && state.value)
+          if (state.key && state.value != null)
           {
             if ( !(state.key == this.context_enter.key && state.value == this.context_enter.value))
-              this.context_enter.model.expand(null, state.obj_id, "node");
+              this.context_enter.model.expand(cb, state.obj_id, "node");
             nav_target.textContent = '"' + state.value+ '"';
           }
           else 
@@ -288,13 +234,15 @@ var DOMAttrAndTextEditor = function(nav_filters)
         case "text":
         {
           if ( !(state.text == this.context_enter.text))
-            this.context_enter.model.expand(null, state.obj_id, "node");
+            this.context_enter.model.expand(cb, state.obj_id, "node");
           if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
           {
-            nav_target.textContent = _escape(state.text);
+            nav_target.addClass("only-whitespace");
+            nav_target.textContent = helpers.escape_whitespace(state.text);
           }
           else
           {
+            nav_target.removeClass("only-whitespace");
             nav_target.textContent = state.text;
           }
           break;
@@ -336,7 +284,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
           }
           case "value":
           {
-            if(state.value)
+            if (state.value != null)
             {
               script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
               services['ecmascript-debugger'].requestEval(0, 
@@ -360,7 +308,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
                 [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
             if( settings.dom.get('dom-tree-style') && /^\s*$/.test( state.text) ) 
             {
-              nav_target.textContent = _escape(state.text);
+              nav_target.textContent = helpers.escape_whitespace(state.text);
             }
             else
             {
@@ -553,6 +501,11 @@ var DOMAttrAndTextEditor = function(nav_filters)
     }
     return true;
   }
+
+  this._select_node = function(target)
+  {
+    ActionBroker.get_instance().dispatch_action("dom", "select-node", null, target);
+  };
 
   this._init = function()
   {
