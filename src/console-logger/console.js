@@ -52,7 +52,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // before calling update_views, need to make sure the respective view is not hidden.
     if (entry.source)
     {
-      var corresponding_tab = this._views[0];
+      var corresponding_tab = this._views[this._views.length - 1];
       for (var i=0; i < ErrorConsoleView.roughViews.length; i++)
       {
         if (ErrorConsoleView.roughViews[i].source === entry.source)
@@ -113,7 +113,18 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     var messages = this._msgs;
     if (source)
     {
-      messages = messages.filter(function(e) {return e.source==source;});
+      if (source.startswith("NOT:"))
+      {
+        var exclude_source_list = source.slice(4).split(",");
+        for (var i=0, exclude_source; exclude_source = exclude_source_list[i]; i++)
+        {
+          messages = messages.filter(function(e) {return e.source != exclude_source;});
+        };
+      }
+      else
+      {
+        messages = messages.filter(function(e) {return e.source == source;});
+      }
     }
     if (query)
     {
@@ -396,7 +407,8 @@ ErrorConsoleView.roughViews =
   },
   {
     id: 'console-other',
-    name: ui_strings.M_VIEW_LABEL_ERROR_OTHER
+    name: ui_strings.M_VIEW_LABEL_ERROR_OTHER,
+    source: 'NOT:ecmascript,css,html,svg,persistent_storage'
   }
 ];
 
