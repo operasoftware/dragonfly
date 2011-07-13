@@ -52,18 +52,18 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // before calling update_views, need to make sure the respective view is not hidden.
     if (entry.source)
     {
-      var corresponding_tab = this._views[this._views.length - 1];
+      var source_specific_tab = this._views[this._views.length - 1];
       for (var i=0; i < ErrorConsoleView.roughViews.length; i++)
       {
         if (ErrorConsoleView.roughViews[i].source === entry.source)
         {
-          corresponding_tab = ErrorConsoleView.roughViews[i].id;
+          source_specific_tab = ErrorConsoleView.roughViews[i].id;
         }
       };
-      if(views[corresponding_tab].is_hidden)
+      if(views[source_specific_tab] && views[source_specific_tab].is_hidden)
       {
-        views[corresponding_tab].is_hidden = false;
-        topCell.disableTab(corresponding_tab, false); // means enable
+        views[source_specific_tab].is_hidden = false;
+        topCell.disableTab(source_specific_tab, false); // means enable
       }
     }
     this._update_views();
