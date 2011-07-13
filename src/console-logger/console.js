@@ -23,22 +23,14 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
 
   this._update_views = function()
   {
-    var updated = false;
     for (view = '', i = 0; view = this._views[i]; i++)
     {
-      if (window.views[view].update())
-      {
-        updated = true;
-      }
+      window.views[view].update()
     }
-    // this could be done anyway, like when update() didn't return anything. but it saves a little.
-    if (!updated)
+    var last_shown_error_view = this.last_shown_error_view || this._views[0];
+    if (last_shown_error_view && window.views[last_shown_error_view])
     {
-      var last_shown_error_view = this.last_shown_error_view || this._views[0];
-      if (last_shown_error_view && window.views[last_shown_error_view])
-      {
-        window.views[last_shown_error_view].update_error_count();
-      }
+      window.views[last_shown_error_view].update_error_count();
     }
   };
 
