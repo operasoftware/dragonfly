@@ -205,14 +205,6 @@ var DOMSearch = function(min_length)
         this._validate_current_search();
         break;
       }
-      case 'dom-search-only-selected-node':
-      {
-        this.search_only_selected_node = Number(event.target.checked);
-        this._setting.set('dom-search-only-selected-node',
-                          this.search_only_selected_node);
-        this._validate_current_search();
-        break;
-      }
     }
   }.bind(this);
 
@@ -228,8 +220,6 @@ var DOMSearch = function(min_length)
     this._setting = window.settings.dom;
     this.search_type = this._setting.get('dom-search-type');
     this.ignore_case = this._setting.get('dom-search-ignore-case');
-    this.search_only_selected_node = this._setting
-                                     .get('dom-search-only-selected-node');
     this._re_match_target = /match-token/i;
     this._min_term_length = 1;
     this._last_query = '';
@@ -250,16 +240,12 @@ var DOMSearch = function(min_length)
   {
     if (this._input.value != this._last_query ||
         this.search_type != this._last_search_type ||
-        this.ignore_case != this._last_ignore_case ||
-        this.search_only_selected_node != this._last_search_only_selected_node ||
-        (this.search_only_selected_node &&
-         this._selected_node != this._last_selected_node))
+        this.ignore_case != this._last_ignore_case)
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
-      this._last_search_only_selected_node = this.search_only_selected_node;
       this._last_selected_node = this._selected_node;
       this._match_node_cursor = -1;
       this._match_cursor = -1;
@@ -287,9 +273,7 @@ var DOMSearch = function(min_length)
           this._queued_input = false;
           this._model.search(this._last_query,
                              this.search_type,
-                             this.ignore_case,
-                             this.search_only_selected_node ?
-                             this._selected_node : 
+                             this.ignore_case, 
                              0,
                              this._handle_search);
         }
