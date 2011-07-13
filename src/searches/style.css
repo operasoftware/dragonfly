@@ -6,6 +6,7 @@
   border: 1px solid transparent;
   box-decoration-break: clone;
   word-wrap: break-word;
+  margin: 0 -2px;
 }
 
 .search-highlight

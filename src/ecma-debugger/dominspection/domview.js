@@ -91,22 +91,6 @@ cls.DOMView = function(id, name, container_class)
     if (container)
     {
       var node = container.querySelector('[ref-id="' + hit.object_id + '"]');
-      if (!node && hit.node_type == document.TEXT_NODE)
-      {
-        node = container.getNextWithFilter(container, function(node)
-        {
-          return node.nodeName.toLowerCase() == 'text' && 
-                 node.textContent == hit.text_content;
-        });
-      }
-      if (!node && hit.node_type == document.COMMENT_NODE)
-      {
-        node = container.getNextWithFilter(container, function(node)
-        {
-          return node.hasClass('comment') && 
-                 node.textContent == hit.text_content;
-        });
-      }
       if (node)
       {
         this._search_hit = this._highlighter.set_hit(node, 
@@ -368,7 +352,8 @@ cls.DOMView.create_ui_widgets = function()
       {
         var target = event.target;
         var ele = target.has_attr("parent-node-chain", "ref-id");
-        if (ele && ele.hasClass("non-editable"))
+        if (ele && (ele.hasClass("non-editable") ||
+                    ele.parentNode.hasClass("non-editable")))
         {
           return;
         }

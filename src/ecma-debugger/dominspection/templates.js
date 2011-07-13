@@ -301,7 +301,6 @@
                ">";
     var i = 0;
     var node = null;
-    var parent_node = null;
     var length = data.length;
     var attrs = null, attr = null, k = 0, key = '', attr_value = '';
     var is_open = false;
@@ -325,11 +324,6 @@
 
     for ( ; node = data[i]; i += 1)
     {
-      if (data[i-1] && data[i-1][DEPTH] < node[DEPTH])
-      {
-        parent_node = data[i-1];
-      }
-
       while(current_depth > node[DEPTH])
       {
         tree += closing_tags.pop();
@@ -404,7 +398,7 @@
               if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
               {
                 one_child_text_content += "<text" +
-                  (!is_script_node ? " ref-id='" + data[child_pointer][ID] + "' " : "") +
+                  " ref-id='" + data[child_pointer][ID] + "' " +
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
             }
@@ -486,7 +480,11 @@
             if (!/^\s*$/.test(node[VALUE]))
             {
               tree += "<div" + this._get_indent(node, depth_first_ele) +
-                      "class='comment pre-wrap'>&lt;!--" + helpers.escapeTextHtml(node[VALUE]) + "--&gt;</div>";
+                               "ref-id='" + node[ID] + "' " + 
+                               "class='comment pre-wrap'>" +
+                               "&lt;!--" + 
+                                   helpers.escapeTextHtml(node[VALUE]) + 
+                               "--&gt;</div>";
             }
           }
           break;
@@ -509,13 +507,15 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            var class_attr = re_formatted.test(parent_node[NAME]) ? " class='pre-wrap' " : "";
+            // style and script elements are handled in 
+            // the 'has_only_text_content' check, 
+            // so we don't need to check here again for 'pre-wrap' content
 
             tree += "<div" + this._get_indent(node, depth_first_ele) + 
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
                     "<text" +
-                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + class_attr +
+                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + 
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -531,7 +531,7 @@
     return tree;
   };
 
-  this._inspected_dom_node_tree_style = function(model, target, editable)
+  this._inspected_dom_node_tree_style = function(model, target, editable, no_contextmenu)
   {
 
     var data = model.getData();
@@ -561,6 +561,8 @@
     var disregard_force_lower_case_depth = 0;
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+    var parent_ele_stack = [];
+    var parent_ele = null;
 
     for ( ; node = data[i]; i += 1)
     {
@@ -572,6 +574,11 @@
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
+      while ((parent_ele = parent_ele_stack[parent_ele_stack.length -1]) && 
+              current_depth < parent_ele[DEPTH])
+      {
+        parent_ele_stack.pop();
+      }
 
       if (force_lower_case && disregard_force_lower_case(node))
       {
@@ -663,7 +670,12 @@
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
           }
-          current_formatting = re_formatted.test(node_name) &&  " class='pre-wrap'" || "";
+
+          if (parent_ele && parent_ele[DEPTH] == node[DEPTH])
+          {
+            parent_ele_stack.pop();
+          } 
+          parent_ele_stack.push(node);  
           break;
         }
 
@@ -672,8 +684,10 @@
           if (show_comments)
           {
             tree += "<div" + this._get_indent(node, depth_first_ele) +
-                    "class='comment pre-wrap'><span class='comment-node'>#comment</span>" +
-                    helpers.escapeTextHtml(node[VALUE]) + "</div>";
+                            "ref-id='"+node[ID] + "' " +
+                            "class='comment pre-wrap'>" +
+                        "<span class='comment-node'>#comment</span>" +
+                        helpers.escapeTextHtml(node[VALUE]) + "</div>";
           }
           break;
         }
@@ -696,6 +710,14 @@
 
         default:
         {
+          current_formatting = "";
+          parent_ele = parent_ele_stack[parent_ele_stack.length - 1];
+          if (re_formatted.test(parent_ele))
+          {
+            current_formatting = parent_ele[NAME].toLowerCase() == 'script'
+                               ? " class='pre-wrap non-editable' "
+                               : " class='pre-wrap' ";
+          } 
           if (!(show_white_space_nodes) && (node[TYPE] == TEXT_NODE))
           {
             if (!/^\s*$/.test(node[VALUE]))
@@ -705,7 +727,7 @@
                                 (no_contextmenu ? "" : "data-menu='dom-element' ") +
                                 ">" +
                        (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
-                       "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
+                       "<text ref-id='" + node[ID] + "' >" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
             }
@@ -718,7 +740,7 @@
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
                     (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
-                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") +
+                      "<text ref-id='" + node[ID]+  "' " +
                         " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
                         (only_whitespace ? helpers.escape_whitespace(node[VALUE])
                                          : helpers.escapeTextHtml(node[VALUE])) +

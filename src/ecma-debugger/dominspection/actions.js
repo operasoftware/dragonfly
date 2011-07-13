@@ -215,11 +215,11 @@ cls.DOMInspectorActions = function(id)
       }
       case 'text':
       {
-        return !target.hasAttribute('ref-id');
+        return target.parentNode.hasClass('non-editable');
       }
       case 'node':
       {
-        return ( target.firstChild && /^<?\/?script/i.test(target.firstChild.nodeValue) );
+        return (target.firstChild && /^<?\/?script/i.test(target.firstChild.nodeValue));
       }
       default:
       {

@@ -431,22 +431,10 @@ var DOMSearch = function(min_length)
       var search_hit_ele = hit[0].get_ancestor(this._query_selector);
       if (search_hit_ele)
       {
-        var text = search_hit_ele.textContent;
-        var node_type = document.ELEMENT_NODE;
-        if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
-        {
-          node_type = document.TEXT_NODE;
-        }
-        else if (search_hit_ele.hasClass('comment'))
-        {
-          node_type = document.COMMENT_NODE;
-        }
         var ctx = {is_target: false, offset: 0, target: hit[0]};
         var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
-        if (!window.settings.dom.get('dom-tree-style') &&
-            node_type == document.TEXT_NODE)
+        if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
         {
-          text = text.slice('#text'.length);
           ctx.offset -= '#text'.length;
         }
         return (
@@ -454,8 +442,6 @@ var DOMSearch = function(min_length)
           offset: ctx.offset,
           length: hit[0].textContent.length,
           object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
-          node_type: node_type,
-          text_content: text,
         });
       }
     }
