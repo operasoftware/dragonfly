@@ -60,7 +60,11 @@ cls.DOMSearchView = function(id, name, container_class)
       }
       case "show-script":
       {
-        this._search.inspect_selected_node();
+        var hit_ele = this._search.get_current_hit_element();
+        if (hit_ele)
+        {
+          hit_ele.dispatchMouseEvent('click');
+        }
         break;
       }
 
@@ -80,7 +84,14 @@ cls.DOMSearchView = function(id, name, container_class)
   {
     this._search.update_match_highlight(event, target);
     this._search_hit = this._search.get_search_hit();
-    eventHandlers.click['inspect-node-link'](event, target);
+    if (window.host_tabs.is_runtime_of_active_tab(this._search_hit.runtime_id))
+    {
+      eventHandlers.click['inspect-node-link'](event, target);
+    }
+    else
+    {
+      new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
+    }
   };
 
   this._onsettingchange = function(msg)
@@ -95,6 +106,7 @@ cls.DOMSearchView = function(id, name, container_class)
   {
     this.init(id, name, container_class);
     this._search = new DOMSearch();
+    this._redo_search_bound = this._search.highlight_next.bind(this._search);
     this.controls =
     [
       {

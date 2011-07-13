@@ -1308,4 +1308,8 @@ ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No
 /* DESC: If enabled objects can be expanded inline in the console  */
 ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
 
+/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
+ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
+
+
 

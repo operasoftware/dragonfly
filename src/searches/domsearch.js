@@ -27,6 +27,9 @@ var DOMSearch = function(min_length)
   // returns an object with object_id, node_type, offset, and length. 
   this.get_search_hit = function() {};
 
+  this.get_current_hit_element = function() {};
+
+
   // overwrites _update_info
   PanelSearch.apply(this);
 
@@ -240,13 +243,15 @@ var DOMSearch = function(min_length)
   {
     if (this._input.value != this._last_query ||
         this.search_type != this._last_search_type ||
-        this.ignore_case != this._last_ignore_case)
+        this.ignore_case != this._last_ignore_case ||
+        this._last_selected_runtime != this._selected_runtime)
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
       this._last_selected_node = this._selected_node;
+      this._last_selected_runtime = this._selected_runtime;
       this._match_node_cursor = -1;
       this._match_cursor = -1;
       if (this._last_query)
@@ -267,7 +272,7 @@ var DOMSearch = function(min_length)
           this._match_nodes = null;
           this._match_count = 0;
           this._hits = [];
-          this._model = new cls.InspectableDOMNode(this._selected_runtime,
+          this._model = new cls.InspectableDOMNode(this._last_selected_runtime,
                                                    this._selected_node);
           this._is_processing = true;
           this._queued_input = false;
@@ -362,17 +367,6 @@ var DOMSearch = function(min_length)
     }
   };
 
-  this.inspect_selected_node = function()
-  {
-    if (this._highligh_node)
-    {
-      this._broker.dispatch_action("dom", 
-                                   "inspect-node-link",
-                                   null,
-                                   this._highligh_node);
-    }
-  };
-
   this.show_last_search = function()
   {
     this._handle_search();
@@ -426,10 +420,18 @@ var DOMSearch = function(min_length)
           offset: ctx.offset,
           length: hit[0].textContent.length,
           object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
+          runtime_id: this._last_selected_runtime,
+          target: search_hit_ele
         });
       }
     }
     return null;
+  };
+
+  this.get_current_hit_element = function()
+  {
+    var hit = this._hits[this._match_cursor];
+    return hit && hit[0] || null;
   };
 
 
