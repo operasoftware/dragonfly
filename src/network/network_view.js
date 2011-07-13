@@ -123,7 +123,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
     this._contentscroll = 0;
     container.className = "";
-    var contheight = container.getBoundingClientRect().height - 2;
+    var has_scrollbar = container.scrollHeight > container.offsetHeight;
+    var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
     var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
     var duration = ctx.get_duration();
 
@@ -134,12 +135,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
     container.clearAndRender(templates.network_log_main(ctx, graphwidth));
     this._vscrollcontainer = container.querySelector("#main-scroll-container");
-    this._vscrollcontainer.style.height = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
+    this._vscrollcontainer.style.height = "" + conheight + "px";
     this._vscrollcontainer.scrollTop = this._vscroll;
 
     this._hscrollcontainer = container.querySelector("#scrollbar-container");
     this._hscrollcontainer.scrollLeft = this._hscroll;
-    container.querySelector("#left-side-content").style.minHeight = "" + (contheight-window.defaults["scrollbar-width"]) + "px";
+    container.querySelector("#left-side-content").style.minHeight = "" + conheight + "px";
 
     var hscrollfun = function(evt)
     {
