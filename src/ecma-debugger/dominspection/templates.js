@@ -319,9 +319,9 @@
     var style = null;
     var is_script_node = true;
     var is_debug = ini.debug;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
     var depth_first_ele = model.get_depth_of_first_element();
+    var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
 
     for ( ; node = data[i]; i += 1)
     {
@@ -339,7 +339,7 @@
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
 
-      if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
+      if (force_lower_case && disregard_force_lower_case(node))
       {
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
@@ -359,7 +359,6 @@
           {
             node_name = node_name.toLowerCase();
           }
-          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
           var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
@@ -409,10 +408,7 @@
                   ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
             }
-          }
 
-          if (is_open)
-          {
             if (has_only_text_content)
             {
               class_name = re_formatted.test(node_name)
@@ -562,9 +558,9 @@
     var re_formatted = /script|style/i;
     var style = null;
     var is_script_node = true;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
     var depth_first_ele = model.get_depth_of_first_element();
+    var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
 
     for ( ; node = data[i]; i += 1)
     {
@@ -577,7 +573,7 @@
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
 
-      if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
+      if (force_lower_case && disregard_force_lower_case(node))
       {
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
@@ -597,7 +593,6 @@
           {
             node_name = node_name.toLowerCase();
           }
-          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
           var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
