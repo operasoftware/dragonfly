@@ -42,7 +42,6 @@
 .request-table tr td:nth-child(4) {
     width: 24ex;
     overflow: hidden;
-    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: bold;

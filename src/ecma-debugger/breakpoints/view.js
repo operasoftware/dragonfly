@@ -169,11 +169,11 @@ cls.BreakpointsView = function(id, name, container_class)
     },
     ContextMenu.separator,
     {
-      label: ui_strings.M_CONTEXTMENU_DISABLE_ALL,
+      label: ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS,
       handler: this._handlers['disable-all'],
     },
     {
-      label: ui_strings.M_CONTEXTMENU_DELETE_ALL,
+      label: ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS,
       handler: this._handlers['delete-all'],
     }
   ];

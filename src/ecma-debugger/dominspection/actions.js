@@ -48,12 +48,16 @@ cls.DOMInspectorActions = function(id)
   });
 
   // traversal 'subtree' or 'children'
-  this._expand_collapse_node = function(event, target, traversal)
+  this._expand_collapse_node = function(event, target, traversal, force_expand)
   {
     var container = event.target.parentNode;
+    var next_node = container.nextElementSibling;
+    while (next_node && next_node.getAttribute("data-pseudo-element"))
+    {
+      next_node = next_node.nextElementSibling;
+    }
     var level = parseInt(container.style.marginLeft) || 0;
-    var level_next = container.nextSibling &&
-                     parseInt(container.nextSibling.style.marginLeft) || 0;
+    var level_next = next_node && parseInt(next_node.style.marginLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
     {
@@ -67,13 +71,17 @@ cls.DOMInspectorActions = function(id)
       {
         if (container.contains(target))
           target_id = parseInt(target.getAttribute('ref-id'));
-        if (level_next > level)
+        if (!force_expand && level_next > level)
         {
           model.collapse(ref_id);
           this._get_children_callback(container, model, target_id, is_editable);
         }
         else
         {
+          if (force_expand)
+          {
+            model.collapse(ref_id);
+          }
           cb = this._get_children_callback.bind(this, container, model,
                                                 target_id, is_editable);
           model.expand(cb, ref_id, traversal);
@@ -94,6 +102,7 @@ cls.DOMInspectorActions = function(id)
     var
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
+    pseudo_element = target.getAttribute('data-pseudo-element'),
     inspections = window.dominspections,
     model = null,
     scroll_into_view = false,
@@ -115,7 +124,8 @@ cls.DOMInspectorActions = function(id)
       inspections.active = model;
       window.messages.post("element-selected", {model: model,
                                                 obj_id: obj_id,
-                                                rt_id: model.getDataRuntimeId()});
+                                                rt_id: model.getDataRuntimeId(),
+                                                pseudo_element: pseudo_element});
       if (document.getElementById('target-element'))
         document.getElementById('target-element').removeAttribute('id');
       target.id = 'target-element';
@@ -132,6 +142,12 @@ cls.DOMInspectorActions = function(id)
         }
         if (this._modebar)
         {
+          // If target is a text node, use the parent element node's id as
+          // obj_id for the breadcrumbs
+          if (target.nodeName.toLowerCase() == "text")
+          {
+            obj_id = target.parentNode.get_attr("parent-node-chain", "ref-id");
+          }
           this._modebar.set_content(model.id, 
                                     window.templates.breadcrumb(model, obj_id), 
                                     true);
@@ -316,7 +332,6 @@ cls.DOMInspectorActions = function(id)
 
   this.setContainer = function(event, container)
   {
-
     document.addEventListener('DOMNodeInserted', ondomnodeinserted, false);
     view_container = container;
     view_container_first_child = container.firstChild;
@@ -326,7 +341,7 @@ cls.DOMInspectorActions = function(id)
     {
       this.is_dom_type_tree = container.firstElementChild
                               .firstElementChild.hasClass('tree-style');
-      if (event.type == 'click')
+      if (event.type == 'click' || event.type == 'contextmenu')
       {
         switch (event.target.nodeName.toLowerCase())
         {
@@ -357,7 +372,8 @@ cls.DOMInspectorActions = function(id)
 
   this.setSelected = function(new_target, scroll_into_view)
   {
-    var firstChild = null, raw_delta = 0, delta = 0, is_end_tag = false;
+    var raw_delta = 0,
+        delta = 0;
     if(new_target)
     {
       if(nav_target)
@@ -390,14 +406,41 @@ cls.DOMInspectorActions = function(id)
       switch (new_target.nodeName.toLowerCase())
       {
         case 'node':
+        {
+          var first_child = new_target.firstChild;
+          var start_offset = 0;
+          var end_offset = first_child.nodeValue.length;
+
+          if (!this.is_dom_type_tree)
+          {
+            start_offset += 1;
+            end_offset -= 1;
+          }
+          else if (first_child.nextSibling) // If it has attributes
+          {
+            end_offset -= 1;
+          }
+
+          if (first_child.nodeValue[1] == "/") // If it's an end-tag
+          {
+            start_offset += 1;
+          }
+
+          if (first_child.nodeValue.slice(-2, -1) == "/") // If it's an empty element tag
+          {
+            end_offset -= 1;
+          }
+
+          range.setStart(first_child, start_offset);
+          range.setEnd(first_child, end_offset);
+          selection.addRange(range);
+          break;
+        }
         case 'value':
         {
           firstChild = new_target.firstChild;
-          is_end_tag = firstChild.nodeValue[1] == "/";
-          range.setStart(firstChild, this.is_dom_type_tree ? 0 : is_end_tag ? 2 : 1);
-          range.setEnd(firstChild,
-                       firstChild.nodeValue.length -
-                       (this.is_dom_type_tree && !firstChild.nextSibling ? 0 : 1));
+          range.setStart(firstChild, 1);
+          range.setEnd(firstChild, firstChild.nodeValue.length - 1);
           selection.addRange(range);
           break;
         }
@@ -484,6 +527,11 @@ cls.DOMInspectorActions = function(id)
     this._expand_collapse_node(event, target, 'subtree');
   }.bind(this);
 
+  this._handlers["expand-node"] = function(event, target)
+  {
+    this._expand_collapse_node(event, target, 'subtree', true);
+  }.bind(this);
+
   this._handlers["spotlight-node"] = function(event, target)
   {
     if(window.settings['dom'].get('highlight-on-hover'))
@@ -498,7 +546,7 @@ cls.DOMInspectorActions = function(id)
   {
     var obj_id = parseInt(target.getAttribute('ref-id'));
     if (!window.settings.dom.get('dom-tree-style') &&
-        /<\//.test(target.firstChild.textContent))
+        target.firstChild && /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
               target.getAttribute('ref-id') != obj_id);
     if (target)

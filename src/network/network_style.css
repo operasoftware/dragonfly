@@ -82,6 +82,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .network-log-url-list .log-url-list-status {
@@ -174,7 +175,7 @@
 
 .network-details-request p
 {
-  margin: 0;
+  margin-top: 0;
   max-width: 60em;
   line-height: 150%;
 }

@@ -171,6 +171,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/debugger_style.css"/>
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
+<link rel="stylesheet" href="./ui-style/dialog.css"/>
 <link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
@@ -255,6 +256,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/toolbarConfig.js"/>
 <script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/editor.js"/>
+<script src="./ui-scripts/dialog.js"/>
 <script src="./searches/TextSearch.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>
@@ -428,7 +430,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./console-logger/ecmascriptdebugger.6.0.events.onconsolelog.js"/>
 
 <script src="./storage/data-storages.js"/>
-<script src="./storage/actions-stoarges.js"/>
+<script src="./storage/actions-storages.js"/>
 <script src="./storage/templates.js"/>
 <script src="./storage/views-storages.js"/>
 

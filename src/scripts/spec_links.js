@@ -296,6 +296,10 @@ SpecLinks.specs = {
     "apparence": "http://www.w3.org/TR/css3-ui/#appearance0",
     "icon": "http://www.w3.org/TR/css3-ui/#icon",
     "resize": "http://www.w3.org/TR/css3-ui/#resize0",
+    "zoom": "http://dev.w3.org/csswg/css-device-adapt/#the-lsquozoomrsquo-property",
+    "min-zoom": "http://dev.w3.org/csswg/css-device-adapt/#min-zoom",
+    "max-zoom": "http://dev.w3.org/csswg/css-device-adapt/#max-zoom",
+    "user-zoom": "http://dev.w3.org/csswg/css-device-adapt/#user-zoom",
 
     // SVG related CSS properties
 
@@ -936,6 +940,9 @@ SpecLinks.specs = {
     "popstate": "http://www.w3.org/TR/html5/history.html#event-popstate",
     "readystatechange": "http://www.w3.org/TR/html5/dom.html#event-readystatechange",
     
+    // HTML5 Elements
+    "dataset": "http://www.w3.org/TR/html5/elements.html#dom-dataset",
+
     //HTML5 Browsing contexts
     "opener": "http://www.w3.org/TR/html5/browsers.html#dom-opener",
     //"close": "http://www.w3.org/TR/html5/browsers.html#dom-window-close",
@@ -1290,6 +1297,19 @@ SpecLinks.specs = {
     "Position": "http://www.w3.org/TR/geolocation-API/#position_interface",
     "Coordinates": "http://www.w3.org/TR/geolocation-API/#coordinates_interface",
     "PositionError": "http://www.w3.org/TR/geolocation-API/#position_error_interface",
+    
+    // File API
+    "Blob": "http://www.w3.org/TR/FileAPI/#blob", 
+    "File": "http://www.w3.org/TR/FileAPI/#file", 
+    "lastModifiedDate": "http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate", 
+    "FileReader": "http://www.w3.org/TR/FileAPI/#FileReader-interface", 
+    "readAsArrayBuffer": "http://www.w3.org/TR/FileAPI/#dfn-readAsArrayBuffer", 
+    "readAsBinaryString": "http://www.w3.org/TR/FileAPI/#dfn-readAsBinaryStringAsync", 
+    "readAsText": "http://www.w3.org/TR/FileAPI/#dfn-readAsText", 
+    "readAsDataURL": "http://www.w3.org/TR/FileAPI/#dfn-readAsDataURL", 
+    "FileReaderSync": "http://www.w3.org/TR/FileAPI/#FileReaderSync", 
+    "FileError": "http://www.w3.org/TR/FileAPI/#FileErrorInterface",   
+    "FileException": "http://www.w3.org/TR/FileAPI/#FileException",
 
     // ES5 (put in a new section? (using Mike Smith’s version as real spec is PDF)
     "NaN": "http://es5.github.com/#x15.1.1.1",

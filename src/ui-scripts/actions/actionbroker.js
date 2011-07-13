@@ -136,7 +136,7 @@ var ActionBroker = function()
 
   this._set_action_context_bound = (function(event)
   {
-    if (this._contextmenu.is_shown && event.type == 'click')
+    if (this._contextmenu.is_visible && event.type == 'click')
     {
       this._contextmenu.modal_click_handler(event);
       return true;

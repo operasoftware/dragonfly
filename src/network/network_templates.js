@@ -73,9 +73,10 @@ templates.network_request_crafter_main = function(url, loading, request, respons
             ["p", ["_auto_height_textarea", request]],
            ["p", ["button", ui_strings.M_NETWORK_CRAFTER_SEND,
             "handler", "request-crafter-send",
+            "unselectable", "on",
             "class", "container-button"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE],
-           (loading ? ["p", ui_strings.M_NETWORK_CRAFTER_SEND] : ["p", ["textarea", response]]),
+           ["p", ["textarea", loading ? ui_strings.M_NETWORK_CRAFTER_SEND : response]],
            "class", "padding request-crafter"
           ]
          ];

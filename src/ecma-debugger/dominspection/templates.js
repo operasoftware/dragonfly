@@ -14,12 +14,43 @@
   const MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON;
   const INDENT = "  ";
   const LINEBREAK = '\n';
+  const SEARCH_PARENT = 2;
+
   const ELEMENT_NODE = Node.ELEMENT_NODE;
+  const TEXT_NODE = Node.TEXT_NODE;
+  const CDATA_SECTION_NODE = Node.CDATA_SECTION_NODE;
   const PROCESSING_INSTRUCTION_NODE = Node.PROCESSING_INSTRUCTION_NODE;
   const COMMENT_NODE = Node.COMMENT_NODE;
   const DOCUMENT_NODE = Node.DOCUMENT_NODE;
   const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
-  const SEARCH_PARENT = 2;
+
+  const PSEUDO_ELEMENT_LIST = 14;
+  const PSEUDO_ELEMENT_TYPE = 0;
+  const PSEUDO_ELEMENT_CONTENT = 1;
+
+  const PSEUDO_ELEMENT_BEFORE = 1;
+  const PSEUDO_ELEMENT_AFTER = 2;
+  const PSEUDO_ELEMENT_FIRST_LETTER = 3;
+  const PSEUDO_ELEMENT_FIRST_LINE = 4;
+
+  this._pseudo_element_map = {};
+  this._pseudo_element_map[PSEUDO_ELEMENT_BEFORE] = "before";
+  this._pseudo_element_map[PSEUDO_ELEMENT_AFTER] = "after";
+  this._pseudo_element_map[PSEUDO_ELEMENT_FIRST_LETTER] = "first-letter";
+  this._pseudo_element_map[PSEUDO_ELEMENT_FIRST_LINE] = "first-line";
+
+  this._node_name_map = {};
+  this._node_name_map[TEXT_NODE] = "<span class='text-node'>#text</span> ";
+  this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
+
+  var disregard_force_lower_case_whitelist = 
+      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+
+  var disregard_force_lower_case = function(node)
+  {
+    return disregard_force_lower_case_whitelist
+           .indexOf(node[NAME].toLowerCase()) != -1;
+  };
 
   /**
    * Generates the part of the document type declaration after the document
@@ -46,13 +77,30 @@
              : "");
   };
 
-  var disregard_force_lower_case_whitelist = 
-      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
-
-  var disregard_force_lower_case = function(node)
+  this._get_pseudo_elements = function(element)
   {
-    return disregard_force_lower_case_whitelist
-           .indexOf(node[NAME].toLowerCase()) != -1;
+    var is_tree_mode = window.settings.dom.get("dom-tree-style");
+    var pseudo_element_list = element[PSEUDO_ELEMENT_LIST];
+    var pseudo_elements = {};
+
+    if (pseudo_element_list)
+    {
+      pseudo_element_list.forEach(function(pseudo_element) {
+        var type = this._pseudo_element_map[pseudo_element[PSEUDO_ELEMENT_TYPE]];
+        pseudo_elements[pseudo_element[PSEUDO_ELEMENT_TYPE]] =
+          "<div handler='spotlight-node' " +
+               "ref-id='" + element[ID] + "'" +
+               "data-pseudo-element='" + type + "'" +
+               this._get_indent(element) +
+          ">" +
+            "<node class='pseudo-element'>" +
+              (is_tree_mode ? "::" + type : "&lt::" + type + "/>") +
+            "</node>" +
+          "</div>";
+      }, this);
+    }
+
+    return pseudo_elements;
   };
 
   var formatProcessingInstructionValue = function(str, force_lower_case)
@@ -221,30 +269,33 @@
                ">";
     var i = 0;
     var node = null;
+    var parent_node = null;
     var length = data.length;
     var attrs = null, attr = null, k = 0, key = '', attr_value = '';
-    var is_open = 0;
-    var has_only_one_child = 0;
+    var is_open = false;
+    var has_only_text_content = false;
     var one_child_text_content = '';
     var current_depth = 0;
     var child_pointer = 0;
     var child_level = 0;
-    var j = 0;
     var children_length = 0;
     var closing_tags = [];
     var force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
-    var node_name = '';
     var class_name = '';
     var re_formatted = /script|style|#comment/i;
     var style = null;
     var is_script_node = true;
     var is_debug = ini.debug;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
 
     for ( ; node = data[i]; i += 1)
     {
+      if (data[i-1] && data[i-1][DEPTH] < node[DEPTH])
+      {
+        parent_node = data[i-1];
+      }
+
       while(current_depth > node[DEPTH])
       {
         tree += closing_tags.pop();
@@ -253,7 +304,6 @@
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
-      node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
 
       if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
       {
@@ -266,15 +316,17 @@
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
       }
 
-      if (force_lower_case)
-      {
-        node_name = node_name.toLowerCase();
-      }
-
       switch (node[TYPE])
       {
         case ELEMENT_NODE:
         {
+          var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
+          if (force_lower_case)
+          {
+            node_name = node_name.toLowerCase();
+          }
+          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+          var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -287,7 +339,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                  ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
                 attr_value +
                 "\"</value>";
@@ -297,14 +349,14 @@
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
           if (is_open)
           {
-            has_only_one_child = 1;
+            has_only_text_content = !node.hasOwnProperty(PSEUDO_ELEMENT_LIST);
             one_child_text_content = '';
             child_level = data[child_pointer][DEPTH];
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
-                has_only_one_child = 0;
+                has_only_text_content = false;
                 one_child_text_content = '';
                 break;
               }
@@ -327,11 +379,11 @@
 
           if (is_open)
           {
-            if (has_only_one_child)
+            if (has_only_text_content)
             {
               class_name = re_formatted.test(node_name)
                          ? " class='pre-wrap " +
-                           (is_script_node ? "non-editable" : "") + "'"
+                           (is_script_node ? "non-editable" : "") + " spotlight-node'"
                          : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
@@ -351,17 +403,24 @@
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       "data-menu='dom-element' " +
-                      (is_script_node ? "class='non-editable'" : "") + ">" +
-                      (node[CHILDREN_LENGTH] ?
+                      "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
+                      (children_length ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>";
+                      "</div>" +
+                      (show_pseudo_elements
+                       ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
+                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
+                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
+                       : "");
 
-              closing_tags.push("<div" + this._get_indent(node) +
-                                "ref-id='" + node[ID] + "' handler='spotlight-node' " +
-                                "data-menu='dom-element'><node>" +
-                                "&lt;/" + node_name + "&gt;" +
+              closing_tags.push((show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "") +
+                                "<div" + this._get_indent(node) +
+                                  "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                                  "class='spotlight-node' " +
+                                  "data-menu='dom-element'><node>" +
+                                  "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
             }
           }
@@ -371,7 +430,7 @@
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       "data-menu='dom-element' " +
-                      (is_script_node ? "class='non-editable'" : "") + ">" +
+                      "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                       (children_length ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
@@ -387,7 +446,6 @@
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
-
         }
 
         case COMMENT_NODE:
@@ -420,9 +478,11 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
+            var class_attr = re_formatted.test(parent_node[NAME]) ? " class='pre-wrap' " : "";
+
             tree += "<div" + this._get_indent(node) + "data-menu='dom-element'>" +
                     "<text" +
-                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") +
+                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + class_attr +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -436,36 +496,6 @@
     }
     tree += "</div>";
     return tree;
-  };
-
-  var nodeNameMap =
-  {
-    3: "<span class='text-node'>#text</span> ",
-    4: "<span class='cdata-node'>#cdata-section</span>"
-  };
-
-  var _escape = function(string)
-  {
-    var 
-    _char = '', 
-    i = 0, 
-    map =
-    {
-      '\t': '\\t',
-      '\v': '\\v',
-      '\f': '\\f',
-      '\u0020': '\\u0020',
-      '\u00A0': '\\u00A0',
-      '\r': '\\r',
-      '\n': '\\n',
-      '\u2028': '\\u2028',
-      '\u2029': '\\u2029'
-    },
-    ret = '';
-
-    for ( ; _char = string.charAt(i); i++)
-      ret += map[_char];
-    return ret;
   };
 
   this._inspected_dom_node_tree_style = function(model, target, editable)
@@ -482,31 +512,31 @@
                "><div class='tree-style'>";
     var i = 0, node = null, length = data.length;
     var attrs = null, key = '', attr_value = '';
-    var is_open = 0;
-    var has_only_one_child = 0;
+    var is_open = false;
+    var has_only_text_content = false;
     var one_child_value = ''
     var current_depth = 0;
     var child_pointer = 0;
     var child_level = 0;
-    var j = 0;
     var k = 0;
     var children_length = 0;
     var closing_tags = [];
-    var node_name = '';
     var current_formatting = '';
     var re_formatted = /script|style/i;
     var style = null;
     var is_script_node = true;
-    var disregard_force_lower_case_whitelist = cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
     var disregard_force_lower_case_depth = 0;
-    var graphic_arr = [];
 
     for ( ; node = data[i]; i += 1)
     {
+      while (current_depth > node[DEPTH])
+      {
+        tree += closing_tags.pop();
+        current_depth--;
+      }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
-      node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
 
       if (force_lower_case && disregard_force_lower_case_whitelist.indexOf(node[NAME].toLowerCase()) != -1)
       {
@@ -519,15 +549,17 @@
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
       }
 
-      if (force_lower_case)
-      {
-        node_name = node_name.toLowerCase();
-      }
-
       switch (node[TYPE])
       {
         case ELEMENT_NODE:
         {
+          var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
+          if (force_lower_case)
+          {
+            node_name = node_name.toLowerCase();
+          }
+          var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+          var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -540,7 +572,7 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link' data-resource-url='" + attr_value + "' "
+                    ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                     : "" ) + ">\"" +
                   attr_value +
               "\"</value>";
@@ -551,15 +583,15 @@
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
           if (is_open)
           {
-            has_only_one_child = 1;
+            has_only_text_content = !node.hasOwnProperty(PSEUDO_ELEMENT_LIST);
             one_child_value = '';
             child_level = data[child_pointer][DEPTH];
             for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
             {
               one_child_value += data[child_pointer][VALUE];
-              if (data[child_pointer][TYPE] != 3)
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
-                has_only_one_child = 0;
+                has_only_text_content = false;
                 one_child_value = '';
                 break;
               }
@@ -570,18 +602,29 @@
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
-                    (children_length && !has_only_one_child ?
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "data-menu='dom-element' " +
+                    "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
+                    (children_length && !has_only_text_content ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    "</div>" +
+                    (show_pseudo_elements
+                     ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
+                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
+                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
+                     : "");
+
+            closing_tags.push(show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "");
           }
           else
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._get_indent(node) +
-                    "ref-id='"+node[ID] + "' handler='spotlight-node' data-menu='dom-element' " + (is_script_node ? "class='non-editable'" : "") + ">" +
-                    (node[CHILDREN_LENGTH] ?
+                    "ref-id='"+node[ID] + "' handler='spotlight-node' " +
+                    "data-menu='dom-element' " +
+                    "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
+                    (children_length ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
@@ -619,13 +662,13 @@
 
         default:
         {
-          if (!(show_white_space_nodes) && (node[TYPE] == 3))
+          if (!(show_white_space_nodes) && (node[TYPE] == TEXT_NODE))
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._get_indent(node) +
                        current_formatting + " data-menu='dom-element'>" +
-                       (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
+                       (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                        "<text" + (!is_script_node ? " ref-id='" + node[ID] + "' " : "") + ">" +
                          helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                        "</div>";
@@ -633,16 +676,23 @@
           }
           else
           {
+            var only_whitespace = /^\s*$/.test(node[VALUE]);
             tree += "<div" + this._get_indent(node) +
                     current_formatting + " data-menu='dom-element'>" +
-                    (node[NAME] ? node[NAME] : nodeNameMap[node[TYPE]]) +
-                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") + ">" +
-                        (/^\s*$/.test(node[VALUE]) ? _escape(node[VALUE]) : helpers.escapeTextHtml(node[VALUE])) +
+                    (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
+                      "<text" + (!is_script_node ? " ref-id='" + node[ID]+  "' " : "") +
+                        " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
+                        (only_whitespace ? helpers.escape_whitespace(node[VALUE])
+                                         : helpers.escapeTextHtml(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }
         }
       }
+    }
+    while (closing_tags.length)
+    {
+      tree += closing_tags.pop();
     }
     tree += "</div></div>";
     return tree;
@@ -687,7 +737,7 @@
                            model.breadcrumbhead == model.target;
       if (target_is_head)
       {
-        model.breadcrumb_offsets = window.helpers.copy_array(offsets_values[0]);
+        model.breadcrumb_offsets = window.helpers.copy_object(offsets_values[0]);
       }
       ret =
       [

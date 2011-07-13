@@ -129,11 +129,26 @@
     return false;
   };
 
+  this._close_open_menus = function()
+  {
+    var contextmenu = ContextMenu.get_instance();
+    if (contextmenu.is_visible)
+    {
+      contextmenu.dismiss();
+      return true;
+    }
+    var has_opened_select = CstSelectBase.close_opened_select();
+    return has_opened_select;
+  };
+
   this._handlers["toggle-console"] = function(action_id, event, target)
   {
-    // escape does much more than just toggle-console,
-    // perhaps we should reflect that
-    
+    var has_open_menus = this._close_open_menus();
+    if (has_open_menus)
+    {
+      return;
+    }
+
     if (this.mode == MODE_EDIT)
     {
       var sc_listener = event.target.get_attr('parent-node-chain', 'shortcuts');
@@ -141,6 +156,13 @@
           this._sc_listeners[sc_listener](action_id, event, target) === false)
       {
          return false;
+      }
+
+      // Prevent ESC from opening/closing console when in edit mode,
+      // except if we're actually in the console
+      if (this._broker.get_current_handler_id() != "command_line")
+      {
+        return;
       }
     }
 
@@ -158,20 +180,14 @@
       UIWindowBase.showWindow('command_line',
                               Math.ceil(innerHeight/2), 0,
                               innerWidth, Math.floor(innerHeight/2));
-      setTimeout(function() {
-        var ele = window.views.command_line.get_container();
-        if (ele)
-        {
-          (ele = ele.getElementsByTagName('textarea')[0]) && ele.focus();
-        }
-      }, 0);
+      ActionBroker.get_instance().focus_handler("command_line", event);
     }
     else
     {
       UIWindowBase.closeWindow('command_line');
     }
-    UI.get_instance().get_button("toggle-console")
-                     .setAttribute("is-active", !visible);
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
     return false;
   }.bind(this);
 
@@ -185,7 +201,7 @@
     var ui = UI.get_instance();
     var overlay_id = target.getAttribute("data-overlay-id");
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "true");
+    ui.get_button("toggle-" + overlay_id).addClass("is-active");
 
     overlay.show(overlay_id);
 
@@ -214,7 +230,7 @@
     var client = window.client.current_client;
     var overlay_id = overlay.active_overlay;
 
-    ui.get_button("toggle-" + overlay_id).setAttribute("is-active", "false");
+    ui.get_button("toggle-" + overlay_id).removeClass("is-active");
 
     if (overlay_id == "remote-debug-overlay" && (!client || !client.connected))
     {
@@ -296,9 +312,18 @@
 
   this.focus = function(event, container)
   {
-    this.mode = event && /input|textarea/i.test(event.target.nodeName) ?
-                                                MODE_EDIT :
-                                                MODE_DEFAULT;
+    var text_inputs = /text|search|tel|url|email|password|datetime|date|month|week|time|datetime-local|number|file/i;
+    var node_name = event && event.target.nodeName.toLowerCase();
+    if (event && (node_name == "input" && text_inputs.test(event.target.type))
+              || node_name == "textarea"
+    )
+    {
+      this.mode = MODE_EDIT;
+    }
+    else
+    {
+      this.mode = MODE_DEFAULT;
+    }
   };
 
   this.check_mode = this.focus;
@@ -317,6 +342,20 @@
   /* instatiation */
 
 
+  /* message handling */
+
+  messages.addListener("before-show-view", function(msg) {
+    if (msg.id == "console_panel")
+    {
+      var is_visible = (window.views.command_line && window.views.command_line.isvisible());
+      if (is_visible)
+      {
+        var button = UI.get_instance().get_button("toggle-console");
+        is_visible ? button.removeClass("is-active") : button.addClass("is-active");
+        UIWindowBase.closeWindow('command_line');
+      }
+    }
+  });
 }
 
 
