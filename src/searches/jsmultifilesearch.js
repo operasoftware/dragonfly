@@ -354,7 +354,7 @@ var JSMultifileSearchPrototype = function()
       }
       var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
                          script.match_length :
-                         script.line_offsets_length[i];
+                         script.line_offsets_length[cursor];
 
       this._source_file_hits = [];
 
@@ -366,7 +366,7 @@ var JSMultifileSearchPrototype = function()
         this._source_file_hits.push(this.set_hit(line_ele, 
                                                  offset,
                                                  match_length, 
-                                                 this._match_style_highlight,
+                                                 TextSearch.HIGHLIGHT_STYLE,
                                                  false));
         match_length -= script.get_line_length(line_index) - offset;
         offset = 0;

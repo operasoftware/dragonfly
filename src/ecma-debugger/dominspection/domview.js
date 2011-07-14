@@ -96,7 +96,7 @@ cls.DOMView = function(id, name, container_class)
         this._search_hit = this._highlighter.set_hit(node, 
                                                      hit.offset, 
                                                      hit.length, 
-                                                     this._highlight_style, 
+                                                     TextSearch.HIGHLIGHT_STYLE, 
                                                      true);
       }
     }

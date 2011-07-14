@@ -129,9 +129,24 @@ var VirtualTextSearchBase = function()
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 1,
   NO_MATCH = 1,
-  EMPTY = 2;
+  EMPTY = 2,
+  DEFAULT_MATCH_CLASS = TextSearch.DEFAULT_MATCH_CLASS,
+  SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS,
+  DEFAULT_MATCH_MORE_CLASS = TextSearch.DEFAULT_MATCH_MORE_CLASS,
+  SELECTED_MATCH_MORE_CLASS = TextSearch.SELECTED_MATCH_MORE_CLASS;
 
   /* private */
+
+  this._set_default_style = function(span, index)
+  {
+    span.className = index ? DEFAULT_MATCH_MORE_CLASS : DEFAULT_MATCH_CLASS;
+  };
+
+  this._set_highlight_style = function(span, index)
+  {
+    span.className = index ? SELECTED_MATCH_MORE_CLASS : SELECTED_MATCH_CLASS;
+  };
+
   this._init = function()
   {
     this._search_term = '';
@@ -316,7 +331,9 @@ var VirtualTextSearchBase = function()
             }
             cur_node = hit.splitText(length);
             span = node.insertBefore(node.ownerDocument.createElement('em'), hit);
-            span.style.cssText = this._highlight_style;
+            span.className = this._hit.length
+                           ? this._highlight_style_more
+                           : this._highlight_style;
             span.appendChild(node.removeChild(hit));
             this._hit[this._hit.length] = span;
           }
@@ -340,7 +357,12 @@ var VirtualTextSearchBase = function()
     {
       this._offset = this._script.line_offsets[index];
       this._length = this._script.match_length;
-      this._highlight_style = index == this._script.match_cursor && this._match_style_highlight || this._match_style_default;
+      this._highlight_style = index == this._script.match_cursor
+                            ? SELECTED_MATCH_CLASS
+                            : DEFAULT_MATCH_CLASS;
+      this._highlight_style_more = index == this._script.match_cursor
+                                 ? SELECTED_MATCH_MORE_CLASS
+                                 : DEFAULT_MATCH_MORE_CLASS;
       this._hits[index] = this._hit = [];
       if (!this._source_container)
       {
@@ -526,7 +548,12 @@ var VirtualTextSearchBase = function()
   {
     this._offset = offset;
     this._length = length;
-    this._highlight_style = style || this._match_style_default;
+    this._highlight_style = style == TextSearch.HIGHLIGHT_STYLE
+                          ? SELECTED_MATCH_CLASS
+                          : DEFAULT_MATCH_CLASS;
+    this._highlight_style_more = style == TextSearch.HIGHLIGHT_STYLE
+                               ? SELECTED_MATCH_MORE_CLASS
+                               : DEFAULT_MATCH_MORE_CLASS;
     this._hit = []
     if (typeof do_store != 'boolean' || do_store)
     {

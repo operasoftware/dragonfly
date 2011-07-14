@@ -23,6 +23,8 @@ var SearchSingleNodesPrototype = function(min_length)
   /* constants */
   const TEXT = document.TEXT_NODE;
   const ELEMENT = document.ELEMENT_NODE;
+  const DEFAULT_MATCH_CLASS = TextSearch.DEFAULT_MATCH_CLASS;
+  const SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS;
 
   this._consume_node = function(node)
   {
@@ -35,7 +37,7 @@ var SearchSingleNodesPrototype = function(min_length)
       this._hits.push([span]); 
       node.parentNode.replaceChild(span, node);
       span.appendChild(node);
-      span.style.cssText = this._match_style_default;
+      span.className = DEFAULT_MATCH_CLASS;
       return span;
     }
     return node;

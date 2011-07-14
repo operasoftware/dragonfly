@@ -15,6 +15,12 @@ TextSearch.PLAIN_TEXT = 1;
 TextSearch.REGEXP = 2;
 TextSearch.NO_MATCH = 1;
 TextSearch.EMPTY = 2;
+TextSearch.DEFAULT_MATCH_CLASS = "search-highlight";
+TextSearch.SELECTED_MATCH_CLASS = "search-highlight-selected",
+TextSearch.DEFAULT_MATCH_MORE_CLASS = "search-highlight-more";
+TextSearch.SELECTED_MATCH_MORE_CLASS = "search-highlight-more-selected";
+TextSearch.DEFAULT_STYLE = 1;
+TextSearch.HIGHLIGHT_STYLE = 1;
 
 TextSearch.prototype = new function()
 {
@@ -23,17 +29,11 @@ TextSearch.prototype = new function()
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
   NO_MATCH = TextSearch.NO_MATCH,
-  EMPTY = TextSearch.EMPTY;
-  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+  EMPTY = TextSearch.EMPTY,
+  DEFAULT_MATCH_CLASS = TextSearch.DEFAULT_MATCH_CLASS,
+  SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS;
 
-  window.addEventListener('load', function()
-  {
-    var style_sheets = document.styleSheets;
-    this._match_style_default = 
-      style_sheets.getDeclaration ('.search-highlight').cssText;
-    this._match_style_highlight = 
-      style_sheets.getDeclaration ('.search-highlight-selected').cssText;
-  }.bind(this), false);
+  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   this._init = function(min_length)
   {
@@ -61,12 +61,12 @@ TextSearch.prototype = new function()
 
   this._set_default_style = function(span)
   {
-    span.style.cssText = this._match_style_default;
+    span.className = DEFAULT_MATCH_CLASS;
   };
 
   this._set_highlight_style = function(span)
   {
-    span.style.cssText = this._match_style_highlight;
+    span.className = SELECTED_MATCH_CLASS;
   };
 
   this._update_info = function(type)
@@ -142,7 +142,7 @@ TextSearch.prototype = new function()
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
-            span.style.cssText = this._match_style_default;
+            span.className = DEFAULT_MATCH_CLASS;
             this._consumed_total_length += node.nodeValue.length;
             node = span;
           }
