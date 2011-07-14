@@ -130,7 +130,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
     if (!fit_to_width && duration > 3000)
     {
-      graphwidth = Math.ceil(duration * 0.35);
+      graphwidth = Math.min(Math.ceil(duration * 0.35), 10000); // cap graphwidth at 10000px
       has_scrollbar = true;
     }
 
