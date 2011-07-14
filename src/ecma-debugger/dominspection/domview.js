@@ -22,6 +22,9 @@ cls.DOMView = function(id, name, container_class)
       container.clearAndRender(window.templates.inspected_dom_node(window.dom_data, 
                                                                    model && model.target, 
                                                                    true));
+      container.firstElementChild.addEventListener('mouseleave',
+                                                   this._clear_soft_spotlight,
+                                                   false);
       if (!window.helpers.scroll_dom_target_into_view())
       {
         container.scrollTop = scrollTop;
@@ -39,11 +42,22 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
-      window.messages.post('dom-view-updated', {model: model});
+      // to dispatch any scroll event before the message is sent
+      setTimeout(function(){
+        window.messages.post('dom-view-updated', {model: model});
+      }, 0);
     }
     else
     {
       this._create_view_no_data_timeout = setTimeout(this._create_view_no_data, 100, container);
+    }
+  };
+
+  this._clear_soft_spotlight = function()
+  {
+    if (window.settings.dom.get('highlight-on-hover'))
+    {
+      window.hostspotlighter.spotlight(window.dom_data.target);
     }
   };
 
@@ -67,6 +81,34 @@ cls.DOMView = function(id, name, container_class)
   this.ondestroy = function()
   {
     window.hostspotlighter.clearSpotlight();
+  };
+
+  this.highligh_search_hit = function(hit)
+  {
+    // hit created in DOMSearch get_search_hit.
+    // hit has offset, length, object_id, node_type and text_content.
+    var container = this.get_container();
+    if (container)
+    {
+      var node = container.querySelector('[ref-id="' + hit.object_id + '"]');
+      if (node)
+      {
+        this._search_hit = this._highlighter.set_hit(node, 
+                                                     hit.offset, 
+                                                     hit.length, 
+                                                     TextSearch.HIGHLIGHT_STYLE, 
+                                                     true);
+      }
+    }
+  };
+
+  this._onscroll = function(event, target)
+  {
+    if (this._search_hit)
+    {
+      this._highlighter.cleanup();
+      this._search_hit = null;
+    }
   }
 
   this._on_setting_change = function(msg)
@@ -85,7 +127,15 @@ cls.DOMView = function(id, name, container_class)
   }
 
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
-  this.init(id, name, container_class);
+  this._init = function(id, name, container_class)
+  {
+    this._highlighter = new VirtualTextSearch();
+    this._highlight_style = this._highlighter.get_match_style('highlight');
+    this.init(id, name, container_class, '', 'clear-search-hit');
+    eventHandlers.scroll['clear-search-hit'] = this._onscroll.bind(this);
+  }
+
+  this._init(id, name, container_class);
 
 }
 
@@ -302,7 +352,8 @@ cls.DOMView.create_ui_widgets = function()
       {
         var target = event.target;
         var ele = target.has_attr("parent-node-chain", "ref-id");
-        if (ele && ele.hasClass("non-editable"))
+        if (ele && (ele.hasClass("non-editable") ||
+                    ele.parentNode.hasClass("non-editable")))
         {
           return;
         }
@@ -332,11 +383,17 @@ cls.DOMView.create_ui_widgets = function()
             menu.extend([
               ContextMenu.separator,
               {
-                label: is_open ? ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE
-                               : ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                label: ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                handler: function contextmenu_expand_collapse_subtree(event, target) {
+                  broker.dispatch_action("dom", "expand-node", event, event.target);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE,
                 handler: function contextmenu_expand_collapse_subtree(event, target) {
                   broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
-                }
+                },
+                disabled: !is_open
               }
             ]);
           }

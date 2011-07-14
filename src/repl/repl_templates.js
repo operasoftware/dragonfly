@@ -18,15 +18,15 @@ templates.repl_main = function()
   ];
 };
 
-templates.repl_output_native = function(s)
+templates.repl_output_native = function(s, severity)
 {
   return ["span", s, "class", "repl-native"];
 };
 
-templates.repl_output_native_or_pobj = function(thing)
+templates.repl_output_native_or_pobj = function(thing, severity)
 {
   if (thing.type == "native") {
-    return templates.repl_output_native(thing.value);
+    return templates.repl_output_native(thing.value, severity);
   }
   else
   {
@@ -38,41 +38,67 @@ templates.repl_output_pobj = function(data)
 {
   var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
                         /(?:Element)$/.test(data.name)
+  if (data.model)
+  {
+    var tmpl = null;
+    if (data.model_template == cls.ReplService.INLINE_MODEL_TMPL_DOM)
+    {
+      tmpl = window.templates[data.model_template](data.model, null, false, true);
+    }
+    else
+    {
+      tmpl = window.templates[data.model_template](data.model);
+    }
+    // the returned template is a innerHTML
+    // the render call can handle that if the innerHTML is passed 
+    // as a single field in an array 
+    return ['span', [tmpl], 'class', 'repl-inline-expandable'];
+  }
+
   return [
     'code',
     data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,
     'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
     'rt-id', data.rt_id.toString(),
     'obj-id', data.obj_id.toString(),
-    'class', 'repl-pobj'
+    'class', 'repl-pobj ' + (is_element_type ? 'inspect-node-link' : 'inspect-object-link')
   ];
 };
 
-templates.repl_output_traceentry = function(frame, index)
+templates.repl_output_traceentry = function(frame_list)
 {
-    var tpl = ['li',
-      ui_strings.S_TEXT_CALL_STACK_FRAME_LINE.
-        replace("%(FUNCTION_NAME)s", ( frame.objectValue ? frame.objectValue.functionName : ui_strings.ANONYMOUS_FUNCTION_NAME ) ).
-        replace("%(LINE_NUMBER)s", ( frame.lineNumber || '-' ) ).
-        replace("%(SCRIPT_ID)s", ( frame.scriptID || '-' ) ),
-      'ref-id', index.toString(),
-      'script-id', String(frame.scriptID), //.toString(),
-      'line-number', String(frame.lineNumber),
-      'scope-variable-object-id', String(frame.variableObject),
-      'this-object-id', String(frame.thisObject),
-      'arguments-object-id', String(frame.argumentObject)
-    ];
+  var is_all_frames = frame_list.length <= ini.max_frames;
+  var tpl = [];
+  for (var i = 0, frame; frame = frame_list[i]; i++)
+  {
+    var function_name = is_all_frames && i == frame_list.length - 1
+                      ? ui_strings.S_GLOBAL_SCOPE_NAME
+                      : frame.objectValue.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME;
+    var uri = helpers.get_script_name(frame.scriptID);
+    tpl.push(['div',
+        ['span', function_name],
+        ['span', (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
+           'data-ref-id', "" + i,
+           'data-script-id', String(frame.scriptID),
+           'data-line-number', String(frame.lineNumber),
+           'data-scope-variable-object-id', String(frame.variableObject),
+           'data-this-object-id', String(frame.thisObject),
+           'data-arguments-object-id', String(frame.argumentObject),
+           'class', 'repl-output-go-to-source'
+        ]
+    ]);
+  }
   return tpl;
 };
 
 templates.repl_output_trace = function(trace)
 {
-  var lis = trace.frameList.map(templates.repl_output_traceentry);
-  var tpl = ["div", ["ol", lis, "class", "console-trace",
-                     'handler', 'select-trace-frame',
-                     'runtime-id', trace.runtimeID.toString()
-                    ],
-                    "class", "console-trace-container"];
+  var list = templates.repl_output_traceentry(trace.frameList);
+  var tpl = ["div", list,
+               "class", "console-trace",
+               'handler', 'select-trace-frame',
+               'runtime-id', trace.runtimeID.toString()
+            ];
   return tpl;
 };
 
@@ -85,10 +111,15 @@ templates.repl_group_line = function(group)
 
 templates.repl_output_location_link = function(id, line)
 {
-  return ["span", "(" + line + ")",
-                          "class", "repl-output-go-to-source",
-                          "handler", "show-log-entry-source",
-                          "data-scriptid", String(id),
-                          "data-scriptline", String(line)
+  var uri = helpers.get_script_name(id);
+  if (!uri)
+  {
+    return [];
+  }
+  return ["span", helpers.basename(uri) + ":" + line,
+            "class", "repl-output-go-to-source",
+            "handler", "show-log-entry-source",
+            "data-scriptid", String(id),
+            "data-scriptline", String(line)
          ];
 }

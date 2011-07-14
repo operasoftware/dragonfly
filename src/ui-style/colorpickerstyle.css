@@ -73,9 +73,8 @@
 {
   position: absolute;
   left: 259px;
-  top: 58px;
+  top: 54px;
   margin: 0;
-  padding: 0;
   border-collapse: collapse;
 }
 
@@ -91,13 +90,12 @@
 
 .color-picker-spacer
 {
-  height: 10px;
+  height: 6px;
 }
 .color-picker-number
 {
   width: 40px;
   margin: 0 0 1px 0;
-  padding: 1px 1px 0 1px;
 }
 
 .color-picker-text
@@ -193,7 +191,11 @@
 {
   position: absolute;
   left: 10px;
+  right: 9px;
   top: 220px;
+  overflow: auto;
+  white-space: nowrap;
+  padding-bottom: 2px;
 }
 
 .color-picker-palette-item
@@ -202,6 +204,10 @@
   width: 16px;
   height: 16px;
   vertical-align: middle;
-  margin: 0 3px;
   border: 1px solid #333;
+  margin-right: 6px;
+}
+
+.color-picker-palette-item:last-of-type {
+  margin: 0;
 }

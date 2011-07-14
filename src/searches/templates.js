@@ -2,7 +2,7 @@
 {
   const MAX_LINE_CHARS = 4000;
 
-  this.search_panel = function(search, type)
+  this.search_panel = function(search, type, handler)
   {
     return (
     [
@@ -12,7 +12,7 @@
       ['div',
         ['div', 'class', 'panel-search mono'],
         'class', 'panel-search-container',
-        'handler', 'show-script'],
+        'handler', handler],
     ]);
   };
 
@@ -60,27 +60,27 @@
           this._search_input('dom-search-type', 
                              'radio', 
                              DOMSearch.PLAIN_TEXT, 
-                             'text',
+                             ui_strings.S_LABEL_SEARCH_TYPE_TEXT,
                              DOMSearch.PLAIN_TEXT == search.search_type),
           this._search_input('dom-search-type', 
                              'radio', 
                              DOMSearch.REGEXP, 
-                             'reg exp',
+                             ui_strings.S_LABEL_SEARCH_TYPE_REGEXP,
                              DOMSearch.REGEXP == search.search_type),
           this._search_input('dom-search-type', 
                              'radio', 
                              DOMSearch.CSS, 
-                             'css',
+                             ui_strings.S_LABEL_SEARCH_TYPE_CSS,
                              DOMSearch.CSS == search.search_type),
           this._search_input('dom-search-type', 
                              'radio', 
                              DOMSearch.XPATH, 
-                             'x-path',
+                             ui_strings.S_LABEL_SEARCH_TYPE_XPATH,
                              DOMSearch.XPATH == search.search_type),
           this._search_input('dom-search-ignore-case', 
                              'checkbox', 
                              'ignore-case', 
-                             'ignore case',
+                             ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
                              search.ignore_case),
           'handler', 'dom-search-type-changed',
         ],
@@ -204,6 +204,12 @@
                                                    script.state_arr[line - 1], 
                                                    ['code'],
                                                    true);
+                                                   
+            if (script.line_offsets_length[i] && 
+                script.line_offsets[i] + script.line_offsets_length[i] > script.get_line_length(line))
+            {
+              script_tmpl.push(['span', '…', 'class', 'match-following-line'])
+            }
             ret.push(['div', 
                        ['span', String(line), 'class', 'line-no'],
                        script_tmpl,

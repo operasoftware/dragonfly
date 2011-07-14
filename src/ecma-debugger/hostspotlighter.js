@@ -379,19 +379,6 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     return "";
   }
 
-  /* map function to copy an array of arrays */
-  var copy_array = function(item)
-  {
-    if( Object.prototype.toString.call(item) == "[object Array]" )
-    {
-      return item.map(copy_array);
-    }
-    else
-    {
-      return item;
-    }
-  };
-
   this._oneditcolor = function(color)
   {
     this._edit_context.ele_container.style.backgroundColor = color.hhex;
@@ -493,7 +480,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     type || (type = "default");
     spotlight_clear_timeouts.clear();
     var join = Array.prototype.join;
-    if( join.call(arguments) != last_spotlight_commands )
+    if (join.call(arguments) != last_spotlight_commands)
     {
       last_spotlight_commands = join.call(arguments);
       var locked_s = settings.dom.get('lock-selected-elements') && 
@@ -513,6 +500,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     services['ecmascript-debugger'].requestSpotlightObjects(0,
       [(last_spotlight_command || []).concat([get_command(node_id, 0, "hover")])]);
+    last_spotlight_commands = '';
   }
 
   // commands["locked"]
@@ -548,9 +536,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
           'style', 'background-color: #' + color,
           'class', 'spotlight-color-select',
           'handler', 'select-spotlight-color'],
-        ['input', 
-          'type', 'button', 
-          'value', ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
+        ['button', 
+          ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
           'handler', 'reset-default-spotlight-colors',
           'class', 'reset-defaults'],
         ['p', ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT.replace ("%s", shortcut)],

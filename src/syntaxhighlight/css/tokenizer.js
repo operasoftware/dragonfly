@@ -444,6 +444,14 @@ cls.CSSTokenizer = function()
           this._state_handler = this._state_handlers.BEFORE_PROPERTY;
           return false;
         }
+        if (c === "}")
+        {
+          this._emitToken(this.token_type, this._token_buffer);
+          this._emitToken(cls.CSSTokenizer.types.DECLARATION_BLOCK_END, "}")
+          this._token_buffer = "";
+          this._state_handler = this._state_handlers.BEFORE_RULE;
+          return false;
+        }
         this._token_buffer+=c;
         return false;
       },

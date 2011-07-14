@@ -2,6 +2,12 @@
 
 window.cls.FriendlyPrinter = function()
 {
+  if (window.cls.FriendlyPrinter.instance)
+  {
+    return window.cls.FriendlyPrinter.instance;
+  }
+  window.cls.FriendlyPrinter.instance = this;
+
   /*
     If you like to add more types to be friendly printed look into
         this._friendly_print_host
@@ -10,11 +16,14 @@ window.cls.FriendlyPrinter = function()
     to print it on the client side.
   */
 
-  const
-  VALUE_LIST = 2,
-  OBJECT_VALUE = 1,
-  OBJECT_ID = 0,
-  MAX_ARGS = 60;
+  const VALUE_LIST = 2;
+  const OBJECT_VALUE = 1;
+  const OBJECT_ID = 0;
+  const CLASS_NAME = 4;
+  const MAX_ARGS = 60;
+  const RE_DOM_OBJECT = cls.InlineExpander.RE_DOM_OBJECT;
+  const IS_EXPAND_INLINE_KEY = "expand-objects-inline";
+  const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
 
   /*
     - create an object list
@@ -25,7 +34,7 @@ window.cls.FriendlyPrinter = function()
     - concatenate the chunks
   */
 
-  this._friendly_print = function(obj_list, rt_id, thread_id, frame_id, fallback)
+  this.get_friendly_print = function(obj_list, rt_id, thread_id, frame_id, fallback)
   {
     var obj_ids = obj_list.map(this._obj2obj_id_list);
     var queue_cb = this._friendly_print_chunked_cb.bind(this, obj_list, rt_id,
@@ -188,7 +197,6 @@ window.cls.FriendlyPrinter = function()
   this._friendly_print_chunked_cb = function(obj_list, rt_id, obj_ids,
                                              fallback, queue)
   {
-    const FRIENDLY_PRINTED = 6;
 
     // concatenate the chunks to one list
     var friendly_list = queue && queue.reduce(function(list, friendly_list_chunk)
@@ -211,6 +219,9 @@ window.cls.FriendlyPrinter = function()
     const ELEMENT = 1;
     const DATE = 2;
     const FUNCTION = 3;
+    const ERROR = 4;
+    const REGEXP = 5;
+
     var ret = list.map(function(item)
     {
       var class_ = item === null ? "" : Object.prototype.toString.call(item);
@@ -219,6 +230,7 @@ window.cls.FriendlyPrinter = function()
         return (
         [
           ELEMENT,
+          0, // expandable inline object (booleans are returned as string)
           item.nodeName.toLowerCase(),
           item.id,
           item.className,
@@ -230,13 +242,31 @@ window.cls.FriendlyPrinter = function()
       {
         return [
           DATE,
-          item.toISOString()
+          1, // expandable inline object (booleans are returned as string)
+          new Date(item.getTime() - item.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','')
         ];
       }
       else if (class_ == "[object Function]")
       {
         return [
           FUNCTION,
+          0, // expandable inline object (booleans are returned as string)
+          item.toString()
+        ];
+      }
+      else if (/(Error|Exception)\]$/.test(class_))
+      {
+        return [
+          ERROR,
+          0, // expandable inline object (booleans are returned as string)
+          item.message
+        ];
+      }
+      else if (class_ == "[object RegExp]")
+      {
+        return [
+          REGEXP,
+          0, // expandable inline object (booleans are returned as string)
           item.toString()
         ];
       }
@@ -248,11 +278,19 @@ window.cls.FriendlyPrinter = function()
   this.templates = function()
   {
     const
-    ELE_NAME = 1,
-    ELE_ID = 2,
-    ELE_CLASS = 3,
-    ELE_HREF = 4,
-    ELE_SRC = 5;
+    TYPE = 0,
+    ELEMENT = 1,
+    DATE = 2,
+    FUNCTION = 3,
+    ERROR = 4,
+    REGEXP = 5;
+
+    const
+    ELE_NAME = 2,
+    ELE_ID = 3,
+    ELE_CLASS = 4,
+    ELE_HREF = 5,
+    ELE_SRC = 6;
 
     var ele_classes = {};
     ele_classes[ELE_NAME] = 'element-name';
@@ -285,7 +323,14 @@ window.cls.FriendlyPrinter = function()
       }
     };
 
-    this._friendly_print_element = function(value_list)
+    this.friendly_print = function(value_list)
+    {
+      return this._friendly_print[value_list[TYPE]](value_list);
+    };
+
+    this._friendly_print = {};
+
+    this._friendly_print[ELEMENT] = function(value_list)
     {
       return value_list.reduce(function(list, prop, index)
       {
@@ -295,40 +340,50 @@ window.cls.FriendlyPrinter = function()
         }
         return list;
       }.bind(this), []);
-    };
+    }.bind(this);
 
-    this._friendly_print_date = function(value_list)
+    this._friendly_print[DATE] = function(value_list)
     {
-      const DATE_STRING = 1;
+      const DATE_STRING = 2;
       return ["span", value_list[DATE_STRING], "class", "datetime"];
     };
 
-    this._friendly_print_function = function(value_list)
+    this._friendly_print[FUNCTION] = function(value_list)
     {
-      const FUNCTION_EXPRESSION = 1;
+      const FUNCTION_EXPRESSION = 2;
       return window.templates.highlight_js_source(value_list[FUNCTION_EXPRESSION]).concat('class', 'function-expression');
     };
 
-    this.friendly_print = function(value_list)
+    this._friendly_print[ERROR] = function(value_list)
     {
-      const
-      TYPE = 0,
-      ELEMENT = 1,
-      DATE = 2,
-      FUNCTION = 3;
-
-      switch (value_list[TYPE])
-      {
-      case ELEMENT:
-        return this._friendly_print_element(value_list);
-
-      case DATE:
-        return this._friendly_print_date(value_list);
-
-      case FUNCTION:
-        return this._friendly_print_function(value_list);
-      }
+      const MESSAGE = 2;
+      return ["span", value_list[MESSAGE], "class", "severity-error"];
     };
+
+    this._friendly_print[REGEXP] = function(value_list)
+    {
+      const REGEXP_STRING = 1;
+      return ["span", value_list[REGEXP_STRING], "class", "reg_exp"];
+    };
+  };
+
+  /* used for inline expandable pretty printed objects */
+
+  this.friendly_string = function(value_list)
+  {
+    const
+    TYPE = 0,
+    ELEMENT = 1,
+    DATE = 2,
+    FUNCTION = 3,
+    STRING_VALUE = 2;
+
+    switch (value_list[TYPE])
+    {
+      case DATE:
+        return value_list[STRING_VALUE];
+    }
+    return "";
   };
 
   this._obj2obj_id_list = function(obj, index)
@@ -350,10 +405,22 @@ window.cls.FriendlyPrinter = function()
     return list;
   };
 
+  this._onsettingchange = function(msg)
+  {
+    if (msg.id == "command_line" && msg.key == IS_EXPAND_INLINE_KEY)
+    {
+      this._is_inline_expand = settings.command_line.get(IS_EXPAND_INLINE_KEY);
+    }
+  };
+
   this.value2objlist = function(list, item)
   {
     const OBJECT_VALUE = 1;
-    if (item[OBJECT_VALUE])
+    // if 'expand-objects-inline' is enabled,
+    // then it doesn't make sense to pretty print DOM objects
+    if (item[OBJECT_VALUE] && 
+        (!this._is_inline_expand || 
+         !RE_DOM_OBJECT.test(item[OBJECT_VALUE][CLASS_NAME])))
     {
       list.push(item[OBJECT_VALUE]);
     }
@@ -368,8 +435,16 @@ window.cls.FriendlyPrinter = function()
     this._friendly_print_host_str = "(" +
                                     this._friendly_print_host.toString() +
                                     ")([%s])";
+    messages.addListener('setting-changed', this._onsettingchange.bind(this));
+    this._is_inline_expand = settings.command_line.get(IS_EXPAND_INLINE_KEY);
+    this.value2objlist = this.value2objlist.bind(this);
   };
 
   this.init();
 
+}
+
+window.cls.FriendlyPrinter.get_instance = function()
+{
+  return this.instance || new window.cls.FriendlyPrinter();
 }

@@ -16,12 +16,13 @@ cls.JSSearchView = function(id, name, container_class)
   SINGLE_FILE = 0,
   SEARCHFIELD = 0,
   MOVE_HIGHLIGHT_UP = 1,
-  MOVE_HIGHLIGHT_DOWN = 2;  
+  MOVE_HIGHLIGHT_DOWN = 2,
+  HANDLER = 'show-script'; 
 
   this.createView = function(container)
   {
     this._container = container;
-    container.clearAndRender(window.templates.search_panel(this, 'js'));
+    container.clearAndRender(window.templates.search_panel(this, 'js', HANDLER));
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
     this._input = container.querySelector(query);
     var search_container = this._container
@@ -175,6 +176,8 @@ cls.JSSearchView = function(id, name, container_class)
                                 this._onshortcut.bind(this));
     messages.addListener('script-selected', this._onscriptselected.bind(this));
   };
+
+  this.focus_search_field = this._focus_input;
 
   this._init(id, name, container_class);
 

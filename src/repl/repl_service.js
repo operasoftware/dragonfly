@@ -4,8 +4,14 @@ cls.ReplService = function(view, data)
 {
   this._count_map = {};
 
-  
-  //this._is_processing = false;
+  const DF_INTERN_TYPE = cls.ReplService.DF_INTERN_TYPE;
+  const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
+  const INLINE_MODEL = cls.ReplService.INLINE_MODEL;
+  const INLINE_MODEL_TMPL = cls.ReplService.INLINE_MODEL_TMPL;
+  const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
+  const RE_DOM_OBJECT = cls.InlineExpander.RE_DOM_OBJECT;
+  const IS_EXPAND_INLINE_KEY = "expand-objects-inline";
+  const CLASS_NAME = 4;
 
   this._on_consolemessage_bound = function(msg)
   {
@@ -37,7 +43,7 @@ cls.ReplService = function(view, data)
      * 8 - console.dirxml
      * 9 - console.group
      * 10 - console.groupCollapsed
-     * 11 - console.groupEnded
+     * 11 - console.groupEnd
      * 12 - console.count
      */
 
@@ -111,7 +117,7 @@ cls.ReplService = function(view, data)
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed)
+  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed, is_inline_expanded)
   {
     const VALUELIST = 2;
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
@@ -121,10 +127,15 @@ cls.ReplService = function(view, data)
     var do_friendly_print = !do_unpack &&
                             settings.command_line.get("do-friendly-print") &&
                             !is_friendly_printed;
+    
     if (do_friendly_print)
     {
       var obj_list = msg[VALUELIST].reduce(this._friendly_printer.value2objlist, []);
     }
+
+    var do_inline_expand = !do_unpack && (!do_friendly_print || !obj_list.length) &&
+                           settings.command_line.get("expand-objects-inline") &&
+                           !is_inline_expanded;
 
     if (do_unpack)
     {
@@ -142,20 +153,27 @@ cls.ReplService = function(view, data)
       // friendly prinyter works as side effect
       // it set a FRIENDLY_PRINTED field on each object
       // that means the callback is an error and success callback
-      this._friendly_printer._friendly_print(obj_list, rt_id, 0, 0, cb);
+      this._friendly_printer.get_friendly_print(obj_list, rt_id, 0, 0, cb);
+    }
+    else if (do_inline_expand)
+    {
+      // the callback works as error and success callback
+      // the _inline_expander adds a model to each JS or DOM object 
+      var callback = this._handle_log.bind(this, msg, rt_id, true, true, true);
+      this._msg_queue.stop_processing();
+      this._inline_expander.expand(msg, rt_id, callback, callback);
     }
     else
     {
-      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1;
+      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1, SEVERITY = 1;
       var values = this._parse_value_list(msg[VALUELIST], rt_id);
       var pos = null;
       if (msg[POSITION])
       {
-        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]}
+        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]};
       }
 
-
-      this._data.add_output_valuelist(rt_id, values, pos);
+      this._data.add_output_valuelist(rt_id, values, pos, msg[SEVERITY]);
       if (is_unpacked)
       {
         this._msg_queue.continue_processing();
@@ -195,8 +213,6 @@ cls.ReplService = function(view, data)
     const TYPE = 0;
     const VALUE = 0, OBJECTVALUE = 1;
     const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
-    const DF_INTERN_TYPE = 3;
-    const FRIENDLY_PRINTED = 6;
 
     var ret = {
       df_intern_type: value[DF_INTERN_TYPE] || "",
@@ -210,6 +226,10 @@ cls.ReplService = function(view, data)
       ret.type = object[OTYPE];
       ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
       ret.friendly_printed = object[FRIENDLY_PRINTED];
+      // TODO check setting
+      // move that to a new class InlineExpandObjects
+      ret.model = object[INLINE_MODEL];
+      ret.model_template = object[INLINE_MODEL_TMPL];
     }
     else
     {
@@ -249,7 +269,6 @@ cls.ReplService = function(view, data)
   {
     const STATUS = 0, TYPE = 1, OBJECT_VALUE = 3;
     const BAD_REQUEST = 3, INTERNAL_ERROR = 4;
-    const FRIENDLY_PRINTED = 4;
     const VALUELIST = 2;
 
     if (status == BAD_REQUEST || status == INTERNAL_ERROR)
@@ -280,13 +299,24 @@ cls.ReplService = function(view, data)
   };
 
   this._before_handling_object = function(msg, rt_id, thread_id, frame_id,
-                                          is_unpacked, is_friendly_printed)
+                                          is_unpacked, is_friendly_printed, is_inline_expanded)
   {
     const OBJECT_VALUE = 3;
-    var do_unpack = !is_unpacked && settings.command_line.get("unpack-list-alikes");
+
+    var do_unpack = !is_unpacked &&
+                    settings.command_line.get("unpack-list-alikes");
+
     var do_friendly_print = !do_unpack &&
                             !is_friendly_printed && 
-                            settings.command_line.get("do-friendly-print");
+                            settings.command_line.get("do-friendly-print") &&
+                            // don't friendly print DOM objects 
+                            // if inline-expand is enabled
+                            (!this._is_inline_expand || 
+                             !RE_DOM_OBJECT.test(msg[OBJECT_VALUE][CLASS_NAME]));
+
+    var do_inline_expand = !do_unpack && !do_friendly_print &&
+                           settings.command_line.get("expand-objects-inline") &&
+                           !is_inline_expanded;
     if (do_unpack)
     {
       var error_cb = this._before_handling_object.bind(this, msg, rt_id,
@@ -303,9 +333,19 @@ cls.ReplService = function(view, data)
       var callback = this._before_handling_object.bind(this, msg, rt_id,
                                                        thread_id, frame_id,
                                                        true, true);
-      this._friendly_printer._friendly_print([msg[OBJECT_VALUE]],
-                                             rt_id, thread_id, frame_id,
-                                             callback);
+      this._friendly_printer.get_friendly_print([msg[OBJECT_VALUE]],
+                                                rt_id, thread_id, frame_id,
+                                                callback);
+    }
+    else if (do_inline_expand)
+    {
+      // the callback works as error and success callback
+      // the _inline_expander adds a model to each JS or DOM object 
+      var callback = this._before_handling_object.bind(this, msg, rt_id,
+                                                       thread_id, frame_id,
+                                                       true, true, true);
+      var log_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
+      this._inline_expander.expand(log_msg, rt_id, callback, callback);
     }
     else
     {
@@ -349,11 +389,11 @@ cls.ReplService = function(view, data)
   {
     const TYPE = 1, OBJVALUE = 3;
     const OBJID = 0, CLASS = 4; FUNCTION = 5;
-    const FRIENDLY_PRINTED = 6;
 
     var obj = msg[OBJVALUE];
     this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION],
-                               obj[FRIENDLY_PRINTED]);
+                               obj[FRIENDLY_PRINTED],
+                               obj[INLINE_MODEL], obj[INLINE_MODEL_TMPL]);
   };
 
   this._handle_native = function(msg)
@@ -490,6 +530,14 @@ cls.ReplService = function(view, data)
     this.hostinfo = new cls.Scope["1.0"].HostInfo(msg);
   }.bind(this);
 
+  this._onsettingchange = function(msg)
+  {
+    if (msg.id == "command_line" && msg.key == IS_EXPAND_INLINE_KEY)
+    {
+      this._is_inline_expand = settings.command_line.get(IS_EXPAND_INLINE_KEY);
+    }
+  };
+
   this.init = function(view, data)
   {
     this._view = view;
@@ -500,6 +548,7 @@ cls.ReplService = function(view, data)
     this._msg_queue = new Queue(this);
     this._friendly_printer = new cls.FriendlyPrinter();
     this._list_unpacker = new cls.ListUnpacker();
+    this._inline_expander = new cls.InlineExpander();
     this._on_consolelog_bound = this._msg_queue.queue(this._process_on_consolelog);
     this._on_eval_done_bound = this._msg_queue.queue(this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
@@ -515,6 +564,9 @@ cls.ReplService = function(view, data)
     this._clservice.addListener("consolemessage", this._on_consolemessage_bound);
 
     window.messages.addListener("element-selected", this._on_element_selected_bound);
+
+    this._is_inline_expand = settings.command_line.get(IS_EXPAND_INLINE_KEY);
+    messages.addListener('setting-changed', this._onsettingchange.bind(this));
 
     this._get_host_info();
   };
@@ -533,3 +585,12 @@ cls.ReplServicePre6_3 = function(view, data) {
 }
 
 cls.ReplServicePre6_3.prototype = cls.ReplService;
+
+// custom fields in the scope messages
+cls.ReplService.DF_INTERN_TYPE = 3;
+cls.ReplService.FRIENDLY_PRINTED = 6;
+cls.ReplService.IS_EXPANDABLE = 1;
+cls.ReplService.INLINE_MODEL = 7;
+cls.ReplService.INLINE_MODEL_TMPL = 8;
+cls.ReplService.INLINE_MODEL_TMPL_JS = "inspected_js_object",
+cls.ReplService.INLINE_MODEL_TMPL_DOM = "inspected_dom_node";

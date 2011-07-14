@@ -30,6 +30,9 @@
  *     <dt>host-state</dt>
  *     <dd>State of the host. Payload: msg.state = 'disconnected' | 'ready' | waiting'</dd>
  *
+ *     <dt>before-show-view</dt>
+ *     <dd>before a view was created. Payload: id msg.view</dd>
+ *
  *     <dt>show-view</dt>
  *     <dd>a view was created. Payload: id msg.view</dd>
  *

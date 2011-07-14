@@ -49,6 +49,8 @@
 
   this.retrieve_last_selected_view = function(){};
 
+  this.get_visible_tabs = function(){};
+
 
   /* implemenation */
   this.get_tabbar = function(id)
@@ -120,9 +122,14 @@
   this.show_view = function(id)
   {
     // TODO make topCell a private member of UI
-    if (window.topCell)
+    var view = window.views[id];
+    if (window.topCell && view)
     {
-      window.topCell.showView(id);
+      if (!view.isvisible())
+      {
+        window.topCell.showView(id);
+      }
+      return window.views[id];
     }
   };
 
@@ -145,6 +152,11 @@
   this.retrieve_last_selected_view = function()
   {
     return window.settings.general.get('last-selected-view');
+  };
+
+  this.get_visible_tabs = function()
+  {
+    return window.topCell && window.topCell.get_visible_tabs() || [];
   };
 
 }

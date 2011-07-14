@@ -24,6 +24,12 @@ var DOMSearch = function(min_length)
 
   this.clear_style_highlight_node = function() {};
 
+  // returns an object with object_id, node_type, offset, and length. 
+  this.get_search_hit = function() {};
+
+  this.get_current_hit_element = function() {};
+
+
   // overwrites _update_info
   PanelSearch.apply(this);
 
@@ -202,14 +208,6 @@ var DOMSearch = function(min_length)
         this._validate_current_search();
         break;
       }
-      case 'dom-search-only-selected-node':
-      {
-        this.search_only_selected_node = Number(event.target.checked);
-        this._setting.set('dom-search-only-selected-node',
-                          this.search_only_selected_node);
-        this._validate_current_search();
-        break;
-      }
     }
   }.bind(this);
 
@@ -225,8 +223,7 @@ var DOMSearch = function(min_length)
     this._setting = window.settings.dom;
     this.search_type = this._setting.get('dom-search-type');
     this.ignore_case = this._setting.get('dom-search-ignore-case');
-    this.search_only_selected_node = this._setting
-                                     .get('dom-search-only-selected-node');
+    this._re_match_target = /match-token/i;
     this._min_term_length = 1;
     this._last_query = '';
     this._last_search_type = 0;
@@ -236,7 +233,7 @@ var DOMSearch = function(min_length)
     this._broker = ActionBroker.get_instance();
     window.eventHandlers.change['dom-search-type-changed'] = 
       this._onsearchtypechange;
-    this._query_selector = ".search-match";
+    this._query_selector = "." + PanelSearch.MATCH_NODE_CLASS;
     this._set_highlight_handlers();
     window.messages.addListener('element-selected', 
                                 this._onelementselected.bind(this));
@@ -247,35 +244,51 @@ var DOMSearch = function(min_length)
     if (this._input.value != this._last_query ||
         this.search_type != this._last_search_type ||
         this.ignore_case != this._last_ignore_case ||
-        this.search_only_selected_node != this._last_search_only_selected_node ||
-        (this.search_only_selected_node &&
-         this._selected_node != this._last_selected_node))
+        this._last_selected_runtime != this._selected_runtime)
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
-      this._last_search_only_selected_node = this.search_only_selected_node;
       this._last_selected_node = this._selected_node;
+      this._last_selected_runtime = this._selected_runtime;
       this._match_node_cursor = -1;
       this._match_cursor = -1;
       if (this._last_query)
       {
-        this._model = new cls.InspectableDOMNode(this._selected_runtime,
-                                                 this._selected_node);
-        this._is_processing = true;
-        this._queued_input = false;
-        this._model.search(this._last_query,
-                           this.search_type,
-                           this.ignore_case,
-                           this.search_only_selected_node ?
-                           this._selected_node : 
-                           0,
-                           this._handle_search);
+        if (this.search_type == TextSearch.REGEXP && !this._validate_reg_exp())
+        {
+          this._model = null;
+          this._match_nodes = null;
+          this._match_count = 0;
+          this._hits = [];
+          this._update_info(EMPTY);
+          var tmpl = ['div', ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING, 
+                             'class', 'info-box'];
+          this._container.firstElementChild.clearAndRender(tmpl);
+        }
+        else
+        {
+          this._match_nodes = null;
+          this._match_count = 0;
+          this._hits = [];
+          this._model = new cls.InspectableDOMNode(this._last_selected_runtime,
+                                                   this._selected_node);
+          this._is_processing = true;
+          this._queued_input = false;
+          this._model.search(this._last_query,
+                             this.search_type,
+                             this.ignore_case, 
+                             0,
+                             this._handle_search);
+        }
       }
       else
       {
         this._model = null;
+        this._match_nodes = null;
+        this._match_count = 0;
+        this._hits = [];
         this._handle_search();
         this._update_info(EMPTY);
       }
@@ -354,17 +367,6 @@ var DOMSearch = function(min_length)
     }
   };
 
-  this.inspect_selected_node = function()
-  {
-    if (this._highligh_node)
-    {
-      this._broker.dispatch_action("dom", 
-                                   "inspect-node-link",
-                                   null,
-                                   this._highligh_node);
-    }
-  };
-
   this.show_last_search = function()
   {
     this._handle_search();
@@ -379,10 +381,66 @@ var DOMSearch = function(min_length)
     }
   };
 
+  this._get_match_offset = function(node, ctx)
+  {
+    const ELEMENT = document.ELEMENT_NODE;
+    const TEXT = document.TEXT_NODE;
+
+    while (node && !ctx.is_target && !(ctx.is_target = node == ctx.target))
+    {
+      if (node.nodeType == ELEMENT)
+      {
+        this._get_match_offset(node.firstChild, ctx);
+      }
+      if (!ctx.is_target && node.nodeType == TEXT)
+      {
+        ctx.offset += node.nodeValue.length;
+      }
+      node = node.nextSibling;
+    }
+  };
+
+  this.get_search_hit = function()
+  {
+    var hit = this._hits[this._match_cursor];
+    var ret = {};
+    if (hit)
+    {
+      var search_hit_ele = hit[0].get_ancestor(this._query_selector);
+      if (search_hit_ele)
+      {
+        var ctx = {is_target: false, offset: 0, target: hit[0]};
+        var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
+        if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
+        {
+          ctx.offset -= '#text'.length;
+        }
+        return (
+        {
+          offset: ctx.offset,
+          length: hit[0].textContent.length,
+          object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
+          runtime_id: this._last_selected_runtime,
+          target: search_hit_ele
+        });
+      }
+    }
+    return null;
+  };
+
+  this.get_current_hit_element = function()
+  {
+    var hit = this._hits[this._match_cursor];
+    return hit && hit[0] || null;
+  };
+
+
+  this.update_match_highlight = this._update_match_highlight;
+
   this._init(min_length);
 };
 
-DOMSearch.prototype = TextSearch.prototype;
+DOMSearch.prototype = SearchSingleNodes.prototype;
 
 DOMSearch.PLAIN_TEXT = TextSearch.PLAIN_TEXT;
 DOMSearch.REGEXP = TextSearch.REGEXP;

@@ -18,12 +18,10 @@
   max-height: 320px;
   height: 100%;
 }
-.screenshot-sample-color-container
+.screenshot-sample-color-container,
+.screenshot-ruler
 {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  margin-top: 35px;
 }
 
 .screenshot-sample-color
@@ -69,6 +67,7 @@
   vertical-align: middle;
   margin-right: 7px;
   border-radius: 3px;
+  border: 1px solid rgba(34, 34, 34, .4);
 }
 
 .color-palette-item

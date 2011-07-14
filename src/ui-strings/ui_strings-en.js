@@ -343,7 +343,7 @@ ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 ui_strings.S_BUTTON_LABEL_AT_ABORT = "Stop when encountering an abort message";
 
 /* DESC: Execution stops when encountering an error. */
-ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show where a JavaScript error occurs";
+ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show parse errors and break on exceptions";
 
 /* DESC: Execution stops when encountering an exception. */
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
@@ -1259,3 +1259,57 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
+
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
+
+/* DESC: Label for the global scope in the Scope Chain. */
+ui_strings.S_SCOPE_GLOBAL = "Global";
+
+/* DESC: Label for the scopes other than local and global in the Scope Chain. */
+ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
+
+/* DESC: Radio label for the search type 'Text' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
+
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
+
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
+
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel  */
+ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
+
+/* DESC: Checkbox label to set the 'ignore case' flag search panel  */
+ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
+
+/* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
+ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
+
+/* DESC: If enabled objects can be expanded inline in the console  */
+ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
+
+/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
+ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
+
+
+

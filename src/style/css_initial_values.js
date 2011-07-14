@@ -160,8 +160,10 @@ css_initial_values =
 "mask": "none",
 "max-height": "-1px",
 "max-width": "-1px",
+"max-zoom": "auto",
 "min-height": "0px",
 "min-width": "0px",
+"min-zoom": "auto",
 "nav-down": "auto",
 "nav-index": "auto",
 "nav-left": "auto",
@@ -231,6 +233,7 @@ css_initial_values =
 "text-transform": "none",
 "top": "auto",
 "unicode-bidi": "normal",
+"user-zoom": "zoom",
 "vector-effect": "none",
 "vertical-align": "baseline",
 "viewport-fill": "none",
@@ -243,5 +246,6 @@ css_initial_values =
 "word-spacing": "0px",
 "word-wrap": "normal",
 "writing-mode": "lr-tb",
+"zoom": "auto",
 "z-index": "auto"
 };

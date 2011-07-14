@@ -129,12 +129,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateBreakpoints = function(force_repaint)
   {
-    if (force_repaint)
+    if (force_repaint && line_numbers)
     {
       line_numbers.style.visibility = "hidden";
     }
-    var lines = line_numbers.getElementsByTagName('span');
-    var bp_states = __current_script.breakpoint_states;
+    var lines = line_numbers && line_numbers.getElementsByTagName('span');
+    var bp_states = __current_script && __current_script.breakpoint_states;
     var default_y = context['bp-line-pointer-default'];
     var line_height = context['line-height'];
     if (bp_states)
@@ -170,6 +170,10 @@ cls.JsSourceView = function(id, name, container_class)
         var highlight_class, bp_state;
         for (var i = 0, line; line = lines[i]; i++)
         {
+          if (line.parentNode != source_content)
+          {
+            continue;
+          }
           highlight_class = "";
           
           if (bp_state = bp_states[__current_line + i])
@@ -177,8 +181,18 @@ cls.JsSourceView = function(id, name, container_class)
             highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
                               BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
           }
-          
-          line.className = highlight_class;
+          if (line.className.indexOf('error') > -1)
+          {
+            line.className = Array.prototype.filter.call(line.classList, 
+                                                         function(cl_name)
+            {
+              return cl_name.indexOf('error') > -1;
+            }).join(' ') + ' ' + highlight_class;
+          }
+          else
+          {
+            line.className = highlight_class;
+          }
         }
       }
     }
@@ -516,7 +530,8 @@ cls.JsSourceView = function(id, name, container_class)
     {
       is_parse_error = true;
     }
-    if (__current_script.script_id != script_id || is_parse_error)
+    var is_current_script = __current_script.script_id == script_id;
+    if (!is_current_script || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
 
@@ -539,7 +554,7 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.parse_error.error_line_offset =
             script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
         }
-        if (is_visible)
+        if (is_visible && !is_current_script)
         {
           setScriptContext(script_id, line_nr);
         }
@@ -551,6 +566,20 @@ cls.JsSourceView = function(id, name, container_class)
         document.getElementById(scroll_id).innerHTML = "";
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "script source is missing for given id in views.js_source.showLine");
+
+        new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
+          {
+            label: ui_strings.S_BUTTON_OK,
+            handler: function() {
+              runtimes.reloadWindow();
+              return true;
+            }
+          },
+          {
+            label: ui_strings.S_BUTTON_CANCEL
+          }
+        ).show();
+
         return;
       }
       // reset the stored current line to ensure
@@ -595,10 +624,6 @@ cls.JsSourceView = function(id, name, container_class)
           scroll_container.scrollTop =
             __current_line / __current_script.line_arr.length * scroll_container.scrollHeight;
         }
-      }
-      if(__current_script.parse_error)
-      {
-        views.js_source.showLinePointer(__current_script.parse_error.error_line + 1, true )
       }
     }
     __current_line = line_nr;
@@ -991,27 +1016,21 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
-
-    if(script_id)
+    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
+    var script_id = script_id_str && parseInt(script_id_str);
+    if (script_id)
     {
       // TODO is this needed?
-      if(script_id != selected_script_id)
+      if (script_id != selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
         topCell.showView(views.js_source.id);
         selected_script_id = script_id;
       }
+      selected_value = target_ele.textContent;
+      return true;
     }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "missing script id in handlers['display-script']")
-    }
-    selected_value = target_ele.textContent;
-    // TODO
-
-    return true;
+    return false;
   }
 
   // this.updateElement
@@ -1287,35 +1306,47 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
 
-          if (breakpoints.script_has_breakpoint_on_line(script_id, line))
+          var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
+          if (bp)
           {
-            var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
-            items.push({
-              label: !bp.condition ?
-                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
-                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
-              handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
-            },
+            if (bp.is_enabled)
             {
-              label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
-              handler: function(event, target) {
-                breakpoints.set_condition("", bp.id);
+              items.push({
+                label: !bp.condition ?
+                       ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                       ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
+                handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
               },
-              disabled: !bp.condition
-            },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+                handler: function(event, target) {
+                  breakpoints.set_condition("", bp.id);
+                },
+                disabled: !bp.condition
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.remove_breakpoint(script_id, line);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
+                handler: function(event, target) {
+                  var bp_id = breakpoints.remove_breakpoint(script_id, line);
+                  breakpoints.delete_breakpoint(bp_id);
+                }
+              });
+            }
+            else
             {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
-              handler: function(event, target) {
-                breakpoints.remove_breakpoint(script_id, line);
-              }
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
-              handler: function(event, target) {
-                var bp_id = breakpoints.remove_breakpoint(script_id, line);
-                breakpoints.delete_breakpoint(bp_id);
-              }
-            });
+              items.push({
+                label: ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.add_breakpoint(script_id, line);
+                }
+              });
+            }
           }
           else
           {

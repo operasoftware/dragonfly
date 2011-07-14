@@ -810,8 +810,9 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      // TODO: should remove previously commited value here, in case of looping through properties
-      actions.set_property(this.context_rt_id, this.context_rule_id, props);
+      actions.restore_all_properties(this.context_cur_prop, function() {
+        actions.set_property(this.context_rt_id, this.context_rule_id, props);
+      }.bind(this));
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {

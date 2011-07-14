@@ -114,6 +114,14 @@ cls.ShortcutConfigView = function(id, name, container_class)
                                                           shortcuts, 
                                                           shortcuts_match,
                                                           invalid_shortcuts));
+
+    var invalid_shortcut = document.querySelector(".invalid-shortcut input");
+    if (invalid_shortcut)
+    {
+      invalid_shortcut.focus();
+      invalid_shortcut.selectionStart = invalid_shortcut.selectionEnd = invalid_shortcut.value.length;
+    }
+
     if (!invalid_shortcuts.length)
       this._broker.set_shortcuts(shortcuts, handler_id);
   }.bind(this);

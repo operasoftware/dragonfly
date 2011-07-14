@@ -372,7 +372,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   this.runtime_has_dom = function(rt_id)
   {
-    // description is only available in never Core versions, so if it's undefined it has DOM
+    // description is only available in newer Core versions, so if it's undefined it has DOM
     return __runtimes[rt_id] && (__runtimes[rt_id].description == "document" ||
                                  __runtimes[rt_id].description === undefined);
   };
@@ -462,9 +462,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
     var log = [EVENT_TYPES[type], ':', NL];
 
-    if (runtime_stoped_queue.length)
+    if (runtime_stopped_queue.length)
     {
-      log.push(INDENT, runtime_stoped_queue.join(' '));
+      log.push(INDENT, runtime_stopped_queue.join(' '));
     }
     log.push(INDENT, 'runtime id: ', rt_id, NL);
     log.push(INDENT, 'thread id: ', thread_id, NL);
@@ -548,6 +548,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   this.createAllRuntimesOnDebugContextChange = function(win_id)
   {
     debug_context_frame_path = '';
+    __windows_reloaded = {};
     __selected_script = '';
     /*
     if( _is_first_call_create_all_runtimes_on_debug_context_change )
@@ -626,17 +627,20 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         context: message[CONTEXT],
         description: message[DESCRIPTION]
       };
-      if(settings['js_source'].get('error'))
+      if (settings['js_source'].get('error') ||
+          (views.js_source.isvisible() && 
+           views.js_source.getCurrentScriptId() == message[SCRIPT_ID]))
       {
-        if(  !views['js_source'].isvisible())
+        if (!views.js_source.isvisible())
         {
           window.topCell.showView('js_source');
         }
         var plus_lines = views.js_source.getMaxLines() <= 10
-          ? views.js_source.getMaxLines() / 2 >> 0
-          : 10;
+                         ? views.js_source.getMaxLines() / 2 >> 0
+                         : 10;
         runtimes.setSelectedScript(error.script_id);
-        views.js_source.showLine(error.script_id, error.line_nr - plus_lines, false, true);
+        views.js_source.showLine(error.script_id, 
+                                 error.line_nr - plus_lines, false, true);
       }
     }
     else
@@ -652,27 +656,38 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   var thread_queues = {};
   var current_threads = {};
 
-  var runtime_stoped_queue = [];
-  var stoped_threads = {};
+  var runtime_stopped_queue = [];
+  var stopped_threads = {};
+
+  // for debug purpose
+  var print_threads = function(label, msg)
+  {
+    var log = label + ': ' + JSON.stringify(msg) + '\n' +
+      'thread_queues: ' + JSON.stringify(thread_queues) + '\n' +
+      'current_threads: ' + JSON.stringify(current_threads) + '\n' +
+      'runtime_stopped_queue: ' + JSON.stringify(runtime_stopped_queue) + '\n' +
+      'stopped_threads: ' + JSON.stringify(stopped_threads) + '\n';
+    opera.postError(log);
+  };
 
   var cleanUpThreadOnContextChange = function()
   {
-    thread_queues = {};
-    current_threads = {};
+    const THREAD_ID = 1;
     // release all stopped events
-    var rt_id = '', i = 0, thread_id = '';
-    for( ; rt_id = runtime_stoped_queue[i]; i++)
+    while (runtime_stopped_queue.length)
     {
-      thread_id = stoped_threads[rt_id] && stoped_threads[rt_id].getNodeData("thread-id");
-      if( thread_id )
+      var rt_id = runtime_stopped_queue.shift();
+      var thread = stopped_threads[rt_id].shift();
+      if (thread)
       {
-        services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
-                                                                  thread_id, 
-                                                                  'run']);
+        var msg = [rt_id, thread[THREAD_ID], 'run'];
+        services['ecmascript-debugger'].requestContinueThread(0, msg);
       }
     }
-    stoped_threads = {};
-    runtime_stoped_queue = [];
+    thread_queues = {};
+    current_threads = {};
+    stopped_threads = {};
+    runtime_stopped_queue = [];
   }
 
   var is_runtime_of_debug_context = function(rt_id)
@@ -696,22 +711,21 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     // it seems that the order of the thread-finished events can get reversed
     // TODO this is a temporary fix for situations where a threads
     // finishes in a runtime whre it has never started
-    if(current_thread)
+    if (current_thread)
     {
-      for(i = 0 ; cur = current_thread[i]; i++)
+      for (i = 0 ; cur = current_thread[i]; i++)
       {
-        if( cur == thread_id )
+        if (cur == thread_id)
         {
           current_thread.splice(i, 1);
           break;
         }
       }
-      for(i = 0 ; cur = thread_queue[i]; i++)
+      for (i = 0 ; cur = thread_queue[i]; i++)
       {
-        if( cur == thread_id )
+        if (cur == thread_id)
         {
           thread_queue.splice(i, 1);
-          delete stoped_threads[rt_id][thread_id];
           return true;
         }
       }
@@ -764,25 +778,31 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     {
       var id = message[THREAD_ID];
       var parent_thread_id = message[PARENT_THREAD_ID];
-      var thread_queue = thread_queues[rt_id] || ( thread_queues[rt_id] = [] );
-      var current_thread = current_threads[rt_id] || ( current_threads[rt_id] = [] );
+      var thread_queue = thread_queues[rt_id] || (thread_queues[rt_id] = []);
+      var current_thread = current_threads[rt_id] || (current_threads[rt_id] = []);
       thread_queue[thread_queue.length] = id;
-      if( !current_thread.length ||
-        ( parent_thread_id !== 0 && parent_thread_id == current_thread[ current_thread.length - 1 ] ) )
+      if (!current_thread.length ||
+          (parent_thread_id !== 0 && 
+           parent_thread_id == current_thread[current_thread.length - 1]))
       {
         current_thread[current_thread.length] = id;
       }
-      if( __log_threads )
+
+      if (__log_threads)
       {
         log_thread(THREAD_STARTED, message, rt_id, id);
         views.threads.update();
       }
     }
+    else
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread started not debug context')
+    }
   }
 
   this.onThreadStoppedAt = function(status, message)
   {
-
     const
     RUNTIME_ID = 0,
     THREAD_ID = 1,
@@ -795,36 +815,39 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     var thread_id = message[THREAD_ID];
 
     // TODO clean up workaround for missing filtering
-    if( is_runtime_of_debug_context(rt_id) )
+    if (is_runtime_of_debug_context(rt_id))
     {
 
       var current_thread = current_threads[rt_id];
 
       // the current thread id must be set in 'thread-started' event
       // TODO thread logic
-      if( !stop_at.getControlsEnabled ()
-          && ( !current_thread // in case the window was switched
-              || thread_id == current_thread[ current_thread.length - 1 ] ) )
+      if (!stop_at.is_stopped && 
+          (!current_thread /* in case the window was switched */ ||
+           thread_id == current_thread[current_thread.length - 1]))
       {
         stop_at.handle(message);
       }
       else
       {
-        // it is sure to assume that per runtime there can be only one <stoped-at> event
-        if( ! stoped_threads[rt_id] )
+        // it is sure to assume that per runtime there can be only one <stopped-at> event
+        if (!stopped_threads[rt_id])
         {
-          stoped_threads[rt_id] = {};
+          stopped_threads[rt_id] = [];
         }
-        stoped_threads[rt_id] = message;
-        runtime_stoped_queue[runtime_stoped_queue.length] = rt_id;
+        stopped_threads[rt_id].push(message);
+        runtime_stopped_queue.push(rt_id);
       }
     }
     else
     {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread stopped not in debug context ')
       services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
                                                                 thread_id, 
                                                                 'run']);
     }
+
     if (__log_threads)
     {
       log_thread(THREAD_STOPPED_AT, message, rt_id, thread_id);
@@ -841,38 +864,47 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     const
     RUNTIME_ID = 0,
     THREAD_ID = 1,
-    SCRIPT_ID = 2,
-    LINE_NUMBER = 3,
-    STOPPED_REASON = 4,
-    BREAKPOINT_ID = 5;
+    STATUS = 2;
 
     var rt_id = message[RUNTIME_ID];
     // workaround for missing filtering
-    if( is_runtime_of_debug_context(rt_id) )
+    if (is_runtime_of_debug_context(rt_id))
     {
       var thread_id = message[THREAD_ID];
       clear_thread_id(rt_id, thread_id);
-      if( !stop_at.getControlsEnabled () && runtime_stoped_queue.length )
+
+      if (message[STATUS] == "cancelled-by-scheduler" && stop_at.is_stopped)
       {
-        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
+        stop_at.on_thread_cancelled(message);
       }
+      
+      if (!stop_at.is_stopped && runtime_stopped_queue.length)
+      {
+        stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());
+      }
+
       if( __log_threads )
       {
         log_thread(THREAD_FINISHED, message, rt_id, thread_id);
         views.threads.update();
       }
     }
+    else
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'thread finished not in debug context')
+    }
   }
 
     // messages.post('host-state', {state: 'ready'});
     // fires when stop_at releases the control to the host
-    // if there is already a <thread-stoped> event in the queue
+    // if there is already a <thread-stopped> event in the queue
     // it has to be handled here
     var onHostStateChange = function(msg)
     {
-      if( !stop_at.getControlsEnabled() && runtime_stoped_queue.length )
+      if (!stop_at.is_stopped && runtime_stopped_queue.length)
       {
-        stop_at.handle( stoped_threads[runtime_stoped_queue.shift()] );
+        stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());
       }
     }
 
