@@ -128,7 +128,9 @@ var JSMultifileSearchPrototype = function()
         this.search_type != this._last_search_type ||
         this.ignore_case != this._last_ignore_case ||
         this.search_all_files != this._last_search_all_files ||
-        this._last_selected_script != this._last_script)
+        (this.search_all_files == this._last_search_all_files && this.search_all_files 
+         ? false 
+         : this._last_selected_script != this._last_script))
     {
       this._last_query = this._input.value;
       this._orig_search_term = this._last_query;
@@ -355,7 +357,7 @@ var JSMultifileSearchPrototype = function()
                          script.line_offsets_length[i];
 
       this._source_file_hits = [];
-      
+
       var line_index = script.line_matches[cursor];
       var offset = script.line_offsets[cursor];
 
