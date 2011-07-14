@@ -12,7 +12,8 @@
 .search-highlight,
 .search-highlight-more
 {
- 
+  background-color: rgba(0,0,0,0.13); 
+  background-color: hsl(0, 0%, 87%); 
 }
 
 .search-highlight-selected,
