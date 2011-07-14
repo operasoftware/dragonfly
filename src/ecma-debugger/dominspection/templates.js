@@ -574,8 +574,8 @@
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       child_pointer = 0;
-      while ((parent_ele = parent_ele_stack[parent_ele_stack.length -1]) && 
-              current_depth < parent_ele[DEPTH])
+      while ((parent_ele = parent_ele_stack.last) &&
+             current_depth <= parent_ele[DEPTH])
       {
         parent_ele_stack.pop();
       }
@@ -670,11 +670,6 @@
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
           }
-
-          if (parent_ele && parent_ele[DEPTH] == node[DEPTH])
-          {
-            parent_ele_stack.pop();
-          } 
           parent_ele_stack.push(node);  
           break;
         }
@@ -711,7 +706,7 @@
         default:
         {
           current_formatting = "";
-          parent_ele = parent_ele_stack[parent_ele_stack.length - 1];
+          parent_ele = parent_ele_stack.last;
           if (re_formatted.test(parent_ele))
           {
             current_formatting = parent_ele[NAME].toLowerCase() == 'script'

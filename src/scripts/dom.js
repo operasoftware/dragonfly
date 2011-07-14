@@ -602,6 +602,13 @@ Array.prototype.sum = function(selectorfun)
   }
 };
 
+Array.prototype.__defineGetter__("last", function()
+{
+  return this[this.length - 1];
+});
+
+Array.prototype.__defineSetter__("last", function() {});
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
