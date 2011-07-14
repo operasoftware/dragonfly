@@ -204,6 +204,11 @@
                                                    script.state_arr[line - 1], 
                                                    ['code'],
                                                    true);
+            if (script.line_offsets_length[i] && 
+                script.line_offsets[i] + script.line_offsets_length[i] > script.get_line_length(i))
+            {
+              script_tmpl.push(['span', '…', 'class', 'match-following-line'])
+            }
             ret.push(['div', 
                        ['span', String(line), 'class', 'line-no'],
                        script_tmpl,

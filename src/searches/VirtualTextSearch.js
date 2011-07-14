@@ -111,7 +111,7 @@ var VirtualTextSearchBase = function()
 
   this.highlight_matches = function(script){};
 
-  this.set_hit = function(node, offset, length, style){};
+  this.set_hit = function(node, offset, length, style, do_store){};
 
   this.get_hit_count = function(){};
   

@@ -238,3 +238,8 @@
 {
   padding: 7px;
 }
+
+.match-following-line
+{
+  display: block;
+}

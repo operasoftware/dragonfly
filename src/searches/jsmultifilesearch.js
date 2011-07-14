@@ -241,7 +241,7 @@ var JSMultifileSearchPrototype = function()
     this._last_search_type = undefined;
     this._last_ignore_case = undefined;
     this._last_search_all_files = undefined;
-    this._source_file_hit = null;
+    this._source_file_hits = null;
     this.search_type = undefined;
     this.ignore_case = undefined;
     this.search_all_files = undefined;
@@ -343,19 +343,38 @@ var JSMultifileSearchPrototype = function()
       var line_nr = script.line_matches[cursor];
       js_source_view.showLine(script.script_id, line_nr - 10);
       var line_ele = js_source_view.get_line_element(line_nr);
-      if (this._source_file_hit)
+      if (this._source_file_hits)
       {
-        this._clear_highlight_spans(this._source_file_hit);
+        this._source_file_hits.forEach(function(hit)
+        {
+          this._clear_highlight_spans(hit);
+        }, this);
       }
       var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
                          script.match_length :
                          script.line_offsets_length[i];
-      this._source_file_hit = this.set_hit(line_ele, 
-                                           script.line_offsets[cursor],
-                                           match_length,
-                                           this._match_style_highlight,
-                                           false);
-      var target = this._source_file_hit && this._source_file_hit[0];
+
+      this._source_file_hits = [];
+      
+      var line_index = script.line_matches[cursor];
+      var offset = script.line_offsets[cursor];
+
+      while (line_ele && typeof match_length == 'number' && match_length > 0)
+      {
+        this._source_file_hits.push(this.set_hit(line_ele, 
+                                                 offset,
+                                                 match_length, 
+                                                 this._match_style_highlight,
+                                                 false));
+        match_length -= script.get_line_length(line_index) - offset;
+        offset = 0;
+        line_index++;
+        line_ele = line_ele.nextElementSibling;
+      }
+
+      var target = this._source_file_hits &&
+                   this._source_file_hits[0] &&
+                   this._source_file_hits[0][0];
       if (target)
       {
         var scroll_container = js_source_view.get_scroll_container();
