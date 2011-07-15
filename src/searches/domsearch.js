@@ -46,6 +46,7 @@ var DOMSearch = function(min_length)
   {
     if (TOKEN_HIGHLIGHT.indexOf(this.search_type) != -1)
     {
+      this.is_token_search = true;
       this._initial_highlight = this._initial_highlight_token;
       this._highlight_next = this._highlight_next_token;
       this._highlight_previous = this._highlight_previous_token;
@@ -59,6 +60,7 @@ var DOMSearch = function(min_length)
     }
     else
     {
+      this.is_token_search = false;
       this._initial_highlight = this._initial_highlight_node;
       this._highlight_next = this._highlight_next_node;
       this._highlight_previous = this._highlight_previous_node;

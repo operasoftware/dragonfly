@@ -133,6 +133,7 @@ cls.DOMSearchView = function(id, name, container_class)
       'search_type',
       'ignore_case',
       'search_only_selected_node',
+      'is_token_search',
     ].forEach(function(prop)
     {
       this.__defineGetter__(prop, function()
