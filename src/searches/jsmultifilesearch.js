@@ -17,7 +17,8 @@ var JSMultifileSearchPrototype = function()
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY,
   MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
-  INJECTED_SCRIPTS = ["Browser JS", "Extension JS", "User JS"];
+  INJECTED_SCRIPTS = ["Browser JS", "Extension JS", "User JS"],
+  REDO_SEARCH = -1;
 
   // overwrites _update_info
   PanelSearch.apply(this);
@@ -127,6 +128,12 @@ var JSMultifileSearchPrototype = function()
   {
     return INJECTED_SCRIPTS.indexOf(script.script_type) != -1;
   };
+
+  this._redo_search = function()
+  {
+    this._last_search_type = REDO_SEARCH;
+    this._validate_current_search();
+  }
 
   this._validate_current_search = function()
   {
@@ -263,6 +270,7 @@ var JSMultifileSearchPrototype = function()
     this.search_all_files = undefined;
     this.search_injected_scripts = undefined;
     this._show_search_results_bound = this._show_search_results.bind(this);
+    this._redo_search_bound = this._redo_search.bind(this);
     window.eventHandlers.click['show-script'] = this._show_script.bind(this);
     window.eventHandlers.mouseover['show-script'] =
       this.clear_style_highlight_node.bind(this);
@@ -356,52 +364,59 @@ var JSMultifileSearchPrototype = function()
 
     if (script)
     {
-      var js_source_view = window.views[JS_SOURCE_ID];
-      var line_nr = script.line_matches[cursor];
-      js_source_view.showLine(script.script_id, line_nr - 10);
-      var line_ele = js_source_view.get_line_element(line_nr);
-      if (this._source_file_hits)
+      if (this._rt_ids.indexOf(script.runtime_id) > -1)
       {
-        this._source_file_hits.forEach(function(hit)
+        var js_source_view = window.views[JS_SOURCE_ID];
+        var line_nr = script.line_matches[cursor];
+        js_source_view.showLine(script.script_id, line_nr - 10);
+        var line_ele = js_source_view.get_line_element(line_nr);
+        if (this._source_file_hits)
         {
-          this._clear_highlight_spans(hit);
-        }, this);
-      }
-      var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
-                         script.match_length :
-                         script.line_offsets_length[cursor];
-
-      this._source_file_hits = [];
-
-      var line_index = script.line_matches[cursor];
-      var offset = script.line_offsets[cursor];
-
-      while (line_ele && typeof match_length == 'number' && match_length > 0)
-      {
-        this._source_file_hits.push(this.set_hit(line_ele, 
-                                                 offset,
-                                                 match_length, 
-                                                 TextSearch.HIGHLIGHT_STYLE,
-                                                 false));
-        match_length -= script.get_line_length(line_index) - offset;
-        offset = 0;
-        line_index++;
-        line_ele = line_ele.nextElementSibling;
-      }
-
-      var target = this._source_file_hits &&
-                   this._source_file_hits[0] &&
-                   this._source_file_hits[0][0];
-      if (target)
-      {
-        var scroll_container = js_source_view.get_scroll_container();
-        scroll_container.scrollLeft = 0;
-        if (target.offsetLeft + target.offsetWidth > scroll_container.offsetWidth)
-        {
-          scroll_container.scrollLeft = target.offsetLeft - 
-                                        scroll_container.offsetWidth +
-                                        target.offsetWidth + 100;
+          this._source_file_hits.forEach(function(hit)
+          {
+            this._clear_highlight_spans(hit);
+          }, this);
         }
+        var match_length = this.search_type == TextSearch.PLAIN_TEXT ?
+                           script.match_length :
+                           script.line_offsets_length[cursor];
+
+        this._source_file_hits = [];
+
+        var line_index = script.line_matches[cursor];
+        var offset = script.line_offsets[cursor];
+
+        while (line_ele && typeof match_length == 'number' && match_length > 0)
+        {
+          this._source_file_hits.push(this.set_hit(line_ele, 
+                                                   offset,
+                                                   match_length, 
+                                                   TextSearch.HIGHLIGHT_STYLE,
+                                                   false));
+          match_length -= script.get_line_length(line_index) - offset;
+          offset = 0;
+          line_index++;
+          line_ele = line_ele.nextElementSibling;
+        }
+
+        var target = this._source_file_hits &&
+                     this._source_file_hits[0] &&
+                     this._source_file_hits[0][0];
+        if (target)
+        {
+          var scroll_container = js_source_view.get_scroll_container();
+          scroll_container.scrollLeft = 0;
+          if (target.offsetLeft + target.offsetWidth > scroll_container.offsetWidth)
+          {
+            scroll_container.scrollLeft = target.offsetLeft - 
+                                          scroll_container.offsetWidth +
+                                          target.offsetWidth + 100;
+          }
+        }
+      }
+      else
+      {
+        new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
       }
     }
   };
