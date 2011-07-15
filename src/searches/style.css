@@ -10,14 +10,18 @@
 }
 
 .search-highlight,
-.search-highlight-more
+.search-highlight-first,
+.search-highlight-between,
+.search-highlight-last
 {
   background-color: rgba(0,0,0,0.13); 
   background-color: hsl(0, 0%, 87%); 
 }
 
 .search-highlight-selected,
-.search-highlight-more-selected
+.search-highlight-selected-first,
+.search-highlight-selected-between,
+.search-highlight-selected-last
 {
   background-color: #c8f7bd; 
   background-image: -o-linear-gradient(-90deg, #fce703 30%, #fcbe03 100%);
@@ -27,18 +31,26 @@
   color: #000000;
 }
 
-.search-highlight-more
+.search-highlight-first,
+.search-highlight-between,
+.search-highlight-selected-first,
+.search-highlight-selected-between
 {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-right: 0;
+  border-right-width: 0;
 }
 
-.search-highlight-more-selected
+.search-highlight-last,
+.search-highlight-between,
+.search-highlight-selected-last,
+.search-highlight-selected-between
 {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  border-left-color: transparent;
-  
+  margin-left: 0;
+  border-left-width: 0;
 }
 
 .advanced-search-table

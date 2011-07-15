@@ -16,9 +16,14 @@ TextSearch.REGEXP = 2;
 TextSearch.NO_MATCH = 1;
 TextSearch.EMPTY = 2;
 TextSearch.DEFAULT_MATCH_CLASS = "search-highlight";
-TextSearch.SELECTED_MATCH_CLASS = "search-highlight-selected",
-TextSearch.DEFAULT_MATCH_MORE_CLASS = "search-highlight-more";
-TextSearch.SELECTED_MATCH_MORE_CLASS = "search-highlight-more-selected";
+TextSearch.DEFAULT_MATCH_CLASS_FIRST = "search-highlight-first";
+TextSearch.DEFAULT_MATCH_CLASS_BETWEEN = "search-highlight-between";
+TextSearch.DEFAULT_MATCH_CLASS_LAST = "search-highlight-last";
+TextSearch.SELECTED_MATCH_CLASS = "search-highlight-selected";
+TextSearch.SELECTED_MATCH_CLASS_FIRST = "search-highlight-selected-first";
+TextSearch.SELECTED_MATCH_CLASS_BETWEEN = "search-highlight-selected-between";
+TextSearch.SELECTED_MATCH_CLASS_LAST = "search-highlight-selected-last";
+
 TextSearch.DEFAULT_STYLE = 1;
 TextSearch.HIGHLIGHT_STYLE = 1;
 
@@ -31,7 +36,13 @@ TextSearch.prototype = new function()
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY,
   DEFAULT_MATCH_CLASS = TextSearch.DEFAULT_MATCH_CLASS,
-  SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS;
+  DEFAULT_MATCH_CLASS_FIRST = TextSearch.DEFAULT_MATCH_CLASS_FIRST,
+  DEFAULT_MATCH_CLASS_BETWEEN = TextSearch.DEFAULT_MATCH_CLASS_BETWEEN,
+  DEFAULT_MATCH_CLASS_LAST = TextSearch.DEFAULT_MATCH_CLASS_LAST,
+  SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS,
+  SELECTED_MATCH_CLASS_FIRST = TextSearch.SELECTED_MATCH_CLASS_FIRST,
+  SELECTED_MATCH_CLASS_BETWEEN = TextSearch.SELECTED_MATCH_CLASS_BETWEEN,
+  SELECTED_MATCH_CLASS_LAST = TextSearch.SELECTED_MATCH_CLASS_LAST;
 
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
@@ -59,14 +70,38 @@ TextSearch.prototype = new function()
     this.search_type = TextSearch.PLAIN_TEXT;
   }
 
-  this._set_default_style = function(span)
+  this._set_default_style = function(span, index, array)
   {
-    span.className = DEFAULT_MATCH_CLASS;
+    var length = array.length;
+    if (length > 1)
+    {
+      span.className = index == 0
+                     ? DEFAULT_MATCH_CLASS_FIRST
+                     : index == length - 1
+                     ? DEFAULT_MATCH_CLASS_LAST
+                     : DEFAULT_MATCH_CLASS_BETWEEN;
+    }
+    else
+    {
+      span.className = DEFAULT_MATCH_CLASS;
+    }
   };
 
-  this._set_highlight_style = function(span)
+  this._set_highlight_style = function(span, index, array)
   {
-    span.className = SELECTED_MATCH_CLASS;
+    var length = array.length;
+    if (length > 1)
+    {
+      span.className = index == 0
+                     ? SELECTED_MATCH_CLASS_FIRST
+                     : index == length - 1
+                     ? SELECTED_MATCH_CLASS_LAST
+                     : SELECTED_MATCH_CLASS_BETWEEN;
+    }
+    else
+    {
+      span.className = SELECTED_MATCH_CLASS;
+    }
   };
 
   this._update_info = function(type)
@@ -142,9 +177,12 @@ TextSearch.prototype = new function()
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
-            span.className = DEFAULT_MATCH_CLASS;
             this._consumed_total_length += node.nodeValue.length;
             node = span;
+            if (this._to_consume_hit_length < 1)
+            {
+              this._curent_search_result.forEach(this._set_default_style);
+            }
           }
           else
           {

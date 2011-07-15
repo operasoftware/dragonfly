@@ -137,16 +137,6 @@ var VirtualTextSearchBase = function()
 
   /* private */
 
-  this._set_default_style = function(span, index)
-  {
-    span.className = index ? DEFAULT_MATCH_MORE_CLASS : DEFAULT_MATCH_CLASS;
-  };
-
-  this._set_highlight_style = function(span, index)
-  {
-    span.className = index ? SELECTED_MATCH_MORE_CLASS : SELECTED_MATCH_CLASS;
-  };
-
   this._init = function()
   {
     this._search_term = '';
@@ -331,9 +321,11 @@ var VirtualTextSearchBase = function()
             }
             cur_node = hit.splitText(length);
             span = node.insertBefore(node.ownerDocument.createElement('em'), hit);
+            /*
             span.className = this._hit.length
                            ? this._highlight_style_more
                            : this._highlight_style;
+            */
             span.appendChild(node.removeChild(hit));
             this._hit[this._hit.length] = span;
           }
@@ -357,18 +349,15 @@ var VirtualTextSearchBase = function()
     {
       this._offset = this._script.line_offsets[index];
       this._length = this._script.match_length;
-      this._highlight_style = index == this._script.match_cursor
-                            ? SELECTED_MATCH_CLASS
-                            : DEFAULT_MATCH_CLASS;
-      this._highlight_style_more = index == this._script.match_cursor
-                                 ? SELECTED_MATCH_MORE_CLASS
-                                 : DEFAULT_MATCH_MORE_CLASS;
       this._hits[index] = this._hit = [];
       if (!this._source_container)
       {
         this._set_source_container();
       }
       this._search_node(this._source_container.getElementsByTagName('div')[line - this._top_line]);
+      this._hit.forEach(index == this._script.match_cursor ?
+                        this._set_highlight_style :
+                        this._set_default_style);
     }
   };
 
@@ -548,18 +537,15 @@ var VirtualTextSearchBase = function()
   {
     this._offset = offset;
     this._length = length;
-    this._highlight_style = style == TextSearch.HIGHLIGHT_STYLE
-                          ? SELECTED_MATCH_CLASS
-                          : DEFAULT_MATCH_CLASS;
-    this._highlight_style_more = style == TextSearch.HIGHLIGHT_STYLE
-                               ? SELECTED_MATCH_MORE_CLASS
-                               : DEFAULT_MATCH_MORE_CLASS;
     this._hit = []
     if (typeof do_store != 'boolean' || do_store)
     {
       this._hits.push(this._hit);
     }
     this._search_node(node);
+    this._hit.forEach(style == TextSearch.HIGHLIGHT_STYLE ?
+                      this._set_highlight_style :
+                      this._set_default_style);
     return this._hit;
   };
 
