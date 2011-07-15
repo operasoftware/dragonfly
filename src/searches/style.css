@@ -5,7 +5,6 @@
   padding: 1px;
   border: 1px solid transparent;
   box-decoration-break: clone;
-  word-wrap: break-word;
   margin: 0 -2px;
 }
 
@@ -127,7 +126,8 @@
   padding: 0;
 }
 
-.dom-search
+.dom-search,
+.dom-search em
 {
   word-wrap: break-word;
 }
