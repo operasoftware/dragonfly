@@ -16,7 +16,8 @@ var JSMultifileSearchPrototype = function()
   SINGLE_FILE = 0,
   NO_MATCH = TextSearch.NO_MATCH,
   EMPTY = TextSearch.EMPTY,
-  MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS;
+  MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
+  INJECTED_SCRIPTS = ["Browser JS", "Extension JS", "User JS"];
 
   // overwrites _update_info
   PanelSearch.apply(this);
@@ -122,11 +123,17 @@ var JSMultifileSearchPrototype = function()
     }
   };
 
+  this._is_injected_script = function(script)
+  {
+    return INJECTED_SCRIPTS.indexOf(script.script_type) != -1;
+  };
+
   this._validate_current_search = function()
   {
     if (this._input.value != this._last_query ||
         this.search_type != this._last_search_type ||
         this.ignore_case != this._last_ignore_case ||
+        this.search_injected_scripts != this._last_search_injected_scripts ||
         this.search_all_files != this._last_search_all_files ||
         (this.search_all_files == this._last_search_all_files && this.search_all_files 
          ? false 
@@ -136,6 +143,7 @@ var JSMultifileSearchPrototype = function()
       this._orig_search_term = this._last_query;
       this._last_search_type = this.search_type;
       this._last_ignore_case = this.ignore_case;
+      this._last_search_injected_scripts = this.search_injected_scripts;
       this._last_search_all_files = this.search_all_files;
       this._last_script = this._last_selected_script;
       this._match_cursor = -1;
@@ -164,10 +172,15 @@ var JSMultifileSearchPrototype = function()
               {
                 var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
                 {
-                  script.search_source(this._last_query,
-                                       this.ignore_case, 
-                                       this.search_type == TextSearch.REGEXP);
-                  return script.line_matches.length;
+                  if (this._last_search_injected_scripts ||
+                      !this._is_injected_script(script))
+                  {
+                    script.search_source(this._last_query,
+                                         this.ignore_case, 
+                                         this.search_type == TextSearch.REGEXP);
+                    return script.line_matches.length;
+                  }
+                  return 0;
                 }, this);
                 if (scripts.length)
                 {
@@ -243,10 +256,12 @@ var JSMultifileSearchPrototype = function()
     this._last_search_type = undefined;
     this._last_ignore_case = undefined;
     this._last_search_all_files = undefined;
+    this._last_search_injected_scripts = undefined;
     this._source_file_hits = null;
     this.search_type = undefined;
     this.ignore_case = undefined;
     this.search_all_files = undefined;
+    this.search_injected_scripts = undefined;
     this._show_search_results_bound = this._show_search_results.bind(this);
     window.eventHandlers.click['show-script'] = this._show_script.bind(this);
     window.eventHandlers.mouseover['show-script'] =

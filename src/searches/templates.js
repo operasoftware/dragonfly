@@ -24,14 +24,30 @@
     return content;
   };
 
-  this._search_input = function(name, type, value, label, is_selected)
+  this._search_input = function(name, type, value, label, 
+                                is_selected, is_disabled, title)
   {
     var input = ['input', 'type', type, 'value', value, 'name', name];
     if (is_selected)
     {
       input.push('checked', 'checked');
     }
-    return ['label', input, label];
+    if (is_disabled)
+    {
+      input.push('disabled', 'disabled');
+    }
+    if (title)
+    {
+      input.push('title', title);
+    }
+
+    var ret = ['label', input, label];
+    
+    if (title)
+    {
+      ret.push('title', title);
+    }
+    return ret;
   };
 
   this.advanced_search_field = function(search)
@@ -100,18 +116,26 @@
           this._search_input('js-search-type', 
                              'checkbox', 
                              'reg-exp', 
-                             'reg exp',
+                             ui_strings.S_LABEL_SEARCH_TYPE_REGEXP,
                              TextSearch.REGEXP == search.search_type),
           this._search_input('js-search-ignore-case', 
                              'checkbox', 
                              'ignore-case', 
-                             'ignore case',
+                             ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
                              search.ignore_case),
           this._search_input('js-search-all-files', 
                              'checkbox', 
                              'search-all-files', 
-                             'all files',
+                             ui_strings.S_LABEL_SEARCH_ALL_FILES,
                              search.search_all_files),
+          this._search_input('js-search-injected-scripts', 
+                             'checkbox', 
+                             'search-injected-scripts', 
+                             ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS,
+                             search.search_injected_scripts,
+                             !search.search_all_files,
+                             ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP),
+                             
           'handler', 'js-search-type-changed',
         ],
       ],

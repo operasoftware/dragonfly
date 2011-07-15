@@ -1149,6 +1149,7 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-type': DOMSearch.PLAIN_TEXT,
       'js-search-ignore-case': true,
       'js-search-all-files': false,
+      'js-search-injected-scripts': true,
       'max-displayed-search-hits': 1000
     },
     // key-label map
@@ -1158,7 +1159,7 @@ cls.JsSourceView.create_ui_widgets = function()
       error: ui_strings.S_BUTTON_LABEL_AT_ERROR,
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
-      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS
+      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
     },
     // settings map
     {

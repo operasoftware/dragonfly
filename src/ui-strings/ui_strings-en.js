@@ -1287,29 +1287,37 @@ ui_strings.S_SCOPE_INNER = "Scope %s";
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
 ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
 
-/* DESC: Radio label for the search type 'Text' in the DOM search panel  */
+/* DESC: Radio label for the search type 'Text' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
 
-/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel  */
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
 
-/* DESC: Radio label for the search type 'CSS' in the DOM search panel  */
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
 
-/* DESC: Radio label for the search type 'XPath' in the DOM search panel  */
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 
-/* DESC: Checkbox label to set the 'ignore case' flag search panel  */
+/* DESC: Checkbox label to set the 'ignore case' flag search panel. */
 ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
 
-/* DESC: If enabled objects can be expanded inline in the console  */
+/* DESC: If enabled objects can be expanded inline in the console. */
 ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
 
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
 ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
 
+/* DESC: Checkbox label to search in all files in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
+
+/* DESC: Checkbox label to search in injected scripts in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
+
+/* DESC: Tooltip for the injected scripts search settings label. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, like Browser JS, Extension JS, User JS";
 
 

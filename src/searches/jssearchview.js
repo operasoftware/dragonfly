@@ -96,6 +96,18 @@ cls.JSSearchView = function(id, name, container_class)
       {
         this._search.search_all_files = Number(event.target.checked);
         this._setting.set('js-search-all-files', this._search.search_all_files);
+        var form = event.target.get_ancestor('form');
+        if (form)
+        {
+          form["js-search-injected-scripts"].disabled = !this._search.search_all_files;
+        }
+        break;
+      }
+      case 'js-search-injected-scripts':
+      {
+        this._search.search_injected_scripts = Number(event.target.checked);
+        this._setting.set('js-search-injected-scripts',
+                          this._search.search_injected_scripts);
         break;
       }
     }
@@ -127,6 +139,7 @@ cls.JSSearchView = function(id, name, container_class)
     this._search.ignore_case = this._setting.get('js-search-ignore-case');
     this._search.search_all_files = this._setting.get('js-search-all-files');
     this._search.search_type = this._setting.get('js-search-type');
+    this._search.search_injected_scripts = this._setting.get('js-search-injected-scripts');
     this.controls =
     [
       {
@@ -153,6 +166,7 @@ cls.JSSearchView = function(id, name, container_class)
       'search_type',
       'ignore_case',
       'search_all_files',
+      'search_injected_scripts',
     ].forEach(function(prop)
     {
       this.__defineGetter__(prop, function()
