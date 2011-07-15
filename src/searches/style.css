@@ -127,7 +127,9 @@
 }
 
 .dom-search,
-.dom-search em
+.dom-search em,
+.js-search-results-script,
+.js-search-results-script em
 {
   word-wrap: break-word;
 }
