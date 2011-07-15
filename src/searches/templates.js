@@ -204,6 +204,19 @@
     return  (padding[line_no.length] || '') + line_no;
   };
 
+  this.resource_link = function(url, text, line)
+  {
+    var ret =
+    ["span", text, "handler", "open-resource-tab",
+                   "data-resource-url", url,
+                   "class", "internal-link"];
+    if (line)
+    {
+      ret.push("data-resource-line-number", String(line));
+    }
+    return ret;
+  };
+
   this.search_result_script = function(script, show_script_uri)
   {
     var ret = ['div'];
@@ -211,7 +224,26 @@
     {
       if (typeof show_script_uri != 'boolean' || show_script_uri)
       {
-        ret.push(['h3', (script.uri || script.script_type) + ':']);
+        var h3 = ['h3'];
+        if (script.uri)
+        {
+          h3.push(this.resource_link(script.uri, script.uri), ':');
+        }
+        else if (script.script_type == "inline")
+        {
+          var rt = window.runtimes.getRuntime(script.runtime_id);
+          if (rt && rt.uri)
+          {
+            h3.push(script.script_type + " (");
+            h3.push(this.resource_link(rt.uri,  rt.uri));
+            h3.push("):");
+          }
+        }
+        else
+        {
+          h3.push(script.script_type + ":");
+        }
+        ret.push(h3);
       }
       var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
       for (var i = 0; i < script.line_matches.length; i++)
