@@ -393,8 +393,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   var rows = templates.network_graph_rows(ctx, width)
-
-  var duration = Math.ceil(ctx.get_duration() / 1000) * 1000;
+  var duration = ctx.get_duration();
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
@@ -420,7 +419,6 @@ templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
   var duration = ctx.get_duration();
-  duration = Math.ceil(duration / 1000) * 1000;
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
