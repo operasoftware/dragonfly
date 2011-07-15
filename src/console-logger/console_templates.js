@@ -43,16 +43,11 @@ window.templates.errors.log_table = function(entries, allExpanded, expandedList,
 
 window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId)
 {
-  if (entry.is_hidden)
-  {
-    return [];
-  }
-
   var expanded;
   if (allExpanded)
   {
     expanded = true;
-    if (toggledList.indexOf(entry.id)!=-1)
+    if (toggledList.indexOf(entry.id) != -1)
     {
       expanded = false;
     }

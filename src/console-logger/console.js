@@ -334,16 +334,35 @@ var ErrorConsoleView = function(id, name, container_class, source)
                       .filter(window.error_console_data._filter_bound);
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
-      var template = templates.errors.log_table(entries, 
+
+      // when exactly one entry is added since last rendering, render and add only that entry
+      var new_entry_hash = entries.map(function(e){return e.id});
+      if (
+           this._table_ele &&
+           entries.length &&
+           this.last_entry_hash &&
+           new_entry_hash.slice(0, new_entry_hash.length - 1).join(",") === this.last_entry_hash.join(",")
+         )
+      {
+        var template = window.templates.errors.log_row(entries[entries.length - 1], 
+                                                       expand_all,
+                                                       window.error_console_data.get_toggled(),
+                                                       this.id);
+        this._table_ele.render(template);
+      }
+      else
+      {
+        var template = templates.errors.log_table(entries, 
                                                   expand_all,
                                                   window.error_console_data.get_toggled(),
                                                   this.id);
-      this._container.clearAndRender(template);
+        this._table_ele = this._container.clearAndRender(template);
+      }
+      this.last_entry_hash = new_entry_hash;
       if (this._scrollTop)
       {
         this._container.scrollTop = this._scrollTop;
       }
-      this._table_ele = this._container.getElementsByTagName("table")[0];
     }
   }
 
