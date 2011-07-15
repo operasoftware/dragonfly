@@ -2151,24 +2151,51 @@ id: 00100
 label: Inspect errors
 desc:
   - Go to the url above
-  - Verify that there is a js and a css error
-  - Verify that the entries can be expanded to see the details
+  - Verify that there is one js, css, storage, and one svg error
+  - Verify that there is a tab shown for each of these error types
+  - Verify that the js and css entries can be expanded to see the details
   - Verify that only the js error is in the JavaScript pane
   - Verify that only the css error is in the CSS pane
+  - Verify that the error count on the top tab is 4
 
 id: 00200
-label: Clear log
-desc:
-  - Press the 'Clear Log' button
-  - Verify that the log is cleared
-  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
-
-id: 00300
 label: Expand all
 desc:
   - Select and unselect the 'Expand all' switch
   - Verify that the entries are expanded and collapse accordingly
   - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+
+id: 00300
+label: Filter errors
+desc:
+  - Go to the "All" tab
+  - Type or paste "foo" into the filter field
+  - Verify that 3 of the 4 errors are shown and 4 matches are highlighted
+  - Verify that the first (JS) Error is expanded
+  - Verify that the error count on the tob tab is now 3
+
+id: 00300
+label: CSS Filter
+desc:
+  - Remove the filter
+  - Go to Settings, Error Log
+  - Enable "Use CSS Filter"
+  - Verify that the error count went down to 3
+  - Remove "_line-height" from the field
+  - Verify that the error count is back at 4
+
+id: 00500
+label: Clearing
+desc:
+  - Change the filter text to "message" and press the 'Clear Log' button
+  - Remove the filter and verify that 3 errors are still shown
+  - Switch to the js panel
+  - Press the 'Clear Log' button
+  - Switch back to "All" and verify that 2 errors are still shown
+  - Switch to the css panel
+  - Right-click and select "Clear all errors"
+  - Verify that all errors are removed, and the specific error tabs are hidden
+  - Reload the page and verify the errors are back, and the specific tabs are shown again
 
 Utilities.Color Picker
 **********************
