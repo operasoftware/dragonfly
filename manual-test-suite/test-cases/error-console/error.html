@@ -2,12 +2,26 @@
 <script>
 (function()
 {
-  a.a = 1;
+  setTimeout(function() {
+    var db = openDatabase("test_for_errors3", "1.0", "Third DB to test errors", 200000);
+    if (db)
+    {
+      db.transaction(function(tx) {
+        tx.executeSql('INSERT INTO foo (id, text) values (?, ?)', ["1", "content goes here"], [], function (tx, result) {
+        });
+      });
+    }
+  }, 1);
+  
+  setTimeout(function() {
+    a.a = 1;
+  }, 1);
 })();
 </script>
 <style>
 body
 {
-  foo: bar;
+  _line-height: 3em;
 }
 </style>
+<object data="error.svg" type="image/xml+svg"></object>

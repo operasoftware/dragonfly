@@ -7,12 +7,13 @@
 window.cls || (window.cls = {});
 cls.ConsoleLogger || (cls.ConsoleLogger = {});
 cls.ConsoleLogger["2.0"] || (cls.ConsoleLogger["2.0"] = {});
+cls.ConsoleLogger["2.1"] || (cls.ConsoleLogger["2.1"] = {});
 
 /**
  * Data class for console logger
  * @constructor
  */
-cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
+cls.ConsoleLogger.ErrorConsoleDataBase = function()
 {
   this._msgs = [];
   this._toggled = [];
@@ -25,7 +26,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   {
     for (view = '', i = 0; view = this._views[i]; i++)
     {
-      window.views[view].update()
+      window.views[view].update() // todo: call _update, make it check is_hidden, enable itself, then call it's own .update. possibly also take care of update_error_count via .is_visible.
     }
     var last_shown_error_view = this.last_shown_error_view || this._views[0];
     if (last_shown_error_view && window.views[last_shown_error_view])
@@ -42,7 +43,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
   /**
    * Adds a log entry to the data model.
    */
-  this.addentry = function(entry)
+  this.add_entry = function(entry)
   {
     if( !entry.uri || entry.uri.indexOf(this._url_self) == -1 )
     {
@@ -84,7 +85,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     this._update_views();
   };
 
-  this.clear_all_and_hide_tabs = function()
+  this.clear_all_and_hide_tabs = function() // todo: probably it's not right to have the data take care of hiding tabs.
   {
     this._msgs = [];
     for (var i = 1, view_id; view_id = this._views[i]; i++)
@@ -169,7 +170,7 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     // only take console messages over ECMAScriptDebugger, will be setting dependend
     if (!message.context.startswith("console."))
     {
-      this.addentry(message);
+      this.add_entry(message);
     }
   };
 
@@ -287,8 +288,50 @@ cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
     var logger = window.services["console-logger"];
     logger.add_listener("consolemessage", this._on_console_message.bind(this));
   };
-  this.init();
 };
+
+cls.ConsoleLogger["2.0"].ErrorConsoleData = function()
+{
+  this.init();
+}
+cls.ConsoleLogger["2.0"].ErrorConsoleData.prototype = new cls.ConsoleLogger.ErrorConsoleDataBase();
+
+cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
+{
+  this._on_window_filter_change = function(msg)
+  {
+    var tag = tagManager.set_callback(this, this._on_list_messages, []);
+    services['console-logger'].requestListMessages(tag);
+  };
+
+  this._on_list_messages = function(status, message)
+  {
+    const DATA = 0;
+    if (status === 0 && message[DATA])
+    {
+      var error_messages = message[DATA];
+      for (var i=0, error_message; error_message = error_messages[i]; i++)
+      {
+        this._on_console_message(error_message);
+      };
+    }
+  };
+
+  this.clear_all_on_host_side = function()
+  {
+    var tag = tagManager.set_callback(this, this.clear_all_and_hide_tabs, []);
+    services["console-logger"].requestClear(tag);
+  }
+
+  this._init = function()
+  {
+    services["ecmascript-debugger"].addListener("window-filter-change", this._on_window_filter_change.bind(this));
+    this.init();
+  }
+  this._init();
+}
+cls.ConsoleLogger["2.1"].ErrorConsoleData.prototype = new cls.ConsoleLogger.ErrorConsoleDataBase();
+
 
 /**
  * Error Console view
@@ -544,6 +587,7 @@ cls.ConsoleLogger["2.0"].ConsoleView = function(id, name, container_class)
   this.createView = function(container){};
   this.init(id, name, container_class);
 };
+cls.ConsoleLogger["2.0"].ConsoleView.prototype = ViewBase;
 
 cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
 {
@@ -584,15 +628,18 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     "console"  
   );
 
-  var contextmenu = ContextMenu.get_instance();
-  contextmenu.register("error-console", [
-    {
-      label: "Clear all errors",
-      handler: function(event, target) {
-        window.error_console_data.clear_all_and_hide_tabs();
+  if (window.error_console_data.clear_all_on_host_side) // todo: make this directly depend on service version instead?
+  {
+    var contextmenu = ContextMenu.get_instance();
+    contextmenu.register("error-console", [
+      {
+        label: "Clear all errors",
+        handler: function(event, target) {
+          window.error_console_data.clear_all_on_host_side();
+        }
       }
-    }
-  ]);
+    ]);
+  }
 };
 
 eventHandlers.input['error-console-css-filter'] = function(event, target)
