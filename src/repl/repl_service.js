@@ -117,68 +117,76 @@ cls.ReplService = function(view, data)
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id, is_unpacked, is_friendly_printed, is_inline_expanded)
+  this._handle_log = function(msg, rt_id)
   {
     const VALUELIST = 2;
+    var ctx = 
+    {
+      callback: this._handle_log_with_explored_value_list.bind(this, msg, rt_id),
+      value_list: msg[VALUELIST],
+      rt_id: rt_id,
+    };
+    this._explore_value_list(ctx);
+  };
+
+  this._explore_value_list = function(ctx)
+  {
+
     var do_unpack = settings.command_line.get("unpack-list-alikes") &&
-                    !is_unpacked &&
-                    msg[VALUELIST];
+                    !ctx.is_unpacked &&
+                    ctx.value_list;
 
     var do_friendly_print = !do_unpack &&
                             settings.command_line.get("do-friendly-print") &&
-                            !is_friendly_printed;
+                            !ctx.is_friendly_printed &&
+                            this._friendly_printer.list_has_object(ctx.value_list);
     
-    if (do_friendly_print)
-    {
-      var obj_list = msg[VALUELIST].reduce(this._friendly_printer.value2objlist, []);
-    }
-
-    var do_inline_expand = !do_unpack && (!do_friendly_print || !obj_list.length) &&
+    var do_inline_expand = !do_unpack && !do_friendly_print &&
                            settings.command_line.get("expand-objects-inline") &&
-                           !is_inline_expanded;
+                           !ctx.is_inline_expanded;
+    
+
+    // this._list_unpacker, this._friendly_printer and this._inline_expander
+    // have all the same generic callback, this._explore_value_list, 
+    // the callee itself bound to this instance here.
+    // They will set the according flagg of is_unpacked, is_friendly_printed,
+    // or is_inline_expanded on the ctx and call the callback with ctx as argument.  
 
     if (do_unpack)
     {
-      // the callback works as error and success callback
-      // the _list_unpacker replace the VALUE_LIST 
-      // with an unpacked list in the scope message
-      var callback = this._handle_log.bind(this, msg, rt_id, true);
       this._msg_queue.stop_processing();
-      this._list_unpacker.unpack_list_alikes(msg, rt_id, callback, callback);
+      this._list_unpacker.unpack_list_alikes(ctx);
     }
-    else if (do_friendly_print && obj_list.length)
+    else if (do_friendly_print)
     {
       this._msg_queue.stop_processing();
-      var cb = this._handle_log.bind(this, msg, rt_id, true, true);
-      // friendly prinyter works as side effect
-      // it set a FRIENDLY_PRINTED field on each object
-      // that means the callback is an error and success callback
-      this._friendly_printer.get_friendly_print(obj_list, rt_id, 0, 0, cb);
+      this._friendly_printer.get_friendly_print(ctx);
     }
     else if (do_inline_expand)
     {
-      // the callback works as error and success callback
-      // the _inline_expander adds a model to each JS or DOM object 
-      var callback = this._handle_log.bind(this, msg, rt_id, true, true, true);
+
       this._msg_queue.stop_processing();
-      this._inline_expander.expand(msg, rt_id, callback, callback);
+      this._inline_expander.expand(ctx);
     }
     else
     {
-      const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1, SEVERITY = 1;
-      var values = this._parse_value_list(msg[VALUELIST], rt_id);
-      var pos = null;
-      if (msg[POSITION])
-      {
-        pos = {scriptid: msg[POSITION][SCRIPTID], scriptline: msg[POSITION][SCRIPTLINE]};
-      }
-
-      this._data.add_output_valuelist(rt_id, values, pos, msg[SEVERITY]);
-      if (is_unpacked)
-      {
-        this._msg_queue.continue_processing();
-      }
+      ctx.callback(ctx.value_list);
+      this._msg_queue.continue_processing();
     }
+  };
+
+  this._handle_log_with_explored_value_list = function(msg, rt_id, value_list)
+  {
+    const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1, SEVERITY = 1;
+    var values = this._parse_value_list(value_list, rt_id);
+    var pos = null;
+    if (msg[POSITION])
+    {
+      pos = {scriptid: msg[POSITION][SCRIPTID], 
+             scriptline: msg[POSITION][SCRIPTLINE]};
+    }
+
+    this._data.add_output_valuelist(rt_id, values, pos, msg[SEVERITY]);
   };
 
   this._handle_count = function(msg)
@@ -226,8 +234,6 @@ cls.ReplService = function(view, data)
       ret.type = object[OTYPE];
       ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
       ret.friendly_printed = object[FRIENDLY_PRINTED];
-      // TODO check setting
-      // move that to a new class InlineExpandObjects
       ret.model = object[INLINE_MODEL];
       ret.model_template = object[INLINE_MODEL_TMPL];
     }
@@ -546,9 +552,10 @@ cls.ReplService = function(view, data)
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
     this._msg_queue = new Queue(this);
-    this._friendly_printer = new cls.FriendlyPrinter();
-    this._list_unpacker = new cls.ListUnpacker();
-    this._inline_expander = new cls.InlineExpander();
+    var value_list_callback = this._explore_value_list.bind(this);
+    this._list_unpacker = new cls.ListUnpacker(value_list_callback);
+    this._friendly_printer = new cls.FriendlyPrinter(value_list_callback);
+    this._inline_expander = new cls.InlineExpander(value_list_callback);
     this._on_consolelog_bound = this._msg_queue.queue(this._process_on_consolelog);
     this._on_eval_done_bound = this._msg_queue.queue(this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton

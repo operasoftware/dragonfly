@@ -1,6 +1,6 @@
 ﻿window.cls || (window.cls = {});
 
-cls.InlineExpander = function()
+cls.InlineExpander = function(callback)
 {
 
   const
@@ -18,9 +18,11 @@ cls.InlineExpander = function()
   FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED,
   IS_EXPANDABLE = cls.ReplService.IS_EXPANDABLE;
 
-  this.expand = function(obj_list, rt_id, successcb, errorcb)
+  this.expand = function(ctx)
   {
-    var value_list = obj_list[VALUE_LIST];
+    ctx.is_inline_expanded = true;
+    
+    var value_list = ctx.value_list;
     var dom_obj_list = [];
     var has_dom_objects = false;
     var cb = null;
@@ -33,13 +35,13 @@ cls.InlineExpander = function()
       {
         if (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]))
         {
-          object[INLINE_MODEL] = new cls.InspectableDOMNode(rt_id, object[OBJECT_ID]);
+          object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, object[OBJECT_ID]);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_DOM;
           dom_obj_list.push({model: object[INLINE_MODEL], model_expanded: false});
 
           if (!cb)
           {
-            cb = this._onexpand_dom_object.bind(this, dom_obj_list, successcb, errorcb);
+            cb = this._onexpand_dom_object.bind(this, dom_obj_list, ctx);
           }
 
           object[INLINE_MODEL].expand(cb, object[OBJECT_ID], "node");
@@ -51,7 +53,7 @@ cls.InlineExpander = function()
           {
             prop_name = this._friendly_printer.friendly_string(object[FRIENDLY_PRINTED]);
           }
-          object[INLINE_MODEL] = new cls.InspectableJSObject(rt_id, 
+          object[INLINE_MODEL] = new cls.InspectableJSObject(ctx.rt_id, 
                                                              object[OBJECT_ID],
                                                              prop_name);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_JS;
@@ -61,29 +63,30 @@ cls.InlineExpander = function()
 
     if (!dom_obj_list.length)
     {
-      successcb();
+      this._callback(ctx);
     }
 
   };
 
-  this._onexpand_dom_object = function(dom_obj_list, successcb, errorcb)
+  this._onexpand_dom_object = function(dom_obj_list, ctx)
   {
     for (var i = 0, value; (value = dom_obj_list[i]) && value.model.has_data(); i++);
 
     if (i == dom_obj_list.length)
     {
-      successcb();
+      this._callback(ctx);
     }
   };
 
-  this.init = function()
+  this.init = function(callback)
   {
+    this._callback = callback;
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
     this._friendly_printer = cls.FriendlyPrinter.get_instance();
   };
 
-  this.init();
+  this.init(callback);
 
 };
 

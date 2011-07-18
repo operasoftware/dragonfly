@@ -1,6 +1,6 @@
 ﻿window.cls || (window.cls = {});
 
-window.cls.FriendlyPrinter = function()
+window.cls.FriendlyPrinter = function(callback)
 {
   if (window.cls.FriendlyPrinter.instance)
   {
@@ -34,11 +34,12 @@ window.cls.FriendlyPrinter = function()
     - concatenate the chunks
   */
 
-  this.get_friendly_print = function(obj_list, rt_id, thread_id, frame_id, fallback)
+  this.get_friendly_print = function(ctx)
   {
+    ctx.is_friendly_printed = true;
+    var obj_list = ctx.value_list.reduce(this.value2objlist, []);
     var obj_ids = obj_list.map(this._obj2obj_id_list);
-    var queue_cb = this._friendly_print_chunked_cb.bind(this, obj_list, rt_id,
-                                                        obj_ids, fallback);
+    var queue_cb = this._friendly_print_chunked_cb.bind(this, ctx, obj_list, obj_ids);
     var queue = [], queue_length = 0, processed_queue = [];
     // chunk the request, Eval is currently limited to 64 arguments
     // CORE-35198
@@ -54,20 +55,20 @@ window.cls.FriendlyPrinter = function()
       var tag = this._tagman.set_callback(this,
                                           this._handle_chunk_list,
                                           [
-                                            rt_id,
+                                            ctx,
                                             processed_queue,
                                             index,
                                             queue_length,
                                             queue_cb
                                           ]);
       var script = this._friendly_print_host_str.replace("%s", call_list);
-      var msg = [rt_id, thread_id, frame_id, script, arg_list];
+      var msg = [ctx.rt_id, ctx.thread_id || 0, ctx.frame_id || 0, script, arg_list];
       this._service.requestEval(tag, msg);
     }, this);
   };
 
   this._handle_chunk_list = function(status, message,
-                                     rt_id, queue, index, queue_length, cb)
+                                     ctx, queue, index, queue_length, queue_cb)
   {
     // This function handles the response of _friendly_print_host.
     // That function returns a list of null or lists with type specific strings
@@ -77,26 +78,27 @@ window.cls.FriendlyPrinter = function()
     if (status || !message[OBJECT_VALUE])
     {
       opera.postError('Pretty printing failed: ' + JSON.stringify(message));
+      // TODO set flag in ctx
       cb(null);
     }
     else
     {
       var tag = this._tagman.set_callback(this, this._handle_examined_chunk_list,
-                                          [rt_id, queue, index, queue_length, cb]);
-      var msg = [rt_id, [message[OBJECT_VALUE][OBJECT_ID]]];
+                                          [ctx, queue, index, queue_length, queue_cb]);
+      var msg = [ctx.rt_id, [message[OBJECT_VALUE][OBJECT_ID]]];
       this._service.requestExamineObjects(tag, msg);
     }
   };
 
   this._handle_examined_chunk_list = function(status, message,
-                                              rt_id, queue, index, queue_length, cb)
+                                              ctx, queue, index, queue_length, queue_cb)
   {
     // This function handles the examined list returned by _friendly_print_host.
     // Here we have to examine the objects in the returned list.
     if (status)
     {
       opera.postError('Pretty printing failed: ' + JSON.stringify(message));
-      cb(null);
+      queue_cb(null);
     }
     else
     {
@@ -131,17 +133,17 @@ window.cls.FriendlyPrinter = function()
       if (object_id_list.length)
       {
         var tag = this._tagman.set_callback(this, this._handle_queue,
-                                            [queue, index, queue_length, cb]);
-        this._service.requestExamineObjects(tag, [rt_id, object_id_list]);
+                                            [queue, index, queue_length, queue_cb]);
+        this._service.requestExamineObjects(tag, [ctx.rt_id, object_id_list]);
       }
       else
       {
-        this._handle_queue(0, null, queue, index, queue_length, cb);
+        this._handle_queue(0, null, queue, index, queue_length, queue_cb);
       }
     }
   };
 
-  this._handle_queue = function(status, message, queue, index, queue_length, cb)
+  this._handle_queue = function(status, message, queue, index, queue_length, queue_cb)
   {
     // This function handles the examined objects of the examined list
     // returned by _friendly_print_host.
@@ -150,7 +152,7 @@ window.cls.FriendlyPrinter = function()
     // If all chunks are examined, the callback is called.
     if (status)
     {
-      cb(null);
+      queue_cb(null);
     }
     else
     {
@@ -190,12 +192,11 @@ window.cls.FriendlyPrinter = function()
     for (var i = 0; i < queue.length && queue[i].is_examined; i++);
     if (i == queue.length)
     {
-      cb(queue);
+      queue_cb(queue);
     }
   };
 
-  this._friendly_print_chunked_cb = function(obj_list, rt_id, obj_ids,
-                                             fallback, queue)
+  this._friendly_print_chunked_cb = function(ctx, obj_list, obj_ids, queue)
   {
 
     // concatenate the chunks to one list
@@ -211,7 +212,7 @@ window.cls.FriendlyPrinter = function()
         value[FRIENDLY_PRINTED] = friendly_list[index];
       });
     }
-    fallback();
+    this._callback(ctx);
   };
 
   this._friendly_print_host = function(list)
@@ -362,7 +363,7 @@ window.cls.FriendlyPrinter = function()
 
     this._friendly_print[REGEXP] = function(value_list)
     {
-      const REGEXP_STRING = 1;
+      const REGEXP_STRING = 2;
       return ["span", value_list[REGEXP_STRING], "class", "reg_exp"];
     };
   };
@@ -413,6 +414,16 @@ window.cls.FriendlyPrinter = function()
     }
   };
 
+  this.list_has_object = function(list)
+  {
+    return list && list.some(function(item)
+    {
+      return item[OBJECT_VALUE] && 
+             (!this._is_inline_expand || 
+              !RE_DOM_OBJECT.test(item[OBJECT_VALUE][CLASS_NAME]))
+    }, this);
+  }
+
   this.value2objlist = function(list, item)
   {
     const OBJECT_VALUE = 1;
@@ -427,8 +438,9 @@ window.cls.FriendlyPrinter = function()
     return list;
   };
 
-  this.init = function()
+  this.init = function(callback)
   {
+    this._callback = callback;
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
     this.templates.apply(window.templates || (window.tempoates = {}));
@@ -440,7 +452,7 @@ window.cls.FriendlyPrinter = function()
     this.value2objlist = this.value2objlist.bind(this);
   };
 
-  this.init();
+  this.init(callback);
 
 }
 
