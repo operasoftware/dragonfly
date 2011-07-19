@@ -26,12 +26,12 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   {
     for (view = '', i = 0; view = this._views[i]; i++)
     {
-      window.views[view].update() // todo: call _update, make it check is_hidden, enable itself, then call it's own .update. possibly also take care of update_error_count via .is_visible.
+      window.views[view].update()
     }
-    var last_shown_error_view = this.last_shown_error_view || this._views[0];
-    if (last_shown_error_view && window.views[last_shown_error_view])
+    var last_shown = this.last_shown_error_view || this._views[0];
+    if (last_shown && window.views[last_shown] && !window.views[last_shown].isvisible())
     {
-      window.views[last_shown_error_view].update_error_count();
+      window.views[last_shown].update_error_count();
     }
   };
 
@@ -76,16 +76,12 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this.clear = function(source, query)
   {
     var messages = this.get_messages(source, query);
-    if (this._filter_bound)
-    {
-      messages = messages.filter(this._filter_bound);
-    }
     var message_ids = messages.map( function(e){return e.id} );
     this._msgs = this._msgs.filter( function(e){return message_ids.indexOf(e.id) == -1} );
     this._update_views();
   };
 
-  this.clear_all_and_hide_tabs = function() // todo: probably it's not right to have the data take care of hiding tabs.
+  this.clear_all = function()
   {
     this._msgs = [];
     for (var i = 1, view_id; view_id = this._views[i]; i++)
@@ -132,7 +128,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       var query_filter = this._get_string_filter(query);
       messages = messages.filter(query_filter);
     }
-    return messages;
+    return messages.filter(this._filter_bound);
   };
 
   this.get_toggled = function()
@@ -192,7 +188,6 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     }
     return true;
   };
-  this._filter_bound = this._filter.bind(this);
 
   this._set_css_filter = function()
   {
@@ -204,7 +199,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     {
       this._setting = window.settings.console;
     }
-    
+
     this._filters.css = null;
     if (this._setting.get('use-css-filter'))
     {
@@ -281,9 +276,10 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this.init = function()
   {
     this._filters = {};
+    this._filter_bound = this._filter.bind(this);
 
     window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
-    window.messages.addListener("debug-context-selected", this.clear_all_and_hide_tabs.bind(this));
+    window.messages.addListener("debug-context-selected", this.clear_all.bind(this));
 
     var logger = window.services["console-logger"];
     logger.add_listener("consolemessage", this._on_console_message.bind(this));
@@ -319,7 +315,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
 
   this.clear_all_on_host_side = function()
   {
-    var tag = tagManager.set_callback(this, this.clear_all_and_hide_tabs, []);
+    var tag = tagManager.set_callback(this, this.clear_all, []);
     services["console-logger"].requestClear(tag);
   }
 
@@ -372,9 +368,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
     if (this._container)
     {
       window.error_console_data.last_shown_error_view = id;
-      var entries = window.error_console_data
-                      .get_messages(source, this.query)
-                      .filter(window.error_console_data._filter_bound);
+      var entries = window.error_console_data.get_messages(source, this.query);
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
 
@@ -382,8 +376,8 @@ var ErrorConsoleView = function(id, name, container_class, source)
       var new_entry_hash = entries.map(function(e){return e.id});
       if (
            this._table_ele &&
-           entries.length &&
            this.last_entry_hash &&
+           entries.length &&
            new_entry_hash.slice(0, new_entry_hash.length - 1).join(",") === this.last_entry_hash.join(",")
          )
       {
@@ -413,9 +407,7 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     if (!entries)
     {
-      entries = window.error_console_data
-                    .get_messages(source, this.query)
-                    .filter(window.error_console_data._filter_bound);
+      entries = window.error_console_data.get_messages(source, this.query);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
@@ -525,7 +517,8 @@ ErrorConsoleView.roughViews.createViews = function()
     (function() {
       var view_id = r_v.id;
 
-      var text_search = window.views[view_id]._text_search = new TextSearch(); // or pass (1) to make it search on 1 char
+      var text_search = 
+      window.views[view_id]._text_search = new TextSearch(); // or pass (1) to make it search on 1 char
       var onShowView = function(msg)
       {
         if( msg.id == view_id )
@@ -581,15 +574,15 @@ eventHandlers.click['error-log-list-expand-collapse'] = function(event, target)
   * @extends ViewBase
   * General view to get general console setting.
   */
-cls.ConsoleLogger["2.0"].ConsoleView = function(id, name, container_class)
+cls.ConsoleLogger.ConsoleView = function(id, name, container_class)
 {
   this.is_hidden = true;
   this.createView = function(container){};
   this.init(id, name, container_class);
 };
-cls.ConsoleLogger["2.0"].ConsoleView.prototype = ViewBase;
+cls.ConsoleLogger.ConsoleView.prototype = ViewBase;
 
-cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
+cls.ConsoleLogger.ConsoleView.create_ui_widgets = function(service_version)
 {
 
   new Settings
@@ -628,7 +621,7 @@ cls.ConsoleLogger["2.0"].ConsoleView.create_ui_widgets = function()
     "console"  
   );
 
-  if (window.error_console_data.clear_all_on_host_side) // todo: make this directly depend on service version instead?
+  if (window.services["console-logger"].major_minor_version >= 2.1)
   {
     var contextmenu = ContextMenu.get_instance();
     contextmenu.register("error-console", [
