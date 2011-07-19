@@ -235,7 +235,7 @@ button[handler="reload-window"]::before {
     width: 17px;
     height: 17px;
 }
-[class^="clear-error-console"]::before {
+.clear-log::before {
     background-image: url("../ui-images/icons/icon_clear.png");
 }
 .console\.expand-all-entries::before {
@@ -256,6 +256,9 @@ button[handler="reload-window"]::before {
 }
 .network_logger\.fit-to-width::before {
     background-image: url("../ui-images/icons/icon_constrain.png");
+}
+.pseudo-items cst-icon {
+    background-image: url("../ui-images/icons/icon_hidedefaults.png");
 }
 
 cst-icon[class="debugger-menu"] {
@@ -283,6 +286,9 @@ cst-icon[class="debugger-menu"] {
 }
 .utils {
     background: url("../ui-images/mode_utilities.png");
+}
+.console_panel {
+    background: url("../ui-images/mode_console.png");
 }
 
 button.ui-control::before,
@@ -331,7 +337,7 @@ button.ui-control::before,
                 inset 0 1px 2px rgba(0, 0, 0, .4);
     background-position: 0 1px;
 }
-.ui-control[is-active="true"] {
+.ui-control.is-active {
     box-shadow: 0 1px #fff,
                 inset 0 1px 2px rgba(0,0,0,0.1),
                 inset 0 0 7px rgba(0,0,0,0.25);
@@ -339,20 +345,20 @@ button.ui-control::before,
     padding: 2px 1px 0;
     background-position: 0 1px;
 }
-.ui-control[is-active="true"]:active {
+.ui-control.is-active:active {
     background-color: #aaa;
 }
 
 /* Show the button topmost when the overlay is visible */
-#toggle-settings-overlay[is-active="true"],
-#toggle-remote-debug-overlay[is-active="true"] {
+#toggle-settings-overlay.is-active,
+#toggle-remote-debug-overlay.is-active {
     position: relative;
     z-index: 301;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
     border-color: #444;
 }
-#toggle-settings-overlay[is-active="true"]:active,
-#toggle-remote-debug-overlay[is-active="true"]:active {
+#toggle-settings-overlay.is-active:active,
+#toggle-remote-debug-overlay.is-active:active {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .5);
 }
 
@@ -374,7 +380,7 @@ button.ui-control::before,
                 0 1px rgba(255,255,255,0.5),
                 0 0 2px #ff0000;
 }
-.ui-control.alert[is-active="true"] {
+.ui-control.alert.is-active {
     background-color: #e54c2e;
     border-color: #bf3000;
     box-shadow: inset 0 1px 2px #bf1000,
@@ -382,14 +388,14 @@ button.ui-control::before,
                 0 1px rgba(255,255,255,0.5),
                 0 0 2px #ff0000;
 }
-.ui-control.alert[is-active="true"]:active {
+.ui-control.alert.is-active:active {
     background-color: #bf381d;
 }
 
-#toggle-settings-overlay.alert[is-active="true"],
-#toggle-remote-debug-overlay.alert[is-active="true"],
-#toggle-settings-overlay.alert[is-active="true"]:active,
-#toggle-remote-debug-overlay.alert[is-active="true"]:active
+#toggle-settings-overlay.alert.is-active,
+#toggle-remote-debug-overlay.alert.is-active,
+#toggle-settings-overlay.alert.is-active:active,
+#toggle-remote-debug-overlay.alert.is-active:active
 {
     border-color: #721;
     box-shadow: inset 0 1px 2px #bf1000,
@@ -398,6 +404,7 @@ button.ui-control::before,
                 0 0 4px #ff0000;
 }
 
+.ui-control.dropdown,
 cst-select[cst-id="debugger-menu"] {
     width: 28px;
 }
@@ -540,42 +547,15 @@ window-select select option[value="-1"]  {
   color: #999;
 }
 
-button[handler="top-settings"]
-{
-  background: transparent none;
-  border-color: transparent;
-  border-style: solid;
-  padding: 1px 8px;
-  margin: 2px 4px;
-  float: right;
-  line-height: 10px;
-}
-button[handler="top-settings"]:before
-{
-  content: '\00A0';
-  display: inline-block;
-  background: transparent url('../ui-images/btn-config.png') scroll no-repeat 0 0;
-  height: 24px;
-  width: 26px;
-  margin: -4px -12px;
-  vertical-align: 4px;
-}
-button[handler="top-settings"]:hover:before
-{
-  background-position:0 -24px;
-}
-button[handler="top-settings"]:active:before
-{
-  background-position:0 -48px;
-}
-
 window-controls {
   display: block;
   position: absolute;
   top: 0;
   right: 0;
-  padding: 5px 4px 3px 0;
+  padding: 5px 3px 3px 0;
   height: 22px;
+}
+window-controls:not(.no-tabbar) {
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.75) 0,
@@ -585,12 +565,15 @@ window-controls {
                                        transparent 52%,
                                        rgba(255,255,255,0.25) 100%);
 }
-window-controls::before {
+window-controls:not(.no-tabbar)::before {
     content: url("../ui-images/window_controls_border.png");
     height: 30px;
     position: relative;
     left: -2px; /* width of the image */
     top: -5px; /* adjust for top padding */
+}
+window-controls.no-tabbar {
+    z-index: 2;
 }
 window-controls toolbar-separator {
     display: inline-block;
@@ -622,38 +605,6 @@ settings-header { /**/
   font-size: 1.2em;
   clear: both;
   }
-settings-container input[type=text]:not([default-text]), 
-settings-container input[type=number], 
-settings-container button, 
-settings-container input[type=button] {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 3px;
-  padding: 3px;
-  margin: 2px;
-  color: #fff;
-}
-
-settings-container input[type=text]:not([default-text]):focus, settings-container input[type=number]:focus {
-  border: 1px solid rgba(255,255,255,1.0);
-}
-
-settings-container button, settings-container input[type=button] {
-  background-color: rgba(255,255,255,0.1);
-  padding: 3px 12px 3px 12px;
-}
-
-settings-container button:hover, settings-container input[type=button]:hover {
-  background-color: rgba(255,255,255,0.15);
-}
-
-settings-container button:active, settings-container input[type=button]:active {
-  background-color: rgba(255,255,255,0.3);
-}
-
-settings-container checkbox label:hover {
-  color: #fff;
-}
 
 setting-composite select
 {
@@ -781,11 +732,11 @@ window-header {
   border-bottom: 1px solid rgba(0,0,0,0.4);
 }
 
-windows-container [handler="window-move"] { /**/
+windows-container .window-move { /**/
   cursor: move;
   }
 
-windows-container [handler='window-close'] { /**/
+windows-container .window-close { /**/
   float: right;
   width: 17px;
   height: 17px;
@@ -796,11 +747,11 @@ windows-container [handler='window-close'] { /**/
 	z-index:11;
   }
 
-windows-container [handler='window-close']:active { /**/
+windows-container .window-close:active { /**/
   background-position: 0 1px;
   }
 
-windows-container [handler='window-scale-top-left'] { /**/
+windows-container .window-scale-top-left { /**/
   left: -5px;
   top: -5px;
   width: 10px;
@@ -808,7 +759,7 @@ windows-container [handler='window-scale-top-left'] { /**/
   cursor: nw-resize;
   }
 
-windows-container [handler='window-scale-top'] { /**/
+windows-container .window-scale-top { /**/
   left: 5px;
   right: 5px;
   top: -5px;
@@ -816,7 +767,7 @@ windows-container [handler='window-scale-top'] { /**/
   cursor: s-resize;
   }
 
-windows-container [handler='window-scale-top-right'] { /**/
+windows-container .window-scale-top-right { /**/
   right: -5px;
   width: 10px;
   height: 10px;
@@ -824,7 +775,7 @@ windows-container [handler='window-scale-top-right'] { /**/
   cursor: sw-resize;
   }
 
-windows-container [handler='window-scale-right'] { /**/
+windows-container .window-scale-right { /**/
   right: -5px;
   width: 10px;
   top: 5px;
@@ -832,7 +783,7 @@ windows-container [handler='window-scale-right'] { /**/
   cursor: w-resize;
   }
 
-windows-container [handler='window-scale-left'] { /**/
+windows-container .window-scale-left { /**/
   left: -5px;
   width: 10px;
   top: 5px;
@@ -840,7 +791,7 @@ windows-container [handler='window-scale-left'] { /**/
   cursor: w-resize;
   }
 
-windows-container [handler='window-scale-bottom'] { /**/
+windows-container .window-scale-bottom { /**/
   left: 0;
   bottom: -5px;
   height: 10px;
@@ -848,7 +799,7 @@ windows-container [handler='window-scale-bottom'] { /**/
   cursor: s-resize;
   }
 
-windows-container [handler='window-scale-bottom-right'] { /**/
+windows-container .window-scale-bottom-right { /**/
   bottom: -5px;
   height: 10px;
   width: 10px;
@@ -856,7 +807,7 @@ windows-container [handler='window-scale-bottom-right'] { /**/
   cursor: nw-resize;
   }
 
-windows-container [handler='window-scale-bottom-left'] { /**/
+windows-container .window-scale-bottom-left { /**/
   bottom: -5px;
   height: 10px;
   width: 10px;
@@ -987,6 +938,7 @@ textarea-container-inline
   background: #fff;
   border: 1px solid #808080;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, .3);
+  box-decoration-break: clone;
 }
 textarea-container-inline textarea
 {
@@ -999,9 +951,6 @@ textarea-container-inline textarea
 }
 cst-select-toolbar-setting
 {
-    display: inline-block;
-    width: 26px;
-    height: 17px;
     float: left;
 }
 
@@ -1013,7 +962,6 @@ cst-value
   height: 17px;
   line-height: 17px;
   white-space: nowrap;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   width: 95%; /* TODO: this is ugly, might push down the dropdown */
   box-sizing: border-box;
@@ -1469,7 +1417,7 @@ tab.active .close-tab-button {
   background: transparent;
 }
 
-.context-window [handler='window-close'] { /**/
+.context-window .window-close { /**/
   background-image: url('../ui-images/icons/context_window_close.png');
 }
 
@@ -1501,6 +1449,11 @@ tab.active .close-tab-button {
     background-color: #ccc;
 }
 
+.container-button:disabled {
+    border-color: #aaa;
+    color: #aaa;
+}
+
 .container-button img {
     vertical-align: middle;
 }
@@ -1515,13 +1468,36 @@ info {
 
 .badge.paused {
     content: url("../ui-images/pause.png");
+    background-color: transparent;
+    top: -2px;
+    left: 21px;
 }
 
-[handler="inspect-node-link"] {
+.inspect-node-link {
     cursor: pointer;
 }
 
-[handler="inspect-node-link"]:hover {
+.inspect-node-link:hover {
     text-decoration: underline;
 }
+
+.internal-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.internal-link:hover {
+    text-decoration: none;
+}
+
+.inline-block {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.block-content {
+  display: block;
+  line-height: 1.1;
+  text-align: center;
+} 
 

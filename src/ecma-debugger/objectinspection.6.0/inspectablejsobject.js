@@ -102,7 +102,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._virtual_props = virtual_props;
     this._root_path = [this._identifier, this._obj_id, 0];
     this._root_path_joined = this._root_path.join();
-    this.scope_list = scope_list;
+    this.scope_list = scope_list && scope_list.slice(1);
   }
 
   this._get_subtree = function(path)
@@ -429,8 +429,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.expand_scope_chain = function()
   {
     if (this.scope_list)
-      this.scope_list_models = this.scope_list.map(function(scope_id, index){
-        return new cls.InspectableJSObject(this._rt_id, scope_id, "scope " + index);
+      this.scope_list_models = this.scope_list.map(function(scope_id, index, array) {
+        var name = index == array.length - 1
+                 ? ui_strings.S_SCOPE_GLOBAL
+                 : ui_strings.S_SCOPE_INNER.replace("%s", index + 1)
+        return new cls.InspectableJSObject(this._rt_id, scope_id, name);
       }, this);
     return this.scope_list_models || [];
   }

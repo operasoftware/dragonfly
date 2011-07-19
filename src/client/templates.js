@@ -13,9 +13,8 @@
           'max', PORT_MAX,
           'value', Math.min(PORT_MAX, Math.max(port, PORT_MIN))
         ],
-        ['input',
-          'type', 'button',
-          'value', ui_strings.S_BUTTON_TEXT_APPLY,
+        ['button',
+          ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'apply-remote-debugging'
         ]
       ],

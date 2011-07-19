@@ -230,6 +230,36 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
+url: ./test-cases/dom/pseduo-test.html
+
+id: 01000
+label: Pseudo element setting
+desc:
+ - Expand the body element
+ - Go to Settings -> Documents
+ - Enable/disable "Show pseudo elements" and make sure they get visible/hidden
+
+id: 01100
+label: Pseudo elements
+desc:
+ - Make sure after/before/first-letter and first-line pseudo elements show up in the DOM view only for elements that are descendants of the <html> element
+ - Select a pseudo element
+ - Make sure that the Style side panel is updated with the according styling, i.e. you see the normal styling for the element of which the pseudo element belongs to, and the psuedo element styling at the top
+ - Make sure that the style can be edited
+
+id: 01200
+label: Pseudo elements context menu
+desc:
+ - Bring up the context menu for a pseudo element
+ - Make sure that it doesn't have additional items than the default context menu for the view
+
+id: 01300
+label: Pseudo classes
+desc:
+ - Select the <a> element
+ - Make sure the :link pseudo class is visible
+ - From the dropdown, check all pseudo classes and make sure they all get visible
+ - Select another element and make sure the same pseudo classes still apply
 
 DOM.Colorpicker
 ***************

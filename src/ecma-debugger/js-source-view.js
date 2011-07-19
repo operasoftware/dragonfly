@@ -566,6 +566,20 @@ cls.JsSourceView = function(id, name, container_class)
         document.getElementById(scroll_id).innerHTML = "";
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           "script source is missing for given id in views.js_source.showLine");
+
+        new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
+          {
+            label: ui_strings.S_BUTTON_OK,
+            handler: function() {
+              runtimes.reloadWindow();
+              return true;
+            }
+          },
+          {
+            label: ui_strings.S_BUTTON_CANCEL
+          }
+        ).show();
+
         return;
       }
       // reset the stored current line to ensure
@@ -1002,27 +1016,21 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
-
-    if(script_id)
+    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
+    var script_id = script_id_str && parseInt(script_id_str);
+    if (script_id)
     {
       // TODO is this needed?
-      if(script_id != selected_script_id)
+      if (script_id != selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
         topCell.showView(views.js_source.id);
         selected_script_id = script_id;
       }
+      selected_value = target_ele.textContent;
+      return true;
     }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "missing script id in handlers['display-script']")
-    }
-    selected_value = target_ele.textContent;
-    // TODO
-
-    return true;
+    return false;
   }
 
   // this.updateElement
@@ -1141,6 +1149,7 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-type': DOMSearch.PLAIN_TEXT,
       'js-search-ignore-case': true,
       'js-search-all-files': false,
+      'js-search-injected-scripts': true,
       'max-displayed-search-hits': 1000
     },
     // key-label map
@@ -1150,7 +1159,7 @@ cls.JsSourceView.create_ui_widgets = function()
       error: ui_strings.S_BUTTON_LABEL_AT_ERROR,
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
-      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS
+      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
     },
     // settings map
     {
@@ -1298,35 +1307,47 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
 
-          if (breakpoints.script_has_breakpoint_on_line(script_id, line))
+          var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
+          if (bp)
           {
-            var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
-            items.push({
-              label: !bp.condition ?
-                     ui_strings.M_CONTEXTMENU_ADD_CONDITION :
-                     ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
-              handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
-            },
+            if (bp.is_enabled)
             {
-              label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
-              handler: function(event, target) {
-                breakpoints.set_condition("", bp.id);
+              items.push({
+                label: !bp.condition ?
+                       ui_strings.M_CONTEXTMENU_ADD_CONDITION :
+                       ui_strings.M_CONTEXTMENU_EDIT_CONDITION,
+                handler: bp_view.show_and_edit_condition.bind(bp_view, script_id, line)
               },
-              disabled: !bp.condition
-            },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_CONDITION,
+                handler: function(event, target) {
+                  breakpoints.set_condition("", bp.id);
+                },
+                disabled: !bp.condition
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.remove_breakpoint(script_id, line);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
+                handler: function(event, target) {
+                  var bp_id = breakpoints.remove_breakpoint(script_id, line);
+                  breakpoints.delete_breakpoint(bp_id);
+                }
+              });
+            }
+            else
             {
-              label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
-              handler: function(event, target) {
-                breakpoints.remove_breakpoint(script_id, line);
-              }
-            },
-            {
-              label: ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT,
-              handler: function(event, target) {
-                var bp_id = breakpoints.remove_breakpoint(script_id, line);
-                breakpoints.delete_breakpoint(bp_id);
-              }
-            });
+              items.push({
+                label: ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT,
+                handler: function(event, target) {
+                  breakpoints.add_breakpoint(script_id, line);
+                }
+              });
+            }
           }
           else
           {

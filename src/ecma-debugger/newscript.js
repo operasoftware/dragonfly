@@ -114,6 +114,13 @@ window.cls.NewScript.prototype = new function()
     }
   };
 
+  this.get_line_length = function(index)
+  {
+    return index > 0
+         ? this.line_arr[index] - this.line_arr[index - 1]
+         : this.line_arr[0];
+  }
+
   this.clear_search = function()
   {
     this.search_term = "";

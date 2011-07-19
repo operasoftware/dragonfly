@@ -223,17 +223,19 @@ window.cls.Client = function()
   var show_info = function(msg, port)
   {
     viewport.innerHTML =
-    "<div class='padding' id='waiting-for-connection'>" +
-      "<div class='info-box'>" + msg +
-          ( port ? "<p><input type='button' value='" + ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG + "'" +
-                " handler='cancel-remote-debug'></p>" : "") +
-      "</div>" +
-    "</div>";
-    var window_controls = document.getElementsByTagName('window-controls')[0];
+      "<div class='padding' id='waiting-for-connection'>" +
+        "<div class='info-box'>" + msg +
+            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+                      ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
+                    "</button></p>"
+                  : "") +
+        "</div>" +
+      "</div>";
+    var window_controls = document.querySelector('window-controls');
     if (window_controls)
     {
       window_controls.parentNode.removeChild(window_controls);
-    };
+    }
     document.documentElement.render(templates.window_controls_close());
   }
 
@@ -304,7 +306,7 @@ window.cls.Client = function()
                       services);
     new CompositeView('console_mode',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_ERROR_CONSOLE,
-                      layouts.console_rough_layout,
+                      layouts.error_console_rough_layout,
                       null,
                       services);
     new CompositeView('utils',
@@ -315,6 +317,9 @@ window.cls.Client = function()
     new CompositeView('resource_panel',
                       ui_strings.M_VIEW_LABEL_RESOURCES,
                       layouts.resource_rough_layout);
+    new CompositeView('console_panel',
+                      ui_strings.M_VIEW_LABEL_COMMAND_LINE,
+                      layouts.console_rough_layout);
   }
 
   this.create_window_controls = function()
@@ -378,7 +383,7 @@ window.cls.Client = function()
       // a short workwround to hide some tabs as long as we don't have the dynamic tabs
       var
       is_disbaled = null,
-      tabs = ui_framework.layouts.console_rough_layout.children[0].tabs,
+      tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
       i = 0;
 
@@ -455,7 +460,7 @@ window.cls.Client = function()
 
 }
 
-ui_framework.layouts.console_rough_layout =
+ui_framework.layouts.error_console_rough_layout =
 {
   dir: 'v', width: 700, height: 700,
   children:
@@ -488,17 +493,6 @@ ui_framework.layouts.environment_rough_layout =
     { height: 200, tabs: ['environment'] }
   ]
 }
-
-ui_framework.layouts.settings_rough_layout =
-{
-  dir: 'v', width: 700, height: 700,
-  children:
-  [
-    { height: 200, tabs: ['settings_view'] }
-  ]
-}
-
-
 
 ui_framework.layouts.dom_rough_layout =
 {
@@ -625,6 +619,14 @@ ui_framework.layouts.storage_rough_layout =
     } ]
 }
 
+ui_framework.layouts.console_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
@@ -644,7 +646,8 @@ ui_framework.layouts.main_layout =
       'resource_panel',
       'storage',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
-      'utils'
+      'utils',
+      'console_panel'
     ];
   }
 };

@@ -37,7 +37,7 @@
 .shortcuts-config filter {
   font-size: inherit;
   vertical-align: middle;
-  background: transparent url("http://localhost:8002/src/ui-images/filter_white.png") no-repeat 4px 50%;
+  background: transparent url("../ui-images/filter_white.png") no-repeat 4px 50%;
   border: 1px solid rgba(255,255,255,0.5);
   box-shadow: none;
   border-radius: 3px;
@@ -66,7 +66,7 @@
 }
 .invalid-shortcut td
 {
-  color: #fff;
+  color: #fc6854;
   border-color: hsl(22, 100%, 50%);;
   border: 1px solid rgba(255,255,255,0.0);
 }
@@ -74,6 +74,9 @@
 {
   font-weight: bold;
   padding: 2px 7px;
+}
+.invalid-shortcut input, .invalid-shortcut input:focus {
+  border-color: #fc6854;
 }
 .scc-input,
 .scc-select

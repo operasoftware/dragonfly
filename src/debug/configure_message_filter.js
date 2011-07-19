@@ -79,8 +79,7 @@ cls.debug.ConfigureMessageFilters = function(id, name, container_class)
     // to pass context to map
     return (
     ['li',
-      ['input',
-        'type', 'button',
+      ['button',
         'handler', 'toggle-filter-messages',
         'data-service-name', service
       ].concat(this.filter.all ? ['disabled', 'disabled'] : []),

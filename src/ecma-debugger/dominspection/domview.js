@@ -42,7 +42,10 @@ cls.DOMView = function(id, name, container_class)
                                     true);
         }
       }
-      window.messages.post('dom-view-updated', {model: model});
+      // to dispatch any scroll event before the message is sent
+      setTimeout(function(){
+        window.messages.post('dom-view-updated', {model: model});
+      }, 0);
     }
     else
     {
@@ -78,6 +81,34 @@ cls.DOMView = function(id, name, container_class)
   this.ondestroy = function()
   {
     window.hostspotlighter.clearSpotlight();
+  };
+
+  this.highligh_search_hit = function(hit)
+  {
+    // hit created in DOMSearch get_search_hit.
+    // hit has offset, length, object_id, node_type and text_content.
+    var container = this.get_container();
+    if (container)
+    {
+      var node = container.querySelector('[ref-id="' + hit.object_id + '"]');
+      if (node)
+      {
+        this._search_hit = this._highlighter.set_hit(node, 
+                                                     hit.offset, 
+                                                     hit.length, 
+                                                     TextSearch.HIGHLIGHT_STYLE, 
+                                                     true);
+      }
+    }
+  };
+
+  this._onscroll = function(event, target)
+  {
+    if (this._search_hit)
+    {
+      this._highlighter.cleanup();
+      this._search_hit = null;
+    }
   }
 
   this._on_setting_change = function(msg)
@@ -96,7 +127,15 @@ cls.DOMView = function(id, name, container_class)
   }
 
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
-  this.init(id, name, container_class);
+  this._init = function(id, name, container_class)
+  {
+    this._highlighter = new VirtualTextSearch();
+    this._highlight_style = this._highlighter.get_match_style('highlight');
+    this.init(id, name, container_class, '', 'clear-search-hit');
+    eventHandlers.scroll['clear-search-hit'] = this._onscroll.bind(this);
+  }
+
+  this._init(id, name, container_class);
 
 }
 
@@ -182,6 +221,24 @@ cls.DocumentSelect = function(id)
 
 cls.DOMView.create_ui_widgets = function()
 {
+  var settings_checkboxes = [
+    'force-lowercase',
+    'dom-tree-style',
+    'show-comments',
+    'show-whitespace-nodes',
+    'find-with-click',
+    'highlight-on-hover',
+    'update-on-dom-node-inserted',
+    'show-id_and_classes-in-breadcrumb',
+    'scroll-into-view-on-spotlight',
+    'lock-selected-elements'
+  ];
+
+  var service = window.services["ecmascript-debugger"];
+  if (service.major_version >= 6 && service.minor_version >= 5)
+  {
+    settings_checkboxes.push('show-pseudo-elements');
+  }
 
   new Settings
   (
@@ -205,6 +262,7 @@ cls.DOMView.create_ui_widgets = function()
       'dom-search-type': DOMSearch.PLAIN_TEXT,
       'dom-search-ignore-case': 1,
       'dom-search-only-selected-node': 0,
+      'show-pseudo-elements': true
     }, 
     // key-label map
     {
@@ -219,24 +277,12 @@ cls.DOMView.create_ui_widgets = function()
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
       'show-id_and_classes-in-breadcrumb': ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB,
       'scroll-into-view-on-spotlight': ui_strings.S_SWITCH_SCROLL_INTO_VIEW_ON_FIRST_SPOTLIGHT,
-      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS
-    
+      'lock-selected-elements': ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS,
+      'show-pseudo-elements': ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS
     },
     // settings map
     {
-      checkboxes:
-      [
-        'force-lowercase',
-        'dom-tree-style',
-        'show-comments',
-        'show-whitespace-nodes',
-        'find-with-click',
-        'highlight-on-hover',
-        'update-on-dom-node-inserted',
-        'show-id_and_classes-in-breadcrumb',
-        'scroll-into-view-on-spotlight',
-        'lock-selected-elements'
-      ],
+      checkboxes: settings_checkboxes,
       contextmenu:
       [
         'dom-tree-style',
@@ -306,7 +352,8 @@ cls.DOMView.create_ui_widgets = function()
       {
         var target = event.target;
         var ele = target.has_attr("parent-node-chain", "ref-id");
-        if (ele && ele.hasClass("non-editable"))
+        if (ele && (ele.hasClass("non-editable") ||
+                    ele.parentNode.hasClass("non-editable")))
         {
           return;
         }
@@ -336,11 +383,17 @@ cls.DOMView.create_ui_widgets = function()
             menu.extend([
               ContextMenu.separator,
               {
-                label: is_open ? ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE
-                               : ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                label: ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE,
+                handler: function contextmenu_expand_collapse_subtree(event, target) {
+                  broker.dispatch_action("dom", "expand-node", event, event.target);
+                }
+              },
+              {
+                label: ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE,
                 handler: function contextmenu_expand_collapse_subtree(event, target) {
                   broker.dispatch_action("dom", "expand-collapse-whole-node", event, event.target);
-                }
+                },
+                disabled: !is_open
               }
             ]);
           }

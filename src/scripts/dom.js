@@ -90,7 +90,8 @@ if (typeof document.createElement('div').classList == 'undefined')
 Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
   var args_is_string = typeof args == 'string';
-  if (this.nodeType == 1 && args_is_string || (args.length == 1 && args[0][0] == "<"))
+  if (this.nodeType == 1 && args_is_string || 
+      (args.length == 1 && typeof args[0]  == 'string' && /</.test(args[0])))
   {
     this.insertAdjacentHTML('beforeend', args_is_string ? args : args[0]);
     return this.firstElementChild;
@@ -250,32 +251,6 @@ Element.prototype.swapClass = function(from, to)
 };
 
 /**
- * Returns the next sibling of the element that is an element. Ignores
- * nodes that are not elements
- */
-Element.prototype.getNextSiblingElement = function()
-{
-  var next = this.nextSibling;
-  while (next && next.nodeType != 1)
-  {
-    next = next.nextSibling;
-  }
-  return next;
-};
-
-// deprecated, use getBoundingClientRect instead
-Element.prototype.getTop = function()
-{
-  var c = this, o_p = null, top = c.offsetTop;
-  while (o_p = c.offsetParent)
-  {
-    top += o_p.offsetTop;
-    c = o_p;
-  }
-  return top;
-};
-
-/**
  * Insert node after target in the tree.
  */
 Element.prototype.insertAfter = function(node, target)
@@ -294,22 +269,6 @@ Element.prototype.insertAfter = function(node, target)
     this.appendChild(node);
   }
   return node;
-};
-
-/**
- * Returns an array of all children on the element that are also elements
- */
-Element.prototype.getChildElements = function()
-{
-  var children = this.childNodes, ret = [], c = null, i = 0;
-  for ( ; c = children[i]; i++)
-  {
-    if (c.nodeType == 1)
-    {
-      ret[ret.length] = c;
-    }
-  }
-  return ret;
 };
 
 /**
@@ -428,120 +387,6 @@ Element.ScrollPosition.prototype.reset = function(target, sec_container)
   }
 }
 
-/* currently broken in Opera */
-Element.prototype.getWidth = function(e)
-{
-  var style = window.getComputedStyle(this, null);
-  return this.offsetWidth
-    - parseInt(style['paddingLeft'])
-    - parseInt(style['paddingRight'])
-    - parseInt(style['borderLeftWidth'])
-    - parseInt(style['borderRightWidth']);
-};
-
-Element.prototype.spliceInnerHTML = function(str)
-{
-  this.insertAdjacentHTML('afterEnd', str);
-  /*
-  var
-  temp = this.ownerDocument.createElement('div-parser'),
-  range = this.ownerDocument.createRange();
-  temp.innerHTML = str;
-  if(this.nextSibling)
-  {
-    range.selectNodeContents(this.parentNode.insertBefore(temp, this.nextSibling));
-  }
-  else
-  {
-    range.selectNodeContents(this.parentNode.appendChild(temp));
-  }
-  this.parentNode.replaceChild(range.extractContents(), temp);
-  */
-};
-
-/**
- * Get the first contained element with name nodeName
- */
-Element.prototype.getFirst = function(nodeName)
-{
-  return this.getElementsByTagName(nodeName)[0];
-};
-
-/**
- * Get the last contained element with name nodeName
- */
-Element.prototype.getLast = function(nodeName)
-{
-  var all = this.getElementsByTagName(nodeName);
-  return all[all.length - 1];
-};
-
-/**
- * Get the previous element of the same name as "current" that is a
- * child of the element. Return null if there is no such element.
- */
-Element.prototype.getPreviousSameNamed = function(current)
-{
-  var
-  nodeName = current && current.nodeName,
-  all = this.getElementsByTagName(nodeName),
-  cur = null,
-  i = 0;
-
-  for ( ; (cur = all[i]) && cur != current; i++);
-  return cur && all[i-1] || null;
-};
-
-/**
- * Same as getPreviousSameNamed but finds the next element
- */
-Element.prototype.getNextSameNamed = function(current)
-{
-  var
-  nodeName = current && current.nodeName,
-  all = this.getElementsByTagName(nodeName),
-  cur = null,
-  i = 0;
-
-  for ( ; (cur = all[i]) && cur != current; i++);
-  return cur && all[i+1] || null;
-};
-
-/**
- * Get the next element of the same name as "target" that is a
- * sibling of the element. Return null if there is no such element.
- */
-Element.prototype.getNextSameNamedSibling = function(target)
-{
-  var
-  next = this.nextSibling,
-  name = this.nodeName;
-
-  while (next && next.nodeName != name)
-  {
-    next = next.nextSibling;
-  }
-
-  return next;
-};
-
-/**
- * Same as getNextSameNamedSibling but finds previous sibling
- */
-Element.prototype.getPreviousSameNamedSibling = function(target)
-{
-  var
-  previous = this.previousSibling,
-  name = this.nodeName;
-
-  while (previous && previous.nodeName != name)
-  {
-    previous = previous.previousSibling;
-  }
-
-  return previous;
-};
-
 /**
  * Returns the next element for which the function "filter" returns true.
  * The filter functions is passed two arguments, the current candidate element
@@ -636,9 +481,11 @@ if (!Element.prototype.matchesSelector)
     }
 };
 
+/* The naming is not precise, it can return the element itself. */
+
 Element.prototype.get_ancestor = function(selector)
 {
-  var ele = this.parentNode;
+  var ele = this;
   while (ele)
   {
     if (ele.nodeType == 1 && ele.matchesSelector(selector))
@@ -720,23 +567,6 @@ Node.prototype.getNodeData = function(nodeName)
 };
 
 /**
- * Get the value of an attribute called attr from the first child node called
- * nodeName. If node is not found, returns null
- * @argument nodeName {string} node name
- * @argument attr {string} attribute name
- * @returns {string}
- */
-Node.prototype.getAttributeFromNode = function(nodeName, attr)
-{
-  var node = this.getElementsByTagName(nodeName)[0];
-  if (node)
-  {
-    return node.getAttribute(attr);
-  }
-  return null;
-};
-
-/**
  * Returns the index of item in the nodelist
  * (The same behaviour as js1.6 array.indexOf)
  * @argument item {Element}
@@ -772,6 +602,13 @@ Array.prototype.sum = function(selectorfun)
   }
 };
 
+Array.prototype.__defineGetter__("last", function()
+{
+  return this[this.length - 1];
+});
+
+Array.prototype.__defineSetter__("last", function() {});
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
@@ -793,36 +630,6 @@ StyleSheetList.prototype.getPropertyValue = function(selector, property)
   var style = this.getDeclaration(selector);
   return style && style.getPropertyValue(property) || '';
 };
-
-/**
- * Make sure there is a getElementsByClassName method if there is no native
- * implementation of it
- * @deprecated All verison of opera in which the dragonfly client runs should have this by now
- */
-(function() {
-  if (!document.getElementsByClassName)
-  {
-    Document.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function()
-    {
-      var eles = this.getElementsByTagName("*"),
-          ele = null, ret =[], c_n = '', cursor = null, i = 0, j = 0;
-      for ( ; c_n = arguments[i]; i++)
-      {
-        arguments[i] = new RegExp('(?:^| +)' + c_n + '(?: +|$)');
-      }
-      for (i = 0; ele = eles[i]; i++)
-      {
-        c_n = ele.className;
-        for (j = 0; (cursor = arguments[j]) && cursor.test(c_n); j++);
-        if (!cursor)
-        {
-          ret[ret.length] = ele;
-        }
-      }
-      return ret;
-    }
-  }
-})();
 
 if (!(function(){}).bind)
 {
@@ -867,6 +674,14 @@ String.prototype.startswith = function(str)
 String.prototype.endswith = function(str)
 {
   return this.slice(this.length - str.length) === str;
+};
+
+String.prototype.zfill = function(width)
+{
+  return this.replace(/(^[+-]?)(.+)/, function(str, sign, rest) {
+    var fill = Array(Math.max(width - str.length + 1, 0)).join(0);
+    return sign + fill + rest;
+  });
 };
 
 /**

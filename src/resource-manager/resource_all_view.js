@@ -18,7 +18,8 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._loading = false;
   this._container = null;
   this._scrollpos = 0;
-
+  this._view = null;
+  this._open_resource_views = [];
 
   this.ondestroy = function()
   {
@@ -31,23 +32,23 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     this._render_main_view(container);
   };
 
-  this.show_resource_for_id = function(rid)
+  this.show_resource_for_id = function(rid, data)
   {
     var res = this._service.get_resource_for_id(rid);
     if (res)
     {
-      this._open_resource_tab(res);
+      this._view = this._open_resource_tab(res, data);
       return true;
     }
     return false;
   };
 
-  this.show_resource_for_url = function(url)
+  this.show_resource_for_url = function(url, data)
   {
     var res = this._service.get_resource_for_url(url);
     if (res)
     {
-      this._open_resource_tab(res);
+      this._view = this._open_resource_tab(res, data);
       return true
     }
     return false;
@@ -91,22 +92,75 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }
   };
 
-  this._open_resource_tab = function(resource)
+  this._setup_single_view = function(resource, resource_manager)
   {
-    var type = resource.type;
-    viewclasses = {
+    var viewclass =
+    {
       image: cls.ImageResourceDetail,
       font: cls.FontResourceDetail,
       script: cls.JSResourceDetail,
       markup: cls.MarkupResourceDetail,
       css: cls.CSSResourceDetail,
-      text: cls.TextResourceDetail
-    }
-    var viewclass = viewclasses[type] || cls.GenericResourceDetail;
-    var view = new viewclass(resource, this._service);
+      text: cls.TextResourceDetail,
+    }[resource.type] || cls.GenericResourceDetail;
+    var view = new viewclass(resource, resource_manager);
+    var handler_name = 'text-search-' + view.id;
+    var textSearch = new TextSearch();
+    var global_handler = ActionBroker.get_instance().get_global_handler();
+    var handler = cls.Helpers.shortcut_search_cb.bind(textSearch);
+    var serach_field = 
+    {
+      handler: handler_name,
+      shortcuts: handler_name,
+      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+    };
+    var onviewcreated = function(msg)
+    {
+      if (msg.id == view.id)
+      {
+        var scroll_container = msg.container.getElementsByClassName('resource-detail-container')[0];
+        if (scroll_container)
+        {
+          textSearch.setContainer(scroll_container);
+          var input = view.getToolbarControl(msg.container, handler_name);
+          textSearch.setFormInput(input);
+        }
+      }
+    };
+    var onviewdestroyed = function(msg)
+    {
+      if( msg.id == view.id )
+      {
+        textSearch.cleanup();
+      }
+    };
+    var oninput = function(event, target)
+    {
+      textSearch.searchDelayed(target.value);
+    };
+
+    new ToolbarConfig(view.id, null, [serach_field]);
+    messages.addListener('view-created', onviewcreated);
+    messages.addListener('view-destroyed', onviewdestroyed);
+    eventHandlers.input[handler_name] = oninput;
+    global_handler.register_shortcut_listener(handler_name, handler);
+    return view;
+  };
+
+  this._open_resource_tab = function(resource, data)
+  {
+
     var ui = UI.get_instance();
-    ui.get_tabbar("resources").add_tab(view.id);
-    ui.show_view(view.id);
+
+    if (!this._open_resource_views[resource.id])
+    {
+      var view = this._setup_single_view(resource, this._service);
+      this._open_resource_views[resource.id] = view.id;
+    }
+    window.views[this._open_resource_views[resource.id]].data = data
+
+    ui.get_tabbar("resources").add_tab(this._open_resource_views[resource.id]);
+    ui.show_view(this._open_resource_views[resource.id]);
   }
 
   this.open_resource_tab = this._open_resource_tab;

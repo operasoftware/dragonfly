@@ -30,6 +30,9 @@
  *     <dt>host-state</dt>
  *     <dd>State of the host. Payload: msg.state = 'disconnected' | 'ready' | waiting'</dd>
  *
+ *     <dt>before-show-view</dt>
+ *     <dd>before a view was created. Payload: id msg.view</dd>
+ *
  *     <dt>show-view</dt>
  *     <dd>a view was created. Payload: id msg.view</dd>
  *
@@ -67,7 +70,7 @@
  *     <dd>A runtime was selected. Payload: msg.rt_id, msg.script_id</dd>
  *
  *     <dt>element-selected</dt>
- *     <dd>An element was selected. Payload: msg.obj_id, msg.rf_id</dd>
+ *     <dd>An element was selected. Payload: msg.model, msg.obj_id, msg.rt_id, msg.pseudo_element</dd>
  *
  *     <dt>setting-changed</dt>
  *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>

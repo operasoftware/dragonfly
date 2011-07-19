@@ -162,7 +162,6 @@ var ui_framework = new function()
         {
           val += parseInt(style.getPropertyValue(prop));
         }
-        val += 5;
         return val;
       }
     },
@@ -198,7 +197,7 @@ var ui_framework = new function()
       "</div> " +
     "</div> " +
     "<toolbar style='top:50px;left:50px;height:26px;width:678px;display:block'> " +
-      "<cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' > " +
+      "<cst-select id='test-cst-select-width' cst-id='js-script-select' unselectable='on' style='width: 302px' class='ui-control'> " +
         "<cst-value unselectable='on' /> " +
         "<cst-drop-down/> " +
       "</cst-select> " +

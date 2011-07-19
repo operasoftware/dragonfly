@@ -48,6 +48,8 @@ function ContextMenu() {
     // Hide the currently visible context menu, if any
     this.dismiss();
 
+    CstSelectBase.close_opened_select();
+
     if (/*!window.getSelection().isCollapsed ||*/ event.shiftKey) // Shift key overrides for debugging
     {
       return;
@@ -121,8 +123,9 @@ function ContextMenu() {
       }
     }
 
-    var res_id_or_url =  event.target.get_attr("parent-node-chain", "data-resource-id") || 
-                         event.target.get_attr("parent-node-chain", "data-resource-url");
+    var res_id_or_url = event.target.get_attr("parent-node-chain", "data-resource-id") ||
+                        event.target.get_attr("parent-node-chain", "data-resource-url");
+    var line_number = event.target.get_attr('parent-node-chain', 'data-resource-line-number');
     if (res_id_or_url)
     {
       if (last_found_menu_id == "dom")
@@ -134,16 +137,17 @@ function ContextMenu() {
       var rid = parseInt(res_id_or_url, 10);
       if (rid)
       {
+        // data-resource-line-number
         var fun = function()
         {
-          broker.show_resource_for_id(rid);
+          broker.show_resource_for_id(rid, line_number);
         }
       }
       else
       {
         var fun = function()
         {
-          broker.show_resource_for_url(res_id_or_url);
+          broker.show_resource_for_url(res_id_or_url, line_number);
         }
       }
 
@@ -166,9 +170,12 @@ function ContextMenu() {
 
     if (all_items.length)
     {
+      // Prevent scrolling by mouse wheel when menu is visible
+      window.onmousewheel = function(event) { event.preventDefault(); }
+
       this._current_event = event;
       this.show(all_items, event.clientX, event.clientY);
-      this.is_shown = true;
+      this.is_visible = true;
     }
   };
 
@@ -239,7 +246,7 @@ function ContextMenu() {
     {
       contextmenu.parentElement.removeChild(contextmenu);
     }
-    this.is_shown = false;
+    this.is_visible = false;
   };
 
   this._expand_all_items = function(items, event, menu_id)
@@ -278,6 +285,8 @@ function ContextMenu() {
   {
     var target = event.target;
     var contextmenu = document.getElementById("contextmenu");
+
+    window.onmousewheel = null;
 
     event.stopPropagation();
     event.preventDefault();

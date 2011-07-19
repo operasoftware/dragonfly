@@ -31,7 +31,8 @@ cls.WatchesView = function(id, name, container_class)
         ['button',
           ['span', ui_strings.S_LABEL_ADD_WATCH],
           'handler', 'watches-add',
-          'class', 'container-button'
+          'class', 'container-button',
+          'unselectable', 'on'
         ],
         'class', 'watches-controls padding'
       ]
@@ -60,17 +61,17 @@ cls.WatchesView = function(id, name, container_class)
 
   this.onclick = function(event)
   {
+    if (this._add_watches_button == event.target)
+    {
+      return false;
+    }
+
     if (this.mode == MODE_EDIT)
     {
-      if (this._add_watches_button == event.target)
-      {
-        return false;
-      }
       if (this._editor.onclick(event))
       {
         this.mode = MODE_DEFAULT;
         this._add_watches_button.disabled = false;
-        return true;
       }
       return false;
     }
@@ -119,7 +120,12 @@ cls.WatchesView = function(id, name, container_class)
   {
     if (this.mode == MODE_EDIT)
     {
-      this._editor.cancel();
+      var ele = this._editor.cancel();
+      if (!this._editor.context_enter.value)
+      {
+        var item = ele.parentNode;
+        item.parentNode.removeChild(item);
+      }
       this._check_no_content();
       this._add_watches_button.disabled = false;
       return false;

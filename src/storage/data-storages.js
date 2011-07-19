@@ -90,8 +90,8 @@ cls.StorageDataBase = new function()
         }
       );
     }
-    var script = "local_storage.set_item(\"" + item.key + "\",\"" +
-      this._encode_new_line_chars(value) + "\",\"" + item.type + "\")";
+    var script = "local_storage.set_item(\"" + helpers.escape_input(item.key) + "\",\"" +
+      this._encode_new_line_chars(helpers.escape_input(value)) + "\",\"" + item.type + "\")";
     var tag = tagManager.set_callback(this, this._handle_default,
       [success_callback, "failed set_item in LocalStorageData"]);
     services['ecmascript-debugger'].requestEval(tag,

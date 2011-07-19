@@ -1245,6 +1245,9 @@ ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
 
+/* DESC: Show pseudo elements in the DOM view */
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+
 /* DESC: Tab heading for the search panel. */
 ui_strings.M_VIEW_LABEL_SEARCH = "Search";
 
@@ -1257,21 +1260,64 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching …";
 
-/* DESC: Radio label for the search type 'Text' in the DOM search panel  */
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
+
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
+
+/* DESC: Label for the global scope in the Scope Chain. */
+ui_strings.S_SCOPE_GLOBAL = "Global";
+
+/* DESC: Label for the scopes other than local and global in the Scope Chain. */
+ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
+
+/* DESC: Radio label for the search type 'Text' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
 
-/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel  */
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
 
-/* DESC: Radio label for the search type 'CSS' in the DOM search panel  */
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
 
-/* DESC: Radio label for the search type 'XPath' in the DOM search panel  */
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 
-/* DESC: Checkbox label to set the 'ignore case' flag search panel  */
+/* DESC: Checkbox label to set the 'ignore case' flag search panel. */
 ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
+
+/* DESC: If enabled objects can be expanded inline in the console. */
+ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
+
+/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
+ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
+
+/* DESC: Checkbox label to search in all files in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
+
+/* DESC: Checkbox label to search in injected scripts in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
+
+/* DESC: Tooltip for the injected scripts search settings label. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, like Browser JS, Extension JS, User JS";
+
 

@@ -2,7 +2,7 @@
 {
   const MAX_LINE_CHARS = 4000;
 
-  this.search_panel = function(search, type)
+  this.search_panel = function(search, type, handler)
   {
     return (
     [
@@ -12,7 +12,7 @@
       ['div',
         ['div', 'class', 'panel-search mono'],
         'class', 'panel-search-container',
-        'handler', 'show-script'],
+        'handler', handler],
     ]);
   };
 
@@ -24,14 +24,30 @@
     return content;
   };
 
-  this._search_input = function(name, type, value, label, is_selected)
+  this._search_input = function(name, type, value, label, 
+                                is_selected, is_disabled, title)
   {
     var input = ['input', 'type', type, 'value', value, 'name', name];
     if (is_selected)
     {
       input.push('checked', 'checked');
     }
-    return ['label', input, label];
+    if (is_disabled)
+    {
+      input.push('disabled', 'disabled');
+    }
+    if (title)
+    {
+      input.push('title', title);
+    }
+
+    var ret = ['label', input, label];
+    
+    if (title)
+    {
+      ret.push('title', title);
+    }
+    return ret;
   };
 
   this.advanced_search_field = function(search)
@@ -81,7 +97,8 @@
                              'checkbox', 
                              'ignore-case', 
                              ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
-                             search.ignore_case),
+                             search.ignore_case,
+                             !search.is_token_search),
           'handler', 'dom-search-type-changed',
         ],
       ],
@@ -100,18 +117,26 @@
           this._search_input('js-search-type', 
                              'checkbox', 
                              'reg-exp', 
-                             'reg exp',
+                             ui_strings.S_LABEL_SEARCH_TYPE_REGEXP,
                              TextSearch.REGEXP == search.search_type),
           this._search_input('js-search-ignore-case', 
                              'checkbox', 
                              'ignore-case', 
-                             'ignore case',
+                             ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
                              search.ignore_case),
           this._search_input('js-search-all-files', 
                              'checkbox', 
                              'search-all-files', 
-                             'all files',
+                             ui_strings.S_LABEL_SEARCH_ALL_FILES,
                              search.search_all_files),
+          this._search_input('js-search-injected-scripts', 
+                             'checkbox', 
+                             'search-injected-scripts', 
+                             ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS,
+                             search.search_injected_scripts,
+                             !search.search_all_files,
+                             ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP),
+                             
           'handler', 'js-search-type-changed',
         ],
       ],
@@ -179,6 +204,19 @@
     return  (padding[line_no.length] || '') + line_no;
   };
 
+  this.resource_link = function(url, text, line)
+  {
+    var ret =
+    ["span", text, "handler", "open-resource-tab",
+                   "data-resource-url", url,
+                   "class", "internal-link"];
+    if (line)
+    {
+      ret.push("data-resource-line-number", String(line));
+    }
+    return ret;
+  };
+
   this.search_result_script = function(script, show_script_uri)
   {
     var ret = ['div'];
@@ -186,7 +224,26 @@
     {
       if (typeof show_script_uri != 'boolean' || show_script_uri)
       {
-        ret.push(['h3', (script.uri || script.script_type) + ':']);
+        var h3 = ['h3'];
+        if (script.uri)
+        {
+          h3.push(this.resource_link(script.uri, script.uri), ':');
+        }
+        else if (script.script_type == "inline")
+        {
+          var rt = window.runtimes.getRuntime(script.runtime_id);
+          if (rt && rt.uri)
+          {
+            h3.push(script.script_type + " (");
+            h3.push(this.resource_link(rt.uri,  rt.uri));
+            h3.push("):");
+          }
+        }
+        else
+        {
+          h3.push(script.script_type + ":");
+        }
+        ret.push(h3);
       }
       var line = 0, cur_line = 0, script_data = '', script_tmpl = null, cur = null;
       for (var i = 0; i < script.line_matches.length; i++)
@@ -204,6 +261,12 @@
                                                    script.state_arr[line - 1], 
                                                    ['code'],
                                                    true);
+                                                   
+            if (script.line_offsets_length[i] && 
+                script.line_offsets[i] + script.line_offsets_length[i] > script.get_line_length(line))
+            {
+              script_tmpl.push(['span', '…', 'class', 'match-following-line'])
+            }
             ret.push(['div', 
                        ['span', String(line), 'class', 'line-no'],
                        script_tmpl,
