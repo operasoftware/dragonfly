@@ -39,66 +39,76 @@ window.cls.FriendlyPrinter = function(callback)
     ctx.is_friendly_printed = true;
     var obj_list = ctx.value_list.reduce(this.value2objlist, []);
     var obj_ids = obj_list.map(this._obj2obj_id_list);
-    var queue_cb = this._friendly_print_chunked_cb.bind(this, ctx, obj_list, obj_ids);
-    var queue = [], queue_length = 0, processed_queue = [];
+    var queue = [], queue_length = 0;
+
     // chunk the request, Eval is currently limited to 64 arguments
     // CORE-35198
     while (obj_ids.length > MAX_ARGS * queue_length)
     {
-      queue.push(obj_ids.slice(queue_length++ * MAX_ARGS,
+      queue.push(obj_ids.slice(queue_length++ * MAX_ARGS, 
                                queue_length * MAX_ARGS));
     }
+
+    var fp_ctx = 
+    { 
+      obj_list: obj_list,
+      queue: [],
+      queue_length: queue_length,
+    };
+
     queue.forEach(function(obj_ids, index)
     {
       var call_list = obj_ids.map(this._obj_id2str).join(',');
       var arg_list = obj_ids.reduce(this._create_arg_list, []);
       var tag = this._tagman.set_callback(this,
                                           this._handle_chunk_list,
-                                          [
-                                            ctx,
-                                            processed_queue,
-                                            index,
-                                            queue_length,
-                                            queue_cb
-                                          ]);
+                                          [ctx, fp_ctx, index]);
       var script = this._friendly_print_host_str.replace("%s", call_list);
-      var msg = [ctx.rt_id, ctx.thread_id || 0, ctx.frame_id || 0, script, arg_list];
+      var msg = 
+      [
+        ctx.rt_id, 
+        ctx.thread_id || 0,
+        ctx.frame_id || 0,
+        script,
+        arg_list
+      ];
+      
       this._service.requestEval(tag, msg);
     }, this);
   };
 
-  this._handle_chunk_list = function(status, message,
-                                     ctx, queue, index, queue_length, queue_cb)
+  this._handle_chunk_list = function(status, message, ctx, fp_ctx, index)
   {
     // This function handles the response of _friendly_print_host.
     // That function returns a list of null or lists with type specific strings
     // to friendly-print an object.
     // Here we make the examine call for the returned list.
     const OBJECT_ID = 0, OBJECT_VALUE = 3;
-    if (status || !message[OBJECT_VALUE])
+    if (status || !message[OBJECT_VALUE] || fp_ctx.failed)
     {
       opera.postError('Pretty printing failed: ' + JSON.stringify(message));
-      // TODO set flag in ctx
-      cb(null);
+      fp_ctx.failed = true;
+      this._finalize(ctx, fp_ctx);
     }
     else
     {
-      var tag = this._tagman.set_callback(this, this._handle_examined_chunk_list,
-                                          [ctx, queue, index, queue_length, queue_cb]);
+      var tag = this._tagman.set_callback(this, 
+                                          this._handle_examined_chunk_list,
+                                          [ctx, fp_ctx, index]);
       var msg = [ctx.rt_id, [message[OBJECT_VALUE][OBJECT_ID]]];
       this._service.requestExamineObjects(tag, msg);
     }
   };
 
-  this._handle_examined_chunk_list = function(status, message,
-                                              ctx, queue, index, queue_length, queue_cb)
+  this._handle_examined_chunk_list = function(status, message, ctx, fp_ctx, index)
   {
     // This function handles the examined list returned by _friendly_print_host.
     // Here we have to examine the objects in the returned list.
-    if (status)
+    if (status || fp_ctx.failed)
     {
       opera.postError('Pretty printing failed: ' + JSON.stringify(message));
-      queue_cb(null);
+      fp_ctx.failed = true;
+      this._finalize(ctx, fp_ctx);
     }
     else
     {
@@ -116,7 +126,7 @@ window.cls.FriendlyPrinter = function(callback)
                       (message = message[OBJECT_LIST]) &&
                       (message = message[0]) &&
                       (message = message[PROPERTY_LIST]) || [];
-      queue[index] =
+      fp_ctx.queue[index] =
       {
         is_examined: false,
         prop_list: prop_list.reduce(function(list, prop)
@@ -129,30 +139,32 @@ window.cls.FriendlyPrinter = function(callback)
           return list;
         }, [])
       };
-      var object_id_list = queue[index].prop_list.filter(Boolean);
+      var object_id_list = fp_ctx.queue[index].prop_list.filter(Boolean);
       if (object_id_list.length)
       {
         var tag = this._tagman.set_callback(this, this._handle_queue,
-                                            [queue, index, queue_length, queue_cb]);
+                                            [ctx, fp_ctx, index]);
         this._service.requestExamineObjects(tag, [ctx.rt_id, object_id_list]);
       }
       else
       {
-        this._handle_queue(0, null, queue, index, queue_length, queue_cb);
+        this._handle_queue(0, null, ctx, fp_ctx, index);
       }
     }
   };
 
-  this._handle_queue = function(status, message, queue, index, queue_length, queue_cb)
+  this._handle_queue = function(status, message, ctx, fp_ctx, index)
   {
     // This function handles the examined objects of the examined list
     // returned by _friendly_print_host.
     // The object_id of the examined list gets replaced
     // by the returned property lists for each object.
     // If all chunks are examined, the callback is called.
-    if (status)
+    if (status || fp_ctx.failed)
     {
-      queue_cb(null);
+      opera.postError('Pretty printing failed: ' + JSON.stringify(message));
+      fp_ctx.failed = true;
+      this._finalize(ctx, fp_ctx);
     }
     else
     {
@@ -166,7 +178,7 @@ window.cls.FriendlyPrinter = function(callback)
       TYPE = 1,
       VALUE = 2;
 
-      var chuncked_list = queue[index].prop_list;
+      var chuncked_list = fp_ctx.queue[index].prop_list;
       var object_list = message && message[OBJECT_CHAIN_LIST];
       if (object_list)
       {
@@ -187,18 +199,17 @@ window.cls.FriendlyPrinter = function(callback)
           }, []);
         });
       }
-      queue[index].is_examined = true;
+      fp_ctx.queue[index].is_examined = true;
     }
-    for (var i = 0; i < queue.length && queue[i].is_examined; i++);
-    if (i == queue.length)
+    for (var i = 0; i < fp_ctx.queue.length && fp_ctx.queue[i].is_examined; i++);
+    if (i == fp_ctx.queue_length)
     {
-      queue_cb(queue);
+      this._finalize(ctx, fp_ctx, fp_ctx.queue);
     }
   };
 
-  this._friendly_print_chunked_cb = function(ctx, obj_list, obj_ids, queue)
+  this._finalize = function(ctx, fp_ctx, queue)
   {
-
     // concatenate the chunks to one list
     var friendly_list = queue && queue.reduce(function(list, friendly_list_chunk)
     {
@@ -207,7 +218,7 @@ window.cls.FriendlyPrinter = function(callback)
 
     if (friendly_list)
     {
-      obj_list.forEach(function(value, index)
+      fp_ctx.obj_list.forEach(function(value, index)
       {
         value[FRIENDLY_PRINTED] = friendly_list[index];
       });
