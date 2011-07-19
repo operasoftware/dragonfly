@@ -456,8 +456,9 @@ cls.SimpleJSParser.prototype = new function()
         group_count = 2;
         while (c)
         {
-          if (group in PUNCTUATOR_GROUPS[group_count].start &&
-                (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
+          if (PUNCTUATOR_GROUPS[group_count] &&
+              group in PUNCTUATOR_GROUPS[group_count].start &&
+              (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
           {
             __buffer += c in __escape ? __escape[c] : c;
             c = __source.charAt(++__pointer);
