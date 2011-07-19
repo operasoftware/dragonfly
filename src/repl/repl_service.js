@@ -120,12 +120,28 @@ cls.ReplService = function(view, data)
   this._handle_log = function(msg, rt_id)
   {
     const VALUELIST = 2;
+    const POSITION = 3;
+    const SCRIPTID = 0;
+    const SCRIPTLINE = 1;
+    const SEVERITY = 1;
+
+    var pos = null;
+    if (msg[POSITION])
+    {
+      pos = 
+      {
+        scriptid: msg[POSITION][SCRIPTID], 
+        scriptline: msg[POSITION][SCRIPTLINE],
+      };
+    }
+
     var ctx = 
     {
-      callback: this._handle_log_with_explored_value_list.bind(this, msg, rt_id),
+      callback: this._handle_explored_list.bind(this, rt_id, pos, msg[SEVERITY]),
       value_list: msg[VALUELIST],
       rt_id: rt_id,
     };
+
     this._explore_value_list(ctx);
   };
 
@@ -145,10 +161,9 @@ cls.ReplService = function(view, data)
                            settings.command_line.get("expand-objects-inline") &&
                            !ctx.is_inline_expanded;
     
-
     // this._list_unpacker, this._friendly_printer and this._inline_expander
     // have all the same generic callback, this._explore_value_list, 
-    // the callee itself bound to this instance here.
+    // the callee itself, bound to this instance here.
     // They will set the according flagg of is_unpacked, is_friendly_printed,
     // or is_inline_expanded on the ctx and call the callback with ctx as argument.  
 
@@ -175,18 +190,10 @@ cls.ReplService = function(view, data)
     }
   };
 
-  this._handle_log_with_explored_value_list = function(msg, rt_id, value_list)
+  this._handle_explored_list = function(rt_id, position, severity, value_list)
   {
-    const POSITION = 3, SCRIPTID = 0, SCRIPTLINE = 1, SEVERITY = 1;
     var values = this._parse_value_list(value_list, rt_id);
-    var pos = null;
-    if (msg[POSITION])
-    {
-      pos = {scriptid: msg[POSITION][SCRIPTID], 
-             scriptline: msg[POSITION][SCRIPTLINE]};
-    }
-
-    this._data.add_output_valuelist(rt_id, values, pos, msg[SEVERITY]);
+    this._data.add_output_valuelist(rt_id, values, position, severity);
   };
 
   this._handle_count = function(msg)
@@ -216,39 +223,12 @@ cls.ReplService = function(view, data)
     this._data.add_output_groupend();
   };
 
-  this._parse_value = function(value, rt_id)
-  {
-    const TYPE = 0;
-    const VALUE = 0, OBJECTVALUE = 1;
-    const ID = 0, OTYPE = 2, CLASSNAME = 4, FUNCTIONNAME = 5;
-
-    var ret = {
-      df_intern_type: value[DF_INTERN_TYPE] || "",
-      type:  value[0] === null ? "object" : "native",
-      rt_id: rt_id,
-    };
-
-    if (ret.type == "object") {
-      var object = value[OBJECTVALUE];
-      ret.obj_id = object[ID];
-      ret.type = object[OTYPE];
-      ret.name = object[CLASSNAME] || object[FUNCTIONNAME];
-      ret.friendly_printed = object[FRIENDLY_PRINTED];
-      ret.model = object[INLINE_MODEL];
-      ret.model_template = object[INLINE_MODEL_TMPL];
-    }
-    else
-    {
-      ret.value = value[VALUE];
-    }
-    return ret;
-  };
-
   this._parse_value_list = function(valuelist, rt_id)
   {
-    var pv = this._parse_value;
-    var fun = function(v) { return pv(v, rt_id); }; // partial invocation wrapping rt_id
-    return valuelist.map(fun);
+    return valuelist.map(function(value) 
+    { 
+      return new cls.JSValue(value, rt_id);
+    });
   };
 
   this._handle_dirxml = function(msg, rt_id)
@@ -296,68 +276,13 @@ cls.ReplService = function(view, data)
     }
     else if (msg[TYPE] == "object")
     {
-      this._before_handling_object(msg, rt_id, thread_id, frame_id);
+      this._handle_object(msg, rt_id, thread_id, frame_id);
     }
     else
     {
       this._handle_native(msg);
     }
   };
-
-  this._before_handling_object = function(msg, rt_id, thread_id, frame_id,
-                                          is_unpacked, is_friendly_printed, is_inline_expanded)
-  {
-    const OBJECT_VALUE = 3;
-
-    var do_unpack = !is_unpacked &&
-                    settings.command_line.get("unpack-list-alikes");
-
-    var do_friendly_print = !do_unpack &&
-                            !is_friendly_printed && 
-                            settings.command_line.get("do-friendly-print") &&
-                            // don't friendly print DOM objects 
-                            // if inline-expand is enabled
-                            (!this._is_inline_expand || 
-                             !RE_DOM_OBJECT.test(msg[OBJECT_VALUE][CLASS_NAME]));
-
-    var do_inline_expand = !do_unpack && !do_friendly_print &&
-                           settings.command_line.get("expand-objects-inline") &&
-                           !is_inline_expanded;
-    if (do_unpack)
-    {
-      var error_cb = this._before_handling_object.bind(this, msg, rt_id,
-                                                       thread_id, frame_id,
-                                                       true);
-      // convert Eval to OnConsoleLog message
-      // 1 - console.log
-      var log_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
-      var success_cb = this._handle_log.bind(this, log_msg, rt_id, true);
-      this._list_unpacker.unpack_list_alikes(log_msg, rt_id, error_cb, success_cb);
-    }
-    else if (do_friendly_print)
-    {
-      var callback = this._before_handling_object.bind(this, msg, rt_id,
-                                                       thread_id, frame_id,
-                                                       true, true);
-      this._friendly_printer.get_friendly_print([msg[OBJECT_VALUE]],
-                                                rt_id, thread_id, frame_id,
-                                                callback);
-    }
-    else if (do_inline_expand)
-    {
-      // the callback works as error and success callback
-      // the _inline_expander adds a model to each JS or DOM object 
-      var callback = this._before_handling_object.bind(this, msg, rt_id,
-                                                       thread_id, frame_id,
-                                                       true, true, true);
-      var log_msg = [rt_id, 1, [[null, msg[OBJECT_VALUE]]]];
-      this._inline_expander.expand(log_msg, rt_id, callback, callback);
-    }
-    else
-    {
-      this._handle_object(msg, rt_id);
-    }
-  }
 
   this._on_element_selected_bound = function(msg)
   {
@@ -391,15 +316,18 @@ cls.ReplService = function(view, data)
     }
   };
 
-  this._handle_object = function(msg, rt_id)
+  this._handle_object = function(msg, rt_id, thread_id, frame_id)
   {
-    const TYPE = 1, OBJVALUE = 3;
-    const OBJID = 0, CLASS = 4; FUNCTION = 5;
-
-    var obj = msg[OBJVALUE];
-    this._data.add_output_pobj(rt_id, obj[OBJID], obj[CLASS] || obj[FUNCTION],
-                               obj[FRIENDLY_PRINTED],
-                               obj[INLINE_MODEL], obj[INLINE_MODEL_TMPL]);
+    const OBJECT_VALUE = 3;
+    var ctx = 
+    {
+      callback: this._handle_explored_list.bind(this, rt_id, null, null),
+      value_list: [[null, msg[OBJECT_VALUE]]],
+      rt_id: rt_id,
+      thread_id: thread_id, 
+      frame_id: frame_id,
+    };
+    this._explore_value_list(ctx);
   };
 
   this._handle_native = function(msg)

@@ -259,7 +259,7 @@ window.cls.FriendlyPrinter = function(callback)
       {
         return [
           ERROR,
-          0, // expandable inline object (booleans are returned as string)
+          1, // expandable inline object (booleans are returned as string)
           item.message
         ];
       }
