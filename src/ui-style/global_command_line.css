@@ -10,7 +10,7 @@ container.console {
     vertical-align: text-top;
 }
 
-.console .dom-tree node,
+
 .console key,
 .console text,
 .console selector,
@@ -24,6 +24,21 @@ container.console {
 .console .datetime {
   color: #fff;
 }
+.console .dom-tree node {
+  color: #a1a1e6;
+}
+.console .dom-tree key {
+    color: #bcbcda;
+}
+
+.console .dom-tree value {
+    color: #da9f94;
+}
+
+.console .dom-tree text {
+    color: #fff;
+}
+
 .console .prototype-chain-object {
   background-color: rgba(255, 255, 255, 0.1);
 }
