@@ -1,6 +1,7 @@
 ﻿(function()
 {
   const MAX_LINE_CHARS = 4000;
+  const RE_WS = /^\s*$/;
 
   this.search_panel = function(search, type, handler)
   {
@@ -261,7 +262,10 @@
                                                    script.state_arr[line - 1], 
                                                    ['code'],
                                                    true);
-                                                   
+            if (script_tmpl.length == 2 && RE_WS.test(script_tmpl[1]))
+            {
+              script_tmpl[1] += "\u00a0";
+            }                                
             if (script.line_offsets_length[i] && 
                 script.line_offsets[i] + script.line_offsets_length[i] > script.get_line_length(line))
             {
