@@ -20,7 +20,7 @@ templates.repl_main = function()
 
 templates.repl_output_native = function(s, severity)
 {
-  return ["span", s, "class", "repl-native"];
+  return ["span", s || "\u00A0", "class", "repl-native"];
 };
 
 templates.repl_output_native_or_pobj = function(thing, severity)
