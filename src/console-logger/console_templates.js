@@ -1,4 +1,4 @@
-﻿window.templates = window.templates || {};
+window.templates = window.templates || {};
 window.templates.errors = window.templates.errors || {};
 
 window.templates.errors._source_map = {
@@ -74,7 +74,6 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   {
     expandable = false;
   }
-  
 
   var expand_button = [
     ["button", "",
@@ -108,7 +107,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
       ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
       ["td",
         [
-          ["pre", entry.title, "class", "mono title"],
+          ["pre", entry.title.trim(), "class", "mono title"],
           ["pre", entry.details, "class", "mono details"]
         ],
         "class", "main"

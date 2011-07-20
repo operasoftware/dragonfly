@@ -6,19 +6,9 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     {
       return this._cached_title;
     }
-    var parts = this.description.split("\n");
-    if (parts.length)
-    {
-              // todo: remove
-              if (parts[0] == "Error:")
-              {
-                // todo: can probably remove the special "Error:" treatment? haven't seen that anywhere?
-                window.___MESSAGE_THAT_STARTS_WITH_ERROR = this;
-                console.log("Info: Logged error message that starts with an \"Error:\" line. Stored as ___MESSAGE_THAT_STARTS_WITH_ERROR");
-              }
-      return this._cached_title = (parts[0] == "Error:" ? parts[1].substr(6) : parts[0]);
-    }
-    return this._cached_title = "";
+    var matcher = /^.*[\r\n]*/;
+    var linematch = matcher.exec(this.description);
+    return this._cached_title = linematch[0];
   });
 
   this.__defineGetter__("location_string", function()
@@ -63,20 +53,7 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     {
       return this._cached_details;
     }
-    var details = this.description;
-    // remove title
-    if (this.title)
-    {
-      details = details.replace(this.title, "");
-    }
-    // remove line_str
-    if (this.line_str)
-    {
-      details = details.replace(this.line_str, "");
-    }
-    // collapse dubble newlines into one.
-    // todo: if line_str included the linebreak, this probably wouldn't be needed.
-    details = details.replace(/(\n\n|\r\n\r\n|\r\r)/, "\n");
+    var details = this.description.replace(this.title, "").replace(this.line_str, "");
     return this._cached_details = details;
   });
 };

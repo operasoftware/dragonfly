@@ -59,7 +59,7 @@
 .sortable-table > tr:not(.header):not(.no-interaction):not(.selected):hover,
 .sortable-table > tr.header > th:not(.sortable-table-group-header):hover
 {
-  background-color: rgba(55,115,211,0.2);
+  background-color: rgba(137,173,232,0.2);
   color: #000;
 }
 
