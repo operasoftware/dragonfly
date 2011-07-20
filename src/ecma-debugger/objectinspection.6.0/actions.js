@@ -111,6 +111,36 @@
       data_model.expand_scope_chain();
       parent.re_render(window.templates.inspected_js_scope_chain(data_model));
     }
-  }
+  };
+
+  var inspect_object = function(rt_id, obj_id, force_show_view)
+  {
+    messages.post('active-inspection-type', {inspection_type: 'object'});
+    if (force_show_view)
+    {
+      UI.get_instance().show_view(views.inspection.id);
+    }
+    messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
+  };
+
+  window.eventHandlers.click['inspect-object-link'] = function(event, target)
+  {
+    var rt_id = parseInt(target.getAttribute('rt-id'));
+    var obj_id = parseInt(target.getAttribute('obj-id'));
+    inspect_object(rt_id, obj_id, true);
+  };
+
+  window.eventHandlers.click['inspect-object-inline-link'] = function(event, target)
+  {
+    if (event.target.nodeName.toLowerCase() == "key" && 
+        event.target.parentNode.hasAttribute('obj-id'))
+    {
+      var obj_id = parseInt(event.target.parentNode.getAttribute('obj-id'));
+      var model_id = event.target.get_attr('parent-node-chain', 'data-id');
+      var model = model_id && window.inspections[model_id];
+      var rt_id = model && model.runtime_id; 
+      inspect_object(rt_id, obj_id);
+    }
+  };
 
 })();

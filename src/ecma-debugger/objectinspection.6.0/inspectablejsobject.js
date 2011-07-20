@@ -24,6 +24,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 {
   /* interface */
 
+  this.runtime_id;
+
   /**
     * To expand a given level of the inspected object.
     * @param {Function} cb callback called when the properties are retrieved.
@@ -445,6 +447,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     });
     this.scope_list_models = null;
   }
+
+  this.__defineGetter__('runtime_id', function()
+  {
+    return this._rt_id;
+  });
+
+  this.__defineSetter__('runtime_id', function(){});
 
 };
 

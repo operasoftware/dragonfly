@@ -52,7 +52,12 @@ templates.repl_output_pobj = function(data)
     // the returned template is a innerHTML
     // the render call can handle that if the innerHTML is passed 
     // as a single field in an array 
-    return ['span', [tmpl], 'class', 'repl-inline-expandable'];
+    var ret = ['span', [tmpl], 'class', 'repl-inline-expandable'];
+    if (data.model instanceof cls.InspectableJSObject)
+    {
+      ret.push('handler', 'inspect-object-inline-link');
+    }
+    return ret;
   }
 
   return [
