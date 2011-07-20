@@ -145,8 +145,7 @@ window.templates.errors.log_settings_css_filter = function(setting)
           'handler', 'error-console-css-filter',
           'id', 'error-console-css-filter',
         ],
-      ],
-      'class', 'error-console-setting',
+      ]
     ]
   ]);
 };

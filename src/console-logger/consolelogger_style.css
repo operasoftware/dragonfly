@@ -102,13 +102,6 @@ button[key="request_list.expand-all-entries"]:before
   background-image: url('../ui-images/btn-log-threads.png');
 }
 
-.error-console-setting
-{
-  border-top: 1px solid #ccc;
-  margin-top: 5px;
-  padding-top: 5px;
-}
-
 #error-console-css-filter
 {
   width: 99%;
