@@ -47,23 +47,24 @@
   padding-left: 3px;
 }
 
-.errors-table .sortable-table > tr > td, .errors-table .sortable-table > tr > th {
-  /* no sure why yet, but in errors this needs to be 5 instead of 4 to match the resource view's line-height */
-  padding-top: 5px;
+.errors-table tr, .errors-table tr pre {
+  color: rgb(68, 68, 68);
 }
 
-/* pre elements in main */
+.errors-table tr:hover, .errors-table tr:hover pre {
+  color: rgb(0, 0, 0);
+}
 
 .errors-table .main pre {
   margin: 0;
 }
 
-/* collapsed */
+/* collapse */
 .errors-table .main .details {
   display: none;
 }
 
-/* expanded */
+/* expand */
 .errors-table .expanded .main .details {
   display: block;
 }
