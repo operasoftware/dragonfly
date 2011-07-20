@@ -211,7 +211,7 @@ cls.ResourceUtil.url_host = function(url)
 }
 
 cls.ResourceUtil.header_presets = [
-  {name: "None", headers: ""},
+  {name: ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE, headers: ""},
   {name: "Chrome 9", headers:
     [
       "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",

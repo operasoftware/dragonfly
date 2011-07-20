@@ -190,7 +190,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
 
   ui.register_overlay("remote-debug-overlay",
     [
-      new SettingsGroup("Remote debug", "remote_debug")
+      new SettingsGroup(ui_strings.S_SWITCH_REMOTE_DEBUG, "remote_debug")
     ]
   );
 

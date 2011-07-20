@@ -1,4 +1,4 @@
-﻿window.ui_strings || ( window.ui_strings  = {} );
+window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -417,6 +417,9 @@ ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
 /* DESC: Reset all keyboard shortcuts to the default values. */
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 
+/* DESC: Label for the global keyboard shortcuts section */
+ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
+
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
 
@@ -687,6 +690,9 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
 
+/* DESC: Setting label to switch back to the default setting */
+ui_strings.S_LABEL_DEFAULT_SELECTION = "Default";
+
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = "Keyboard shortcuts %s";
 
@@ -848,6 +854,15 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
+
+/* DESC: Label for selecting an empty preset */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
+
+/* DESC: Example value to show what header formats look like. Header-name */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_NAME = "Header-name";
+
+/* DESC: Example value to show what header formats look like. Header-value */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_VALUE = "Header-value";
 
 /* DESC: Label for save nbutton */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";

@@ -9,7 +9,7 @@
         this._font_selection(ui_strings.S_LABEL_FONT_SELECTION_FACE, 
                              fonts,
                              'monospace-font-face',
-                             {"": "Default"}),
+                             {"": ui_strings.S_LABEL_DEFAULT_SELECTION}),
         this._font_selection(ui_strings.S_LABEL_FONT_SELECTION_SIZE, 
                              ['10px', '11px', '12px', '13px', 
                               '14px', '15px', '16px'],

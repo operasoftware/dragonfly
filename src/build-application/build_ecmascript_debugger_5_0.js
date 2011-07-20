@@ -190,7 +190,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
 
     /* About */
     cls.AboutView.prototype = ViewBase;
-    new cls.AboutView('about', 'About', 'scroll');
+    new cls.AboutView('about', ui_strings.S_SETTINGS_HEADER_ABOUT, 'scroll');
     cls.AboutView.create_ui_widgets();
 
     /* Hostspotlighter */
