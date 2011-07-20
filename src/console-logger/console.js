@@ -627,7 +627,7 @@ cls.ConsoleLogger.ConsoleView.create_ui_widgets = function(service_version)
     var contextmenu = ContextMenu.get_instance();
     contextmenu.register("error-console", [
       {
-        label: "Clear all errors",
+        label: ui_strings.M_LABEL_CLEAR_ALL_ERRORS,
         handler: function(event, target) {
           window.error_console_data.clear_all_on_host_side();
         }
