@@ -3,7 +3,7 @@ window.templates.errors = window.templates.errors || {};
 
 window.templates.errors._source_map = {
   "svg": {
-    icon: "markup", // or "image"?
+    icon: "markup",
     title: "SVG"
   },
   "html": {

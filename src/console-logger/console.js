@@ -20,7 +20,6 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this._views = [];
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
-  this.current_error_count = 0;
 
   this._update_views = function()
   {
@@ -35,7 +34,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     }
   };
 
-  this.addview = function(view_id)
+  this.add_view = function(view_id)
   {
     this._views.push(view_id);
   };
@@ -50,7 +49,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       this._msgs.push(entry);
     }
 
-    // before calling update_views, need to make sure the respective view is not hidden.
+    // before calling update_views, need to make sure the source specific view is not hidden.
     if (entry.source)
     {
       var source_specific_tab = this._views[this._views.length - 1];
@@ -72,6 +71,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
 
   /**
    * Clear the visible items in the log, based on source and query, both optional.
+   * The CSS filter will always be applied when it's set.
    */
   this.clear = function(source, query)
   {
@@ -481,7 +481,7 @@ ErrorConsoleView.roughViews.createViews = function()
   for( ; r_v = this[i]; i++)
   {
     new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source);
-    window.error_console_data.addview(r_v.id);
+    window.error_console_data.add_view(r_v.id);
     handler_id = 'clear-error-console' + ( r_v.source ? '-' + r_v.source : '' );
     new ToolbarConfig
     (
