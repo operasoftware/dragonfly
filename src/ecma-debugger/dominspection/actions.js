@@ -444,6 +444,14 @@ cls.DOMInspectorActions = function(id)
           selection.addRange(range);
           break;
         }
+        case 'value':
+        {
+          firstChild = new_target.firstChild;
+          range.setStart(firstChild, 1);
+          range.setEnd(firstChild, firstChild.nodeValue.length - 1);
+          selection.addRange(range);
+          break;
+        }
         case 'key':
         case 'text':
         {

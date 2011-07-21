@@ -1,45 +1,26 @@
-﻿/* Expander cell */
-.errors-table > tr:not(.error-details) > th:nth-child(1),
-/* Icon cell */
-.errors-table > tr:not(.error-details) > th:nth-child(2) {
-    width: 16px;
+.errors-table tr {
+  vertical-align: top;
 }
 
 /* Expander cell */
 .errors-table > tr:not(.error-details) > td:nth-child(1),
 /* Icon cell */
-.errors-table > tr:not(.error-details) > td:nth-child(2) {
-    text-align: center;
+.errors-table tr td.icon_cell {
+  text-align: center;
+  width: 16px;
 }
 
-/* File cell */
-.errors-table > tr > th:nth-child(3),
-.errors-table > tr > td:nth-child(3) {
-    width: 30%;
-    max-width: 500px;
+.errors-table tr td.location {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* File cell */
-.errors-table > tr > td:nth-child(3) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Line cell */
-.errors-table > tr > th:nth-child(4) {
-    width: 128px;
-    max-width: 32px;
-}
-
-/* Line cell */
-.errors-table > tr > td:nth-child(4) {
-    text-align: right;
-}
-
-.errors-table > tr:not(.header):not(.no-interaction):not([handler]):active {
-    background-color: rgba(55,115,211,0.2);
-    color: #000;
+.errors-table tr td.context {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .errors-table button {
@@ -47,40 +28,55 @@
   width: 5px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
-  margin: 0;
+  margin: 0 5px 0 2px;
   padding: 0;
   cursor: pointer;
-  -o-transition: all .2s;
+  -o-transition: -o-transform .2s;
 }
 
 .errors-table > tr.expanded button {
     -o-transform: rotate(90deg);
 }
 
-.errors-table > tr.error-details > td:nth-child(1) {
-    border-right: 0;
+.errors-table .expand_cell {
+  border-right: none;
+  padding-right: 0;
+  width: 16px;
 }
 
-.errors-table > tr.error-details > td:nth-child(2) {
-    border-left: 0;
+.errors-table .main {
+  border-left: none;
+  padding-left: 3px;
 }
 
-.errors-table pre {
-    margin: 0;
+.errors-table tr, .errors-table tr pre {
+  color: rgb(68, 68, 68);
 }
 
-.error-details-table th {
-    text-align: right;
-    padding-right: 5px;
-    vertical-align: top;
+.errors-table tr:hover, .errors-table tr:hover pre {
+  color: rgb(0, 0, 0);
+}
+
+.errors-table .main pre {
+  margin: 0;
+}
+
+/* collapse */
+.errors-table .main .details {
+  display: none;
+}
+
+/* expand */
+.errors-table .expanded .main .details {
+  display: block;
 }
 
 .errors-table .severity {
+  display: inline-block;
+  vertical-align: middle;
   width: 16px;
   height: 16px;
-  vertical-align: middle;
-  display: inline-block;
-  background: url('../ui-images/error-console-info.png') no-repeat 50% 50%;
+  background: url('../ui-images/error-console-info.png') no-repeat;
 }
 
 .errors-table .severity.debug {
@@ -108,17 +104,9 @@ button[key="request_list.expand-all-entries"]:before
   background-image: url('../ui-images/btn-log-threads.png');
 }
 
-.error-console-setting
-{
-  border-top: 1px solid #ccc;
-  margin-top: 5px;
-  padding-top: 5px;
-}
-
 #error-console-css-filter
 {
   width: 99%;
   display: block;
   margin: 3px 0;
 }
-

@@ -152,14 +152,26 @@ window.cls.Proxy = function()
     * @return      The responseXML property of the XMLHttpRequest 
     * @exceptions Throws an exception if the return code is not 200
     */
-    this.POST = function ( msg, data, cb ) 
+    this.POST = function ( msg, data, cb, retry_count ) 
     {
+      retry_count || (retry_count = 0);
       var x = new XMLHttpRequest;
       x.onload=function()
       {
         if (this.status != 200) 
         {
-          throw "Message failed, Status: " + this.status;
+          var retry_function = self.POST.bind(self, msg, data, cb, retry_count++);
+          if (retry_count < 5)
+          {
+            setTimeout(retry_function, 50);
+            // console.log("retry "+ retry_count, msg, data);
+            opera.postError("POST request failed, will retry (" + retry_count + ")");
+            return;
+          }
+          else
+          {
+            throw "Message failed, Status: " + this.status;
+          }
         }
         //self.onReceive(x);
         var xml = this.responseXML;

@@ -245,7 +245,10 @@ TextSearch.prototype = new function()
       this._hits = [];
       this._match_cursor = -1;
       this.post_message("onbeforesearch", 
-                        {search_term: this._search_term.length >= this._min_term_length ? 
+                        {search_term: (
+                                        this._search_term.length >= this._min_term_length ||
+                                        this._search_forced
+                                      ) ? 
                                       this._search_term : ""});
       if (this._search_term.length >= this._min_term_length || force_search)
       {

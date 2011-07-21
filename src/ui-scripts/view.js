@@ -120,7 +120,7 @@ var ViewBase = new function()
         // if actions[this.id] actions[this.id].onViewUpdate(cotainer)
       }
 
-      
+
     }
   }
 

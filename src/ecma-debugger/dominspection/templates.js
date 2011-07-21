@@ -52,6 +52,10 @@
            .indexOf(node[NAME].toLowerCase()) != -1;
   };
 
+  this._node_name_map = {};
+  this._node_name_map[TEXT_NODE] = "<span class='text-node'>#text</span> ";
+  this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
+
   /**
    * Generates the part of the document type declaration after the document
    * element type name.
@@ -388,6 +392,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element'" +
                       class_name + ">" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
@@ -402,6 +407,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                       (children_length ?
@@ -429,6 +435,7 @@
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._get_indent(node) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
+                      "class='spotlight-node' " +
                       "data-menu='dom-element' " +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
                       (children_length ?

@@ -64,7 +64,12 @@ window.cls.Helpers = function()
       return "";
     }
     // Strip away any query string or fragment identifier
-    var end = Math.min(path.indexOf("?"), path.indexOf("#"));
+    var end = path.indexOf("?");
+    var hash_index = path.indexOf("#");
+    if (hash_index != -1)
+    {
+      end = Math.min(end, hash_index);
+    }
     if (end != -1)
     {
       path = path.slice(0, end);

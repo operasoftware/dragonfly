@@ -16,7 +16,7 @@ window.cls || ( window.cls = {} );
   */
 cls.ExportDataView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.hidden_in_settings = true;
   this.createView = function(container)
   {

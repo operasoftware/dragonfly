@@ -1,4 +1,4 @@
-﻿/**
+/**
   * @constructor
   */
 
@@ -385,13 +385,12 @@ window.cls.Client = function()
       is_disbaled = null,
       tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
-      i = 0;
+      i = 1;
 
-      for( i = 0; tab = tabs[i]; i++ )
+      for( i = 1; tab = tabs[i]; i++ )
       {
-        is_disbaled = !settings.console.get(tab);
-        views[tab].ishidden_in_menu = is_disbaled;
-        topCell.disableTab(tab, is_disbaled);
+        views[tab].is_hidden = true;
+        topCell.disableTab(tab, true);
       }
       arguments.callee._called_once = true;
     }
@@ -450,6 +449,15 @@ window.cls.Client = function()
       const OBJECT_ID = 0;
       if (!message[OBJECT_ID])
       {
+        // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
+        if (
+          views[last_selected_view] &&
+          views[last_selected_view].is_hidden &&
+          views[last_selected_view].fallback_view_id
+        )
+        {
+          last_selected_view = views[last_selected_view].fallback_view_id;
+        }
         UI.get_instance().show_view(last_selected_view);
       }
     });
@@ -470,16 +478,10 @@ ui_framework.layouts.error_console_rough_layout =
         'console-all',
         'console-script',
         'console-css',
-        'console-xml',
-        'console-java',
-        'console-m2',
-        'console-network',
         'console-html',
-        'console-xslt',
         'console-svg',
-        'console-bittorrent',
-        'console-voice',
-        'console-widget'
+        'console-storage',
+        'console-other'
       ]
     }
   ]

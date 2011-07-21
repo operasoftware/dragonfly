@@ -163,7 +163,7 @@ cls.CallstackView = function(id, name, container_class)
 
 cls.GeneralView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container)
   {
   }
@@ -277,7 +277,7 @@ cls.GeneralView.create_ui_widgets = function()
 
 cls.HostSpotlightView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container)
   {
   }
@@ -358,7 +358,7 @@ cls.DocumentationView = function(id, name, container_class)
 
 cls.DebugRemoteSettingView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container)
   {
     
@@ -474,7 +474,7 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
 
 cls.ModebarView = function(id, name, container_class)
 {
-  this.ishidden_in_menu = true;
+  this.is_hidden = true;
   this.createView = function(container) {};
   this.init(id, name, container_class);
 };

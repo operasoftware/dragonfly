@@ -76,6 +76,10 @@
     background-image: url(../ui-images/type_video.png);
 }
 
+.resource-type-storage {
+    background-image: url(../ui-images/type_storage.png);
+}
+
 
 .resource-detail-container {
     display: block;

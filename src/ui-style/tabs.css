@@ -1,4 +1,4 @@
-﻿/* Tabs */
+/* Tabs */
 tabs {
   height: 21px;
   padding: 2px 2px 0 0; /* Tab will be pushed down one pixel, hence only 1 pixel at the top */
@@ -120,9 +120,9 @@ top-tabs .icon {
 }
 top-tabs .badge {
   position: absolute;
-  background: #df6531;
-  color: #000;
-  text-shadow: none;
+  background: #cf3015; /* daniel/david edit 2011-07-01, was: #df6531 */
+  color: #FFF; /* daniel/david edit 2011-07-01, was: #000 */
+  text-shadow: 0px 0px 1px;  /* daniel/david edit 2011-07-01, was: none */
   line-height: 1;
   padding: 1px 3px;
   border-radius: 4px;

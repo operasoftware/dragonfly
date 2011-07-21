@@ -1,102 +1,135 @@
-﻿window.templates = window.templates || {};
+window.templates = window.templates || {};
+window.templates.errors = window.templates.errors || {};
 
-window.templates.error_log_table = function(entries, allExpanded, expandedList, viewId)
+window.templates.errors._source_map = {
+  "svg": {
+    icon: "markup",
+    title: "SVG"
+  },
+  "html": {
+    icon: "markup",
+    title: "HTML"
+  },
+  "xml": {
+    icon: "markup",
+    title: "XML"
+  },
+  "css": {
+    icon: "css",
+    title: "CSS"
+  },
+  "ecmascript": {
+    icon: "script",
+    title: "Ecmascript"
+  },
+  "persistent_storage": {
+    icon: "storage",
+    title: "Persistent Storage"
+  }
+};
+
+window.templates.errors.log_table = function(entries, allExpanded, expandedList, viewId)
 {
   var rowClosure = function(e)
   {
-    return window.templates.error_log_row(e, allExpanded, expandedList, viewId);
+    return window.templates.errors.log_row(e, allExpanded, expandedList, viewId);
   };
 
   return [
-    "table", [
-      "tr", [
-        ['th', ""],
-        ['th', ""],
-        ['th', ui_strings.S_COLUMN_LABEL_FILE],
-        ['th', ui_strings.S_COLUMN_LABEL_LINE],
-        ['th', ui_strings.S_COLUMN_LABEL_ERROR]
-      ],
-      "class", "header",
-    ],
-    entries.map(rowClosure),
+    "table", entries.map(rowClosure),
     "class", "sortable-table errors-table",
   ];
 };
 
-window.templates.error_log_row = function(entry, allExpanded, toggledList, viewId)
+window.templates.errors.log_row = function(entry, allExpanded, toggledList, viewId)
 {
+  var expanded;
   if (allExpanded)
   {
-    var expanded = true;
-    if (toggledList.indexOf(entry.id)!=-1)
+    expanded = true;
+    if (toggledList.indexOf(entry.id) != -1)
     {
       expanded = false;
     }
   }
   else
   {
-    var expanded = toggledList.indexOf(entry.id) != -1;
+    expanded = toggledList.indexOf(entry.id) != -1;
   }
+  if (entry.requires_expansion)
+  {
+    expanded = true;
+  }
+
+  var location_title = entry.context;
+  if (entry.line && entry.uri)
+  {
+    location_title = ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE
+                                        .replace("%(LINE)", entry.line)
+                                        .replace("%(URI)", entry.uri)
+  }
+
+  var expandable = true;
+  if (entry.title === entry.description)
+  {
+    expandable = false;
+  }
+
+  var expand_button = [
+    ["button", "",
+       "type", "button",
+       "data-logid", entry.id,
+       "data-viewid", viewId,
+       "unselectable", "on",
+       "class", "expander"
+    ]
+  ];
 
   var severity = entry.severity || "information";
-  var rows = [
-    [
-      "tr", [
-      ["td", ["button", "",
-                 "type", "button",
-                 //"handler", "error-log-list-expand-collapse",
-                 "data-logid", entry.id,
-                 "data-viewid", viewId,
-                 "unselectable", "on"
-               ]
-      ],
-      ["td", ["span", "class", "severity " + severity, "title", severity]],
-      ["td", helpers.basename(entry.uri) || entry.context, "title", entry.uri || entry.context],
-      ["td", (entry.line==null ? "–" : entry.line) ],
-      ["td", entry.title]
-     ],  "class", (expanded ? "expanded" : "collapsed"),
-     "handler", "error-log-list-expand-collapse",
-    "data-logid", entry.id,
-    "data-viewid", viewId
-    ]
+  var icon_cell = [
+    "span",
+    "class", "severity " + severity,
+    "title", severity
   ];
 
-  if (expanded)
+  if (viewId == "console-all")
   {
-    rows.push(templates.error_log_detail_row(entry));
+    var source = templates.errors._source_map[entry.source];
+    icon_cell = ["span",
+      "class", "resource-icon resource-type-" + (source && source.icon),
+      "title", (source && source.title) || entry.source
+    ];
   }
 
-  return rows;
-};
-
-window.templates.error_log_detail_row = function(entry)
-{
   return [
     "tr", [
-      ["td"],
+      ["td", icon_cell, "class", "icon_cell"],
+      ["td", (expandable ? expand_button : ""), "class", "expand_cell"],
       ["td",
-        ["table",
-          ["tr",
-            ["th", "Source:"],
-            ["td", ["span", entry.uri || entry.context, "class", (entry.uri ? "internal-link" : "")],
-             "handler", "open-resource-tab",
-             "data-resource-url", entry.uri
-            ],
-          ],
-          ["tr",
-            ["th", "Description:"],
-            ["td", ["pre", entry.description, "class", "mono"]]
-          ],
-          "class", "error-details-table"
+        [
+          ["pre", entry.title.trim(), "class", "mono title"],
+          ["pre", entry.details, "class", "mono details"]
         ],
-        "colspan", "4"
+        "class", "main"
       ],
-      "class", "no-interaction error-details"
-    ]
+      ["td", entry.context, "class", "context"],
+      ["td",
+         entry.location_string,
+         "title", location_title,
+         "class", "location " + (entry.uri ? "internal-link" : ""),
+         "handler", "open-resource-tab",
+         "data-resource-url", entry.uri,
+         "data-resource-line-number", entry.line ? entry.line : ""
+      ]
+    ],
+    "class", (expandable ? "expandable" : "") + (expanded ? " expanded" : " collapsed"),
+    "handler", expandable ? "error-log-list-expand-collapse" : "",
+    "data-logid", entry.id,
+    "data-viewid", viewId
   ];
 };
 
-window.templates.error_log_settings_css_filter = function(setting)
+window.templates.errors.log_settings_css_filter = function(setting)
 {
   return (
   [
@@ -111,8 +144,7 @@ window.templates.error_log_settings_css_filter = function(setting)
           'handler', 'error-console-css-filter',
           'id', 'error-console-css-filter',
         ],
-      ],
-      'class', 'error-console-setting',
+      ]
     ]
   ]);
 };

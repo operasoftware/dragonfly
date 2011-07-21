@@ -1,4 +1,4 @@
-﻿window.ui_strings || ( window.ui_strings  = {} );
+window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -177,9 +177,6 @@ ui_strings.M_VIEW_LABEL_ERROR_SCRIPT = "JavaScript";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all SVG errors. */
 ui_strings.M_VIEW_LABEL_ERROR_SVG = "SVG";
 
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Voice errors. */
-ui_strings.M_VIEW_LABEL_ERROR_VOICE = "Voice";
-
 /* DESC: See Opera Error console: Error view filter for showing all Widget errors. */
 ui_strings.M_VIEW_LABEL_ERROR_WIDGET = "Widgets";
 
@@ -188,6 +185,18 @@ ui_strings.M_VIEW_LABEL_ERROR_XML = "XML";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XSLT errors. */
 ui_strings.M_VIEW_LABEL_ERROR_XSLT = "XSLT";
+
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Storage errors. */
+ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
+
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing errors that we don't have a dedicated tab for. */
+ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
+
+/* DESC: Tooltip that explains File:Line notation (e.g. in Error Log) */
+ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE = "Line %(LINE) in %(URI)";
+
+/* DESC: Label for option that clears all errors */
+ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";
@@ -410,6 +419,9 @@ ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
 
 /* DESC: Reset all keyboard shortcuts to the default values. */
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
+
+/* DESC: Label for the global keyboard shortcuts section */
+ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
@@ -681,6 +693,9 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
 
+/* DESC: Setting label to switch back to the default setting */
+ui_strings.S_LABEL_DEFAULT_SELECTION = "Default";
+
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = "Keyboard shortcuts %s";
 
@@ -842,6 +857,15 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
+
+/* DESC: Label for selecting an empty preset */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
+
+/* DESC: Example value to show what header formats look like. Header-name */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_NAME = "Header-name";
+
+/* DESC: Example value to show what header formats look like. Header-value */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_VALUE = "Header-value";
 
 /* DESC: Label for save nbutton */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
@@ -1227,14 +1251,17 @@ ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatic
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
 
-/* DESC: Label for request input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_REQUEST = "Request";
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
 
-/* DESC: Label for response input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_RESPONSE = "Response";
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
 
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
 
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
