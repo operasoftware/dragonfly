@@ -230,7 +230,7 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
-url: ./test-cases/dom/pseduo-test.html
+url: ./test-cases/dom/pseudo-test.html
 
 id: 01000
 label: Pseudo element setting
