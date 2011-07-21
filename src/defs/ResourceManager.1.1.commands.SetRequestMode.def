@@ -1,0 +1,84 @@
+message <span class="message">SetRequestModeArg</span>
+{
+  message <span class="message">ContentMode</span>
+  {
+    enum Transport
+    {
+      <span class="comment">/** 
+       * Send the payload as a string.
+       * 
+       * Selecting this transport mode  will automatically enable decoding,
+       * and the string will automatically converted to the correct character
+       * encoding.
+       * 
+       * If this transport mode is used an unsuitable content type, the payload
+       * will not be sent (without errors).
+       */</span>
+      STRING = 1;
+      <span class="comment">/** 
+       * Send the payload as bytes. When this transport mode is chosen, character
+       * conversion will not be performed. If the payload contains text data, it
+       * will be sent in its original encoding.
+       */</span>
+      BYTES = 2;
+      <span class="comment">/** 
+       * Send the payload as a base64-encoded data URI in the string field. When
+       * this transport mode is chosen, character conversion will not be performed.
+       * If the payload contains text data, it will be sent in its original encoding.
+       */</span>
+      DATA_URI = 3;
+      <span class="comment">/** 
+       * Do not send the payload at all.
+       */</span>
+      OFF = 4;
+    }
+
+    <span class="comment">/** 
+     * Indicates how to send the payload.
+     */</span>
+    optional <span class="number">Transport</span> transport = 1; 
+    <span class="comment">/** 
+     * Decode the data (for instance, decompress it, decrypt it, etc). This is
+     * unrelated to character encoding.
+     */</span>
+    optional <span class="bool">bool     </span> decode    = 2; 
+    <span class="comment">/** 
+     * Even if other conditions are met, do not send the payload if it
+     * exceeds the specified amout (in bytes).
+     * 
+     * By default, only payloads under one megabyte are sent.
+     */</span>
+    optional <span class="number">uint32   </span> sizeLimit = 3; 
+  }
+  <span class="comment">/** 
+   * Used to override the default ContentMode for resources with a
+   * certain mime type.
+   */</span>
+  message <span class="message">MimeMode</span>
+  {
+    <span class="comment">/** 
+     * The mime type, for instance 'text/plain'.
+     */</span>
+    required <span class="string">string     </span> type        = 1; 
+    <span class="comment">/** 
+     * How to treat this mime type.
+     */</span>
+    required <span class="message">ContentMode</span> contentMode = 2; 
+  }
+  <span class="comment">/** 
+   * If there is no matching mode for a certain mime type, then this
+   * mode will be used. If not present, no data is received by default.
+   */</span>
+  optional <span class="message">ContentMode</span> defaultContentMode    = 1; 
+  <span class="comment">/** 
+   * Whenever a resource matches a mime type found in this list, the
+   * corresponding ContentMode is used for that resource.
+   */</span>
+  repeated <span class="message">MimeMode   </span> mimeModeList          = 2; 
+  <span class="comment">/** 
+   * Whenever an individual part of a multipart/form-data matches a
+   * type found in this list, the corresponding ContentMode is used
+   * for that part.
+   */</span>
+  repeated <span class="message">MimeMode   </span> multipartMimeModeList = 3; 
+}

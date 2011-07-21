@@ -1,0 +1,43 @@
+message <span class="message">CssStyleDeclarations</span>
+{
+  message <span class="message">NodeStyle</span>
+  {
+    required <span class="number">uint32          </span> objectID    = 1; 
+    required <span class="string">string          </span> elementName = 2; 
+    repeated <span class="message">StyleDeclaration</span> styleList   = 3; 
+  }
+  <span class="comment">/** 
+   * Common to all origins:
+   * - indexList
+   * - valueList
+   * - priorityList
+   * - statusList
+   * 
+   * Common to AUTHOR and LOCAL
+   * - selector
+   * - specificity
+   * 
+   * For AUTHOR
+   * - stylesheetID
+   * - ruleID
+   * - ruleType
+   */</span>
+  message <span class="message">StyleDeclaration</span>
+  {
+    <span class="comment">/** 
+     * 1 = USER-AGENT, 2=LOCAL, 3=AUTHOR, 4=ELEMENT
+     */</span>
+    required <span class="number">uint32</span> origin       =  1; 
+    repeated <span class="number">uint32</span> indexList    =  2; 
+    repeated <span class="string">string</span> valueList    =  3; 
+    repeated <span class="bool">bool  </span> priorityList =  4; 
+    repeated <span class="number">uint32</span> statusList   =  5; 
+    optional <span class="string">string</span> selector     =  6; 
+    optional <span class="number">uint32</span> specificity  =  7; 
+    optional <span class="number">uint32</span> stylesheetID =  8; 
+    optional <span class="number">uint32</span> ruleID       =  9; 
+    optional <span class="number">uint32</span> ruleType     = 10; 
+  }
+  repeated <span class="string">string   </span> computedStyleList = 1; 
+  repeated <span class="message">NodeStyle</span> nodeStyleList     = 2; 
+}

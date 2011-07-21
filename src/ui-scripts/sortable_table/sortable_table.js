@@ -152,9 +152,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       obj.group(group);
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render");
-      table.re_render(obj.render());
-      obj.post_message("after-render");
+      obj.post_message("before-render", table);
+      table = table.re_render(obj.render());
+      obj.post_message("after-render", table);
     }
   }
 
@@ -166,9 +166,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       obj.togglecol(col);
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render");
-      table.re_render(obj.render());
-      obj.post_message("after-render");
+      obj.post_message("before-render", table);
+      table = table.re_render(obj.render());
+      obj.post_message("after-render", table);
     }
   }
 
@@ -179,9 +179,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
-    obj.post_message("before-render");
-    table.re_render(obj.render());
-    obj.post_message("after-render");
+    obj.post_message("before-render", table);
+    table = table.re_render(obj.render());
+    obj.post_message("after-render", table);
   }
 
   this._default_sorters = {
@@ -195,12 +195,12 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
                                     this.reversed);
   };
 
-  this.restore_columns = function(target)
+  this.restore_columns = function(table)
   {
     this.columns = this.orgininal_columns.slice(0);
-    this.post_message("before-render");
-    target.re_render(this.render());
-    this.post_message("after-render");
+    this.post_message("before-render", table);
+    table = table.re_render(this.render());
+    this.post_message("after-render", table);
   }
 
   this._prop_getter = function(name)
@@ -358,12 +358,17 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
   var tpl = [];
   if (render_header) {
     var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
-    tpl.push(["tr",
-              ["th", renderer(groupname, data),
-               "colspan", String(cols.length),
-               "class", "sortable-table-group-header"],
-              "class", "header"
-             ]);
+    var row = ["tr",
+                ["th", renderer(groupname, data),
+                 "colspan", String(cols.length),
+                 "class", "sortable-table-group-header"],
+                "class", "header"
+               ];
+    if(tabledef.groups[groupby].idgetter)
+    {
+      row.push("data-object-id", tabledef.groups[groupby].idgetter(data));
+    }
+    tpl.push(row);
   }
 
   var ret =  tpl.concat(data.map(function(item) {

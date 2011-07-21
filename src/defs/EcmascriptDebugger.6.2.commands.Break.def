@@ -1,0 +1,5 @@
+message <span class="message">BreakSelection</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+  required <span class="number">uint32</span> threadID  = 2; 
+}

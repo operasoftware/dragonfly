@@ -1,0 +1,25 @@
+message <span class="message">ReadyStateChange</span>
+{
+  enum State
+  {
+    <span class="comment">/** 
+     * Occurs immediately after the DOM environment is created
+     * for a document.
+     */</span>
+    DOM_ENVIRONMENT_CREATED = 1;
+    <span class="comment">/** 
+     * This state indicates that the HTML tree is done (for now). The event
+     * happens immediately after the DOMContentLoaded event fires on the window 
+     * object. Useful for figuring out when we can inspect the DOM.
+     */</span>
+    DOM_CONTENT_LOADED = 2;
+    <span class="comment">/** 
+     * Occurs after onload is finished, and after external resources are loaded. 
+     * When this event is observed, it should be safe to take a screenshot.
+     */</span>
+    AFTER_ONLOAD = 3;
+  }
+
+  required <span class="number">uint32</span> runtimeID = 1; 
+  required <span class="number">State </span> state     = 2; 
+}

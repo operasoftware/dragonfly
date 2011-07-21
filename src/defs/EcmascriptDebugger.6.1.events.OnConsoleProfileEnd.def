@@ -1,0 +1,4 @@
+message <span class="message">ConsoleProfileEndInfo</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+}

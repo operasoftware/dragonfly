@@ -1,0 +1,13 @@
+message <span class="message">ListRuntimesArg</span>
+{
+  <span class="comment">/** 
+   * If non-empty, only information about the specified runtime(s) will
+   * be received.
+   */</span>
+  repeated <span class="number">uint32</span> runtimeIDList = 1; 
+  <span class="comment">/** 
+   * If true, runtimes will be created for documents which would otherwise
+   * not require them.
+   */</span>
+  optional <span class="bool">bool  </span> create        = 2; 
+}

@@ -1,0 +1,7 @@
+<span class="comment">/** 
+ * List of objects to release.
+ */</span>
+message <span class="message">ReleaseObjectsArg</span>
+{
+  repeated <span class="number">uint32</span> objectIDList = 1; 
+}

@@ -1,4 +1,4 @@
-﻿
+
 
 var ActionBroker = function()
 {
@@ -123,12 +123,14 @@ var ActionBroker = function()
   /* private */
 
   this._handlers = {};
+  this._inherited_handlers = {};
   this._action_context = null;
   this._action_context_id = '';
   this._container = null;
   this._shortcuts = null;
   this._global_shortcuts = null;
   this._current_shortcuts = null;
+  this._current_shared_shortcuts = null;
   this._global_handler = new GlobalActionHandler(GLOBAL_HANDLER);
   this._delays = {};
   this._modal_click_handler_setter = null;
@@ -162,7 +164,9 @@ var ActionBroker = function()
         {
           var ui_obj = UIBase.getUIById(container.getAttribute('ui-id'));
           if (ui_obj)
+          {
             this._set_current_handler(ui_obj.view_id, event, container);
+          }
           break;
         }
         // TODO set according key handler, e.g. toolbar, tab
@@ -190,6 +194,7 @@ var ActionBroker = function()
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
+      this._current_shared_shortcuts = this._shortcuts[this._action_context.shared_shortcuts] || {};
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
       this._context_queue.push(handler_id);
@@ -313,6 +318,10 @@ var ActionBroker = function()
     if (!(action_handler && action_handler.id))
       throw 'missing id on action_handler in ActionBroker.instance.register_handler';
     this._handlers[action_handler.id] = action_handler;
+    if (action_handler.shared_shortcuts)
+    {
+      this._inherited_handlers[action_handler.shared_shortcuts] = action_handler;
+    }
   }
 
   this.dispatch_action = function(action_handler_id, action_id, event, target)
@@ -322,8 +331,9 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event)
   {
-    var shortcuts = this._current_shortcuts[this._action_context.mode];
-    var action = shortcuts && shortcuts[key_id] || '';
+    var shortcuts = this._current_shortcuts[this._action_context.mode] || {};
+    var shared_shortcuts = this._current_shared_shortcuts[this._action_context.mode] || {};
+    var action = shortcuts[key_id] || shared_shortcuts[key_id] || '';
     var propagate_event = true;
     if (action)
     {
@@ -391,7 +401,9 @@ var ActionBroker = function()
   {
     
     return (
-    this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort());
+      (this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort()) ||
+      (this._inherited_handlers[handler_id] && this._inherited_handlers[handler_id].get_action_list().sort())
+    );
   };
 
   this._get_shortcut_keys = function()
@@ -414,7 +426,8 @@ var ActionBroker = function()
 
   this.get_label_with_handler_id_and_mode = function(handler_id, mode)
   {
-    return this._handlers[handler_id].mode_labels[mode];
+    return (this._handlers[handler_id] && this._handlers[handler_id].mode_labels[mode]) ||
+           (this._inherited_handlers[handler_id] && this._inherited_handlers[handler_id].mode_labels[mode]);
   };
 
   this.get_global_handler = function()

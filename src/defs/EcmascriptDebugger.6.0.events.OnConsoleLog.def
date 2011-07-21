@@ -10,17 +10,20 @@ message <span class="message">ConsoleLogInfo</span>
     required <span class="number">uint32</span> objectID     = 1; 
     required <span class="bool">bool  </span> isCallable   = 2; 
     <span class="comment">/** 
-     * type, function or object
+     * 
+     *  type, function or object
      */</span>
     required <span class="string">string</span> type         = 3; 
     optional <span class="number">uint32</span> prototypeID  = 4; 
     <span class="comment">/** 
-     * The class of the object.
+     * 
+     *  The class of the object.
      */</span>
     optional <span class="string">string</span> className    = 5; 
     <span class="comment">/** 
-     * If the object is a function, this is the name of
-     * the variable associated with that function (if any).
+     * 
+     *  If the object is a function, this is the name of
+     *  the variable associated with that function (if any).
      */</span>
     optional <span class="string">string</span> functionName = 6; 
   }
@@ -31,28 +34,32 @@ message <span class="message">ConsoleLogInfo</span>
   }
   required <span class="number">uint32  </span> runtimeID = 1; 
   <span class="comment">/** 
-   * This value indicates which function was called:
    * 
-   * 1 - console.log
-   * 2 - console.debug
-   * 3 - console.info
-   * 4 - console.warn
-   * 5 - console.error
-   * 6 - console.assert
-   * 7 - console.dir
-   * 8 - console.dirxml
-   * 9 - console.group
-   * 10 - console.groupCollapsed
-   * 11 - console.groupEnded
-   * 12 - console.count
+   *  This value indicates which function was called:
+   * 
+   *  1 - console.log
+   *  2 - console.debug
+   *  3 - console.info
+   *  4 - console.warn
+   *  5 - console.error
+   *  6 - console.assert
+   *  7 - console.dir
+   *  8 - console.dirxml
+   *  9 - console.group
+   *  10 - console.groupCollapsed
+   *  11 - console.groupEnded
+   *  12 - console.count
+   *  13 - console.table
    */</span>
   required <span class="number">uint32  </span> type      = 2; 
   <span class="comment">/** 
-   * The list of values passed to the function as arguments.
+   * 
+   *  The list of values passed to the function as arguments.
    */</span>
   repeated <span class="message">Value   </span> valueList = 3; 
   <span class="comment">/** 
-   * The position the function was called.
+   * 
+   *  The position the function was called.
    */</span>
   optional <span class="message">Position</span> position  = 4; 
 }

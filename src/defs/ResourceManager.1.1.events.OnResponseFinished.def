@@ -1,0 +1,61 @@
+message <span class="message">ResponseFinished</span>
+{
+  message <span class="message">ResourceData</span>
+  {
+    required <span class="number">uint32 </span> resourceID        = 1; 
+    required <span class="string">string </span> url               = 2; 
+    <span class="comment">/** 
+     * The used mime type. This may be different from the mime type
+     * advertised in the HTTP headers.
+     */</span>
+    optional <span class="string">string </span> mimeType          = 3; 
+    <span class="comment">/** 
+     * Original character encoding (if applicable).
+     */</span>
+    optional <span class="string">string </span> characterEncoding = 4; 
+    <span class="comment">/** 
+     * Content-Length, as advertised by HTTP headers.
+     */</span>
+    optional <span class="number">uint32 </span> contentLength     = 5; 
+    optional <span class="message">Content</span> content           = 6; 
+  }
+  message <span class="message">Content</span>
+  {
+    <span class="comment">/** 
+     * If BYTES or DATA_URI was chosen as the transport mode, this field
+     * contains the size of the data. (If, in addition, decoding was enabled,
+     * the field contains the size of the decoded data).
+     * 
+     * If STRING was chosen as the transport mode, this field contains the
+     * string length (regardless of encoding), i.e. the number of characters,
+     * not including zero terminator.
+     */</span>
+    optional <span class="number">uint32</span> length            = 1; 
+    <span class="comment">/** 
+     * The (original) character encoding of the data (if applicable).
+     */</span>
+    optional <span class="string">string</span> characterEncoding = 2; 
+    <span class="comment">/** 
+     * This field contains the data if BYTES was chosen as the transport
+     * mode. If other modes were chosen, this field is not set.
+     * 
+     * @see ContentMode::Transport
+     */</span>
+    optional <span class="bytes">bytes </span> byteData          = 3; 
+    <span class="comment">/** 
+     * This field contains the data if either STRING or DATA_URI were chosen
+     * as transport mode. If some other mode was chosen, this field is not set.
+     * 
+     * @see ContentMode::Transport
+     */</span>
+    optional <span class="string">string</span> stringData        = 4; 
+  }
+  required <span class="number">uint32      </span> requestID     = 1; 
+  required <span class="number">uint32      </span> resourceID    = 2; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double      </span> time          = 3; 
+  required <span class="number">uint32      </span> contentLength = 4; 
+  optional <span class="message">ResourceData</span> data          = 5; 
+}

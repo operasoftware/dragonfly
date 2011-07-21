@@ -1,4 +1,4 @@
-﻿var ini =
+var ini =
 {
   // all files in http-clients must be updated to the cvs version of this file //
   protocol_version: '5',
@@ -188,7 +188,7 @@
           "escape": "cancel",
         }
       },
-      "cookie_manager":
+      "storage":
       {
         "default":
         {
@@ -199,7 +199,7 @@
           "enter": "submit",
           "escape": "cancel"
         }
-      },
+      }
     },
     mac:
     {
@@ -380,10 +380,11 @@
           "escape": "cancel",
         }
       },
-      "cookie_manager":
+      "storage":
       {
         "default":
         {
+          "enter": "submit",
           "delete": "remove-item",
           "cmd backspace": "remove-item"
         },
@@ -392,7 +393,7 @@
           "enter": "submit",
           "escape": "cancel"
         }
-      },
+      }
     },
   },
   spotlight_color: "3875d7",

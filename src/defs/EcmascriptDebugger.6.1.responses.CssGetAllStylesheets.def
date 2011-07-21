@@ -1,0 +1,16 @@
+message <span class="message">CssStylesheetList</span>
+{
+  message <span class="message">Stylesheet</span>
+  {
+    required <span class="number">uint32</span> objectID           = 1; 
+    required <span class="bool">bool  </span> isDisabled         = 2; 
+    required <span class="string">string</span> href               = 3; 
+    required <span class="string">string</span> title              = 4; 
+    required <span class="string">string</span> type               = 5; 
+    repeated <span class="string">string</span> mediaList          = 6; 
+    optional <span class="number">uint32</span> ownerNodeID        = 7; 
+    optional <span class="number">uint32</span> ownerRuleID        = 8; 
+    optional <span class="number">uint32</span> parentStylesheetID = 9; 
+  }
+  repeated <span class="message">Stylesheet</span> stylesheetList = 1; 
+}

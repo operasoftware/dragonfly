@@ -1,7 +1,8 @@
 message <span class="message">EventHandlerID</span>
 {
   <span class="comment">/** 
-   * `handlerID` as specified in EventHandler.handlerID.
+   * 
+   *  `handlerID` as specified in EventHandler.handlerID.
    */</span>
   required <span class="number">uint32</span> handlerID = 1; 
 }

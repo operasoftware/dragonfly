@@ -1,0 +1,46 @@
+message <span class="message">ConsoleTraceInfo</span>
+{
+  message <span class="message">BacktraceFrame</span>
+  {
+    required <span class="number">uint32     </span> functionID     = 1; 
+    required <span class="number">uint32     </span> argumentObject = 2; 
+    required <span class="number">uint32     </span> variableObject = 3; 
+    required <span class="number">uint32     </span> thisObject     = 4; 
+    <span class="comment">/** 
+     * TODO: Spec says repeated, while the code only assumes one (optional)
+     */</span>
+    optional <span class="message">ObjectValue</span> objectValue    = 5; 
+    optional <span class="number">uint32     </span> scriptID       = 6; 
+    optional <span class="number">uint32     </span> lineNumber     = 7; 
+    <span class="comment">/** 
+     * The variable objects in the scope chain of the function. The first
+     * element in the list is the innermost scope (the scope of the function
+     * itself).
+     */</span>
+    repeated <span class="number">uint32     </span> scopeList      = 8; 
+  }
+  message <span class="message">ObjectValue</span>
+  {
+    required <span class="number">uint32</span> objectID     = 1; 
+    required <span class="bool">bool  </span> isCallable   = 2; 
+    <span class="comment">/** 
+     * type, function or object
+     */</span>
+    required <span class="string">string</span> type         = 3; 
+    optional <span class="number">uint32</span> prototypeID  = 4; 
+    <span class="comment">/** 
+     * The class of the object.
+     */</span>
+    optional <span class="string">string</span> className    = 5; 
+    <span class="comment">/** 
+     * If the object is a function, this is the name of
+     * the variable associated with that function (if any).
+     */</span>
+    optional <span class="string">string</span> functionName = 6; 
+  }
+  required <span class="number">uint32        </span> runtimeID = 1; 
+  <span class="comment">/** 
+   * The list of stack frames at the level console.trace was called.
+   */</span>
+  repeated <span class="message">BacktraceFrame</span> frameList = 2; 
+}

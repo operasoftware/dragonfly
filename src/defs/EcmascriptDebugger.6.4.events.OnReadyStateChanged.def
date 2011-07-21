@@ -1,0 +1,9 @@
+message <span class="message">ReadyStateInfo</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+  <span class="comment">/** 
+   * 1 - DOMContentLoaded
+   * 2 - Load
+   */</span>
+  required <span class="number">uint32</span> state     = 2; 
+}
