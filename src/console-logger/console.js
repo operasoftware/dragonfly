@@ -361,9 +361,6 @@ var ErrorConsoleView = function(id, name, container_class, source)
     {
       this._create();
     }
-
-    window.messages.post("error-count-update", {current_error_count: entries.length});
-    this._prev_entries_length = entries.length;
   };
 
   this._create = function()
