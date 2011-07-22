@@ -230,7 +230,7 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
-url: ./test-cases/dom/pseduo-test.html
+url: ./test-cases/dom/pseudo-test.html
 
 id: 01000
 label: Pseudo element setting
@@ -447,6 +447,7 @@ url: ./test-cases/dom/searchbar/basic-search.html
 
 id: 00100
 label: Show and hide the search-bar with search button
+deprecated: true
 desc:
   - Select the 'Document' tab
   - Press the search button at the end of the toolbar
@@ -463,6 +464,7 @@ desc:
 
 id: 00200
 label: Show and hide the search-bar with shortcuts
+deprecated: true
 desc:
   - Select the 'Document' tab
   - Click the DOM pane to ensure that the DOM view has focus
@@ -476,6 +478,7 @@ desc:
 
 id: 00300
 label: Perform a search
+deprecated: true
 desc:
  - Open the test case, select the 'Document' tab and expand the whole DOM tree
  - Open the search-bar by hitting the search button
@@ -489,6 +492,7 @@ desc:
 url: ./test-cases/dom/searchbar/long-document.html
 id: 00400
 label: Move the search highlight
+deprecated: true
 desc:
  - Open the test case, select the 'Document' tab and expand the whole DOM tree
  - Open the search-bar by hitting the search button
@@ -499,6 +503,135 @@ desc:
  - Hit 'Shift enter' and verify that the match highlight now moves in the other direction
  - Verify that you can move the search highlight in the same way with 'F3' and 'Shift F3'
  - Verify that you can move the search highlight in the same way with the two buttons close to the search filed
+
+DOM.Searchtab
+*************
+
+url: ./test-cases/dom/searchtab/search.html
+label: Focus the search tab in DOM view
+desc:
+ - Open the testcase in DOM view.
+ - Click search tab on the right.
+ - Verify that tab changed and search field got focused.
+ - Focus another tab.
+ - Press search shortcut on keyboard (Ctrl-F).
+ - Verify that search tab is selected and search field got focus.
+ - Verify that ignore case is turned on by default.
+
+label: Execute simple text search on document with ignore case
+desc:
+ - Make sure that ignore case checkbox is ENABLED.
+ - Search for "CLASS" in text mode.
+ - Verify that you get 7 nodes as hits (sum: 1 comment, 3 text nodes and 3 elements nodes p, div, span) with grey highlight on matching strings.
+ - Verify that you get 12 hits in total.
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that search field says 1/12 on the right side.
+
+label: Walking through results in DOM search tab
+desc:
+ - Press Enter in search field.
+ - Verify that highlight moves to the next match.
+ - Verify that you can iterate through each highlight by pressing Enter.
+ - Verify the you can iterate through them backwards by Shift-Enter.
+ - Verify that turnaround works when you reach the ends of the list.
+ - Verify that hit counter in the right side of the search field is updated properly.
+
+label: Focusing results in DOM search tab
+desc:
+ - Walk through results by using Enter and focus them using Ctrl-Enter.
+ - Verify that all individual highlighted string hits can be focused.
+ - Verify that all focused hits bring up the relevant node in DOM view.
+ - Verify that matching string is highlighted in DOM view.
+ - Click all highlighted hits one by one.
+ - Verify that all focused hits bring up the relevant node in DOM view.
+ - Verify that matching string is highlighted in DOM view.
+
+label: Tree view in DOM search table
+desc:
+ - Right-click the DOM view area and select tree view for DOM.
+ - Verify that hits in search tab are also updated.
+ - Verify that any new search result still has the tree view.
+ - Verify that turning option off changes search tab back, too.
+ - Verify that any new search results are presented in markup view again.
+
+label: Execute simple case-dependent text search on document
+desc:
+ - Click on ignore case checkbox to set it DISABLED.
+ - Verify that search is executed immediately.
+ - Verify that you get 2 nodes as hits (sum: 1 text node and 1 span) with grey highlight on matching strings.
+ - Verify that you get 2 hits in total.
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that search field says 1/2 on the right side.
+ - Click ignore case checkbox.
+ - Verify that search is executed immediately and you got 12 hits (case-insensitive).
+
+label: Execute search in another runtime
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the DOM.
+ - Change runtime of DOM view to the iframe content.
+ - Focus search field.
+ - Press Enter.
+ - Verify that you get hits from the relevant DOM.
+
+label: Click search result from another runtime
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the DOM.
+ - Change runtime of DOM view to the iframe content.
+ - Click one of the hits in the search tab.
+ - Verify that the hit is properly shown in the DOM view in its proper runtime.
+
+label: Click search result from outdated runtime
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the DOM.
+ - Change URL to /test-cases/dom/searchtab/iframe.html
+ - Click one of the hits in the search tab.
+ - Verify that warning dialog is presented about expired content and re-running search.
+ - Click cancel.
+ - Verify that nothing has changed.
+ - Click the hit again.
+ - Click OK this time.
+ - Verify that search has been executed on the new runtime.
+
+label: Execute simple case-independent regexp search on document
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Switch to regexp mode.
+ - Search for "test.*well"[;\n]{1,2}".
+ - Verify that you get one hit with proper highlight.
+ - Click on the hit.
+ - Verify the highlight in DOM view, too (\n is not highlighted).
+
+label: Execute simple case-dependent regexp search on document
+desc:
+ - Make sure that ignore case checkbox to set it DISABLED.
+ - Switch to regexp mode.
+ - Search for "test.*well"[;\n]{1,2}".
+ - Verify that you get no hits.
+ - Change runtime of DOM view to the iframe content.
+ - Focus search field.
+ - Press Enter to repeat the search.
+ - Verify that you get one hit now.
+ - Click on it.
+ - Verify highlight in DOM view.
+
+label: Execute simple CSS search in document
+desc:
+ - Switch to CSS mode.
+ - Verify that "ignore case" checkbox is disabled.
+ - Search for "#numberone".
+ - Verify that you get 1 proper hit.
+ - Search for "[class=testclass]".
+ - Verify that you get 2 hits.
+
+label: Execute simple XPath search in document
+desc:
+ - Switch to XPath mode.
+ - Verify that "ignore case" checkbox is disabled.
+ - Search for "//[@class="testclass"]".
+ - Verify that you get 2 proper hits.
 
 
 
@@ -992,6 +1125,7 @@ url: ./test-cases/scripts/searchbar-window/search.html
 
 id: 00100
 label: Switch between search bar and window
+deprecated: true
 desc:
   - Select the 'Scripts' tab
   - Press the search button at the end of the toolbar to show the search bar
@@ -1006,6 +1140,7 @@ desc:
 
 id: 00200
 label: Perform a search in the search window
+deprecated: true
 desc:
   - Open the test url
   - Select the 'Scripts' tab, hit the search button and hit the 'More' button to open the search window
@@ -1025,7 +1160,132 @@ desc:
   - Verify that the file of the highlighted match is displayed in the source view
   - Verify that for each match the according file can be displayed with 'Ctrl Enter'
 
+Scripts.Search tab
+******************
 
+url: ./test-cases/dom/searchtab/search.html
+label: Focus the search tab in Scripts view
+desc:
+ - Open the testcase in scripts view.
+ - Click search tab on the right.
+ - Verify that tab changed and search field got focused.
+ - Focus another tab.
+ - Press search shortcut on keyboard (Ctrl-F).
+ - Verify that search tab is selected and search field got focus.
+ - Verify that ignore case is turned on by default.
+
+label: Execute simple text search on document with ignore case
+desc:
+ - Make sure that ignore case checkbox is ENABLED.
+ - Select the first script on page (not browser.js).
+ - Search for "test" in text mode.
+ - Verify that you get 2 lines with a total of 4 hits (different cases).
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that other hits are highlighted in grey.
+ - Verify that search field says 1/4 on the right side.
+
+label: Walking through results in script search tab
+desc:
+ - Press Enter in search field.
+ - Verify that highlight moves to the next match.
+ - Verify that you can iterate through each highlight by pressing Enter.
+ - Verify the you can iterate through them backwards by Shift-Enter.
+ - Verify that turnaround works when you reach the ends of the list.
+ - Verify that hit counter in the right side of the search field is updated properly.
+
+label: Focusing results in script search tab
+desc:
+ - Walk through results by using Enter and focus them using Ctrl-Enter.
+ - Verify that all individual highlighted string hits can be focused.
+ - Verify that all focused hits bring up the relevant line in script view.
+ - Verify that matching string is highlighted in line.
+ - Click all highlighted hits one by one.
+ - Verify that all focused hits bring up the relevant line in script view.
+ - Verify that matching string is highlighted in script view.
+
+label: Execute simple case-dependent text search in script
+desc:
+ - Click on ignore case checkbox to set it DISABLED.
+ - Verify that search is executed immediately.
+ - Verify that you get 1 line with 2 hits.
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that the other hit is highlighted in grey.
+ - Verify that search field says 1/2 on the right side.
+ - Click ignore case checkbox.
+ - Verify that search is executed immediately and you got the previous case-independent search result back.
+
+label: Execute search in another script
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the DOM.
+ - Change the displayed script to the second script in the same runtime.
+ - Focus search field.
+ - Press Enter.
+ - Verify that you get hits from the displayed script (3 hits in 2 lines).
+
+label: Click search result from another runtime
+desc:
+ - Search for "test" in normal case-insensitive mode (in the first script of the runtime).
+ - Verify that you get hits from the DOM.
+ - Change the displayed script to the second script.
+ - Click one of the hits in the search tab.
+ - Verify that the hit is properly shown in its script (view switched back to the correct script).
+
+label: Click search result from outdated runtime
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the script.
+ - Change URL to anything else containing scripts (e.g.: http://www.sg.hu).
+ - Click one of the hits in the search tab.
+ - Verify that warning dialog is presented about expired content and re-running search.
+ - Click cancel.
+ - Verify that nothing has changed.
+ - Click the hit again.
+ - Click OK this time.
+ - Verify that search has been executed on the new runtime.
+
+label: Execute simple case-independent regexp search on script
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Switch to regexp mode.
+ - Search for "test.*"[;\n]{1,2}".
+ - Verify that you get lines with 2 hits with proper highlight.
+ - Click on the hits.
+ - Verify the highlight in script view, too (\n is not highlighted).
+
+label: Execute simple case-dependent regexp search on script
+desc:
+ - Make sure that ignore case checkbox to set it DISABLED.
+ - Switch to regexp mode.
+ - Search for "test.*"[;\n]{1,2}".
+ - Verify that you get 1 hit.
+ - Change script to the first script of the iframe.
+ - Focus search field.
+ - Press Enter to repeat the search.
+ - Verify that you get one hit now.
+ - Click on it.
+ - Verify highlight in DOM view.
+
+label: Execute a search on all scripts on the page
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Make sure that all files checkbox to set it ENABLED.
+ - Search for "test" in text search mode.
+ - Verify that you get hits from 3 files.
+ - Click through all of the hits.
+ - Verify the highlight in script view, too.
+ - Verify that all files checkbox can be disabled and search is re-executed instantly.
+
+label: Execute a search including injected script content
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Make sure that all files checkbox to set it ENABLED.
+ - Make sure that injected checkbox to set it DISABLED.
+ - Search for "test" in text search mode.
+ - Verify that you get hits from 3 files.
+ - Click on injected checkbox to enable it.
+ - Verify that the search is instantly executed and updated with contents of browser.js.
+ - Verify that the option can be turned off.
 
 Scripts.Call Stack
 ******************
@@ -1732,6 +1992,23 @@ desc:
   - Verify clickability
   - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
   - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
+
+label: Inline expandableJS and DOM objects
+desc:
+  - Open the test case
+  - Ensure that 'Expand objects inline in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
+  - Enable 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit 'console.log(document.all)' button
+  - Verify that you get '+HTMLCollection[' followed by a sequence of DOM nodes, represented in the same way as in the 'Documents' tab (either markup or tree style)
+  - Verify that all objects with an expander can be expanded in place
+  - Hit the 'console.log(document.childNodes)' button
+  - Verify that you get '+NodeList[+DocumentType, +html]' in the command line
+  - Verify expandability in place
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get '+XPathResult[+p, +p, +p, +p]' in the command line
+  - Verify expandability in place
 
 Scripts.Breakpoints
 *******************

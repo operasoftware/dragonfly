@@ -1,16 +1,18 @@
 ﻿window.cls || (window.cls = {});
 
-window.cls.ListUnpacker = function()
+window.cls.ListUnpacker = function(callback)
 {
 
-  this.unpack_list_alikes = function(msg, rt_id, error_callback, success_callback)
+  const DF_INTERN_TYPE = cls.ReplService.DF_INTERN_TYPE;
+
+  this.unpack_list_alikes = function(ctx) //value_list, rt_id, error_callback, success_callback)
   {
-    const VALUE_LIST = 2, OBJECT_VALUE = 1, OBJECT_ID = 0;
-    var value_list = msg[VALUE_LIST];
+    ctx.is_unpacked = true;
+    const OBJECT_VALUE = 1, OBJECT_ID = 0;
     var obj_ids = [];
     var call_list = [];
     var arg_list = [];
-    for (var i = 0, obj_id, obj_id_str, value; value = value_list[i]; i++)
+    for (var i = 0, obj_id, obj_id_str, value; value = ctx.value_list[i]; i++)
     {
       obj_id = value[OBJECT_VALUE] && value[OBJECT_VALUE][OBJECT_ID] || 0;
       obj_id_str = obj_id && "$_" + obj_id || "null";
@@ -22,10 +24,9 @@ window.cls.ListUnpacker = function()
       }
     };
     var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
-                                        [msg, rt_id, obj_ids,
-                                         error_callback, success_callback]);
+                                        [ctx, obj_ids]);
     var script = this._is_list_alike_to_string.replace("%s", call_list.join(','));
-    var msg = [rt_id, 0, 0, script, arg_list];
+    var msg = [ctx.rt_id, 0, 0, script, arg_list];
     this._edservice.requestEval(tag, msg);
   }
 
@@ -60,15 +61,13 @@ window.cls.ListUnpacker = function()
     return ret;
   };
 
-  this._handle_list_alikes_list = function(status, msg, orig_msg,
-                                           rt_id, obj_ids,
-                                           error_callback, success_callback)
+  this._handle_list_alikes_list = function(status, msg, ctx, obj_ids)
   {
     const STATUS = 0, VALUE = 2;
     const XPATH_RESULT = 3;
     if (status || msg[STATUS] != "completed")
     {
-      error_callback();
+      this._callback(ctx);
     }
     else
     {
@@ -84,10 +83,8 @@ window.cls.ListUnpacker = function()
             has_xpathresult = true;
             xpathresults[i] = false;
             tag = this._tagman.set_callback(this, this._handle_xpathresult,
-                                            [orig_msg, rt_id, obj_ids, 
-                                             log, i, xpathresults,
-                                             error_callback, success_callback]);
-            msg = [rt_id, 0, 0, 
+                                            [ctx, obj_ids, log, i, xpathresults]);
+            msg = [ctx.rt_id, 0, 0, 
                    this._xpathresult2array_to_string, 
                    [["xpathresult", obj_ids[i]]]];
             this._edservice.requestEval(tag, msg);
@@ -95,27 +92,23 @@ window.cls.ListUnpacker = function()
         }
         if (!has_xpathresult)
         {
-          this._examine_list_alikes(orig_msg,
-                                    rt_id, obj_ids, log,
-                                    error_callback, success_callback);
+          this._examine_list_alikes(ctx, obj_ids, log);
         }
       }
       else
       {
-        error_callback();
+        this._callback(ctx);
       }
     }
   }
   
   this._handle_xpathresult = function(status, msg,
-                                      orig_msg, rt_id, 
-                                      obj_ids, log, index, xpathresults,
-                                      error_callback, success_callback)
+                                      ctx, obj_ids, log, index, xpathresults)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
     if (status || msg[STATUS] != "completed" || !msg[OBJECT_VALUE])
     {
-      error_callback();
+      this._callback(ctx);
     }
     else
     {
@@ -128,16 +121,12 @@ window.cls.ListUnpacker = function()
       }
       if (all_returned_check)
       {
-        this._examine_list_alikes(orig_msg,
-                                  rt_id, obj_ids, log,
-                                  error_callback, success_callback);
+        this._examine_list_alikes(ctx, obj_ids, log);
       }
     }
   }
   
-  this._examine_list_alikes = function(orig_msg,
-                                       rt_id, obj_ids, log,
-                                       error_callback, success_callback)
+  this._examine_list_alikes = function(ctx, obj_ids, log)
   {
     var unpack = log.reduce(function(list, entry, index)
     {
@@ -147,29 +136,28 @@ window.cls.ListUnpacker = function()
       }
       return list;
     }, []);
-    var tag = this._tagman.set_callback(this, this._handle_unpacked_list,
-                                        [orig_msg, rt_id, log,
-                                         error_callback, success_callback]);
-    this._edservice.requestExamineObjects(tag, [rt_id, unpack]);
+    var tag = this._tagman.set_callback(this, 
+                                        this._handle_unpacked_list,
+                                        [ctx, log]);
+    this._edservice.requestExamineObjects(tag, [ctx.rt_id, unpack]);
   
   }
 
-  this._handle_unpacked_list = function(status, msg, orig_msg, rt_id, log,
-                                        error_callback, success_callback)
+  this._handle_unpacked_list = function(status, msg, ctx, log)
   {
-    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2, DF_INTERN_TYPE = 3;
+    const OBJECT_CHAIN_LIST = 0, VALUE_LIST = 2;
     if (status || !msg[OBJECT_CHAIN_LIST])
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       " ExamineObjects failed in _handle_unpacked_list in ListUnpacker");
-      error_callback();
+      this._callback(ctx);
     }
     else
     {
       var object_list =
         (msg[OBJECT_CHAIN_LIST]).map(this._examine_objects_to_value_list, this);
-      var orig_value_list = orig_msg[VALUE_LIST];
-      orig_msg[VALUE_LIST] = log.reduce(function(list, log_entry, index)
+      var orig_value_list = ctx.value_list;
+      ctx.value_list = log.reduce(function(list, log_entry, index)
       {
         if (log_entry)
         {
@@ -185,7 +173,7 @@ window.cls.ListUnpacker = function()
         }
         return list;
       }, []);
-      success_callback();
+      this._callback(ctx);
     }
 
   }
@@ -234,8 +222,9 @@ window.cls.ListUnpacker = function()
     return value_list;
   };
 
-  this.init = function()
+  this.init = function(callback)
   {
+    this._callback = callback;
     this._tagman = window.tagManager;
     this._edservice = window.services["ecmascript-debugger"];
     this._is_list_alike_to_string =
@@ -244,6 +233,6 @@ window.cls.ListUnpacker = function()
       "(" + this._xpathresult2array.toString() + ")(xpathresult)";
   };
 
-  this.init();
+  this.init(callback);
 
 };

@@ -15,6 +15,17 @@ TextSearch.PLAIN_TEXT = 1;
 TextSearch.REGEXP = 2;
 TextSearch.NO_MATCH = 1;
 TextSearch.EMPTY = 2;
+TextSearch.DEFAULT_MATCH_CLASS = "search-highlight";
+TextSearch.DEFAULT_MATCH_CLASS_FIRST = "search-highlight-first";
+TextSearch.DEFAULT_MATCH_CLASS_BETWEEN = "search-highlight-between";
+TextSearch.DEFAULT_MATCH_CLASS_LAST = "search-highlight-last";
+TextSearch.SELECTED_MATCH_CLASS = "search-highlight-selected";
+TextSearch.SELECTED_MATCH_CLASS_FIRST = "search-highlight-selected-first";
+TextSearch.SELECTED_MATCH_CLASS_BETWEEN = "search-highlight-selected-between";
+TextSearch.SELECTED_MATCH_CLASS_LAST = "search-highlight-selected-last";
+
+TextSearch.DEFAULT_STYLE = 1;
+TextSearch.HIGHLIGHT_STYLE = 1;
 
 TextSearch.prototype = new function()
 {
@@ -23,17 +34,17 @@ TextSearch.prototype = new function()
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 2, // search term must be this long or longer
   NO_MATCH = TextSearch.NO_MATCH,
-  EMPTY = TextSearch.EMPTY;
-  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
+  EMPTY = TextSearch.EMPTY,
+  DEFAULT_MATCH_CLASS = TextSearch.DEFAULT_MATCH_CLASS,
+  DEFAULT_MATCH_CLASS_FIRST = TextSearch.DEFAULT_MATCH_CLASS_FIRST,
+  DEFAULT_MATCH_CLASS_BETWEEN = TextSearch.DEFAULT_MATCH_CLASS_BETWEEN,
+  DEFAULT_MATCH_CLASS_LAST = TextSearch.DEFAULT_MATCH_CLASS_LAST,
+  SELECTED_MATCH_CLASS = TextSearch.SELECTED_MATCH_CLASS,
+  SELECTED_MATCH_CLASS_FIRST = TextSearch.SELECTED_MATCH_CLASS_FIRST,
+  SELECTED_MATCH_CLASS_BETWEEN = TextSearch.SELECTED_MATCH_CLASS_BETWEEN,
+  SELECTED_MATCH_CLASS_LAST = TextSearch.SELECTED_MATCH_CLASS_LAST;
 
-  window.addEventListener('load', function()
-  {
-    var style_sheets = document.styleSheets;
-    this._match_style_default = 
-      style_sheets.getDeclaration ('.search-highlight').cssText;
-    this._match_style_highlight = 
-      style_sheets.getDeclaration ('.search-highlight-selected').cssText;
-  }.bind(this), false);
+  window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
   this._init = function(min_length)
   {
@@ -51,7 +62,7 @@ TextSearch.prototype = new function()
     this._current_match_index = 0;
     this._last_match_index = 0;
     this._consumed_total_length = 0;
-    this._to_consume_hit_length = 0;
+    this._length_to_consume = 0;
     this._curent_search_result = null;
     this._timeouts = new Timeouts();
     this._search_bound = this.search.bind(this);
@@ -59,14 +70,45 @@ TextSearch.prototype = new function()
     this.search_type = TextSearch.PLAIN_TEXT;
   }
 
-  this._set_default_style = function(span)
+  this._set_default_style = function(span, index, array)
   {
-    span.style.cssText = this._match_style_default;
+    var length = array.length;
+    if (length > 1)
+    {
+      span.className = index == 0
+                     ? DEFAULT_MATCH_CLASS_FIRST
+                     : index == length - 1
+                     ? DEFAULT_MATCH_CLASS_LAST
+                     : DEFAULT_MATCH_CLASS_BETWEEN;
+    }
+    else
+    {
+      span.className = DEFAULT_MATCH_CLASS;
+    }
   };
 
-  this._set_highlight_style = function(span)
+  this._set_highlight_style = function(span, index, array)
   {
-    span.style.cssText = this._match_style_highlight;
+    var length = array.length;
+    if (length > 1)
+    {
+      if (index == 0)
+      {
+        span.className = SELECTED_MATCH_CLASS_FIRST;
+      }
+      else if (index == length - 1)
+      {
+        span.className = SELECTED_MATCH_CLASS_LAST;
+      }
+      else
+      {
+        span.className = SELECTED_MATCH_CLASS_BETWEEN;
+      }
+    }
+    else
+    {
+      span.className = SELECTED_MATCH_CLASS;
+    }
   };
 
   this._update_info = function(type)
@@ -110,7 +152,7 @@ TextSearch.prototype = new function()
     
   this._consume_node = function(node)
   {
-    if (node && (this._current_match_index != -1 || this._to_consume_hit_length))
+    if (node && (this._current_match_index != -1 || this._length_to_consume))
     {
       switch (node.nodeType)
       {
@@ -121,37 +163,40 @@ TextSearch.prototype = new function()
         }
         case 3:
         {
-          if (this._to_consume_hit_length)
+          if (this._length_to_consume)
           {
-            if (node.nodeValue.length >= this._to_consume_hit_length)
+            if (node.nodeValue.length >= this._length_to_consume)
             {
-              node.splitText(this._to_consume_hit_length);
+              node.splitText(this._length_to_consume);
             }
             // if the search token does not fit in the current node value and 
             // the current node is not part of some simple text formatting
             // sequence disregard that this._current_match_index
             else if (!(node.nextSibling || node.parentNode.nextSibling))
             {
-              this._to_consume_hit_length = 0;
+              this._length_to_consume = 0;
               this._consumed_total_length += node.nodeValue.length;
               this._hits.pop();
               return;
             }
-            this._to_consume_hit_length -= node.nodeValue.length;
+            this._length_to_consume -= node.nodeValue.length;
             var span = document.createElement('em');
             this._curent_search_result.push(span); 
             node.parentNode.replaceChild(span, node);
             span.appendChild(node);
-            span.style.cssText = this._match_style_default;
             this._consumed_total_length += node.nodeValue.length;
             node = span;
+            if (this._length_to_consume < 1)
+            {
+              this._curent_search_result.forEach(this._set_default_style);
+            }
           }
           else
           {
             if (this._current_match_index - this._consumed_total_length < node.nodeValue.length)
             {
               node.splitText(this._current_match_index - this._consumed_total_length);
-              this._to_consume_hit_length = this._search_term_length;
+              this._length_to_consume = this._search_term_length;
               this._search_next_match();
               this._curent_search_result = this._hits[this._hits.length] = [];
             }
@@ -180,7 +225,7 @@ TextSearch.prototype = new function()
     }
     this._search_next_match();
     this._consumed_total_length = 0;
-    this._to_consume_hit_length = 0;
+    this._length_to_consume = 0;
     this._curent_search_result = null;
     this._consume_node(node);
   };
@@ -522,6 +567,13 @@ TextSearch.prototype = new function()
   this.set_search_term = function(search_term)
   {
     this._orig_search_term = this._search_term = search_term;
+  }
+
+  this.get_match_style = function(type) 
+  {
+    return type == 'highlight' ?
+           this._match_style_highlight :
+           this._match_style_default;
   }
 
 };

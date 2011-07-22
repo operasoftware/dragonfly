@@ -177,6 +177,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
 <link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
+<link rel="stylesheet" href="./ui-scripts/ruler/style.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
 <link rel="stylesheet" href="./network/network_style.css"/>
@@ -257,7 +258,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/modebar.js"/>
 <script src="./ui-scripts/editor.js"/>
 <script src="./ui-scripts/dialog.js"/>
+<script src="./ui-scripts/ruler/ruler.js"/>
+<script src="./ui-scripts/ruler/templates.js"/>
 <script src="./searches/TextSearch.js"/>
+<script src="./searches/searchsinglenodes.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
 <script src="./searches/searchbar.js"/>
 <script src="./searches/searchwindow.js"/>
@@ -445,6 +449,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/inspectableobjectview.js"/>
 <script src="./repl/buffermanager.js"/>
 <script src="./repl/friendlyprinter.js"/>
+<script src="./repl/inlineexpand.js"/>
 <script src="./repl/listunpacker.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
@@ -453,6 +458,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 <script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <script src="./repl/consolelogger.2.0.events.onconsolemessage.js"/>
+<script src="./repl/jsvalue.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>

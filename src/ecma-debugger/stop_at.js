@@ -59,6 +59,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   var __controls_enabled = false;
 
+  var __is_stopped = false;
+
   var __stopAtId = 1;
 
   var __selected_frame_index = -1;
@@ -120,7 +122,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   
   this.__defineGetter__("is_stopped", function()
   {
-    return __controls_enabled;
+    return __is_stopped;
   });
   
   this.__defineSetter__("is_stopped", function(){});
@@ -176,7 +178,6 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   var parseBacktrace = function(status, message, stop_at)
   {
-
     const
     FRAME_LIST = 0,
     // sub message BacktraceFrame
@@ -218,7 +219,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         {
           fn_name : is_all_frames && i == _frames_length - 1
                     ? ui_strings.S_GLOBAL_SCOPE_NAME
-                    : frame[OBJECT_VALUE][NAME] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                    : frame[OBJECT_VALUE] && frame[OBJECT_VALUE][NAME] ||
+                      ui_strings.S_ANONYMOUS_FUNCTION_NAME,
           line : line_number,
           script_id : frame[SCRIPT_ID],
           argument_id : frame[ARGUMENT_OBJECT],
@@ -272,31 +274,51 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
   }
 
-  this.__continue = function (mode) //
+  this.__continue = function (mode, clear_disabled_state) //
   {
-    var tag = tag_manager.set_callback(this, this._handle_continue, [mode]);
+    var tag = tag_manager.set_callback(this, 
+                                       this._handle_continue,
+                                       [mode, clear_disabled_state]);
     var msg = [stopAt.runtime_id, stopAt.thread_id, mode];
     services['ecmascript-debugger'].requestContinueThread(tag, msg);
   }
   
   this.continue_thread = function (mode) //
   {
-    if (this.is_stopped)
+    if (__controls_enabled)
     {
-      this.__continue(mode);
+      this.__continue(mode, true);
     }
   }
   
-  this._handle_continue = function(status, message, mode)
+  this._handle_continue = function(status, message, mode, clear_disabled_state)
   {
-    __controls_enabled = false;
     callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
-    toolbars.js_source.disableButtons('continue');
+    if (clear_disabled_state)
+    {
+      __controls_enabled = false;
+      __is_stopped = false;
+      toolbars.js_source.disableButtons('continue');
+    }
     messages.post('host-state', {state: 'ready'});
   }
+
+  this.on_thread_cancelled = function(message)
+  {
+    const THREAD_ID = 1;
+    if (message[THREAD_ID] == stopAt.thread_id)
+    {
+      callstack = [];
+      messages.post('frame-selected', {frame_index: -1});
+      __controls_enabled = false;
+      __is_stopped = false;
+      toolbars.js_source.disableButtons('continue');
+      messages.post('host-state', {state: 'ready'});
+    }
+  };
 
   this.handle = function(message)
   {
@@ -386,7 +408,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     }
     else
     {
-      throw 'not a line number: '+stopAt.line_number;
+      opera.postError('not a line number: ' + stopAt.line_number + '\n' + 
+                      JSON.stringify(stopAt))
     }
   }
 
@@ -412,6 +435,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
 
   this._stop_in_script = function(stop_at)
   {
+    __is_stopped = true;
     var tag = tagManager.set_callback(null, parseBacktrace, [stop_at]);
     var msg = [stop_at.runtime_id, stop_at.thread_id, ini.max_frames];
     services['ecmascript-debugger'].requestGetBacktrace(tag, msg);

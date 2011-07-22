@@ -11,7 +11,7 @@ cls.ResourceDetailBase = function()
   this.drawer = null;
   this.title = null
 
-  const HIGHLIGHTED_LINE_CLASSNAME = 'higlighted-line';
+  const HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
   const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container'
   const TEXT = document.TEXT_NODE;
   const ELE  = document.ELEMENT_NODE;

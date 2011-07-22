@@ -30,6 +30,12 @@ ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
 
+/* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
+
+/* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
+
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -337,7 +343,7 @@ ui_strings.S_BUTTON_EXPAND_ALL_SECTIONS = "Expand all sections";
 ui_strings.S_BUTTON_LABEL_AT_ABORT = "Stop when encountering an abort message";
 
 /* DESC: Execution stops when encountering an error. */
-ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show where a JavaScript error occurs";
+ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show parse errors and break on exceptions";
 
 /* DESC: Execution stops when encountering an exception. */
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
@@ -1305,13 +1311,44 @@ ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 /* DESC: Can't show request data, as we don't know the type of it. */
 ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Can't display content of type %s";
 
+/* DESC: Radio label for the search type 'Text' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
+
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
+
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "No MIME type known for request data";
+
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
 
 /* DESC: Label for the name column header of a form field in a POST */
 ui_strings.S_LABEL_NETWORK_POST_DATA_NAME = "Name";
 
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
+
 /* DESC: Label for the value column header of a form value in a POST */
 ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE = "Value";
 
+/* DESC: Checkbox label to set the 'ignore case' flag search panel. */
+ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
 
+/* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
+ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
+
+/* DESC: If enabled objects can be expanded inline in the console. */
+ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
+
+/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
+ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
+
+/* DESC: Checkbox label to search in all files in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
+
+/* DESC: Checkbox label to search in injected scripts in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
+
+/* DESC: Tooltip for the injected scripts search settings label. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, like Browser JS, Extension JS, User JS";

@@ -45,11 +45,11 @@ BaseDialog.prototype = new function()
     if (handler_id)
     {
       this.dismiss();
-    }
 
-    if (handler)
-    {
-      handler(event, event.target);
+      if (handler)
+      {
+        handler(event, event.target);
+      }
     }
 
     event.stopPropagation();
@@ -61,7 +61,8 @@ BaseDialog.prototype = new function()
     return ["div",
               ["div",
                  ["div",
-                    template
+                    template,
+                    'id', 'ui-dialog-message'
                  ],
                  ["div",
                     buttons.map(this._get_button_template),
@@ -98,24 +99,28 @@ BaseDialog.prototype = new function()
 /**
  * @constructor
  */
-function ConfirmDialog(template, ok_button, cancel_button) {
-  this._init = function(template, ok_button, cancel_button)
+function ConfirmDialog(template, ok_callback, cancel_callback) {
+  this._init(template, ok_callback, cancel_callback);
+};
+
+function ConfirmDialogPrototype()
+{
+  this._init = function(template, ok_callback, cancel_callback)
   {
     var buttons = [
       {
-        label: ok_button.label || ui_strings.S_BUTTON_OK,
-        handler: ok_button.handler
+        label: ui_strings.S_BUTTON_OK,
+        handler: ok_callback,
       },
       {
-        label: cancel_button.label || ui_strings.S_BUTTON_CANCEL,
-        handler: cancel_button.handler
+        label: ui_strings.S_BUTTON_CANCEL,
+        handler: cancel_callback,
       }
     ];
     BaseDialog.prototype._init.call(this, template, buttons);
   };
+};
 
-  this._init(template, ok_button, cancel_button);
-}
-
-ConfirmDialog.prototype = new BaseDialog();
+ConfirmDialogPrototype.prototype = new BaseDialog();
+ConfirmDialog.prototype = new ConfirmDialogPrototype();
 

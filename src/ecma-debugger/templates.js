@@ -251,7 +251,9 @@
         [(
           display_uri.uri ?
           ["span", display_uri.uri] :
-          ["code", script.script_data.replace(/\s+/g, " ").slice(0, 120), "class", "code-snippet"]
+          ["code", 
+            script.script_data.slice(0, 360).replace(/\s+/g, " ").slice(0, 120), 
+            "class", "code-snippet"]
         )]
       ],
       'script-id', script.script_id.toString()

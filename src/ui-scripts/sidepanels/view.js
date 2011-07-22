@@ -9,6 +9,7 @@
 
   this.init = function(id, name, view_list, default_unfolded_list)
   {
+    this._view_list = view_list;
     var key_value_map = {};
     key_value_map['panel-expanded-' + id] = default_unfolded_list || [];
     new Settings(id, key_value_map);
@@ -38,6 +39,11 @@
       this._store_views_unfolded();
     }
     this.update();
+  }
+
+  this.get_visible_tabs = function()
+  {
+    return this._view_list.slice(0);
   }
 
   this.createView = function(container)

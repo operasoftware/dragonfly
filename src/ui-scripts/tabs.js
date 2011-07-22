@@ -220,9 +220,28 @@ var TabsBase = function()
       {
         global_state.ui_framework.last_selected_tab = view_id;
       }
-      if (is_user_selected && window.views[view_id].type == 'single-view')
+      if (is_user_selected)
       {
-        ActionBroker.get_instance().focus_handler(view_id, event);
+        var target_focus_view = "";
+        if (window.views[view_id].type == 'composite-view')
+        {
+          var visible_tabs = window.views[view_id].cell.get_visible_tabs();
+          if (visible_tabs && visible_tabs.length == 1)
+          {
+            target_focus_view = visible_tabs[0];
+          }
+        }
+        else if (window.views[view_id].type == 'single-view')
+        {
+          target_focus_view = view_id;
+        }
+
+        if (target_focus_view)
+        {
+          setTimeout(function() {
+            ActionBroker.get_instance().focus_handler(target_focus_view, event);
+          }, 0);
+        }
       }
     }
   }
