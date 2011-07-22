@@ -83,7 +83,7 @@ cls.DOMView = function(id, name, container_class)
     window.hostspotlighter.clearSpotlight();
   };
 
-  this.highligh_search_hit = function(hit)
+  this.highlight_search_hit = function(hit)
   {
     // hit created in DOMSearch get_search_hit.
     // hit has offset, length, object_id, node_type and text_content.

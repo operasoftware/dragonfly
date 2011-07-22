@@ -92,11 +92,18 @@ TextSearch.prototype = new function()
     var length = array.length;
     if (length > 1)
     {
-      span.className = index == 0
-                     ? SELECTED_MATCH_CLASS_FIRST
-                     : index == length - 1
-                     ? SELECTED_MATCH_CLASS_LAST
-                     : SELECTED_MATCH_CLASS_BETWEEN;
+      if (index == 0)
+      {
+        span.className = SELECTED_MATCH_CLASS_FIRST;
+      }
+      else if (index == length - 1)
+      {
+        span.className = SELECTED_MATCH_CLASS_LAST;
+      }
+      else
+      {
+        span.className = SELECTED_MATCH_CLASS_BETWEEN;
+      }
     }
     else
     {

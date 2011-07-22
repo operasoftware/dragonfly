@@ -188,6 +188,7 @@ cls.JSSearchView = function(id, name, container_class)
     action_broker.get_global_handler()
     .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
                                 this._onshortcut.bind(this));
+    action_broker.get_global_handler().register_search_panel(this.id);
     messages.addListener('script-selected', this._onscriptselected.bind(this));
   };
 

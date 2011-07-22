@@ -380,7 +380,7 @@ header input {
   -o-transition: .2s;
   }
 
-.unfolded > header{
+.unfolded > header {
   border-bottom-color: #d7d7d7;
 }
 

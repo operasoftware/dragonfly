@@ -321,11 +321,6 @@ var VirtualTextSearchBase = function()
             }
             cur_node = hit.splitText(length);
             span = node.insertBefore(node.ownerDocument.createElement('em'), hit);
-            /*
-            span.className = this._hit.length
-                           ? this._highlight_style_more
-                           : this._highlight_style;
-            */
             span.appendChild(node.removeChild(hit));
             this._hit[this._hit.length] = span;
           }

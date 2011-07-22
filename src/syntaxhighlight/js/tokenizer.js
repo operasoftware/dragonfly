@@ -840,7 +840,7 @@ cls.SimpleJSParser.prototype = new function()
 
   var read_buffer_with_parse_error = function()
   {
-    if(__buffer&& !__has_hit_max_line_chars)
+    if (__buffer && !__has_hit_max_line_chars)
     {
       __char_count += __buffer.length;
       // To handle the width limit (instaed of overflow hidden). 

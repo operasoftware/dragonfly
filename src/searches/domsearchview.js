@@ -7,7 +7,8 @@ cls.DOMSearchView = function(id, name, container_class)
   SEARCHFIELD = 0,
   MOVE_HIGHLIGHT_UP = 1,
   MOVE_HIGHLIGHT_DOWN = 2,
-  HANDLER = 'clear-style-highlight-node';
+  HANDLER = 'clear-style-highlight-node',
+  SHOW_SEARCH_MATCH = 'show-search-match';
 
   this.createView = function(container)
   {
@@ -75,7 +76,7 @@ cls.DOMSearchView = function(id, name, container_class)
   {
     if (this._search_hit)
     {
-      window.views.dom.highligh_search_hit(this._search_hit);
+      window.views.dom.highlight_search_hit(this._search_hit);
       this._search_hit = null;
     }
   };
@@ -149,8 +150,8 @@ cls.DOMSearchView = function(id, name, container_class)
       this._onshortcut.bind(this, 'highlight-previous-match');
     eventHandlers.mouseover[HANDLER] =
       this._search.clear_style_highlight_node.bind(this._search);
-    eventHandlers.click['show-search-match'] = this._show_search.bind(this);
-    eventHandlers.mouseover['show-search-match'] = 
+    eventHandlers.click[SHOW_SEARCH_MATCH] = this._show_search.bind(this);
+    eventHandlers.mouseover[SHOW_SEARCH_MATCH] = 
       eventHandlers.mouseover['inspect-node-link'];
     this._broker = ActionBroker.get_instance();
     this._broker.register_handler(this);
@@ -160,6 +161,7 @@ cls.DOMSearchView = function(id, name, container_class)
                                 ['highlight-next-match',
                                  'highlight-previous-match',
                                  'hide-search']);
+    this._broker.get_global_handler().register_search_panel(this.id);
     messages.addListener('setting-changed', this._onsettingchange.bind(this));
     messages.addListener('dom-view-updated', this._ondomviewupdated.bind(this));
   };

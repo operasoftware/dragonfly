@@ -661,7 +661,7 @@ String.prototype.isdigit = function()
   return this.length && !(/\D/.test(this));
 };
 
-String.prototype.contains = function(str)
+Array.prototype.contains = String.prototype.contains = function(str)
 {
   return this.indexOf(str) != -1;
 };

@@ -37,7 +37,7 @@ cls.InlineExpander = function(callback)
         {
           object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, object[OBJECT_ID]);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_DOM;
-          dom_obj_list.push({model: object[INLINE_MODEL], model_expanded: false});
+          dom_obj_list.push(object[INLINE_MODEL]);
 
           if (!cb)
           {
@@ -70,9 +70,7 @@ cls.InlineExpander = function(callback)
 
   this._onexpand_dom_object = function(dom_obj_list, ctx)
   {
-    for (var i = 0, value; (value = dom_obj_list[i]) && value.model.has_data(); i++);
-
-    if (i == dom_obj_list.length)
+    if (dom_obj_list.every(function(model) { return model.has_data(); }))
     {
       this._callback(ctx);
     }

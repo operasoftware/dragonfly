@@ -57,6 +57,12 @@
     */
   this.register_shortcut_listener = function(listener_id, callback, action_list){};
 
+  /**
+    * To register a serach panel. 
+    * This is used to focus the panel with an according shortcut.
+    */
+  this.register_search_panel = function(view_id){};
+
   /* constants */
 
   const
@@ -78,8 +84,8 @@
   this._handlers = {};
   this._private_handlers = [];
   this._listener_handlers = [];
-
   this._sc_listeners = {};
+  this._search_panels = [];
 
   this.get_action_list = function()
   {
@@ -260,14 +266,14 @@
     var ui = UI.get_instance();
     var search = ui.get_visible_tabs().filter(function(view_id)
     {
-      return view_id.indexOf('search') > -1;
-    })[0];
+      return this._search_panels.contains(view_id);
+    }, this)[0];
     if (search)
     {
       ui.show_view(search).focus_search_field();
       return false;
     }
-  }
+  }.bind(this);
 
   var TestTempView = function(name)
   {
@@ -342,8 +348,15 @@
       }, this);
   };
 
-  /* instatiation */
+  this.register_search_panel = function(view_id)
+  {
+    if (!this._search_panels.contains(view_id))
+    {
+      this._search_panels.push(view_id);
+    }
+  };
 
+  /* instatiation */
 
   /* message handling */
 

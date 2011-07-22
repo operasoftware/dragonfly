@@ -179,7 +179,6 @@ cls.ReplService = function(view, data)
     }
     else if (do_inline_expand)
     {
-
       this._msg_queue.stop_processing();
       this._inline_expander.expand(ctx);
     }

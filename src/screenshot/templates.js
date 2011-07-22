@@ -1,6 +1,6 @@
 ﻿(function()
 {
-  this.scrennshot_controls = function(color)
+  this.screenshot_controls = function(color)
   {
   	return (
   	['div',

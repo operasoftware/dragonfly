@@ -165,14 +165,14 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
 
   this._handlers['screenshot-show-ruler'] = function(event, target)
   {
-    this._ruler.show_ruler(window.views.screenshot.get_container());;
+    this._ruler.show_ruler(window.views.screenshot.get_container());
   }.bind(this);
 
   /* implementation */
 
   this.createView = function(container)
   {
-    var tmpl = window.templates.scrennshot_controls(this._sample_color);
+    var tmpl = window.templates.screenshot_controls(this._sample_color);
     container.clearAndRender(tmpl);
     this._scale_control = container.getElementsByTagName('input')[0];
     this._sample_size_control = container.getElementsByTagName('input')[1];
