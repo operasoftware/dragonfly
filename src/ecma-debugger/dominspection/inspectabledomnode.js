@@ -344,7 +344,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   this.getParentElement = function(obj_id)
   {
     var i = 0, depth = 0;
-    for ( ; this._data[i] && this._data[i][ID] != obj_id; i++);
+    for ( ; this._data[i] && this._data[i][ID] != obj_id; i++)
+      ;
     if (this._data[i])
     {
       depth = this._data[i][DEPTH];
@@ -355,13 +356,15 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this.getRootElement = function()
   {
-    for (var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++);
+    for (var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++)
+      ;
     return this._data[i] && this._data[i][ID] || 0;
   }
 
   this.get_depth_of_first_element = function()
   {
-    for (var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++);
+    for (var i = 0; this._data[i] && this._data[i][TYPE] != 1; i++)
+      ;
     return this._data[i] && this._data[i][DEPTH] || 0;
   }
 

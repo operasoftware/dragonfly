@@ -81,7 +81,7 @@ cls.DOMSearchView = function(id, name, container_class)
     }
   };
 
-  this._show_search = function(event, target)
+  this._show_search_hit = function(event, target)
   {
     this._search.update_match_highlight(event, target);
     this._search_hit = this._search.get_search_hit();
@@ -150,7 +150,7 @@ cls.DOMSearchView = function(id, name, container_class)
       this._onshortcut.bind(this, 'highlight-previous-match');
     eventHandlers.mouseover[HANDLER] =
       this._search.clear_style_highlight_node.bind(this._search);
-    eventHandlers.click[SHOW_SEARCH_MATCH] = this._show_search.bind(this);
+    eventHandlers.click[SHOW_SEARCH_MATCH] = this._show_search_hit.bind(this);
     eventHandlers.mouseover[SHOW_SEARCH_MATCH] = 
       eventHandlers.mouseover['inspect-node-link'];
     this._broker = ActionBroker.get_instance();

@@ -91,7 +91,7 @@
           "<div handler='spotlight-node' " +
                "ref-id='" + element[ID] + "'" +
                "data-pseudo-element='" + type + "'" +
-               this._get_indent(element) +
+               this._margin_style(element) +
           ">" +
             "<node class='pseudo-element'>" +
               (is_tree_mode ? "::" + type : "&lt::" + type + "/>") +
@@ -410,7 +410,7 @@
                            (is_script_node ? "non-editable" : "") + " spotlight-node'"
                          : '';
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      this._get_indent(node, depth_first_ele) +
+                      this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       class_name + ">" +
@@ -424,7 +424,7 @@
             else
             {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      this._get_indent(node, depth_first_ele) +
+                      this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
@@ -440,7 +440,7 @@
                        : "");
 
               closing_tags.push((show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "") +
-                                "<div" + this._get_indent(node, depth_first_ele) +
+                                "<div" + this._margin_style(node, depth_first_ele) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                                   "class='spotlight-node' " +
                                   (no_contextmenu ? "" : "data-menu='dom-element' ") +
@@ -452,7 +452,7 @@
           else
           {
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                      this._get_indent(node, depth_first_ele) +
+                      this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
@@ -467,7 +467,7 @@
 
         case PROCESSING_INSTRUCTION_NODE:
         {
-          tree += "<div" + this._get_indent(node, depth_first_ele) +
+          tree += "<div" + this._margin_style(node, depth_first_ele) +
             "class='processing-instruction'>&lt;?" + node[NAME] + ' ' +
             formatProcessingInstructionValue(node[VALUE], force_lower_case) + "?&gt;</div>";
           break;
@@ -479,7 +479,7 @@
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-              tree += "<div" + this._get_indent(node, depth_first_ele) +
+              tree += "<div" + this._margin_style(node, depth_first_ele) +
                                "ref-id='" + node[ID] + "' " + 
                                "class='comment pre-wrap'>" +
                                "&lt;!--" + 
@@ -496,7 +496,7 @@
 
         case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div" + this._get_indent(node, depth_first_ele) + "class='doctype'>" +
+          tree += "<div" + this._margin_style(node, depth_first_ele) + "class='doctype'>" +
                   "&lt;!DOCTYPE " + node[NAME] +
                     this._get_doctype_external_identifier(node) +
                   "&gt;</div>";
@@ -511,7 +511,7 @@
             // the 'has_only_text_content' check, 
             // so we don't need to check here again for 'pre-wrap' content
 
-            tree += "<div" + this._get_indent(node, depth_first_ele) + 
+            tree += "<div" + this._margin_style(node, depth_first_ele) + 
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
                     "<text" +
@@ -642,7 +642,7 @@
           if (is_open)
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    this._get_indent(node, depth_first_ele) +
+                    this._margin_style(node, depth_first_ele) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
@@ -661,7 +661,7 @@
           else
           {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
-                    this._get_indent(node, depth_first_ele) +
+                    this._margin_style(node, depth_first_ele) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
@@ -678,7 +678,7 @@
         {
           if (show_comments)
           {
-            tree += "<div" + this._get_indent(node, depth_first_ele) +
+            tree += "<div" + this._margin_style(node, depth_first_ele) +
                             "ref-id='"+node[ID] + "' " +
                             "class='comment pre-wrap'>" +
                         "<span class='comment-node'>#comment</span>" +
@@ -689,14 +689,14 @@
 
         case DOCUMENT_NODE:
         {
-          tree += "<div" + this._get_indent(node, depth_first_ele) + ">" +
+          tree += "<div" + this._margin_style(node, depth_first_ele) + ">" +
                     "<span class='document-node'>#document</span></div>";
           break;
         }
 
         case DOCUMENT_TYPE_NODE:
         {
-          tree += "<div" + this._get_indent(node, depth_first_ele) + ">" +
+          tree += "<div" + this._margin_style(node, depth_first_ele) + ">" +
                     "<span class='doctype'>" + node[NAME] + " " +
                       this._get_doctype_external_identifier(node) +
                     "</span></div>";
@@ -717,7 +717,7 @@
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
-               tree += "<div" + this._get_indent(node, depth_first_ele) +
+               tree += "<div" + this._margin_style(node, depth_first_ele) +
                                 current_formatting + 
                                 (no_contextmenu ? "" : "data-menu='dom-element' ") +
                                 ">" +
@@ -730,7 +730,7 @@
           else
           {
             var only_whitespace = /^\s*$/.test(node[VALUE]);
-            tree += "<div" + this._get_indent(node, depth_first_ele) +
+            tree += "<div" + this._margin_style(node, depth_first_ele) +
                              current_formatting + 
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
@@ -760,7 +760,7 @@
            this._inspected_dom_node_markup_style(model, target, editable, no_contextmenu));
   }
 
-  this._get_indent = function(node, start_depth)
+  this._margin_style = function(node, start_depth)
   {
     const INDENT_AMOUNT = 16;
     return " style='margin-left:" + 
