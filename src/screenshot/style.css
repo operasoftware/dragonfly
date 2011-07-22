@@ -18,12 +18,10 @@
   max-height: 320px;
   height: 100%;
 }
-.screenshot-sample-color-container
+.screenshot-sample-color-container,
+.screenshot-ruler
 {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  margin-top: 35px;
 }
 
 .screenshot-sample-color

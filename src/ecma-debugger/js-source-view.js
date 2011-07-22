@@ -129,12 +129,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   var updateBreakpoints = function(force_repaint)
   {
-    if (force_repaint)
+    if (force_repaint && line_numbers)
     {
       line_numbers.style.visibility = "hidden";
     }
-    var lines = line_numbers.getElementsByTagName('span');
-    var bp_states = __current_script.breakpoint_states;
+    var lines = line_numbers && line_numbers.getElementsByTagName('span');
+    var bp_states = __current_script && __current_script.breakpoint_states;
     var default_y = context['bp-line-pointer-default'];
     var line_height = context['line-height'];
     if (bp_states)
@@ -170,6 +170,10 @@ cls.JsSourceView = function(id, name, container_class)
         var highlight_class, bp_state;
         for (var i = 0, line; line = lines[i]; i++)
         {
+          if (line.parentNode != source_content)
+          {
+            continue;
+          }
           highlight_class = "";
           
           if (bp_state = bp_states[__current_line + i])
@@ -177,8 +181,18 @@ cls.JsSourceView = function(id, name, container_class)
             highlight_class = (LINE_HIGHLIGHT_CLASSNAMES[bp_state % 3] + " " +
                               BP_HIGHLIGHT_CLASSNAMES[bp_state >> 3]);
           }
-          
-          line.className = highlight_class;
+          if (line.className.indexOf('error') > -1)
+          {
+            line.className = Array.prototype.filter.call(line.classList, 
+                                                         function(cl_name)
+            {
+              return cl_name.indexOf('error') > -1;
+            }).join(' ') + ' ' + highlight_class;
+          }
+          else
+          {
+            line.className = highlight_class;
+          }
         }
       }
     }
@@ -516,7 +530,8 @@ cls.JsSourceView = function(id, name, container_class)
     {
       is_parse_error = true;
     }
-    if (__current_script.script_id != script_id || is_parse_error)
+    var is_current_script = __current_script.script_id == script_id;
+    if (!is_current_script || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
 
@@ -539,7 +554,7 @@ cls.JsSourceView = function(id, name, container_class)
           script_obj.parse_error.error_line_offset =
             script_obj.parse_error.offset - script_obj.line_arr[error_line - 1];
         }
-        if (is_visible)
+        if (is_visible && !is_current_script)
         {
           setScriptContext(script_id, line_nr);
         }
@@ -609,10 +624,6 @@ cls.JsSourceView = function(id, name, container_class)
           scroll_container.scrollTop =
             __current_line / __current_script.line_arr.length * scroll_container.scrollHeight;
         }
-      }
-      if(__current_script.parse_error)
-      {
-        views.js_source.showLinePointer(__current_script.parse_error.error_line + 1, true )
       }
     }
     __current_line = line_nr;
@@ -1005,27 +1016,21 @@ cls.ScriptSelect = function(id, class_name)
 
   this.checkChange = function(target_ele)
   {
-    var script_id = parseInt(target_ele.get_attr('parent-node-chain', 'script-id'));
-
-    if(script_id)
+    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
+    var script_id = script_id_str && parseInt(script_id_str);
+    if (script_id)
     {
       // TODO is this needed?
-      if(script_id != selected_script_id)
+      if (script_id != selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
         topCell.showView(views.js_source.id);
         selected_script_id = script_id;
       }
+      selected_value = target_ele.textContent;
+      return true;
     }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "missing script id in handlers['display-script']")
-    }
-    selected_value = target_ele.textContent;
-    // TODO
-
-    return true;
+    return false;
   }
 
   // this.updateElement
@@ -1144,6 +1149,7 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-type': DOMSearch.PLAIN_TEXT,
       'js-search-ignore-case': true,
       'js-search-all-files': false,
+      'js-search-injected-scripts': true,
       'max-displayed-search-hits': 1000
     },
     // key-label map
@@ -1153,7 +1159,7 @@ cls.JsSourceView.create_ui_widgets = function()
       error: ui_strings.S_BUTTON_LABEL_AT_ERROR,
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
-      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS
+      'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
     },
     // settings map
     {

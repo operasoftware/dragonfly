@@ -1,28 +1,57 @@
 ﻿em
 {
   font-style: normal;
-  display: inline-block;
   border-radius: 3px;
-  padding-left: 1px;
-  padding-right: 1px;
+  padding: 1px;
   border: 1px solid transparent;
+  box-decoration-break: clone;
+  margin: 0 -2px;
 }
 
-.search-highlight
+.search-highlight,
+.search-highlight-first,
+.search-highlight-between,
+.search-highlight-last
 {
   background-color: rgba(0,0,0,0.13); 
+  background-color: hsl(0, 0%, 87%); 
 }
 
-.search-highlight-selected
+.search-highlight-selected,
+.search-highlight-selected-first,
+.search-highlight-selected-between,
+.search-highlight-selected-last
 {
   background-color: #c8f7bd; 
   background-image: -o-linear-gradient(-90deg, #fce703 30%, #fcbe03 100%);
-  border: 1px solid #ceba73;   
+  border-color: #ceba73;   
   border-top-color: #dbd3ad;
   border-bottom-color: #c7b267;
   color: #000000;
-  position: relative;
-  z-index: 98;
+}
+
+.search-highlight-first,
+.search-highlight-between,
+.search-highlight-selected-first,
+.search-highlight-selected-between
+{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-right: 0;
+  padding-right: 0;
+  border-right-width: 0;
+}
+
+.search-highlight-last,
+.search-highlight-between,
+.search-highlight-selected-last,
+.search-highlight-selected-between
+{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
+  padding-left: 0;
+  border-left-width: 0;
 }
 
 .advanced-search-table
@@ -43,9 +72,8 @@
   border-radius: 3px;
   background-color: hsl(0, 0%, 90%);
   margin: 2px 3px;
-  padding: 0 2px;
+  padding: 0 3px;
   line-height: 15px;
-  min-width: 2em;
   text-align: right;
 }
 
@@ -100,7 +128,10 @@
   padding: 0;
 }
 
-.dom-search
+.dom-search,
+.dom-search em,
+.js-search-results-script,
+.js-search-results-script em
 {
   word-wrap: break-word;
 }
@@ -170,7 +201,7 @@
   text-align: center;
 }
 
-.panel-search .info-box
+.info-box-container .info-box
 {
   margin: 0;
   background: transparent url("../ui-images/error-console-info.png") no-repeat 0 50%;
@@ -238,4 +269,9 @@
 .info-is-searching
 {
   padding: 7px;
+}
+
+.match-following-line
+{
+  display: block;
 }

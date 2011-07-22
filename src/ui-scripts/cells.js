@@ -24,6 +24,32 @@
     this.toolbar = new Toolbar(this);
   }
 
+  this.get_visible_tabs = function()
+  {
+    var ret = [];
+    if (this.tab)
+    {
+      ret.extend(this.tab.tabs.map(function(tab){return tab.ref_id}));
+      var view = window.views[this.tab.activeTab];
+      if (view.type == 'composite-view')
+      {
+        ret.extend(view.cell.get_visible_tabs());
+      }
+      else if (view.type == 'side-panel')
+      {
+        ret.extend(view.get_visible_tabs);
+      }
+    }
+    else
+    {
+      for (var i = 0, child; child = this.children[i]; i++)
+      {
+        ret.extend(child.get_visible_tabs())
+      }
+    }
+    return ret;
+  }
+
 
 
   this.getView = function(view_id)

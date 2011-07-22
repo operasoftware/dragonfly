@@ -1,0 +1,97 @@
+<!doctype html>
+<link rel="stylesheet" href="../../src/ui-scripts/ruler/style.css">
+<style>
+#container
+{
+	position: absolute;
+	left: 20px;
+	top: 150px;
+	width: 700px;
+	height: 700px;
+	/* *
+	background-position: 0px 0px; 
+	background-repeat: repeat; 
+	background-size: 100% 100%, 100% 2px, 2px 100%; 
+	background-image: 
+		-o-linear-gradient(45deg, rgba(0, 0, 0, 0.9) 0px, 
+		                          rgba(0, 85, 255, 0.9) 100%), 
+		-o-linear-gradient(90deg, rgba(0, 85, 255, 0.5) 0px, 
+		                          rgba(0, 85, 255, 0.5) 1px, 
+		                          transparent 1px), 
+		-o-linear-gradient(0deg, rgb(0, 85, 255) 0px,
+		                         rgb(0, 85, 255) 1px, 
+		                         transparent 1px) /* */
+	background: url("4939626792_12ccbcd91b_z.jpg");
+
+}
+
+</style>
+<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/ui-scripts/ruler/ruler.js"></script>
+<script src="../../src/ui-scripts/ruler/templates.js"></script>
+<script>
+
+
+
+
+window.onload = function()
+{
+
+		
+	window.ruler = new cls.Ruler(function(ruler)
+	{
+		document.getElementsByTagName('code')[0].textContent = 
+		"width: " + ruler.w + "px\nheight: " + ruler.h + "px";
+	});
+
+}
+
+var show_ruler = function()
+{
+	window.ruler.show_ruler(document.getElementById('container'));
+}
+
+document.addEventListener('input', function(event)
+{
+	switch (event.target.name)
+	{
+		case 'scale':
+		{
+			var scale = Number(event.target.value);
+			var style = document.getElementById('container').style;
+			/* *
+			style.backgroundImage = 
+				"-o-linear-gradient(45deg, hsla(220, 0%, 0%, .9) 0, " +
+				                          "hsla(220, 100%, 50%, .9) 100%), " +
+				"-o-linear-gradient(90deg, hsla(220, 100%, 50%, .5) 0, " +
+				                          "hsla(220, 100%, 50%, .5) " + scale + "px, " +
+				                          "transparent " + scale + "px), " +
+				"-o-linear-gradient(0deg, hsl(220, 100%, 50%) 0, " +
+				                         "hsl(220, 100%, 50%) " + scale + "px, " +
+				                         "transparent " + scale + "px)";
+			style.backgroundSize = "100% 100%, " +
+			                       "100% " + (2 * scale) + "px, " +
+			                        (2 * scale) + "px 100%";
+			//style.backgroundColor = "#00f"
+			style.backgroundPosition = "0 0";
+			style.backgroundRepeat = "repeat";
+			/* */
+			window.ruler.scale = scale;
+			break;
+		}
+	}
+}, false)
+
+</script>
+<div id="controls">
+<form>
+	<p><input type="button" value="Show ruler" onclick="show_ruler()">
+	<p><label>scale: <input type="range"
+	                        name="scale"
+	                        min="1"
+	                        max="30"
+	                        value="1"></label>
+</form>
+<p><code></code>
+</div>
+<div id="container"></div>

@@ -480,7 +480,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
     type || (type = "default");
     spotlight_clear_timeouts.clear();
     var join = Array.prototype.join;
-    if( join.call(arguments) != last_spotlight_commands )
+    if (join.call(arguments) != last_spotlight_commands)
     {
       last_spotlight_commands = join.call(arguments);
       var locked_s = settings.dom.get('lock-selected-elements') && 
@@ -500,6 +500,7 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
   {
     services['ecmascript-debugger'].requestSpotlightObjects(0,
       [(last_spotlight_command || []).concat([get_command(node_id, 0, "hover")])]);
+    last_spotlight_commands = '';
   }
 
   // commands["locked"]

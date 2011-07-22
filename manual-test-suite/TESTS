@@ -1970,6 +1970,23 @@ desc:
   - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
   - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
 
+label: Inline expandableJS and DOM objects
+desc:
+  - Open the test case
+  - Ensure that 'Expand objects inline in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
+  - Enable 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit 'console.log(document.all)' button
+  - Verify that you get '+HTMLCollection[' followed by a sequence of DOM nodes, represented in the same way as in the 'Documents' tab (either markup or tree style)
+  - Verify that all objects with an expander can be expanded in place
+  - Hit the 'console.log(document.childNodes)' button 
+  - Verify that you get '+NodeList[+DocumentType, +html]' in the command line
+  - Verify expandability in place
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get '+XPathResult[+p, +p, +p, +p]' in the command line
+  - Verify expandability in place
+
 Scripts.Breakpoints
 *******************
 

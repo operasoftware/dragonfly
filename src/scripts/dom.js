@@ -64,6 +64,15 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
+if (typeof document.createElement('div').classList == 'undefined')
+{
+  Element.prototype.__defineGetter__('classList', function()
+  {
+    return this.className.split(/\s+/);
+  });
+  Element.prototype.__defineSetter__('classList', function(){});
+}
+
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
@@ -80,10 +89,11 @@ if (!Element.prototype.insertAdjacentHTML)
 
 Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
-
-  if (typeof args == 'string' && this.nodeType == 1)
+  var args_is_string = typeof args == 'string';
+  if (this.nodeType == 1 && args_is_string || 
+      (args.length == 1 && typeof args[0]  == 'string' && /</.test(args[0])))
   {
-    this.insertAdjacentHTML('beforeend', args);
+    this.insertAdjacentHTML('beforeend', args_is_string ? args : args[0]);
     return this.firstElementChild;
   }
 
@@ -471,9 +481,11 @@ if (!Element.prototype.matchesSelector)
     }
 };
 
+/* The naming is not precise, it can return the element itself. */
+
 Element.prototype.get_ancestor = function(selector)
 {
-  var ele = this.parentNode;
+  var ele = this;
   while (ele)
   {
     if (ele.nodeType == 1 && ele.matchesSelector(selector))
@@ -484,7 +496,6 @@ Element.prototype.get_ancestor = function(selector)
   }
   return null;
 };
-
 
 /**
  * Make sure the element is visible in its scoll context.
@@ -591,6 +602,13 @@ Array.prototype.sum = function(selectorfun)
   }
 };
 
+Array.prototype.__defineGetter__("last", function()
+{
+  return this[this.length - 1];
+});
+
+Array.prototype.__defineSetter__("last", function() {});
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
@@ -643,7 +661,7 @@ String.prototype.isdigit = function()
   return this.length && !(/\D/.test(this));
 };
 
-String.prototype.contains = function(str)
+Array.prototype.contains = String.prototype.contains = function(str)
 {
   return this.indexOf(str) != -1;
 };

@@ -1,6 +1,6 @@
 ﻿(function()
 {
-  this.scrennshot_controls = function(color)
+  this.screenshot_controls = function(color)
   {
   	return (
   	['div',
@@ -31,7 +31,20 @@
       ['div', 
         this.sample_color(color),
         'class', 'screenshot-sample-container'],
+        this._ruler_controls(),
       'class', 'padding screenshot-max-height']);
+  };
+
+  this._ruler_controls = function()
+  {
+    return (
+    ['div',
+      ['button',
+            'Show ruler',
+            'handler', 'screenshot-show-ruler',
+            'class', 'container-button'],
+      ['pre', 'class', 'screenshot-ruler-dimensions'],
+      'class', 'screenshot-ruler']);
   };
 
   this.sample_color = function(color)

@@ -96,6 +96,9 @@ cls.SimpleJSParser.prototype = new function()
   var __line='';
   var __line_number = 1;
   var __max_line_number = 0;
+  var __max_line_chars = 2500;
+  var __char_count = 0;
+  var __has_hit_max_line_chars = false;
 
   var __parse_error_line = 0;
   var __parse_error_line_offset = 0;
@@ -453,8 +456,9 @@ cls.SimpleJSParser.prototype = new function()
         group_count = 2;
         while (c)
         {
-          if (group in PUNCTUATOR_GROUPS[group_count].start &&
-                (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
+          if (PUNCTUATOR_GROUPS[group_count] &&
+              group in PUNCTUATOR_GROUPS[group_count].start &&
+              (group += c) in PUNCTUATOR_GROUPS[group_count].groups)
           {
             __buffer += c in __escape ? __escape[c] : c;
             c = __source.charAt(++__pointer);
@@ -763,8 +767,16 @@ cls.SimpleJSParser.prototype = new function()
 
   var read_buffer_default=function()
   {
-    if(__buffer)
+    if (__buffer && !__has_hit_max_line_chars)
     {
+      __char_count += __buffer.length;
+      // To handle the width limit (instaed of overflow hidden). 
+      // Opera 12 will no longer have that limit, so this is just temporary. 
+      if (__char_count > __max_line_chars)
+      {
+        __buffer = __buffer.slice(0, __buffer.length - (__char_count - __max_line_chars));
+        __has_hit_max_line_chars = true;
+      }
       switch (__type)
       {
         case STRING:
@@ -818,14 +830,26 @@ cls.SimpleJSParser.prototype = new function()
         __previous_type=__type;
         __previous_value = __buffer;
       }
+      if (__has_hit_max_line_chars)
+      {
+        __line += " … ";
+      }
     }
     __buffer='';
   }
 
   var read_buffer_with_parse_error = function()
   {
-    if(__buffer)
+    if (__buffer && !__has_hit_max_line_chars)
     {
+      __char_count += __buffer.length;
+      // To handle the width limit (instaed of overflow hidden). 
+      // Opera 12 will no longer have that limit, so this is just temporary. 
+      if (__char_count > __max_line_chars)
+      {
+        __buffer = __buffer.slice(0, __buffer.length - (__char_count - __max_line_chars));
+        __has_hit_max_line_chars = true;
+      }
       if(__line_number < __parse_error_line)
       {
         read_buffer_default();
@@ -860,6 +884,10 @@ cls.SimpleJSParser.prototype = new function()
       {
         __line += __buffer ;
       }
+      if (__has_hit_max_line_chars)
+      {
+        __line += " … ";
+      }
     }
     __buffer='';
   }
@@ -878,6 +906,8 @@ cls.SimpleJSParser.prototype = new function()
                           "<" + __current_line_ele + " data-line-number='" + (__line_number+1) + "'>" + __line + "</" + __current_line_ele + ">";
     __line='';
     __buffer = '';
+    __has_hit_max_line_chars = false;
+    __char_count = 0;
     return (++__line_number) > __max_line_number;
   }
 
@@ -901,6 +931,8 @@ cls.SimpleJSParser.prototype = new function()
     }
     __line='';
     __buffer = '';
+    __has_hit_max_line_chars = false;
+    __char_count = 0;
     return (++__line_number) > __max_line_number;
   }
 
@@ -916,6 +948,9 @@ cls.SimpleJSParser.prototype = new function()
     __line='';
     __line_number = line;
     __max_line_number = line + max_line;
+    __has_hit_max_line_chars = false;
+    __char_count = 0;
+    __max_line_chars = 32000 / window.defaults['js-source-char-width'] >> 0;
   }
 
   var states = [];

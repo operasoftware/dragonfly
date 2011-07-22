@@ -140,3 +140,19 @@ li > .repl-lines {
 .severity-error {
     color: #fc6854;
 }
+
+.repl-inline-expandable {
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.repl-inline-expandable > examine-objects {
+  padding: 0 1px;
+}
+
+.repl-inline-expandable > .dom-tree {
+  padding: 0 1px;
+  padding-left: 10px;
+}
+

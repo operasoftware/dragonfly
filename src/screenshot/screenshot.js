@@ -237,9 +237,15 @@ cls.ScreenShotView = function(id, name, container_class)
   {
     if (this._take_screenshot)
     {
+      var ruler = container.getElementsByClassName('ruler')[0];
       this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
       this._pixel_magnifier.width = container.clientWidth;
       this._pixel_magnifier.height = container.clientHeight;
+      if (ruler)
+      {
+        container.appendChild(ruler);
+      }
+
       if (!this._screenshot)
       {
         this._get_window_size();
