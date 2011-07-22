@@ -4,32 +4,30 @@ cls.ReplService = function(view, data)
 {
   this._count_map = {};
 
-  
-  //this._is_processing = false;
+  // Ignore these contexts to avoid duplicate messages in the console
+  // when we get the results from both the ecmascript service and th
+  // console logger service.
+  const CONTEXT_BLACKLIST = [ "console.log", "console.debug",
+     "console.info", "console.warn", "console.error", "console.assert",
+     "console.dir", "console.dirxml", "console.group",
+     "console.groupCollapsed", "console.groupEnded", "console.count"
+  ];
 
   this._on_consolemessage_bound = function(msg)
   {
     var data = new cls.ConsoleLogger["2.0"].ConsoleMessage(msg);
 
-    // Ignore these contexts to avoid duplicate messages in the console
-    // when we get the results from both the ecmascript service and th
-    // console logger service.
-    const CONTEXT_BLACKLIST = [ "console.log", "console.debug",
-      "console.info", "console.warn", "console.error", "console.assert",
-      "console.dir", "console.dirxml", "console.group",
-      "console.groupCollapsed", "console.groupEnded", "console.count"
-    ];
-
-    if (data.source != "ecmascript") { return; }
-    else if (CONTEXT_BLACKLIST.indexOf(data.context) != -1) { return; }
-    else { this._data.add_output_errorlog(data.description); }
+    if (data.source != "ecmascript" ||
+        CONTEXT_BLACKLIST.indexOf(data.context) != -1)
+    {
+      return;
+    }
+    else
+    {
+      this._data.add_output_errorlog(data.description);
+    }
   }.bind(this);
 
-
-/*
-    this._on_consolelog_bound = 
-      this._queue_msg_with_handler.bind(this, this._process_on_consolelog);
-      */
   this._process_on_consolelog = function(msg)
   {
     const RUNTIME = 0, TYPE = 1;
@@ -140,7 +138,7 @@ cls.ReplService = function(view, data)
     if (do_unpack)
     {
       // the callback works as error and success callback
-      // the _list_unpacker replace the VALUE_LIST 
+      // the _list_unpacker replace the VALUE_LIST
       // with an unpacked list in the scope message
       var callback = this._handle_log.bind(this, msg, rt_id, true);
       this._msg_queue.stop_processing();
@@ -295,7 +293,7 @@ cls.ReplService = function(view, data)
     const OBJECT_VALUE = 3;
     var do_unpack = !is_unpacked && settings.command_line.get("unpack-list-alikes");
     var do_friendly_print = !do_unpack &&
-                            !is_friendly_printed && 
+                            !is_friendly_printed &&
                             settings.command_line.get("do-friendly-print");
     if (do_unpack)
     {

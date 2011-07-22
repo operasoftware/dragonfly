@@ -1298,3 +1298,20 @@ ui_strings.S_SCOPE_INNER = "Scope %s";
 
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
 ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
+
+/* DESC: String used when there is a request body we can't show the contents of directly. */
+ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
+
+/* DESC: Can't show request data, as we don't know the type of it. */
+ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Can't display content of type %s";
+
+/* DESC: Unknown mime type for content */
+ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "No MIME type known for request data";
+
+/* DESC: Label for the name column header of a form field in a POST */
+ui_strings.S_LABEL_NETWORK_POST_DATA_NAME = "Name";
+
+/* DESC: Label for the value column header of a form value in a POST */
+ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE = "Value";
+
+

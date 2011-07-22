@@ -222,7 +222,6 @@ cls.ResourceUtil.header_presets = [
       "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.124 Safari/534.30",
     ].join("\n")
   },
-  },
   {name: "Firefox 5", headers:
     [
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -279,18 +278,18 @@ cls.ResourceUtil.header_presets = [
   },
   {name: "Opera Mini 6.0 on iPhone", headers:
     [
-      "x-operamini-features": "advanced, download, touch, viewport",
-      "user-agent": "Opera/9.80 (iPhone; Opera Mini/6.0.0.12542/25.351; U; en) Presto/2.5.25 Version/10.54",
-      "x-operamini-phone": "Apple # iPhone",
-      "x-operamini-phone-ua": "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_1 like Mac OS X; en-us)"
+      "x-operamini-features: advanced, download, touch, viewport",
+      "user-agent: Opera/9.80 (iPhone; Opera Mini/6.0.0.12542/25.351; U; en) Presto/2.5.25 Version/10.54",
+      "x-operamini-phone: Apple # iPhone",
+      "x-operamini-phone-ua: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_1 like Mac OS X; en-us)"
     ].join("\n")
   },
   {name: "Opera Mini 6.0 on Nokia 6300", headers:
     [
-      "x-operamini-features": "advanced, file_system, camera, folding, routing",
-      "user-agent": "Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
-      "x-operamini-phone": "Nokia # 6300",
-      "x-operamini-phone-ua": "Nokia6300/2.0 (07.21) Profile/MIDP-2.0 Configuration/CLDC-1.1"
+      "x-operamini-features: advanced, file_system, camera, folding, routing",
+      "user-agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
+      "x-operamini-phone: Nokia # 6300",
+      "x-operamini-phone-ua: Nokia6300/2.0 (07.21) Profile/MIDP-2.0 Configuration/CLDC-1.1"
     ].join("\n")
   },
 ];

@@ -72,15 +72,11 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
                      text_types.map(function(e) { return [e, [STRING, DECODE]]})
                     ];
 
-      // var reqarg = [[STRING, DECODE],
-      //                text_types.map(function(e) { return [e, [STRING, DECODE]]})
-      //              ];
     }
     else
     {
       var resparg = reqarg = [[OFF]];
     }
-    //this._service.requestSetRequestMode(null, reqarg);
     this._service.requestSetResponseMode(null, resparg);
   }.bind(this);
 

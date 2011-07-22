@@ -34,6 +34,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._everrendered = false;
   }
 
+  this._update_bound = this.update.bind(this);
+
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
@@ -111,7 +113,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       if (!this._rendertimer)
       {
-        this._rendertimer = window.setTimeout(this.update.bind(this), min_render_delay/2);
+        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
       }
       return;
     }
@@ -145,24 +147,24 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._hscrollcontainer.scrollLeft = this._hscroll;
     container.querySelector("#left-side-content").style.minHeight = "" + conheight + "px";
 
-    var hscrollfun = function(evt)
-    {
-      var e = document.getElementById("right-side-container");
-      var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
-      e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
-      this._hscroll = e.scrollLeft;
-    }.bind(this);
-    hscrollfun({target:this._hscrollcontainer});
-    this._hscrollcontainer.addEventListener("scroll", hscrollfun, false)
-
-    var vscrollfun = function()
-    {
-      this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
-    }.bind(this);
-
-    this._vscrollcontainer.addEventListener("scroll", vscrollfun, false);
-    this._hscrollcontainer.addEventListener("scroll", hscrollfun, false);
+    this._hscrollfun_bound({target:this._hscrollcontainer});
+    this._vscrollcontainer.addEventListener("scroll", this._vscrollfun_bound, false);
+    this._hscrollcontainer.addEventListener("scroll", this._hscrollfun_bound, false);
   }
+
+  this._vscrollfun_bound = function()
+  {
+    this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
+  }.bind(this);
+
+  this._hscrollfun_bound = function(evt)
+  {
+    var e = document.getElementById("right-side-container");
+    var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
+    e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
+    this._hscroll = e.scrollLeft;
+  }.bind(this);
+
 
   this._on_clicked_close_bound = function(evt, target)
   {

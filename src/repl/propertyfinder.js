@@ -65,7 +65,7 @@ window.cls.PropertyFinder = function(rt_id) {
     return {scope: new_path, identifier: new_id, input: input};
   };
 
- 
+
   /**
    * Returns a list of properties that match the input string in the given
    * runtime.
@@ -144,7 +144,7 @@ window.cls.PropertyFinder = function(rt_id) {
     const EVALRESULT = 0; OBJVALUE = 3, OBJID = 0;
     var objid = null;
     if (msg && msg[EVALRESULT] == "completed" && msg[OBJVALUE])
-    { 
+    {
       objid = msg[OBJVALUE][OBJID];
       this._get_object_props(callback, frameinfo, [objid], parts)
     }
@@ -193,7 +193,7 @@ window.cls.PropertyFinder = function(rt_id) {
       (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
         var objectlist = chain[OBJECT_LIST] || [];
         objectlist.forEach(function(obj) {
-          names = names.concat((obj[PROPERTY_LIST] || []).map(function(prop) {
+          names.extend((obj[PROPERTY_LIST] || []).map(function(prop) {
             return prop[NAME];
           }));
         });

@@ -219,7 +219,7 @@ templates.network_request_body = function(req)
 
   if (!req.requestbody)
   {
-    ret.push(["p", "No request data"]);
+    ret.push(["p", ui_strings.S_NETWORK_NO_REQUEST_DATA]);
   }
   else if (req.requestbody.partList.length)
   {
@@ -234,15 +234,16 @@ templates.network_request_body = function(req)
       }
       else
       {
-        ret.push(["pre", "<%s bytes binary payload>".replace("%s", part.contentLength)])
+        ret.push(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)])
       }
     }
   }
   else if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
   {
-    parts = req.requestbody.content.stringData.split("&");
+    var parts = req.requestbody.content.stringData.split("&");
     var tab = ["table",
-             ["tr", ["th", "name"], ["th", "value"]]
+              ["tr", ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
+              ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
     ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", unescape(e[0])], ["td", unescape(e[1])]]}));
     ret.push(tab);
   }
@@ -262,7 +263,11 @@ templates.network_request_body = function(req)
     {
       tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
     }
-    else if (type == "css" || type == "text")
+    else if (type == "css")
+    {
+      tpl = window.templates.highlight_css(req.requestbody.content.stringData);
+    }
+    else if (type == "text")
     {
       tpl = ["p", req.requestbody.content.stringData];
     }
@@ -270,11 +275,11 @@ templates.network_request_body = function(req)
     {
       if (req.requestbody.mimeType)
       {
-        ret.push(["p", "Can't display stuff type " + req.requestbody.mimeType]);
+        ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
       }
       else
       {
-        ret.push(["p", "No MIME type known for request data"]);
+        ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
       }
     }
 
@@ -452,8 +457,6 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
     if (req_duration < min_bar_width)
     {
       req_duration = min_bar_width;
-      //latency to 0 ?
-      //resstart = start + reqwidth - reswidth;
     }
 
     var title = "";
