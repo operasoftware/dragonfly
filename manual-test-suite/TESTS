@@ -2010,6 +2010,17 @@ desc:
   - Verify that you get '+XPathResult[+p, +p, +p, +p]' in the command line
   - Verify expandability in place
 
+label: multiple inline expandableJS and DOM objects in one line
+desc:
+  - Open the test case
+  - Ensure that 'Expand objects inline in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
+  - Enable 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Enter [1, "foo", window, function () { return "bar" }, document.getElementsByTagName("p")]
+  - Verify expandability in place for all objects.
+  - Verify that multiple objects are expandable from the returned array at the proper place.
+
 Scripts.Breakpoints
 *******************
 
