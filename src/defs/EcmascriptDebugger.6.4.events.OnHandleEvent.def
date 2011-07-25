@@ -1,0 +1,14 @@
+message <span class="message">DomEvent</span>
+{
+  <span class="comment">/** 
+   * Refers to the target of the event.
+   */</span>
+  required <span class="number">uint32</span> objectID  = 1; 
+  required <span class="number">uint32</span> handlerID = 2; 
+  <span class="comment">/** 
+   * The event type is e.g., `"click"`, `"mousemove"`
+   * More examples are at http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.html
+   * Exactly which events are implemented depends on the host, and is not defined in this protocol.
+   */</span>
+  required <span class="string">string</span> eventType = 3; 
+}

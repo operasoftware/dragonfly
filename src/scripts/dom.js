@@ -178,14 +178,16 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
 
 Element.prototype.re_render = function(args)
 {
-  if (this.parentNode)
+  var parent = this.parentNode;
+  if (parent)
   {
     var div = document.createElement('div');
     var doc_frag = document.createDocumentFragment();
     div.render(args);
     while (div.firstChild)
       doc_frag.appendChild(div.firstChild);
-    this.parentNode.replaceChild(doc_frag, this);
+    parent.replaceChild(doc_frag, this);
+    return parent.childNodes;
   }
 }
 

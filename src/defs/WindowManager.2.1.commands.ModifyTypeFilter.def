@@ -1,0 +1,17 @@
+message <span class="message">ModifyTypeFilterArg</span>
+{
+  <span class="comment">/** 
+   * Possible values:
+   * 
+   *  - "replace" clears the current filter, and replaces it with the input values.
+   *  - "append" adds the input values to the current filter. It is acceptable to
+   *    add a value already present in the filter (silent fail).
+   *  - "default" resets the filter to its defaults. The input values are ignored.
+   *    The default is ["normal_hidden", "devtools"].
+   */</span>
+  required <span class="string">string</span> mode     = 2; 
+  <span class="comment">/** 
+   * A list of window types to exclude. For valid window types, see CreateWindowArg.
+   */</span>
+  repeated <span class="string">string</span> typeList = 1; 
+}

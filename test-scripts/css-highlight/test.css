@@ -4773,6 +4773,7 @@ li > .repl-lines {
 }
 .cookie_manager .sortable-table .col_path {
   width: 5%;
+  min-width: 18px; /* just enough so the column can't entirely disappear when all values are "/" */
 }
 .cookie_manager .sortable-table .col_expires {
   width: 15%;

@@ -1,0 +1,7 @@
+message <span class="message">GetResourceIDArg</span>
+{
+  <span class="comment">/** 
+   * The URL of the resource to get the ID for.
+   */</span>
+  required <span class="string">string</span> url = 1; 
+}

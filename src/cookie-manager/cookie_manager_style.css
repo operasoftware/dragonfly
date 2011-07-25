@@ -1,122 +1,32 @@
-﻿.cookie_manager .sortable-table input[type=text] {
-  width: 100%;
-  border: none;
-}
-
+/*
+ * This file is only for cookie_manager specifics.
+ * General .storage_view things are in storage/storage_style.css
+ */
 .cookie_manager .sortable-table .add_cookie_dropdown {
   font-size: 11px;
 }
 
-.cookie_manager .replaced-val,
-.cookie_manager .expired_cookie {
-  color: #AAA;
-}
-
-/* editing */
-
-.cookie_manager .value_container {
-  position: relative;
-  height: 15px;
-}
-
-.cookie_manager .edit_container {
-  display: none;
-  position: relative;
-  margin: -6px 0 -2px -5px;
-  padding: 2px;
-}
-
-.cookie_manager .edit_mode .edit_container {
-  display: block;
-}
-
-.cookie_manager .edit_container input[type=text] {
-  padding: 2px 3px 0 3px;
-}
-
-.cookie_manager .edit_mode .value_container {
-  display: none;
-}
-
-/* ellipsis */
-
-.cookie_manager .sortable-table .ellipsis_cont {
-  position: relative;
-  height: 12px;
-}
-
-.cookie_manager .sortable-table .ellipsis_cont .ellipsis {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-#contextmenu .ellipsis_cont, #contextmenu .ellipsis {
-  display: inline; /* hide containers in context menu */
-}
-
-/* "check" values */
-
-.cookie_manager .check {
-  content: url("../ui-images/menu_check.png");
-}
-
 /* columns */
 
-.cookie_manager .sortable-table .col_domain {
+.storage_view.cookie_manager .sortable-table .col_domain {
   width: 15%;
 }
-.cookie_manager .sortable-table .col_name {
+.storage_view.cookie_manager .sortable-table .col_name {
   width: 15%;
 }
-.cookie_manager .sortable-table .col_value {
+.storage_view.cookie_manager .sortable-table .col_value {
   width: 25%;
 }
-.cookie_manager .sortable-table .col_path {
+.storage_view.cookie_manager .sortable-table .col_path {
   width: 5%;
 }
-.cookie_manager .sortable-table .col_expires {
+.storage_view.cookie_manager .sortable-table .col_expires {
   width: 15%;
   min-width: 160px; /* due too the date-picker */
 }
-.cookie_manager .sortable-table .col_secure {
+.storage_view.cookie_manager .sortable-table .col_secure {
   width: 7.5%;
 }
-.cookie_manager .sortable-table .col_httponly {
+.storage_view.cookie_manager .sortable-table .col_httponly {
   width: 7.5%;
-}
-
-/* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
-  it's just for the add_cookie button */
-.cookie_manager .sortable-table tr.sortable-table-summation-row td {
-  border: none;
-  background: none;
-  padding-bottom: 7px;
-}
-
-.cookie_manager .sortable-table tr.sortable-table-summation-row {
-  background: none;
-}
-
-.cookie_manager tr[data-object-id ^= "runtime_placeholder_"] {
-  display: none;
-}
-
-/* other sortable-table stuff specific to cookie-manager (for now) */
-
-.cookie_manager .sortable-table td {
-  padding: 6px 5px 2px 20px;
-  position: relative;
-}
-
-.cookie_manager .sortable-table td.align-center {
-  padding: 6px 5px 2px 5px;
-}
-
-.cookie_manager .sortable-table td.align-right {
-  padding: 6px 5px 2px 5px;
 }

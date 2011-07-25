@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
@@ -18,6 +18,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this.init(id, name, container_class, null, "cookiemanager-container");
 
+    this.shared_shortcuts = "storage";
     ActionHandlerInterface.apply(this);
     this._handlers = {
       "submit": this._submit.bind(this),
@@ -54,7 +55,9 @@ cls.CookieManager.CookieManagerViewBase = function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return window.templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
+            return templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol,
+                                                                 obj[0]._rt_hostname,
+                                                                 obj[0]._rt_path);
           }
         }
       },
@@ -62,79 +65,76 @@ cls.CookieManager.CookieManagerViewBase = function()
       idgetter: function(res) { return res._objectref },
       columns: {
         domain: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN),
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
-            return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "container-button", "handler", "cookiemanager-add-cookie-row", "unselectable", "on"];
+            return [
+              "button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+              "class", "container-button",
+              "handler", "cookiemanager-add-cookie-row",
+              "unselectable", "on"
+            ];
           },
           sorter: this._make_sorter("domain")
         },
         name: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_NAME),
           classname: "col_name",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_name(obj.name);
+            return templates.cookie_manager.editable_name(obj.name);
           },
           sorter: this._make_sorter("name")
         },
         value: {
-          label: ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_VALUE),
           classname: "col_value",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            return window.templates.cookie_manager.editable_value(obj.value);
+            return templates.cookie_manager.editable_value(obj.value);
           },
           sorter: this._make_sorter("value")
         },
         path: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_PATH),
           classname: "col_path",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            if (typeof obj.path === "string")
-            {
-              return window.templates.cookie_manager.editable_path(obj.path);
-            }
-            return window.templates.cookie_manager.unknown_value();
+            return templates.cookie_manager.editable_path(obj.path);
           },
           sorter: this._make_sorter("path")
         },
         expires: {
-          label:    ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES,
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_EXPIRES),
           classname: "col_expires",
           renderer: function(obj) {
             if (obj._is_runtime_placeholder)
             {
               return;
             }
-            if (typeof obj.expires === "number")
-            {
-              return window.templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
-            }
-            return window.templates.cookie_manager.unknown_value();
+            return templates.cookie_manager.editable_expires(obj.expires, obj._objectref);
           },
           sorter: this._make_sorter("expires")
         },
         isSecure: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY),
           classname: "col_secure",
           renderer: this._is_secure_renderer.bind(this),
           align: "center",
           sorter: this._make_sorter("isSecure")
         },
         isHTTPOnly: {
-          label:    window.templates.cookie_manager.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
+          label: templates.storage.wrap_ellipsis(ui_strings.S_LABEL_COOKIE_MANAGER_HTTP_ONLY),
           classname: "col_httponly",
           renderer: this._is_http_only_renderer.bind(this),
           align: "center",
@@ -157,19 +157,19 @@ cls.CookieManager.CookieManagerViewBase = function()
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
     }
     this._before_table_render();
-    this._table_container = container.clearAndRender(["div", this._sortable_table.render(), "class", "table_container"]);
-    this._after_table_render();
+    this._table_elem = container.clearAndRender(this._sortable_table.render());
+    this._after_table_render({table: this._table_elem});
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
-      if(obj_a._is_runtime_placeholder)
+      if (obj_a._is_runtime_placeholder)
       {
         return Infinity;
       }
-      if(obj_b._is_runtime_placeholder)
+      if (obj_b._is_runtime_placeholder)
       {
         return -Infinity;
       }
@@ -216,40 +216,43 @@ cls.CookieManager.CookieManagerViewBase = function()
       if (selected_cookie_objects.length === 1)
       {
         var sel_cookie_obj = selected_cookie_objects[0];
-        if (sel_cookie_obj._is_editable)
+        if (sel_cookie_obj)
         {
+          if (sel_cookie_obj._is_editable)
+          {
+            options.push(
+              {
+                label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
+                handler: this.enter_edit_mode.bind(this)
+              }
+            );
+          }
           options.push(
             {
-              label: ui_strings.S_LABEL_COOKIE_MANAGER_EDIT_COOKIE,
-              handler: this.enter_edit_mode.bind(this)
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
+              handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
+            }
+          );
+          // Add "Remove all from protocol-domain-path"
+          var runtime_id = sel_cookie_obj._rt_id;
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
+              handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
             }
           );
         }
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIE,
-            handler: this.data.remove_cookie.bind(this.data, sel_cookie_obj._objectref, this.data.refetch)
-          }
-        );
-        // Add "Remove all from protocol-domain-path"
-        var runtime_id = sel_cookie_obj._rt_id;
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF.replace(/%s/, sel_cookie_obj._rt_protocol + "//" + sel_cookie_obj._rt_hostname + sel_cookie_obj._rt_path),
-            handler: this.data.remove_cookies_of_runtime.bind(this.data, runtime_id)
-          }
-        );
+        else
+        {
+          options.push(
+            {
+              label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
+              handler: this.data.remove_cookies.bind(this.data, selected_cookie_objects)
+            }
+          );
+        }
+        return options;
       }
-      else
-      {
-        options.push(
-          {
-            label: ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES,
-            handler: this.data.remove_cookies.bind(this.data, selected_cookie_objects)
-          }
-        );
-      }
-      return options;
     }
   };
 
@@ -267,19 +270,24 @@ cls.CookieManager.CookieManagerViewBase = function()
     var event = event || {};
     this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
-      * unselect everything while not doing multiple selection, which is when:
-      *   cmd / ctrl key is pressed OR
-      *   more than 1 item is already selected && event is right-click, clicked item was already selected
+      * unselect everything unless
+      *   it's a row that adds a storage item
+      *   doing multiple selection, which is when:
+      *     cmd / ctrl key is pressed OR
+      *     more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
+    if (!(event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected"))))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
-        selected_node.removeClass("selected");
+        if (!selected_node.hasClass("add_cookie_row"))
+        {
+          selected_node.removeClass("selected");
+        }
       };
     }
     // unselect, works with multiple selection as ".selected" was removed otherwise
-    if(event.ctrlKey && target.hasClass("selected"))
+    if (event.ctrlKey && target.hasClass("selected"))
     {
       target.removeClass("selected");
     }
@@ -310,12 +318,13 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       this._sortable_table.restore_columns(this._table_elem);
     }
-    var row = document.querySelector("[data-object-id='"+objectref+"']");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var row = document.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
     if (row)
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
       var runtime_id = (cookie_object && cookie_object._rt_id) || null;
-      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
+      var templ = document.documentElement.render(templates.cookie_manager.add_cookie_row(runtime_id, this.data._rts));
       var inserted = row.parentElement.insertAfter(templ, row);
       inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted); // todo: check if it's nicer if a added row does not get selected, but the class gives it a selection-like style
@@ -328,7 +337,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._sortable_table.restore_columns(this._table_elem);
     // can't directly work with target because restore_columns has renewed it
     var objectref = target.getAttribute("data-object-id");
-    var target = document.querySelector(".sortable-table tr[data-object-id='"+objectref+"']").addClass("edit_mode");
+    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
     this.select_row(event, target);
     // todo: find input that is closest to the actual event.target and focus it
   }
@@ -482,15 +492,14 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._clear_container = function()
   {
-    if(this._container)
+    if (this._container)
     {
       this._container.innerHTML = "";
     }
   }
 
-  this._before_table_render = function(message)
+  this._before_table_render = function()
   {
-    var message = message || {};
     // save selection
     if (this._table_elem)
     {
@@ -502,46 +511,57 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   }
 
-  this._after_table_render = function()
+  this._after_table_render = function(message)
   {
-    this._update_expiry();
-    this._table_elem = this._table_container.firstChild;
-    // restore selection
-    if (this._restore_selection)
+    var table = message.table;
+    if (table)
     {
-      for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
-        var elem = this._container.querySelector("[data-object-id='"+objectref+"']");
-        if (elem)
-        {
-          elem.addClass("selected");
-        }
-      };
-      this._restore_selection = null;
-    }
-    // add context menus per tr
-    for (var i=0; i < this._table_elem.childNodes.length; i++)
-    {
-      this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
-    }
+      this._update_expiry();
+      this._table_elem = table;
+      // restore selection
+      if (this._restore_selection)
+      {
+        for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
+          var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+          var elem = this._container.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
+          if (elem)
+          {
+            elem.addClass("selected");
+          }
+        };
+        this._restore_selection = null;
+      }
+      // add context menus per tr, 
+      for (var i=0; i < this._table_elem.childNodes.length; i++)
+      {
+        this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
+      }
 
-    // select and dbl-click to edit
-    var rows = this._container.querySelectorAll("tr[data-object-id]");
-    for (var i=0, row; row = rows[i]; i++) {
-      row.setAttribute("handler", "cookiemanager-row-select");
-      var objectref = row.getAttribute("data-object-id");
-      if (
-        this.data.get_cookie_by_objectref(objectref) &&
-        this.data.get_cookie_by_objectref(objectref)._is_editable
-      )
-      {
-        row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+      // select and dbl-click to edit, add runtime_placeholder class
+      var rows = this._container.querySelectorAll("tr[data-object-id]");
+      for (var i=0, row; row = rows[i]; i++) {
+        var is_runtime_placeholder = row.getAttribute("data-object-id").startswith("runtime_placeholder_");
+        if (is_runtime_placeholder)
+        {
+          row.addClass("runtime_placeholder");
+          // todo: probably nothing else needs to be done to runtime_placeholders.
+        }
+        row.setAttribute("handler", "cookiemanager-row-select");
+        var objectref = row.getAttribute("data-object-id");
+        if (
+          this.data.get_cookie_by_objectref(objectref) &&
+          this.data.get_cookie_by_objectref(objectref)._is_editable
+        )
+        {
+          row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+        }
+        else
+        {
+          row.addClass("non-editable");
+        }
       }
-      else
-      {
-        row.addClass("non-editable");
-      }
-    };
-  }
+    }
+  };
 
   this._fuzzy_date_def = [
     {
@@ -637,18 +657,14 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   };
 
-  // DEPENDEND ON SERVICE VERSION - those might get overwritten
+  // DEPENDENT ON SERVICE VERSION - those might get overwritten
   this._domain_renderer = function(obj)
   {
     if (obj._is_runtime_placeholder)
     {
       return;
     }
-    if (obj.domain)
-    {
-      return window.templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts, obj.domain);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts);
   }
 
   this._is_secure_renderer = function(obj)
@@ -657,11 +673,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    if (typeof obj.isSecure === "number")
-    {
-      return window.templates.cookie_manager.boolean_value(obj.isSecure);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -670,14 +682,9 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    if (typeof obj.isHTTPOnly === "number")
-    {
-      // this will depend on the service version, it gets editable with 1.1
-      return window.templates.cookie_manager.boolean_value(obj.isHTTPOnly);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.http_only(obj.isHTTPOnly);
   }
-  // END DEPENDEND ON SERVICE VERSION
+  // END DEPENDENT ON SERVICE VERSION
 };
 cls.CookieManager.CookieManagerViewBase.prototype = ViewBase;
 
@@ -708,11 +715,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (obj.domain)
-    {
-      return window.templates.cookie_manager.all_editable_domain(obj.domain);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.all_editable_domain(obj._rt_id, this.data._rts, obj.domain);
   }
 
   this._is_secure_renderer = function(obj)
@@ -721,11 +724,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (typeof obj.isSecure === "number")
-    {
-      return window.templates.cookie_manager.editable_secure(obj.isSecure);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.editable_secure(obj.isSecure);
   }
 
   this._is_http_only_renderer = function(obj)
@@ -734,11 +733,7 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       return;
     }
-    if (typeof obj.isHTTPOnly === "number")
-    {
-      return window.templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
-    }
-    return window.templates.cookie_manager.unknown_value();
+    return templates.cookie_manager.editable_http_only(obj.isHTTPOnly);
   }
 
   this.insert_add_cookie_row_after_objectref = function(objectref)
@@ -753,8 +748,9 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
       var default_domain = (cookie_object && cookie_object._rt_hostname) || "";
-      var templ = document.documentElement.render(window.templates.cookie_manager.add_cookie_row_all_editable(default_domain));
-      var inserted = row.parentElement.insertAfter(templ, row);
+      var templ = templates.cookie_manager.add_cookie_row_all_editable(default_domain);
+      var rendered = document.documentElement.render(templ);
+      var inserted = row.parentElement.insertAfter(rendered, row);
       inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted);
     }

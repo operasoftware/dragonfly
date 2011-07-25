@@ -187,6 +187,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./cookie-manager/cookie_manager_style.css"/>
 <link rel="stylesheet" href="./searches/style.css"/>
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
+<link rel="stylesheet" href="./storage/storage_style.css"/>
 <link rel="stylesheet" href="./screenshot/style.css"/>
 
 
@@ -436,7 +437,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./storage/data-storages.js"/>
 <script src="./storage/actions-storages.js"/>
-<script src="./storage/templates.js"/>
+<script src="./storage/templates-storages.js"/>
 <script src="./storage/views-storages.js"/>
 
 <script src="./http-logger/httplogger_service.js"/>

@@ -1,0 +1,53 @@
+message <span class="message">SetPropertyFilterArg</span>
+{
+  <span class="comment">/** 
+   * Because we want different filters for different classes, a PropertyFilter consists
+   * of several ClassMasks, and one ClassMask consists of several PropertyMasks. A PropertyMask
+   * can be regarded as a 'rule' for filtering a property. If no rule is present, the property is
+   * allowed through the filter. If a matching rule is present, the property is not included.
+   */</span>
+  message <span class="message">PropertyFilter</span>
+  {
+    <span class="comment">/** 
+     * The list of classes which should be filtered.
+     */</span>
+    repeated <span class="message">ClassMask</span> classMaskList = 1; 
+  }
+  <span class="comment">/** 
+   * A ClassMask contains all the properties which should be considered for exclusion for a
+   * certain class.
+   */</span>
+  message <span class="message">ClassMask</span>
+  {
+    <span class="comment">/** 
+     * The name of the class this filter applies to. Examples are 'Object' and
+     * 'HTMLHtmlElement'.
+     */</span>
+    required <span class="string">string      </span> className        = 1; 
+    <span class="comment">/** 
+     * The list of properties which could be filtered.
+     */</span>
+    repeated <span class="message">PropertyMask</span> propertyMaskList = 2; 
+  }
+  <span class="comment">/** 
+   * You can choose to filter a property based on name and, as an additional condition, type.
+   * For booleans, numbers and strings, you can also filter by value as a third additional
+   * condition.
+   * 
+   * If only 'name' is present, then a property with that name will be excluded, regardless
+   * of its value. If 'type' is also present, then the property with that name will be excluded
+   * only if its value is the specified type.
+   * 
+   * If 'type' indicates a boolean, number or string, you can assign a value in the corresponding
+   * optional field. The property will then be excluded only if the name, type and value all match.
+   */</span>
+  message <span class="message">PropertyMask</span>
+  {
+    required <span class="string">string</span> name    = 1; 
+    optional <span class="number">uint32</span> type    = 2; 
+    optional <span class="bool">bool  </span> boolean = 3; 
+    optional <span class="number">uint32</span> number  = 4; 
+    optional <span class="string">string</span> string  = 5; 
+  }
+  required <span class="message">PropertyFilter</span> propertyFilter = 1; 
+}

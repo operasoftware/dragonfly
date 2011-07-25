@@ -2403,6 +2403,7 @@ label: Inspect local storage
 desc:
   - Go to the above url in the above order
   - Verify that you see local storage item a - j
+  - Sort by Name and Value and verify the order makes sense and doesn't change when switching between the two
 
 url: ./test-cases/storages/check-storages.html
 
@@ -2448,6 +2449,7 @@ label: Inspect session storage
 desc:
   - Go to the above url in the above order
   - Verify that you see session storage item a - j
+  - Sort by Name and Value and verify the order makes sense and doesn't change when switching between the two
 
 url: ./test-cases/storages/check-storages.html
 

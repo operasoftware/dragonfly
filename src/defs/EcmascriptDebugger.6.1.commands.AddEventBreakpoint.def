@@ -1,0 +1,15 @@
+message <span class="message">EventBreakpoint</span>
+{
+  <span class="comment">/** 
+   * A nonzero ID chosen by the client.
+   */</span>
+  required <span class="number">uint32</span> breakpointID = 1; 
+  <span class="comment">/** 
+   * The name of the event to break on.
+   */</span>
+  required <span class="string">string</span> eventType    = 2; 
+  <span class="comment">/** 
+   * If specified the event will only break in this specific window.
+   */</span>
+  optional <span class="number">uint32</span> windowID     = 3; 
+}
