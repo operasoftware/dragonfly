@@ -1,4 +1,4 @@
-window.potools = {
+﻿window.potools = {
     parse: function(input, scope)
     {
         return this._parser.parseString(input, scope);

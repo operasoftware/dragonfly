@@ -1,4 +1,4 @@
-cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
+﻿cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
 {
   this.__defineGetter__("title", function()
   {

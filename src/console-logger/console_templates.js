@@ -1,4 +1,4 @@
-window.templates = window.templates || {};
+﻿window.templates = window.templates || {};
 window.templates.errors = window.templates.errors || {};
 
 window.templates.errors._source_map = {

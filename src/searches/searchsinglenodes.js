@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subclasses TextSearch. The difference is that this class will only 
  * search in single tokens, not span a match over several tokes.
  * Subclassed e.g. by DOMSearch.

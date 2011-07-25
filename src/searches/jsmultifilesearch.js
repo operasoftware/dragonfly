@@ -1,4 +1,4 @@
-var JSMultifileSearch = function()
+﻿var JSMultifileSearch = function()
 {
   this._init();
 };

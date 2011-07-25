@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview
  * This file contains most of the code implementing the console view in
  * Dragonfly

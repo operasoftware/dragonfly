@@ -1,4 +1,4 @@
-var DOMSearch = function(min_length)
+﻿var DOMSearch = function(min_length)
 {
 
   /* inherits from TextSearch */

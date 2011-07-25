@@ -1,4 +1,4 @@
-/* load after build_application.jsn */
+﻿/* load after build_application.jsn */
 
 window.app.builders.ConsoleLogger || ( window.app.builders.ConsoleLogger = {} );
 /**
