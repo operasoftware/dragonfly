@@ -21,6 +21,7 @@ templates.cookie_manager = {
       "input",
       "value", value || "",
       "type",  "text",
+      "class",  "text",
       "name",  name,
       "handler", "cookiemanager-input-field"
     ]

@@ -36,6 +36,7 @@ window.templates.storage = {
       "input",
       "value", value || "",
       "type", "text",
+      "class", "text",
       "name", name,
       "handler", "storage-input-field"
     ]
@@ -61,8 +62,19 @@ window.templates.storage = {
   },
   add_storage_row: function(rt_id) {
     return ["tr",
-        ["td", ["div", [this.input_text_container("key"), this.input_hidden("rt_id", rt_id)], "class", "edit_container"]],
-        ["td", ["div", this.input_textarea_container("value"), "class", "edit_container"]],
+        ["td",
+          ["div",
+            [
+              this.input_text_container("key"), this.input_hidden("rt_id", rt_id)
+            ],
+            "class", "edit_container"
+          ]
+        ],
+        ["td",
+          ["div", this.input_textarea_container("value"),
+            "class", "edit_container"
+          ]
+        ],
       "class", "edit_mode add_storage_row"
     ];
   },

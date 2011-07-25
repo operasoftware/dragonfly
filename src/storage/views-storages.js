@@ -18,13 +18,9 @@ cls.StorageView = function(id, name, container_class, storage_name)
       {
         var storage_data = storage.get_storages_plain();
         this._sortable_table.data = storage_data;
-        if (!this._update_expiry_interval)
-        {
-          this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
-        }
-        this._before_table_render(container.querySelector(".sortable-table"));
+        this._before_table_render({table: container.querySelector(".sortable-table")});
         table = container.clearAndRender(this._sortable_table.render());
-        this._after_table_render(table);
+        this._after_table_render({table: table});
       }
       else
       {
@@ -38,8 +34,9 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   };
 
-  this._before_table_render = function(table)
+  this._before_table_render = function(message)
   {
+    var table = message.table;
     if (table)
     {
       // save selection
@@ -51,8 +48,9 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   }
 
-  this._after_table_render = function(table)
+  this._after_table_render = function(message)
   {
+    var table = message.table;
     if (table)
     {
       if (this._restore_selection)
@@ -71,8 +69,20 @@ cls.StorageView = function(id, name, container_class, storage_name)
       for (var i=0, row; row = table.childNodes[i]; i++)
       {
         row.setAttribute("data-menu", "storage-item");
-        row.setAttribute("handler", "storage-row");
-        row.setAttribute("edit-handler", "storage-row");
+        // summation-row should not have select and edit handlers
+        if (!row.hasClass("sortable-table-summation-row"))
+        {
+          row.setAttribute("handler", "storage-row");
+          row.setAttribute("edit-handler", "storage-row");
+        }
+        // to avoid expensive tr[data-object-id ^= "runtime_placeholder_"] selectors
+        if (
+          row.getAttribute("data-object-id") &&
+          row.getAttribute("data-object-id").startswith("runtime_placeholder_")
+        )
+        {
+          row.addClass("runtime_placeholder");
+        }
       }
       // textarea-autosize
       var data_storage_id = table.get_attr("parent-node-chain", "data-storage-id");

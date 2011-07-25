@@ -55,7 +55,9 @@ cls.CookieManager.CookieManagerViewBase = function()
             return obj._rt_id;
           },
           renderer: function(groupvalue, obj) {
-            return templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol, obj[0]._rt_hostname, obj[0]._rt_path);
+            return templates.cookie_manager.runtime_group_render(obj[0]._rt_protocol,
+                                                                 obj[0]._rt_hostname,
+                                                                 obj[0]._rt_path);
           }
         }
       },
@@ -67,7 +69,12 @@ cls.CookieManager.CookieManagerViewBase = function()
           classname: "col_domain",
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
-            return ["button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE, "class", "container-button", "handler", "cookiemanager-add-cookie-row", "unselectable", "on"];
+            return [
+              "button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+              "class", "container-button",
+              "handler", "cookiemanager-add-cookie-row",
+              "unselectable", "on"
+            ];
           },
           sorter: this._make_sorter("domain")
         },
@@ -151,7 +158,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
     this._before_table_render();
     this._table_elem = container.clearAndRender(this._sortable_table.render());
-    this._after_table_render(this._table_elem);
+    this._after_table_render({table: this._table_elem});
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
@@ -504,47 +511,57 @@ cls.CookieManager.CookieManagerViewBase = function()
     }
   }
 
-  this._after_table_render = function(table)
+  this._after_table_render = function(message)
   {
-    this._update_expiry();
-    this._table_elem = table;
-    // restore selection
-    if (this._restore_selection)
+    var table = message.table;
+    if (table)
     {
-      for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
-        var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-        var elem = this._container.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
-        if (elem)
-        {
-          elem.addClass("selected");
-        }
-      };
-      this._restore_selection = null;
-    }
-    // add context menus per tr
-    for (var i=0; i < this._table_elem.childNodes.length; i++)
-    {
-      this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
-    }
+      this._update_expiry();
+      this._table_elem = table;
+      // restore selection
+      if (this._restore_selection)
+      {
+        for (var i=0, objectref; objectref = this._restore_selection[i]; i++) {
+          var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+          var elem = this._container.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
+          if (elem)
+          {
+            elem.addClass("selected");
+          }
+        };
+        this._restore_selection = null;
+      }
+      // add context menus per tr, 
+      for (var i=0; i < this._table_elem.childNodes.length; i++)
+      {
+        this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");
+      }
 
-    // select and dbl-click to edit
-    var rows = this._container.querySelectorAll("tr[data-object-id]");
-    for (var i=0, row; row = rows[i]; i++) {
-      row.setAttribute("handler", "cookiemanager-row-select");
-      var objectref = row.getAttribute("data-object-id");
-      if (
-        this.data.get_cookie_by_objectref(objectref) &&
-        this.data.get_cookie_by_objectref(objectref)._is_editable
-      )
-      {
-        row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+      // select and dbl-click to edit, add runtime_placeholder class
+      var rows = this._container.querySelectorAll("tr[data-object-id]");
+      for (var i=0, row; row = rows[i]; i++) {
+        var is_runtime_placeholder = row.getAttribute("data-object-id").startswith("runtime_placeholder_");
+        if (is_runtime_placeholder)
+        {
+          row.addClass("runtime_placeholder");
+          // todo: probably nothing else needs to be done to runtime_placeholders.
+        }
+        row.setAttribute("handler", "cookiemanager-row-select");
+        var objectref = row.getAttribute("data-object-id");
+        if (
+          this.data.get_cookie_by_objectref(objectref) &&
+          this.data.get_cookie_by_objectref(objectref)._is_editable
+        )
+        {
+          row.setAttribute("edit-handler", "cookiemanager-init-edit-mode");
+        }
+        else
+        {
+          row.addClass("non-editable");
+        }
       }
-      else
-      {
-        row.addClass("non-editable");
-      }
-    };
-  }
+    }
+  };
 
   this._fuzzy_date_def = [
     {
@@ -731,8 +748,9 @@ cls.CookieManager["1.1"].CookieManagerView = function(id, name, container_class,
     {
       var cookie_object = this.data.get_cookie_by_objectref(objectref);
       var default_domain = (cookie_object && cookie_object._rt_hostname) || "";
-      var templ = document.documentElement.render(templates.cookie_manager.add_cookie_row_all_editable(default_domain));
-      var inserted = row.parentElement.insertAfter(templ, row);
+      var templ = templates.cookie_manager.add_cookie_row_all_editable(default_domain);
+      var rendered = document.documentElement.render(templ);
+      var inserted = row.parentElement.insertAfter(rendered, row);
       inserted.querySelector("[name='name']").focus();
       this.select_row(null, inserted);
     }

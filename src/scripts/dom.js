@@ -177,7 +177,7 @@ Element.prototype.re_render = function(args)
     while (div.firstChild)
       doc_frag.appendChild(div.firstChild);
     parent.replaceChild(doc_frag, this);
-    return parent.firstChild;
+    return parent.lastChild;
   }
 }
 

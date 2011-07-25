@@ -152,9 +152,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       obj.group(group);
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render", table);
+      obj.post_message("before-render", {table: table});
       table = table.re_render(obj.render());
-      obj.post_message("after-render", table);
+      obj.post_message("after-render", {table: table});
     }
   }
 
@@ -166,9 +166,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       obj.togglecol(col);
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render", table);
+      obj.post_message("before-render", {table: table});
       table = table.re_render(obj.render());
-      obj.post_message("after-render", table);
+      obj.post_message("after-render", {table: table});
     }
   }
 
@@ -179,9 +179,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
-    obj.post_message("before-render", table);
+    obj.post_message("before-render", {table: table});
     table = table.re_render(obj.render());
-    obj.post_message("after-render", table);
+    obj.post_message("after-render", {table: table});
   }
 
   this._default_sorters = {
@@ -198,9 +198,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this.restore_columns = function(table)
   {
     this.columns = this.orgininal_columns.slice(0);
-    this.post_message("before-render", table);
+    this.post_message("before-render", {table: table});
     table = table.re_render(this.render());
-    this.post_message("after-render", table);
+    this.post_message("after-render", {table: table});
   }
 
   this._prop_getter = function(name)

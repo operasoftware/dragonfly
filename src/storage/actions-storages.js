@@ -66,7 +66,7 @@ cls.StorageViewActions = function(id)
       var edit_trs = container.querySelectorAll("tr.edit_mode");
       for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
-        var rt_id        = +edit_tr.querySelector("[name=rt_id]").value;
+        var rt_id        = Number(edit_tr.querySelector("[name=rt_id]").value);
         var original_key = edit_tr.querySelector("[name=original_key]")
                            && edit_tr.querySelector("[name=original_key]").value;
         var key          = edit_tr.querySelector("[name=key]").value;
@@ -107,7 +107,7 @@ cls.StorageViewActions = function(id)
       var selection = container.querySelectorAll("tr.selected");
       for (var i=0, selected; selected = selection[i]; i++)
       {
-        var rt_id = +selected.querySelector("[name=rt_id]").value;
+        var rt_id = Number(selected.querySelector("[name=rt_id]").value);
         var key   = selected.querySelector("[name=key]").value;
         var cb = function(){};
         if (i === selection.length - 1)
@@ -133,7 +133,7 @@ cls.StorageViewActions = function(id)
     if (container)
     {
       var storage_id = container.getAttribute("data-storage-id");
-      var rt_id = +target.querySelector("[name=rt_id]").value;
+      var rt_id = Number(target.querySelector("[name=rt_id]").value);
       window.storages[storage_id].clear(rt_id);
       window.storages[storage_id].update();
     }
@@ -280,7 +280,7 @@ cls.StorageViewActions = function(id)
   {
     if (target)
     {
-      var max_height = parseInt(document.defaultView.getComputedStyle(target, null).maxHeight, 10);
+      var max_height = parseInt(window.getComputedStyle(target, null).maxHeight, 10);
       // Can't rely on scrollHeight to shrink when it has less content, even if that's how it works in O11.
       // In other browsers, when height is set, scrollHeight is max(height, scrollHeight)
       target.style.height = null;
@@ -303,18 +303,11 @@ cls.StorageViewActions = function(id)
   this.onclick = function(event)
   {
     // was add_storage button clicked?
-    var is_within_edit = event.target.hasClass("add_storage_button");
+    var is_add_button = event.target.hasClass("add_storage_button");
     // was something in an edit-container clicked?
-    var edit_container = event.target;
-    while (!is_within_edit && edit_container && edit_container.parentNode)
-    {
-      if (edit_container.hasClass("edit_mode"))
-      {
-        is_within_edit = true;
-      }
-      edit_container = edit_container.parentNode;
-    }
-    if (!is_within_edit && this.mode == MODE_EDIT)
+    var edit_parent = event.target.get_ancestor(".edit_mode");
+
+    if (!is_add_button && !edit_parent && this.mode == MODE_EDIT)
     {
       // don't pass event and target as the click is out of the context of the storage_view
       this._handlers["submit"]();
@@ -370,7 +363,7 @@ cls.StorageViewActions = function(id)
         }
       ];
 
-      var rt_id = target.querySelector("[name=rt_id]") && +target.querySelector("[name=rt_id]").value;
+      var rt_id = target.querySelector("[name=rt_id]") && Number(target.querySelector("[name=rt_id]").value);
       if (rt_id)
       {
         options.push({

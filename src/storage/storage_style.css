@@ -1,4 +1,4 @@
-﻿.storage_view .sortable-table input[type=text], .storage_view .sortable-table textarea {
+﻿.storage_view .sortable-table input.text, .storage_view .sortable-table textarea {
   width: 100%;
   border: none;
   border-radius: 0;
@@ -119,7 +119,7 @@ input[type='datetime-local'] {
   background: none;
 }
 
-.storage_view .sortable-table tr[data-object-id ^= "runtime_placeholder_"] {
+.storage_view .sortable-table tr.runtime_placeholder {
   display: none;
 }
 
