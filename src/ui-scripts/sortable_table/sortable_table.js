@@ -364,7 +364,7 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
                  "class", "sortable-table-group-header"],
                 "class", "header"
                ];
-    if(tabledef.groups[groupby].idgetter)
+    if (tabledef.groups[groupby].idgetter)
     {
       row.push("data-object-id", tabledef.groups[groupby].idgetter(data));
     }

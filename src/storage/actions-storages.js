@@ -80,8 +80,7 @@ cls.StorageViewActions = function(id)
         {
           remove_and_set_item_bound();
         }
-        else
-        if (key)
+        else if (key)
         {
           set_item_bound();
         }
@@ -108,7 +107,7 @@ cls.StorageViewActions = function(id)
       for (var i=0, selected; selected = selection[i]; i++)
       {
         var rt_id = Number(selected.querySelector("[name=rt_id]").value);
-        var key   = selected.querySelector("[name=key]").value;
+        var key = selected.querySelector("[name=key]").value;
         var cb = function(){};
         if (i === selection.length - 1)
         {
@@ -255,7 +254,7 @@ cls.StorageViewActions = function(id)
     }
 
     var selection = container.querySelectorAll(".sortable-table .selected");
-    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
+    if (!(event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected"))))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++)
       {

@@ -54,10 +54,10 @@ cls.CookieManager.CookieDataBase = function()
 
   this.refetch = function()
   {
-    this._active_tab_counter++;
+    this._active_tab_count++;
     this.cookie_list = [];
     for (var rt_id in this._rts) {
-      this._request_runtime_details(Number(rt_id), this._active_tab_counter);
+      this._request_runtime_details(Number(rt_id), this._active_tab_count);
     };
   };
 
@@ -135,7 +135,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._on_active_tab = function(msg)
   {
-    this._active_tab_counter++;
+    this._active_tab_count++;
     this.cookie_list = [];
     for (var i=0; i < msg.runtimes_with_dom.length; i++)
     {
@@ -144,7 +144,7 @@ cls.CookieManager.CookieDataBase = function()
       {
         this._rts[rt_id]={rt_id: rt_id};
       }
-      this._request_runtime_details(rt_id, this._active_tab_counter);
+      this._request_runtime_details(rt_id, this._active_tab_count);
     };
 
     // cleanup runtimes directory
@@ -214,7 +214,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._handle_cookies = function(status, message, rt_id, active_tab_counter)
   {
-    if (this._active_tab_counter === active_tab_counter)
+    if (this._active_tab_count === active_tab_counter)
     {
       var rt = this._rts[rt_id] || {};
       if (status === 0)
@@ -283,7 +283,7 @@ cls.CookieManager.CookieDataBase = function()
 
   this._handle_js_retrieved_cookies = function(status, message, rt_id, active_tab_counter)
   {
-    if (this._active_tab_counter === active_tab_counter)
+    if (this._active_tab_count === active_tab_counter)
     {
       const STATUS = 0;
       const DATA = 2;
@@ -295,7 +295,7 @@ cls.CookieManager.CookieDataBase = function()
         {
           var cookies = cookie_string.split('; ');
           for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
-            var pos = cookie_info.indexOf('=', 0);
+            var pos = cookie_info.indexOf('=');
             var has_value = pos !== -1;
             this.cookie_list.push(
               new cls.CookieManager.Cookie({
@@ -332,7 +332,7 @@ cls.CookieManager.CookieDataBase = function()
     this._view = view;
     this.cookie_list = [];
     this._rts = {};
-    this._active_tab_counter = 0;
+    this._active_tab_count = 0;
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   };
 };

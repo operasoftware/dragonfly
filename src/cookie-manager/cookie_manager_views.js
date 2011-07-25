@@ -277,7 +277,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       *     more than 1 item is already selected && event is right-click, clicked item was already selected
       */
     var selection = this._table_elem.querySelectorAll(".selected");
-    if (!( event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected")) ))
+    if (!(event.ctrlKey || (selection.length > 1 && event.button === 2 && target.hasClass("selected"))))
     {
       for (var i=0, selected_node; selected_node = selection[i]; i++) {
         if (!selected_node.hasClass("add_cookie_row"))
