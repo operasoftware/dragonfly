@@ -82,7 +82,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     // leave only ids in _msgs array that are not in message_ids
     this._msgs = this._msgs.filter(function(e)
     { 
-      return message_ids.contains(e.id);
+      return !message_ids.contains(e.id);
     });
     this._update_views();
   };
