@@ -206,13 +206,3 @@ window.eventHandlers.click['set-break-point'] = function(event)
     }
   }
 };
-
-window.eventHandlers.click['inspect-object-link'] = function(event, target)
-{
-  var rt_id = parseInt(target.getAttribute('rt-id'));
-  var obj_id = parseInt(target.getAttribute('obj-id'));
-  messages.post('active-inspection-type', {inspection_type: 'object'});
-  // if that works it should be just inspection
-  topCell.showView(views.inspection.id);
-  messages.post('object-selected', {rt_id: rt_id, obj_id: obj_id});
-};

@@ -109,7 +109,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
           builder = window.app.builders[class_name] && window.app.builders[class_name][match_version];
           if (builder)
           {
-            // service_description is a dict of services 
+            // service_description is a dict of services
             // with name and version for each service
             // return false if the service shall not be enabled
             window.services[service_name].is_implemented = builder(service, service_descriptions);
@@ -149,13 +149,28 @@ window.app.build_application = function(on_services_created, on_services_enabled
     window.services.add(new ServiceClass());
   }
 
+  var report_usage = function()
+  {
+    if (settings.general.get("track-usage"))
+    {
+      var trackerurl = "/app/user-count"
+      var tracker = new cls.UserTracker(trackerurl);
+      var cb = function(status, url)
+      {
+        if (status != 200)
+        {
+          opera.postError("Usertracker could not send heartbeat to tracker server at " + url + ". Got status " + status);
+        }
+      };
+      tracker.call_home(cb);
+    }
+  }
+
   // ensure that the static methods on cls.ServiceBase exist.
   new cls.ServiceBase();
   new ActionBroker();
 
-
-
-
+  window.messages.addListener("application-setup", report_usage);
 
   // global objects
   window.tagManager = window.tag_manager = new window.cls.TagManager();
@@ -194,7 +209,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   /* Monospace font selection */
   cls.MonospaceFontView.prototype = ViewBase;
-  var view = new cls.MonospaceFontView('monospacefont', 
+  var view = new cls.MonospaceFontView('monospacefont',
                                        ui_strings.M_VIEW_LABEL_MONOSPACE_FONT);
   cls.MonospaceFontView.create_ui_widgets();
   view.set_font_style();

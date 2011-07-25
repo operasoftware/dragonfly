@@ -61,6 +61,8 @@ cls.DOMInspectorActions = function(id)
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
     {
+      var no_contextmenu = 
+        event.target.get_attr('parent-node-chain', 'data-menu') != 'dom-element';
       var model = window.dominspections[container.getAttribute('data-model-id')];
       var target = document.getElementById('target-element');
       var is_editable = container.hasAttribute('edit-handler');
@@ -74,7 +76,8 @@ cls.DOMInspectorActions = function(id)
         if (!force_expand && level_next > level)
         {
           model.collapse(ref_id);
-          this._get_children_callback(container, model, target_id, is_editable);
+          this._get_children_callback(container, model, target_id, 
+                                      is_editable, no_contextmenu);
         }
         else
         {
@@ -83,16 +86,19 @@ cls.DOMInspectorActions = function(id)
             model.collapse(ref_id);
           }
           cb = this._get_children_callback.bind(this, container, model,
-                                                target_id, is_editable);
+                                                target_id, is_editable, 
+                                                no_contextmenu);
           model.expand(cb, ref_id, traversal);
         }
       }
     }
   }
 
-  this._get_children_callback = function(container, model, target_id, is_editable)
+  this._get_children_callback = function(container, model, target_id, 
+                                         is_editable, no_contextmenu)
   {
-    var tmpl = window.templates.inspected_dom_node(model, target_id, is_editable);
+    var tmpl = window.templates.inspected_dom_node(model, target_id,
+                                                   is_editable, no_contextmenu);
     container.re_render(tmpl);
     window.messages.post('dom-view-updated', {model: model});
   }
@@ -153,9 +159,6 @@ cls.DOMInspectorActions = function(id)
                                     true);
         }
       }
-      // if the view_container is null the view is not in focus
-      if (!view_container)
-        window.helpers.scroll_dom_target_into_view();
     }
     return model;
   };
@@ -212,11 +215,11 @@ cls.DOMInspectorActions = function(id)
       }
       case 'text':
       {
-        return !target.hasAttribute('ref-id');
+        return target.parentNode.hasClass('non-editable');
       }
       case 'node':
       {
-        return ( target.firstChild && /^<?\/?script/i.test(target.firstChild.nodeValue) );
+        return (target.firstChild && /^<?\/?script/i.test(target.firstChild.nodeValue));
       }
       default:
       {

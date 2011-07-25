@@ -955,12 +955,17 @@ SpecLinks.specs = {
     "undo": "http://www.w3.org/TR/html5/dnd.html#event-undo",
 
     // HTML5 Elements
-    "HTMLTimeElement": "http://www.w3.org/TR/html5/text-level-semantics.html#htmltimeelement",
     "HTMLVideoElement": "http://www.w3.org/TR/html5/video.html#htmlvideoelement",
     "HTMLMediaElement": "http://www.w3.org/TR/html5/video.html#htmlmediaelement",
     "HTMLSourceElement": "http://www.w3.org/TR/html5/video.html#htmlsourceelement",
     "HTMLAudioElement": "http://www.w3.org/TR/html5/video.html#htmlaudioelement",
     "HTMLTimeElement": "http://www.w3.org/TR/html5/text-level-semantics.html#htmltimeelement",
+    "dateTime":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-datetime",
+    "pubDate":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-pubdate",
+    "valueAsDate":
+    "http://www.w3.org/TR/html5/text-level-semantics.html#dom-time-valueasdate",
     "HTMLProgressElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlprogresselement",
     "HTMLMeterElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlmeterelement",
     "HTMLKeygenElement": "http://www.w3.org/TR/html5/the-button-element.html#htmlkeygenelement",
@@ -970,6 +975,7 @@ SpecLinks.specs = {
     "Image": "http://www.w3.org/TR/html5/embedded-content-1.html#dom-image",
     "HTMLEmbedElement": "http://www.w3.org/TR/html5/the-iframe-element.html#htmlembedelement",
     "Option": "http://www.w3.org/TR/html5/the-button-element.html#dom-option-t",
+    "classList": "http://www.w3.org/TR/html5/elements.html#dom-classlist",
 
      // HTML5 Session History
     "History": "http://www.w3.org/TR/html5/history.html#history-0",
@@ -1146,6 +1152,7 @@ SpecLinks.specs = {
     // Selectors API
     "querySelector": "http://www.w3.org/TR/selectors-api/#queryselector",
     "querySelectorAll": "http://www.w3.org/TR/selectors-api/#queryselectorall",
+    "oMatchesSelector": "http://www.w3.org/TR/selectors-api2/#matchesselector",
 
     // XHR
     "XMLHttpRequest": "http://www.w3.org/TR/XMLHttpRequest/#the-xmlhttprequest-interface",

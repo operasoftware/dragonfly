@@ -350,14 +350,21 @@ header {
   background-color: #fff;
   border-bottom: 1px solid #fff;
   border-bottom-color: #ccc;
-  }
+}
+
+container > div > header {
+  line-height: 20px;
+  background-color: #ebebeb;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255,255,255,0.90) 0,
+                                       rgba(255,255,255,0.30) 100%);
+}
 
 div.unfolded {
   border-bottom: 1px solid #ccc;
 }
-
 header:hover {
-  background-color: #eee;
+  background-color: #efefef;
   color: #000;
 }
 
@@ -366,13 +373,16 @@ category header:hover input {
 }
 
 header input {
-  background:transparent url('../ui-images/toggle.png') scroll no-repeat 50% 100%;
+  background:transparent url('../ui-images/icons/icon_arrow_right.png') scroll no-repeat 50% 100%;
   border:none;
-  width:5px;
-  height:9px;
-  opacity: 0.66;
+  width:17px;
+  height:17px;
   -o-transition: .2s;
   }
+
+.unfolded > header {
+  border-bottom-color: #d7d7d7;
+}
 
 .unfolded > header input,
 input.unfolded {
@@ -540,14 +550,15 @@ offsets value  {
   border: 1px solid #ccc;
   color: #666;
   }
-div.dom {
+.dom-tree {
     display: table;
+    padding-left: 21px !important;
 }
-.dom .pre-wrap {
+.dom-tree .pre-wrap {
   white-space: pre-wrap;
   }
-.dom { width: 100%; }
-.dom div:not(.tree-style):not(.info-box)
+.dom-tree { width: 100%; }
+.dom-tree div:not(.tree-style):not(.info-box)
 {
   padding-left: 1px;
   padding-right: 3px;
@@ -564,7 +575,7 @@ div.dom {
 }
 
 
-.dom input
+.dom-tree input
 {
   border: 0;
   padding: 0;
@@ -575,10 +586,10 @@ div.dom {
   background: transparent url('../ui-images/expand-collapse.png') 1px 1px no-repeat;
 }
 
-.dom input.open {
+.dom-tree input.open {
   background-position: 1px -14px;
   }
-.dom input:focus {
+.dom-tree input:focus {
   outline: 2px solid #598bec;
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
   }

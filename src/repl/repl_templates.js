@@ -20,7 +20,7 @@ templates.repl_main = function()
 
 templates.repl_output_native = function(s, severity)
 {
-  return ["span", s, "class", "repl-native"];
+  return ["span", s || "\u00A0", "class", "repl-native"];
 };
 
 templates.repl_output_native_or_pobj = function(thing, severity)
@@ -38,6 +38,28 @@ templates.repl_output_pobj = function(data)
 {
   var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
                         /(?:Element)$/.test(data.name)
+  if (data.model)
+  {
+    var tmpl = null;
+    if (data.model_template == cls.ReplService.INLINE_MODEL_TMPL_DOM)
+    {
+      tmpl = window.templates[data.model_template](data.model, null, false, true);
+    }
+    else
+    {
+      tmpl = window.templates[data.model_template](data.model);
+    }
+    // the returned template is a innerHTML
+    // the render call can handle that if the innerHTML is passed 
+    // as a single field in an array 
+    var ret = ['span', [tmpl], 'class', 'repl-inline-expandable'];
+    if (data.model instanceof cls.InspectableJSObject)
+    {
+      ret.push('handler', 'inspect-object-inline-link');
+    }
+    return ret;
+  }
+
   return [
     'code',
     data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,

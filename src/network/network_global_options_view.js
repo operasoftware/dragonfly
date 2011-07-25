@@ -64,20 +64,23 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
     if (this._track_bodies)
     {
-      var arg = [[DATA_URI, DECODE],
-                 [ "text/html", "application/xhtml+xml", "application/mathml+xml",
-                   "application/xslt+xml", "text/xsl", "application/xml",
-                   "text/css", "text/plain", "application/x-javascript",
-                   "application/javascript", "text/javascript"
-                 ].map(function(e) { return [e, [STRING, DECODE]] })
-                ];
+
+      var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
+                        "application/xslt+xml", "text/xsl", "application/xml",
+                        "text/css", "text/plain", "application/x-javascript",
+                        "application/javascript", "text/javascript",
+                        "application/x-www-form-urlencoded"];
+
+      var resparg = [[DATA_URI, DECODE],
+                     text_types.map(function(e) { return [e, [STRING, DECODE]]})
+                    ];
+
     }
     else
     {
-      var arg = [[OFF]];
+      var resparg = reqarg = [[OFF]];
     }
-    this._service.requestSetRequestMode(null, arg);
-    this._service.requestSetResponseMode(null, arg);
+    this._service.requestSetResponseMode(null, resparg);
   }.bind(this);
 
   this._handle_toggle_header_overrides_bound = function(evt, target)

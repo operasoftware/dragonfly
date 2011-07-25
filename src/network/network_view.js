@@ -13,6 +13,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._selected = null;
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
+  this._rendertime = 0;
+  this._rendertimer = null;
+  this._everrendered = false;
+  this._url_list_width = 250;
 
   this.createView = function(container)
   {
@@ -27,92 +31,140 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
     var content = this._container ? this._container.querySelector(".network-details-request") : null;
     this._contentscroll = content ? content.scrollTop : 0;
+    this._everrendered = false;
   }
+
+  this._update_bound = this.update.bind(this);
 
   this._render_main_view = function(container)
   {
     var ctx = this._service.get_request_context();
     var paused = settings.network_logger.get('paused-update');
-    if (ctx && ctx.resources.length)
+    this._container = container;
+
+    if (ctx && ctx.resources.length && this._selected)
     {
-      this._container = container;
-
-      var fit_to_width = settings.network_logger.get('fit-to-width');
-
-      var url_list_width = 250;
-      if (this._selected !== null)
-      {
-        url_list_width += window.defaults["scrollbar-width"];
-        this.ondestroy(); // saves scroll pos
-        container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
-        this._vscrollcontainer = container.querySelector(".network-details-url-list");
-        this._vscrollcontainer.scrollTop = this._vscroll;
-        var content = container.querySelector(".network-details-request");
-        content.scrollTop = this._contentscroll;
-      }
-      else if (!paused)
-      {
-        this._contentscroll = 0;
-        container.className = "";
-        var has_scrollbar = container.scrollHeight > container.offsetHeight;
-        var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
-        var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
-        var duration = ctx.get_duration();
-
-        if (!fit_to_width && duration > 3000)
-        {
-          graphwidth = Math.ceil(duration * 0.35);
-        }
-
-        container.clearAndRender(templates.network_log_main(ctx, graphwidth));
-        this._vscrollcontainer = container.querySelector("#main-scroll-container");
-        this._vscrollcontainer.style.height = "" + conheight + "px";
-        this._vscrollcontainer.scrollTop = this._vscroll;
-
-        this._hscrollcontainer = container.querySelector("#scrollbar-container");
-        this._hscrollcontainer.scrollLeft = this._hscroll;
-        container.querySelector("#left-side-content").style.minHeight = "" + conheight + "px";
-
-        var scrollfun = function(evt) {
-          var e = document.getElementById("right-side-container");
-          var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
-          e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
-        }
-        scrollfun({target:this._hscrollcontainer});
-        this._hscrollcontainer.addEventListener("scroll", scrollfun, false)
-      }
+      this._render_details_view(container);
     }
-    else if (paused)
-    {
-      container.clearAndRender(
-        ['div',
-         ['p', ui_strings.S_INFO_NETWORK_UPDATES_PAUSED],
-         'class', 'info-box'
-        ]
-      );
+    else if (ctx && ctx.resources.length) {
+      var paused = settings.network_logger.get('paused-update');
+      if (paused && this._everrendered) { return }
+      this._render_graph_view(container);
     }
     else if (this._loading)
     {
-      container.clearAndRender(
-        ['div',
-         ['p', "Loading page..."],
-         'class', 'info-box'
-        ]
-      );
+      this._render_loading_view(container);
+    }
+    else if (this._everrendered)
+    {
+      container.innerHTML = "";
     }
     else
     {
-      container.clearAndRender(
-        ['div',
-         ['button',
-          'class', 'container-button',
-          'handler', 'reload-window'],
-         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
-         'class', 'info-box'
-        ]
-      );
+      this._render_click_to_fetch_view(container);
     }
   };
+
+  this._render_details_view = function(container)
+  {
+    var ctx = this._service.get_request_context();
+    var url_list_width = this._url_list_width + window.defaults["scrollbar-width"];
+    this.ondestroy(); // saves scroll pos
+    container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
+    this._vscrollcontainer = container.querySelector(".network-details-url-list");
+    this._vscrollcontainer.scrollTop = this._vscroll;
+    var content = container.querySelector(".network-details-request");
+    content.scrollTop = this._contentscroll;
+  }
+
+  this._render_click_to_fetch_view = function(container)
+  {
+    container.clearAndRender(
+      ['div',
+        ['button',
+          'class', 'container-button',
+          'handler', 'reload-window'],
+        ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
+          'class', 'info-box'
+      ]
+    );
+  }
+
+  this._render_loading_view = function(container)
+  {
+    container.clearAndRender(
+      ['div',
+        ['p', "Loading page..."],
+         'class', 'info-box'
+      ]
+    );
+  }
+
+  this._render_graph_view = function(container)
+  {
+    var fit_to_width = settings.network_logger.get('fit-to-width');
+    var url_list_width = 250;
+    var ctx = this._service.get_request_context();
+
+    this._everrendered = true;
+    var min_render_delay = 1200;
+    var timedelta = new Date().getTime() - this._rendertime;
+    if (timedelta < min_render_delay)
+    {
+      if (!this._rendertimer)
+      {
+        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
+      }
+      return;
+    }
+    else
+    {
+      this._rendertimer = null;
+      this._rendertime = new Date().getTime();
+    }
+
+    this._contentscroll = 0;
+    container.className = "";
+
+    var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
+    var has_scrollbar = false;
+    var duration = ctx.get_duration();
+
+    if (!fit_to_width && duration > 3000)
+    {
+      graphwidth = Math.round(Math.min((duration * 0.35), 10000)); // cap graphwidth at 10000px
+      has_scrollbar = true;
+    }
+
+    container.clearAndRender(templates.network_log_main(ctx, graphwidth));
+
+    var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
+    this._vscrollcontainer = container.querySelector("#main-scroll-container");
+    this._vscrollcontainer.style.height = "" + conheight + "px";
+    this._vscrollcontainer.scrollTop = this._vscroll;
+
+    this._hscrollcontainer = container.querySelector("#scrollbar-container");
+    this._hscrollcontainer.scrollLeft = this._hscroll;
+    container.querySelector("#left-side-content").style.minHeight = "" + conheight + "px";
+
+    this._hscrollfun_bound({target:this._hscrollcontainer});
+    this._vscrollcontainer.addEventListener("scroll", this._vscrollfun_bound, false);
+    this._hscrollcontainer.addEventListener("scroll", this._hscrollfun_bound, false);
+  }
+
+  this._vscrollfun_bound = function()
+  {
+    this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
+  }.bind(this);
+
+  this._hscrollfun_bound = function(evt)
+  {
+    var e = document.getElementById("right-side-container");
+    var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
+    e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
+    this._hscroll = e.scrollLeft;
+  }.bind(this);
+
 
   this._on_clicked_close_bound = function(evt, target)
   {
@@ -135,38 +187,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
-  this._get_hover_eles = function(rid)
-  {
-    var rule = "li[data-resource-id='" + rid + "'], g[data-resource-id='" + rid + "']";
-    var eles = this._container.querySelectorAll(rule);
-    return eles.length ? {li: eles[0], g: eles[1]} : null;
-  }
-
   this._on_hover_request_bound = function(evt, target)
   {
     var rid = target.getAttribute("data-resource-id");
-    if (rid && this._prev_hovered && rid == this._prev_hovered) { return }
-
-    if (this._prev_hovered)
-    {
-      var eles = this._get_hover_eles(this._prev_hovered)
-      if (eles)
-      {
-        eles.li.removeClass("hovered");
-        if(eles.g) { eles.g.removeClass("hovered"); }
-      }
-    }
-
-    if (rid) { this._prev_hovered = rid }
-
-    var eles = this._get_hover_eles(this._prev_hovered)
-    if (eles)
-    {
-        eles.li.addClass("hovered");
-        if (eles.g) { eles.g.addClass("hovered") }
-    }
+    var oldhovered = this._container.querySelectorAll(".hovered");
+    var newhovered = this._container.querySelectorAll("li[data-resource-id='" + rid + "'], div[data-resource-id='" + rid + "']");
+    for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered") }
+    for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered") }
   }.bind(this);
-
 
   this._on_clicked_get_body = function(evt, target)
   {
@@ -211,6 +239,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
+  this._on_clear_log_bound = function(evt, target)
+  {
+    this._service.clear_resources();
+    this.update();
+  }.bind(this);
+
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
   // did, the event handler doesn't get added until the view is created
@@ -220,9 +254,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
-
-  eh.click["select-network-request-graph"] = this._on_clicked_request_bound;
-  eh.mouseover["select-network-request-graph"] = this._on_hover_request_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
@@ -240,8 +271,24 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
   res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
+  eh.click["clear-log-network-view"] = this._on_clear_log_bound;
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
   eh.click["toggle-fit-graph-to-network-view"] = this._on_toggle_fit_graph_to_width;
+
+  new ToolbarConfig
+  (
+    'network_logger',
+    [
+      {
+        handler: 'clear-log-network-view',
+        title: "Clear log"
+      }
+    ],
+    null,
+    null,
+    null,
+    true
+  );
 
   new Settings
   (
@@ -273,8 +320,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       'fit-to-width',
     ]
   );
-
-
 
   this.init(id, name, container_class, html, default_handler);
 };

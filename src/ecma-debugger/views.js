@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -21,11 +21,11 @@ cls.EnvironmentView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'environment', 
+    'environment',
     // key-value map
     {
       'environment': true
-    }, 
+    },
     // key-label map
     {
     },
@@ -59,11 +59,11 @@ cls.AboutView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'about', 
+    'about',
     // key-value map
     {
       'about': true
-    }, 
+    },
     // key-label map
     {
     },
@@ -81,7 +81,7 @@ cls.AboutView.create_ui_widgets = function()
       {
         new XMLHttpRequest().loadResource('AUTHORS', function(xml)
         {
-          var 
+          var
           authors = document.getElementById('about-authors'),
           response_text = xml.responseText;
           if(authors && response_text)
@@ -98,7 +98,7 @@ cls.AboutView.create_ui_widgets = function()
 
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -113,9 +113,9 @@ cls.CallstackView = function(id, name, container_class)
   var __clearView = function()
   {
     var container = document.getElementById(container_id);
-    if( container ) 
+    if( container )
     {
-      container.innerHTML = not_stopped_content; 
+      container.innerHTML = not_stopped_content;
       __clear_timeout = 0;
     }
   }
@@ -156,7 +156,7 @@ cls.CallstackView = function(id, name, container_class)
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * Settings are bound to a view. This class it only to have 'General Settings'.
   */
@@ -175,25 +175,28 @@ cls.GeneralView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'general', 
+    'general',
     // key-value map
     {
       "show-views-menu": false,
       "window-attached": true,
       "show-only-normal-and-gadget-type-windows": true,
       "shortcuts": null,
-      "shortcuts-hash": ""
-    }, 
+      "shortcuts-hash": "",
+      "track-usage": true,
+    },
     // key-label map
     {
       "show-views-menu": ui_strings.S_SWITCH_SHOW_VIEWS_MENU,
-      "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS
+      "show-only-normal-and-gadget-type-windows": ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS,
+      "track-usage": ui_strings.S_SWITCH_TRACK_USAGE,
     },
     // settings map
     {
       checkboxes:
       [
-        "show-only-normal-and-gadget-type-windows"
+        "show-only-normal-and-gadget-type-windows",
+        "track-usage",
       ],
       customSettings:
       [
@@ -240,12 +243,12 @@ cls.GeneralView.create_ui_widgets = function()
     var container = parent.getElementsByClassName('change-ui-lang-info')[0] ||
                     parent.render(['div', 'class', 'change-ui-lang-info']);
     var ui_str = ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO.split("%s");
-    var tmpl = 
+    var tmpl =
     [
-      ['h2', 
+      ['h2',
         ui_str[0] + ' ',
-        ['a', 
-          'opera:config#DeveloperTools|DeveloperToolsURL', 
+        ['a',
+          'opera:config#DeveloperTools|DeveloperToolsURL',
           'href', 'opera:config#DeveloperTools|DeveloperToolsURL',
           'target', '_blank'
         ],
@@ -256,7 +259,7 @@ cls.GeneralView.create_ui_widgets = function()
         {
           return (
           ['li',
-            ['code', "https://dragonfly.opera.com/app/"  + part + "client-" + 
+            ['code', "https://dragonfly.opera.com/app/"  + part + "client-" +
                      event.target.value + ".xml"]
           ]);
         }),
@@ -270,7 +273,7 @@ cls.GeneralView.create_ui_widgets = function()
 
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * Settings are bound to a view. This class it only to have 'General Settings'.
   */
@@ -289,11 +292,11 @@ cls.HostSpotlightView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'host-spotlight', 
+    'host-spotlight',
     // key-value map
     {
       'spotlight-color': "3875d7",
-    }, 
+    },
     // key-label map
     {
 
@@ -322,9 +325,9 @@ cls.HostSpotlightView.create_ui_widgets = function()
 }
 
 
-  
+
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * Settings are bound to a view. This class it only to have 'General Settings'.
   */
@@ -351,7 +354,7 @@ cls.DocumentationView = function(id, name, container_class)
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   * Settings are bound to a view. This class it only to have 'Debug Remote Setting'.
   */
@@ -361,7 +364,7 @@ cls.DebugRemoteSettingView = function(id, name, container_class)
   this.is_hidden = true;
   this.createView = function(container)
   {
-    
+
   };
   this.init(id, name, container_class);
 }
@@ -513,7 +516,7 @@ cls.MainView .create_ui_widgets = function()
 {
 
   // TODO clean up
-  
+
   new ToolbarConfig
   (
     'main-view',

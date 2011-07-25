@@ -1,6 +1,6 @@
 ﻿if (!window.opera)
 {
-  window.opera = 
+  window.opera =
   {
     postError: function(a){console.log(a);},
     stpVersion: true
@@ -16,7 +16,7 @@
   {
     opera.postError('setter: '+this.nodeName + ', '+scroll_top);
     setter.call(this, scroll_top);
-  });  
+  });
   Element.prototype.__defineGetter__('scrollTop', function()
   {
     var scroll_top = getter.call(this);
@@ -26,9 +26,9 @@
 */
 
 /* testing in Chrome or FF
-if (document.createElementNS && 
+if (document.createElementNS &&
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
-{  
+{
   Document.prototype.createElement = document.createElement = function(name)
   {
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
@@ -64,6 +64,15 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
+if (typeof document.createElement('div').classList == 'undefined')
+{
+  Element.prototype.__defineGetter__('classList', function()
+  {
+    return this.className.split(/\s+/);
+  });
+  Element.prototype.__defineSetter__('classList', function(){});
+}
+
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
@@ -80,10 +89,11 @@ if (!Element.prototype.insertAdjacentHTML)
 
 Element.prototype.render = Document.prototype.render = function(args, namespace)
 {
-
-  if (typeof args == 'string' && this.nodeType == 1)
+  var args_is_string = typeof args == 'string';
+  if (this.nodeType == 1 && args_is_string ||
+      (args.length == 1 && typeof args[0]  == 'string' && /</.test(args[0])))
   {
-    this.insertAdjacentHTML('beforeend', args);
+    this.insertAdjacentHTML('beforeend', args_is_string ? args : args[0]);
     return this.firstElementChild;
   }
 
@@ -140,7 +150,7 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
       {
         if (typeof args[i] != 'string')
         {
-          throw "TemplateSyntaxError, expected 'string', got " + 
+          throw "TemplateSyntaxError, expected 'string', got " +
                 (typeof args[i]) + " for TEXT or KEY";
         }
         if (typeof args[i + 1] == 'string')
@@ -285,11 +295,11 @@ Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_k
   var box = this.getBoundingClientRect();
   var client_x = box.left + box.width * .5;
   var client_y = box.top + box.height * .5;
-  event.initMouseEvent(type, true, true, window, 1, 
-                       window.screenLeft + client_x, 
-                       window.screenTop + client_y, 
-                       client_x, client_y, 
-                       ctrl_key, alt_key, shift_key, false, 
+  event.initMouseEvent(type, true, true, window, 1,
+                       window.screenLeft + client_x,
+                       window.screenTop + client_y,
+                       client_x, client_y,
+                       ctrl_key, alt_key, shift_key, false,
                        0, null);
   this.dispatchEvent(event);
 };
@@ -297,7 +307,7 @@ Element.prototype.dispatchMouseEvent = function(type, ctrl_key, alt_key, shift_k
 Element.prototype.get_scroll_container = function()
 {
   var scroll_container = this;
-  while (scroll_container && 
+  while (scroll_container &&
          scroll_container.scrollHeight <= scroll_container.offsetHeight)
     scroll_container = scroll_container.parentNode;
   return (scroll_container == document.documentElement ||
@@ -307,15 +317,15 @@ Element.prototype.get_scroll_container = function()
   * A class to store a scroll position and reset it later in an asynchronous
   * environment.
   * The class takes a target as initialisation argument.
-  * The scroll position is stored for the first scroll container 
+  * The scroll position is stored for the first scroll container
   * in the parent node chain of that target. The root element is
-  * disregarded as scroll container (this is a bit too Dragonfly specific. 
-  * Better would be to check the overflow property of the computed style to 
+  * disregarded as scroll container (this is a bit too Dragonfly specific.
+  * Better would be to check the overflow property of the computed style to
   * find a real scroll container).
   * Resetting the scroll position can be done with or without argument.
-  * Without argument. it resets the scrollTop and scrollLeft properties 
-  * of the scroll container to the stored values. With a target argument, 
-  * it scroll the target in the exact same position as the target of 
+  * Without argument. it resets the scrollTop and scrollLeft properties
+  * of the scroll container to the stored values. With a target argument,
+  * it scroll the target in the exact same position as the target of
   * the initialisation.
   */
 Element.ScrollPosition = function(target)
@@ -340,10 +350,10 @@ Element.ScrollPosition = function(target)
 }
 
 /**
-  * To reset the scroll position. 
-  * Without target, scrollTop and scrollleft are restored to 
+  * To reset the scroll position.
+  * Without target, scrollTop and scrollleft are restored to
   * the initialisation values.
-  * If target is set, the target is scrolled in the exact same position 
+  * If target is set, the target is scrolled in the exact same position
   * as the target of the initialisation.
   * A secondary container can be specified. This will be used in case the
   * initial scroll container was not set in get_scroll_container().
@@ -355,15 +365,15 @@ Element.ScrollPosition.prototype.reset = function(target, sec_container)
     if (target)
     {
       var target_box = target.getBoundingClientRect();
-      this._scroll_container.scrollTop -= this._delta_top - 
+      this._scroll_container.scrollTop -= this._delta_top -
                                           (target_box.top - this._container_top);
-      this._scroll_container.scrollTop -= this._delta_left - 
+      this._scroll_container.scrollTop -= this._delta_left -
                                           (target_box.left - this._container_left);
     }
     else
     {
       this._scroll_container.scrollTop = this._scroll_top;
-      this._scroll_container.scrollLeft = this._scroll_left; 
+      this._scroll_container.scrollLeft = this._scroll_left;
     }
   }
   else if (sec_container)
@@ -460,7 +470,7 @@ Element.prototype.get_attr = function(traverse_type, name)
 
 if (!Element.prototype.matchesSelector)
 {
-  Element.prototype.matchesSelector = 
+  Element.prototype.matchesSelector =
     Element.prototype.oMatchesSelector ?
     Element.prototype.oMatchesSelector :
     function(selector)
@@ -471,9 +481,11 @@ if (!Element.prototype.matchesSelector)
     }
 };
 
+/* The naming is not precise, it can return the element itself. */
+
 Element.prototype.get_ancestor = function(selector)
 {
-  var ele = this.parentNode;
+  var ele = this;
   while (ele)
   {
     if (ele.nodeType == 1 && ele.matchesSelector(selector))
@@ -484,7 +496,6 @@ Element.prototype.get_ancestor = function(selector)
   }
   return null;
 };
-
 
 /**
  * Make sure the element is visible in its scoll context.
@@ -591,6 +602,21 @@ Array.prototype.sum = function(selectorfun)
   }
 };
 
+Array.prototype.unique = function()
+{
+  var ret = [];
+  this.forEach(function(e) { if (ret.indexOf(e) == -1) {ret.push(e) }});
+  return ret;
+}
+
+Array.prototype.__defineGetter__("last", function()
+{
+   return this[this.length - 1];
+});
+
+Array.prototype.__defineSetter__("last", function() {});
+
+
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
@@ -643,7 +669,7 @@ String.prototype.isdigit = function()
   return this.length && !(/\D/.test(this));
 };
 
-String.prototype.contains = function(str)
+Array.prototype.contains = String.prototype.contains = function(str)
 {
   return this.indexOf(str) != -1;
 };

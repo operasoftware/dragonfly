@@ -230,7 +230,7 @@ desc:
   - Enable the property
   - Make sure the style is re-applied and that this is reflected in the UI
 
-url: ./test-cases/dom/pseduo-test.html
+url: ./test-cases/dom/pseudo-test.html
 
 id: 01000
 label: Pseudo element setting
@@ -415,7 +415,7 @@ desc:
 url: ./test-cases/dom/nodes.html
 
 # TODO: unsure of what this is supposed to test, headline doesn't match desc
-# 
+#
 # id: 00200
 # label: Represent the DOM as a node tree
 # desc:
@@ -493,7 +493,7 @@ url: ./test-cases/dom/searchbar/long-document.html
 id: 00400
 label: Move the search highlight
 deprecated: true
-desc: 
+desc:
  - Open the test case, select the 'Document' tab and expand the whole DOM tree
  - Open the search-bar by hitting the search button
  - Search for 'class' and verify that you get 7 hits
@@ -526,15 +526,16 @@ desc:
  - Verify that you get 12 hits in total.
  - Verify that the first hit is highlighted in yellow.
  - Verify that search field says 1/12 on the right side.
- 
+
 label: Walking through results in DOM search tab
 desc:
  - Press Enter in search field.
  - Verify that highlight moves to the next match.
  - Verify that you can iterate through each highlight by pressing Enter.
  - Verify the you can iterate through them backwards by Shift-Enter.
+ - Verify that turnaround works when you reach the ends of the list.
  - Verify that hit counter in the right side of the search field is updated properly.
- 
+
 label: Focusing results in DOM search tab
 desc:
  - Walk through results by using Enter and focus them using Ctrl-Enter.
@@ -544,7 +545,7 @@ desc:
  - Click all highlighted hits one by one.
  - Verify that all focused hits bring up the relevant node in DOM view.
  - Verify that matching string is highlighted in DOM view.
-  
+
 label: Tree view in DOM search table
 desc:
  - Right-click the DOM view area and select tree view for DOM.
@@ -609,7 +610,7 @@ desc:
  - Switch to regexp mode.
  - Search for "test.*well"[;\n]{1,2}".
  - Verify that you get no hits.
- - Change runtime of DOM view to the iframe content. 
+ - Change runtime of DOM view to the iframe content.
  - Focus search field.
  - Press Enter to repeat the search.
  - Verify that you get one hit now.
@@ -1124,6 +1125,7 @@ url: ./test-cases/scripts/searchbar-window/search.html
 
 id: 00100
 label: Switch between search bar and window
+deprecated: true
 desc:
   - Select the 'Scripts' tab
   - Press the search button at the end of the toolbar to show the search bar
@@ -1138,6 +1140,7 @@ desc:
 
 id: 00200
 label: Perform a search in the search window
+deprecated: true
 desc:
   - Open the test url
   - Select the 'Scripts' tab, hit the search button and hit the 'More' button to open the search window
@@ -1149,7 +1152,7 @@ desc:
   - Verify that for each match the according source line including line number is displayed
   - Hit 'Enter'
   - Verify that the match highlight moves down
-  - Hit 'Shift Enter' 
+  - Hit 'Shift Enter'
   - Verify that the match highlight moves in the other direction
   - Verify that the match highlight can be moved in the same way with 'F3' and 'Shift F3'
   - Verify that the match highlight can be moved in the same way with the buttons close to the search field
@@ -1157,7 +1160,132 @@ desc:
   - Verify that the file of the highlighted match is displayed in the source view
   - Verify that for each match the according file can be displayed with 'Ctrl Enter'
 
+Scripts.Search tab
+******************
 
+url: ./test-cases/dom/searchtab/search.html
+label: Focus the search tab in Scripts view
+desc:
+ - Open the testcase in scripts view.
+ - Click search tab on the right.
+ - Verify that tab changed and search field got focused.
+ - Focus another tab.
+ - Press search shortcut on keyboard (Ctrl-F).
+ - Verify that search tab is selected and search field got focus.
+ - Verify that ignore case is turned on by default.
+
+label: Execute simple text search on document with ignore case
+desc:
+ - Make sure that ignore case checkbox is ENABLED.
+ - Select the first script on page (not browser.js).
+ - Search for "test" in text mode.
+ - Verify that you get 2 lines with a total of 4 hits (different cases).
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that other hits are highlighted in grey.
+ - Verify that search field says 1/4 on the right side.
+
+label: Walking through results in script search tab
+desc:
+ - Press Enter in search field.
+ - Verify that highlight moves to the next match.
+ - Verify that you can iterate through each highlight by pressing Enter.
+ - Verify the you can iterate through them backwards by Shift-Enter.
+ - Verify that turnaround works when you reach the ends of the list.
+ - Verify that hit counter in the right side of the search field is updated properly.
+
+label: Focusing results in script search tab
+desc:
+ - Walk through results by using Enter and focus them using Ctrl-Enter.
+ - Verify that all individual highlighted string hits can be focused.
+ - Verify that all focused hits bring up the relevant line in script view.
+ - Verify that matching string is highlighted in line.
+ - Click all highlighted hits one by one.
+ - Verify that all focused hits bring up the relevant line in script view.
+ - Verify that matching string is highlighted in script view.
+
+label: Execute simple case-dependent text search in script
+desc:
+ - Click on ignore case checkbox to set it DISABLED.
+ - Verify that search is executed immediately.
+ - Verify that you get 1 line with 2 hits.
+ - Verify that the first hit is highlighted in yellow.
+ - Verify that the other hit is highlighted in grey.
+ - Verify that search field says 1/2 on the right side.
+ - Click ignore case checkbox.
+ - Verify that search is executed immediately and you got the previous case-independent search result back.
+
+label: Execute search in another script
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the DOM.
+ - Change the displayed script to the second script in the same runtime.
+ - Focus search field.
+ - Press Enter.
+ - Verify that you get hits from the displayed script (3 hits in 2 lines).
+
+label: Click search result from another runtime
+desc:
+ - Search for "test" in normal case-insensitive mode (in the first script of the runtime).
+ - Verify that you get hits from the DOM.
+ - Change the displayed script to the second script.
+ - Click one of the hits in the search tab.
+ - Verify that the hit is properly shown in its script (view switched back to the correct script).
+
+label: Click search result from outdated runtime
+desc:
+ - Search for "test" in normal case-insensitive mode.
+ - Verify that you get hits from the script.
+ - Change URL to anything else containing scripts (e.g.: http://www.sg.hu).
+ - Click one of the hits in the search tab.
+ - Verify that warning dialog is presented about expired content and re-running search.
+ - Click cancel.
+ - Verify that nothing has changed.
+ - Click the hit again.
+ - Click OK this time.
+ - Verify that search has been executed on the new runtime.
+
+label: Execute simple case-independent regexp search on script
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Switch to regexp mode.
+ - Search for "test.*"[;\n]{1,2}".
+ - Verify that you get lines with 2 hits with proper highlight.
+ - Click on the hits.
+ - Verify the highlight in script view, too (\n is not highlighted).
+
+label: Execute simple case-dependent regexp search on script
+desc:
+ - Make sure that ignore case checkbox to set it DISABLED.
+ - Switch to regexp mode.
+ - Search for "test.*"[;\n]{1,2}".
+ - Verify that you get 1 hit.
+ - Change script to the first script of the iframe.
+ - Focus search field.
+ - Press Enter to repeat the search.
+ - Verify that you get one hit now.
+ - Click on it.
+ - Verify highlight in DOM view.
+
+label: Execute a search on all scripts on the page
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Make sure that all files checkbox to set it ENABLED.
+ - Search for "test" in text search mode.
+ - Verify that you get hits from 3 files.
+ - Click through all of the hits.
+ - Verify the highlight in script view, too.
+ - Verify that all files checkbox can be disabled and search is re-executed instantly.
+
+label: Execute a search including injected script content
+desc:
+ - Make sure that ignore case checkbox to set it ENABLED.
+ - Make sure that all files checkbox to set it ENABLED.
+ - Make sure that injected checkbox to set it DISABLED.
+ - Search for "test" in text search mode.
+ - Verify that you get hits from 3 files.
+ - Click on injected checkbox to enable it.
+ - Verify that the search is instantly executed and updated with contents of browser.js.
+ - Verify that the option can be turned off.
 
 Scripts.Call Stack
 ******************
@@ -1781,6 +1909,29 @@ desc:
   - Verify that the highlighted word is entered in the console
   - Verify that the keys [, ], (, ) have the samme effect as "."
 
+url: ./test-cases/repl/autocomplete_stopped.html
+
+label: Autocomplete, stopped
+desc:
+  - Navigate to url
+  - Verify that debugger has stopped
+  - Type "f"
+  - Press tab
+  - Verify a list of expansions are displayed, and that "foo" is one of the entries
+  - Clear input
+  - Type "w"
+  - Press tab
+  - Verify that the input The list of completions include contents of the global scope. "window" should be one of the entries.
+  - Press continue, to resume running script
+  - Verify that debugger has stopped
+  - Type "p"
+  - Press tab
+  - Verify that phlebotinum is in the tab completion list
+  - type c
+  - press tab
+  - verify that closure is in the autocomplete list
+
+
 url: ./test-cases/repl/unpack-list-alikes.html
 
 id: 04100
@@ -1797,7 +1948,7 @@ desc:
   - Verify that you get 'HTMLCollection[HTMLHtmlElement, HTMLHeadElement, HTMLBodyElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement, HTMLParagraphElement, HTMLInputElement]' (ignore a '[object HTMLCollection]' before that)
   - Verify that 'HTMLCollection' is clickable and opens the 'Inspection' view with the HTMLCollection
   - Verify that each element in the list is clickable and shows the according element in the DOM tree
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that you get 'NodeList[DocumentType, HTMLHtmlElement]' in the command line (ignore a '[object HTMLCollection]' before that)
   - Verify that each object of type Element is clickable and shows the according element in the DOM tree
   - Verify that other objects are clickable too and open the according 'Inspection' view
@@ -1819,7 +1970,7 @@ desc:
   - Verify that the output is now only a clickable 'Array' (ignore a '[object Array]' before that)
   - Hit 'console.log(document.all)' button
   - Verify that the ourtput is now only a clickable 'HTMLCollection' (ignore a '[object HTMLCollection]' before that)
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that the output is now only a clickable 'NodeList' (ignore a '[object HTMLCollection]' before that)
   - Hit the 'console.log(xPathResult)' button
   - Verify that the output is now only a clickable 'XPathResult'
@@ -1834,7 +1985,7 @@ desc:
   - Hit 'console.log(document.all)' button
   - Verify that you get 'HTMLCollection[html, head, body, p, input.foo, p, input#bar, p, input, p, input]'
   - Verify that all objects are clickable and open the appropriated view
-  - Hit the 'console.log(document.childNodes)' button 
+  - Hit the 'console.log(document.childNodes)' button
   - Verify that you get 'NodeList[DocumentType, html]' in the command line
   - Verify clickability
   - Hit the 'console.log(xPathResult)' button
@@ -1842,6 +1993,34 @@ desc:
   - Verify clickability
   - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
   - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
+
+label: Inline expandableJS and DOM objects
+desc:
+  - Open the test case
+  - Ensure that 'Expand objects inline in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
+  - Enable 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Hit 'console.log(document.all)' button
+  - Verify that you get '+HTMLCollection[' followed by a sequence of DOM nodes, represented in the same way as in the 'Documents' tab (either markup or tree style)
+  - Verify that all objects with an expander can be expanded in place
+  - Hit the 'console.log(document.childNodes)' button
+  - Verify that you get '+NodeList[+DocumentType, +html]' in the command line
+  - Verify expandability in place
+  - Hit the 'console.log(xPathResult)' button
+  - Verify that you get '+XPathResult[+p, +p, +p, +p]' in the command line
+  - Verify expandability in place
+
+label: multiple inline expandableJS and DOM objects in one line
+desc:
+  - Open the test case
+  - Ensure that 'Expand objects inline in the console' in settings &gt; 'General' is checked
+  - Enable 'Enable smart-printing for Element objects in the console' in settings &gt; 'General'
+  - Enable 'Unpack objects which have list-like behavior in the console' in settings &gt; 'General'
+  - Open the command line (hit 'escape' or hit the command line button)
+  - Enter [1, "foo", window, function () { return "bar" }, document.getElementsByTagName("p")]
+  - Verify expandability in place for all objects.
+  - Verify that multiple objects are expandable from the returned array at the proper place.
 
 Scripts.Breakpoints
 *******************
@@ -1920,17 +2099,17 @@ desc:
   - Hit the 'test' button
   - Verify that the engine stops in each script exactly once (use the 'Continue' button or 'F8' ('F5' on Mac) to continue)
   - Right click the breakpoint panel and select 'Disable all'
-  - Verify that all breakpoints are unchecked 
+  - Verify that all breakpoints are unchecked
   - Verify that in each script in the source view the breakpoints look like disabled conditional breakpoints
   - Hit the 'test' button again
   - Verify that none breakpoint stops the engine
   - Enable all breakpoints again and verify that they stop properly
   - Right click the breakpoint panel and select 'Delete all'
   - Verify that all breakpoints are removed from the panel
-  - Verify for each script that all breakpoints are removed in the source view 
+  - Verify for each script that all breakpoints are removed in the source view
   - Hit the 'test' button
   - Verify that no breakpoint stops the execution
-  
+
 Scripts.Event Breakpoints
 *************************
 
@@ -2048,7 +2227,7 @@ desc:
   - Verify that the entry is now an expandable 'Window' object
   - Right click the watch and select 'Delete'
   - Verify that the watch is removed from the view
-  - Right click the panel, select 'Add' and verify that you can some watch  
+  - Right click the panel, select 'Add' and verify that you can some watch
 
 
 
@@ -2169,7 +2348,7 @@ desc:
   In case the host has the cookie-service:
   - Switch to 'No grouping' in the context menu
   - Verify that the group headers are gone
-  
+
 url: ./test-cases/storages/cookie-expiry.html
 
 id: 00900
@@ -2367,7 +2546,7 @@ url: http://www.nzz.ch
 # TODO: test completely outdated
 # id: 00100
 # label: Pixel Magnifier
-# desc: 
+# desc:
 #   - Hover over the page
 #   - Verify that the screenshot area is updated accordingly
 #   - Click some where on a image
@@ -2688,7 +2867,7 @@ desc:
 
 id: 00800
 label: Image detail view
-desc: 
+desc:
   - load a page that contains an image
   - click the image in the resource table
   - verify that a temporary tab is opened and focused
@@ -2697,7 +2876,7 @@ desc:
 
 id: 00900
 label: Markup detail view
-desc: 
+desc:
   - load a page
   - click the html resource in the resource table
   - verify that a temporary tab is opened and focused
@@ -2706,7 +2885,7 @@ desc:
 
 id: 01000
 label: Javascript detail view
-desc: 
+desc:
   - load a page that contains a javascriptfile
   - click the javascript resource in the resource table
   - verify that a temporary tab is opened and focused

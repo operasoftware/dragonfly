@@ -1,11 +1,34 @@
 <!doctype html>
 <script>
-window.onload = function()
+
+
+
+(function() {
+  var closure = true;
+  window.fun3 = function() {
+      var phlebotinum = 123;
+      debugger;
+  }
+
+})();
+
+
+fun2 = function()
+{
+  var baz = 3;
+  fun1();
+}
+
+fun1 = function()
 {
   var foo = 1;
   var bar = 2;
   debugger;
-  var baz = 3;
+}
+
+window.onload = function() {
+  fun2();
+  fun3();
 }
 
 </script>
