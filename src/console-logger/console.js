@@ -23,9 +23,9 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
 
   this._update_views = function()
   {
-    for (var view = '', i = 0; view = this._views[i]; i++)
+    for (var view_id = '', i = 0; view_id = this._views[i]; i++)
     {
-      window.views[view].update()
+      window.views[view_id].update()
     }
     var last_shown = this.last_shown_error_view || this._views[0];
     if (last_shown && window.views[last_shown] && !window.views[last_shown].isvisible())
@@ -124,10 +124,10 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   }
 
   /**
-   * Makes a filter function to match message.source with
-   * source_list (as whitelist or blacklist)
+   * Makes a filter function to match message.source with one of the
+   * values in source_list. Result can optionally be inverted.
    */
-  this.make_source_filter = function(source_list, is_blacklist)
+  this.make_source_filter = function(source_list, invert)
   {
     var source_filter = function(e) { return true };
     if (source_list)
@@ -136,7 +136,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       {
         var index = source_list.indexOf(e.source);
         var matched = index > -1;
-        if (is_blacklist)
+        if (invert)
         {
           matched = !matched;
         }
