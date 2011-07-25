@@ -97,7 +97,7 @@ cls.CSSInspectorActions = function(id)
     {
       return ((ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id'))
                || ele.nodeName.toLowerCase() == 'header'
-               || ele.getAttribute('handler') == 'display-rule-in-stylesheet');
+               || ele.getAttribute('handler') == 'open-resource-tab');
     },
 
     header: function(ele)
@@ -660,12 +660,6 @@ cls.CSSInspectorActions = function(id)
     window.elementStyle.setUnfoldedCat(cat, !value);
   }.bind(this);
 
-  this._handlers['display-rule-in-stylesheet'] = function(event, target)
-  {
-    var broker = cls.ResourceDisplayBroker.get_instance();
-    broker.show_resource_for_ele(target);
-  }.bind(this);
-
   this.target_enter = function(event, action_id)
   {
     if (this.__target)
@@ -829,11 +823,6 @@ eventHandlers.dblclick['edit-css'] = function(event, target)
 eventHandlers.click['css-toggle-category'] = function(event, target)
 {
   this.broker.dispatch_action('css-inspector', 'css-toggle-category',
-                              event, target);
-}
-eventHandlers.click['display-rule-in-stylesheet'] = function(event, target)
-{
-  this.broker.dispatch_action('css-inspector', 'display-rule-in-stylesheet',
                               event, target);
 }
 eventHandlers.click['enable-disable'] = function(event, target)

@@ -23,7 +23,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
 
   this._update_views = function()
   {
-    for (view = '', i = 0; view = this._views[i]; i++)
+    for (var view = '', i = 0; view = this._views[i]; i++)
     {
       window.views[view].update()
     }
@@ -44,7 +44,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
    */
   this.add_entry = function(entry)
   {
-    if( !entry.uri || entry.uri.indexOf(this._url_self) == -1 )
+    if (!entry.uri || entry.uri.indexOf(this._url_self) == -1)
     {
       this._msgs.push(entry);
     }
@@ -52,31 +52,36 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     // before calling update_views, need to make sure the source specific view is not hidden.
     if (entry.source)
     {
-      var source_specific_tab = this._views[this._views.length - 1];
-      for (var i=0; i < ErrorConsoleView.roughViews.length; i++)
-      {
-        if (ErrorConsoleView.roughViews[i].source === entry.source)
+      var source_matching_tabs = this._views.filter(
+        (function(view)
         {
-          source_specific_tab = ErrorConsoleView.roughViews[i].id;
+          var matches_source_filter = views[view].source_filter(entry);
+          var matches_css_filter = this._filter_bound(entry); // todo: combine in source_filter?
+          return matches_source_filter && matches_css_filter;
+        }).bind(this)
+      );
+      for (var i=0, tab; tab = source_matching_tabs[i]; i++)
+      {
+        if (views[tab] && views[tab].is_hidden)
+        {
+          views[tab].is_hidden = false;
+          topCell.enableTab(tab);
         }
       };
-      if(views[source_specific_tab] && views[source_specific_tab].is_hidden)
-      {
-        views[source_specific_tab].is_hidden = false;
-        topCell.disableTab(source_specific_tab, false); // means enable
-      }
     }
     this._update_views();
   };
 
   /**
-   * Clear the visible items in the log, based on source and query, both optional.
-   * The CSS filter will always be applied when it's set.
+   * Clear the visible items in the log, optionally based on query.
+   * The CSS filter will always be applied in get_messages.
    */
-  this.clear = function(source, query)
+  this.clear = function(query, source_filter)
   {
-    var messages = this.get_messages(source, query);
-    var message_ids = messages.map( function(e){return e.id} );
+    var shown_messages = this.get_messages(query)
+                               .filter(source_filter);
+    var message_ids = shown_messages.map( function(e){return e.id} );
+    // leave only ids in _msgs array that are not in message_ids
     this._msgs = this._msgs.filter( function(e){return message_ids.indexOf(e.id) == -1} );
     this._update_views();
   };
@@ -84,6 +89,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this.clear_all = function()
   {
     this._msgs = [];
+    // loop starts at 1, because the "all" tab never gets hidden
     for (var i = 1, view_id; view_id = this._views[i]; i++)
     {
       window.views[view_id].is_hidden = true;
@@ -105,30 +111,38 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     }
   };
 
-  this.get_messages = function(source, query)
+  this.get_messages = function(query)
   {
     var messages = this._msgs;
-    if (source)
-    {
-      if (source.startswith("NOT:"))
-      {
-        var exclude_source_list = source.slice(4).split(",");
-        for (var i=0, exclude_source; exclude_source = exclude_source_list[i]; i++)
-        {
-          messages = messages.filter(function(e) {return e.source != exclude_source;});
-        };
-      }
-      else
-      {
-        messages = messages.filter(function(e) {return e.source == source;});
-      }
-    }
     if (query)
     {
       var query_filter = this._get_string_filter(query);
       messages = messages.filter(query_filter);
     }
     return messages.filter(this._filter_bound);
+  }
+
+  /**
+   * Makes a filter function to match message.source with
+   * source_list (as whitelist or blacklist)
+   */
+  this.make_source_filter = function(source_list, is_blacklist)
+  {
+    var source_filter = function(e) { return true };
+    if (source_list)
+    {
+      source_filter = function(e)
+      {
+        var index = source_list.indexOf(e.source);
+        var matched = index > -1;
+        if (is_blacklist)
+        {
+          matched = !matched;
+        }
+        return matched;
+      }
+    }
+    return source_filter;
   };
 
   this.get_toggled = function()
@@ -138,7 +152,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
 
   this._on_setting_change = function(msg)
   {
-    if( msg.id == 'console' )
+    if (msg.id == 'console')
     {
       switch(msg.key)
       {
@@ -335,7 +349,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData.prototype = new cls.ConsoleLogger.Erro
  * @extends ViewBase
  */
 
-var ErrorConsoleView = function(id, name, container_class, source)
+var ErrorConsoleView = function(id, name, container_class, source_list, is_blacklist)
 {
   container_class || (container_class = "scroll error-console");
 
@@ -368,7 +382,8 @@ var ErrorConsoleView = function(id, name, container_class, source)
     if (this._container)
     {
       window.error_console_data.last_shown_error_view = id;
-      var entries = window.error_console_data.get_messages(source, this.query);
+      var entries = window.error_console_data.get_messages(this.query)
+                                               .filter(this.source_filter);
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
 
@@ -407,15 +422,16 @@ var ErrorConsoleView = function(id, name, container_class, source)
   {
     if (!entries)
     {
-      entries = window.error_console_data.get_messages(source, this.query);
+      entries = window.error_console_data.get_messages(this.query)
+                                           .filter(this.source_filter);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
 
   this.ondestroy = function()
   {
-    delete this._table_ele;
     this._table_ele = null;
+    this._container = null;
   };
 
   this._on_before_search_bound = (function(message)
@@ -424,7 +440,12 @@ var ErrorConsoleView = function(id, name, container_class, source)
     this._create();
   }).bind(this);
 
-  this.init(id, name, container_class, null, "error-view");
+  this._init = function()
+  {
+    this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
+    this.init(id, name, container_class, null, "error-view");
+  }
+  this._init();
 };
 ErrorConsoleView.prototype = ViewBase;
 
@@ -437,41 +458,44 @@ ErrorConsoleView.roughViews =
   {
     id: 'console-script',
     name: ui_strings.M_VIEW_LABEL_ERROR_SCRIPT,
-    source: 'ecmascript'
+    source_list: ['ecmascript']
   },
   {
     id: 'console-css',
     name: ui_strings.M_VIEW_LABEL_ERROR_CSS,
-    source: 'css'
+    source_list: ['css']
   },
   {
     id: 'console-html',
     name: ui_strings.M_VIEW_LABEL_ERROR_HTML,
-    source: 'html'
+    source_list: ['html']
   },
   {
     id: 'console-svg',
     name: ui_strings.M_VIEW_LABEL_ERROR_SVG,
-    source: 'svg'
+    source_list: ['svg']
   },
   {
     id: 'console-storage',
     name: ui_strings.M_VIEW_LABEL_ERROR_STORAGE,
-    source: 'persistent_storage'
+    source_list: ['persistent_storage']
   },
   {
     id: 'console-other',
     name: ui_strings.M_VIEW_LABEL_ERROR_OTHER,
-    source: 'NOT:ecmascript,css,html,svg,persistent_storage'
+    source_list: ["ecmascript", "css", "html", "svg", "persistent_storage"],
+    is_blacklist: true
   }
 ];
 
-ErrorConsoleView.roughViews.bindClearSource = function(source, view_id)
+ErrorConsoleView.roughViews.bindClearSource = function(view_id)
 {
   return function(event, target)
   {
-    var query = window.views[view_id] && window.views[view_id].query;
-    window.error_console_data.clear(source, query);
+    var view = window.views[view_id];
+    var query = view && view.query;
+    var source_filter = view && view.source_filter;
+    window.error_console_data.clear(query, source_filter);
   };
 };
 
@@ -480,9 +504,9 @@ ErrorConsoleView.roughViews.createViews = function()
   var r_v = null, i = 0, handler_id = '';
   for( ; r_v = this[i]; i++)
   {
-    new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source);
+    var view = new ErrorConsoleView(r_v.id, r_v.name, r_v.container_class, r_v.source_list, r_v.is_blacklist);
     window.error_console_data.add_view(r_v.id);
-    handler_id = 'clear-error-console' + ( r_v.source ? '-' + r_v.source : '' );
+    handler_id = 'clear-error' + ( r_v.id ? '-' + r_v.id : '' );
     new ToolbarConfig
     (
       r_v.id,
@@ -510,7 +534,7 @@ ErrorConsoleView.roughViews.createViews = function()
         'console.expand-all-entries'
       ]
     );
-    eventHandlers.click[handler_id] = this.bindClearSource( r_v.source ? r_v.source : '', r_v.id);
+    eventHandlers.click[handler_id] = this.bindClearSource(r_v.id);
 
     /* create the handler code for the text search box
        We make a function here so we close around the view id */
@@ -521,7 +545,7 @@ ErrorConsoleView.roughViews.createViews = function()
       window.views[view_id]._text_search = new TextSearch(); // or pass (1) to make it search on 1 char
       var onShowView = function(msg)
       {
-        if( msg.id == view_id )
+        if (msg.id == view_id)
         {
           var container = UI.get_instance().get_container(view_id);
           text_search.setContainer(container);
@@ -531,7 +555,7 @@ ErrorConsoleView.roughViews.createViews = function()
 
       var onViewDestroyed = function(msg)
       {
-        if( msg.id == view_id )
+        if (msg.id == view_id)
         {
           text_search.cleanup();
         }

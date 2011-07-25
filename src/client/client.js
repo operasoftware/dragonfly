@@ -380,13 +380,14 @@ window.cls.Client = function()
           window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
         }
       }
-      // a short workwround to hide some tabs as long as we don't have the dynamic tabs
+      // a short workaround to hide some tabs as long as we don't have the dynamic tabs
       var
       is_disbaled = null,
       tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
       i = 1;
 
+      // tabs[0] is skipped, as that is console-all, that should never be hidden.
       for( i = 1; tab = tabs[i]; i++ )
       {
         views[tab].is_hidden = true;

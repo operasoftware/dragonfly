@@ -179,7 +179,8 @@
           button.text || "",
           'handler', button.handler,
           'title', button.title,
-          'class', button.handler + ' ui-control' + (button.class_name ? ' ' + button.class_name : '') + (button.text ? ' text-button' : '')
+          'class', button.handler + ' ui-control' + (button.class_name ? ' ' +
+                          button.class_name : '') + (button.text ? ' text-button' : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],

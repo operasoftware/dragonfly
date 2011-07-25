@@ -164,7 +164,6 @@ window.cls.Proxy = function()
           if (retry_count < 5)
           {
             setTimeout(retry_function, 50);
-            // console.log("retry "+ retry_count, msg, data);
             opera.postError("POST request failed, will retry (" + retry_count + ")");
             return;
           }

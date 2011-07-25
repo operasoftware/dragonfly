@@ -912,7 +912,7 @@ cls.Stylesheets = function()
       ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
         (sheet ?
          "<stylesheet-link rt-id='" + rt_id + "'"+
-           " index='" + sheet.index + "' handler='display-rule-in-stylesheet'" +
+           " index='" + sheet.index + "' handler='open-resource-tab'" +
            " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
            " data-resource-line-number='" + (line_number || 0) + "'" +
          ">" +

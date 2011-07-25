@@ -219,7 +219,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   // which means you can't open tabs from elsewhere if you haven't opened
   // the resources view first
   eh.click["resources-all-open"] = this._handle_open_resource_bound;
-  eh.click["open-resource-tab"] = this._handle_open_resource_tab_bound;
+  eh.click['open-resource-tab'] = function(event, target)
+  {
+    var broker = cls.ResourceDisplayBroker.get_instance();
+    broker.show_resource_for_ele(target);
+  }
 
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
