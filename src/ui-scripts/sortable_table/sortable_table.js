@@ -153,7 +153,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
       obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render());
+      table = table.re_render(obj.render())[0];
       obj.post_message("after-render", {table: table});
     }
   }
@@ -167,7 +167,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
       obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render());
+      table = table.re_render(obj.render())[0];
       obj.post_message("after-render", {table: table});
     }
   }
@@ -180,7 +180,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
     obj.post_message("before-render", {table: table});
-    table = table.re_render(obj.render());
+    table = table.re_render(obj.render())[0];
     obj.post_message("after-render", {table: table});
   }
 
@@ -199,7 +199,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   {
     this.columns = this.orgininal_columns.slice(0);
     this.post_message("before-render", {table: table});
-    table = table.re_render(this.render());
+    table = table.re_render(this.render())[0];
     this.post_message("after-render", {table: table});
   }
 
