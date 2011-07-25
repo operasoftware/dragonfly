@@ -27,12 +27,25 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     {
       window.views[view_id].update()
     }
-    var last_shown = this.last_shown_error_view || this._views[0];
-    if (last_shown && window.views[last_shown] && !window.views[last_shown].isvisible())
+
+    var used_for_error_count = this._view_used_for_error_count || this._views[0];
+    if (used_for_error_count &&
+        window.views[used_for_error_count] &&
+        !window.views[used_for_error_count].isvisible()
+    )
     {
-      window.views[last_shown].update_error_count();
+      window.views[used_for_error_count].update_error_count();
     }
   };
+
+  /**
+   * Set view id that will be used when updating the error badge
+   * while no error-view is visible.
+   */
+  this.set_view_to_use_for_error_count = function(view_id)
+  {
+    this._view_used_for_error_count = view_id;
+  }
 
   this.add_view = function(view_id)
   {
@@ -374,26 +387,31 @@ ErrorConsoleViewPrototype = function()
     }
   };
 
+  this._hash_array = function(string, item, index, array)
+  {
+    return string + "," + item.id;
+  }
+
   this._create = function()
   {
     if (this._container)
     {
-      window.error_console_data.last_shown_error_view = this.id;
+      window.error_console_data.set_view_to_use_for_error_count(this.id);
       var entries = window.error_console_data.get_messages(this.query)
                                                .filter(this.source_filter);
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
 
       // when exactly one entry is added since last rendering, render and add only that entry
-      var new_entry_hash = entries.map(function(e){return e.id});
+      var new_entry_hash = entries.slice(0, entries.length - 1).reduce(this._hash_array, "");
       if (
            this._table_ele &&
            this.last_entry_hash &&
            entries.length &&
-           new_entry_hash.slice(0, new_entry_hash.length - 1).join(",") === this.last_entry_hash.join(",")
+           new_entry_hash === this.last_entry_hash
          )
       {
-        var template = window.templates.errors.log_row(entries[entries.length - 1], 
+        var template = window.templates.errors.log_row(entries.last, 
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
@@ -407,7 +425,7 @@ ErrorConsoleViewPrototype = function()
                                                   this.id);
         this._table_ele = this._container.clearAndRender(template);
       }
-      this.last_entry_hash = new_entry_hash;
+      this.last_entry_hash = entries.reduce(this._hash_array, "");
       if (this._scrollTop)
       {
         this._container.scrollTop = this._scrollTop;
