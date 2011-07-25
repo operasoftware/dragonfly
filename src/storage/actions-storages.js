@@ -25,8 +25,7 @@ cls.StorageViewActions = function(id)
 
   this._handlers["edit"] = function(event, target)
   {
-    this.mode = MODE_EDIT; // todo: why doesn't this work?
-    ActionBroker.get_instance()._action_context.mode = MODE_EDIT;
+    this.mode = MODE_EDIT;
 
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
@@ -141,7 +140,6 @@ cls.StorageViewActions = function(id)
   this._handlers["cancel"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
-    ActionBroker.get_instance()._action_context.mode = MODE_DEFAULT;
     this._handlers["update"](event, target);
     return false;
   }.bind(this);
@@ -163,7 +161,6 @@ cls.StorageViewActions = function(id)
   this._handlers["add-key"] = function(event, target)
   {
     this.mode = MODE_EDIT;
-    ActionBroker.get_instance()._action_context.mode = MODE_EDIT;
 
     var row = target;
     while (row && row.nodeName != "tr")
