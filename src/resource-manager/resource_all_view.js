@@ -165,18 +165,6 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this.open_resource_tab = this._open_resource_tab;
 
-  this._handle_open_resource_tab_bound = function(evt, target) {
-    var rid = target.getAttribute("data-resource-id");
-    if (rid)
-    {
-      this.show_resource_for_id(rid);
-    }
-    else
-    {
-      this.show_resource_for_url(target.getAttribute("data-resource-url"))
-    }
-  }.bind(this);
-
   this._handle_open_resource_bound = function(evt, target)
   {
     var rid = target.getAttribute("data-object-id");

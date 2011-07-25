@@ -52,14 +52,13 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     // before calling update_views, need to make sure the source specific view is not hidden.
     if (entry.source)
     {
-      var source_matching_tabs = this._views.filter(
-        (function(view)
-        {
-          var matches_source_filter = views[view].source_filter(entry);
-          var matches_css_filter = this._filter_bound(entry); // todo: combine in source_filter?
-          return matches_source_filter && matches_css_filter;
-        }).bind(this)
-      );
+      var source_matching_tabs = this._views.filter(function(view)
+      {
+        var matches_source_filter = views[view].source_filter(entry);
+        var matches_css_filter = this._filter_bound(entry); // todo: combine in source_filter?
+        return matches_source_filter && matches_css_filter;
+      }, this);
+
       for (var i=0, tab; tab = source_matching_tabs[i]; i++)
       {
         if (views[tab] && views[tab].is_hidden)
@@ -78,11 +77,13 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
    */
   this.clear = function(query, source_filter)
   {
-    var shown_messages = this.get_messages(query)
-                               .filter(source_filter);
-    var message_ids = shown_messages.map( function(e){return e.id} );
+    var shown_messages = this.get_messages(query).filter(source_filter);
+    var message_ids = shown_messages.map(function(e){ return e.id; });
     // leave only ids in _msgs array that are not in message_ids
-    this._msgs = this._msgs.filter( function(e){return message_ids.indexOf(e.id) == -1} );
+    this._msgs = this._msgs.filter(function(e)
+    { 
+      return message_ids.contains(e.id);
+    });
     this._update_views();
   };
 
@@ -351,20 +352,16 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData.prototype = new cls.ConsoleLogger.Erro
 
 var ErrorConsoleView = function(id, name, container_class, source_list, is_blacklist)
 {
-  container_class || (container_class = "scroll error-console");
+  this._init(id, name, container_class, source_list, is_blacklist);
+}
 
-  this._expand_all_state = null;
-  this._table_ele = null;
-
-  if (id !== ErrorConsoleView.roughViews[0].id)
-  {
-    this.fallback_view_id = ErrorConsoleView.roughViews[0].id;
-  }
+ErrorConsoleViewPrototype = function()
+{
 
   this.createView = function(container)
   {
     this._container = container;
-    this._container.setAttribute("data-error-log-id", id);
+    this._container.setAttribute("data-error-log-id", this.id);
     this._container.setAttribute("data-menu", "error-console");
     if (this.query)
     {
@@ -381,7 +378,7 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
   {
     if (this._container)
     {
-      window.error_console_data.last_shown_error_view = id;
+      window.error_console_data.last_shown_error_view = this.id;
       var entries = window.error_console_data.get_messages(this.query)
                                                .filter(this.source_filter);
       this.update_error_count(entries);
@@ -434,20 +431,30 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
     this._container = null;
   };
 
-  this._on_before_search_bound = (function(message)
+  this._on_before_search = function(message)
   {
     this.query = message.search_term;
     this._create();
-  }).bind(this);
+  };
 
-  this._init = function()
+  this._init = function(id, name, container_class, source_list, is_blacklist)
   {
-    this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
+    container_class || (container_class = "scroll error-console");
     this.init(id, name, container_class, null, "error-view");
+    if (id !== ErrorConsoleView.roughViews[0].id)
+    {
+      this.fallback_view_id = ErrorConsoleView.roughViews[0].id;
+    }
+    this._expand_all_state = null;
+    this._table_ele = null;
+    this._on_before_search_bound = this._on_before_search.bind(this);
+    this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
   }
-  this._init();
+  
 };
-ErrorConsoleView.prototype = ViewBase;
+
+ErrorConsoleViewPrototype.prototype = ViewBase;
+ErrorConsoleView.prototype = new ErrorConsoleViewPrototype();
 
 ErrorConsoleView.roughViews =
 [

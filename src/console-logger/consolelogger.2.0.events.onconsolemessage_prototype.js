@@ -8,7 +8,7 @@ cls.ConsoleLogger["2.0"].ConsoleMessage.prototype = new function()
     }
     var matcher = /^.*[\r\n]*/;
     var linematch = matcher.exec(this.description);
-    return this._cached_title = linematch[0];
+    return this._cached_title = linematch ? linematch[0] : " ";
   });
 
   this.__defineGetter__("location_string", function()
