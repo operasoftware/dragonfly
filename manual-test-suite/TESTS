@@ -2517,7 +2517,6 @@ desc:
   - Verify that the first (JS) Error is expanded
   - Verify that the error count on the tob tab is now 3
 
-id: 00300
 label: CSS Filter
 desc:
   - Remove the filter
