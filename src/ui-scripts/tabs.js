@@ -22,7 +22,7 @@ var TabsBase = function()
   this.tabs = [];
   this.activeTab = '';
 
-  
+
 
   this.hasTab = function(ref_id)
   {
@@ -108,14 +108,14 @@ var TabsBase = function()
     }
     return this.is_hidden ? 0 : this._offset_height;
   });
-  
+
   this.__defineSetter__("offsetHeight", function(offset_height)
   {
     this._offset_height = offset_height;
   });
 
   this._super_update = this.update;
-    
+
   this.update = function(force_redraw)
   {
     return this.is_hidden ? null : this._super_update(force_redraw);

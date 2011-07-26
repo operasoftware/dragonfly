@@ -320,6 +320,12 @@ window.cls.Client = function()
     new CompositeView('console_panel',
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
+
+    new CompositeView('old_http_logger',
+                      ui_strings.M_VIEW_LABEL_NETWORK,
+                      layouts.old_http_logger_rough_layout
+                    )
+
   }
 
   this.create_window_controls = function()
@@ -507,7 +513,7 @@ ui_framework.layouts.dom_rough_layout =
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
-      width: 250, 
+      width: 250,
       tabs: function(services)
       {
         return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
@@ -541,7 +547,7 @@ ui_framework.layouts.js_rough_layout =
           height: 250,
           tabs: function(services)
           {
-            return services['ecmascript-debugger'].major_version > 5 ? 
+            return services['ecmascript-debugger'].major_version > 5 ?
                    ['scripts-side-panel', 'breakpoints-side-panel', 'js-search'] :
                    ['scripts-side-panel', 'js-search'];
           }
@@ -630,6 +636,14 @@ ui_framework.layouts.console_rough_layout =
     children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
 }
 
+ui_framework.layouts.old_http_logger_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["request_list"], is_hidden: true } }]
+}
+
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
@@ -642,15 +656,30 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    return [
-      'dom_mode',
-      {view: 'js_mode', tab_class: JavaScriptTab},
-      'network_mode',
-      'resource_panel',
-      'storage',
-      {view: 'console_mode', tab_class: ErrorConsoleTab},
-      'utils',
-      'console_panel'
-    ];
+    if (services['resource-manager'].is_implemented)
+    {
+      return [
+        'dom_mode',
+        {view: 'js_mode', tab_class: JavaScriptTab},
+        'network_mode',
+        'resource_panel',
+        'storage',
+        {view: 'console_mode', tab_class: ErrorConsoleTab},
+        'utils',
+        'console_panel'
+      ];
+    }
+    else
+    {
+      return [
+        'dom_mode',
+        {view: 'js_mode', tab_class: JavaScriptTab},
+        'old_http_logger',
+        'storage',
+        {view: 'console_mode', tab_class: ErrorConsoleTab},
+        'utils',
+        'console_panel'
+      ];
+    }
   }
 };

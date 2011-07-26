@@ -339,7 +339,7 @@ eventHandlers.click['clear-request-list'] = function(event, target)
     };
 
     ActionBroker.get_instance().get_global_handler().
-    register_shortcut_listener('http-text-search', 
+    register_shortcut_listener('http-text-search',
                                cls.Helpers.shortcut_search_cb.bind(textSearch));
 
 })();
