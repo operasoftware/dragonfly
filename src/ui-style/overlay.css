@@ -144,7 +144,7 @@ overlay hr {
 .overlay button,
 .shortcuts-config header {
   background-color: #292929;
-  color: rgba(255, 255, 255, .6);
+  color: rgba(255, 255, 255, .8);
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.14) 0%,
                                        rgba(255,255,255,0.02) 100%);
