@@ -72,6 +72,8 @@ cls.ElementStyle = function()
   var _rt_id;
   var _obj_id;
 
+  this._es_debugger = window.services['ecmascript-debugger'];
+
   this._pseudo_item_list = [NONE];
 
   this._pseudo_element_list = [];
@@ -411,10 +413,13 @@ cls.ElementStyle = function()
     if (stylesheets.hasStylesheetsRuntime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
-      services['ecmascript-debugger'].requestCssGetStyleDeclarations(
-         tag,
-         [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)]
-      );
+      var callback_params = [rt_id, obj_id];
+      if (self._es_debugger.major_version >= 6 && self._es_debugger.minor_version >= 5)
+      {
+        // Add the pseudoSelectorList if we have the right version
+        callback_params.push(self._pseudo_item_list.concat(self._pseudo_element_list));
+      }
+      self._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else
     {
