@@ -508,6 +508,7 @@ DOM.Searchtab
 *************
 
 url: ./test-cases/dom/searchtab/search.html
+id: 00100
 label: Focus the search tab in DOM view
 desc:
  - Open the testcase in DOM view.
@@ -518,6 +519,7 @@ desc:
  - Verify that search tab is selected and search field got focus.
  - Verify that ignore case is turned on by default.
 
+id: 00200
 label: Execute simple text search on document with ignore case
 desc:
  - Make sure that ignore case checkbox is ENABLED.
@@ -527,6 +529,7 @@ desc:
  - Verify that the first hit is highlighted in yellow.
  - Verify that search field says 1/12 on the right side.
 
+id: 00300
 label: Walking through results in DOM search tab
 desc:
  - Press Enter in search field.
@@ -536,6 +539,7 @@ desc:
  - Verify that turnaround works when you reach the ends of the list.
  - Verify that hit counter in the right side of the search field is updated properly.
 
+id: 00400
 label: Focusing results in DOM search tab
 desc:
  - Walk through results by using Enter and focus them using Ctrl-Enter.
@@ -546,6 +550,7 @@ desc:
  - Verify that all focused hits bring up the relevant node in DOM view.
  - Verify that matching string is highlighted in DOM view.
 
+id: 00500
 label: Tree view in DOM search table
 desc:
  - Right-click the DOM view area and select tree view for DOM.
@@ -554,6 +559,7 @@ desc:
  - Verify that turning option off changes search tab back, too.
  - Verify that any new search results are presented in markup view again.
 
+id: 00600
 label: Execute simple case-dependent text search on document
 desc:
  - Click on ignore case checkbox to set it DISABLED.
@@ -565,6 +571,7 @@ desc:
  - Click ignore case checkbox.
  - Verify that search is executed immediately and you got 12 hits (case-insensitive).
 
+id: 00700
 label: Execute search in another runtime
 desc:
  - Search for "test" in normal case-insensitive mode.
@@ -574,6 +581,7 @@ desc:
  - Press Enter.
  - Verify that you get hits from the relevant DOM.
 
+id: 00800
 label: Click search result from another runtime
 desc:
  - Search for "test" in normal case-insensitive mode.
@@ -582,6 +590,7 @@ desc:
  - Click one of the hits in the search tab.
  - Verify that the hit is properly shown in the DOM view in its proper runtime.
 
+id: 00900
 label: Click search result from outdated runtime
 desc:
  - Search for "test" in normal case-insensitive mode.
@@ -595,6 +604,7 @@ desc:
  - Click OK this time.
  - Verify that search has been executed on the new runtime.
 
+id: 01000
 label: Execute simple case-independent regexp search on document
 desc:
  - Make sure that ignore case checkbox to set it ENABLED.
@@ -604,6 +614,7 @@ desc:
  - Click on the hit.
  - Verify the highlight in DOM view, too (\n is not highlighted).
 
+id: 01100
 label: Execute simple case-dependent regexp search on document
 desc:
  - Make sure that ignore case checkbox to set it DISABLED.
@@ -617,6 +628,7 @@ desc:
  - Click on it.
  - Verify highlight in DOM view.
 
+id: 01200
 label: Execute simple CSS search in document
 desc:
  - Switch to CSS mode.
@@ -626,6 +638,7 @@ desc:
  - Search for "[class=testclass]".
  - Verify that you get 2 hits.
 
+id: 01300
 label: Execute simple XPath search in document
 desc:
  - Switch to XPath mode.
@@ -1164,6 +1177,7 @@ Scripts.Search tab
 ******************
 
 url: ./test-cases/dom/searchtab/search.html
+id: 00100
 label: Focus the search tab in Scripts view
 desc:
  - Open the testcase in scripts view.
@@ -1174,6 +1188,7 @@ desc:
  - Verify that search tab is selected and search field got focus.
  - Verify that ignore case is turned on by default.
 
+id: 00200
 label: Execute simple text search on document with ignore case
 desc:
  - Make sure that ignore case checkbox is ENABLED.
@@ -1184,6 +1199,7 @@ desc:
  - Verify that other hits are highlighted in grey.
  - Verify that search field says 1/4 on the right side.
 
+id: 00300
 label: Walking through results in script search tab
 desc:
  - Press Enter in search field.
@@ -1193,6 +1209,7 @@ desc:
  - Verify that turnaround works when you reach the ends of the list.
  - Verify that hit counter in the right side of the search field is updated properly.
 
+id: 00400
 label: Focusing results in script search tab
 desc:
  - Walk through results by using Enter and focus them using Ctrl-Enter.
@@ -1203,6 +1220,7 @@ desc:
  - Verify that all focused hits bring up the relevant line in script view.
  - Verify that matching string is highlighted in script view.
 
+id: 00500
 label: Execute simple case-dependent text search in script
 desc:
  - Click on ignore case checkbox to set it DISABLED.
@@ -1214,6 +1232,7 @@ desc:
  - Click ignore case checkbox.
  - Verify that search is executed immediately and you got the previous case-independent search result back.
 
+id: 00600
 label: Execute search in another script
 desc:
  - Search for "test" in normal case-insensitive mode.
@@ -1223,6 +1242,7 @@ desc:
  - Press Enter.
  - Verify that you get hits from the displayed script (3 hits in 2 lines).
 
+id: 00700
 label: Click search result from another runtime
 desc:
  - Search for "test" in normal case-insensitive mode (in the first script of the runtime).
@@ -1231,6 +1251,7 @@ desc:
  - Click one of the hits in the search tab.
  - Verify that the hit is properly shown in its script (view switched back to the correct script).
 
+id: 00800
 label: Click search result from outdated runtime
 desc:
  - Search for "test" in normal case-insensitive mode.
@@ -1244,6 +1265,7 @@ desc:
  - Click OK this time.
  - Verify that search has been executed on the new runtime.
 
+id: 00900
 label: Execute simple case-independent regexp search on script
 desc:
  - Make sure that ignore case checkbox to set it ENABLED.
@@ -1253,6 +1275,7 @@ desc:
  - Click on the hits.
  - Verify the highlight in script view, too (\n is not highlighted).
 
+id: 01000
 label: Execute simple case-dependent regexp search on script
 desc:
  - Make sure that ignore case checkbox to set it DISABLED.
@@ -1266,6 +1289,7 @@ desc:
  - Click on it.
  - Verify highlight in DOM view.
 
+id: 01100
 label: Execute a search on all scripts on the page
 desc:
  - Make sure that ignore case checkbox to set it ENABLED.
@@ -1276,6 +1300,7 @@ desc:
  - Verify the highlight in script view, too.
  - Verify that all files checkbox can be disabled and search is re-executed instantly.
 
+id: 01200
 label: Execute a search including injected script content
 desc:
  - Make sure that ignore case checkbox to set it ENABLED.
@@ -1911,6 +1936,7 @@ desc:
 
 url: ./test-cases/repl/autocomplete_stopped.html
 
+id: 04050
 label: Autocomplete, stopped
 desc:
   - Navigate to url
@@ -1994,6 +2020,7 @@ desc:
   - Write 'console.log(document.all)' and 'console.log(document.childNodes)' in the command line
   - Verify that you get the same output as before, except that each output is followed by a 'undefined' return statement
 
+id: 04400
 label: Inline expandableJS and DOM objects
 desc:
   - Open the test case
@@ -2011,6 +2038,7 @@ desc:
   - Verify that you get '+XPathResult[+p, +p, +p, +p]' in the command line
   - Verify expandability in place
 
+id: 04500
 label: multiple inline expandableJS and DOM objects in one line
 desc:
   - Open the test case
@@ -2051,7 +2079,7 @@ desc:
 id: 00200
 label: Conditional breakpoint
 desc:
-  - Open the test case
+  - Open the test case // todo: check if the test case is now tricky enough for newest core versions. The loop was optimized away, added some random numbers.
   - Select the 'Scripts' tab and reload the document
   - Select the 'Breakpoints' panel and expand the 'Breakpoints' section
   - Set a breakpoint on line 8 in script 'a.js'
@@ -2402,7 +2430,7 @@ id: 00100
 label: Inspect local storage
 desc:
   - Go to the above url in the above order
-  - Verify that you see local storage item a - j
+  - Verify that you see local storage item a - m
   - Sort by Name and Value and verify the order makes sense and doesn't change when switching between the two
 
 url: ./test-cases/storages/check-storages.html
@@ -2448,7 +2476,7 @@ id: 00100
 label: Inspect session storage
 desc:
   - Go to the above url in the above order
-  - Verify that you see session storage item a - j
+  - Verify that you see session storage item a - m
   - Sort by Name and Value and verify the order makes sense and doesn't change when switching between the two
 
 url: ./test-cases/storages/check-storages.html
@@ -2499,7 +2527,7 @@ desc:
   - Verify that the js and css entries can be expanded to see the details
   - Verify that only the js error is in the JavaScript pane
   - Verify that only the css error is in the CSS pane
-  - Verify that the error count on the top tab is 4
+  - Verify that the error count on the top tab matches the number of errors shown
 
 id: 00200
 label: Expand all
@@ -2517,6 +2545,7 @@ desc:
   - Verify that the first (JS) Error is expanded
   - Verify that the error count on the tob tab is now 3
 
+id: 00400
 label: CSS Filter
 desc:
   - Remove the filter
@@ -2535,7 +2564,8 @@ desc:
   - Press the 'Clear Log' button
   - Switch back to "All" and verify that 2 errors are still shown
   - Switch to the css panel
-  - Right-click and select "Clear all errors"
+  - Right-click. If you have ConsoleLogger 2.1, you'll have a "Clear all errors" option
+  - Select it
   - Verify that all errors are removed, and the specific error tabs are hidden
   - Reload the page and verify the errors are back, and the specific tabs are shown again
 

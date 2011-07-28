@@ -10,7 +10,7 @@ var log = (function()
   var arr = [];
   return function(val)
   {
-    arr.push(val);
+    arr.push(val + "-" + Math.round(Math.random()*10));
   };
 })();
 var test = function()
