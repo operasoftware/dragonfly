@@ -184,6 +184,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 //  'http-logger',
 //  'exec',
     'window-manager',
+    'profiler',
 //  'ecmascript-debugger',
 //  'cookie-manager',
 //  'resource-manager',

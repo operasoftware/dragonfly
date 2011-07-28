@@ -1,0 +1,156 @@
+message <span class="message">EventList</span>
+{
+  message <span class="message">Interval</span>
+  {
+    <span class="comment">/** 
+     * The start of the interval. If not present, this is an left-open interval.
+     */</span>
+    optional <span class="number">double</span> start = 1; 
+    <span class="comment">/** 
+     * The end of the interval. If not present, this is an right-open interval.
+     */</span>
+    optional <span class="number">double</span> end   = 2; 
+  }
+  message <span class="message">Event</span>
+  {
+    <span class="comment">/** 
+     * The type of Event. Some events carry additional information relevant
+     * to their type.
+     */</span>
+    required <span class="number">EventType               </span> type                =  1; 
+    <span class="comment">/** 
+     * The time spent on this task. (Self-time). This time takes place at some
+     * (unknown) point in the 'interval'.
+     * 
+     * Does not include 'overhead'.
+     */</span>
+    required <span class="number">double                  </span> time                =  2; 
+    <span class="comment">/** 
+     * Profiling overhead. This is the time spent doing things which would
+     * normally not happen if we had not been profiling, e.g. storing the
+     * selector text for CSS selector Events.
+     * 
+     * The overhead takes place at some (unknown) point in the 'interval'.
+     */</span>
+    required <span class="number">double                  </span> overhead            =  3; 
+    <span class="comment">/** 
+     * Number of hits on this Event.
+     */</span>
+    required <span class="number">uint32                  </span> hits                =  4; 
+    <span class="comment">/** 
+     * The interval in which the Event took place. An Event may consume time
+     * across multiple time slices (e.g. thread evaluation) without requiring
+     * *all* the time in that interval.
+     * 
+     * The 'time' field contains the time actually spent working on the Event.
+     * There is no exact start and end time for Events which are spread across
+     * time slices, because the self-time spent is fragmented across the
+     * interval.
+     * 
+     * We can therefore only know that the 'time' spent on this Event happened
+     * some time in this interval, but not exactly where. (It would be possible
+     * to expose each fragment of execution, of course, but the amount of data
+     * required to represent this would be to large to handle).
+     * 
+     * The start of the interval represents the first time we started working on
+     * this Event. The end of the interval represents the last time we were done
+     * working on this Event.
+     */</span>
+    optional <span class="message">Interval                </span> interval            =  5; 
+    <span class="comment">/** 
+     * The non-zero ID of this Event.
+     */</span>
+    optional <span class="number">uint32                  </span> eventID             =  6; 
+    <span class="comment">/** 
+     * The parent Event ID, or not set if this is a top-level Event.
+     */</span>
+    optional <span class="number">uint32                  </span> parentEventID       =  7; 
+    <span class="comment">/** 
+     * Aggregated 'time' for all children, including 'time' for this Event.
+     */</span>
+    optional <span class="number">double                  </span> aggregatedTime      =  8; 
+    <span class="comment">/** 
+     * Aggregated 'overhead' for all children, including 'overhead' for this
+     * Event.
+     */</span>
+    optional <span class="number">double                  </span> aggregatedOverhead  =  9; 
+    <span class="comment">/** 
+     * Additional information for 'CSS_SELECTOR_MATCHING' Events.
+     */</span>
+    optional <span class="message">CssSelectorMatchingEvent</span> cssSelectorMatching = 10; 
+    <span class="comment">/** 
+     * Additional information for 'CSS_THREAD_EVALUATION' Events.
+     */</span>
+    optional <span class="message">ThreadEvaluationEvent   </span> threadEvaluation    = 11; 
+    <span class="comment">/** 
+     * Additional information for 'DOCUMENT_PARSING' Events.
+     */</span>
+    optional <span class="message">DocumentParsingEvent    </span> documentParsing     = 12; 
+    <span class="comment">/** 
+     * Additional information for 'CSS_PARSING' Events.
+     */</span>
+    optional <span class="message">CssParsingEvent         </span> cssParsing          = 13; 
+    <span class="comment">/** 
+     * Additional information for 'SCRIPT_COMPILATION' Events.
+     */</span>
+    optional <span class="message">ScriptCompilationEvent  </span> scriptCompilation   = 14; 
+  }
+  message <span class="message">CssSelectorMatchingEvent</span>
+  {
+    <span class="comment">/** 
+     * The selector text, e.g. "#foo .bar".
+     */</span>
+    required <span class="string">string</span> selector = 1; 
+  }
+  message <span class="message">ThreadEvaluationEvent</span>
+  {
+    <span class="comment">/** 
+     * What kind of thread the Event represents.
+     */</span>
+    required <span class="number">ThreadType</span> threadType = 1; 
+    <span class="comment">/** 
+     * If 'threadType' is 'EVENT', this field will contain the event name, e.g.
+     * 'load'.
+     * 
+     * In all other cases, this field is not set.
+     */</span>
+    optional <span class="string">string    </span> eventName  = 2; 
+  }
+  message <span class="message">DocumentParsingEvent</span>
+  {
+    <span class="comment">/** 
+     * The URL of the document that was parsed.
+     */</span>
+    optional <span class="string">string</span> url = 1; 
+  }
+  message <span class="message">CssParsingEvent</span>
+  {
+    <span class="comment">/** 
+     * The URL of the stylesheet that was parsed. If the stylesheet is inlined
+     * in another doucment, that document is used as the URL.
+     */</span>
+    optional <span class="string">string</span> url = 1; 
+  }
+  message <span class="message">ScriptCompilationEvent</span>
+  {
+    <span class="comment">/** 
+     * Describes the origin of the script, for display purposes. E.g.: "inline",
+     * "linked", "Browser JS", and so forth.
+     */</span>
+    optional <span class="string">string</span> scriptType = 1; 
+    <span class="comment">/** 
+     * The URL of the stylesheet that was parsed. If the stylesheet is inlined
+     * in another doucment, that document is used as the URL.
+     */</span>
+    optional <span class="string">string</span> url        = 2; 
+  }
+  <span class="comment">/** 
+   * May not be set if the there are no probes in the list.
+   */</span>
+  optional <span class="message">Interval</span> interval  = 1; 
+  <span class="comment">/** 
+   * List of probes. The probes are ordered according to the start time of
+   * their intervals (increasing order).
+   */</span>
+  repeated <span class="message">Event   </span> eventList = 2; 
+}

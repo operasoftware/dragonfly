@@ -1,0 +1,78 @@
+message <span class="message">GetEventsArg</span>
+{
+  <span class="comment">/** 
+   * Describes different ways Events can be returned.
+   */</span>
+  enum Mode
+  {
+    <span class="comment">/** 
+     * Return each Event unprocessed
+     */</span>
+    ALL = 1;
+    <span class="comment">/** 
+     * Reduce all Events of the same type into the same *virtual* Event.
+     * Timing information and number of hits will then be summarzied into
+     * that single Event (for each type).
+     * 
+     * This makes it possible to provide a summary which says how much time
+     * was spent in total on a certain activity, e.g. CSS selector matching.
+     */</span>
+    REDUCE_UNIQUE_TYPES = 2;
+    <span class="comment">/** 
+     * Reduce all equal Events into the same *virtual* Event. Timing
+     * information and number of hits will then be summarzied into a single
+     * virtual Event.
+     * 
+     * An Event is equal to another Event if they both have the same type,
+     * and both have the same type-specific data. For instance, two CSS
+     * selector matching Events are equal if they have the same selector
+     * text.
+     * 
+     * This makes it possible to pinpoint specific performance problems in
+     * the profile. For instance, an overview of total time spent matching
+     * a single CSS selector can be provided.
+     */</span>
+    REDUCE_UNIQUE_EVENTS = 3;
+  }
+
+  <span class="comment">/** 
+   * ID of the Profile to get Events from.
+   */</span>
+  required <span class="number">uint32   </span> profileID     = 1; 
+  <span class="comment">/** 
+   * ID of the Timeline to get Events from.
+   */</span>
+  required <span class="number">uint32   </span> timelineID    = 2; 
+  <span class="comment">/** 
+   * How Events should be processed before they are returned.
+   */</span>
+  optional <span class="number">Mode     </span> mode          = 3; 
+  <span class="comment">/** 
+   * If present, this Event will be used as the root for the iteration instead
+   * of the Timeline itself. The Event specified here will not be included in
+   * the response. (The highest level Events in the response will be the
+   * specified Event's immediate children).
+   * 
+   * This can be used with a non-default 'Mode' to produce subtree summaries.
+   * 
+   * This, combined with the 'maxDepth' option is useful for UIs where the
+   * timeline is manually expanded by the user.
+   */</span>
+  optional <span class="number">uint32   </span> eventID       = 4; 
+  <span class="comment">/** 
+   * If present, return only Events down to the specified level. The smallest
+   * allowed vaule is '1', which represents the root Event's immediate children.
+   * (A value of '0' represents the root Event itself, which is either the
+   * timeline, or the Event specified by 'eventID'). A value of 2 represents
+   * the root Event's grandchilren, and so forth.
+   * 
+   * A value of '1' will be useful for creating a UI where the user manually
+   * expands an Event he or she is interested in.
+   */</span>
+  optional <span class="number">uint32   </span> maxDepth      = 5; 
+  <span class="comment">/** 
+   * If non-empty, include only the specified types in the result. An empty
+   * list means all event types will be included.
+   */</span>
+  repeated <span class="number">EventType</span> eventTypeList = 6; 
+}
