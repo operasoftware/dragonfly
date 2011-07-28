@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 
 cls.StorageView = function(id, name, container_class, storage_name)
 {
@@ -88,7 +88,8 @@ cls.StorageView = function(id, name, container_class, storage_name)
       var data_storage_id = table.get_attr("parent-node-chain", "data-storage-id");
       var autosize_elements = table.querySelectorAll("textarea");
       var broker = ActionBroker.get_instance();
-      for (var i=0, element; element = autosize_elements[i]; i++) {
+      for (var i=0, element; element = autosize_elements[i]; i++)
+      {
         broker.dispatch_action(data_storage_id, "textarea-autosize", null, element);
       };
     }
