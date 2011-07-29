@@ -376,7 +376,7 @@ var Editor = function(actions)
       this.submit();
     }
 
-    this.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
+    this.context_edit_mode = ele.get_attr("parent-node-chain", "rule-id") == "element-svg"
                            ? this.MODE_SVG
                            : this.MODE_CSS;
     this.context_rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id'));
