@@ -1071,7 +1071,8 @@ cls.ReplView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
-  contextmenu.register("command_line", [
+  var default_menu = 
+  [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
@@ -1083,10 +1084,28 @@ cls.ReplView.create_ui_widgets = function()
       handler: function() {
         broker.dispatch_action("command_line", "help");
       }
-    },    {
-      label: ui_strings.S_CLOSE_COMMAND_LINE,
-      handler: function() {
-        broker.dispatch_action("global", "toggle-console");
+    }, 
+  ];
+  var with_close_option = default_menu.slice(0);
+  with_close_option.push(
+  {
+    label: ui_strings.S_CLOSE_COMMAND_LINE,
+    handler: function(event, target) {
+      broker.dispatch_action("global", "toggle-commandline", event, target);
+    }
+  });
+
+  contextmenu.register("command_line", 
+  [
+    {
+      callback: function(event, target)
+      {
+        if (UI.get_instance().get_mode() == "console_panel")
+        {
+          return default_menu;
+        }
+        return with_close_option;
       }
-    },  ]);
+    }
+  ]);
 };
