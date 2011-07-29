@@ -110,7 +110,7 @@ templates.network_log_main = function(ctx, graphwidth)
 
 templates.network_log_details = function(ctx, selected, listwidth)
 {
-  return  [
+  return [
     ["div", templates.network_log_url_list(ctx, selected, listwidth),
      "class", "network-details-url-list",
      "style", "width: " + listwidth + "px"
@@ -409,7 +409,8 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
   var cnt = Math.round(width / gridwidth);
-  while (--cnt) // skips last one on purpose
+
+  while (--cnt > 0) // skips last one on purpose
   {
     labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
                  "style", "left: " + ((gridwidth * cnt)-30) + "px;",

@@ -41,7 +41,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var ctx = this._service.get_request_context();
     var paused = settings.network_logger.get('paused-update');
     this._container = container;
-
     if (ctx && ctx.resources.length && this._selected)
     {
       this._render_details_view(container);
