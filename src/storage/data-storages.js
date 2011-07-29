@@ -559,6 +559,7 @@ cls.CookiesData = function(id, update_event_name, title)
       length = cookies.length,
       ret = [],
       key = '',
+      has_value = false,
       value = '',
       pos = 0,
       type = '',
@@ -568,8 +569,9 @@ cls.CookiesData = function(id, update_event_name, title)
       {
         cookie = cookies[i];
         pos = cookie.indexOf('=', 0);
-        key = cookie.slice(0, pos);
-        value = decodeURIComponent(cookie.slice(pos+1));
+        has_value = pos !== -1;
+        key = has_value ? cookie.slice(0, pos) : cookie;
+        value = has_value ? decodeURIComponent(cookie.slice(pos+1)) : null;
         type = 'string';
         if (key.length)
         {
