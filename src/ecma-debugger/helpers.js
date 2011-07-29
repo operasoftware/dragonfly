@@ -119,7 +119,7 @@ window.cls.Helpers = function()
     var re_amp = /&/g, re_lt = /</g;
     return function(str)
     {
-      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;");
+      return str ? str.replace(re_amp, "&amp;").replace(re_lt, "&lt;") : str;
     }
   })();
 
