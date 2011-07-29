@@ -564,22 +564,18 @@ cls.JsSourceView = function(id, name, container_class)
       else
       {
         document.getElementById(scroll_id).innerHTML = "";
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          "script source is missing for given id in views.js_source.showLine");
-
-        new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
-          {
-            label: ui_strings.S_BUTTON_OK,
-            handler: function() {
-              runtimes.reloadWindow();
-              return true;
-            }
-          },
-          {
-            label: ui_strings.S_BUTTON_CANCEL
-          }
-        ).show();
-
+        if (typeof script_id == "number" && !isNaN(script_id) &&
+            typeof line_nr == "number"  && !isNaN(line_nr))
+        {
+          new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS, 
+                            function(){ runtimes.reloadWindow(); }).show();
+        }
+        else
+        {
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                          "script source is missing for given id " +
+                          "in views.js_source.showLine");
+        }
         return;
       }
       // reset the stored current line to ensure

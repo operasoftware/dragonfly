@@ -80,18 +80,22 @@ templates.repl_output_traceentry = function(frame_list)
                       ? ui_strings.S_GLOBAL_SCOPE_NAME
                       : frame.objectValue.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME;
     var uri = helpers.get_script_name(frame.scriptID);
-    tpl.push(['div',
-        ['span', function_name],
-        ['span', (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
-           'data-ref-id', "" + i,
-           'data-script-id', String(frame.scriptID),
-           'data-line-number', String(frame.lineNumber),
-           'data-scope-variable-object-id', String(frame.variableObject),
-           'data-this-object-id', String(frame.thisObject),
-           'data-arguments-object-id', String(frame.argumentObject),
-           'class', 'repl-output-go-to-source'
-        ]
-    ]);
+    var entry = ['div', ['span', function_name]];
+    if (typeof frame.scriptID == "number" && !isNaN(frame.scriptID) &&
+        typeof frame.lineNumber == "number"  && !isNaN(frame.lineNumber))
+    {
+      entry.push(
+      ['span', 
+          (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
+          'data-ref-id', "" + i,
+          'data-script-id', String(frame.scriptID),
+          'data-line-number', String(frame.lineNumber),
+          'data-scope-variable-object-id', String(frame.variableObject),
+          'data-this-object-id', String(frame.thisObject),
+          'data-arguments-object-id', String(frame.argumentObject),
+          'class', 'repl-output-go-to-source']);
+    }
+    tpl.push(entry);
   }
   return tpl;
 };
