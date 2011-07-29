@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 
@@ -7,7 +7,6 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.createView = function(container){};
   this.insert_add_cookie_row_after_objectref = function(objectref){};
   this.enter_edit_mode = function(objectref, event){};
-  this.check_to_exit_edit_mode = function(event, target){};
   this.exit_edit_and_save = function(){};
   
   const
@@ -26,8 +25,27 @@ cls.CookieManager.CookieManagerViewBase = function()
       "remove-item": this._remove_item.bind(this),
       "select-row": this.select_row.bind(this),
       "enter-edit-mode": this.enter_edit_mode.bind(this),
-      "check-to-exit-edit-mode": this.check_to_exit_edit_mode.bind(this),
       "add-cookie": this.click_add_cookie_button.bind(this)
+    };
+
+    this.onclick = function(event)
+    {
+      var is_editing = this.mode == MODE_EDIT;
+      /**
+        * Prevent exiting edit mode when
+        * add button was clicked (so more rows can be added at a time) OR
+        * the click was within an edit container (to allow changing fields)
+        */
+      var is_add_button = event.target.hasClass("add_storage_button");
+      var has_edit_parent = event.target.get_ancestor(".edit_mode");
+      if (!is_add_button && !has_edit_parent)
+      {
+        this._handlers["submit"]();
+      }
+      if (is_editing)
+      {
+        return false;
+      }
     };
     ActionBroker.get_instance().register_handler(this);
 
@@ -71,7 +89,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           summer: function(values, groupname, getter) {
             return [
               "button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-              "class", "container-button",
+              "class", "add_storage_button container-button",
               "handler", "cookiemanager-add-cookie-row",
               "unselectable", "on"
             ];
@@ -187,7 +205,6 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._create_context_menu = function(event, row)
   {
-    this.check_to_exit_edit_mode(event, row);
     while (row.nodeName !== "tr" || !row.parentNode) // todo: remove when it's fixed on menus
     {
       row = row.parentNode;
@@ -268,7 +285,6 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.select_row = function(event, target) // public just towards actions
   {
     var event = event || {};
-    this.check_to_exit_edit_mode(event, target); // todo: check if it's okay to always do that, was only in click action before
     /**
       * unselect everything unless
       *   it's a row that adds a storage item
@@ -299,7 +315,6 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.click_add_cookie_button = function(event, target)
   {
-    this.check_to_exit_edit_mode(event, target);
     // find closest runtime above button
     var row = target.parentElement.parentElement;
     var row_with_data_id = row.previousElementSibling;
@@ -366,24 +381,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     };
     this.data.remove_cookies(selected_cookie_objects);
     return false;
-  }
-
-  this.check_to_exit_edit_mode = function(event, target)
-  {
-    if (document.querySelector(".edit_mode") && target.getAttribute("handler") !== "cookiemanager-add-cookie-row")
-    {
-      // find out if target is within some .edit_mode node. don't exit then.
-      var walk_up = target;
-      while (walk_up)
-      {
-        if (walk_up.hasClass("edit_mode"))
-        {
-          return;
-        }
-        walk_up = walk_up.parentElement;
-      }
-      this.exit_edit_and_save();
-    }
   }
 
   this.exit_edit_and_save = function()

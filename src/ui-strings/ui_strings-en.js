@@ -367,7 +367,7 @@ ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear thread log";
 
 /* DESC: Empties the log entries. */
-ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear log";
+ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear shown entries";
 
 /* DESC: Tooltip text for a button on the Thread Log view to clear thread log. */
 ui_strings.S_BUTTON_LABEL_CLEAR_THREAD_LOG = "Clear thread log";
@@ -1196,6 +1196,9 @@ ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 
 /* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
 ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to the window width";
+
+/* DESC: Label on button to clear network graph */
+ui_strings.S_CLEAR_NETWORK_LOG = "Clear log";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";

@@ -281,7 +281,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     [
       {
         handler: 'clear-log-network-view',
-        title: "Clear log"
+        title: ui_strings.S_CLEAR_NETWORK_LOG
       }
     ],
     null,

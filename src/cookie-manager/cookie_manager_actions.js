@@ -19,10 +19,4 @@
   {
     this.broker.dispatch_action("cookie_manager", "add-cookie", event, target);
   }
-
-  window.eventHandlers.click['cookiemanager-input-field'] = function(event, target)
-  {
-    // Empty for now, but preventing click['cookiemanager-container']
-    // which exits editing
-  }
 }

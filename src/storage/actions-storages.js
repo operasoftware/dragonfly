@@ -1,4 +1,4 @@
-﻿var cls = window.cls || (window.cls = {});
+var cls = window.cls || (window.cls = {});
 
 cls.StorageViewActions = function(id)
 {
@@ -298,15 +298,20 @@ cls.StorageViewActions = function(id)
 
   this.onclick = function(event)
   {
-    // was add_storage button clicked?
+    var is_editing = this.mode == MODE_EDIT;
+    /**
+      * Prevent exiting edit mode when
+      * add button was clicked (so more rows can be added at a time) OR
+      * the click was within an edit container (to allow changing fields)
+      */
     var is_add_button = event.target.hasClass("add_storage_button");
-    // was something in an edit-container clicked?
-    var edit_parent = event.target.get_ancestor(".edit_mode");
-
-    if (!is_add_button && !edit_parent && this.mode == MODE_EDIT)
+    var has_edit_parent = event.target.get_ancestor(".edit_mode");
+    if (!is_add_button && !has_edit_parent)
     {
-      // don't pass event and target as the click is out of the context of the storage_view
       this._handlers["submit"]();
+    }
+    if (is_editing)
+    {
       return false;
     }
   };
@@ -390,12 +395,6 @@ window.eventHandlers.click["storage-row"] = function(event, target)
   this.broker.dispatch_action(data_storage_id, "select-row", event, target);
 }
 
-window.eventHandlers.click["storage-view"] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "submit", event, target);
-}
-
 window.eventHandlers.click["storage-add-key"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
@@ -409,16 +408,4 @@ window.eventHandlers.input["storage-input-field"] = function(event, target)
     var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
     this.broker.dispatch_action(data_storage_id, "textarea-autosize", event, target);
   }
-}
-
-window.eventHandlers.focus["textarea-focus"] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "textarea-focus", event, target);
-}
-
-window.eventHandlers.blur["textarea-blur"] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "textarea-blur", event, target);
 }
