@@ -661,7 +661,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     {
       return;
     }
-    return templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts);
+    return templates.cookie_manager.editable_domain(obj._rt_id, this.data._rts, obj.domain);
   }
 
   this._is_secure_renderer = function(obj)
