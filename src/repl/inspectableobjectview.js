@@ -41,7 +41,7 @@ window.cls.InspectableDomNodeView.prototype =
 
   render: function()
   {
-    var tpl = window.templates.inspected_dom_node(this.model, this.show_root);
+    var tpl = window.templates.inspected_dom_node(this.model, this.show_root, false, true);
     return tpl;
   },
 
