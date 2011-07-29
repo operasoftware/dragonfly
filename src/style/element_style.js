@@ -19,7 +19,7 @@ cls.ElementStyle = function()
   PROP_LIST = 1,
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
-  SEARCH_LIST = 10,
+  SEARCH_LIST = cls.ElementStyle.SEARCH_LIST,
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
   MIN_SEARCH_TERM_LENGTH = 1,
@@ -670,3 +670,5 @@ cls.ElementStyle = function()
     searchDelayed(target.value);
   };
 };
+
+cls.ElementStyle.SEARCH_LIST = 12;
