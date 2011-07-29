@@ -139,7 +139,8 @@ cls.CSSInspectorActions = function(id)
 
   this.blur_edit_mode = function()
   {
-    this.escape_edit_mode();
+    this.editor.escape();
+    this.mode = MODE_DEFAULT;
     this.clearSelected();
   };
 
