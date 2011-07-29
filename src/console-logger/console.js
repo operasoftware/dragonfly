@@ -63,24 +63,21 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     }
 
     // before calling update_views, need to make sure the source specific view is not hidden.
-    if (entry.source)
+    var source_matching_tabs = this._views.filter(function(view)
     {
-      var source_matching_tabs = this._views.filter(function(view)
-      {
-        var matches_source_filter = views[view].source_filter(entry);
-        var matches_css_filter = this._filter_bound(entry); // todo: combine in source_filter?
-        return matches_source_filter && matches_css_filter;
-      }, this);
+      var matches_source_filter = views[view].source_filter(entry);
+      var matches_css_filter = this._filter_bound(entry); // todo: combine in source_filter?
+      return matches_source_filter && matches_css_filter;
+    }, this);
 
-      for (var i=0, tab; tab = source_matching_tabs[i]; i++)
+    for (var i=0, tab; tab = source_matching_tabs[i]; i++)
+    {
+      if (views[tab] && views[tab].is_hidden)
       {
-        if (views[tab] && views[tab].is_hidden)
-        {
-          views[tab].is_hidden = false;
-          topCell.enableTab(tab);
-        }
-      };
-    }
+        views[tab].is_hidden = false;
+        topCell.enableTab(tab);
+      }
+    };
     this._update_views();
   };
 
