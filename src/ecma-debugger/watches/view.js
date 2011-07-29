@@ -78,6 +78,16 @@ cls.WatchesView = function(id, name, container_class)
     return true;
   };
 
+  this.blur = function()
+  {
+    if (this.mode == MODE_EDIT)
+    {
+      this._editor.cancel();
+      this.mode = MODE_DEFAULT;
+      return false;
+    }
+  };
+
   this._handlers['edit'] = function(event, target)
   {
     var ele = this._get_editable_item(event, target);
