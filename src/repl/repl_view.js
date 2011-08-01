@@ -542,7 +542,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         {
             candidate = candidate.toLowerCase();
         }
-        return candidate.indexOf(localpart) == 0;
+        return candidate.startswith(localpart);
       });
 
       if (! matches.length) {
@@ -623,7 +623,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
       for (var n=last.length; n; n--)
       {
-        if (first.indexOf(last.slice(0,n)) == 0) { return last.slice(0, n); }
+        if (first.startswith(last.slice(0, n))) { return last.slice(0, n); }
       }
     }
     return "";
@@ -926,7 +926,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var actions = [];
     for (var methodname in this)
     {
-      if (methodname.indexOf("_handle_action_") == 0)
+      if (methodname.startswith("_handle_action_"))
       {
         actions.push(methodname.slice(15));
       }
