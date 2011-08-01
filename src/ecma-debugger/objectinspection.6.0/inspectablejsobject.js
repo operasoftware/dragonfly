@@ -268,6 +268,21 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         }
         if (i == 0 && obj_id == this._obj_id && this._virtual_props)
         {
+          const NAME = 0, ARGS = "arguments";
+          // Not really a clean solution, but at some point 
+          // the "arguments" object was exposed as property of the scope too.
+          // So we remove here the arguments object from the "virtual" 
+          // properties if the property list contains an "arguments" object.
+          if (this._property_list_has_property(proto[PROPERTY_LIST], ARGS))
+          {
+            for (var k = 0, l = this._virtual_props.length - 1; k > -1; k--)
+            {
+              if (this._virtual_props[i][NAME] == ARGS)
+              {
+                this._virtual_props.splice(i, 1);
+              }
+            }
+          }
           proto[PROPERTY_LIST] = this._virtual_props.concat(proto[PROPERTY_LIST] || []);
         }
 
@@ -279,6 +294,16 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   }
 
   /* helpers */
+
+  this._property_list_has_property = function(prop_list, prop_name)
+  {
+    const NAME = 0;
+    for (var i = 0; 
+         prop_list && i < prop_list.length && prop_list[i][NAME] != prop_name;
+         i++)
+      ;
+    return Boolean(prop_list && prop_list[i]);
+  };
 
   this._sort_name = function(a, b)
   {
