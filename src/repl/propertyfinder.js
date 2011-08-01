@@ -99,7 +99,7 @@ window.cls.PropertyFinder = function(rt_id) {
       }
       else
       {
-        var scopes = frameinfo.scope_list.concat(frameinfo.scope_id);
+        var scopes = [frameinfo.scope_id].extend(frameinfo.scope_list || []);
         this._get_object_props(callback, frameinfo, scopes, parts);
       }
     }
