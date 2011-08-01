@@ -810,9 +810,9 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      actions.restore_all_properties(this.context_cur_prop, function() {
-        actions.set_property(this.context_rt_id, this.context_rule_id, props);
-      }.bind(this));
+      var script = actions.get_restore_all_properties_script(this.context_cur_prop);
+      actions.set_property(this.context_rt_id, this.context_rule_id, props,
+                           "", null, script);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
