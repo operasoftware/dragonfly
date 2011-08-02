@@ -99,9 +99,9 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       "script": 1,
       "markup": 1,
       "css": 1,
-      "text": 1,
+      "text": 1
     };
-    
+
     var viewclass =
     {
       image: cls.ImageResourceDetail,
