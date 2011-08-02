@@ -225,7 +225,13 @@ rule:not(.non-editable) property:hover {
 
 .tree-style > div
 {
-  background-color: #fefefe;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  border-bottom-color: #fefefe;
+  background-image: -o-linear-gradient(-90deg, transparent 0px,
+                                               transparent 1px,
+                                               #fefefe 1px);
+  background-repeat: no-repeat;
 }
 
 .tree-style > div > node:first-child:before
