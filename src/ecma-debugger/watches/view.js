@@ -122,6 +122,7 @@ cls.WatchesView = function(id, name, container_class)
       this._editor.submit();
       this._check_no_content();
       this._add_watches_button.disabled = false;
+      this.mode = MODE_DEFAULT;
       return false;
     }
   }.bind(this);
