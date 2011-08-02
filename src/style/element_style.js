@@ -401,6 +401,8 @@ cls.ElementStyle = function()
     }
   };
 
+  this.update_bound = this.update.bind(this);
+
   this.get_computed_style = function()
   {
     return this.getCategoryData(COMP_STYLE);

@@ -732,7 +732,7 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     this.mode = MODE_DEFAULT;
-    window.elementStyle.update();
+    setTimeout(window.elementStyle.update_bound, 1);
 
     return false;
   }.bind(this);
