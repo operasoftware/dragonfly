@@ -112,42 +112,42 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }[resource.type] || cls.GenericResourceDetail;
 
     var view = new viewclass(resource, resource_manager);
-    var handler_name = 'text-search-' + view.id;
-    var textSearch = new TextSearch();
-    var global_handler = ActionBroker.get_instance().get_global_handler();
-    var handler = cls.Helpers.shortcut_search_cb.bind(textSearch);
-    var search_field = 
-    {
-      handler: handler_name,
-      shortcuts: handler_name,
-      title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-    };
-    var onviewcreated = function(msg)
-    {
-      if (msg.id == view.id)
-      {
-        var scroll_container = msg.container.getElementsByClassName('resource-detail-container')[0];
-        if (scroll_container)
-        {
-          textSearch.setContainer(scroll_container.parentElement);
-          var input = view.getToolbarControl(msg.container, handler_name);
-          textSearch.setFormInput(input);
-        }
-      }
-    };
-    var onviewdestroyed = function(msg)
-    {
-      if( msg.id == view.id )
-      {
-        textSearch.cleanup();
-      }
-    };
-    var oninput = function(event, target)
-    {
-      textSearch.searchDelayed(target.value);
-    };
     if (resource.type in searchable_types)
     {
+      var handler_name = 'text-search-' + view.id;
+      var textSearch = new TextSearch();
+      var global_handler = ActionBroker.get_instance().get_global_handler();
+      var handler = cls.Helpers.shortcut_search_cb.bind(textSearch);
+      var search_field = 
+      {
+        handler: handler_name,
+        shortcuts: handler_name,
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+      };
+      var onviewcreated = function(msg)
+      {
+        if (msg.id == view.id)
+        {
+          var scroll_container = msg.container.getElementsByClassName('resource-detail-container')[0];
+          if (scroll_container)
+          {
+            textSearch.setContainer(scroll_container.parentElement);
+            var input = view.getToolbarControl(msg.container, handler_name);
+            textSearch.setFormInput(input);
+          }
+        }
+      };
+      var onviewdestroyed = function(msg)
+      {
+        if( msg.id == view.id )
+        {
+          textSearch.cleanup();
+        }
+      };
+      var oninput = function(event, target)
+      {
+        textSearch.searchDelayed(target.value);
+      };
       new ToolbarConfig(view.id, null, [search_field]);
       messages.addListener('view-created', onviewcreated);
       messages.addListener('view-destroyed', onviewdestroyed);
