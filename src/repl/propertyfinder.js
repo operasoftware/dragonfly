@@ -87,15 +87,17 @@ window.cls.PropertyFinder = function(rt_id) {
     var props = this._cache_get(parts.scope, frameinfo);
 
 
-    if (props) {
+    if (props)
+    {
       props.input = input;
       props.identifier = parts.identifier;
       callback(props);
     }
-    else {
+    else
+    {
       if (parts.scope)
       {
-        this._get_subject_id(callback, parts.scope, frameinfo, parts);
+        this._get_subject_id(callback, parts.scope, frameinfo, parts, context);
       }
       else
       {
@@ -129,13 +131,23 @@ window.cls.PropertyFinder = function(rt_id) {
     return this._cache[key];
   };
 
-  this._get_subject_id = function(callback, scope, frameinfo, parts)
+  this._get_subject_id = function(callback, scope, frameinfo, parts, context)
   {
     var js = "" + scope;
+
+    var varlist = [];
+    if (context)
+    {
+      for (var key in context)
+      {
+        varlist.push([key, context[key]]);
+      }
+    }
+
     var tag = tagManager.set_callback(this, this._got_subject_id,
                                       [callback, frameinfo, parts]);
     this._service.requestEval(
-      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js]
+      tag, [frameinfo.runtime_id, frameinfo.thread_id, frameinfo.index, js, varlist]
     );
   }
 
