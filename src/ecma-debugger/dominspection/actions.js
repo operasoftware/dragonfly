@@ -228,6 +228,11 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
+  var _is_pseudo_element = function(target)
+  {
+    return target.hasClass("pseudo-element");
+  };
+
   var nav_filters =
   {
     attr_text: function(ele)
@@ -703,7 +708,7 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(target))
+    if (!_is_script_node(target) && !_is_pseudo_element(target))
     {
       switch(target.nodeName.toLowerCase())
       {
