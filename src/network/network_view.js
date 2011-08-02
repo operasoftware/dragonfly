@@ -134,7 +134,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       graphwidth = Math.round(Math.min((duration * 0.35), 10000)); // cap graphwidth at 10000px
       has_scrollbar = true;
     }
-
     container.clearAndRender(templates.network_log_main(ctx, graphwidth));
 
     var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
@@ -206,6 +205,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     if (msg.id == "network_logger")
     {
+      if (this._rendertimer)
+      {
+        window.clearTimeout(this._rendertimer);
+        this._renderTimer = null;
+      }
+      this._rendertime = 0;
+      this._rendertimer = null;
       this.ondestroy(); // saves scroll pos
       this.update();
     }
