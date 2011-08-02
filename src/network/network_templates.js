@@ -315,7 +315,7 @@ templates.network_response_body = function(req)
   else
   {
     var bodytpl;
-    if (["script", "markup", "css", "text"].indexOf(req.type) != -1)
+    if (["script", "markup", "css", "text"].contains(req.type))
     {
       bodytpl = ["textarea", req.responsebody.content.stringData];
     }

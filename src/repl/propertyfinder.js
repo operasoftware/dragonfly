@@ -187,7 +187,7 @@ window.cls.PropertyFinder = function(rt_id) {
       identifier: parts.identifier,
     };
 
-    if (ret.props.indexOf("this") == -1)
+    if (! ret.props.contains("this"))
     {
         ret.props.push("this");
     }
