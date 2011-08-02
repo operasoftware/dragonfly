@@ -67,7 +67,21 @@
 
   const
   MODE_DEFAULT = "default",
-  MODE_EDIT = "edit";
+  MODE_EDIT = "edit",
+  RE_TEXT_INPUTS = new RegExp(["text",
+                               "search",
+                               "tel",
+                               "url",
+                               "email",
+                               "password",
+                               "datetime", 
+                               "date",
+                               "month",
+                               "week", 
+                               "time",
+                               "datetime-local", 
+                               "number",
+                               "file"].join("|"), "i");
 
   this.mode = MODE_DEFAULT;
 
@@ -319,18 +333,10 @@
     }
   }
 
-  this.onclick = function(event)
-  {
-    this.mode = /input|textarea/i.test(event.target.nodeName) ?
-                                       MODE_EDIT :
-                                       MODE_DEFAULT;
-  };
-
   this.focus = function(event, container)
   {
-    var text_inputs = /text|search|tel|url|email|password|datetime|date|month|week|time|datetime-local|number|file/i;
     var node_name = event && event.target.nodeName.toLowerCase();
-    if (event && (node_name == "input" && text_inputs.test(event.target.type))
+    if (event && (node_name == "input" && RE_TEXT_INPUTS.test(event.target.type))
               || node_name == "textarea"
     )
     {
@@ -342,7 +348,7 @@
     }
   };
 
-  this.check_mode = this.focus;
+  this.check_mode = this.onclick = this.focus;
 
   this.register_shortcut_listener = function(listener_id, callback, action_list)
   {
