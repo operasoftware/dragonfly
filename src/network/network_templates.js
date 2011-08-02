@@ -410,7 +410,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   var labels = [];
   var cnt = Math.round(width / gridwidth);
 
-  while (--cnt > 0) // skips last one on purpose
+  while (stepsize && --cnt > 0) // skips last one on purpose
   {
     labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
                  "style", "left: " + ((gridwidth * cnt)-30) + "px;",
@@ -536,6 +536,9 @@ templates.grid_info = function(duration, width)
   else if (density > 2)
   {
     step = 30000;
+  }
+  else {
+    step = 0; // don't render lines. too much crap on the screen
   }
 
   return step
