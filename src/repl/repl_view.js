@@ -1068,11 +1068,6 @@ cls.ReplView.create_ui_widgets = function()
       }
     },
     {
-      label: ui_strings.S_HELP_COMMAND_LINE,
-      handler: function() {
-        broker.dispatch_action("command_line", "help");
-      }
-    },    {
       label: ui_strings.S_CLOSE_COMMAND_LINE,
       handler: function() {
         broker.dispatch_action("global", "toggle-console");
