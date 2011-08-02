@@ -187,6 +187,14 @@ cls.RequestContext = function()
     return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
   }
 
+  // return duration rounded upp to closes full second
+  this.get_course_duration = function()
+  {
+    var t = this.get_duration();
+    var nt = Math.ceil(t/1000)*1000;
+    return nt
+  }
+
   this.get_starttime = function()
   {
     return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));

@@ -398,7 +398,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   var rows = templates.network_graph_rows(ctx, width)
-  var duration = ctx.get_duration();
+  var duration = ctx.get_course_duration();
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
@@ -424,7 +424,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_duration();
+  var duration = ctx.get_course_duration();
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
@@ -521,5 +521,22 @@ templates.grid_info = function(duration, width)
   {
     step = 5000;
   }
+  else if (density > 40)
+  {
+    step = 10000;
+  }
+  else if (density > 25)
+  {
+    step = 15000;
+  }
+  else if (density > 5)
+  {
+    step = 20000;
+  }
+  else if (density > 2)
+  {
+    step = 30000;
+  }
+
   return step
 }
