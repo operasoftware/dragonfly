@@ -367,7 +367,10 @@ cls.CookieManager.CookieManagerViewBase = function()
       var sel_cookie_obj = this.data.get_cookie_by_objectref(selected_node.getAttribute("data-object-id"));
       selected_cookie_objects.push(sel_cookie_obj);
     };
-    this.data.remove_cookies(selected_cookie_objects);
+    if (selected_cookie_objects.length)
+    {
+      this.data.remove_cookies(selected_cookie_objects);
+    }
     return false;
   }
 
