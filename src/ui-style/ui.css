@@ -93,25 +93,21 @@ toolbar, panel-toolbar, window-toolbar {
   border-width: 0 1px 1px;
   padding: 3px 2px;
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
-  background-color: #f3f3f3;
+  background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 49%,
-                                       rgba(0,0,0,0.05) 49%,
-                                       rgba(0,0,0,0.05) 52%,
-                                       transparent 52%,
+                                       rgba(255,255,255,0.85) 0,
                                        rgba(255,255,255,0.25) 100%);
-}
 
+}
 panel-toolbar {
   display: block;
   border-width: 0 0 1px 0;
-  background-color: #eaeaea;
+  background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.60) 0,
-                                       rgba(255,255,255,0.30) 100%);
+                                       rgba(255,255,255,0.55) 0,
+                                       rgba(255,255,255,0.25) 100%);
   border-color: #bfbfbf;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4), inset 0 1px 1px 0 rgba(255,255,255,0.9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), inset 0 1px 1px 0 rgba(255,255,255,0.9);
 }
 
 toolbar-buttons, toolbar-switches {
@@ -308,13 +304,10 @@ button.ui-control::before,
 
 .ui-control
 {
-  background: #ddd repeat-x -o-linear-gradient(-90deg, rgba(255,255,255,0.75) 0,
-                                               rgba(255,255,255,0.25) 50%,
-                                               rgba(0,0,0,0.05) 50%,
-                                               rgba(0,0,0,0.05) 52%,
-                                               transparent 52%,
-                                               rgba(255,255,255,0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .5);
+  background: #e6e6e6 repeat-x -o-linear-gradient(-90deg,
+                                    rgba(255,255,255,0.75) 0,
+                                    rgba(255,255,255,0.25) 100%);
+  border: 1px solid rgba(0, 0, 0, .3);
   border-radius: 3px;
   height: 17px;
   width: 17px;
@@ -322,7 +315,7 @@ button.ui-control::before,
   padding: 1px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255,255,255,0.5),
+  box-shadow: 0 1px rgba(255,255,255,0.6),
               inset 0 1px 1px #fff;
   vertical-align: top;
   -o-transition: background-color 0.2s;
@@ -334,16 +327,16 @@ button.ui-control::before,
 .ui-control:not([disabled]):active {
     padding: 2px 1px 0;
     box-shadow: 0 1px #fff,
-                inset 0 1px 2px rgba(0, 0, 0, .4);
-    background-position: 0 1px;
+                inset 0 1px 1px rgba(0, 0, 0, .2);
+    background-color: #ccc;
 }
 .ui-control.is-active {
+    border: 1px solid rgba(0, 0, 0, .4);
     box-shadow: 0 1px #fff,
-                inset 0 1px 2px rgba(0,0,0,0.1),
-                inset 0 0 7px rgba(0,0,0,0.25);
-    background-color: #bfbfbf;
+                inset 0 1px 1px rgba(0, 0, 0, 0.2),
+                inset 0 1px 7px rgba(0, 0, 0, 0.25);
+    background-color: #c5c5c5;
     padding: 2px 1px 0;
-    background-position: 0 1px;
 }
 .ui-control.is-active:active {
     background-color: #aaa;
@@ -432,10 +425,6 @@ toolbar-filters input[type=button]
   background-color: #ddd;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 50%,
-                                       rgba(0,0,0,0.05) 50%,
-                                       rgba(0,0,0,0.05) 52%,
-                                       transparent 52%,
                                        rgba(255,255,255,0.25) 100%);
   border: 1px solid rgba(0, 0, 0, .5);
   border-radius: 3px;
@@ -559,10 +548,6 @@ window-controls:not(.no-tabbar) {
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 50%,
-                                       rgba(0,0,0,0.05) 50%,
-                                       rgba(0,0,0,0.05) 52%,
-                                       transparent 52%,
                                        rgba(255,255,255,0.25) 100%);
 }
 window-controls:not(.no-tabbar)::before {
@@ -869,10 +854,6 @@ window.hud window-container {
     background-color: #000;
     background-image: -o-linear-gradient(-90deg,
                                          rgba(255,255,255,0.33) 0,
-                                         rgba(255,255,255,0.15) 49%,
-                                         rgba(0,0,0,0.05) 49%,
-                                         rgba(0,0,0,0.05) 52%,
-                                         transparent 52%,
                                          rgba(255,255,255,0.15) 100%);
     border: 0;
     border-bottom: 1px solid rgba(255,255,255,.1);
@@ -881,11 +862,8 @@ window.hud window-container {
 .hud .ui-control
 {
     background-color: #000;
-    background-image: -o-linear-gradient(-90deg, rgba(255,255,255,0.33) 0,
-                                         rgba(255,255,255,0.15) 50%,
-                                         rgba(0,0,0,0.05) 50%,
-                                         rgba(0,0,0,0.05) 52%,
-                                         transparent 52%,
+    background-image: -o-linear-gradient(-90deg, 
+                                         rgba(255,255,255,0.33) 0,
                                          rgba(255,255,255,0.15) 100%);
     box-shadow: 0 1px rgba(0,0,0,0.35),
                 inset 0 0 0 1px rgba(255,255,255,.35);
