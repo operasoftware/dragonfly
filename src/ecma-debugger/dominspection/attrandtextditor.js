@@ -279,14 +279,15 @@ var DOMAttrAndTextEditor = function(nav_filters)
               services['ecmascript-debugger'].requestEval(0, 
                   [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
               nav_target.textContent = state.key;
-              break
+              break;
             }
           }
           case "value":
           {
-            if (state.value != null)
+            if (state.key && state.value != null)
             {
-              script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
+              script =  'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                                                crlf_encode(state.value) + '")';
               services['ecmascript-debugger'].requestEval(0, 
                   [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
               nav_target.textContent = '"' + state.value + '"';
