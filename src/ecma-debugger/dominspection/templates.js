@@ -521,8 +521,7 @@
             tree += "<div" + this._margin_style(node, depth_first_ele) + 
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
-                    "<text" +
-                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + 
+                    "<text ref-id='"+ node[ID] + "' " + 
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
