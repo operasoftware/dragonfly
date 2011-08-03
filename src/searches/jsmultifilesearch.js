@@ -133,7 +133,12 @@ var JSMultifileSearchPrototype = function()
   {
     this._last_search_type = REDO_SEARCH;
     this._validate_current_search();
-  }
+  };
+
+  this._is_live_rt = function(rt_id)
+  { 
+    return this._rt_ids && this._rt_ids.contains(rt_id);
+  };
 
   this._validate_current_search = function()
   {
@@ -142,6 +147,7 @@ var JSMultifileSearchPrototype = function()
         this.ignore_case != this._last_ignore_case ||
         this.search_injected_scripts != this._last_search_injected_scripts ||
         this.search_all_files != this._last_search_all_files ||
+        !this._search_rt_ids.every(this._is_live_rt, this) ||
         (this.search_all_files == this._last_search_all_files && this.search_all_files 
          ? false 
          : this._last_selected_script != this._last_script))
@@ -155,6 +161,7 @@ var JSMultifileSearchPrototype = function()
       this._last_script = this._last_selected_script;
       this._match_cursor = -1;
       this.searchresults = {};
+      this._search_rt_ids = [];
       this.reset_match_cursor();
       
       var tmpl = ['div', ui_strings.S_INFO_IS_SEARCHING, 
@@ -192,6 +199,7 @@ var JSMultifileSearchPrototype = function()
                 if (scripts.length)
                 {
                   this.searchresults[rt_id] = scripts;
+                  this._search_rt_ids.push(rt_id);
                 }
               }, this);
             }
@@ -204,6 +212,7 @@ var JSMultifileSearchPrototype = function()
               this._script.search_source(this._last_query,
                                          this.ignore_case, 
                                          this.search_type == TextSearch.REGEXP);
+              this._search_rt_ids.push(this._script.runtime_id);
             }
           }
           setTimeout(this._show_search_results_bound, 0);
@@ -260,6 +269,7 @@ var JSMultifileSearchPrototype = function()
     this._setting = window.settings.js_source;
     this._max_hits_display_count = this._setting.get('max-displayed-search-hits');
     this._rt_ids = null;
+    this._search_rt_ids = null;
     this._last_search_type = undefined;
     this._last_ignore_case = undefined;
     this._last_search_all_files = undefined;
