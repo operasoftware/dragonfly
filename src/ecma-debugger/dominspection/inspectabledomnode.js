@@ -60,7 +60,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         if (node[TYPE] == 1 )
         {
           // TODO take in account doctype if present
-          return /^[A-Z]*$/.test(node[NAME]) && "text/html" || "application/xml";
+          return /^[A-Z][A-Z0-9]*$/.test(node[NAME]) && "text/html" || "application/xml";
         }
       }
     return "";
