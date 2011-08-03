@@ -8,7 +8,7 @@ tools: tools needed for building/distributing/testing
 
 Developing Dragonfly:
 
-When working on the code base it's you should use the "dragonkeeper"
+When working on the code base you should use the "dragonkeeper"
 tool. See the README file for dragonkeeper for more information:
 
 http://bitbucket.org/scope/dragonkeeper/
