@@ -165,15 +165,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
     {
       height += defaults["scrollbar-width"];
     }
+    
+    var width = typeof this._edit_context.initial_color.alpha == 'number'
+              ? this.window_width_with_alpha
+              : this.window_width;
 
     UIWindowBase.showWindow(this.id,
                             this.window_top,
                             this.window_left,
-                            typeof this._edit_context.initial_color.alpha == 'number' ?
-                            this.window_width_with_alpha :
-                            this.window_width,
-                            height);
-  }
+                            width,
+                            height).set_width(width);
+  }          
 
   this.ondestroy = function()
   {
