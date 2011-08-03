@@ -206,6 +206,12 @@ var UIWindowBase = new function()
     return null;
   }
 
+  this.is_window_visible = function(view_id)
+  {
+    var win = this.getWindowByViewId(view_id);
+    return win && document.getElementById(win.id);
+  };
+
   this.close_all_windows = function()
   {
     var ret = [];

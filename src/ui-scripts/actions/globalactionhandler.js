@@ -164,7 +164,7 @@
   this._handlers["toggle-console"] = function(action_id, event, target)
   {
     var has_open_menus = this._close_open_menus();
-    if (has_open_menus)
+    if (has_open_menus || window.views['color-selector'].cancel_edit_color())
     {
       return;
     }

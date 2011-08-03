@@ -131,6 +131,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
     }
   }
 
+  this.cancel_edit_color = function()
+  {
+    if (UIWindowBase.is_window_visible(this.id))
+    {
+      this._color_cb_bound(this._edit_context.initial_color);
+      UIWindowBase.closeWindow(this.id);
+      return true;
+    }
+    return false;
+  };
+
   this._handle_get_color = function(status, message)
   {
     const TYPE = 1, VALUE = 2;
