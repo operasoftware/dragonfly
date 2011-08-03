@@ -333,14 +333,17 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this.enter_edit_mode = function(event, target)
   {
-    this.mode = MODE_EDIT;
-    this._sortable_table.restore_columns(this._table_elem);
-    // can't directly work with target because restore_columns has renewed it
-    var objectref = target.getAttribute("data-object-id");
-    var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-    var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
-    this.select_row(event, target);
-    // todo: find input that is closest to the actual event.target and focus it
+    if (!event.target.get_ancestor('.edit_mode'))
+    {
+      this.mode = MODE_EDIT;
+      this._sortable_table.restore_columns(this._table_elem);
+      // can't directly work with target because restore_columns has renewed it
+      var objectref = target.getAttribute("data-object-id");
+      var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+      var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
+      this.select_row(event, target);
+      // todo: find input that is closest to the actual event.target and focus it
+    }
   }
 
   this._submit = function(event, target)
