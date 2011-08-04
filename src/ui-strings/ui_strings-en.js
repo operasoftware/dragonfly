@@ -792,7 +792,7 @@ ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "Frame";
 /* DESC: Missing description! */
 ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "Grid";
 
-/* DESC: Settings label to define the element highlight color */
+/* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
 
 /* DESC: Missing description! */

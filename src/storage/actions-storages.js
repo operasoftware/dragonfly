@@ -371,7 +371,9 @@ cls.StorageViewActions = function(id)
     }
   };
 
-  contextmenu.register("storage-item", [
+  // bound method, menu id must be unique
+  var menu_id = this.id.replace(/_/g, '-') + "-item";
+  contextmenu.register(menu_id, [
     {
       callback: this._create_context_menu.bind(this)
     }
@@ -388,12 +390,6 @@ window.eventHandlers.click["storage-row"] = function(event, target)
 {
   var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
   this.broker.dispatch_action(data_storage_id, "select-row", event, target);
-}
-
-window.eventHandlers.click["storage-view"] = function(event, target)
-{
-  var data_storage_id = target.get_attr("parent-node-chain", "data-storage-id");
-  this.broker.dispatch_action(data_storage_id, "submit", event, target);
 }
 
 window.eventHandlers.click["storage-add-key"] = function(event, target)
