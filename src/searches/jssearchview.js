@@ -50,30 +50,25 @@ cls.JSSearchView = function(id, name, container_class)
       this._input.focus();
     }
   }.bind(this);
-  
 
-  this._onshortcut = function(action_id, event, target)
+  this._handlers['highlight-next-match'] = function(action_id, event, target)
   {
-    switch (action_id)
-    {
-      case 'highlight-next-match':
-      {
-        this._search.highlight_next();
-        return false;
-      }
-      case 'highlight-previous-match':
-      {
-        this._search.highlight_previous();
-        return false;
-      }
-      case "show-script":
-      {
-        this._search.show_script_of_search_match(event, target);
-        break;
-      }
-    }
-  };
+    this._search.highlight_next();
+    return false;
+  }.bind(this);
 
+  this._handlers['highlight-previous-match'] = function(action_id, event, target)
+  {
+    this._search.highlight_previous();
+    return false;
+  }.bind(this);
+
+  this._handlers['show-script'] = function(action_id, event, target)
+  {
+    this._search.show_script_of_search_match(event, target);
+    return false;
+  }.bind(this);
+  
   this._onsearchtypechange = function(event)
   {
     switch (event.target.name)
@@ -132,6 +127,7 @@ cls.JSSearchView = function(id, name, container_class)
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
+    this.shared_shortcuts = "search";
     this._setting = window.settings.js_source;
     this._rts = window.runtimes;
     this._ui = UI.get_instance();
@@ -178,16 +174,16 @@ cls.JSSearchView = function(id, name, container_class)
     
     this._onscriptselected_bound = this._onscriptselected.bind(this);
     window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
-      this._onshortcut.bind(this, 'highlight-next-match');
+      this._handlers['highlight-next-match'];
     window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
-      this._onshortcut.bind(this, 'highlight-previous-match');
+      this._handlers['highlight-previous-match'];
     window.eventHandlers.change['js-search-type-changed'] = 
       this._onsearchtypechange;
     var action_broker = ActionBroker.get_instance();
     action_broker.register_handler(this);
     action_broker.get_global_handler()
     .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
-                                this._onshortcut.bind(this));
+                                this.handle.bind(this));
     action_broker.get_global_handler().register_search_panel(this.id);
     messages.addListener('script-selected', this._onscriptselected.bind(this));
   };

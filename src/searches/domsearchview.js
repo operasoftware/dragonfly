@@ -45,32 +45,27 @@ cls.DOMSearchView = function(id, name, container_class)
     }
   }.bind(this);
 
-  this._onshortcut = function(action_id, event, target)
+  this._handlers['highlight-next-match'] = function(action_id, event, target)
   {
-    switch (action_id)
-    {
-      case 'highlight-next-match':
-      {
-        this._search.highlight_next();
-        return false;
-      }
-      case 'highlight-previous-match':
-      {
-        this._search.highlight_previous();
-        return false;
-      }
-      case "show-script":
-      {
-        var hit_ele = this._search.get_current_hit_element();
-        if (hit_ele)
-        {
-          hit_ele.dispatchMouseEvent('click');
-        }
-        break;
-      }
+    this._search.highlight_next();
+    return false;
+  }.bind(this);
 
+  this._handlers['highlight-previous-match'] = function(action_id, event, target)
+  {
+    this._search.highlight_previous();
+    return false;
+  }.bind(this);
+
+  this._handlers['show-script'] = function(action_id, event, target)
+  {
+    var hit_ele = this._search.get_current_hit_element();
+    if (hit_ele)
+    {
+      hit_ele.dispatchMouseEvent('click');
     }
-  };
+    return false;
+  }.bind(this);
 
   this._ondomviewupdated = function(msg)
   {
@@ -106,6 +101,7 @@ cls.DOMSearchView = function(id, name, container_class)
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
+    this.shared_shortcuts = "search";
     this._search = new DOMSearch();
     this._redo_search_bound = this._search.highlight_next.bind(this._search);
     this.controls =
@@ -145,9 +141,9 @@ cls.DOMSearchView = function(id, name, container_class)
     }, this);
 
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
-      this._onshortcut.bind(this, 'highlight-next-match');
+      this._handlers['highlight-next-match'];
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
-      this._onshortcut.bind(this, 'highlight-previous-match');
+      this._handlers['highlight-previous-match'];
     eventHandlers.mouseover[HANDLER] =
       this._search.clear_style_highlight_node.bind(this._search);
     eventHandlers.click[SHOW_SEARCH_MATCH] = this._show_search_hit.bind(this);
@@ -157,7 +153,7 @@ cls.DOMSearchView = function(id, name, container_class)
     this._broker.register_handler(this);
     this._broker.get_global_handler()
     .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
-                                this._onshortcut.bind(this), 
+                                this.handle.bind(this), 
                                 ['highlight-next-match',
                                  'highlight-previous-match',
                                  'hide-search']);
