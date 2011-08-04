@@ -58,7 +58,7 @@ window.app.builders.EcmascriptDebugger["5.0"] = function(service)
     cls.CommandLineView.prototype = ViewBase;
     new cls.CommandLineView('command_line',
                             ui_strings.M_VIEW_LABEL_COMMAND_LINE,
-                            'scroll mono', '', 'cmd-focus');
+                            'scroll mono old-command-line', '', 'cmd-focus');
     cls.CndRtSelect.prototype = new CstSelect();
     new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
     cls.CommandLineView.create_ui_widgets();

@@ -10,6 +10,10 @@ cls.CommandLineView = function(id, name, container_class, html, default_handler)
 
   var self = this;
 
+  this.window_header = false;
+  this.window_statusbar = false;
+  this.window_type = UIWindow.HUD;
+
   var __frame_index = -1;
 
   var __container = null;
