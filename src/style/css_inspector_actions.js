@@ -800,7 +800,15 @@ cls.CSSInspectorActions = function(id)
   this.onclick = function(event)
   {
     if (this.mode == MODE_EDIT)
-      return this.edit_onclick(event);
+    {
+      // Whenever we are in edit mode, cancel any additional action
+      // because edit-exit will cause an async update of the whole view
+      // (meaning that actions of the contextmenu would e.g. refer 
+      // to an already replaced view).
+      // See e.g. DFL-2307.
+      this.edit_onclick(event);
+      return false;
+    }
   };
 
   this.handle = function(action_id, event, target)
