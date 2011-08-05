@@ -402,7 +402,8 @@ var JSMultifileSearchPrototype = function()
                                                    offset,
                                                    match_length, 
                                                    TextSearch.HIGHLIGHT_STYLE,
-                                                   false));
+                                                   false,
+                                                   ".error-description"));
           match_length -= script.get_line_length(line_index) - offset;
           offset = 0;
           line_index++;
