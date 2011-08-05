@@ -92,7 +92,8 @@ cls.DOMSearchView = function(id, name, container_class)
 
   this._onsettingchange = function(msg)
   {
-    if (msg.id == "dom" && msg.key == "dom-tree-style")
+    if (msg.id == "dom" && 
+        (msg.key == "dom-tree-style" || msg.key == "force-lowercase"))
     {
       this.update();
     }
