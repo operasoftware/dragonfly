@@ -332,6 +332,7 @@
     {
       this._is_processing = false;
     }
+    window.messages.post("panel-search-executed");
   }.bind(this);
 
   /* implementation */
