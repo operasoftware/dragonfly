@@ -486,23 +486,27 @@ cls.CSSInspectorActions = function(id)
                   ? window.elementStyle.get_style_dec_by_id(rule_id)
                   : window.elementStyle.get_inline_style_dec_by_id(obj_id);
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
-    var script = "";
 
     if (!disabled_style_dec_list[id])
     {
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
-
-    while (style_dec[INDEX_LIST].length)
+    
+    if (window.elementStyle.is_some_declaration_enabled(style_dec))
     {
-      var property = window.css_index_map[style_dec[INDEX_LIST][0]];
-      window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
-      window.elementStyle.remove_property(style_dec, property);
-    }
+      while (style_dec[INDEX_LIST].length)
+      {
+        var property = window.css_index_map[style_dec[INDEX_LIST][0]];
+        window.elementStyle.copy_property(style_dec, 
+                                          disabled_style_dec_list[id],
+                                          property);
+        window.elementStyle.remove_property(style_dec, property);
+      }
 
-    var tag = tagManager.set_callback(null, window.elementStyle.update);
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]]);
+      var tag = tagManager.set_callback(null, window.elementStyle.update);
+      var msg = [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]];
+      services['ecmascript-debugger'].requestEval(tag, msg);
+    }
   };
 
   /**

@@ -23,7 +23,7 @@ cls.ElementStyle = function()
   HAS_MATCHING_SEARCH_PROPS = 11,
   SEARCH_DELAY = 50,
   MIN_SEARCH_TERM_LENGTH = 1,
-  DISABLED_LIST = 12,
+  DISABLED_LIST = cls.ElementStyle.DISABLED_LIST,
 
   // new scope messages
   COMPUTED_STYLE_LIST = 0,
@@ -663,6 +663,19 @@ cls.ElementStyle = function()
     return "inline-obj-id-" + obj_id;
   };
 
+  this.is_some_declaration_enabled = function(declaration)
+  {
+    var is_some_dec_enabled = false, i = 0;
+
+    for ( ; i < declaration[INDEX_LIST].length && !is_some_dec_enabled; i++)
+    {
+      is_some_dec_enabled = !declaration[DISABLED_LIST] || 
+                            !declaration[DISABLED_LIST][i];
+    }
+
+    return is_some_dec_enabled;
+  };
+
   /* */
   messages.addListener('element-selected', onElementSelected);
   messages.addListener('reset-state', onResetState);
@@ -673,4 +686,5 @@ cls.ElementStyle = function()
   };
 };
 
-cls.ElementStyle.SEARCH_LIST = 12;
+cls.ElementStyle.DISABLED_LIST = 12
+cls.ElementStyle.SEARCH_LIST = 13;
