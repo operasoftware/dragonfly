@@ -273,13 +273,22 @@ var DOMAttrAndTextEditor = function(nav_filters)
         {
           case "key":
           {
-            if(state.key)
+            if (state.key)
             {
-              script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + crlf_encode(state.value) + '")';
-              services['ecmascript-debugger'].requestEval(0, 
-                  [state.rt_id, 0, 0, script, [["node", state.obj_id]]]);
+              script = 'node.setAttribute("' + crlf_encode(state.key) + '","' + 
+                                               crlf_encode(state.value) + '")';
+              var msg = [state.rt_id, 0, 0, script, [["node", state.obj_id]]];
+              services['ecmascript-debugger'].requestEval(0, msg);
               nav_target.textContent = state.key;
               break;
+            }
+            else // a newly added attribute
+            {
+              var key = crlf_encode(this.context_cur.key);
+              script = 'node.removeAttribute("' + key + '")';
+              var msg = [state.rt_id, 0, 0, script, [["node", state.obj_id]]];
+              services['ecmascript-debugger'].requestEval(0, msg);
+              // fall trough to value
             }
           }
           case "value":
