@@ -23,9 +23,8 @@ cls.InlineExpander = function(callback)
     ctx.is_inline_expanded = true;
     
     var value_list = ctx.value_list;
-    var dom_obj_list = [];
-    var has_dom_objects = false;
-    var cb = null;
+    var obj_list = [];
+    var cb = this._onexpand_object.bind(this, obj_list, ctx);
 
     // split JS and DOM objects
     for (var i = 0, value, object; value = value_list[i]; i++)
@@ -33,18 +32,15 @@ cls.InlineExpander = function(callback)
       if ((object = value[OBJECT_VALUE]) &&
           (!object[FRIENDLY_PRINTED] || object[FRIENDLY_PRINTED][IS_EXPANDABLE]))
       {
-        if (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]))
+        if (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]) || ctx.traversal)
         {
-          object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, object[OBJECT_ID]);
+          object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, 
+                                                            object[OBJECT_ID]);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_DOM;
-          dom_obj_list.push(object[INLINE_MODEL]);
-
-          if (!cb)
-          {
-            cb = this._onexpand_dom_object.bind(this, dom_obj_list, ctx);
-          }
-
-          object[INLINE_MODEL].expand(cb, object[OBJECT_ID], "node");
+          obj_list.push(object[INLINE_MODEL]);
+          object[INLINE_MODEL].expand(cb,
+                                      object[OBJECT_ID], 
+                                      ctx.traversal || "node");
         }
         else
         {
@@ -57,20 +53,27 @@ cls.InlineExpander = function(callback)
                                                              object[OBJECT_ID],
                                                              prop_name);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_JS;
+          object[INLINE_MODEL].show_root = true;
+          if (ctx.expand)
+          {
+            obj_list.push(object[INLINE_MODEL]);
+            object[INLINE_MODEL].show_root = false;
+            object[INLINE_MODEL].expand(cb);
+          }
         }
       }
     }
 
-    if (!dom_obj_list.length)
+    if (!obj_list.length)
     {
       this._callback(ctx);
     }
 
   };
 
-  this._onexpand_dom_object = function(dom_obj_list, ctx)
+  this._onexpand_object = function(obj_list, ctx)
   {
-    if (dom_obj_list.every(function(model) { return model.has_data(); }))
+    if (obj_list.every(function(model) { return model.has_data(); }))
     {
       this._callback(ctx);
     }

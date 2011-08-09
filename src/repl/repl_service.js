@@ -42,6 +42,7 @@ cls.ReplService = function(view, data)
     const RUNTIME = 0, TYPE = 1;
     var rt_id = msg[RUNTIME];
     var type = msg[TYPE];
+    var ctx = {};
     /**
      * This value indicates which function was called:
      *
@@ -70,10 +71,22 @@ cls.ReplService = function(view, data)
         this._handle_log(msg, rt_id);
         break;
       case 7:
-        this._handle_dir(msg, rt_id);
+        ctx = 
+        {
+          is_unpacked: true,
+          is_friendly_printed: true,
+          expand: true,
+        }
+        this._handle_log(msg, rt_id, ctx);
         break;
       case 8:
-        this._handle_dirxml(msg, rt_id);
+        ctx = 
+        {
+          is_unpacked: true,
+          is_friendly_printed: true,
+          traversal: "subtree",
+        }
+        this._handle_log(msg, rt_id, ctx);
         break;
       case 9:
         this._handle_group(msg);
@@ -129,7 +142,7 @@ cls.ReplService = function(view, data)
     this._data.add_output_trace(message);
   }.bind(this);
 
-  this._handle_log = function(msg, rt_id)
+  this._handle_log = function(msg, rt_id, ctx)
   {
     const VALUELIST = 2;
     const POSITION = 3;
@@ -147,12 +160,10 @@ cls.ReplService = function(view, data)
       };
     }
 
-    var ctx =
-    {
-      callback: this._handle_explored_list.bind(this, rt_id, pos, msg[SEVERITY]),
-      value_list: msg[VALUELIST],
-      rt_id: rt_id,
-    };
+    ctx || (ctx = {});
+    ctx.callback = this._handle_explored_list.bind(this, rt_id, pos, msg[SEVERITY]);
+    ctx.value_list = msg[VALUELIST];
+    ctx.rt_id = rt_id;
 
     this._explore_value_list(ctx);
   };
@@ -240,26 +251,6 @@ cls.ReplService = function(view, data)
     {
       return new cls.JSValue(value, rt_id);
     });
-  };
-
-  this._handle_dirxml = function(msg, rt_id)
-  {
-    const VALUELIST = 2;
-    var values = this._parse_value_list(msg[VALUELIST], rt_id);
-    for (var n=0, e; e=values[n]; n++)
-    {
-      this._data.add_output_iele(rt_id, e.obj_id, e.name);
-    }
-  };
-
-  this._handle_dir = function(msg, rt_id)
-  {
-    const VALUELIST = 2;
-    var values = this._parse_value_list(msg[VALUELIST], rt_id);
-    for (var n=0, e; e=values[n]; n++)
-    {
-      this._data.add_output_iobj(rt_id, e.obj_id, e.name);
-    }
   };
 
   this._process_on_eval_done = function(status, msg, rt_id, thread_id, frame_id)

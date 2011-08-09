@@ -160,12 +160,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "exception":
           this._render_error(e.data);
           break;
-        case "iobj":
-          this._render_inspectable_object(e.data);
-          break;
-        case "iele":
-          this._render_inspectable_element(e.data);
-          break;
         case "pobj":
           this._render_pointer_to_object(e.data);
           break;
@@ -245,40 +239,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_pointer_to_object = function(data)
   {
     this._add_line(templates.repl_output_pobj(data));
-  };
-
-  this._render_inspectable_element = function(data)
-  {
-    if (!data.view) {
-      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
-      data.view = new cls.InspectableDomNodeView(rt_id, obj_id, name, false);
-    }
-
-    if (data.view && !data.view.expanded)
-    {
-      // re-enter once we have the data.
-      data.view.expand(this._render_inspectable_element.bind(this, data));
-      return;
-    }
-
-    this._add_line(data.view.render());
-  };
-
-  this._render_inspectable_object = function(data)
-  {
-    if (!data.view) {
-      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
-      data.view = new cls.InspectableObjectView(rt_id, obj_id, name, false);
-    }
-
-    if (data.view && !data.view.expanded)
-    {
-      // re-enter once we have the data.
-      data.view.expand(this._render_inspectable_object.bind(this, data));
-      return;
-    }
-
-    this._add_line(data.view.render());
   };
 
   this._render_error = function(data)

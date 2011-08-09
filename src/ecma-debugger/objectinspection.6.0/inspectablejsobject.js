@@ -58,6 +58,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.expand_scope_chain = function(){};
   this.collapse_scope_chain = function(){};
 
+  this.has_data = function(){};
+
   /* private */
 
   /*
@@ -105,6 +107,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._root_path = [this._identifier, this._obj_id, 0];
     this._root_path_joined = this._root_path.join();
     this.scope_list = scope_list && scope_list.slice(1);
+    this._has_data = false;
   }
 
   this._get_subtree = function(path)
@@ -238,6 +241,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     // This is a async callback. The tree could already be collapsed.
     else if(tree)
     {
+      this._has_data = true;
       proto_chain = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST];
       for (i = 0; proto = proto_chain[i]; i++)
       {
@@ -472,6 +476,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     });
     this.scope_list_models = null;
   }
+
+  this.has_data = function()
+  {
+    return this._has_data;
+  };
 
   this.__defineGetter__('runtime_id', function()
   {
