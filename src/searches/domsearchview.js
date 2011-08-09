@@ -103,6 +103,7 @@ cls.DOMSearchView = function(id, name, container_class)
   {
     this.init(id, name, container_class);
     this.shared_shortcuts = "search";
+    this.shared_shortcuts_label = ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;
     this._search = new DOMSearch();
     this._redo_search_bound = this._search.highlight_next.bind(this._search);
     this.controls =
