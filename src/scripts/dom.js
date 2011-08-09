@@ -696,6 +696,11 @@ String.prototype.zfill = function(width)
   });
 };
 
+String.prototype.ljust = function(width, char)
+{
+  return this + Array(Math.max(width - this.length + 1, 0)).join(char || ' ');
+};
+
 /**
  * Capitalizes the first character of the string. Lowercases the rest of
  * the characters, unless `only_first` is true.
