@@ -922,13 +922,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   /**
    * action click
    */
-  this.onclick = function()
+  this.onclick = function(event) 
   {
-    if (this._current_scroll === null)
+        if (this._textarea &&
+        !/^(?:input|textarea|button)$/i.test(event.target.nodeName) &&
+        !event.target.hasTextNodeChild())
     {
       this._textarea.focus();
+      this._current_scroll = null;
     }
-  }
+    else
+    {
+      this._current_scroll = this._container.scrollTop;
+    }
+  };
 
   this.get_action_list = function()
   {

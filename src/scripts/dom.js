@@ -553,6 +553,18 @@ Element.prototype.scrollSoftIntoContainerView = function()
   }
 };
 
+Element.prototype.hasTextNodeChild = function()
+{
+  for (var i = 0, child; child = this.childNodes[i]; i++)
+  {
+    if (child.nodeType == document.TEXT_NODE)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Get the text content of the first node in Node with the name nodeName
  * Escapes opening angle brackets into less than entities. If node is not
