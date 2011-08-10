@@ -398,7 +398,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   var rows = templates.network_graph_rows(ctx, width)
-  var duration = ctx.get_course_duration();
+  var duration = ctx.get_coarse_duration();
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
@@ -424,7 +424,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_course_duration();
+  var duration = ctx.get_coarse_duration();
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
@@ -454,7 +454,7 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
       video: "green"
     }
 
-    var min_bar_width = 14;
+    var min_bar_width = 14; // in px
     if (req_duration < min_bar_width)
     {
       req_duration = min_bar_width;

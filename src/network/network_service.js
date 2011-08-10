@@ -188,7 +188,7 @@ cls.RequestContext = function()
   }
 
   // return duration rounded upp to closes full second
-  this.get_course_duration = function()
+  this.get_coarse_duration = function(reqmin)
   {
     var t = this.get_duration();
     var nt = Math.ceil(t/1000)*1000;

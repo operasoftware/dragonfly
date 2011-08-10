@@ -134,8 +134,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       graphwidth = Math.round(Math.min((duration * 0.35), 10000)); // cap graphwidth at 10000px
       has_scrollbar = true;
     }
-    container.clearAndRender(templates.network_log_main(ctx, graphwidth));
 
+    container.clearAndRender(templates.network_log_main(ctx, graphwidth));
     var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
     this._vscrollcontainer = container.querySelector("#main-scroll-container");
     this._vscrollcontainer.style.height = "" + conheight + "px";
