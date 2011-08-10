@@ -1,5 +1,9 @@
 ﻿window.templates || (window.templates = {});
 
+(function(templates) {
+
+const MIN_BAR_WIDTH = 16; // pixels
+
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
   return ["div",
@@ -398,7 +402,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   var rows = templates.network_graph_rows(ctx, width)
-  var duration = ctx.get_coarse_duration();
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
@@ -424,7 +428,8 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_coarse_duration();
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
@@ -543,3 +548,5 @@ templates.grid_info = function(duration, width)
 
   return step
 }
+
+})(window.templates);
