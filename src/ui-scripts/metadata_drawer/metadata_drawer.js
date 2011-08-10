@@ -56,9 +56,15 @@
     var obj = ObjectRegistry.get_instance().get_object(objid);
     var table = target.parentNode.parentNode.parentNode;
     var div = table.parentNode;
+    var search_cell = div.getElementsByClassName('searchcell')[0];
     var container = div.parentNode;
     obj.toggle();
-    div.re_render(obj.render());
+    var new_div = div.re_render(obj.render())[0];
+    if (search_cell && search_cell.firstElementChild)
+    {
+      var new_search_cell = new_div.getElementsByClassName('searchcell')[0];
+      new_search_cell.parentNode.replaceChild(search_cell, new_search_cell);
+    }
     cls.ResourceDetailBase.sync_dimensions(container);
   }
 
