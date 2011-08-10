@@ -94,6 +94,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._setup_single_view = function(resource, resource_manager)
   {
+
     var searchable_types =
     {
       "script": 1,
@@ -113,13 +114,18 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }[resource.type] || cls.GenericResourceDetail;
 
     var view = new viewclass(resource, resource_manager);
+    ActionHandlerInterface.apply(view);
     if (resource.type in searchable_types)
     {
-
+      const 
+      SEARCHFIELD = 0,
+      MOVE_HIGHLIGHT_UP = 1,
+      MOVE_HIGHLIGHT_DOWN = 2;
 
       var handler_name = view.id + '-text-search';
       var textSearch = new TextSearch(2);
       textSearch._update_info = new PanelSearch()._update_info;
+      textSearch._query_selector = "pre"
       textSearch.controls =
       [
         {
@@ -141,9 +147,17 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
           title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
         },
       ];
-
       var global_handler = ActionBroker.get_instance().get_global_handler();
+      ActionBroker.get_instance().register_handler(view);
       var handler = cls.Helpers.shortcut_search_cb.bind(textSearch);
+      view.handle = handler;
+      this.shared_shortcuts = "search";
+      global_handler.register_shortcut_listener(handler_name, handler);
+
+      eventHandlers.click[textSearch.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+      cls.Helpers.shortcut_search_cb.bind(textSearch, 'highlight-next-match');
+      eventHandlers.click[textSearch.controls[MOVE_HIGHLIGHT_UP].handler] = 
+      cls.Helpers.shortcut_search_cb.bind(textSearch, 'highlight-previous-match');
 
       var onviewcreated = function(msg)
       {
@@ -174,11 +188,9 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       {
         textSearch.searchDelayed(target.value);
       };
-      // new ToolbarConfig(view.id, null, [search_field]);
       messages.addListener('view-created', onviewcreated);
       messages.addListener('view-destroyed', onviewdestroyed);
       eventHandlers.input[handler_name] = oninput;
-      global_handler.register_shortcut_listener(handler_name, handler);
     }
     return view;
   };
