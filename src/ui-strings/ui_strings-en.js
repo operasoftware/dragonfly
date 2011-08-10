@@ -367,7 +367,7 @@ ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear thread log";
 
 /* DESC: Empties the log entries. */
-ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear shown entries";
+ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear visible errors";
 
 /* DESC: Tooltip text for a button on the Thread Log view to clear thread log. */
 ui_strings.S_BUTTON_LABEL_CLEAR_THREAD_LOG = "Clear thread log";
@@ -436,7 +436,7 @@ ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Button label to reset the fon selection to the default values */
-ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset to default values";
+ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset default values";
 
 /* DESC: Missing description! */
 ui_strings.S_BUTTON_SAVE = "Save";
@@ -448,7 +448,7 @@ ui_strings.S_BUTTON_SEARCH_EVENT = "Search for an event";
 ui_strings.S_BUTTON_SEARCH_SHORTCUT = "Search keyboard shortcuts";
 
 /* DESC: Set the default value. */
-ui_strings.S_BUTTON_SET_DEFAULT_VALUE = "Set default value";
+ui_strings.S_BUTTON_SET_DEFAULT_VALUE = "Reset default value";
 
 /* DESC: Show request headers. */
 ui_strings.S_BUTTON_SHOW_REQUEST_HEADERS = "Headers";
@@ -463,7 +463,7 @@ ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
 ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED = "Advanced";
 
 /* DESC: Missing description! */
-ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset Default Colors";
+ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
 /* DESC: Missing description! */
 ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
@@ -643,7 +643,7 @@ ui_strings.S_LABEL_COLOR_OPACITY = "Opacity";
 ui_strings.S_LABEL_COLOR_SATURATION = "Saturation";
 
 /* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
-ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add Cookie";
+ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add cookie";
 
 /* DESC: Label for "Add storage_type" button */
 ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE = "Add %s";
@@ -892,7 +892,7 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
 /* DESC: Help text about how to always track resources in request view */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" tab. To retrieve only this body, click the button.";
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
 
 /* DESC: Title for response body section */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
@@ -1048,7 +1048,7 @@ ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT = "Highlight selected 
 ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Display Element objects in the DOM panel when selected in the console";
 
 /* DESC: Draw a border on to selected DOM elements */
-ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Keep elements highlighted when selecting a different element";
+ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Keep elements highlighted";
 
 /* DESC: Switch toggeling if the debugger should automatically reload the page when the user changes the window to debug. */
 ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically when selecting a window";
@@ -1198,7 +1198,7 @@ ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to the window width";
 
 /* DESC: Label on button to clear network graph */
-ui_strings.S_CLEAR_NETWORK_LOG = "Clear log";
+ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
@@ -1296,11 +1296,11 @@ ui_strings.M_VIEW_LABEL_SEARCH = "Search";
 /* DESC: The info text to notify the user that only a part of the search results are displayed. */
 ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
 
-/* DESC: Settings label for tyhe maximum number of search hits in the search panel. */
-ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of displayed serach hits";
+/* DESC: Settings label for the maximum number of search hits in the search panel. */
+ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "searching …";
+ui_strings.S_INFO_IS_SEARCHING = "searching…";
 
 /* DESC: Title of request body section of the request details view. */
 ui_strings.S_NETWORK_REQUEST_BODY_TITLE = "Request body";
@@ -1315,10 +1315,10 @@ ui_strings.S_NETWORK_NO_REQUEST_DATA = "No request data";
 ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
 
 /* DESC: Settings checkbox label for toggling usage tracking */
-ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to the Opera Dragonfly servers whenever Dragonfly is started";
+ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";
 
 /* DESC: Explanation of how to enable content tracking. */
-ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the network options tab to be able to see request bodies";
+ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the \"network options\" panel to be able to see request bodies";
 
 /* DESC: Context menu item for enabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
@@ -1360,7 +1360,7 @@ ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
 ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
 
 /* DESC: Unknown mime type for content */
-ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "No MIME type known for request data";
+ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
 /* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
@@ -1378,13 +1378,13 @@ ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE = "Value";
 ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
-ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search performed.";
+ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
 
 /* DESC: If enabled objects can be expanded inline in the console. */
 ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
 
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
-ui_strings.D_REDO_SEARCH = "The document of the search does no longer exist.\nRedo the search in the current document?";
+ui_strings.D_REDO_SEARCH = "The searched document no longer exist.\nRepeat search in the current document?";
 
 /* DESC: Checkbox label to search in all files in the JS search pane. */
 ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
@@ -1393,4 +1393,4 @@ ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
 
 /* DESC: Tooltip for the injected scripts search settings label. */
-ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, like Browser JS, Extension JS, User JS";
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";

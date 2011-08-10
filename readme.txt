@@ -8,7 +8,7 @@ tools: tools needed for building/distributing/testing
 
 Developing Dragonfly:
 
-When working on the code base it's you should use the "dragonkeeper"
+When working on the code base you should use the "dragonkeeper"
 tool. See the README file for dragonkeeper for more information:
 
 http://bitbucket.org/scope/dragonkeeper/
@@ -89,29 +89,31 @@ simply merging new versions of the JavaScript string files. The
 strings will need to be whetted by the translations team and
 integrated into the Opera translation infrastructure.
 
-For those with access to Opera translations, do the following to
-update the strings:
+To work with translations, you will need Python installed. You will also need
+polib, which can be installed e.g. by:
 
-- Make sure you have python, and that you have installed polib. polib
-  is on pypi.
-- Check out the translations
-- In the tools directory of the dragonfly repo there is a script
-  called po2js.py. Run it as follows:
+  pip install polib
 
-  python ./tools/po2js.py -d <translations checkout dir> ./src/ui-strings
+The translation workflow is as follows:
 
-- If there were new languages added, the language code must be added
-  to the list in ./src/client.xml
+1. While developing and testing, new string are added to src/ui-strings/ui_strings-en.js
 
+2. Before a release, Dragonfly has to be localized. This is handled by the
+translations team. To request translations from the translations team, a so
+called DB file has to be created. To generate this file, run the js2strings.py
+script, like so:
 
-To submit new strings to translators you need to make a diff between
-strings used in dragonfly and the strings that exist in the english.db
-file. This is done with the stringdiff.py script in the tools
-directory.
+  python ./tools/js2strings.py ./src/ui-strings/ui_strings-en.js > <db_file>
 
-- Check out the strings module
-- Run stringdiff.py as follows;
+3. File a BTS task in the TRN project with the DB file attached, CCing relevant people.
 
-  python ./tools/stringdiff.py ./src/ui-strings/en.js <path_to_engish_db>
+4. When strings are returned from the translations team, they are in PO format,
+and needs to be converted back to JS files. This is done like so:
+- Check out the translations from the translation team to a directory
+- Run po2js.py as follows:
 
+  python ./tools/po2js.py -d <po translations checkout dir> ./src/ui-strings
+
+- If there were new languages added, the according JS file needs to be added
+  to ./src/client.xml
 
