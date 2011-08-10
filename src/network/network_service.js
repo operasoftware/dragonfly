@@ -203,7 +203,7 @@ cls.RequestContext = function()
     }
 
     var nt = Math.ceil(t/1000)*1000;
-    return nt
+    return nt;
   }
 
   this.get_starttime = function()

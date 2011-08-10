@@ -208,7 +208,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       if (this._rendertimer)
       {
         window.clearTimeout(this._rendertimer);
-        this._renderTimer = null;
       }
       this._rendertime = 0;
       this._rendertimer = null;
