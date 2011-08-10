@@ -234,7 +234,7 @@ cls.ResourceDetailSearchPrototype = function()
     }
   };
 
-  this.ondestroyed = function()
+  this.ondestroy = function()
   {
     ondestroy_super.call(this);
     this._text_search.cleanup();
@@ -256,7 +256,7 @@ cls.ResourceDetailSearchPrototype = function()
   this.init = function(res, service)
   {
     init_super.call(this, res, service);
-    this._text_search = new DetailResourceSearch(2);
+    this._text_search = new DetailResourceSearch(2); // minimal search term length
     this.controls =
     [
       {
