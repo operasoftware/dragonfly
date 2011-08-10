@@ -38,7 +38,8 @@
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
   MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
   NO_MATCH = TextSearch.NO_MATCH,
-  EMPTY = TextSearch.EMPTY;
+  EMPTY = TextSearch.EMPTY,
+  H_TEXT_LENGTH = '#text'.length;
 
   /* private */
 
@@ -419,7 +420,7 @@
           var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
           if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
           {
-            ctx.offset -= '#text'.length;
+            ctx.offset -= H_TEXT_LENGTH; // '#text'.length;
           }
           return (
           {
