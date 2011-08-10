@@ -67,7 +67,21 @@
 
   const
   MODE_DEFAULT = "default",
-  MODE_EDIT = "edit";
+  MODE_EDIT = "edit",
+  RE_TEXT_INPUTS = new RegExp(["text",
+                               "search",
+                               "tel",
+                               "url",
+                               "email",
+                               "password",
+                               "datetime", 
+                               "date",
+                               "month",
+                               "week", 
+                               "time",
+                               "datetime-local", 
+                               "number",
+                               "file"].join("|"), "i");
 
   this.mode = MODE_DEFAULT;
 
@@ -150,7 +164,7 @@
   this._handlers["toggle-console"] = function(action_id, event, target)
   {
     var has_open_menus = this._close_open_menus();
-    if (has_open_menus)
+    if (has_open_menus || window.views['color-selector'].cancel_edit_color())
     {
       return;
     }
@@ -179,6 +193,12 @@
       return;
     }
 
+    return this._handlers["toggle-commandline"](action_id, event, target);
+
+  }.bind(this);
+
+  this._handlers["toggle-commandline"] = function(action_id, event, target)
+  {
     var visible = (window.views.command_line && window.views.command_line.isvisible());
 
     if (!visible)
@@ -194,6 +214,7 @@
     }
     var button = UI.get_instance().get_button("toggle-console");
     visible ? button.removeClass("is-active") : button.addClass("is-active");
+
     return false;
   }.bind(this);
 
@@ -312,18 +333,10 @@
     }
   }
 
-  this.onclick = function(event)
-  {
-    this.mode = /input|textarea/i.test(event.target.nodeName) ?
-                                       MODE_EDIT :
-                                       MODE_DEFAULT;
-  };
-
   this.focus = function(event, container)
   {
-    var text_inputs = /text|search|tel|url|email|password|datetime|date|month|week|time|datetime-local|number|file/i;
     var node_name = event && event.target.nodeName.toLowerCase();
-    if (event && (node_name == "input" && text_inputs.test(event.target.type))
+    if (event && (node_name == "input" && RE_TEXT_INPUTS.test(event.target.type))
               || node_name == "textarea"
     )
     {
@@ -335,7 +348,7 @@
     }
   };
 
-  this.check_mode = this.focus;
+  this.check_mode = this.onclick = this.focus;
 
   this.register_shortcut_listener = function(listener_id, callback, action_list)
   {

@@ -111,7 +111,7 @@ var VirtualTextSearchBase = function()
 
   this.highlight_matches = function(script){};
 
-  this.set_hit = function(node, offset, length, style, do_store){};
+  this.set_hit = function(node, offset, length, style, do_store, skip_query){};
 
   this.get_hit_count = function(){};
   
@@ -291,7 +291,7 @@ var VirtualTextSearchBase = function()
     *
     * @param {Element} node The DOM element which represents a line of the source file.
     */
-  this._search_node = function(node) 
+  this._search_node = function(node, skip_query) 
   {
     var cur_node = node && node.firstChild, pos = 0, hit = null, span = null, length = 0;
     while (cur_node && this._offset > -1) 
@@ -300,7 +300,10 @@ var VirtualTextSearchBase = function()
       {
         case 1:
         {
-          this._search_node(cur_node);
+          if (!skip_query || !cur_node.matchesSelector(skip_query))
+          {
+            this._search_node(cur_node, skip_query);
+          }
           break;
         }
         case 3:
@@ -528,7 +531,7 @@ var VirtualTextSearchBase = function()
   }
 
   /* search window */
-  this.set_hit = function(node, offset, length, style, do_store)
+  this.set_hit = function(node, offset, length, style, do_store, skip_query)
   {
     this._offset = offset;
     this._length = length;
@@ -537,7 +540,7 @@ var VirtualTextSearchBase = function()
     {
       this._hits.push(this._hit);
     }
-    this._search_node(node);
+    this._search_node(node, skip_query);
     this._hit.forEach(style == TextSearch.HIGHLIGHT_STYLE ?
                       this._set_highlight_style :
                       this._set_default_style);

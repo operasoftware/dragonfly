@@ -97,7 +97,7 @@ cls.Stylesheets = function()
   VAL_LIST = 2,
   PRIORITY_LIST = 3,
   OVERWRITTEN_LIST = 4,
-  SEARCH_LIST = 10,
+  SEARCH_LIST = cls.ElementStyle.SEARCH_LIST,
   HAS_MATCHING_SEARCH_PROPS = 11,
   DISABLED_LIST = 12,
 

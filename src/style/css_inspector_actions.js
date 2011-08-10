@@ -139,7 +139,8 @@ cls.CSSInspectorActions = function(id)
 
   this.blur_edit_mode = function()
   {
-    this.escape_edit_mode();
+    this.editor.escape();
+    this.mode = MODE_DEFAULT;
     this.clearSelected();
   };
 
@@ -150,15 +151,20 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property = function(rt_id, rule_id, declaration, prop_to_remove, callback)
+  this.set_property = function(rt_id, rule_id, declaration, 
+                               prop_to_remove, callback, script)
   {
+    script || (script = "");
+
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
+      this.set_property_svg(rt_id, rule_id, declaration, 
+                            prop_to_remove, callback, script);
     }
     else
     {
-      this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
+      this.set_property_css(rt_id, rule_id, declaration, 
+                            prop_to_remove, callback, script);
     }
   };
 
@@ -169,10 +175,12 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
+  this.set_property_css = function(rt_id, rule_id, declaration, 
+                                   prop_to_remove, callback, script)
   {
+    script || (script = "");
+
     var prop = this.normalize_property(declaration[0]);
-    var script = "";
 
     // TEMP: workaround for CORE-31191: updating a property with !important is discarded
     var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
@@ -210,14 +218,17 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
+  this.set_property_svg = function(rt_id, rule_id, declaration, 
+                                   prop_to_remove, callback, script)
   {
+    script || (script = "");
+
     var prop = this.normalize_property(declaration[0]);
 
-    var script = "object.setAttribute(\"" +
-                     prop + "\", \"" +
-                     declaration[1].replace(/"/g, "\\\"") + "\"" +
-                 ");";
+    script += "object.setAttribute(\"" +
+               prop + "\", \"" +
+               declaration[1].replace(/"/g, "\\\"") + "\"" +
+              ");";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
@@ -398,7 +409,7 @@ cls.CSSInspectorActions = function(id)
    * @param {String} exception Do not restore a property with this name. Useful when
    *                           restoring all properties except an overwritten one
    */
-  this.restore_all_properties = function(exception, callback)
+  this.get_restore_all_properties_script = function(exception)
   {
     var style_dec = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
@@ -418,12 +429,7 @@ cls.CSSInspectorActions = function(id)
       }
     }
 
-    if (script)
-    {
-      var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
-      services['ecmascript-debugger'].requestEval(tag,
-        [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
-    }
+    return script;
   };
 
   /**
@@ -480,23 +486,27 @@ cls.CSSInspectorActions = function(id)
                   ? window.elementStyle.get_style_dec_by_id(rule_id)
                   : window.elementStyle.get_inline_style_dec_by_id(obj_id);
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
-    var script = "";
 
     if (!disabled_style_dec_list[id])
     {
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
-
-    while (style_dec[INDEX_LIST].length)
+    
+    if (window.elementStyle.is_some_declaration_enabled(style_dec))
     {
-      var property = window.css_index_map[style_dec[INDEX_LIST][0]];
-      window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
-      window.elementStyle.remove_property(style_dec, property);
-    }
+      while (style_dec[INDEX_LIST].length)
+      {
+        var property = window.css_index_map[style_dec[INDEX_LIST][0]];
+        window.elementStyle.copy_property(style_dec, 
+                                          disabled_style_dec_list[id],
+                                          property);
+        window.elementStyle.remove_property(style_dec, property);
+      }
 
-    var tag = tagManager.set_callback(null, window.elementStyle.update);
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]]);
+      var tag = tagManager.set_callback(null, window.elementStyle.update);
+      var msg = [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]];
+      services['ecmascript-debugger'].requestEval(tag, msg);
+    }
   };
 
   /**
@@ -726,7 +736,7 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     this.mode = MODE_DEFAULT;
-    window.elementStyle.update();
+    setTimeout(window.elementStyle.update_bound, 1);
 
     return false;
   }.bind(this);
@@ -794,7 +804,15 @@ cls.CSSInspectorActions = function(id)
   this.onclick = function(event)
   {
     if (this.mode == MODE_EDIT)
-      return this.edit_onclick(event);
+    {
+      // Whenever we are in edit mode, cancel any additional action
+      // because edit-exit will cause an async update of the whole view
+      // (meaning that actions of the contextmenu would e.g. refer 
+      // to an already replaced view).
+      // See e.g. DFL-2307.
+      this.edit_onclick(event);
+      return false;
+    }
   };
 
   this.handle = function(action_id, event, target)

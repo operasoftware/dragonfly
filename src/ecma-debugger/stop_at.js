@@ -191,7 +191,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     // sub message ObjectValue
     OBJECT_ID = 0,
     NAME = 5,
-    SCOPE_LIST = 7;
+    SCOPE_LIST = 7,
+    ARGUMENT_VALUE = 8,
+    THIS_VALUE = 9;
     
     if (status)
     {
@@ -228,7 +230,9 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           this_id : frame[THIS_OBJECT],
           id: i,
           rt_id: stop_at.runtime_id,
-          scope_list: frame[SCOPE_LIST]
+          scope_list: frame[SCOPE_LIST],
+          argument_value: frame[ARGUMENT_VALUE],
+          this_value: frame[THIS_VALUE],
         }
       }
       

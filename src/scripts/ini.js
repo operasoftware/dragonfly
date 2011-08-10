@@ -199,6 +199,15 @@
           "enter": "submit",
           "escape": "cancel"
         }
+      },
+      "search":
+      {
+        "default":
+        {
+          "enter": "highlight-next-match",
+          "shift enter": "highlight-previous-match",
+          "ctrl enter": "show-script",
+        },
       }
     },
     mac:
@@ -393,6 +402,15 @@
           "enter": "submit",
           "escape": "cancel"
         }
+      },
+      "search":
+      {
+        "default":
+        {
+          "enter": "highlight-next-match",
+          "shift enter": "highlight-previous-match",
+          "cmd enter": "show-script",
+        },
       }
     },
   },

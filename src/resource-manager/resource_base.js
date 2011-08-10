@@ -106,7 +106,7 @@ cls.ResourceDetailBase = function()
   this.go_to_line = function(container, data)
   {
 
-    if (!data || !data.lines[0]) return;
+    if (!data || !(data.lines && data.lines[0])) return;
     this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
     this.clear_line_numbers(this._root_ele)
     this._line = parseInt(data.lines[0]);

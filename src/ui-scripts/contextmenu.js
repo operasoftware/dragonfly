@@ -63,11 +63,13 @@ function ContextMenu() {
     var menu_id = null;
     var last_found_menu_id = '';
     var collected_menus = [];
+    var items = null;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
     while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
+      items = null;
       if (menu_id)
       {
         last_found_menu_id = menu_id;
@@ -98,7 +100,7 @@ function ContextMenu() {
       var specs = speclinks.get_spec_links(spec);
       if (specs.length)
       {
-        var items = specs.map(function(spec)
+        items = specs.map(function(spec)
         {
           return {
             label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
@@ -116,7 +118,7 @@ function ContextMenu() {
           all_items.push(ContextMenu.separator);
         }
       }
-
+      
       if (items)
       {
         all_items = all_items.concat(items);

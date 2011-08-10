@@ -450,6 +450,9 @@ cls.StorageDataBase = new function()
           },
           sorter: this._make_sorter("value")
         }
+      },
+      options: {
+        no_default_menu: true,
       }
     }
   };

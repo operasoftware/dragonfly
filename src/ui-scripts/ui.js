@@ -51,6 +51,11 @@
 
   this.get_visible_tabs = function(){};
 
+  /**
+    * To get the top bar view id.
+    */
+  this.get_mode = function() {};
+
 
   /* implemenation */
   this.get_tabbar = function(id)
@@ -157,6 +162,12 @@
   this.get_visible_tabs = function()
   {
     return window.topCell && window.topCell.get_visible_tabs() || [];
+  };
+
+  this.get_mode = function()
+  {
+    return window.topCell && window.topCell.tab &&
+           window.topCell.tab.activeTab || '';
   };
 
 }

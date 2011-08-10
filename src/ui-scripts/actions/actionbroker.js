@@ -115,6 +115,12 @@ var ActionBroker = function()
 
   this.focus_handler = function(handler_id, event){};
 
+  /**
+    * To get the label for shared shortcuts.
+    * @param {String} shared_shortcuts
+    */
+  this.get_shared_shortcuts_label = function(shared_shortcuts){};
+
   /* constants */
 
   const GLOBAL_HANDLER = ActionBroker.GLOBAL_HANDLER_ID;
@@ -135,6 +141,7 @@ var ActionBroker = function()
   this._delays = {};
   this._modal_click_handler_setter = null;
   this._modal_click_handler = null;
+  this._shared_shortcuts_labels = {};
 
   this._set_action_context_bound = (function(event)
   {
@@ -321,6 +328,11 @@ var ActionBroker = function()
     if (action_handler.shared_shortcuts)
     {
       this._inherited_handlers[action_handler.shared_shortcuts] = action_handler;
+      if (action_handler.shared_shortcuts_label)
+      {
+        this._shared_shortcuts_labels[action_handler.shared_shortcuts] = 
+          action_handler.shared_shortcuts_label;
+      }
     }
   }
 
@@ -490,6 +502,11 @@ var ActionBroker = function()
       this._last_event_target = event.target;
       this._set_current_handler(handler_id, event, view.get_container());
     }
+  };
+
+  this.get_shared_shortcuts_label = function(shared_shortcuts)
+  {
+    return this._shared_shortcuts_labels[shared_shortcuts] || ""; 
   };
 
   if (document.readyState == "complete")

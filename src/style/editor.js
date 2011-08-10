@@ -376,7 +376,7 @@ var Editor = function(actions)
       this.submit();
     }
 
-    this.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
+    this.context_edit_mode = ele.get_attr("parent-node-chain", "rule-id") == "element-svg"
                            ? this.MODE_SVG
                            : this.MODE_CSS;
     this.context_rt_id = parseInt(ele.parentElement.parentElement.getAttribute('rt-id'));
@@ -810,9 +810,9 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      actions.restore_all_properties(this.context_cur_prop, function() {
-        actions.set_property(this.context_rt_id, this.context_rule_id, props);
-      }.bind(this));
+      var script = actions.get_restore_all_properties_script(this.context_cur_prop);
+      actions.set_property(this.context_rt_id, this.context_rule_id, props,
+                           "", null, script);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {

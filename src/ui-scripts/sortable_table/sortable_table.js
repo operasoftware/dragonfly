@@ -265,13 +265,18 @@ window.templates = window.templates || {};
 
 templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sortby, reversed)
 {
-  return ["table",
-          templates.sortable_table_header(tabledef, cols, sortby, reversed),
-          templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
-          "class", "sortable-table",
-          "data-table-object-id", objectid,
-          "data-menu", "sortable-table-grouper"
-         ]
+  var table =  ["table",
+                templates.sortable_table_header(tabledef, cols, sortby, reversed),
+                templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
+                "class", "sortable-table",
+                "data-table-object-id", objectid,
+               ]
+               
+  if (!tabledef.options || !tabledef.options.no_default_menu)
+  {
+    table.push("data-menu", "sortable-table-grouper");
+  }
+  return table;
 }
 
 templates.sortable_table_header = function(tabledef, cols, sortby, reversed)

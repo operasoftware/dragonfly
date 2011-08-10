@@ -178,16 +178,18 @@ Element.prototype.render = Document.prototype.render = function(args, namespace)
 
 Element.prototype.re_render = function(args)
 {
-  var parent = this.parentNode;
+  var parent = this.parentNode, ret = [];
   if (parent)
   {
     var div = document.createElement('div');
     var doc_frag = document.createDocumentFragment();
     div.render(args);
     while (div.firstChild)
-      doc_frag.appendChild(div.firstChild);
+    {
+      ret.push(doc_frag.appendChild(div.firstChild));
+    }
     parent.replaceChild(doc_frag, this);
-    return parent.childNodes;
+    return ret;
   }
 }
 
@@ -551,6 +553,18 @@ Element.prototype.scrollSoftIntoContainerView = function()
   }
 };
 
+Element.prototype.hasTextNodeChild = function()
+{
+  for (var i = 0, child; child = this.childNodes[i]; i++)
+  {
+    if (child.nodeType == document.TEXT_NODE)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Get the text content of the first node in Node with the name nodeName
  * Escapes opening angle brackets into less than entities. If node is not
@@ -692,6 +706,11 @@ String.prototype.zfill = function(width)
     var fill = Array(Math.max(width - str.length + 1, 0)).join(0);
     return sign + fill + rest;
   });
+};
+
+String.prototype.ljust = function(width, char)
+{
+  return this + Array(Math.max(width - this.length + 1, 0)).join(char || ' ');
 };
 
 /**

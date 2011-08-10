@@ -160,12 +160,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         case "exception":
           this._render_error(e.data);
           break;
-        case "iobj":
-          this._render_inspectable_object(e.data);
-          break;
-        case "iele":
-          this._render_inspectable_element(e.data);
-          break;
         case "pobj":
           this._render_pointer_to_object(e.data);
           break;
@@ -245,40 +239,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_pointer_to_object = function(data)
   {
     this._add_line(templates.repl_output_pobj(data));
-  };
-
-  this._render_inspectable_element = function(data)
-  {
-    if (!data.view) {
-      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
-      data.view = new cls.InspectableDomNodeView(rt_id, obj_id, name, false);
-    }
-
-    if (data.view && !data.view.expanded)
-    {
-      // re-enter once we have the data.
-      data.view.expand(this._render_inspectable_element.bind(this, data));
-      return;
-    }
-
-    this._add_line(data.view.render());
-  };
-
-  this._render_inspectable_object = function(data)
-  {
-    if (!data.view) {
-      var rt_id = data.rt_id, obj_id=data.obj_id, name=data.name;
-      data.view = new cls.InspectableObjectView(rt_id, obj_id, name, false);
-    }
-
-    if (data.view && !data.view.expanded)
-    {
-      // re-enter once we have the data.
-      data.view.expand(this._render_inspectable_object.bind(this, data));
-      return;
-    }
-
-    this._add_line(data.view.render());
   };
 
   this._render_error = function(data)
@@ -922,13 +882,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   /**
    * action click
    */
-  this.onclick = function()
+  this.onclick = function(event) 
   {
-    if (this._current_scroll === null)
+        if (this._textarea &&
+        !/^(?:input|textarea|button)$/i.test(event.target.nodeName) &&
+        !event.target.hasTextNodeChild())
     {
       this._textarea.focus();
+      this._current_scroll = null;
     }
-  }
+    else
+    {
+      this._current_scroll = this._container.scrollTop;
+    }
+  };
 
   this.get_action_list = function()
   {
@@ -1071,7 +1038,8 @@ cls.ReplView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
-  contextmenu.register("command_line", [
+  var default_menu = 
+  [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
@@ -1083,10 +1051,28 @@ cls.ReplView.create_ui_widgets = function()
       handler: function() {
         broker.dispatch_action("command_line", "help");
       }
-    },    {
-      label: ui_strings.S_CLOSE_COMMAND_LINE,
-      handler: function() {
-        broker.dispatch_action("global", "toggle-console");
+    }, 
+  ];
+  var with_close_option = default_menu.slice(0);
+  with_close_option.push(
+  {
+    label: ui_strings.S_CLOSE_COMMAND_LINE,
+    handler: function(event, target) {
+      broker.dispatch_action("global", "toggle-commandline", event, target);
+    }
+  });
+
+  contextmenu.register("command_line", 
+  [
+    {
+      callback: function(event, target)
+      {
+        if (UI.get_instance().get_mode() == "console_panel")
+        {
+          return default_menu;
+        }
+        return with_close_option;
       }
-    },  ]);
+    }
+  ]);
 };

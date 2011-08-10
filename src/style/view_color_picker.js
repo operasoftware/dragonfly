@@ -131,6 +131,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
     }
   }
 
+  this.cancel_edit_color = function()
+  {
+    if (UIWindowBase.is_window_visible(this.id))
+    {
+      this._color_cb_bound(this._edit_context.initial_color);
+      UIWindowBase.closeWindow(this.id);
+      return true;
+    }
+    return false;
+  };
+
   this._handle_get_color = function(status, message)
   {
     const TYPE = 1, VALUE = 2;
@@ -165,15 +176,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
     {
       height += defaults["scrollbar-width"];
     }
+    
+    var width = typeof this._edit_context.initial_color.alpha == 'number'
+              ? this.window_width_with_alpha
+              : this.window_width;
 
     UIWindowBase.showWindow(this.id,
                             this.window_top,
                             this.window_left,
-                            typeof this._edit_context.initial_color.alpha == 'number' ?
-                            this.window_width_with_alpha :
-                            this.window_width,
-                            height);
-  }
+                            width,
+                            height).set_width(width);
+  }          
 
   this.ondestroy = function()
   {

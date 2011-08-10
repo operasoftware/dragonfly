@@ -228,6 +228,11 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
+  var _is_pseudo_element = function(target)
+  {
+    return target.hasClass("pseudo-element");
+  };
+
   var nav_filters =
   {
     attr_text: function(ele)
@@ -703,7 +708,7 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(target))
+    if (!_is_script_node(target) && !_is_pseudo_element(target))
     {
       switch(target.nodeName.toLowerCase())
       {
@@ -874,15 +879,18 @@ cls.DOMInspectorActions = function(id)
   this._handlers["remove-node"] = function(event, target)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
-    var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
-    var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
-    var tag = 0;
-    if (!settings.dom.get("update-on-dom-node-inserted"))
-    {
-      var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
-      tag = tag_manager.set_callback(null, cb);
+    if (ele)
+    {  
+      var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
+      var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
+      var tag = 0;
+      if (!settings.dom.get("update-on-dom-node-inserted"))
+      {
+        var cb = window.dom_data.remove_node.bind(window.dom_data, rt_id, ref_id);
+        tag = tag_manager.set_callback(null, cb);
+      }
+      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
     }
-    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
   }.bind(this);
 
   this.edit_onclick = function(event)

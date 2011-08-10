@@ -89,6 +89,7 @@
         var type = this._pseudo_element_map[pseudo_element[PSEUDO_ELEMENT_TYPE]];
         pseudo_elements[pseudo_element[PSEUDO_ELEMENT_TYPE]] =
           "<div handler='spotlight-node' " +
+               "class='spotlight-node'" +
                "ref-id='" + element[ID] + "'" +
                "data-pseudo-element='" + type + "'" +
                this._margin_style(element) +
@@ -405,10 +406,16 @@
 
             if (has_only_text_content)
             {
-              class_name = re_formatted.test(node_name)
-                         ? " class='pre-wrap " +
-                           (is_script_node ? "non-editable" : "") + " spotlight-node'"
-                         : '';
+              class_name = " class='spotlight-node";
+              if (re_formatted.test(node_name))
+              {
+                class_name += " pre-wrap";
+                if (is_script_node)
+                {
+                  class_name += " non-editable";
+                }
+              }
+              class_name += "'";
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
@@ -514,8 +521,7 @@
             tree += "<div" + this._margin_style(node, depth_first_ele) + 
                              (no_contextmenu ? "" : "data-menu='dom-element' ") + 
                              ">" +
-                    "<text" +
-                    (!is_script_node ? " ref-id='"+ node[ID] + "' " : "") + 
+                    "<text ref-id='"+ node[ID] + "' " + 
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }

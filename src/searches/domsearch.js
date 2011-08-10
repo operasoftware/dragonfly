@@ -38,7 +38,8 @@
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
   MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
   NO_MATCH = TextSearch.NO_MATCH,
-  EMPTY = TextSearch.EMPTY;
+  EMPTY = TextSearch.EMPTY,
+  H_TEXT_LENGTH = '#text'.length;
 
   /* private */
 
@@ -332,6 +333,7 @@
     {
       this._is_processing = false;
     }
+    window.messages.post("panel-search-executed");
   }.bind(this);
 
   /* implementation */
@@ -404,28 +406,41 @@
 
   this.get_search_hit = function()
   {
-    var hit = this._hits[this._match_cursor];
-    var ret = {};
-    if (hit)
+    var hit = null;
+    if (TOKEN_HIGHLIGHT.indexOf(this.search_type) != -1)
     {
-      var search_hit_ele = hit[0].get_ancestor(this._query_selector);
-      if (search_hit_ele)
+      hit = this._hits[this._match_cursor];
+      var ret = {};
+      if (hit)
       {
-        var ctx = {is_target: false, offset: 0, target: hit[0]};
-        var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
-        if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
+        var search_hit_ele = hit[0].get_ancestor(this._query_selector);
+        if (search_hit_ele)
         {
-          ctx.offset -= '#text'.length;
+          var ctx = {is_target: false, offset: 0, target: hit[0]};
+          var offset = this._get_match_offset(search_hit_ele.firstChild, ctx);
+          if (search_hit_ele.getElementsByClassName('dom-search-text-node')[0])
+          {
+            ctx.offset -= H_TEXT_LENGTH; // '#text'.length;
+          }
+          return (
+          {
+            offset: ctx.offset,
+            length: hit[0].textContent.length,
+            object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
+            runtime_id: this._last_selected_runtime,
+            target: search_hit_ele
+          });
         }
-        return (
-        {
-          offset: ctx.offset,
-          length: hit[0].textContent.length,
-          object_id: parseInt(search_hit_ele.getAttribute('obj-id')),
-          runtime_id: this._last_selected_runtime,
-          target: search_hit_ele
-        });
       }
+    }
+    else if (hit = this._match_nodes[this._match_node_cursor])
+    {
+      return (
+      {
+        object_id: parseInt(hit.getAttribute('obj-id')),
+        runtime_id: this._last_selected_runtime,
+        target: hit
+      });
     }
     return null;
   };

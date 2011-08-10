@@ -234,13 +234,13 @@ cls.Breakpoints = function()
       state -= pointer_state;
       if (!state)
       {
-        script.breakpoint_states[line_nr] = BP_DISABLED;
+        state = BP_DISABLED;
       }
-      if (script.breakpoint_states[line_nr] < BP_ENABLED)
+      if (state < BP_ENABLED)
       {
-        script.breakpoint_states[line_nr] += BP_DELTA_ENABLE;
+        state += BP_DELTA_ENABLE;
       }
-      script.breakpoint_states[line_nr] += pointer_state;
+      script.breakpoint_states[line_nr] = state + pointer_state;
       // message signature has changes with version 6.0
       // AddBreakpoint means always to a source line
       // for events it's now AddEventBreakpoint

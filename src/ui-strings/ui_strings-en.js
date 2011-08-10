@@ -205,7 +205,7 @@ ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
 ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
 
 /* DESC: Tooltip that explains File:Line notation (e.g. in Error Log) */
-ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE = "Line %(LINE) in %(URI)";
+ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE = "Line %(LINE)s in %(URI)s";
 
 /* DESC: Label for option that clears all errors */
 ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
@@ -792,7 +792,7 @@ ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "Frame";
 /* DESC: Missing description! */
 ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "Grid";
 
-/* DESC: Missing description! */
+/* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
 
 /* DESC: Missing description! */

@@ -53,6 +53,9 @@ cls.StorageView = function(id, name, container_class, storage_name)
     var table = message.table;
     if (table)
     {
+      var data_storage_id = table.get_attr("parent-node-chain", "data-storage-id");
+      var menu_id = data_storage_id.replace(/_/g, '-') + "-item";
+
       if (this._restore_selection)
       {
         for (var i=0, objectref; objectref = this._restore_selection[i]; i++)
@@ -68,7 +71,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
       // add context menus and handlers to rows
       for (var i=0, row; row = table.childNodes[i]; i++)
       {
-        row.setAttribute("data-menu", "storage-item");
+        row.setAttribute("data-menu", menu_id);
         // summation-row should not have select and edit handlers
         if (!row.hasClass("sortable-table-summation-row"))
         {
@@ -85,7 +88,6 @@ cls.StorageView = function(id, name, container_class, storage_name)
         }
       }
       // textarea-autosize
-      var data_storage_id = table.get_attr("parent-node-chain", "data-storage-id");
       var autosize_elements = table.querySelectorAll("textarea");
       var broker = ActionBroker.get_instance();
       for (var i=0, element; element = autosize_elements[i]; i++)

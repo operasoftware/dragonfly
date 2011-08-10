@@ -7,10 +7,9 @@ cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
   {
     this._super_createView(container);
     var quick_find = this.getToolbarControl(container, 'css-inspector-text-search');
-    if( quick_find && elementStyle.getSearchTerm() )
+    if (quick_find && elementStyle.getSearchTerm())
     {
       quick_find.value = elementStyle.getSearchTerm();
-      quick_find.previousElementSibling.textContent = "";
     }
   }
   this.init(id, name, view_list, default_unfolded_list);

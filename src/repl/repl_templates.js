@@ -34,38 +34,38 @@ templates.repl_output_native_or_pobj = function(thing, severity)
   };
 };
 
-templates.repl_output_pobj = function(data)
+templates.repl_output_pobj = function(entry)
 {
   var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
-                        /(?:Element)$/.test(data.name)
-  if (data.model)
+                        /(?:Element)$/.test(entry.name)
+  if (entry.model)
   {
     var tmpl = null;
-    if (data.model_template == cls.ReplService.INLINE_MODEL_TMPL_DOM)
+    if (entry.model_template == cls.ReplService.INLINE_MODEL_TMPL_DOM)
     {
-      tmpl = window.templates[data.model_template](data.model, null, false, true);
+      tmpl = window.templates[entry.model_template](entry.model, null, false, true);
     }
     else
     {
-      tmpl = window.templates[data.model_template](data.model);
+      tmpl = window.templates[entry.model_template](entry.model, entry.model.show_root);
     }
-    // the returned template is a innerHTML
-    // the render call can handle that if the innerHTML is passed 
-    // as a single field in an array 
+    // The returned template is an innerHTML string.
+    // The render call can handle that if the innerHTML is passed 
+    // as a single field in an array.
     var ret = ['span', [tmpl], 'class', 'repl-inline-expandable'];
-    if (data.model instanceof cls.InspectableJSObject)
+    if (entry.model instanceof cls.InspectableJSObject)
     {
       ret.push('handler', 'inspect-object-inline-link');
     }
     return ret;
-  }
+  };
 
   return [
     'code',
-    data.friendly_printed ? this.friendly_print(data.friendly_printed) : data.name,
+    entry.friendly_printed ? this.friendly_print(entry.friendly_printed) : entry.name,
     'handler', is_element_type ? 'inspect-node-link' : 'inspect-object-link',
-    'rt-id', data.rt_id.toString(),
-    'obj-id', data.obj_id.toString(),
+    'rt-id', entry.rt_id.toString(),
+    'obj-id', entry.obj_id.toString(),
     'class', 'repl-pobj ' + (is_element_type ? 'inspect-node-link' : 'inspect-object-link')
   ];
 };
@@ -80,18 +80,22 @@ templates.repl_output_traceentry = function(frame_list)
                       ? ui_strings.S_GLOBAL_SCOPE_NAME
                       : frame.objectValue.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME;
     var uri = helpers.get_script_name(frame.scriptID);
-    tpl.push(['div',
-        ['span', function_name],
-        ['span', (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
-           'data-ref-id', "" + i,
-           'data-script-id', String(frame.scriptID),
-           'data-line-number', String(frame.lineNumber),
-           'data-scope-variable-object-id', String(frame.variableObject),
-           'data-this-object-id', String(frame.thisObject),
-           'data-arguments-object-id', String(frame.argumentObject),
-           'class', 'repl-output-go-to-source'
-        ]
-    ]);
+    var entry = ['div', ['span', function_name]];
+    if (typeof frame.scriptID == "number" && !isNaN(frame.scriptID) &&
+        typeof frame.lineNumber == "number"  && !isNaN(frame.lineNumber))
+    {
+      entry.push(
+      ['span', 
+          (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
+          'data-ref-id', "" + i,
+          'data-script-id', String(frame.scriptID),
+          'data-line-number', String(frame.lineNumber),
+          'data-scope-variable-object-id', String(frame.variableObject),
+          'data-this-object-id', String(frame.thisObject),
+          'data-arguments-object-id', String(frame.argumentObject),
+          'class', 'repl-output-go-to-source']);
+    }
+    tpl.push(entry);
   }
   return tpl;
 };

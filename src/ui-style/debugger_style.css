@@ -569,7 +569,7 @@ offsets value  {
   margin-left: -1px;
 }
 
-.dom div:not(.info-box)
+.dom-tree div:not(.info-box)
 {
   margin: -2px 0;
 }

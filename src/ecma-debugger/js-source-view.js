@@ -104,12 +104,12 @@ cls.JsSourceView = function(id, name, container_class)
 
   var clearLineNumbers = function()
   {
-    var lines = line_numbers.getElementsByTagName('input'), line = null, i=0;
+    var lines = line_numbers.getElementsByTagName('input');
 
     var breakpoints = line_numbers.getElementsByTagName('span');
 
 
-    for( ; line = lines[i]; i++)
+    for (var i = 0, line; line = lines[i]; i++)
     {
       if( i == 0 )
       {
@@ -123,8 +123,6 @@ cls.JsSourceView = function(id, name, container_class)
       //breakpoints[i].style.removeProperty('background-position');
       breakpoints[i].style.backgroundPosition = '0 0';
     }
-
-
   }
 
   var updateBreakpoints = function(force_repaint)
@@ -564,22 +562,18 @@ cls.JsSourceView = function(id, name, container_class)
       else
       {
         document.getElementById(scroll_id).innerHTML = "";
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          "script source is missing for given id in views.js_source.showLine");
-
-        new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
-          {
-            label: ui_strings.S_BUTTON_OK,
-            handler: function() {
-              runtimes.reloadWindow();
-              return true;
-            }
-          },
-          {
-            label: ui_strings.S_BUTTON_CANCEL
-          }
-        ).show();
-
+        if (typeof script_id == "number" && !isNaN(script_id) &&
+            typeof line_nr == "number"  && !isNaN(line_nr))
+        {
+          new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS, 
+                            function(){ runtimes.reloadWindow(); }).show();
+        }
+        else
+        {
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                          "script source is missing for given id " +
+                          "in views.js_source.showLine");
+        }
         return;
       }
       // reset the stored current line to ensure
@@ -750,11 +744,13 @@ cls.JsSourceView = function(id, name, container_class)
       }
       clearLineNumbers();
     }
+    __current_script = {};
     self.clearLinePointer();
     __current_line = 0;
     __timeout_clear_view = 0;
     view_invalid = true;
     __view_is_destroyed = true;
+    runtimes.setSelectedScript(-1);
   }
 
   var onRuntimeDestroyed = function(msg)
@@ -970,6 +966,10 @@ cls.ScriptSelect = function(id, class_name)
                display_uri.uri :
                script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
                ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
+      }
+      else if(selected_script_id == -1)
+      {
+        return ' ';
       }
       else
       {

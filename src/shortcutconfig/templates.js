@@ -33,10 +33,13 @@
     {
       if (broker.get_actions_with_handler_id(key))
         sections.push({id: key, 
-                       name: window.views[key].name,
+                       name: window.views[key]
+                           ? window.views[key].name
+                           : broker.get_shared_shortcuts_label(key),
                        is_search: Boolean(shortcuts_match),
                        has_match: shortcuts_match && shortcuts_match[key].has_match});
     }
+
     return (
     ['ul', 
       sections.map(this.scc_section.bind(this, shortcuts, shortcuts_match)), 

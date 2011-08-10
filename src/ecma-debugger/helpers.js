@@ -40,11 +40,12 @@ window.cls.Helpers = function()
   this.get_script_name = function(script_id)
   {
     var script = runtimes.getScript(script_id);
-    if (!script)
+    var rt = script && runtimes.getRuntime(script.runtime_id);
+    if (!script || !rt)
     {
       return null;
     }
-    return script.uri || runtimes.getRuntime(script.runtime_id).uri;
+    return script.uri || rt.uri;
   };
 
   /**
@@ -119,7 +120,7 @@ window.cls.Helpers = function()
     var re_amp = /&/g, re_lt = /</g;
     return function(str)
     {
-      return str.replace(re_amp, "&amp;").replace(re_lt, "&lt;");
+      return str ? str.replace(re_amp, "&amp;").replace(re_lt, "&lt;") : str;
     }
   })();
 

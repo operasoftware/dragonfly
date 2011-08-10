@@ -467,7 +467,8 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
       ele = ele.parentNode;
     }
     this._set_style_metrics_target(ele, class_name);
-    if (active_model = window.dominspections && window.dominspections.active)
+    if ((active_model = window.dominspections && window.dominspections.active) &&
+        window.settings.dom.get('highlight-on-hover'))
     {
       this.spotlight(active_model.target, 0, class_name || "default");
     }

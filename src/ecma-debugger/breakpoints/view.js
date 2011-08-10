@@ -94,11 +94,14 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._handlers['add-or-edit-condition'] = function(event, target)
   {
-    var bp_ele = event.target.has_attr('parent-node-chain', 'data-breakpoint-id');
-    this.mode = MODE_EDIT;
-    var ele = bp_ele.getElementsByClassName('condition')[0] ||
-              bp_ele.render(this._tmpls.breakpoint_condition());
-    this._editor.edit(event, ele.firstElementChild);
+    if (this.mode != MODE_EDIT)
+    {
+      var bp_ele = event.target.has_attr('parent-node-chain', 'data-breakpoint-id');
+      this.mode = MODE_EDIT;
+      var ele = bp_ele.getElementsByClassName('condition')[0] ||
+                bp_ele.render(this._tmpls.breakpoint_condition());
+      this._editor.edit(event, ele.firstElementChild);
+    }
   }.bind(this);
 
   this._handlers['delete-condition'] = function(event, target)

@@ -65,8 +65,8 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   if (entry.line && entry.uri)
   {
     location_title = ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE
-                                        .replace("%(LINE)", entry.line)
-                                        .replace("%(URI)", entry.uri)
+                                        .replace("%(LINE)s", entry.line)
+                                        .replace("%(URI)s", entry.uri)
   }
 
   var expandable = true;
