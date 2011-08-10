@@ -1,5 +1,8 @@
 ﻿window.cls || (window.cls = {});
 
+/** Inherits from ViewBase, 
+   @see ../build-application/build_ecmascript_debugger_6_0.js
+**/
 cls.DOMSearchView = function(id, name, container_class)
 {
 

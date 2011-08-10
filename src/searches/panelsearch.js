@@ -1,4 +1,4 @@
-﻿PanelSearch = function()
+﻿var PanelSearch = function()
 {
   const
   NO_MATCH = TextSearch.NO_MATCH,

@@ -137,3 +137,7 @@
 .resource-manager td:nth-child(1) {
     width: 16px;
 }
+
+.searchcell {
+  width: 250px;
+}

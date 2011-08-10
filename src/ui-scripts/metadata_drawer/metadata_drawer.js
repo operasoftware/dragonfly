@@ -1,4 +1,4 @@
-﻿function MetadataDrawer(resource, title) {
+﻿function MetadataDrawer(resource, title, search_field) {
   this.expanded = false;
   this.resource = resource;
   this.title = title;
@@ -93,6 +93,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
                ],
                ["th", templates.network_request_icon(resource), "class", "iconcell"],
                ["th", url, "class", "urlcell"],
+               ["td", "", "class", "searchcell"],
              ],
              "class", "metadata-drawer-summary-table"
            ],

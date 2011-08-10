@@ -115,26 +115,51 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     var view = new viewclass(resource, resource_manager);
     if (resource.type in searchable_types)
     {
-      var handler_name = 'text-search-' + view.id;
-      var textSearch = new TextSearch();
+
+
+      var handler_name = view.id + '-text-search';
+      var textSearch = new TextSearch(2);
+      textSearch._update_info = new PanelSearch()._update_info;
+      textSearch.controls =
+      [
+        {
+          handler: view.id + '-text-search',
+          class: 'panel-search-input-container',
+          shortcuts: view.id + '-text-search',
+          title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+        },
+        {
+          handler: view.id + '-move-highlight-up',
+          type: "search_control",
+          class: "search-move-highlight-up container-button",
+          title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP
+        },
+        {
+          handler: view.id + '-move-highlight-down',
+          type: "search_control",
+          class: "search-move-highlight-down container-button",
+          title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
+        },
+      ];
+
       var global_handler = ActionBroker.get_instance().get_global_handler();
       var handler = cls.Helpers.shortcut_search_cb.bind(textSearch);
-      var search_field = 
-      {
-        handler: handler_name,
-        shortcuts: handler_name,
-        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      };
+
       var onviewcreated = function(msg)
       {
         if (msg.id == view.id)
         {
+          var search_cell = msg.container.getElementsByClassName('searchcell')[0];
+          search_cell.clearAndRender(window.templates.advanced_search_field(textSearch))
+          var info_ele = search_cell.getElementsByClassName('search-info-badge')[0];
           var scroll_container = msg.container.getElementsByClassName('resource-detail-container')[0];
+          textSearch.set_info_element(info_ele);
           if (scroll_container)
           {
-            textSearch.setContainer(scroll_container.parentElement);
-            var input = view.getToolbarControl(msg.container, handler_name);
-            textSearch.setFormInput(input);
+            var query = '[handler="' + textSearch.controls[0].handler + '"]';
+            var _input = search_cell.querySelector(query);
+            textSearch.setContainer(scroll_container);
+            textSearch.setFormInput(_input);
           }
         }
       };
@@ -149,7 +174,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       {
         textSearch.searchDelayed(target.value);
       };
-      new ToolbarConfig(view.id, null, [search_field]);
+      // new ToolbarConfig(view.id, null, [search_field]);
       messages.addListener('view-created', onviewcreated);
       messages.addListener('view-destroyed', onviewdestroyed);
       eventHandlers.input[handler_name] = oninput;
