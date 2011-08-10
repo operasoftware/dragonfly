@@ -96,7 +96,7 @@
 }
 
 .line-numbered-resource pre {
-    padding-top: 0;
+    padding-top: 1px;
     margin-top: 0;
     padding-left: 10ex;
 }
@@ -112,6 +112,7 @@
   top: 0;
   width: 7ex;
   padding-right: 1ex;
+  padding-top: 1px;
   text-align: right;
   background-color: hsl(0, 0%, 96%);
   color: hsl(0, 0%, 70%);

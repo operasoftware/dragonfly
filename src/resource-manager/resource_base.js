@@ -281,26 +281,26 @@ cls.ResourceDetailSearchPrototype = function()
 
     var broker = ActionBroker.get_instance();
     var global_handler = broker.get_global_handler();
-    var handler = cls.Helpers.shortcut_search_cb.bind(this._text_search);
-    var handler_name = this.controls[SEARCHFIELD].handler;
 
     ActionHandlerInterface.apply(this);
     this.shared_shortcuts = "search";
     this._handlers['highlight-next-match'] = function(event, target)
     {
       this._text_search.highlight_next();
+      return false;
     }.bind(this);
     this._handlers['highlight-previous-match'] = function(event, target)
     {
       this._text_search.highlight_previous();
+      return false;
     }.bind(this);
     broker.register_handler(this);
-    global_handler.register_shortcut_listener(handler_name, handler);
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
       this._handlers['highlight-next-match'];
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
       this._handlers['highlight-previous-match'];
-    eventHandlers.input[handler_name] = this._oninput.bind(this);
+    eventHandlers.input[this.controls[SEARCHFIELD].handler] =
+      this._oninput.bind(this);
     global_handler.register_search_panel(this.id);
   };
 
