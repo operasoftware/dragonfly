@@ -24,15 +24,24 @@ container.console {
 .console .datetime {
   color: #fff;
 }
+
+
+.console ::selection {
+  color: #fff;
+  background-color: #006ad4;
+}
+
+/* DOM */
+
 .console .dom-tree node {
-  color: #a1a1e6;
+  color: #9999ff;
 }
 .console .dom-tree key {
-    color: #bcbcda;
+    color: #bfc5ff;
 }
 
 .console .dom-tree value {
-    color: #da9f94;
+    color: #e68d7c;
 }
 
 .console .dom-tree text {
@@ -47,17 +56,63 @@ container.console {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.20);
 }
-.console ::selection {
-  color: #f33;
-}
+
+
+/* JavaScript */
 
 .console .js_keywords {
   color: #66c;
 }
 .console .repl-pobj,
 .console .js_builtins {
-  color: #88f;
+  color: #bfc5ff;
 }
+.console .null,
+.console .undefined {
+    color: #f25941;
+    font-weight: bold;
+}
+
+.console .boolean {
+    color: #ff8b26;
+}
+
+.console .error {
+    color: #ff6224;
+    font-style: italic;
+}
+
+.console .number,
+offsets value {
+    color: #ff4d40;
+}
+
+.console .string {
+    color: #d46d59;
+}
+
+.console .object {
+    color: rgba(255, 255, 255, .4);
+    background-color: rgba(0, 0, 0, .075);
+}
+
+.console .punctuator {
+    color: #fff;
+}
+
+.console .reg_exp {
+    color: #62d962;
+}
+
+.console .js_builtins {
+    color: #bfc5ff;
+}
+
+.console .js_keywords {
+    color: #9999ff;
+    font-weight: bold;
+}
+
 
 .console .inspect-object-link:hover {
   text-decoration: none;

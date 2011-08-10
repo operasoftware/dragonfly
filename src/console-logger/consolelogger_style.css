@@ -24,8 +24,8 @@
 }
 
 .errors-table button {
-  height: 9px;
-  width: 5px;
+  height: 7px;
+  width: 9px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
   border: 0;
   margin: 0 5px 0 2px;
