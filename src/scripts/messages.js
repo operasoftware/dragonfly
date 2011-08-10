@@ -129,7 +129,7 @@
  *     <dd>A template inspected_dom_node was rendered. Payload: msg.model, the according DOM model.</dd>
  *
  *     <dt>panel-search-executed</dt>
- *     <dd>A new search in a search panel has been executed.</dd>
+ *     <dd>A new search in a search panel has been executed and the according result is displayed in the panel.</dd>
  *
  * </dl>
  *

@@ -736,6 +736,10 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     this.mode = MODE_DEFAULT;
+    // this.editor.escape() will reset the style
+    // to ensure the command to reset the style is dispatched before
+    // elementStyle queries again the current style the update call
+    // is done asynchronously 
     setTimeout(window.elementStyle.update_bound, 1);
 
     return false;

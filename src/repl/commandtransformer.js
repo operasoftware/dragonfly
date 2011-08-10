@@ -268,6 +268,7 @@ cls.HostCommandTransformer = function() {
     view._handle_action_clear();
   };
 
+  // TODO: these special client commands should be defined outside of this class here.
   this.dfcommand_help = function(view, data, service)
   {
     data.add_message("Available commands:");
