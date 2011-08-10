@@ -1,5 +1,9 @@
 ﻿window.templates || (window.templates = {});
 
+(function(templates) {
+
+const MIN_BAR_WIDTH = 16; // pixels
+
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
   return ["div",
@@ -315,7 +319,7 @@ templates.network_response_body = function(req)
   else
   {
     var bodytpl;
-    if (["script", "markup", "css", "text"].indexOf(req.type) != -1)
+    if (["script", "markup", "css", "text"].contains(req.type))
     {
       bodytpl = ["textarea", req.responsebody.content.stringData];
     }
@@ -398,7 +402,7 @@ templates.network_request_icon = function(request)
 templates.network_log_graph = function(ctx, width)
 {
   var rows = templates.network_graph_rows(ctx, width)
-  var duration = ctx.get_duration();
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
@@ -410,7 +414,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   var labels = [];
   var cnt = Math.round(width / gridwidth);
 
-  while (--cnt > 0) // skips last one on purpose
+  while (stepsize && --cnt > 0) // skips last one on purpose
   {
     labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
                  "style", "left: " + ((gridwidth * cnt)-30) + "px;",
@@ -424,7 +428,8 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 templates.network_graph_rows = function(ctx, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_duration();
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+
   var tpls = [];
   for (var n=0, res; res=ctx.resources[n]; n++)
   {
@@ -454,7 +459,7 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
       video: "green"
     }
 
-    var min_bar_width = 14;
+    var min_bar_width = 14; // in px
     if (req_duration < min_bar_width)
     {
       req_duration = min_bar_width;
@@ -521,5 +526,27 @@ templates.grid_info = function(duration, width)
   {
     step = 5000;
   }
+  else if (density > 40)
+  {
+    step = 10000;
+  }
+  else if (density > 25)
+  {
+    step = 15000;
+  }
+  else if (density > 5)
+  {
+    step = 20000;
+  }
+  else if (density > 2)
+  {
+    step = 30000;
+  }
+  else {
+    step = 0; // don't render lines. too much crap on the screen
+  }
+
   return step
 }
+
+})(window.templates);

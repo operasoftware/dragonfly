@@ -27,7 +27,7 @@ cls.ReplService = function(view, data)
     var data = new cls.ConsoleLogger["2.0"].ConsoleMessage(msg);
 
     if (data.source != "ecmascript" ||
-        CONTEXT_BLACKLIST.indexOf(data.context) != -1)
+        CONTEXT_BLACKLIST.contains(data.context))
     {
       return;
     }

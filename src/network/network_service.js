@@ -187,6 +187,25 @@ cls.RequestContext = function()
     return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
   }
 
+  /**
+   * Return duration of request context, rounded upp to closest full second.
+   * if width and padlen is set, add the ammount of milliseconds needed to
+   * the duration needed to accomodate padlen pixels.
+   */
+  this.get_coarse_duration = function(padlen, width)
+  {
+    var t = this.get_duration();
+
+    if (padlen && width)
+    {
+      var millis_per_px = t / width;
+      t += (millis_per_px * padlen);
+    }
+
+    var nt = Math.ceil(t/1000)*1000;
+    return nt;
+  }
+
   this.get_starttime = function()
   {
     return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));

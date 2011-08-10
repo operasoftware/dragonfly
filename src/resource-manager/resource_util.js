@@ -278,18 +278,46 @@ cls.ResourceUtil.header_presets = [
   },
   {name: "Opera Mini 6.0 on iPhone", headers:
     [
+      "User-Agent: Opera/9.80 (iPhone; Opera Mini/6.0.0.12542/25.351; U; en) Presto/2.5.25 Version/10.54",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en-US,en;q=0.9",
+      "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
+      "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
+      "Connection: Keep-Alive",
       "x-operamini-features: advanced, download, touch, viewport",
-      "user-agent: Opera/9.80 (iPhone; Opera Mini/6.0.0.12542/25.351; U; en) Presto/2.5.25 Version/10.54",
       "x-operamini-phone: Apple # iPhone",
       "x-operamini-phone-ua: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_1 like Mac OS X; en-us)"
     ].join("\n")
   },
   {name: "Opera Mini 6.0 on Nokia 6300", headers:
     [
+      "User-Agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en-US,en;q=0.9",
+      "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
+      "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
+      "Connection: Keep-Alive",
       "x-operamini-features: advanced, file_system, camera, folding, routing",
-      "user-agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
       "x-operamini-phone: Nokia # 6300",
       "x-operamini-phone-ua: Nokia6300/2.0 (07.21) Profile/MIDP-2.0 Configuration/CLDC-1.1"
+    ].join("\n")
+  },
+  {name: "Mobile Safari on iOS 4", headers:
+    [
+      "User-Agent: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5",
+      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "Accept-Encoding: gzip, deflate",
+    ].join("\n")
+  },
+  {name: "Android 2.3.3", headers:
+    [
+      "Connection: keep-alive",
+      "Accept-Encoding: gzip",
+      "Accept-Language: en-US",
+      "x-wap-profile: http://wap.samsungmobile.com/uaprof/GT-I9100.xml",
+      "User-Agent: Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; GT-I9100 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
+      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "Accept-Charset: utf-8, iso-8859-1, utf-16, *;q=0.7",
     ].join("\n")
   },
 ];

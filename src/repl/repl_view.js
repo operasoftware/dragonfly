@@ -357,7 +357,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       this._cancel_completion();
     }
-    this._check_for_multiline();
+    if (this._check_for_multiline())
+    {
+      this._be_multiline();
+    }
     this._update_input_height_bound();
   }.bind(this);
 
@@ -367,11 +370,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this._check_for_multiline = function()
   {
-    if (this.mode == "single-line-edit" &&
-        this._textarea_handler.get_value().indexOf("\n") != -1)
-    {
-      this._be_multiline();
-    }
+    return this._textarea_handler.get_value().contains("\n")
   }
 
   this._handle_backlog = function(delta)
@@ -503,7 +502,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
         {
             candidate = candidate.toLowerCase();
         }
-        return candidate.indexOf(localpart) == 0;
+        return candidate.startswith(localpart);
       });
 
       if (! matches.length) {
@@ -584,7 +583,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
       for (var n=last.length; n; n--)
       {
-        if (first.indexOf(last.slice(0,n)) == 0) { return last.slice(0, n); }
+        if (first.startswith(last.slice(0, n))) { return last.slice(0, n); }
       }
     }
     return "";
@@ -652,17 +651,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     settings.command_line.set('max-typed-history-length', target.value);
     messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
-  }.bind(this);
-
-  this._handle_input_focus_bound = function()
-  {
-    this._be_singleline();
-  }.bind(this);
-
-  this._handle_input_blur_bound = function()
-  {
-    this._be_singleline();
-    this.mode = "default";
   }.bind(this);
 
   this._update_runtime_selector_bound = function(msg)
@@ -756,8 +744,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this["_handle_action_exit-multiline-mode"] = function(evt, target)
   {
-    this._multiediting = false;
-    this._be_singleline();
+    if (!this._check_for_multiline())
+    {
+      this._multiediting = false;
+      this._be_singleline();
+    }
     return false;
   };
 
@@ -902,7 +893,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var actions = [];
     for (var methodname in this)
     {
-      if (methodname.indexOf("_handle_action_") == 0)
+      if (methodname.startswith("_handle_action_"))
       {
         actions.push(methodname.slice(15));
       }
@@ -938,8 +929,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["show-log-entry-source"] = this._handle_repl_show_log_entry_source_bound;
   eh.change["set-typed-history-length"] = this._handle_option_change_bound;
-  eh.focus["repl-textarea"] = this._handle_input_focus_bound;
-  eh.blur["repl-textarea"] = this._handle_input_blur_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
@@ -1044,12 +1033,6 @@ cls.ReplView.create_ui_widgets = function()
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
         broker.dispatch_action("command_line", "clear");
-      }
-    },
-    {
-      label: ui_strings.S_HELP_COMMAND_LINE,
-      handler: function() {
-        broker.dispatch_action("command_line", "help");
       }
     }, 
   ];
