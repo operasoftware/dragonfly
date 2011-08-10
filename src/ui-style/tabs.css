@@ -55,8 +55,8 @@ top-tabs toolbar-buttons {
 top-tabs tab {  /**/
   height: 30px;
   line-height: 30px;
-  border: 0;
-  border-right: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid transparent;
+  border-width: 0 1px;
   padding: 0 6px;
   text-shadow: 0 1px rgba(255, 255, 255, .5);
   top: 0;
@@ -66,9 +66,14 @@ top-tabs tab {  /**/
                                        rgba(255, 255, 255, 0.25) 100%);
 }
 
+top-tabs tab:first-child {
+  border-left-width: 0;
+}
+
 top-tabs tab.active {
   background-color: #cecece;
   box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 top-tabs tab.active:first-of-type {

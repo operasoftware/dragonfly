@@ -352,7 +352,10 @@ button.text-button:active {
     box-shadow: 0 1px #fff,
                 inset 0 1px 1px rgba(0, 0, 0, 0.2),
                 inset 0 1px 7px rgba(0, 0, 0, 0.25);
-    background-color: #c5c5c5;
+    background-image: -o-linear-gradient(-90deg, rgba(0, 0, 0, 0.03) 0,
+                                                 rgba(0, 0, 0, 0.12) 20%,
+                                                 rgba(0, 0, 0, 0.12) 80%,
+                                                 rgba(0, 0, 0, 0.03) 100%);
     padding: 2px 1px 0;
 }
 .ui-control.is-active:active {
