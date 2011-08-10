@@ -228,9 +228,9 @@ cls.ResourceDetailSearchPrototype = function()
     if (scroll_container)
     {
       var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
-      var _input = search_cell.querySelector(query);
+      this._search_input = search_cell.querySelector(query);
       this._text_search.setContainer(scroll_container);
-      this._text_search.setFormInput(_input);
+      this._text_search.setFormInput(this._search_input);
     }
   };
 
@@ -243,6 +243,14 @@ cls.ResourceDetailSearchPrototype = function()
   this._oninput = function(event, target)
   {
     this._text_search.searchDelayed(target.value);
+  };
+
+  this.focus_search_field = function()
+  {
+    if (this._search_input)
+    {
+      this._search_input.focus();
+    }
   };
 
   this.init = function(res, service)
@@ -293,6 +301,7 @@ cls.ResourceDetailSearchPrototype = function()
     eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
       this._handlers['highlight-previous-match'];
     eventHandlers.input[handler_name] = this._oninput.bind(this);
+    global_handler.register_search_panel(this.id);
   };
 
 };
