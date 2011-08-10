@@ -201,6 +201,105 @@ cls.GenericResourceDetail = function(res, service)
 cls.GenericResourceDetail.prototype = new cls.ResourceDetailBase();
 
 
+cls.ResourceDetailSearch = function(res, service)
+{
+  this.init(res, service);
+};
+
+cls.ResourceDetailSearchPrototype = function()
+{
+
+  var init_super = this.init;
+  var create_view_super = this.createView;
+  var ondestroy_super = this.ondestroy;
+
+  const SEARCHFIELD = 0;
+  const MOVE_HIGHLIGHT_UP = 1;
+  const MOVE_HIGHLIGHT_DOWN = 2;
+
+  this.createView = function(container)
+  {
+    create_view_super.call(this, container);
+    var search_cell = container.getElementsByClassName('searchcell')[0];
+    search_cell.clearAndRender(window.templates.advanced_search_field(this))
+    var info_ele = search_cell.getElementsByClassName('search-info-badge')[0];
+    var scroll_container = container.getElementsByClassName('resource-detail-container')[0];
+    this._text_search.set_info_element(info_ele);
+    if (scroll_container)
+    {
+      var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
+      var _input = search_cell.querySelector(query);
+      this._text_search.setContainer(scroll_container);
+      this._text_search.setFormInput(_input);
+    }
+  };
+
+  this.ondestroyed = function()
+  {
+    ondestroy_super.call(this);
+    this._text_search.cleanup();
+  };
+
+  this._oninput = function(event, target)
+  {
+    this._text_search.searchDelayed(target.value);
+  };
+
+  this.init = function(res, service)
+  {
+    init_super.call(this, res, service);
+    this._text_search = new DetailResourceSearch(2);
+    this.controls =
+    [
+      {
+        handler: this.id + '-text-search',
+        class: 'panel-search-input-container',
+        shortcuts: this.id + '-text-search',
+        title: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+      },
+      {
+        handler: this.id + '-move-highlight-up',
+        type: "search_control",
+        class: "search-move-highlight-up container-button",
+        title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP
+      },
+      {
+        handler: this.id + '-move-highlight-down',
+        type: "search_control",
+        class: "search-move-highlight-down container-button",
+        title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
+      },
+    ];
+
+    var broker = ActionBroker.get_instance();
+    var global_handler = broker.get_global_handler();
+    var handler = cls.Helpers.shortcut_search_cb.bind(this._text_search);
+    var handler_name = this.controls[SEARCHFIELD].handler;
+
+    ActionHandlerInterface.apply(this);
+    this.shared_shortcuts = "search";
+    this._handlers['highlight-next-match'] = function(event, target)
+    {
+      this._text_search.highlight_next();
+    }.bind(this);
+    this._handlers['highlight-previous-match'] = function(event, target)
+    {
+      this._text_search.highlight_previous();
+    }.bind(this);
+    broker.register_handler(this);
+    global_handler.register_shortcut_listener(handler_name, handler);
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+      this._handlers['highlight-next-match'];
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+      this._handlers['highlight-previous-match'];
+    eventHandlers.input[handler_name] = this._oninput.bind(this);
+  };
+
+};
+
+cls.ResourceDetailSearchPrototype.prototype = new cls.ResourceDetailBase();
+cls.ResourceDetailSearch.prototype = new cls.ResourceDetailSearchPrototype();
+
 // any textual resource, like html, js and css
 cls.TextResourceDetail = function(res, service)
 {
@@ -211,7 +310,7 @@ cls.TextResourceDetail = function(res, service)
 
   this.init(res, service);
 }
-cls.TextResourceDetail.prototype = new cls.ResourceDetailBase();
+cls.TextResourceDetail.prototype = cls.ResourceDetailSearch.prototype;
 
 cls.JSResourceDetail = function(res, service, options)
 {
@@ -225,7 +324,8 @@ cls.JSResourceDetail = function(res, service, options)
 
   this.init(res, service);
 }
-cls.JSResourceDetail.prototype = new cls.ResourceDetailBase();
+
+cls.JSResourceDetail.prototype = cls.ResourceDetailSearch.prototype;
 
 
 cls.ImageResourceDetail = function(res, service)
@@ -260,7 +360,7 @@ cls.MarkupResourceDetail = function(res, service)
 
   this.init(res, service);
 }
-cls.MarkupResourceDetail.prototype = new cls.ResourceDetailBase();
+cls.MarkupResourceDetail.prototype = cls.ResourceDetailSearch.prototype;
 
 cls.CSSResourceDetail = function(res, service)
 {
@@ -271,7 +371,7 @@ cls.CSSResourceDetail = function(res, service)
 
   this.init(res, service);
 }
-cls.CSSResourceDetail.prototype = new cls.ResourceDetailBase();
+cls.CSSResourceDetail.prototype = cls.ResourceDetailSearch.prototype;
 
 
 

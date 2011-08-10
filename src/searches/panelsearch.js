@@ -121,3 +121,16 @@
 PanelSearch.MATCH_NODE_CLASS = "search-match";
 PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor";
 
+var DetailResourceSearch = function(min_length)
+{
+  this._init(min_length);
+};
+
+var DetailResourceSearchPrototype = function()
+{
+  this._update_info = new PanelSearch()._update_info;
+  this._query_selector = "pre";
+};
+
+DetailResourceSearchPrototype.prototype = TextSearch.prototype;
+DetailResourceSearch.prototype = new DetailResourceSearchPrototype();
