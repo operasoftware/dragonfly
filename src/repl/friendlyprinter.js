@@ -2,11 +2,11 @@
 
 window.cls.FriendlyPrinter = function(callback)
 {
-  if (window.cls.FriendlyPrinter.instance)
-  {
-    return window.cls.FriendlyPrinter.instance;
-  }
-  window.cls.FriendlyPrinter.instance = this;
+  this.init(callback);
+};
+
+window.cls.FriendlyPrinter.prototype = new function()
+{
 
   /*
     If you like to add more types to be friendly printed look into
@@ -463,11 +463,4 @@ window.cls.FriendlyPrinter = function(callback)
     this.value2objlist = this.value2objlist.bind(this);
   };
 
-  this.init(callback);
-
-}
-
-window.cls.FriendlyPrinter.get_instance = function()
-{
-  return this.instance || new window.cls.FriendlyPrinter();
 }

@@ -84,7 +84,7 @@ cls.InlineExpander = function(callback)
     this._callback = callback;
     this._tagman = window.tagManager;
     this._service = window.services['ecmascript-debugger'];
-    this._friendly_printer = cls.FriendlyPrinter.get_instance();
+    this._friendly_printer = new cls.FriendlyPrinter();
   };
 
   this.init(callback);

@@ -450,9 +450,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/propertyfinder.js"/>
 <script src="./repl/inspectableobjectview.js"/>
 <script src="./repl/buffermanager.js"/>
-<script src="./repl/friendlyprinter.js"/>
-<script src="./repl/inlineexpand.js"/>
-<script src="./repl/listunpacker.js"/>
 <script src="./repl/repl_service.js"/>
 <script src="./repl/repl_view.js"/>
 <script src="./repl/repl_data.js"/>
@@ -460,6 +457,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 <script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <script src="./repl/jsvalue.js"/>
+<script src="./repl/inlineexpand.js"/>
+<script src="./repl/friendlyprinter.js"/>
+<script src="./repl/listunpacker.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>
