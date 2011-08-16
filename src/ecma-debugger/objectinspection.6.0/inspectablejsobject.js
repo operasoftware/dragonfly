@@ -62,6 +62,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   /* private */
 
+  // The expanded property tree on which we would like to use that function 
+  // can have a property with the same name (if the user expendes e.g.
+  // the Object.prototype). See also bug DFL-2376.
+  var has_own_property = Object.prototype.hasOwnProperty;
+
   /*
     format for path and expand_tree:
 
@@ -128,7 +133,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (!tree.protos[index])
         tree.protos[index] = {};
       /* the last element of a prototype path has no object id */
-      if ((!tree.protos[index].hasOwnProperty(key) && !isNaN(obj_id)) || tree.protos[index][key] === null)
+      if ((!has_own_property.call(tree.protos[index], key) && !isNaN(obj_id)) || 
+          tree.protos[index][key] === null)
         tree.protos[index][key] = {object_id: obj_id, protos: {}};
       tree = tree.protos[index][key];
     }
@@ -367,7 +373,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (ids.indexOf(dead_ids[i]) == -1)
         this._obj_map[dead_ids[i]] = this._queried_map[dead_ids[i]] = null;
     }
-  }
+  };
 
   /* implementation */
 
