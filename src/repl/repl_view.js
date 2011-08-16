@@ -787,6 +787,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._service.handle_input(input);
     this._cancel_completion();
     this._be_singleline();
+    this._current_scroll = null;
     return false;
   }
 
