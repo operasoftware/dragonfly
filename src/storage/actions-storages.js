@@ -354,15 +354,20 @@ cls.StorageViewActions = function(id)
           label: ui_strings.M_CONTEXTMENU_STORAGE_ADD,
           handler: this._handlers["add-key"]
         },
+      ];
+      if (!target.hasClass("header") &&
+          !target.hasClass("sortable-table-summation-row"))
+      {
+        options.extend([
         {
           label: ui_strings.M_CONTEXTMENU_STORAGE_EDIT,
-          handler: this._handlers["edit"]
+          handler: this._handlers["edit"],
         },
         {
           label: remove_label,
-          handler: this._handlers["remove-item"]
-        }
-      ];
+          handler: this._handlers["remove-item"],
+        }]);
+      }
 
       var rt_id = target.querySelector("[name=rt_id]") && Number(target.querySelector("[name=rt_id]").value);
       if (rt_id)
