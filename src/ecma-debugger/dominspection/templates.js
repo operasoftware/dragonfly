@@ -375,32 +375,35 @@
 
           child_pointer = i + 1;
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
-          if (is_open)
+          if (is_open || pseudo_elements && node[PSEUDO_ELEMENT_LIST])
           {
             has_only_text_content = !node.hasOwnProperty(PSEUDO_ELEMENT_LIST);
-            one_child_text_content = '';
-            child_level = data[child_pointer][DEPTH];
-            for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
+            if (is_open && has_only_text_content)
             {
-              if (data[child_pointer][TYPE] != TEXT_NODE)
+              one_child_text_content = '';
+              child_level = data[child_pointer][DEPTH];
+              for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
               {
-                has_only_text_content = false;
-                one_child_text_content = '';
-                break;
-              }
-              // perhaps this needs to be adjusted. a non-closed (e.g. p) tag
-              // will create an additional CRLF text node, that means the text nodes are not normalized.
-              // in markup view it doesn't make sense to display such a node, still we have to ensure
-              // that there is at least one text node.
-              // perhaps there are other situation with not-normalized text nodes,
-              // with the following code each of them will be a single text node,
-              // if they contain more than just white space.
-              // for exact DOM representation it is anyway better to use the DOM tree style.
-              if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
-              {
-                one_child_text_content += "<text" +
-                  " ref-id='" + data[child_pointer][ID] + "' " +
-                  ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
+                if (data[child_pointer][TYPE] != TEXT_NODE)
+                {
+                  has_only_text_content = false;
+                  one_child_text_content = '';
+                  break;
+                }
+                // perhaps this needs to be adjusted. a non-closed (e.g. p) tag
+                // will create an additional CRLF text node, that means the text nodes are not normalized.
+                // in markup view it doesn't make sense to display such a node, still we have to ensure
+                // that there is at least one text node.
+                // perhaps there are other situation with not-normalized text nodes,
+                // with the following code each of them will be a single text node,
+                // if they contain more than just white space.
+                // for exact DOM representation it is anyway better to use the DOM tree style.
+                if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
+                {
+                  one_child_text_content += "<text" +
+                    " ref-id='" + data[child_pointer][ID] + "' " +
+                    ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
+                }
               }
             }
 
