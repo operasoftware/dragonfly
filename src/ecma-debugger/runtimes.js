@@ -59,6 +59,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
 
+  var __window_top_rt_map = {};
+
   // used to set the top runtime automatically
   // on start or on debug context change
   var debug_context_frame_path = '';
@@ -293,6 +295,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
         {
           __window_ids[win_id] = true;
         }
+        __window_top_rt_map[runtime.window_id] = runtime;
         /*
            pop-ups are top runtimes but part of the debug context.
            right now we don't get the correct info in the message
@@ -697,10 +700,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       everything which passes the window manager filter
       is part of the debug context
     */
-    return __runtimes[rt_id] &&
-              ( __runtimes[rt_id].window_id == __selected_window ||
-                __runtimes[rt_id].opener_window_id == __selected_window );
 
+    var rt = __runtimes[rt_id];
+    return rt && (rt.window_id == __selected_window ||
+                  (rt = __window_top_rt_map[rt.window_id]) && 
+                  rt.opener_window_id == __selected_window);
   }
 
   var clear_thread_id = function(rt_id, thread_id)
