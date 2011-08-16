@@ -158,6 +158,9 @@ cls.CookieManager.CookieManagerViewBase = function()
           align: "center",
           sorter: this._make_sorter("isHTTPOnly")
         }
+      },
+      options: {
+        no_default_menu: true,
       }
     };
     this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
