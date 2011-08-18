@@ -189,6 +189,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
 <link rel="stylesheet" href="./storage/storage_style.css"/>
 <link rel="stylesheet" href="./screenshot/style.css"/>
+<link rel="stylesheet" href="./profiler/profiler_style.css"/>
 
 
 
@@ -461,6 +462,13 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/ecmascriptdebugger.6.0.events.onconsoletrace.js"/>
 <script src="./repl/scope.1.0.responses.hostinfo.js"/>
 <script src="./repl/jsvalue.js"/>
+
+<script src="./profiler/profiler_service.js"/>
+<script src="./profiler/profiler_data.js"/>
+<script src="./profiler/profiler_view.js"/>
+<script src="./profiler/profiler_templates.js"/>
+<script src="./profiler/profiler.1.0.responses.getevents.js"/>
+<script src="./profiler/profiler.1.0.responses.stopprofiler.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>

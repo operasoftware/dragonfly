@@ -1,0 +1,75 @@
+.profiler-event
+{
+  position: absolute;
+  height: 10px;
+  border-color: #333;
+  border-radius: 2px;
+  background-image: -o-linear-gradient(-90deg,
+                                       #d9d9d9 1%,
+                                       #adadad 60%,
+                                       #bfbfbf 100%);
+}
+
+.event-type-1
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-2
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-3
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-5
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-6
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-7
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}
+
+.event-type-8
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #c9c9ff 1%,
+                                       #a7a5d6 60%,
+                                       #b0b0d6 100%);
+}
+
+.event-type-10
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #b8d4ff 1%,
+                                       #8bafe0 60%,
+                                       #a6c5f3 100%);
+}

@@ -76,6 +76,7 @@ cls.Profiler["1.0"].Service = function()
     DOCUMENT_PARSING = 11,
     CSS_PARSING = 12,
     SCRIPT_COMPILATION = 13,
+    PAINT_EVENT = 14,
     // sub message CssSelectorMatchingEvent 
     SELECTOR = 0;
     // sub message ThreadEvaluationEvent 
@@ -88,6 +89,13 @@ cls.Profiler["1.0"].Service = function()
     // sub message ScriptCompilationEvent 
     SCRIPT_TYPE = 0,
     SCRIPTCOMPILATIONEVENT_URL = 1;
+    // sub message PaintEvent 
+    AREA = 0,
+    // sub message Area 
+    X = 0,
+    Y = 1,
+    W = 2,
+    H = 3;
     */
     opera.postError("NotBoundWarning: Profiler, GetEvents");
   }

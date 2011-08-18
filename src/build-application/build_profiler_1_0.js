@@ -4,5 +4,14 @@ window.app.builders.Profiler || ( window.app.builders.Profiler = {} );
   */
 window.app.builders.Profiler["1.0"] = function(service)
 {
-      var namespace = cls.Profiler && cls.Profiler["1.0"];
+  var namespace = cls.Profiler && cls.Profiler["1.0"];
+
+  new cls.ProfilerView('profiler_all',
+                       'Profiler',
+                       'scroll',
+                       '',
+                       '');
+  cls.ProfilerView.create_ui_widgets();
+
+  return true;
 }
