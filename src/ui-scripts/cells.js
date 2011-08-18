@@ -31,13 +31,16 @@
     {
       ret.extend(this.tab.tabs.map(function(tab){return tab.ref_id}));
       var view = window.views[this.tab.activeTab];
-      if (view.type == 'composite-view')
+      if (view)
       {
-        ret.extend(view.cell.get_visible_tabs());
-      }
-      else if (view.type == 'side-panel')
-      {
-        ret.extend(view.get_visible_tabs);
+        if (view.type == 'composite-view')
+        {
+          ret.extend(view.cell.get_visible_tabs());
+        }
+        else if (view.type == 'side-panel')
+        {
+          ret.extend(view.get_visible_tabs());
+        }
       }
     }
     else
