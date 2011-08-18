@@ -126,6 +126,17 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
         view.cell.setTooolbarVisibility(view_id, bool);
       }
     }
+    // TODO. This is a bit too radical.
+    var windows = window.ui_windows;
+    if (windows)
+    {
+      for (var win in windows)
+      {
+        view_id = windows[win].view_id;
+        UIWindowBase.closeWindow(view_id);
+        UIWindowBase.showWindow(view_id);
+      }
+    }
   }
 
   this.setup = function()
