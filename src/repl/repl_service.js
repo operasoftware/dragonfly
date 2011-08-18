@@ -302,18 +302,14 @@ cls.ReplService = function(view, data)
 
   this._handle_exception = function(msg, rt_id)
   {
-    this._data.add_output_str("Unhandled exception:");
     const VALUE = 2, OBJECTVALUE = 3, CLASSNAME = 4;
-    if (msg[OBJECTVALUE] && msg[OBJECTVALUE][CLASSNAME] == "Error")
-    {
-      this._get_exception_info(rt_id, msg[3][0]);
-    }
-    else if (msg[OBJECTVALUE])
+    if (msg[OBJECTVALUE])
     {
       this._handle_object(msg, rt_id);
     }
     else
     {
+      this._data.add_output_str("Unhandled exception:");
       this._handle_native(msg, rt_id);
     }
   };
@@ -356,28 +352,6 @@ cls.ReplService = function(view, data)
   this._handle_raw = function(val)
   {
     this._data.add_output_str(val);
-  };
-
-  this._get_exception_info = function(rt, obj)
-  {
-    var tag = this._tagman.set_callback(this, this._on_get_exception_info.bind(this));
-    this._edservice.requestExamineObjects(tag, [rt, [obj], 0, 0, 1]);
-  };
-
-  this._on_get_exception_info = function(status, msg)
-  {
-    const NAME = 0, VALUE = 2;
-    var props = {};
-
-    // the following line looks up
-    // msg -> objectchainlist -> objectchain -> objectlist -> objectinfo -> propertylist
-    var propslist = msg[0][0][0][0][1];
-    for (var n=0, e; e=propslist[n]; n++)
-    {
-      props[e[NAME]] = e[VALUE];
-    }
-
-    this._data.add_output_exception(props.message, props.stacktrace);
   };
 
   this.handle_input = function(input)

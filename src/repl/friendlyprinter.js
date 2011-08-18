@@ -271,7 +271,7 @@ window.cls.FriendlyPrinter.prototype = new function()
         return [
           ERROR,
           1, // expandable inline object (booleans are returned as string)
-          item.message
+          "Unhandled " + class_.slice(8, -1) + ": " + item.message
         ];
       }
       else if (class_ == "[object RegExp]")
@@ -388,11 +388,14 @@ window.cls.FriendlyPrinter.prototype = new function()
     ELEMENT = 1,
     DATE = 2,
     FUNCTION = 3,
-    STRING_VALUE = 2;
+    STRING_VALUE = 2,
+    ERROR = 4;
 
     switch (value_list[TYPE])
     {
       case DATE:
+        return value_list[STRING_VALUE];
+      case ERROR:
         return value_list[STRING_VALUE];
     }
     return "";
