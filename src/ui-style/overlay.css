@@ -142,6 +142,8 @@ overlay hr {
 .overlay select option{color: rgba(255, 255, 255, .6);}
 
 .overlay button,
+.overlay input[handler="cancel-remote-debug"], /* TODO should be changed to button */
+.hud .ui-control, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header {
   background-color: #292929;
   color: rgba(255, 255, 255, .8);
@@ -156,7 +158,9 @@ overlay hr {
   -o-transition: background-color 0.2s;
 }
 
-.overlay button {
+.overlay button,
+.overlay input[handler="cancel-remote-debug"], /* TODO should be changed to button */
+.overlay .setting-composite input[type=button]{
   line-height: 20px;
   padding: 1px 12px;
   height: 24px;
@@ -165,6 +169,8 @@ overlay hr {
 }
 
 .overlay button:hover,
+.overlay input[handler="cancel-remote-debug"]:hover, /* TODO should be changed to button */
+.hud .ui-control:hover, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header:hover {
   background-color: #323232;
   color: rgba(255, 255, 255, .9);
@@ -173,6 +179,8 @@ overlay hr {
 
 
 .overlay button:active,
+.overlay input[handler="cancel-remote-debug"]:active, /* TODO should be changed to button */
+.hud .ui-control:not([disabled]):active, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header:active {
   box-shadow: 0 1px rgba(0,0,0,0.0),
               inset 0 1px 3px rgba(0, 0, 0, .4);
