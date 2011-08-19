@@ -191,7 +191,7 @@ cls.CookieManager.CookieDataBase = function()
     // within sub message ObjectValue
     OBJECT_ID = 0;
 
-    if (status === 0)
+    if (status === 0 && message[OBJECT_VALUE])
     {
       var object_id = message[OBJECT_VALUE][OBJECT_ID];
       var tag = tagManager.set_callback(this, this._handle_location, [rt_id, active_tab_counter]);
