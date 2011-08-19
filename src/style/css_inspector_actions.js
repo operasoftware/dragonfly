@@ -16,6 +16,7 @@ cls.CSSInspectorActions = function(id)
   const INDEX_LIST = 1;
   const VALUE_LIST = 2;
   const PRIORITY_LIST = 3;
+  const DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
 
   const PROPERTY = 0;
 
@@ -419,7 +420,7 @@ cls.CSSInspectorActions = function(id)
     for (var i = 0; i < length; i++)
     {
       var prop = window.css_index_map[style_dec[INDEX_LIST][i]];
-      if (prop != exception)
+      if (prop != exception && !style_dec[DISABLED_LIST][i])
       {
         script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
