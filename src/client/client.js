@@ -80,9 +80,12 @@ window.cls.Client = function()
     }
     else if (self.connection_is_remote(client))
     {
-      document.getElementById("remote-debug-settings").clearAndRender(
-        window.templates.remote_debug_settings(port + 1)
-      );
+      var remote_debug_setting = document.getElementById("remote-debug-settings");
+      if (remote_debug_setting)
+      {
+        var tmpl = window.templates.remote_debug_settings(port + 1);
+        remote_debug_setting.clearAndRender(tmpl);
+      }
 
       UI.get_instance().get_button("toggle-remote-debug-overlay")
                        .addClass("alert");
@@ -210,9 +213,12 @@ window.cls.Client = function()
         window.templates.remote_debug_waiting_help(port)
       );
 
-      document.getElementById("remote-debug-settings").clearAndRender(
-        window.templates.remote_debug_waiting(port)
-      );
+      var remote_debug_setting = document.getElementById("remote-debug-settings");
+      if (remote_debug_setting)
+      {
+        var tmpl = window.templates.remote_debug_waiting(port);
+        remote_debug_setting.clearAndRender(tmpl);
+      }
     }
     else
     {
