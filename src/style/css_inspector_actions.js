@@ -420,7 +420,8 @@ cls.CSSInspectorActions = function(id)
     for (var i = 0; i < length; i++)
     {
       var prop = window.css_index_map[style_dec[INDEX_LIST][i]];
-      if (prop != exception && !style_dec[DISABLED_LIST][i])
+      if (prop != exception && (!style_dec[DISABLED_LIST] || 
+                                !style_dec[DISABLED_LIST][i]))
       {
         script += "object.style.setProperty(\"" +
                      prop + "\", \"" +
