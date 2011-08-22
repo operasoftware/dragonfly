@@ -84,6 +84,20 @@ var UIWindowBase = new function()
     win.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
   }
 
+  this.set_toolbar_visibility = function(bool)
+  {
+    if (this.is_window_visible(this.view_id))
+    {
+      if (this.toolbar)
+      {
+        this.toolbar.setVisibility(bool);
+        this.toolbar.setup(this.view_id);
+        this.toolbar.setDimensions(true);
+      }
+      this.container.setDimensions(true);
+    }
+  };
+
   this._delete = function(id)
   {
     var
