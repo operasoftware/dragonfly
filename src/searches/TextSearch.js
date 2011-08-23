@@ -152,7 +152,7 @@ TextSearch.prototype = new function()
     
   this._consume_node = function(node)
   {
-    if (node && (this._current_match_index != -1 || this._length_to_consume))
+    while (node && (this._current_match_index != -1 || this._length_to_consume))
     {
       switch (node.nodeType)
       {
@@ -204,7 +204,7 @@ TextSearch.prototype = new function()
           }
         }
       }
-      this._consume_node(node.nextSibling);
+      node = node.nextSibling;
     }
   };
   
