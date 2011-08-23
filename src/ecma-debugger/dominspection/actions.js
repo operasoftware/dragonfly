@@ -607,6 +607,7 @@ cls.DOMInspectorActions = function(id)
         if (div)
           this._select_node(div, true);
       }
+      window.helpers.scroll_dom_target_into_view();
     }
   }.bind(this);
 
