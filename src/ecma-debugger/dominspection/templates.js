@@ -325,7 +325,7 @@
 
     for ( ; node = data[i]; i += 1)
     {
-      while(current_depth > node[DEPTH])
+      while (current_depth > node[DEPTH])
       {
         tree += closing_tags.pop();
         current_depth--;
@@ -457,6 +457,10 @@
                                   "><node>" +
                                   "&lt;/" + node_name + "&gt;" +
                                 "</node></div>");
+              if (show_pseudo_elements && node.hasOwnProperty(PSEUDO_ELEMENT_LIST))
+              {
+                current_depth++;
+              }
             }
           }
           else
