@@ -127,14 +127,8 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
       }
     }
 
-    var windows = window.ui_windows;
-    if (windows)
-    {
-      for (var win in windows)
-      {
-        windows[win].set_toolbar_visibility(bool);
-      }
-    }
+    UIWindowBase.set_toolbar_visibility(view_id, bool);
+
   }
 
   this.setup = function()

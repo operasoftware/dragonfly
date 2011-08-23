@@ -84,17 +84,25 @@ var UIWindowBase = new function()
     win.style.zIndex = Overlay.get_instance().is_visible ? 400 : 200;
   }
 
-  this.set_toolbar_visibility = function(bool)
+  this.set_toolbar_visibility = function(view_id, bool)
   {
-    if (this.is_window_visible(this.view_id))
+    var windows = window.ui_windows, win = null;
+    if (windows)
     {
-      if (this.toolbar)
+      for (var win_id in windows)
       {
-        this.toolbar.setVisibility(bool);
-        this.toolbar.setup(this.view_id);
-        this.toolbar.setDimensions(true);
+        win = windows[win_id];
+        if (win.view_id == view_id && this.is_window_visible(view_id))
+        {
+          if (win.toolbar)
+          {
+            win.toolbar.setVisibility(bool);
+            win.toolbar.setup(view_id);
+            win.toolbar.setDimensions(true);
+          }
+          win.container.setDimensions(true);
+        }
       }
-      this.container.setDimensions(true);
     }
   };
 
