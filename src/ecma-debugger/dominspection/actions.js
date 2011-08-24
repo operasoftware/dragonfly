@@ -52,10 +52,6 @@ cls.DOMInspectorActions = function(id)
   {
     var container = event.target.parentNode;
     var next_node = container.nextElementSibling;
-    while (next_node && next_node.getAttribute("data-pseudo-element"))
-    {
-      next_node = next_node.nextElementSibling;
-    }
     var level = parseInt(container.style.marginLeft) || 0;
     var level_next = next_node && parseInt(next_node.style.marginLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));

@@ -632,6 +632,18 @@ Array.prototype.__defineGetter__("last", function()
 
 Array.prototype.__defineSetter__("last", function() {});
 
+Array.prototype.extend = function(list)
+{
+  this.push.apply(this, list);
+  return this;
+};
+
+Array.prototype.insert = function(index, list, replace_count)
+{
+  this.splice.apply(this, [index, replace_count || 0].extend(list));
+  return this;
+};
+
 
 StyleSheetList.prototype.getDeclaration = function(selector)
 {
@@ -727,11 +739,7 @@ String.prototype.capitalize = function(only_first)
   return this[0].toUpperCase() + rest;
 };
 
-Array.prototype.extend = function(list)
-{
-  this.push.apply(this, list);
-  return this;
-}
+
 
 /**
  * Local ISO strings, currently needed as datetime-local input values

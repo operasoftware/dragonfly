@@ -28,6 +28,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CONTENT_DOCUMENT = 11;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
@@ -50,7 +51,22 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   TRAVERSE_SEARCH = "search",
   TRAVERSAL = 1,
   SEARCH_PARENT = 2,
-  SEARCH_HIT = 3;
+  SEARCH_HIT = 3,
+  PSEUDO_TYPE = 0,
+  PSEUDO_ELEMENT = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT,
+  PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE,
+  BEFORE = 1,
+  AFTER = 2,
+  FIRST_LETTER = 3,
+  FIRST_LINE = 4,
+  BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE],
+  AFTER_ALIKES = [AFTER],
+  PSEUDO_NAME = {};
+
+  PSEUDO_NAME[BEFORE] = "before";
+  PSEUDO_NAME[AFTER] = "after";
+  PSEUDO_NAME[FIRST_LETTER] = "first-letter";
+  PSEUDO_NAME[FIRST_LINE] = "firts-line";
 
   this._set_mime = function()
   {
@@ -146,6 +162,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           if (traverse_type != "search" || !object_id)
           {            
             this._data = _data;
+            this._unfold_pseudos();
             break;
           }
         }
@@ -175,17 +192,25 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
             // a search can return no data 
             if (_data[0])
             { 
-              splice_args = [i + 1, 0];
               if (object_id == _data[0][ID])
               {
                 this.collapse(object_id);
-                splice_args = [i, 1]
+                this._data.insert(i, _data, 1);
+                this._unfold_pseudos(i, _data.length);
               }
-              Array.prototype.splice.apply(this._data, splice_args.concat(_data));
+              else
+              {
+                this._data.insert(i + 1, _data);
+                this._unfold_pseudos(i, _data.length + 1);
+              }
+              
             }
           }
           else if (!this._data.length)
+          {
             this._data = _data;
+            this._unfold_pseudos();
+          }
           else
             opera.postError(error_ms);
           break;
@@ -205,6 +230,75 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       opera.postError(error_ms + ' ' + JSON.stringify(message));
     }
     this._isprocessing = false;
+  };
+
+  this._unfold_pseudos = function(index, length)
+  {
+    index || (index = 0);
+    length || (length = this._data ? this._data.length : 0);
+
+    if (this._data && this._data[index])
+    {
+      var current_depth = this._data[index][DEPTH];
+      var parent_stack = [];
+      var pseudos = null;
+      for (var i = index, cur; i <= index + length && (cur = this._data[i]); i++)
+      {
+        if (cur[DEPTH] > current_depth)
+        {
+          parent_stack.push(this._data[i - 1]);
+          if (pseudos = this._get_pseudos(parent_stack.last, BEFORE_ALIKES))
+          {
+            this._data.insert(i, pseudos);
+            i += pseudos.length;
+            length += pseudos.length;
+          }
+          current_depth++;
+        }
+        else if (cur[DEPTH] < current_depth)
+        {
+          while (cur[DEPTH] < current_depth)
+          {
+            if (pseudos = this._get_pseudos(parent_stack.last, AFTER_ALIKES))
+            {
+              this._data.insert(i, pseudos);
+              i += pseudos.length;
+              length += pseudos.length;
+            }
+            parent_stack.pop();
+            current_depth--;
+          }
+        }
+      }
+
+      while (parent_stack.length)
+      {
+        if (pseudos = this._get_pseudos(parent_stack.last, AFTER_ALIKES))
+        {
+          this._data.insert(i, pseudos);
+          i += pseudos.length;
+        }
+        parent_stack.pop();
+      }
+    }
+  };
+
+  this._get_pseudos = function(node, alike)
+  {
+    if (node && node[PSEUDO_ELEMENT])
+    {
+      for (var i = 0, ret = [], cur; cur = node[PSEUDO_ELEMENT][i]; i++)
+      {
+        if (alike.contains(cur[PSEUDO_TYPE]))
+        {
+          ret.push([node[ID],
+                    PSEUDO_NODE,
+                    PSEUDO_NAME[cur[PSEUDO_TYPE]],
+                    node[DEPTH] + 1]);
+        }
+      }
+    }
+    return ret && ret.length ? ret : null;
   };
 
   this.__defineGetter__('isprocessing', function()
