@@ -196,15 +196,14 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
               {
                 this.collapse(object_id);
                 this._data.insert(i, _data, 1);
-                this._unfold_pseudos(i, _data.length);
               }
               else
               {
                 this._data.insert(i + 1, _data);
-                this._unfold_pseudos(i, _data.length + 1);
               }
               
             }
+            this._unfold_pseudos(i, _data.length, traverse_type == "subtree");
           }
           else if (!this._data.length)
           {
@@ -232,62 +231,65 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     this._isprocessing = false;
   };
 
-  this._unfold_pseudos = function(index, length)
+  this._unfold_pseudos = function(index, length, force_unfold)
   {
-    index || (index = 0);
-    length || (length = this._data ? this._data.length : 0);
+    typeof index == "number" || (index = 0);
+    typeof length == "number" || (length = this._data ? this._data.length : 0);
 
     if (this._data && this._data[index])
     {
       var current_depth = this._data[index][DEPTH];
       var parent_stack = [];
-      var pseudos = null;
-      for (var i = index, cur; i <= index + length && (cur = this._data[i]); i++)
+      var i = index;
+      var delta = 0;
+      var cur = null;
+
+      for ( ; i <= index + length && (cur = this._data[i + delta]); i++)
       {
         if (cur[DEPTH] > current_depth)
         {
-          parent_stack.push(this._data[i - 1]);
-          if (pseudos = this._get_pseudos(parent_stack.last, BEFORE_ALIKES))
-          {
-            this._data.insert(i, pseudos);
-            i += pseudos.length;
-            length += pseudos.length;
-          }
+          parent_stack.push(this._data[i + delta - 1]);
+          delta += this._insert_pseudos(parent_stack.last, 
+                                        i + delta,
+                                        BEFORE_ALIKES);
           current_depth++;
         }
         else if (cur[DEPTH] < current_depth)
         {
           while (cur[DEPTH] < current_depth)
           {
-            if (pseudos = this._get_pseudos(parent_stack.last, AFTER_ALIKES))
-            {
-              this._data.insert(i, pseudos);
-              i += pseudos.length;
-              length += pseudos.length;
-            }
+            delta += this._insert_pseudos(parent_stack.last, 
+                                          i + delta,
+                                          AFTER_ALIKES);
             parent_stack.pop();
             current_depth--;
           }
+        }
+
+        if (!cur[CHILDREN_LENGTH] && 
+            (force_unfold || current_depth == this._data[index][DEPTH]))
+        {
+          delta += this._insert_pseudos(cur, i + delta + 1, BEFORE_ALIKES);
+          delta += this._insert_pseudos(cur, i + delta + 1, AFTER_ALIKES);
         }
       }
 
       while (parent_stack.length)
       {
-        if (pseudos = this._get_pseudos(parent_stack.last, AFTER_ALIKES))
-        {
-          this._data.insert(i, pseudos);
-          i += pseudos.length;
-        }
-        parent_stack.pop();
+        delta += this._insert_pseudos(parent_stack.pop(),
+                                      i + delta,
+                                      AFTER_ALIKES);
       }
     }
   };
 
-  this._get_pseudos = function(node, alike)
+  this._insert_pseudos = function(node, index, alike)
   {
+    var ret = [];
+
     if (node && node[PSEUDO_ELEMENT])
     {
-      for (var i = 0, ret = [], cur; cur = node[PSEUDO_ELEMENT][i]; i++)
+      for (var i = 0, cur; cur = node[PSEUDO_ELEMENT][i]; i++)
       {
         if (alike.contains(cur[PSEUDO_TYPE]))
         {
@@ -298,7 +300,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         }
       }
     }
-    return ret && ret.length ? ret : null;
+
+    if (ret.length)
+    {
+      this._data.insert(index, ret);
+    }
+    return ret.length;
   };
 
   this.__defineGetter__('isprocessing', function()

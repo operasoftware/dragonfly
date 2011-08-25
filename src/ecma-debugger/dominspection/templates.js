@@ -323,6 +323,7 @@
     var disregard_force_lower_case_depth = 0;
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+    var is_expandable = false;
 
     // opera.postError(JSON.stringify(data))
 
@@ -335,6 +336,8 @@
       }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
+      is_expandable = children_length || (show_pseudo_elements &&
+                                          node[PSEUDO_ELEMENT_LIST]);
       child_pointer = 0;
 
       if (force_lower_case && disregard_force_lower_case(node))
@@ -444,6 +447,7 @@
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       class_name + ">" +
+                          "<input handler='get-children' type='button' class='open' />" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
@@ -453,12 +457,13 @@
             }
             else
             {
+
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                      (children_length ?
+                      (is_expandable ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
@@ -480,9 +485,9 @@
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                      (children_length ?
+                      (is_expandable ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
-                          "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
+                          "<node>&lt;" + node_name + attrs + (is_expandable ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
           }
@@ -586,6 +591,7 @@
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var parent_ele_stack = [];
     var parent_ele = null;
+    var is_expandable = false;
 
     for ( ; node = data[i]; i += 1)
     {
@@ -595,6 +601,8 @@
       }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
+      is_expandable = children_length || (show_pseudo_elements &&
+                                          node[PSEUDO_ELEMENT_LIST]);
       child_pointer = 0;
       while ((parent_ele = parent_ele_stack.last) &&
              current_depth <= parent_ele[DEPTH])
@@ -675,16 +683,13 @@
                 break;
               }
             }
-          }
 
-          if (is_open)
-          {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._margin_style(node, depth_first_ele) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                    (children_length && !has_only_text_content ?
+                    (is_expandable ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
@@ -696,7 +701,7 @@
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                    (children_length ?
+                    (is_expandable ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";

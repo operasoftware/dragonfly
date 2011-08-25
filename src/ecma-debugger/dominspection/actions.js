@@ -69,7 +69,8 @@ cls.DOMInspectorActions = function(id)
       {
         if (container.contains(target))
           target_id = parseInt(target.getAttribute('ref-id'));
-        if (!force_expand && level_next > level)
+        if (!force_expand && (level_next > level ||
+                              event.target.parentNode.childNodes.length > 2))
         {
           model.collapse(ref_id);
           this._get_children_callback(container, model, target_id, 
