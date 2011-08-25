@@ -816,11 +816,6 @@ cls.DOMInspectorActions = function(id)
     this._remove_from_dom(event, target, "el.removeAttribute(\"" + target.textContent + "\")");
   }.bind(this);
 
-  this._handlers["remove-node"] = function(event, target)
-  {
-    this._remove_from_dom(event, target, "el.parentNode.removeChild(el)");
-  }.bind(this);
-
   this._handlers["edit-next"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
@@ -879,7 +874,7 @@ cls.DOMInspectorActions = function(id)
   this._handlers["remove-node"] = function(event, target)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
-    if (ele)
+    if (ele && !ele.hasAttribute("data-pseudo-element"))
     {  
       var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
       var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
