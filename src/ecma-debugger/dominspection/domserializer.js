@@ -119,6 +119,10 @@ window.cls.DOMSerializer.prototype = new function()
       }
       switch (node[TYPE])
       {
+        case 0: // pseudos
+        {
+          break;
+        }
         case 1: // elements
         {
           attrs = '';
