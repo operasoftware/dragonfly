@@ -325,8 +325,6 @@
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var is_expandable = false;
 
-    // opera.postError(JSON.stringify(data))
-
     for ( ; node = data[i]; i += 1)
     {
       while (current_depth > node[DEPTH])
