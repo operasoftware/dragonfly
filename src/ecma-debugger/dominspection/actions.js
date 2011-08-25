@@ -561,7 +561,9 @@ cls.DOMInspectorActions = function(id)
     if (!window.settings.dom.get('dom-tree-style') &&
         target.firstChild && /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
-              target.getAttribute('ref-id') != obj_id);
+              (target.getAttribute('ref-id') != obj_id ||
+              target.hasAttribute('data-pseudo-element')))
+        ;
     if (target)
     {
       var model = this._select_node(target);
