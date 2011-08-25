@@ -46,6 +46,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   const CHECKED = 1;
   const CHECK_AGAIN_RUNTIME = 2;
   const CHECK_AGAIN_NO_RUNTIME = 3;
+  const PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE;
 
   /* private */
 
@@ -349,7 +350,8 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
           j = i + 1;
           while (this._data[j] && this._data[j][DEPTH] > level)
           {
-            if (this._data[j][DEPTH] == (level + 1))
+            if (this._data[j][DEPTH] == (level + 1) &&
+                this._data[j][TYPE] !== PSEUDO_NODE)
             {
               children_count++;
             }
