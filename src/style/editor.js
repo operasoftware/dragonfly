@@ -705,6 +705,11 @@ var Editor = function(actions)
 
   this.suggest_value = function(token, cur_start, cur_end, action_id, match)
   {
+    if (!this.tab_context_tokens)
+    {
+      return null;
+    }
+    
     var
     prop = this.tab_context_tokens[0],
     set = this.tab_context_tokens[3] &&
