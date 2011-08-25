@@ -66,7 +66,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
   PSEUDO_NAME[FIRST_LETTER] = "first-letter";
-  PSEUDO_NAME[FIRST_LINE] = "firts-line";
+  PSEUDO_NAME[FIRST_LINE] = "first-line";
 
   this._set_mime = function()
   {
