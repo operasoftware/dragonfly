@@ -708,7 +708,8 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(target) && !_is_pseudo_element(target))
+    if (!_is_script_node(target) && !_is_pseudo_element(target) &&
+        document.documentElement.contains(target))
     {
       switch(target.nodeName.toLowerCase())
       {
