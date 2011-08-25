@@ -211,6 +211,10 @@
       }
       switch (node[TYPE])
       {
+        case PSEUDO_NODE:
+        {
+          break;
+        }
         case ELEMENT_NODE:
         {
           attrs = this._dom_attrs_search(node, force_lower_case);
