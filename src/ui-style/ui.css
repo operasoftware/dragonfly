@@ -265,29 +265,38 @@ cst-icon[class="debugger-menu"] {
 }
 
 /* Top tabs */
+/* Width depends on the images */
 .dom_mode {
     background: url("../ui-images/mode_documents.png");
+    width: 28px;
 }
 .js_mode {
     background: url("../ui-images/mode_scripts.png");
+    width: 22px;
 }
 .network_mode {
     background: url("../ui-images/mode_network.png");
+    width: 23px; 
 }
 .resource_panel {
     background: url("../ui-images/mode_resources.png");
+    width: 23px; 
 }
 .storage {
     background: url("../ui-images/mode_storage.png");
+    width: 24px;
 }
 .console_mode {
     background: url("../ui-images/mode_errors.png");
+    width: 25px;
 }
 .utils {
     background: url("../ui-images/mode_utilities.png");
+    width: 25px;
 }
 .console_panel {
     background: url("../ui-images/mode_console.png");
+    width: 25px;
 }
 
 button.ui-control::before,
@@ -329,7 +338,7 @@ button.text-button:active {
   height: 17px;
   width: 17px;
   margin: 0 2px;
-  padding: 1px;
+  padding: 1px 5px;
   box-sizing: content-box;
   display: inline-block;
   box-shadow: 0 1px rgba(255,255,255,0.6),
@@ -342,7 +351,7 @@ button.text-button:active {
   opacity: 0.4;
 }
 .ui-control:not([disabled]):active {
-    padding: 2px 1px 0;
+    padding: 2px 5px 0;
     box-shadow: 0 1px #fff,
                 inset 0 1px 1px rgba(0, 0, 0, .15),
                 inset 0 0px 4px rgba(0, 0, 0, .05);
@@ -351,7 +360,7 @@ button.text-button:active {
                                     rgba(255,255,255,0.25) 100%);
 }
 .ui-control.is-active {
-    padding: 2px 1px 0;
+    padding: 2px 5px 0;
     box-shadow: 0 1px #fff,
                 inset 0 1px 1px rgba(0, 0, 0, .15),
                 inset 0 0px 4px rgba(0, 0, 0, .15);
@@ -362,6 +371,41 @@ button.text-button:active {
 .ui-control.is-active:active {
     background-color: #b0b0b0;
 }
+
+/* Grouping the toolbar buttons */
+
+toolbar-switches button.ui-control:not(:only-of-type):not(:first-of-type):not(:last-of-type),
+toolbar-buttons button.ui-control:not(:only-of-type):not(:first-of-type):not(:last-of-type){
+  border-radius: 0px;
+  border-right: none;
+  margin:0px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+toolbar-switches button.ui-control:not(:only-of-type):first-of-type,
+toolbar-buttons button.ui-control:not(:only-of-type):first-of-type,
+window-controls button.ui-control#toggle-settings-overlay{
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right: none;
+  margin:0px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-left: 3px;
+}
+
+toolbar-switches button.ui-control:not(:only-of-type):last-of-type,
+toolbar-buttons button.ui-control:not(:only-of-type):last-of-type,
+window-controls button.ui-control#toggle-remote-debug-overlay{
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  margin:0px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-right: 3px;
+}
+
 
 /* Show the button topmost when the overlay is visible */
 #toggle-settings-overlay.is-active,
@@ -429,7 +473,7 @@ cst-icon {
 }
 
 toolbar-separator {
-  display: block;
+  display: none;
   float: left;
   height: 21px;
   margin: 0 3px;
@@ -1276,7 +1320,7 @@ breadcrumbs breadcrumb:last-of-type::after {
     width: 11px;
     position: absolute;
     left: 0;
-    background: transparent url("../ui-images/crumb_arrow.png");
+    background-image: url("../ui-images/crumb_arrow.png");
 }
 breadcrumbs breadcrumb:last-of-type::after {
     left: auto;
