@@ -156,9 +156,18 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       }
     }
     */
-    if( __selected_runtime_id == id )
+    if (__selected_runtime_id == id)
     {
       __selected_runtime_id = '';
+      if (__runtimes[id] && !__runtimes[id].is_top)
+      {
+        var rt = __window_top_rt_map[__runtimes[id].window_id];
+        if (rt)
+        {
+          self.setSelectedRuntime(rt);
+          window['cst-selects']['cmd-runtime-select'].updateElement();
+        }
+      }
     }
     messages.post('runtime-destroyed', {id: id});
     __old_runtimes[id] = __runtimes[id];
