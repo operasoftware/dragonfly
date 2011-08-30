@@ -16,6 +16,7 @@ cls.DOMSearchView = function(id, name, container_class)
   this.createView = function(container)
   {
     container.clearAndRender(window.templates.search_panel(this, 'dom', HANDLER));
+    this._adjust_search_controls(container);
     this._search_container = container.childNodes[1];
     this._search.set_container(this._search_container);
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
@@ -24,6 +25,13 @@ cls.DOMSearchView = function(id, name, container_class)
     var info_ele = container.getElementsByClassName('search-info-badge')[0];
     this._search.set_info_element(info_ele);
     this._search.show_last_search();
+  };
+
+  this._adjust_search_controls = PanelSearch.adjust_search_controls;
+
+  this.onresize = function(container)
+  {
+    this._adjust_search_controls(container);
   };
 
   ActionHandlerInterface.apply(this);

@@ -23,6 +23,7 @@ cls.JSSearchView = function(id, name, container_class)
   {
     this._container = container;
     container.clearAndRender(window.templates.search_panel(this, 'js', HANDLER));
+    this._adjust_search_controls(container);
     var query = '[handler="' + this.controls[SEARCHFIELD].handler + '"]';
     this._input = container.querySelector(query);
     var search_container = this._container
@@ -32,6 +33,13 @@ cls.JSSearchView = function(id, name, container_class)
     this._search.set_info_element(info);
     this._search.set_form_input(this._input);
     this._search.show_last_search();
+  };
+
+  this._adjust_search_controls = PanelSearch.adjust_search_controls;
+
+  this.onresize = function(container)
+  {
+    this._adjust_search_controls(container);
   };
 
   ActionHandlerInterface.apply(this);

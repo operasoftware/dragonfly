@@ -121,6 +121,19 @@
 PanelSearch.MATCH_NODE_CLASS = "search-match";
 PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS = "search-match-cursor";
 
+PanelSearch.adjust_search_controls = function(container)
+{
+  if (container)
+  {
+    var controls = container.querySelector('.advanced-search-controls');
+    var search_container = container.querySelector('.panel-search-container');
+    if (controls && search_container)
+    {
+      search_container.style.top = controls.offsetHeight + 'px';
+    }
+  }
+};
+
 var DetailResourceSearch = function(min_length)
 {
   this._init(min_length);
