@@ -7,15 +7,17 @@ cls.Profiler["1.0"].EventList = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * Represents the smallest `Interval` which is large enough to cover all the
-    * `Intervals` of each individual `Event` in the list.
     * 
-    * Is not set if `eventList` is empty.
+    *  Represents the smallest `Interval` which is large enough to cover all the
+    *  `Intervals` of each individual `Event` in the list.
+    * 
+    *  Is not set if `eventList` is empty.
     */
   this.interval = arr[0] ? new cls.Profiler["1.0"].Interval(arr[0], this) : null;
   /** 
-    * List of `Events`. The `Events` are ordered according to the start time of
-    * their `Intervals` (increasing order).
+    * 
+    *  List of `Events`. The `Events` are ordered according to the start time of
+    *  their `Intervals` (increasing order).
     */
   var self = this;
   this.eventList = (arr[1] || []).map(function(item)
@@ -29,13 +31,15 @@ cls.Profiler["1.0"].Interval = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The start of the `Interval`. If not present, this is an left-open
-    * `Interval` ([-inf, N]).
+    * 
+    *  The start of the `Interval`. If not present, this is an left-open
+    *  `Interval` ([-inf, N]).
     */
   this.start = arr[0];
   /** 
-    * The end of the `Interval`. If not present, this is an right-open
-    * `Interval` ([N, +inf]).
+    * 
+    *  The end of the `Interval`. If not present, this is an right-open
+    *  `Interval` ([N, +inf]).
     */
   this.end = arr[1];
   this.toString = function() { return "[message Interval]"; }
@@ -45,91 +49,111 @@ cls.Profiler["1.0"].Event = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The type of `Event`. Some `Events` carry additional information relevant
-    * to their type.
+    * 
+    *  The type of `Event`. Some `Events` carry additional information relevant
+    *  to their type.
     */
   // cls.Profiler["1.0"].Event.EventType
   this.type = arr[0];
   /** 
-    * The time spent on this task. (Self-time). This time takes place at some
-    * (unknown) point in the `Interval`.
     * 
-    * Does not include `overhead`.
+    *  The time spent on this task. (Self-time). This time takes place at some
+    *  (unknown) point in the `Interval`.
+    * 
+    *  Does not include `overhead`.
     */
   this.time = arr[1];
   /** 
-    * Profiling overhead. This is the time spent doing things which would
-    * normally not happen if we had not been profiling, e.g. storing the
-    * selector text for CSS selector `Events`.
     * 
-    * The overhead takes place at some (unknown) point in the `Interval`.
+    *  Profiling overhead. This is the time spent doing things which would
+    *  normally not happen if we had not been profiling, e.g. storing the
+    *  selector text for CSS selector `Events`.
+    * 
+    *  The overhead takes place at some (unknown) point in the `Interval`.
     */
   this.overhead = arr[2];
   /** 
-    * Number of hits on this `Event`.
+    * 
+    *  Number of hits on this `Event`.
     */
   this.hits = arr[3];
   /** 
-    * The `Interval` in which the `Event` took place. An `Event` may consume time
-    * across multiple time slices (e.g. thread evaluation) without requiring
-    * *all* the time in that `Interval`.
     * 
-    * The `time` field contains the time actually spent working on the `Event`.
-    * There is no exact start and end time for `Events` which are spread across
-    * time slices, because the self-time spent is fragmented across the
-    * `Interval`.
+    *  The `Interval` in which the `Event` took place. An `Event` may consume time
+    *  across multiple time slices (e.g. thread evaluation) without requiring
+    *  *all* the time in that `Interval`.
     * 
-    * We can therefore only know that the `time` spent on this `Event` happened
-    * some time in this `Interval`, but not exactly where. (It would be
-    * possible to expose each fragment of execution, of course, but the amount
-    * of data required to represent this would be to large to handle).
+    *  The `time` field contains the time actually spent working on the `Event`.
+    *  There is no exact start and end time for `Events` which are spread across
+    *  time slices, because the self-time spent is fragmented across the
+    *  `Interval`.
     * 
-    * The start of the `Interval` represents the first time we started working
-    * on this `Event`. The end of the `Interval` represents the last time we
-    * were done working on this `Event`.
+    *  We can therefore only know that the `time` spent on this `Event` happened
+    *  some time in this `Interval`, but not exactly where. (It would be
+    *  possible to expose each fragment of execution, of course, but the amount
+    *  of data required to represent this would be to large to handle).
+    * 
+    *  The start of the `Interval` represents the first time we started working
+    *  on this `Event`. The end of the `Interval` represents the last time we
+    *  were done working on this `Event`.
     */
   this.interval = arr[4] ? new cls.Profiler["1.0"].Interval(arr[4], this) : null;
   /** 
-    * The non-zero ID of this `Event`.
+    * 
+    *  The non-zero ID of this `Event`.
     */
   this.eventID = arr[5];
   /** 
-    * The parent `Event` ID, or not set if this is a top-level `Event`.
+    * 
+    *  The parent `Event` ID, or not set if this is a top-level `Event`.
     */
   this.parentEventID = arr[6];
   /** 
-    * Aggregated `time` for all children, including `time` for this `Event`.
+    * 
+    *  The number of immediate children (not grandchildren) for this `Event`.
     */
-  this.aggregatedTime = arr[7];
+  this.childCount = arr[7];
   /** 
-    * Aggregated `overhead` for all children, including `overhead` for this
-    * `Event`.
+    * 
+    *  Aggregated `time` for all children, including `time` for this `Event`.
     */
-  this.aggregatedOverhead = arr[8];
+  this.aggregatedTime = arr[8];
   /** 
-    * Additional information for `CSS_SELECTOR_MATCHING` `Events`.
+    * 
+    *  Aggregated `overhead` for all children, including `overhead` for this
+    *  `Event`.
     */
-  this.cssSelectorMatching = arr[9] ? new cls.Profiler["1.0"].CssSelectorMatchingEvent(arr[9], this) : null;
+  this.aggregatedOverhead = arr[9];
   /** 
-    * Additional information for `CSS_THREAD_EVALUATION` `Events`.
+    * 
+    *  Additional information for `CSS_SELECTOR_MATCHING` `Events`.
     */
-  this.threadEvaluation = arr[10] ? new cls.Profiler["1.0"].ThreadEvaluationEvent(arr[10], this) : null;
+  this.cssSelectorMatching = arr[10] ? new cls.Profiler["1.0"].CssSelectorMatchingEvent(arr[10], this) : null;
   /** 
-    * Additional information for `DOCUMENT_PARSING` `Events`.
+    * 
+    *  Additional information for `CSS_THREAD_EVALUATION` `Events`.
     */
-  this.documentParsing = arr[11] ? new cls.Profiler["1.0"].DocumentParsingEvent(arr[11], this) : null;
+  this.threadEvaluation = arr[11] ? new cls.Profiler["1.0"].ThreadEvaluationEvent(arr[11], this) : null;
   /** 
-    * Additional information for `CSS_PARSING` `Events`.
+    * 
+    *  Additional information for `DOCUMENT_PARSING` `Events`.
     */
-  this.cssParsing = arr[12] ? new cls.Profiler["1.0"].CssParsingEvent(arr[12], this) : null;
+  this.documentParsing = arr[12] ? new cls.Profiler["1.0"].DocumentParsingEvent(arr[12], this) : null;
   /** 
-    * Additional information for `SCRIPT_COMPILATION` `Events`.
+    * 
+    *  Additional information for `CSS_PARSING` `Events`.
     */
-  this.scriptCompilation = arr[13] ? new cls.Profiler["1.0"].ScriptCompilationEvent(arr[13], this) : null;
+  this.cssParsing = arr[13] ? new cls.Profiler["1.0"].CssParsingEvent(arr[13], this) : null;
   /** 
-    * Additional information for `PAINT` `Events`.
+    * 
+    *  Additional information for `SCRIPT_COMPILATION` `Events`.
     */
-  this.paintEvent = arr[14] ? new cls.Profiler["1.0"].PaintEvent(arr[14], this) : null;
+  this.scriptCompilation = arr[14] ? new cls.Profiler["1.0"].ScriptCompilationEvent(arr[14], this) : null;
+  /** 
+    * 
+    *  Additional information for `PAINT` `Events`.
+    */
+  this.paint = arr[15] ? new cls.Profiler["1.0"].PaintEvent(arr[15], this) : null;
   this.toString = function() { return "[message Event]"; }
 };
 
@@ -137,7 +161,8 @@ cls.Profiler["1.0"].CssSelectorMatchingEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The selector text, e.g. "#foo .bar".
+    * 
+    *  The selector text, e.g. "#foo .bar".
     */
   this.selector = arr[0];
   this.toString = function() { return "[message CssSelectorMatchingEvent]"; }
@@ -147,15 +172,17 @@ cls.Profiler["1.0"].ThreadEvaluationEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * What kind of thread the `Event` represents.
+    * 
+    *  What kind of thread the `Event` represents.
     */
   // cls.Profiler["1.0"].ThreadEvaluationEvent.ThreadType
   this.threadType = arr[0];
   /** 
-    * If `threadType` is `EVENT`, this field will contain the event name, e.g.
-    * 'load'.
     * 
-    * In all other cases, this field is not set.
+    *  If `threadType` is `EVENT`, this field will contain the event name, e.g.
+    *  'load'.
+    * 
+    *  In all other cases, this field is not set.
     */
   this.eventName = arr[1];
   this.toString = function() { return "[message ThreadEvaluationEvent]"; }
@@ -165,7 +192,8 @@ cls.Profiler["1.0"].DocumentParsingEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The URL of the document that was parsed.
+    * 
+    *  The URL of the document that was parsed.
     */
   this.url = arr[0];
   this.toString = function() { return "[message DocumentParsingEvent]"; }
@@ -175,8 +203,9 @@ cls.Profiler["1.0"].CssParsingEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The URL of the stylesheet that was parsed. If the stylesheet is inlined
-    * in another doucment, that document is used as the URL.
+    * 
+    *  The URL of the stylesheet that was parsed. If the stylesheet is inlined
+    *  in another doucment, that document is used as the URL.
     */
   this.url = arr[0];
   this.toString = function() { return "[message CssParsingEvent]"; }
@@ -186,13 +215,15 @@ cls.Profiler["1.0"].ScriptCompilationEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * Describes the origin of the script.
+    * 
+    *  Describes the origin of the script.
     */
   // cls.Profiler["1.0"].ScriptCompilationEvent.ScriptType
   this.scriptType = arr[0];
   /** 
-    * The URL of the stylesheet that was parsed. If the stylesheet is inlined
-    * in another doucment, that document is used as the URL.
+    * 
+    *  The URL of the stylesheet that was parsed. If the stylesheet is inlined
+    *  in another doucment, that document is used as the URL.
     */
   this.url = arr[1];
   this.toString = function() { return "[message ScriptCompilationEvent]"; }
@@ -202,15 +233,17 @@ cls.Profiler["1.0"].PaintEvent = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * The `Area` that was painted, in document coordinates relative the upper
-    * left corner of the view.
+    * 
+    *  The `Area` that was painted, in document coordinates relative the upper
+    *  left corner of the view.
     */
   this.area = arr[0] ? new cls.Profiler["1.0"].Area(arr[0], this) : null;
   this.toString = function() { return "[message PaintEvent]"; }
 };
 
 /** 
-  * Defines an `Area` by its top-left corner and width/height.
+  * 
+  *  Defines an `Area` by its top-left corner and width/height.
   */
 cls.Profiler["1.0"].Area = function(arr, parent)
 {

@@ -6,14 +6,13 @@ cls.ProfilerService = function()
   this.is_active = false;
   this._profiler = window.services["profiler"];
   this._tag_manager = window.tag_manager;
+  this._window_id = 0;
 
   const START_MODE_IMMEDIATE = 1;
   const START_MODE_URL = 2;
 
   this.start_profiler = function(start_mode, window_id, callback)
   {
-    start_mode = start_mode || START_MODE_IMMEDIATE;
-    window_id = window_id || 3; // TODO: should be current window
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this.is_active = true;
       if (callback)
@@ -21,7 +20,8 @@ cls.ProfilerService = function()
         callback(status, msg);
       }
     });
-    this._profiler.requestStartProfiler(tag, [start_mode, window_id]);
+    this._profiler.requestStartProfiler(tag, [start_mode || START_MODE_IMMEDIATE,
+                                              this._window_id]);
   };
 
   this.stop_profiler = function(callback)
@@ -40,7 +40,6 @@ cls.ProfilerService = function()
                              max_depth, event_type_list, interval, callback)
   {
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      this.data.set_event_list(msg);
       if (callback)
       {
         callback(status, msg);
@@ -59,17 +58,24 @@ cls.ProfilerService = function()
   {
     this._profiler.requestReleaseProfile(null, [profile_id]);
   };
+
+  this._on_debug_context_selected = function(msg)
+  {
+    this._window_id = msg.window_id;
+  };
+
+  window.messages.addListener("debug-context-selected", this._on_debug_context_selected.bind(this));
 };
 
 cls.ProfilerService.GENERIC = 1;
-cls.ProfilerService.PROCESS = 11;
-cls.ProfilerService.DOCUMENT_PARSING = 7;
-cls.ProfilerService.CSS_PARSING = 8;
-cls.ProfilerService.SCRIPT_COMPILATION = 9;
-cls.ProfilerService.THREAD_EVALUATION = 4;
-cls.ProfilerService.REFLOW = 5;
-cls.ProfilerService.STYLE_RECALCULATION = 2;
-cls.ProfilerService.CSS_SELECTOR_MATCHING = 3;
+cls.ProfilerService.PROCESS = 2;
+cls.ProfilerService.DOCUMENT_PARSING = 3;
+cls.ProfilerService.CSS_PARSING = 4;
+cls.ProfilerService.SCRIPT_COMPILATION = 5;
+cls.ProfilerService.THREAD_EVALUATION = 6;
+cls.ProfilerService.REFLOW = 7;
+cls.ProfilerService.STYLE_RECALCULATION = 8;
+cls.ProfilerService.CSS_SELECTOR_MATCHING = 9;
 cls.ProfilerService.LAYOUT = 10;
-cls.ProfilerService.PAINT = 6;
+cls.ProfilerService.PAINT = 11;
 

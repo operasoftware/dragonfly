@@ -69,14 +69,15 @@ cls.Profiler["1.0"].Service = function()
     EVENT_INTERVAL = 4,
     EVENT_ID = 5,
     PARENT_EVENT_ID = 6,
-    AGGREGATED_TIME = 7,
-    AGGREGATED_OVERHEAD = 8,
-    CSS_SELECTOR_MATCHING = 9,
-    THREAD_EVALUATION = 10,
-    DOCUMENT_PARSING = 11,
-    CSS_PARSING = 12,
-    SCRIPT_COMPILATION = 13,
-    PAINT_EVENT = 14,
+    CHILD_COUNT = 7,
+    AGGREGATED_TIME = 8,
+    AGGREGATED_OVERHEAD = 9,
+    CSS_SELECTOR_MATCHING = 10,
+    THREAD_EVALUATION = 11,
+    DOCUMENT_PARSING = 12,
+    CSS_PARSING = 13,
+    SCRIPT_COMPILATION = 14,
+    PAINT = 15,
     // sub message CssSelectorMatchingEvent 
     SELECTOR = 0;
     // sub message ThreadEvaluationEvent 

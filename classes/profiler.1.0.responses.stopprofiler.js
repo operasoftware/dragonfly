@@ -7,23 +7,26 @@ cls.Profiler["1.0"].Profile = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * Nonzero ID for the `Profile`. This must be used when accessing `Events`
-    * from a `Timeline` withing the `Profile`, and when releasing the
-    * `Profile`.
+    * 
+    *  Nonzero ID for the `Profile`. This must be used when accessing `Events`
+    *  from a `Timeline` withing the `Profile`, and when releasing the
+    *  `Profile`.
     */
   this.profileID = arr[0];
   /** 
-    * The ID of the window associated with a `Profile`.
     * 
-    * This field may not be present if the `Profile` is not associated with a
-    * window. (Currently not applicable, but field is made optional for
-    * future compatibility).
+    *  The ID of the window associated with a `Profile`.
+    * 
+    *  This field may not be present if the `Profile` is not associated with a
+    *  window. (Currently not applicable, but field is made optional for
+    *  future compatibility).
     */
   this.windowID = arr[1];
   /** 
-    * `Timelines` contained within the `Profile`. This will typically contain
-    * one `Timeline` for each frame that existed in the window at some point
-    * during profiling.
+    * 
+    *  `Timelines` contained within the `Profile`. This will typically contain
+    *  one `Timeline` for each frame that existed in the window at some point
+    *  during profiling.
     */
   var self = this;
   this.timelineList = (arr[2] || []).map(function(item)
@@ -37,19 +40,21 @@ cls.Profiler["1.0"].Timeline = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
-    * Nonnzero ID for the `Timeline`. This must be used when accessing `Events`
-    * from the `Timeline`.
+    * 
+    *  Nonnzero ID for the `Timeline`. This must be used when accessing `Events`
+    *  from the `Timeline`.
     */
   this.timelineID = arr[0];
   /** 
-    * If the `Timeline` is associated with a frame, the ID of the frame will be
-    * stored here. If the frame was removed during profiling, it will not be
-    * possible to access additional information about the frame from
-    * 'DocumentManager'.
     * 
-    * Also, this field may not be present if the `Timeline` is not associated
-    * with a frame. (Currently not applicable, but field is made optional for
-    * future compatibility).
+    *  If the `Timeline` is associated with a frame, the ID of the frame will be
+    *  stored here. If the frame was removed during profiling, it will not be
+    *  possible to access additional information about the frame from
+    *  'DocumentManager'.
+    * 
+    *  Also, this field may not be present if the `Timeline` is not associated
+    *  with a frame. (Currently not applicable, but field is made optional for
+    *  future compatibility).
     */
   this.frameID = arr[1];
   this.toString = function() { return "[message Timeline]"; }

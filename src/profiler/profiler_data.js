@@ -1,8 +1,8 @@
-window.cls = window.cls || {};
+window.cls = (window.cls || {});
 
 cls.ProfilerData = function()
 {
-  this._event_list = [];
+  this._event_list = {};
 
   this.set_event_list = function(event_list)
   {
@@ -16,7 +16,7 @@ cls.ProfilerData = function()
 
   this.clear_event_list = function()
   {
-    this._event_list = [];
+    this._event_list = {};
   };
 };
 

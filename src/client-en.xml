@@ -237,7 +237,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
 
-
+<script src="lib/chart.js"></script>
 
 <script src="./ui-scripts/ui.js"/>
 <script src="./ui-scripts/tabbar.js"/>
