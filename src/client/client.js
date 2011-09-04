@@ -285,11 +285,71 @@ window.cls.Client = function()
     this.send(null);
   }
 
+  var _resolve_implicit_dimensions = function(layout)
+  {
+    var
+    container_width = window.innerWidth,
+    container_height = window.innerHeight;
+
+    layout.width && (layout.width = container_width);
+    layout.height && (layout.height = container_height);
+
+    if (layout.children)
+    {
+      var
+      remaining = { width: container_width, height: container_height },
+      implicit_count = { width: 0, height: 0 },
+      distribute = { width: 0, height: 0 };
+
+      // first pass - check how many implicit dimensions were specified and
+      // find out how much space should be allocated for each one of them
+      for (var i = 0, child; child = layout.children[i++]; )
+      {
+        ['width', 'height'].forEach(function(prop)
+        {
+          if (child[prop])
+          {
+            if (child[prop] == '*')
+            {
+              implicit_count[prop]++;
+            }
+            else
+            {
+              remaining[prop] -= child[prop];
+            }
+          }
+        });
+      }
+
+      // calculate how many pixels to distribute for each implicit dimension
+      implicit_count.width && (distribute.width = remaining.width / implicit_count.width);
+      implicit_count.height && (distribute.height = remaining.height / implicit_count.height);
+
+      // second pass - update implicit dimensions
+      for (var i = 0, child; child = layout.children[i++]; )
+      {
+        ['width', 'height'].forEach(function(prop)
+        {
+          if (child[prop] == '*')
+          {
+            child[prop] = distribute[prop];
+          }
+        });
+      }
+    }
+  }
+
   this.create_top_level_views = function(services)
   {
     var layouts = ui_framework.layouts;
     var ui = UI.get_instance();
     var modebar_dom = ui.register_modebar('dom', HorizontalNavigation);
+
+    for (var layout in layouts)
+    {
+      _resolve_implicit_dimensions(layouts[layout]);
+    }
+
     new CompositeView('dom_mode',
                       ui_strings.M_VIEW_LABEL_COMPOSITE_DOM,
                       layouts.dom_rough_layout,
@@ -329,9 +389,7 @@ window.cls.Client = function()
 
     new CompositeView('old_http_logger',
                       ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.old_http_logger_rough_layout
-                    )
-
+                      layouts.old_http_logger_rough_layout);
   }
 
   this.create_window_controls = function()
@@ -515,11 +573,11 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700,
+      width: '*',
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
-      width: 250,
+      width: 350,
       tabs: function(services)
       {
         return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
@@ -536,7 +594,7 @@ ui_framework.layouts.js_rough_layout =
   children:
   [
     {
-      width: 700,
+      width: '*',
       children:
       [
         {
@@ -546,7 +604,7 @@ ui_framework.layouts.js_rough_layout =
       ]
     },
     {
-      width: 250,
+      width: 350,
       children:
       [
         {
@@ -595,7 +653,7 @@ ui_framework.layouts.utils_rough_layout =
   children:
   [
     {
-      width: 700,
+      width: '*',
       children:
       [
         {
@@ -604,7 +662,7 @@ ui_framework.layouts.utils_rough_layout =
       ]
     },
     {
-      width: 250,
+      width: 350,
       children:
       [
         {
