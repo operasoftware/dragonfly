@@ -38,7 +38,20 @@
   var select_obj = null;
   var self = this;
 
-  var modal_click_handler = function(event)
+  var modal_mousedown_handler = function(event)
+  {
+    var ele = event.target;
+
+    event.stopPropagation();
+    event.preventDefault();
+    while (ele != modal_box && (ele = ele.parentElement));
+    if (!ele)
+    {
+      self.remove_select();
+    }
+  }
+
+  var modal_mouseup_handler = function(event)
   {
     var
     ele = event.target,
@@ -78,15 +91,17 @@
         // keep modal state
         case 2: return
       }
+
+      self.remove_select();
     }
-    self.remove_select();
   }
 
   this.remove_select = function()
   {
     if (modal_box)
     {
-      document.removeEventListener('click', modal_click_handler, true);
+      document.removeEventListener('mousedown', modal_mousedown_handler, true);
+      document.removeEventListener('mouseup', modal_mouseup_handler, true);
       modal_box.parentElement.removeChild(modal_box);
       modal_box = null;
       select_obj = null;
@@ -96,7 +111,7 @@
     return false;
   }
 
-  var click_handler = function(event)
+  var mouse_handler = function(event)
   {
     var ele = event.target;
     if (/^cst-/i.test(ele.nodeName))
@@ -107,8 +122,11 @@
       {
         return;
       }
+      event.stopPropagation();
+      event.preventDefault();
       while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
-      document.addEventListener('click', modal_click_handler, true);
+      document.addEventListener('mousedown', modal_mousedown_handler, true);
+      document.addEventListener('mouseup', modal_mouseup_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
       modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
 
@@ -272,7 +290,7 @@
     return false;
   }
 
-  document.addEventListener('click', click_handler, false);
+  document.addEventListener('mousedown', mouse_handler, false);
 }
 
 /**
