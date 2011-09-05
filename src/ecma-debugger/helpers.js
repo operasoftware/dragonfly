@@ -69,7 +69,7 @@ window.cls.Helpers = function()
 
     if (path.startswith("data:"))
     {
-      var short_path = path.slice(0, DATA_URI_MAX_SIZE)
+      var short_path = path.slice(0, DATA_URI_MAX_SIZE);
       return path.length > DATA_URI_MAX_SIZE ? short_path + "…" : short_path;
     }
 
