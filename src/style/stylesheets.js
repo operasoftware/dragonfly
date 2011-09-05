@@ -916,7 +916,7 @@ cls.Stylesheets = function()
            " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
            " data-resource-line-number='" + (line_number || 0) + "'" +
          ">" +
-           helpers.basename(sheet.href) + (line_number ? ":" + line_number : "") +
+           helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : "") +
          "</stylesheet-link>" :
          "") +
         "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
