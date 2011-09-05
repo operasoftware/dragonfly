@@ -218,6 +218,12 @@
     return false;
   }.bind(this);
 
+  this._handlers["reload-context"] = function(action_id, event, target)
+  {
+    runtimes.reloadWindow();
+
+    return false;
+  };
 
   this._handlers["show-overlay"] = function(action_id, event, target)
   {

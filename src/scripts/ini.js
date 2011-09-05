@@ -26,7 +26,8 @@
           "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
-          "ctrl f": "show-search"
+          "ctrl f": "show-search",
+          "ctrl r": "reload-context"
         },
         "edit":
         {
@@ -225,7 +226,8 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
-          "f3": "show-search"
+          "f3": "show-search",
+          "cmd r": "reload-context"
         },
         "edit":
         {
