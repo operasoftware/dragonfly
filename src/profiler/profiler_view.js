@@ -92,13 +92,13 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
 
   this._start_profiler = function(container)
   {
-    this._container.innerHTML = "Profiling";
+    this._container.clearAndRender(this._templates.empty("Profiling"));
     this._profiler.start_profiler();
   };
 
   this._stop_profiler = function(container)
   {
-    this._container.innerHTML = "Stopped profiling. Calculating...";
+    this._container.clearAndRender(this._templates.empty("Stopped profiling. Calculating..."));
     this._profiler.stop_profiler(this._handle_stop_profiler.bind(this));
   };
 
@@ -146,10 +146,12 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._update_view = function()
   {
     this._container.clearAndRender(
+        this._timeline_list.eventList && this._timeline_list.eventList[0] ?
         this._templates.main(this._templates.event_list_aggregated(this._aggregated_list),
-                             this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 121), // FIXME: don't hardcode
+                             this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 120), // FIXME: don't hardcode
                              this._templates.details(this._table),
-                             this._templates.status(format_time(this._details_time)))
+                             this._templates.status(format_time(this._details_time))) :
+        this._templates.empty("Press the “Start profiling” button to start profiling")
     );
   };
 
@@ -195,6 +197,7 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
     else
     {
       this._table = null;
+      this._details_time = 0;
       this._update_view();
     }
   };
@@ -250,7 +253,7 @@ cls.ProfilerView.create_ui_widgets = function()
     [
       {
         handler: "profiler-start-stop",
-        title: "Start profiler" // FIXME: ui string
+        title: "Start profiling" // FIXME: ui string
       }
     ],
     null,

@@ -8,7 +8,7 @@
 
 #profiler-timeline {
     position: absolute;
-    left: 121px;
+    left: 120px;
     right: 0;
     top: 0;
     height: 120px;
@@ -33,11 +33,18 @@
     text-align: center;
 }
 
-.profiler-no-events {
+.profiler-empty {
     text-align: center;
     color: #999;
-    font-size: 2em;
-    text-shadow: 1px 1px 1px #ddd;
+    text-shadow: 1px 1px 1px #eee;
+    font-size: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
 }
 
 .profiler-details-time,
@@ -53,9 +60,10 @@
 
 .profiler-event {
   position: absolute;
+  min-width: 5px;
   height: 10px;
   border-color: #333;
-  border-radius: 4px;
+  border-radius: 2px;
   background-clip: padding-box;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(184, 212, 255, .7) 1%,
@@ -87,46 +95,64 @@
                                        rgb(166, 197, 243) 100%);
 }
 
-.event-type2
+.event-type-2
 {
+    background: rgba(173, 255, 47, .7) !important;
+    fill: rgb(173, 255, 47) !important;
 }
 
-.event-type2.profiler-timeline-selftime {
+.event-type-2.profiler-timeline-selftime {
+    background: rgb(173, 255, 47) !important;
 }
 
-.event-type3
+.event-type-3
 {
+    background: rgba(173, 216, 230, .7) !important;
+    fill: rgb(173, 216, 230) !important;
 }
 
-.event-type3.profiler-timeline-selftime {
+.event-type-3.profiler-timeline-selftime {
+    background: rgb(173, 216, 230) !important;
 }
 
-.event-type4
+.event-type-4
 {
+    background: rgba(144, 238, 144, .7) !important;
+    fill: rgb(144, 238, 144) !important;
 }
 
-.event-type4.profiler-timeline-selftime {
+.event-type-4.profiler-timeline-selftime {
+    background: rgb(144, 238, 144) !important;
 }
 
-.event-type5
+.event-type-5
 {
+    background: rgba(255, 160, 122, .7) !important;
+    fill: rgb(255, 160, 122) !important;
 }
 
-.event-type5.profiler-timeline-selftime {
+.event-type-5.profiler-timeline-selftime {
+    background: rgb(255, 160, 122) !important;
 }
 
-.event-type6
+.event-type-6
 {
+    background: rgba(255, 182, 193, .7) !important;
+    fill: rgb(255, 182, 193) !important;
 }
 
-.event-type6.profiler-timeline-selftime {
+.event-type-6.profiler-timeline-selftime {
+    background: rgb(255, 182, 193) !important;
 }
 
-.event-type7
+.event-type-7
 {
+    background: rgba(176, 196, 222, .7) !important;
+    fill: rgb(176, 196, 222) !important;
 }
 
-.event-type7.profiler-timeline-selftime {
+.event-type-7.profiler-timeline-selftime {
+    background: rgb(176, 196, 222) !important;
 }
 
 .event-type-8
@@ -146,16 +172,32 @@
                                        rgb(176, 176, 214) 100%);
 }
 
-.event-type9
+.event-type-9
 {
+    background: rgba(255, 228, 181, .7) !important;
+    fill: rgb(255, 228, 181) !important;
 }
 
-.event-type9.profiler-timeline-selftime {
+.event-type-9.profiler-timeline-selftime {
+    background: rgb(255, 228, 181) !important;
 }
 
-.event-type10
+.event-type-10
 {
+    background: rgba(216, 191, 216, .7) !important;
+    fill: rgb(216, 191, 216) !important;
 }
 
-.event-type10.profiler-timeline-selftime {
+.event-type-10.profiler-timeline-selftime {
+    background: rgb(216, 191, 216) !important;
+}
+
+.event-type-11
+{
+    background: rgba(135, 206, 235, .7) !important;
+    fill: rgb(135, 206, 235) !important;
+}
+
+.event-type-11.profiler-timeline-selftime {
+    background: rgb(135, 206, 235) !important;
 }

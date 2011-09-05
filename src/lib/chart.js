@@ -55,8 +55,8 @@ Chart.prototype._generate_random_color = function()
 Chart.prototype.get_pie_chart = function(size, padding)
 {
   padding || (padding = 0);
-  size = (size || 200) + padding * 2;
   var radius = size / 2;
+  size = (size || 200) + padding * 2;
   var center = radius + padding;
 
   // Calculate the total

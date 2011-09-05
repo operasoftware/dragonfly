@@ -29,10 +29,14 @@ type_map[CSS_SELECTOR_MATCHING] = "CSS selector matching";
 type_map[LAYOUT] = "Layout";
 type_map[PAINT] = "Paint";
 
-const BAR_MIN_WIDTH = 5;
-const BAR_HEIGHT = 11;
+const BAR_MIN_WIDTH = 5; // same as min-width for .profiler-event
+const BAR_HEIGHT = 11; // height of .profiler-event + 1px extra
 
-// TODO: rename parameters
+window.templates.profiler.empty = function(text)
+{
+  return ["div", text, "class", "profiler-empty"];
+};
+
 window.templates.profiler.main = function(aggregated_events, timeline, details_list, status)
 {
   return [
@@ -61,43 +65,34 @@ window.templates.profiler.event_list_all = function(event_list, container_width)
   {
     // Calculate scaling, to fit all events into the view.
     // We first calculate a prelimiary scaling, to know the width
-    // if the last event. We then calculate the real scaling where
+    // of the last event. We then calculate the real scaling where
     // the width of the last event is taken into account
     var start = event_list.interval.start;
-    var interval = event_list.interval.end - start;
-    var ms_unit = container_width / interval;
+    var total_interval = event_list.interval.end - start;
     var last_event = event_list.eventList.slice(-1)[0];
-    var extra_width = Math.max(BAR_MIN_WIDTH,
-                           Math.round((last_event.interval.end -
-                                       last_event.interval.start) *
-                                       ms_unit));
-    ms_unit = (container_width - extra_width) / interval;
-
+    var last_event_time = last_event.interval.end - last_event.interval.start;
+    var ms_unit = container_width / total_interval;
+    var extra_width = Math.max(BAR_MIN_WIDTH, Math.round(last_event_time * ms_unit));
+    ms_unit = (container_width - extra_width) / total_interval;
 
     event_list.eventList.forEach(function(event) {
-      // TODO: rename to interval, rename current interval
-      var width = Math.max(BAR_MIN_WIDTH,
-                           Math.round((event.interval.end -
-                                       event.interval.start) *
-                                       ms_unit));
-      var time = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
+      var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
+      var time = Math.round(event.time * ms_unit);
       var event_start = Math.round((event.interval.start - start) * ms_unit);
       var column = order.indexOf(event.type);
-      var top = column * BAR_HEIGHT;
-      var title = get_title_all(event);
-      ret.push(["div",
+      ret.push(
+        // Interval
+        ["div",
+          // Self-time
           ["div",
             "style", "width: " + time + "px;",
-            "class", "profiler-event profiler-timeline-selftime event-type-" + event.type,
-            "data-event-id", String(event.eventID),
-            "data-event-type", String(event.type),
-            "handler", "profiler-get-event-details"
+            "class", "profiler-event profiler-timeline-selftime event-type-" + event.type
           ],
           "style",
-            "width: " + width + "px;" +
+            "width: " + interval + "px;" +
             "left: " + event_start + "px;" +
-            "top:" + top + "px;",
-          "title", title,
+            "top:" + (column * BAR_HEIGHT) + "px;",
+          "title", get_title_all(event),
           "class", "profiler-event profiler-event-interval event-type-" + event.type,
           "data-event-id", String(event.eventID),
           "data-event-type", String(event.type),
@@ -105,10 +100,6 @@ window.templates.profiler.event_list_all = function(event_list, container_width)
         ]
       )
     });
-  }
-  else
-  {
-    ret = ["div", "No events"];
   }
   return ret;
 };
@@ -128,7 +119,7 @@ window.templates.profiler.event_list_unique_types = function(event_list, contain
     var ms_unit = container_width / interval;
 
     event_list.eventList.forEach(function(event, idx) {
-      var width = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
+      var width = Math.round(event.time * ms_unit);
       ret.push(["div",
         "style",
           "width: " + width + "px;" +
@@ -154,7 +145,12 @@ window.templates.profiler.event_list_aggregated = function(event_list)
       return b.time - a.time;
     });
 
-    var data = event_list.eventList.map(function(event) {
+    // Filter out event types with zero time
+    var data = event_list.eventList.filter(function(event) {
+      return event.time != 0;
+    });
+
+    data = data.map(function(event) {
       return {
         amount: event.time,
         data: {
@@ -203,7 +199,7 @@ window.templates.profiler.event_list_unique_events = function(event_list, contai
 
     var t = 0;
     event_list.eventList.forEach(function(event, idx) {
-      var width = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
+      var width = Math.round(event.time * ms_unit);
       t += event.time;
       ret.push(["div",
         "style",
@@ -233,7 +229,7 @@ window.templates.profiler.status = function(time)
 
 window.templates.profiler.no_events = function()
 {
-  return ["div", "No event details", "class", "profiler-no-events"];
+  return ["div", "No event details", "class", "profiler-empty"];
 };
 
 // Helper functions
