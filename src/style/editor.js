@@ -815,8 +815,7 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      actions.set_property(this.context_rt_id, this.context_rule_id, props,
-                           "", null);
+      actions.set_property(this.context_rt_id, this.context_rule_id, props);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
