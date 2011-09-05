@@ -815,11 +815,8 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      // FIXME: commented out because of DFL-2450. Needs a proper fix for DFL-1990
-      //var script = actions.get_restore_all_properties_script(this.context_cur_prop);
-      var script = "";
       actions.set_property(this.context_rt_id, this.context_rule_id, props,
-                           "", null, script);
+                           "", null);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
