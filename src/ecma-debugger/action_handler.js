@@ -16,10 +16,7 @@
       {
         if (frame.script_id)
         {
-          var plus_lines = views.js_source.getMaxLines() <= 10
-            ? views.js_source.getMaxLines() / 2 >> 0
-            : 10;
-          views.js_source.showLine(frame.script_id, frame.line - plus_lines);
+          views.js_source.showLine(frame.script_id, frame.line);
           views.js_source.showLinePointer(frame.line, frame.id == 0);
         }
         else
