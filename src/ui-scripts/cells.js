@@ -487,7 +487,7 @@
         if (sum < max)
         {
           // calculate average that should be allocated for each auto dimension
-          average_dim = max - sum - (auto_dim_count * 2 * defaults.view_border_width);
+          average_dim = ((max - sum - auto_dim_count * 2 * defaults.view_border_width) / auto_dim_count) >> 0;
 
           // allocate space
           for (i = 0; child = this.children[i++]; )
