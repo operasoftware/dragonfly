@@ -106,11 +106,6 @@ templates.cookie_manager = {
   domain: function(domain) {
     return this.value_container(domain || this.unknown_value());
   },
-  editable_domain: function(current_runtime, runtimes, domain) {
-    // in this case editing_default is fixed to the hostname of the runtime.
-    var edit_elem = this.input_domain(current_runtime, runtimes);
-    return [this.domain(domain), this.edit_container(edit_elem)];
-  },
   all_editable_domain: function(current_runtime, runtimes, domain) {
     var editing_default = domain || runtimes[current_runtime].hostname;
     var edit_elem = this.input_text_container("domain", editing_default);
