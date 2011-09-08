@@ -41,6 +41,7 @@ top-tabs {
   top: 0;
   left: 0;
   height: 30px;
+  overflow: hidden;
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(270deg,
                                        rgba(255, 255, 255, 0.90) 0px,
@@ -52,7 +53,9 @@ top-tabs toolbar-buttons {
   margin: -7px 3px 0 -2px;
 }
 
-top-tabs tab {  /**/
+top-tabs tab {
+  float: none;
+  display: inline-block;
   height: 30px;
   line-height: 30px;
   border: 1px solid transparent;
