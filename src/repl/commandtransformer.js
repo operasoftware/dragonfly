@@ -140,21 +140,30 @@ cls.HostCommandTransformer = function() {
 
   /**
    * Check if the token at index looks like it's a function/method being
-   * called by looking at the following tokens.
+   * called by looking at the following tokens. This is a naïve check, but
+   * should work fine in most cases.
    */
   this.is_call = function(tokens, index) {
     if (!tokens[index] || tokens[index].type != IDENTIFIER) {
       return false;
     }
 
+    var open_paren_seen = false;
     for (var n=index+1, token; token=tokens[n]; n++) {
       switch (token.type) {
         case WHITESPACE:
           continue;
         case PUNCTUATOR:
-        if (token.value == "(") { return true; }
-        default:
-          return false;
+          if (token.value == "(")
+          {
+            open_paren_seen = true;
+          }
+          else if (token.value == ")" && open_paren_seen)
+          {
+            // if there's no junk after, assume it's fine
+            return !tokens[n+1];
+          }
+          break;
       }
     }
     return false;
