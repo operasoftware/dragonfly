@@ -163,7 +163,16 @@ cls.HostCommandTransformer = function() {
             // if there's no junk after, assume it's fine
             return !tokens[n+1];
           }
+          else {
+            return false;
+          }
           break;
+        default:
+          if (open_paren_seen)
+          {
+            continue;
+          }
+          return false;
       }
     }
     return false;
