@@ -513,7 +513,6 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: '*',
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
@@ -534,7 +533,6 @@ ui_framework.layouts.js_rough_layout =
   children:
   [
     {
-      width: '*',
       children:
       [
         {
@@ -548,7 +546,6 @@ ui_framework.layouts.js_rough_layout =
       children:
       [
         {
-          height: 250,
           tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ?
@@ -593,7 +590,6 @@ ui_framework.layouts.utils_rough_layout =
   children:
   [
     {
-      width: '*',
       children:
       [
         {

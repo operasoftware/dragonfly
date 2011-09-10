@@ -229,16 +229,19 @@
 
   this.init = function(rough_cell, dir, parent, container_id, services)
   {
-    this.width = rough_cell.width == '*' ? 0 : (
+    this.width =
       rough_cell.width && rough_cell.width > defaults.min_view_width ?
-      rough_cell.width : defaults.min_view_width);
-    this.height = rough_cell.height == '*' ? 0 : (
+      rough_cell.width : defaults.min_view_width;
+    this.height =
       rough_cell.height && rough_cell.height > defaults.min_view_height ?
-      rough_cell.height : defaults.min_view_height);
+      rough_cell.height : defaults.min_view_height;
     ids[ this.id = rough_cell.id || getId()] = this;
 
     this.checked_height = 0;
     this.checked_width = 0;
+
+    this.explicit_width = rough_cell.width !== undefined;
+    this.explicit_height = rough_cell.height !== undefined;
 
     this.type = '';
     this.children = [];
@@ -451,16 +454,20 @@
 
   // helper to get the totalised dimension
 
-  this._getTotalChildrenDimension = function(dim)
+  this.getTotalChildrenDimension = function(dim, explicit_only)
   {
     var child = null, i = 0, sum = 0, length = this.children.length;
-    for( ; child = this.children[i]; i++)
+    for ( ; child = this.children[i]; i++)
     {
-      sum += child[dim] + 2 * defaults.view_border_width;
-      if( i != length - 1 )
+      if (i != length - 1)
       {
         sum += defaults.slider_border_width;
       }
+      if (explicit_only && !child['explicit_' + dim])
+      {
+        continue;
+      }
+      sum += child[dim] + 2 * defaults.view_border_width;
     }
     return sum;
   }
@@ -478,12 +485,12 @@
       // check how many implicit (auto) dimensions were specified
       for (i = 0; child = this.children[i++]; )
       {
-        child[dim] === 0 && auto_dim_count++;
+        !child['explicit_' + dim] && auto_dim_count++;
       }
 
       if (auto_dim_count)
       {
-        sum = this._getTotalChildrenDimension(dim);
+        sum = this.getTotalChildrenDimension(dim, true);
         if (sum < max)
         {
           // calculate average that should be allocated for each auto dimension
@@ -492,16 +499,16 @@
           // allocate space
           for (i = 0; child = this.children[i++]; )
           {
-            child[dim] === 0 && (child[dim] = average_dim);
+            !child['explicit_' + dim] && (child[dim] = average_dim);
           }
         }
       }
 
       while (--length)
       {
-        sum = this._getTotalChildrenDimension(dim);
+        sum = this.getTotalChildrenDimension(dim);
         prov = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
-        if (sum < max || defaults['min_view_' + dim] < prov)
+        if (sum <= max || defaults['min_view_' + dim] < prov)
         {
           this.children[length][dim] = prov;
           length = this.children.length;
