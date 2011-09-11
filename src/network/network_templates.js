@@ -123,7 +123,7 @@ templates.network_log_details = function(ctx, selected, listwidth)
      "class", "network-details-request",
      "style", "left: " + listwidth + "px;"
     ]
-  ]
+  ];
 };
 
 templates.network_log_request_detail = function(ctx, selected)
@@ -161,13 +161,13 @@ templates.network_log_request_detail = function(ctx, selected)
     ],
     "data-resource-id", String(req.id),
     "class", "request-details"
-  ]
+  ];
 };
 
 templates.request_details = function(req)
 {
-  if (!req.touched_network) { return ["p", ui_strings.S_NETWORK_SERVED_FROM_CACHE] }
-  if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
+  if (!req.touched_network) { return ["p", ui_strings.S_NETWORK_SERVED_FROM_CACHE]; }
+  if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL]; }
   var firstline = req.request_raw.split("\n")[0];
   var parts = firstline.split(" ");
   if (parts.length == 3)
@@ -176,7 +176,7 @@ templates.request_details = function(req)
       ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
       ["span", parts[1] + " "],
       ["span", parts[2] + " "]
-    ]
+    ];
   }
 
   return [["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
@@ -186,7 +186,7 @@ templates.request_details = function(req)
 
 templates.response_details = function(req)
 {
-  if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL] }
+  if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL]; }
   var firstline = req.response_raw.split("\n")[0];
   var parts = firstline.split(" ", 2);
   if (parts.length == 2)
@@ -195,7 +195,7 @@ templates.response_details = function(req)
       ["span", parts[0] + " "],
       ["span", parts[1], "data-spec", "http#" + parts[1]],
       ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
-    ]
+    ];
   }
   return templates.network_headers_list(req.response_headers, firstline);
 };
@@ -203,15 +203,15 @@ templates.response_details = function(req)
 templates.network_headers_list = function(headers, firstline)
 {
   if (!headers) { return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL; }
-  var lis = headers.map(function(header) { return [
-    ["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]
-  ]});
+  var lis = headers.map(function(header) {
+      return [["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]];
+  });
 
   if (firstline)
   {
     lis.unshift(["li", firstline]);
   }
-  return ["ol", lis, "class", "network-details-header-list mono"]
+  return ["ol", lis, "class", "network-details-header-list mono"];
 };
 
 
@@ -229,7 +229,7 @@ templates.network_request_body = function(req)
     ret = [["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]];
     for (var n=0, part; part=req.requestbody.partList[n]; n++)
     {
-      ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n+1))]);
+      ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n + 1))]);
       ret.push(templates.network_headers_list(part.headerList));
       if (part.content && part.content.stringData)
       {
@@ -247,7 +247,13 @@ templates.network_request_body = function(req)
     var tab = ["table",
               ["tr", ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
               ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
-    ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", decodeURIComponent(e[0])], ["td", decodeURIComponent(e[1])]]}));
+    ].concat(parts.map(function(e) {
+        e = e.replace(/\+/g, "%20").split("=");
+        return ["tr",
+            ["td", decodeURIComponent(e[0])],
+            ["td", decodeURIComponent(e[1])]
+        ];
+    }));
     ret.push(tab);
   }
   // else // There is content, but we're not tracking
@@ -286,7 +292,7 @@ templates.network_request_body = function(req)
       }
     }
 
-    ret.push(tpl)
+    ret.push(tpl);
   }
   return ret;
 };
@@ -352,14 +358,14 @@ templates.network_header_table = function(headers)
             ["th", header.name],
             ["td", header.value],
             "data-spec", "http#" + header.name
-           ]
+           ];
   };
 
   var headers = headers.slice(0); // copy so we can sort withouth nuking original
   headers.sort(function(a, b) {
-    if (a.name>b.name) { return 1 }
-    else if (b.name>a.name) { return -1 }
-    else { return 0 }
+    if (a.name>b.name) { return 1; }
+    else if (b.name>a.name) { return -1; }
+    else { return 0; }
   });
   return ["table", headers.map(rowfun),
           "class", "header-list"];
@@ -375,7 +381,7 @@ templates.network_log_url_list = function(ctx, selected)
       statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
     }
 
-    if (res.cached) { statusclass = "status-cached" }
+    if (res.cached) { statusclass = "status-cached"; }
     return ["li",
             templates.network_request_icon(res),
             ["span", res.human_url],
@@ -387,7 +393,7 @@ templates.network_log_url_list = function(ctx, selected)
             "data-resource-id", String(res.id),
             "class", selected===res.id ? "selected" : "",
             "title", res.human_url
-           ]
+           ];
   };
   return ["ol", ctx.resources.map(itemfun),
           "class", "network-log-url-list"];
@@ -405,7 +411,7 @@ templates.network_log_graph = function(ctx, width)
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
-  return ["div", headerrow, rows, "id", "graph", "style", "width: " + width + "px; background-size: " + gridwidth + "px 100%, 50px 50px;"]
+  return ["div", headerrow, rows, "id", "graph", "style", "width: " + width + "px; background-size: " + gridwidth + "px 100%, 50px 50px;"];
 };
 
 templates.network_timeline_row = function(width, stepsize, gridwidth)
