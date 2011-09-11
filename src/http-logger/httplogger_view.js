@@ -203,6 +203,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         this.update();
         scroll = true;
         if (dirty) {
+            //TODO:row?
             var row = this._getRowForId(id).nextSibling;
         }
     };

@@ -189,5 +189,5 @@ cls.HttpLogger["2.0"].HTTPLoggerData = function()
 
 
     messages.addListener("active-tab", function(msg) { HTTPLoggerData.onActiveTab(msg); });
-}
+};
 
