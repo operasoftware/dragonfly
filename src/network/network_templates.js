@@ -247,7 +247,7 @@ templates.network_request_body = function(req)
     var tab = ["table",
               ["tr", ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
               ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
-    ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", decodeURI(e[0])], ["td", decodeURI(e[1])]]}));
+    ].concat(parts.map(function(e) { e = e.split("="); return ["tr", ["td", decodeURIComponent(e[0])], ["td", decodeURIComponent(e[1])]]}));
     ret.push(tab);
   }
   // else // There is content, but we're not tracking
