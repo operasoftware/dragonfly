@@ -204,7 +204,7 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         scroll = true;
         if (dirty) {
             //TODO:row?
-            var row = this._getRowForId(id).nextSibling;
+            //var row = this._getRowForId(id).nextSibling;
         }
     };
 

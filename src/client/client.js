@@ -66,7 +66,7 @@ window.cls.Client = function()
       }
       handle_fallback.call(new XMLHttpRequest(), fallback_version);
     }
-  }
+  };
 
   var _on_host_quit = function(client)
   {
@@ -102,7 +102,7 @@ window.cls.Client = function()
     {
       show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
     }
-  }
+  };
 
   var get_quit_callback = function(client)
   {
@@ -116,7 +116,7 @@ window.cls.Client = function()
         _on_host_quit(client);
       }
     }
-  }
+  };
 
   var _get_port_number = function()
   {
@@ -133,7 +133,7 @@ window.cls.Client = function()
       (settings.debug_remote_setting.get('port') ||
       JSON.parse(window.helpers.getCookie('port'))) ||
       0);
-  }
+  };
 
   this.connection_is_remote = function(client)
   {
@@ -243,7 +243,7 @@ window.cls.Client = function()
       window_controls.parentNode.removeChild(window_controls);
     }
     document.documentElement.render(templates.window_controls_close());
-  }
+  };
 
   var handle_fallback = function(version)
   {
@@ -256,8 +256,7 @@ window.cls.Client = function()
     file_name = path.slice(path.lastIndexOf('/') + 1),
     fallback_filename = '/app/fall-back-urls.json',
     type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default',
-    search = location.search,
-    pos = 0;
+    search = location.search;
 
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
@@ -265,7 +264,7 @@ window.cls.Client = function()
       if (this.status != 200)
       {
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-            "could not load fallback urls. (during local development this is OK!)")
+            "could not load fallback urls. (during local development this is OK!)");
         return;
       }
       var fallback_urls = eval( "(" + this.responseText + ")" );
@@ -280,10 +279,10 @@ window.cls.Client = function()
       {
         alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
-    }
+    };
     this.open('GET', protocol + hostname + port + fallback_filename);
     this.send(null);
-  }
+  };
 
   this.create_top_level_views = function(services)
   {
@@ -330,9 +329,9 @@ window.cls.Client = function()
     new CompositeView('old_http_logger',
                       ui_strings.M_VIEW_LABEL_NETWORK,
                       layouts.old_http_logger_rough_layout
-                    )
+                    );
 
-  }
+  };
 
   this.create_window_controls = function()
   {
@@ -351,7 +350,7 @@ window.cls.Client = function()
       new Button("toggle-remote-debug-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG, "toggle-overlay", {"data-overlay-id": "remote-debug-overlay"}),
       new ToolbarSeparator(),
       window['cst-selects']['debugger-menu'],
-      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
+      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW)
     ];
 
     if (is_attached)
@@ -393,9 +392,7 @@ window.cls.Client = function()
         }
       }
       // a short workaround to hide some tabs as long as we don't have the dynamic tabs
-      var
-      is_disbaled = null,
-      tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
+      var tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
       i = 1;
 
@@ -407,7 +404,7 @@ window.cls.Client = function()
       }
       arguments.callee._called_once = true;
     }
-  }
+  };
 
   this.setup_top_cell = function(services)
   {
@@ -479,7 +476,7 @@ window.cls.Client = function()
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
 
-}
+};
 
 ui_framework.layouts.error_console_rough_layout =
 {
@@ -498,7 +495,7 @@ ui_framework.layouts.error_console_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.environment_rough_layout =
 {
@@ -507,7 +504,7 @@ ui_framework.layouts.environment_rough_layout =
   [
     { height: 200, tabs: ['environment'] }
   ]
-}
+};
 
 ui_framework.layouts.dom_rough_layout =
 {
@@ -528,7 +525,7 @@ ui_framework.layouts.dom_rough_layout =
       }
     }
   ]
-}
+};
 
 ui_framework.layouts.js_rough_layout =
 {
@@ -561,7 +558,7 @@ ui_framework.layouts.js_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.network_rough_layout =
 {
@@ -576,7 +573,7 @@ ui_framework.layouts.network_rough_layout =
                   ]
                 }
               ]
-}
+};
 
 
 ui_framework.layouts.resource_rough_layout =
@@ -584,10 +581,10 @@ ui_framework.layouts.resource_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all',
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all'//,
                                                                   // 'resource_fonts', 'resource_images'
                                                                  ] } } ]
-}
+};
 
 ui_framework.layouts.utils_rough_layout =
 {
@@ -613,7 +610,7 @@ ui_framework.layouts.utils_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.storage_rough_layout =
 {
@@ -632,7 +629,7 @@ ui_framework.layouts.storage_rough_layout =
         return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences']
       }
     } ]
-}
+};
 
 ui_framework.layouts.console_rough_layout =
 {
@@ -640,7 +637,7 @@ ui_framework.layouts.console_rough_layout =
     width: 1000,
     height: 1000,
     children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
-}
+};
 
 ui_framework.layouts.old_http_logger_rough_layout =
 {
@@ -648,7 +645,7 @@ ui_framework.layouts.old_http_logger_rough_layout =
     width: 1000,
     height: 1000,
     children: [{ height: 1000, tabbar: { tabs: ["request_list"], is_hidden: true } }]
-}
+};
 
 ui_framework.layouts.main_layout =
 {
