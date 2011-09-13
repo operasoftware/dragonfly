@@ -4,6 +4,7 @@
 <title> </title>
 <link rel='stylesheet' href='../src/ui-style/syntax-highlight.css'>
 <link rel='stylesheet' href='../src/ui-style/debugger_style.css'>
+<link rel='stylesheet' href='../src/searches/style.css'>
 <style>
   #search-container
   {
@@ -56,12 +57,13 @@ onload = function()
     {
       if( event.keyCode == 13 )
       {
-        textSearch.highlight();
+        textSearch.highlight(false, event.shiftKey ? -1 : 1);
       }
     },
     false
   );
   textSearch.setContainer(document.getElementById('search-container'));
+  textSearch.set_info_element(document.getElementById('statusbar'));
   textSearch.setFormInput(input);
 }
 </script>
@@ -69,7 +71,7 @@ onload = function()
 
 <body>
   <p><label>search: <input></label>
-  <p><label>statusbar: <input id='statusbar' style='width: 500px'></label>
+  <p><label>statusbar: <span id='statusbar' style='width: 500px'></span></label>
  <div id='search-container' class='dom'>
 <div class='padding' ><div style='margin-left:16px;' ><input type='button' class='open'><node>&lt;html&gt;</node></div><div style='margin-left:32px;' ><input type='button' class='open'><node>&lt;head&gt;</node></div><div style='margin-left:48px;' ><node>&lt;title&gt;</node><text > </text><node>&lt;/title&gt;</node></div><div style='margin-left:48px;' class='pre-wrap'><node>&lt;style&gt;</node><text >
 </text><node>&lt;/style&gt;</node></div><div style='margin-left:48px;' class='pre-wrap'><node>&lt;script&gt;</node><text >
