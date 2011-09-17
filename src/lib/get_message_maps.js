@@ -142,21 +142,21 @@ window.cls.ScopeInterfaceGenerator = function ()
   {
     var 
     enums = this._get_msg(list, id),
-    name = enums && enums[1] || '', 
-    dict = {}, 
-    enum = null, 
+    name = enums && enums[1] || '',
+    dict = {},
+    _enum = null,
     i = 0;
 
     if (enums && enums.length == 3)
-      for (; enum = enums[2][i]; i++)
-        dict[enum[1]] = enum[0];
+      for (; _enum = enums[2][i]; i++)
+        dict[_enum[1]] = _enum[0];
     return [name, dict];
   };
 
-            
+
   this._parse_msg = function(msg, msg_list, parsed_list, raw_enums, ret)
   {
-    var field = null, i = 0, name = '', field_obj = null, enum = null, sub_msg = null;
+    var field = null, i = 0, name = '', field_obj = null, _enum = null, sub_msg = null;
     if (msg)
     {
       for (; i < msg[FIELD_LIST].length; i++)
@@ -189,8 +189,8 @@ window.cls.ScopeInterfaceGenerator = function ()
         }
         if (field[ENUM_ID])
         {
-          enum = this._get_enum(raw_enums, field[ENUM_ID]);
-          field_obj.enum = {name: enum[0], numbers: enum[1]};
+          _enum = this._get_enum(raw_enums, field[ENUM_ID]);
+          field_obj._enum = {name: _enum[0], numbers: _enum[1]};
         }
         ret.push(field_obj);
       }
