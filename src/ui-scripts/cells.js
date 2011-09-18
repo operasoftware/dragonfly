@@ -229,6 +229,22 @@
 
   this.init = function(rough_cell, dir, parent, container_id, services)
   {
+    this.explicit_width = rough_cell.width !== undefined;
+    this.explicit_height = rough_cell.height !== undefined;
+
+    if (rough_cell.name)
+    {
+      var stored_width, stored_height;
+      if (this.explicit_width && (stored_width = window.settings.general.get('view-width-' + rough_cell.name)))
+      {
+        rough_cell.width = stored_width;
+      }
+      if (this.explicit_height && (stored_height = window.settings.general.get('view-height-' + rough_cell.name)))
+      {
+        rough_cell.height = stored_height;
+      }
+    }
+
     this.width =
       rough_cell.width && rough_cell.width > defaults.min_view_width ?
       rough_cell.width : defaults.min_view_width;
@@ -240,10 +256,8 @@
     this.checked_height = 0;
     this.checked_width = 0;
 
-    this.explicit_width = rough_cell.width !== undefined;
-    this.explicit_height = rough_cell.height !== undefined;
-
     this.type = '';
+    this.name = rough_cell.name;
     this.children = [];
     this.previous = null;
     this.next = null;
@@ -446,6 +460,12 @@
           ele.style.cssText = css_text;
         }
       }
+    }
+
+    if (this.name)
+    {
+      this.explicit_width && window.settings.general.set('view-width-' + this.name, this.width);
+      this.explicit_height && window.settings.general.set('view-height-' + this.name, this.height);
     }
 
     return ( this.dir == VER ? this.width : this.height ) +

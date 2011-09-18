@@ -516,6 +516,7 @@ ui_framework.layouts.dom_rough_layout =
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
+      name: 'dom_panel',
       width: 350,
       tabs: function(services)
       {
@@ -542,6 +543,7 @@ ui_framework.layouts.js_rough_layout =
       ]
     },
     {
+      name: 'js_panel',
       width: 350,
       children:
       [
@@ -598,6 +600,7 @@ ui_framework.layouts.utils_rough_layout =
       ]
     },
     {
+      name: 'utils_panel',
       width: 350,
       children:
       [
