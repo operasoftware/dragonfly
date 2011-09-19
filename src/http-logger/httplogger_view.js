@@ -202,9 +202,6 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
         scroll = false;
         this.update();
         scroll = true;
-        if (dirty) {
-            var row = this._getRowForId(id).nextSibling;
-        }
     };
 
     this.selectDetailView = function(id, name) {

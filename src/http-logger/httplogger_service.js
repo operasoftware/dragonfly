@@ -131,7 +131,7 @@ cls.HttpLogger["2.0"].HTTPLoggerService = function(name)
                     var offset = e.indexOf("=");
                     if (offset<1) { return; }
                     var key = e.substr(0, offset);
-                    var val = e.substr(offset+1);
+                    var val = e.substr(offset + 1);
                     retval.queryDict[key] = val;
                 });
 
