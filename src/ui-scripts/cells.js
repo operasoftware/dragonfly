@@ -229,20 +229,19 @@
 
   this.init = function(rough_cell, dir, parent, container_id, services)
   {
-    this.explicit_width = rough_cell.width !== undefined;
-    this.explicit_height = rough_cell.height !== undefined;
+    this.has_explicit_width = rough_cell.width !== undefined;
+    this.has_explicit_height = rough_cell.height !== undefined;
 
     if (rough_cell.name)
     {
-      var stored_width, stored_height;
-      if (this.explicit_width && (stored_width = window.settings.general.get('view-width-' + rough_cell.name)))
-      {
+      var stored_width;
+      var stored_height;
+
+      if (this.has_explicit_width && (stored_width = window.settings.general.get('view-width-' + rough_cell.name)))
         rough_cell.width = stored_width;
-      }
-      if (this.explicit_height && (stored_height = window.settings.general.get('view-height-' + rough_cell.name)))
-      {
+
+      if (this.has_explicit_height && (stored_height = window.settings.general.get('view-height-' + rough_cell.name)))
         rough_cell.height = stored_height;
-      }
     }
 
     this.width =
@@ -464,8 +463,11 @@
 
     if (this.name)
     {
-      this.explicit_width && window.settings.general.set('view-width-' + this.name, this.width);
-      this.explicit_height && window.settings.general.set('view-height-' + this.name, this.height);
+      if (this.has_explicit_width)
+        window.settings.general.set('view-width-' + this.name, this.width);
+
+      if (this.has_explicit_height)
+        window.settings.general.set('view-height-' + this.name, this.height);
     }
 
     return ( this.dir == VER ? this.width : this.height ) +
@@ -474,7 +476,7 @@
 
   // helper to get the totalised dimension
 
-  this.getTotalChildrenDimension = function(dim, explicit_only)
+  this.get_total_children_dimension = function(dim, explicit_only)
   {
     var child = null, i = 0, sum = 0, length = this.children.length;
     for ( ; child = this.children[i]; i++)
@@ -505,12 +507,13 @@
       // check how many implicit (auto) dimensions were specified
       for (i = 0; child = this.children[i++]; )
       {
-        !child['explicit_' + dim] && auto_dim_count++;
+        if (!child['explicit_' + dim])
+          auto_dim_count++;
       }
 
       if (auto_dim_count)
       {
-        sum = this.getTotalChildrenDimension(dim, true);
+        sum = this.get_total_children_dimension(dim, true);
         if (sum < max)
         {
           // calculate average that should be allocated for each auto dimension
@@ -519,14 +522,15 @@
           // allocate space
           for (i = 0; child = this.children[i++]; )
           {
-            !child['explicit_' + dim] && (child[dim] = average_dim);
+            if (!child['explicit_' + dim])
+              child[dim] = average_dim;
           }
         }
       }
 
       while (--length)
       {
-        sum = this.getTotalChildrenDimension(dim);
+        sum = this.get_total_children_dimension(dim);
         prov = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
         if (sum <= max || defaults['min_view_' + dim] < prov)
         {
