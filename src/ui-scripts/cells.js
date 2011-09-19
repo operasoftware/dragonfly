@@ -485,7 +485,7 @@
       {
         sum += defaults.slider_border_width;
       }
-      if (explicit_only && !child['explicit_' + dim])
+      if (explicit_only && !child['has_explicit_' + dim])
       {
         continue;
       }
@@ -500,14 +500,14 @@
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, sum = 0, length = this.children.length, prov = 0;
+    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0;
     var auto_dim_count = 0, average_dim = 0;
     if (length)
     {
       // check how many implicit (auto) dimensions were specified
       for (i = 0; child = this.children[i++]; )
       {
-        if (!child['explicit_' + dim])
+        if (!child['has_explicit_' + dim])
           auto_dim_count++;
       }
 
@@ -522,8 +522,15 @@
           // allocate space
           for (i = 0; child = this.children[i++]; )
           {
-            if (!child['explicit_' + dim])
-              child[dim] = average_dim;
+            if (child['has_explicit_' + dim] && child[dim] < defaults['min_view_' + dim])
+            {
+              // if the dimension is below the minimum limit, set minimum value
+              // and reduce the average to compensate for the distributed pixels
+              average_dim -= (defaults['min_view_' + dim] - child[dim]) / auto_dim_count;
+              child[dim] = defaults['min_view_' + dim];
+            }
+            else if (!child['has_explicit_' + dim])
+              child[dim] = average_dim > defaults['min_view_' + dim] ? average_dim : defaults['min_view_' + dim];
           }
         }
       }
@@ -531,10 +538,10 @@
       while (--length)
       {
         sum = this.get_total_children_dimension(dim);
-        prov = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
-        if (sum <= max || defaults['min_view_' + dim] < prov)
+        temp = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
+        if (sum <= max || defaults['min_view_' + dim] < temp)
         {
-          this.children[length][dim] = prov;
+          this.children[length][dim] = temp;
           length = this.children.length;
           break;
         }
