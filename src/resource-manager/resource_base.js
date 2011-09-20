@@ -171,7 +171,7 @@ cls.ResourceDetailBase = function()
     this.service = service;
     this.resource = res;
     this.resourcedata = null;
-    this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
+    this.filename = cls.ResourceUtil.url_filename(res.url) || ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME;
     this.drawer = new MetadataDrawer(res);
     this.drawer.expanded = false;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
