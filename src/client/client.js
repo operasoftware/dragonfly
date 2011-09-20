@@ -328,9 +328,7 @@ window.cls.Client = function()
 
     new CompositeView('old_http_logger',
                       ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.old_http_logger_rough_layout
-                    );
-
+                      layouts.old_http_logger_rough_layout);
   };
 
   this.create_window_controls = function()
@@ -512,11 +510,11 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700,
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
-      width: 250,
+      name: 'dom_panel',
+      width: 350,
       tabs: function(services)
       {
         return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
@@ -533,7 +531,6 @@ ui_framework.layouts.js_rough_layout =
   children:
   [
     {
-      width: 700,
       children:
       [
         {
@@ -543,11 +540,11 @@ ui_framework.layouts.js_rough_layout =
       ]
     },
     {
-      width: 250,
+      name: 'js_panel',
+      width: 350,
       children:
       [
         {
-          height: 250,
           tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ?
@@ -590,7 +587,6 @@ ui_framework.layouts.utils_rough_layout =
   children:
   [
     {
-      width: 700,
       children:
       [
         {
@@ -599,7 +595,8 @@ ui_framework.layouts.utils_rough_layout =
       ]
     },
     {
-      width: 250,
+      name: 'utils_panel',
+      width: 350,
       children:
       [
         {
