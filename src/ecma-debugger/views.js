@@ -89,7 +89,7 @@ cls.AboutView.create_ui_widgets = function()
             authors.textContent = response_text;
           }
         });
-        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding']];
+        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding selectable']];
       }
     },
     "about"

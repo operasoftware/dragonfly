@@ -375,7 +375,8 @@
                                ':not(.network-options-container)' +
                                ':not(.screenshot-controls),' +
                       'panel-container,' +
-                      '.screenshot-sample-values';
+                      'window-container,' +
+                      '.selectable';
 
   this._selection_controller =new SelectionController(is_selectable, if_check);
 

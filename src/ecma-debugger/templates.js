@@ -25,6 +25,7 @@
     }
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
+    ret.push('class', 'selectable');
     return ['div', ret, 'class', 'padding'];
   }
 
