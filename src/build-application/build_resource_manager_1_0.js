@@ -18,6 +18,7 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                      "text/css", "text/plain", "application/x-javascript",
                      "application/javascript", "text/javascript",
                      "application/x-www-form-urlencoded",
+                     "text/xml",
                      ""]; // <- Yes really.
                      // It's frelling silly, but there's a bug with core not giving us content types
                      // for post data, even though core generates that itself. See CORE-39597
