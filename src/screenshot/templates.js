@@ -55,7 +55,7 @@
         ['span', 'RGB: '], color.getRGB().join(', ') + '\n',
         ['span', 'HSL: '], color.getHSL().join('%, ').replace('%', '') + '%\n',
         ['span', 'HEX: '], '#' + color.getHex() + '\n',
-        'class', 'mono screenshot-sample-values'],
+        'class', 'mono screenshot-sample-values selectable'],
       ['button',
             ui_strings.S_BUTTON_STORE_COLOR,
             'handler', 'screenshot-store-color',

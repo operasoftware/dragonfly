@@ -68,20 +68,7 @@
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit",
-  RE_TEXT_INPUTS = new RegExp(["text",
-                               "search",
-                               "tel",
-                               "url",
-                               "email",
-                               "password",
-                               "datetime", 
-                               "date",
-                               "month",
-                               "week", 
-                               "time",
-                               "datetime-local", 
-                               "number",
-                               "file"].join("|"), "i");
+  RE_TEXT_INPUTS = GlobalActionHandler.RE_TEXT_INPUTS;
 
   this.mode = MODE_DEFAULT;
 
@@ -92,7 +79,6 @@
   }
 
   /* privat */
-
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
@@ -135,13 +121,16 @@
     
   this._handlers["select-all"] = function(action_id, event, target)
   {
-    var selection = getSelection();
-    var range = document.createRange();
-    selection.removeAllRanges()
-    range.selectNodeContents(target);
-    selection.addRange(range);
+    if (this._selection_controller.is_selectable(target))
+    {
+      var selection = getSelection();
+      var range = document.createRange();
+      selection.removeAllRanges();
+      range.selectNodeContents(target);
+      selection.addRange(range);
+    }
     return false;
-  };
+  }.bind(this);
 
   this._handlers["invert-spotlight-colors"] = function(action_id, event, target)
   {
@@ -377,8 +366,21 @@
 
   /* instatiation */
 
-  /* message handling */
+  var if_check = function(conatiner)
+  {
+    return conatiner && !conatiner.querySelector(".info-box");
+  };
 
+  var is_selectable = 'container:not(.side-panel)' +
+                               ':not(.network-options-container)' +
+                               ':not(.screenshot-controls),' +
+                      'panel-container,' +
+                      'window-container,' +
+                      '.selectable';
+
+  this._selection_controller =new SelectionController(is_selectable, if_check);
+
+  /* message handling */
   messages.addListener("before-show-view", function(msg) {
     if (msg.id == "console_panel")
     {
@@ -391,6 +393,22 @@
       }
     }
   });
-}
+
+};
+
+GlobalActionHandler.RE_TEXT_INPUTS = new RegExp(["text",
+                                                 "search",
+                                                 "tel",
+                                                 "url",
+                                                 "email",
+                                                 "password",
+                                                 "datetime", 
+                                                 "date",
+                                                 "month",
+                                                 "week", 
+                                                 "time",
+                                                 "datetime-local", 
+                                                 "number",
+                                                 "file"].join("|"), "i");
 
 

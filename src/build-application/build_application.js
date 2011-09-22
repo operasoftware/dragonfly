@@ -306,6 +306,7 @@ window.app.helpers.dash_to_class_name = function(name)
 window.onload = function()
 {
   window.clearTimeout(window.load_screen_timeout);
+  new OperaDBLclickMenuController();
   window.app.build_application();
 }
 
