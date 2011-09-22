@@ -278,7 +278,9 @@ templates.network_request_body = function(req)
     }
     else if (type == "text")
     {
-      tpl = ["p", req.requestbody.content.stringData];
+      tpl = ["p", req.requestbody.content ? 
+                  req.requestbody.content.stringData :
+                  ""];
     }
     else
     {
