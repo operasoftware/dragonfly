@@ -213,6 +213,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/queue.js"/>
 <script src="./scripts/potools.js"/>
 <script src="./scripts/selectioncontroller.js"/>
+<script src="./scripts/dblclickmenucontroller.js"/>
 
 
 
