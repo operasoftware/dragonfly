@@ -278,7 +278,9 @@ templates.network_request_body = function(req)
     }
     else if (type == "text")
     {
-      tpl = ["p", req.requestbody.content.stringData];
+      tpl = ["p", req.requestbody.content ? 
+                  req.requestbody.content.stringData :
+                  ""];
     }
     else
     {
@@ -446,6 +448,7 @@ templates.network_graph_rows = function(ctx, width)
 templates.network_graph_row_bar = function(request, width, basetime, duration)
 {
   var scale = width / duration;
+  var ret = [];
 
   if (request.duration)
   {
@@ -483,8 +486,6 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
     }
 
     var type = request.type in gradientmap ? request.type : 'unknown';
-
-    var ret = [];
     ret.push([
               ["span",
                 ["span", "class", "network-graph-time network-" + type,
