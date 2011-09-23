@@ -1,4 +1,4 @@
-var SelectionController = function(css_query_selectable, if_check)
+﻿var SelectionController = function(css_query_selectable, if_check)
 {
   /* interface */
 

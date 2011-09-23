@@ -1,4 +1,4 @@
-var OperaDBLclickMenuController = function()
+﻿var OperaDBLclickMenuController = function()
 {
     var is_selection = false;
     var down_event = null;
