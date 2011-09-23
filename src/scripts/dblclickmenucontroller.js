@@ -19,7 +19,7 @@ var OperaDBLclickMenuController = function()
         down_event = event;
     };
 
-    var readdrange = function() 
+    var re_add_range = function() 
     {
         if (selection && range)
         {
@@ -36,7 +36,7 @@ var OperaDBLclickMenuController = function()
         {
             range = selection.getRangeAt(0);
             selection.removeAllRanges();
-            setTimeout(readdrange, 0);
+            setTimeout(re_add_range, 0);
         }
     };
 
