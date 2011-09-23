@@ -26,7 +26,9 @@ var SelectionController = function(css_query_selectable, if_check)
       this.addEventListener('mouseup', mouseup, false);
     }
     else
+    {
       event.preventDefault();
+    }
 
     start_node = null;
   };

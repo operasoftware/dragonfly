@@ -366,9 +366,9 @@
 
   /* instatiation */
 
-  var if_check = function(conatiner)
+  var if_check = function(container)
   {
-    return conatiner && !conatiner.querySelector(".info-box");
+    return container && !container.querySelector(".info-box");
   };
 
   var is_selectable = 'container:not(.side-panel)' +
@@ -378,7 +378,7 @@
                       'window-container,' +
                       '.selectable';
 
-  this._selection_controller =new SelectionController(is_selectable, if_check);
+  this._selection_controller = new SelectionController(is_selectable, if_check);
 
   /* message handling */
   messages.addListener("before-show-view", function(msg) {
