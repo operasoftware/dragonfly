@@ -65,9 +65,8 @@ cls.StorageViewActions = function(id)
     {
       var storage_id = container.getAttribute("data-storage-id");
       var edit_trs = container.querySelectorAll("tr.edit_mode");
-      for (var i = 0; i < edit_trs.length; i++)
+      for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++)
       {
-        var edit_tr      = edit_trs[i];
         var rt_id        = Number(edit_tr.querySelector("[name=rt_id]").value);
         var original_key = edit_tr.querySelector("[name=original_key]")
                            && edit_tr.querySelector("[name=original_key]").value;
