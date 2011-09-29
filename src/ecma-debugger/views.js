@@ -241,7 +241,7 @@ cls.GeneralView.create_ui_widgets = function()
     helpers.setCookie('ui-lang-set', '1');
     var parent = event.target.parentNode;
     var container = parent.getElementsByClassName('change-ui-lang-info')[0] ||
-                    parent.render(['div', 'class', 'change-ui-lang-info']);
+                    parent.render(['div', 'class', 'change-ui-lang-info selectable']);
     var ui_str = ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO.split("%s");
     var tmpl =
     [
