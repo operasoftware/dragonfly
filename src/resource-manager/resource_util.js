@@ -194,7 +194,10 @@ cls.ResourceUtil.url_filename = function(url)
 {
   var path = cls.ResourceUtil.url_path(url);
   var lastslash = path.lastIndexOf("/");
-  if (lastslash < 1) // 0 and -1 both mean there is no file name
+  if (
+    lastslash === -1 || // no slash or
+    path === "/"        // the path _is_ a slash means there is no file name
+  )
   {
     return null;
   }

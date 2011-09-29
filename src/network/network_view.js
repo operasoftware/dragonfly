@@ -1,4 +1,4 @@
-﻿window.cls = window.cls || {};
+window.cls = window.cls || {};
 
 /**
  * @constructor
@@ -32,6 +32,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var content = this._container ? this._container.querySelector(".network-details-request") : null;
     this._contentscroll = content ? content.scrollTop : 0;
     this._everrendered = false;
+    this._loading = false;
   };
 
   this._update_bound = this.update.bind(this);
