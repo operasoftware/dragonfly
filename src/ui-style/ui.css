@@ -80,7 +80,7 @@ container {
 window-statusbar {
   display: block;
   background: #e6e6e6 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
-  border-top: 1px solid #ccc;
+  border-top: transparent;
   line-height: 20px;
   height: 20px;
 }
@@ -333,7 +333,7 @@ button.text-button:active {
   background: #e6e6e6 repeat-x -o-linear-gradient(-90deg,
                                     rgba(255,255,255,0.75) 0,
                                     rgba(255,255,255,0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .32);
+  border: 1px solid rgba(0, 0, 0, .325);
   border-radius: 3px;
   height: 17px;
   width: 17px;
@@ -627,7 +627,7 @@ window-controls.no-tabbar {
     z-index: 2;
 }
 window-controls toolbar-separator {
-    display: inline-block;
+    display: none;
     float: none;
     height: auto;
 }
@@ -881,7 +881,7 @@ window {
   border-radius: 3px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.5);
   border: 1px solid rgba(0,0,0,0.3);
-  background: rgba(50,50,50,0.9) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAQAAADmB58qAAAAIElEQVQIW2NgYGFiYGICkaxgxA5DHDASjuBSQGVsQC0AEiIAo3s7awoAAAAASUVORK5CYII%3D") 0 0 repeat-x;
+  background: rgba(50,50,50,0.9);
   background-size: auto 100%;
 }
 
@@ -897,7 +897,6 @@ window:after {
 window-container {
  /* border: 1px solid #000; <-- TODO: Do we need this */
   border-width: 0 1px 1px;
-  border-radius: 0 0 7px 7px;
   display: block;
   position: relative;
   background-color: rgba(0, 0, 0, .4);

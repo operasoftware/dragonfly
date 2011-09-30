@@ -228,11 +228,7 @@
 .network-options label {
   margin: 5px 0 0 0;
   display: block;
-  color: #666;
-}
-
-.network-options label:hover, .network-options label:focus {
-  color: #000;
+  color: #444;
 }
 
 .network-options input[type=checkbox] {
@@ -311,48 +307,42 @@
   border-color: #383f77;
   background-image: -o-linear-gradient(-90deg,
                                        #c9c9ff 1%,
-                                       #a7a5d6 60%,
-                                       #b0b0d6 100%);
+                                       #a7a5d6 100%);
 }
 .network-css /* blue */
 {
   border-color: #266099;
   background-image: -o-linear-gradient(-90deg,
                                        #b8d4ff 1%,
-                                       #8bafe0 60%,
-                                       #a6c5f3 100%);
+                                       #8bafe0 100%);
 }
 .network-script /* yellow */
 {
   border-color: #807040;
   background-image: -o-linear-gradient(-90deg,
                                        #f7f2d5 1%,
-                                       #e3d696 60%,
-                                       #f4edc9 100%);
+                                       #e3d696 100%);
 }
 .network-image /* red */
 {
   border-color: #922424;
   background-image: -o-linear-gradient(-90deg,
                                        #ed9696 1%,
-                                       #d46868 60%,
-                                       #e78989 100%);
+                                       #d46868 100%);
 }
 .network-video /* green */
 {
   border-color: #333;
   background-image: -o-linear-gradient(-90deg,
                                        #cae6ca 1%,
-                                       #9ec59e 60%,
-                                       #b5d6b5 100%);
+                                       #9ec59e 100%);
 }
 .network-unknown /* gray */
 {
   border-color: #333;
   background-image: -o-linear-gradient(-90deg,
                                        #d9d9d9 1%,
-                                       #adadad 60%,
-                                       #bfbfbf 100%);
+                                       #adadad 100%);
 }
 
 .timeline-marker {

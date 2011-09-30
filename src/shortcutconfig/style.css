@@ -5,16 +5,8 @@
 }
 
 .shortcuts-config header {
-  padding: 3px;
+  padding-left: 3px;
   margin: 2px 1px;
-}
-
-.shortcuts-config header:hover {
-  background-color: #323232;
-}
-
-.shortcuts-config header:active {
-  background-color: #242424;
 }
 
 .shortcuts-config header input {
@@ -34,7 +26,6 @@
   background-position: 4px 50%;
   padding: 1px 1px 1px 20px;
   margin: 2px;
-
 }
 
 .shortcuts-config filter.focus input {
