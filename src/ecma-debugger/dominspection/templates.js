@@ -23,6 +23,7 @@
   const COMMENT_NODE = Node.COMMENT_NODE;
   const DOCUMENT_NODE = Node.DOCUMENT_NODE;
   const DOCUMENT_TYPE_NODE = Node.DOCUMENT_TYPE_NODE;
+  const PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE;
 
   const PSEUDO_ELEMENT_LIST = 14;
   const PSEUDO_ELEMENT_TYPE = 0;
@@ -210,6 +211,10 @@
       }
       switch (node[TYPE])
       {
+        case PSEUDO_NODE:
+        {
+          break;
+        }
         case ELEMENT_NODE:
         {
           attrs = this._dom_attrs_search(node, force_lower_case);
@@ -322,16 +327,19 @@
     var disregard_force_lower_case_depth = 0;
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
+    var is_expandable = false;
 
     for ( ; node = data[i]; i += 1)
     {
-      while(current_depth > node[DEPTH])
+      while (current_depth > node[DEPTH])
       {
         tree += closing_tags.pop();
         current_depth--;
       }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
+      is_expandable = children_length || (show_pseudo_elements &&
+                                          node[PSEUDO_ELEMENT_LIST]);
       child_pointer = 0;
 
       if (force_lower_case && disregard_force_lower_case(node))
@@ -339,7 +347,8 @@
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
       }
-      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+      else if (disregard_force_lower_case_depth &&
+               disregard_force_lower_case_depth == node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
@@ -347,14 +356,29 @@
 
       switch (node[TYPE])
       {
+        case PSEUDO_NODE:
+        {
+          if (show_pseudo_elements)
+          {
+            tree += "<div " + this._margin_style(node, depth_first_ele) +
+                              "ref-id='" + node[ID] + "' " +
+                              "handler='spotlight-node' " +
+                              "data-pseudo-element='" + node[NAME] + "' " +
+                              "class='spotlight-node'>" +
+                      "<node class='pseudo-element'>" +
+                        "&lt;::" + node[NAME] + "&gt;" +
+                      "</node>" +
+                    "</div>";
+          }
+          break;
+        }
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
-          }
-          var pseudo_elements = show_pseudo_elements && this._get_pseudo_elements(node);
+          }          
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -362,12 +386,15 @@
             attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
             attrs += " <key>" +
               ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-              /* regarding escaping "<". it happens that there are very starnge keys in broken html.
-                  perhaps we will have to extend the escaping to other data tokens as well */
-              (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY])).replace(/</g, '&lt;') +
+              /* Regarding escaping "<". It happens that there are very 
+                 strange keys in broken html. Perhaps we will have to extend 
+                 the escaping to other data tokens as well */
+              (force_lower_case ? attr[ATTR_KEY].toLowerCase()
+                                : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
+                  ? " handler='dom-resource-link' class='dom-resource-link' " +
+                     "data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
                 attr_value +
                 "\"</value>";
@@ -375,38 +402,36 @@
 
           child_pointer = i + 1;
           is_open = (data[child_pointer] && (node[DEPTH] < data[child_pointer][DEPTH]));
-          if (is_open || pseudo_elements && node[PSEUDO_ELEMENT_LIST])
+          if (is_open)
           {
-            has_only_text_content = !node.hasOwnProperty(PSEUDO_ELEMENT_LIST);
-            if (is_open && has_only_text_content)
+            one_child_text_content = '';
+            has_only_text_content = false;
+            child_level = data[child_pointer][DEPTH];
+            for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level;
+                    child_pointer += 1)
             {
-              one_child_text_content = '';
-              child_level = data[child_pointer][DEPTH];
-              for ( ; data[child_pointer] && data[child_pointer][DEPTH] == child_level; child_pointer += 1)
+              has_only_text_content = true;
+              if (data[child_pointer][TYPE] != TEXT_NODE)
               {
-                if (data[child_pointer][TYPE] != TEXT_NODE)
-                {
-                  has_only_text_content = false;
-                  one_child_text_content = '';
-                  break;
-                }
-                // perhaps this needs to be adjusted. a non-closed (e.g. p) tag
-                // will create an additional CRLF text node, that means the text nodes are not normalized.
-                // in markup view it doesn't make sense to display such a node, still we have to ensure
-                // that there is at least one text node.
-                // perhaps there are other situation with not-normalized text nodes,
-                // with the following code each of them will be a single text node,
-                // if they contain more than just white space.
-                // for exact DOM representation it is anyway better to use the DOM tree style.
-                if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
-                {
-                  one_child_text_content += "<text" +
-                    " ref-id='" + data[child_pointer][ID] + "' " +
-                    ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
-                }
+                has_only_text_content = false;
+                one_child_text_content = '';
+                break;
+              }
+              // perhaps this needs to be adjusted. a non-closed (e.g. p) tag
+              // will create an additional CRLF text node, that means the text nodes are not normalized.
+              // in markup view it doesn't make sense to display such a node, still we have to ensure
+              // that there is at least one text node.
+              // perhaps there are other situation with not-normalized text nodes,
+              // with the following code each of them will be a single text node,
+              // if they contain more than just white space.
+              // for exact DOM representation it is anyway better to use the DOM tree style.
+              if (!one_child_text_content || !/^\s*$/.test(data[child_pointer][VALUE]))
+              {
+                one_child_text_content += "<text" +
+                  " ref-id='" + data[child_pointer][ID] + "' " +
+                  ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
               }
             }
-
             if (has_only_text_content)
             {
               class_name = " class='spotlight-node";
@@ -424,6 +449,7 @@
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       class_name + ">" +
+                          "<input handler='get-children' type='button' class='open' />" +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
@@ -433,24 +459,19 @@
             }
             else
             {
+
               tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                       this._margin_style(node, depth_first_ele) +
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                      (children_length ?
+                      (is_expandable ?
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>" +
-                      (show_pseudo_elements
-                       ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
-                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
-                          (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
-                       : "");
+                      "</div>"; 
 
-              closing_tags.push((show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "") +
-                                "<div" + this._margin_style(node, depth_first_ele) +
+              closing_tags.push("<div" + this._margin_style(node, depth_first_ele) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                                   "class='spotlight-node' " +
                                   (no_contextmenu ? "" : "data-menu='dom-element' ") +
@@ -466,9 +487,9 @@
                       "ref-id='" + node[ID] + "' handler='spotlight-node' " +
                       (no_contextmenu ? "" : "data-menu='dom-element' ") +
                       "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                      (children_length ?
+                      (is_expandable ?
                           "<input handler='get-children' type='button' class='close' />" : '') +
-                          "<node>&lt;" + node_name + attrs + (children_length ? '' : '/') + "&gt;</node>" +
+                          "<node>&lt;" + node_name + attrs + (is_expandable ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
                       "</div>";
           }
@@ -572,16 +593,18 @@
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var parent_ele_stack = [];
     var parent_ele = null;
+    var is_expandable = false;
 
     for ( ; node = data[i]; i += 1)
     {
       while (current_depth > node[DEPTH])
       {
-        tree += closing_tags.pop();
         current_depth--;
       }
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
+      is_expandable = children_length || (show_pseudo_elements &&
+                                          node[PSEUDO_ELEMENT_LIST]);
       child_pointer = 0;
       while ((parent_ele = parent_ele_stack.last) &&
              current_depth <= parent_ele[DEPTH])
@@ -602,6 +625,22 @@
 
       switch (node[TYPE])
       {
+        case PSEUDO_NODE:
+        {
+          if (show_pseudo_elements)
+          {
+            tree += "<div " + this._margin_style(node, depth_first_ele) +
+                              "ref-id='" + node[ID] + "' " +
+                              "handler='spotlight-node' " +
+                              "data-pseudo-element='" + node[NAME] + "' " +
+                              "class='spotlight-node'>" +
+                      "<node class='pseudo-element'>" +
+                        "::" + node[NAME] +
+                      "</node>" +
+                    "</div>";
+          }
+          break;
+        }
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
@@ -646,26 +685,16 @@
                 break;
               }
             }
-          }
 
-          if (is_open)
-          {
             tree += "<div " + (node[ID] == target ? "id='target-element'" : '') +
                     this._margin_style(node, depth_first_ele) +
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                    (children_length && !has_only_text_content ?
+                    (is_expandable ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>" +
-                    (show_pseudo_elements
-                     ? ((pseudo_elements[PSEUDO_ELEMENT_BEFORE] || "") +
-                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LETTER] || "") +
-                        (pseudo_elements[PSEUDO_ELEMENT_FIRST_LINE] || ""))
-                     : "");
-
-            closing_tags.push(show_pseudo_elements ? (pseudo_elements[PSEUDO_ELEMENT_AFTER] || "") : "");
+                    "</div>";
           }
           else
           {
@@ -674,7 +703,7 @@
                     "ref-id='"+node[ID] + "' handler='spotlight-node' " +
                     (no_contextmenu ? "" : "data-menu='dom-element' ") +
                     "class='spotlight-node " + (is_script_node ? "non-editable" : "") + "'>" +
-                    (children_length ?
+                    (is_expandable ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
                     "</div>";
@@ -753,10 +782,6 @@
           }
         }
       }
-    }
-    while (closing_tags.length)
-    {
-      tree += closing_tags.pop();
     }
     tree += "</div></div>";
     return tree;

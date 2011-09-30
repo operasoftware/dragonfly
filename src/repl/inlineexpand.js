@@ -32,7 +32,8 @@ cls.InlineExpander = function(callback)
       if ((object = value[OBJECT_VALUE]) &&
           (!object[FRIENDLY_PRINTED] || object[FRIENDLY_PRINTED][IS_EXPANDABLE]))
       {
-        if (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]) || ctx.traversal)
+        if (!ctx.is_dir && (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]) || 
+                            ctx.traversal))
         {
           object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, 
                                                             object[OBJECT_ID]);

@@ -57,7 +57,7 @@ cls.CookieManager.CookieDataBase = function()
     this._active_tab_count++;
     this.cookie_list = [];
     for (var rt_id in this._rts) {
-      this._request_runtime_details(Number(rt_id), this._active_tab_count);
+      this._request_location_object_id(Number(rt_id), this._active_tab_count);
     };
   };
 
@@ -144,7 +144,7 @@ cls.CookieManager.CookieDataBase = function()
       {
         this._rts[rt_id]={rt_id: rt_id};
       }
-      this._request_runtime_details(rt_id, this._active_tab_count);
+      this._request_location_object_id(rt_id, this._active_tab_count);
     };
 
     // cleanup runtimes directory
@@ -177,24 +177,78 @@ cls.CookieManager.CookieDataBase = function()
     return true;
   };
 
-  this._request_runtime_details = function(rt_id, active_tab_counter)
+  this._request_location_object_id = function(rt_id, active_tab_counter)
   {
-    var script = "return JSON.stringify({protocol: location.protocol || '', hostname: location.hostname || '', pathname: location.pathname || ''})";
-    var tag = tagManager.set_callback(this, this._handle_runtime_details,[rt_id, active_tab_counter]);
+    var script = "location";
+    var tag = tagManager.set_callback(this, this._handle_location_object_id,[rt_id, active_tab_counter]);
     services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
   };
 
-  this._handle_runtime_details = function(status, message, rt_id, active_tab_counter)
+  this._handle_location_object_id = function(status, message, rt_id, active_tab_counter)
   {
-    const STATUS = 0;
-    const DATA = 2;
-    if (status === 0 && message[STATUS] == "completed")
+    const
+    OBJECT_VALUE = 3,
+    // within sub message ObjectValue
+    OBJECT_ID = 0;
+
+    if (status === 0 && message[OBJECT_VALUE])
     {
-      var rt = this._rts[rt_id];
-      var parsed_data = JSON.parse(message[DATA]);
-      rt.protocol = parsed_data.protocol;
-      rt.hostname = parsed_data.hostname;
-      rt.pathname = parsed_data.pathname;
+      var object_id = message[OBJECT_VALUE][OBJECT_ID];
+      var tag = tagManager.set_callback(this, this._handle_location, [rt_id, active_tab_counter]);
+      var command_details = [
+        rt_id, // runtimeID
+        [ // objectList
+          object_id
+        ],
+        0, // examinePrototypes
+        1, // skipNonenumerables
+        0  // filterProperties
+      ];
+      services["ecmascript-debugger"].requestExamineObjects(tag, command_details);
+    }
+  };
+
+  this._handle_location = function(status, message, rt_id, active_tab_counter)
+  {
+    const
+    OBJECT_CHAIN_LIST = 0,
+    // sub message ObjectList
+    OBJECT_LIST = 0,
+    // sub message ObjectInfo
+    PROPERTY_LIST = 1,
+    // sub message Property
+    PROPERTY_NAME = 0,
+    PROPERTY_TYPE = 1,
+    PROPERY_VAL = 2;
+
+    var rt = this._rts[rt_id];
+    var prop_list;
+
+    if (
+        rt &&
+        status === 0 &&
+        message[OBJECT_CHAIN_LIST] &&
+        message[OBJECT_CHAIN_LIST][0] &&
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST] &&
+        message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0] &&
+        (prop_list = message[OBJECT_CHAIN_LIST][0][OBJECT_LIST][0][PROPERTY_LIST]))
+    {
+      var wanted_props = [
+        "protocol",
+        "hostname",
+        "pathname",
+      ];
+
+      for (var i = 0, prop; prop = prop_list[i]; i++)
+      {
+        var property_name = prop[PROPERTY_NAME];
+        var property_type = prop[PROPERTY_TYPE];
+        var propery_val = prop[PROPERY_VAL];
+        if (property_type === "string" && wanted_props.indexOf(property_name) > -1)
+        {
+          rt[property_name] = propery_val;
+        }
+      }
 
       if (rt.hostname)
       {

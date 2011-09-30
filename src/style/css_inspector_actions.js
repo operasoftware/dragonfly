@@ -16,6 +16,7 @@ cls.CSSInspectorActions = function(id)
   const INDEX_LIST = 1;
   const VALUE_LIST = 2;
   const PRIORITY_LIST = 3;
+  const DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
 
   const PROPERTY = 0;
 
@@ -152,19 +153,17 @@ cls.CSSInspectorActions = function(id)
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
   this.set_property = function(rt_id, rule_id, declaration, 
-                               prop_to_remove, callback, script)
+                               prop_to_remove, callback)
   {
-    script || (script = "");
-
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
       this.set_property_svg(rt_id, rule_id, declaration, 
-                            prop_to_remove, callback, script);
+                            prop_to_remove, callback);
     }
     else
     {
       this.set_property_css(rt_id, rule_id, declaration, 
-                            prop_to_remove, callback, script);
+                            prop_to_remove, callback);
     }
   };
 
@@ -175,10 +174,10 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_css = function(rt_id, rule_id, declaration, 
-                                   prop_to_remove, callback, script)
+  this.set_property_css = function(rt_id, rule_id, declaration,
+                                   prop_to_remove, callback)
   {
-    script || (script = "");
+    var script = "";
 
     var prop = this.normalize_property(declaration[0]);
 
@@ -218,17 +217,15 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_svg = function(rt_id, rule_id, declaration, 
-                                   prop_to_remove, callback, script)
+  this.set_property_svg = function(rt_id, rule_id, declaration,
+                                   prop_to_remove, callback)
   {
-    script || (script = "");
-
     var prop = this.normalize_property(declaration[0]);
 
-    script += "object.setAttribute(\"" +
-               prop + "\", \"" +
-               declaration[1].replace(/"/g, "\\\"") + "\"" +
-              ");";
+    var script = "object.setAttribute(\"" +
+                  prop + "\", \"" +
+                  declaration[1].replace(/"/g, "\\\"") + "\"" +
+                 ");";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
@@ -400,36 +397,6 @@ cls.CSSInspectorActions = function(id)
       services['ecmascript-debugger'].requestEval(null,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
-  };
-
-
-  /**
-   * Restores all properties, except `exception`.
-   *
-   * @param {String} exception Do not restore a property with this name. Useful when
-   *                           restoring all properties except an overwritten one
-   */
-  this.get_restore_all_properties_script = function(exception)
-  {
-    var style_dec = this.editor.saved_style_dec;
-    var rule_id = this.editor.context_rule_id;
-    var length = style_dec[INDEX_LIST].length;
-    var script = "object.style.cssText = '';";
-
-    for (var i = 0; i < length; i++)
-    {
-      var prop = window.css_index_map[style_dec[INDEX_LIST][i]];
-      if (prop != exception)
-      {
-        script += "object.style.setProperty(\"" +
-                     prop + "\", \"" +
-                     helpers.escape_input(style_dec[VALUE_LIST][i]) + "\", " +
-                     (style_dec[PRIORITY_LIST][i] ? "\"important\"" : null) +
-                  ");";
-      }
-    }
-
-    return script;
   };
 
   /**

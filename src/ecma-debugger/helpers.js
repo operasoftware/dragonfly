@@ -60,10 +60,19 @@ window.cls.Helpers = function()
    */
   this.basename = function(path)
   {
+    const DATA_URI_MAX_SIZE = 40;
+
     if (!path)
     {
       return "";
     }
+
+    if (path.startswith("data:"))
+    {
+      var short_path = path.slice(0, DATA_URI_MAX_SIZE);
+      return path.length > DATA_URI_MAX_SIZE ? short_path + "…" : short_path;
+    }
+
     // Strip away any query string or fragment identifier
     var end = path.indexOf("?");
     var hash_index = path.indexOf("#");

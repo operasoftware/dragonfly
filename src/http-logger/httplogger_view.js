@@ -192,19 +192,14 @@ cls.HttpLogger["2.0"].RequestListView = function(id, name, container_class)
      */
     this.toggleDetails = function(id)
     {
-        var dirty = false;
         if (expandedItems.indexOf(id) == -1) {
             expandedItems.push(id);
-            dirty = true;
         } else {
             expandedItems.splice(expandedItems.indexOf(id), 1);
         }
         scroll = false;
         this.update();
         scroll = true;
-        if (dirty) {
-            var row = this._getRowForId(id).nextSibling;
-        }
     };
 
     this.selectDetailView = function(id, name) {

@@ -126,6 +126,9 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
         view.cell.setTooolbarVisibility(view_id, bool);
       }
     }
+
+    UIWindowBase.set_toolbar_visibility(view_id, bool);
+
   }
 
   this.setup = function()

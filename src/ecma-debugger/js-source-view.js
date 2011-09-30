@@ -330,7 +330,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.onresize = function(container)
   {
-    if(this.isvisible())
+    // optimization - having no line wrapping allows to optimize out width-only changes
+    if(this.isvisible() && context['container-height'] != parseInt(container.style.height))
     {
       __view_is_destroyed = true;
       this.createView(container);

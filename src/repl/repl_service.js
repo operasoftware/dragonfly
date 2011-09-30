@@ -76,6 +76,7 @@ cls.ReplService = function(view, data)
           is_unpacked: true,
           is_friendly_printed: true,
           expand: true,
+          is_dir: true,
         }
         this._handle_log(msg, rt_id, ctx);
         break;

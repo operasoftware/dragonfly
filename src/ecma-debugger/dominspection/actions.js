@@ -52,10 +52,6 @@ cls.DOMInspectorActions = function(id)
   {
     var container = event.target.parentNode;
     var next_node = container.nextElementSibling;
-    while (next_node && next_node.getAttribute("data-pseudo-element"))
-    {
-      next_node = next_node.nextElementSibling;
-    }
     var level = parseInt(container.style.marginLeft) || 0;
     var level_next = next_node && parseInt(next_node.style.marginLeft) || 0;
     var ref_id = parseInt(container.getAttribute('ref-id'));
@@ -73,7 +69,8 @@ cls.DOMInspectorActions = function(id)
       {
         if (container.contains(target))
           target_id = parseInt(target.getAttribute('ref-id'));
-        if (!force_expand && level_next > level)
+        if (!force_expand && (level_next > level ||
+                              event.target.parentNode.querySelector("text")))
         {
           model.collapse(ref_id);
           this._get_children_callback(container, model, target_id, 
@@ -564,7 +561,9 @@ cls.DOMInspectorActions = function(id)
     if (!window.settings.dom.get('dom-tree-style') &&
         target.firstChild && /<\//.test(target.firstChild.textContent))
       while ((target = target.previousSibling) &&
-              target.getAttribute('ref-id') != obj_id);
+              (target.getAttribute('ref-id') != obj_id ||
+              target.hasAttribute('data-pseudo-element')))
+        ;
     if (target)
     {
       var model = this._select_node(target);
@@ -607,6 +606,7 @@ cls.DOMInspectorActions = function(id)
         if (div)
           this._select_node(div, true);
       }
+      window.helpers.scroll_dom_target_into_view();
     }
   }.bind(this);
 
@@ -708,7 +708,8 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["edit-dom"] = function(event, target)
   {
-    if (!_is_script_node(target) && !_is_pseudo_element(target))
+    if (!_is_script_node(target) && !_is_pseudo_element(target) &&
+        document.documentElement.contains(target))
     {
       switch(target.nodeName.toLowerCase())
       {
@@ -816,11 +817,6 @@ cls.DOMInspectorActions = function(id)
     this._remove_from_dom(event, target, "el.removeAttribute(\"" + target.textContent + "\")");
   }.bind(this);
 
-  this._handlers["remove-node"] = function(event, target)
-  {
-    this._remove_from_dom(event, target, "el.parentNode.removeChild(el)");
-  }.bind(this);
-
   this._handlers["edit-next"] = function(event, target)
   {
     if( this.editor.type == "dom-attr-text-editor" )
@@ -879,7 +875,7 @@ cls.DOMInspectorActions = function(id)
   this._handlers["remove-node"] = function(event, target)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
-    if (ele)
+    if (ele && !ele.hasAttribute("data-pseudo-element"))
     {  
       var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
       var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));

@@ -73,36 +73,41 @@ window.cls.PropertyFinder = function(rt_id) {
    */
   this.find_props = function(callback, input, frameinfo, context)
   {
-    frameinfo = frameinfo ||
+    var rt_id = runtimes.getSelectedRuntimeId();
+    var rt = runtimes.getRuntime(rt_id);
+    if (rt)
     {
-      runtime_id: runtimes.getSelectedRuntimeId(),
-      thread_id: 0,
-      scope_id: runtimes.getRuntime(runtimes.getSelectedRuntimeId()).object_id,
-      index: 0,
-      scope_list: []
-    };
-
-    frameinfo.stopped = Boolean(frameinfo.thread_id);
-    var parts = this._find_input_parts(input);
-    var props = this._cache_get(parts.scope, frameinfo);
-
-
-    if (props)
-    {
-      props.input = input;
-      props.identifier = parts.identifier;
-      callback(props);
-    }
-    else
-    {
-      if (parts.scope)
+      frameinfo = frameinfo ||
       {
-        this._get_subject_id(callback, parts.scope, frameinfo, parts, context);
+        runtime_id: rt_id,
+        thread_id: 0,
+        scope_id: rt.object_id,
+        index: 0,
+        scope_list: []
+      };
+
+      frameinfo.stopped = Boolean(frameinfo.thread_id);
+      var parts = this._find_input_parts(input);
+      var props = this._cache_get(parts.scope, frameinfo);
+
+
+      if (props)
+      {
+        props.input = input;
+        props.identifier = parts.identifier;
+        callback(props);
       }
       else
       {
-        var scopes = [frameinfo.scope_id].extend(frameinfo.scope_list || []);
-        this._get_object_props(callback, frameinfo, scopes, parts);
+        if (parts.scope)
+        {
+          this._get_subject_id(callback, parts.scope, frameinfo, parts, context);
+        }
+        else
+        {
+          var scopes = [frameinfo.scope_id].extend(frameinfo.scope_list || []);
+          this._get_object_props(callback, frameinfo, scopes, parts);
+        }
       }
     }
   };

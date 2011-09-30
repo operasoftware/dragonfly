@@ -705,6 +705,11 @@ var Editor = function(actions)
 
   this.suggest_value = function(token, cur_start, cur_end, action_id, match)
   {
+    if (!this.tab_context_tokens)
+    {
+      return null;
+    }
+    
     var
     prop = this.tab_context_tokens[0],
     set = this.tab_context_tokens[3] &&
@@ -810,9 +815,7 @@ var Editor = function(actions)
 
     if (props[1])
     {
-      var script = actions.get_restore_all_properties_script(this.context_cur_prop);
-      actions.set_property(this.context_rt_id, this.context_rule_id, props,
-                           "", null, script);
+      actions.set_property(this.context_rt_id, this.context_rule_id, props);
     }
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
