@@ -73,8 +73,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
-      padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
-      padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+      padder.addEventListener("DOMAttrModified", this._queue_DOM_change, false);
+      padder.addEventListener("DOMNodeInserted", this._queue_DOM_change, false);
 
       if(this._current_scroll === null)
       {
@@ -131,12 +131,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._current_scroll = at_bottom ? null : this._container.scrollTop;
   }.bind(this);
 
+  this._queue_DOM_change = function()
+  {
+    if (this._update_scroll_timeout)
+      clearTimeout(this._update_scroll_timeout);
+    this._update_scroll_timeout = setTimeout(this._update_scroll_bound, 10);
+  }.bind(this);
+
   this._update_scroll_bound = function()
   {
     if (this._current_scroll === null)
     {
       this._container.scrollTop = 9999999;
     }
+    this._update_scroll_timeout = 0;
   }.bind(this);
 
   /**
@@ -347,9 +355,24 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       line.appendChild(elem_or_template);
     }
-    this._linelist.appendChild(line);
+    this._add_to_line_queue(line);
     return line;
   };
+
+  this._add_to_line_queue = function(line)
+  {
+    if (this._render_queue_timeout)
+      clearTimeout(this._render_queue_timeout);
+    this._line_queue.push(line);
+    this._render_queue_timeout = setTimeout(this._render_queue, 20);
+  };
+
+  this._render_queue = function()
+  {
+    while (this._line_queue.length)  
+      this._linelist.appendChild(this._line_queue.shift());
+    this._render_queue_timeout = 0;
+  }.bind(this);
 
   this._handle_input_bound = function(evt)
   {
@@ -949,6 +972,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }, this);
 
   this._actionbroker.register_handler(this);
+  this._line_queue = [];
 
 };
 cls.ReplView.prototype = ViewBase;
