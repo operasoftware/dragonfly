@@ -408,7 +408,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._recent_autocompletion = null;
   };
 
-  this._update_textarea_value = function(prop)
+  this._update_textarea_value = function(prop, is_partial_completion)
   {
     var pos = this._textarea.value
                   .slice(0, this._textarea.selectionStart)
@@ -417,16 +417,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var pre = this._textarea.value.slice(0, pos);
       var post = this._textarea.value.slice(this._textarea.selectionStart);
-      var line = this._construct_line(pre, prop, post);
+      var line = this._construct_line(pre, prop, post, is_partial_completion);
       this._textarea.value = line;
       this._textarea_handler.put_cursor(line.length - post.length);
     }
   };
 
-  this._construct_line = function(pre, prop, post)
+  this._construct_line = function(pre, prop, post, is_partial_completion)
   {
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if (!JSSyntax.is_valid_identifier(prop) && this._autocompletion_scope)
+    if (!is_partial_completion && 
+        !JSSyntax.is_valid_identifier(prop) &&
+        this._autocompletion_scope)
     {
       if (!is_number_without_leading_zero.test(prop))
       {
@@ -512,7 +514,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        this._update_textarea_value(match);
+        this._update_textarea_value(match, match.length > localpart.length);
       }
       else
       {
