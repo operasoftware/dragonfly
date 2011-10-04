@@ -378,7 +378,7 @@ var JSMultifileSearchPrototype = function()
       {
         var js_source_view = window.views[JS_SOURCE_ID];
         var line_nr = script.line_matches[cursor];
-        js_source_view.showLine(script.script_id, line_nr - 10);
+        js_source_view.showLine(script.script_id, line_nr);
         var line_ele = js_source_view.get_line_element(line_nr);
         if (this._source_file_hits)
         {

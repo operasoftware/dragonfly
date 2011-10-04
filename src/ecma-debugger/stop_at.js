@@ -247,10 +247,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
         topCell.showView(views.js_source.id);
       }
       var top_frame = callstack[0];
-      var plus_lines = views.js_source.getMaxLines() <= 10 ? 
-                       views.js_source.getMaxLines() / 2 >> 0 :
-                       10;
-      if (views.js_source.showLine(top_frame.script_id, top_frame.line - plus_lines))
+      if (views.js_source.showLine(top_frame.script_id, top_frame.line))
       {
         runtimes.setSelectedScript(top_frame.script_id);
         views.js_source.showLinePointer(top_frame.line, true);

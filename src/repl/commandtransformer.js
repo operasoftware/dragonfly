@@ -25,6 +25,53 @@
  * token list to be re-processed, by returning true. This may be
  * useful if a handler inserts something that is itself a host command.
  *
+ * commandline API (http://getfirebug.com/wiki/index.php/Command_Line_API)
+ * 
+ *   $(id)
+ *   $$(selector)
+ *   $x(xpath)
+ *   $0
+ *   $1
+ *   $n(index)
+ *   dir(object)
+ *   dirxml(node)
+ *   cd(window)
+ *   clear()
+ *   inspect(object[, tabName])
+ *   keys(object)
+ *   values(object)
+ *   debug(fn)
+ *   undebug(fn)
+ *   monitor(fn)
+ *   unmonitor(fn)
+ *   monitorEvents(object[, types])
+ *   unmonitorEvents(object[, types])
+ *   profile([title])
+ *   profileEnd()
+ * 
+ * console API (http://getfirebug.com/wiki/index.php/Console_API)
+ * 
+ *   console.log(object[, object, ...])
+ *   console.debug(object[, object, ...])
+ *   console.info(object[, object, ...])
+ *   console.warn(object[, object, ...])
+ *   console.error(object[, object, ...])
+ *   console.assert(expression[, object, ...])
+ *   console.clear()
+ *   console.dir(object)
+ *   console.dirxml(node)
+ *   console.trace()
+ *   console.group(object[, object, ...])
+ *   console.groupCollapsed(object[, object, ...])
+ *   console.groupEnd()
+ *   console.time(name)
+ *   console.timeEnd(name)
+ *   console.profile([title])
+ *   console.profileEnd()
+ *   console.count([title])
+ *   console.exception(error-object[, object, ...])
+ *   console.table(data[, columns])
+ * 
  */
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
@@ -44,7 +91,9 @@ cls.HostCommandTransformer = function() {
   PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
   DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
   REG_EXP = window.cls.SimpleJSParser.REG_EXP,
-  COMMENT = window.cls.SimpleJSParser.COMMENT;
+  COMMENT = window.cls.SimpleJSParser.COMMENT,
+  TYPE = 0,
+  VALUE = 1;
 
   this.init = function() {
     // window.simple_js_parser is default location for the parser instance
@@ -73,51 +122,52 @@ cls.HostCommandTransformer = function() {
 
   this.transform = function(source)
   {
-    var types = [];
-    var values = [];
     var tokens = [];
-    this.parser.parse(source, values, types);
+    this.parser.tokenize(source, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
 
-    // make a more straightforward representation of tokens. Command line
-    // stuff is small, so the cost of this doesn't matter much.
-    tokens = this.zip_tokens(types, values);
-
-    dirty: // we jump back here if we need to re-process all tokens
-    for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == IDENTIFIER && this.transform_map.hasOwnProperty(token.value)) {
-        var fun = this.transform_map[token.value];
-        if (fun.call(this, token, tokens)) {
-          break dirty;
+    for (var n = 0, token; token = tokens[n]; n++)
+    {
+      if (token[TYPE] == IDENTIFIER &&
+          this.transform_map.hasOwnProperty(token[VALUE]))
+      {
+        var fun = this.transform_map[token[VALUE]];
+        if (fun.call(this, token, tokens, n))
+        {
+          // re-process all tokens. do we really need this?
+          n = -1;
         }
       }
     }
-    return tokens.map(function(e) {return e.value;}).join("");
+    
+    return tokens.map(function(e) {return e[VALUE];}).join("");
   };
 
   this.get_command = function(source)
   {
-    var types = [];
-    var values = [];
     var tokens = [];
-    this.parser.parse(source, values, types);
-
-    // make a more straightforward representation of tokens. Command line
-    // stuff is small, so the cost of this doesn't matter much.
-    tokens = this.zip_tokens(types, values);
+    this.parser.tokenize(source, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
 
     if (!tokens.length)
     {
       return null;
     }
-    else if (this.is_call(tokens, 0) && tokens[0].value in this.client_command_map)
+    else if (this.is_global_call(tokens, 0) &&
+             tokens[0][VALUE] in this.client_command_map)
     {
-      return this.client_command_map[tokens[0].value];
+      return this.client_command_map[tokens[0][VALUE]];
     }
 
-    if (tokens[0].type == COMMENT)
+    if (tokens[0][TYPE] == COMMENT)
     {
-      // regex matches "// command()" . Whitespace is allowed inbetween most tokens
-      var match = tokens[0].value.match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
+      // regex matches "// command()" .
+      // Whitespace is allowed inbetween most tokens
+      var match = tokens[0][VALUE].match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
       if (match)
       {
         var command = match[1];
@@ -130,33 +180,39 @@ cls.HostCommandTransformer = function() {
     return null;
   };
 
-  this.zip_tokens = function(types, values) {
-    var tokens = [];
-    for (var n=0; n<types.length; n++) {
-      tokens.push({type: types[n], value: values[n]});
-    }
-    return tokens;
-  };
-
   /**
-   * Check if the token at index looks like it's a function/method being
-   * called by looking at the following tokens.
+   * Check if the token at index looks like it's a global function call.
    */
-  this.is_call = function(tokens, index) {
-    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+  this.is_global_call = function(tokens, index)
+  {
+    if (!tokens[index] || tokens[index][TYPE] != IDENTIFIER)
       return false;
-    }
 
-    for (var n=index+1, token; token=tokens[n]; n++) {
-      switch (token.type) {
-        case WHITESPACE:
-          continue;
+    for (var n = index - 1, token; token = tokens[n]; n--)
+      switch (token[TYPE])
+      {
         case PUNCTUATOR:
-        if (token.value == "(") { return true; }
+          if (!["=", ":", "?", "||", "&&", "("].contains(token[VALUE]))
+            return false;
+          n = -1;
+        case WHITESPACE:
+          break;
         default:
           return false;
       }
-    }
+
+    for (n = index + 1; token = tokens[n]; n++)
+      switch (token[TYPE])
+      {
+        case WHITESPACE:
+          break;
+        case PUNCTUATOR:
+          if (token[VALUE] == "(")
+            return true;
+        default:
+          return false;
+      }
+
     return false;
   };
 
@@ -164,18 +220,18 @@ cls.HostCommandTransformer = function() {
    * Check if the token at index is a property of name
    */
   this.is_property_of = function(name, tokens, index) {
-    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+    if (!tokens[index] || tokens[index][TYPE] != IDENTIFIER) {
       return false;
     }
 
     var n = index-1;
 
     for (var token; token=tokens[n]; n--) {
-      if (token.type == WHITESPACE)
+      if (token[TYPE] == WHITESPACE)
       {
         continue;
       }
-      else if (token.type == PUNCTUATOR && token.value == ".")
+      else if (token[TYPE] == PUNCTUATOR && token[VALUE] == ".")
       {
         break;
       }
@@ -188,11 +244,11 @@ cls.HostCommandTransformer = function() {
     n--; // if the break triggered n didn't decr
 
     for (var token; token=tokens[n]; n--) {
-      switch (token.type) {
+      switch (token[TYPE]) {
         case WHITESPACE:
           break;
         case IDENTIFIER:
-          if (token.value == name) { return true; }
+          if (token[VALUE] == name) { return true; }
         default:
           return false;
       }
@@ -204,63 +260,70 @@ cls.HostCommandTransformer = function() {
 
   // Host commands:
 
-  this.hostcommand_dir = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-    if (!this.is_call(tokenlist, index) ||
-         this.is_property_of("console", tokenlist, index)) {
-      return;
-    }
-
-    token.value = "(window.dir || function(e) { return console.dir(e)})";
+  this.hostcommand_dir = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.dir || function(e) { return console.dir(e)})";
   };
 
-  this.hostcommand_dirxml = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (!this.is_call(tokenlist, index) ||
-         this.is_property_of("console", tokenlist, index)) {
-      return;
-    }
-
-    token.value = "(window.dirxml || function(e) { return console.dirxml(e)})";
+  this.hostcommand_dirxml = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.dirxml || function(e) { return console.dirxml(e)})";
   };
 
-  this.hostcommand_$ = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (this.is_call(tokenlist, index)) {
-      token.value = "(window.$ || function(e) { return document.getElementById(e)})";
-    }
+  this.hostcommand_$ = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.$ || function(e)\
+                      {\
+                        return document.getElementById(e);\
+                      })";
   };
 
-  this.hostcommand_$$ = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (this.is_call(tokenlist, index)) {
-      token.value = "(window.$$ || function(e) { return document.querySelectorAll(e)})";
-    }
+  this.hostcommand_$$ = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.$$ || function(e)\
+                      {\
+                        return document.querySelectorAll(e);\
+                      })";
   };
 
-  this.hostcommand_$x = function(token, tokenlist) {
-    var funstr = "(window.$x || function(e)\
-                  {\
-                    var res = document.evaluate(e, document, null, XPathResult.ANY_TYPE, null);\
-                    var ret = [];\
-                    var ele = res.iterateNext();\
-                    while (ele) { ret.push(ele); ele=res.iterateNext() };\
-                    return ret;\
-                  })";
-    token.value = funstr;
+  this.hostcommand_$x = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.$x || function(e)\
+                      {\
+                        var res = document.evaluate(e, document, null,\
+                                                    XPathResult.ANY_TYPE, null);\
+                        var ret = [], ele = null;\
+                        while (ele = res.iterateNext())\
+                          ret.push(ele);\
+                        return ret;\
+                      })";
   };
 
-  this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "(window.keys || function(o) {var arr=[], key; for (key in o) {arr.push(key)}; return arr})";
-    token.value = funstr;
+  this.hostcommand_keys = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.keys || function(o)\
+                     {\
+                       var arr = [], key;\
+                       for (key in o) {arr.push(key)};\
+                       return arr;\
+                     })";
   };
 
-  this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "(window.values || function(o) {var arr=[], key; for (key in o) {arr.push(o[key])}; return arr})";
-    token.value = funstr;
+  this.hostcommand_values = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(window.values || function(o)\
+                     {\
+                       var arr = [], key;\
+                       for (key in o) {arr.push(o[key])}\
+                       return arr;\
+                     })";
   };
 
   this.clientcommand_clear = function(view, data, input)
