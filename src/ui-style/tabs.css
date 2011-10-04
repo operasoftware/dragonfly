@@ -109,14 +109,14 @@ top-tabs tab[data-state="waiting"].active {
               -1px 0 rgba(0,0,0,0.3);
 }
 
-top-tabs .icon {
+.icon {
   display: inline-block;
   height: 30px;
-  max-width: 32px;
+  width: 32px;
   vertical-align: top;
   margin-right: 5px;
   background-repeat: no-repeat;
-  background-position: 50% 0%;
+  background-position: 50% 50%;
 }
 top-tabs .badge {
   position: absolute;
@@ -134,3 +134,37 @@ top-tabs .badge:empty {
   display: none;
 }
 
+/* Top tabs */
+/* Width depends on the images */
+.dom_mode {
+    background-image: url("../ui-images/mode_documents.png");
+    width: 28px;
+}
+.js_mode {
+    background-image: url("../ui-images/mode_scripts.png");
+    width: 22px;
+}
+.network_mode {
+    background-image: url("../ui-images/mode_network.png");
+    width: 23px; 
+}
+.resource_panel {
+    background-image: url("../ui-images/mode_resources.png");
+    width: 23px; 
+}
+.storage {
+    background-image: url("../ui-images/mode_storage.png");
+    width: 24px;
+}
+.console_mode {
+    background-image: url("../ui-images/mode_errors.png");
+    width: 25px;
+}
+.utils {
+    background-image: url("../ui-images/mode_utilities.png");
+    width: 25px;
+}
+.console_panel {
+    background-image: url("../ui-images/mode_console.png");
+    width: 25px;
+}
