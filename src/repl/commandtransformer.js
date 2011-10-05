@@ -307,22 +307,25 @@ cls.HostCommandTransformer = function() {
     view._handle_action_clear();
   };
 
-  this.register_dfcommand = function(command)
+  this.register_dflcommands = function(commands)
   {
-    if (['name', 'command', 'description'].every(function(prop)
-        {
-          return command.hasOwnProperty(prop);
-        }))
+    for (var name in commands)
     {
-      this._dfcommands[command.name] = command.command;
-      this._dfcommands[command.name].description = command.description;
-      if (command.hasOwnProperty('alias')
-        this._dfcommands[command.alias] = this._dfcommands[command.name];
-    }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "not a valid DFL command");
+      if (['command', 'description'].every(function(prop)
+          {
+            return commands[name].hasOwnProperty(prop);
+          }))
+      {
+        this._dfcommands[name] = commands[name].command;
+        this._dfcommands[name].description = commands[name].description;
+        if (commands[name].hasOwnProperty('alias'))
+          this._dfcommands[commands[name].alias] = this._dfcommands[name];
+      }
+      else
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        "not a valid DFL command " + name);
+      }
     }
   };
 

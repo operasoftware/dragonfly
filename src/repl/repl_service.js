@@ -451,10 +451,7 @@ cls.ReplService = function(view, data)
     this._cur_selected = null;
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
-    window.dfl_commandline_commands.forEach(function(command)
-    {
-      this._transformer.register_dfcommand(command);
-    }, this);
+    this._transformer.register_dflcommands(DFLCommands.commands);
     this._msg_queue = new Queue(this);
     var value_list_callback = this._explore_value_list.bind(this);
     this._list_unpacker = new cls.ListUnpacker(value_list_callback);
