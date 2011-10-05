@@ -514,7 +514,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        this._update_textarea_value(match, match.length > localpart.length);
+        var is_partial_completion = match.length > localpart.length &&
+                                    matches.length !== 1;
+        this._update_textarea_value(match, is_partial_completion);
       }
       else
       {
