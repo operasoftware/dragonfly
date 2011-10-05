@@ -1,4 +1,4 @@
-DFLCommands = function(){};
+var DFLCommands = function(){};
 DFLCommands.commands = {};
 
 DFLCommands.commands.help =

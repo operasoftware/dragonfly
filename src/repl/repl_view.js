@@ -369,9 +369,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._render_queue = function()
   {
-    while (this._line_queue.length)  
-      this._linelist.appendChild(this._line_queue.shift());
-    this._render_queue_timeout = 0;
+    if (this._linelist)
+    {
+      while (this._line_queue.length)  
+        this._linelist.appendChild(this._line_queue.shift());
+      this._render_queue_timeout = 0;
+    }
   }.bind(this);
 
   this._handle_input_bound = function(evt)
