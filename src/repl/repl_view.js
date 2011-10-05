@@ -293,7 +293,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var severity = entry.severity != null
                  ? "severity-" + ["log", "debug", "info", "warn", "error"][entry.severity-1]
                  : "";
-    this._add_line(tpl, severity);
+    this._add_line(tpl, severity, true);
   };
 
   this._render_completion = function(s)
@@ -339,7 +339,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template, class_name)
+  this._add_line = function(elem_or_template, class_name, queue_call)
   {
     var line = document.createElement("li");
     if (class_name)
@@ -355,7 +355,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       line.appendChild(elem_or_template);
     }
-    this._add_to_line_queue(line);
+
+    if (queue_call)
+    {
+      
+      this._add_to_line_queue(line);
+    }
+    else
+    {
+      this._linelist.appendChild(line);
+     this._update_scroll_bound(); 
+    }
     return line;
   };
 
@@ -374,6 +384,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       while (this._line_queue.length)  
         this._linelist.appendChild(this._line_queue.shift());
       this._render_queue_timeout = 0;
+      this._update_scroll_bound();
     }
   }.bind(this);
 
