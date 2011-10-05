@@ -42,6 +42,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_header = false;
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
+  this._do_not_queue = false;
 
   this.ondestroy = function()
   {
@@ -52,6 +53,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._backlog_index = -1;
       this._current_input = this._textarea.value;
       this._container.removeEventListener("scroll", this._save_scroll_bound, false);
+      this._do_not_queue = false;
     }
   };
 
@@ -119,6 +121,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     opera.postError("fixme: implement help function and split into help/commands")
   };
 
+  this.do_not_queue_next_update = function()
+  {
+    this._do_not_queue = true;
+  }
+
 
   this._update_input_height_bound = function()
   {
@@ -160,7 +167,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       switch(e.type) { // free like a flying demon
         case "input":
-          this._render_input(e.data);
+          this._render_input(e.data, this._do_not_queue);
           break;
         case "string":
           this._render_string(e.data);
@@ -187,7 +194,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_count(e.data);
           break;
         case "completion":
-          this._render_completion(e.data);
+          this._render_completion(e.data, this._do_not_queue);
           break;
         case "errorlog":
           this._render_errorlog(e.data);
@@ -196,6 +203,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_string("unknown");
       }
     }
+
+    this._do_not_queue = false;
   };
 
   this._render_count = function(data)
@@ -293,12 +302,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var severity = entry.severity != null
                  ? "severity-" + ["log", "debug", "info", "warn", "error"][entry.severity-1]
                  : "";
-    this._add_line(tpl, severity, true);
+    this._add_line(tpl, severity);
   };
 
-  this._render_completion = function(s)
+  this._render_completion = function(s, do_not_queue)
   {
-    this._add_line(["span", s, "class", "repl-completion"]);
+    this._add_line(["span", s, "class", "repl-completion"], null, do_not_queue);
   };
 
   this._render_errorlog = function(s) {
@@ -327,10 +336,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._render_input = function(str)
+  this._render_input = function(str, do_not_queue)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + (index ? "... " : "&gt&gt&gt ") + "</span>" + line);
+      this._add_line('<span class="repl-line-marker">' + 
+                       (index ? "... " : "&gt&gt&gt ") +
+                     "</span>" + line, null, do_not_queue);
     }, this);
   };
 
@@ -339,7 +350,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template, class_name, queue_call)
+  this._add_line = function(elem_or_template, class_name, do_not_queue)
   {
     var line = document.createElement("li");
     if (class_name)
@@ -356,15 +367,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       line.appendChild(elem_or_template);
     }
 
-    if (queue_call)
+    if (do_not_queue)
     {
-      
-      this._add_to_line_queue(line);
+      this._linelist.appendChild(line);
+      this._update_scroll_bound();
     }
     else
     {
-      this._linelist.appendChild(line);
-     this._update_scroll_bound(); 
+      this._add_to_line_queue(line);
     }
     return line;
   };
@@ -557,8 +567,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
       else
       {
-        this._data.add_input(this._textarea.value);
-        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
+        this._data.add_input(this._textarea.value, true);
+        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "),
+                                         true);
         this.mode = "autocomplete";
 
         var completions = this._linelist.querySelectorAll(".repl-completion");
