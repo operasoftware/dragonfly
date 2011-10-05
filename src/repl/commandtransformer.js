@@ -168,7 +168,7 @@ cls.HostCommandTransformer = function() {
       switch (token[TYPE])
       {
         case PUNCTUATOR:
-          if (!["=", ":", "?", "||", "&&", "("].contains(token[VALUE]))
+          if (!["=", ":", "?", "||", "&&", "(", ")"].contains(token[VALUE]))
             return false;
           n = -1;
         case WHITESPACE:
