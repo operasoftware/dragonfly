@@ -237,7 +237,7 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._set_canvas_and_px_magnifier_size = function(container)
   {
-    if (this._pixel_magnifier)
+    if (this._pixel_magnifier && container)
     {
       this._pixel_magnifier.set_canvas(container.clearAndRender(['canvas']));
       this._pixel_magnifier.width = container.clientWidth;
