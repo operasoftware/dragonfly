@@ -3,9 +3,14 @@ window.cls || (window.cls = {});
 cls.Profiler || (cls.Profiler = {});
 cls.Profiler["1.0"] || (cls.Profiler["1.0"] = {});
 
-cls.Profiler["1.0"].Default = function(arr, parent)
+cls.Profiler["1.0"].SessionID = function(arr, parent)
 {
   this.parent = parent || null;
-  this.toString = function() { return "[message Default]"; }
+  /** 
+    * 
+    *  The ID of the `Session`.
+    */
+  this.sessionID = arr[0];
+  this.toString = function() { return "[message SessionID]"; }
 };
 

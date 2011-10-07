@@ -59,6 +59,11 @@ Chart.prototype.get_pie_chart = function(size, padding)
   size = (size || 200) + padding * 2;
   var center = radius + padding;
 
+  // Filter out negative values, they don't make sense in a pie chart
+  this._data = this._data.filter(function(slice) {
+    return slice.amount >= 0;
+  });
+
   // Calculate the total
   var total = this._data.reduce(function(prev, curr) {
     return prev + curr.amount;

@@ -205,7 +205,7 @@ cls.Profiler["1.0"].CssParsingEvent = function(arr, parent)
   /** 
     * 
     *  The URL of the stylesheet that was parsed. If the stylesheet is inlined
-    *  in another doucment, that document is used as the URL.
+    *  in another document, that document is used as the URL.
     */
   this.url = arr[0];
   this.toString = function() { return "[message CssParsingEvent]"; }
@@ -223,7 +223,7 @@ cls.Profiler["1.0"].ScriptCompilationEvent = function(arr, parent)
   /** 
     * 
     *  The URL of the stylesheet that was parsed. If the stylesheet is inlined
-    *  in another doucment, that document is used as the URL.
+    *  in another document, that document is used as the URL.
     */
   this.url = arr[1];
   this.toString = function() { return "[message ScriptCompilationEvent]"; }

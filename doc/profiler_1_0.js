@@ -25,6 +25,10 @@ cls.Profiler["1.0"].Service = function()
   }
   this.handleStartProfiler = function(status, message)
   {
+    /*
+    const
+    SESSION_ID = 0;
+    */
     opera.postError("NotBoundWarning: Profiler, StartProfiler");
   }
 
@@ -37,7 +41,7 @@ cls.Profiler["1.0"].Service = function()
   {
     /*
     const
-    PROFILE_ID = 0,
+    SESSION_ID = 0,
     WINDOW_ID = 1,
     TIMELINE_LIST = 2,
     // sub message Timeline 
@@ -101,13 +105,13 @@ cls.Profiler["1.0"].Service = function()
     opera.postError("NotBoundWarning: Profiler, GetEvents");
   }
 
-  // see http://dragonfly.opera.com/app/scope-interface/Profiler.html#releaseprofile
-  this.requestReleaseProfile = function(tag, message)
+  // see http://dragonfly.opera.com/app/scope-interface/Profiler.html#releasesession
+  this.requestReleaseSession = function(tag, message)
   {
     opera.scopeTransmit('profiler', message || [], 4, tag || 0);
   }
-  this.handleReleaseProfile = function(status, message)
+  this.handleReleaseSession = function(status, message)
   {
-    opera.postError("NotBoundWarning: Profiler, ReleaseProfile");
+    opera.postError("NotBoundWarning: Profiler, ReleaseSession");
   }
 }

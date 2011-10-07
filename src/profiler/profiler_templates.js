@@ -29,8 +29,8 @@ type_map[CSS_SELECTOR_MATCHING] = "CSS selector matching";
 type_map[LAYOUT] = "Layout";
 type_map[PAINT] = "Paint";
 
-const BAR_MIN_WIDTH = 5; // same as min-width for .profiler-event
-const BAR_HEIGHT = 11; // height of .profiler-event + 1px extra
+const BAR_MIN_WIDTH = 5; // min-width for .profiler-event
+const BAR_HEIGHT = 14; // height of .profiler-timeline-row
 
 window.templates.profiler.empty = function(text)
 {
@@ -55,11 +55,33 @@ window.templates.profiler.main = function(aggregated_events, timeline, details_l
   ];
 };
 
+window.templates.profiler.timeline_markers = function(width, start, interval, ms_unit)
+{
+  const MIN_MARKER_GAP = 100;
+  var marker_amount = Math.max(2, Math.floor(width / MIN_MARKER_GAP));
+  var marker_time = interval / marker_amount;
+  var ret = [];
+  for (var i = 1; i < marker_amount; i++)
+  {
+    var left = Math.floor(marker_time * i * ms_unit);
+    ret.push(["div",
+               "class", "profiler-timeline-marker",
+               "style", "left:" + left + "px"
+             ],
+             ["div",
+               format_time(start + (marker_time * i)),
+               "class", "profiler-timeline-marker-time",
+               "style", "left:" + left + "px"
+             ]);
+  }
+  return ret;
+};
+
 window.templates.profiler.event_list_all = function(event_list, container_width)
 {
   var ret = [];
-  var order = [GENERIC, DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
-               THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
+  var order = [DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION, THREAD_EVALUATION,
+               REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
 
   if (event_list && event_list.eventList && event_list.eventList[0])
   {
@@ -75,9 +97,18 @@ window.templates.profiler.event_list_all = function(event_list, container_width)
     var extra_width = Math.max(BAR_MIN_WIDTH, Math.round(last_event_time * ms_unit));
     ms_unit = (container_width - extra_width) / total_interval;
 
+    // Add time markers
+    ret.push(this.timeline_markers(container_width - extra_width, start, total_interval, ms_unit));
+
+    order.forEach(function(row, idx) {
+      ret.push(["div",
+                 "class", "profiler-timeline-row " + (idx % 2 ? "odd" : "")
+               ]);
+    });
+
     event_list.eventList.forEach(function(event) {
       var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
-      var time = Math.round(event.time * ms_unit);
+      var self_time = Math.round(event.time * ms_unit);
       var event_start = Math.round((event.interval.start - start) * ms_unit);
       var column = order.indexOf(event.type);
       ret.push(
@@ -85,7 +116,7 @@ window.templates.profiler.event_list_all = function(event_list, container_width)
         ["div",
           // Self-time
           ["div",
-            "style", "width: " + time + "px;",
+            "style", "width: " + self_time + "px;",
             "class", "profiler-event profiler-timeline-selftime event-type-" + event.type
           ],
           "style",

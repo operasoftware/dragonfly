@@ -24,7 +24,7 @@ cls.ProfilerService = function()
                                               this._window_id]);
   };
 
-  this.stop_profiler = function(callback)
+  this.stop_profiler = function(session_id, callback)
   {
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this.is_active = false;
@@ -33,10 +33,10 @@ cls.ProfilerService = function()
         callback(status, msg);
       }
     });
-    this._profiler.requestStopProfiler(tag);
+    this._profiler.requestStopProfiler(tag, [session_id]);
   };
 
-  this.get_events = function(profile_id, timeline_id, mode, event_id,
+  this.get_events = function(session_id, timeline_id, mode, event_id,
                              max_depth, event_type_list, interval, callback)
   {
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
@@ -45,7 +45,7 @@ cls.ProfilerService = function()
         callback(status, msg);
       }
     });
-    this._profiler.requestGetEvents(tag, [profile_id,
+    this._profiler.requestGetEvents(tag, [session_id,
                                           timeline_id,
                                           mode,
                                           event_id,
@@ -54,9 +54,9 @@ cls.ProfilerService = function()
                                           interval]);
   };
 
-  this.release_profile = function(profile_id)
+  this.release_session = function(session_id)
   {
-    this._profiler.requestReleaseProfile(null, [profile_id]);
+    this._profiler.requestReleaseSession(null, [session_id]);
   };
 
   this._on_debug_context_selected = function(msg)

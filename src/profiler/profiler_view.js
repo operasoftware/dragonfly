@@ -4,10 +4,9 @@
  * @constructor
  * @extends ViewBase
  */
-
 cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._profiler = new cls.ProfilerService();
-  this._current_profile_id = null;
+  this._current_session_id = null;
   this._current_timeline_id = null;
   this._event_id = null;
   this._event_type = null;
@@ -15,6 +14,7 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._details_time = 0;
   this._timeline_list = [];
   this._aggregated_list = [];
+  this._reduced_list = [];
 
   // Event types
   const GENERIC = cls.ProfilerService.GENERIC;
@@ -34,6 +34,10 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   const MODE_REDUCE_UNIQUE_TYPES = 2;
   const MODE_REDUCE_UNIQUE_EVENTS = 3;
   const MODE_REDUCE_ALL = 4;
+
+  const SESSION_ID = 0;
+  const TIMELINE_LIST = 2;
+  const TIMELINE_ID = 0;
 
   // Parent-children relationships
   this._children = {};
@@ -70,10 +74,9 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._default_types = [GENERIC, PROCESS, DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
                          THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
 
-  this._super_init = this.init;
   this._init = function(id, name, container_class, html, default_handler)
   {
-    this._super_init(id, name, container_class, html, default_handler);
+    ViewBase.init.call(this, id, name, container_class, html, default_handler);
   };
 
   // TODO: this is also in templates, should not be in both
@@ -93,26 +96,23 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._start_profiler = function(container)
   {
     this._container.clearAndRender(this._templates.empty("Profiling"));
-    this._profiler.start_profiler();
+    this._profiler.start_profiler(null, null, (function(status, msg) {
+      this._current_session_id = msg[SESSION_ID];
+    }).bind(this));
   };
 
   this._stop_profiler = function(container)
   {
     this._container.clearAndRender(this._templates.empty("Stopped profiling. Calculating..."));
-    this._profiler.stop_profiler(this._handle_stop_profiler.bind(this));
+    this._profiler.stop_profiler(this._current_session_id, this._handle_stop_profiler.bind(this));
   };
 
   this._handle_stop_profiler = function(status, msg)
   {
-    const PROFILE_ID = 0;
-    const TIMELINE_LIST = 2;
-    const TIMELINE_ID = 0;
-
     if (status == 0)
     {
-      this._current_profile_id = msg[PROFILE_ID];
       this._current_timeline_id = msg[TIMELINE_LIST][0][TIMELINE_ID];
-      this._profiler.get_events(this._current_profile_id,
+      this._profiler.get_events(this._current_session_id,
                                 this._current_timeline_id,
                                 MODE_ALL,
                                 null,
@@ -126,12 +126,12 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._handle_timeline_list = function(status, msg)
   {
     this._timeline_list = new cls.Profiler["1.0"].EventList(msg);
-    this._profiler.get_events(this._current_profile_id,
+    this._profiler.get_events(this._current_session_id,
                               this._current_timeline_id,
                               MODE_REDUCE_UNIQUE_TYPES,
                               null,
                               null,
-                              this._default_types,
+                              null,
                               null,
                               this._handle_aggregated_list.bind(this));
   };
@@ -139,6 +139,20 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._handle_aggregated_list = function(status, msg)
   {
     this._aggregated_list = new cls.Profiler["1.0"].EventList(msg);
+    this._profiler.get_events(this._current_session_id,
+                              this._current_timeline_id,
+                              MODE_REDUCE_ALL,
+                              null,
+                              null,
+                              null,
+                              null,
+                              this._handle_reduced_list.bind(this));
+  };
+
+  this._handle_reduced_list = function(status, msg)
+  {
+    this._reduced_list = new cls.Profiler["1.0"].EventList(msg);
+    this._aggregated_list.eventList.push(this._reduced_list.eventList[1]);
     this._update_view();
   };
 
@@ -146,12 +160,12 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._update_view = function()
   {
     this._container.clearAndRender(
-        this._timeline_list.eventList && this._timeline_list.eventList[0] ?
-        this._templates.main(this._templates.event_list_aggregated(this._aggregated_list),
-                             this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 120), // FIXME: don't hardcode
-                             this._templates.details(this._table),
-                             this._templates.status(format_time(this._details_time))) :
-        this._templates.empty("Press the “Start profiling” button to start profiling")
+        this._timeline_list.eventList && this._timeline_list.eventList[0]
+        ? this._templates.main(this._templates.event_list_aggregated(this._aggregated_list),
+                               this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 120), // FIXME: don't hardcode
+                               this._templates.details(this._table),
+                               this._templates.status(format_time(this._details_time)))
+        : this._templates.empty("Press the “Start profiling” button to start profiling")
     );
   };
 
@@ -185,7 +199,7 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
     var children = this._children[this._event_type];
     if (children)
     {
-      this._profiler.get_events(this._current_profile_id,
+      this._profiler.get_events(this._current_session_id,
                                 this._current_timeline_id,
                                 MODE_REDUCE_UNIQUE_EVENTS,
                                 this._event_id,

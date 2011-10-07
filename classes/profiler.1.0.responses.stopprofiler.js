@@ -3,28 +3,28 @@ window.cls || (window.cls = {});
 cls.Profiler || (cls.Profiler = {});
 cls.Profiler["1.0"] || (cls.Profiler["1.0"] = {});
 
-cls.Profiler["1.0"].Profile = function(arr, parent)
+cls.Profiler["1.0"].Session = function(arr, parent)
 {
   this.parent = parent || null;
   /** 
     * 
-    *  Nonzero ID for the `Profile`. This must be used when accessing `Events`
-    *  from a `Timeline` withing the `Profile`, and when releasing the
-    *  `Profile`.
+    *  Non-zero ID for the `Session`. This must be used when accessing `Events`
+    *  from a `Timeline` within the `Session`, and when releasing the
+    *  `Session`.
     */
-  this.profileID = arr[0];
+  this.sessionID = arr[0];
   /** 
     * 
-    *  The ID of the window associated with a `Profile`.
+    *  The ID of the window associated with a `Session`.
     * 
-    *  This field may not be present if the `Profile` is not associated with a
+    *  This field may not be present if the `Session` is not associated with a
     *  window. (Currently not applicable, but field is made optional for
     *  future compatibility).
     */
   this.windowID = arr[1];
   /** 
     * 
-    *  `Timelines` contained within the `Profile`. This will typically contain
+    *  `Timelines` contained within the `Session`. This will typically contain
     *  one `Timeline` for each frame that existed in the window at some point
     *  during profiling.
     */
@@ -33,7 +33,7 @@ cls.Profiler["1.0"].Profile = function(arr, parent)
   {
     return new cls.Profiler["1.0"].Timeline(item, self);
   });
-  this.toString = function() { return "[message Profile]"; }
+  this.toString = function() { return "[message Session]"; }
 };
 
 cls.Profiler["1.0"].Timeline = function(arr, parent)
@@ -41,7 +41,7 @@ cls.Profiler["1.0"].Timeline = function(arr, parent)
   this.parent = parent || null;
   /** 
     * 
-    *  Nonnzero ID for the `Timeline`. This must be used when accessing `Events`
+    *  Non-zero ID for the `Timeline`. This must be used when accessing `Events`
     *  from the `Timeline`.
     */
   this.timelineID = arr[0];

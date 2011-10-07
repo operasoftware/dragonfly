@@ -1,7 +1,10 @@
 #profiler-aggregated {
+    position: absolute;
+    top: 20px;
     width: 120px;
     height: 120px;
-    border-right: 1px solid #999;
+    border-right: 1px solid #e6e6e6;
+    border-top: 1px solid #e6e6e6;
     padding: 5px;
     box-sizing: border-box;
 }
@@ -10,16 +13,17 @@
     position: absolute;
     left: 120px;
     right: 0;
-    top: 0;
+    top: 20px;
     height: 120px;
+    border-top: 1px solid #e6e6e6;
 }
 
 #profiler-details-list {
     position: absolute;
-    top: 120px;
+    top: 140px;
     bottom: 21px;
     overflow: auto;
-    border-top: 1px solid #999;
+    border-top: 1px solid #e6e6e6;
     width: 100%;
 }
 
@@ -29,7 +33,7 @@
     height: 20px;
     line-height: 20px;
     width: 100%;
-    border-top: 1px solid #999;
+    border-top: 1px solid #e6e6e6;
     text-align: center;
 }
 
@@ -52,6 +56,27 @@
     width: 100px;
 }
 
+.profiler-timeline-row {
+    height: 14px;
+}
+
+.profiler-timeline-row.odd {
+    background: #f5f5f5;
+}
+
+.profiler-timeline-marker {
+    position: absolute;
+    height: 100%;
+    width: 1px;
+    background: #e6e6e6;
+}
+
+.profiler-timeline-marker-time {
+    position: absolute;
+    top: -15px;
+    color: #444;
+}
+
 .profiler-event-special {
     height: 100%;
     width: 2px;
@@ -59,145 +84,108 @@
 }
 
 .profiler-event {
-  position: absolute;
-  min-width: 5px;
-  height: 10px;
-  border-color: #333;
-  border-radius: 2px;
-  background-clip: padding-box;
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(184, 212, 255, .7) 1%,
-                                       rgba(139, 175, 224, .7) 60%,
-                                       rgba(166, 197, 243, .7) 100%);
+    position: absolute;
+    min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
+    height: 6px; /* 6px + 2*1px (border) + 2*3px (margin) = 14px (height of .profiler-timeline-row)  */
+    border-radius: 2px;
+}
+
+.profiler-event-interval {
+    margin: 3px 0;
+    border: 1px solid rgba(0, 0, 0, .17);
 }
 
 .profiler-timeline-selftime {
-
-  background-image: -o-linear-gradient(-90deg,
-                                       rgb(184, 212, 255) 1%,
-                                       rgb(139, 175, 224) 60%,
-                                       rgb(166, 197, 243) 100%);
+    background-image: -o-linear-gradient(-90deg,
+                                         rgba(0, 0, 0, 0) 1%,
+                                         rgba(0, 0, 0, .17) 100%);
 }
-.event-type-1
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(184, 212, 255, .7) 1%,
-                                       rgba(139, 175, 224, .7) 60%,
-                                       rgba(166, 197, 243, .7) 100%);
-  fill: rgb(139, 175, 224);
+.event-type-1 {
 }
 
 .event-type-1.profiler-timeline-selftime {
-
-  background-image: -o-linear-gradient(-90deg,
-                                       rgb(184, 212, 255) 1%,
-                                       rgb(139, 175, 224) 60%,
-                                       rgb(166, 197, 243) 100%);
 }
 
-.event-type-2
-{
-    background: rgba(173, 255, 47, .7) !important;
-    fill: rgb(173, 255, 47) !important;
+.event-type-2 {
 }
 
 .event-type-2.profiler-timeline-selftime {
-    background: rgb(173, 255, 47) !important;
 }
 
-.event-type-3
-{
-    background: rgba(173, 216, 230, .7) !important;
-    fill: rgb(173, 216, 230) !important;
+.event-type-3 {
+    background-color: #c7c7eb;
+    fill: #b3b0ff;
 }
 
 .event-type-3.profiler-timeline-selftime {
-    background: rgb(173, 216, 230) !important;
+    background-color: #b3b0ff;
 }
 
-.event-type-4
-{
-    background: rgba(144, 238, 144, .7) !important;
-    fill: rgb(144, 238, 144) !important;
+.event-type-4 {
+    background-color: #aac1e3;
+    fill: #8cb8fa;
 }
 
 .event-type-4.profiler-timeline-selftime {
-    background: rgb(144, 238, 144) !important;
+    background-color: #8cb8fa;
 }
 
-.event-type-5
-{
-    background: rgba(255, 160, 122, .7) !important;
-    fill: rgb(255, 160, 122) !important;
+.event-type-5 {
+    background-color: #f5e19f;
+    fill: #ffe17d;
 }
 
 .event-type-5.profiler-timeline-selftime {
-    background: rgb(255, 160, 122) !important;
+    background-color: #ffe17d;
 }
 
-.event-type-6
-{
-    background: rgba(255, 182, 193, .7) !important;
-    fill: rgb(255, 182, 193) !important;
+.event-type-6 {
+    background-color: #7cde89;
+    fill: #97dea0;
 }
 
 .event-type-6.profiler-timeline-selftime {
-    background: rgb(255, 182, 193) !important;
+    background-color: #97dea0;
 }
 
-.event-type-7
-{
-    background: rgba(176, 196, 222, .7) !important;
-    fill: rgb(176, 196, 222) !important;
+.event-type-7 {
+    background-color: #fcb174;
+    fill: #fc8d32;
 }
 
 .event-type-7.profiler-timeline-selftime {
-    background: rgb(176, 196, 222) !important;
+    background-color: #fc8d32;
 }
 
-.event-type-8
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(201, 201, 255, .7) 1%,
-                                       rgba(167, 165, 214, .7) 60%,
-                                       rgba(176, 176, 214, .7) 100%);
-  fill: rgb(167, 165, 214);
+.event-type-8 {
+    background-color: #fbcfab;
+    fill: #ffc08c;
 }
 
-.event-type-8.profiler-timeline-selftime
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       rgb(201, 201, 255) 1%,
-                                       rgb(167, 165, 214) 60%,
-                                       rgb(176, 176, 214) 100%);
+.event-type-8.profiler-timeline-selftime {
+    background-color: #ffc08c;
 }
 
-.event-type-9
-{
-    background: rgba(255, 228, 181, .7) !important;
-    fill: rgb(255, 228, 181) !important;
+.event-type-9 {
 }
 
 .event-type-9.profiler-timeline-selftime {
-    background: rgb(255, 228, 181) !important;
 }
 
-.event-type-10
-{
-    background: rgba(216, 191, 216, .7) !important;
-    fill: rgb(216, 191, 216) !important;
+.event-type-10 {
+    background-color: #ebbf9b;
+    fill: #e09455;
 }
 
 .event-type-10.profiler-timeline-selftime {
-    background: rgb(216, 191, 216) !important;
+    background-color: #e09455;
 }
 
-.event-type-11
-{
-    background: rgba(135, 206, 235, .7) !important;
-    fill: rgb(135, 206, 235) !important;
+.event-type-11 {
+    background-color: #ff8f8f;
+    fill: #ff5757;
 }
 
 .event-type-11.profiler-timeline-selftime {
-    background: rgb(135, 206, 235) !important;
+    background-color: #ff5757;
 }
