@@ -122,7 +122,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._update_input_height_bound = function()
   {
-    this._textarea.rows = (this._textarea.scrollHeight / this._input_row_height >> 0) || 1;
+    this._textarea.rows = Math.max(1, Math.floor(this._textarea.scrollHeight / this._input_row_height));
   }.bind(this);
 
   this._save_scroll_bound = function()
