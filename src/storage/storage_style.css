@@ -68,9 +68,9 @@ input[type='datetime-local'] {
 
 .storage_view .sortable-table th .ellipsis_cont {
   /* header row is lower */
-  height: 8px;
+  height: 1em;
   margin-top: 0;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .storage_view .sortable-table th, .storage_view .sortable-table td {
