@@ -24,6 +24,21 @@ window.cls.PropertyFinder = function(rt_id) {
 
   this._cache = {};
 
+  this._parser = window.simple_js_parser || new window.cls.SimpleJSParser();
+
+  const PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
+  const TYPE = 0;
+  const VALUE = 1;
+
+  this._get_last_punctuator = function(tokens, punctuator)
+  {
+    if (tokens)
+      for (var i = tokens.length - 1, token; token = tokens[i]; i--)
+        if (token[TYPE] == PUNCTUATOR && token[VALUE] == punctuator)
+          return i;
+    return -1;
+  };
+
   /**
    * Figure out the object to which input belongs.
    * foo.bar -> foo
@@ -36,16 +51,26 @@ window.cls.PropertyFinder = function(rt_id) {
    */
   this._find_input_parts = function(input)
   {
-    var last_bracket = input.lastIndexOf('[');
-    var last_brace = input.lastIndexOf('(');
+    var tokens = [];
 
-    last_brace = input.lastIndexOf(')') <= last_brace ? last_brace : -1;
-    last_bracket = input.lastIndexOf(']') <= last_bracket ? last_bracket : -1;
-    input = input.slice( Math.max(
-                  last_brace,
-                  last_bracket,
-                  input.lastIndexOf('=') ) + 1
-                ).replace(/^\s+/, '');
+    this._parser.tokenize(input, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
+
+    var last_bracket = this._get_last_punctuator(tokens, '[');
+    var last_brace = this._get_last_punctuator(tokens, '(');
+
+    last_brace = this._get_last_punctuator(tokens, ')') <= last_brace 
+               ? last_brace
+               : -1;
+    last_bracket = this._get_last_punctuator(tokens, ']') <= last_bracket 
+                 ? last_bracket
+                 : -1;
+    input = input.slice(Math.max(last_brace,
+                                 last_bracket,
+                                 this._get_last_punctuator(tokens, '=')) + 1);
+    input = input.replace(/^\s+/, '');
 
     var last_dot = input.lastIndexOf('.');
     var new_path = '';
