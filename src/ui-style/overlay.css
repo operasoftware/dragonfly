@@ -142,21 +142,20 @@ overlay hr {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.overlay select option{color: rgba(255, 255, 255, .6);}
-
-
+.overlay select option {
+    color: rgba(255, 255, 255, .6);
+}
 
 /* Buttons */
 
 .overlay button,
-.overlay input[handler="cancel-remote-debug"], /* TODO should be changed to button */
 .hud .ui-control, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header {
   background-color: #474747;
   color: rgba(255, 255, 255, .8);
   background-image: -o-linear-gradient(-90deg,
-                      transparent,
-                      rgba(0, 0, 0, 0.37) 100%);
+                    transparent,
+                    rgba(0, 0, 0, 0.37) 100%);
   border: none;
   border-radius: 4px;
 
@@ -168,19 +167,17 @@ overlay hr {
 }
 
 .overlay button:hover,
-.overlay input[handler="cancel-remote-debug"]:hover, /* TODO should be changed to button */
 .hud .ui-control:hover, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header:hover {
   background-color: #525252;
   color: rgba(255, 255, 255, .9);
   -o-transition: background-color 0.2s;
   background-image: -o-linear-gradient(-90deg,
-                      transparent,
-                      rgba(0, 0, 0, 0.37) 100%);
+                    transparent,
+                    rgba(0, 0, 0, 0.37) 100%);
 }
 
 .overlay button:active,
-.overlay input[handler="cancel-remote-debug"]:active, /* TODO should be changed to button */
 .hud .ui-control:not([disabled]):active, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header:active {
   box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.2),
@@ -190,17 +187,14 @@ overlay hr {
   color: rgba(255, 255, 255, .9);
   background-color: #404040;
   background-image: -o-linear-gradient(-90deg,
-                      transparent 0%,
-                      rgba(0, 0, 0, 0.37) 100%);
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.37) 100%);
   -o-transition: background-color 0.2s;
 }
 
-
-
 /* Defining the size and margins for some of the buttons */
 
-.overlay button, 
-.overlay input[handler="cancel-remote-debug"], /* TODO should be changed to button */
+.overlay button,
 .overlay .setting-composite input[type=button],
 .shortcuts-config header {
   line-height: 20px;
@@ -208,8 +202,9 @@ overlay hr {
   margin-left: 1px;
   margin-right: 1px;
 }
-.overlay input[handler="cancel-remote-debug"] {
-  height: 22px;
+.overlay select + button {
+    margin-left: 6px;
 }
-.overlay select+button {margin-left: 6px;}
-.overlay button+button {margin-left: 3px;}
+.overlay button + button {
+    margin-left: 3px;
+}

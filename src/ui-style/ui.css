@@ -106,7 +106,8 @@ panel-toolbar {
                                        rgba(255, 255, 255, 0.55) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
   border-color: #bfbfbf;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35),
+              inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
 toolbar-buttons, toolbar-switches {
@@ -322,8 +323,8 @@ button.text-button:active {
                 inset 0 1px 1px rgba(0, 0, 0, .15),
                 inset 0 0 4px rgba(0, 0, 0, .05);
     background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                    rgba(255, 255, 255, 0.45) 0,
-                                    rgba(255, 255, 255, 0.25) 100%);
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
 
 .ui-control.is-active {
@@ -333,8 +334,8 @@ button.text-button:active {
                 inset 0 1px 1px rgba(0, 0, 0, .15),
                 inset 0 0 4px rgba(0, 0, 0, .15);
     background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                    rgba(255, 255, 255, 0.45) 0,
-                                    rgba(255, 255, 255, 0.25) 100%);
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
 
 .ui-control.is-active:active {
@@ -460,7 +461,8 @@ toolbar-filters input[type=button]
   height: 17px;
   line-height: 27px;
   text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-  box-shadow: 0 1px rgba(255, 255, 255, 0.5), inset 0 1px 1px #fff;
+  box-shadow: 0 1px rgba(255, 255, 255, 0.5),
+              inset 0 1px 1px #fff;
   display: inline-block;
   vertical-align: top;
   -o-transition: background-color 0.2s;
@@ -469,7 +471,8 @@ toolbar-filters input[type=button]
 
 toolbar-filters input[type=button]:active
 {
-  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+  box-shadow: 0 1px #fff,
+              inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
   padding-top: 2px;
   padding-bottom: 0;
