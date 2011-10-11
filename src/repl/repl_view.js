@@ -43,11 +43,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
   this._do_not_queue = false;
+  this._last_scroll = 0;
 
   this.ondestroy = function()
   {
     if (this._container)
     {
+      this._last_scroll = this._container.scrollTop;
       this._linelist = null;
       this._lastupdate = 0;
       this._backlog_index = -1;
@@ -78,7 +80,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       padder.addEventListener("DOMAttrModified", this._queue_DOM_change, false);
       padder.addEventListener("DOMNodeInserted", this._queue_DOM_change, false);
 
-      if(this._current_scroll === null)
+      if (this._current_scroll === null)
       {
         this._container.scrollTop = 999999;
       }
@@ -147,7 +149,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._update_scroll_bound = function()
   {
-    if (this._current_scroll === null)
+    if (this._last_scroll)
+    {
+      this._container.scrollTop = this._last_scroll;
+      this._last_scroll = 0;
+    }
+    else if (this._current_scroll === null)
     {
       this._container.scrollTop = 9999999;
     }
