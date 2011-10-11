@@ -154,8 +154,8 @@ overlay hr {
   background-color: #474747;
   color: rgba(255, 255, 255, .8);
   background-image: -o-linear-gradient(-90deg,
-                    transparent,
-                    rgba(0, 0, 0, 0.37) 100%);
+                                       transparent,
+                                       rgba(0, 0, 0, 0.37) 100%);
   border: none;
   border-radius: 4px;
 
@@ -173,8 +173,8 @@ overlay hr {
   color: rgba(255, 255, 255, .9);
   -o-transition: background-color 0.2s;
   background-image: -o-linear-gradient(-90deg,
-                    transparent,
-                    rgba(0, 0, 0, 0.37) 100%);
+                                       transparent,
+                                       rgba(0, 0, 0, 0.37) 100%);
 }
 
 .overlay button:active,
@@ -187,8 +187,8 @@ overlay hr {
   color: rgba(255, 255, 255, .9);
   background-color: #404040;
   background-image: -o-linear-gradient(-90deg,
-                    transparent 0%,
-                    rgba(0, 0, 0, 0.37) 100%);
+                                       transparent 0%,
+                                       rgba(0, 0, 0, 0.37) 100%);
   -o-transition: background-color 0.2s;
 }
 
