@@ -239,67 +239,68 @@ cls.HostCommandTransformer = function() {
   this._hostcommands.dir = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.dir || function(e) { return console.dir(e)})";
+      token[VALUE] = "(typeof dir == 'function' && dir || \
+                       function(e) { return console.dir(e) })";
   };
 
   this._hostcommands.dirxml = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.dirxml || function(e) { return console.dirxml(e)})";
+      token[VALUE] = "(typeof dirxml == 'function' && dirxml || \
+                       function(e) { return console.dirxml(e) })";
   };
 
   this._hostcommands.$ = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$ || function(e)\
-                      {\
-                        return document.getElementById(e);\
-                      })";
+      token[VALUE] = "(typeof $ == 'function' && $ || \
+                       function(e) { return document.getElementById(e); })";
   };
 
   this._hostcommands.$$ = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$$ || function(e)\
-                      {\
-                        return document.querySelectorAll(e);\
-                      })";
+      token[VALUE] = "(typeof $$ == 'function' && $$ || \
+                       function(e) { return document.querySelectorAll(e); })";
   };
 
   this._hostcommands.$x = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$x || function(e)\
-                      {\
-                        var res = document.evaluate(e, document, null,\
-                                                    XPathResult.ANY_TYPE, null);\
-                        var ret = [], ele = null;\
-                        while (ele = res.iterateNext())\
-                          ret.push(ele);\
-                        return ret;\
-                      })";
+      token[VALUE] = "(typeof $x == 'function' && $x || \
+                       function(e)\
+                       {\
+                         var res = document.evaluate(e, document, null,\
+                                                     XPathResult.ANY_TYPE, null);\
+                         var ret = [], ele = null;\
+                         while (ele = res.iterateNext())\
+                           ret.push(ele);\
+                         return ret;\
+                       })";
   };
 
   this._hostcommands.keys = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.keys || function(o)\
-                     {\
-                       var arr = [], key;\
-                       for (key in o) {arr.push(key)};\
-                       return arr;\
-                     })";
+      token[VALUE] = "(typeof keys == 'function' && keys || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(key)};\
+                         return arr;\
+                       })";
   };
 
   this._hostcommands.values = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.values || function(o)\
-                     {\
-                       var arr = [], key;\
-                       for (key in o) {arr.push(o[key])}\
-                       return arr;\
-                     })";
+      token[VALUE] = "(typeof values == 'function' && values || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(o[key])}\
+                         return arr;\
+                       })";
   };
 
   this._clientcommands.clear = function(view, data, input)
