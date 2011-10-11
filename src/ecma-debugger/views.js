@@ -422,9 +422,8 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         else
         {
           return ['setting-composite',
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+            ['button',
+              ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
               'handler', 'cancel-remote-debug'
             ]
           ]

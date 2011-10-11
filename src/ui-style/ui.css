@@ -80,7 +80,6 @@ container {
 window-statusbar {
   display: block;
   background: #e6e6e6 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
-  border-top: transparent;
   line-height: 20px;
   height: 20px;
 }
@@ -97,8 +96,8 @@ toolbar, panel-toolbar, window-toolbar {
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
-
 }
+
 panel-toolbar {
   display: block;
   border-width: 0 0 1px 0;
@@ -107,7 +106,8 @@ panel-toolbar {
                                        rgba(255, 255, 255, 0.55) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
   border-color: #bfbfbf;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35),
+              inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
 toolbar-buttons, toolbar-switches {
@@ -306,7 +306,7 @@ button.text-button:active {
   padding: 1px 5px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255,255,255,0.6),
+  box-shadow: 0 1px rgba(255, 255, 255, 0.6),
               inset 0 1px 1px #fff;
   vertical-align: top;
   -o-transition: background-color 0.2s;
@@ -315,50 +315,51 @@ button.text-button:active {
   background: #e0e0e0 !important;
   opacity: 0.4;
 }
+
 .ui-control:not([disabled]):active {
     padding-top: 2px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
     box-shadow: 0 1px #fff,
                 inset 0 1px 1px rgba(0, 0, 0, .15),
-                inset 0 0px 4px rgba(0, 0, 0, .05);
-    background: #d9d9d9 repeat-x -o-linear-gradient(-90deg,
-                                    rgba(255, 255, 255, 0.45) 0,
-                                    rgba(255, 255, 255, 0.25) 100%);
+                inset 0 0 4px rgba(0, 0, 0, .05);
+    background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
+
 .ui-control.is-active {
     padding-top: 2px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
     box-shadow: 0 1px #fff,
                 inset 0 1px 1px rgba(0, 0, 0, .15),
-                inset 0 0px 4px rgba(0, 0, 0, .15);
-    background: #d0d0d0 repeat-x -o-linear-gradient(-90deg,
-                                    rgba(255, 255, 255, 0.45) 0,
-                                    rgba(255, 255, 255, 0.25) 100%);
+                inset 0 0 4px rgba(0, 0, 0, .15);
+    background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
+
 .ui-control.is-active:active {
-    background-color: #b0b0b0;
+    background-color: #c6c6c6;
 }
 
 /* Grouping the toolbar buttons */
 /* All Buttons in a group*/
 toolbar-switches button.ui-control:not(:only-of-type),
 toolbar-buttons button.ui-control:not(:only-of-type),
-window-controls button.ui-control#toggle-settings-overlay,
-window-controls button.ui-control#toggle-remote-debug-overlay,
-window-controls button.ui-control#top-window-toggle-attach.attached,
-window-controls button.ui-control#top-window-close {
-  border-radius: 0px;
-  border-right-width: 0px;
-  margin: 0px;
-  padding-left: 6px;
-  padding-right: 6px;
+#toggle-settings-overlay,
+#toggle-remote-debug-overlay,
+#top-window-toggle-attach.attached,
+#top-window-close {
+  border-radius: 0;
+  border-right-width: 0;
+  margin: 0;
 }
 
 /* Leftmost Button*/
 toolbar-switches button.ui-control:first-of-type,
 toolbar-buttons button.ui-control:first-of-type,
-window-controls button.ui-control#toggle-settings-overlay,
-window-controls button.ui-control#top-window-toggle-attach.attached {
+#toggle-settings-overlay,
+#top-window-toggle-attach.attached {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
   margin-left: 3px;
@@ -367,8 +368,8 @@ window-controls button.ui-control#top-window-toggle-attach.attached {
 /* Rightmost Button*/
 toolbar-switches button.ui-control:last-of-type,
 toolbar-buttons button.ui-control:last-of-type,
-window-controls button.ui-control#toggle-remote-debug-overlay,
-window-controls button.ui-control#top-window-close {
+#toggle-remote-debug-overlay,
+#top-window-close {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
   border-right-width: 1px;
@@ -396,7 +397,7 @@ window-controls button.ui-control#top-window-close {
   color: #993d1f;
   box-shadow: inset 0 0 1px #fff,
               inset 0 0 10px #ff4433,
-              0 1px rgba(255,255,255,0.5),
+              0 1px rgba(255, 255, 255, 0.5),
               0 0 2px #ff0000;
 }
 .ui-control.alert:not([disabled]):active {
@@ -404,7 +405,7 @@ window-controls button.ui-control#top-window-close {
     border-color: #bf3000;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.5),
+                0 1px rgba(255, 255, 255, 0.5),
                 0 0 2px #ff0000;
 }
 .ui-control.alert.is-active {
@@ -412,7 +413,7 @@ window-controls button.ui-control#top-window-close {
     border-color: #bf3000;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.5),
+                0 1px rgba(255, 255, 255, 0.5),
                 0 0 2px #ff0000;
 }
 .ui-control.alert.is-active:active {
@@ -427,7 +428,7 @@ window-controls button.ui-control#top-window-close {
     border-color: #721;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.2),
+                0 1px rgba(255, 255, 255, 0.2),
                 0 0 4px #ff0000;
 }
 
@@ -451,16 +452,17 @@ toolbar-filters input[type=button]
 {
   background-color: #ddd;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 100%);
+                                       rgba(255, 255, 255, 0.75) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
   border: 1px solid rgba(0, 0, 0, .5);
   border-radius: 3px;
   margin: 0 0 0 4px;
   padding: 1px 10px;
   height: 17px;
   line-height: 27px;
-  text-shadow: 0 1px rgba(255,255,255,0.5);
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px rgba(255, 255, 255, 0.5),
+              inset 0 1px 1px #fff;
   display: inline-block;
   vertical-align: top;
   -o-transition: background-color 0.2s;
@@ -469,7 +471,8 @@ toolbar-filters input[type=button]
 
 toolbar-filters input[type=button]:active
 {
-  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
+  box-shadow: 0 1px #fff,
+              inset 0 1px 2px rgba(0, 0, 0, .4);
   background-position: 0 1px;
   padding-top: 2px;
   padding-bottom: 0;
@@ -575,8 +578,8 @@ window-controls {
 window-controls:not(.no-tabbar) {
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 100%);
+                                       rgba(255, 255, 255, 0.75) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
 }
 window-controls:not(.no-tabbar)::before {
     content: url("../ui-images/window_controls_border.png");
@@ -670,7 +673,7 @@ ui-menu { /**/
   width: 180px;
   position: absolute;
   right:30px;
-  top: 0px;
+  top: 0;
   z-index:10;
   right: 200px;
   }
@@ -734,10 +737,10 @@ window-header {
   height: 21px;
   line-height: 21px;
   padding-left: 5px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px 3px 0 0;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  border-bottom: 1px solid rgba(0,0,0,0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 windows-container .window-move { /**/
@@ -836,9 +839,9 @@ window {
   left: 20px;
   color: #fff;
   border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  border: 1px solid rgba(0,0,0,0.3);
-  background: rgba(50,50,50,0.9);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: rgba(50, 50, 50, 0.9);
   background-size: auto 100%;
 }
 
@@ -875,8 +878,8 @@ window.hud window-container {
 .hud window-toolbar {
     background-color: #000;
     background-image: -o-linear-gradient(-90deg,
-                                         rgba(255,255,255,0.25) 0,
-                                         rgba(255,255,255,0.15) 100%);
+                                         rgba(255, 255, 255, 0.25) 0,
+                                         rgba(255, 255, 255, 0.15) 100%);
     border: 0;
     border-bottom: 1px solid rgba(0,0,0,.65);
     padding-bottom: 3px;
@@ -934,7 +937,7 @@ textarea-container-inline textarea
   padding: 0 1px;
   vertical-align: text-top;
   overflow: hidden;
-  height: 0px;
+  height: 0;
 }
 cst-select-toolbar-setting
 {
@@ -1064,7 +1067,7 @@ cst-select.color cst-value
 {
   border: 1px solid #999;
   width: 4px;
-  margin: 0px;
+  margin: 0;
 }
 cst-select.color[disabled] cst-value
 {
@@ -1120,7 +1123,7 @@ cst-select-option-list-container.color cst-selected-border
   width: 32px;
   height: 24px;
   padding: 2px;
-  margin: 0px 0px 0px -40px;
+  margin: 0 0 0 -40px;
   border: 2px solid #999;
 }
 
@@ -1418,19 +1421,19 @@ tab.active .close-tab-button {
 .container-button {
     background-color: #ddd;
     background-image: -o-linear-gradient(-90deg,
-                                         rgba(255,255,255,0.90) 0%,
-                                         rgba(255,255,255,0.25) 100%);
+                                         rgba(255, 255, 255, 0.90) 0%,
+                                         rgba(255, 255, 255, 0.25) 100%);
     border: 1px solid rgba(0, 0, 0, .45);
     border-radius: 4px;
     height: 22px;
     line-height: 20px;
     padding: 1px 12px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.55);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
     -o-transition: background-color 0.2s;
 }
 
 .container-button:active:not([disabled]) {
-    box-shadow: 0 1px rgba(0,0,0,0.0),
+    box-shadow: 0 1px rgba(0, 0, 0, 0.0),
                 inset 0 1px 3px rgba(0, 0, 0, .3);
     background-color: #ccc;
     border-color: rgba(0, 0, 0, .4);
