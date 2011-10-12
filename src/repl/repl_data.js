@@ -15,7 +15,7 @@ cls.ReplData = function(view)
   };
 
   this._entry_count = 0;
-  this._add_entry = function(type, data, pos, severity)
+  this._add_entry = function(type, data, pos, severity, do_not_queue)
   {
     var entry = {
       time: ++this._entry_count,
@@ -25,16 +25,18 @@ cls.ReplData = function(view)
       severity: severity
     };
     this._repllog.push(entry);
+    if (do_not_queue && this._view.isvisible())
+      this._view.do_not_queue_next_update();
     this._view.update();
   };
 
   /**
    * Input, what was typed, always a string
    */
-  this.add_input = function(str)
+  this.add_input = function(str, do_not_queue)
   {
     this._add_typed_history(str);
-    this._add_entry("input", str);
+    this._add_entry("input", str, null, null, do_not_queue);
   };
 
   /**
@@ -47,9 +49,9 @@ cls.ReplData = function(view)
 
   this.add_message = this.add_output_str; // for now, just emit strings
 
-  this.add_output_completion = function(str)
+  this.add_output_completion = function(str, do_not_queue)
   {
-    this._add_entry("completion", str);
+    this._add_entry("completion", str, null, null, do_not_queue);
   };
 
   this.add_output_errorlog = function(str)

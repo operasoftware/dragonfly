@@ -42,16 +42,20 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_header = false;
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
+  this._do_not_queue = false;
+  this._last_scroll = 0;
 
   this.ondestroy = function()
   {
     if (this._container)
     {
+      this._last_scroll = this._container.scrollTop;
       this._linelist = null;
       this._lastupdate = 0;
       this._backlog_index = -1;
       this._current_input = this._textarea.value;
       this._container.removeEventListener("scroll", this._save_scroll_bound, false);
+      this._do_not_queue = false;
     }
   };
 
@@ -73,10 +77,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var padder = this._container.querySelector(".padding");
       // defer adding listeners until after update
       this._container.addEventListener("scroll", this._save_scroll_bound, false);
-      padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
-      padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+      padder.addEventListener("DOMAttrModified", this._queue_DOM_change, false);
+      padder.addEventListener("DOMNodeInserted", this._queue_DOM_change, false);
 
-      if(this._current_scroll === null)
+      if (this._current_scroll === null)
       {
         this._container.scrollTop = 999999;
       }
@@ -119,6 +123,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     opera.postError("fixme: implement help function and split into help/commands")
   };
 
+  this.do_not_queue_next_update = function()
+  {
+    this._do_not_queue = true;
+  }
+
 
   this._update_input_height_bound = function()
   {
@@ -131,12 +140,25 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._current_scroll = at_bottom ? null : this._container.scrollTop;
   }.bind(this);
 
+  this._queue_DOM_change = function()
+  {
+    if (this._update_scroll_timeout)
+      clearTimeout(this._update_scroll_timeout);
+    this._update_scroll_timeout = setTimeout(this._update_scroll_bound, 10);
+  }.bind(this);
+
   this._update_scroll_bound = function()
   {
-    if (this._current_scroll === null)
+    if (this._last_scroll)
+    {
+      this._container.scrollTop = this._last_scroll;
+      this._last_scroll = 0;
+    }
+    else if (this._current_scroll === null)
     {
       this._container.scrollTop = 9999999;
     }
+    this._update_scroll_timeout = 0;
   }.bind(this);
 
   /**
@@ -152,7 +174,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       switch(e.type) { // free like a flying demon
         case "input":
-          this._render_input(e.data);
+          this._render_input(e.data, this._do_not_queue);
           break;
         case "string":
           this._render_string(e.data);
@@ -179,7 +201,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_count(e.data);
           break;
         case "completion":
-          this._render_completion(e.data);
+          this._render_completion(e.data, this._do_not_queue);
           break;
         case "errorlog":
           this._render_errorlog(e.data);
@@ -188,6 +210,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_string("unknown");
       }
     }
+
+    this._do_not_queue = false;
   };
 
   this._render_count = function(data)
@@ -288,9 +312,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(tpl, severity);
   };
 
-  this._render_completion = function(s)
+  this._render_completion = function(s, do_not_queue)
   {
-    this._add_line(["span", s, "class", "repl-completion"]);
+    this._add_line(["span", s, "class", "repl-completion"], null, do_not_queue);
   };
 
   this._render_errorlog = function(s) {
@@ -319,10 +343,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._render_input = function(str)
+  this._render_input = function(str, do_not_queue)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + (index ? "... " : "&gt&gt&gt ") + "</span>" + line);
+      this._add_line('<span class="repl-line-marker">' + 
+                       (index ? "... " : "&gt&gt&gt ") +
+                     "</span>" + line, null, do_not_queue);
     }, this);
   };
 
@@ -331,7 +357,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template, class_name)
+  this._add_line = function(elem_or_template, class_name, do_not_queue)
   {
     var line = document.createElement("li");
     if (class_name)
@@ -347,9 +373,37 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       line.appendChild(elem_or_template);
     }
-    this._linelist.appendChild(line);
+
+    if (do_not_queue)
+    {
+      this._linelist.appendChild(line);
+      this._update_scroll_bound();
+    }
+    else
+    {
+      this._add_to_line_queue(line);
+    }
     return line;
   };
+
+  this._add_to_line_queue = function(line)
+  {
+    if (this._render_queue_timeout)
+      clearTimeout(this._render_queue_timeout);
+    this._line_queue.push(line);
+    this._render_queue_timeout = setTimeout(this._render_queue, 20);
+  };
+
+  this._render_queue = function()
+  {
+    if (this._linelist)
+    {
+      while (this._line_queue.length)  
+        this._linelist.appendChild(this._line_queue.shift());
+      this._render_queue_timeout = 0;
+      this._update_scroll_bound();
+    }
+  }.bind(this);
 
   this._handle_input_bound = function(evt)
   {
@@ -408,7 +462,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._recent_autocompletion = null;
   };
 
-  this._update_textarea_value = function(prop)
+  this._update_textarea_value = function(prop, is_partial_completion)
   {
     var pos = this._textarea.value
                   .slice(0, this._textarea.selectionStart)
@@ -417,16 +471,18 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       var pre = this._textarea.value.slice(0, pos);
       var post = this._textarea.value.slice(this._textarea.selectionStart);
-      var line = this._construct_line(pre, prop, post);
+      var line = this._construct_line(pre, prop, post, is_partial_completion);
       this._textarea.value = line;
       this._textarea_handler.put_cursor(line.length - post.length);
     }
   };
 
-  this._construct_line = function(pre, prop, post)
+  this._construct_line = function(pre, prop, post, is_partial_completion)
   {
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if (!JSSyntax.is_valid_identifier(prop) && this._autocompletion_scope)
+    if (!is_partial_completion && 
+        !JSSyntax.is_valid_identifier(prop) &&
+        this._autocompletion_scope)
     {
       if (!is_number_without_leading_zero.test(prop))
       {
@@ -512,12 +568,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        this._update_textarea_value(match);
+        var is_partial_completion = match.length > localpart.length &&
+                                    matches.length !== 1;
+        this._update_textarea_value(match, is_partial_completion);
       }
       else
       {
-        this._data.add_input(this._textarea.value);
-        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
+        this._data.add_input(this._textarea.value, true);
+        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "),
+                                         true);
         this.mode = "autocomplete";
 
         var completions = this._linelist.querySelectorAll(".repl-completion");
@@ -945,6 +1004,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }, this);
 
   this._actionbroker.register_handler(this);
+  this._line_queue = [];
 
 };
 cls.ReplView.prototype = ViewBase;

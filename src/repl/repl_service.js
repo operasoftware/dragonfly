@@ -420,13 +420,8 @@ cls.ReplService = function(view, data)
   this._eval = function(msg, callback, cbargs)
   {
     var tag = this._tagman.set_callback(null, callback, cbargs);
-    var wantdebugging = 1;
-    /* The wantdebugging flag is not behaving as expected, so disabling this for 1.0. See DFL-1736
-    if (msg.length == 5)
-    {
-      msg.push(wantdebugging);
-    }
-    */
+    const THREAD_ID = 1, WANT_DEBUG = 5;
+    msg[WANT_DEBUG] = msg[THREAD_ID] ? 0 : 1;
     this._edservice.requestEval(tag, msg);
   }
 
@@ -456,6 +451,7 @@ cls.ReplService = function(view, data)
     this._cur_selected = null;
     this._prev_selected = null;
     this._transformer = new cls.HostCommandTransformer();
+    this._transformer.register_dflcommands(DFLCommands.commands);
     this._msg_queue = new Queue(this);
     var value_list_callback = this._explore_value_list.bind(this);
     this._list_unpacker = new cls.ListUnpacker(value_list_callback);
