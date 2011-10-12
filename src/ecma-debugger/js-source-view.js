@@ -401,7 +401,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  var setScriptContext = function(script_id, line_nr)
+  var setScriptContext = function(script_id, line_no)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
       simple_js_parser.format(__current_script, getMaxLineLength() - 1, 1).join('') + "</div>";
@@ -454,18 +454,18 @@ cls.JsSourceView = function(id, name, container_class)
   }
 
   // deprecated. use this.show_and_flash_line instead.
-  this.highlight = function(script_id, line_nr, highlight_line_start, highlight_line_end)
+  this.highlight = function(script_id, line_no, highlight_line_start, highlight_line_end)
   {
     if (this.isvisible())
     {
-      this.show_and_flash_line(script_id, line_nr);
+      this.show_and_flash_line(script_id, line_no);
     }
   }
 
-  this.show_and_flash_line = function(script_id, line_nr)
+  this.show_and_flash_line = function(script_id, line_no)
   {
-    this.showLine(script_id, line_nr);
-    var line = this.get_line_element(line_nr);
+    this.showLine(script_id, line_no);
+    var line = this.get_line_element(line_no);
     if (line)
     {
       line.addClass('selected-js-source-line');
@@ -473,11 +473,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  this.get_line_element = function(line_nr)
+  this.get_line_element = function(line_no)
   {
     var source_content = document.getElementById(container_id);
     var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_nr - __top_line];
+    var line = lines && lines[line_no - __top_line];
     return line;
   }
 
@@ -490,7 +490,7 @@ cls.JsSourceView = function(id, name, container_class)
     * Generate and show lines of the script.
     *
     * @param script_id Id of the script.
-    * @param line_nr Line number of the line that should be made visible.
+    * @param line_no Line number of the line that should be made visible.
     *        In case of scrolling the view, requested line will correspond with
     *        the top of the view. In other cases line will be displayed in what
     *        will be the most appropriate way (for example centered in the view).
@@ -500,7 +500,7 @@ cls.JsSourceView = function(id, name, container_class)
     *
     * @return boolean for the visibility of this view.
     */
-  this.showLine = function(script_id, line_nr, is_parse_error, is_scroll)
+  this.showLine = function(script_id, line_no, is_parse_error, is_scroll)
   {
     if (__timeout_clear_view)
     {
@@ -541,7 +541,7 @@ cls.JsSourceView = function(id, name, container_class)
         }
         if (is_visible && !is_current_script)
         {
-          setScriptContext(script_id, line_nr);
+          setScriptContext(script_id, line_no);
         }
         messages.post('script-selected', {script_id: script_id});
         runtimes.setSelectedScript(script_id);
@@ -550,7 +550,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         document.getElementById(scroll_id).innerHTML = "";
         if (typeof script_id == "number" && !isNaN(script_id) &&
-            typeof line_nr == "number"  && !isNaN(line_nr))
+            typeof line_no == "number"  && !isNaN(line_no))
         {
           new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
                             function(){ runtimes.reloadWindow(); }).show();
@@ -567,34 +567,34 @@ cls.JsSourceView = function(id, name, container_class)
       // that the view gets updated in the next block
       __top_line = 0;
     }
-    if (line_nr < 1)
+    if (line_no < 1)
     {
-      line_nr = 1;
+      line_no = 1;
     }
 
     if (is_visible)
     {
       if (!__current_script.scroll_width)
       {
-        setScriptContext(script_id, line_nr);
+        setScriptContext(script_id, line_no);
       }
       if (view_invalid)
       {
         updateScriptContext();
       }
 
-      var is_line_in_view = is_line_within_view(line_nr)
+      var is_line_in_view = this._is_line_within_view(line_no)
                           // show LINE_MIN_CONTEXT_SIZE lines of context after specified line
-                          && line_nr < (this.getBottomLine() - LINE_MIN_CONTEXT_SIZE);
+                          && line_no < (this.getBottomLine() - LINE_MIN_CONTEXT_SIZE);
       if (!is_line_in_view || __view_is_destroyed || !source_content.innerHTML || is_scroll)
       {
-        __top_line = line_nr;
+        __top_line = line_no;
 
         // line should not be modified when scrolling
         if (!is_scroll)
         {
           // show at least LINE_MIN_CONTEXT_SIZE lines of context before specified line
-          __top_line = Math.max(1, line_nr - LINE_MIN_CONTEXT_SIZE);
+          __top_line = Math.max(1, line_no - LINE_MIN_CONTEXT_SIZE);
           // when at the end of the script, align with the bottom of the view
           __top_line = Math.max(1, Math.min(__top_line, __current_script.line_arr.length - __max_lines));
         }
@@ -639,9 +639,9 @@ cls.JsSourceView = function(id, name, container_class)
                                    lines_num).join('');
   }
 
-  var is_line_within_view = function(line_nr)
+  this._is_line_within_view = function(line_no)
   {
-    return __top_line && line_nr >= __top_line && line_nr < (__top_line + __max_lines);
+    return __top_line && line_no >= __top_line && line_no < (__top_line + __max_lines);
   }
 
   this.getTopLine = function()
