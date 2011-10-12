@@ -397,7 +397,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.mode = MODE_DEFAULT;
 
     var edit_trs = document.querySelectorAll("tr.edit_mode");
-    for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++) {
+    for (var i = 0, edit_tr; edit_tr = edit_trs[i]; i++)
+    {
       // avoid refetching multiple times when saving multiple cookies.
       var is_last_cookie_in_list = (i == edit_trs.length - 1);
       var callback_after_set_cookie = function(){};
