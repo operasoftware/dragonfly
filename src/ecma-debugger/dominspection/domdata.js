@@ -441,7 +441,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._handle_snapshot = function(status, message, runtime_id)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
-    if(message[STATUS] == 'completed' )
+    if (message[STATUS] == 'completed' && message[OBJECT_VALUE])
     {
       this._data = [];
       this._get_dom(message[OBJECT_VALUE][OBJECT_ID], 'subtree',
@@ -468,7 +468,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this.get_snapshot = function()
   {
     var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
-    var script_data = 'return document.document';
+    var script_data = 'return document.documentElement && document.documentElement.ownerDocument;';
     services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
