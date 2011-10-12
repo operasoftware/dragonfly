@@ -309,7 +309,7 @@ window.cls.Client = function()
                      layouts.error_console_rough_layout,
                      null,
                      services);
-   new CompositeView('profiler',
+   new CompositeView('profiler_mode',
                      "Profiler",
                      layouts.profiler_rough_layout,
                      null,
@@ -679,7 +679,7 @@ ui_framework.layouts.main_layout =
 //       'network_mode',
 //       'resource_panel',
 //       'storage',
-         'profiler',
+         'profiler_mode',
          {view: 'console_mode', tab_class: ErrorConsoleTab},
 //       'utils',
 //       'console_panel'

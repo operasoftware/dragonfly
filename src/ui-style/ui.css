@@ -260,6 +260,9 @@ button[handler="reload-window"]::before {
 .network_logger\.fit-to-width::before {
     background-image: url("../ui-images/icons/icon_constrain.png");
 }
+.profiler-start-stop::before {
+    background-image: url("../ui-images/icons/icon_record.png");
+}
 .pseudo-items cst-icon {
     background-image: url("../ui-images/icons/icon_hidedefaults.png");
 }
@@ -292,6 +295,9 @@ cst-icon[class="debugger-menu"] {
 }
 .console_panel {
     background: url("../ui-images/mode_console.png");
+}
+.profiler_mode {
+    background: url("../ui-images/mode_profiler.png");
 }
 
 button.ui-control::before,
