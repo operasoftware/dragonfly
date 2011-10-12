@@ -1,33 +1,31 @@
-﻿window.cls || (window.cls = {});
-
-/**
+﻿/**
  * @constructor
  * @extends ViewBase
  */
-cls.ProfilerView = function(id, name, container_class, html, default_handler) {
-  this._profiler = new cls.ProfilerService();
+var ProfilerView = function(id, name, container_class, html, default_handler) {
+  this._profiler = new ProfilerService();
+  this._templates = new ProfilerTemplates();
   this._current_session_id = null;
   this._current_timeline_id = null;
   this._event_id = null;
   this._event_type = null;
-  this._templates = window.templates.profiler;
   this._details_time = 0;
   this._timeline_list = [];
   this._aggregated_list = [];
   this._reduced_list = [];
 
   // Event types
-  const GENERIC = cls.ProfilerService.GENERIC;
-  const PROCESS = cls.ProfilerService.PROCESS;
-  const DOCUMENT_PARSING = cls.ProfilerService.DOCUMENT_PARSING;
-  const CSS_PARSING = cls.ProfilerService.CSS_PARSING;
-  const SCRIPT_COMPILATION = cls.ProfilerService.SCRIPT_COMPILATION;
-  const THREAD_EVALUATION = cls.ProfilerService.THREAD_EVALUATION;
-  const REFLOW = cls.ProfilerService.REFLOW;
-  const STYLE_RECALCULATION = cls.ProfilerService.STYLE_RECALCULATION;
-  const CSS_SELECTOR_MATCHING = cls.ProfilerService.CSS_SELECTOR_MATCHING;
-  const LAYOUT = cls.ProfilerService.LAYOUT;
-  const PAINT = cls.ProfilerService.PAINT;
+  const GENERIC = ProfilerService.GENERIC;
+  const PROCESS = ProfilerService.PROCESS;
+  const DOCUMENT_PARSING = ProfilerService.DOCUMENT_PARSING;
+  const CSS_PARSING = ProfilerService.CSS_PARSING;
+  const SCRIPT_COMPILATION = ProfilerService.SCRIPT_COMPILATION;
+  const THREAD_EVALUATION = ProfilerService.THREAD_EVALUATION;
+  const REFLOW = ProfilerService.REFLOW;
+  const STYLE_RECALCULATION = ProfilerService.STYLE_RECALCULATION;
+  const CSS_SELECTOR_MATCHING = ProfilerService.CSS_SELECTOR_MATCHING;
+  const LAYOUT = ProfilerService.LAYOUT;
+  const PAINT = ProfilerService.PAINT;
 
   // Modes
   const MODE_ALL = 1;
@@ -55,9 +53,9 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
       time: {
         label: "Time",
         align: "right",
-        renderer: function(event) {
-          return format_time(event.time);
-        },
+        renderer: (function(event) {
+          return this._templates.format_time(event.time);
+        }).bind(this),
         classname: "profiler-details-time"
       },
       hits: {
@@ -78,20 +76,6 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   {
     ViewBase.init.call(this, id, name, container_class, html, default_handler);
   };
-
-  // TODO: this is also in templates, should not be in both
-  function format_time(time)
-  {
-    var unit = "ms";
-    var fractions = 1;
-    if (time >= 1000) // if at least on second
-    {
-      time /= 1000;
-      unit = "s";
-      fractions = 3;
-    }
-    return time.toFixed(fractions) + " " + unit;
-  }
 
   this._start_profiler = function(container)
   {
@@ -120,6 +104,10 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
                                 this._default_types,
                                 null,
                                 this._handle_timeline_list.bind(this));
+    }
+    else
+    {
+      this._container.clearAndRender(this._templates.empty("Profiling failed"));
     }
   };
 
@@ -152,7 +140,6 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   this._handle_reduced_list = function(status, msg)
   {
     this._reduced_list = new cls.Profiler["1.0"].EventList(msg);
-    this._aggregated_list.eventList.push(this._reduced_list.eventList[1]);
     this._update_view();
   };
 
@@ -161,10 +148,10 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
   {
     this._container.clearAndRender(
         this._timeline_list.eventList && this._timeline_list.eventList[0]
-        ? this._templates.main(this._templates.event_list_aggregated(this._aggregated_list),
+        ? this._templates.main(this._templates.event_list_aggregated(this._aggregated_list, this._reduced_list.eventList[1]),
                                this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 120), // FIXME: don't hardcode
                                this._templates.details(this._table),
-                               this._templates.status(format_time(this._details_time)))
+                               this._templates.status(this._templates.format_time(this._details_time)))
         : this._templates.empty("Press the “Start profiling” button to start profiling")
     );
   };
@@ -257,9 +244,9 @@ cls.ProfilerView = function(id, name, container_class, html, default_handler) {
 
   this._init(id, name, container_class, html, default_handler);
 };
-cls.ProfilerView.prototype = ViewBase;
+ProfilerView.prototype = ViewBase;
 
-cls.ProfilerView.create_ui_widgets = function()
+ProfilerView.create_ui_widgets = function()
 {
   new ToolbarConfig
   (

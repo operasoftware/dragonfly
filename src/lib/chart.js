@@ -1,9 +1,8 @@
 /**
  * @Constructor
  *
- * @param {Array} data
- * The chart data. This is an array of objects, each having the following
- * properties:
+ * @param {Array} data The chart data. This is an array of objects, each
+ * having the following properties:
  *  - 'amount': The amount of the total as an integer;
  *  - 'color': The color of the slice. If 'color' is missing, a
  *    random one will be generated;
@@ -46,38 +45,34 @@ Chart.prototype._generate_random_color = function()
  *
  * This is kept general for use with templates.
  *
- * @param {int} size
- * The size of the SVG document. Default is 200.
+ * @param {int} size The size of the SVG document. Default is 200.
  *
- * @param {int} padding
- * The padding around the pie chart. Default is 0.
+ * @param {int} padding The padding around the pie chart. Default is 0.
  */
 Chart.prototype.get_pie_chart = function(size, padding)
 {
   padding || (padding = 0);
   var radius = size / 2;
-  size = (size || 200) + padding * 2;
   var center = radius + padding;
+  size = (size || 200) + padding * 2;
 
   // Filter out negative values, they don't make sense in a pie chart
   this._data = this._data.filter(function(slice) {
     return slice.amount >= 0;
   });
 
-  // Calculate the total
-  var total = this._data.reduce(function(prev, curr) {
+  var total_amount = this._data.reduce(function(prev, curr) {
     return prev + curr.amount;
   }, 0);
 
-  // Calculate the angles
+  // Calculate angles
   this._data.forEach(function(slice) {
-    slice.angle = (slice.amount * 360) / total;
+    slice.angle = (slice.amount * 360) / total_amount;
   });
 
-  var slices = [];
   var start_angle = 0;
   var end_angle = -90;
-  this._data.forEach(function(slice) {
+  var slices = this._data.map(function(slice) {
     start_angle = end_angle;
     end_angle += slice.angle;
 
@@ -87,14 +82,14 @@ Chart.prototype.get_pie_chart = function(size, padding)
     var y2 = center + radius * Math.sin(Math.PI * end_angle / 180);
     var large_arc_flag = slice.angle > 180 ? 1 : 0;
 
-    slices.push({
+    return {
       path: ["M", center, ",", center, // Start path
             " L", x1, ",", y1,         // Line
             " A", radius, ",", radius, " 0 ", large_arc_flag, ",1 ", x2, ",", y2, // Arc
             " Z"].join(""),            // End path
       color: slice.color || this._generate_random_color(),
       data: slice.data
-    });
+    };
   }, this);
 
   return {

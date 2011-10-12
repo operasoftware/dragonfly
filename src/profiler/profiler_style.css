@@ -107,6 +107,7 @@
 }
 
 .event-type-2 {
+    fill: #9b9b9b;
 }
 
 .event-type-2.profiler-timeline-selftime {
@@ -114,7 +115,8 @@
 
 .event-type-3 {
     background-color: #c7c7eb;
-    fill: #b3b0ff;
+    fill: #8683cf;
+    border-color: #a5a5c3;
 }
 
 .event-type-3.profiler-timeline-selftime {
@@ -123,7 +125,8 @@
 
 .event-type-4 {
     background-color: #aac1e3;
-    fill: #8cb8fa;
+    fill: #77a6ed;
+    border-color: #8da0bd;
 }
 
 .event-type-4.profiler-timeline-selftime {
@@ -132,7 +135,8 @@
 
 .event-type-5 {
     background-color: #f5e19f;
-    fill: #ffe17d;
+    fill: #f0cf65;
+    border-color: #ccb97c;
 }
 
 .event-type-5.profiler-timeline-selftime {
@@ -141,7 +145,8 @@
 
 .event-type-6 {
     background-color: #7cde89;
-    fill: #97dea0;
+    fill: #6bbc76;
+    border-color: #7eb985;
 }
 
 .event-type-6.profiler-timeline-selftime {
@@ -150,7 +155,8 @@
 
 .event-type-7 {
     background-color: #fcb174;
-    fill: #fc8d32;
+    fill: #ff7400;
+    border-color: #d29360;
 }
 
 .event-type-7.profiler-timeline-selftime {
@@ -159,7 +165,8 @@
 
 .event-type-8 {
     background-color: #fbcfab;
-    fill: #ffc08c;
+    fill: #ffb273;
+    border-color: #d2ad8f;
 }
 
 .event-type-8.profiler-timeline-selftime {
@@ -174,7 +181,8 @@
 
 .event-type-10 {
     background-color: #ebbf9b;
-    fill: #e09455;
+    fill: #e38539;
+    border-color: #c39f81;
 }
 
 .event-type-10.profiler-timeline-selftime {
@@ -183,7 +191,8 @@
 
 .event-type-11 {
     background-color: #ff8f8f;
-    fill: #ff5757;
+    fill: #e83333;
+    border-color: #d47777;
 }
 
 .event-type-11.profiler-timeline-selftime {

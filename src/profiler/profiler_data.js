@@ -1,6 +1,4 @@
-window.cls = (window.cls || {});
-
-cls.ProfilerData = function()
+var ProfilerData = function()
 {
   this._event_list = {};
 

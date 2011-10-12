@@ -1,8 +1,9 @@
-window.cls || (window.cls = {});
-
-cls.ProfilerService = function()
+/**
+ * @constructor
+ */
+var ProfilerService = function()
 {
-  this.data = new cls.ProfilerData();
+  this.data = new ProfilerData();
   this.is_active = false;
   this._profiler = window.services["profiler"];
   this._tag_manager = window.tag_manager;
@@ -67,15 +68,15 @@ cls.ProfilerService = function()
   window.messages.addListener("debug-context-selected", this._on_debug_context_selected.bind(this));
 };
 
-cls.ProfilerService.GENERIC = 1;
-cls.ProfilerService.PROCESS = 2;
-cls.ProfilerService.DOCUMENT_PARSING = 3;
-cls.ProfilerService.CSS_PARSING = 4;
-cls.ProfilerService.SCRIPT_COMPILATION = 5;
-cls.ProfilerService.THREAD_EVALUATION = 6;
-cls.ProfilerService.REFLOW = 7;
-cls.ProfilerService.STYLE_RECALCULATION = 8;
-cls.ProfilerService.CSS_SELECTOR_MATCHING = 9;
-cls.ProfilerService.LAYOUT = 10;
-cls.ProfilerService.PAINT = 11;
+ProfilerService.GENERIC = 1;
+ProfilerService.PROCESS = 2;
+ProfilerService.DOCUMENT_PARSING = 3;
+ProfilerService.CSS_PARSING = 4;
+ProfilerService.SCRIPT_COMPILATION = 5;
+ProfilerService.THREAD_EVALUATION = 6;
+ProfilerService.REFLOW = 7;
+ProfilerService.STYLE_RECALCULATION = 8;
+ProfilerService.CSS_SELECTOR_MATCHING = 9;
+ProfilerService.LAYOUT = 10;
+ProfilerService.PAINT = 11;
 
