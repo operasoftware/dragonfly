@@ -34,9 +34,6 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __timeoutUpdateLayout = 0;
 
-  var __highlight_line_start = -1;
-  var __highlight_line_end = -1;
-
   var templates = {};
 
   var __timeout_clear_view = 0;
@@ -639,9 +636,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return simple_js_parser.format(__current_script,
                                    from_line - 1,
-                                   lines_num,
-                                   __highlight_line_start,
-                                   __highlight_line_end).join('');
+                                   lines_num).join('');
   }
 
   var is_line_within_view = function(line_nr)
