@@ -420,9 +420,11 @@ cls.ReplService = function(view, data)
   this._eval = function(msg, callback, cbargs)
   {
     var tag = this._tagman.set_callback(null, callback, cbargs);
-    const THREAD_ID = 1, WANT_DEBUG = 5;
+    const THREAD_ID = 1, WANT_DEBUG = 5, SCRIPT_DATA = 3;
     msg[WANT_DEBUG] = msg[THREAD_ID] ? 0 : 1;
     this._edservice.requestEval(tag, msg);
+    if (msg[WANT_DEBUG])
+      window.messages.post('console-script-submitted', {script: msg[SCRIPT_DATA]});
   }
 
   this._get_host_info = function()

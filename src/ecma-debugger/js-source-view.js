@@ -1003,8 +1003,8 @@ cls.ScriptSelect = function(id, class_name)
         return;
       }
       return templates.script_dropdown(_runtimes,
-                                 stopped_script_id,
-                                 runtimes.getSelectedScript());
+                                       stopped_script_id,
+                                       runtimes.getSelectedScript());
     }
   }
 

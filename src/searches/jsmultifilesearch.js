@@ -184,7 +184,7 @@ var JSMultifileSearchPrototype = function()
             {
               this._rt_ids.forEach(function(rt_id)
               {
-                var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
+                var scripts = window.runtimes.getScripts(rt_id, true).filter(function(script)
                 {
                   if (this._last_search_injected_scripts ||
                       !this._is_injected_script(script))
