@@ -137,7 +137,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   this.get_script_ids_in_callstack = function()
   {
     return __script_ids_in_callstack;
-  }
+  };
 
   this.getFrame = function(id)
   {

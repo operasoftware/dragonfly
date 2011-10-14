@@ -225,7 +225,6 @@ window.cls.PropertyFinder = function(rt_id) {
     }
     else
     {
-      
       var ret = {
         props: this._parse_prop_list(msg) || [],
         scope: parts.scope,

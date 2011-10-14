@@ -42,13 +42,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_header = false;
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
-  this._do_not_delay_update = false;
+  this._delay_update = true;
   this._last_scroll = 0;
 
   const RENDER_DELAY = 20;
 
   this.ondestroy = function()
   {
+    if (this._update_timeout)
+      clearTimeout(this._update_timeout);
+
     if (this._container)
     {
       this._last_scroll = this._container.scrollTop;
@@ -57,7 +60,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._backlog_index = -1;
       this._current_input = this._textarea.value;
       this._container.removeEventListener("scroll", this._save_scroll_bound, false);
-      this._do_not_delay_update = false;
+      this._delay_update = true;
     }
   };
 
@@ -98,14 +101,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     if (this._update_timeout)
       clearTimeout(this._update_timeout);
 
-    if (this._do_not_delay_update)
+    if (this._delay_update)
     {
-      this._update();
-      this._do_not_delay_update = false;
+      this._update_timeout = setTimeout(this._update_bound, RENDER_DELAY);
     }
     else
     {
-      this._update_timeout = setTimeout(this._update_bound, RENDER_DELAY);
+      this._update();
+      this._delay_update = true;
     }
 
     // On first update add scroll listeners and update scroll,
@@ -130,7 +133,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.do_not_queue_next_update = function()
   {
-    this._do_not_delay_update = true;
+    this._delay_update = false;
   };
 
   this._update_input_height_bound = function()
@@ -375,7 +378,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       line.appendChild(elem_or_template);
     }
 
-    this._linelist.appendChild(line);
+    if (this._linelist)
+      this._linelist.appendChild(line);
 
     return line;
   };
