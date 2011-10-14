@@ -43,34 +43,31 @@ cls.ReplService = function(view, data)
     var rt_id = msg[RUNTIME];
     var type = msg[TYPE];
     var ctx = {};
-    /**
-     * This value indicates which function was called:
-     *
-     * 1 - console.log
-     * 2 - console.debug
-     * 3 - console.info
-     * 4 - console.warn
-     * 5 - console.error
-     * 6 - console.assert
-     * 7 - console.dir
-     * 8 - console.dirxml
-     * 9 - console.group
-     * 10 - console.groupCollapsed
-     * 11 - console.groupEnd
-     * 12 - console.count
-     */
 
-    switch(type)
+    const CONSOLE_LOG = 1;
+    const CONSOLE_DEBUG = 2;
+    const CONSOLE_INFO = 3;
+    const CONSOLE_WARN = 4;
+    const CONSOLE_ERROR = 5;
+    const CONSOLE_ASSERT = 6;
+    const CONSOLE_DIR = 7;
+    const CONSOLE_DIRXML = 8;
+    const CONSOLE_GROUP = 9;
+    const CONSOLE_GROUP_COLLAPSED = 10;
+    const CONSOLE_GROUP_END = 11;
+    const CONSOLE_COUNT = 12;
+
+    switch (type)
     {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
+      case CONSOLE_LOG:
+      case CONSOLE_DEBUG:
+      case CONSOLE_INFO:
+      case CONSOLE_WARN:
+      case CONSOLE_ERROR:
+      case CONSOLE_ASSERT:
         this._handle_log(msg, rt_id);
         break;
-      case 7:
+      case CONSOLE_DIR:
         ctx = 
         {
           is_unpacked: true,
@@ -80,7 +77,7 @@ cls.ReplService = function(view, data)
         }
         this._handle_log(msg, rt_id, ctx);
         break;
-      case 8:
+      case CONSOLE_DIRXML:
         ctx = 
         {
           is_unpacked: true,
@@ -89,16 +86,16 @@ cls.ReplService = function(view, data)
         }
         this._handle_log(msg, rt_id, ctx);
         break;
-      case 9:
+      case CONSOLE_GROUP:
         this._handle_group(msg);
         break;
-      case 10:
+      case CONSOLE_GROUP_COLLAPSED:
         this._handle_group(msg, "collapsed");
         break;
-      case 11:
+      case CONSOLE_GROUP_END:
         this._handle_groupend(msg);
         break;
-      case 12:
+      case CONSOLE_COUNT:
         this._handle_count(msg);
         break;
     }
@@ -237,8 +234,9 @@ cls.ReplService = function(view, data)
 
   this._handle_group = function(msg, collapsed)
   {
-    const VALUE=0, VALUELIST=2;
-    this._data.add_output_groupstart({name: msg[VALUELIST][0][VALUE], collapsed: Boolean(collapsed)});
+    const VALUE = 0, VALUELIST = 2;
+    this._data.add_output_groupstart({name: msg[VALUELIST][0][VALUE],
+                                      collapsed: Boolean(collapsed)});
   };
 
   this._handle_groupend = function(msg)
