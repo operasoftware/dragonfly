@@ -267,12 +267,15 @@ window.cls.Client = function()
             "could not load fallback urls. (during local development this is OK!)");
         return;
       }
-      var fallback_urls = eval( "(" + this.responseText + ")" );
-      if( fallback_urls && fallback_urls[type] && version in fallback_urls[type] )
+      var fallback_urls = JSON.parse(this.responseText);
+      if (fallback_urls && fallback_urls[type] && version in fallback_urls[type])
       {
-        if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
+        if (confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION))
         {
-          location = protocol + hostname + port + fallback_urls[type][version] + file_name + search;
+          location = protocol + 
+                     hostname + port + 
+                     fallback_urls[type][version] + 
+                     file_name + search;
         }
       }
       else
@@ -282,6 +285,11 @@ window.cls.Client = function()
     };
     this.open('GET', protocol + hostname + port + fallback_filename);
     this.send(null);
+  };
+
+  this.handle_fallback = function(version)
+  {
+    handle_fallback.call(new XMLHttpRequest(), version); 
   };
 
   this.create_top_level_views = function(services)
