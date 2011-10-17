@@ -44,10 +44,12 @@ var ToolbarConfigBase = new function()
       
       if( container )
       {
-        buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByTagName('button');
+        buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByClassName('ui-button');
         for( j = 0; button = buttons[j]; j++)
         {
-          button.disabled = this.buttons[j].disabled ? true : false;
+          this.buttons[j].disabled ?
+            button.setAttribute("disabled", "") :
+            button.removeAttribute("disabled");
         }
       }
     }

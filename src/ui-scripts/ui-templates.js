@@ -12,10 +12,10 @@
                      .filter(Boolean).join(' ');
     if (obj.has_close_button)
     {
-      ret.push(['input', 
-                'type', 'button', 
+      ret.push(['span', 
+                'tabindex', '1',
                 'handler', 'close-tab', 
-                'class', 'close-tab-button']);
+                'class', 'close-tab-button ui-button']);
     }
     ret.push('handler', 'tab', 'ref-id', obj.ref_id);
     if (class_name)
@@ -137,9 +137,9 @@
   this.search_control = function(button)
   {
     var ret = 
-    ['button',
-        'type', 'button',
-        'class', button.class,
+    ['span',
+        'tabindex', '1',
+        'class', 'ui-button ' + button.class,
         'handler', button.handler,
         'title', button.title
     ];
@@ -150,7 +150,7 @@
     return ret;
   }
 
-  this.search_button = function(search)
+  this.search_button = function(search) // todo: this seems unreferenced (see DFL-2509)
   {
     return (
     ['toolbar-search', 
@@ -182,11 +182,12 @@
     for( ; button = buttons[i]; i++)
     {
       ret[ret.length] =
-        ['button',
+        ['span',
           button.text || "",
           'handler', button.handler,
           'title', button.title,
-          'class', button.handler + ' ui-control' + (button.class_name ? ' ' +
+          'tabindex', '1',
+          'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
                           button.class_name : '') + (button.text ? ' text-button' : '')
         ].concat(
             button.id ? ['id', button.id] : [],
@@ -219,11 +220,12 @@
       if(setting = Settings.get_setting_with_view_key_token(_switch))
       {
         ret[ret.length] =
-          ['button',
+          ['span',
             'handler', 'toolbar-switch',
             'title', setting.label,
             'key', _switch,
-            'class', _switch + ' ui-control switch ' + (setting.value ? "is-active" : "")
+            'tabindex', '1',
+            'class', _switch + ' ui-control ui-button switch ' + (setting.value ? "is-active" : "")
           ];
       }
       else
@@ -246,7 +248,7 @@
     return [ ['info']]
   }
 
-  this.configButton = function(handler)
+  this.configButton = function(handler) // todo: this seems unreferenced (see DFL-2509)
   {
     return ['button', 'type', 'button', 'handler', handler, 'title', ui_strings.S_BUTTON_LABEL_SETTINGS];
   }
@@ -309,7 +311,7 @@
     ];
   };
 
-  this.window_controls_close = function()
+  this.window_controls_close = function() // todo: this seems unreferenced (see DFL-2509)
   {
     if (window.opera.attached)
     {

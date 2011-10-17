@@ -231,9 +231,9 @@ window.cls.Client = function()
     viewport.innerHTML =
       "<div class='padding' id='waiting-for-connection'>" +
         "<div class='info-box'>" + msg +
-            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+            (port ? "<p><span class='ui-button container-button' handler='cancel-remote-debug' tabindex='1'>" +
                       ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
-                    "</button></p>"
+                    "</span></p>" 
                   : "") +
         "</div>" +
       "</div>";

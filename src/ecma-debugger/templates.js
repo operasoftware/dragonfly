@@ -391,14 +391,15 @@ MODE ::= "<mode>"
 
   this.continueWithMode = function(name, mode)
   {
-    return ['input',
-          'type', 'button',
+    return ['span',
+          'tabindex', '1',
           'value', '',
           'title', name,
           'mode', mode,
           'id', 'continue-' + mode,
           'handler', 'continue',
-          'disabled', true
+          'disabled', true,
+          'class', 'ui-button'
         ]
   }
 
@@ -453,6 +454,7 @@ MODE ::= "<mode>"
 
   this.key_value_folder = function(key, ref_index)
   {
+    debugger;
     return ['li',
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
       ['span', key, 'class', 'key'],
@@ -491,10 +493,11 @@ MODE ::= "<mode>"
     //<input type="button"  handler="toggle-setting"  view-id="css-inspector"  tab-id="css-inspector"  class="unfolded" />
     var ret = ['category',
         ['header',
-          ['input',
-            'type', 'button',
+          ['span', // todo: see in ui
+            'tabindex', '1',
             'handler', 'css-toggle-category',
-            'cat-id', cat.id
+            'cat-id', cat.id,
+            'class', 'ui-button'
           ].concat( cat.is_unfolded() ? ['class', 'unfolded'] : [] ),
           cat.name,
           'handler', 'css-toggle-category'

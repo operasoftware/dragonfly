@@ -88,10 +88,11 @@ cls.CookieManager.CookieManagerViewBase = function()
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
             return [
-              "button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-              "class", "add_storage_button container-button",
+              "span", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+              "class", "add_storage_button container-button ui-button",
               "handler", "cookiemanager-add-cookie-row",
-              "unselectable", "on"
+              "unselectable", "on",
+              "tabindex", "1"
             ];
           },
           sorter: this._make_sorter("domain")
