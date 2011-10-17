@@ -237,7 +237,7 @@
       arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
     }
 
-    var first_button = overlay.element.querySelector("button, input[type='button']");
+    var first_button = overlay.element.querySelector("button, input[type='button'], .ui-button");
     if (first_button)
     {
       first_button.focus();

@@ -5,7 +5,7 @@
 <link rel="icon" href="/favicon.ico" />
 <!-- command set_rel_base_url -->
 <style><![CDATA[
-button.ui-control::before {
+.ui-button.ui-control::before {
     content: "";
     display: block;
     height: 17px;
@@ -141,8 +141,8 @@ window.load_screen_timeout = window.setTimeout(function()
     #start-window-reload::before {background-image: url('data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAQAAACRZI9xAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAARZJREFUGBm1wU8ow3EYwOG3yXXF1Z3DUur92oZms/m3GpcNRU5S/m5FqyUHix2UCymt7CC5OhBKDuIkqUkcqBV3FxeW+FguPzM5KM8j8g+0VmOa1gmtkp9opR4YnLhwYvKalFLuzXr8z4ls8nzwoRkXmpDvHofjl7k1woSIbhwFcL9qjRSjnB7s8gkTuwngX5HfLC8FCWbFoguKoR6D5rVTCkanQkSuxRJdb6GddrzvmUMcUtB23MX0rljiqT4mGWf+AqeIlmmyjdaXswGxzI1FmCVO/5v71GyZnAcvmT3sYlnsbiBxNZP14aORJjqeDnYw8lW6buSWXsL3mxtHqyfb+6SolmJ3FfkhKcCOwYNDSmHDJn/3AZHHgNnzMRSAAAAAAElFTkSuQmCC');} \
   /*\u005d\u005d\u003e*/</style> \
   <div style='width: 330px; margin: auto;'> \
-    <button class='ui-control' id='start-window-close' onclick='window.close()'></button> \
-    <button class='ui-control' id='start-window-reload' onclick='window.location.reload()'></button> \
+    <span class='ui-button ui-control' id='start-window-close' onclick='window.close()' tabindex='1'></span> \
+    <span class='ui-button ui-control' id='start-window-reload' onclick='window.location.reload()' tabindex='1'></span> \
   </div> \
   <h1 style='height:100px; \
       clear: both; \

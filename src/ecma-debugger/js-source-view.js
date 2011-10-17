@@ -306,9 +306,10 @@ cls.JsSourceView = function(id, name, container_class)
                 'class', 'info-box'
               ] :
               ['div',
-                ['button',
-                  'class', 'container-button',
-                  'handler', 'reload-window'],
+                ['span',
+                  'class', 'container-button ui-button',
+                  'handler', 'reload-window',
+                  'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
                 'class', 'info-box'
               ]

@@ -221,10 +221,11 @@ cls.ScreenShotView = function(id, name, container_class)
   {
     return (
     ['div',
-      ['button',
+      ['span',
         ui_strings.S_BUTTON_TAKE_SCREENSHOT,
-        'class', 'container-button',
-        'handler', 'take-first-screenshot'],
+        'class', 'container-button ui-button',
+        'handler', 'take-first-screenshot',
+        'tabindex', '1'],
       ['p',
         window.templates.settingCheckbox('screenshot-controls', 
                                          'auto-screenshot', 

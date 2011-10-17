@@ -28,11 +28,12 @@ cls.WatchesView = function(id, name, container_class)
     [
       ['div'],
       ['div',
-        ['button',
+        ['span',
           ['span', ui_strings.S_LABEL_ADD_WATCH],
           'handler', 'watches-add',
-          'class', 'container-button',
-          'unselectable', 'on'
+          'class', 'container-button ui-button',
+          'unselectable', 'on',
+          'tabindex', '1'
         ],
         'class', 'watches-controls padding'
       ]
@@ -249,7 +250,7 @@ cls.WatchesView = function(id, name, container_class)
     {
       container.clearAndRender(this._tmpl_main());
       this._watch_container = container.firstElementChild;
-      this._add_watches_button = container.getElementsByTagName('button')[0];
+      this._add_watches_button = container.getElementsByClassName('ui-button')[0];
     }
     var tmpl = window.templates.inspected_js_object(this._data, false, null);
     this._watch_container.clearAndRender(tmpl);

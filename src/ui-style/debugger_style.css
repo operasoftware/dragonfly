@@ -925,7 +925,7 @@ d
   margin-top: 3px;
 }
 
-.filter-container button
+.filter-container .ui-button
 {
   border: 0;
   margin: 0;
@@ -941,7 +941,7 @@ d
   border-color: #999;
 }
 
-.filter-container li.open > button {
+.filter-container li.open > .ui-button {
   background-position: 4px -13px;
   }
 
