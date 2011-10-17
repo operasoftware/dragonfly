@@ -176,7 +176,8 @@
 .advanced-search .container-button {
   height: 19px;
   border-radius: 0px;
-  padding: 1px 7px;
+  padding: 1px 6px;
+  box-shadow: none;
   border-right: none;
   border-top: none;
   border-bottom: none;

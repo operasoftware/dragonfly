@@ -42,16 +42,25 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_header = false;
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
+  this._delay_update = true;
+  this._last_scroll = 0;
+
+  const RENDER_DELAY = 20;
 
   this.ondestroy = function()
   {
+    if (this._update_timeout)
+      clearTimeout(this._update_timeout);
+
     if (this._container)
     {
+      this._last_scroll = this._container.scrollTop;
       this._linelist = null;
       this._lastupdate = 0;
       this._backlog_index = -1;
       this._current_input = this._textarea.value;
       this._container.removeEventListener("scroll", this._save_scroll_bound, false);
+      this._delay_update = true;
     }
   };
 
@@ -70,20 +79,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._init_scroll_handling = function()
   {
-      var padder = this._container.querySelector(".padding");
-      // defer adding listeners until after update
-      this._container.addEventListener("scroll", this._save_scroll_bound, false);
-      padder.addEventListener("DOMAttrModified", this._update_scroll_bound, false);
-      padder.addEventListener("DOMNodeInserted", this._update_scroll_bound, false);
+    // defer adding listeners until after update
+    this._container.addEventListener("scroll", this._save_scroll_bound, false);
 
-      if(this._current_scroll === null)
-      {
-        this._container.scrollTop = 999999;
-      }
-      else
-      {
-        this._container.scrollTop = this._current_scroll;
-      }
+    if (this._current_scroll === null)
+      this._container.scrollTop = 999999;
+    else
+      this._container.scrollTop = this._current_scroll;
   }
 
   this.createView = function(container)
@@ -91,13 +93,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var first_update = !this._linelist;
     // on first update, render view skeleton stuff
     if (first_update)
-    {
       this._create_structure(container);
-    }
 
     // Always render the lines of data
     this._update_runtime_selector_bound();
-    this._update();
+
+    if (this._update_timeout)
+      clearTimeout(this._update_timeout);
+
+    if (this._delay_update)
+    {
+      this._update_timeout = setTimeout(this._update_bound, RENDER_DELAY);
+    }
+    else
+    {
+      this._update();
+      this._delay_update = true;
+    }
 
     // On first update add scroll listeners and update scroll,
     // but after the view was rendered so we don't trigger a
@@ -119,10 +131,17 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     opera.postError("fixme: implement help function and split into help/commands")
   };
 
+  this.do_not_queue_next_update = function()
+  {
+    this._delay_update = false;
+  };
 
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.floor(this._textarea.scrollHeight / this._input_row_height));
+    if (this._textarea.selectionStart == this._textarea.value.length)
+      this._update_scroll_bound();
+
   }.bind(this);
 
   this._save_scroll_bound = function()
@@ -133,11 +152,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._update_scroll_bound = function()
   {
-    if (this._current_scroll === null)
+    if (this._last_scroll)
+    {
+      this._container.scrollTop = this._last_scroll;
+      this._last_scroll = 0;
+    }
+    else if (this._current_scroll === null)
     {
       this._container.scrollTop = 9999999;
     }
-  }.bind(this);
+  };
 
   /**
    * Pulls all the available, non-rendered, events from the data
@@ -188,7 +212,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_string("unknown");
       }
     }
+
+    this._update_scroll_bound();
   };
+
+  this._update_bound = this._update.bind(this);
 
   this._render_count = function(data)
   {
@@ -288,9 +316,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._add_line(tpl, severity);
   };
 
-  this._render_completion = function(s)
+  this._render_completion = function(s, do_not_queue)
   {
-    this._add_line(["span", s, "class", "repl-completion"]);
+    this._add_line(["span", s, "class", "repl-completion"], null, do_not_queue);
   };
 
   this._render_errorlog = function(s) {
@@ -322,7 +350,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_input = function(str)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + (index ? "... " : "&gt&gt&gt ") + "</span>" + line);
+      this._add_line('<span class="repl-line-marker">' + 
+                       (index ? "... " : "&gt&gt&gt ") +
+                     "</span>" + line);
     }, this);
   };
 
@@ -347,7 +377,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       line.appendChild(elem_or_template);
     }
-    this._linelist.appendChild(line);
+
+    if (this._linelist)
+      this._linelist.appendChild(line);
+
     return line;
   };
 
@@ -514,12 +547,15 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       var match = this._longest_common_prefix(matches.slice(0));
       if (match.length > localpart.length || matches.length == 1)
       {
-        this._update_textarea_value(match, match.length > localpart.length);
+        var is_partial_completion = match.length > localpart.length &&
+                                    matches.length !== 1;
+        this._update_textarea_value(match, is_partial_completion);
       }
       else
       {
-        this._data.add_input(this._textarea.value);
-        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "));
+        this._data.add_input(this._textarea.value, true);
+        this._data.add_output_completion(matches.sort(cls.PropertyFinder.prop_sorter).join(", "),
+                                         true);
         this.mode = "autocomplete";
 
         var completions = this._linelist.querySelectorAll(".repl-completion");

@@ -184,7 +184,7 @@ var JSMultifileSearchPrototype = function()
             {
               this._rt_ids.forEach(function(rt_id)
               {
-                var scripts = window.runtimes.getScripts(rt_id).filter(function(script)
+                var scripts = window.runtimes.getScripts(rt_id, true).filter(function(script)
                 {
                   if (this._last_search_injected_scripts ||
                       !this._is_injected_script(script))
@@ -378,7 +378,7 @@ var JSMultifileSearchPrototype = function()
       {
         var js_source_view = window.views[JS_SOURCE_ID];
         var line_nr = script.line_matches[cursor];
-        js_source_view.showLine(script.script_id, line_nr - 10);
+        js_source_view.showLine(script.script_id, line_nr);
         var line_ele = js_source_view.get_line_element(line_nr);
         if (this._source_file_hits)
         {

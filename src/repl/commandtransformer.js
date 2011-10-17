@@ -76,9 +76,10 @@
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
   this.parser = null;
-  this.client_command_map = {};
-  this.df_command_map = {};
-  this.transform_map = {};
+  this._clientcommands = {};
+  this._dfcommands = {};
+  this._hostcommands = {};
+  this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
 
 
   //local copy of token types, local vars have better performance. :
@@ -95,31 +96,6 @@ cls.HostCommandTransformer = function() {
   TYPE = 0,
   VALUE = 1;
 
-  this.init = function() {
-    // window.simple_js_parser is default location for the parser instance
-    // in dragonfly. Use it if it exists.
-    this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
-
-    for (var methodname in this) {
-      var type = methodname.split("_", 1)[0];
-      if (type == "hostcommand")
-      {
-        var name = methodname.split("hostcommand_")[1];
-        this.transform_map[name] = this[methodname];
-      }
-      else if (type == "clientcommand")
-      {
-        var name = methodname.split("clientcommand_")[1];
-        this.client_command_map[name] = this[methodname];
-      }
-      else if (type == "dfcommand")
-      {
-        var name = methodname.split("dfcommand_")[1];
-        this.df_command_map[name] = this[methodname];
-      }
-    }
-  };
-
   this.transform = function(source)
   {
     var tokens = [];
@@ -131,9 +107,9 @@ cls.HostCommandTransformer = function() {
     for (var n = 0, token; token = tokens[n]; n++)
     {
       if (token[TYPE] == IDENTIFIER &&
-          this.transform_map.hasOwnProperty(token[VALUE]))
+          this._hostcommands.hasOwnProperty(token[VALUE]))
       {
-        var fun = this.transform_map[token[VALUE]];
+        var fun = this._hostcommands[token[VALUE]];
         if (fun.call(this, token, tokens, n))
         {
           // re-process all tokens. do we really need this?
@@ -158,9 +134,9 @@ cls.HostCommandTransformer = function() {
       return null;
     }
     else if (this.is_global_call(tokens, 0) &&
-             tokens[0][VALUE] in this.client_command_map)
+             this._clientcommands.hasOwnProperty(tokens[0][VALUE]))
     {
-      return this.client_command_map[tokens[0][VALUE]];
+      return this._clientcommands[tokens[0][VALUE]];
     }
 
     if (tokens[0][TYPE] == COMMENT)
@@ -171,9 +147,9 @@ cls.HostCommandTransformer = function() {
       if (match)
       {
         var command = match[1];
-        if (command in this.df_command_map)
+        if (this._dfcommands.hasOwnProperty(command))
         {
-          return this.df_command_map[command];
+          return this._dfcommands[command];
         }
       }
     }
@@ -192,7 +168,7 @@ cls.HostCommandTransformer = function() {
       switch (token[TYPE])
       {
         case PUNCTUATOR:
-          if (!["=", ":", "?", "||", "&&", "("].contains(token[VALUE]))
+          if (!["=", ":", "?", "||", "&&", "(", ")"].contains(token[VALUE]))
             return false;
           n = -1;
         case WHITESPACE:
@@ -260,150 +236,98 @@ cls.HostCommandTransformer = function() {
 
   // Host commands:
 
-  this.hostcommand_dir = function(token, tokenlist, index)
+  this._hostcommands.dir = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.dir || function(e) { return console.dir(e)})";
+      token[VALUE] = "(typeof dir == 'function' && dir || \
+                       function(e) { return console.dir(e) })";
   };
 
-  this.hostcommand_dirxml = function(token, tokenlist, index)
+  this._hostcommands.dirxml = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.dirxml || function(e) { return console.dirxml(e)})";
+      token[VALUE] = "(typeof dirxml == 'function' && dirxml || \
+                       function(e) { return console.dirxml(e) })";
   };
 
-  this.hostcommand_$ = function(token, tokenlist, index)
+  this._hostcommands.$ = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$ || function(e)\
-                      {\
-                        return document.getElementById(e);\
-                      })";
+      token[VALUE] = "(typeof $ == 'function' && $ || \
+                       function(e) { return document.getElementById(e); })";
   };
 
-  this.hostcommand_$$ = function(token, tokenlist, index)
+  this._hostcommands.$$ = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$$ || function(e)\
-                      {\
-                        return document.querySelectorAll(e);\
-                      })";
+      token[VALUE] = "(typeof $$ == 'function' && $$ || \
+                       function(e) { return document.querySelectorAll(e); })";
   };
 
-  this.hostcommand_$x = function(token, tokenlist, index)
+  this._hostcommands.$x = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.$x || function(e)\
-                      {\
-                        var res = document.evaluate(e, document, null,\
-                                                    XPathResult.ANY_TYPE, null);\
-                        var ret = [], ele = null;\
-                        while (ele = res.iterateNext())\
-                          ret.push(ele);\
-                        return ret;\
-                      })";
+      token[VALUE] = "(typeof $x == 'function' && $x || \
+                       function(e)\
+                       {\
+                         var res = document.evaluate(e, document, null,\
+                                                     XPathResult.ANY_TYPE, null);\
+                         var ret = [], ele = null;\
+                         while (ele = res.iterateNext())\
+                           ret.push(ele);\
+                         return ret;\
+                       })";
   };
 
-  this.hostcommand_keys = function(token, tokenlist, index)
+  this._hostcommands.keys = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.keys || function(o)\
-                     {\
-                       var arr = [], key;\
-                       for (key in o) {arr.push(key)};\
-                       return arr;\
-                     })";
+      token[VALUE] = "(typeof keys == 'function' && keys || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(key)};\
+                         return arr;\
+                       })";
   };
 
-  this.hostcommand_values = function(token, tokenlist, index)
+  this._hostcommands.values = function(token, tokenlist, index)
   {
     if (this.is_global_call(tokenlist, index))
-      token[VALUE] = "(window.values || function(o)\
-                     {\
-                       var arr = [], key;\
-                       for (key in o) {arr.push(o[key])}\
-                       return arr;\
-                     })";
+      token[VALUE] = "(typeof values == 'function' && values || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(o[key])}\
+                         return arr;\
+                       })";
   };
 
-  this.clientcommand_clear = function(view, data, input)
+  this._clientcommands.clear = function(view, data, input)
   {
     view._handle_action_clear();
   };
 
-  // TODO: these special client commands should be defined outside of this class here.
-  this.dfcommand_help = function(view, data, service)
+  this.register_dflcommands = function(commands)
   {
-    data.add_message("Available commands:");
-    var names = [];
-    for (var key in this.df_command_map) { names.push(key) }
-    names.sort();
-    for (var n=0, name; name=names[n]; n++)
+    for (var name in commands)
     {
-      var cmd = this.df_command_map[name];
-      data.add_message(name + (cmd.description ? ": " + cmd.description : ""));
-    }
-    data.add_message("\n");
-    data.add_message(ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS + ":");
-    data.add_message("\n");
-    const CMD_LINE_VIEW_ID = 'command_line';
-    var broker = ActionBroker.get_instance();
-    var shortcuts = broker.get_shortcuts();
-    shortcuts = shortcuts && shortcuts[CMD_LINE_VIEW_ID];
-    var label_map = {};
-    var all_keys = [];
-    for (var mode in shortcuts)
-    {
-      mode_label = broker.get_label_with_handler_id_and_mode(CMD_LINE_VIEW_ID, mode);
-      if (mode_label)
+      if (['command', 'description'].every(function(prop)
+          {
+            return commands[name].hasOwnProperty(prop);
+          }))
       {
-        var mode_shortcuts = shortcuts[mode];
-        var keys = [];
-        for (var mode_shortcut in mode_shortcuts)
-        {
-          keys.push(mode_shortcut);
-        }
-        keys.sort();
-        all_keys.extend(keys)  
-        label_map[mode] = {label: mode_label, keys: keys};
+        this._dfcommands[name] = commands[name].command;
+        this._dfcommands[name].description = commands[name].description;
+        if (commands[name].hasOwnProperty('alias'))
+          this._dfcommands[commands[name].alias] = this._dfcommands[name];
       }
-    }
-    var width = Math.max.apply(Math, all_keys.map(function(k)
-    {
-      return k.length;
-    }));
-    for (mode in label_map)
-    {
-      data.add_message(label_map[mode].label);
-      label_map[mode].keys.forEach(function(key)
+      else
       {
-        data.add_message("    " + key.ljust(width + 4) + shortcuts[mode][key]);
-      });
-      data.add_message("\n");
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        "not a valid DFL command " + name);
+      }
     }
   };
 
-  this.dfcommand_help.description = ui_strings.S_REPL_HELP_COMMAND_DESC;
-
-  this.dfcommand_man = this.dfcommand_help; // man is alias for help
-
-  this.dfcommand_jquery = function(view, data, service)
-  {
-    var url = "http://code.jquery.com/jquery.min.js";
-    var code = ["(function(){",
-                "  var script = document.createElement('script');",
-                "  script.setAttribute('src', '" + url + "');",
-                "  var cb = function() {",
-                "    script.parentNode.removeChild(script);",
-                "    console.log('jquery loaded');",
-                "  };",
-                "  script.addEventListener('load', cb, false);",
-                "  document.body.appendChild(script);",
-                "  return 'Loading jquery'",
-                "})();"].join("\n");
-    service.evaluate_input(code);
-  }
-  this.dfcommand_jquery.description = ui_strings.S_REPL_JQUERY_COMMAND_DESC;
-
-  this.init();
 };
