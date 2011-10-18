@@ -5,11 +5,15 @@
 
 .sortable-table > tr > td,
 .sortable-table > tr > th {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-left: none;
+  border: 0 solid rgba(0, 0, 0, 0.06);
+  border-left-width: 1px;
   padding: 4px 5px;
   text-align: left;
   overflow: hidden;
+}
+.sortable-table > tr > td:first-child,
+.sortable-table > tr > th:first-child {
+  border-left-width: 0;
 }
 
 .sortable-table > tr > td.align-center {
@@ -30,12 +34,13 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:first-of-type > th {
-  border-top-color: #fefefe;
+.sortable-table > tr:last-of-type > td {
+  border-bottom-width: 1px;
 }
 
+
 .sortable-table > tr:nth-child(odd) {
-  background-color: rgba(0,0,0,0.025);
+  background-color: rgba(0,0,0,0.03);
 }
 
 .sort-column {
@@ -51,6 +56,7 @@
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .sortable-table > tr.header:first-child th {
