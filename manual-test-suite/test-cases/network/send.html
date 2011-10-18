@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>form tests</title>
+  <style>
+    iframe {
+      height: 250px; width: 100%; border: none;
+    }
+    
+    .result {
+       border: 1px solid #bababa;
+    }
+    
+    table {
+      width: 100%;
+    }
+    
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 5px;
+    }
+    
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>post - multipart/form-data</th><th>Result (iframe)</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" method="post" enctype="multipart/form-data" target="result1">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><textarea name="textarea1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea></p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <input name="file1" type="file">
+          </p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="400000" />
+            <input name="file2" type="file">
+          </p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td class="result">
+        <iframe id="result1"></iframe>
+      </td>
+    </tr>
+
+    <tr>
+      <th>post - application/x-www-form-urlencoded</th><th>Result (iframe)</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" method="post" enctype="application/x-www-form-urlencoded" target="result2">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><textarea name="textarea1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea></p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <input name="file1" type="file">
+          </p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="400000" />
+            <input name="file2" type="file">
+          </p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td class="result">
+        <iframe id="result2"></iframe>
+      </td>
+    </tr>
+
+    <tr>
+      <th>post - application/x-www-form-urlencoded  - via xmlhttprequest</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" class="xmlhttpreqform" method="post" target="result3">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result3" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via xmlhttprequest</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" class="xmlhttpreqform" method="get" target="result4">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result4" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via xmlhttprequest, 5 seconds delayed on the server</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php?sleep=5" class="xmlhttpreqform" method="get" target="result4a">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result4a" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via JSONP</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" class="jsonpform" method="get" target="result5">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result5" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via xmlhttprequest, jquery</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" class="xmlhttpreqform usejquery" method="get" target="result6">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result6" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via jsonp, jquery</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php" class="jsonpform usejquery" method="get" target="result6a">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result6a" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>get - via jsonp, jquery, 5 seconds delayed on the server</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php?sleep=5" class="jsonpform usejquery" method="get" target="result6b">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result6b" class="result"></td>
+    </tr>
+
+    <tr>
+      <th>post - multipart/form-data, 5 seconds delayed on the server</th><th>Result (iframe)</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php?sleep=5" method="post" enctype="multipart/form-data" target="result7">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><textarea name="textarea1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea></p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <input name="file1" type="file">
+          </p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="400000" />
+            <input name="file2" type="file">
+          </p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td class="result">
+        <iframe id="result7"></iframe>
+      </td>
+    </tr>
+
+    <tr>
+      <th>post - multipart/form-data, 5 redirects on server</th><th>Result (iframe)</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php?redirect=5" method="post" enctype="multipart/form-data" target="result8">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><textarea name="textarea1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea></p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+            <input name="file1" type="file">
+          </p>
+          <p>
+            <input type="hidden" name="MAX_FILE_SIZE" value="400000" />
+            <input name="file2" type="file">
+          </p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td class="result">
+        <iframe id="result8"></iframe>
+      </td>
+    </tr>
+
+    <tr>
+      <th>get - via xmlhttprequest, 5 redirects on server</th><th>Result</th>
+    </tr>
+    <tr>
+      <td>
+        <form action="receive.php?redirect=5" class="xmlhttpreqform" method="get" target="result9">
+          <p><input name="textfield1" value="Here is some text."></p>
+          <p><input type="submit"></p>
+        </form>
+      </td>
+      <td id="result9" class="result"></td>
+    </tr>
+
+  </table>
+  <script src="http://code.jquery.com/jquery-1.6.4.js"></script>
+  <script>
+
+  (function() {
+    var ajaxform_submit_listener = function(evt)
+    {
+      evt || (evt = {});
+      evt.preventDefault && evt.preventDefault();
+
+      var form = evt.target || this; // method can be called on the form or as an event listener
+      var url = new String(form.getAttribute("action")).add_param("async=true");
+      var method = form.getAttribute("method").toUpperCase();
+      var target_id = form.getAttribute("target");
+
+      var form_data_string = "";
+      var inputs = form.querySelectorAll("input[name]");
+      for (var j = 0, input; input = inputs[j]; j++)
+      {
+        form_data_string += input.getAttribute("name") + "=" + input.value + "&";
+      }
+      form_data_string = form_data_string.slice(0, -1);
+
+      if (form.classList.contains("usejquery"))
+      {
+        url = url.valueOf();
+        jQuery.ajax(url, {
+                           data: form_data_string,
+                           success: function(data, status)
+                           {
+                             $("#" + target_id).html(data);
+                           }
+                         });
+      }
+      else if (url && method)
+      {
+        req(url, method, form_data_string, target_id);
+      }
+    };
+    
+    var ajaxforms = document.getElementsByClassName("xmlhttpreqform");
+    for (var i = 0, form; form = ajaxforms[i]; i++)
+    {
+      form.addEventListener("submit", ajaxform_submit_listener, false);
+      // When calling form.submit() from script directly, [target] won't be respected
+      form._submit_me = ajaxform_submit_listener;
+    };
+    
+    var jsonp_submit_listener = function(evt)
+    {
+      // todo: rather similar to the ajaxforms submit listener..
+      evt || (evt = {});
+      evt.preventDefault && evt.preventDefault();
+      
+      var form = evt.target || this;
+      var target_id = form.getAttribute("target");
+      var url = form.getAttribute("action");
+
+      if (url)
+      {          
+        var form_data_string = "";
+        var inputs = form.querySelectorAll("input[name]");
+        for (var j = 0, input; input = inputs[j]; j++)
+        {
+          form_data_string += input.getAttribute("name") + "=" + input.value + "&";
+        }
+        form_data_string = form_data_string.slice(0, -1);
+        
+        if (form.classList.contains("usejquery"))
+        {
+          jQuery.ajax(url, {
+                             data: form_data_string,
+                             dataType: "jsonp",
+                             success: function(data, status)
+                             {
+                               $("#" + target_id).html(data);
+                             }
+                           });
+        }
+        else
+        {
+          reqJSONP(url, form_data_string, "JSONPCB");
+        }
+      }
+    }
+    var jsonpforms = document.getElementsByClassName("jsonpform");
+    for (var i = 0, form; form = jsonpforms[i]; i++)
+    {
+      form.addEventListener("submit", jsonp_submit_listener, false);
+      form._submit_me = jsonp_submit_listener;
+    };
+
+    var rcount = 0;
+    var req = function(url, method, body, target_id)
+    {
+      var client = new XMLHttpRequest();
+      client.onreadystatechange = xhr_handler;
+      url = new String(url).add_param("rcount=" + rcount);
+      if (method === "GET")
+      {
+        url = url.add_param(body);
+      }
+      client.open(method, url);
+      client.setRequestHeader("X-Requested-With", "XMLHttpRequest"); // this is what jquery does by default
+      if (method === "POST")
+      {
+        client.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        // Chrome emits "Refused to set unsafe header" for the next two
+        client.setRequestHeader("Content-length", body.length);
+        client.setRequestHeader("Connection", "close"); 
+      }
+      if (target_id)
+      {
+        client.target_id = target_id;
+      }
+      client.send(body);
+      i++;
+    }
+    
+    var xhr_handler = function()
+    {
+      var elem = document.getElementById(this.target_id);
+      if (this.readyState == 4 && this.status == 200)
+      {
+        if (this.responseText && elem)
+        {
+          elem.innerHTML = this.responseText;
+        }
+      }
+      else if (this.readyState == 4 && this.status != 200)
+      {
+        if (elem)
+        {
+          elem.innerHTML = "XHR failed";
+        }
+      }
+    }
+    
+    var reqJSONP = function(url, formdata, cb_func)
+    {
+      url = new String(url)
+              .add_param(formdata)
+              .add_param("rcount=" + rcount)
+              .add_param("async=true");
+      url = cb_func ? url.add_param("callback="+cb_func) : url;
+      var script = document.createElement("script");
+      script.setAttribute("src", url);
+      document.body.appendChild(script);
+      rcount++;
+    }
+    
+    window.JSONPCB = function(data)
+    {
+      document.getElementById("result5").innerHTML =  data;
+    }
+
+    String.prototype.add_param = function(param_pair)
+    {
+      var e = document.createElement("a");
+      e.setAttribute("href", this);
+      var query = e.search;
+      return new String(this + (query ? "&" : "?") + param_pair);
+    }
+
+    String.prototype.has_param = function(param)
+    {
+      var e = document.createElement("a");
+      e.setAttribute("href", this);
+      return !(e.search.slice(1).split("=").indexOf(param) % 2);
+    }
+    
+    // post all forms
+    var post_all_forms = new String(location.href).has_param("submit_all");
+    if (post_all_forms)
+    {
+      var forms = document.forms;
+      for (var i=0, form; form = forms[i]; i++)
+      {
+        setTimeout(
+          function(form)
+          {
+            return function()
+            {
+              if (form._submit_me)
+              {
+                form._submit_me()
+              }
+              else
+              {
+                form.submit();
+              }
+            }
+          }(form), i*500);
+      };
+    }
+    
+  })()
+  </script>
+</body>
+</html>
