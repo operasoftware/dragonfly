@@ -8,9 +8,11 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode =
-cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id, obj_id)
+cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id,
+                                                            obj_id,
+                                                            has_error_handling)
 {
-  this._init(rt_id, obj_id);
+  this._init(rt_id, obj_id, has_error_handling);
 };
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.OBJECT_ID = 0;
@@ -61,6 +63,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   FIRST_LINE = 4,
   BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE],
   AFTER_ALIKES = [AFTER],
+  ERROR_MSG = 0,
   PSEUDO_NAME = {};
 
   PSEUDO_NAME[BEFORE] = "before";
@@ -223,6 +226,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     {
       this._data = [];
       cb();
+    }
+    else if (this._has_error_handling)
+    {
+      this.error = message[ERROR_MSG];
+      if (cb)
+        cb();
     }
     else
     {
@@ -484,11 +493,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     };
   })();
 
-  this._init = function(rt_id, obj_id)
+  this._init = function(rt_id, obj_id, has_error_handling)
   {
     this.id = this._get_id();
     this._data_runtime_id = rt_id || 0;  // data of a dom tree has always just one runtime
     this._root_obj_id = obj_id || 0;
+    this._has_error_handling = has_error_handling;
     this._data = [];
     this._mime = '';
     if (!window.dominspections)
