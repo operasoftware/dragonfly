@@ -364,10 +364,6 @@ container > div > header {
 div.unfolded {
   border-bottom: 1px solid #ccc;
 }
-header:hover {
-  background-color: #f2f2f2;
-  color: #000;
-}
 
 category header:hover input {
   opacity: 1;

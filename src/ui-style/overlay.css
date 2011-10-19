@@ -166,16 +166,6 @@ overlay hr {
   -o-transition: background-color 0.2s;
 }
 
-.overlay button:hover,
-.hud .ui-control:hover, /* TODO class should be changed to .overlay ... */
-.shortcuts-config header:hover {
-  background-color: #525252;
-  color: rgba(255, 255, 255, .9);
-  -o-transition: background-color 0.2s;
-  background-image: -o-linear-gradient(-90deg,
-                                       transparent,
-                                       rgba(0, 0, 0, 0.37) 100%);
-}
 
 .overlay button:active,
 .hud .ui-control:not([disabled]):active, /* TODO class should be changed to .overlay ... */
