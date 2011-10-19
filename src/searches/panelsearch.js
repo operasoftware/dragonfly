@@ -58,8 +58,15 @@
 
   this._validate_reg_exp = function()
   {
-    var re = new RegExp(this._last_query, this.ignore_case ? 'ig' : 'g');
-    return !re.test("");
+    try
+    {
+      var re = new RegExp(this._last_query, this.ignore_case ? 'ig' : 'g');
+      return [null, !re.test("")];
+    }
+    catch(e)
+    {
+      return [e];
+    }
   };
 
   this._update_match_highlight = function(event, target)
