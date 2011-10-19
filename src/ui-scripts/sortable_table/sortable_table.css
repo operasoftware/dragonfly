@@ -44,7 +44,7 @@
 }
 
 .sort-column {
-  background: url("../../ui-images/dropdown.png") no-repeat 99% 50%;
+  background: url("../../ui-images/dropdown.png") no-repeat 100% 50%;
 }
 
 .sort-column.reversed {
