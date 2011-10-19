@@ -61,11 +61,11 @@
     try
     {
       var re = new RegExp(this._last_query, this.ignore_case ? 'ig' : 'g');
-      return [null, !re.test("")];
+      return re.test("") && ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING;
     }
     catch(e)
     {
-      return [e];
+      return ui_strings.S_INFO_INVALID_REGEXP;
     }
   };
 

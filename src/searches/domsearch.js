@@ -259,15 +259,8 @@
       this._match_cursor = -1;
       if (this._last_query)
       {
-        if (this.search_type == TextSearch.REGEXP)
-        {
-          var check = this._validate_reg_exp();
-          var error = check[0];
-          var matches_empty_string = !check[1];
-          var error = (error && ui_strings.S_INFO_INVALID_REGEXP) || 
-                      (!error && matches_empty_string &&
-                       ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING);
-        }
+        var error = this.search_type == TextSearch.REGEXP &&
+                    this._validate_reg_exp();
 
         if (error)
         {
