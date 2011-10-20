@@ -190,6 +190,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
   }
 
+  // If the script _is_ a console script it is also 
+  // removed from the list of console scripts.
+  // This is to prevent a false positive, e.g. if the document itself 
+  // would by coincidence create a script as submitted in the console.
   var is_console_script = function(script)
   {
     var index = __submitted_scripts.indexOf(script);
@@ -1098,8 +1102,10 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     for (var cur in __scripts)
     {
       script = __scripts[cur];
-      if (script.runtime_id == runtime_id && (!without_console_scripts ||
-          (!script.is_console_script || callstack_scripts.contains(script.script_id))))
+      if (script.runtime_id == runtime_id && 
+          (!without_console_scripts ||
+           !script.is_console_script ||
+           callstack_scripts.contains(script.script_id)))
       {
         ret[ret.length] = script;
       }
