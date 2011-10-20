@@ -1,14 +1,12 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor 
   */
 
-cls.EcmascriptDebugger["6.0"].InspectableDOMNode =
-cls.EcmascriptDebugger["5.0"].InspectableDOMNode = function(rt_id,
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode = function(rt_id,
                                                             obj_id,
                                                             has_error_handling)
 {

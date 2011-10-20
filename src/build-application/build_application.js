@@ -57,7 +57,6 @@ window.app = {};
   * It is replaced by the "resource-manager". 
   *
   */
-
 window.app.MIN_SUPPORTED_CORE_VERSION = 168;
 
 window.cls.MessageMixin.apply(window.app); // Give the app object message handling powers
