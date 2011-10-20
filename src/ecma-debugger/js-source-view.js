@@ -1057,7 +1057,6 @@ cls.ScriptSelect.prototype = new CstSelect();
 
 cls.JsSourceView.create_ui_widgets = function()
 {
-  var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
   var toolbar_buttons =
   [
     {

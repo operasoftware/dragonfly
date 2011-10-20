@@ -482,18 +482,6 @@ cls.ReplService = function(view, data)
   this.init(view, data);
 };
 
-cls.ReplServicePre6_3 = function(view, data) {
-  cls.ReplService.call(this, view, data);
-
-  this._eval = function(msg, callback, cbargs)
-  {
-    var tag = this._tagman.set_callback(null, callback, cbargs);
-    this._edservice.requestEval(tag, msg);
-  }
-}
-
-cls.ReplServicePre6_3.prototype = cls.ReplService;
-
 // custom fields in the scope messages
 cls.ReplService.DF_INTERN_TYPE = 3;
 cls.ReplService.FRIENDLY_PRINTED = 6;

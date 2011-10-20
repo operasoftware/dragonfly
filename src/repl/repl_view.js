@@ -9,16 +9,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._resolver = new cls.PropertyFinder();
   this._data = new cls.ReplData(this);
 
-
-  if (window.services["ecmascript-debugger"].major_version == 6 &&
-      window.services["ecmascript-debugger"].minor_version < 3)
-  {
-    this._service = new cls.ReplServicePre6_3(this, this._data);
-  }
-  else
-  {
-    this._service = new cls.ReplService(this, this._data);
-  }
+  this._service = new cls.ReplService(this, this._data);
 
   this._linelist = null;
   this._textarea = null;

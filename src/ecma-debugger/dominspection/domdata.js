@@ -511,7 +511,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
 };
 
-cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
+cls.EcmascriptDebugger["6.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
 
 // Disable forced lowercase for some elements
 cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];

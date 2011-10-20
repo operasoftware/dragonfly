@@ -111,17 +111,8 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DocumentSelect.prototype = new CstSelect();
     new cls.DocumentSelect('document-select', 'document-options');
     cls.DOMView.create_ui_widgets();
-    if (service_interface.major_minor_version > 6.4)
-    {
-      cls.DOMSearchView.prototype = ViewBase;
-      new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
-    }
-    else
-    {
-      cls.InspectableDOMNode.search = null;
-      cls.InspectableDOMNode.get_match_count = null;
-      cls.InspectableDOMNode.clear_search = null;
-    }
+    cls.DOMSearchView.prototype = ViewBase;
+    new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
 
     /* Stylesheets */
     // TODO: remove, this is old

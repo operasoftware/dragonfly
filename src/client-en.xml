@@ -454,6 +454,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/friendlyprinter.js"/>
 <script src="./repl/listunpacker.js"/>
 <script src="./repl/dfcommands.js"/>
+<script src="./repl/runtimeselect.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>
