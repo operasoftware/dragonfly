@@ -20,9 +20,9 @@
 {
   position: absolute;
   height: 100%;
-  top: 0px;
+  top: 0;
   left: 251px;
-  right: 0px;
+  right: 0;
   overflow: hidden;
 }
 
@@ -261,7 +261,7 @@
   left: 0;
   padding-top: 1px;
   background-image: -o-linear-gradient(0deg,
-                                       rgba(0, 0, 0, 0.06) 0px,
+                                       rgba(0, 0, 0, 0.06) 0,
                                        rgba(0, 0, 0, 0.06) 1px,
                                        transparent 1px);
 

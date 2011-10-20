@@ -66,7 +66,7 @@ ul {
   background-image: url("../ui-images/expand-collapse-inverted.gif");
 }
 .unfolded > .folder-key {
-  background-position: 0px -11px;
+  background-position: 0 -11px;
 }
 
 .folder-key[disabled="true"] {
@@ -1061,7 +1061,7 @@ d
 {
   text-align: left;
   line-height: 20px;
-  border: 0px;
+  border: 0;
   padding: 0;
   background-color: #fff;
   font-weight: bold;
@@ -1078,7 +1078,7 @@ d
   white-space: nowrap;
   text-overflow: ellipsis;
   border: 1px solid #ccc;
-  padding: 0px 5px;
+  padding: 0 5px;
   line-height: 16px;
 }
 
@@ -1095,13 +1095,13 @@ d
 
 .storage-table .value
 {
-  border-right: 0px;
+  border-right: 0;
 }
 
 .storage-table .control
 {
   text-align: right;
-  border-left: 0px;
+  border-left: 0;
   width: 30px;
 }
 
@@ -1115,7 +1115,7 @@ d
 .storage-table h4
 {
   margin: 0;
-  padding: 0px 5px;
+  padding: 0 5px;
   padding-right: 20px;
   line-height: 16px;
   font-weight: normal;
@@ -1126,7 +1126,7 @@ d
 .storage-table p
 {
   margin: 0;
-  padding: 0px;
+  padding: 0;
   background-color: hsl(0, 0%, 90%);
   border-top: 1px solid #ccc;
   text-align: right;
@@ -1156,8 +1156,8 @@ d
   width: 100%;
   height: 16px;
   background-color: hsl(0, 0%, 90%);
-  padding: 0px 5px;
-  border: 0px;
+  padding: 0 5px;
+  border: 0;
   margin-left: -5px;
 }
 
