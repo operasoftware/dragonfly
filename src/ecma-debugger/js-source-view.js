@@ -601,6 +601,7 @@ cls.JsSourceView = function(id, name, container_class)
 
         source_content.innerHTML = get_script_lines(__top_line, this.getMaxLines() - 1);
         updateLineNumbers(__top_line);
+        this.update_stop_at_error();
 
         var scroll_container = document.getElementById(scroll_container_id);
         if(scroll_container)
@@ -708,6 +709,31 @@ cls.JsSourceView = function(id, name, container_class)
   this.getCurrentScriptId = function()
   {
     return __current_script && __current_script.script_id;
+  }
+
+  this.update_stop_at_error = function()
+  {
+    if (__current_script &&
+        __current_script.stop_at_error &&
+        this._is_line_within_view(__current_script.stop_at_error.line_number))
+    {
+      var error = __current_script.stop_at_error;
+      var line_ele = this.get_line_element(error.line_number);
+      if (line_ele)
+      {
+        
+        line_ele.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
+        line_ele.className = "first-error-line";
+        var tmpl = ['div',
+                    'Unhadled ' + error.error_class + ': ' + error.error_message,
+                    'class', 'error-description'];
+        var error = document.render(tmpl)
+        if (line_ele.firstChild)
+          line_ele.insertBefore(document.render(tmpl), line_ele.firstChild);
+        else
+          line_ele.render(tmpl);
+      }
+    }
   }
 
   this.clearView = function()
