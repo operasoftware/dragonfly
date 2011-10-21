@@ -59,8 +59,8 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     window.runtime_onload_handler = new namespace.RuntimeOnloadHandler();
 
     /* commandline */
-    cls.CndRtSelect.prototype = new CstSelect();
-    new cls.CndRtSelect('cmd-runtime-select', 'cmd-line-runtimes');
+    cls.CommandLineRuntimeSelect.prototype = new CstSelect();
+    new cls.CommandLineRuntimeSelect('cmd-runtime-select', 'cmd-line-runtimes');
 
     cls.ReplView.create_ui_widgets();
     new cls.ReplView('command_line', 

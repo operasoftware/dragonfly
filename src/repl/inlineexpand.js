@@ -92,12 +92,16 @@ cls.InlineExpander = function(callback)
       }
     }
 
-    if (obj_list.every(function(model) { return model.has_data(); }) ||
-        obj_list.length == 0)
+    if (obj_list.every(this._model_has_data) || obj_list.length == 0)
     {
       ctx.inline_expand_callback = null;
       this._callback(ctx);
     }
+  };
+
+  this._model_has_data = function(model)
+  { 
+    return model.has_data();
   };
 
   this._error_handlers = {};
