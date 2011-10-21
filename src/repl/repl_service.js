@@ -235,7 +235,11 @@ cls.ReplService = function(view, data)
   this._handle_group = function(msg, collapsed)
   {
     const VALUE = 0, VALUELIST = 2;
-    this._data.add_output_groupstart({name: msg[VALUELIST][0][VALUE],
+    var group_name = msg[VALUELIST] && 
+                     msg[VALUELIST][0] &&
+                     msg[VALUELIST][0][VALUE] ||
+                     ""; 
+    this._data.add_output_groupstart({name: group_name,
                                       collapsed: Boolean(collapsed)});
   };
 
