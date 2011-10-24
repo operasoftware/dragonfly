@@ -1,14 +1,12 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
   * @constructor
   */
 
-cls.EcmascriptDebugger["6.0"].StopAt =
-cls.EcmascriptDebugger["5.0"].StopAt = function()
+cls.EcmascriptDebugger["6.0"].StopAt = function()
 {
 
   /**
@@ -56,6 +54,8 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   var runtime_id = '';
 
   var callstack = [];
+
+  var __script_ids_in_callstack = [];
 
   var __controls_enabled = false;
 
@@ -132,6 +132,11 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     return callstack; // should be copied
   }
 
+  this.get_script_ids_in_callstack = function()
+  {
+    return __script_ids_in_callstack;
+  };
+
   this.getFrame = function(id)
   {
     return callstack[id];
@@ -207,6 +212,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
       var is_all_frames = _frames_length <= ini.max_frames;
       var line_number = 0;
       callstack = [];
+      __script_ids_in_callstack = [];
       for( ; frame  = _frames[i]; i++ )
       {
         line_number = frame[LINE_NUMBER];
@@ -234,6 +240,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
           argument_value: frame[ARGUMENT_VALUE],
           this_value: frame[THIS_VALUE],
         }
+        __script_ids_in_callstack[i] = frame[SCRIPT_ID];
       }
       
       if( cur_inspection_type != 'frame' )
@@ -295,6 +302,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
   this._handle_continue = function(status, message, mode, clear_disabled_state)
   {
     callstack = [];
+    __script_ids_in_callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
     messages.post('frame-selected', {frame_index: -1});
     messages.post('thread-continue-event', {stop_at: stopAt});
@@ -313,6 +321,7 @@ cls.EcmascriptDebugger["5.0"].StopAt = function()
     if (message[THREAD_ID] == stopAt.thread_id)
     {
       callstack = [];
+      __script_ids_in_callstack = [];
       messages.post('frame-selected', {frame_index: -1});
       __controls_enabled = false;
       __is_stopped = false;

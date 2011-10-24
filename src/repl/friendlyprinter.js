@@ -278,7 +278,7 @@ window.cls.FriendlyPrinter.prototype = new function()
       {
         return [
           REGEXP,
-          0, // expandable inline object (booleans are returned as string)
+          1, // expandable inline object (booleans are returned as string)
           item.toString()
         ];
       }
@@ -389,11 +389,13 @@ window.cls.FriendlyPrinter.prototype = new function()
     DATE = 2,
     FUNCTION = 3,
     STRING_VALUE = 2,
-    ERROR = 4;
+    ERROR = 4,
+    REGEXP = 5;
 
     switch (value_list[TYPE])
     {
       case DATE:
+      case REGEXP:
         return value_list[STRING_VALUE];
       case ERROR:
         return value_list[STRING_VALUE];

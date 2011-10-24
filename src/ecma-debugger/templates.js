@@ -152,7 +152,7 @@
           };
           if (get_scripts)
           {
-            scripts = window.runtimes.getScripts(rt_id);
+            scripts = window.runtimes.getScripts(rt_id, true);
             browser_js = null;
             user_js_s = [];
             for (j = scripts.length - 1; script = scripts[j]; j--)

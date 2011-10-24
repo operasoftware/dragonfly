@@ -1,6 +1,5 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
@@ -8,8 +7,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 // TODO clean up in regard of protocol 4
-cls.EcmascriptDebugger["6.0"].Runtimes =
-cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
+cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 {
 
   const
@@ -60,6 +58,8 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
 
   var __window_top_rt_map = {};
+
+  var __submitted_scripts = [];
 
   // used to set the top runtime automatically
   // on start or on debug context change
@@ -187,6 +187,18 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       }
     }
   }
+
+  // If the script _is_ a console script it is also 
+  // removed from the list of console scripts.
+  // This is to prevent a false positive, e.g. if the document itself 
+  // would by coincidence create a script as submitted in the console.
+  var is_console_script = function(script)
+  {
+    var index = __submitted_scripts.indexOf(script);
+    if (index > -1)
+      __submitted_scripts.splice(index, 1);
+    return index != -1;
+  };
 
   this.handleRuntimeStarted = function(xml)
   {
@@ -439,7 +451,11 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
       }
     }
 
-    if (!__selected_script ||
+    var callstack_scripts = window.stop_at.get_script_ids_in_callstack();
+
+    if ((!__selected_script && 
+         (!script.is_console_script || 
+          callstack_scripts.contains(new_script_id))) ||
         (is_injected_script(__selected_script_type) && 
          !is_injected_script(script.script_type)))
     {
@@ -611,6 +627,9 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
   this.onNewScript = function(status, message)
   {
     var script = new cls.NewScript(message);
+    if (script.is_console_script = is_console_script(script.script_data))
+      script.script_type = "Console Script";
+
     if( is_runtime_of_debug_context(script.runtime_id))
     {
       registerRuntime(script.runtime_id);
@@ -1068,13 +1087,23 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     return null;
   }
 
-  this.getScripts = function(runtime_id)
+  /**
+    * If the without_console_scripts flag is set it will 
+    * still return console_scripts if they are in the current call stack
+    */
+  this.getScripts = function(runtime_id, without_console_scripts)
   {
-    var ret=[], script = null, cur = '';
-    for( cur in __scripts )
+    var ret = [], script = null;
+    var callstack_scripts = without_console_scripts
+                          ? window.stop_at.get_script_ids_in_callstack()
+                          : null;
+    for (var cur in __scripts)
     {
       script = __scripts[cur];
-      if(script.runtime_id == runtime_id)
+      if (script.runtime_id == runtime_id && 
+          (!without_console_scripts ||
+           !script.is_console_script ||
+           callstack_scripts.contains(script.script_id)))
       {
         ret[ret.length] = script;
       }
@@ -1263,6 +1292,12 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
     }
   }
 
+  var _on_console_script_submitted = function(msg)
+  {
+    __submitted_scripts.push(msg.script);
+  };
+
+
   this._bps = cls.Breakpoints.get_instance();
 
   messages.addListener("thread-stopped-event", onThreadStopped);
@@ -1277,6 +1312,7 @@ cls.EcmascriptDebugger["5.0"].Runtimes = function(service_version)
 
   messages.addListener('window-updated', _on_window_updated);
   messages.addListener('debug-context-selected', _on_debug_context_selected);
+  messages.addListener('console-script-submitted', _on_console_script_submitted);
 
   window.app.addListener('services-created', on_services_created);
 

@@ -9,16 +9,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._resolver = new cls.PropertyFinder();
   this._data = new cls.ReplData(this);
 
-
-  if (window.services["ecmascript-debugger"].major_version == 6 &&
-      window.services["ecmascript-debugger"].minor_version < 3)
-  {
-    this._service = new cls.ReplServicePre6_3(this, this._data);
-  }
-  else
-  {
-    this._service = new cls.ReplService(this, this._data);
-  }
+  this._service = new cls.ReplService(this, this._data);
 
   this._linelist = null;
   this._textarea = null;
@@ -42,11 +33,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this.window_header = false;
   this.window_statusbar = false;
   this.window_type = UIWindow.HUD;
-  this._do_not_queue = false;
+  this._delay_update = true;
   this._last_scroll = 0;
+
+  const RENDER_DELAY = 20;
 
   this.ondestroy = function()
   {
+    if (this._update_timeout)
+      clearTimeout(this._update_timeout);
+
     if (this._container)
     {
       this._last_scroll = this._container.scrollTop;
@@ -55,7 +51,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       this._backlog_index = -1;
       this._current_input = this._textarea.value;
       this._container.removeEventListener("scroll", this._save_scroll_bound, false);
-      this._do_not_queue = false;
+      this._delay_update = true;
     }
   };
 
@@ -74,20 +70,13 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._init_scroll_handling = function()
   {
-      var padder = this._container.querySelector(".padding");
-      // defer adding listeners until after update
-      this._container.addEventListener("scroll", this._save_scroll_bound, false);
-      padder.addEventListener("DOMAttrModified", this._queue_DOM_change, false);
-      padder.addEventListener("DOMNodeInserted", this._queue_DOM_change, false);
+    // defer adding listeners until after update
+    this._container.addEventListener("scroll", this._save_scroll_bound, false);
 
-      if (this._current_scroll === null)
-      {
-        this._container.scrollTop = 999999;
-      }
-      else
-      {
-        this._container.scrollTop = this._current_scroll;
-      }
+    if (this._current_scroll === null)
+      this._container.scrollTop = 999999;
+    else
+      this._container.scrollTop = this._current_scroll;
   }
 
   this.createView = function(container)
@@ -95,13 +84,23 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     var first_update = !this._linelist;
     // on first update, render view skeleton stuff
     if (first_update)
-    {
       this._create_structure(container);
-    }
 
     // Always render the lines of data
     this._update_runtime_selector_bound();
-    this._update();
+
+    if (this._update_timeout)
+      clearTimeout(this._update_timeout);
+
+    if (this._delay_update)
+    {
+      this._update_timeout = setTimeout(this._update_bound, RENDER_DELAY);
+    }
+    else
+    {
+      this._update();
+      this._delay_update = true;
+    }
 
     // On first update add scroll listeners and update scroll,
     // but after the view was rendered so we don't trigger a
@@ -125,26 +124,21 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.do_not_queue_next_update = function()
   {
-    this._do_not_queue = true;
-  }
-
+    this._delay_update = false;
+  };
 
   this._update_input_height_bound = function()
   {
     this._textarea.rows = Math.max(1, Math.floor(this._textarea.scrollHeight / this._input_row_height));
+    if (this._textarea.selectionStart == this._textarea.value.length)
+      this._update_scroll_bound();
+
   }.bind(this);
 
   this._save_scroll_bound = function()
   {
     var at_bottom = (this._container.scrollTop + this._container.offsetHeight >= this._container.scrollHeight);
     this._current_scroll = at_bottom ? null : this._container.scrollTop;
-  }.bind(this);
-
-  this._queue_DOM_change = function()
-  {
-    if (this._update_scroll_timeout)
-      clearTimeout(this._update_scroll_timeout);
-    this._update_scroll_timeout = setTimeout(this._update_scroll_bound, 10);
   }.bind(this);
 
   this._update_scroll_bound = function()
@@ -158,8 +152,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       this._container.scrollTop = 9999999;
     }
-    this._update_scroll_timeout = 0;
-  }.bind(this);
+  };
 
   /**
    * Pulls all the available, non-rendered, events from the data
@@ -174,7 +167,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     {
       switch(e.type) { // free like a flying demon
         case "input":
-          this._render_input(e.data, this._do_not_queue);
+          this._render_input(e.data);
           break;
         case "string":
           this._render_string(e.data);
@@ -201,7 +194,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
           this._render_count(e.data);
           break;
         case "completion":
-          this._render_completion(e.data, this._do_not_queue);
+          this._render_completion(e.data);
           break;
         case "errorlog":
           this._render_errorlog(e.data);
@@ -211,8 +204,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       }
     }
 
-    this._do_not_queue = false;
+    this._update_scroll_bound();
   };
+
+  this._update_bound = this._update.bind(this);
 
   this._render_count = function(data)
   {
@@ -343,12 +338,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
-  this._render_input = function(str, do_not_queue)
+  this._render_input = function(str)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
       this._add_line('<span class="repl-line-marker">' + 
                        (index ? "... " : "&gt&gt&gt ") +
-                     "</span>" + line, null, do_not_queue);
+                     "</span>" + line);
     }, this);
   };
 
@@ -357,7 +352,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._textarea.textContent = str;
   };
 
-  this._add_line = function(elem_or_template, class_name, do_not_queue)
+  this._add_line = function(elem_or_template, class_name)
   {
     var line = document.createElement("li");
     if (class_name)
@@ -374,36 +369,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
       line.appendChild(elem_or_template);
     }
 
-    if (do_not_queue)
-    {
+    if (this._linelist)
       this._linelist.appendChild(line);
-      this._update_scroll_bound();
-    }
-    else
-    {
-      this._add_to_line_queue(line);
-    }
+
     return line;
   };
-
-  this._add_to_line_queue = function(line)
-  {
-    if (this._render_queue_timeout)
-      clearTimeout(this._render_queue_timeout);
-    this._line_queue.push(line);
-    this._render_queue_timeout = setTimeout(this._render_queue, 20);
-  };
-
-  this._render_queue = function()
-  {
-    if (this._linelist)
-    {
-      while (this._line_queue.length)  
-        this._linelist.appendChild(this._line_queue.shift());
-      this._render_queue_timeout = 0;
-      this._update_scroll_bound();
-    }
-  }.bind(this);
 
   this._handle_input_bound = function(evt)
   {
@@ -1004,7 +974,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   }, this);
 
   this._actionbroker.register_handler(this);
-  this._line_queue = [];
 
 };
 cls.ReplView.prototype = ViewBase;

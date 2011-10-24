@@ -1002,8 +1002,8 @@ cls.ScriptSelect = function(id, class_name)
         return;
       }
       return templates.script_dropdown(_runtimes,
-                                 stopped_script_id,
-                                 runtimes.getSelectedScript());
+                                       stopped_script_id,
+                                       runtimes.getSelectedScript());
     }
   }
 
@@ -1056,7 +1056,6 @@ cls.ScriptSelect.prototype = new CstSelect();
 
 cls.JsSourceView.create_ui_widgets = function()
 {
-  var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
   var toolbar_buttons =
   [
     {

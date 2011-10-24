@@ -218,37 +218,45 @@ window.cls.PropertyFinder = function(rt_id) {
 
   this._got_object_props = function(status, msg, callback, parts)
   {
-    var ret = {
-      props: this._parse_prop_list(msg) || [],
-      scope: parts.scope,
-      input: parts.input,
-      identifier: parts.identifier,
-    };
-
-    if (! ret.props.contains("this"))
+    if (status)
     {
-        ret.props.push("this");
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'ExamineObjects failed in _got_object_props in PropertyFinder');
     }
+    else
+    {
+      var ret = {
+        props: this._parse_prop_list(msg) || [],
+        scope: parts.scope,
+        input: parts.input,
+        identifier: parts.identifier,
+      };
 
-    // fixme: is "arguments" in the props when stopped?
-    //this._cache_put(ret);
-    callback(ret);
+      if (! ret.props.contains("this"))
+      {
+          ret.props.push("this");
+      }
+
+      // fixme: is "arguments" in the props when stopped?
+      //this._cache_put(ret);
+      callback(ret);
+    }
   }
 
   this._parse_prop_list = function(msg)
   {
     var names = [];
-    if (status == 0) {
-      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
-      (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
-        var objectlist = chain[OBJECT_LIST] || [];
-        objectlist.forEach(function(obj) {
-          names.extend((obj[PROPERTY_LIST] || []).map(function(prop) {
-            return prop[NAME];
-          }));
-        });
+    const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
+
+    (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
+      var objectlist = chain[OBJECT_LIST] || [];
+      objectlist.forEach(function(obj) {
+        names.extend((obj[PROPERTY_LIST] || []).map(function(prop) {
+          return prop[NAME];
+        }));
       });
-    }
+    });
+
     return names.unique();
   }
 
