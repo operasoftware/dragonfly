@@ -191,6 +191,7 @@ Element.prototype.re_render = function(args)
     parent.replaceChild(doc_frag, this);
     return ret;
   }
+  return null;
 }
 
 /**

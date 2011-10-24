@@ -152,9 +152,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       obj.group(group);
       var table = evt.target;
       while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render())[0];
-      obj.post_message("after-render", {table: table});
+      var new_table = table && table.re_render(obj.render());
+      if (new_table)
+      {
+        obj.post_message("before-render", {table: table});
+        table = new_table[0];
+        obj.post_message("after-render", {table: table});
+      }
     }
   }
 
