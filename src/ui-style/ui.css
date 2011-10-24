@@ -437,36 +437,6 @@ toolbar-search {
   float: right;
 }
 
-toolbar-filters input[type=button]
-{
-  background-color: #ddd;
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(255, 255, 255, 0.75) 0,
-                                       rgba(255, 255, 255, 0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 3px;
-  margin: 0 0 0 4px;
-  padding: 1px 10px;
-  height: 17px;
-  line-height: 27px;
-  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-  box-shadow: 0 1px rgba(255, 255, 255, 0.5),
-              inset 0 1px 1px #fff;
-  display: inline-block;
-  vertical-align: top;
-  -o-transition: background-color 0.2s;
-  box-sizing: content-box;
-}
-
-toolbar-filters input[type=button]:active
-{
-  box-shadow: 0 1px #fff,
-              inset 0 1px 2px rgba(0, 0, 0, .4);
-  background-position: 0 1px;
-  padding-top: 2px;
-  padding-bottom: 0;
-}
-
 toolbar-filters .ui-button.search-move-highlight-up
 {
   content: url("../ui-images/icons/icon_back.png");
