@@ -172,7 +172,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ui-style/js-source.css"/>
 <link rel="stylesheet" href="./ui-style/syntax-highlight.css"/>
 <link rel="stylesheet" href="./ui-style/dialog.css"/>
-<link rel="stylesheet" href="./http-logger/httplogger_style.css"/>
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
@@ -429,11 +428,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./storage/templates-storages.js"/>
 <script src="./storage/views-storages.js"/>
 
-<script src="./http-logger/httplogger_service.js"/>
-<script src="./http-logger/httplogger_data.js"/>
-<script src="./http-logger/httplogger_view.js"/>
-<script src="./http-logger/httplogger_resources.js"/>
-<script src="./http-logger/httplogger_templates.js"/>
 
 <script src="./repl/commandtransformer.js"/>
 <script src="./repl/propertyfinder.js"/>
