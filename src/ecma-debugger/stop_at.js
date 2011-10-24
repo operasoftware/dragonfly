@@ -528,7 +528,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     if (stop_at.error)
     {      
       var tag = tagManager.set_callback(this, this._handle_error, [stop_at]);
-      var msg = [stopAt.runtime_id, [stopAt.error_obj_id], 0, 0, 0];
+      var msg = [stop_at.runtime_id, [stop_at.error_obj_id], 0, 0, 0];
       window.services['ecmascript-debugger'].requestExamineObjects(tag, msg); 
     }
   }
