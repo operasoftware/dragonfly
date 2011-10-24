@@ -1168,6 +1168,12 @@ cls.JsSourceView.create_ui_widgets = function()
     true
   );
 
+  var service = window.services['ecmascript-debugger'];
+  var stop_on_error = (service.major_version > 6 ||
+                       service.minor_version > 7)
+                    ? 1
+                    : 0;
+  
   new Settings
   (
     // id
@@ -1176,7 +1182,7 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       script: 0,
       exception: 0,
-      error: 0,
+      error: stop_on_error,
       abort: 0,
       'tab-size': 4,
       'js-search-type': DOMSearch.PLAIN_TEXT,
