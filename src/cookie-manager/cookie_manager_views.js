@@ -8,7 +8,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.insert_add_cookie_row_after_objectref = function(objectref){};
   this.enter_edit_mode = function(objectref, event){};
   this.exit_edit_and_save = function(){};
-  
+
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit";
@@ -372,7 +372,7 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.mode = MODE_DEFAULT;
     return false;
   }
-  
+
   this._remove_item = function(event, target)
   {
     var selection = this._table_elem.querySelectorAll(".selected");
@@ -533,7 +533,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         };
         this._restore_selection = null;
       }
-      // add context menus per tr, 
+      // add context menus per tr,
       for (var i=0; i < this._table_elem.childNodes.length; i++)
       {
         this._table_elem.childNodes[i].setAttribute("data-menu", "cookie_context");

@@ -144,7 +144,7 @@ templates.cookie_manager = {
       return this.value_container(this.expires_0values());
     }
     var parsed_date = new Date(date_in_seconds * 1000);
-    return this.value_container(["div", "id", "expires_container_"+objectref, "title", parsed_date.toLocaleString()]);    
+    return this.value_container(["div", "id", "expires_container_"+objectref, "title", parsed_date.toLocaleString()]);
   },
   editable_expires: function(date_in_seconds, objectref) {
     var editing_default = date_in_seconds;

@@ -84,8 +84,8 @@ cls.CookieManager.CookieDataBase = function()
     ];
     var tag = callback ? tagManager.set_callback(this, callback) : 0;
     services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
-  };  
-  
+  };
+
   this.remove_cookie = function(objectref, callback)
   {
     var cookie = this.get_cookie_by_objectref(objectref);
