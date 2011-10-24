@@ -612,7 +612,8 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["export-markup"] = function(event, target)
   {
-    window.open("data:text/plain," + encodeURIComponent(this.serializer.serialize(window.dom_data)));
+    var data = this.serializer.serialize(window.dom_data);
+    window.open("data:text/plain;charset=utf-8," + encodeURIComponent(data));
   }.bind(this);
 
   this._handlers["expand-whole-dom"] = function(event, target)

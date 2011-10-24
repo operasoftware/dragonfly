@@ -45,7 +45,7 @@
   this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
 
   var disregard_force_lower_case_whitelist = 
-      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+      cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
 
   var disregard_force_lower_case = function(node)
   {

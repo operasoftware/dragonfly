@@ -241,17 +241,7 @@ cls.Breakpoints = function()
         state += BP_DELTA_ENABLE;
       }
       script.breakpoint_states[line_nr] = state + pointer_state;
-      // message signature has changes with version 6.0
-      // AddBreakpoint means always to a source line
-      // for events it's now AddEventBreakpoint
-      if (this._esdb.major_version > 5)
-      {
-        this._esdb.requestAddBreakpoint(0, [bp_id, script_id, line_nr]);
-      }
-      else
-      {
-        this._esdb.requestAddBreakpoint(0, [bp_id, "line", script_id, line_nr]);
-      }
+      this._esdb.requestAddBreakpoint(0, [bp_id, script_id, line_nr]);
       this._add_bp(bp_id, script_id, line_nr);
     }
   };

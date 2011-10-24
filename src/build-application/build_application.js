@@ -34,8 +34,32 @@ if( window.app )
   throw "window.app does already exist";
 }
 window.app = {};
-window.cls.MessageMixin.apply(window.app); // Give the app object message handling powers
 
+/** 
+  * If the connected host has a core intergation point prior to 168 the 
+  * application will reload an according older application version.
+  * Core integartion 168 supports the following service versions:
+  *
+  *   scope:               1.1
+  *   console-logger:      2.0
+  *   cookie-manager:      1.1.1
+  *   document-manager:    1.1
+  *   http-logger:         2.0
+  *   exec:                2.1
+  *   window-manager:      2.1
+  *   widget-manager:      1.0
+  *   resource-manager:    1.1
+  *   prefs:               1.0
+  *   ecmascript:          1.0
+  *   ecmascript-debugger: 6.6
+  *
+  * "http-logger" is not present in this build. 
+  * It is replaced by the "resource-manager". 
+  *
+  */
+window.app.MIN_SUPPORTED_CORE_VERSION = 168;
+
+window.cls.MessageMixin.apply(window.app); // Give the app object message handling powers
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
@@ -58,9 +82,12 @@ window.app.build_application = function(on_services_created, on_services_enabled
     return match && match[0];
   }
 
-  var on_host_info_callback = function(service_descriptions)
+  var on_host_info_callback = function(service_descriptions, hello_message)
   {
-
+    var core_version = hello_message.coreVersion;
+    var core_integration = core_version && parseInt(core_version.split('.')[2]);
+    if (core_integration >= window.app.MIN_SUPPORTED_CORE_VERSION)
+    {
       new window.cls.ScopeInterfaceGenerator().get_interface(service_descriptions,
         function(map)
         {
@@ -74,7 +101,11 @@ window.app.build_application = function(on_services_created, on_services_enabled
         },
         Boolean(window.ini.debug)
       );
-
+    }
+    else
+    {
+      window.client.handle_fallback("ci-168");
+    }
   };
 
   /**
@@ -181,7 +212,6 @@ window.app.build_application = function(on_services_created, on_services_enabled
   [
     'scope',
     'console-logger',
-    'http-logger',
     'exec',
     'window-manager',
     'ecmascript-debugger',
