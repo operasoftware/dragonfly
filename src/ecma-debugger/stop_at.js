@@ -301,6 +301,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   
   this._handle_continue = function(status, message, mode, clear_disabled_state)
   {
+    this._clear_stop_at_error();
     callstack = [];
     __script_ids_in_callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
@@ -320,6 +321,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     const THREAD_ID = 1;
     if (message[THREAD_ID] == stopAt.thread_id)
     {
+      this._clear_stop_at_error();
       callstack = [];
       __script_ids_in_callstack = [];
       messages.post('frame-selected', {frame_index: -1});
@@ -338,8 +340,10 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     SCRIPT_ID = 2,
     LINE_NUMBER = 3,
     STOPPED_REASON = 4,
-    BREAKPOINT_ID = 5;
-
+    BREAKPOINT_ID = 5,
+    EXCEPTION_VALUE = 6,
+    OBJECT_VALUE = 3,
+    OBJECT_ID = 0;
 
     stopAt =
     {
@@ -350,6 +354,18 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       stopped_reason: message[STOPPED_REASON],
       breakpoint_id: message[BREAKPOINT_ID]
     };
+
+    if (message[EXCEPTION_VALUE])
+    {
+      var error_obj_id = message[EXCEPTION_VALUE] &&
+                         message[EXCEPTION_VALUE][OBJECT_VALUE] && 
+                         message[EXCEPTION_VALUE][OBJECT_VALUE][OBJECT_ID];
+      if (error_obj_id)
+      {
+        stopAt.error = message[EXCEPTION_VALUE];
+        stopAt.error_obj_id = error_obj_id;
+      }
+    }
 
     var line = stopAt.line_number;
     if (typeof line == 'number')
@@ -441,7 +457,67 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     {
       this.__continue('run');
     }
-  }
+  };
+
+  this._handle_error = function(status, message, stop_at)
+  {
+    if (status)
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      " error inspection failed in StopAt handle_error");
+    }
+    else
+    {
+      const
+      OBJECT_CHAIN_LIST = 0,
+      OBJECT_LIST = 0,
+      OBJECT_VALUE = 0,
+      CLASS_NAME = 4,
+      PROPERTY_LIST = 1,
+      OBJECT_ID = 0,
+      PROP_OBJECT_VALUE = 3,
+      NAME = 0,
+      STRING = 2;
+
+      var error = message &&
+                  (message = message[OBJECT_CHAIN_LIST]) &&
+                  (message = message[0]) &&
+                  (message = message[OBJECT_LIST]) &&
+                  message[0];
+      if (error)
+      {
+        stop_at.error_class = error[OBJECT_VALUE] &&
+                              error[OBJECT_VALUE][CLASS_NAME] || "Error";
+        var props = error[PROPERTY_LIST];
+        if (props)
+        {
+          for (var i = 0, prop; prop = props[i]; i++)
+          {
+            if (prop[NAME] == "message")
+              stop_at.error_message = prop[STRING];
+          }
+        }
+
+        var script = window.runtimes.getScript(stop_at.script_id);
+        if (script)
+        {
+          script.stop_at_error = stop_at;
+          window.views.js_source.show_stop_at_error();
+        }
+      }
+    }
+  };
+
+  this._clear_stop_at_error = function()
+  {
+    if (stopAt.error)
+    {
+      var script = window.runtimes.getScript(stopAt.script_id);
+      if (script)
+        script.stop_at_error = null;
+      window.views.js_source.clear_stop_at_error();
+    }
+  };
 
   this._stop_in_script = function(stop_at)
   {
@@ -449,6 +525,12 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     var tag = tagManager.set_callback(null, parseBacktrace, [stop_at]);
     var msg = [stop_at.runtime_id, stop_at.thread_id, ini.max_frames];
     services['ecmascript-debugger'].requestGetBacktrace(tag, msg);
+    if (stop_at.error)
+    {      
+      var tag = tagManager.set_callback(this, this._handle_error, [stop_at]);
+      var msg = [stopAt.runtime_id, [stopAt.error_obj_id], 0, 0, 0];
+      window.services['ecmascript-debugger'].requestExamineObjects(tag, msg); 
+    }
   }
 
   var onRuntimeDestroyed = function(msg)

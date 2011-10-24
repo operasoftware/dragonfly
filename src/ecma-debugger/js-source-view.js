@@ -16,6 +16,9 @@ cls.JsSourceView = function(id, name, container_class)
   var scroll_container_id = 'js-source-scroll-container';
   var container_breakpoints_id = 'break-point-container';
 
+  const STOP_AT_ERROR_CLASS = "stop-at-error";
+  const ERROR_TOOLTIP_CLASS = "error-description";
+
   var context = {};
 
   var __current_script = {};
@@ -601,6 +604,9 @@ cls.JsSourceView = function(id, name, container_class)
         source_content.innerHTML = get_script_lines(__top_line, this.getMaxLines() - 1);
         updateLineNumbers(__top_line);
 
+        if (__current_script.stop_at_error)
+          this.show_stop_at_error();
+
         var scroll_container = document.getElementById(scroll_container_id);
         if(scroll_container)
         {
@@ -708,6 +714,41 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return __current_script && __current_script.script_id;
   }
+
+  this.show_stop_at_error = function()
+  {
+    if (__current_script &&
+        __current_script.stop_at_error &&
+        this._is_line_within_view(__current_script.stop_at_error.line_number))
+    {
+      var error = __current_script.stop_at_error;
+      var line_ele = this.get_line_element(error.line_number);
+      if (line_ele)
+      {
+        line_ele.className = STOP_AT_ERROR_CLASS;
+        var tmpl = ['div',
+                    'Unhandled ' + error.error_class + ': ' + error.error_message,
+                    'class', ERROR_TOOLTIP_CLASS];
+        if (line_ele.firstChild)
+          line_ele.insertBefore(document.render(tmpl), line_ele.firstChild);
+        else
+          line_ele.render(tmpl);
+      }
+    }
+  };
+
+  this.clear_stop_at_error = function()
+  {
+    var source_content = document.getElementById(container_id);
+    var tooltip = source_content &&
+                  source_content.querySelector("." + ERROR_TOOLTIP_CLASS);
+
+    if (tooltip)
+    {
+      tooltip.parentNode.removeClass(STOP_AT_ERROR_CLASS);
+      tooltip.parentNode.removeChild(tooltip);
+    }
+  };
 
   this.clearView = function()
   {
