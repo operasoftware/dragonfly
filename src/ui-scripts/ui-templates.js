@@ -150,7 +150,7 @@
     return ret;
   }
 
-  this.search_button = function(search) // todo: this seems unreferenced (see DFL-2509)
+  this.search_button = function(search)
   {
     return (
     ['toolbar-search', 

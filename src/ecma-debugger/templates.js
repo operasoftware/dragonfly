@@ -454,7 +454,6 @@ MODE ::= "<mode>"
 
   this.key_value_folder = function(key, ref_index)
   {
-    debugger;
     return ['li',
       ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
       ['span', key, 'class', 'key'],

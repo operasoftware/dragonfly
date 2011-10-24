@@ -63,7 +63,7 @@
       ['span', 
         ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT,
         'handler', 'ev-brp-edit-custom-events',
-        'class', 'ui-button container-button', // todo: had to add .container-button here, won't get any real "button" styles otherwise
+        'class', 'ui-button container-button',
         'tabindex', '1'
       ],
       'class', 'controls'
@@ -86,13 +86,13 @@
         ['span', 
           ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'ev-brp-edit-custom-events-save',
-          'class', 'ui-button container-button', // todo: had to .add container-button here, won't get any real "button" styles otherwise
+          'class', 'ui-button container-button',
           'tabindex', '1'
         ],
         ['span', 
           ui_strings.S_BUTTON_CANCEL,
           'handler', 'ev-brp-edit-custom-events-cancel',
-          'class', 'ui-button container-button', // todo: had to .add container-button here, won't get any real "button" styles otherwise
+          'class', 'ui-button container-button',
           'tabindex', '1'
         ],
         'class', 'controls'

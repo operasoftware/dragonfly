@@ -136,7 +136,12 @@ templates.network_log_request_detail = function(ctx, selected)
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["span", "class", "close-request-detail container-button ui-button", "handler", "close-request-detail", "unselectable", "on", "tabindex", "1"],
+    ["span",
+      "class", "close-request-detail container-button ui-button",
+      "handler", "close-request-detail",
+      "unselectable", "on",
+      "tabindex", "1"
+    ],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],

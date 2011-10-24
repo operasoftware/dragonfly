@@ -268,7 +268,7 @@ cst-icon[class="debugger-menu"] {
   display: inline-block;
 }
 
-.ui-button.ui-control::before, /* todo: check back, not too sure of these changes. maybe the diff just looks really bad */
+.ui-button.ui-control::before,
 .container-button:empty::before {
     content: "";
     display: block;
@@ -437,7 +437,7 @@ toolbar-search {
   float: right;
 }
 
-toolbar-filters input[type=button] /* todo: .ui-button instead? */
+toolbar-filters input[type=button]
 {
   background-color: #ddd;
   background-image: -o-linear-gradient(-90deg,
@@ -458,7 +458,7 @@ toolbar-filters input[type=button] /* todo: .ui-button instead? */
   box-sizing: content-box;
 }
 
-toolbar-filters input[type=button]:active /* todo: .ui-button instead? */
+toolbar-filters input[type=button]:active
 {
   box-shadow: 0 1px #fff,
               inset 0 1px 2px rgba(0, 0, 0, .4);
@@ -1415,7 +1415,7 @@ tab.active .close-tab-button {
     border: 1px solid rgba(0, 0, 0, .45);
     border-radius: 4px;
     line-height: 20px;
-    padding: 1px 12px;
+    padding: 0 12px;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
     -o-transition: background-color 0.2s;
 }
