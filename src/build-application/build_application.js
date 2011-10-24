@@ -212,7 +212,6 @@ window.app.build_application = function(on_services_created, on_services_enabled
   [
     'scope',
     'console-logger',
-    'http-logger',
     'exec',
     'window-manager',
     'ecmascript-debugger',
