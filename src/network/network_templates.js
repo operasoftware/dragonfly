@@ -132,7 +132,7 @@ templates.network_log_details = function(ctx, selected, listwidth)
 templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
-  var responsecode = req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
+  var responsecode = req && req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
