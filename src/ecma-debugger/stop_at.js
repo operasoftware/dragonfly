@@ -301,6 +301,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   
   this._handle_continue = function(status, message, mode, clear_disabled_state)
   {
+    this._clear_stop_at_error();
     callstack = [];
     __script_ids_in_callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
@@ -320,6 +321,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     const THREAD_ID = 1;
     if (message[THREAD_ID] == stopAt.thread_id)
     {
+      this._clear_stop_at_error();
       callstack = [];
       __script_ids_in_callstack = [];
       messages.post('frame-selected', {frame_index: -1});
@@ -492,8 +494,21 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
         if (script)
         {
           script.stop_at_error = stop_at;
-          window.views.js_source.update_stop_at_error();
+          window.views.js_source.show_stop_at_error();
         }
+      }
+    }
+  };
+
+  this._clear_stop_at_error = function()
+  {
+    if (stopAt.error)
+    {
+      var script = window.runtimes.getScript(stopAt.script_id);
+      if (script)
+      {
+        script.stop_at_error = null;
+        window.views.js_source.clear_stop_at_error();
       }
     }
   };

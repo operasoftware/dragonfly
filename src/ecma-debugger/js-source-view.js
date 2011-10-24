@@ -16,6 +16,9 @@ cls.JsSourceView = function(id, name, container_class)
   var container_breakpoints_id = 'break-point-container';
   var horizontal_scoller = 'js-source-scroll-content';
 
+  const STOP_AT_ERROR_CLASS = "stop-at-error";
+  const ERROR_TOOLTIP_CLASS = "error-description";
+
   var context = {};
 
   var __current_script = {};
@@ -601,7 +604,9 @@ cls.JsSourceView = function(id, name, container_class)
 
         source_content.innerHTML = get_script_lines(__top_line, this.getMaxLines() - 1);
         updateLineNumbers(__top_line);
-        this.update_stop_at_error();
+
+        if (__current_script.stop_at_error)
+          this.show_stop_at_error();
 
         var scroll_container = document.getElementById(scroll_container_id);
         if(scroll_container)
@@ -711,7 +716,7 @@ cls.JsSourceView = function(id, name, container_class)
     return __current_script && __current_script.script_id;
   }
 
-  this.update_stop_at_error = function()
+  this.show_stop_at_error = function()
   {
     if (__current_script &&
         __current_script.stop_at_error &&
@@ -721,12 +726,10 @@ cls.JsSourceView = function(id, name, container_class)
       var line_ele = this.get_line_element(error.line_number);
       if (line_ele)
       {
-        
-        line_ele.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
-        line_ele.className = "first-error-line";
+        line_ele.className = STOP_AT_ERROR_CLASS;
         var tmpl = ['div',
                     'Unhadled ' + error.error_class + ': ' + error.error_message,
-                    'class', 'error-description'];
+                    'class', ERROR_TOOLTIP_CLASS];
         var error = document.render(tmpl)
         if (line_ele.firstChild)
           line_ele.insertBefore(document.render(tmpl), line_ele.firstChild);
@@ -734,7 +737,20 @@ cls.JsSourceView = function(id, name, container_class)
           line_ele.render(tmpl);
       }
     }
-  }
+  };
+
+  this.clear_stop_at_error = function()
+  {
+    var source_content = document.getElementById(container_id);
+    var tooltip = source_content &&
+                  source_content.querySelector("." + ERROR_TOOLTIP_CLASS);
+
+    if (tooltip)
+    {
+      tooltip.parentNode.removeClass(STOP_AT_ERROR_CLASS);
+      tooltip.parentNode.removeChild(tooltip);
+    }
+  };
 
   this.clearView = function()
   {
