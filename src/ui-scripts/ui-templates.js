@@ -248,7 +248,7 @@
     return [ ['info']]
   }
 
-  this.configButton = function(handler) // todo: this seems unreferenced (see DFL-2509)
+  this.configButton = function(handler)
   {
     return ['button', 'type', 'button', 'handler', handler, 'title', ui_strings.S_BUTTON_LABEL_SETTINGS];
   }
@@ -311,7 +311,7 @@
     ];
   };
 
-  this.window_controls_close = function() // todo: this seems unreferenced (see DFL-2509)
+  this.window_controls_close = function()
   {
     if (window.opera.attached)
     {
