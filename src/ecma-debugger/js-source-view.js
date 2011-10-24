@@ -728,9 +728,8 @@ cls.JsSourceView = function(id, name, container_class)
       {
         line_ele.className = STOP_AT_ERROR_CLASS;
         var tmpl = ['div',
-                    'Unhadled ' + error.error_class + ': ' + error.error_message,
+                    'Unhandled ' + error.error_class + ': ' + error.error_message,
                     'class', ERROR_TOOLTIP_CLASS];
-        var error = document.render(tmpl)
         if (line_ele.firstChild)
           line_ele.insertBefore(document.render(tmpl), line_ele.firstChild);
         else

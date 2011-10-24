@@ -352,12 +352,20 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       script_id: message[SCRIPT_ID],
       line_number: message[LINE_NUMBER],
       stopped_reason: message[STOPPED_REASON],
-      breakpoint_id: message[BREAKPOINT_ID],
-      error: message[EXCEPTION_VALUE],
-      error_obj_id: message[EXCEPTION_VALUE] &&
-                    message[EXCEPTION_VALUE][OBJECT_VALUE] && 
-                    message[EXCEPTION_VALUE][OBJECT_VALUE][OBJECT_ID]
+      breakpoint_id: message[BREAKPOINT_ID]
     };
+
+    if (message[EXCEPTION_VALUE])
+    {
+      var error_obj_id = message[EXCEPTION_VALUE] &&
+                         message[EXCEPTION_VALUE][OBJECT_VALUE] && 
+                         message[EXCEPTION_VALUE][OBJECT_VALUE][OBJECT_ID];
+      if (error_obj_id)
+      {
+        stopAt.error = message[EXCEPTION_VALUE];
+        stopAt.error_obj_id = error_obj_id;
+      }
+    }
 
     var line = stopAt.line_number;
     if (typeof line == 'number')
@@ -506,10 +514,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     {
       var script = window.runtimes.getScript(stopAt.script_id);
       if (script)
-      {
         script.stop_at_error = null;
-        window.views.js_source.clear_stop_at_error();
-      }
+      window.views.js_source.clear_stop_at_error();
     }
   };
 
