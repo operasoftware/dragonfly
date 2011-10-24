@@ -477,49 +477,6 @@ MODE ::= "<mode>"
     return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
   }
 
-  this.cssInspector = function(categories)
-  {
-    var ret = [], cat = null, i = 0;
-    for( ; cat = categories[i]; i++)
-    {
-      ret[ret.length] = this.cssInspectorCategory(cat);
-    }
-    return ret;
-  }
-
-  this.cssInspectorCategory = function(cat)
-  {
-    //<input type="button"  handler="toggle-setting"  view-id="css-inspector"  tab-id="css-inspector"  class="unfolded" />
-    var ret = ['category',
-        ['header',
-          ['span', // todo: see in ui
-            'tabindex', '1',
-            'handler', 'css-toggle-category',
-            'cat-id', cat.id,
-            'class', 'ui-button'
-          ].concat( cat.is_unfolded() ? ['class', 'unfolded'] : [] ),
-          cat.name,
-          'handler', 'css-toggle-category'
-        ],
-        ['styles']
-      ];
-
-    if( cat.is_unfolded() )
-    {
-      ret.splice(ret.length, 0, 'class', 'unfolded');
-    }
-
-    if( cat.handler )
-    {
-      ret.splice(ret.length, 0, 'edit-handler', cat.handler);
-    }
-
-    return ret;
-
-
-  }
-
-
   this['js-script-select'] = function(ui_obj)
   {
     return self['cst-select'](ui_obj.script_select);
