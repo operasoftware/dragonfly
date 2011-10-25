@@ -1169,6 +1169,7 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
   var service = window.services['ecmascript-debugger'];
+  // core integartion is at least 168, that means major version is at least 6
   var stop_on_error = (service.major_version > 6 ||
                        service.minor_version > 7)
                     ? 1
