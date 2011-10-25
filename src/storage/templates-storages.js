@@ -80,10 +80,11 @@ window.templates.storage = {
   },
   add_item_button: function(storage_name) {
     return [
-      "button", ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE.replace("%s", storage_name),
-      "class", "add_storage_button container-button",
+      "span", ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE.replace("%s", storage_name),
+      "class", "add_storage_button container-button ui-button",
       "handler", "storage-add-key",
-      "unselectable", "on"
+      "unselectable", "on",
+      "tabindex", "1"
     ];
   },
   not_existing: function(storage_id) {

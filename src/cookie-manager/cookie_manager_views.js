@@ -88,10 +88,11 @@ cls.CookieManager.CookieManagerViewBase = function()
           renderer: this._domain_renderer.bind(this),
           summer: function(values, groupname, getter) {
             return [
-              "button", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-              "class", "add_storage_button container-button",
+              "span", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
+              "class", "add_storage_button container-button ui-button",
               "handler", "cookiemanager-add-cookie-row",
-              "unselectable", "on"
+              "unselectable", "on",
+              "tabindex", "1"
             ];
           },
           sorter: this._make_sorter("domain")
@@ -393,7 +394,8 @@ cls.CookieManager.CookieManagerViewBase = function()
     this.mode = MODE_DEFAULT;
 
     var edit_trs = document.querySelectorAll("tr.edit_mode");
-    for (var i=0, edit_tr; edit_tr = edit_trs[i]; i++) {
+    for (var i = 0, edit_tr; edit_tr = edit_trs[i]; i++)
+    {
       // avoid refetching multiple times when saving multiple cookies.
       var is_last_cookie_in_list = (i == edit_trs.length - 1);
       var callback_after_set_cookie = function(){};

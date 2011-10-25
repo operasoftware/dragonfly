@@ -66,7 +66,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
       var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
                         "application/xslt+xml", "text/xsl", "application/xml",
                         "text/css", "text/plain", "application/x-javascript",
-                        "application/javascript", "text/javascript",
+                        "application/json", "application/javascript", "text/javascript",
                         "application/x-www-form-urlencoded"];
 
       var resparg = [[DATA_URI, DECODE],

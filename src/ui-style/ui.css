@@ -1,5 +1,5 @@
 ﻿/* Font stack defaults */
-viewport, .info-box, button {
+viewport, .info-box, .ui-button {
   font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
   color: #444;
@@ -116,7 +116,7 @@ toolbar-buttons, toolbar-switches {
   height: 100%;
 }
 
-button[handler="reload-window"]::before {
+.ui-button[handler="reload-window"]::before {
     background-image: url("../ui-images/icons/icon_reload.png");
 }
 /* Window control buttons */
@@ -264,7 +264,11 @@ cst-icon[class="debugger-menu"] {
     background-image: url("../ui-images/icons/icon_tabs.png");
 }
 
-button.ui-control::before,
+.ui-button {
+  display: inline-block;
+}
+
+.ui-button.ui-control::before,
 .container-button:empty::before {
     content: "";
     display: block;
@@ -274,21 +278,21 @@ button.ui-control::before,
     background-repeat: no-repeat;
 }
 
-.container-button:empty::before {
+.container-button:empty {
     height: 18px;
-    width: 18px;
+    padding-top: 2px;
 }
 
-button.text-button::before  {
+.ui-button.text-button::before  {
     display: none;
 }
 
-button.text-button {
+.ui-button.text-button {
     width: auto;
     padding-right: 5px;
     padding-left: 5px;
 }
-button.text-button:active {
+.ui-button.text-button:active {
     padding-right: 5px !important;
     padding-left: 5px !important;
 }
@@ -311,12 +315,12 @@ button.text-button:active {
   vertical-align: top;
   -o-transition: background-color 0.2s;
 }
-.ui-control[disabled] { /* :disabled seems to be buggy */
+.ui-control[disabled], .container-button[disabled] { /* :disabled seems to be buggy */
   background: #e0e0e0 !important;
   opacity: 0.4;
 }
 
-.ui-control:not([disabled]):active {
+.ui-control:not([disabled]):active, .ui-control.is-active {
     padding-top: 2px;
     padding-bottom: 0;
     box-shadow: 0 1px #fff,
@@ -327,25 +331,10 @@ button.text-button:active {
                                                     rgba(255, 255, 255, 0.25) 100%);
 }
 
-.ui-control.is-active {
-    padding-top: 2px;
-    padding-bottom: 0;
-    box-shadow: 0 1px #fff,
-                inset 0 1px 1px rgba(0, 0, 0, .15),
-                inset 0 0 4px rgba(0, 0, 0, .15);
-    background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                                    rgba(255, 255, 255, 0.45) 0,
-                                                    rgba(255, 255, 255, 0.25) 100%);
-}
-
-.ui-control.is-active:active {
-    background-color: #c6c6c6;
-}
-
 /* Grouping the toolbar buttons */
 /* All Buttons in a group*/
-toolbar-switches button.ui-control:not(:only-of-type),
-toolbar-buttons button.ui-control:not(:only-of-type),
+toolbar-switches .ui-button.ui-control:not(:only-of-type),
+toolbar-buttons .ui-button.ui-control:not(:only-of-type),
 #toggle-settings-overlay,
 #toggle-remote-debug-overlay,
 #top-window-toggle-attach.attached,
@@ -356,8 +345,8 @@ toolbar-buttons button.ui-control:not(:only-of-type),
 }
 
 /* Leftmost Button*/
-toolbar-switches button.ui-control:first-of-type,
-toolbar-buttons button.ui-control:first-of-type,
+toolbar-switches .ui-button.ui-control:first-of-type,
+toolbar-buttons .ui-button.ui-control:first-of-type,
 #toggle-settings-overlay,
 #top-window-toggle-attach.attached {
   border-top-left-radius: 3px;
@@ -366,8 +355,8 @@ toolbar-buttons button.ui-control:first-of-type,
 }
 
 /* Rightmost Button*/
-toolbar-switches button.ui-control:last-of-type,
-toolbar-buttons button.ui-control:last-of-type,
+toolbar-switches .ui-button.ui-control:last-of-type,
+toolbar-buttons .ui-button.ui-control:last-of-type,
 #toggle-remote-debug-overlay,
 #top-window-close {
   border-top-right-radius: 3px;
@@ -448,37 +437,7 @@ toolbar-search {
   float: right;
 }
 
-toolbar-filters input[type=button]
-{
-  background-color: #ddd;
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(255, 255, 255, 0.75) 0,
-                                       rgba(255, 255, 255, 0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 3px;
-  margin: 0 0 0 4px;
-  padding: 1px 10px;
-  height: 17px;
-  line-height: 27px;
-  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-  box-shadow: 0 1px rgba(255, 255, 255, 0.5),
-              inset 0 1px 1px #fff;
-  display: inline-block;
-  vertical-align: top;
-  -o-transition: background-color 0.2s;
-  box-sizing: content-box;
-}
-
-toolbar-filters input[type=button]:active
-{
-  box-shadow: 0 1px #fff,
-              inset 0 1px 2px rgba(0, 0, 0, .4);
-  background-position: 0 1px;
-  padding-top: 2px;
-  padding-bottom: 0;
-}
-
-toolbar-filters input[type=button].search-move-highlight-up
+toolbar-filters .ui-button.search-move-highlight-up
 {
   content: url("../ui-images/icons/icon_back.png");
   border-radius: 10px 0 0 10px;
@@ -486,7 +445,7 @@ toolbar-filters input[type=button].search-move-highlight-up
   margin: 0;
 }
 
-toolbar-filters input[type=button].search-move-highlight-down
+toolbar-filters .ui-button.search-move-highlight-down 
 {
   content: url("../ui-images/icons/icon_forward.png");
   border-radius: 0 10px 10px 0;
@@ -1425,9 +1384,8 @@ tab.active .close-tab-button {
                                          rgba(255, 255, 255, 0.25) 100%);
     border: 1px solid rgba(0, 0, 0, .45);
     border-radius: 4px;
-    height: 22px;
     line-height: 20px;
-    padding: 1px 12px;
+    padding: 0 12px;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
     -o-transition: background-color 0.2s;
 }

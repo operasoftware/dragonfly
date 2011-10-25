@@ -609,34 +609,6 @@ cls.CSSInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers['css-toggle-category'] = function(event, target)
-  {
-    if (/header/i.test(target.nodeName))
-    {
-      target = target.firstChild;
-    }
-    var cat = target.getAttribute('cat-id'), value = target.hasClass('unfolded');
-    var cat_container = target.parentNode.parentNode;
-    if (value)
-    {
-      target.removeClass('unfolded');
-      cat_container.removeClass('unfolded');
-      var styles = cat_container.getElementsByTagName('styles')[0];
-      if (styles)
-      {
-        styles.innerHTML = "";
-      }
-    }
-    else
-    {
-      target.addClass('unfolded');
-      cat_container.addClass('unfolded');
-    }
-    this.setSelected(target.parentNode);
-    settings['css-inspector'].set(cat, !value);
-    window.elementStyle.setUnfoldedCat(cat, !value);
-  }.bind(this);
-
   this.target_enter = function(event, action_id)
   {
     if (this.__target)
@@ -808,14 +780,4 @@ cls.CSSInspectorActions = function(id)
 eventHandlers.dblclick['edit-css'] = function(event, target)
 {
   this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
-}
-eventHandlers.click['css-toggle-category'] = function(event, target)
-{
-  this.broker.dispatch_action('css-inspector', 'css-toggle-category',
-                              event, target);
-}
-eventHandlers.click['enable-disable'] = function(event, target)
-{
-  this.broker.dispatch_action('css-inspector', 'enable-disable-property',
-                              event, target);
 }

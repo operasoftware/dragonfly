@@ -222,7 +222,12 @@ cls.GeneralView.create_ui_widgets = function()
               templates.uiLangOptions(),
               'handler', 'set-ui-language'
             ],
-            ["button", ui_strings.S_BUTTON_LOAD_PO_FILE, "handler", "show-po-selector"]
+            [
+              "span", ui_strings.S_BUTTON_LOAD_PO_FILE,
+              "handler", "show-po-selector",
+              "class", "ui-button",
+              "tabindex", "1"
+            ]
           ]
         ];
       }
@@ -422,9 +427,11 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         else
         {
           return ['setting-composite',
-            ['button',
+            ['span',
               ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
-              'handler', 'cancel-remote-debug'
+              'handler', 'cancel-remote-debug',
+              'class', 'ui-button',
+              'tabindex', '1'
             ]
           ]
         }

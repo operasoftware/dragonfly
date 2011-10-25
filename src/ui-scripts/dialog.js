@@ -77,9 +77,11 @@ BaseDialog.prototype = new function()
 
   this._get_button_template = function(button)
   {
-    return ["button",
+    return ["span",
               button.label,
             "data-handler-id", "" + button.id,
+            "class", "ui-button",
+            "tabindex", "1"
            ];
   };
 

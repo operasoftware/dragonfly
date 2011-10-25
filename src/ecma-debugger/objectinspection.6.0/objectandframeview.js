@@ -193,13 +193,17 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
               ],
             ],
             ['span', '  '],
-            ['button',
+            ['span',
               ui_strings.S_BUTTON_TEXT_APPLY,
-              'handler', 'apply-collapsed-prototypes'
+              'handler', 'apply-collapsed-prototypes',
+              'class', 'ui-button',
+              'tabindex', '1'
             ],
-            ['button',
+            ['span',
               ui_strings.S_BUTTON_SET_DEFAULT_VALUE,
-              'handler', 'default-collapsed-prototypes'
+              'handler', 'default-collapsed-prototypes',
+              'class', 'ui-button',
+              'tabindex', '1'
             ],
             'class', ' '
           ]
