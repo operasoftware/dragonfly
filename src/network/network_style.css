@@ -13,16 +13,16 @@
 #left-side-content
 {
   width: 250px;
-  border-right: solid thin gray;
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 #right-side-container
 {
   position: absolute;
   height: 100%;
-  top: 0px;
+  top: 0;
   left: 251px;
-  right: 0px;
+  right: 0;
   overflow: hidden;
 }
 
@@ -54,16 +54,17 @@
 
 .network-log-url-list li {
   height: 19px;
-  border-top: 1px solid #dedede;
-  padding: 4px 0px 1px 8px;
+  padding: 4px 0 1px 8px;
 }
 
-.network-log-url-list:last-child {
-  border-bottom: 1px solid #dedede;
+.network-log-url-list:last-child,
+.network-graph-row:last-of-type {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.network-log-url-list li:nth-child(odd) {
-  background-color: #f8f8f8;
+.network-log-url-list li:nth-child(odd),
+.network-graph-row:nth-child(even) {
+  background-color: rgba(0,0,0,0.03)
 }
 
 .network-log-url-list li.hovered,
@@ -260,29 +261,21 @@
   left: 0;
   padding-top: 1px;
   background-image: -o-linear-gradient(0deg,
-                                       #e5e5e5 0px,
-                                       #e5e5e5 1px,
-                                       transparent 1px),
-                    -o-linear-gradient(top,
-                                       #dedede 0px,
-                                       #dedede 1px,
-                                       #fefefe 1px,
-                                       #fefefe 25px,
-                                       #dedede 25px,
-                                       #dedede 26px,
-                                       #f8f8f8 26px,
-                                       #f8f8f8 51px,
-                                       red 51px);
+                                       rgba(0, 0, 0, 0.06) 0,
+                                       rgba(0, 0, 0, 0.06) 1px,
+                                       transparent 1px);
 
-  background-size: 41px 100%, 50px 50px;
+  background-size: 41px 100%;
   background-repeat: repeat;
+  background-position: -1px 50%;
 }
 
 .network-graph-row
 {
-  height: 25px;
-  line-height: 25px;
+  height: 24px;
+  line-height: 24px;
 }
+
 .network-graph-latency
 {
   display: inline-block;
@@ -348,6 +341,9 @@
 .timeline-marker {
   display: inline-block;
   width: 60px;
+  line-height: 21px;
+  background-color: #fefefe;
   position: absolute;
+  top: 0;
   text-align: center;
 }
