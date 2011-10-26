@@ -18,7 +18,7 @@ cls.StylesheetsView = function(id, name, container_class)
       //var t = new Date().getTime();
       container.innerHTML = 
         "<div class='padding'>" + 
-        stylesheets.prettyPrintRules(selected_sheet.rules, settings[self.id].get('shortcuts') ) + 
+        stylesheets.pretty_print_rules(selected_sheet.rules) + 
         "</div>";
       if(selected_sheet.rule_id)
       {
@@ -134,29 +134,6 @@ cls.StylesheetSelect = function(id, class_name)
 
 cls.StylesheetsView.create_ui_widgets = function()
 {
-  new Settings
-  (
-    // id
-    'stylesheets', 
-    // key-value map
-    {
-      'shortcuts': true
-    }, 
-    // key-label map
-    {
-      'shortcuts': ui_strings.S_SWITCH_CREATE_SHORTHANDS
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        'shortcuts'
-      ]
-    },
-    null,
-    "document"
-  );
-
   new ToolbarConfig
   (
     'stylesheets',
@@ -164,7 +141,6 @@ cls.StylesheetsView.create_ui_widgets = function()
     [
       {
         handler: 'stylesheets-text-search',
-        shortcuts: 'stylesheets-text-search',
         title: ui_strings.S_SEARCH_INPUT_TOOLTIP
       }
     ],
@@ -179,15 +155,6 @@ cls.StylesheetsView.create_ui_widgets = function()
       }
     ]
   );
-
-  new Switches
-  (
-    'stylesheets',
-    [
-      'shortcuts'
-    ]
-  );
-
  
   // filter handlers
   var textSearch = new TextSearch();
