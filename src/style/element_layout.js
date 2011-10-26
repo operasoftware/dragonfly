@@ -261,14 +261,14 @@ cls.ElementLayout = function()
     rt_id = __selectedElement.rt_id,
     obj_id = __selectedElement.obj_id;
     
-    if( stylesheets.hasStylesheetsRuntime(rt_id) )
+    if( stylesheets.has_stylesheets_runtime(rt_id) )
     {
       var tag = tagManager.set_callback(null, handleGetMetricsData, [rt_id, obj_id, org_args]);
       services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
-      stylesheets.getStylesheets(__selectedElement.rt_id, arguments);
+      stylesheets.get_stylesheets(__selectedElement.rt_id, arguments);
     }
     return null;
   }

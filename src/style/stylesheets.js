@@ -9,6 +9,7 @@
 cls.Stylesheets = function()
 {
   var self = this;
+  this._tag_manager = window.tag_manager;
   // document.styleSheets dict with runtime-id as key
   this._sheets = {};
   // document.styleSheets[index].cssRules with runtime-id and index as keys
@@ -17,15 +18,11 @@ cls.Stylesheets = function()
   this._index_map_length = 0; // TODO: is this needed, check length of _index_map instead?
   this._sorted_index_map = [];
   this._initial_values = [];
-  var __colorIndexMap = [];
   this._selected_rules = null;
-  var __colorIndex = 0;
-  var __new_rts = null;
-  var __top_rt_id = '';
-  var __on_new_stylesheets_cbs = {};
-
-  var line_height_index = 0;
-
+  this._color_index = 0;
+  this._new_runtime_ids = null;
+  this._top_runtime_id = '';
+  this._on_new_stylesheet_cbs = {};
   this._is_getting_index_map = false;
 
   var __color_properties =
@@ -52,10 +49,10 @@ cls.Stylesheets = function()
     this._sorted_index_map = [];
     this._initial_values = [];
     this._selected_rules = null;
-    __colorIndex = 0;
-    __new_rts = null;
-    __top_rt_id = '';
-    __on_new_stylesheets_cbs = {};
+    this._color_index = 0;
+    this._new_runtime_ids = null;
+    this._top_runtime_id = '';
+    this._on_new_stylesheet_cbs = {};
   };
 
   var SHEET_OBJECT_ID = 0; // TODO use the right obj-id
@@ -122,7 +119,7 @@ cls.Stylesheets = function()
   special_default_values["border-right-color"] =
   special_default_values["border-top-color"] = function(data, value)
   {
-    return value == data[__colorIndex];
+    return value == data[this._color_index];
   };
 
   const
@@ -185,7 +182,7 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[UNKNOWN_RULE] = function(rule, is_style_sheet)
   {
-    return '';
+    return "";
   }.bind(this);
 
   this._pretty_print_rule[STYLE_RULE] = function(rule, is_style_sheet)
@@ -235,9 +232,9 @@ cls.Stylesheets = function()
     MEDIA_LIST = 8,
     STYLESHEETRULE_RULE_LIST = 9;
 
-    var ret = '', _rule = null, header = null, i = 0;
+    var ret = '', _rule = null, header = null;
     if (rule[STYLESHEETRULE_RULE_LIST]) {
-      for ( ; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
+      for (var i = 0; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
       {
         ret += this._pretty_print_rule[_rule[TYPE]](_rule, is_style_sheet);
       }
@@ -250,7 +247,7 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[FONT_FACE_RULE] = function(rule, is_style_sheet)
   {
-    const RULE_ID = 2;
+    var RULE_ID = 2;
     return "<font-face-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@font-face</at> {\n" +
               this._pretty_print_rule[COMMON](rule, 0, is_style_sheet) +
@@ -259,7 +256,8 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[PAGE_RULE] = function(rule, is_style_sheet)
   {
-    const RULE_ID = 2, PSEUDO_CLASS = 12;
+    var RULE_ID = 2;
+    var PSEUDO_CLASS = 12;
 
     var pseudo_class_map =
     {
@@ -270,17 +268,17 @@ cls.Stylesheets = function()
 
     return "<page-rule rule-id='" + rule[RULE_ID] + "'>" +
               "<at>@page</at>" +
-              ( rule[PSEUDO_CLASS]
-              ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
-              : "" ) + " {\n" +
+                (rule[PSEUDO_CLASS]
+                ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
+                : "") + " {\n" +
               this._pretty_print_rule[COMMON](rule, 0, is_style_sheet) +
             "\n}</page-rule>";
   }.bind(this);
 
   this.pretty_print_rules = function(rules)
   {
-    const TYPE = 0;
-    var ret = '';
+    var TYPE = 0;
+    var ret = "";
     if (rules.length)
     {
       for (var i = 0, rule; rule = rules[i]; i++)
@@ -298,30 +296,28 @@ cls.Stylesheets = function()
 
   this._pretty_print_cat[COMP_STYLE] = function(data, search_active)
   {
-    var ret = "", i = 0, index = 0, prop = '', value = '';
-    // setProps is used to force the display if a given property is set
+    var ret = "";
+    // set_props is used to force the display if a given property is set
     // also if it has the initial value
-    var setProps = elementStyle.getSetProps();
-    var hideInitialValue = !settings['css-comp-style'].get('show-initial-values');
+    var set_props = elementStyle.getSetProps();
+    var hide_initial_value = !settings['css-comp-style'].get('show-initial-values');
     var search_term = elementStyle.getSearchTerm();
-    var is_not_initial_value = false;
-    var display = false;
 
-    for ( ; i < this._index_map_length; i++)
+    for (var i = 0; i < this._index_map_length; i++)
     {
-      index = this._sorted_index_map[i];
-      prop = this._index_map[index];
-      value = data[index];
-      is_not_initial_value =
-        hideInitialValue
+      var index = this._sorted_index_map[i];
+      var prop = this._index_map[index];
+      var value = data[index];
+      var is_not_initial_value =
+        hide_initial_value
         && value
         && value != this._initial_values[index]
         && !(prop in special_default_values && special_default_values[prop](data, value))
         || false;
-      display =
+      var display =
         (
-          !hideInitialValue
-          || setProps[index]
+          !hide_initial_value
+          || set_props[index]
           || is_not_initial_value
         )
         && !(search_term && !(prop.indexOf(search_term) != -1 ||
@@ -338,21 +334,13 @@ cls.Stylesheets = function()
 
   this._pretty_print_cat[CSS] = function(data, search_active)
   {
-    var
-    node_casc = null,
-    i = 0,
-    ret = '',
-    j = 0,
-    css_style_dec = null,
-    rt_id = data.rt_id,
-    element_name = null,
-    style_dec_list = null,
-    style_dec = null;
+    var ret = "";
+    var rt_id = data.rt_id;
 
-    for ( ; node_casc = data[i]; i++)
+    for (var i = 0, node_casc; node_casc = data[i]; i++)
     {
-      element_name = node_casc[ELEMENT_NAME];
-      style_dec_list = node_casc[STYLE_LIST];
+      var element_name = node_casc[ELEMENT_NAME];
+      var style_dec_list = node_casc[STYLE_LIST];
 
       if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
       {
@@ -360,7 +348,7 @@ cls.Stylesheets = function()
       }
 
       var inherited_printed = false;
-      for (j = 0; style_dec = style_dec_list[j]; j++)
+      for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
       {
         if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
         {
@@ -420,15 +408,15 @@ cls.Stylesheets = function()
     PRIORITY = 1,
     STATUS = 2;
 
-    var ret = '',
-    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
-    value_list = rule[VALUE_LIST],
-    priority_list = rule[PROPERTY_LIST],
-    overwritten_list = rule[OVERWRITTEN_LIST] || [],
-    search_list = rule[SEARCH_LIST] || [],
-    disabled_list = rule[DISABLED_LIST] || [],
-    prop_index = 0,
-    index = 0;
+    var ret = '';
+    var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
+    var value_list = rule[VALUE_LIST];
+    var priority_list = rule[PROPERTY_LIST];
+    var overwritten_list = rule[OVERWRITTEN_LIST] || [];
+    var search_list = rule[SEARCH_LIST] || [];
+    var disabled_list = rule[DISABLED_LIST] || [];
+    var prop_index = 0;
+    var index = 0;
 
     // Create an array of [prop, prop_index] for sorting
     var properties = index_list.map(function(index) {
@@ -502,12 +490,9 @@ cls.Stylesheets = function()
 
   this._pretty_print_style_dec[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, style_dec, search_active)
   {
-    var
-    ret = '',
-    header = null,
-    i = 0,
-    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]),
-    has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
+    var ret = '';
+    var sheet = this.get_sheet_with_obj_id(rt_id, style_dec[STYLESHEET_ID]);
+    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
@@ -582,23 +567,23 @@ cls.Stylesheets = function()
   {
     if (!this._sheets[data.rt_id])
     {
-      var tag = tagManager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
-      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
+      window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
       return '';
     }
 
     if (!this._index_map && !this._is_getting_index_map)
     {
       this._is_getting_index_map = true;
-      var tag = tagManager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
-      services['ecmascript-debugger'].requestCssGetIndexMap(tag);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
+      window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       return '';
     }
 
     return this._pretty_print_cat[cat_index](data, search_active);
   };
 
-  this.getStylesheets = function(rt_id, org_args)
+  this.get_stylesheets = function(rt_id, org_args)
   {
     if (this._sheets[rt_id])
     {
@@ -610,21 +595,21 @@ cls.Stylesheets = function()
       if (!this._index_map && !this._is_getting_index_map)
       {
         this._is_getting_index_map = true;
-        var tag = tagManager.set_callback(null, this._handle_get_index_map.bind(this), []);
-        services['ecmascript-debugger'].requestCssGetIndexMap(tag);
+        var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), []);
+        window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
       }
-      var tag = tagManager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
-      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
+      window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
       return null;
     }
   };
 
-  this.hasStylesheetsRuntime = function(rt_id)
+  this.has_stylesheets_runtime = function(rt_id)
   {
-    return this._sheets[rt_id] && true || false;
+    return this._sheets[rt_id] && true || false; // TODO: just use Boolean(this._sheets[rt_id])?
   };
 
-  this.getSheetWithObjId = function(rt_id, obj_id)
+  this.get_sheet_with_obj_id = function(rt_id, obj_id)
   {
     if (this._sheets[rt_id])
     {
@@ -645,12 +630,12 @@ cls.Stylesheets = function()
     }
   };
 
-  this.getSheetWithRtIdAndIndex = function(rt_id, index)
+  this.get_sheet_with_rt_id_and_index = function(rt_id, index)
   {
     return this._sheets[rt_id] && this._sheets[rt_id][index] || null;
   };
 
-  this.invalidateSheet = function(rt_id, index)
+  this.invalidate_sheet = function(rt_id, index)
   {
     if (this._rules[rt_id] && this._rules[rt_id][index])
     {
@@ -664,7 +649,7 @@ cls.Stylesheets = function()
     }
   };
 
-  this.getRulesWithSheetIndex = function(rt_id, index, org_args)
+  this.get_rules_with_sheet_index = function(rt_id, index, org_args)
   {
     if (rt_id)
     {
@@ -675,27 +660,27 @@ cls.Stylesheets = function()
 
       if (this._sheets[rt_id][index])
       {
-        var tag = tagManager.set_callback(null, this._handle_get_rules_with_index.bind(this), [rt_id, index, org_args]);
+        var tag = this._tag_manager.set_callback(null, this._handle_get_rules_with_index.bind(this), [rt_id, index, org_args]);
         var sheet_id = this._sheets[rt_id][index][SHEET_OBJECT_ID];
-        services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
+        window.services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
         return null;
       }
     }
     return null;
   };
 
-  this.setSelectedSheet = function(rt_id, index, rules, rule_id)
+  this.set_selected_sheet = function(rt_id, index, rules, rule_id)
   {
-    this._selected_rules =
-    {
+    this._selected_rules = {
       runtime_id: rt_id,
       index: index,
       rules: rules,
       rule_id: rule_id || ''
-    }
+    };
   };
 
-  this.getSelectedSheet = function(org_args)
+  // TODO: probably not used anymore
+  this.get_selected_sheet = function(org_args)
   {
     if (this._selected_rules)
     {
@@ -704,7 +689,7 @@ cls.Stylesheets = function()
 
     if (org_args)
     {
-      this._on_new_stylesheets(__top_rt_id, [null, this._select_first_sheet.bind(this), __top_rt_id, 0, org_args]);
+      this._on_new_stylesheets(this._top_runtime_id, [null, this._select_first_sheet.bind(this), this._top_runtime_id, 0, org_args]);
     }
     return null;
   };
@@ -714,26 +699,15 @@ cls.Stylesheets = function()
     var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
     if (rules)
     {
-      this.setSelectedSheet(rt_id, index, rules);
+      this.set_selected_sheet(rt_id, index, rules);
       org_args.callee.apply(null, org_args);
     }
     window['cst-selects']['stylesheet-select'].updateElement();
   };
 
-  this.hasSelectedSheetRuntime = function(rt_id)
-  {
-    return this._selected_rules && this._selected_rules.runtime_id == rt_id || false;
-  };
-
-  this.isSelectedSheet = function(rt_id, index)
-  {
-    return (this._selected_rules && rt_id == this._selected_rules.runtime_id &&
-            index == this._selected_rules.index && true || false );
-  };
-
   this._handle_get_index_map = function(status, message, org_args)
   {
-    const NAME_LIST = 0;
+    var NAME_LIST = 0;
     var index_map = message[NAME_LIST];
     if (!index_map)
     {
@@ -741,9 +715,8 @@ cls.Stylesheets = function()
     }
     window.css_index_map = this._index_map = index_map;
     window.inherited_props_index_list = [];
-    var prop = '', i = 0;
     var temp = [];
-    for ( ; prop = this._index_map[i]; i++)
+    for (var i = 0, prop; prop = this._index_map[i]; i++)
     {
       temp[i] = {index: i, key : prop};
       this._initial_values[i] = css_initial_values[prop];
@@ -751,57 +724,16 @@ cls.Stylesheets = function()
       {
         inherited_props_index_list[i] = true;
       }
-      switch (prop)
+
+      if (prop == 'color')
       {
-        case 'fill':
-        case 'stroke':
-        case 'stop-color':
-        case 'flood-color':
-        case 'lighting-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'color':
-        {
-          __colorIndex = i;
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'border-top-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'border-right-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'border-bottom-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'border-left-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'background-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'line-height':
-        {
-          line_height_index = i;
-          break;
-        }
+        this._color_index = i;
       }
     }
 
-    temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
+    temp.sort(function(a, b) {
+      return a.key < b.key ? -1 : a.key > b.key ? 1 : 0
+    });
 
     for (i = 0; prop = temp[i]; i++)
     {
@@ -833,7 +765,7 @@ cls.Stylesheets = function()
 
   this._handle_get_all_stylesheets = function(status, message, rt_id, org_args)
   {
-    const STYLESHEET_LIST = 0;
+    var STYLESHEET_LIST = 0;
     if (status == 0)
     {
       this._sheets[rt_id] = message[STYLESHEET_LIST] || [];
@@ -858,9 +790,9 @@ cls.Stylesheets = function()
   this._on_new_stylesheets = function(rt_id, cb_arr/* obj, cb_method, arg 1, arg 2, ... */)
   {
     // cb_arr: [cb_obj, cb_method, arg 1, arg 2, ... ]
-    if (__on_new_stylesheets_cbs[rt_id])
+    if (this._on_new_stylesheet_cbs[rt_id])
     {
-      __on_new_stylesheets_cbs[rt_id][__on_new_stylesheets_cbs[rt_id].length] = cb_arr;
+      this._on_new_stylesheet_cbs[rt_id][this._on_new_stylesheet_cbs[rt_id].length] = cb_arr;
     }
     else
     {
@@ -875,57 +807,55 @@ cls.Stylesheets = function()
     rt_id_c_2 = '',
     i = 0;
 
-    for (rt_id_c_1 in __on_new_stylesheets_cbs)
+    for (rt_id_c_1 in this._on_new_stylesheet_cbs)
     {
-      for (i = 0; ( rt_id_c_2 = rt_ids[i] ) && rt_id_c_1 != rt_id_c_2 ; i++);
+      for (i = 0; (rt_id_c_2 = rt_ids[i]) && rt_id_c_1 != rt_id_c_2; i++);
       if (!rt_id_c_2)
       {
-        delete __on_new_stylesheets_cbs[rt_id_c_1];
+        delete this._on_new_stylesheet_cbs[rt_id_c_1];
       }
     }
 
     for (i = 0; rt_id_c_1 = rt_ids[i]; i++)
     {
-      if (!(rt_id_c_1 in __on_new_stylesheets_cbs))
+      if (!(rt_id_c_1 in this._on_new_stylesheet_cbs))
       {
-        __on_new_stylesheets_cbs[rt_id_c_1] = [];
+        this._on_new_stylesheet_cbs[rt_id_c_1] = [];
       }
     }
 
-    __new_rts = rt_ids;
+    this._new_runtime_ids = rt_ids;
 
-    if (rt_ids[0] != __top_rt_id)
+    if (rt_ids[0] != this._top_runtime_id)
     {
-      __top_rt_id = rt_ids[0] || 0;
+      this._top_runtime_id = rt_ids[0] || 0;
       this._selected_rules = null;
       window.views['stylesheets'].update();
     }
   };
 
+  // TODO: using 'self' in here (because of callees called with 'null'?), change to 'this'
   this._check_new_runtimes = function(obj)
   {
-    var
-    cursor = null,
-    cbs = null,
-    cb = null,
-    i = 0;
+    var cbs = null;
+    var cb = null;
 
-    for (i = 0; cursor = __new_rts[i]; i++)
+    for (var i = 0, cursor; cursor = self._new_runtime_ids[i]; i++)
     {
       // TODO: the handling of stylesheets needs to be cleaned up.
       if (!self._sheets[cursor])
       {
-        self.getStylesheets(cursor, arguments);
+        self.get_stylesheets(cursor, arguments);
       }
       else
       {
-        if (cbs = __on_new_stylesheets_cbs[cursor])
+        if (cbs = self._on_new_stylesheet_cbs[cursor])
         {
           for (i = 0; cb = cbs[i]; i++)
           {
             cb[1].apply(cb[0], cb.slice(2));
           }
-          delete __on_new_stylesheets_cbs[cursor];
+          delete self._on_new_stylesheet_cbs[cursor];
         }
       }
     }
@@ -935,9 +865,9 @@ cls.Stylesheets = function()
   {
     if (this._selected_rules)
     {
-      var rt_id = this._selected_rules.runtime_id, cur_rt_id = '', i = 0;
+      var rt_id = this._selected_rules.runtime_id;
 
-      for ( ; (cur_rt_id = msg.runtimes_with_dom[i]) && cur_rt_id != rt_id ; i++);
+      for (var i = 0, cur_rt_id; (cur_rt_id = msg.runtimes_with_dom[i]) && cur_rt_id != rt_id; i++);
       if (!cur_rt_id)
       {
         window.views.stylesheets.clearAllContainers();
@@ -950,9 +880,9 @@ cls.Stylesheets = function()
       // document.styleSheets[index].cssRules with runtime-id and index as keys
       this._rules = {};
       this._selected_rules = null;
-      __new_rts = null;
-      __top_rt_id = '';
-      __on_new_stylesheets_cbs = {};
+      this._new_runtime_ids = null;
+      this._top_runtime_id = '';
+      this._on_new_stylesheet_cbs = {};
     }
     else
     {
@@ -961,23 +891,24 @@ cls.Stylesheets = function()
     }
   };
 
-  this.getSortedProperties = function()
+  this.get_sorted_properties = function()
   {
-    var ret = [], i = 0, dashs = [], value = '';
+    var ret = [];
+    var dashes = [];
 
-    for ( ; i < this._index_map_length; i++)
+    for (var i = 0; i < this._index_map_length; i++)
     {
-      value = this._index_map[this._sorted_index_map[i]];
+      var value = this._index_map[this._sorted_index_map[i]];
       if (value.indexOf('-') == 0)
       {
-        dashs[dashs.length] = value;
+        dashes.push(value);
       }
       else
       {
-        ret[ret.length] = value;
+        ret.push(value);
       }
     }
-    return ret.concat(dashs);
+    return ret.concat(dashes);
   };
 
   window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));

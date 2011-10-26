@@ -412,7 +412,7 @@ cls.ElementStyle = function()
   {
     _rt_id = rt_id;
     _obj_id = obj_id;
-    if (stylesheets.hasStylesheetsRuntime(rt_id))
+    if (stylesheets.has_stylesheets_runtime(rt_id))
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id];
@@ -421,7 +421,7 @@ cls.ElementStyle = function()
     }
     else
     {
-      stylesheets.getStylesheets(rt_id, arguments);
+      stylesheets.get_stylesheets(rt_id, arguments);
     }
   };
 

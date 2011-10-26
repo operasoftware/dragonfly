@@ -11,7 +11,7 @@ cls.StylesheetsView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    var selected_sheet = stylesheets.getSelectedSheet(arguments);
+    var selected_sheet = stylesheets.get_selected_sheet(arguments);
     if(selected_sheet)
     {
       // TODO check markup
@@ -73,12 +73,12 @@ cls.StylesheetSelect = function(id, class_name)
   {
     var 
     title = ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS,
-    selected_sheet = stylesheets.getSelectedSheet(),
+    selected_sheet = stylesheets.get_selected_sheet(),
     sheet = null;
 
     if(selected_sheet)
     {
-      sheet = stylesheets.getSheetWithRtIdAndIndex(selected_sheet.runtime_id, selected_sheet.index);
+      sheet = stylesheets.get_sheet_with_rt_id_and_index(selected_sheet.runtime_id, selected_sheet.index);
       if( sheet )
       {
         title = sheet[TITLE] || sheet[HREF] || 'inline stylesheet ' + ( selected_sheet.index + 1 );
@@ -111,14 +111,14 @@ cls.StylesheetSelect = function(id, class_name)
 
     var index = parseInt(target_ele.getAttribute('index'));
     var rt_id = parseInt(target_ele.getAttribute('runtime-id'));
-    // stylesheets.getRulesWithSheetIndex will call this function again if data is not avaible
+    // stylesheets.get_rules_with_sheet_index will call this function again if data is not available
     // handleGetRulesWithIndex in stylesheets will 
     // set for this reason __call_count on the event object
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
+    var rules = stylesheets.get_rules_with_sheet_index(rt_id, index, arguments);
     if(rules && rules.index != index)
     {
       delete target_ele.__call_count;
-      stylesheets.setSelectedSheet(rt_id, index, rules);
+      stylesheets.set_selected_sheet(rt_id, index, rules);
       views['stylesheets'].update();
       self.updateElement();
     }

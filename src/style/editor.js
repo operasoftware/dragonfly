@@ -679,7 +679,7 @@ var Editor = function(actions)
   {
     if (!this.property_list)
     {
-      this.property_list = stylesheets.getSortedProperties();
+      this.property_list = stylesheets.get_sorted_properties();
       this.property_list_length = this.property_list.length;
     }
     return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
@@ -824,7 +824,7 @@ var Editor = function(actions)
 
     if (this.context_stylesheet_index > -1)
     {
-      stylesheets.invalidateSheet(this.context_rt_id, this.context_stylesheet_index);
+      stylesheets.invalidate_sheet(this.context_rt_id, this.context_stylesheet_index);
       this.context_stylesheet_index = -1;
     }
   };
