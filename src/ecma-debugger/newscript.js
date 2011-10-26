@@ -325,6 +325,9 @@ window.cls.NewScript.prototype = new function()
               }
               case '*':
               {
+                // skip the first '*'
+                slash_cur++;
+                
                 do
                 {
                   slash_cur = string.indexOf('*', slash_cur + 1);
