@@ -46,7 +46,8 @@ cls.ElementStyle = function()
   ORIGIN_USER_AGENT = 1,
   ORIGIN_LOCAL = 2,
   ORIGIN_AUTHOR = 3,
-  ORIGIN_ELEMENT = 4;
+  ORIGIN_ELEMENT = 4,
+  ORIGIN_SVG = 5;
 
   // Pseudo classes/elements
   const NONE = 0;

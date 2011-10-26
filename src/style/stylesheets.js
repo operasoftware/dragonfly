@@ -25,8 +25,7 @@ cls.Stylesheets = function()
   this._on_new_stylesheet_cbs = {};
   this._is_getting_index_map = false;
 
-  var __color_properties =
-  {
+  this._color_properties = {
     'fill': true,
     'stroke': true,
     'stop-color': true,
@@ -112,6 +111,15 @@ cls.Stylesheets = function()
   var RULE_TYPE = 9;
   var LINE_NUMBER = 10;
 
+  var ORIGIN_USER_AGENT = 1; // default
+  var ORIGIN_LOCAL = 2; // user
+  var ORIGIN_AUTHOR = 3; // author
+  var ORIGIN_ELEMENT = 4; // inline
+  var ORIGIN_SVG = 5; // SVG presentation attribute
+
+  var RULE_HEADER = 0;
+  var INDENT = '  ';
+
   var special_default_values = {};
 
   special_default_values["border-bottom-color"] =
@@ -122,37 +130,47 @@ cls.Stylesheets = function()
     return value == data[this._color_index];
   };
 
-  const
-  RULE_HEADER = 0,
-  INDENT = '  ';
+  this.pretty_print_rules = function(rules)
+  {
+    var TYPE = 0;
+    var ret = "";
+    if (rules.length)
+    {
+      for (var i = 0, rule; rule = rules[i]; i++)
+      {
+        ret += this._pretty_print_rule[rule[TYPE]](rule, true);
+      }
+      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>"
+                + ret + "</stylesheet>";
+    }
+    return "<div class='info-box'><p>" +
+                ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
+  };
 
   this._pretty_print_rule = {};
 
   this._pretty_print_rule[COMMON] = function(rule, search_active, is_style_sheet)
   {
-    const
-    HEADER = 0,
-    INDEX_LIST = is_style_sheet && 3 || 1,
-    VALUE_LIST = is_style_sheet && 4 || 2,
-    PROPERTY_LIST = is_style_sheet && 5 || 3;
+    var HEADER = 0;
+    var INDEX_LIST = is_style_sheet && 3 || 1;
+    var VALUE_LIST = is_style_sheet && 4 || 2;
+    var PROPERTY_LIST = is_style_sheet && 5 || 3;
 
-    var ret = '',
-    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
-    value_list = rule[VALUE_LIST],
-    priority_list = rule[PROPERTY_LIST],
-    overwrittenlist = rule[OVERWRITTEN_LIST],
-    search_list = rule[SEARCH_LIST],
-    length = index_list.length, i = 0,
-    index = 0,
-    s_h_index = [],
-    s_h_value = [],
-    s_h_priority = [],
-    s_h_prop = '',
-    s_h_count = 0;
+    var ret = '';
+    var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
+    var value_list = rule[VALUE_LIST];
+    var priority_list = rule[PROPERTY_LIST];
+    var overwrittenlist = rule[OVERWRITTEN_LIST];
+    var search_list = rule[SEARCH_LIST];
+    var s_h_index = [];
+    var s_h_value = [];
+    var s_h_priority = [];
+    var s_h_prop = '';
+    var s_h_count = 0;
 
-    for ( ; i < length; i++)
+    for (var i = 0, length = index_list.length; i < length; i++)
     {
-      index = index_list[i];
+      var index = index_list[i];
       if (search_active && !search_list[i])
       {
         continue;
@@ -163,8 +181,8 @@ cls.Stylesheets = function()
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                 INDENT +
                 MARKUP_KEY + this._index_map[index] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + 
-                helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                MARKUP_VALUE +
+                helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") +
                 MARKUP_VALUE_CLOSE;
       }
       else
@@ -172,8 +190,8 @@ cls.Stylesheets = function()
         ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
                 INDENT +
                 MARKUP_KEY_OW + this._index_map[index] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE_OW + 
-                helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + 
+                MARKUP_VALUE_OW +
+                helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") +
                 MARKUP_VALUE_CLOSE;
       }
     }
@@ -187,9 +205,8 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[STYLE_RULE] = function(rule, is_style_sheet)
   {
-    const
-    RULE_ID = 2,
-    SELECTOR_LIST = 6;
+    var RULE_ID = 2;
+    var SELECTOR_LIST = 6;
 
     return "<rule rule-id='" + rule[RULE_ID] + "'>" +
       "<selector>" + helpers.escapeTextHtml(rule[SELECTOR_LIST].join(', ')) + "</selector> {\n" +
@@ -199,9 +216,8 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[CHARSET_RULE] = function(rule, is_style_sheet)
   {
-    const
-    RULE_ID = 2,
-    CHARSET = 13; // Actually the encoding
+    var RULE_ID = 2;
+    var CHARSET = 13; // Actually the encoding
 
     return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
                "<at>@charset</at> \"" + helpers.escapeTextHtml(rule[CHARSET]) + "\";" +
@@ -211,11 +227,10 @@ cls.Stylesheets = function()
   /*  e.g.: @import url("bluish.css") projection, tv; */
   this._pretty_print_rule[IMPORT_RULE] = function(rule, is_style_sheet)
   {
-    const
-    RULE_ID = 2,
-    MEDIA_LIST = 8,
-    HREF = 10,
-    IMPORT_STYLESHEET_ID = 11;
+    var RULE_ID = 2;
+    var MEDIA_LIST = 8;
+    var HREF = 10;
+    var IMPORT_STYLESHEET_ID = 11;
 
     return "<import-rule rule-id='" + rule[RULE_ID] +
                   "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
@@ -226,11 +241,10 @@ cls.Stylesheets = function()
 
   this._pretty_print_rule[MEDIA_RULE] = function(rule, is_style_sheet)
   {
-    const
-    TYPE = 0,
-    RULE_ID = 2,
-    MEDIA_LIST = 8,
-    STYLESHEETRULE_RULE_LIST = 9;
+    var TYPE = 0;
+    var RULE_ID = 2;
+    var MEDIA_LIST = 8;
+    var STYLESHEETRULE_RULE_LIST = 9;
 
     var ret = '', _rule = null, header = null;
     if (rule[STYLESHEETRULE_RULE_LIST]) {
@@ -275,21 +289,35 @@ cls.Stylesheets = function()
             "\n}</page-rule>";
   }.bind(this);
 
-  this.pretty_print_rules = function(rules)
+  this.pretty_print_computed_style = function(data, org_args, search_active)
   {
-    var TYPE = 0;
-    var ret = "";
-    if (rules.length)
+    return this.pretty_print_cat(COMP_STYLE, data, org_args, search_active);
+  };
+
+  this.pretty_print_cascaded_style = function(data, org_args, search_active)
+  {
+    return this.pretty_print_cat(CSS, data, org_args, search_active);
+  };
+
+  // TODO: should be private, fix naming clash
+  this.pretty_print_cat = function(cat_index, data, org_args, search_active)
+  {
+    if (!this._sheets[data.rt_id])
     {
-      for (var i = 0, rule; rule = rules[i]; i++)
-      {
-        ret += this._pretty_print_rule[rule[TYPE]](rule, true);
-      }
-      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>"
-                + ret + "</stylesheet>";
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
+      window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
+      return '';
     }
-    return "<div class='info-box'><p>" +
-                ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
+
+    if (!this._index_map && !this._is_getting_index_map)
+    {
+      this._is_getting_index_map = true;
+      var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
+      window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
+      return '';
+    }
+
+    return this._pretty_print_cat[cat_index](data, search_active);
   };
 
   this._pretty_print_cat = {};
@@ -367,46 +395,15 @@ cls.Stylesheets = function()
     return ret;
   }.bind(this);
 
-  this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
-  {
-    value = helpers.escapeTextHtml(value);
-    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
-                 " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
-                 " class='enable-disable'" +
-                 (!is_disabled ? " checked='checked'" : "") +
-                 " handler='enable-disable'" +
-                 " data-property='" + prop + "'" +
-                 " data-rule-id='" + rule_id + "' />"
-               : "") +
-           "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
-              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
-                  "<color-sample handler='show-color-picker' " +
-                      "style='background-color:" + value +"'/>" : "") +
-           "</value>;";
-
-  };
-
-  /* to print a matching style rule */
-  /**********************************/
-
-  const
-  ORIGIN_USER_AGENT = 1, // default
-  ORIGIN_LOCAL = 2, // user
-  ORIGIN_AUTHOR = 3, // author
-  ORIGIN_ELEMENT = 4; // inline
-  ORIGIN_SVG = 5; // SVG presentation attribute
-
   this._pretty_print_rule_in_inspector = function(rule, search_active)
   {
-    const
-    HEADER = 0,
-    INDEX_LIST = 1,
-    VALUE_LIST = 2,
-    PROPERTY_LIST = 3,
-    VALUE = 0,
-    PRIORITY = 1,
-    STATUS = 2;
+    var HEADER = 0;
+    var INDEX_LIST = 1;
+    var VALUE_LIST = 2;
+    var PROPERTY_LIST = 3;
+    var VALUE = 0;
+    var PRIORITY = 1;
+    var STATUS = 2;
 
     var ret = '';
     var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
@@ -552,35 +549,26 @@ cls.Stylesheets = function()
     return "";
   }.bind(this);
 
-  this.pretty_print_computed_style = function(data, org_args, search_active)
+  this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
   {
-    return this.pretty_print_cat(COMP_STYLE, data, org_args, search_active);
-  };
+    value = helpers.escapeTextHtml(value);
+    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
+                 " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
+                 " class='enable-disable'" +
+                 (!is_disabled ? " checked='checked'" : "") +
+                 " handler='enable-disable'" +
+                 " data-property='" + prop + "'" +
+                 " data-rule-id='" + rule_id + "' />"
+               : "") +
+           "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
+           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
+              (this._color_properties.hasOwnProperty(prop) &&
+               !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL)
+              ? "<color-sample handler='show-color-picker' " +
+                      "style='background-color:" + value +"'/>"
+              : "") +
+           "</value>;";
 
-  this.pretty_print_cascaded_style = function(data, org_args, search_active)
-  {
-    return this.pretty_print_cat(CSS, data, org_args, search_active);
-  };
-
-  // TODO: should be private, fix naming clash
-  this.pretty_print_cat = function(cat_index, data, org_args, search_active)
-  {
-    if (!this._sheets[data.rt_id])
-    {
-      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
-      window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
-      return '';
-    }
-
-    if (!this._index_map && !this._is_getting_index_map)
-    {
-      this._is_getting_index_map = true;
-      var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
-      window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
-      return '';
-    }
-
-    return this._pretty_print_cat[cat_index](data, search_active);
   };
 
   this.get_stylesheets = function(rt_id, org_args)
@@ -718,7 +706,7 @@ cls.Stylesheets = function()
     var temp = [];
     for (var i = 0, prop; prop = this._index_map[i]; i++)
     {
-      temp[i] = {index: i, key : prop};
+      temp[i] = {index: i, key: prop};
       this._initial_values[i] = css_initial_values[prop];
       if (prop in css_inheritable_properties)
       {
@@ -800,23 +788,21 @@ cls.Stylesheets = function()
     }
   };
 
-  this._update_on_new_stylesheets = function(rt_ids) // rt_ids is an array
+  this._update_on_new_stylesheets = function(rt_ids)
   {
-    var
-    rt_id_c_1 = '',
-    rt_id_c_2 = '',
-    i = 0;
+    var rt_id_c_1 = '';
+    var rt_id_c_2 = '';
 
     for (rt_id_c_1 in this._on_new_stylesheet_cbs)
     {
-      for (i = 0; (rt_id_c_2 = rt_ids[i]) && rt_id_c_1 != rt_id_c_2; i++);
+      for (var i = 0; (rt_id_c_2 = rt_ids[i]) && rt_id_c_1 != rt_id_c_2; i++);
       if (!rt_id_c_2)
       {
         delete this._on_new_stylesheet_cbs[rt_id_c_1];
       }
     }
 
-    for (i = 0; rt_id_c_1 = rt_ids[i]; i++)
+    for (var i = 0; rt_id_c_1 = rt_ids[i]; i++)
     {
       if (!(rt_id_c_1 in this._on_new_stylesheet_cbs))
       {
@@ -837,9 +823,6 @@ cls.Stylesheets = function()
   // TODO: using 'self' in here (because of callees called with 'null'?), change to 'this'
   this._check_new_runtimes = function(obj)
   {
-    var cbs = null;
-    var cb = null;
-
     for (var i = 0, cursor; cursor = self._new_runtime_ids[i]; i++)
     {
       // TODO: the handling of stylesheets needs to be cleaned up.
@@ -849,6 +832,9 @@ cls.Stylesheets = function()
       }
       else
       {
+        var cbs = null;
+        var cb = null;
+
         if (cbs = self._on_new_stylesheet_cbs[cursor])
         {
           for (i = 0; cb = cbs[i]; i++)
