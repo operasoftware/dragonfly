@@ -781,3 +781,8 @@ eventHandlers.dblclick['edit-css'] = function(event, target)
 {
   this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
 }
+eventHandlers.click['enable-disable'] = function(event, target)
+{
+  this.broker.dispatch_action('css-inspector', 'enable-disable-property',
+                              event, target);
+}
