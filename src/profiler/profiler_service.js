@@ -1,16 +1,17 @@
+"use strict";
+
 /**
  * @constructor
  */
 var ProfilerService = function()
 {
-  this.data = new ProfilerData();
   this.is_active = false;
   this._profiler = window.services["profiler"];
   this._tag_manager = window.tag_manager;
   this._window_id = 0;
 
-  const START_MODE_IMMEDIATE = 1;
-  const START_MODE_URL = 2;
+  var START_MODE_IMMEDIATE = 1;
+  var START_MODE_URL = 2;
 
   this.start_profiler = function(start_mode, window_id, callback)
   {

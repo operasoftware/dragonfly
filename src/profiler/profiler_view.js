@@ -1,91 +1,69 @@
-﻿/**
+﻿"use strict";
+
+/**
  * @constructor
  * @extends ViewBase
  */
-var ProfilerView = function(id, name, container_class, html, default_handler) {
-  this._profiler = new ProfilerService();
-  this._templates = new ProfilerTemplates();
-  this._current_session_id = null;
-  this._current_timeline_id = null;
-  this._event_id = null;
-  this._event_type = null;
-  this._details_time = 0;
-  this._timeline_list = [];
-  this._aggregated_list = [];
-  this._reduced_list = [];
-
+var ProfilerView = function(id, name, container_class, html, default_handler)
+{
   // Event types
-  const GENERIC = ProfilerService.GENERIC;
-  const PROCESS = ProfilerService.PROCESS;
-  const DOCUMENT_PARSING = ProfilerService.DOCUMENT_PARSING;
-  const CSS_PARSING = ProfilerService.CSS_PARSING;
-  const SCRIPT_COMPILATION = ProfilerService.SCRIPT_COMPILATION;
-  const THREAD_EVALUATION = ProfilerService.THREAD_EVALUATION;
-  const REFLOW = ProfilerService.REFLOW;
-  const STYLE_RECALCULATION = ProfilerService.STYLE_RECALCULATION;
-  const CSS_SELECTOR_MATCHING = ProfilerService.CSS_SELECTOR_MATCHING;
-  const LAYOUT = ProfilerService.LAYOUT;
-  const PAINT = ProfilerService.PAINT;
+  var GENERIC = ProfilerService.GENERIC;
+  var PROCESS = ProfilerService.PROCESS;
+  var DOCUMENT_PARSING = ProfilerService.DOCUMENT_PARSING;
+  var CSS_PARSING = ProfilerService.CSS_PARSING;
+  var SCRIPT_COMPILATION = ProfilerService.SCRIPT_COMPILATION;
+  var THREAD_EVALUATION = ProfilerService.THREAD_EVALUATION;
+  var REFLOW = ProfilerService.REFLOW;
+  var STYLE_RECALCULATION = ProfilerService.STYLE_RECALCULATION;
+  var CSS_SELECTOR_MATCHING = ProfilerService.CSS_SELECTOR_MATCHING;
+  var LAYOUT = ProfilerService.LAYOUT;
+  var PAINT = ProfilerService.PAINT;
 
   // Modes
-  const MODE_ALL = 1;
-  const MODE_REDUCE_UNIQUE_TYPES = 2;
-  const MODE_REDUCE_UNIQUE_EVENTS = 3;
-  const MODE_REDUCE_ALL = 4;
+  var MODE_ALL = 1;
+  var MODE_REDUCE_UNIQUE_TYPES = 2;
+  var MODE_REDUCE_UNIQUE_EVENTS = 3;
+  var MODE_REDUCE_ALL = 4;
 
-  const SESSION_ID = 0;
-  const TIMELINE_LIST = 2;
-  const TIMELINE_ID = 0;
+  var SESSION_ID = 0;
+  var TIMELINE_LIST = 2;
+  var TIMELINE_ID = 0;
 
   // Parent-children relationships
   this._children = {};
   this._children[STYLE_RECALCULATION] = [CSS_SELECTOR_MATCHING];
-
-  this._tabledefs = {};
-  // TODO: implements sorters. E.g. hits should sort by hits and then by time
-  this._tabledefs[CSS_SELECTOR_MATCHING] = {
-    column_order: ["selector", "time", "hits"],
-    // TODO: ui strings
-    columns: {
-      selector: {
-        label: "Selector"
-      },
-      time: {
-        label: "Time",
-        align: "right",
-        renderer: (function(event) {
-          return this._templates.format_time(event.time);
-        }).bind(this),
-        classname: "profiler-details-time"
-      },
-      hits: {
-        label: "Hits",
-        align: "right",
-        renderer: function(event) {
-          return String(event.hits);
-        },
-        classname: "profiler-details-hits"
-      }
-    }
-  };
 
   this._default_types = [GENERIC, PROCESS, DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
                          THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
 
   this._init = function(id, name, container_class, html, default_handler)
   {
-    ViewBase.init.call(this, id, name, container_class, html, default_handler);
+    this._profiler = new ProfilerService();
+    this._templates = new ProfilerTemplates();
+    this._current_session_id = null;
+    this._old_session_id = null;
+    this._current_timeline_id = null;
+    this._event_id = null;
+    this._event_type = null;
+    this._timeline_list = [];
+    this._aggregated_list = [];
+    this._reduced_list = [];
+    this._details_time = 0;
+
+    View.prototype.init.call(this, id, name, container_class, html, default_handler);
   };
 
-  this._start_profiler = function(container)
+  this._start_profiler = function()
   {
+    this._reset_data();
     this._container.clearAndRender(this._templates.empty("Profiling"));
     this._profiler.start_profiler(null, null, (function(status, msg) {
+      this._old_session_id = this._current_session_id;
       this._current_session_id = msg[SESSION_ID];
     }).bind(this));
   };
 
-  this._stop_profiler = function(container)
+  this._stop_profiler = function()
   {
     this._container.clearAndRender(this._templates.empty("Stopped profiling. Calculating..."));
     this._profiler.stop_profiler(this._current_session_id, this._handle_stop_profiler.bind(this));
@@ -95,6 +73,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
   {
     if (status == 0)
     {
+      if (this._old_session_id) this._profiler.release_session(this._old_session_id);
       this._current_timeline_id = msg[TIMELINE_LIST][0][TIMELINE_ID];
       this._profiler.get_events(this._current_session_id,
                                 this._current_timeline_id,
@@ -143,16 +122,16 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
     this._update_view();
   };
 
-
   this._update_view = function()
   {
+    var AGGREGATED_EVENTS_WIDTH = 240; // FIXME: calculate automatically
     this._container.clearAndRender(
         this._timeline_list.eventList && this._timeline_list.eventList[0]
         ? this._templates.main(this._templates.event_list_aggregated(this._aggregated_list, this._reduced_list.eventList[1]),
-                               this._templates.event_list_all(this._timeline_list, this._container.clientWidth - 120), // FIXME: don't hardcode
+                               this._templates.event_list_all(this._timeline_list, this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
                                this._templates.details(this._table),
                                this._templates.status(this._templates.format_time(this._details_time)))
-        : this._templates.empty("Press the “Start profiling” button to start profiling")
+        : this._templates.empty("Press the Record button to start profiling")
     );
   };
 
@@ -181,6 +160,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
                               : this._stop_profiler();
   };
 
+  this._reset_data = function()
+  {
+    this._table = null;
+    this._details_time = 0;
+  };
+
   this._show_details_list = function()
   {
     var children = this._children[this._event_type];
@@ -197,8 +182,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
     }
     else
     {
-      this._table = null;
-      this._details_time = 0;
+      this._reset_data();
       this._update_view();
     }
   };
@@ -207,9 +191,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
   {
     var sortby = this._table ? this._table.sortby : "time";
     var reversed = this._table && this._table.reversed;
-    this._table = new SortableTable(this._tabledefs[CSS_SELECTOR_MATCHING],
+    this._table = new SortableTable(this._templates._tabledefs[CSS_SELECTOR_MATCHING],
                                     null,
-                                    this._tabledefs[CSS_SELECTOR_MATCHING].column_order,
+                                    this._templates._tabledefs[CSS_SELECTOR_MATCHING].column_order,
                                     sortby,
                                     null,
                                     reversed);
@@ -220,9 +204,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
     this._update_view();
   };
 
-  this._get_top_list_data = function(event_list)
+  this._get_top_list_data = function(events)
   {
-    var data = event_list.eventList.map(function(event) {
+    var data = events.eventList.map(function(event) {
       return {
         selector: event.cssSelectorMatching.selector,
         time: event.time,
@@ -239,11 +223,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler) {
     this._show_details_list();
   };
 
+  this._zoom_timeline = function(event, target)
+  {
+  };
+
   window.eventHandlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
   window.eventHandlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
+  window.eventHandlers.mousewheel["profiler-zoom-timeline"] = this._zoom_timeline.bind(this);
 
   this._init(id, name, container_class, html, default_handler);
 };
+
 ProfilerView.prototype = ViewBase;
 
 ProfilerView.create_ui_widgets = function()

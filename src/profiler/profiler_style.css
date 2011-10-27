@@ -1,26 +1,35 @@
 #profiler-aggregated {
     position: absolute;
     top: 20px;
+    right: 0;
     width: 120px;
-    height: 120px;
-    border-right: 1px solid #e6e6e6;
+    height: 128px;
     border-top: 1px solid #e6e6e6;
     padding: 5px;
     box-sizing: border-box;
 }
 
+#profiler-legend {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    height: 120px;
+    width: 119px;
+    border-top: 1px solid #e6e6e6;
+}
+
 #profiler-timeline {
     position: absolute;
     left: 120px;
-    right: 0;
+    right: 120px;
     top: 20px;
-    height: 120px;
+    height: 128px; /* 16 (offset height of .profiler-row) * 8 (number of rows) */
     border-top: 1px solid #e6e6e6;
 }
 
 #profiler-details-list {
     position: absolute;
-    top: 140px;
+    top: 149px;
     bottom: 21px;
     overflow: auto;
     border-top: 1px solid #e6e6e6;
@@ -58,6 +67,11 @@
 
 .profiler-timeline-row {
     height: 14px;
+    line-height: 14px;
+    padding: 1px 3px; /* Line up up with toolbar buttons */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profiler-timeline-row.odd {
@@ -75,6 +89,7 @@
     position: absolute;
     top: -15px;
     color: #444;
+    white-space: nowrap;
 }
 
 .profiler-event-special {
@@ -86,7 +101,7 @@
 .profiler-event {
     position: absolute;
     min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
-    height: 6px; /* 6px + 2*1px (border) + 2*3px (margin) = 14px (height of .profiler-timeline-row)  */
+    height: 6px; /* 6px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
     border-radius: 2px;
 }
 

@@ -1,12 +1,14 @@
+"use strict";
+
 /**
- * @Constructor
+ * @constructor
  *
  * @param {Array} data The chart data. This is an array of objects, each
- * having the following properties:
- *  - 'amount': The amount of the total as an integer;
- *  - 'color': The color of the slice. If 'color' is missing, a
- *    random one will be generated;
- *  - 'data': Auxillary data to be returned from method calls.
+ *        having the following properties:
+ *         - 'amount': The amount of the total as an integer;
+ *         - 'color': The color of the slice. If 'color' is missing, a
+ *           random one will be generated;
+ *         - 'data': Auxillary data to be returned from method calls.
  *
  * Example:
  *
@@ -48,31 +50,39 @@ Chart.prototype._generate_random_color = function()
  * @param {int} size The size of the SVG document. Default is 200.
  *
  * @param {int} padding The padding around the pie chart. Default is 0.
+ *
+ * @return An object with two properties:
+ *         - 'size': The size of the pie chart;
+ *         - 'slices': An array of slices with 'path', 'color' and 'data'.
  */
 Chart.prototype.get_pie_chart = function(size, padding)
 {
-  padding || (padding = 0);
+  var DEFAULT_SIZE = 200;
+  var DEFAULT_PADDING = 0;
+
+  padding || (padding = DEFAULT_PADDING);
   var radius = size / 2;
   var center = radius + padding;
-  size = (size || 200) + padding * 2;
+  size = (size || DEFAULT_SIZE) + padding * 2;
 
+  // TODO: should maybe work on a copy of the data array instead
   // Filter out negative values, they don't make sense in a pie chart
-  this._data = this._data.filter(function(slice) {
+  var data = this._data.filter(function(slice) {
     return slice.amount >= 0;
   });
 
-  var total_amount = this._data.reduce(function(prev, curr) {
+  var total_amount = data.reduce(function(prev, curr) {
     return prev + curr.amount;
   }, 0);
 
   // Calculate angles
-  this._data.forEach(function(slice) {
+  data.forEach(function(slice) {
     slice.angle = (slice.amount * 360) / total_amount;
   });
 
   var start_angle = 0;
   var end_angle = -90;
-  var slices = this._data.map(function(slice) {
+  var slices = data.map(function(slice) {
     start_angle = end_angle;
     end_angle += slice.angle;
 
@@ -82,10 +92,20 @@ Chart.prototype.get_pie_chart = function(size, padding)
     var y2 = center + radius * Math.sin(Math.PI * end_angle / 180);
     var large_arc_flag = slice.angle > 180 ? 1 : 0;
 
+    // Special case in case we only have one piece here. The reason for this is that if the
+    // path goes all the way back to the start, it's the same as not moving at all, hance it
+    // won't render. Instead, we draw two half circles. There's a theoretical chance that
+    // this will still break (if one slice is still very big), but in practice it should be
+    // pretty safe.
+    var arc = data.length == 1
+            ? [" A", radius, ",", radius, " 0 ", "0,1 ", x2, ",", x2 * 2,
+               " A", radius, ",", radius, " 0 ", "0,1 ", x2, ",", y1]
+            : [" A", radius, ",", radius, " 0 ", large_arc_flag, ",1 ", x2, ",", y2];
+
     return {
       path: ["M", center, ",", center, // Start path
             " L", x1, ",", y1,         // Line
-            " A", radius, ",", radius, " 0 ", large_arc_flag, ",1 ", x2, ",", y2, // Arc
+            arc.join(""),              // Arc
             " Z"].join(""),            // End path
       color: slice.color || this._generate_random_color(),
       data: slice.data

@@ -464,7 +464,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/jsvalue.js"/>
 
 <script src="./profiler/profiler_service.js"/>
-<script src="./profiler/profiler_data.js"/>
 <script src="./profiler/profiler_view.js"/>
 <script src="./profiler/profiler_templates.js"/>
 <script src="./profiler/profiler.1.0.responses.getevents.js"/>
