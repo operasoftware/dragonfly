@@ -351,8 +351,9 @@ var Editor = function(actions)
   this.insert_declaration_edit = function(event, target)
   {
     var rule = event.target.has_attr("parent-node-chain", "rule-id");
-    var last_decl = rule.querySelector("property:last-of-type");
-    var new_decl = document.createElement("property");
+    var last_decl = rule.querySelector(".css-declaration:last-of-type");
+    var new_decl = document.createElement("div");
+    new_decl.className = "css-declaration";
     rule.insertBefore(new_decl, last_decl.nextSibling);
     new_decl.textContent = "\u00A0"; // Need some content for the height to be set correctly
     this.edit(event, new_decl, true);
@@ -768,13 +769,13 @@ var Editor = function(actions)
       {
         actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
       }
-      this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
-        props[1], props[2], this.context_rule_id, disabled);
+      this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0],
+        props[1], props[2], this.context_rule_id, disabled));
     }
     else if (props[1] === "") // If someone deletes just the value and then submits, just re-display it
     {
-      this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
-        this.context_cur_value, this.context_cur_priority, this.context_rule_id, disabled);
+      this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0],
+        this.context_cur_value, this.context_cur_priority, this.context_rule_id, disabled));
     }
     else
     {
@@ -795,10 +796,10 @@ var Editor = function(actions)
     {
       reset = true;
       prop = this.textarea_container.parentElement.parentElement.
-        insertBefore(document.createElement('property'), this.textarea_container.parentElement);
+        insertBefore(document.createElement('div'), this.textarea_container.parentElement);
 
-      prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id,
-        this.textarea_container.parentNode.hasClass("disabled"));
+      prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id,
+        this.textarea_container.parentNode.hasClass("disabled")));
       props.splice(0, 3);
     }
 
@@ -849,8 +850,8 @@ var Editor = function(actions)
     {
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
-        this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0],
-          this.context_cur_value, this.context_cur_priority, this.context_rule_id, is_disabled);
+        this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0],
+          this.context_cur_value, this.context_cur_priority, this.context_rule_id, is_disabled));
         return false;
       }
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
@@ -862,7 +863,8 @@ var Editor = function(actions)
         this.saved_style_dec[VALUE_LIST].push(props[VALUE]);
         this.saved_style_dec[PRIORITY_LIST].push(props[PRIORITY]);
 
-        var property_ele = document.createElement('property');
+        var property_ele = document.createElement('div');
+        property_ele.className = "css-declaration";
         if (this.textarea_container.parentNode.hasClass("overwritten"))
         {
           property_ele.addClass("overwritten");
@@ -875,7 +877,7 @@ var Editor = function(actions)
         this.textarea_container.parentNode.removeClass("disabled");
         prop = this.textarea_container.parentElement.parentElement.
           insertBefore(property_ele, this.textarea_container.parentElement);
-        prop.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
+        prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled));
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -885,7 +887,7 @@ var Editor = function(actions)
       }
       else
       {
-        this.textarea_container.parentElement.innerHTML = window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled);
+        this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled));
       }
     }
     else
@@ -903,12 +905,12 @@ var Editor = function(actions)
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
-      this.textarea_container.parentElement.innerHTML =
+      this.textarea_container.parentElement.clearAndRender(
         window.stylesheets.create_declaration(this.context_cur_prop,
                                               this.context_cur_value,
                                               this.context_cur_priority,
                                               this.context_rule_id,
-                                              this.textarea_container.parentNode.hasClass("disabled"));
+                                              this.textarea_container.parentNode.hasClass("disabled")));
       return true;
     }
     else

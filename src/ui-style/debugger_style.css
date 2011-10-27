@@ -269,17 +269,21 @@ cst-option.selected-runtime {
 
 /* styleseeht view */
 
-stylesheet, import-rule, media-rule, rules, property {
+stylesheet, import-rule, media-rule, rules {
   display: block;
   }
 
-property {
+.css-declaration {
   padding-left: 2em;
   padding-right: 3px;
-  }
-property.disabled, .disabled key, .disabled value {
+}
+
+.css-declaration.disabled,
+.css-declaration.disabled .css-property,
+.css-declaration.disabled .css-property-value {
   color: #999 !important;
-  }
+}
+
 .enable-disable {
   float: left;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
@@ -288,7 +292,7 @@ property.disabled, .disabled key, .disabled value {
   cursor: default;
   }
 .enable-disable.hidden { visibility: hidden; }
-property:hover .enable-disable,
+.css-declaration:hover .enable-disable,
 .disabled .enable-disable {
   opacity: 1;
   }
@@ -309,7 +313,7 @@ media-rule rules {
 
 /* css inspector class css-inspector */
 
-.css-inspector rule:not(.non-editable) property {
+.css-inspector rule:not(.non-editable) .css-declaration {
   cursor: text;
   }
 
@@ -393,7 +397,7 @@ input.unfolded {
 .css-inspector .selected {
   background-color: #d4e3f4;
   }
-.css-inspector property.selected {
+.css-inspector .css-declaration.selected {
     border-radius: 3px;
 }
 
@@ -1192,7 +1196,7 @@ color-sample
   width: 24em;
 }
 
-property.disabled color-sample
+.css-declaration.disabled color-sample
 {
   opacity: .35;
 }

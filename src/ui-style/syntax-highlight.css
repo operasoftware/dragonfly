@@ -149,7 +149,7 @@ selector {
     color: #555;
 }
 
-property.disabled, /* TODO: rename to .declaration */
+.css-declaration.disabled,
 .disabled key,
 .disabled value {
     color: #999;
@@ -201,7 +201,7 @@ media, at { /* TODO: Use classes */
 }
 
 .spotlight-node:hover,
-rule:not(.non-editable) property:hover {
+rule:not(.non-editable) .css-declaration:hover {
     border-color: #e0eaf6;
     background: #f2f5f9;
 }

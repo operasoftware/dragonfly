@@ -27,7 +27,7 @@ cls.CSSInspectorActions = function(id)
     return self.__active_container &&
            self.__active_container.
            getElementsByTagName('styles')[0].
-           getElementsByTagName('property')[0];
+           querySelector('.css-declaration');
   };
 
   this.clearSelected = function()
@@ -96,7 +96,7 @@ cls.CSSInspectorActions = function(id)
   {
     _default: function(ele)
     {
-      return ((ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id'))
+      return ((ele.hasClass('css-declaration') && ele.parentElement.hasAttribute('rule-id'))
                || ele.nodeName.toLowerCase() == 'header'
                || ele.getAttribute('handler') == 'open-resource-tab');
     },
@@ -108,7 +108,7 @@ cls.CSSInspectorActions = function(id)
 
     property_editable: function(ele)
     {
-      return ele.nodeName.toLowerCase() == 'property' && ele.parentElement.hasAttribute('rule-id');
+      return ele.hasClass('css-declaration') && ele.parentElement.hasAttribute('rule-id');
     }
   };
 
@@ -560,31 +560,25 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['edit-css'] = function(event, target)
   {
-    var cat = event.target;
-    switch(event.target.nodeName.toLowerCase())
-     {
-      case 'key':
-      case 'value':
+    if (event.target.hasClass("css-property") ||
+        event.target.hasClass("css-property-value"))
+    {
+      if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
+          !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
       {
-        if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
-            !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
-        {
-          this.mode = MODE_EDIT;
-          this.setSelected(event.target.parentNode);
-          this.editor.edit(event, event.target.parentNode);
-        }
-        break;
+        this.mode = MODE_EDIT;
+        this.setSelected(event.target.parentNode);
+        this.editor.edit(event, event.target.parentNode);
       }
-      case 'property':
+    }
+    else if (event.target.hasClass("css-declaration"))
+    {
+      if (event.target.parentElement.hasAttribute('rule-id') &&
+          !event.target.hasClass(CSS_CLASS_CP_TARGET))
       {
-        if (event.target.parentElement.hasAttribute('rule-id') &&
-            !event.target.hasClass(CSS_CLASS_CP_TARGET))
-        {
-          this.mode = MODE_EDIT;
-          this.setSelected(event.target);
-          this.editor.edit(event);
-        }
-        break;
+        this.mode = MODE_EDIT;
+        this.setSelected(event.target);
+        this.editor.edit(event);
       }
     }
   }.bind(this);
@@ -712,11 +706,11 @@ cls.CSSInspectorActions = function(id)
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var ele = event.target;
-    while (ele && ele.nodeName.toLowerCase() != "property")
+    while (ele && !ele.hasClass(".css-declaration"))
     {
       ele = ele.parentNode;
     }
-    var prop = ele.querySelector("key").textContent;
+    var prop = ele.querySelector(".css-property").textContent;
 
     this.remove_property(rt_id, rule_id, prop, window.elementStyle.update);
   }.bind(this);

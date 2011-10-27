@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -13,20 +13,20 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    container.innerHTML ='';
+    container.innerHTML = '';
     var styles = container.render(['category', ['styles']]).firstElementChild;
     var data = elementStyle.get_computed_style();
     var search_active = elementStyle.getSearchActive();
     if (data)
     {
-      // stylesheets.prettyPrintCat call will also ensure 
+      // stylesheets.prettyPrintCat call will also ensure
       // that all style sheets for the given runtime and the index map
-      // will be avaible, that means the call will not return any data 
+      // will be avaible, that means the call will not return any data
       // before this datas are avaible
-      styles.innerHTML =
-          stylesheets.pretty_print_computed_style(data, arguments, search_active);
+      styles.clearAndRender(stylesheets.pretty_print_computed_style(data, arguments, search_active));
       styles.setAttribute('rt-id', data.rt_id);
     }
   }
   this.init(id, name, container_class);
-}
+};
+

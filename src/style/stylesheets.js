@@ -39,62 +39,15 @@ cls.Stylesheets = function()
     'background-color': true,
   };
 
-  this._on_reset_state = function()
-  {
-    this._sheets = {};
-    this._rules = {};
-    this._index_map = null;
-    this._index_map_length = 0;
-    this._sorted_index_map = [];
-    this._initial_values = [];
-    this._selected_rules = null;
-    this._color_index = 0;
-    this._new_runtime_ids = null;
-    this._top_runtime_id = '';
-    this._on_new_stylesheet_cbs = {};
-  };
-
   var SHEET_OBJECT_ID = 0; // TODO use the right obj-id
   var SHEET_IS_DISABLED = 1;
   var SHEET_HREF = 2;
   var SHEET_TITLE = 3;
-  var SHEET_TYPE = 4;
-  var SHEET_MEDIA_LIST = 5;
-  var SHEET_OWNER_NODE_ID = 6;
-  var SHEET_OWNER_RULE_ID = 7;
-  var SHEET_PARENT_STYLESHEET_ID = 8;
-  var UNKNOWN_RULE = 0;
-  var STYLE_RULE = 1;
-  var CHARSET_RULE = 2;
-  var IMPORT_RULE = 3;
-  var MEDIA_RULE = 4;
-  var FONT_FACE_RULE = 5;
-  var PAGE_RULE = 6;
-  var COMMON = 11;
-  var MARKUP_KEY = "<property><key>";
-  var MARKUP_KEY_OW = "<property class='overwritten'><key>";
-  var MARKUP_KEY_CLOSE = "</key>: ";
-  var MARKUP_VALUE = "<value>";
-  var MARKUP_VALUE_OW = "<value>";
-  var MARKUP_VALUE_CLOSE = "</value>;</property>";
-  var MARKUP_PROP_NL = "";
-  var MARKUP_IMPORTANT = " !important";
-  var MARKUP_SPACE = " ";
-  var MARKUP_EMPTY = "";
-  var HEADER = 0;
   var COMP_STYLE = 0;
   var CSS = 1;
-  var PROP_LIST = 1;
-  var VAL_LIST = 2;
-  var PRIORITY_LIST = 3;
-  var OVERWRITTEN_LIST = 4;
   var SEARCH_LIST = cls.ElementStyle.SEARCH_LIST;
   var HAS_MATCHING_SEARCH_PROPS = 11;
-  var DISABLED_LIST = 12;
 
-  // new names of the scope messages
-  var COMPUTED_STYLE_LIST = 0;
-  var NODE_STYLE_LIST = 1;
   // sub message NodeStyle
   var OBJECT_ID = 0;
   var ELEMENT_NAME = 1;
@@ -117,9 +70,6 @@ cls.Stylesheets = function()
   var ORIGIN_ELEMENT = 4; // inline
   var ORIGIN_SVG = 5; // SVG presentation attribute
 
-  var RULE_HEADER = 0;
-  var INDENT = '  ';
-
   var special_default_values = {};
 
   special_default_values["border-bottom-color"] =
@@ -130,164 +80,20 @@ cls.Stylesheets = function()
     return value == data[this._color_index];
   };
 
-  this.pretty_print_rules = function(rules)
+  this._on_reset_state = function()
   {
-    var TYPE = 0;
-    var ret = "";
-    if (rules.length)
-    {
-      for (var i = 0, rule; rule = rules[i]; i++)
-      {
-        ret += this._pretty_print_rule[rule[TYPE]](rule, true);
-      }
-      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>"
-                + ret + "</stylesheet>";
-    }
-    return "<div class='info-box'><p>" +
-                ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
+    this._sheets = {};
+    this._rules = {};
+    this._index_map = null;
+    this._index_map_length = 0;
+    this._sorted_index_map = [];
+    this._initial_values = [];
+    this._selected_rules = null;
+    this._color_index = 0;
+    this._new_runtime_ids = null;
+    this._top_runtime_id = '';
+    this._on_new_stylesheet_cbs = {};
   };
-
-  this._pretty_print_rule = {};
-
-  this._pretty_print_rule[COMMON] = function(rule, search_active, is_style_sheet)
-  {
-    var HEADER = 0;
-    var INDEX_LIST = is_style_sheet && 3 || 1;
-    var VALUE_LIST = is_style_sheet && 4 || 2;
-    var PROPERTY_LIST = is_style_sheet && 5 || 3;
-
-    var ret = '';
-    var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
-    var value_list = rule[VALUE_LIST];
-    var priority_list = rule[PROPERTY_LIST];
-    var overwrittenlist = rule[OVERWRITTEN_LIST];
-    var search_list = rule[SEARCH_LIST];
-    var s_h_index = [];
-    var s_h_value = [];
-    var s_h_priority = [];
-    var s_h_prop = '';
-    var s_h_count = 0;
-
-    for (var i = 0, length = index_list.length; i < length; i++)
-    {
-      var index = index_list[i];
-      if (search_active && !search_list[i])
-      {
-        continue;
-      }
-
-      if (overwrittenlist && overwrittenlist[i])
-      {
-        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                INDENT +
-                MARKUP_KEY + this._index_map[index] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE +
-                helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") +
-                MARKUP_VALUE_CLOSE;
-      }
-      else
-      {
-        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                INDENT +
-                MARKUP_KEY_OW + this._index_map[index] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE_OW +
-                helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") +
-                MARKUP_VALUE_CLOSE;
-      }
-    }
-    return ret;
-  }.bind(this);
-
-  this._pretty_print_rule[UNKNOWN_RULE] = function(rule, is_style_sheet)
-  {
-    return "";
-  }.bind(this);
-
-  this._pretty_print_rule[STYLE_RULE] = function(rule, is_style_sheet)
-  {
-    var RULE_ID = 2;
-    var SELECTOR_LIST = 6;
-
-    return "<rule rule-id='" + rule[RULE_ID] + "'>" +
-      "<selector>" + helpers.escapeTextHtml(rule[SELECTOR_LIST].join(', ')) + "</selector> {\n" +
-        this._pretty_print_rule[COMMON](rule, 0, is_style_sheet) +
-      "\n}</rule>";
-  }.bind(this);
-
-  this._pretty_print_rule[CHARSET_RULE] = function(rule, is_style_sheet)
-  {
-    var RULE_ID = 2;
-    var CHARSET = 13; // Actually the encoding
-
-    return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
-               "<at>@charset</at> \"" + helpers.escapeTextHtml(rule[CHARSET]) + "\";" +
-           "</charset-rule>";
-  }.bind(this);
-
-  /*  e.g.: @import url("bluish.css") projection, tv; */
-  this._pretty_print_rule[IMPORT_RULE] = function(rule, is_style_sheet)
-  {
-    var RULE_ID = 2;
-    var MEDIA_LIST = 8;
-    var HREF = 10;
-    var IMPORT_STYLESHEET_ID = 11;
-
-    return "<import-rule rule-id='" + rule[RULE_ID] +
-                  "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
-              "<at>@import</at> url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + ";" +
-           "</import-rule>";
-  }.bind(this);
-
-  this._pretty_print_rule[MEDIA_RULE] = function(rule, is_style_sheet)
-  {
-    var TYPE = 0;
-    var RULE_ID = 2;
-    var MEDIA_LIST = 8;
-    var STYLESHEETRULE_RULE_LIST = 9;
-
-    var ret = '', _rule = null, header = null;
-    if (rule[STYLESHEETRULE_RULE_LIST]) {
-      for (var i = 0; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
-      {
-        ret += this._pretty_print_rule[_rule[TYPE]](_rule, is_style_sheet);
-      }
-    }
-    return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@media</at> " + rule[MEDIA_LIST].join(', ') + " {" +
-              (ret ? "<rules>" + ret + "</rules>" : " ") +
-            "}</media-rule>";
-  }.bind(this);
-
-  this._pretty_print_rule[FONT_FACE_RULE] = function(rule, is_style_sheet)
-  {
-    var RULE_ID = 2;
-    return "<font-face-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@font-face</at> {\n" +
-              this._pretty_print_rule[COMMON](rule, 0, is_style_sheet) +
-            "\n}</font-face-rule>";
-  }.bind(this);
-
-  this._pretty_print_rule[PAGE_RULE] = function(rule, is_style_sheet)
-  {
-    var RULE_ID = 2;
-    var PSEUDO_CLASS = 12;
-
-    var pseudo_class_map =
-    {
-      '1': ':first',
-      '2': ':left',
-      '4': ':right'
-    };
-
-    return "<page-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@page</at>" +
-                (rule[PSEUDO_CLASS]
-                ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
-                : "") + " {\n" +
-              this._pretty_print_rule[COMMON](rule, 0, is_style_sheet) +
-            "\n}</page-rule>";
-  }.bind(this);
 
   this.pretty_print_computed_style = function(data, org_args, search_active)
   {
@@ -324,7 +130,7 @@ cls.Stylesheets = function()
 
   this._pretty_print_cat[COMP_STYLE] = function(data, search_active)
   {
-    var ret = "";
+    var ret = [];
     // set_props is used to force the display if a given property is set
     // also if it has the initial value
     var set_props = elementStyle.getSetProps();
@@ -352,9 +158,19 @@ cls.Stylesheets = function()
                               value.indexOf(search_term) != -1));
       if (display)
       {
-        ret += (ret ? MARKUP_PROP_NL : "") +
-                "<property data-spec='css#" + prop + "'><key>" + prop + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + helpers.escapeTextHtml(value) + MARKUP_VALUE_CLOSE;
+        ret.push([
+          "div",
+            ["span",
+               prop,
+             "class", "css-property"
+            ], ": ",
+            ["span",
+               helpers.escapeTextHtml(value),
+             "class", "css-property-value"
+            ], ";",
+          "data-spec", "css#" + prop,
+          "class", "css-declaration"
+        ]);
       }
     }
     return ret;
@@ -362,7 +178,7 @@ cls.Stylesheets = function()
 
   this._pretty_print_cat[CSS] = function(data, search_active)
   {
-    var ret = "";
+    var ret = [];
     var rt_id = data.rt_id;
 
     for (var i = 0, node_casc; node_casc = data[i]; i++)
@@ -381,15 +197,19 @@ cls.Stylesheets = function()
         if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
         {
           inherited_printed = true;
-          ret += "<h2>" +
-                ui_strings.S_INHERITED_FROM +
-                " <code class='element-name inspect-node-link'" +
-                " handler='inspect-node-link'" +
-                " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
-                element_name +
-              "</code></h2>";
+          ret.push([
+            "h2",
+              ui_strings.S_INHERITED_FROM + " ",
+              ["code",
+                 element_name,
+               "rt-id", String(rt_id),
+               "obj-id", String(node_casc[OBJECT_ID]),
+               "class", "element-name inspect-node-link",
+               "handler", "inspect-node-link",
+              ]
+          ]);
         }
-        ret += this._pretty_print_style_dec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
+        ret.push(this._pretty_print_style_dec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active));
       }
     }
     return ret;
@@ -401,11 +221,13 @@ cls.Stylesheets = function()
     var INDEX_LIST = 1;
     var VALUE_LIST = 2;
     var PROPERTY_LIST = 3;
+    var OVERWRITTEN_LIST = 4;
+    var DISABLED_LIST = 12;
     var VALUE = 0;
     var PRIORITY = 1;
     var STATUS = 2;
 
-    var ret = '';
+    var ret = [];
     var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
     var value_list = rule[VALUE_LIST];
     var priority_list = rule[PROPERTY_LIST];
@@ -425,8 +247,7 @@ cls.Stylesheets = function()
       return a[0] > b[0] ? 1 : -1; // The same property can never happen
     });
 
-    var length = index_list.length;
-    for (var i = 0; i < length; i++)
+    for (var i = 0, len = index_list.length; i < len; i++)
     {
       prop_index = properties[i][1];
       index = index_list.indexOf(prop_index);
@@ -436,20 +257,21 @@ cls.Stylesheets = function()
         continue;
       }
 
-      ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-              INDENT +
-              // TODO: rename "property" to "declaration"
-              "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
-                                    (disabled_list[index] ? " disabled" : "") + "'" +
-                                    "data-spec='css#" + this._index_map[prop_index] + "'>" +
-                self.create_declaration(this._index_map[prop_index],
-                                        value_list[index],
-                                        priority_list[index],
-                                        rule[RULE_ID],
-                                        disabled_list[index],
-                                        rule[ORIGIN]) +
-              "</property>";
+      ret.push([
+        "div",
+          this.create_declaration(this._index_map[prop_index],
+                                  value_list[index],
+                                  priority_list[index],
+                                  rule[RULE_ID],
+                                  disabled_list[index],
+                                  rule[ORIGIN]),
+        "class", "css-declaration" +
+                 (overwritten_list[index] ? "" : " overwritten") +
+                 (disabled_list[index] ? " disabled" : ""),
+        "data-spec", "css#" + this._index_map[prop_index]
+      ]);
     }
+
     return ret;
   };
 
@@ -459,14 +281,25 @@ cls.Stylesheets = function()
   {
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
-      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
-              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-        "<selector>" + element_name + "</selector>" +
-        " {\n" +
-            this._pretty_print_rule_in_inspector(style_dec, false, search_active) +
-        "\n}</rule>";
+      return [
+        "rule",
+          ["stylesheet-link",
+             "default values", // TODO: ui string
+           "class", "pseudo"
+          ],
+          ["span",
+             element_name,
+           "class", "css-selector"
+          ],
+          " {\n",
+            this._pretty_print_rule_in_inspector(style_dec, false, search_active),
+          "\n}",
+        "class", "non-editable",
+        "obj-id", String(obj_id)
+      ];
     }
-    return "";
+
+    return [];
   }.bind(this);
 
   this._pretty_print_style_dec[ORIGIN_LOCAL] = function(rt_id, obj_id, element_name, style_dec, search_active)
@@ -475,39 +308,57 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
-      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
-              "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
-        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-        " {\n" +
-            this._pretty_print_rule_in_inspector(style_dec, false, search_active) +
-        "\n}</rule>";
+      return [
+        "rule",
+          ["stylesheet-link",
+             "local user stylesheet", // TODO: ui string
+           "class", "pseudo"
+          ],
+          ["span",
+             helpers.escapeTextHtml(style_dec[SELECTOR]),
+           "class", "css-selector"
+          ],
+          " {\n",
+            this._pretty_print_rule_in_inspector(style_dec, false, search_active),
+          "\n}",
+        "class", "non-editable",
+        "obj-id", String(obj_id)
+      ];
     }
-    return "";
+
+    return [];
   }.bind(this);
 
   this._pretty_print_style_dec[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, style_dec, search_active)
   {
-    var ret = '';
+    var ret = [];
     var sheet = this.get_sheet_with_obj_id(rt_id, style_dec[STYLESHEET_ID]);
     var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       var line_number = style_dec[LINE_NUMBER];
-      ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
-        (sheet ?
-         "<stylesheet-link rt-id='" + rt_id + "'"+
-           " index='" + sheet.index + "' handler='open-resource-tab'" +
-           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
-           " data-resource-line-number='" + (line_number || 0) + "'" +
-         ">" +
-           helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : "") +
-         "</stylesheet-link>" :
-         "") +
-        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-        " {\n" +
-            this._pretty_print_rule_in_inspector(style_dec, false, search_active) +
-        "\n}</rule>";
+      ret.push([
+        "rule",
+          ["stylesheet-link",
+             helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : ""),
+           "rt-id", String(rt_id),
+           "index", String(sheet.index),
+           "handler", "open-resource-tab",
+           "data-resource-url", helpers.escapeAttributeHtml(sheet.href),
+           "data-resource-line-number", String(line_number || 0)
+          ],
+          ["span",
+             helpers.escapeTextHtml(style_dec[SELECTOR]),
+           "class", "css-selector"
+          ],
+          " {\n",
+            this._pretty_print_rule_in_inspector(style_dec, false, search_active),
+          "\n}",
+        "rule-id", String(style_dec[RULE_ID]),
+        "obj-id", String(obj_id),
+        "data-menu", "style-inspector-rule"
+      ]);
     }
 
     if (!sheet)
@@ -525,13 +376,21 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
-      return "<rule rule-id='element-style' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
-        "<inline-style>element.style</inline-style>" +
-        " {\n" +
-            this._pretty_print_rule_in_inspector(style_dec, false, search_active) +
-        "\n}</rule>";
+      return [
+        "rule",
+          ["inline-style",
+             "element.style"
+          ],
+          " {\n",
+            this._pretty_print_rule_in_inspector(style_dec, false, search_active),
+          "\n}",
+        "rule-id", "element-style",
+        "rt-id", String(rt_id),
+        "obj-id", String(obj_id)
+      ];
     }
-    return "";
+
+    return [];
   }.bind(this);
 
   this._pretty_print_style_dec[ORIGIN_SVG] = function(rt_id, obj_id, element_name, style_dec, search_active)
@@ -540,35 +399,55 @@ cls.Stylesheets = function()
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
-      return "<rule rule-id='element-svg' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
-        "<span style='font-style: italic;'>presentation attributes</span>" +
-        " {\n" +
-            this._pretty_print_rule_in_inspector(style_dec, false, search_active) +
-        "\n}</rule>";
+      return [
+        "rule",
+          ["span",
+             "presentation attributes", // TODO: ui string
+           "style", "font-style: italic;" // TODO: use a class
+          ],
+          " {\n",
+            this._pretty_print_rule_in_inspector(style_dec, false, search_active),
+          "\n}",
+        "rule-id", "element-svg",
+        "rt-id", String(rt_id),
+        "obj-id", String(obj_id)
+      ];
     }
-    return "";
+
+    return [];
   }.bind(this);
 
-  this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
+  this.create_declaration = function(prop, value, is_important, rule_id, is_disabled, origin)
   {
     value = helpers.escapeTextHtml(value);
-    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
-                 " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
-                 " class='enable-disable'" +
-                 (!is_disabled ? " checked='checked'" : "") +
-                 " handler='enable-disable'" +
-                 " data-property='" + prop + "'" +
-                 " data-rule-id='" + rule_id + "' />"
-               : "") +
-           "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
-              (this._color_properties.hasOwnProperty(prop) &&
-               !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL)
-              ? "<color-sample handler='show-color-picker' " +
-                      "style='background-color:" + value +"'/>"
-              : "") +
-           "</value>;";
-
+    return [
+      (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL)
+       ? ["input",
+          "type", "checkbox",
+          "title", (is_disabled ? "Enable" : "Disable"), // TODO: ui strings
+          "class", "enable-disable",
+          "checked", !is_disabled,
+          "handler", "enable-disable",
+          "data-property", prop,
+          "data-rule-id", String(rule_id)
+         ]
+       : []),
+      ["span",
+         prop,
+       "class", "css-property"
+      ], ": ",
+      ["span",
+         value + (is_important ? " !important" : ""),
+         (this._color_properties.hasOwnProperty(prop) &&
+          !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL)
+          ? ["color-sample",
+             "handler", "show-color-picker",
+             "style", "background-color:" + value
+            ]
+          : []),
+       "class", "css-property-value"
+      ], ";"
+    ];
   };
 
   this.get_stylesheets = function(rt_id, org_args)
@@ -608,9 +487,9 @@ cls.Stylesheets = function()
           return {
             index: i,
             href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
-            name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
-              || sheet[SHEET_TITLE]
-              || 'stylesheet ' + i)
+            name: (sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
+                   || sheet[SHEET_TITLE]
+                   || 'stylesheet ' + i)
           };
         }
       }
@@ -720,7 +599,7 @@ cls.Stylesheets = function()
     }
 
     temp.sort(function(a, b) {
-      return a.key < b.key ? -1 : a.key > b.key ? 1 : 0
+      return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
     });
 
     for (i = 0; prop = temp[i]; i++)
