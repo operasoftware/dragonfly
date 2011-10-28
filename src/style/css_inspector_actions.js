@@ -152,17 +152,17 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property = function(rt_id, rule_id, declaration, 
+  this.set_property = function(rt_id, rule_id, declaration,
                                prop_to_remove, callback)
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.set_property_svg(rt_id, rule_id, declaration, 
+      this.set_property_svg(rt_id, rule_id, declaration,
                             prop_to_remove, callback);
     }
     else
     {
-      this.set_property_css(rt_id, rule_id, declaration, 
+      this.set_property_css(rt_id, rule_id, declaration,
                             prop_to_remove, callback);
     }
   };
@@ -458,13 +458,13 @@ cls.CSSInspectorActions = function(id)
     {
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
     }
-    
+
     if (window.elementStyle.is_some_declaration_enabled(style_dec))
     {
       while (style_dec[INDEX_LIST].length)
       {
         var property = window.css_index_map[style_dec[INDEX_LIST][0]];
-        window.elementStyle.copy_property(style_dec, 
+        window.elementStyle.copy_property(style_dec,
                                           disabled_style_dec_list[id],
                                           property);
         window.elementStyle.remove_property(style_dec, property);
@@ -673,7 +673,7 @@ cls.CSSInspectorActions = function(id)
     // to ensure the command to reset the style is dispatched before
     // elementStyle queries again the current style the update call
     // is done asynchronously 
-    setTimeout(window.elementStyle.update_bound, 1);
+    setTimeout(window.elementStyle.update, 1);
 
     return false;
   }.bind(this);

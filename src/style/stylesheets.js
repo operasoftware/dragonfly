@@ -133,9 +133,9 @@ cls.Stylesheets = function()
     var ret = [];
     // set_props is used to force the display if a given property is set
     // also if it has the initial value
-    var set_props = elementStyle.getSetProps();
+    var set_props = elementStyle.get_set_props();
     var hide_initial_value = !settings['css-comp-style'].get('show-initial-values');
-    var search_term = elementStyle.getSearchTerm();
+    var search_term = elementStyle.get_search_term();
 
     for (var i = 0; i < this._index_map_length; i++)
     {

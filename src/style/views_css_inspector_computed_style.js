@@ -13,10 +13,9 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    container.innerHTML = '';
-    var styles = container.render(['category', ['styles']]).firstElementChild;
+    var styles = container.clearAndRender(['category', ['styles']]).firstElementChild;
     var data = elementStyle.get_computed_style();
-    var search_active = elementStyle.getSearchActive();
+    var search_active = elementStyle.get_search_active();
     if (data)
     {
       // stylesheets.prettyPrintCat call will also ensure
