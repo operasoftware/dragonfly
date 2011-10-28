@@ -343,9 +343,9 @@ cls.Stylesheets = function()
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
         "class", "css-rule",
+        "data-menu", "style-inspector-rule",
         "rule-id", String(style_dec[RULE_ID]),
-        "obj-id", String(obj_id),
-        "data-menu", "style-inspector-rule"
+        "obj-id", String(obj_id)
       ]);
     }
 
@@ -398,6 +398,7 @@ cls.Stylesheets = function()
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
         "class", "css-rule",
+        "data-menu", "style-inspector-rule",
         "rule-id", "element-svg",
         "rt-id", String(rt_id),
         "obj-id", String(obj_id)

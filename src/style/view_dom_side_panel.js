@@ -189,7 +189,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
         // Only add this for a declaration, not on the whole rule
         while (target && !target.hasClass("css-declaration"))
         {
-          target = target.parentNode;
+          target = target.parentElement;
         }
 
         if (target)
