@@ -825,7 +825,6 @@ var Editor = function(actions)
 
     if (this.context_stylesheet_index > -1)
     {
-      stylesheets.invalidate_sheet(this.context_rt_id, this.context_stylesheet_index);
       this.context_stylesheet_index = -1;
     }
   };

@@ -269,10 +269,6 @@ cst-option.selected-runtime {
 
 /* styleseeht view */
 
-stylesheet, import-rule, media-rule, rules {
-  display: block;
-  }
-
 .css-declaration {
   padding-left: 2em;
   padding-right: 3px;
@@ -298,7 +294,7 @@ stylesheet, import-rule, media-rule, rules {
   }
 
 
-rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
+.css-rule {
   display:block;
   margin: 5px 0;
   }
@@ -307,37 +303,29 @@ rule, font-face-rule, page-rule, import-rule, charset-rule, media-rule {
   background:red;
   }
 
-media-rule rules {
-  padding-left: 2ex;
-  }
+.dom-resource-link {
+  cursor: pointer;
+}
 
 /* css inspector class css-inspector */
 
-.css-inspector rule:not(.non-editable) .css-declaration {
+.css-rule:not(.non-editable) .css-declaration {
   cursor: text;
   }
 
-category, header, styles, stylesheet-link {
+category, header, styles {
   display:block;
   }
 
-stylesheet-link {
+.rule-description {
+  display: block;
   text-align:right;
-  color: #999;
-  text-decoration: underline;
   float: right;
   margin-left: 10px;
-  }
-stylesheet-link:not(.pseudo), .dom-resource-link {
-    cursor: pointer;
+  color: #666;
 }
 
-stylesheet-link:hover {
-  color: #666;
-  }
-
-stylesheet-link.pseudo, stylesheet-link.pseudo:hover {
-  text-decoration: none;
+.rule-description.internal-link {
   color: #666;
 }
 

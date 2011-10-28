@@ -6,7 +6,7 @@
  */
 cls.ElementStyle = function()
 {
-  var self = this;
+  var self = this; // TODO: get rid of
 
   this._categories_data = [];
   this._selected_element = null;

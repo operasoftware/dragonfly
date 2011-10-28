@@ -1,28 +1,22 @@
 ﻿window.cls || (window.cls = {});
 
-/**
-  * @constructor
-  */
-
 // TODO clean up pretty printing, does contain much too much code history
 
+/**
+ * @constructor
+ */
 cls.Stylesheets = function()
 {
-  var self = this;
+  var self = this; // TODO: get rid of
+
   this._tag_manager = window.tag_manager;
-  // document.styleSheets dict with runtime-id as key
-  this._sheets = {};
-  // document.styleSheets[index].cssRules with runtime-id and index as keys
-  this._rules = {};
+  this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._index_map = null;
   this._index_map_length = 0; // TODO: is this needed, check length of _index_map instead?
   this._sorted_index_map = [];
   this._initial_values = [];
   this._selected_rules = null;
   this._color_index = 0;
-  this._new_runtime_ids = null;
-  this._top_runtime_id = '';
-  this._on_new_stylesheet_cbs = {};
   this._is_getting_index_map = false;
 
   this._color_properties = {
@@ -83,16 +77,12 @@ cls.Stylesheets = function()
   this._on_reset_state = function()
   {
     this._sheets = {};
-    this._rules = {};
     this._index_map = null;
     this._index_map_length = 0;
     this._sorted_index_map = [];
     this._initial_values = [];
     this._selected_rules = null;
     this._color_index = 0;
-    this._new_runtime_ids = null;
-    this._top_runtime_id = '';
-    this._on_new_stylesheet_cbs = {};
   };
 
   this.pretty_print_computed_style = function(data, org_args, search_active)
@@ -108,14 +98,20 @@ cls.Stylesheets = function()
   // TODO: should be private, fix naming clash
   this.pretty_print_cat = function(cat_index, data, org_args, search_active)
   {
+    //if (!this._sheets[data.rt_id])
+    //{
+    //  var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
+    //  window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
+    //  return '';
+    //}
 
-    if (!this._index_map && !this._is_getting_index_map)
-    {
-      this._is_getting_index_map = true;
-      var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
-      window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
-      return '';
-    }
+    //if (!this._index_map && !this._is_getting_index_map)
+    //{
+    //  this._is_getting_index_map = true;
+    //  var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
+    //  window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
+    //  return '';
+    //}
 
     return this._pretty_print_cat[cat_index](data, search_active);
   };
@@ -272,10 +268,10 @@ cls.Stylesheets = function()
     if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
     {
       return [
-        "rule",
-          ["stylesheet-link",
+        "div",
+          ["span",
              "default values", // TODO: ui string
-           "class", "pseudo"
+           "class", "rule-description"
           ],
           ["span",
              element_name,
@@ -284,7 +280,7 @@ cls.Stylesheets = function()
           " {\n",
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
-        "class", "non-editable",
+        "class", "css-rule non-editable",
         "obj-id", String(obj_id)
       ];
     }
@@ -299,10 +295,10 @@ cls.Stylesheets = function()
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       return [
-        "rule",
-          ["stylesheet-link",
+        "div",
+          ["span",
              "local user stylesheet", // TODO: ui string
-           "class", "pseudo"
+           "class", "rule-description"
           ],
           ["span",
              helpers.escapeTextHtml(style_dec[SELECTOR]),
@@ -311,7 +307,7 @@ cls.Stylesheets = function()
           " {\n",
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
-        "class", "non-editable",
+        "class", "css-rule non-editable",
         "obj-id", String(obj_id)
       ];
     }
@@ -329,9 +325,10 @@ cls.Stylesheets = function()
     {
       var line_number = style_dec[LINE_NUMBER];
       ret.push([
-        "rule",
-          ["stylesheet-link",
+        "div",
+          ["span",
              helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : ""),
+           "class", "rule-description internal-link",
            "rt-id", String(rt_id),
            "index", String(sheet.index),
            "handler", "open-resource-tab",
@@ -345,6 +342,7 @@ cls.Stylesheets = function()
           " {\n",
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
+        "class", "css-rule",
         "rule-id", String(style_dec[RULE_ID]),
         "obj-id", String(obj_id),
         "data-menu", "style-inspector-rule"
@@ -367,13 +365,14 @@ cls.Stylesheets = function()
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       return [
-        "rule",
-          ["inline-style",
+        "div",
+          ["span",
              "element.style"
           ],
           " {\n",
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
+        "class", "css-rule",
         "rule-id", "element-style",
         "rt-id", String(rt_id),
         "obj-id", String(obj_id)
@@ -390,7 +389,7 @@ cls.Stylesheets = function()
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       return [
-        "rule",
+        "div",
           ["span",
              "presentation attributes", // TODO: ui string
            "style", "font-style: italic;" // TODO: use a class
@@ -398,6 +397,7 @@ cls.Stylesheets = function()
           " {\n",
             this._pretty_print_rule_in_inspector(style_dec, false, search_active),
           "\n}",
+        "class", "css-rule",
         "rule-id", "element-svg",
         "rt-id", String(rt_id),
         "obj-id", String(obj_id)
@@ -425,7 +425,8 @@ cls.Stylesheets = function()
       ["span",
          prop,
        "class", "css-property"
-      ], ": ",
+      ],
+      ": ",
       ["span",
          value + (is_important ? " !important" : ""),
          (this._color_properties.hasOwnProperty(prop) &&
@@ -436,7 +437,8 @@ cls.Stylesheets = function()
             ]
           : []),
        "class", "css-property-value"
-      ], ";"
+      ],
+      ";"
     ];
   };
 
@@ -484,20 +486,6 @@ cls.Stylesheets = function()
         }
       }
       return null;
-    }
-  };
-
-  this.invalidate_sheet = function(rt_id, index)
-  {
-    if (this._rules[rt_id] && this._rules[rt_id][index])
-    {
-      this._rules[rt_id][index] = null;
-      if (this._selected_rules &&
-          this._selected_rules.runtime_id == rt_id &&
-          this._selected_rules.index == index)
-      {
-        this._selected_rules = null;
-      }
     }
   };
 
@@ -552,7 +540,6 @@ cls.Stylesheets = function()
     {
       this._sheets[rt_id] = message[STYLESHEET_LIST] || [];
       this._sheets[rt_id].runtime_id = rt_id;
-      this._rules[rt_id] = [];
       if (org_args && !org_args[0].__call_count)
       {
         org_args[0].__call_count = 1;

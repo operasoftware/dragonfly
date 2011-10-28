@@ -46,6 +46,10 @@ offsets value { /* TODO: use class */
     font-weight: bold;
 }
 
+.non-editable {
+    background: transparent url("../ui-images/disabled_stripe_tile.png");
+}
+
 /* JavaScript */
 
 .js-source .not-error { /* TODO: Not specified */
@@ -127,53 +131,43 @@ examine-objects key {
 
 /* CSS */
 
-.css-selector,
-selector {
+.css-selector {
     color: #338;
     font-weight: bold;
 }
 
-.css-property,
-.css-inspector key { /* Rename to .property */
+.css-property {
     color: #55a;
 }
 
-.css-property-value,
-.css-inspector value { /* Use class */
+.css-property-value {
     color: #111;
 }
 
 .overwritten {
     text-decoration: line-through;
-    /* more... */
     color: #555;
 }
 
-.css-declaration.disabled,
-.disabled key,
-.disabled value {
+.css-declaration.disabled {
     color: #999;
 }
 
-.non-editable {
-    background: transparent url("../ui-images/disabled_stripe_tile.png");
-}
-rule.non-editable {
+.css-rule.non-editable {
     margin: 0 -5px; /* This is ugly */
     padding: 5px;
 }
-rule:not(.non-editable) + rule.non-editable {
+
+.css-rule:not(.non-editable) + .css-rule.non-editable {
     margin: -5px -5px 0; /* Adjust this so that the spacing is always consistent between rules */
 }
-.css-inspector .non-editable key {
+
+.css-inspector .non-editable .css-property {
     color: #4c7899;
 }
-css-inspector .non-editable value {
-    color: #aaa;
-}
 
-media, at { /* TODO: Use classes */
-    color: #279;
+.css-inspector .non-editable .css-property-value {
+    color: #aaa;
 }
 
 .import-rule {
@@ -201,7 +195,7 @@ media, at { /* TODO: Use classes */
 }
 
 .spotlight-node:hover,
-rule:not(.non-editable) .css-declaration:hover {
+.css-rule:not(.non-editable) .css-declaration:hover {
     border-color: #e0eaf6;
     background: #f2f5f9;
 }
