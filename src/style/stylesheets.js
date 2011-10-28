@@ -108,12 +108,6 @@ cls.Stylesheets = function()
   // TODO: should be private, fix naming clash
   this.pretty_print_cat = function(cat_index, data, org_args, search_active)
   {
-    if (!this._sheets[data.rt_id])
-    {
-      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
-      window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
-      return '';
-    }
 
     if (!this._index_map && !this._is_getting_index_map)
     {
@@ -149,13 +143,9 @@ cls.Stylesheets = function()
         && !(prop in special_default_values && special_default_values[prop](data, value))
         || false;
       var display =
-        (
-          !hide_initial_value
-          || set_props[index]
-          || is_not_initial_value
-        )
-        && !(search_term && !(prop.indexOf(search_term) != -1 ||
-                              value.indexOf(search_term) != -1));
+        (!hide_initial_value || set_props[index] || is_not_initial_value)
+        && !(search_term && !(prop.indexOf(search_term) != -1
+        || value.indexOf(search_term) != -1));
       if (display)
       {
         ret.push([
@@ -497,11 +487,6 @@ cls.Stylesheets = function()
     }
   };
 
-  this.get_sheet_with_rt_id_and_index = function(rt_id, index)
-  {
-    return this._sheets[rt_id] && this._sheets[rt_id][index] || null;
-  };
-
   this.invalidate_sheet = function(rt_id, index)
   {
     if (this._rules[rt_id] && this._rules[rt_id][index])
@@ -514,62 +499,6 @@ cls.Stylesheets = function()
         this._selected_rules = null;
       }
     }
-  };
-
-  this.get_rules_with_sheet_index = function(rt_id, index, org_args)
-  {
-    if (rt_id)
-    {
-      if (this._rules[rt_id][index])
-      {
-        return this._rules[rt_id][index];
-      }
-
-      if (this._sheets[rt_id][index])
-      {
-        var tag = this._tag_manager.set_callback(null, this._handle_get_rules_with_index.bind(this), [rt_id, index, org_args]);
-        var sheet_id = this._sheets[rt_id][index][SHEET_OBJECT_ID];
-        window.services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
-        return null;
-      }
-    }
-    return null;
-  };
-
-  this.set_selected_sheet = function(rt_id, index, rules, rule_id)
-  {
-    this._selected_rules = {
-      runtime_id: rt_id,
-      index: index,
-      rules: rules,
-      rule_id: rule_id || ''
-    };
-  };
-
-  // TODO: probably not used anymore
-  this.get_selected_sheet = function(org_args)
-  {
-    if (this._selected_rules)
-    {
-      return this._selected_rules;
-    }
-
-    if (org_args)
-    {
-      this._on_new_stylesheets(this._top_runtime_id, [null, this._select_first_sheet.bind(this), this._top_runtime_id, 0, org_args]);
-    }
-    return null;
-  };
-
-  this._select_first_sheet = function(rt_id, index, org_args)
-  {
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if (rules)
-    {
-      this.set_selected_sheet(rt_id, index, rules);
-      org_args.callee.apply(null, org_args);
-    }
-    window['cst-selects']['stylesheet-select'].updateElement();
   };
 
   this._handle_get_index_map = function(status, message, org_args)
@@ -616,20 +545,6 @@ cls.Stylesheets = function()
     }
   };
 
-  this._handle_get_rules_with_index = function(status, message, rt_id, index, org_args)
-  {
-    if (status == 0 && this._rules[rt_id])
-    {
-      this._rules[rt_id][index] = message[0] || [];
-      this._rules[rt_id][index].runtime_id = rt_id;
-      if (org_args && !org_args[0].__call_count)
-      {
-        org_args[0].__call_count = 1
-        org_args.callee.apply(null, org_args);
-      }
-    }
-  };
-
   this._handle_get_all_stylesheets = function(status, message, rt_id, org_args)
   {
     var STYLESHEET_LIST = 0;
@@ -643,116 +558,6 @@ cls.Stylesheets = function()
         org_args[0].__call_count = 1;
         org_args.callee.apply(null, org_args);
       }
-    }
-  };
-
-  this._on_runtime_destroyed = function(msg)
-  {
-    if (this._selected_rules &&  this._selected_rules.runtime_id == msg.id)
-    {
-      window.views.stylesheets.clearAllContainers();
-    }
-  };
-
-  this._on_new_stylesheets = function(rt_id, cb_arr/* obj, cb_method, arg 1, arg 2, ... */)
-  {
-    // cb_arr: [cb_obj, cb_method, arg 1, arg 2, ... ]
-    if (this._on_new_stylesheet_cbs[rt_id])
-    {
-      this._on_new_stylesheet_cbs[rt_id][this._on_new_stylesheet_cbs[rt_id].length] = cb_arr;
-    }
-    else
-    {
-      cb_arr[1].apply(cb_arr[0], cb_arr.slice(2));
-    }
-  };
-
-  this._update_on_new_stylesheets = function(rt_ids)
-  {
-    var rt_id_c_1 = '';
-    var rt_id_c_2 = '';
-
-    for (rt_id_c_1 in this._on_new_stylesheet_cbs)
-    {
-      for (var i = 0; (rt_id_c_2 = rt_ids[i]) && rt_id_c_1 != rt_id_c_2; i++);
-      if (!rt_id_c_2)
-      {
-        delete this._on_new_stylesheet_cbs[rt_id_c_1];
-      }
-    }
-
-    for (var i = 0; rt_id_c_1 = rt_ids[i]; i++)
-    {
-      if (!(rt_id_c_1 in this._on_new_stylesheet_cbs))
-      {
-        this._on_new_stylesheet_cbs[rt_id_c_1] = [];
-      }
-    }
-
-    this._new_runtime_ids = rt_ids;
-
-    if (rt_ids[0] != this._top_runtime_id)
-    {
-      this._top_runtime_id = rt_ids[0] || 0;
-      this._selected_rules = null;
-      window.views['stylesheets'].update();
-    }
-  };
-
-  // TODO: using 'self' in here (because of callees called with 'null'?), change to 'this'
-  this._check_new_runtimes = function(obj)
-  {
-    for (var i = 0, cursor; cursor = self._new_runtime_ids[i]; i++)
-    {
-      // TODO: the handling of stylesheets needs to be cleaned up.
-      if (!self._sheets[cursor])
-      {
-        self.get_stylesheets(cursor, arguments);
-      }
-      else
-      {
-        var cbs = null;
-        var cb = null;
-
-        if (cbs = self._on_new_stylesheet_cbs[cursor])
-        {
-          for (i = 0; cb = cbs[i]; i++)
-          {
-            cb[1].apply(cb[0], cb.slice(2));
-          }
-          delete self._on_new_stylesheet_cbs[cursor];
-        }
-      }
-    }
-  };
-
-  this._on_active_tab = function(msg)
-  {
-    if (this._selected_rules)
-    {
-      var rt_id = this._selected_rules.runtime_id;
-
-      for (var i = 0, cur_rt_id; (cur_rt_id = msg.runtimes_with_dom[i]) && cur_rt_id != rt_id; i++);
-      if (!cur_rt_id)
-      {
-        window.views.stylesheets.clearAllContainers();
-      }
-    }
-
-    if (!msg.runtimes_with_dom.length)
-    {
-      this._sheets = {};
-      // document.styleSheets[index].cssRules with runtime-id and index as keys
-      this._rules = {};
-      this._selected_rules = null;
-      this._new_runtime_ids = null;
-      this._top_runtime_id = '';
-      this._on_new_stylesheet_cbs = {};
-    }
-    else
-    {
-      this._update_on_new_stylesheets(msg.runtimes_with_dom.slice(0));
-      this._check_new_runtimes({});
     }
   };
 
@@ -776,8 +581,6 @@ cls.Stylesheets = function()
     return ret.concat(dashes);
   };
 
-  window.messages.addListener('runtime-destroyed', this._on_runtime_destroyed.bind(this));
-  window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   window.messages.addListener('reset-state', this._on_reset_state.bind(this));
 };
 

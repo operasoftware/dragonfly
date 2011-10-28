@@ -6,6 +6,8 @@
  */
 cls.ElementStyle = function()
 {
+  var self = this;
+
   this._categories_data = [];
   this._selected_element = null;
   this._search_map = [];
@@ -462,16 +464,17 @@ cls.ElementStyle = function()
     }
   };
 
+  // TODO: self -> this
   this._get_data = function(rt_id, obj_id)
   {
-    this._rt_id = rt_id;
-    this._obj_id = obj_id;
+    self._rt_id = rt_id;
+    self._obj_id = obj_id;
     if (stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = tagManager.set_callback(null, this._handle_get_data.bind(this), [rt_id, obj_id]);
+      var tag = tagManager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id];
-      callback_params.push(this._pseudo_item_list.concat(this._pseudo_element_list));
-      this._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
+      callback_params.push(self._pseudo_item_list.concat(self._pseudo_element_list));
+      self._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else
     {
