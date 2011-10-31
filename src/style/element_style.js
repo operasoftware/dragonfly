@@ -456,16 +456,15 @@ cls.ElementStyle = function()
   {
     self._rt_id = rt_id;
     self._obj_id = obj_id;
-    if (stylesheets.has_stylesheets_runtime(rt_id))
+    if (window.stylesheets.has_stylesheets_runtime(rt_id))
     {
       var tag = self._tag_manager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
-      var callback_params = [rt_id, obj_id];
-      callback_params.push(self._pseudo_item_list.concat(self._pseudo_element_list));
+      var callback_params = [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)];
       self._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else
     {
-      stylesheets.get_stylesheets(rt_id, arguments);
+      window.stylesheets.get_stylesheets(rt_id, arguments);
     }
   };
 

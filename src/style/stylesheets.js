@@ -120,7 +120,7 @@ cls.Stylesheets = function()
 
   this._pretty_print_cat[COMP_STYLE] = function(data, search_active)
   {
-    var ret = [];
+    var template = [];
     // set_props is used to force the display if a given property is set
     // also if it has the initial value
     var set_props = elementStyle.get_set_props();
@@ -144,27 +144,30 @@ cls.Stylesheets = function()
         || value.indexOf(search_term) != -1));
       if (display)
       {
-        ret.push([
+        template.push([
           "div",
             ["span",
                prop,
              "class", "css-property"
-            ], ": ",
+            ],
+            ": ",
             ["span",
                helpers.escapeTextHtml(value),
              "class", "css-property-value"
-            ], ";",
+            ],
+            ";",
           "data-spec", "css#" + prop,
           "class", "css-declaration"
         ]);
       }
     }
-    return ret;
+
+    return template;
   }.bind(this);
 
   this._pretty_print_cat[CSS] = function(data, search_active)
   {
-    var ret = [];
+    var template = [];
     var rt_id = data.rt_id;
 
     for (var i = 0, node_casc; node_casc = data[i]; i++)
@@ -178,10 +181,10 @@ cls.Stylesheets = function()
       var inherited_printed = false;
       for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
       {
-        if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
+        if (i > 0 && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
         {
           inherited_printed = true;
-          ret.push([
+          template.push([
             "h2",
               ui_strings.S_INHERITED_FROM + " ",
               ["code",
@@ -193,10 +196,11 @@ cls.Stylesheets = function()
               ]
           ]);
         }
-        ret.push(this._pretty_print_style_dec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active));
+        template.push(this._pretty_print_style_dec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active));
       }
     }
-    return ret;
+
+    return template;
   }.bind(this);
 
   this._pretty_print_rule_in_inspector = function(rule, search_active)
@@ -211,7 +215,7 @@ cls.Stylesheets = function()
     var PRIORITY = 1;
     var STATUS = 2;
 
-    var ret = [];
+    var template = [];
     var index_list = rule[INDEX_LIST] || []; // the built-in proxy returns empty repeated values as null
     var value_list = rule[VALUE_LIST];
     var priority_list = rule[PROPERTY_LIST];
@@ -237,11 +241,9 @@ cls.Stylesheets = function()
       index = index_list.indexOf(prop_index);
 
       if (search_active && !search_list[index])
-      {
         continue;
-      }
 
-      ret.push([
+      template.push([
         "div",
           this.create_declaration(this._index_map[prop_index],
                                   value_list[index],
@@ -256,7 +258,7 @@ cls.Stylesheets = function()
       ]);
     }
 
-    return ret;
+    return template;
   };
 
   this._pretty_print_style_dec = {};
@@ -315,14 +317,14 @@ cls.Stylesheets = function()
 
   this._pretty_print_style_dec[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, style_dec, search_active)
   {
-    var ret = [];
+    var template = [];
     var sheet = this.get_sheet_with_obj_id(rt_id, style_dec[STYLESHEET_ID]);
     var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
 
     if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
     {
       var line_number = style_dec[LINE_NUMBER];
-      ret.push([
+      template.push([
         "div",
           ["span",
              helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : ""),
@@ -353,7 +355,7 @@ cls.Stylesheets = function()
         'stylesheet is missing in stylesheets, _pretty_print_style_dec[ORIGIN_AUTHOR]');
     }
 
-    return ret;
+    return template;
   }.bind(this);
 
   this._pretty_print_style_dec[ORIGIN_ELEMENT] = function(rt_id, obj_id, element_name, style_dec, search_active)
@@ -542,7 +544,7 @@ cls.Stylesheets = function()
 
   this.get_sorted_properties = function()
   {
-    var ret = [];
+    var props = [];
     var dashes = [];
 
     for (var i = 0; i < this._index_map_length; i++)
@@ -551,9 +553,9 @@ cls.Stylesheets = function()
       if (value.indexOf('-') == 0)
         dashes.push(value);
       else
-        ret.push(value);
+        props.push(value);
     }
-    return ret.concat(dashes);
+    return props.concat(dashes);
   };
 
   window.messages.addListener('reset-state', this._on_reset_state.bind(this));

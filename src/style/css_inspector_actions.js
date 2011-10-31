@@ -140,8 +140,7 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property = function(rt_id, rule_id, declaration,
-                               prop_to_remove, callback)
+  this.set_property = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
       this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
@@ -156,8 +155,7 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_css = function(rt_id, rule_id, declaration,
-                                   prop_to_remove, callback)
+  this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
     var script = "object.style.setProperty(\"" +
@@ -184,8 +182,7 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
-  this.set_property_svg = function(rt_id, rule_id, declaration,
-                                   prop_to_remove, callback)
+  this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
     var script = "object.setAttribute(\"" +
@@ -436,7 +433,7 @@ cls.CSSInspectorActions = function(id)
    */
   this.normalize_property = function normalize_property(prop)
   {
-    return (prop || "").replace(/^\s*|\s*$/g, "").toLowerCase();
+    return (prop || "").trim().toLowerCase();
   };
 
   /* ActionHandler interface */
