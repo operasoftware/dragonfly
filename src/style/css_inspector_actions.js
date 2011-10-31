@@ -30,9 +30,7 @@ cls.CSSInspectorActions = function(id)
   this._clear_selected = function()
   {
     if (self._target)
-    {
       self._target.removeClass('selected');
-    }
   };
 
   this.setSelected = function(new_target)
@@ -110,13 +108,10 @@ cls.CSSInspectorActions = function(id)
     this.resetTarget(container);
     this._active_container = container;
     if (!this._target || !this._target.parentElement)
-    {
       this._target = this.getFirstTarget()
-    }
+
     if (this._target && !this._target.hasClass('selected'))
-    {
       this.setSelected(this._target);
-    }
   };
 
   this.edit_onclick = function(event)
@@ -149,13 +144,9 @@ cls.CSSInspectorActions = function(id)
                                prop_to_remove, callback)
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
-    {
       this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
-    }
     else
-    {
       this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
-    }
   };
 
   /**
@@ -177,11 +168,11 @@ cls.CSSInspectorActions = function(id)
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
-    {
       script += "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
-    }
 
-    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function")
+            ? this._tag_manager.set_callback(null, callback)
+            : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -204,11 +195,11 @@ cls.CSSInspectorActions = function(id)
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
-    {
       script += "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
-    }
 
-    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function")
+            ? this._tag_manager.set_callback(null, callback)
+            : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -222,13 +213,9 @@ cls.CSSInspectorActions = function(id)
   this.remove_property = function(rt_id, rule_id, property, callback)
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
-    {
       this.remove_property_svg(rt_id, rule_id, property, callback);
-    }
     else
-    {
       this.remove_property_css(rt_id, rule_id, property, callback);
-    }
   };
 
   /**
@@ -242,12 +229,13 @@ cls.CSSInspectorActions = function(id)
     property = this.normalize_property(property);
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-    {
       window.elementStyle.remove_property(disabled_style_dec, property);
-    }
+
     var script = "object.style.removeProperty(\"" + property + "\");";
 
-    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function")
+            ? this._tag_manager.set_callback(null, callback)
+            : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -263,12 +251,13 @@ cls.CSSInspectorActions = function(id)
     property = this.normalize_property(property);
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-    {
       window.elementStyle.remove_property(disabled_style_dec, property);
-    }
+
     var script = "object.removeAttribute(\"" + property + "\");";
 
-    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function")
+            ? this._tag_manager.set_callback(null, callback)
+            : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -279,13 +268,9 @@ cls.CSSInspectorActions = function(id)
   this.restore_property = function()
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
-    {
       this.restore_property_svg();
-    }
     else
-    {
       this.restore_property_css();
-    }
   };
 
   /**
@@ -302,9 +287,7 @@ cls.CSSInspectorActions = function(id)
     var prop_enum = window.css_index_map.indexOf(new_property);
     // Check if it's a real property. If not, we don't have to set something back.
     if (prop_enum != -1)
-    {
       script = "object.style.removeProperty(\"" + new_property + "\");";
-    }
 
     if (initial_property)
     {
@@ -346,9 +329,7 @@ cls.CSSInspectorActions = function(id)
     var prop_enum = window.css_index_map.indexOf(new_property);
     // Check if it's a real property. If not, we don't have to set something back.
     if (prop_enum != -1)
-    {
       script = "object.removeAttribute(\"" + new_property + "\");";
-    }
 
     if (initial_property)
     {
@@ -407,9 +388,7 @@ cls.CSSInspectorActions = function(id)
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
     if (!disabled_style_dec_list[id])
-    {
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
-    }
 
     this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
     window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
@@ -430,9 +409,7 @@ cls.CSSInspectorActions = function(id)
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
     if (!disabled_style_dec_list[id])
-    {
       disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
-    }
 
     if (window.elementStyle.is_some_declaration_enabled(style_dec))
     {
@@ -494,17 +471,19 @@ cls.CSSInspectorActions = function(id)
     if (this._target)
     {
       var filter = this._target.nodeName.toLowerCase() == 'header' &&
-                   this._target.parentElement.getAttribute('handler') ?
-                   this._nav_filters.header :
-                   this._nav_filters._default;
+                   this._target.parentElement.getAttribute('handler')
+                 ? this._nav_filters.header
+                 : this._nav_filters._default;
       var next = this._target.getPreviousWithFilter(this._active_container,
                                                      filter);
       this.setSelected(next);
       return false;
     }
     else
+    {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'keyboard_handler: no target to move');
+    }
   }.bind(this);
 
   this._handlers["nav-down"] = function(event, target)
@@ -512,17 +491,19 @@ cls.CSSInspectorActions = function(id)
     if (this._target)
     {
       var filter = this._target.nodeName.toLowerCase() == 'header' &&
-                   !this._target.parentElement.getAttribute('handler') ?
-                   this._nav_filters.header :
-                   this._nav_filters._default;
+                   !this._target.parentElement.getAttribute('handler')
+                 ? this._nav_filters.header
+                 : this._nav_filters._default;
       var next = this._target.getNextWithFilter(this._active_container,
                                                 filter);
       this.setSelected(next);
       return false;
     }
     else
+    {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'keyboard_handler: no target to move');
+    }
   }.bind(this);
 
   this._handlers["dispatch-dbl-click"] = function(event, target)
@@ -568,21 +549,15 @@ cls.CSSInspectorActions = function(id)
                                   : this.editor.MODE_CSS;
 
     if (is_disabled)
-    {
       this.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
-    }
     else
-    {
       this.disable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
-    }
   }.bind(this);
 
   this.target_enter = function(event, action_id)
   {
     if (this._target)
-    {
       this._target.releaseEvent('click');
-    }
   };
 
   this._handlers["edit-previous"] = function(event, target)
@@ -699,7 +674,6 @@ cls.CSSInspectorActions = function(id)
 
   this.focus = function(event, container)
   {
-
     if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
   };

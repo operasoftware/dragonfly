@@ -173,9 +173,7 @@ cls.Stylesheets = function()
       var style_dec_list = node_casc[STYLE_LIST];
 
       if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
-      {
         continue;
-      }
 
       var inherited_printed = false;
       for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
@@ -446,9 +444,7 @@ cls.Stylesheets = function()
   this.get_stylesheets = function(rt_id, org_args)
   {
     if (this._sheets[rt_id])
-    {
       return this._sheets[rt_id];
-    }
 
     if (org_args && runtime_onload_handler.check(rt_id, org_args))
     {
@@ -495,9 +491,8 @@ cls.Stylesheets = function()
     var NAME_LIST = 0;
     var index_map = message[NAME_LIST];
     if (!index_map)
-    {
       return;
-    }
+
     window.css_index_map = this._index_map = index_map;
     window.inherited_props_index_list = [];
     var temp = [];
@@ -506,14 +501,10 @@ cls.Stylesheets = function()
       temp[i] = {index: i, key: prop};
       this._initial_values[i] = css_initial_values[prop];
       if (prop in css_inheritable_properties)
-      {
         inherited_props_index_list[i] = true;
-      }
 
       if (prop == 'color')
-      {
         this._color_index = i;
-      }
     }
 
     temp.sort(function(a, b) {
@@ -558,13 +549,9 @@ cls.Stylesheets = function()
     {
       var value = this._index_map[this._sorted_index_map[i]];
       if (value.indexOf('-') == 0)
-      {
         dashes.push(value);
-      }
       else
-      {
         ret.push(value);
-      }
     }
     return ret.concat(dashes);
   };

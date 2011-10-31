@@ -112,14 +112,10 @@ cls.ElementStyle = function()
   this.get_category_data = function(index)
   {
     if (this._categories_data[IS_VALID])
-    {
       return this._categories_data[index];
-    }
 
     if (this._selected_element)
-    {
       this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
-    }
 
     return null;
   };
@@ -138,26 +134,20 @@ cls.ElementStyle = function()
   {
     var index = this._pseudo_item_list.indexOf(this._pseudo_item_map[pseduo_item]);
     if (index == -1)
-    {
       this._pseudo_item_list.push(this._pseudo_item_map[pseduo_item]);
-    }
   };
 
   this.remove_pseudo_item = function(pseduo_item)
   {
     var index = this._pseudo_item_list.indexOf(this._pseudo_item_map[pseduo_item]);
     if (index != -1)
-    {
       this._pseudo_item_list.splice(index, 1);
-    }
   };
 
   this.update = function()
   {
     if (this._rt_id && this._obj_id)
-    {
       this._get_data(this._rt_id, this._obj_id);
-    }
   }.bind(this);
 
   /**
@@ -213,9 +203,7 @@ cls.ElementStyle = function()
       for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
       {
         if (style_dec[RULE_ID] == id)
-        {
           return style_dec;
-        }
       }
     }
     return null;
@@ -234,9 +222,7 @@ cls.ElementStyle = function()
       for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
       {
         if ((style_dec[ORIGIN] == ORIGIN_ELEMENT || style_dec[ORIGIN] == ORIGIN_SVG) && node_style[OBJECT_ID] == id)
-        {
           return style_dec;
-        }
       }
     }
     return null;
@@ -509,27 +495,21 @@ cls.ElementStyle = function()
                                      ? disabled_style_dec_list[style_dec[RULE_ID]]
                                      : disabled_style_dec_list[this.get_inline_obj_id(node_style_cascade[0])];
               if (disabled_style_dec)
-              {
                 style_dec = this.sync_declarations(style_dec, disabled_style_dec, i > 0);
-              }
             }
 
             var length = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length || 0;
             for (var k = 0; k < length; k++)
             {
               if (style_dec[STATUS_LIST][k])
-              {
                 this._set_props[style_dec[INDEX_LIST][k]] = 1;
-              }
             }
           }
         }
       }
 
       if (this._search_term)
-      {
         this._do_search(this._search_term);
-      }
 
       for (var i = 0, view_id; view_id = this._views[i]; i++)
       {

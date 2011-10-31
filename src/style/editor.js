@@ -20,16 +20,16 @@ var Editor = function(actions)
   this.MODE_CSS = 1;
   this.MODE_SVG = 2;
 
-  this.base_style =
-  {
+  this.base_style = {
     'font-family': '',
     'line-height': 0,
     'font-size': 0
   };
 
+  this._actions = actions;
+
   this.char_width = 0;
   this.line_height = 0;
-  this.cssText = '';
   this.textarea_container = null;
   this.textarea = null;
 
@@ -46,7 +46,6 @@ var Editor = function(actions)
   this.context_edit_mode = this.MODE_CSS;
 
   this.last_suggest_type = null;
-  this.suggest_count = 0;
   this.suggest_iterate = false;
   this.property_list_length = 0;
 
@@ -90,7 +89,7 @@ var Editor = function(actions)
     this.textarea = this.textarea_container.
       appendChild(document.createElement('textarea'));
     this.textarea.style.cssText = css_text;
-    this.textarea.oninput = input_handler;
+    this.textarea.oninput = this._input_handler;
   };
 
   // TODO: this should use the CSS tokenizer
@@ -177,17 +176,14 @@ var Editor = function(actions)
 
     // last char would be ;
     if (char_pos >= value.length - 1)
-    {
       char_pos = value.length - 2;
-    }
 
     if ((cur_pos = value.indexOf(':', 0)) > -1)
     {
       // TODO should test if pos is in match_token string
       if (cur_pos >= char_pos)
-      {
         return {start: 0, end: cur_pos};
-      }
+
       cur_pos++;
       while (value.charAt(cur_pos) == ' ')
       {
@@ -284,9 +280,7 @@ var Editor = function(actions)
     }
 
     if (last_pos < value.length && (val = value.slice(last_pos)))
-    {
       ret[ret.length] = val;
-    }
 
     return ret;
   };
@@ -359,14 +353,10 @@ var Editor = function(actions)
     var scroll_pos = force_focus ? null : new Element.ScrollPosition(ele);
 
     if (!this.base_style['font-size'])
-    {
       this.get_base_style(ref_ele || ele);
-    }
 
     if (this.textarea_container.parentElement)
-    {
       this.submit();
-    }
 
     this.context_edit_mode = ele.get_attr("parent-node-chain", "rule-id") == "element-svg"
                            ? this.MODE_SVG
@@ -407,9 +397,7 @@ var Editor = function(actions)
       this._get_char_position(event);
       this.textarea.focus();
       if (scroll_pos)
-      {
         scroll_pos.reset();
-      }
     }
   };
 
@@ -499,8 +487,8 @@ var Editor = function(actions)
 
   this.autocomplete = function(event, action_id)
   {
-    var cur_start = this.textarea.selectionStart;
     var new_start = 0;
+    var cur_start = this.textarea.selectionStart;
     var cur_end = this.textarea.selectionEnd;
     var value = this.textarea.value;
     var cur_token = '';
@@ -523,7 +511,7 @@ var Editor = function(actions)
       }
     }
 
-    var suggest = this._get_suggest
+    var suggest = this._get_suggestion
     (
       this.tab_context_tokens && this.tab_context_tokens[0] || '',
       this.tab_context_tokens && cur_end <= this.tab_context_tokens[2],
@@ -535,48 +523,45 @@ var Editor = function(actions)
 
     if (suggest)
     {
-      switch(suggest.replace_type)
+      switch (suggest.replace_type)
       {
-        case SELECTION:
-        {
-          new_start = this.tab_context_tokens[i];
-          this.textarea.value =
-            value.slice(0, new_start) +
-            suggest.value +
-            value.slice(this.tab_context_tokens[i+1]);
-          this.textarea.selectionStart = cur_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
-        case TOKEN:
-        {
-          new_start = this.tab_context_tokens[i];
-          this.textarea.value =
-            value.slice(0, new_start) +
-            suggest.value +
-            value.slice(this.tab_context_tokens[i+1]);
-          this.textarea.selectionStart = new_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
-        case VALUE:
-        {
-          new_start = this.tab_context_tokens[2] + 2;
-          this.textarea.value =
-            this.tab_context_tokens[0] + ': ' + suggest.value + (this.context_cur_priority ? " !important" : "") + ";";
-          this.textarea.selectionStart = new_start;
-          this.textarea.selectionEnd = new_start + suggest.value.length;
-          break;
-        }
+      case SELECTION:
+        new_start = this.tab_context_tokens[i];
+        this.textarea.value =
+          value.slice(0, new_start) +
+          suggest.value +
+          value.slice(this.tab_context_tokens[i+1]);
+        this.textarea.selectionStart = cur_start;
+        this.textarea.selectionEnd = new_start + suggest.value.length;
+        break;
+
+      case TOKEN:
+        new_start = this.tab_context_tokens[i];
+        this.textarea.value =
+          value.slice(0, new_start) +
+          suggest.value +
+          value.slice(this.tab_context_tokens[i+1]);
+        this.textarea.selectionStart = new_start;
+        this.textarea.selectionEnd = new_start + suggest.value.length;
+        break;
+
+      case VALUE:
+        new_start = this.tab_context_tokens[2] + 2;
+        this.textarea.value =
+          this.tab_context_tokens[0] + ': ' + suggest.value + (this.context_cur_priority ? " !important" : "") + ";";
+        this.textarea.selectionStart = new_start;
+        this.textarea.selectionEnd = new_start + suggest.value.length;
+        break;
       }
 
       this.textarea.style.height = this.textarea.scrollHeight + 'px';
       this.commit();
     }
+
     return false;
   };
 
-  this._get_suggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
+  this._get_suggestion = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
     var re_num = /^(-?)([\d.]+)(.*)$/;
     var match = null;
@@ -606,18 +591,14 @@ var Editor = function(actions)
     var length = list && list.length || 0;
 
     if (length == 1)
-    {
       return list;
-    }
 
     if (length && set)
     {
       for (var i = 0; i < length; i++)
       {
         if (list[i].indexOf(set) == 0)
-        {
           ret[ret.length] = list[i];
-        }
       }
     }
     else
@@ -633,18 +614,15 @@ var Editor = function(actions)
     {
       cur_cursor += action_id;
       if (cur_cursor > matches.length - 1)
-      {
         cur_cursor = 0;
-      }
       else if (cur_cursor < 0)
-      {
         cur_cursor = matches.length - 1;
-      }
     }
     else
     {
       cur_cursor = 0;
     }
+
     return cur_cursor;
   };
 
@@ -663,7 +641,8 @@ var Editor = function(actions)
       this.property_list = stylesheets.get_sorted_properties();
       this.property_list_length = this.property_list.length;
     }
-    return this._get_matches_from_list(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
+    return this._get_matches_from_list(this.property_list,
+        this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
   };
 
   this.suggest_property.replace_type = SELECTION;
@@ -674,9 +653,9 @@ var Editor = function(actions)
   {
     var is_float = /\.(\d+)/.exec(match[2]);
     if (is_float)
-    {
-      return [(parseFloat(match[1] + match[2]) + (action_id == PLUS ? 0.1 : -0.1)).toFixed(is_float[1].length) + match[3]];
-    }
+      return [(parseFloat(match[1] + match[2]) +
+              (action_id == PLUS ? 0.1 : -0.1)).toFixed(is_float[1].length) + match[3]];
+
     return [(parseInt(match[1] + match[2]) + action_id).toString() + match[3]];
   };
 
@@ -687,9 +666,7 @@ var Editor = function(actions)
   this.suggest_value = function(token, cur_start, cur_end, action_id, match)
   {
     if (!this.tab_context_tokens)
-    {
       return null;
-    }
 
     var prop = this.tab_context_tokens[0];
     var set = this.tab_context_tokens[3] &&
@@ -699,9 +676,8 @@ var Editor = function(actions)
     var match = null;
 
     if (set == this.suggest_value.last_set && prop == this.suggest_value.last_prop)
-    {
       return this.suggest_value.matches;
-    }
+
     this.suggest_value.last_set = set;
     this.suggest_value.last_prop = prop;
 
@@ -718,9 +694,8 @@ var Editor = function(actions)
     }
 
     if (suggest_values[prop] && suggest_values[prop].length)
-    {
       return this._get_matches_from_list(suggest_values[prop], set);
-    }
+
     return null;
   }
 
@@ -742,7 +717,7 @@ var Editor = function(actions)
             this.context_cur_value == props[1] &&
             this.context_cur_priority == props[2]))
       {
-        actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
+        this._actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
       }
       this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0],
         props[1], props[2], this.context_rule_id, disabled));
@@ -788,18 +763,12 @@ var Editor = function(actions)
     }
 
     if (props[1])
-    {
-      actions.set_property(this.context_rt_id, this.context_rule_id, props);
-    }
+      this._actions.set_property(this.context_rt_id, this.context_rule_id, props);
     else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
-    {
-      actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
-    }
+      this._actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
 
     if (this.context_stylesheet_index > -1)
-    {
       this.context_stylesheet_index = -1;
-    }
   };
 
   this.enter = function()
@@ -820,8 +789,15 @@ var Editor = function(actions)
     {
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
-        this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0],
-          this.context_cur_value, this.context_cur_priority, this.context_rule_id, is_disabled));
+        this.textarea_container.parentElement.clearAndRender(
+          window.stylesheets.create_declaration(
+            props[0],
+            this.context_cur_value,
+            this.context_cur_priority,
+            this.context_rule_id,
+            is_disabled
+          )
+        );
         return false;
       }
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
@@ -835,19 +811,26 @@ var Editor = function(actions)
 
         var property_ele = document.createElement('div');
         property_ele.className = "css-declaration";
+
         if (this.textarea_container.parentNode.hasClass("overwritten"))
-        {
           property_ele.addClass("overwritten");
-        }
+
         if (is_disabled)
-        {
           property_ele.addClass("disabled");
-        }
+
         this.textarea_container.parentNode.removeClass("overwritten");
         this.textarea_container.parentNode.removeClass("disabled");
         var prop = this.textarea_container.parentElement.parentElement.
           insertBefore(property_ele, this.textarea_container.parentElement);
-        prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled));
+        prop.clearAndRender(
+          window.stylesheets.create_declaration(
+            props[0],
+            props[1],
+            props[2],
+            this.context_rule_id,
+            is_disabled
+          )
+        );
         this.textarea.value =
         this.context_cur_text_content =
         this.context_cur_prop =
@@ -857,7 +840,15 @@ var Editor = function(actions)
       }
       else
       {
-        this.textarea_container.parentElement.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled));
+        this.textarea_container.parentElement.clearAndRender(
+          window.stylesheets.create_declaration(
+            props[0],
+            props[1],
+            props[2],
+            this.context_rule_id,
+            is_disabled
+          )
+        );
       }
     }
     else
@@ -871,16 +862,19 @@ var Editor = function(actions)
   this.escape = function()
   {
     this.last_suggest_type = '';
-    actions.restore_property();
+    this._actions.restore_property();
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.clearAndRender(
-        window.stylesheets.create_declaration(this.context_cur_prop,
-                                              this.context_cur_value,
-                                              this.context_cur_priority,
-                                              this.context_rule_id,
-                                              this.textarea_container.parentNode.hasClass("disabled")));
+        window.stylesheets.create_declaration(
+          this.context_cur_prop,
+          this.context_cur_value,
+          this.context_cur_priority,
+          this.context_rule_id,
+          this.textarea_container.parentNode.hasClass("disabled")
+        )
+      );
       return true;
     }
     else
@@ -891,10 +885,10 @@ var Editor = function(actions)
     }
   };
 
-  var input_handler = function(event)
+  this._input_handler = function(event)
   {
-    this.style.height = this.scrollHeight + 'px';
-    self.commit();
-  };
+    event.target.style.height = event.target.scrollHeight + 'px';
+    this.commit();
+  }.bind(this);
 };
 
