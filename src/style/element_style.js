@@ -416,11 +416,7 @@ cls.ElementStyle = function()
     {
       var tag = tagManager.set_callback(null, handleGetData, [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id];
-      if (self._es_debugger.major_version >= 6 && self._es_debugger.minor_version >= 5)
-      {
-        // Add the pseudoSelectorList if we have the right version
-        callback_params.push(self._pseudo_item_list.concat(self._pseudo_element_list));
-      }
+      callback_params.push(self._pseudo_item_list.concat(self._pseudo_element_list));
       self._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else

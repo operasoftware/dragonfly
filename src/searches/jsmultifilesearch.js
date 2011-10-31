@@ -169,11 +169,13 @@ var JSMultifileSearchPrototype = function()
       this._container.firstElementChild.clearAndRender(tmpl);
       if (this._last_query)
       {
-        if (this.search_type == TextSearch.REGEXP && !this._validate_reg_exp())
+        var error = this.search_type == TextSearch.REGEXP &&
+                    this._validate_reg_exp();
+
+        if (error)
         {
           this._clear_search_results();
-          var tmpl = ['div', ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING, 
-                             'class', 'info-box'];
+          var tmpl = ['div', error, 'class', 'info-box'];
           this._container.firstElementChild.clearAndRender(tmpl);
         }
         else

@@ -148,7 +148,7 @@ overlay hr {
 
 /* Buttons */
 
-.overlay button,
+.overlay .ui-button,
 .hud .ui-control, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header {
   background-color: #474747;
@@ -166,18 +166,8 @@ overlay hr {
   -o-transition: background-color 0.2s;
 }
 
-.overlay button:hover,
-.hud .ui-control:hover, /* TODO class should be changed to .overlay ... */
-.shortcuts-config header:hover {
-  background-color: #525252;
-  color: rgba(255, 255, 255, .9);
-  -o-transition: background-color 0.2s;
-  background-image: -o-linear-gradient(-90deg,
-                                       transparent,
-                                       rgba(0, 0, 0, 0.37) 100%);
-}
 
-.overlay button:active,
+.overlay .ui-button:active,
 .hud .ui-control:not([disabled]):active, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header:active {
   box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.2),
@@ -194,17 +184,17 @@ overlay hr {
 
 /* Defining the size and margins for some of the buttons */
 
-.overlay button,
-.overlay .setting-composite input[type=button],
+.overlay .ui-button,
+.overlay setting-composite .ui-button,
 .shortcuts-config header {
   line-height: 20px;
   padding: 1px 12px;
   margin-left: 1px;
   margin-right: 1px;
 }
-.overlay select + button {
+.overlay select + .ui-button {
     margin-left: 6px;
 }
-.overlay button + button {
+.overlay .ui-button + .ui-button {
     margin-left: 3px;
 }

@@ -12,9 +12,12 @@ cls.JsSourceView = function(id, name, container_class)
   var container_id = 'js-source-content';
   var container_line_nr_id = 'js-source-line-numbers';
   var scroll_id = 'js-source-scroller';
+  var scroll_content_id = 'js-source-scroll-content';
   var scroll_container_id = 'js-source-scroll-container';
   var container_breakpoints_id = 'break-point-container';
-  var horizontal_scoller = 'js-source-scroll-content';
+
+  const STOP_AT_ERROR_CLASS = "stop-at-error";
+  const ERROR_TOOLTIP_CLASS = "error-description";
 
   var context = {};
 
@@ -286,16 +289,17 @@ cls.JsSourceView = function(id, name, container_class)
         updateLineNumbers(0);
         if(runtimes.getSelectedRuntimeId())
         {
-          document.getElementById(horizontal_scoller).render(
+          document.getElementById(scroll_content_id).render(
               runtimes.isReloadedWindow(runtimes.getActiveWindowId()) ?
               ['div',
                 ['p', ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS],
                 'class', 'info-box'
               ] :
               ['div',
-                ['button',
-                  'class', 'container-button',
-                  'handler', 'reload-window'],
+                ['span',
+                  'class', 'container-button ui-button',
+                  'handler', 'reload-window',
+                  'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
                 'class', 'info-box'
               ]
@@ -303,7 +307,7 @@ cls.JsSourceView = function(id, name, container_class)
         }
         else
         {
-          document.getElementById(horizontal_scoller).render(
+          document.getElementById(scroll_content_id).render(
               ['div',
                 ['p', ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME],
                 'class', 'info-box'
@@ -354,7 +358,7 @@ cls.JsSourceView = function(id, name, container_class)
     __timeoutUpdateLayout = 0;
   }
 
-  var getMaxLineLength = function()
+  var getMaxLengthLineIndex = function()
   {
     var i = 0,
       max = 0,
@@ -362,9 +366,9 @@ cls.JsSourceView = function(id, name, container_class)
       previous = 0,
       line_arr = __current_script.line_arr,
       length = line_arr.length;
-    for( ; i < length; i++)
+    for ( ; i < length; i++)
     {
-      if( ( line_arr[i] - previous ) > max )
+      if ((line_arr[i] - previous) > max)
       {
         max = line_arr[i] - previous;
         max_index = i;
@@ -377,64 +381,63 @@ cls.JsSourceView = function(id, name, container_class)
   var updateScriptContext = function()
   {
     if (__current_script.scroll_width &&
-        source_content.firstChild &&
-        __current_script.scroll_width > source_content.firstChild.firstChild.offsetWidth)
+        __current_script.scroll_width > source_content.offsetWidth)
     {
       document.getElementById(scroll_container_id).style.bottom =
           context['scrollbar-width'] + 'px';
-      source_content.style.width = __current_script.scroll_width +'px';
+      source_content.style.minWidth = __current_script.scroll_width +'px';
     }
     else
     {
       document.getElementById(scroll_container_id).style.removeProperty('bottom');
-      source_content.style.removeProperty('width');
+      source_content.style.removeProperty('min-width');
     }
     document.getElementById(scroll_id).style.height = __current_script.scroll_height + 'px';
     if (__current_script.scroll_height > context['line-height'] * __max_lines)
     {
-      document.getElementById(horizontal_scoller).style.right =
+      document.getElementById(scroll_content_id).style.right =
         context['scrollbar-width'] + 'px';
     }
     else
     {
-      document.getElementById(horizontal_scoller).style.right = '0px';
+      document.getElementById(scroll_content_id).style.right = '0px';
     }
   }
 
   var setScriptContext = function(script_id, line_no)
   {
     source_content.innerHTML = "<div style='visibility:hidden'>" +
-      simple_js_parser.format(__current_script, getMaxLineLength() - 1, 1).join('') + "</div>";
-    var scrollWidth = __current_script.scroll_width = source_content.firstChild.firstChild.scrollWidth + 7;
-    var offsetWidth = source_content.firstChild.firstChild.offsetWidth;
+      simple_js_parser.format(__current_script, getMaxLengthLineIndex() - 1, 1).join('') + "</div>";
+    var scrollWidth = __current_script.scroll_width = document.getElementById(scroll_content_id).scrollWidth;
+    var offsetWidth = document.getElementById(scroll_content_id).offsetWidth;
     // ensure that a scrollbar is also displayed with very long one-liner scripts
     // max width which produces a scrollbar is 0x7FFF - 1
     if(__current_script.scroll_width > 0x7FFE)
     {
       __current_script.scroll_width = 0x7FFE;
     }
-    if( scrollWidth > offsetWidth )
+    if (scrollWidth > offsetWidth)
     {
       __max_lines =
-        ( context['container-height'] - context['scrollbar-width'] ) / context['line-height'] >> 0;
+        (context['container-height'] - context['scrollbar-width']) / context['line-height'] >> 0;
     }
     else
     {
       __max_lines = context['container-height'] / context['line-height'] >> 0;
     }
-    if( __max_lines > __current_script.line_arr.length )
+    if (__max_lines > __current_script.line_arr.length)
     {
       __max_lines = __current_script.line_arr.length;
     }
     var lines = document.getElementById(container_line_nr_id);
 
-    if( lines )
+    if (lines)
     {
       lines.parentElement.removeChild(lines);
     }
     document.getElementById(frame_id).render(templates.line_nummer_container(__max_lines));
     line_numbers = document.getElementById(container_line_nr_id);
-    source_content.style.height = ( context['line-height'] * __max_lines ) +'px';
+    source_content.style.height = (context['line-height'] * __max_lines) +'px';
     __current_script.scroll_height = __current_script.line_arr.length * context['line-height'];
     updateScriptContext();
     source_content.innerHTML = "";
@@ -450,7 +453,7 @@ cls.JsSourceView = function(id, name, container_class)
     lines.parentElement.removeChild(lines);
     document.getElementById(frame_id).render(templates.line_nummer_container(__max_lines));
     document.getElementById(scroll_id).style.height = 'auto';
-    document.getElementById(horizontal_scoller).style.right = '0px';
+    document.getElementById(scroll_content_id).style.right = '0px';
   }
 
   // deprecated. use this.show_and_flash_line instead.
@@ -483,7 +486,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.get_scroll_container = function()
   {
-    return document.getElementById(horizontal_scoller);
+    return document.getElementById(scroll_content_id);
   }
 
   /**
@@ -602,6 +605,9 @@ cls.JsSourceView = function(id, name, container_class)
         source_content.innerHTML = get_script_lines(__top_line, this.getMaxLines() - 1);
         updateLineNumbers(__top_line);
 
+        if (__current_script.stop_at_error)
+          this.show_stop_at_error();
+
         var scroll_container = document.getElementById(scroll_container_id);
         if(scroll_container)
         {
@@ -709,6 +715,41 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return __current_script && __current_script.script_id;
   }
+
+  this.show_stop_at_error = function()
+  {
+    if (__current_script &&
+        __current_script.stop_at_error &&
+        this._is_line_within_view(__current_script.stop_at_error.line_number))
+    {
+      var error = __current_script.stop_at_error;
+      var line_ele = this.get_line_element(error.line_number);
+      if (line_ele)
+      {
+        line_ele.className = STOP_AT_ERROR_CLASS;
+        var tmpl = ['div',
+                    'Unhandled ' + error.error_class + ': ' + error.error_message,
+                    'class', ERROR_TOOLTIP_CLASS];
+        if (line_ele.firstChild)
+          line_ele.insertBefore(document.render(tmpl), line_ele.firstChild);
+        else
+          line_ele.render(tmpl);
+      }
+    }
+  };
+
+  this.clear_stop_at_error = function()
+  {
+    var source_content = document.getElementById(container_id);
+    var tooltip = source_content &&
+                  source_content.querySelector("." + ERROR_TOOLTIP_CLASS);
+
+    if (tooltip)
+    {
+      tooltip.parentNode.removeClass(STOP_AT_ERROR_CLASS);
+      tooltip.parentNode.removeChild(tooltip);
+    }
+  };
 
   this.clearView = function()
   {
@@ -1057,7 +1098,6 @@ cls.ScriptSelect.prototype = new CstSelect();
 
 cls.JsSourceView.create_ui_widgets = function()
 {
-  var major_ecma_service_version = parseInt(window.services['ecmascript-debugger'].version.split('.')[0]);
   var toolbar_buttons =
   [
     {
@@ -1129,6 +1169,13 @@ cls.JsSourceView.create_ui_widgets = function()
     true
   );
 
+  var service = window.services['ecmascript-debugger'];
+  // core integartion is at least 168, that means major version is at least 6
+  var stop_on_error = (service.major_version > 6 ||
+                       service.minor_version > 7)
+                    ? 1
+                    : 0;
+  
   new Settings
   (
     // id
@@ -1137,7 +1184,7 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       script: 0,
       exception: 0,
-      error: 0,
+      error: stop_on_error,
       abort: 0,
       'tab-size': 4,
       'js-search-type': DOMSearch.PLAIN_TEXT,

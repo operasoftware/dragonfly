@@ -170,9 +170,12 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
 
 cls.ResourceUtil.mime_to_type = function(mime, extension)
 {
-  return this.mime_type_map[mime.contains(";") ?
-                            mime.split(';')[0].trim() :
-                            mime];
+  if (mime)
+  {
+    return this.mime_type_map[mime.contains(";") ?
+                              mime.split(';')[0].trim() :
+                              mime];
+  }
 }
 
 cls.ResourceUtil.path_to_type = function(path)

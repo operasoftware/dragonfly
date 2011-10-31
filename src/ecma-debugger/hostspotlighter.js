@@ -1,10 +1,8 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
-cls.EcmascriptDebugger["6.0"].Hostspotlighter =
-cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
+cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 {
   /* interface */
   // type: default, dimension, padding, border, margin, locked 
@@ -537,10 +535,11 @@ cls.EcmascriptDebugger["5.0"].Hostspotlighter = function()
           'style', 'background-color: #' + color,
           'class', 'spotlight-color-select',
           'handler', 'select-spotlight-color'],
-        ['button', 
+        ['span', 
           ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
           'handler', 'reset-default-spotlight-colors',
-          'class', 'reset-defaults'],
+          'class', 'reset-defaults ui-button',
+          'tabindex', '1'],
         ['p', ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT.replace ("%s", shortcut)],
       'class', 'host-spotlight']])  
   };

@@ -31,7 +31,7 @@ var SettingsBase = function()
     for( ; _switch = switches[i]; i++)
     {
       force_reflow = false;
-      buttons = _switch.getElementsByTagName('button');
+      buttons = _switch.getElementsByClassName('ui-button');
       for( j = 0; button = buttons[j]; j++)
       {
         if( button.getAttribute('key') == key_id )

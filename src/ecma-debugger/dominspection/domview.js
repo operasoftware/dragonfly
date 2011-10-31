@@ -233,14 +233,9 @@ cls.DOMView.create_ui_widgets = function()
     'update-on-dom-node-inserted',
     'show-id_and_classes-in-breadcrumb',
     'scroll-into-view-on-spotlight',
-    'lock-selected-elements'
+    'lock-selected-elements',
+    'show-pseudo-elements'
   ];
-
-  var service = window.services["ecmascript-debugger"];
-  if (service.major_version >= 6 && service.minor_version >= 5)
-  {
-    settings_checkboxes.push('show-pseudo-elements');
-  }
 
   new Settings
   (
@@ -493,24 +488,5 @@ cls.DOMView.create_ui_widgets = function()
       'update-on-dom-node-inserted'
     ]
   );
-
-  // If the ECMAScriptDebugger version is higher than 6.4
-  // the search will be in a sub view in the side panel.
-  if (window.services['ecmascript-debugger'].major_minor_version < 6.5)
-  {
-    var searchbar = [Searchbar];
-    var search = new Search('dom', searchbar);
-    window.messages.addListener('dom-view-updated', function(msg)
-    {
-      if (msg.model == window.dom_data)
-      {
-        search.update_search();
-      }
-    });
-  }
-
-
-
-
 
 };

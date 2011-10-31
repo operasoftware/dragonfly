@@ -231,9 +231,9 @@ window.cls.Client = function()
     viewport.innerHTML =
       "<div class='padding' id='waiting-for-connection'>" +
         "<div class='info-box'>" + msg +
-            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+            (port ? "<p><span class='ui-button container-button' handler='cancel-remote-debug' tabindex='1'>" +
                       ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
-                    "</button></p>"
+                    "</span></p>" 
                   : "") +
         "</div>" +
       "</div>";
@@ -267,12 +267,15 @@ window.cls.Client = function()
             "could not load fallback urls. (during local development this is OK!)");
         return;
       }
-      var fallback_urls = eval( "(" + this.responseText + ")" );
-      if( fallback_urls && fallback_urls[type] && version in fallback_urls[type] )
+      var fallback_urls = JSON.parse(this.responseText);
+      if (fallback_urls && fallback_urls[type] && version in fallback_urls[type])
       {
-        if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
+        if (confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION))
         {
-          location = protocol + hostname + port + fallback_urls[type][version] + file_name + search;
+          location = protocol + 
+                     hostname + port + 
+                     fallback_urls[type][version] + 
+                     file_name + search;
         }
       }
       else
@@ -282,6 +285,11 @@ window.cls.Client = function()
     };
     this.open('GET', protocol + hostname + port + fallback_filename);
     this.send(null);
+  };
+
+  this.handle_fallback = function(version)
+  {
+    handle_fallback.call(new XMLHttpRequest(), version); 
   };
 
   this.create_top_level_views = function(services)
@@ -326,9 +334,6 @@ window.cls.Client = function()
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
 
-    new CompositeView('old_http_logger',
-                      ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.old_http_logger_rough_layout);
   };
 
   this.create_window_controls = function()
@@ -634,14 +639,6 @@ ui_framework.layouts.console_rough_layout =
     children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
 };
 
-ui_framework.layouts.old_http_logger_rough_layout =
-{
-    dir: 'v',
-    width: 1000,
-    height: 1000,
-    children: [{ height: 1000, tabbar: { tabs: ["request_list"], is_hidden: true } }]
-};
-
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
@@ -654,30 +651,15 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    if (services['resource-manager'].is_implemented)
-    {
-      return [
-        'dom_mode',
-        {view: 'js_mode', tab_class: JavaScriptTab},
-        'network_mode',
-        'resource_panel',
-        'storage',
-        {view: 'console_mode', tab_class: ErrorConsoleTab},
-        'utils',
-        'console_panel'
-      ];
-    }
-    else
-    {
-      return [
-        'dom_mode',
-        {view: 'js_mode', tab_class: JavaScriptTab},
-        'old_http_logger',
-        'storage',
-        {view: 'console_mode', tab_class: ErrorConsoleTab},
-        'utils',
-        'console_panel'
-      ];
-    }
+    return [
+      'dom_mode',
+      {view: 'js_mode', tab_class: JavaScriptTab},
+      'network_mode',
+      'resource_panel',
+      'storage',
+      {view: 'console_mode', tab_class: ErrorConsoleTab},
+      'utils',
+      'console_panel'
+    ];
   }
 };

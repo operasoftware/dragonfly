@@ -15,10 +15,11 @@ cls.NewStyle = function(id, name, container_class)
             'handler', 'css-update-new-style',
             'class', 'css-new-style-sheet'
            ],
-           ['button',
+           ['span',
               ui_strings.S_BUTTON_TEXT_APPLY,
-            'class', 'container-button',
-            'handler', 'apply-new-style'
+            'class', 'container-button ui-button',
+            'handler', 'apply-new-style',
+            'tabindex', '1'
            ],
          'class', 'padding'
         ]);
