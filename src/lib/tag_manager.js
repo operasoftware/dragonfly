@@ -13,7 +13,7 @@
  *
  * or you can call
  *
- * var instance = cls.TagManager.getInstance()
+ * var instance = cls.TagManager.get_instance()
  *
  * The result will be the same. Calling new cls.TagManager() multiple times
  * will only result in a single instance being created
@@ -88,6 +88,6 @@ window.cls.TagManager = function()
  * Static method for getting the global instance of the tag manager
  * class.
  */
-window.cls.TagManager.getInstance = function() {
+window.cls.TagManager.get_instance = function() {
   return new window.cls.TagManager();
 };

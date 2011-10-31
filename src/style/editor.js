@@ -1,22 +1,20 @@
 ﻿ /**
   * @constructor
   */
-
 var Editor = function(actions)
 {
   // assert: a element wich is editable has a monospace font
 
   // TODO make it more general so it can be used for other views then just the css inspector
 
-  // TODO make this a subclass of BAseEditor
+  // TODO make this a subclass of BaseEditor
   var self = this;
 
-  const
-  SELECTION = 1,
-  TOKEN = 2,
-  VALUE = 3,
-  MINUS = -1,
-  PLUS = 1;
+  var SELECTION = 1;
+  var TOKEN = 2;
+  var VALUE = 3;
+  var MINUS = -1;
+  var PLUS = 1;
 
   // Edit modes
   this.MODE_CSS = 1;
@@ -56,23 +54,20 @@ var Editor = function(actions)
 
   this.get_base_style = function(ele)
   {
-    var
-    style = getComputedStyle(ele, null),
-    props = ['font-family', 'line-height', 'font-size'],
-    prop = null,
-    i = 0,
-    span = document.createElement('test-element'),
-    cssText = 'display:block;position:absolute;left:-100px;top:0;white-space:pre;';
+    var style = getComputedStyle(ele, null);
+    var props = ['font-family', 'line-height', 'font-size'];
+    var span = document.createElement('test-element');
+    var css_text = 'display:block;position:absolute;left:-100px;top:0;white-space:pre;';
 
-    for ( ; prop = props[i]; i++)
+    for (var i = 0, prop; prop = props[i]; i++)
     {
       this.base_style[prop] = style.getPropertyValue(prop);
-      cssText += prop + ':' + this.base_style[prop] + ';';
+      css_text += prop + ':' + this.base_style[prop] + ';';
     }
 
     span.textContent = '1234567890';
     document.documentElement.appendChild(span);
-    span.style.cssText = cssText;
+    span.style.cssText = css_text;
     this.char_width = span.offsetWidth / 10;
     this.base_style['line-height'] = (this.line_height = span.offsetHeight) + 'px';
     document.documentElement.removeChild(span);
@@ -85,41 +80,40 @@ var Editor = function(actions)
       parseInt(style.getPropertyValue('padding-top')) +
       parseInt(style.getPropertyValue('border-top-width'));
 
-    cssText = '';
-    for (prop in this.base_style)
+    css_text = '';
+    for (var prop in this.base_style)
     {
-      cssText += prop + ':' + this.base_style[prop] + ';';
+      css_text += prop + ':' + this.base_style[prop] + ';';
     }
 
     this.textarea_container = document.createElement('textarea-container');
     this.textarea = this.textarea_container.
       appendChild(document.createElement('textarea'));
-    this.textarea.style.cssText = cssText;
+    this.textarea.style.cssText = css_text;
     this.textarea.oninput = input_handler;
   };
 
-  this.getAllTokens = function()
+  // TODO: this should use the CSS tokenizer
+  this._get_all_tokens = function()
   {
-    const
-    SPACE = 1,
-    COMMA = 2,
-    BRACKET_OPEN = 3,
-    BRACKET_CLOSE = 4,
-    END = 5,
-    SEMICOLON = 6;
+    var SPACE = 1;
+    var COMMA = 2;
+    var BRACKET_OPEN = 3;
+    var BRACKET_CLOSE = 4;
+    var END = 5;
+    var SEMICOLON = 6;
 
-    var
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g,
-    value = this.textarea.value,
-    cur_pos = 0,
-    last_pos = 0,
-    next_pos = 0,
+    var re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g;
+    var re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g;
+    var value = this.textarea.value;
+    var cur_pos = 0;
+    var last_pos = 0;
+    var next_pos = 0;
     // last char would be ;
-    char_pos = value.length - 2,
-    match_str = null,
-    match_token = null,
-    ret = [];
+    var char_pos = value.length - 2;
+    var match_str = null;
+    var match_token = null;
+    var ret = [];
 
     re_str.lastIndex = 0;
     match_str = re_str.exec(value);
@@ -167,17 +161,16 @@ var Editor = function(actions)
     return ret;
   };
 
-  this.getNextToken = function(char_pos)
+  this._get_next_token = function(char_pos)
   {
-    var
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g,
-    value = this.textarea.value,
-    cur_pos = 0,
-    last_pos = 0,
-    next_pos = 0,
-    match_str = null,
-    match_token = null;
+    var re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g;
+    var re_token = /([^,] +)|(, *)|(\( *)|(\))|($)|(;)/g;
+    var value = this.textarea.value;
+    var cur_pos = 0;
+    var last_pos = 0;
+    var next_pos = 0;
+    var match_str = null;
+    var match_token = null;
 
     re_str.lastIndex = 0;
     match_str = re_str.exec(value);
@@ -231,23 +224,22 @@ var Editor = function(actions)
     return null;
   };
 
-  this.getProperties = function()
+  this.get_properties = function()
   {
-    var
-    re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g,
-    re_token = /(;)|($)/g,
-    re_important = /\s*!\s*important/,
-    value = this.textarea.value,
-    last_pos = 0,
-    cur_pos = 0,
-    important_pos = 0,
-    prop = '',
-    val = '',
-    priority = 0,
-    match_str = null,
-    match_token = null,
-    match_important = null,
-    ret = [];
+    var re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g;
+    var re_token = /(;)|($)/g;
+    var re_important = /\s*!\s*important/;
+    var value = this.textarea.value;
+    var last_pos = 0;
+    var cur_pos = 0;
+    var important_pos = 0;
+    var prop = '';
+    var val = '';
+    var priority = 0;
+    var match_str = null;
+    var match_token = null;
+    var match_important = null;
+    var ret = [];
 
     while ((cur_pos = value.indexOf(':', last_pos)) > -1)
     {
@@ -299,20 +291,19 @@ var Editor = function(actions)
     return ret;
   };
 
-  this.getCharPosition = function(event)
+  this._get_char_position = function(event)
   {
-    var
-    box = this.textarea.getBoundingClientRect(),
-    left = event.clientX - box.left,
-    top = event.clientY - box.top,
-    charOffset = 0,
-    cur_top = this.line_height,
-    previous_line_chars = 0,
-    re = /[ -/\n,]/g,
-    match = null,
-    prev_match_index = 0,
-    value = this.textarea.value,
-    max_line_char = this.textarea.offsetWidth / this.char_width >> 0;
+    var box = this.textarea.getBoundingClientRect();
+    var left = event.clientX - box.left;
+    var top = event.clientY - box.top;
+    var charOffset = 0;
+    var cur_top = this.line_height;
+    var previous_line_chars = 0;
+    var re = /[ -/\n,]/g;
+    var match = null;
+    var prev_match_index = 0;
+    var value = this.textarea.value;
+    var max_line_char = this.textarea.offsetWidth / this.char_width >> 0;
 
     re.lastIndex = 0;
 
@@ -339,7 +330,7 @@ var Editor = function(actions)
       }
     }
 
-    var selection = this.getNextToken(charOffset);
+    var selection = this._get_next_token(charOffset);
 
     if (selection)
     {
@@ -398,7 +389,7 @@ var Editor = function(actions)
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
 
-    var props = this.getProperties();
+    var props = this.get_properties();
 
     this.context_cur_prop = props[0] || '';
     this.context_cur_value = props[1] || '';
@@ -413,7 +404,7 @@ var Editor = function(actions)
     // only for click events
     if (event)
     {
-      this.getCharPosition(event);
+      this._get_char_position(event);
       this.textarea.focus();
       if (scroll_pos)
       {
@@ -424,19 +415,17 @@ var Editor = function(actions)
 
   this.nav_next = function(event, action_id)
   {
-    var
-    cur_pos = this.textarea.selectionEnd,
-    i = 1;
+    var cur_pos = this.textarea.selectionEnd;
 
     if (this.textarea.value != this.tab_context_value)
     {
-      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_tokens = this._get_all_tokens();
       this.tab_context_value = this.textarea.value;
     }
 
     if (this.tab_context_tokens)
     {
-      for ( ; i < this.tab_context_tokens.length; i += 2)
+      for (var i = 1; i < this.tab_context_tokens.length; i += 2)
       {
         if (this.tab_context_tokens[i+1] > cur_pos)
         {
@@ -451,19 +440,17 @@ var Editor = function(actions)
 
   this.nav_previous = function(event, action_id)
   {
-    var
-    cur_pos = this.textarea.selectionStart,
-    i = 1;
+    var cur_pos = this.textarea.selectionStart;
 
     if (this.textarea.value != this.tab_context_value)
     {
-      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_tokens = this._get_all_tokens();
       this.tab_context_value = this.textarea.value;
     }
 
     if (this.tab_context_tokens)
     {
-      for (i = this.tab_context_tokens.length - 1; i > 1; i -= 2)
+      for (var i = this.tab_context_tokens.length - 1; i > 1; i -= 2)
       {
         if (this.tab_context_tokens[i] < cur_pos)
         {
@@ -476,9 +463,9 @@ var Editor = function(actions)
     return false;
   };
 
-  this.focusFirstToken = function()
+  this.focus_first_token = function()
   {
-    this.tab_context_tokens = this.getAllTokens();
+    this.tab_context_tokens = this._get_all_tokens();
     this.tab_context_value = this.textarea.value;
     if (this.tab_context_tokens && this.tab_context_tokens[2])
     {
@@ -493,9 +480,9 @@ var Editor = function(actions)
     this.textarea.focus();
   };
 
-  this.focusLastToken = function()
+  this.focus_last_token = function()
   {
-    this.tab_context_tokens = this.getAllTokens();
+    this.tab_context_tokens = this._get_all_tokens();
     this.tab_context_value = this.textarea.value;
     if (this.tab_context_tokens && this.tab_context_tokens[2])
     {
@@ -512,24 +499,21 @@ var Editor = function(actions)
 
   this.autocomplete = function(event, action_id)
   {
-    var
-    cur_start = this.textarea.selectionStart,
-    new_start = 0,
-    cur_end = this.textarea.selectionEnd,
-    value = this.textarea.value,
-    cur_token = '',
-    i = 1,
-    suggest = '';
+    var cur_start = this.textarea.selectionStart;
+    var new_start = 0;
+    var cur_end = this.textarea.selectionEnd;
+    var value = this.textarea.value;
+    var cur_token = '';
 
     if (this.textarea.value != this.tab_context_value)
     {
-      this.tab_context_tokens = this.getAllTokens();
+      this.tab_context_tokens = this._get_all_tokens();
       this.tab_context_value = this.textarea.value;
     }
 
     if (this.tab_context_tokens)
     {
-      for ( ; i < this.tab_context_tokens.length; i += 2)
+      for (var i = 1; i < this.tab_context_tokens.length; i += 2)
       {
         if (cur_start >= this.tab_context_tokens[i] && cur_start <= this.tab_context_tokens[i+1])
         {
@@ -539,7 +523,7 @@ var Editor = function(actions)
       }
     }
 
-    suggest = this.getSuggest
+    var suggest = this._get_suggest
     (
       this.tab_context_tokens && this.tab_context_tokens[0] || '',
       this.tab_context_tokens && cur_end <= this.tab_context_tokens[2],
@@ -592,19 +576,17 @@ var Editor = function(actions)
     return false;
   };
 
-  this.getSuggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
+  this._get_suggest = function(prop_name, is_prop, token, cur_start, cur_end, action_id)
   {
-    var
-    re_num = /^(-?)([\d.]+)(.*)$/,
-    match = null,
-    suggest = null,
-    suggest_type =
+    var re_num = /^(-?)([\d.]+)(.*)$/;
+    var match = null;
+    var suggest_type =
       (is_prop && 'suggest_property') ||
       ((match = re_num.exec(token)) && 'suggest_number') ||
-      ('suggest_value'),
-    suggest_handler = this[suggest_type];
+      ('suggest_value');
+    var suggest_handler = this[suggest_type];
 
-    suggest_handler.cursor = this.setCursor
+    suggest_handler.cursor = this._set_cursor
     (
       this.suggest_iterate = this.last_suggest_type == suggest_type,
       suggest_handler.cursor,
@@ -614,16 +596,14 @@ var Editor = function(actions)
 
     this.last_suggest_type = suggest_type;
 
-    suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
+    var suggest = suggest_handler.matches && suggest_handler.matches[suggest_handler.cursor];
     return suggest && {value: suggest, replace_type: suggest_handler.replace_type} || null;
   };
 
-  this.getMatchesFromList = function(list, set)
+  this._get_matches_from_list = function(list, set)
   {
-    var
-    ret = [],
-    length = list && list.length || 0,
-    i = 0;
+    var ret = [];
+    var length = list && list.length || 0;
 
     if (length == 1)
     {
@@ -632,7 +612,7 @@ var Editor = function(actions)
 
     if (length && set)
     {
-      for ( ; i < length; i++)
+      for (var i = 0; i < length; i++)
       {
         if (list[i].indexOf(set) == 0)
         {
@@ -647,7 +627,7 @@ var Editor = function(actions)
     return ret;
   };
 
-  this.setCursor = function(iterate, cur_cursor, matches, action_id)
+  this._set_cursor = function(iterate, cur_cursor, matches, action_id)
   {
     if (iterate && matches)
     {
@@ -673,7 +653,7 @@ var Editor = function(actions)
     if (this.textarea_container.contains(event.target))
       return false;
     this.submit(true);
-    return true;    
+    return true;
   };
 
   this.suggest_property = function(token, cur_start, cur_end, action_id, match)
@@ -683,7 +663,7 @@ var Editor = function(actions)
       this.property_list = stylesheets.get_sorted_properties();
       this.property_list_length = this.property_list.length;
     }
-    return this.getMatchesFromList(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
+    return this._get_matches_from_list(this.property_list, this.textarea.value.slice(this.tab_context_tokens[1], cur_start));
   };
 
   this.suggest_property.replace_type = SELECTION;
@@ -710,16 +690,13 @@ var Editor = function(actions)
     {
       return null;
     }
-    
-    var
-    prop = this.tab_context_tokens[0],
-    set = this.tab_context_tokens[3] &&
-          this.textarea.value.slice(this.tab_context_tokens[3], cur_start) ||
-          '',
-    re_hex = /^#([0-9a-f]{6})$/i,
-    match = null,
-    hsl = null,
-    rgb = null;
+
+    var prop = this.tab_context_tokens[0];
+    var set = this.tab_context_tokens[3] &&
+              this.textarea.value.slice(this.tab_context_tokens[3], cur_start) ||
+              '';
+    var re_hex = /^#([0-9a-f]{6})$/i;
+    var match = null;
 
     if (set == this.suggest_value.last_set && prop == this.suggest_value.last_prop)
     {
@@ -731,8 +708,8 @@ var Editor = function(actions)
     if (/color/.test(prop) && token && (match = re_hex.exec(token)))
     {
       this.colors.setHex(match[1]);
-      hsl = this.colors.getHSL();
-      rgb = this.colors.getRGB();
+      var hsl = this.colors.getHSL();
+      var rgb = this.colors.getRGB();
       return [
         match[0],
         ('hsl(' + hsl[0] + ',' + parseInt(hsl[1]) + '%,' + parseInt(hsl[2]) + '%)'),
@@ -742,7 +719,7 @@ var Editor = function(actions)
 
     if (suggest_values[prop] && suggest_values[prop].length)
     {
-      return this.getMatchesFromList(suggest_values[prop], set);
+      return this._get_matches_from_list(suggest_values[prop], set);
     }
     return null;
   }
@@ -755,10 +732,8 @@ var Editor = function(actions)
 
   this.submit = function()
   {
-    var
-    props = this.getProperties(),
-    inner = '',
-    disabled = this.textarea_container.parentNode.hasClass("disabled");
+    var props = this.get_properties();
+    var disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     if (props[1])
     {
@@ -787,15 +762,13 @@ var Editor = function(actions)
 
   this.commit = function()
   {
-    var props = self.getProperties(),
-    script = "",
-    prop = null,
-    reset = false;
+    var props = self.get_properties();
+    var reset = false;
 
     while (props.length > 3)
     {
       reset = true;
-      prop = this.textarea_container.parentElement.parentElement.
+      var prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('div'), this.textarea_container.parentElement);
 
       prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id,
@@ -831,18 +804,16 @@ var Editor = function(actions)
 
   this.enter = function()
   {
-    const INDEX_LIST = 1;
-    const VALUE_LIST = 2;
-    const PRIORITY_LIST = 3;
-    const INDEX = 0;
-    const VALUE = 1;
-    const PRIORITY = 2;
+    var INDEX_LIST = 1;
+    var VALUE_LIST = 2;
+    var PRIORITY_LIST = 3;
+    var INDEX = 0;
+    var VALUE = 1;
+    var PRIORITY = 2;
 
-    var
-    props = self.getProperties(),
-    keep_edit = false,
-    prop = null,
-    is_disabled = this.textarea_container.parentNode.hasClass("disabled");
+    var props = self.get_properties();
+    var keep_edit = false;
+    var is_disabled = this.textarea_container.parentNode.hasClass("disabled");
 
     this.last_suggest_type = '';
     if (props && props.length == 3)
@@ -874,7 +845,7 @@ var Editor = function(actions)
         }
         this.textarea_container.parentNode.removeClass("overwritten");
         this.textarea_container.parentNode.removeClass("disabled");
-        prop = this.textarea_container.parentElement.parentElement.
+        var prop = this.textarea_container.parentElement.parentElement.
           insertBefore(property_ele, this.textarea_container.parentElement);
         prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2], this.context_rule_id, is_disabled));
         this.textarea.value =
@@ -926,3 +897,4 @@ var Editor = function(actions)
     self.commit();
   };
 };
+

@@ -9,7 +9,7 @@ cls.Stylesheets = function()
 {
   var self = this; // TODO: get rid of
 
-  this._tag_manager = window.tag_manager;
+  this._tag_manager = cls.TagManager.get_instance();
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._index_map = null;
   this._index_map_length = 0; // TODO: is this needed, check length of _index_map instead?

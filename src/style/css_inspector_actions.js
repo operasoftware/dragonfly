@@ -1,40 +1,37 @@
 ﻿var cls = window.cls || ( window.cls = {} );
-// this should go in a own file
 
 /**
  * @constructor
  * @extends BaseActions
  */
-
 cls.CSSInspectorActions = function(id)
 {
   var self = this;
 
-  this.__active_container = null;
-  this.__target = null;
-  const CSS_CLASS_CP_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
-  const INDEX_LIST = 1;
-  const VALUE_LIST = 2;
-  const PRIORITY_LIST = 3;
-  const DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
+  this._tag_manager = cls.TagManager.get_instance();
+  this._active_container = null;
+  this._target = null;
 
-  const PROPERTY = 0;
+  var CSS_CLASS_CP_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
+  var INDEX_LIST = 1;
+  var VALUE_LIST = 2;
+  var PRIORITY_LIST = 3;
+  var DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
+  var PROPERTY = 0;
 
   this.editor = new Editor(this);
 
   this.getFirstTarget = function()
   {
-    return self.__active_container &&
-           self.__active_container.
-           getElementsByTagName('styles')[0].
-           querySelector('.css-declaration');
+    return self._active_container &&
+           self._active_container.querySelector('.css-declaration');
   };
 
-  this.clearSelected = function()
+  this._clear_selected = function()
   {
-    if (self.__target)
+    if (self._target)
     {
-      self.__target.removeClass('selected');
+      self._target.removeClass('selected');
     }
   };
 
@@ -42,58 +39,54 @@ cls.CSSInspectorActions = function(id)
   {
     if (new_target)
     {
-      if (self.__target)
+      if (self._target)
       {
-        self.__target.removeClass('selected');
+        self._target.removeClass('selected');
       }
-      if (!self.__active_container.contains(new_target))
+
+      if (!self._active_container.contains(new_target))
       {
         // this is just a quick fix to make the keyboard navigation
         // work somewhat after a view update.
-        // all keyboard navigation must be re-implemented 
+        // all keyboard navigation must be re-implemented
         // in a much more generic way
-        var 
-        rule_id = new_target.getElementsByTagName('input')[0],
-        inputs = self.__active_container.getElementsByTagName('input'),
-        input = null,
-        i = 0,
-        attr_val = '';
-
-        if (rule_id = rule_id && rule_id.getAttribute("data-rule-id"))
+        var rule_id = new_target.querySelector('input') &&
+                      rule_id.getAttribute("data-rule-id");
+        if (rule_id)
         {
-          for (; input = inputs[i]; i++)
+          var inputs = self._active_container.getElementsByTagName('input');
+          for (var i = 0, input; input = inputs[i]; i++)
           {
-             attr_val = input.getAttribute("data-rule-id");
+             var attr_val = input.getAttribute("data-rule-id");
              if (attr_val && attr_val == rule_id)
-              break;
+               break;
           }
         }
+
         if (input)
           new_target = input.parentNode;
       }
-      (self.__target = new_target).addClass('selected');
+      (self._target = new_target).addClass('selected');
     }
   };
 
   this.resetTarget = function(new_container)
   {
-    if (self.__active_container && self.__target && !self.__active_container.parentNode)
+    if (self._active_container && self._target && !self._active_container.parentNode)
     {
-      var
-      targets = self.__active_container.getElementsByTagName(self.__target.nodeName),
-      target = null,
-      i = 0;
-      for ( ; (target = targets[i]) && target != self.__target; i++);
-      if (target && (target = new_container.getElementsByTagName(self.__target.nodeName)[i]))
+      var targets = self._active_container.getElementsByTagName(self._target.nodeName);
+      var target = null;
+      var index = 0;
+      for ( ; (target = targets[index]) && target != self._target; index++);
+      if (target && (target = new_container.getElementsByTagName(self._target.nodeName)[index]))
       {
-        self.__active_container = new_container;
+        self._active_container = new_container;
         self.setSelected(target);
       }
     }
   };
 
-  var nav_filter =
-  {
+  this._nav_filters = {
     _default: function(ele)
     {
       return ((ele.hasClass('css-declaration') && ele.parentElement.hasAttribute('rule-id'))
@@ -115,14 +108,14 @@ cls.CSSInspectorActions = function(id)
   this.setContainer = function(event, container)
   {
     this.resetTarget(container);
-    this.__active_container = container;
-    if (!this.__target || !this.__target.parentElement)
+    this._active_container = container;
+    if (!this._target || !this._target.parentElement)
     {
-      this.__target = this.getFirstTarget()
+      this._target = this.getFirstTarget()
     }
-    if (this.__target && !this.__target.hasClass('selected'))
+    if (this._target && !this._target.hasClass('selected'))
     {
-      this.setSelected(this.__target);
+      this.setSelected(this._target);
     }
   };
 
@@ -142,7 +135,7 @@ cls.CSSInspectorActions = function(id)
   {
     this.editor.escape();
     this.mode = MODE_DEFAULT;
-    this.clearSelected();
+    this._clear_selected();
   };
 
   /**
@@ -157,13 +150,11 @@ cls.CSSInspectorActions = function(id)
   {
     if (this.editor.context_edit_mode == this.editor.MODE_SVG)
     {
-      this.set_property_svg(rt_id, rule_id, declaration,
-                            prop_to_remove, callback);
+      this.set_property_svg(rt_id, rule_id, declaration, prop_to_remove, callback);
     }
     else
     {
-      this.set_property_css(rt_id, rule_id, declaration,
-                            prop_to_remove, callback);
+      this.set_property_css(rt_id, rule_id, declaration, prop_to_remove, callback);
     }
   };
 
@@ -177,27 +168,12 @@ cls.CSSInspectorActions = function(id)
   this.set_property_css = function(rt_id, rule_id, declaration,
                                    prop_to_remove, callback)
   {
-    var script = "";
-
     var prop = this.normalize_property(declaration[0]);
-
-    // TEMP: workaround for CORE-31191: updating a property with !important is discarded
-    var style_dec = window.elementStyle.get_style_dec_by_id(rule_id);
-    if (style_dec) {
-      for (var i = style_dec[1].length; i--; ) {
-        if (window.css_index_map[style_dec[1][i]] == declaration[0])
-        {
-          script += "object.style.removeProperty(\"" + declaration[0] + "\");";
-          break;
-        }
-      }
-    }
-
-    script += "object.style.setProperty(\"" +
-                  prop + "\", \"" +
-                  helpers.escape_input(declaration[1]) + "\", " +
-                  (declaration[2] ? "\"important\"" : null) +
-              ");";
+    var script = "object.style.setProperty(\"" +
+                   prop + "\", \"" +
+                   helpers.escape_input(declaration[1]) + "\", " +
+                   (declaration[2] ? "\"important\"" : null) +
+                 ");";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
@@ -205,7 +181,7 @@ cls.CSSInspectorActions = function(id)
       script += "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
     }
 
-    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -221,10 +197,9 @@ cls.CSSInspectorActions = function(id)
                                    prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration[0]);
-
     var script = "object.setAttribute(\"" +
-                  prop + "\", \"" +
-                  declaration[1].replace(/"/g, "\\\"") + "\"" +
+                   prop + "\", \"" +
+                   declaration[1].replace(/"/g, "\\\"") + "\"" +
                  ");";
 
     // If a property is added by overwriting another one, remove the other property
@@ -233,7 +208,7 @@ cls.CSSInspectorActions = function(id)
       script += "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
     }
 
-    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -272,7 +247,7 @@ cls.CSSInspectorActions = function(id)
     }
     var script = "object.style.removeProperty(\"" + property + "\");";
 
-    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -293,7 +268,7 @@ cls.CSSInspectorActions = function(id)
     }
     var script = "object.removeAttribute(\"" + property + "\");";
 
-    var tag = (typeof callback == "function") ? tagManager.set_callback(null, callback) : 1;
+    var tag = (typeof callback == "function") ? this._tag_manager.set_callback(null, callback) : 1;
     services['ecmascript-debugger'].requestEval(tag,
       [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
@@ -321,22 +296,22 @@ cls.CSSInspectorActions = function(id)
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var initial_property = this.editor.context_cur_prop;
-    var new_property = this.editor.getProperties()[0];
+    var new_property = this.editor.get_properties()[0];
     var script = "";
 
     var prop_enum = window.css_index_map.indexOf(new_property);
     // Check if it's a real property. If not, we don't have to set something back.
     if (prop_enum != -1)
     {
-      var script = "object.style.removeProperty(\"" + new_property + "\");";
+      script = "object.style.removeProperty(\"" + new_property + "\");";
     }
 
     if (initial_property)
     {
       script += "object.style.setProperty(\"" +
-                   initial_property + "\", \"" +
-                   helpers.escape_input(this.editor.context_cur_value) + "\", " +
-                   (this.editor.context_cur_priority ? "\"important\"" : null) +
+                  initial_property + "\", \"" +
+                  helpers.escape_input(this.editor.context_cur_value) + "\", " +
+                  (this.editor.context_cur_priority ? "\"important\"" : null) +
                 ");";
     }
 
@@ -344,9 +319,9 @@ cls.CSSInspectorActions = function(id)
     if (index != -1)
     {
       script += "object.style.setProperty(\"" +
-                   new_property + "\", \"" +
-                   helpers.escape_input(rule[VALUE_LIST][index]) + "\", " +
-                   (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
+                  new_property + "\", \"" +
+                  helpers.escape_input(rule[VALUE_LIST][index]) + "\", " +
+                  (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
                 ");";
     }
 
@@ -365,21 +340,21 @@ cls.CSSInspectorActions = function(id)
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var initial_property = this.editor.context_cur_prop;
-    var new_property = this.editor.getProperties()[PROPERTY];
+    var new_property = this.editor.get_properties()[PROPERTY];
     var script = "";
 
     var prop_enum = window.css_index_map.indexOf(new_property);
     // Check if it's a real property. If not, we don't have to set something back.
     if (prop_enum != -1)
     {
-      var script = "object.removeAttribute(\"" + new_property + "\");";
+      script = "object.removeAttribute(\"" + new_property + "\");";
     }
 
     if (initial_property)
     {
       script += "object.setAttribute(\"" +
-                   initial_property + "\", \"" +
-                   this.editor.context_cur_value.replace(/"/g, "'") + "\"" +
+                  initial_property + "\", \"" +
+                  this.editor.context_cur_value.replace(/"/g, "'") + "\"" +
                 ");";
     }
 
@@ -387,8 +362,8 @@ cls.CSSInspectorActions = function(id)
     if (index != -1)
     {
       script += "object.setAttribute(\"" +
-                   new_property + "\", \"" +
-                   rule[VALUE_LIST][index].replace(/"/g, "'") + "\"" +
+                  new_property + "\", \"" +
+                  rule[VALUE_LIST][index].replace(/"/g, "'") + "\"" +
                 ");";
     }
 
@@ -406,9 +381,9 @@ cls.CSSInspectorActions = function(id)
    */
   this.enable_property = function enable_property(rt_id, rule_id, obj_id, property)
   {
-    const INDEX_LIST = 1;
-    const VALUE_LIST = 2;
-    const PRIORITY_LIST = 3;
+    var INDEX_LIST = 1;
+    var VALUE_LIST = 2;
+    var PRIORITY_LIST = 3;
 
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[id];
@@ -446,7 +421,7 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_all_properties = function disable_property(rt_id, rule_id, obj_id)
   {
-    const INDEX_LIST = 1;
+    var INDEX_LIST = 1;
 
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var style_dec = rule_id
@@ -470,7 +445,7 @@ cls.CSSInspectorActions = function(id)
         window.elementStyle.remove_property(style_dec, property);
       }
 
-      var tag = tagManager.set_callback(null, window.elementStyle.update);
+      var tag = this._tag_manager.set_callback(null, window.elementStyle.update);
       var msg = [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]];
       services['ecmascript-debugger'].requestEval(tag, msg);
     }
@@ -489,11 +464,10 @@ cls.CSSInspectorActions = function(id)
 
   /* ActionHandler interface */
 
-  const
-  MODE_DEFAULT = "default",
-  MODE_EDIT = "edit",
-  MINUS = -1,
-  PLUS = 1;
+  var MODE_DEFAULT = "default";
+  var MODE_EDIT = "edit";
+  var MINUS = -1;
+  var PLUS = 1;
 
   this.id = id;
   this._broker = ActionBroker.get_instance();
@@ -505,7 +479,7 @@ cls.CSSInspectorActions = function(id)
   {
     "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
     "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
-  }
+  };
 
   this.get_action_list = function()
   {
@@ -517,13 +491,13 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['nav-up'] = function(event, target)
   {
-    if (this.__target)
+    if (this._target)
     {
-      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
-                   this.__target.parentElement.getAttribute('handler') ?
-                   nav_filter.header :
-                   nav_filter._default;
-      var next = this.__target.getPreviousWithFilter(this.__active_container,
+      var filter = this._target.nodeName.toLowerCase() == 'header' &&
+                   this._target.parentElement.getAttribute('handler') ?
+                   this._nav_filters.header :
+                   this._nav_filters._default;
+      var next = this._target.getPreviousWithFilter(this._active_container,
                                                      filter);
       this.setSelected(next);
       return false;
@@ -535,13 +509,13 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers["nav-down"] = function(event, target)
   {
-    if (this.__target)
+    if (this._target)
     {
-      var filter = this.__target.nodeName.toLowerCase() == 'header' &&
-                   !this.__target.parentElement.getAttribute('handler') ?
-                   nav_filter.header :
-                   nav_filter._default;
-      var next = this.__target.getNextWithFilter(this.__active_container,
+      var filter = this._target.nodeName.toLowerCase() == 'header' &&
+                   !this._target.parentElement.getAttribute('handler') ?
+                   this._nav_filters.header :
+                   this._nav_filters._default;
+      var next = this._target.getNextWithFilter(this._active_container,
                                                 filter);
       this.setSelected(next);
       return false;
@@ -553,8 +527,8 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers["dispatch-dbl-click"] = function(event, target)
   {
-    if(this.__target)
-      this.__target.dispatchMouseEvent('dblclick');
+    if(this._target)
+      this._target.dispatchMouseEvent('dblclick');
     return false;
   }.bind(this);
 
@@ -605,9 +579,9 @@ cls.CSSInspectorActions = function(id)
 
   this.target_enter = function(event, action_id)
   {
-    if (this.__target)
+    if (this._target)
     {
-      this.__target.releaseEvent('click');
+      this._target.releaseEvent('click');
     }
   };
 
@@ -616,13 +590,13 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.nav_previous(event, MINUS))
     {
       var new_target =
-        this.__target.getPreviousWithFilter(this.__active_container,
-                                            nav_filter.property_editable);
+        this._target.getPreviousWithFilter(this._active_container,
+                                           this._nav_filters.property_editable);
       if (new_target)
       {
         this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusLastToken();
+        this.editor.edit(null, this._target);
+        this.editor.focus_last_token();
       }
     }
 
@@ -635,13 +609,13 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.nav_next(event, PLUS))
     {
       var new_target =
-        this.__target.getNextWithFilter(this.__active_container,
-                                        nav_filter.property_editable);
+        this._target.getNextWithFilter(this._active_container,
+                                       this._nav_filters.property_editable);
       if (new_target)
       {
         this.setSelected(new_target);
-        this.editor.edit(null, this.__target);
-        this.editor.focusFirstToken();
+        this.editor.edit(null, this._target);
+        this.editor.focus_first_token();
       }
     }
     // to stop default action
@@ -664,7 +638,7 @@ cls.CSSInspectorActions = function(id)
   {
     if (!this.editor.escape())
     {
-      var cur_target = this.__target;
+      var cur_target = this._target;
       this._handlers['nav-up']();
       cur_target.parentElement.removeChild(cur_target);
     }
@@ -672,7 +646,7 @@ cls.CSSInspectorActions = function(id)
     // this.editor.escape() will reset the style
     // to ensure the command to reset the style is dispatched before
     // elementStyle queries again the current style the update call
-    // is done asynchronously 
+    // is done asynchronously
     setTimeout(window.elementStyle.update, 1);
 
     return false;
@@ -684,9 +658,9 @@ cls.CSSInspectorActions = function(id)
     {
       this.mode = MODE_DEFAULT;
       window.elementStyle.update();
-      if (!this.__target.textContent)
+      if (!this._target.textContent)
       {
-        var cur_target = this.__target;
+        var cur_target = this._target;
         this._handlers['nav-up'](event, target);
         cur_target.parentElement.removeChild(cur_target);
       }
@@ -728,15 +702,15 @@ cls.CSSInspectorActions = function(id)
 
     if (this.mode == MODE_DEFAULT)
       this.setContainer(event, container);
-  }
+  };
 
   this.blur = function(event)
   {
     if (this.mode == MODE_DEFAULT)
-      this.clearSelected();
+      this._clear_selected();
     else
       this.blur_edit_mode();
-  }
+  };
 
   this.onclick = function(event)
   {
@@ -744,7 +718,7 @@ cls.CSSInspectorActions = function(id)
     {
       // Whenever we are in edit mode, cancel any additional action
       // because edit-exit will cause an async update of the whole view
-      // (meaning that actions of the contextmenu would e.g. refer 
+      // (meaning that actions of the contextmenu would e.g. refer
       // to an already replaced view).
       // See e.g. DFL-2307.
       this.edit_onclick(event);
@@ -757,18 +731,6 @@ cls.CSSInspectorActions = function(id)
     if (action_id in this._handlers)
       return this._handlers[action_id](event, target);
   }
-
-  var onViewCreated = function(msg)
-  {
-    /*
-    if(msg.id == "css-inspector" )
-    {
-
-      self.resetTarget();
-    }
-    */
-  }
-  messages.addListener('view-created', onViewCreated)
 };
 
 eventHandlers.dblclick['edit-css'] = function(event, target)
