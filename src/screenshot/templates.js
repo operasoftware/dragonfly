@@ -5,10 +5,11 @@
   	return (
   	['div',
       ['p',
-        ['button',
+        ['span',
           ui_strings.S_BUTTON_UPDATE_SCREESHOT,
           'handler', 'screenshot-update',
-          'class', 'container-button']],
+          'class', 'container-button ui-button',
+          'tabindex', '1']],
       ['table',
         ['tr',
           ['td', ui_strings.S_LABEL_COLOR_PICKER_ZOOM + ':'],
@@ -41,10 +42,11 @@
   {
     return (
     ['div',
-      ['button',
+      ['span',
             'Show ruler',
             'handler', 'screenshot-show-ruler',
-            'class', 'container-button'],
+            'class', 'container-button ui-button',
+            'tabindex', '1'],
       ['pre', 'class', 'screenshot-ruler-dimensions'],
       'class', 'screenshot-ruler']);
   };
@@ -58,11 +60,12 @@
         ['span', 'HSL: '], color.getHSL().join('%, ').replace('%', '') + '%\n',
         ['span', 'HEX: '], '#' + color.getHex() + '\n',
         'class', 'mono screenshot-sample-values selectable'],
-      ['button',
+      ['span',
             ui_strings.S_BUTTON_STORE_COLOR,
             'handler', 'screenshot-store-color',
             'data-color', color.getHex(),
-            'class', 'container-button'],
+            'class', 'container-button ui-button',
+            'tabindex', '1'],
       ['div',
         ['canvas'],
         'class', 'screenshot-sample-color',
@@ -80,10 +83,11 @@
         'edit-handler', 'color-palette-edit-color',
         'class', 'color-palette mono'],
       ['p',
-        ['button',
+        ['span',
           ui_strings.M_CONTEXTMENU_ADD_COLOR,
           'handler', 'color-palette-add-color',
-          'class', 'container-button color-palette-add-button']]]);
+          'class', 'container-button color-palette-add-button ui-button',
+          'tabindex', '1']]]);
 
   };
 

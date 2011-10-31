@@ -24,6 +24,29 @@ window.cls.PropertyFinder = function(rt_id) {
 
   this._cache = {};
 
+  this._parser = window.simple_js_parser || new window.cls.SimpleJSParser();
+
+  const PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
+  const TYPE = 0;
+  const VALUE = 1;
+
+  this._get_last_punctuator = function(tokens, punctuator)
+  {
+    if (tokens)
+    {
+      for (var i = tokens.length - 1, token; token = tokens[i]; i--)
+      {
+        if (token[TYPE] == PUNCTUATOR && token[VALUE] == punctuator)
+        {
+          for (var j = 0, index = 0; j < i; j++)
+            index += tokens[j][VALUE].length;
+          return index;
+        }
+      }
+    }
+    return -1;
+  };
+
   /**
    * Figure out the object to which input belongs.
    * foo.bar -> foo
@@ -36,16 +59,26 @@ window.cls.PropertyFinder = function(rt_id) {
    */
   this._find_input_parts = function(input)
   {
-    var last_bracket = input.lastIndexOf('[');
-    var last_brace = input.lastIndexOf('(');
+    var tokens = [];
 
-    last_brace = input.lastIndexOf(')') <= last_brace ? last_brace : -1;
-    last_bracket = input.lastIndexOf(']') <= last_bracket ? last_bracket : -1;
-    input = input.slice( Math.max(
-                  last_brace,
-                  last_bracket,
-                  input.lastIndexOf('=') ) + 1
-                ).replace(/^\s+/, '');
+    this._parser.tokenize(input, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
+
+    var last_bracket = this._get_last_punctuator(tokens, '[');
+    var last_brace = this._get_last_punctuator(tokens, '(');
+
+    last_brace = this._get_last_punctuator(tokens, ')') <= last_brace 
+               ? last_brace
+               : -1;
+    last_bracket = this._get_last_punctuator(tokens, ']') <= last_bracket 
+                 ? last_bracket
+                 : -1;
+    input = input.slice(Math.max(last_brace,
+                                 last_bracket,
+                                 this._get_last_punctuator(tokens, '=')) + 1);
+    input = input.replace(/^\s+/, '');
 
     var last_dot = input.lastIndexOf('.');
     var new_path = '';
@@ -185,37 +218,45 @@ window.cls.PropertyFinder = function(rt_id) {
 
   this._got_object_props = function(status, msg, callback, parts)
   {
-    var ret = {
-      props: this._parse_prop_list(msg) || [],
-      scope: parts.scope,
-      input: parts.input,
-      identifier: parts.identifier,
-    };
-
-    if (! ret.props.contains("this"))
+    if (status)
     {
-        ret.props.push("this");
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      'ExamineObjects failed in _got_object_props in PropertyFinder');
     }
+    else
+    {
+      var ret = {
+        props: this._parse_prop_list(msg) || [],
+        scope: parts.scope,
+        input: parts.input,
+        identifier: parts.identifier,
+      };
 
-    // fixme: is "arguments" in the props when stopped?
-    //this._cache_put(ret);
-    callback(ret);
+      if (! ret.props.contains("this"))
+      {
+          ret.props.push("this");
+      }
+
+      // fixme: is "arguments" in the props when stopped?
+      //this._cache_put(ret);
+      callback(ret);
+    }
   }
 
   this._parse_prop_list = function(msg)
   {
     var names = [];
-    if (status == 0) {
-      const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
-      (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
-        var objectlist = chain[OBJECT_LIST] || [];
-        objectlist.forEach(function(obj) {
-          names.extend((obj[PROPERTY_LIST] || []).map(function(prop) {
-            return prop[NAME];
-          }));
-        });
+    const OBJECT_CHAIN_LIST = 0, OBJECT_LIST = 0, PROPERTY_LIST = 1, NAME = 0;
+
+    (msg[OBJECT_CHAIN_LIST] || []).forEach(function(chain){
+      var objectlist = chain[OBJECT_LIST] || [];
+      objectlist.forEach(function(obj) {
+        names.extend((obj[PROPERTY_LIST] || []).map(function(prop) {
+          return prop[NAME];
+        }));
       });
-    }
+    });
+
     return names.unique();
   }
 

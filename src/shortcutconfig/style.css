@@ -5,23 +5,15 @@
 }
 
 .shortcuts-config header {
-  padding: 3px;
+  padding-left: 3px;
   margin: 2px 1px;
-}
-
-.shortcuts-config header:hover {
-  background-color: #323232;
-}
-
-.shortcuts-config header:active {
-  background-color: #242424;
 }
 
 .shortcuts-config header input {
   background:transparent url('../ui-images/toggle_white.png') scroll no-repeat 50% 100%;
   border:none;
-  width:9px;
-  height:7px;
+  width: 9px;
+  height: 7px;
   opacity: 0.66;
   -o-transition: .2s;
 }
@@ -34,7 +26,6 @@
   background-position: 4px 50%;
   padding: 1px 1px 1px 20px;
   margin: 2px;
-
 }
 
 .shortcuts-config filter.focus input {

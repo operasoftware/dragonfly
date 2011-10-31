@@ -24,7 +24,6 @@ window.cls.TestFramework = function()
     *     <li>Scope</li>
     *     <li>WindowManager</li>
     *     <li>EcmascriptDebugger</li>
-    *     <li>HttpLogger</li>
     *     etc
     *   </ul>
     *

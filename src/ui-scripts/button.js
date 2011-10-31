@@ -58,12 +58,13 @@ window.templates["button"] = function(id, class_name, title, handler, attributes
   }
 
   return [
-    "button",
+    "span",
     "",
     "id", id,
-    "class", "ui-control " + class_name,
+    "class", "ui-button ui-control " + class_name,
     "title", title,
-    "handler", handler || id
+    "handler", handler || id,
+    "tabindex", "1"
   ].concat(attrs);
 };
 

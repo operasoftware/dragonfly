@@ -38,20 +38,32 @@
   var select_obj = null;
   var self = this;
 
-  var modal_click_handler = function(event)
+  var modal_mousedown_handler = function(event)
   {
-    var 
+    var ele = event.target;
+
+    event.stopPropagation();
+    event.preventDefault();
+    while (ele != modal_box && (ele = ele.parentElement));
+    if (!ele)
+    {
+      self.remove_select();
+    }
+  }
+
+  var modal_mouseup_handler = function(event)
+  {
+    var
     ele = event.target,
-    target = event.target, 
-    index = 0,
+    target = event.target,
     select = null;
 
     event.stopPropagation();
     event.preventDefault();
-    while( ele != modal_box && ( ele = ele.parentElement ) );
-    if( ele )
+    while (ele != modal_box && (ele = ele.parentElement));
+    if (ele)
     {
-      switch( select_obj.handleClick(target, modal_box, select_obj) )
+      switch (select_obj.handleClick(target, modal_box, select_obj))
       {
         // cancel
         case 0: break;
@@ -59,9 +71,9 @@
         case 1:
         {
           var handler = target.getAttribute('handler');
-          if( handler )
+          if (handler)
           {
-            if( eventHandlers.click[handler] )
+            if (eventHandlers.click[handler])
             {
               eventHandlers.click[handler](event, target);
             }
@@ -69,7 +81,7 @@
           else
           {
             select = select_obj.updateElement();
-            if(select )
+            if (select)
             {
               select.releaseEvent('change');
             }
@@ -79,15 +91,17 @@
         // keep modal state
         case 2: return
       }
+
+      self.remove_select();
     }
-    self.remove_select();
   }
 
   this.remove_select = function()
   {
     if (modal_box)
     {
-      document.removeEventListener('click', modal_click_handler, true);
+      document.removeEventListener('mousedown', modal_mousedown_handler, true);
+      document.removeEventListener('mouseup', modal_mouseup_handler, true);
       modal_box.parentElement.removeChild(modal_box);
       modal_box = null;
       select_obj = null;
@@ -95,24 +109,27 @@
       return true;
     }
     return false;
-  };
+  }
 
-  var click_handler = function(event)
+  var mouse_handler = function(event)
   {
     var ele = event.target;
-    if( /^cst-/i.test(ele.nodeName) )
+    if (/^cst-/i.test(ele.nodeName))
     {
       var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
       var cursor = event.target;
-      if(select.hasAttribute("disabled"))
+      if (select.hasAttribute("disabled"))
       {
         return;
       }
-      while( cursor && !/^container$/i.test(cursor.nodeName) && ( cursor = cursor.parentElement ) );
-      document.addEventListener('click', modal_click_handler, true);
+      event.stopPropagation();
+      event.preventDefault();
+      while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
+      document.addEventListener('mousedown', modal_mousedown_handler, true);
+      document.addEventListener('mouseup', modal_mouseup_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
       modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
-      
+
       var box = select.getBoundingClientRect(),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
       cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
@@ -120,7 +137,7 @@
       bottom = box.bottom - cursor_top,
       right = box.right - cursor_left,
       top = box.top - cursor_top,
-      _innerWidth = innerWidth, 
+      _innerWidth = innerWidth,
       _innerHeight = innerHeight,
       max_width = _innerWidth - left - 30,
       max_height = _innerHeight - bottom - 30,
@@ -130,11 +147,9 @@
       max_height_2 = top - 30,
       style = '';
 
-      
-
-      if( modal_box_height > max_height && modal_box_height < max_height_2 )
+      if (modal_box_height > max_height && modal_box_height < max_height_2)
       {
-        style += "top: " + ( top - modal_box_height ) + "px;";
+        style += "top: " + (top - modal_box_height) + "px;";
       }
       else
       {
@@ -150,7 +165,7 @@
       {
         style += "left: " + left + "px; max-width: " + max_width + "px;";
       }
-      style += "min-width:" + ( select.offsetWidth < max_width ? select.offsetWidth : (  max_width > 0 ? max_width : 0 ) ) + "px;";
+      style += "min-width:" + (select.offsetWidth < max_width ? select.offsetWidth : (max_width > 0 ? max_width : 0)) + "px;";
       modal_box.style.cssText = style;
       var selected_option = modal_box.querySelector("cst-option.selected");
       if (selected_option)
@@ -163,7 +178,7 @@
           modal_box.firstElementChild.scrollTop = offset_top + (offset_height / 2) - (box_height / 2);
         }
       }
-      EventHandler.__modal_mode= true;
+      EventHandler.__modal_mode = true;
     }
   }
 
@@ -262,12 +277,12 @@
     return ret;
   }
 
-  /* default interface implemetation */
+  /* default interface implementation */
   this.checkChange = function(target_ele)
   {
     var index = target_ele['opt-index'];
-    
-    if( this._selected_option_index != index )
+
+    if (this._selected_option_index != index)
     {
       this._selected_option_index = index;
       return true;
@@ -275,7 +290,7 @@
     return false;
   }
 
-  document.addEventListener('click', click_handler, false);
+  document.addEventListener('mousedown', mouse_handler, false);
 }
 
 /**

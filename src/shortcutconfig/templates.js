@@ -183,7 +183,9 @@
     return (
     ['button',
       label_handler[LABEL],
-      'handler', label_handler[HANDLER]
+      'handler', label_handler[HANDLER],
+      'class', 'ui-button',
+      'tabindex', '1'
     ]);
   };
   

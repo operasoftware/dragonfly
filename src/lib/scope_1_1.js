@@ -174,7 +174,7 @@ cls.Scope["1.1"].Service = function()
         index: i
       }
     }
-    this._onHostInfoCallback(service_descriptions);
+    this._onHostInfoCallback(service_descriptions, hello_message);
     hello_message.services = service_descriptions;    
   }
 

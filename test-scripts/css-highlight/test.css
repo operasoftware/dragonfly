@@ -3401,7 +3401,6 @@ property:hover {
   color: #000;
 }
 
-/* dfbuild: concatenated from: ./http-logger/httplogger_style.css */
 .request-table {
     border-collapse: collapse;
     width: 100%;

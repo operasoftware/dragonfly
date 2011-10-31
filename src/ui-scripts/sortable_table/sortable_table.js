@@ -94,7 +94,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     var menuitems = [{
       label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
       selected: !obj.groupby,
-      handler: obj._make_group_handler(null)
+      handler: obj._make_group_handler(null, obj._re_render_table)
     }];
 
     for (var group in obj.tabledef.groups)
@@ -102,7 +102,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
         selected: obj.groupby == group,
-        handler: obj._make_group_handler(group)
+        handler: obj._make_group_handler(group, obj._re_render_table)
       });
     }
 
@@ -125,7 +125,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       menuitems.push({
         label: coldef.label,
         checked: obj.columns.indexOf(colname) != -1,
-        handler: obj._make_colselect_handler(colname)
+        handler: obj._make_colselect_handler(colname, obj._re_render_table)
       });
     }
     return menuitems;
@@ -144,44 +144,44 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     return this.columns.length;
   }
 
-  this._make_group_handler = function(group)
+  this._make_group_handler = function(group, re_render_table)
   {
     return function(evt) {
       var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.group(group);
-      var table = evt.target;
-      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render())[0];
-      obj.post_message("after-render", {table: table});
+      re_render_table(obj, evt.target.get_ancestor("table"));
     }
   }
 
-  this._make_colselect_handler = function(col)
+  this._make_colselect_handler = function(col, re_render_table)
   {
     return function(evt) {
       var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.togglecol(col);
-      var table = evt.target;
-      while (table.nodeName.toLowerCase() != "table") { table = table.parentNode };
-      obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render())[0];
-      obj.post_message("after-render", {table: table});
+      re_render_table(obj, evt.target.get_ancestor("table"));
     }
   }
 
   this._sort_handler = function(evt, target)
   {
-    var table = target.parentNode.parentNode;
     var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
     obj.sort(col_id);
-    obj.post_message("before-render", {table: table});
-    table = table.re_render(obj.render())[0];
-    obj.post_message("after-render", {table: table});
+    obj._re_render_table(obj, target.parentNode.parentNode);
+  }
+
+  this._re_render_table = function(obj, table)
+  {
+    if (table && table.parentNode)
+    {
+      obj.post_message("before-render", {table: table});
+      table = table.re_render(obj.render());
+      if (table)
+        obj.post_message("after-render", {table: table[0]});
+    }
   }
 
   this._default_sorters = {
@@ -198,9 +198,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   this.restore_columns = function(table)
   {
     this.columns = this.orgininal_columns.slice(0);
-    this.post_message("before-render", {table: table});
-    table = table.re_render(this.render())[0];
-    this.post_message("after-render", {table: table});
+    this._re_render_table(this, table);
   }
 
   this._prop_getter = function(name)

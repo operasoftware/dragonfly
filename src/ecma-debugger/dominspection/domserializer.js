@@ -87,7 +87,7 @@ window.cls.DOMSerializer.prototype = new function()
     tag_head = '',
     start_depth = data[0][DEPTH] - 1,
     disregard_force_lower_case_whitelist = 
-      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST,
+      cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST,
     disregard_force_lower_case_depth = 0;
 
     for( ; node = data[i]; i++ )

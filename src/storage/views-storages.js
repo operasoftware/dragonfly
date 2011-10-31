@@ -72,8 +72,11 @@ cls.StorageView = function(id, name, container_class, storage_name)
       for (var i=0, row; row = table.childNodes[i]; i++)
       {
         row.setAttribute("data-menu", menu_id);
-        // summation-row should not have select and edit handlers
-        if (!row.hasClass("sortable-table-summation-row"))
+        // summation-rows and headers should not have select and edit handlers
+        if (
+          !row.hasClass("sortable-table-summation-row") &&
+          !row.hasClass("header")
+        )
         {
           row.setAttribute("handler", "storage-row");
           row.setAttribute("edit-handler", "storage-row");

@@ -60,10 +60,11 @@
   {
     return (
     ['li', 
-      ['input', 
-        'type', 'button', 
-        'value', ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT, 
-        'handler', 'ev-brp-edit-custom-events'
+      ['span', 
+        ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT,
+        'handler', 'ev-brp-edit-custom-events',
+        'class', 'ui-button container-button',
+        'tabindex', '1'
       ],
       'class', 'controls'
     ]);
@@ -82,15 +83,17 @@
         ]
       ],
       ['li', 
-        ['input', 
-          'type', 'button', 
-          'value', ui_strings.S_BUTTON_TEXT_APPLY, 
-          'handler', 'ev-brp-edit-custom-events-save'
+        ['span', 
+          ui_strings.S_BUTTON_TEXT_APPLY,
+          'handler', 'ev-brp-edit-custom-events-save',
+          'class', 'ui-button container-button',
+          'tabindex', '1'
         ],
-        ['input', 
-          'type', 'button', 
-          'value', ui_strings.S_BUTTON_CANCEL, 
-          'handler', 'ev-brp-edit-custom-events-cancel'
+        ['span', 
+          ui_strings.S_BUTTON_CANCEL,
+          'handler', 'ev-brp-edit-custom-events-cancel',
+          'class', 'ui-button container-button',
+          'tabindex', '1'
         ],
         'class', 'controls'
       ],

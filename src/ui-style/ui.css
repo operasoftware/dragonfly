@@ -1,5 +1,5 @@
 ﻿/* Font stack defaults */
-viewport, .info-box, button {
+viewport, .info-box, .ui-button {
   font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
   font-size: 11px;
   color: #444;
@@ -80,7 +80,6 @@ container {
 window-statusbar {
   display: block;
   background: #e6e6e6 url('../ui-images/window-dragger.png') no-repeat 100% 100%;
-  border-top: 1px solid #ccc;
   line-height: 20px;
   height: 20px;
 }
@@ -95,19 +94,20 @@ toolbar, panel-toolbar, window-toolbar {
   height: 21px; /* 21 + 3 + 2 (padding) = 26 */
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.85) 0,
-                                       rgba(255,255,255,0.25) 100%);
-
+                                       rgba(255, 255, 255, 0.85) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
 }
+
 panel-toolbar {
   display: block;
   border-width: 0 0 1px 0;
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.55) 0,
-                                       rgba(255,255,255,0.25) 100%);
+                                       rgba(255, 255, 255, 0.55) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
   border-color: #bfbfbf;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), inset 0 1px 1px 0 rgba(255,255,255,0.9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35),
+              inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
 toolbar-buttons, toolbar-switches {
@@ -116,7 +116,7 @@ toolbar-buttons, toolbar-switches {
   height: 100%;
 }
 
-button[handler="reload-window"]::before {
+.ui-button[handler="reload-window"]::before {
     background-image: url("../ui-images/icons/icon_reload.png");
 }
 /* Window control buttons */
@@ -264,33 +264,11 @@ cst-icon[class="debugger-menu"] {
     background-image: url("../ui-images/icons/icon_tabs.png");
 }
 
-/* Top tabs */
-.dom_mode {
-    background: url("../ui-images/mode_documents.png");
-}
-.js_mode {
-    background: url("../ui-images/mode_scripts.png");
-}
-.network_mode {
-    background: url("../ui-images/mode_network.png");
-}
-.resource_panel {
-    background: url("../ui-images/mode_resources.png");
-}
-.storage {
-    background: url("../ui-images/mode_storage.png");
-}
-.console_mode {
-    background: url("../ui-images/mode_errors.png");
-}
-.utils {
-    background: url("../ui-images/mode_utilities.png");
-}
-.console_panel {
-    background: url("../ui-images/mode_console.png");
+.ui-button {
+  display: inline-block;
 }
 
-button.ui-control::before,
+.ui-button.ui-control::before,
 .container-button:empty::before {
     content: "";
     display: block;
@@ -300,21 +278,21 @@ button.ui-control::before,
     background-repeat: no-repeat;
 }
 
-.container-button:empty::before {
+.container-button:empty {
     height: 18px;
-    width: 18px;
+    padding-top: 2px;
 }
 
-button.text-button::before  {
+.ui-button.text-button::before  {
     display: none;
 }
 
-button.text-button {
+.ui-button.text-button {
     width: auto;
     padding-right: 5px;
     padding-left: 5px;
 }
-button.text-button:active {
+.ui-button.text-button:active {
     padding-right: 5px !important;
     padding-left: 5px !important;
 }
@@ -322,45 +300,86 @@ button.text-button:active {
 .ui-control
 {
   background: #e6e6e6 repeat-x -o-linear-gradient(-90deg,
-                                    rgba(255,255,255,0.75) 0,
-                                    rgba(255,255,255,0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .3);
+                                                  rgba(255, 255, 255, 0.75) 0,
+                                                  rgba(255, 255, 255, 0.25) 100%);
+  border: 1px solid rgba(0, 0, 0, .325);
   border-radius: 3px;
   height: 17px;
   width: 17px;
-  margin: 0 2px;
-  padding: 1px;
+  margin: 0 3px;
+  padding: 1px 5px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255,255,255,0.6),
+  box-shadow: 0 1px rgba(255, 255, 255, 0.6),
               inset 0 1px 1px #fff;
   vertical-align: top;
   -o-transition: background-color 0.2s;
 }
-.ui-control[disabled] { /* :disabled seems to be buggy */
+.ui-control[disabled], .container-button[disabled] { /* :disabled seems to be buggy */
   background: #e0e0e0 !important;
   opacity: 0.4;
 }
-.ui-control:not([disabled]):active {
-    padding: 2px 1px 0;
+
+.ui-control:not([disabled]):active, .ui-control.is-active {
+    padding-top: 2px;
+    padding-bottom: 0;
     box-shadow: 0 1px #fff,
-                inset 0 1px 1px rgba(0, 0, 0, .2);
-    background-color: #ccc;
+                inset 0 1px 1px rgba(0, 0, 0, .15),
+                inset 0 0 4px rgba(0, 0, 0, .05);
+    background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
+
 .ui-control.is-active {
-    border: 1px solid rgba(0, 0, 0, .4);
+    padding-top: 2px;
+    padding-bottom: 0;
     box-shadow: 0 1px #fff,
-                inset 0 1px 1px rgba(0, 0, 0, 0.2),
-                inset 0 1px 7px rgba(0, 0, 0, 0.25);
-    background-image: -o-linear-gradient(-90deg, rgba(0, 0, 0, 0.03) 0,
-                                                 rgba(0, 0, 0, 0.12) 20%,
-                                                 rgba(0, 0, 0, 0.12) 80%,
-                                                 rgba(0, 0, 0, 0.03) 100%);
-    padding: 2px 1px 0;
+                inset 0 1px 1px rgba(0, 0, 0, .15),
+                inset 0 0 4px rgba(0, 0, 0, .15);
+    background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
+                                                    rgba(255, 255, 255, 0.45) 0,
+                                                    rgba(255, 255, 255, 0.25) 100%);
 }
+
 .ui-control.is-active:active {
-    background-color: #aaa;
+    background-color: #c6c6c6;
 }
+
+/* Grouping the toolbar buttons */
+/* All Buttons in a group*/
+toolbar-switches .ui-button.ui-control:not(:only-of-type),
+toolbar-buttons .ui-button.ui-control:not(:only-of-type),
+#toggle-settings-overlay,
+#toggle-remote-debug-overlay,
+#top-window-toggle-attach.attached,
+#top-window-close {
+  border-radius: 0;
+  border-right-width: 0;
+  margin: 0;
+}
+
+/* Leftmost Button*/
+toolbar-switches .ui-button.ui-control:first-of-type,
+toolbar-buttons .ui-button.ui-control:first-of-type,
+#toggle-settings-overlay,
+#top-window-toggle-attach.attached {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  margin-left: 3px;
+}
+
+/* Rightmost Button*/
+toolbar-switches .ui-button.ui-control:last-of-type,
+toolbar-buttons .ui-button.ui-control:last-of-type,
+#toggle-remote-debug-overlay,
+#top-window-close {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-right-width: 1px;
+  margin-right: 3px;
+}
+
 
 /* Show the button topmost when the overlay is visible */
 #toggle-settings-overlay.is-active,
@@ -382,7 +401,7 @@ button.text-button:active {
   color: #993d1f;
   box-shadow: inset 0 0 1px #fff,
               inset 0 0 10px #ff4433,
-              0 1px rgba(255,255,255,0.5),
+              0 1px rgba(255, 255, 255, 0.5),
               0 0 2px #ff0000;
 }
 .ui-control.alert:not([disabled]):active {
@@ -390,7 +409,7 @@ button.text-button:active {
     border-color: #bf3000;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.5),
+                0 1px rgba(255, 255, 255, 0.5),
                 0 0 2px #ff0000;
 }
 .ui-control.alert.is-active {
@@ -398,7 +417,7 @@ button.text-button:active {
     border-color: #bf3000;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.5),
+                0 1px rgba(255, 255, 255, 0.5),
                 0 0 2px #ff0000;
 }
 .ui-control.alert.is-active:active {
@@ -413,7 +432,7 @@ button.text-button:active {
     border-color: #721;
     box-shadow: inset 0 1px 2px #bf1000,
                 inset 0 0 10px #ff4433,
-                0 1px rgba(255,255,255,0.2),
+                0 1px rgba(255, 255, 255, 0.2),
                 0 0 4px #ff0000;
 }
 
@@ -427,48 +446,13 @@ cst-icon {
     width: 17px;
 }
 
-toolbar-separator {
-  display: block;
-  float: left;
-  height: 21px;
-  margin: 0 3px;
-}
-
 toolbar-filters,
 toolbar-search {
   display: block;
   float: right;
 }
 
-toolbar-filters input[type=button]
-{
-  background-color: #ddd;
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .5);
-  border-radius: 3px;
-  margin: 0 0 0 4px;
-  padding: 1px 10px;
-  height: 17px;
-  line-height: 27px;
-  text-shadow: 0 1px rgba(255,255,255,0.5);
-  box-shadow: 0 1px rgba(255,255,255,0.5), inset 0 1px 1px #fff;
-  display: inline-block;
-  vertical-align: top;
-  -o-transition: background-color 0.2s;
-  box-sizing: content-box;
-}
-
-toolbar-filters input[type=button]:active
-{
-  box-shadow: 0 1px #fff, inset 0 1px 2px rgba(0, 0, 0, .4);
-  background-position: 0 1px;
-  padding-top: 2px;
-  padding-bottom: 0;
-}
-
-toolbar-filters input[type=button].search-move-highlight-up
+toolbar-filters .ui-button.search-move-highlight-up
 {
   content: url("../ui-images/icons/icon_back.png");
   border-radius: 10px 0 0 10px;
@@ -476,7 +460,7 @@ toolbar-filters input[type=button].search-move-highlight-up
   margin: 0;
 }
 
-toolbar-filters input[type=button].search-move-highlight-down
+toolbar-filters .ui-button.search-move-highlight-down 
 {
   content: url("../ui-images/icons/icon_forward.png");
   border-radius: 0 10px 10px 0;
@@ -568,8 +552,8 @@ window-controls {
 window-controls:not(.no-tabbar) {
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
-                                       rgba(255,255,255,0.75) 0,
-                                       rgba(255,255,255,0.25) 100%);
+                                       rgba(255, 255, 255, 0.75) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
 }
 window-controls:not(.no-tabbar)::before {
     content: url("../ui-images/window_controls_border.png");
@@ -580,11 +564,6 @@ window-controls:not(.no-tabbar)::before {
 }
 window-controls.no-tabbar {
     z-index: 2;
-}
-window-controls toolbar-separator {
-    display: inline-block;
-    float: none;
-    height: auto;
 }
 
 .default-container {
@@ -668,7 +647,7 @@ ui-menu { /**/
   width: 180px;
   position: absolute;
   right:30px;
-  top: 0px;
+  top: 0;
   z-index:10;
   right: 200px;
   }
@@ -732,10 +711,10 @@ window-header {
   height: 21px;
   line-height: 21px;
   padding-left: 5px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px 3px 0 0;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  border-bottom: 1px solid rgba(0,0,0,0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 windows-container .window-move { /**/
@@ -834,9 +813,9 @@ window {
   left: 20px;
   color: #fff;
   border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  border: 1px solid rgba(0,0,0,0.3);
-  background: rgba(50,50,50,0.9) url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAQAAADmB58qAAAAIElEQVQIW2NgYGFiYGICkaxgxA5DHDASjuBSQGVsQC0AEiIAo3s7awoAAAAASUVORK5CYII%3D") 0 0 repeat-x;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: rgba(50, 50, 50, 0.9);
   background-size: auto 100%;
 }
 
@@ -852,7 +831,6 @@ window:after {
 window-container {
  /* border: 1px solid #000; <-- TODO: Do we need this */
   border-width: 0 1px 1px;
-  border-radius: 0 0 7px 7px;
   display: block;
   position: relative;
   background-color: rgba(0, 0, 0, .4);
@@ -874,10 +852,10 @@ window.hud window-container {
 .hud window-toolbar {
     background-color: #000;
     background-image: -o-linear-gradient(-90deg,
-                                         rgba(255,255,255,0.33) 0,
-                                         rgba(255,255,255,0.15) 100%);
+                                         rgba(255, 255, 255, 0.25) 0,
+                                         rgba(255, 255, 255, 0.15) 100%);
     border: 0;
-    border-bottom: 1px solid rgba(255,255,255,.1);
+    border-bottom: 1px solid rgba(0,0,0,.65);
     padding-bottom: 3px;
 }
 
@@ -933,7 +911,7 @@ textarea-container-inline textarea
   padding: 0 1px;
   vertical-align: text-top;
   overflow: hidden;
-  height: 0px;
+  height: 0;
 }
 cst-select-toolbar-setting
 {
@@ -964,10 +942,10 @@ cst-drop-down
   position: relative;
   top: -1px;
 }
-
-cst-select:active {
-    padding: 1px;
+.hud cst-drop-down{
+    background: transparent url("../ui-images/dropdown_white.png") 50% 50% no-repeat;
 }
+
 cst-select cst-value {
   text-shadow: 0 1px rgba(255, 255, 255, .5);
 }
@@ -1063,7 +1041,7 @@ cst-select.color cst-value
 {
   border: 1px solid #999;
   width: 4px;
-  margin: 0px;
+  margin: 0;
 }
 cst-select.color[disabled] cst-value
 {
@@ -1119,7 +1097,7 @@ cst-select-option-list-container.color cst-selected-border
   width: 32px;
   height: 24px;
   padding: 2px;
-  margin: 0px 0px 0px -40px;
+  margin: 0 0 0 -40px;
   border: 2px solid #999;
 }
 
@@ -1272,7 +1250,7 @@ breadcrumbs breadcrumb:last-of-type::after {
     width: 11px;
     position: absolute;
     left: 0;
-    background: transparent url("../ui-images/crumb_arrow.png");
+    background-image: url("../ui-images/crumb_arrow.png");
 }
 breadcrumbs breadcrumb:last-of-type::after {
     left: auto;
@@ -1417,22 +1395,21 @@ tab.active .close-tab-button {
 .container-button {
     background-color: #ddd;
     background-image: -o-linear-gradient(-90deg,
-                                         rgba(255,255,255,0.90) 0%,
-                                         rgba(255,255,255,0.25) 85%,
-                                         rgba(255,255,255,0.50) 100%);
-    border: 1px solid rgba(0, 0, 0, .5);
+                                         rgba(255, 255, 255, 0.90) 0%,
+                                         rgba(255, 255, 255, 0.25) 100%);
+    border: 1px solid rgba(0, 0, 0, .45);
     border-radius: 4px;
-    height: 22px;
     line-height: 20px;
-    padding: 1px 12px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+    padding: 0 12px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
     -o-transition: background-color 0.2s;
 }
 
 .container-button:active:not([disabled]) {
-    box-shadow: 0 1px rgba(0,0,0,0.0),
-                inset 0 1px 3px rgba(0, 0, 0, .4);
+    box-shadow: 0 1px rgba(0, 0, 0, 0.0),
+                inset 0 1px 3px rgba(0, 0, 0, .3);
     background-color: #ccc;
+    border-color: rgba(0, 0, 0, .4);
 }
 
 .container-button:disabled {

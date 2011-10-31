@@ -259,15 +259,17 @@
       this._match_cursor = -1;
       if (this._last_query)
       {
-        if (this.search_type == TextSearch.REGEXP && !this._validate_reg_exp())
+        var error = this.search_type == TextSearch.REGEXP &&
+                    this._validate_reg_exp();
+
+        if (error)
         {
           this._model = null;
           this._match_nodes = null;
           this._match_count = 0;
           this._hits = [];
           this._update_info(EMPTY);
-          var tmpl = ['div', ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING, 
-                             'class', 'info-box'];
+          var tmpl = ['div', error, 'class', 'info-box'];
           this._container.firstElementChild.clearAndRender(tmpl);
         }
         else

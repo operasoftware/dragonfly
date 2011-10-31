@@ -50,8 +50,10 @@ templates.network_options_override_list = function(headers, overrides)
           ["br"],
           tpl,
           ["br"],
-          ["button", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
-           "handler", "update-header-overrides", "class", "container-button"
+          ["span", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
+           "handler", "update-header-overrides",
+           "class", "container-button ui-button",
+           "tabindex", "1"
           ].concat(overrides ? [] : ["disabled", "disabled"])
          ];
 };
@@ -75,10 +77,11 @@ templates.network_request_crafter_main = function(url, loading, request, respons
             "handler", "request-crafter-url-change"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
             ["p", ["_auto_height_textarea", request]],
-           ["p", ["button", ui_strings.M_NETWORK_CRAFTER_SEND,
+           ["p", ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
             "handler", "request-crafter-send",
             "unselectable", "on",
-            "class", "container-button"]],
+            "class", "container-button ui-button",
+            "tabindex", "1"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
            ["p", ["textarea", loading ? ui_strings.M_NETWORK_CRAFTER_SEND : response]],
            "class", "padding request-crafter"
@@ -129,11 +132,16 @@ templates.network_log_details = function(ctx, selected, listwidth)
 templates.network_log_request_detail = function(ctx, selected)
 {
   var req = ctx.get_resource(selected);
-  var responsecode = req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
+  var responsecode = req && req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
   ["div",
-    ["button", "class", "close-request-detail container-button", "handler", "close-request-detail", "unselectable", "on"],
+    ["span",
+      "class", "close-request-detail container-button ui-button",
+      "handler", "close-request-detail",
+      "unselectable", "on",
+      "tabindex", "1"
+    ],
     ["table",
      ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
      ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
@@ -312,13 +320,14 @@ templates.network_response_body = function(req)
   {
     ret.push(["p",
       ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-      ["p", ["button",
+      ["p", ["span",
           ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
           "data-resource-id", String(req.id),
           // unselectable attribute works around bug CORE-35118
           "unselectable", "on",
           "handler", "get-response-body",
-          "class", "container-button"
+          "class", "container-button ui-button",
+          "tabindex", "1"
       ]],
       "class", "response-view-body-container"
     ]);

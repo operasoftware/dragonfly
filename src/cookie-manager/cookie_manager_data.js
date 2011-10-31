@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 cls.CookieManager || (cls.CookieManager = {});
 cls.CookieManager["1.0"] || (cls.CookieManager["1.0"] = {});
 cls.CookieManager["1.1"] || (cls.CookieManager["1.1"] = {});
@@ -26,19 +26,6 @@ cls.CookieManager.Cookie = function(details, data)
   {
     this._objectref = "runtime_placeholder_"+this._rt_id;
   }
-
-  /**
-   * Decide if the cookie can be edited.
-   * The cookie.domain and .isHTTPOnly conditions applies only when the "add cookie"
-   * interface is not used, which allows specifying the domain when creating cookies
-   * cookie_service 1.0.2 fixes CORE-35055 -> correct paths, allows for editing
-  */
-  this._is_editable =
-    data._is_min_service_version_1_1 || (
-      !this.isHTTPOnly &&
-      (!this.path || data._is_min_service_version_1_0_2) &&
-      this.domain === this._rt_hostname
-    );
 }
 
 cls.CookieManager.CookieDataBase = function()
@@ -80,14 +67,23 @@ cls.CookieManager.CookieDataBase = function()
   {
     this._view._restore_selection = [cookie_instance._objectref];
 
-    var add_cookie_script = 'document.cookie="' + cookie_instance.name + '=' + encodeURIComponent(cookie_instance.value);
-    if (cookie_instance.expires) // in case of 0 value the "expires" value should not be written, represents "Session" value
+    // work around CORE-36742, cookies with path "/" don't show up on document.cookie, "" to be used instead
+    var path_val = cookie_instance.path;
+    if (path_val && path_val.trim() === "/")
     {
-      add_cookie_script += '; expires='+ (new Date(cookie_instance.expires).toUTCString());
+      path_val = "";
     }
-    add_cookie_script += '; path=' + (cookie_instance.path || "/") + '"';
-    var tag = callback ? tagManager.set_callback(this, callback, []) : 0;
-    services['ecmascript-debugger'].requestEval(tag,[cookie_instance._rt_id, 0, 0, add_cookie_script]);
+    var cookie_detail_arr = [
+      cookie_instance.domain,
+      cookie_instance.name,
+      path_val,
+      cookie_instance.value,
+      cookie_instance.expires / 1000,
+      cookie_instance.isSecure,
+      cookie_instance.isHTTPOnly
+    ];
+    var tag = callback ? tagManager.set_callback(this, callback) : 0;
+    services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
   };
 
   this.remove_cookie = function(objectref, callback)
@@ -95,7 +91,7 @@ cls.CookieManager.CookieDataBase = function()
     var cookie = this.get_cookie_by_objectref(objectref);
     if (cookie)
     {
-      var domain = this._check_to_add_local_to_domain(cookie.domain);
+      var domain = cookie.domain;
       if (!domain)
       {
         // in case the cookies domain is undefined (cookie is retrieved via JS), try using the runtime domain
@@ -158,23 +154,6 @@ cls.CookieManager.CookieDataBase = function()
         delete this._rts[rt_id];
       }
     }
-  };
-
-  this._is_min_service_version = function(compare_version)
-  {
-    var compare_version = compare_version.split(".").map(Number);
-    var service_version = this.service_version.split(".").map(Number);
-    for (var i=0; i < compare_version.length; i++) {
-      if ((service_version[i] || 0) < compare_version[i])
-      {
-        return false;
-      }
-      else if (service_version[i] > compare_version[i])
-      {
-        return true;
-      }
-    };
-    return true;
   };
 
   this._request_location_object_id = function(rt_id, active_tab_counter)
@@ -252,11 +231,9 @@ cls.CookieManager.CookieDataBase = function()
 
       if (rt.hostname)
       {
-        // Add .local even in the GetCookie request, only for consistency reasons and to spot problems with it more easily
-        var request_hostname = this._check_to_add_local_to_domain(rt.hostname);
+        var request_hostname = rt.hostname;
         var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id, active_tab_counter]);
-        // workaround: Use GetCookie without path filter, instead apply it client-side (see callback), CORE-37107
-        services['cookie-manager'].requestGetCookie(tag,[request_hostname]);
+        services['cookie-manager'].requestGetCookie(tag,[request_hostname, rt.pathname]);
       }
       else
       {
@@ -284,17 +261,6 @@ cls.CookieManager.CookieDataBase = function()
             {
               continue;
             }
-            // workaround: Check path to match if it's not root, CORE-37107
-            var path = cookie_info[1];
-            if (path && (path !== "/") && !rt.pathname.startswith(path))
-            {
-              /*
-               * In opera (and IE, checked IE8), the path value doesn't have to match
-               * with a trailing slash. Would be used with startswith(path+"/") in 
-               * other browsers, see http://people.opera.com/dherzog/cookie-path/
-               */
-              continue;
-            }
             this.cookie_list.push(
               new cls.CookieManager.Cookie({
                 domain:     cookie_info[0],
@@ -315,7 +281,7 @@ cls.CookieManager.CookieDataBase = function()
         }
         else
         {
-          // In case no cookies come back, check via JS (workaround for CORE-35055)
+          // In case no cookies come back, check via JS (workaround for CORE-41145)
           var script = "return document.cookie";
           var tag = tagManager.set_callback(this, this._handle_js_retrieved_cookies, [rt_id, active_tab_counter]);
           services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
@@ -348,7 +314,8 @@ cls.CookieManager.CookieDataBase = function()
         if (cookie_string && cookie_string.length > 0)
         {
           var cookies = cookie_string.split('; ');
-          for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
+          for (var i=0, cookie_info; cookie_info = cookies[i]; i++)
+          {
             var pos = cookie_info.indexOf('=');
             var has_value = pos !== -1;
             this.cookie_list.push(
@@ -368,21 +335,8 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
-  this._check_to_add_local_to_domain = function(domain)
+  this._init = function(view)
   {
-    // work around CORE-37379 by adding ".local" to domain names if they seem local
-    if (domain && domain.indexOf(".") === -1 || domain.match(/^[0-9]+$/))
-    {
-      domain += ".local";
-    }
-    return domain;
-  }
-
-  this._init = function(service_version, view)
-  {
-    this.service_version = service_version || 0;
-    this._is_min_service_version_1_0_2 = this._is_min_service_version("1.0.2");
-    this._is_min_service_version_1_1 = this._is_min_service_version("1.1");
     this._view = view;
     this.cookie_list = [];
     this._rts = {};
@@ -391,36 +345,8 @@ cls.CookieManager.CookieDataBase = function()
   };
 };
 
-cls.CookieManager["1.0"].CookieManagerData = function(service_version, view)
+cls.CookieManager["1.1"].CookieManagerData = function(view)
 {
-  this._init(service_version, view);
-}
-cls.CookieManager["1.0"].CookieManagerData.prototype = new cls.CookieManager.CookieDataBase();
-
-cls.CookieManager["1.1"].CookieManagerData = function(service_version, view)
-{
-  this.set_cookie = function(cookie_instance, callback)
-  {
-    this._view._restore_selection = [cookie_instance._objectref];
-
-    // work around CORE-36742, cookies with path "/" don't show up on document.cookie, "" to be used instead
-    var path_val = cookie_instance.path;
-    if (path_val && path_val.trim() === "/")
-    {
-      path_val = "";
-    }
-    var cookie_detail_arr = [
-      this._check_to_add_local_to_domain(cookie_instance.domain),
-      cookie_instance.name,
-      path_val,
-      cookie_instance.value,
-      cookie_instance.expires / 1000,
-      cookie_instance.isSecure,
-      cookie_instance.isHTTPOnly
-    ];
-    var tag = callback ? tagManager.set_callback(this, callback) : 0;
-    services['cookie-manager'].requestAddCookie(tag, cookie_detail_arr);
-  }
-  this._init(service_version, view);
+  this._init(view);
 }
 cls.CookieManager["1.1"].CookieManagerData.prototype = new cls.CookieManager.CookieDataBase();
