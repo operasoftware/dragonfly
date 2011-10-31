@@ -64,12 +64,12 @@
 
 .network-log-url-list li:nth-child(odd),
 .network-graph-row:nth-child(even) {
-  background-color: rgba(0,0,0,0.03)
+  background-color: rgba(0, 0, 0, 0.03)
 }
 
 .network-log-url-list li.hovered,
 #graph div.hovered {
-  background-color: rgba(55,115,211,0.2);
+  background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .status-cached {
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .network-log-url-list li:active,
@@ -103,7 +103,7 @@
 .network-log-url-list li.selected,
 .network-log-url-list li:nth-child(even).selected
 {
-  background-color: rgba(55,115,211,0.8);
+  background-color: rgba(55, 115, 211, 0.8);
   color: #fff;
 }
 
