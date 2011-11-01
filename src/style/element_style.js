@@ -8,6 +8,7 @@ cls.ElementStyle = function()
 {
   var self = this; // TODO: get rid of
 
+  this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._categories_data = [];
   this._selected_element = null;
@@ -17,8 +18,6 @@ cls.ElementStyle = function()
   this._set_props = [];
   this._rt_id = null;
   this._obj_id = null;
-  this._es_debugger = window.services['ecmascript-debugger'];
-  this._search_timeout = new Timeouts();
   this._views = ['css-comp-style', 'css-inspector'];
   this._categories = [
     {
@@ -338,7 +337,7 @@ cls.ElementStyle = function()
 
   this._search_delayed = function(value)
   {
-    this._search_timeout.set(this._search.bind(this), SEARCH_DELAY, value);
+    window.setTimeout(this._search.bind(this), SEARCH_DELAY, value);
   };
 
   this._search = function(search_term)
@@ -369,7 +368,7 @@ cls.ElementStyle = function()
       {
         this._clear_node_cascade(this._categories_data[CSS][i], this._search_map);
       }
-      this._search_term  = "";
+      this._search_term = "";
       this._search_is_active = false;
     }
   };

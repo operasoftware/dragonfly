@@ -8,6 +8,7 @@ cls.CSSInspectorActions = function(id)
 {
   var self = this;
 
+  this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._active_container = null;
   this._target = null;
@@ -48,9 +49,8 @@ cls.CSSInspectorActions = function(id)
         // work somewhat after a view update.
         // all keyboard navigation must be re-implemented
         // in a much more generic way
-        var rule_id = new_target.querySelector('input') &&
-                      rule_id.getAttribute("data-rule-id");
-        if (rule_id)
+        var rule_id = new_target.querySelector('input');
+        if (rule_id = rule_id && rule_id.getAttribute("data-rule-id"))
         {
           var inputs = self._active_container.getElementsByTagName('input');
           for (var i = 0, input; input = inputs[i]; i++)
@@ -171,8 +171,7 @@ cls.CSSInspectorActions = function(id)
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
             : 1;
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["object", rule_id]]]);
+    this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -197,8 +196,7 @@ cls.CSSInspectorActions = function(id)
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
             : 1;
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["object", rule_id]]]);
+    this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -233,8 +231,7 @@ cls.CSSInspectorActions = function(id)
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
             : 1;
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["object", rule_id]]]);
+    this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -255,8 +252,7 @@ cls.CSSInspectorActions = function(id)
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
             : 1;
-    services['ecmascript-debugger'].requestEval(tag,
-      [rt_id, 0, 0, script, [["object", rule_id]]]);
+    this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
@@ -307,7 +303,7 @@ cls.CSSInspectorActions = function(id)
 
     if (script)
     {
-      services['ecmascript-debugger'].requestEval(null,
+      this._es_debugger.requestEval(null,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
   };
@@ -347,7 +343,7 @@ cls.CSSInspectorActions = function(id)
 
     if (script)
     {
-      services['ecmascript-debugger'].requestEval(null,
+      this._es_debugger.requestEval(null,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
   };
@@ -421,7 +417,7 @@ cls.CSSInspectorActions = function(id)
 
       var tag = this._tag_manager.set_callback(null, window.elementStyle.update);
       var msg = [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]];
-      services['ecmascript-debugger'].requestEval(tag, msg);
+      this._es_debugger.requestEval(tag, msg);
     }
   };
 
@@ -457,8 +453,8 @@ cls.CSSInspectorActions = function(id)
 
   this.get_action_list = function()
   {
-    var actions = [], key = '';
-    for (key in this._handlers)
+    var actions = [];
+    for (var key in this._handlers)
       actions.push(key);
     return actions;
   };
@@ -544,7 +540,6 @@ cls.CSSInspectorActions = function(id)
     this.editor.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
                                   ? this.editor.MODE_SVG
                                   : this.editor.MODE_CSS;
-
     if (is_disabled)
       this.enable_property(rt_id, rule_id, obj_id, target.getAttribute("data-property"));
     else
