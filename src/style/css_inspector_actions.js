@@ -534,7 +534,7 @@ cls.CSSInspectorActions = function(id)
   this._handlers['enable-disable-property'] = function enable_disable_property(event, target)
   {
     var is_disabled = target.checked;
-    var rule_id = parseInt(target.getAttribute("data-rule-id")) || null;
+    var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id")) || null;
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     this.editor.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"

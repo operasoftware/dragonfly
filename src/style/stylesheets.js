@@ -154,144 +154,118 @@ cls.Stylesheets = function()
       var inherited_printed = false;
       for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
       {
-        if (i > 0 && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
+        var rule = new Rule(style_dec);
+        if (!rule.declarations.length)
+          continue;
+
+        if (i > 0 && !inherited_printed)
         {
           inherited_printed = true;
-          template.push(this._templates.inherited_header(element_name, rt_id, node_casc[OBJECT_ID]));
+          template.push(this._templates.inherited_header(element_name, node_casc[OBJECT_ID]));
         }
-        template.push(this._pretty_print_rule[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active));
+
+        template.push(this._pretty_print_rule[rule.origin](rt_id,
+              node_casc[OBJECT_ID], element_name, rule));
       }
     }
 
     return template;
   }.bind(this);
 
-  this._pretty_print_declaration_list = function(rule, search_active)
+  // TODO: move, rename etc
+  var Rule = function(rule)
   {
-    var HEADER = 0;
-    var INDEX_LIST = 1;
-    var SEARCH_LIST = cls.ElementStyle.SEARCH_LIST;
-    var VALUE = 0;
-    var PRIORITY = 1;
-    var STATUS = 2;
+    this.declarations = [];
+    this.origin = rule[0];
+    this.selector = rule[5];
+    this.specificity = rule[6];
+    this.stylesheet_id = rule[7];
+    this.rule_id = rule[8];
+    this.rule_type = rule[9];
+    this.line_number = rule[10];
 
-    var template = [];
-    var index_list = rule[INDEX_LIST] || [];
-    var search_list = rule[SEARCH_LIST] || [];
-    var prop_index = 0;
-    var index = 0;
+    for (var i = 0, len = rule[1].length; i < len; i++)
+    {
+      this.declarations.push({
+        property: window.css_index_map[rule[1][i]],
+        value: rule[2][i],
+        priority: rule[3][i],
+        is_applied: Boolean(rule[4][i]), // Could be inverted and renamed to overwritten
+        is_disabled: rule[12] ? Boolean(rule[12][i]) : false
+      });
+    }
+  };
 
-    // Create an array of [prop, prop_index] for sorting
-    var properties = index_list.map(function(index) {
-      return [this._index_map[index], index];
-    }, this);
+  this._pretty_print_declaration_list = function(rule)
+  {
+    //CssShorthandResolver.get_instance().resolve(rule.declarations);
 
-    // Sort in alphabetical order
-    properties.sort(function(a, b) {
-      return a[0] > b[0] ? 1 : -1; // The same property can never happen
+    rule.declarations.sort(function(a, b) {
+      return a.property > b.property ? 1 : -1; // The same property can never appear
     });
 
-    for (var i = 0, len = index_list.length; i < len; i++)
-    {
-      prop_index = properties[i][1];
-      index = index_list.indexOf(prop_index);
+    var is_editable = rule.origin != ORIGIN_USER_AGENT && rule.origin != ORIGIN_LOCAL;
 
-      if (search_active && !search_list[index])
-        continue;
-
-      template.push(this._templates.declaration(this._index_map[prop_index], rule, index));
-    }
-
-    return template;
+    return rule.declarations.map(function(declaration) {
+      // TODO: filter properties that don't match the search here
+      return this._templates.declaration(declaration, is_editable);
+    }, this);
   };
 
   this._pretty_print_rule = {};
 
-  this._pretty_print_rule[ORIGIN_USER_AGENT] = function(rt_id, obj_id, element_name, style_dec, search_active)
+  this._pretty_print_rule[ORIGIN_USER_AGENT] = function(rt_id, obj_id, element_name, rule)
   {
-    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
-    {
-      return this._templates.rule_origin_user_agent(
-        this._pretty_print_declaration_list(style_dec, search_active),
-        obj_id,
-        element_name
-      );
-    }
-
-    return [];
+    return this._templates.rule_origin_user_agent(
+      this._pretty_print_declaration_list(rule),
+      obj_id,
+      element_name
+    );
   }.bind(this);
 
-  this._pretty_print_rule[ORIGIN_LOCAL] = function(rt_id, obj_id, element_name, style_dec, search_active)
+  this._pretty_print_rule[ORIGIN_LOCAL] = function(rt_id, obj_id, element_name, rule)
   {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return this._templates.rule_origin_user_local(
-        this._pretty_print_declaration_list(style_dec, search_active),
-        obj_id,
-        style_dec[SELECTOR]
-      );
-    }
-
-    return [];
+    return this._templates.rule_origin_user_local(
+      this._pretty_print_declaration_list(rule),
+      obj_id,
+      rule.selector
+    );
   }.bind(this);
 
-  this._pretty_print_rule[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, style_dec, search_active)
+  this._pretty_print_rule[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, rule)
   {
-    var sheet = this.get_sheet_with_obj_id(rt_id, style_dec[STYLESHEET_ID]);
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
+    var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheet_id);
     if (!sheet)
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'stylesheet is missing in stylesheets, _pretty_print_rule[ORIGIN_AUTHOR]');
     }
 
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return this._templates.rule_origin_user_author(
-        this._pretty_print_declaration_list(style_dec, search_active),
-        obj_id,
-        rt_id,
-        style_dec,
-        sheet
-      );
-    }
-
-    return [];
+    return this._templates.rule_origin_author(
+      this._pretty_print_declaration_list(rule),
+      obj_id,
+      rt_id,
+      rule,
+      sheet
+    );
   }.bind(this);
 
-  this._pretty_print_rule[ORIGIN_ELEMENT] = function(rt_id, obj_id, element_name, style_dec, search_active)
+  this._pretty_print_rule[ORIGIN_ELEMENT] = function(rt_id, obj_id, element_name, rule)
   {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return this._templates.rule_origin_user_element(
-        this._pretty_print_declaration_list(style_dec, search_active),
-        obj_id,
-        rt_id
-      );
-    }
-
-    return [];
+    return this._templates.rule_origin_user_element(
+      this._pretty_print_declaration_list(rule),
+      obj_id,
+      rt_id
+    );
   }.bind(this);
 
-  this._pretty_print_rule[ORIGIN_SVG] = function(rt_id, obj_id, element_name, style_dec, search_active)
+  this._pretty_print_rule[ORIGIN_SVG] = function(rt_id, obj_id, element_name, rule)
   {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return this._templates.rule_origin_user_svg(
-        this._pretty_print_declaration_list(style_dec, search_active),
-        obj_id,
-        rt_id
-      );
-    }
-
-    return [];
+    return this._templates.rule_origin_user_svg(
+      this._pretty_print_declaration_list(rule),
+      obj_id,
+      rt_id
+    );
   }.bind(this);
 
   this.create_declaration = function(prop, value, is_important, rule_id, is_disabled, origin)
