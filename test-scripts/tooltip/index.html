@@ -27,12 +27,8 @@ span
 
 window.onload = function()
 {
-	var tooltip = TooltipManager.register_tooltip("test", true);
-
-	tooltip.ontooltip = function(event, target)
+	TooltipManager.register("test", true).ontooltip = function(event, target)
 	{
-		this.container.textContent = "tooltip " +
-		                             target.getAttribute("data-tooltip-data");
 		this.show();
 	}
 }
@@ -41,218 +37,219 @@ window.onload = function()
 <div id="viewport">
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
-</ul>
-<ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 <ul>
-	<li><span data-tooltip="test" data-tooltip-data="test 1">item 1</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 2">item 2</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 3">item 3</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 4">item 4</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 5">item 5</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 6">item 6</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 7">item 7</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 8">item 8</span</li>
-	<li><span data-tooltip="test" data-tooltip-data="test 9">item 9</span</li>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
+</ul>
+
+<ul>
+	<li><span data-tooltip="test" data-tooltip-text="test 1">item 1</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 2">item 2</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 3">item 3</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 4">item 4</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 5">item 5</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 6">item 6</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 7">item 7</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 8">item 8</span></li>
+	<li><span data-tooltip="test" data-tooltip-text="test 9">item 9</span></li>
 </ul>
 
 
