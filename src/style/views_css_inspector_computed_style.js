@@ -15,14 +15,13 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
   {
     var styles = container.clearAndRender(['category', ['styles']]).firstElementChild;
     var data = elementStyle.get_computed_style();
-    var search_active = elementStyle.get_search_active();
     if (data)
     {
       // stylesheets.prettyPrintCat call will also ensure
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data
       // before this datas are avaible
-      styles.clearAndRender(stylesheets.pretty_print_computed_style(data, search_active));
+      styles.clearAndRender(stylesheets.pretty_print_computed_style(data));
       styles.setAttribute('rt-id', data.rt_id);
     }
   }

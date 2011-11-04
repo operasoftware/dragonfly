@@ -76,7 +76,7 @@ cls.Stylesheets = function()
     }
   };
 
-  this.pretty_print_computed_style = function(data, search_active)
+  this.pretty_print_computed_style = function(data)
   {
     var template = [];
     // set_props is used to force the display if a given property is set
@@ -98,8 +98,8 @@ cls.Stylesheets = function()
         || false;
       var display =
         (!hide_initial_value || set_props[index] || is_not_initial_value)
-        && !(search_term && !(prop.indexOf(search_term) != -1
-        || value.indexOf(search_term) != -1));
+        && (prop.indexOf(search_term) != -1 ||
+            value.indexOf(search_term) != -1);
 
       if (display)
         template.push(this._templates.declaration_computed_style(prop, value));
@@ -108,23 +108,27 @@ cls.Stylesheets = function()
     return template;
   };
 
-  this.pretty_print_cascaded_style = function(data, search_active)
+  this.pretty_print_cascaded_style = function(data)
   {
     var template = [];
     var rt_id = data.rt_id;
+    var search_term = window.elementStyle.get_search_term();
 
     for (var i = 0, node_casc; node_casc = data[i]; i++)
     {
       var element_name = node_casc[ELEMENT_NAME];
       var style_dec_list = node_casc[STYLE_LIST];
 
-      if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
-        continue;
-
       var inherited_printed = false;
       for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
       {
         var rule = new Rule(style_dec); // TODO: this is temporary
+
+        rule.declarations = rule.declarations.filter(function(declaration) {
+          return declaration.property.indexOf(search_term) != -1 ||
+                 declaration.value.indexOf(search_term) != -1;
+        });
+
         if (!rule.declarations.length)
           continue;
 
@@ -182,7 +186,6 @@ cls.Stylesheets = function()
     var is_editable = rule.origin != ORIGIN_USER_AGENT && rule.origin != ORIGIN_LOCAL;
 
     return rule.declarations.map(function(declaration) {
-      // TODO: filter properties that don't match the search here
       return this._templates.declaration(declaration, is_editable);
     }, this);
   };

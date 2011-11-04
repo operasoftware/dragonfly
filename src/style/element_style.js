@@ -13,7 +13,6 @@ cls.ElementStyle = function()
   this._categories_data = [];
   this._selected_element = null;
   this._search_map = [];
-  this._search_is_active = false;
   this._search_term = "";
   this._set_props = [];
   this._rt_id = null;
@@ -47,10 +46,8 @@ cls.ElementStyle = function()
   var PROP_LIST = 1;
   var VAL_LIST = 2;
   var PRIORITY_LIST = 3;
-  var SEARCH_LIST = cls.ElementStyle.SEARCH_LIST;
   var HAS_MATCHING_SEARCH_PROPS = 11;
   var SEARCH_DELAY = 50;
-  var MIN_SEARCH_TERM_LENGTH = 1;
   var DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
 
   // new scope messages
@@ -331,7 +328,6 @@ cls.ElementStyle = function()
     this._selected_element = null;
     this._set_props = [];
     this._search_map = [];
-    this._search_is_active = false;
     this._search_term = '';
   };
 
@@ -342,8 +338,7 @@ cls.ElementStyle = function()
 
   this._search = function(search_term)
   {
-    if (this._search_term != search_term &&
-       (this._search_is_active || search_term.length >= MIN_SEARCH_TERM_LENGTH))
+    if (this._search_term != search_term)
     {
       this._do_search(search_term);
       this._search_term = search_term;
@@ -354,13 +349,12 @@ cls.ElementStyle = function()
 
   this._do_search = function(search_term)
   {
-    if (search_term.length >= MIN_SEARCH_TERM_LENGTH)
+    if (search_term)
     {
       for (var i = 0, length = this._categories_data[CSS].length; i < length; i++)
       {
         this._search_node_cascade(this._categories_data[CSS][i], search_term);
       }
-      this._search_is_active = true;
     }
     else
     {
@@ -369,7 +363,6 @@ cls.ElementStyle = function()
         this._clear_node_cascade(this._categories_data[CSS][i], this._search_map);
       }
       this._search_term = "";
-      this._search_is_active = false;
     }
   };
 
@@ -385,14 +378,11 @@ cls.ElementStyle = function()
         var length = declaration[PROP_LIST].length;
         var has_matching_search_props = false;
 
-        declaration[SEARCH_LIST] = [];
-
         for (var j = 0; j < length; j++)
         {
           if (window.css_index_map[declaration[PROP_LIST][j]].indexOf(search_term) != -1 ||
               declaration[VALUE_LIST][j].indexOf(search_term) != -1)
           {
-            declaration[SEARCH_LIST][j] = 1;
             has_matching_search_props = true;
             node_cascade_has_matching_search_props = true;
           }
@@ -404,7 +394,7 @@ cls.ElementStyle = function()
     node_cascade[HAS_MATCHING_SEARCH_PROPS] = node_cascade_has_matching_search_props;
   };
 
-  this._clear_node_cascade = function(node_cascade, search_list)
+  this._clear_node_cascade = function(node_cascade)
   {
     var declaration_list = node_cascade[1];
 
@@ -414,11 +404,6 @@ cls.ElementStyle = function()
       delete dec[HAS_MATCHING_SEARCH_PROPS];
     }
     delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];
-  };
-
-  this.get_search_active = function()
-  {
-    return this._search_is_active;
   };
 
   this._on_element_selected = function(msg)
@@ -526,5 +511,4 @@ cls.ElementStyle = function()
 };
 
 cls.ElementStyle.DISABLED_LIST = 12
-cls.ElementStyle.SEARCH_LIST = 13;
 
