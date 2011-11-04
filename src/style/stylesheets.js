@@ -1,14 +1,10 @@
 ﻿window.cls || (window.cls = {});
 
-// TODO clean up pretty printing, does contain much too much code history
-
 /**
  * @constructor
  */
 cls.Stylesheets = function()
 {
-  var self = this; // TODO: get rid of
-
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._templates = new StylesheetTemplates();
@@ -17,33 +13,18 @@ cls.Stylesheets = function()
   this._index_map_length = 0; // TODO: is this needed, check length of _index_map instead?
   this._sorted_index_map = [];
   this._initial_values = [];
-  this._selected_rules = null;
   this._color_index = 0;
   this._is_getting_index_map = false;
 
   var SHEET_OBJECT_ID = 0; // TODO use the right obj-id
-  var SHEET_IS_DISABLED = 1;
   var SHEET_HREF = 2;
   var SHEET_TITLE = 3;
-  var COMP_STYLE = 0;
-  var CSS = 1;
   var HAS_MATCHING_SEARCH_PROPS = 11;
 
   // sub message NodeStyle
   var OBJECT_ID = 0;
   var ELEMENT_NAME = 1;
   var STYLE_LIST = 2;
-  // sub message StyleDeclaration
-  var ORIGIN = 0;
-  var INDEX_LIST = 1;
-  var VALUE_LIST = 2;
-  var STATUS_LIST = 4;
-  var SELECTOR = 5;
-  var SPECIFICITY = 6;
-  var STYLESHEET_ID = 7;
-  var RULE_ID = 8;
-  var RULE_TYPE = 9;
-  var LINE_NUMBER = 10;
 
   var ORIGIN_USER_AGENT = cls.Stylesheets.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.ORIGIN_LOCAL;
@@ -68,109 +49,8 @@ cls.Stylesheets = function()
     this._index_map_length = 0;
     this._sorted_index_map = [];
     this._initial_values = [];
-    this._selected_rules = null;
     this._color_index = 0;
   };
-
-  this.pretty_print_computed_style = function(data, org_args, search_active)
-  {
-    return this.pretty_print_cat(COMP_STYLE, data, org_args, search_active);
-  };
-
-  this.pretty_print_cascaded_style = function(data, org_args, search_active)
-  {
-    return this.pretty_print_cat(CSS, data, org_args, search_active);
-  };
-
-  // TODO: should be private, fix naming clash
-  this.pretty_print_cat = function(cat_index, data, org_args, search_active)
-  {
-    //if (!this._sheets[data.rt_id])
-    //{
-    //  var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [data.rt_id, org_args]);
-    //  window.services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
-    //  return '';
-    //}
-
-    //if (!this._index_map && !this._is_getting_index_map)
-    //{
-    //  this._is_getting_index_map = true;
-    //  var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
-    //  window.services['ecmascript-debugger'].requestCssGetIndexMap(tag);
-    //  return '';
-    //}
-
-    return this._pretty_print_cat[cat_index](data, search_active);
-  };
-
-  this._pretty_print_cat = {};
-
-  this._pretty_print_cat[COMP_STYLE] = function(data, search_active)
-  {
-    var template = [];
-    // set_props is used to force the display if a given property is set
-    // also if it has the initial value
-    var set_props = elementStyle.get_set_props();
-    var hide_initial_value = !settings['css-comp-style'].get('show-initial-values');
-    var search_term = elementStyle.get_search_term();
-
-    for (var i = 0; i < this._index_map_length; i++)
-    {
-      var index = this._sorted_index_map[i];
-      var prop = this._index_map[index];
-      var value = data[index];
-      var is_not_initial_value =
-        hide_initial_value
-        && value
-        && value != this._initial_values[index]
-        && !(prop in special_default_values && special_default_values[prop](data, value))
-        || false;
-      var display =
-        (!hide_initial_value || set_props[index] || is_not_initial_value)
-        && !(search_term && !(prop.indexOf(search_term) != -1
-        || value.indexOf(search_term) != -1));
-      if (display)
-      {
-        template.push(this._templates.declaration_computed_style(prop, value));
-      }
-    }
-
-    return template;
-  }.bind(this);
-
-  this._pretty_print_cat[CSS] = function(data, search_active)
-  {
-    var template = [];
-    var rt_id = data.rt_id;
-
-    for (var i = 0, node_casc; node_casc = data[i]; i++)
-    {
-      var element_name = node_casc[ELEMENT_NAME];
-      var style_dec_list = node_casc[STYLE_LIST];
-
-      if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
-        continue;
-
-      var inherited_printed = false;
-      for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
-      {
-        var rule = new Rule(style_dec);
-        if (!rule.declarations.length)
-          continue;
-
-        if (i > 0 && !inherited_printed)
-        {
-          inherited_printed = true;
-          template.push(this._templates.inherited_header(element_name, node_casc[OBJECT_ID]));
-        }
-
-        template.push(this._pretty_print_rule[rule.origin](rt_id,
-              node_casc[OBJECT_ID], element_name, rule));
-      }
-    }
-
-    return template;
-  }.bind(this);
 
   // TODO: move, rename etc
   var Rule = function(rule)
@@ -196,6 +76,101 @@ cls.Stylesheets = function()
     }
   };
 
+  this.pretty_print_computed_style = function(data, search_active)
+  {
+    var template = [];
+    // set_props is used to force the display if a given property is set
+    // also if it has the initial value
+    var set_props = window.elementStyle.get_set_props();
+    var search_term = window.elementStyle.get_search_term();
+    var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
+
+    for (var i = 0; i < this._index_map_length; i++)
+    {
+      var index = this._sorted_index_map[i];
+      var prop = this._index_map[index];
+      var value = data[index];
+      var is_not_initial_value =
+        hide_initial_value
+        && value
+        && value != this._initial_values[index]
+        && !(prop in special_default_values && special_default_values[prop](data, value))
+        || false;
+      var display =
+        (!hide_initial_value || set_props[index] || is_not_initial_value)
+        && !(search_term && !(prop.indexOf(search_term) != -1
+        || value.indexOf(search_term) != -1));
+
+      if (display)
+        template.push(this._templates.declaration_computed_style(prop, value));
+    }
+
+    return template;
+  };
+
+  this.pretty_print_cascaded_style = function(data, search_active)
+  {
+    var template = [];
+    var rt_id = data.rt_id;
+
+    for (var i = 0, node_casc; node_casc = data[i]; i++)
+    {
+      var element_name = node_casc[ELEMENT_NAME];
+      var style_dec_list = node_casc[STYLE_LIST];
+
+      if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
+        continue;
+
+      var inherited_printed = false;
+      for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
+      {
+        var rule = new Rule(style_dec); // TODO: this is temporary
+        if (!rule.declarations.length)
+          continue;
+
+        if (i > 0 && !inherited_printed)
+        {
+          inherited_printed = true;
+          template.push(this._templates.inherited_header(element_name, node_casc[OBJECT_ID]));
+        }
+
+        template.push(this._pretty_print_rule(rule.origin, rt_id,
+              node_casc[OBJECT_ID], element_name, rule));
+      }
+    }
+
+    return template;
+  };
+
+  this._pretty_print_rule = function(origin, rt_id, obj_id, element_name, rule)
+  {
+    var decl_list = this._pretty_print_declaration_list(rule);
+    switch (origin)
+    {
+    case ORIGIN_USER_AGENT:
+      return this._templates.rule_origin_user_agent(decl_list, obj_id, element_name);
+
+    case ORIGIN_LOCAL:
+      return this._templates.rule_origin_local(decl_list, obj_id, rule.selector);
+
+    case ORIGIN_AUTHOR:
+      var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheet_id);
+      if (!sheet)
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+          'stylesheet is missing in stylesheets, _pretty_print_rule[ORIGIN_AUTHOR]');
+      }
+
+      return this._templates.rule_origin_author(decl_list, obj_id, rt_id, rule, sheet);
+
+    case ORIGIN_ELEMENT:
+      return this._templates.rule_origin_element(decl_list, obj_id, rt_id);
+
+    case ORIGIN_SVG:
+      return this._templates.rule_origin_svg(decl_list, obj_id, rt_id);
+    }
+  };
+
   this._pretty_print_declaration_list = function(rule)
   {
     //CssShorthandResolver.get_instance().resolve(rule.declarations);
@@ -212,66 +187,10 @@ cls.Stylesheets = function()
     }, this);
   };
 
-  this._pretty_print_rule = {};
-
-  this._pretty_print_rule[ORIGIN_USER_AGENT] = function(rt_id, obj_id, element_name, rule)
-  {
-    return this._templates.rule_origin_user_agent(
-      this._pretty_print_declaration_list(rule),
-      obj_id,
-      element_name
-    );
-  }.bind(this);
-
-  this._pretty_print_rule[ORIGIN_LOCAL] = function(rt_id, obj_id, element_name, rule)
-  {
-    return this._templates.rule_origin_user_local(
-      this._pretty_print_declaration_list(rule),
-      obj_id,
-      rule.selector
-    );
-  }.bind(this);
-
-  this._pretty_print_rule[ORIGIN_AUTHOR] = function(rt_id, obj_id, element_name, rule)
-  {
-    var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheet_id);
-    if (!sheet)
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        'stylesheet is missing in stylesheets, _pretty_print_rule[ORIGIN_AUTHOR]');
-    }
-
-    return this._templates.rule_origin_author(
-      this._pretty_print_declaration_list(rule),
-      obj_id,
-      rt_id,
-      rule,
-      sheet
-    );
-  }.bind(this);
-
-  this._pretty_print_rule[ORIGIN_ELEMENT] = function(rt_id, obj_id, element_name, rule)
-  {
-    return this._templates.rule_origin_user_element(
-      this._pretty_print_declaration_list(rule),
-      obj_id,
-      rt_id
-    );
-  }.bind(this);
-
-  this._pretty_print_rule[ORIGIN_SVG] = function(rt_id, obj_id, element_name, rule)
-  {
-    return this._templates.rule_origin_user_svg(
-      this._pretty_print_declaration_list(rule),
-      obj_id,
-      rt_id
-    );
-  }.bind(this);
-
-  this.create_declaration = function(prop, value, is_important, rule_id, is_disabled, origin)
+  this.create_declaration = function(prop, value, priority, is_disabled)
   {
     // TODO: call the template directly, need to fox in editor.js too
-    return this._templates.prop_value(prop, value, is_important, rule_id, is_disabled, origin);
+    return this._templates.prop_value(prop, value, priority, is_disabled, true);
   };
 
   this.get_stylesheets = function(rt_id, org_args)
@@ -327,21 +246,18 @@ cls.Stylesheets = function()
       return;
 
     window.css_index_map = this._index_map = index_map;
-    window.inherited_props_index_list = [];
     var temp = [];
     for (var i = 0, prop; prop = this._index_map[i]; i++)
     {
-      temp[i] = {index: i, key: prop};
+      temp[i] = {index: i, prop: prop};
       this._initial_values[i] = css_initial_values[prop];
-      if (prop in css_inheritable_properties)
-        inherited_props_index_list[i] = true;
 
       if (prop == 'color')
         this._color_index = i;
     }
 
     temp.sort(function(a, b) {
-      return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+      return a.prop > b.prop ? 1 : -1;
     });
 
     for (i = 0; prop = temp[i]; i++)

@@ -42,7 +42,7 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.rule_origin_user_local = function(decl_list, obj_id, selector)
+  this.rule_origin_local = function(decl_list, obj_id, selector)
   {
     return [
       "div",
@@ -90,7 +90,7 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.rule_origin_user_element = function(decl_list, obj_id, rt_id)
+  this.rule_origin_element = function(decl_list, obj_id, rt_id)
   {
     return [
       "div",
@@ -107,7 +107,7 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.rule_origin_user_svg = function(decl_list, obj_id, rt_id)
+  this.rule_origin_svg = function(decl_list, obj_id, rt_id)
   {
     return [
       "div",
@@ -145,7 +145,7 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.declaration = function(declaration, rule_id, rule_origin)
+  this.declaration = function(declaration, is_editable)
   {
     return [
       "div",
@@ -153,8 +153,7 @@ var StylesheetTemplates = function()
                         declaration.value,
                         declaration.priority,
                         declaration.is_disabled,
-                        rule_id,
-                        rule_origin),
+                        is_editable),
       "class", "css-declaration" +
                (declaration.is_applied ? "" : " overwritten") +
                (declaration.is_disabled ? " disabled" : ""),

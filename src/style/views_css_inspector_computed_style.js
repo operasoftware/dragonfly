@@ -22,7 +22,7 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data
       // before this datas are avaible
-      styles.clearAndRender(stylesheets.pretty_print_computed_style(data, arguments, search_active));
+      styles.clearAndRender(stylesheets.pretty_print_computed_style(data, search_active));
       styles.setAttribute('rt-id', data.rt_id);
     }
   }

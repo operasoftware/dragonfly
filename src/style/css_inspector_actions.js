@@ -1,4 +1,4 @@
-﻿var cls = window.cls || ( window.cls = {} );
+﻿var cls = window.cls || (window.cls = {});
 
 /**
  * @constructor
@@ -6,7 +6,7 @@
  */
 cls.CSSInspectorActions = function(id)
 {
-  var self = this;
+  this.editor = new Editor(this);
 
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
@@ -17,33 +17,28 @@ cls.CSSInspectorActions = function(id)
   var INDEX_LIST = 1;
   var VALUE_LIST = 2;
   var PRIORITY_LIST = 3;
-  var DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
   var PROPERTY = 0;
-
-  this.editor = new Editor(this);
 
   this.getFirstTarget = function()
   {
-    return self._active_container &&
-           self._active_container.querySelector('.css-declaration');
+    return this._active_container &&
+           this._active_container.querySelector('.css-declaration');
   };
 
   this._clear_selected = function()
   {
-    if (self._target)
-      self._target.removeClass('selected');
+    if (this._target)
+      this._target.removeClass('selected');
   };
 
   this.setSelected = function(new_target)
   {
     if (new_target)
     {
-      if (self._target)
-      {
-        self._target.removeClass('selected');
-      }
+      if (this._target)
+        this._target.removeClass('selected');
 
-      if (!self._active_container.contains(new_target))
+      if (!this._active_container.contains(new_target))
       {
         // this is just a quick fix to make the keyboard navigation
         // work somewhat after a view update.
@@ -52,7 +47,7 @@ cls.CSSInspectorActions = function(id)
         var rule_id = new_target.querySelector('input');
         if (rule_id = rule_id && rule_id.getAttribute("data-rule-id"))
         {
-          var inputs = self._active_container.getElementsByTagName('input');
+          var inputs = this._active_container.getElementsByTagName('input');
           for (var i = 0, input; input = inputs[i]; i++)
           {
              var attr_val = input.getAttribute("data-rule-id");
@@ -64,22 +59,22 @@ cls.CSSInspectorActions = function(id)
         if (input)
           new_target = input.parentNode;
       }
-      (self._target = new_target).addClass('selected');
+      (this._target = new_target).addClass('selected');
     }
   };
 
   this.resetTarget = function(new_container)
   {
-    if (self._active_container && self._target && !self._active_container.parentNode)
+    if (this._active_container && this._target && !this._active_container.parentNode)
     {
-      var targets = self._active_container.getElementsByTagName(self._target.nodeName);
+      var targets = this._active_container.getElementsByTagName(this._target.nodeName);
       var target = null;
       var index = 0;
-      for ( ; (target = targets[index]) && target != self._target; index++);
-      if (target && (target = new_container.getElementsByTagName(self._target.nodeName)[index]))
+      for ( ; (target = targets[index]) && target != this._target; index++);
+      if (target && (target = new_container.getElementsByTagName(this._target.nodeName)[index]))
       {
-        self._active_container = new_container;
-        self.setSelected(target);
+        this._active_container = new_container;
+        this.setSelected(target);
       }
     }
   };
