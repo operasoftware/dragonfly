@@ -1,6 +1,5 @@
 var TooltipManager = function() {};
 
-
 (function()
 {
   /* static methods of TooltipManager */
@@ -8,10 +7,7 @@ var TooltipManager = function() {};
   this.register = function(name, keep_on_hover) {};
   this.unregister = function(name, tooltip) {};
 
-  var Tooltip = function(keep_on_hover) 
-  {
-    this._init(keep_on_hover);
-  };
+  var Tooltip = function() {};
 
   Tooltip.prototype = new function()
   {
@@ -37,7 +33,7 @@ var TooltipManager = function() {};
       * the optional 'box' argument that box is used instead to position
       * the tooltip.
       * @param content {String or Template} The content for the tooltip. Optional.
-      * If not set the "data-tooltip-text" value on the target element will be 
+      * If not set the 'data-tooltip-text' value on the target element will be 
       * used instead.
       * @param box The box to position the tootip. Optional. Only left, top and 
       * bottom are used. By default the box is given by the intersection of the 
@@ -50,19 +46,6 @@ var TooltipManager = function() {};
       * To hide the tooltip.
       */
     this.hide = function(){};
-
-    /**
-      * A flag to indicate if the tooltip should be hidden or not on hovering
-      * the tooltip itself.
-      */
-    this.keep_on_hover = false;
-    
-    /* private */
-
-    this._init = function(keep_on_hover)
-    {
-      this.keep_on_hover = Boolean(keep_on_hover);
-    };
     
     /* implementation */
     
@@ -106,7 +89,7 @@ var TooltipManager = function() {};
     {
       if (ele == _tooltip_ele)
       {
-        if (_current_tooltip && _current_tooltip.keep_on_hover)
+        if (_current_tooltip && _current_tooltip._keep_on_hover)
         {
           _last_handler_ele = null;
           _clear_show_timeout();
@@ -200,10 +183,10 @@ var TooltipManager = function() {};
 
       if (!box && _last_handler_ele)
       {
-        var _handler_ele_box = _last_handler_ele.getBoundingClientRect();
-        box = {top: _handler_ele_box.top,
-               bottom: _handler_ele_box.bottom,
-               left: _last_event ? _last_event.clientX : _handler_ele_box.left};          
+        var handler_ele_box = _last_handler_ele.getBoundingClientRect();
+        box = {top: handler_ele_box.top,
+               bottom: handler_ele_box.bottom,
+               left: _last_event ? _last_event.clientX : handler_ele_box.left};          
       }
 
       if (box)
@@ -222,8 +205,8 @@ var TooltipManager = function() {};
 
   var _setup = function()
   {
-    document.addEventListener('mouseover', _mouseover, false);
-    var tmpl =['div', 'id', 'tooltip-container', 'style', 'top: -100px;'];
+    document.addEventListener("mouseover", _mouseover, false);
+    var tmpl = ["div", "id", "tooltip-container", "style", "top: -100px;"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
   };
 
@@ -239,8 +222,9 @@ var TooltipManager = function() {};
         document.addEvenetListener("load", _setup, false);
       _is_setup = true;  
     }
-    _tooltips[name] = new Tooltip(keep_on_hover);
-    _tooltips[name]._container = document.render(['div', 'class', 'tooltip']);
+    _tooltips[name] = new Tooltip();
+    _tooltips[name]._container = document.render(["div", "class", "tooltip"]);
+    _tooltips[name]._keep_on_hover = Boolean(keep_on_hover);
     return _tooltips[name];
   };
 
