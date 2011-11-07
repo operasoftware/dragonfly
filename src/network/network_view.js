@@ -103,26 +103,23 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._render_graph_view = function(container)
   {
-    var fit_to_width = settings.network_logger.get('fit-to-width');
+    var fit_to_width = settings.network_logger.get("fit-to-width");
     var url_list_width = 250;
     var ctx = this._service.get_request_context();
 
     this._everrendered = true;
-    var min_render_delay = 1200;
+    var min_render_delay = 600;
     var timedelta = new Date().getTime() - this._rendertime;
+
+    if (this._rendertimer)
+      this._rendertimer = window.clearTimeout(this._rendertimer);
+
     if (timedelta < min_render_delay)
     {
-      if (!this._rendertimer)
-      {
-        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
-      }
+      this._rendertimer = window.setTimeout(this._update_bound, min_render_delay);
       return;
     }
-    else
-    {
-      this._rendertimer = null;
-      this._rendertime = new Date().getTime();
-    }
+    this._rendertime = new Date().getTime();
 
     this._contentscroll = 0;
     container.className = "";
