@@ -39,45 +39,52 @@
 
 #scrollbar
 {
-    height: 1px;
+  height: 1px;
 }
 
 
 /* Network log / Overview */
 
-.network-log-url-list {
+.network-log-url-list
+{
   list-style: none;
   padding: 0;
   margin: 0;
   padding-top: 25px;
 }
 
-.network-log-url-list li {
+.network-log-url-list li
+{
   height: 19px;
   padding: 4px 0 1px 8px;
 }
 
 .network-log-url-list:last-child,
-.network-graph-row:last-of-type {
+.network-graph-row:last-of-type
+{
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .network-log-url-list li:nth-child(odd),
-.network-graph-row:nth-child(even) {
+.network-graph-row:nth-child(even)
+{
   background-color: rgba(0, 0, 0, 0.03)
 }
 
 .network-log-url-list li.hovered,
-#graph div.hovered {
+#graph div.hovered
+{
   background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
 
-.network-log-url-list li span {
+.network-log-url-list li span
+{
   display: inline-block;
 }
 
-.network-log-url-list li span + span {
+.network-log-url-list li span + span
+{
   padding-left: 5px;
   width: 186px;
   overflow: hidden;
@@ -86,7 +93,8 @@
   vertical-align: middle;
 }
 
-.network-log-url-list .log-url-list-status {
+.network-log-url-list .log-url-list-status
+{
   width: 30px;
   text-align: center;
   margin: 0 2px;
@@ -94,7 +102,8 @@
   border-radius: 3px;
 }
 
-.status-cached {
+.status-cached
+{
   background: rgba(0, 0, 0, 0.15);
 }
 
@@ -113,6 +122,7 @@
   height: 300px;
 }
 
+
 /* Network log / Detail view */
 
 .close-request-detail::before
@@ -120,7 +130,8 @@
   background-image: url("../ui-images/icons/icon_button_back.png");
 }
 
-.network-details-url-list {
+.network-details-url-list
+{
   height: 100%;
   padding: 0;
   overflow: hidden;
@@ -131,7 +142,7 @@
 {
   position: absolute;
   right: 0;
-  top:0;
+  top: 0;
   bottom: 0;
   overflow: hidden;
   overflow-y: auto;
@@ -189,7 +200,9 @@
   margin: 15px 0 0 0;
 }
 
+
 /* Request crafter */
+
 .request-crafter
 {
   padding: 5px 20px;
@@ -199,7 +212,6 @@
 {
   margin-top: 0;
 }
-
 
 .request-crafter input
 {
@@ -221,18 +233,21 @@
 
 
 /* Options */
+
 .network-options
 {
   padding: 5px 20px 25px 20px;
 }
 
-.network-options label {
+.network-options label
+{
   margin: 5px 0 0 0;
   display: block;
   color: #444;
 }
 
-.network-options input[type=checkbox] {
+.network-options input[type=checkbox]
+{
   padding: 0 10px 0 5px;
 }
 
@@ -242,7 +257,6 @@
   max-width: 60em;
   line-height: 150%;
 }
-
 
 .network-options select
 {
@@ -264,7 +278,6 @@
                                        rgba(0, 0, 0, 0.06) 0,
                                        rgba(0, 0, 0, 0.06) 1px,
                                        transparent 1px);
-
   background-size: 41px 100%;
   background-repeat: repeat;
   background-position: -1px 50%;
@@ -281,11 +294,12 @@
   display: inline-block;
   vertical-align: -5px;
   height: 13px;
-  border: 1px solid rgba(0, 0, 0, .3);
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, .05);
-  box-shadow:inset 0 0 4px rgba(0, 0, 0, .20);
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.20);
 }
+
 .network-graph-time
 {
   display: inline-block;
@@ -295,6 +309,7 @@
   border: 1px solid transparent;
   border-radius: 4px;
 }
+
 .network-markup /* purple */
 {
   border-color: #383f77;
@@ -302,6 +317,7 @@
                                        #c9c9ff 1%,
                                        #a7a5d6 100%);
 }
+
 .network-css /* blue */
 {
   border-color: #266099;
@@ -309,6 +325,7 @@
                                        #b8d4ff 1%,
                                        #8bafe0 100%);
 }
+
 .network-script /* yellow */
 {
   border-color: #807040;
@@ -316,6 +333,7 @@
                                        #f7f2d5 1%,
                                        #e3d696 100%);
 }
+
 .network-image /* red */
 {
   border-color: #922424;
@@ -323,6 +341,7 @@
                                        #ed9696 1%,
                                        #d46868 100%);
 }
+
 .network-video /* green */
 {
   border-color: #333;
@@ -330,6 +349,7 @@
                                        #cae6ca 1%,
                                        #9ec59e 100%);
 }
+
 .network-unknown /* gray */
 {
   border-color: #333;

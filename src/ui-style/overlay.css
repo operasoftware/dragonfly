@@ -1,121 +1,164 @@
-﻿overlay {
-    background: rgba(0, 0, 0, .5);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    z-index: 300; /* Need to clean this up, there is no reason for z-index to ever be this high. */
-    padding: 0 30px;
-}
-overlay.active {
-    display: block;
-}
-overlay-window {
-    color: #fff;
-    border-radius: 7px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
-    background: rgba(40, 40, 40, .92);
-    width: 650px;
-    border: 2px solid #b1b1b1;
-    display: block;
-    position: absolute;
-    height: 80%;
-    max-height: 600px;
-    right: 20px;
-}
-overlay-arrow {
-    background: transparent url("../ui-images/overlay_arrow.png");
-    width: 17px;
-    height: 13px;
-    position: absolute;
-    top: -12px;
-}
-overlay-window h2 {
-    font-size: 1em;
-}
-overlay-tabs, overlay-content {
-    display: block;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-}
-overlay-tabs {
-    border-radius: 7px 7px 0 0;
-    border-bottom: none;
-    padding: 5px 5px 0;
-    overflow: hidden;
-    white-space: nowrap;
-}
-overlay-tabs tab {
-    border-radius: 3px 3px 0 0;
-    padding: 0 15px;
-    height: 25px;
-    line-height: 25px;
-    margin-right: 5px;
-    color: #bbb;
-    display: inline-block;
-    float: none;
-    position: static;
-    border: none;
-}
-overlay-tabs tab:hover {
-     background: rgba(0, 0, 0, .2);
-}
-overlay-tabs tab.active {
-    color: #fff;
-    border-color: #000;
-    background: rgba(0, 0, 0, .38);
-    cursor: auto;
-}
-overlay-content, overlay-info {
-    position: absolute;
-    top: 31px;
-    bottom: 0;
-    right: 0;
-    padding: 10px;
-    overflow: auto;
-}
-overlay-content {
-    background: rgba(0, 0, 0, .38);
-    border-radius: 0 0 7px 7px;
-    border-top-width: 0;
-    left: 0;
-}
-overlay-info:not(:empty) + overlay-content {
-    padding-right: 200px;
-}
-overlay-info:not(:empty) {
-    z-index: 2;
-    border-left: 1px solid rgba(255, 255, 255, .1);
-    width: 180px;
-}
-overlay-info p {
-    margin: 0 0 8px;
-}
-overlay-info ol {
-    margin: 0;
-    padding: 0 0 0 20px;;
-}
-overlay-info li {
-    margin-bottom: 8px;
-}
-overlay fieldset, overlay hr {
-    border: 1px solid rgba(255, 255, 255, .1);
-}
-overlay fieldset {
-    margin: 10px 5px 10px 5px;
-    color: #a0a0a0;
-}
-overlay fieldset legend {
-    color: #fff;
-}
-overlay hr {
-    border-width: 0 0 1px;
+﻿overlay
+{
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 300; /* Need to clean this up, there is no reason for z-index to ever be this high. */
+  padding: 0 30px;
 }
 
-.overlay input {
+overlay.active
+{
+  display: block;
+}
+
+overlay-window
+{
+  color: #fff;
+  border-radius: 7px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  background: rgba(40, 40, 40, 0.92);
+  width: 650px;
+  border: 2px solid #b1b1b1;
+  display: block;
+  position: absolute;
+  height: 80%;
+  max-height: 600px;
+  right: 20px;
+}
+
+overlay-arrow
+{
+  background: transparent url("../ui-images/overlay_arrow.png");
+  width: 17px;
+  height: 13px;
+  position: absolute;
+  top: -12px;
+}
+
+overlay-window h2
+{
+  font-size: 1em;
+}
+
+overlay-tabs,
+overlay-content
+{
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+overlay-tabs
+{
+  border-radius: 7px 7px 0 0;
+  border-bottom: none;
+  padding: 5px 5px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+overlay-tabs tab
+{
+  border-radius: 3px 3px 0 0;
+  padding: 0 15px;
+  height: 25px;
+  line-height: 25px;
+  margin-right: 5px;
+  color: #bbb;
+  display: inline-block;
+  float: none;
+  position: static;
+  border: none;
+}
+
+overlay-tabs tab:hover
+{
+  background: rgba(0, 0, 0, 0.2);
+}
+
+overlay-tabs tab.active
+{
+  color: #fff;
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.38);
+  cursor: auto;
+}
+
+overlay-content,
+overlay-info
+{
+  position: absolute;
+  top: 31px;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  overflow: auto;
+}
+
+overlay-content
+{
+  background: rgba(0, 0, 0, 0.38);
+  border-radius: 0 0 7px 7px;
+  border-top-width: 0;
+  left: 0;
+}
+
+overlay-info:not(:empty) + overlay-content
+{
+  padding-right: 200px;
+}
+
+overlay-info:not(:empty)
+{
+  z-index: 2;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  width: 180px;
+}
+
+overlay-info p
+{
+  margin: 0 0 8px;
+}
+
+overlay-info ol
+{
+  margin: 0;
+  padding: 0 0 0 20px;;
+}
+
+overlay-info li
+{
+  margin-bottom: 8px;
+}
+
+overlay fieldset, overlay hr
+{
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+overlay fieldset
+{
+  margin: 10px 5px 10px 5px;
+  color: #a0a0a0;
+}
+
+overlay fieldset legend
+{
   color: #fff;
 }
 
+overlay hr
+{
+  border-width: 0 0 1px;
+}
+
+.overlay input
+{
+  color: #fff;
+}
 
 
 /* Input Fields, Drop Downs */
@@ -125,12 +168,13 @@ overlay hr {
 .overlay select,
 .overlay textarea,
 .scc-input,
-.shortcuts-config filter {
+.shortcuts-config filter
+{
   border: 1px solid #0c0c0c;
   border-top-color: #000;
   background-color: #0f0f0f;
   border-radius: 3px;
-  color: rgba(255, 255, 255, .6);
+  color: rgba(255, 255, 255, 0.6);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.025),
               0 1px 0 0 rgba(255, 255, 255, 0.035);
   padding: 3px 6px 3px 4px;
@@ -138,21 +182,25 @@ overlay hr {
 }
 
 .overlay input[type=text]:not([default-text]):not([placeholder]):focus,
-.overlay input[type=number]:focus {
+.overlay input[type=number]:focus
+{
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.overlay select option {
-    color: rgba(255, 255, 255, .6);
+.overlay select option 
+{
+    color: rgba(255, 255, 255, 0.6);
 }
+
 
 /* Buttons */
 
 .overlay .ui-button,
 .hud .ui-control, /* TODO class should be changed to .overlay ... */
-.shortcuts-config header {
+.shortcuts-config header
+{
   background-color: #474747;
-  color: rgba(255, 255, 255, .8);
+  color: rgba(255, 255, 255, 0.8);
   background-image: -o-linear-gradient(-90deg,
                                        transparent,
                                        rgba(0, 0, 0, 0.37) 100%);
@@ -166,15 +214,15 @@ overlay hr {
   -o-transition: background-color 0.2s;
 }
 
-
 .overlay .ui-button:active,
 .hud .ui-control:not([disabled]):active, /* TODO class should be changed to .overlay ... */
-.shortcuts-config header:active {
+.shortcuts-config header:active
+{
   box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.2),
               inset 0 1px 2px 0 rgba(0, 0, 0, 0.3),
               0 0 0 1px rgba(0, 0, 0, 0.1),
               0 -1px 0 0 rgba(0, 0, 0, 0.1);
-  color: rgba(255, 255, 255, .9);
+  color: rgba(255, 255, 255, 0.9);
   background-color: #404040;
   background-image: -o-linear-gradient(-90deg,
                                        transparent 0%,
@@ -182,19 +230,25 @@ overlay hr {
   -o-transition: background-color 0.2s;
 }
 
+
 /* Defining the size and margins for some of the buttons */
 
 .overlay .ui-button,
 .overlay setting-composite .ui-button,
-.shortcuts-config header {
+.shortcuts-config header
+{
   line-height: 20px;
   padding: 1px 12px;
   margin-left: 1px;
   margin-right: 1px;
 }
-.overlay select + .ui-button {
-    margin-left: 6px;
+
+.overlay select + .ui-button
+{
+  margin-left: 6px;
 }
-.overlay .ui-button + .ui-button {
-    margin-left: 3px;
+
+.overlay .ui-button + .ui-button
+{
+  margin-left: 3px;
 }

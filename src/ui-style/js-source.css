@@ -1,32 +1,37 @@
-﻿#js-source {
-  position:relative;
-  padding:0;
-  }
+﻿#js-position
+{
+  source: relative;
+  padding: 0;
+}
 
-#js-source-scroll-content, #js-source-scroll-container {
-  position:absolute;
-  right:0px;
-  top:0px;
-  bottom:0px;
-  overflow:auto;
-  }
+#js-source-scroll-content,
+#js-source-scroll-container
+{
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+}
 
-#js-source-scroll-content {
-  left:40px;
-  }
+#js-source-scroll-content
+{
+  left: 40px;
+}
 
 #js-source-scroll-container {
   /* the correct width is set dynamically 
      to scroll bar width in JsSourceView */
   width: 50px;
-  }
+}
 
-#js-source-content div {
-  color:#000;
+#js-source-content div
+{
+  color: #000;
   white-space: pre;
   padding-left: 10px;
   -o-tab-size: 4;
-  }
+}
 
 #js-source-content .not-error
 {
@@ -66,8 +71,8 @@
 }
 
 /* line number */ 
-
-#js-source-line-numbers {
+#js-source-line-numbers
+{
   position: absolute;
   left: 0;
   top: 0;
@@ -75,26 +80,30 @@
   background-color: #f3f3f3;
   width: 40px;
   border-right: 1px solid #e6e6e6;
-  }
+}
 
-#break-point-container {
-  background-color:transparent;
-  }
+#break-point-container
+{
+  background-color: transparent;
+}
 
-#js-source-line-numbers li {
-  position:relative;
-  }
+#js-source-line-numbers li
+{
+  position: relative;
+}
 
-#js-source-line-numbers span {
+#js-source-line-numbers span
+{
   position: absolute;
   left: 0;
   top: 0;
   width: 40px;
   height: 100%;
   background: transparent url('../ui-images/line-types.png') no-repeat 0 0;
-  }
+}
 
-#js-source-line-numbers input {
+#js-source-line-numbers input
+{
   width: 37px;
   text-align: right;
   border: none;
@@ -107,13 +116,9 @@
   font-family: inherit;
   vertical-align: middle;
   color: #b3b3b3;
-  }
+}
 
-#js-source-line-numbers input:hover {
-  background-color:#f0f0f0;
-  }
-
-
-  
-
-
+#js-source-line-numbers input:hover
+{
+  background-color: #f0f0f0;
+}
