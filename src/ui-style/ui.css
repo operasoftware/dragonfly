@@ -250,11 +250,8 @@ button[handler="reload-window"]::before {
 .ev-brp-expand-all-sections::before {
     background-image: url("../ui-images/icons/icon_expand.png");
 }
-.network_logger\.paused-update::before {
+.toggle-paused-network-view::before {
     background-image: url("../ui-images/icons/icon_pause.png");
-}
-.network_logger\.fit-to-width::before {
-    background-image: url("../ui-images/icons/icon_constrain.png");
 }
 .pseudo-items cst-icon {
     background-image: url("../ui-images/icons/icon_hidedefaults.png");

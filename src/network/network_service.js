@@ -16,7 +16,11 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, just ignore. This usually means it's an iframe
+    // if not a top resource, don't reset the context. This usually means it's an iframe
+
+    // When paused, the context will still be reset and the paused status and what
+    // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
+    // RequestContext object, and when unpausing, that one should be rendered. Hard.
     if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
   }.bind(this);
@@ -161,7 +165,26 @@ cls.NetworkLoggerService = function(view)
 
   this.clear_resources = function()
   {
-    this._current_context.resources = [];
+    if (this._current_context)
+      this._current_context.clear_resources();
+  };
+
+  this.pause = function()
+  {
+    if (this._current_context)
+      this._current_context.pause();
+  };
+
+  this.unpause = function()
+  {
+    if (this._current_context)
+      this._current_context.unpause();
+  };
+
+  this.is_paused = function()
+  {
+    if (this._current_context)
+      return this._current_context._paused;
   };
 
   this.get_resource = function(rid)
@@ -179,11 +202,40 @@ cls.NetworkLoggerService = function(view)
 
 cls.RequestContext = function()
 {
-  this.resources = [];
+  this._resources = [];
+
+  this.get_resources = function()
+  {
+    if (this._paused)
+    {
+      return this._paused_resources;
+    }
+    return this._resources;
+  }
+
+  this.clear_resources = function()
+  {
+    this._paused_resources = [];
+    this._resources = [];
+  }
+
+  this.pause = function()
+  {
+    this._paused_resources = this._resources.slice(0);
+    this._paused = true;
+  }
+
+  this.unpause = function()
+  {
+    this._paused_resources = null;
+    this._paused = false;
+  }
+
   this.get_duration = function()
   {
-    var starttimes = this.resources.map(function(e) { return e.starttime });
-    var endtimes = this.resources.map(function(e) { return e.endtime });
+    var resources = this.get_resources();
+    var starttimes = resources.map(function(e) { return e.starttime });
+    var endtimes = resources.map(function(e) { return e.endtime });
     return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
   };
 
@@ -207,44 +259,46 @@ cls.RequestContext = function()
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_resources().map(function(e) { return e.starttime }));
   };
 
   this.update = function(eventname, event)
   {
     var res = this.get_resource(event.resourceID);
 
-    if (!res && eventname == "urlload")
+    if (!res && eventname == "urlload") 
     {
       res = new cls.Request(event.resourceID);
-      if (this.resources.length == 0) { this.topresource = event.resourceID; }
-      this.resources.push(res);
+      if (this._resources.length == 0) { this.topresource = event.resourceID; }
+      this._resources.push(res);
     }
     else if (!res)
     {
       // ignoring. Never saw an urlload, or it's allready invalidated
-      return
+      return;
     }
     res.update(eventname, event);
   };
 
   this.get_resource = function(id)
   {
-    return this.resources.filter(function(e) { return e.id == id; })[0];
+    // as this is to return a resource explicitely, it doesn't use get_resources()
+    // because that returnes paused_resources while paused.
+    return this._resources.filter(function(e) { return e.id == id; })[0];
   };
 
   this.get_resources_for_types = function()
   {
     var types = Array.prototype.slice.call(arguments, 0);
     var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.resources.filter(filterfun);
+    return this.get_resources().filter(filterfun);
   };
 
   this.get_resources_for_mimes = function()
   {
     var mimes = Array.prototype.slice.call(arguments, 0);
     var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.resources.filter(filterfun);
+    return this.get_resources().filter(filterfun);
   };
 
   this.get_resource_groups = function()
@@ -257,7 +311,7 @@ cls.RequestContext = function()
                                               "text/javascript");
 
     var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.resources.filter(function(e) {
+    var other = this.get_resources().filter(function(e) {
       return known.indexOf(e) == -1;
     });
     return {
@@ -315,6 +369,7 @@ cls.Request = function(id)
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
+    this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
     this.starttime = Math.round(event.time);
     // fixme: complete list

@@ -7,48 +7,24 @@
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.NetworkLoggerService(this);
   this._loading = false;
-  this._hscroll = 0;
-  this._vscroll = 0;
   this._contentscroll = 0;
   this._selected = null;
-  this._hscrollcontainer = null;
-  this._vscrollcontainer = null;
   this._rendertime = 0;
   this._rendertimer = null;
   this._everrendered = false;
-  this._url_list_width = 250;
 
   this.createView = function(container)
   {
-    this._render_main_view(container);
-  };
-
-  this.onresize = this.createView;
-
-  this.ondestroy = function()
-  {
-    this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
-    this._hscroll = this._hscrollcontainer ? this._hscrollcontainer.scrollLeft : 0;
-    var content = this._container ? this._container.querySelector(".network-details-request") : null;
-    this._contentscroll = content ? content.scrollTop : 0;
-    this._everrendered = false;
-  };
-
-  this._update_bound = this.update.bind(this);
-
-  this._render_main_view = function(container)
-  {
     var ctx = this._service.get_request_context();
-    var paused = settings.network_logger.get('paused-update');
     this._container = container;
-    if (ctx && ctx.resources.length && this._selected)
+
+    if (ctx && ctx.get_resources().length)
     {
-      this._render_details_view(container);
-    }
-    else if (ctx && ctx.resources.length) {
-      var paused = settings.network_logger.get('paused-update');
-      if (paused && this._everrendered) { return }
-      this._render_graph_view(container);
+      this._render_tabbed_view(container);
+      if (this._selected)
+      {
+        this._render_details_view(container, this._selected);
+      }
     }
     else if (this._loading)
     {
@@ -56,27 +32,42 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
     else if (this._everrendered)
     {
+      // todo: render template "No data to show." This is also for when service is paused and no resources are there now.
       container.innerHTML = "";
     }
     else
     {
       this._render_click_to_fetch_view(container);
     }
+
+    var pause_button = document.querySelector(".toggle-paused-network-view");
+    if (pause_button)
+    {
+      if (this._service.is_paused())
+        pause_button.addClass("is-active");
+      else
+        pause_button.removeClass("is-active");
+    }
+  };
+  this._update_bound = this.update.bind(this);
+
+  this.onresize = this.createView;
+
+  this.ondestroy = function()
+  {
+    this._contentscroll = this._container ? this._container.scrollTop : 0;
+    this._everrendered = false;
   };
 
   this._render_details_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    var url_list_width = this._url_list_width + window.defaults["scrollbar-width"];
-    this.ondestroy(); // saves scroll pos
-    container.clearAndRender(templates.network_log_details(ctx, this._selected, url_list_width));
-    this._vscrollcontainer = container.querySelector(".network-details-url-list");
-    this._vscrollcontainer.scrollTop = this._vscroll;
-    var content = container.querySelector(".network-details-request");
-    content.scrollTop = this._contentscroll;
+    var content = container.render(templates.network_log_details(ctx, this._selected));
+    if (content && this._contentscroll)
+      content.scrollTop = this._contentscroll;
   };
 
-  this._render_click_to_fetch_view = function(container)
+  this._render_click_to_fetch_view = function(container) // todo: templates
   {
     container.clearAndRender(
       ['div',
@@ -89,7 +80,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     );
   };
 
-  this._render_loading_view = function(container)
+  this._render_loading_view = function(container) // todo: templates
   {
     container.clearAndRender(
       ['div',
@@ -99,70 +90,37 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     );
   };
 
-  this._render_graph_view = function(container)
+  this._render_tabbed_view = function(container)
   {
-    var fit_to_width = settings.network_logger.get('fit-to-width');
-    var url_list_width = 250;
-    var ctx = this._service.get_request_context();
-
     this._everrendered = true;
-    var min_render_delay = 1200;
+    var min_render_delay = 600;
     var timedelta = new Date().getTime() - this._rendertime;
+
+    if (this._rendertimer)
+      this._rendertimer = window.clearTimeout(this._rendertimer);
+
     if (timedelta < min_render_delay)
     {
-      if (!this._rendertimer)
-      {
-        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
-      }
+      this._rendertimer = window.setTimeout(this._update_bound, min_render_delay);
       return;
     }
-    else
-    {
-      this._rendertimer = null;
-      this._rendertime = new Date().getTime();
-    }
+    this._rendertime = new Date().getTime();
 
-    this._contentscroll = 0;
-    container.className = "";
+    /*
+      hand-calculate network-url-list's width, so it only takes one rendering
+      #network-url-list
+      {
+        width: 40%;
+        min-width: 175px; 
+      }
+    */
+    var url_list_width = Math.ceil(Math.max(175, parseInt(container.style.width) * 0.4));
+    var detail_width = parseInt(container.style.width) - url_list_width;
 
-    var graphwidth = container.getBoundingClientRect().width - url_list_width - window.defaults["scrollbar-width"];
-    var has_scrollbar = false;
-    var duration = ctx.get_duration();
-
-    if (!fit_to_width && duration > 3000)
-    {
-      graphwidth = Math.round(Math.min((duration * 0.35), 10000)); // cap graphwidth at 10000px
-      has_scrollbar = true;
-    }
-
-    container.clearAndRender(templates.network_log_main(ctx, graphwidth));
-    var conheight = (container.getBoundingClientRect().height - (has_scrollbar ? window.defaults["scrollbar-width"] : 0));
-    this._vscrollcontainer = container.querySelector("#main-scroll-container");
-    this._vscrollcontainer.style.height = "" + conheight + "px";
-    this._vscrollcontainer.scrollTop = this._vscroll;
-
-    this._hscrollcontainer = container.querySelector("#scrollbar-container");
-    this._hscrollcontainer.scrollLeft = this._hscroll;
-    container.querySelector("#left-side-content").style.minHeight = "" + conheight + "px";
-
-    this._hscrollfun_bound({target:this._hscrollcontainer});
-    this._vscrollcontainer.addEventListener("scroll", this._vscrollfun_bound, false);
-    this._hscrollcontainer.addEventListener("scroll", this._hscrollfun_bound, false);
+    var ctx = this._service.get_request_context();
+    var selected_viewmode = settings.network_logger.get("selected_viewmode");
+    container.clearAndRender(templates.network_log_main(ctx, this._selected, selected_viewmode, detail_width));
   };
-
-  this._vscrollfun_bound = function()
-  {
-    this._vscroll = this._vscrollcontainer ? this._vscrollcontainer.scrollTop : 0;
-  }.bind(this);
-
-  this._hscrollfun_bound = function(evt)
-  {
-    var e = document.getElementById("right-side-container");
-    var pct = evt.target.scrollLeft / (evt.target.scrollWidth - evt.target.offsetWidth);
-    e.scrollLeft = Math.round((e.scrollWidth - e.offsetWidth) * pct);
-    this._hscroll = e.scrollLeft;
-  }.bind(this);
-
 
   this._on_clicked_close_bound = function(evt, target)
   {
@@ -201,43 +159,27 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._service.request_body(rid, this.update.bind(this));
   }.bind(this);
 
-  this._on_setting_change_bound = function(msg)
+  this._on_abouttoloaddocument_bound = function()
   {
-    if (msg.id == "network_logger")
+    if (!this._service.is_paused())
     {
-      if (this._rendertimer)
-      {
-        window.clearTimeout(this._rendertimer);
-      }
-      this._rendertime = 0;
-      this._rendertimer = null;
-      this.ondestroy(); // saves scroll pos
+      this._loading = true;
       this.update();
     }
   }.bind(this);
 
-  this._on_scroll_bound = function(evt)
-  {
-    this._container.querySelector(".resourcelist").scrollTop = evt.target.scrollTop;
-  }.bind(this);
-
-  this._on_abouttoloaddocument_bound = function()
-  {
-    this._loading = true;
-    this._table = null;
-    this._selected = null;
-    this.update();
-  }.bind(this);
-
   this._on_documentloaded_bound = function()
   {
-    this._loading = false;
-    this.update();
+    if (!this._service.is_paused())
+    {
+      this._loading = false;
+      this.update();
+    }
   }.bind(this);
 
   this._on_urlfinished_bound = function()
   {
-    if (!this._loading)
+    if (!this._service.is_paused() && !this._loading)
     {
       this.update();
     }
@@ -245,7 +187,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_clear_log_bound = function(evt, target)
   {
+    if (this._service.is_paused())
+      this._service.unpause();
     this._service.clear_resources();
+    this.update();
+  }.bind(this);
+
+  this._on_toggle_paused_bound = function(evt, target)
+  {
+    if (this._service.is_paused())
+      this._service.unpause();
+    else
+      this._service.pause();
+
+    this.update();
+  }.bind(this);
+  
+  this._on_select_network_viewmode_bound = function(evt, target)
+  {
+    settings.network_logger.set("selected_viewmode", target.getAttribute("data-select-viewmode"));
     this.update();
   }.bind(this);
 
@@ -265,19 +225,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
 
-  messages.addListener("setting-changed", this._on_setting_change_bound);
 
+  // todo: is it really just these few events that trigger update?
+  // should be triggered whenever the data modell is updated, right?
 
   var doc_service = window.services['document-manager'];
   var res_service = window.services['resource-manager'];
-
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
   res_service.addListener("urlfinished", this._on_urlfinished_bound);
 
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
-  eh.click["toggle-fit-graph-to-network-view"] = this._on_toggle_fit_graph_to_width;
+
+  eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
 
   new ToolbarConfig
   (
@@ -286,6 +247,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       {
         handler: 'clear-log-network-view',
         title: ui_strings.S_CLEAR_NETWORK_LOG
+      },
+      {
+        handler: 'toggle-paused-network-view',
+        title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
       }
     ],
     null,
@@ -300,29 +265,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     "network_logger",
     // key-value map
     {
-      "paused-update": false,
-      "fit-to-width": false
+      "selected_viewmode": "graph"
     },
     // key-label map
     {
-      "paused-update": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW
+      "selected_viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW // todo: fix string? does this ever show up?
     },
     // settings map
     {
-      checkboxes: ["paused-update", "fit-to-width"]
+      customSettings: ["selected_viewmode"]
     },
     null,
     null
-  );
-
-  new Switches
-  (
-    'network_logger',
-    [
-      'paused-update',
-      'fit-to-width'
-    ]
   );
 
   this.init(id, name, container_class, html, default_handler);

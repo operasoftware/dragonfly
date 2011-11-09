@@ -86,42 +86,77 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
-templates.network_log_main = function(ctx, graphwidth)
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width)
 {
   return [
-    ["div",
-     ["div",
-      ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
-      ["div",
-       ["div", templates.network_log_graph(ctx, graphwidth),
-        "id", "right-side-content",
-         "style", "width: " + graphwidth + "px"
-       ],
-       "id", "right-side-container"
-      ],
-      "id", "main-scroll-content"
-     ],
-     "class", "network-log",
-     "id", "main-scroll-container"
+    [
+      "div", templates.network_log_url_list(ctx, selected),
+      "id", "network-url-list"
     ],
-    ["div", ["div",
-             "id", "scrollbar",
-             "style", "width: " + graphwidth + "px"],
-     "id", "scrollbar-container"
+    [
+      "div", [
+        [
+          templates.network_viewmode_select(selected_viewmode),
+          "class", "network-details-container-tabbar"
+        ],
+        [
+          "div", templates["network_viewmode_" + selected_viewmode](ctx, detail_width),
+          "class", "network-data-container"
+        ]
+      ],
+      "class", "network-detail-container"
     ]
-  ];
+  ]
 };
 
-templates.network_log_details = function(ctx, selected, listwidth)
+templates.network_viewmode_select = function(selected_viewmode)
 {
   return [
-    ["div", templates.network_log_url_list(ctx, selected, listwidth),
-     "class", "network-details-url-list",
-     "style", "width: " + listwidth + "px"
-    ],
-    ["div", templates.network_log_request_detail(ctx, selected),
-     "class", "network-details-request",
-     "style", "left: " + listwidth + "px;"
+    "tabs", [
+      {
+        id: "graphs",
+        label: "Graphs" // Todo: Strings
+      },
+      {
+        id: "data",
+        label: "Data" // Todo: Strings
+      }
+    ].map(function(tab)
+        {
+          var arr = [
+            "tab", tab.label,
+            "handler", "select-network-viewmode",
+            "data-select-viewmode", tab.id
+          ]
+          if (selected_viewmode === tab.id)
+            arr.push("class", "active");
+          return arr;
+    })
+  ];
+}
+
+templates.network_viewmode_graphs = function(ctx, width)
+{
+  // the tabs to choose between graph and data table, and the graph and data table itself
+  var rows = templates.network_graph_rows(ctx, width);
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+  var stepsize = templates.grid_info(duration, width);
+  var gridwidth = Math.round((width / duration) * stepsize);
+  var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
+  return ["div", headerrow, rows, "id", "graph", "style", "background-size: auto, " + gridwidth + "px 100%, 50px 50px;"];
+}
+
+templates.network_viewmode_data = function(ctx, detail_width)
+{
+  return [];
+}
+
+templates.network_log_details = function(ctx, selected)
+{
+  return [
+    [
+      "div", templates.network_log_request_detail(ctx, selected),
+      "class", "network-details-request"
     ]
   ];
 };
@@ -376,55 +411,75 @@ templates.network_header_table = function(headers)
 templates.network_log_url_list = function(ctx, selected)
 {
   var itemfun = function(res) {
-    var statusclass = "status-" + res.responsecode;
-    var statusstring = res.responsecode || null;
+    var statusclass = "status-" + res.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
+    if (res.cached) { statusclass = "status-cached"; }
+
+    var statusstring = res.responsecode || null; // todo: statusstring should probably be added to the (data-) item instead
     if (res.responsecode && res.responsecode in cls.ResourceUtil.http_status_codes)
     {
       statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
     }
 
-    if (res.cached) { statusclass = "status-cached"; }
     return ["li",
             templates.network_request_icon(res),
-            ["span", res.human_url],
-            ["span", res.touched_network && res.responsecode ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
-             "class", "log-url-list-status " + statusclass,
-             "title", String(statusstring || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
-             ],
+            ["span", res.filename || res.human_url],
             "handler", "select-network-request",
             "data-resource-id", String(res.id),
-            "class", selected===res.id ? "selected" : "",
+            "class", selected === res.id ? "selected" : "",
             "title", res.human_url
            ];
   };
-  return ["ol", ctx.resources.map(itemfun),
-          "class", "network-log-url-list"];
+  return [
+    templates.network_type_filter_buttons("all"),
+    ["ol", ctx.get_resources().map(itemfun),
+      "class", "network-log-url-list"]
+  ]
 };
+
+
+templates.network_type_filter_buttons = function(current_filter)
+{
+  return [
+    "div", [
+      {name: "All", id: "all"}, // Todo: Strings
+      {name: "Markup", id: "markup"},
+      {name: "Scripts", id: "scripts"},
+      {name: "Images", id: "images"},
+      {name: "XHR", id: "xhr"},
+      {name: "Other", id: "other"}
+    ].map(function(filter)
+          {
+            var c = "ui-button container-button";
+            if (filter.id === current_filter)
+              c += " on";
+            return [
+              "span", filter.name,
+              "data-filter", filter.id,
+              "class", c,
+              "handler", "type-filter-network-view"
+            ];
+          }),
+    "class", "type-filter-buttons"
+  ];
+}
 
 templates.network_request_icon = function(request)
 {
   return ["span", "class", "resource-icon resource-type-" + request.type];
 };
 
-templates.network_log_graph = function(ctx, width)
-{
-  var rows = templates.network_graph_rows(ctx, width);
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-  var stepsize = templates.grid_info(duration, width);
-  var gridwidth = Math.round((width / duration) * stepsize);
-  var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
-  return ["div", headerrow, rows, "id", "graph", "style", "width: " + width + "px; background-size: " + gridwidth + "px 100%, 50px 50px;"];
-};
-
 templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
-  var cnt = Math.round(width / gridwidth);
+  var cnt = Math.ceil(width / gridwidth);
+  var timeline_marker_width = 60;
+  var offset = 1; // background-position in #graph is adjusted by that, to hide the 0s line
 
-  while (stepsize && --cnt > 0) // skips last one on purpose
+  while (stepsize && --cnt > 0) // skips last one on purpose (0s marker)
   {
+    var left_val = gridwidth * cnt - timeline_marker_width / 2 - offset;
     labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
-                 "style", "left: " + ((gridwidth * cnt)-30) + "px;",
+                 "style", "left: " + left_val + "px;",
                  "class", "timeline-marker"
                  ]);
   }
@@ -438,7 +493,7 @@ templates.network_graph_rows = function(ctx, width)
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
 
   var tpls = [];
-  for (var n=0, res; res=ctx.resources[n]; n++)
+  for (var n=0, res; res = ctx.get_resources()[n]; n++)
   {
     tpls.push(templates.network_graph_row_bar(res, width, basetime, duration));
   }
@@ -505,53 +560,14 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 
 templates.grid_info = function(duration, width)
 {
-  var density = (width / duration) * 1000;
-  var step = 2000;
-
-  if (density > 1000) {
-    step = 100;
-  }
-  else if (density > 600)
+  if (duration > 0)
   {
-    step = 200;
+    var draw_line_every = 150; // px
+    var draw_lines = Math.round(width / draw_line_every);
+  
+    var value = Number(duration / draw_lines).toPrecision(1);
+    return value;
   }
-  else if (density > 400)
-  {
-    step = 500;
-  }
-  else if (density > 160)
-  {
-    step = 1000;
-  }
-  else if (density > 120)
-  {
-    step = 2000;
-  }
-  else if (density > 90)
-  {
-    step = 5000;
-  }
-  else if (density > 40)
-  {
-    step = 10000;
-  }
-  else if (density > 25)
-  {
-    step = 15000;
-  }
-  else if (density > 5)
-  {
-    step = 20000;
-  }
-  else if (density > 2)
-  {
-    step = 30000;
-  }
-  else {
-    step = 0; // don't render lines. too much crap on the screen
-  }
-
-  return step;
 }
 
 })(window.templates);
