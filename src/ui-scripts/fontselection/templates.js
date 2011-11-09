@@ -21,9 +21,11 @@
         'handler', 'font-selection'
       ],
       ['p', 
-        ['button', 
+        ['span', 
           ['span', ui_strings.S_BUTTON_RESET_TO_DEFAULTS],
-          'handler', 'font-defualt-selection'
+          'handler', 'font-defualt-selection',
+          'class', 'ui-button',
+          'tabindex', '1'
         ]
       ]
     ]);

@@ -189,6 +189,8 @@
   this._handlers["toggle-commandline"] = function(action_id, event, target)
   {
     var visible = (window.views.command_line && window.views.command_line.isvisible());
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     if (!visible)
     {
@@ -201,8 +203,6 @@
     {
       UIWindowBase.closeWindow('command_line');
     }
-    var button = UI.get_instance().get_button("toggle-console");
-    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     return false;
   }.bind(this);
@@ -218,6 +218,7 @@
   {
     const OVERLAY_TOP_MARGIN = 10;
     const OVERLAY_RIGHT_MARGIN = 20;
+    const ADJUST = 2; // TODO: where does this actually come from
 
     var overlay = Overlay.get_instance();
     var ui = UI.get_instance();
@@ -232,12 +233,14 @@
       var button_dims = target.getBoundingClientRect();
       var element = overlay.element.querySelector("overlay-window");
       var arrow = overlay.element.querySelector("overlay-arrow");
+      var arrow_width = arrow.getBoundingClientRect().width;
       element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
       element.addClass("attached");
-      arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+      arrow.style.right = Math.floor(document.documentElement.clientWidth - OVERLAY_RIGHT_MARGIN -
+          button_dims.right - (arrow_width / 2) + (button_dims.width / 2) - ADJUST) + "px";
     }
 
-    var first_button = overlay.element.querySelector("button, input[type='button']");
+    var first_button = overlay.element.querySelector("button, input[type='button'], .ui-button");
     if (first_button)
     {
       first_button.focus();

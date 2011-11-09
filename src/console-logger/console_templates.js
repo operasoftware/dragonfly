@@ -76,12 +76,12 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   }
 
   var expand_button = [
-    "button", "",
-       "type", "button",
+    "span", "",
        "data-logid", entry.id,
        "data-viewid", viewId,
        "unselectable", "on",
-       "class", "expander"
+       "class", "expander ui-button",
+       "tabindex", "1"
   ];
 
   var severity = entry.severity || "information";

@@ -68,9 +68,9 @@ input[type='datetime-local'] {
 
 .storage_view .sortable-table th .ellipsis_cont {
   /* header row is lower */
-  height: 8px;
+  height: 1em;
   margin-top: 0;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .storage_view .sortable-table th, .storage_view .sortable-table td {
@@ -110,9 +110,11 @@ input[type='datetime-local'] {
 /* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
   it's just for the add_cookie/add_storage button */
 .storage_view .sortable-table tr.sortable-table-summation-row td {
-  border: none;
+  border-width: 0;
+  border-top-width: 1px;
   background: none;
-  padding-bottom: 7px;
+  padding-top: 7px;
+  padding-bottom: 11px;
 }
 
 .storage_view .sortable-table tr.sortable-table-summation-row {

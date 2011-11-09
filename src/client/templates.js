@@ -13,9 +13,11 @@
           'max', PORT_MAX,
           'value', Math.min(PORT_MAX, Math.max(port, PORT_MIN))
         ],
-        ['button',
+        ['span',
           ui_strings.S_BUTTON_TEXT_APPLY,
-          'handler', 'apply-remote-debugging'
+          'handler', 'apply-remote-debugging',
+          'class', 'ui-button',
+          'tabindex', '1'
         ]
       ],
       ['p',
@@ -55,10 +57,12 @@
       //  ]
       //],
       ["p",
-        ["button",
+        ["span",
           ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
           "handler",
-          "cancel-remote-debug"
+          "cancel-remote-debug",
+          "class", "ui-button",
+          "tabindex", "1"
         ]
       ]
     ]

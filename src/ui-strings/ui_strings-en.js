@@ -1394,3 +1394,6 @@ ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
 
 /* DESC: Tooltip for the injected scripts search settings label. */
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
+
+/* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
+ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression."

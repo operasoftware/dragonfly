@@ -32,7 +32,7 @@
     margin-top: 5px;
     text-align: right;
 }
-#ui-dialog-buttons button {
+#ui-dialog-buttons .ui-button {
     margin-left: 5px;
 }
 #ui-dialog-message {

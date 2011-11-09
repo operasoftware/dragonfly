@@ -180,30 +180,14 @@ var ToolbarBase = function()
       }
       if(this.switches.length)
       {
-        if(set_separator)
-        {
-          toolbar.render(templates.toolbarSeparator());
-        }
-        else
-        {
-          set_separator = true;
-        }
         toolbar.render(templates.switches(this.switches));
       }
       if(this.toolbar_settings)
       {
-        if(set_separator)
-        {
-          toolbar.render(templates.toolbarSeparator());
-        }
         toolbar.render(templates.toolbar_settings(this.toolbar_settings));
       }
       if(this.specials.length)
       {
-        if(set_separator)
-        {
-          toolbar.render(templates.toolbarSeparator());
-        }
         toolbar.render(templates.buttons(this.specials));
       } 
       if(this.customs.length)
