@@ -29,7 +29,7 @@
 
 .network-data-container {
   position: relative;
-  top: 43px;
+  top: 44px;
 }
 
 /* Network log / Overview */
@@ -69,7 +69,7 @@
 }
 
 .network-log-url-list li {
-  height: 20px;
+  height: 19px;
   padding: 4px 0px 1px 8px;
 }
 

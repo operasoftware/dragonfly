@@ -94,7 +94,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._render_tabbed_view = function(container)
   {
     this._everrendered = true;
-    var min_render_delay = 600;
+    var min_render_delay = 200;
     var timedelta = new Date().getTime() - this._rendertime;
 
     if (this._rendertimer)
