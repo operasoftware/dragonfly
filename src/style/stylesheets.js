@@ -20,11 +20,6 @@ cls.Stylesheets = function()
   var SHEET_TITLE = 3;
   var HAS_MATCHING_SEARCH_PROPS = 11;
 
-  // sub message NodeStyle
-  var OBJECT_ID = 0;
-  var ELEMENT_NAME = 1;
-  var STYLE_LIST = 2;
-
   var ORIGIN_USER_AGENT = cls.Stylesheets.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.ORIGIN_LOCAL;
   var ORIGIN_AUTHOR = cls.Stylesheets.ORIGIN_AUTHOR;
@@ -50,30 +45,6 @@ cls.Stylesheets = function()
     this._color_index = 0;
   };
 
-  // TODO: move, rename etc
-  var Rule = function(rule)
-  {
-    this.declarations = [];
-    this.origin = rule[0];
-    this.selector = rule[5];
-    this.specificity = rule[6];
-    this.stylesheet_id = rule[7];
-    this.rule_id = rule[8];
-    this.rule_type = rule[9];
-    this.line_number = rule[10];
-
-    for (var i = 0, len = rule[1].length; i < len; i++)
-    {
-      this.declarations.push({
-        property: window.css_index_map[rule[1][i]],
-        value: rule[2][i],
-        priority: rule[3][i],
-        is_applied: Boolean(rule[4][i]), // Could be inverted and renamed to overwritten
-        is_disabled: rule[12] ? Boolean(rule[12][i]) : false
-      });
-    }
-  };
-
   this.pretty_print_computed_style = function(data)
   {
     var template = [];
@@ -95,7 +66,7 @@ cls.Stylesheets = function()
         && !(prop in special_default_values && special_default_values[prop](data, value))
         || false;
       var display =
-        (!hide_initial_value || set_props[index] || is_not_initial_value)
+        (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
         && (prop.indexOf(search_term) != -1 ||
             value.indexOf(search_term) != -1);
 
@@ -109,19 +80,16 @@ cls.Stylesheets = function()
   this.pretty_print_cascaded_style = function(data)
   {
     var template = [];
-    var rt_id = data.rt_id;
     var search_term = window.elementStyle.get_search_term();
 
-    for (var i = 0, node_casc; node_casc = data[i]; i++)
+    for (var i = 0, node_style; node_style = data[i]; i++)
     {
-      var element_name = node_casc[ELEMENT_NAME];
-      var style_dec_list = node_casc[STYLE_LIST];
+      var element_name = node_style.elementName;
+      var style_dec_list = node_style.styleList;
 
       var inherited_printed = false;
-      for (var j = 0, style_dec; style_dec = style_dec_list[j]; j++)
+      for (var j = 0, rule; rule = style_dec_list[j]; j++)
       {
-        var rule = new Rule(style_dec); // TODO: this is temporary
-
         rule.declarations = rule.declarations.filter(function(declaration) {
           return declaration.property.indexOf(search_term) != -1 ||
                  declaration.value.indexOf(search_term) != -1;
@@ -133,20 +101,21 @@ cls.Stylesheets = function()
         if (i > 0 && !inherited_printed)
         {
           inherited_printed = true;
-          template.push(this._templates.inherited_header(element_name, node_casc[OBJECT_ID]));
+          template.push(this._templates.inherited_header(element_name, node_style.objectID));
         }
 
-        template.push(this._pretty_print_rule(rule.origin, rt_id,
-              node_casc[OBJECT_ID], element_name, rule));
+        template.push(this._pretty_print_rule(rule.origin,
+              node_style.objectID, element_name, rule));
       }
     }
 
     return template;
   };
 
-  this._pretty_print_rule = function(origin, rt_id, obj_id, element_name, rule)
+  this._pretty_print_rule = function(origin, obj_id, element_name, rule)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
+    var rt_id = window.elementStyle.get_rt_id();
     switch (origin)
     {
     case ORIGIN_USER_AGENT:
@@ -156,13 +125,12 @@ cls.Stylesheets = function()
       return this._templates.rule_origin_local(decl_list, obj_id, rule.selector);
 
     case ORIGIN_AUTHOR:
-      var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheet_id);
+      var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheetID);
       if (!sheet)
       {
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'stylesheet is missing in stylesheets, _pretty_print_rule[ORIGIN_AUTHOR]');
       }
-
       return this._templates.rule_origin_author(decl_list, obj_id, rt_id, rule, sheet);
 
     case ORIGIN_ELEMENT:

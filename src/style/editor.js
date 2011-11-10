@@ -14,6 +14,11 @@ var Editor = function(actions)
   var MINUS = -1;
   var PLUS = 1;
 
+  // Positions returned from get_properties()
+  var INDEX = 0;
+  var VALUE = 1;
+  var PRIORITY = 2;
+
   // Edit modes
   this.MODE_CSS = 1;
   this.MODE_SVG = 2;
@@ -344,7 +349,7 @@ var Editor = function(actions)
 
     if (this.context_rule_id)
     {
-      this.saved_style_dec = window.elementStyle.get_style_dec_by_id(this.context_rule_id);
+      this.saved_style_dec = window.elementStyle.get_rule_by_id(this.context_rule_id);
     }
     else
     {
@@ -672,19 +677,23 @@ var Editor = function(actions)
     var decl_ele = this.textarea.get_ancestor(".css-declaration");
     var disabled = decl_ele.hasClass("disabled"); // TODO: should use the model
 
-    if (props[1])
+    if (props[INDEX])
     {
       // Only add property if something has changed (new or updated value)
-      if (!(this.context_cur_prop == props[0] &&
-            this.context_cur_value == props[1] &&
-            this.context_cur_priority == props[2]))
+      if (!(this.context_cur_prop == props[INDEX] &&
+            this.context_cur_value == props[VALUE] &&
+            this.context_cur_priority == props[PRIORITY]))
       {
         this._actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
       }
-      decl_ele.clearAndRender(window.stylesheets.create_declaration(props[0],
-        props[1], props[2], disabled));
+      decl_ele.clearAndRender(window.stylesheets.create_declaration(
+        props[INDEX],
+        props[VALUE],
+        props[PRIORITY],
+        disabled)
+      );
     }
-    else if (props[1] === "") // If someone deletes just the value and then submits, just re-display it
+    else if (props[VALUE] === "") // If someone deletes just the value and then submits, just re-display it
     {
       decl_ele.clearAndRender(window.stylesheets.create_declaration(props[0],
         this.context_cur_value, this.context_cur_priority, disabled));
@@ -706,15 +715,19 @@ var Editor = function(actions)
       var prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('div'), this.textarea_container.parentElement);
 
-      prop.clearAndRender(window.stylesheets.create_declaration(props[0], props[1], props[2],
-        this.textarea_container.parentNode.hasClass("disabled")));
+      prop.clearAndRender(window.stylesheets.create_declaration(
+        props[INDEX],
+        props[VALUE],
+        props[PRIORITY],
+        this.textarea_container.parentNode.hasClass("disabled"))
+      );
       props.splice(0, 3);
     }
 
     if (reset)
     {
       this.textarea.value =
-        props[0] + (props[1] ? ': ' + props[1] + (props[2] ? ' !important' : '') + ';' : '');
+        props[INDEX] + (props[VALUE] ? ': ' + props[VALUE] + (props[PRIORITY] ? ' !important' : '') + ';' : '');
 
       this.context_cur_text_content =
       this.context_cur_prop =
@@ -724,19 +737,12 @@ var Editor = function(actions)
 
     if (props[1])
       this._actions.set_property(this.context_rt_id, this.context_rule_id, props);
-    else if ((!props[0] || props[0] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
+    else if ((!props[INDEX] || props[INDEX] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
       this._actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
   };
 
   this.enter = function()
   {
-    var INDEX_LIST = 1;
-    var VALUE_LIST = 2;
-    var PRIORITY_LIST = 3;
-    var INDEX = 0;
-    var VALUE = 1;
-    var PRIORITY = 2;
-
     var props = this.get_properties();
     var keep_edit = false;
     var is_disabled = this.textarea_container.parentNode.hasClass("disabled");
@@ -747,7 +753,7 @@ var Editor = function(actions)
       {
         this.textarea_container.parentElement.clearAndRender(
           window.stylesheets.create_declaration(
-            props[0],
+            props[INDEX],
             this.context_cur_value,
             this.context_cur_priority,
             is_disabled
@@ -760,9 +766,11 @@ var Editor = function(actions)
       {
         // We don't know if the property is valid or not at this point, but
         // it will simply be discarded when setting it back if it's not.
-        this.saved_style_dec[INDEX_LIST].push(css_index_map.indexOf(props[INDEX]));
-        this.saved_style_dec[VALUE_LIST].push(props[VALUE]);
-        this.saved_style_dec[PRIORITY_LIST].push(props[PRIORITY]);
+        this.saved_style_dec.declarations.push({
+          property: window.css_index_map.indexOf(props[INDEX]),
+          value: props[VALUE],
+          priority: props[PRIORITY]
+        });
 
         var decl_ele = document.createElement('div');
         decl_ele.className = "css-declaration";
@@ -779,9 +787,9 @@ var Editor = function(actions)
           insertBefore(decl_ele, this.textarea_container.parentElement);
         decl.clearAndRender(
           window.stylesheets.create_declaration(
-            props[0],
-            props[1],
-            props[2],
+            props[INDEX],
+            props[VALUE],
+            props[PRIORITY],
             is_disabled
           )
         );
@@ -796,9 +804,9 @@ var Editor = function(actions)
       {
         this.textarea_container.parentElement.clearAndRender(
           window.stylesheets.create_declaration(
-            props[0],
-            props[1],
-            props[2],
+            props[INDEX],
+            props[VALUE],
+            props[PRIORITY],
             is_disabled
           )
         );

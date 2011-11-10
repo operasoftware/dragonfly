@@ -21,9 +21,10 @@ cls.CSSInspectorView = function(id, name, container_class)
       // stylesheets.prettyPrintCat call will also ensure
       // that all style sheets for the given runtime and the index map
       // will be avaible, that means the call will not return any data
-      // before this datas are avaible
+      // before this datas are available
+      var rt_id = elementStyle.get_rt_id();
       styles.clearAndRender(stylesheets.pretty_print_cascaded_style(data));
-      styles.setAttribute('rt-id', data.rt_id);
+      styles.setAttribute('rt-id', rt_id);
     }
   }
 

@@ -1,5 +1,30 @@
 ﻿window.cls || (window.cls = {});
 
+// TODO: move, rename etc
+var Rule = function(rule)
+{
+  this.declarations = [];
+  this.origin = rule.origin;
+  this.selector = rule.selector;
+  this.specificity = rule.specificity;
+  this.stylesheetID = rule.stylesheetID;
+  this.ruleID = rule.ruleID;
+  this.ruleType = rule.ruleType;
+  this.lineNumber = rule.lineNumber;
+
+  var len = rule.indexList ? rule.indexList.length : 0;
+  for (var i = 0; i < len; i++)
+  {
+    this.declarations.push({
+      property: window.css_index_map[rule.indexList[i]],
+      value: rule.valueList[i],
+      priority: rule.priorityList[i],
+      is_applied: Boolean(rule.statusList[i]), // Could be inverted and renamed to overwritten
+      is_disabled: rule.disableList ? Boolean(rule.disabledList[i]) : false
+    });
+  }
+};
+
 // TODO categories and everything related needs to be removed completely
 /**
  * @constructor
@@ -11,10 +36,13 @@ cls.ElementStyle = function()
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._categories_data = [];
+  this._style_declarations = [];
+  this._has_data = false;
   this._selected_element = null;
   this._search_map = [];
   this._search_term = "";
   this._set_props = [];
+  this._current_rt_id = null; // TODO: always the same as this._rt_id?
   this._rt_id = null;
   this._obj_id = null;
   this._views = ['css-comp-style', 'css-inspector'];
@@ -41,32 +69,8 @@ cls.ElementStyle = function()
 
   var COMP_STYLE = 0;
   var CSS = 1;
-  var IS_VALID = 2;
   var REQ_TYPE_CSS = 2;
-  var PROP_LIST = 1;
-  var VAL_LIST = 2;
-  var PRIORITY_LIST = 3;
-  var HAS_MATCHING_SEARCH_PROPS = 11;
   var SEARCH_DELAY = 50;
-  var DISABLED_LIST = cls.ElementStyle.DISABLED_LIST;
-
-  // new scope messages
-  var COMPUTED_STYLE_LIST = 0;
-  var NODE_STYLE_LIST = 1;
-  // sub message NodeStyle
-  var OBJECT_ID = 0;
-  var ELEMENT_NAME = 1;
-  var STYLE_LIST = 2;
-  // sub message StyleDeclaration
-  var ORIGIN = 0;
-  var INDEX_LIST = 1;
-  var VALUE_LIST = 2;
-  var STATUS_LIST = 4;
-  var SELECTOR = 5;
-  var SPECIFICITY = 6;
-  var STYLESHEET_ID = 7;
-  var RULE_ID = 8;
-  var RULE_TYPE = 9;
 
   var ORIGIN_USER_AGENT = 1;
   var ORIGIN_LOCAL = 2;
@@ -107,8 +111,13 @@ cls.ElementStyle = function()
 
   this.get_category_data = function(index)
   {
-    if (this._categories_data[IS_VALID])
-      return this._categories_data[index];
+    if (this._has_data)
+    {
+      if (index == COMP_STYLE)
+        return window.helpers.copy_object(this._style_declarations.computedStyleList);
+      else
+        return window.helpers.copy_object(this._style_declarations.nodeStyleList);
+    }
 
     if (this._selected_element)
       this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
@@ -119,6 +128,11 @@ cls.ElementStyle = function()
   this.get_computed_style = function()
   {
     return this.get_category_data(COMP_STYLE);
+  };
+
+  this.get_rt_id = function()
+  {
+    return this._current_rt_id;
   };
 
   this.get_set_props = function()
@@ -156,30 +170,17 @@ cls.ElementStyle = function()
    */
   this.sync_declarations = function(style_dec, disabled_style_dec, is_inherited)
   {
-    var index_map = window.css_index_map;
-
-    if (!style_dec[INDEX_LIST])
+    var declarations = disabled_style_dec.declarations;
+    for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      style_dec[INDEX_LIST] = [];
-      style_dec[VALUE_LIST] = [];
-      style_dec[PRIORITY_LIST] = [];
-      style_dec[STATUS_LIST] = [];
-    }
-    style_dec[DISABLED_LIST] = [];
-
-    var len = disabled_style_dec[INDEX_LIST].length;
-    for (var i = 0; i < len; i++)
-    {
-      var prop = index_map[disabled_style_dec[INDEX_LIST][i]];
-
-      if (this.has_property(style_dec, prop))
+      if (this.has_property(style_dec, decl.property))
       {
-        this.remove_property(disabled_style_dec, prop);
+        this.remove_property(disabled_style_dec, decl.property);
       }
-      else if (!(is_inherited && !(prop in window.css_inheritable_properties)))
+      else if (!(is_inherited && !(window.css_inheritable_properties.hasOwnProperty(decl.property))))
       {
-        var index = this.copy_property(disabled_style_dec, style_dec, prop);
-        style_dec[DISABLED_LIST][index] = 1;
+        var index = this.copy_property(disabled_style_dec, style_dec, decl.property);
+        style_dec.declarations[index].is_disabled = true;
       }
     }
 
@@ -187,19 +188,19 @@ cls.ElementStyle = function()
   };
 
   /**
-   * Get a StyleDeclaration based on the rule ID.
+   * Get a Rule based on the rule ID.
    *
    * @param {Integer} id The rule id
-   * @returns {Array|null} The StyleDeclaration if it was found, otherwise null
+   * @returns {Array|null} The Rule if it was found, otherwise null
    */
-  this.get_style_dec_by_id = function(id)
+  this.get_rule_by_id = function(id)
   {
-    for (var i = 0, node_style; node_style = (this._categories_data[NODE_STYLE_LIST] || [])[i]; i++)
+    for (var i = 0, node_style; node_style = this._style_declarations.nodeStyleList[i]; i++)
     {
-      for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
+      for (var j = 0, rule; rule = node_style.styleList[j]; j++)
       {
-        if (style_dec[RULE_ID] == id)
-          return style_dec;
+        if (rule.ruleID == id)
+          return rule;
       }
     }
     return null;
@@ -213,25 +214,48 @@ cls.ElementStyle = function()
    */
   this.get_inline_style_dec_by_id = function(id)
   {
-    for (var i = 0, node_style; node_style = (this._categories_data[NODE_STYLE_LIST] || [])[i]; i++)
+    for (var i = 0, node_style; node_style = this._style_declarations.nodeStyleList[i]; i++)
     {
-      for (var j = 0, style_dec; style_dec = (node_style[STYLE_LIST] || [])[j]; j++)
+      for (var j = 0, rule; rule = node_style.styleList[j]; j++)
       {
-        if ((style_dec[ORIGIN] == ORIGIN_ELEMENT || style_dec[ORIGIN] == ORIGIN_SVG) && node_style[OBJECT_ID] == id)
-          return style_dec;
+        if ((rule.origin == ORIGIN_ELEMENT || rule.origin == ORIGIN_SVG) && node_style.objectID == id)
+          return rule;
       }
     }
     return null;
   };
 
   /**
-   * Returns an empty StyleDeclaration
+   * Get a declaration based on a rule ID and the property
    *
-   * @returns {Array} An empty StyleDeclaration
+   * @param {Integer} id The rule id
+   * @param {String} property The name of the property
+   * @returns {Object|null} The declaration if found, oterwise null
+   */
+  this.get_declaration = function(rule_id, property)
+  {
+    for (var i = 0, node_style; node_style = this._style_declarations.nodeStyleList[i]; i++)
+    {
+      for (var j = 0, rule; rule = node_style.styleList[j]; j++)
+      {
+        for (var k = 0, decl; decl = rule.declarations[k]; k++)
+        {
+          if (rule.ruleID == rule_id && decl.property == property)
+            return decl;
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * Returns an empty Rule
+   *
+   * @returns {Rule} An empty Rule
    */
   this.get_new_style_dec = function()
   {
-    return [3, [/*INDEX_LIST*/], [/*VALUE_LIST*/], [/*PRIORITY_LIST*/], [/*STATUS_LIST*/]];
+    return new Rule({origin: 3});
   };
 
   /**
@@ -244,45 +268,44 @@ cls.ElementStyle = function()
    */
   this.copy_property = function(source, target, property)
   {
-    var index_list = source[INDEX_LIST];
-    var len = index_list.length;
-    for (var i = 0; i < len; i++)
+    var new_style_dec = this.get_new_style_dec();
+    var declarations = source.declarations;
+    for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      if (window.css_index_map[index_list[i]] == property)
+      if (decl.property == property)
       {
-         target[INDEX_LIST].push(source[INDEX_LIST][i]);
-         target[VALUE_LIST].push(source[VALUE_LIST][i]);
-         target[PRIORITY_LIST].push(source[PRIORITY_LIST][i]);
-         target[STATUS_LIST].push(source[STATUS_LIST][i]);
-         break;
+        target.declarations.push({
+          property: decl.property,
+          value: decl.value,
+          priority: decl.priority,
+          is_applied: decl.is_applied,
+          is_disabled: decl.is_disabled
+        });
+        break;
       }
     }
-    return target[INDEX_LIST].length-1;
+    return target.declarations.length - 1;
   };
 
   /**
-   * Removes a property from `style_dec`
+   * Removes a property from `rule`
    *
-   * @param {Array} style_dec The StyleDeclaration to remove the property from
+   * @param {Rule} rule The Rule to remove the property from
    * @param {String} property The property to remove
-   * @returns {Array|null} A StyleDeclaration with the removed property if it was
-   *                       removed, otherwise null
+   * @returns {Rule|null} A Rule with the removed property if it was
+   *          removed, otherwise null
    */
-  this.remove_property = function(style_dec, property)
+  this.remove_property = function(rule, property)
   {
-    var new_style_dec = this.get_new_style_dec();
-    var index_list = style_dec[INDEX_LIST];
-    var len = index_list.length;
-    for (var i = 0; i < len; i++)
+    var new_rule = this.get_new_style_dec();
+    var declarations = rule.declarations;
+    for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      if (window.css_index_map[index_list[i]] == property)
+      if (decl.property == property)
       {
-        this.copy_property(style_dec, new_style_dec, property);
-        style_dec[INDEX_LIST].splice(i, 1);
-        style_dec[VALUE_LIST].splice(i, 1);
-        style_dec[PRIORITY_LIST].splice(i, 1);
-        style_dec[STATUS_LIST].splice(i, 1);
-        return new_style_dec;
+        this.copy_property(rule, new_rule, property);
+        rule.declarations.splice(i, 1);
+        return new_rule;
       }
     }
     return null;
@@ -297,7 +320,9 @@ cls.ElementStyle = function()
    */
   this.has_property = function(style_dec, property)
   {
-    return style_dec[INDEX_LIST].indexOf(window.css_index_map.indexOf(property)) != -1;
+    return style_dec.declarations.some(function(decl) {
+      return decl.property == property;
+    });
   };
 
   this.get_inline_obj_id = function(obj_id)
@@ -305,17 +330,11 @@ cls.ElementStyle = function()
     return "inline-obj-id-" + obj_id;
   };
 
-  this.is_some_declaration_enabled = function(declaration)
+  this.is_some_declaration_enabled = function(rule)
   {
-    var is_some_dec_enabled = false;
-
-    for (var i = 0; i < declaration[INDEX_LIST].length && !is_some_dec_enabled; i++)
-    {
-      is_some_dec_enabled = !declaration[DISABLED_LIST] ||
-                            !declaration[DISABLED_LIST][i];
-    }
-
-    return is_some_dec_enabled;
+    return rule.declarations.some(function(decl) {
+      return !decl.is_disabled;
+    });
   };
 
   this.get_search_term = function()
@@ -340,70 +359,10 @@ cls.ElementStyle = function()
   {
     if (this._search_term != search_term)
     {
-      this._do_search(search_term);
       this._search_term = search_term;
       window.views['css-inspector'].update();
       window.views['css-comp-style'].update();
     }
-  };
-
-  this._do_search = function(search_term)
-  {
-    if (search_term)
-    {
-      for (var i = 0, length = this._categories_data[CSS].length; i < length; i++)
-      {
-        this._search_node_cascade(this._categories_data[CSS][i], search_term);
-      }
-    }
-    else
-    {
-      for (var i = 0, length = this._categories_data[CSS].length; i < length; i++)
-      {
-        this._clear_node_cascade(this._categories_data[CSS][i], this._search_map);
-      }
-      this._search_term = "";
-    }
-  };
-
-  this._search_node_cascade = function(node_cascade, search_term)
-  {
-    var declaration_list = node_cascade[STYLE_LIST];
-    var node_cascade_has_matching_search_props = false;
-
-    for (var i = 0, declaration; declaration = declaration_list[i]; i++)
-    {
-      if (declaration[PROP_LIST])
-      {
-        var length = declaration[PROP_LIST].length;
-        var has_matching_search_props = false;
-
-        for (var j = 0; j < length; j++)
-        {
-          if (window.css_index_map[declaration[PROP_LIST][j]].indexOf(search_term) != -1 ||
-              declaration[VALUE_LIST][j].indexOf(search_term) != -1)
-          {
-            has_matching_search_props = true;
-            node_cascade_has_matching_search_props = true;
-          }
-        }
-        declaration[HAS_MATCHING_SEARCH_PROPS] = has_matching_search_props;
-      }
-    }
-
-    node_cascade[HAS_MATCHING_SEARCH_PROPS] = node_cascade_has_matching_search_props;
-  };
-
-  this._clear_node_cascade = function(node_cascade)
-  {
-    var declaration_list = node_cascade[1];
-
-    delete node_cascade[0][HAS_MATCHING_SEARCH_PROPS];
-    for (var i = 0, dec; dec = declaration_list[i]; i++)
-    {
-      delete dec[HAS_MATCHING_SEARCH_PROPS];
-    }
-    delete node_cascade[2][HAS_MATCHING_SEARCH_PROPS];
   };
 
   this._on_element_selected = function(msg)
@@ -424,13 +383,13 @@ cls.ElementStyle = function()
       }
       else
       {
-        this._categories_data[IS_VALID] = false;
+        this._has_data = false;
       }
     }
     else
     {
       this._on_reset_state();
-      this._categories_data[IS_VALID] = false;
+      this._has_data = false;
       window.views['css-inspector'].update();
     }
   };
@@ -456,38 +415,37 @@ cls.ElementStyle = function()
   {
     if (status == 0)
     {
-      this._categories_data[COMP_STYLE] = message[COMPUTED_STYLE_LIST];
-      this._categories_data[CSS] = message[NODE_STYLE_LIST] || [];
-      this._categories_data[CSS].rt_id = this._categories_data[COMP_STYLE].rt_id = rt_id;
-      this._categories_data[IS_VALID] = true;
+      this._style_declarations = new cls.EcmascriptDebugger["6.4"].CssStyleDeclarations(message);
+      this._has_data = true;
+      this._current_rt_id = rt_id;
 
       var disabled_style_dec_list = this.disabled_style_dec_list;
 
       // this is to ensure that a set property is always displayed in computed style,
       // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
       this._set_props = [];
-      for (var i = 0, node_style_cascade; node_style_cascade = this._categories_data[CSS][i]; i++)
+      for (var i = 0, node_style_list; node_style_list = this._style_declarations.nodeStyleList[i]; i++)
       {
-        for (var j = 0, style_dec; style_dec = node_style_cascade[STYLE_LIST][j]; j++)
+        for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
-          if (style_dec[ORIGIN] != ORIGIN_USER_AGENT)
+          var rule = new Rule(node_style);
+          if (rule.origin != ORIGIN_USER_AGENT)
           {
             if (disabled_style_dec_list)
             {
-              var disabled_style_dec = (style_dec[ORIGIN] != ORIGIN_ELEMENT && style_dec[ORIGIN] != ORIGIN_SVG)
-                                     ? disabled_style_dec_list[style_dec[RULE_ID]]
-                                     : disabled_style_dec_list[this.get_inline_obj_id(node_style_cascade[0])];
+              var disabled_style_dec = (rule.origin != ORIGIN_ELEMENT && rule.origin != ORIGIN_SVG)
+                                     ? disabled_style_dec_list[rule.ruleID]
+                                     : disabled_style_dec_list[this.get_inline_obj_id(node_style_list.objectID)];
               if (disabled_style_dec)
-                style_dec = this.sync_declarations(style_dec, disabled_style_dec, i > 0);
+                rule = this.sync_declarations(rule, disabled_style_dec, i > 0);
             }
 
-            var length = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length || 0;
-            for (var k = 0; k < length; k++)
-            {
-              if (style_dec[STATUS_LIST][k])
-                this._set_props[style_dec[INDEX_LIST][k]] = 1;
-            }
+            rule.declarations.forEach(function(decl) {
+              if (decl.is_applied)
+                this._set_props.push(decl.property);
+            }, this);
           }
+          node_style_list.styleList[j] = rule;
         }
       }
 
@@ -509,6 +467,4 @@ cls.ElementStyle = function()
     this._search_delayed(target.value);
   }.bind(this);
 };
-
-cls.ElementStyle.DISABLED_LIST = 12
 

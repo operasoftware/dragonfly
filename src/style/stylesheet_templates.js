@@ -68,13 +68,13 @@ var StylesheetTemplates = function()
       "div",
         ["span",
            helpers.escapeTextHtml(helpers.basename(sheet.href)) +
-           (rule.line_number ? ":" + rule.line_number : ""),
+           (rule.lineNumber ? ":" + rule.lineNumber : ""),
          "class", "rule-description internal-link",
          "rt-id", String(rt_id),
          "index", String(sheet.index),
          "handler", "open-resource-tab",
          "data-resource-url", helpers.escapeAttributeHtml(sheet.href),
-         "data-resource-line-number", String(rule.line_number || 0)
+         "data-resource-line-number", String(rule.lineNumber || 0)
         ],
         ["span",
            helpers.escapeTextHtml(rule.selector),
@@ -85,8 +85,8 @@ var StylesheetTemplates = function()
         "\n}",
       "class", "css-rule",
       "data-menu", "style-inspector-rule",
-      "rule-id", String(rule.rule_id),
-      "obj-id", String(obj_id)
+      "rule-id", rule.ruleID && String(rule.ruleID),
+      "obj-id", obj_id && String(obj_id)
     ];
   };
 

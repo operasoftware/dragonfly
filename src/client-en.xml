@@ -398,11 +398,14 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./searches/jssearchview.js"/>
 
+<script src="./style/ecmascriptdebugger.6.4.responses.cssgetstyledeclarations.js"/>
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>
 <script src="./style/css_inheritable_properties.js"/>
 <script src="./style/css_suggest_values.js"/>
+<script src="./style/css_value_tokenizer.js"/>
+<script src="./style/css_shorthand_resolver.js"/>
 <script src="./style/element_style.js"/>
 <script src="./style/stylesheets.js"/>
 <script src="./style/stylesheet_templates.js"/>

@@ -14,9 +14,6 @@ cls.CSSInspectorActions = function(id)
   this._target = null;
 
   var CSS_CLASS_CP_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
-  var INDEX_LIST = 1;
-  var VALUE_LIST = 2;
-  var PRIORITY_LIST = 3;
   var PROPERTY = 0;
 
   this.getFirstTarget = function()
@@ -269,13 +266,8 @@ cls.CSSInspectorActions = function(id)
     var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
     var initial_property = this.editor.context_cur_prop;
-    var new_property = this.editor.get_properties()[0];
-    var script = "";
-
-    var prop_enum = window.css_index_map.indexOf(new_property);
-    // Check if it's a real property. If not, we don't have to set something back.
-    if (prop_enum != -1)
-      script = "object.style.removeProperty(\"" + new_property + "\");";
+    var new_property = this.editor.get_properties()[PROPERTY];
+    var script = "object.style.removeProperty(\"" + new_property + "\");";
 
     if (initial_property)
     {
@@ -286,13 +278,13 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var index = rule[INDEX_LIST].indexOf(prop_enum);
-    if (index != -1)
+    var decl = window.elementStyle.get_declaration(rule_id, new_property);
+    if (decl)
     {
       script += "object.style.setProperty(\"" +
                   new_property + "\", \"" +
-                  helpers.escape_input(rule[VALUE_LIST][index]) + "\", " +
-                  (rule[PRIORITY_LIST][index] ? "\"important\"" : null) +
+                  helpers.escape_input(decl.value) + "\", " +
+                  (decl.priority ? "\"important\"" : null) +
                 ");";
     }
 
@@ -312,12 +304,7 @@ cls.CSSInspectorActions = function(id)
     var rule_id = this.editor.context_rule_id;
     var initial_property = this.editor.context_cur_prop;
     var new_property = this.editor.get_properties()[PROPERTY];
-    var script = "";
-
-    var prop_enum = window.css_index_map.indexOf(new_property);
-    // Check if it's a real property. If not, we don't have to set something back.
-    if (prop_enum != -1)
-      script = "object.removeAttribute(\"" + new_property + "\");";
+    var script = "object.removeAttribute(\"" + new_property + "\");";
 
     if (initial_property)
     {
@@ -327,12 +314,12 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var index = rule[INDEX_LIST].indexOf(prop_enum);
-    if (index != -1)
+    var decl = window.elementStyle.get_declaration(rule_id, new_property);
+    if (decl)
     {
       script += "object.setAttribute(\"" +
                   new_property + "\", \"" +
-                  rule[VALUE_LIST][index].replace(/"/g, "'") + "\"" +
+                  helpers.escape_input(decl.value) + "\"" +
                 ");";
     }
 
@@ -350,16 +337,16 @@ cls.CSSInspectorActions = function(id)
    */
   this.enable_property = function enable_property(rt_id, rule_id, obj_id, property)
   {
-    var INDEX_LIST = 1;
-    var VALUE_LIST = 2;
-    var PRIORITY_LIST = 3;
-
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var disabled_style_dec = window.elementStyle.disabled_style_dec_list[id];
     var style_dec = window.elementStyle.remove_property(disabled_style_dec, property);
-    this.set_property(rt_id, rule_id || obj_id, [window.css_index_map[style_dec[INDEX_LIST][0]],
-                      style_dec[VALUE_LIST][0],
-                      style_dec[PRIORITY_LIST][0]], null, window.elementStyle.update);
+    var declarations = style_dec.declarations;
+    if (declarations)
+    {
+      this.set_property(rt_id, rule_id || obj_id, [declarations[0].property,
+                        declarations[0].value,
+                        declarations[0].priority], null, window.elementStyle.update);
+    }
   };
 
   /**
@@ -371,7 +358,7 @@ cls.CSSInspectorActions = function(id)
   {
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var style_dec = rule_id
-                  ? window.elementStyle.get_style_dec_by_id(rule_id)
+                  ? window.elementStyle.get_rule_by_id(rule_id)
                   : window.elementStyle.get_inline_style_dec_by_id(obj_id);
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
@@ -388,11 +375,9 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_all_properties = function disable_property(rt_id, rule_id, obj_id)
   {
-    var INDEX_LIST = 1;
-
     var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
     var style_dec = rule_id
-                  ? window.elementStyle.get_style_dec_by_id(rule_id)
+                  ? window.elementStyle.get_rule_by_id(rule_id)
                   : window.elementStyle.get_inline_style_dec_by_id(obj_id);
     var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
 
@@ -401,9 +386,9 @@ cls.CSSInspectorActions = function(id)
 
     if (window.elementStyle.is_some_declaration_enabled(style_dec))
     {
-      while (style_dec[INDEX_LIST].length)
+      while (style_dec.declarations.length)
       {
-        var property = window.css_index_map[style_dec[INDEX_LIST][0]];
+        var property = style_dec.declarations[0].property;
         window.elementStyle.copy_property(style_dec,
                                           disabled_style_dec_list[id],
                                           property);
@@ -529,9 +514,9 @@ cls.CSSInspectorActions = function(id)
   this._handlers['enable-disable-property'] = function enable_disable_property(event, target)
   {
     var is_disabled = target.checked;
-    var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id")) || null;
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
-    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
+    var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id")) || null;
+    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id")) || null;
     this.editor.context_edit_mode = event.target.get_attr("parent-node-chain", "rule-id") == "element-svg"
                                   ? this.editor.MODE_SVG
                                   : this.editor.MODE_CSS;
