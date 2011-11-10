@@ -10,7 +10,6 @@ cls.Stylesheets = function()
   this._templates = new StylesheetTemplates();
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._index_map = null;
-  this._index_map_length = 0; // TODO: is this needed, check length of _index_map instead?
   this._sorted_index_map = [];
   this._initial_values = [];
   this._color_index = 0;
@@ -46,7 +45,6 @@ cls.Stylesheets = function()
   {
     this._sheets = {};
     this._index_map = null;
-    this._index_map_length = 0;
     this._sorted_index_map = [];
     this._initial_values = [];
     this._color_index = 0;
@@ -85,7 +83,7 @@ cls.Stylesheets = function()
     var search_term = window.elementStyle.get_search_term();
     var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
 
-    for (var i = 0; i < this._index_map_length; i++)
+    for (var i = 0; i < this._index_map.length; i++)
     {
       var index = this._sorted_index_map[i];
       var prop = this._index_map[index];
@@ -250,10 +248,10 @@ cls.Stylesheets = function()
 
     window.css_index_map = this._index_map = index_map;
     var temp = [];
-    for (var i = 0, prop; prop = this._index_map[i]; i++)
+    for (var i = 0, prop; prop = index_map[i]; i++)
     {
       temp[i] = {index: i, prop: prop};
-      this._initial_values[i] = css_initial_values[prop];
+      this._initial_values[i] = window.css_initial_values[prop];
 
       if (prop == 'color')
         this._color_index = i;
@@ -267,8 +265,6 @@ cls.Stylesheets = function()
     {
       this._sorted_index_map[i] = prop.index;
     }
-
-    this._index_map_length = this._index_map.length;
 
     if (org_args && (!org_args[0].__call_count || org_args[0].__call_count == 1))
     {
@@ -297,10 +293,10 @@ cls.Stylesheets = function()
     var props = [];
     var dashes = [];
 
-    for (var i = 0; i < this._index_map_length; i++)
+    for (var i = 0; i < this._index_map.length; i++)
     {
       var value = this._index_map[this._sorted_index_map[i]];
-      if (value.indexOf('-') == 0)
+      if (value[0] == "-")
         dashes.push(value);
       else
         props.push(value);
