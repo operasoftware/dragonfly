@@ -108,6 +108,9 @@ ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: General settings label. */
 ui_strings.M_SETTING_LABEL_GENERAL = "General";
 
+/* DESC: Context menu entry to reset the columns that are shown */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
+
 /* DESC: Context menu entry to selecting to group by %s */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 

@@ -61,7 +61,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     {
       if (!this._table)
       {
-        this._table = new SortableTable(this._tabledef, null, this._columns)
+        this._table = new SortableTable(this._tabledef, null, this._columns, null, null, null, "resources")
       }
       this._table.data = ctx.resources.slice(0);
       container.clearAndRender(this._table.render());

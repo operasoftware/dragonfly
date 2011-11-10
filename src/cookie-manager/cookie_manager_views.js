@@ -164,7 +164,9 @@ cls.CookieManager.CookieManagerViewBase = function()
         no_default_menu: true,
       }
     };
-    this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
+    this._sortable_table = new SortableTable(
+                             this._tabledef, null, null, "domain", "runtime", true, "cookie-inspector"
+                           );
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
   };
@@ -328,10 +330,6 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
     this.mode = MODE_EDIT;
-    if (!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
-    {
-      this._sortable_table.restore_columns(this._table_elem);
-    }
     var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     var row = document.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
     if (row)
@@ -351,8 +349,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     if (!event.target.get_ancestor('.edit_mode'))
     {
       this.mode = MODE_EDIT;
-      this._sortable_table.restore_columns(this._table_elem);
-      // can't directly work with target because restore_columns has renewed it
       var objectref = target.getAttribute("data-object-id");
       var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
       var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");
