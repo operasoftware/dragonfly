@@ -5,8 +5,13 @@
  */
 cls.Stylesheets = function()
 {
+  if (cls.Stylesheets._instance)
+    return cls.Stylesheets._instance;
+  cls.Stylesheets._instance = this;
+
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
+  this._element_style = cls.ElementStyle.get_instance();
   this._templates = new StylesheetTemplates();
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._index_map = null;
@@ -15,16 +20,15 @@ cls.Stylesheets = function()
   this._color_index = 0;
   this._is_getting_index_map = false;
 
-  var SHEET_OBJECT_ID = 0; // TODO use the right obj-id
+  var SHEET_OBJECT_ID = 0;
   var SHEET_HREF = 2;
   var SHEET_TITLE = 3;
-  var HAS_MATCHING_SEARCH_PROPS = 11;
 
-  var ORIGIN_USER_AGENT = cls.Stylesheets.ORIGIN_USER_AGENT;
-  var ORIGIN_LOCAL = cls.Stylesheets.ORIGIN_LOCAL;
-  var ORIGIN_AUTHOR = cls.Stylesheets.ORIGIN_AUTHOR;
-  var ORIGIN_ELEMENT = cls.Stylesheets.ORIGIN_ELEMENT;
-  var ORIGIN_SVG = cls.Stylesheets.ORIGIN_SVG;
+  var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
+  var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
+  var ORIGIN_AUTHOR = cls.Stylesheets.origins.ORIGIN_AUTHOR;
+  var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
+  var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
   var special_default_values = {};
 
@@ -50,8 +54,8 @@ cls.Stylesheets = function()
     var template = [];
     // set_props is used to force the display if a given property is set
     // also if it has the initial value
-    var set_props = window.elementStyle.get_set_props();
-    var search_term = window.elementStyle.get_search_term();
+    var set_props = this._element_style.get_set_props();
+    var search_term = this._element_style.get_search_term();
     var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
 
     for (var i = 0; i < this._index_map.length; i++)
@@ -80,7 +84,7 @@ cls.Stylesheets = function()
   this.pretty_print_cascaded_style = function(data)
   {
     var template = [];
-    var search_term = window.elementStyle.get_search_term();
+    var search_term = this._element_style.get_search_term();
 
     for (var i = 0, node_style; node_style = data[i]; i++)
     {
@@ -115,7 +119,7 @@ cls.Stylesheets = function()
   this._pretty_print_rule = function(origin, obj_id, element_name, rule)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
-    var rt_id = window.elementStyle.get_rt_id();
+    var rt_id = this._element_style.get_rt_id();
     switch (origin)
     {
     case ORIGIN_USER_AGENT:
@@ -273,9 +277,16 @@ cls.Stylesheets = function()
   window.messages.addListener('reset-state', this._on_reset_state.bind(this));
 };
 
-cls.Stylesheets.ORIGIN_USER_AGENT = 1; // default
-cls.Stylesheets.ORIGIN_LOCAL = 2; // user
-cls.Stylesheets.ORIGIN_AUTHOR = 3; // author
-cls.Stylesheets.ORIGIN_ELEMENT = 4; // inline
-cls.Stylesheets.ORIGIN_SVG = 5; // SVG presentation attribute
+cls.Stylesheets.get_instance = function()
+{
+  return new cls.Stylesheets();
+};
+
+cls.Stylesheets.origins = {
+  ORIGIN_USER_AGENT: 1, // default
+  ORIGIN_LOCAL: 2, // user
+  ORIGIN_AUTHOR: 3, // author
+  ORIGIN_ELEMENT: 4, // inline
+  ORIGIN_SVG: 5 // SVG presentation attribute
+};
 

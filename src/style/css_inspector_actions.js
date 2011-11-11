@@ -10,6 +10,7 @@ cls.CSSInspectorActions = function(id)
 
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
+  this._element_style = cls.ElementStyle.get_instance();
   this._active_container = null;
   this._target = null;
 
@@ -113,7 +114,7 @@ cls.CSSInspectorActions = function(id)
       if (!this.editor.onclick(event))
         return false;
       this.mode = MODE_DEFAULT;
-      window.elementStyle.update();
+      this._element_style.update();
     }
     return true;
   }.bind(this);
@@ -214,9 +215,9 @@ cls.CSSInspectorActions = function(id)
   this.remove_property_css = function(rt_id, rule_id, property, callback)
   {
     property = this.normalize_property(property);
-    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    var disabled_style_dec = this._element_style.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-      window.elementStyle.remove_property(disabled_style_dec, property);
+      this._element_style.remove_property(disabled_style_dec, property);
 
     var script = "object.style.removeProperty(\"" + property + "\");";
 
@@ -235,9 +236,9 @@ cls.CSSInspectorActions = function(id)
   this.remove_property_svg = function(rt_id, rule_id, property, callback)
   {
     property = this.normalize_property(property);
-    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[rule_id];
+    var disabled_style_dec = this._element_style.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-      window.elementStyle.remove_property(disabled_style_dec, property);
+      this._element_style.remove_property(disabled_style_dec, property);
 
     var script = "object.removeAttribute(\"" + property + "\");";
 
@@ -278,7 +279,7 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var decl = window.elementStyle.get_declaration(rule_id, new_property);
+    var decl = this._element_style.get_declaration(rule_id, new_property);
     if (decl)
     {
       script += "object.style.setProperty(\"" +
@@ -314,7 +315,7 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var decl = window.elementStyle.get_declaration(rule_id, new_property);
+    var decl = this._element_style.get_declaration(rule_id, new_property);
     if (decl)
     {
       script += "object.setAttribute(\"" +
@@ -337,15 +338,15 @@ cls.CSSInspectorActions = function(id)
    */
   this.enable_property = function enable_property(rt_id, rule_id, obj_id, property)
   {
-    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
-    var disabled_style_dec = window.elementStyle.disabled_style_dec_list[id];
-    var style_dec = window.elementStyle.remove_property(disabled_style_dec, property);
+    var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
+    var disabled_style_dec = this._element_style.disabled_style_dec_list[id];
+    var style_dec = this._element_style.remove_property(disabled_style_dec, property);
     var declarations = style_dec.declarations;
     if (declarations)
     {
       this.set_property(rt_id, rule_id || obj_id, [declarations[0].property,
                         declarations[0].value,
-                        declarations[0].priority], null, window.elementStyle.update);
+                        declarations[0].priority], null, this._element_style.update);
     }
   };
 
@@ -356,18 +357,18 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_property = function disable_property(rt_id, rule_id, obj_id, property)
   {
-    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
+    var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var style_dec = rule_id
-                  ? window.elementStyle.get_rule_by_id(rule_id)
-                  : window.elementStyle.get_inline_style_dec_by_id(obj_id);
-    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
+                  ? this._element_style.get_rule_by_id(rule_id)
+                  : this._element_style.get_inline_style_dec_by_id(obj_id);
+    var disabled_style_dec_list = this._element_style.disabled_style_dec_list;
 
     if (!disabled_style_dec_list[id])
-      disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
+      disabled_style_dec_list[id] = this._element_style.get_new_style_dec();
 
-    this.remove_property(rt_id, rule_id || obj_id, property, window.elementStyle.update);
-    window.elementStyle.copy_property(style_dec, disabled_style_dec_list[id], property);
-    window.elementStyle.remove_property(style_dec, property);
+    this.remove_property(rt_id, rule_id || obj_id, property, this._element_style.update);
+    this._element_style.copy_property(style_dec, disabled_style_dec_list[id], property);
+    this._element_style.remove_property(style_dec, property);
   };
 
   /**
@@ -375,27 +376,27 @@ cls.CSSInspectorActions = function(id)
    */
   this.disable_all_properties = function disable_property(rt_id, rule_id, obj_id)
   {
-    var id = rule_id || window.elementStyle.get_inline_obj_id(obj_id);
+    var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var style_dec = rule_id
-                  ? window.elementStyle.get_rule_by_id(rule_id)
-                  : window.elementStyle.get_inline_style_dec_by_id(obj_id);
-    var disabled_style_dec_list = window.elementStyle.disabled_style_dec_list;
+                  ? this._element_style.get_rule_by_id(rule_id)
+                  : this._element_style.get_inline_style_dec_by_id(obj_id);
+    var disabled_style_dec_list = this._element_style.disabled_style_dec_list;
 
     if (!disabled_style_dec_list[id])
-      disabled_style_dec_list[id] = window.elementStyle.get_new_style_dec();
+      disabled_style_dec_list[id] = this._element_style.get_new_style_dec();
 
-    if (window.elementStyle.is_some_declaration_enabled(style_dec))
+    if (this._element_style.is_some_declaration_enabled(style_dec))
     {
       while (style_dec.declarations.length)
       {
         var property = style_dec.declarations[0].property;
-        window.elementStyle.copy_property(style_dec,
+        this._element_style.copy_property(style_dec,
                                           disabled_style_dec_list[id],
                                           property);
-        window.elementStyle.remove_property(style_dec, property);
+        this._element_style.remove_property(style_dec, property);
       }
 
-      var tag = this._tag_manager.set_callback(null, window.elementStyle.update);
+      var tag = this._tag_manager.set_callback(null, this._element_style.update);
       var msg = [rt_id, 0, 0, "object.style.cssText='';", [["object", rule_id]]];
       this._es_debugger.requestEval(tag, msg);
     }
@@ -591,9 +592,9 @@ cls.CSSInspectorActions = function(id)
     this.mode = MODE_DEFAULT;
     // this.editor.escape() will reset the style
     // to ensure the command to reset the style is dispatched before
-    // elementStyle queries again the current style the update call
+    // ElementStyle queries again the current style the update call
     // is done asynchronously
-    setTimeout(window.elementStyle.update, 1);
+    setTimeout(this._element_style.update, 1);
 
     return false;
   }.bind(this);
@@ -603,7 +604,7 @@ cls.CSSInspectorActions = function(id)
     if (!this.editor.enter(event))
     {
       this.mode = MODE_DEFAULT;
-      window.elementStyle.update();
+      this._element_style.update();
       if (!this._target.textContent)
       {
         var cur_target = this._target;
@@ -631,7 +632,7 @@ cls.CSSInspectorActions = function(id)
       ele = ele.parentNode;
     }
     var prop = ele.querySelector(".css-property").textContent;
-    this.remove_property(rt_id, rule_id, prop, window.elementStyle.update);
+    this.remove_property(rt_id, rule_id, prop, this._element_style.update);
   }.bind(this);
 
   this._handlers["disable-all-properties"] = function(event, target)

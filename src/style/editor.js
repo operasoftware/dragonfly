@@ -1,13 +1,11 @@
-﻿ /**
-  * @constructor
-  */
+﻿// assert: a element wich is editable has a monospace font
+// TODO make it more general so it can be used for other views then just the css inspector
+// TODO make this a subclass of BaseEditor
+/**
+ * @constructor
+ */
 var Editor = function(actions)
 {
-  // assert: a element wich is editable has a monospace font
-
-  // TODO make it more general so it can be used for other views then just the css inspector
-
-  // TODO make this a subclass of BaseEditor
   var SELECTION = 1;
   var TOKEN = 2;
   var VALUE = 3;
@@ -23,12 +21,6 @@ var Editor = function(actions)
   this.MODE_CSS = 1;
   this.MODE_SVG = 2;
 
-  this.base_style = {
-    'font-family': '',
-    'line-height': 0,
-    'font-size': 0
-  };
-
   this.char_width = 0;
   this.line_height = 0;
   this.textarea_container = null;
@@ -42,9 +34,17 @@ var Editor = function(actions)
   this.context_edit_mode = this.MODE_CSS;
   this.colors = new Color();
 
+  this._stylesheets = cls.Stylesheets.get_instance();
+  this._element_style = cls.ElementStyle.get_instance();
   this._actions = actions;
   this._tab_context_value = '';
   this._tab_context_tokens = null;
+
+  this.base_style = {
+    'font-family': '',
+    'line-height': 0,
+    'font-size': 0
+  };
 
   this.get_base_style = function(ele)
   {
@@ -349,12 +349,12 @@ var Editor = function(actions)
 
     if (this.context_rule_id)
     {
-      this.saved_style_dec = window.elementStyle.get_rule_by_id(this.context_rule_id);
+      this.saved_style_dec = this._element_style.get_rule_by_id(this.context_rule_id);
     }
     else
     {
       this.context_rule_id = parseInt(ele.get_attr('parent-node-chain', 'obj-id'));
-      this.saved_style_dec = window.elementStyle.get_inline_style_dec_by_id(this.context_rule_id);
+      this.saved_style_dec = this._element_style.get_inline_style_dec_by_id(this.context_rule_id);
     }
 
     this.context_cur_text_content = this.textarea.value = ele.textContent;
@@ -605,7 +605,7 @@ var Editor = function(actions)
   {
     if (!this.property_list)
     {
-      this.property_list = stylesheets.get_sorted_properties();
+      this.property_list = this._stylesheets.get_sorted_properties();
     }
     return this._get_matches_from_list(this.property_list,
         this.textarea.value.slice(this._tab_context_tokens[1], cur_start));
@@ -686,7 +686,7 @@ var Editor = function(actions)
       {
         this._actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
       }
-      decl_ele.clearAndRender(window.stylesheets.create_declaration(
+      decl_ele.clearAndRender(this._stylesheets.create_declaration(
         props[INDEX],
         props[VALUE],
         props[PRIORITY],
@@ -695,7 +695,7 @@ var Editor = function(actions)
     }
     else if (props[VALUE] === "") // If someone deletes just the value and then submits, just re-display it
     {
-      decl_ele.clearAndRender(window.stylesheets.create_declaration(props[0],
+      decl_ele.clearAndRender(this._stylesheets.create_declaration(props[0],
         this.context_cur_value, this.context_cur_priority, disabled));
     }
     else
@@ -715,7 +715,7 @@ var Editor = function(actions)
       var prop = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('div'), this.textarea_container.parentElement);
 
-      prop.clearAndRender(window.stylesheets.create_declaration(
+      prop.clearAndRender(this._stylesheets.create_declaration(
         props[INDEX],
         props[VALUE],
         props[PRIORITY],
@@ -752,7 +752,7 @@ var Editor = function(actions)
       if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
       {
         this.textarea_container.parentElement.clearAndRender(
-          window.stylesheets.create_declaration(
+          this._stylesheets.create_declaration(
             props[INDEX],
             this.context_cur_value,
             this.context_cur_priority,
@@ -786,7 +786,7 @@ var Editor = function(actions)
         var decl = this.textarea_container.get_ancestor(".css-rule").
           insertBefore(decl_ele, this.textarea_container.parentElement);
         decl.clearAndRender(
-          window.stylesheets.create_declaration(
+          this._stylesheets.create_declaration(
             props[INDEX],
             props[VALUE],
             props[PRIORITY],
@@ -803,7 +803,7 @@ var Editor = function(actions)
       else
       {
         this.textarea_container.parentElement.clearAndRender(
-          window.stylesheets.create_declaration(
+          this._stylesheets.create_declaration(
             props[INDEX],
             props[VALUE],
             props[PRIORITY],
@@ -827,7 +827,7 @@ var Editor = function(actions)
     {
       this.textarea.value = this.context_cur_text_content;
       this.textarea_container.parentElement.clearAndRender(
-        window.stylesheets.create_declaration(
+        this._stylesheets.create_declaration(
           this.context_cur_prop,
           this.context_cur_value,
           this.context_cur_priority,

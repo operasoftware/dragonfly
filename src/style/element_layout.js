@@ -6,6 +6,8 @@
 
 cls.ElementLayout = function()
 {
+  this._stylesheets = cls.Stylesheets.get_instance();
+
   const
   PADDING_TOP = 0,
   PADDING_RIGHT = 1,
@@ -261,14 +263,14 @@ cls.ElementLayout = function()
     rt_id = __selectedElement.rt_id,
     obj_id = __selectedElement.obj_id;
     
-    if( stylesheets.has_stylesheets_runtime(rt_id) )
+    if( this._stylesheets.has_stylesheets_runtime(rt_id) )
     {
       var tag = tagManager.set_callback(null, handleGetMetricsData, [rt_id, obj_id, org_args]);
       services['ecmascript-debugger'].requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
-      stylesheets.get_stylesheets(__selectedElement.rt_id, arguments);
+      this._stylesheets.get_stylesheets(__selectedElement.rt_id, arguments);
     }
     return null;
   }

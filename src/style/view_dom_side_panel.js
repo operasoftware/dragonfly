@@ -7,7 +7,7 @@ cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
   {
     this._super_createView(container);
     var quick_find = this.getToolbarControl(container, 'css-inspector-text-search');
-    var search_term = elementStyle.get_search_term();
+    var search_term = cls.ElementStyle.get_instance().get_search_term();
     if (quick_find && search_term)
     {
       quick_find.value = search_term;
@@ -20,6 +20,7 @@ cls.DOMSidePanelView.prototype = SidePanelView.prototype;
 
 cls.DOMSidePanelView.create_ui_widgets = function()
 {
+  var element_style = cls.ElementStyle.get_instance();
 
   new ToolbarConfig
   (
@@ -133,19 +134,19 @@ cls.DOMSidePanelView.create_ui_widgets = function()
   {
     if (is_active)
     {
-      window.elementStyle.add_pseudo_item(pseudo_item);
+      element_style.add_pseudo_item(pseudo_item);
     }
     else
     {
-      window.elementStyle.remove_pseudo_item(pseudo_item);
+      element_style.remove_pseudo_item(pseudo_item);
     }
-    window.elementStyle.update();
+    element_style.update();
   }
 
   ["link", "visited", "hover", "active", "focus", "selection"].forEach(function(pseudo_item) {
     if (window.settings["css-inspector"].get(pseudo_item))
     {
-      window.elementStyle.add_pseudo_item(pseudo_item);
+     element_style.add_pseudo_item(pseudo_item);
     }
   });
 

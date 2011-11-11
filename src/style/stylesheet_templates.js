@@ -5,8 +5,8 @@
  */
 var StylesheetTemplates = function()
 {
-  var ORIGIN_USER_AGENT = cls.Stylesheets.ORIGIN_USER_AGENT;
-  var ORIGIN_LOCAL = cls.Stylesheets.ORIGIN_LOCAL;
+  var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
+  var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
 
   this._color_properties = {
     'fill': true,
@@ -66,16 +66,18 @@ var StylesheetTemplates = function()
   {
     return [
       "div",
-        ["span",
-           window.helpers.basename(sheet.href) +
-           (rule.lineNumber ? ":" + rule.lineNumber : ""),
-         "class", "rule-description internal-link",
-         "rt-id", String(rt_id),
-         "index", String(sheet.index),
-         "handler", "open-resource-tab",
-         "data-resource-url", sheet.href,
-         "data-resource-line-number", String(rule.lineNumber || 0)
-        ],
+        (sheet
+         ? ["span",
+              window.helpers.basename(sheet.href) +
+              (rule.lineNumber ? ":" + rule.lineNumber : ""),
+            "class", "rule-description internal-link",
+            "rt-id", String(rt_id),
+            "index", String(sheet.index),
+            "handler", "open-resource-tab",
+            "data-resource-url", sheet.href,
+            "data-resource-line-number", String(rule.lineNumber || 0)
+           ]
+         : []), // TODO: always assume that this is added via Dragonfly? If so, show some text here
         ["span",
            rule.selector,
          "class", "css-selector"

@@ -25,16 +25,18 @@ var Rule = function(rule)
   }
 };
 
-// TODO categories and everything related needs to be removed completely
 /**
  * @constructor
  */
 cls.ElementStyle = function()
 {
-  var self = this; // TODO: get rid of
+  if (cls.ElementStyle._instance)
+    return cls.ElementStyle._instance;
+  cls.ElementStyle._instance = this;
 
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
+  this._stylesheets = cls.Stylesheets.get_instance();
   this._style_declarations = [];
   this._has_data = false;
   this._selected_element = null;
@@ -44,20 +46,6 @@ cls.ElementStyle = function()
   this._rt_id = null;
   this._obj_id = null;
   this._views = ['css-comp-style', 'css-inspector'];
-  this._categories = [
-    {
-      id: 'computedStyle',
-      name: ui_strings.M_VIEW_LABEL_COMPUTED_STYLE,
-      is_unfolded: true,
-      handler: null
-    },
-    {
-      id: 'css',
-      name: ui_strings.M_VIEW_LABEL_STYLES,
-      is_unfolded: true,
-      handler: 'edit-css'
-    },
-  ];
 
   /**
    * An object with rule IDs as keys and values as StyleDeclarations with the disabled
@@ -368,12 +356,11 @@ cls.ElementStyle = function()
     {
       this._selected_element = {
         rt_id: msg.rt_id,
-        obj_id: msg.obj_id,
-        req_type: (this._categories[COMP_STYLE].is_unfolded || this._categories[CSS].is_unfolded) && REQ_TYPE_CSS || 0
+        obj_id: msg.obj_id
       };
       var get_data = false;
       for (var i = 0, view_id; (view_id = this._views[i]) && !(get_data = window.views[view_id].isvisible()); i++);
-      if (get_data && this._selected_element.req_type)
+      if (get_data)
       {
         this._pseudo_element_list = msg.pseudo_element ? [this._pseudo_item_map[msg.pseudo_element]] : [];
         this._get_data(msg.rt_id, msg.obj_id);
@@ -391,12 +378,13 @@ cls.ElementStyle = function()
     }
   };
 
-  // TODO: self -> this
+  // TODO: This whole stylesheet handling has to be rewritten
+  var self = this;
   this._get_data = function(rt_id, obj_id)
   {
     self._rt_id = rt_id;
     self._obj_id = obj_id;
-    if (window.stylesheets.has_stylesheets_runtime(rt_id))
+    if (self._stylesheets.has_stylesheets_runtime(rt_id))
     {
       var tag = self._tag_manager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)];
@@ -404,7 +392,7 @@ cls.ElementStyle = function()
     }
     else
     {
-      window.stylesheets.get_stylesheets(rt_id, arguments);
+      self._stylesheets.get_stylesheets(rt_id, arguments);
     }
   };
 
@@ -462,5 +450,10 @@ cls.ElementStyle = function()
   {
     this._search_delayed(target.value);
   }.bind(this);
+};
+
+cls.ElementStyle.get_instance = function()
+{
+  return new cls.ElementStyle();
 };
 

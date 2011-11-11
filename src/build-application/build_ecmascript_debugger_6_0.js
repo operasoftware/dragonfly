@@ -114,11 +114,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMSearchView.prototype = ViewBase;
     new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
 
-    /* Stylesheets */
-    window.stylesheets = new cls.Stylesheets();
-
     /* CSS inspector */
-    window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', 
                              ui_strings.M_VIEW_LABEL_STYLES, 
