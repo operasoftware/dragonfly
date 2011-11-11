@@ -51,7 +51,7 @@ var StylesheetTemplates = function()
          "class", "rule-description"
         ],
         ["span",
-           helpers.escapeTextHtml(selector),
+           selector,
          "class", "css-selector"
         ],
         " {\n",
@@ -67,17 +67,17 @@ var StylesheetTemplates = function()
     return [
       "div",
         ["span",
-           helpers.escapeTextHtml(helpers.basename(sheet.href)) +
+           window.helpers.basename(sheet.href) +
            (rule.lineNumber ? ":" + rule.lineNumber : ""),
          "class", "rule-description internal-link",
          "rt-id", String(rt_id),
          "index", String(sheet.index),
          "handler", "open-resource-tab",
-         "data-resource-url", helpers.escapeAttributeHtml(sheet.href),
+         "data-resource-url", sheet.href,
          "data-resource-line-number", String(rule.lineNumber || 0)
         ],
         ["span",
-           helpers.escapeTextHtml(rule.selector),
+           rule.selector,
          "class", "css-selector"
         ],
         " {\n",
@@ -136,7 +136,7 @@ var StylesheetTemplates = function()
         ],
         ": ",
         ["span",
-           helpers.escapeTextHtml(value),
+           value,
          "class", "css-property-value"
         ],
         ";",
@@ -164,7 +164,6 @@ var StylesheetTemplates = function()
   // TODO: this can simply take a declaration as first argument
   this.prop_value = function(prop, value, priority, is_disabled, is_editable)
   {
-    value = helpers.escapeTextHtml(value);
     return [
       (is_editable
        ? ["input",
