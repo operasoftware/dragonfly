@@ -426,6 +426,8 @@ cls.ElementStyle = function()
         for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
           var rule = new Rule(node_style);
+          CssShorthandResolver.get_instance().resolve(rule.declarations);
+
           if (rule.origin != ORIGIN_USER_AGENT)
           {
             if (disabled_style_dec_list)

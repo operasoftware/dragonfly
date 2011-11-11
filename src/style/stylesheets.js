@@ -143,8 +143,6 @@ cls.Stylesheets = function()
 
   this._pretty_print_declaration_list = function(rule)
   {
-    //CssShorthandResolver.get_instance().resolve(rule.declarations);
-
     rule.declarations.sort(function(a, b) {
       return a.property > b.property ? 1 : -1; // The same property can never appear
     });
