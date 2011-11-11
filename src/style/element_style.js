@@ -35,11 +35,9 @@ cls.ElementStyle = function()
 
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
-  this._categories_data = [];
   this._style_declarations = [];
   this._has_data = false;
   this._selected_element = null;
-  this._search_map = [];
   this._search_term = "";
   this._set_props = [];
   this._current_rt_id = null; // TODO: always the same as this._rt_id?
@@ -346,7 +344,6 @@ cls.ElementStyle = function()
   {
     this._selected_element = null;
     this._set_props = [];
-    this._search_map = [];
     this._search_term = '';
   };
 
@@ -448,9 +445,6 @@ cls.ElementStyle = function()
           node_style_list.styleList[j] = rule;
         }
       }
-
-      if (this._search_term)
-        this._do_search(this._search_term);
 
       for (var i = 0, view_id; view_id = this._views[i]; i++)
       {
