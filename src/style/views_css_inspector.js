@@ -10,8 +10,7 @@ cls.CSSInspectorView = function(id, name, container_class)
   {
     var element_style = cls.ElementStyle.get_instance();
     var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
-    var cat_index = 1;
-    var data = element_style.get_category_data(cat_index);
+    var data = element_style.get_style();
     if (data)
     {
       // stylesheets.prettyPrintCat call will also ensure

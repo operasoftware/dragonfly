@@ -38,31 +38,21 @@ cls.ElementStyle = function()
   this._tag_manager = cls.TagManager.get_instance();
   this._stylesheets = cls.Stylesheets.get_instance();
   this._style_declarations = [];
+  this._rt_id = null;
+  this._obj_id = null;
   this._has_data = false;
   this._selected_element = null;
   this._search_term = "";
   this._set_props = [];
-  this._current_rt_id = null; // TODO: always the same as this._rt_id?
-  this._rt_id = null;
-  this._obj_id = null;
   this._views = ['css-comp-style', 'css-inspector'];
 
-  /**
-   * An object with rule IDs as keys and values as StyleDeclarations with the disabled
-   * properties for that rule
-   */
   this.disabled_style_dec_list = {};
 
-  var COMP_STYLE = 0;
-  var CSS = 1;
-  var REQ_TYPE_CSS = 2;
-  var SEARCH_DELAY = 50;
-
-  var ORIGIN_USER_AGENT = 1;
-  var ORIGIN_LOCAL = 2;
-  var ORIGIN_AUTHOR = 3;
-  var ORIGIN_ELEMENT = 4;
-  var ORIGIN_SVG = 5;
+  var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
+  var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
+  var ORIGIN_AUTHOR = cls.Stylesheets.origins.ORIGIN_AUTHOR;
+  var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
+  var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
   // Pseudo classes/elements
   var NONE = 0;
@@ -95,15 +85,10 @@ cls.ElementStyle = function()
     "selection": SELECTION
   };
 
-  this.get_category_data = function(index)
+  this.get_style = function()
   {
     if (this._has_data)
-    {
-      if (index == COMP_STYLE)
-        return window.helpers.copy_object(this._style_declarations.computedStyleList);
-      else
-        return window.helpers.copy_object(this._style_declarations.nodeStyleList);
-    }
+      return window.helpers.copy_object(this._style_declarations.nodeStyleList);
 
     if (this._selected_element)
       this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
@@ -113,12 +98,18 @@ cls.ElementStyle = function()
 
   this.get_computed_style = function()
   {
-    return this.get_category_data(COMP_STYLE);
+    if (this._has_data)
+      return window.helpers.copy_object(this._style_declarations.computedStyleList);
+
+    if (this._selected_element)
+      this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
+
+    return null;
   };
 
   this.get_rt_id = function()
   {
-    return this._current_rt_id;
+    return this._rt_id;
   };
 
   this.get_set_props = function()
@@ -335,11 +326,6 @@ cls.ElementStyle = function()
     this._search_term = '';
   };
 
-  this._search_delayed = function(value)
-  {
-    window.setTimeout(this._search.bind(this), SEARCH_DELAY, value);
-  };
-
   this._search = function(search_term)
   {
     if (this._search_term != search_term)
@@ -358,8 +344,11 @@ cls.ElementStyle = function()
         rt_id: msg.rt_id,
         obj_id: msg.obj_id
       };
-      var get_data = false;
-      for (var i = 0, view_id; (view_id = this._views[i]) && !(get_data = window.views[view_id].isvisible()); i++);
+
+      var get_data = this._views.some(function(view_id) {
+        return window.views[view_id].isvisible();
+      });
+
       if (get_data)
       {
         this._pseudo_element_list = msg.pseudo_element ? [this._pseudo_item_map[msg.pseudo_element]] : [];
@@ -402,7 +391,6 @@ cls.ElementStyle = function()
     {
       this._style_declarations = new cls.EcmascriptDebugger["6.4"].CssStyleDeclarations(message);
       this._has_data = true;
-      this._current_rt_id = rt_id;
 
       var disabled_style_dec_list = this.disabled_style_dec_list;
 
@@ -448,7 +436,7 @@ cls.ElementStyle = function()
 
   window.eventHandlers.input['css-inspector-text-search'] = function(event, target)
   {
-    this._search_delayed(target.value);
+    this._search(target.value);
   }.bind(this);
 };
 

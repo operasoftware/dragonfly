@@ -17,7 +17,6 @@ cls.Stylesheets = function()
   this._index_map = null;
   this._sorted_index_map = [];
   this._initial_values = [];
-  this._color_index = 0;
   this._is_getting_index_map = false;
 
   var SHEET_OBJECT_ID = 0;
@@ -30,23 +29,81 @@ cls.Stylesheets = function()
   var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
   var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
-  var special_default_values = {};
-
-  special_default_values["border-bottom-color"] =
-  special_default_values["border-left-color"] =
-  special_default_values["border-right-color"] =
-  special_default_values["border-top-color"] = function(data, value)
+  this._special_defaults = {};
+  this._special_defaults["border-color"] =
+  this._special_defaults["border-bottom-color"] =
+  this._special_defaults["border-left-color"] =
+  this._special_defaults["border-right-color"] =
+  this._special_defaults["border-top-color"] = function(data, value)
   {
-    return value == data[this._color_index];
+    return value == data[this._index_map.indexOf("color")];
+  }.bind(this);
+
+  this.create_declaration = function(prop, value, priority, is_disabled)
+  {
+    // TODO: call the template directly, need to fox in editor.js too
+    return this._templates.prop_value(prop, value, priority, is_disabled, true);
   };
 
-  this._on_reset_state = function()
+  this.get_stylesheets = function(rt_id, org_args)
   {
-    this._sheets = {};
-    this._index_map = null;
-    this._sorted_index_map = [];
-    this._initial_values = [];
-    this._color_index = 0;
+    if (this._sheets[rt_id])
+      return this._sheets[rt_id];
+
+    if (org_args && runtime_onload_handler.check(rt_id, org_args))
+    {
+      if (!this._index_map && !this._is_getting_index_map)
+      {
+        this._is_getting_index_map = true;
+        var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), []);
+        this._es_debugger.requestCssGetIndexMap(tag);
+      }
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
+      this._es_debugger.requestCssGetAllStylesheets(tag, [rt_id]);
+      return null;
+    }
+  };
+
+  this.has_stylesheets_runtime = function(rt_id)
+  {
+    return Boolean(this._sheets[rt_id]);
+  };
+
+  this.get_sheet_with_obj_id = function(rt_id, obj_id)
+  {
+    if (this._sheets[rt_id])
+    {
+      for (var i = 0, sheet; sheet = this._sheets[rt_id][i]; i++)
+      {
+        if (sheet[SHEET_OBJECT_ID] == obj_id)
+        {
+          return {
+            index: i,
+            href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
+            name: (sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
+                   || sheet[SHEET_TITLE]
+                   || 'stylesheet ' + i)
+          };
+        }
+      }
+      return null;
+    }
+  };
+
+  this.get_sorted_properties = function()
+  {
+    var props = [];
+    var dashes = [];
+
+    for (var i = 0; i < this._index_map.length; i++)
+    {
+      var value = this._index_map[this._sorted_index_map[i]];
+      if (value[0] == "-")
+        dashes.push(value);
+      else
+        props.push(value);
+    }
+    return props.concat(dashes);
   };
 
   this.pretty_print_computed_style = function(data)
@@ -67,7 +124,7 @@ cls.Stylesheets = function()
         hide_initial_value
         && value
         && value != this._initial_values[index]
-        && !(prop in special_default_values && special_default_values[prop](data, value))
+        && !(this._special_defaults.hasOwnProperty(prop) && this._special_defaults[prop](data, value))
         || false;
       var display =
         (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
@@ -158,57 +215,6 @@ cls.Stylesheets = function()
     }, this);
   };
 
-  this.create_declaration = function(prop, value, priority, is_disabled)
-  {
-    // TODO: call the template directly, need to fox in editor.js too
-    return this._templates.prop_value(prop, value, priority, is_disabled, true);
-  };
-
-  this.get_stylesheets = function(rt_id, org_args)
-  {
-    if (this._sheets[rt_id])
-      return this._sheets[rt_id];
-
-    if (org_args && runtime_onload_handler.check(rt_id, org_args))
-    {
-      if (!this._index_map && !this._is_getting_index_map)
-      {
-        this._is_getting_index_map = true;
-        var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), []);
-        this._es_debugger.requestCssGetIndexMap(tag);
-      }
-      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
-      this._es_debugger.requestCssGetAllStylesheets(tag, [rt_id]);
-      return null;
-    }
-  };
-
-  this.has_stylesheets_runtime = function(rt_id)
-  {
-    return this._sheets[rt_id] && true || false; // TODO: just use Boolean(this._sheets[rt_id])?
-  };
-
-  this.get_sheet_with_obj_id = function(rt_id, obj_id)
-  {
-    if (this._sheets[rt_id])
-    {
-      for (var i = 0, sheet; sheet = this._sheets[rt_id][i]; i++)
-      {
-        if (sheet[SHEET_OBJECT_ID] == obj_id)
-        {
-          return {
-            index: i,
-            href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
-            name: (sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
-                   || sheet[SHEET_TITLE]
-                   || 'stylesheet ' + i)
-          };
-        }
-      }
-      return null;
-    }
-  };
-
   this._handle_get_index_map = function(status, message, org_args)
   {
     var NAME_LIST = 0;
@@ -222,16 +228,13 @@ cls.Stylesheets = function()
     {
       temp[i] = {index: i, prop: prop};
       this._initial_values[i] = window.css_initial_values[prop];
-
-      if (prop == 'color')
-        this._color_index = i;
     }
 
     temp.sort(function(a, b) {
       return a.prop > b.prop ? 1 : -1;
     });
 
-    for (i = 0; prop = temp[i]; i++)
+    for (var i = 0; prop = temp[i]; i++)
     {
       this._sorted_index_map[i] = prop.index;
     }
@@ -258,20 +261,12 @@ cls.Stylesheets = function()
     }
   };
 
-  this.get_sorted_properties = function()
+  this._on_reset_state = function()
   {
-    var props = [];
-    var dashes = [];
-
-    for (var i = 0; i < this._index_map.length; i++)
-    {
-      var value = this._index_map[this._sorted_index_map[i]];
-      if (value[0] == "-")
-        dashes.push(value);
-      else
-        props.push(value);
-    }
-    return props.concat(dashes);
+    this._sheets = {};
+    this._index_map = null;
+    this._sorted_index_map = [];
+    this._initial_values = [];
   };
 
   window.messages.addListener('reset-state', this._on_reset_state.bind(this));
