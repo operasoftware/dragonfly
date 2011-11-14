@@ -14,6 +14,10 @@
   position: relative;
 }
 
+.network_logger {
+  min-width: 460px;
+}
+
 #network-url-list
 {
   float: left;
@@ -27,9 +31,14 @@
   width: 60%;
 }
 
-.network-data-container {
+.network-data-container.graphs {
   position: relative;
   top: 44px;
+}
+
+.network-data-container.data {
+  position: relative;
+  top: 43px;
 }
 
 /* Network log / Overview */
@@ -68,17 +77,27 @@
   padding-top: 10px;
 }
 
-.network-log-url-list li {
+.network-log-url-list li
+{
   height: 19px;
-  padding: 4px 0px 1px 8px;
+  padding: 5px 0 0 8px;
 }
 
-.network-log-url-list li:nth-child(odd) {
-  background-color: #f8f8f8;
+.network-log-url-list:last-child,
+.network-graph-row:last-of-type
+{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.network-log-url-list li:nth-child(even),
+.network-graph-row:nth-child(odd)
+{
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .network-log-url-list li.hovered,
-#graph div.hovered {
+#graph div.hovered,
+.network_logger .network-data-table-container .sortable-table > tr.hovered > td {
   background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
@@ -93,6 +112,8 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   vertical-align: middle;
+  display: inline-block;
+  max-width: 88%;
 }
 
 .network-log-url-list .log-url-list-status {
@@ -112,14 +133,22 @@
   color: #fff;
 }
 
-.network_logger tabs { 
+.network_logger tabs
+{ 
   top: 6px; /* have to do that because otherwise I get -1000px from ui.css */
   width: 60%;
   padding-right: 0;
 }
 
-.network_logger tab.active { 
+.network_logger tab.active
+{ 
   box-shadow: none;
+}
+
+.network_logger .sortable-table tr td, .network_logger .sortable-table tr th
+{
+  padding-bottom: 5px;
+  padding-top: 6px;
 }
 
 .response-body-content textarea
@@ -148,6 +177,7 @@
   right: 0;
   top: 0;
   bottom: 0;
+  z-index: 2;
   left: 160px;
   overflow: auto;
   padding: 15px 20px 25px 20px;
@@ -273,26 +303,18 @@
 
 #graph
 {
-  background-image: -o-linear-gradient(top,
-                                       #fefefe 0px,
-                                       #fefefe 17px,
-                                       transparent 40px), /* fade the bg behind time scale */
-                    -o-linear-gradient(0deg,
-                                       #e5e5e5 0px, /* e5e5e5 */
+  background-image: -o-linear-gradient(0deg,
+                                       #e5e5e5 0px,
                                        #e5e5e5 1px,
-                                       transparent 1px), /* time scale */
-                    -o-linear-gradient(top,
-                                       #fefefe 0px,
-                                       #fefefe 25px,
-                                       #f8f8f8 25px,
-                                       #f8f8f8 50px); /* zebra */
+                                       transparent 1px); /* time scale */
 
   /* background-size is duplicated in templates.network_log_graph to replace 41px */
-  background-size: auto, 41px 100%, 50px 50px;
-  background-position: 0% 0%, -1px 0%, 0% 0%;
+  background-size: 41px 100%;
+  background-position: -1px 0%;
   background-repeat: repeat;
 }
 
+.network-timeline-row,
 .network-graph-row
 {
   height: 24px;

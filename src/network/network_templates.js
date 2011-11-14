@@ -89,11 +89,15 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
-templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width)
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
 {
+  var viewmode_render = templates["network_viewmode_" + selected_viewmode];
+  if (!viewmode_render)
+    viewmode_render = templates["network_viewmode_graphs"];
+
   return [
     [
-      "div", templates.network_log_url_list(ctx, selected),
+      "div", templates.network_log_url_list(ctx, selected, item_order),
       "id", "network-url-list"
     ],
     [
@@ -103,8 +107,8 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
           "class", "network-details-container-tabbar"
         ],
         [
-          "div", templates["network_viewmode_" + selected_viewmode](ctx, detail_width),
-          "class", "network-data-container"
+          "div", viewmode_render(ctx, detail_width),
+          "class", "network-data-container " + selected_viewmode
         ]
       ],
       "class", "network-detail-container"
@@ -146,12 +150,12 @@ templates.network_viewmode_graphs = function(ctx, width)
   var stepsize = templates.grid_info(duration, width);
   var gridwidth = Math.round((width / duration) * stepsize);
   var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
-  return ["div", headerrow, rows, "id", "graph", "style", "background-size: auto, " + gridwidth + "px 100%, 50px 50px;"];
+  return ["div", headerrow, rows, "id", "graph", "style", "background-size: " + gridwidth + "px 100%;"];
 }
 
 templates.network_viewmode_data = function(ctx, detail_width)
 {
-  return [];
+  return ["div", "class", "network-data-table-container"];
 }
 
 templates.network_log_details = function(ctx, selected)
@@ -202,7 +206,7 @@ templates.network_log_request_detail = function(ctx, selected)
     templates.network_response_body(req)
 
     ],
-    "data-resource-id", String(req.id),
+    "data-object-id", String(req.id),
     "class", "request-details"
   ];
 };
@@ -357,7 +361,7 @@ templates.network_response_body = function(req)
       ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
       ["p", ["span",
           ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-          "data-resource-id", String(req.id),
+          "data-object-id", String(req.id),
           // unselectable attribute works around bug CORE-35118
           "unselectable", "on",
           "handler", "get-response-body",
@@ -417,7 +421,7 @@ templates.network_header_table = function(headers)
           "class", "header-list"];
 };
 
-templates.network_log_url_list = function(ctx, selected)
+templates.network_log_url_list = function(ctx, selected, item_order)
 {
   var itemfun = function(res) {
     var statusclass = "status-" + res.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
@@ -433,14 +437,26 @@ templates.network_log_url_list = function(ctx, selected)
             templates.network_request_icon(res),
             ["span", res.filename || res.human_url],
             "handler", "select-network-request",
-            "data-resource-id", String(res.id),
+            "data-object-id", String(res.id),
             "class", selected === res.id ? "selected" : "",
             "title", res.human_url
            ];
   };
+  var items = ctx.get_resources();
+  if (item_order)
+  {
+    var item_ids = items.map(function(item){return item.id});
+    for (var i = 0, new_items = [], id; id = item_order[i]; i++)
+    {
+      var index = item_ids.indexOf(id);
+      if (index != -1)
+        new_items.push(items[index])
+    }
+    items = new_items;
+  }
   return [
     templates.network_type_filter_buttons("all"),
-    ["ol", ctx.get_resources().map(itemfun),
+    ["ol", items.map(itemfun),
       "class", "network-log-url-list"]
   ]
 };
@@ -493,7 +509,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
                  ]);
   }
 
-  return ["div", labels, "class", "network-graph-row"];
+  return ["div", labels, "class", "network-timeline-row"];
 };
 
 templates.network_graph_rows = function(ctx, width)
@@ -562,7 +578,7 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 
   return ["div", ret,
           "class", "network-graph-row",
-          "data-resource-id", String(request.id),
+          "data-object-id", String(request.id),
           "handler", "select-network-request"];
 };
 
