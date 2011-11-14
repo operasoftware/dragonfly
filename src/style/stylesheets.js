@@ -18,6 +18,7 @@ cls.Stylesheets = function()
   this._sorted_index_map = [];
   this._initial_values = [];
   this._is_getting_index_map = false;
+  this._new_runtimes = null;
 
   var SHEET_OBJECT_ID = 0;
   var SHEET_HREF = 2;
@@ -267,8 +268,33 @@ cls.Stylesheets = function()
     this._index_map = null;
     this._sorted_index_map = [];
     this._initial_values = [];
+    this._new_runtimes = null;
   };
 
+  this._on_active_tab = function(msg)
+  {
+    if (!msg.runtimes_with_dom.length)
+    {
+      this._on_reset_state();
+    }
+    else
+    {
+      this._new_runtimes = msg.runtimes_with_dom.slice(0);
+      this._check_new_runtimes({});
+    }
+  };
+
+  var self = this; // TODO: get rid of this and fix stylesheet handling
+  this._check_new_runtimes = function()
+  {
+    for (var i = 0, rt_id; rt_id = self._new_runtimes[i]; i++)
+    {
+      if (!self._sheets[rt_id])
+        self.get_stylesheets(rt_id, arguments);
+    }
+  };
+
+  window.messages.addListener('active-tab', this._on_active_tab.bind(this));
   window.messages.addListener('reset-state', this._on_reset_state.bind(this));
 };
 

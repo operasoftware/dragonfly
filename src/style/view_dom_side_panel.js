@@ -14,7 +14,7 @@ cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
     }
   }
   this.init(id, name, view_list, default_unfolded_list);
-}
+};
 
 cls.DOMSidePanelView.prototype = SidePanelView.prototype;
 
@@ -228,4 +228,5 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       }
     }
   ]);
-}
+};
+
