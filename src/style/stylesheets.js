@@ -30,14 +30,31 @@ cls.Stylesheets = function()
   var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
   var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
+  // TODO: this belong to the rest of the initial values
   this._special_defaults = {};
   this._special_defaults["border-color"] =
   this._special_defaults["border-bottom-color"] =
   this._special_defaults["border-left-color"] =
   this._special_defaults["border-right-color"] =
-  this._special_defaults["border-top-color"] = function(data, value)
+  this._special_defaults["border-top-color"] =
+  this._special_defaults["column-rule-color"] = function(data, value)
   {
     return value == data[this._index_map.indexOf("color")];
+  }.bind(this);
+
+  this._special_defaults["border"] =
+  this._special_defaults["border-bottom"] =
+  this._special_defaults["border-left"] =
+  this._special_defaults["border-right"] =
+  this._special_defaults["border-top"] =
+  this._special_defaults["column-rule"] = function(data, value)
+  {
+    return value == "0px " + data[this._index_map.indexOf("color")];
+  }.bind(this);
+
+  this._special_defaults["column-gap"] = function(data, value)
+  {
+    return value == data[this._index_map.indexOf("font-size")];
   }.bind(this);
 
   this.create_declaration = function(prop, value, priority, is_disabled)
