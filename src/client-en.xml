@@ -398,7 +398,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./searches/jssearchview.js"/>
 
-<script src="./style/ecmascriptdebugger.6.4.responses.cssgetstyledeclarations.js"/>
+<script src="./style/ecmascriptdebugger.6.7.responses.cssgetstyledeclarations.js"/>
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_initial_values.js"/>

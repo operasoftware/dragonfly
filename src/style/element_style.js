@@ -389,7 +389,7 @@ cls.ElementStyle = function()
   {
     if (status == 0)
     {
-      this._style_declarations = new cls.EcmascriptDebugger["6.4"].CssStyleDeclarations(message);
+      this._style_declarations = new cls.EcmascriptDebugger["6.7"].CssStyleDeclarations(message);
       this._has_data = true;
 
       var disabled_style_dec_list = this.disabled_style_dec_list;
