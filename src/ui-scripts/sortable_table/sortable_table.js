@@ -54,6 +54,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       }
     }
 
+/* sorting should not be default. leave as is.
     if (!sortby)
     {
       for (var n=0, key; key = cols[n]; n++)
@@ -65,7 +66,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
         }
       }
     }
-
+*/
     groupby = localStorage[GROUPER] || groupby;
     sortby = localStorage[SORTER] || sortby;
     if (localStorage[COLUMNS])
@@ -412,9 +413,11 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
 
 templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, groupby, sortby, reversed)
 {
-  var sorter = tabledef.columns[sortby].sorter;
+  var sorter = sortby && tabledef.columns[sortby].sorter;
+  // console.log("sortable_table_group", sortby, sorter);
   if (sorter) { data.sort(sorter) }
   if (reversed) { data.reverse() }
+  // console.log("sorted/reversed", data.map(function(res){return res.id}));
   var tpl = [];
   if (render_header) {
     var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
@@ -468,7 +471,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
-              var title_templ=[];
+              var title_templ = [];
               if (typeof content == "string")
               {
                 title_templ = ["title", content]; // fixme: use custom title renderer.
