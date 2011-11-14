@@ -23,7 +23,7 @@ cls.CSSLayoutView = function(id, name, container_class)
                                   'class', 'padding']);
       }
       this.updateLayout({});
-      window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
+      window.elementLayout.get_offset_values(this.updateOffsets.bind(this, container));
     }
     else
       container.innerHTML = "";
@@ -37,9 +37,9 @@ cls.CSSLayoutView = function(id, name, container_class)
     for( ; c = containers[i]; i++)
     {
       c = c.getElementsByTagName('layout-container')[0];
-      if(elementLayout.getLayoutValues(arguments))
+      if(elementLayout.get_layout_values(arguments))
       {
-        c.clearAndRender(elementLayout.metricsTemplate());
+        c.clearAndRender(elementLayout.get_metrics_template());
       }
     }
   }
