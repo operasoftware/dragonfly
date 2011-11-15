@@ -257,6 +257,18 @@ CssShorthandResolver.shorthands = {
     }
   },
 
+  // TODO: implement with two values for each property
+  //"border-radius": {
+  //  properties: [
+  //    "border-bottom-left-radius",
+  //    "border-bottom-right-radius",
+  //    "border-top-left-radius",
+  //    "border-top-right-radius"
+  //  ],
+  //  format: function(decls) {
+  //  }
+  //},
+
   "columns": {
     properties:[
       "column-width",

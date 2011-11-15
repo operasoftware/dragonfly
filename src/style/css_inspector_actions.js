@@ -270,6 +270,7 @@ cls.CSSInspectorActions = function(id)
     var new_property = this.editor.get_properties()[PROPERTY];
     var script = "object.style.removeProperty(\"" + new_property + "\");";
 
+    // TODO: don't set back if the property was disabled
     if (initial_property)
     {
       script += "object.style.setProperty(\"" +
