@@ -175,7 +175,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this._container = container;
     var storage_data = this.data.get_cookies();
-    this._sortable_table.data = storage_data;
+    this._sortable_table.set_data(storage_data);
     if (!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);

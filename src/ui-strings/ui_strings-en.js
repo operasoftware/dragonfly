@@ -111,6 +111,9 @@ ui_strings.M_SETTING_LABEL_GENERAL = "General";
 /* DESC: Context menu entry to reset the columns that are shown */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
 
+/* DESC: Context menu entry to reset the sort order */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
+
 /* DESC: Context menu entry to selecting to group by %s */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 

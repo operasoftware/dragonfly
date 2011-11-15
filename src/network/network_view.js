@@ -145,7 +145,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                         "network-inspector");
         this._table.add_listener("after-render", this._catch_up_with_sort_bound);
       }
-      this._table.data = ctx.get_resources().slice(0);
+      this._table.set_data(ctx.get_resources().slice(0));
       table_container.clearAndRender(this._table.render());
       this._catch_up_with_sort_bound();
     }
@@ -163,7 +163,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       status: {
         label: "Status",
         renderer: function(req) {
-          return String(req.responsecode);
+          return req.responsecode && String(req.responsecode);
         },
         title_getter: function(req) { // todo: use this in sortable_table
           if (cls.ResourceUtil.http_status_codes[req.responsecode])
@@ -201,7 +201,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       latency: {
         label: "Latency",
         align: "right",
-        getter: function(req) { return req.responsestart - req.starttime + "ms" }
+        getter: function(req) { return req.responsestart && req.starttime && req.responsestart - req.starttime + "ms" }
       },
       duration: {
         label: "Duration",
@@ -212,19 +212,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }
 
-  this._catch_up_with_sort_bound = function(table)
+  this._catch_up_with_sort_bound = function()
   {
-    if (this._table && this._table.data)
+    var data = this._table.get_data();
+    if (this._table && data && data.length)
     {
       var old_resource_order = (this._resource_order || []).join(",");
 
-      this.resource_order = this._table.data.map(function(res){return res.id});
+      this._resource_order = data.map(function(res){return res.id});
       if (this._resource_order.join(",") !== old_resource_order)
       {
         this.update();
       }
     }
-  }.bind(this)
+  }.bind(this);
 
   this._on_clicked_close_bound = function(evt, target)
   {
