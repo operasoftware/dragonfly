@@ -656,11 +656,11 @@ var Editor = function(actions)
         match[0],
         ('hsl(' + hsl[0] + ',' + parseInt(hsl[1]) + '%,' + parseInt(hsl[2]) + '%)'),
         ('rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')')
-      ].concat(suggest_values['color']);
+      ].concat(window.suggest_values['color']);
     }
 
-    if (suggest_values[prop] && suggest_values[prop].length)
-      return this._get_matches_from_list(suggest_values[prop], set);
+    if (window.suggest_values[prop] && window.suggest_values[prop].length)
+      return this._get_matches_from_list(window.suggest_values[prop], set);
 
     return null;
   }
@@ -767,7 +767,7 @@ var Editor = function(actions)
         // We don't know if the property is valid or not at this point, but
         // it will simply be discarded when setting it back if it's not.
         this.saved_style_dec.declarations.push({
-          property: window.css_index_map.indexOf(props[INDEX]),
+          property: this._stylesheets.get_css_index_map().indexOf(props[INDEX]),
           value: props[VALUE],
           priority: props[PRIORITY]
         });

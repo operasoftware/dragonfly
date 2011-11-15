@@ -16,7 +16,6 @@ cls.Stylesheets = function()
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._index_map = null;
   this._sorted_index_map = [];
-  this._initial_values = [];
   this._is_getting_index_map = false;
   this._new_runtimes = null;
 
@@ -30,36 +29,9 @@ cls.Stylesheets = function()
   var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
   var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
-  // TODO: this belong to the rest of the initial values
-  this._special_defaults = {};
-  this._special_defaults["border-color"] =
-  this._special_defaults["border-bottom-color"] =
-  this._special_defaults["border-left-color"] =
-  this._special_defaults["border-right-color"] =
-  this._special_defaults["border-top-color"] =
-  this._special_defaults["column-rule-color"] = function(data, value)
-  {
-    return value == data[this._index_map.indexOf("color")];
-  }.bind(this);
-
-  this._special_defaults["border"] =
-  this._special_defaults["border-bottom"] =
-  this._special_defaults["border-left"] =
-  this._special_defaults["border-right"] =
-  this._special_defaults["border-top"] =
-  this._special_defaults["column-rule"] = function(data, value)
-  {
-    return value == "0px " + data[this._index_map.indexOf("color")];
-  }.bind(this);
-
-  this._special_defaults["column-gap"] = function(data, value)
-  {
-    return value == data[this._index_map.indexOf("font-size")];
-  }.bind(this);
-
   this.create_declaration = function(prop, value, priority, is_disabled)
   {
-    // TODO: call the template directly, need to fox in editor.js too
+    // TODO: call the template directly, need to fix in editor.js too
     return this._templates.prop_value(prop, value, priority, is_disabled, true);
   };
 
@@ -124,11 +96,16 @@ cls.Stylesheets = function()
     return props.concat(dashes);
   };
 
+  this.get_css_index_map = function()
+  {
+    return this._index_map;
+  };
+
   this.pretty_print_computed_style = function(data)
   {
     var template = [];
     // set_props is used to force the display if a given property is set
-    // also if it has the initial value
+    // even if it has the initial value
     var set_props = this._element_style.get_set_props();
     var search_term = this._element_style.get_search_term();
     var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
@@ -140,9 +117,8 @@ cls.Stylesheets = function()
       var value = data[index];
       var is_not_initial_value =
         hide_initial_value
-        && value
-        && value != this._initial_values[index]
-        && !(this._special_defaults.hasOwnProperty(prop) && this._special_defaults[prop](data, value))
+        && value != ""
+        && value != cls.Stylesheets.get_initial_value(prop, data, this._index_map)
         || false;
       var display =
         (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
@@ -240,12 +216,11 @@ cls.Stylesheets = function()
     if (!index_map)
       return;
 
-    window.css_index_map = this._index_map = index_map;
+    this._index_map = index_map;
     var temp = [];
     for (var i = 0, prop; prop = index_map[i]; i++)
     {
       temp[i] = {index: i, prop: prop};
-      this._initial_values[i] = window.css_initial_values[prop];
     }
 
     temp.sort(function(a, b) {
@@ -260,7 +235,7 @@ cls.Stylesheets = function()
     if (org_args && (!org_args[0].__call_count || org_args[0].__call_count == 1))
     {
       org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
-      org_args.callee.apply(null, org_args)
+      org_args.callee.apply(null, org_args);
     }
   };
 
@@ -284,7 +259,6 @@ cls.Stylesheets = function()
     this._sheets = {};
     this._index_map = null;
     this._sorted_index_map = [];
-    this._initial_values = [];
     this._new_runtimes = null;
   };
 
@@ -326,5 +300,850 @@ cls.Stylesheets.origins = {
   ORIGIN_AUTHOR: 3, // author
   ORIGIN_ELEMENT: 4, // inline
   ORIGIN_SVG: 5 // SVG presentation attribute
+};
+
+cls.Stylesheets.get_initial_value = function(prop, data, index_map)
+{
+  // TODO: we only need to check for the special initial values here (e.g. border-color
+  // being the same as color unless overridden). The rest could simply return the first value
+  // of the suggested values (this needs to be arranged so that the first is actually the
+  // initial value).
+  switch (prop)
+  {
+  case "-apple-dashboard-region":
+    return "";
+
+  case "-o-border-image":
+    return "";
+
+  case "-o-focus-opacity":
+    return "";
+
+  case "-o-link":
+    return "";
+
+  case "-o-link-source":
+    return "";
+
+  case "-o-mini-fold":
+    return "";
+
+  case "-o-object-fit":
+    return "auto"; // this is 'fill' according to new spec, update when the imlementation changes
+
+  case "-o-object-position":
+    return "50% 50%";
+
+  case "-o-tab-size":
+    return "";
+
+  case "-o-table-baseline":
+    return "";
+
+  case "-o-text-overflow":
+    return "";
+
+  case "-o-transform":
+    return "none";
+
+  case "-o-transform-origin":
+    return "0px 0px";
+
+  case "-o-transition":
+    return "";
+
+  case "-o-transition-delay":
+    return "0";
+
+  case "-o-transition-duration":
+    return "0";
+
+  case "-o-transition-property":
+    return "all";
+
+  case "-o-transition-timing-function":
+    return "ease";
+
+  case "-wap-accesskey":
+    return "";
+
+  case "-wap-input-format":
+    return "";
+
+  case "-wap-input-required":
+    return "";
+
+  case "-wap-marquee-dir":
+    return "";
+
+  case "-wap-marquee-loop":
+    return "";
+
+  case "-wap-marquee-speed":
+    return "";
+
+  case "-wap-marquee-style":
+    return "";
+
+  case "-xv-interpret-as":
+    return "";
+
+  case "-xv-phonemes":
+    return "";
+
+  case "-xv-voice-balance":
+    return "";
+
+  case "-xv-voice-duration":
+    return "";
+
+  case "-xv-voice-pitch":
+    return "";
+
+  case "-xv-voice-pitch-range":
+    return "";
+
+  case "-xv-voice-rate":
+    return "";
+
+  case "-xv-voice-stress":
+    return "";
+
+  case "-xv-voice-volume":
+    return "";
+
+  case "alignment-baseline":
+    return "auto";
+
+  case "audio-level":
+    return "1";
+
+  case "background":
+    return "transparent 0% 0%";
+
+  case "background-attachment":
+    return "scroll";
+
+  case "background-clip":
+    return "border-box";
+
+  case "background-color":
+    return "transparent";
+
+  case "background-image":
+    return "none";
+
+  case "background-origin":
+    return "padding-box";
+
+  case "background-position":
+    return "0% 0%";
+
+  case "background-repeat":
+    return "repeat";
+
+  case "background-size":
+    return "auto";
+
+  case "baseline-shift":
+    return "baseline";
+
+  case "border":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-bottom":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-bottom-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-bottom-style":
+    return "none";
+
+  case "border-bottom-width":
+    return "0px";
+
+  case "border-collapse":
+    return "separate";
+
+  case "border-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-left":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-left-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-left-style":
+    return "none";
+
+  case "border-left-width":
+    return "0px";
+
+  case "border-right":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-right-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-right-style":
+    return "none";
+
+  case "border-right-width":
+    return "0px";
+
+  case "border-spacing":
+    return "0px";
+
+  case "border-style":
+    return "none";
+
+  case "border-top":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-top-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-top-style":
+    return "none";
+
+  case "border-top-width":
+    return "0px";
+
+  case "border-width":
+    return "0px";
+
+  case "border-radius":
+    return "";
+
+  case "border-bottom-left-radius":
+    return "0px";
+
+  case "border-bottom-right-radius":
+    return "0px";
+
+  case "border-bottom-width":
+    return "0px";
+
+  case "border-top-left-radius":
+    return "0px";
+
+  case "border-top-right-radius":
+    return "0px";
+
+  case "bottom":
+    return "auto";
+
+  case "box-decoration-break":
+    return "slice";
+
+  case "box-sizing":
+    return "content-box";
+
+  case "box-shadow":
+    return "none";
+
+  case "break-after":
+    return "auto";
+
+  case "break-before":
+    return "auto";
+
+  case "break-inside":
+    return "auto";
+
+  case "buffered-rendering":
+    return "auto";
+
+  case "caption-side":
+    return "top";
+
+  case "clear":
+    return "none";
+
+  case "clip":
+    return "rect(0px, 0px, 0px, 0px)";
+
+  case "clip-path":
+    return "none";
+
+  case "clip-rule":
+    return "nonzero";
+
+  case "color":
+    return "rgb(0, 0, 0)";
+
+  case "color-interpolation":
+    return "sRGB";
+
+  case "color-interpolation-filters":
+    return "linearRGB";
+
+  case "color-profile":
+    return "auto";
+
+  case "color-rendering":
+    return "auto";
+
+  case "column-count":
+    return "auto";
+
+  case "column-fill":
+    return "balance";
+
+  case "column-gap":
+    return data[index_map.indexOf("font-size")];
+
+  case "column-rule":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "column-rule-color":
+    return data[index_map.indexOf("color")];
+
+  case "column-rule-style":
+    return "none";
+
+  case "column-rule-width":
+    return "0px";
+
+  case "column-span":
+    return "none";
+
+  case "column-width":
+    return "auto";
+
+  case "columns":
+    return "auto";
+
+  case "content":
+    return "none";
+
+  case "counter-increment":
+    return "none";
+
+  case "counter-reset":
+    return "none";
+
+  case "cue":
+    return "";
+
+  case "cue-after":
+    return "none";
+
+  case "cue-before":
+    return "none";
+
+  case "cursor":
+    return "auto";
+
+  case "direction":
+    return "ltr";
+
+  case "display":
+    return "inline";
+
+  case "display-align":
+    return "auto";
+
+  case "dominant-baseline":
+    return "auto";
+
+  case "empty-cells":
+    return "show";
+
+  case "enable-background":
+    return "accumulate";
+
+  case "fill":
+    return "rgb(0, 0, 0)";
+
+  case "fill-opacity":
+    return "1";
+
+  case "fill-rule":
+    return "nonzero";
+
+  case "filter":
+    return "none";
+
+  case "float":
+    return "none";
+
+  case "flood-color":
+    return "rgb(0, 0, 0)";
+
+  case "flood-opacity":
+    return "1";
+
+  case "font":
+    return "";
+
+  case "font-family":
+    return "";
+
+  case "font-size":
+    return "16px";
+
+  case "font-size-adjust":
+    return "none";
+
+  case "font-stretch":
+    return "normal";
+
+  case "font-style":
+    return "normal";
+
+  case "font-variant":
+    return "normal";
+
+  case "font-weight":
+    return "400";
+
+  case "glyph-orientation-horizontal":
+    return "0";
+
+  case "glyph-orientation-vertical":
+    return "auto";
+
+  case "height":
+    return "0px";
+
+  case "image-rendering":
+    return "auto";
+
+  case "input-format":
+    return "";
+
+  case "kerning":
+    return "auto";
+
+  case "left":
+    return "auto";
+
+  case "letter-spacing":
+    return "0px";
+
+  case "lighting-color":
+    return "#ffffff";
+
+  case "line-height":
+    return "normal";
+
+  case "line-increment":
+    return "auto";
+
+  case "list-style":
+    return "disc outside none";
+
+  case "list-style-image":
+    return "none";
+
+  case "list-style-position":
+    return "outside";
+
+  case "list-style-type":
+    return "disc";
+
+  case "margin":
+    return "0px";
+
+  case "margin-bottom":
+    return "0px";
+
+  case "margin-left":
+    return "0px";
+
+  case "margin-right":
+    return "0px";
+
+  case "margin-top":
+    return "0px";
+
+  case "mark":
+    return "";
+
+  case "mark-after":
+    return "";
+
+  case "mark-before":
+    return "";
+
+  case "marker":
+    return "none";
+
+  case "marker-end":
+    return "none";
+
+  case "marker-mid":
+    return "none";
+
+  case "marker-offset":
+    return "";
+
+  case "marker-start":
+    return "none";
+
+  case "marks":
+    return "none";
+
+  case "mask":
+    return "none";
+
+  case "max-height":
+    return "none";
+
+  case "max-width":
+    return "none";
+
+  case "max-zoom":
+    return "auto";
+
+  case "min-height":
+    return "0px";
+
+  case "min-width":
+    return "0px";
+
+  case "min-zoom":
+    return "auto";
+
+  case "nav-down":
+    return "auto";
+
+  case "nav-index":
+    return "auto";
+
+  case "nav-left":
+    return "auto";
+
+  case "nav-right":
+    return "auto";
+
+  case "nav-up":
+    return "auto";
+
+  case "opacity":
+    return "1";
+
+  case "orientation":
+    return "";
+
+  case "orphans":
+    return "2";
+
+  case "outline":
+    return "3px";
+
+  case "outline-color":
+    return "invert";
+
+  case "outline-offset":
+    return "0";
+
+  case "outline-style":
+    return "none";
+
+  case "outline-width":
+    return "3px";
+
+  case "overflow":
+    return "visible";
+
+  case "overflow-x":
+    return "visible";
+
+  case "overflow-y":
+    return "visible";
+
+  case "padding":
+    return "0px";
+
+  case "padding-bottom":
+    return "0px";
+
+  case "padding-left":
+    return "0px";
+
+  case "padding-right":
+    return "0px";
+
+  case "padding-top":
+    return "0px";
+
+  case "page":
+    return "auto";
+
+  case "page-break-after":
+    return "auto";
+
+  case "page-break-before":
+    return "auto";
+
+  case "page-break-inside":
+    return "auto";
+
+  case "pause":
+    return "";
+
+  case "pause-after":
+    return "";
+
+  case "pause-before":
+    return "";
+
+  case "pointer-events":
+    return "visiblePainted";
+
+  case "position":
+    return "static";
+
+  case "quotes":
+    return "none";
+
+  case "resolution":
+    return "";
+
+  case "rest":
+    return "";
+
+  case "rest-after":
+    return "";
+
+  case "rest-before":
+    return "";
+
+  case "right":
+    return "auto";
+
+  case "row-span":
+    return "";
+
+  case "scrollbar-3dlight-color":
+    return "";
+
+  case "scrollbar-arrow-color":
+    return "";
+
+  case "scrollbar-base-color":
+    return "";
+
+  case "scrollbar-darkshadow-color":
+    return "";
+
+  case "scrollbar-face-color":
+    return "";
+
+  case "scrollbar-highlight-color":
+    return "";
+
+  case "scrollbar-shadow-color":
+    return "";
+
+  case "scrollbar-track-color":
+    return "";
+
+  case "shape-rendering":
+    return "auto";
+
+  case "size":
+    return "portrait";
+
+  case "src":
+    return "";
+
+  case "solid-color":
+    return "rgb(0, 0, 0)";
+
+  case "solid-opacity":
+    return "1";
+
+  case "speak":
+    return "";
+
+  case "stop-color":
+    return "rgb(0, 0, 0)";
+
+  case "stop-opacity":
+    return "1";
+
+  case "stroke":
+    return "none";
+
+  case "stroke-dasharray":
+    return "none";
+
+  case "stroke-dashoffset":
+    return "0";
+
+  case "stroke-linecap":
+    return "butt";
+
+  case "stroke-linejoin":
+    return "miter";
+
+  case "stroke-miterlimit":
+    return "4";
+
+  case "stroke-opacity":
+    return "1";
+
+  case "stroke-width":
+    return "1";
+
+  case "table-layout":
+    return "auto";
+
+  case "text-align":
+    return "left";
+
+  case "text-anchor":
+    return "start";
+
+  case "text-decoration":
+    return "none";
+
+  case "text-indent":
+    return "0px";
+
+  case "text-overflow":
+    return "clip";
+
+  case "text-rendering":
+    return "auto";
+
+  case "text-shadow":
+    return "none";
+
+  case "text-transform":
+    return "none";
+
+  case "top":
+    return "auto";
+
+  case "unicode-bidi":
+    return "normal";
+
+  case "user-zoom":
+    return "zoom";
+
+  case "vector-effect":
+    return "none";
+
+  case "vertical-align":
+    return "baseline";
+
+  case "viewport-fill":
+    return "none";
+
+  case "viewport-fill-opacity":
+    return "1";
+
+  case "visibility":
+    return "visible";
+
+  case "voice-family":
+    return "";
+
+  case "white-space":
+    return "normal";
+
+  case "widows":
+    return "2";
+
+  case "width":
+    return "0px";
+
+  case "word-spacing":
+    return "0px";
+
+  case "word-wrap":
+    return "normal";
+
+  case "writing-mode":
+    return "lr-tb";
+
+  case "zoom":
+    return "auto";
+
+  case "z-index":
+    return "auto";
+
+  default:
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+      "Initial value missing for " + prop + " in cls.Stylesheets.get_initial_value");
+  }
+};
+
+cls.Stylesheets.inheritable_properties = {
+  "-xv-voice-balance": true,
+  "-xv-voice-pitch": true,
+  "-xv-voice-pitch-range": true,
+  "-xv-voice-rate": true,
+  "-xv-voice-stress": true,
+  "-xv-voice-volume": true,
+  "alignment-baseline": true,
+  "border-collapse": true,
+  "border-spacing": true,
+  "box-sizing": true,
+  "caption-side": true,
+  "cell-spacing": true,
+  "color": true,
+  "color-interpolation": true,
+  "color-interpolation-filters": true,
+  "color-rendering": true,
+  "cursor": true,
+  "direction": true,
+  // "display": true, inherited in svg
+  "display-align": true,
+  "empty-cells": true,
+  "font": true,
+  "font-family": true,
+  "font-size": true,
+  "font-stretch": true,
+  "font-style": true,
+  "font-variant": true,
+  "font-weight": true,
+  "image-rendering": true,
+  "letter-spacing": true,
+  "line-height": true,
+  "line-increment": true,
+  "list-style": true,
+  "list-style-image": true,
+  "list-style-position": true,
+  "list-style-type": true,
+  "marker": true,
+  "orphans": true,
+  "overflow": true,
+  "page": true,
+  "page-break-inside": true,
+  "pointer-events": true,
+  "quotes": true,
+  "scrollbar-3dlight-color": true,
+  "scrollbar-arrow-color": true,
+  "scrollbar-base-color": true,
+  "scrollbar-darkshadow-color": true,
+  "scrollbar-face-color": true,
+  "scrollbar-highlight-color": true,
+  "scrollbar-shadow-color": true,
+  "scrollbar-track-color": true,
+  "shape-rendering": true,
+  "size": true,
+  "speak": true,
+  "stroke-linecap": true,
+  "stroke-linejoin": true,
+  "text-align": true,
+  "text-anchor": true,
+  "text-indent": true,
+  "text-rendering": true,
+  "text-shadow": true,
+  "text-transform": true,
+  "unicode-bidi": true,
+  "visibility": true,
+  "voice-family": true,
+  "white-space": true,
+  "widows": true,
+  "word-spacing": true,
+  "writing-mode": true
 };
 

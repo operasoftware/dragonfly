@@ -12,11 +12,12 @@ var Rule = function(rule)
   this.ruleType = rule.ruleType;
   this.lineNumber = rule.lineNumber;
 
+  var index_map = cls.Stylesheets.get_instance().get_css_index_map();
   var len = rule.indexList ? rule.indexList.length : 0;
   for (var i = 0; i < len; i++)
   {
     this.declarations.push({
-      property: window.css_index_map[rule.indexList[i]],
+      property: index_map[rule.indexList[i]],
       value: rule.valueList[i],
       priority: rule.priorityList[i],
       is_applied: Boolean(rule.statusList[i]), // Could be inverted and renamed to overwritten
@@ -154,7 +155,7 @@ cls.ElementStyle = function()
       {
         this.remove_property(disabled_style_dec, decl.property);
       }
-      else if (!(is_inherited && !(window.css_inheritable_properties.hasOwnProperty(decl.property))))
+      else if (!(is_inherited && !(this._stylesheets.inheritable_properties.hasOwnProperty(decl.property))))
       {
         var index = this.copy_property(disabled_style_dec, style_dec, decl.property);
         style_dec.declarations[index].is_disabled = true;
@@ -416,7 +417,7 @@ cls.ElementStyle = function()
             }
 
             rule.declarations.forEach(function(decl) {
-              if (decl.is_applied)
+              if (decl.is_applied && !decl.is_disabled)
                 this._set_props.push(decl.property);
             }, this);
           }

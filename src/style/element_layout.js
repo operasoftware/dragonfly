@@ -93,7 +93,7 @@ cls.ElementLayout = function()
 
   this._setup_layout_map = function()
   {
-    for (var i = 0, prop; prop = window.css_index_map[i]; i++)
+    for (var i = 0, prop; prop = this._stylesheets.get_css_index_map()[i]; i++)
     {
       switch (prop)
       {
