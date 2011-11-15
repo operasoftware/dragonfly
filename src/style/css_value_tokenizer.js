@@ -34,7 +34,6 @@ var CssValueTokenizer = function()
   var IDENT_CHARS = /[a-z0-9-]/i;
   var UNARY_OP_CHARS = /[-+]/i;
   var UNIT_CHARS = /[a-z%]/i;
-  var IMPORTANT_DECLARATION = /^!\s*important$/i;
 
   this._states = {
     DEFAULT: 1,
@@ -54,7 +53,6 @@ var CssValueTokenizer = function()
     this._ontoken = ontoken;
     this._position = 0;
     this._token_val = "";
-    this._important_declaration_seen = false;
 
     while (this._position < this._buffer.length)
     {
@@ -97,10 +95,6 @@ var CssValueTokenizer = function()
     else if (c == "#")
     {
       this._parse_hexcolor(c);
-    }
-    else if (c == "!")
-    {
-      this._parse_important_declaration(c);
     }
     else if (c == "/" || c == ",")
     {
@@ -271,43 +265,6 @@ var CssValueTokenizer = function()
     this._emit_token(CssValueTokenizer.types.IDENT);
   };
 
-  // Handles whitespace between `!` and `important`, but not comments
-  this._parse_important_declaration = function(c)
-  {
-    if (this._important_declaration_seen)
-    {
-      this._throw_error("Extra !important declaration seen");
-    }
-
-    while (c)
-    {
-      this._token_val += c;
-      // TODO: maybe this can be made a bit nicer with regexp
-      var substring = this._token_val.replace(/!\s*/, "");
-      if (substring == "important".slice(0, substring.length))
-      {
-        c = this._buffer[++this._position];
-        if (IMPORTANT_DECLARATION.test(this._token_val) && WHITESPACE_CHARS.test(c))
-        {
-          break;
-        }
-      }
-      else
-      {
-        this._throw_error("Not a valid !important declaration");
-      }
-    }
-
-    // TODO: this  repeats some code from above, rewrite a bit
-    if (this._token_val.replace(/!\s*/, "") != "important")
-    {
-      this._throw_error("Not a valid !important declaration");
-    }
-
-    this._important_declaration_seen = true;
-    this._emit_token(CssValueTokenizer.types.IMPORTANT_DECLARATION);
-  };
-
   this._parse_operator = function(c)
   {
     this._token_val = c;
@@ -369,7 +326,6 @@ CssValueTokenizer.types = {
   HEX_COLOR: 8,
   FUNCTION_START: 9,
   FUNCTION_END: 10,
-  IMPORTANT_DECLARATION: 11,
-  COMMENT: 12
+  COMMENT: 11
 };
 
