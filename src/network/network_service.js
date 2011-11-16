@@ -240,7 +240,7 @@ cls.RequestContext = function()
   };
 
   /**
-   * Return duration of request context, rounded upp to closest full second.
+   * Return duration of request context.
    * if width and padlen is set, add the ammount of milliseconds needed to
    * the duration needed to accomodate padlen pixels.
    */
@@ -254,7 +254,7 @@ cls.RequestContext = function()
       t += (millis_per_px * padlen);
     }
 
-    return Math.ceil(t/1000)*1000;
+    return t;
   };
 
   this.get_starttime = function()
