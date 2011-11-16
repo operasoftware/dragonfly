@@ -15,8 +15,7 @@
     font-style: italic;
 }
 
-.number,
-offsets value { /* TODO: use class */
+.number {
     color: #c32;
 }
 

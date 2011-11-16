@@ -520,21 +520,14 @@ parent-offset {
   padding: 0 2px;
 }
 
-offsets{
-  display:table;
+.offsets {
+    border-spacing: 0;
 }
 
-offsets item {
-  display:table-row;
-}
-
-offsets key, offsets value  {
-  display:table-cell;
-}
-
-offsets value  {
-  text-align: right;
-  padding-left: 8px;
+.offsets th {
+  font-weight: normal;
+  text-align: left;
+  padding-right: 5px;
 }
 
 .info-text {
