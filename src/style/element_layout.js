@@ -348,30 +348,30 @@ cls.ElementLayout = function()
         ['table',
           ['tr',
             ['th',
-              'position:',
-             'data-spec', 'css#position'
+              'position:'
             ],
             ['td',
               comp_style[index_map.indexOf("position")] || "–"
             ],
+           'data-spec', 'css#position'
           ],
           ['tr',
             ['th',
-              'z-index:',
-             'data-spec', 'css#z-index'
+              'z-index:'
             ],
             ['td',
               comp_style[index_map.indexOf("z-index")] || "–"
             ],
+           'data-spec', 'css#z-index'
           ],
           ['tr',
             ['th',
-              'box-sizing:',
-              'data-spec', 'css#box-sizing'
+              'box-sizing:'
             ],
             ['td',
               comp_style[index_map.indexOf("box-sizing")] || "–"
             ],
+           'data-spec', 'css#box-sizing'
           ],
          'id', 'layout-info'
         ]
