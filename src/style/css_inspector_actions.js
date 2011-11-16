@@ -483,7 +483,7 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers["dispatch-dbl-click"] = function(event, target)
   {
-    if(this._target)
+    if (this._target)
       this._target.dispatchMouseEvent('dblclick');
     return false;
   }.bind(this);

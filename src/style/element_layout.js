@@ -8,33 +8,12 @@ cls.ElementLayout = function()
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._stylesheets = cls.Stylesheets.get_instance();
-  this._layout_map = [];
+  this._index_map = null;
   this._selected_element = null;
   this._comp_style = null;
   this._offset_values = "";
   this._views = ['css-layout'];
 
-  var PADDING_TOP = 0;
-  var PADDING_RIGHT = 1;
-  var PADDING_BOTTOM = 2;
-  var PADDING_LEFT = 3;
-  var BORDER_TOP_WIDTH = 4;
-  var BORDER_RIGHT_WIDTH = 5;
-  var BORDER_BOTTOM_WIDTH = 6;
-  var BORDER_LEFT_WIDTH = 7;
-  var MARGIN_TOP = 8;
-  var MARGIN_RIGHT = 9;
-  var MARGIN_BOTTOM = 10;
-  var MARGIN_LEFT = 11;
-  var WIDTH = 12;
-  var HEIGHT = 13;
-  var TOP = 14;
-  var RIGHT = 15;
-  var BOTTOM = 16;
-  var LEFT = 17;
-  var POSITION = 18;
-  var Z_INDEX = 19;
-  var BOX_SIZING = 20;
   var OFFSET_TOP = 1;
   var OFFSET_LEFT = 2;
   var OFFSET_WIDTH = 3;
@@ -48,7 +27,7 @@ cls.ElementLayout = function()
   var CLIENT_WIDTH = 11;
   var CLIENT_HEIGHT = 12;
   var OFFSETS = cls.ElementLayout.OFFSETS;
-  var GET_OFFSETS_SCRIPT = "\
+  var OFFSETS_SCRIPT = "\
     (function(ele)\
     {\
       var \
@@ -91,99 +70,6 @@ cls.ElementLayout = function()
       return log;\
     })(ele)\
     ";
-
-  this._setup_layout_map = function()
-  {
-    for (var i = 0, prop; prop = this._stylesheets.get_css_index_map()[i]; i++)
-    {
-      switch (prop)
-      {
-      case 'padding-top':
-        this._layout_map[PADDING_TOP] = i;
-        break;
-
-      case 'padding-right':
-        this._layout_map[PADDING_RIGHT] = i;
-        break;
-
-      case 'padding-bottom':
-        this._layout_map[PADDING_BOTTOM] = i;
-        break;
-
-      case 'padding-left':
-        this._layout_map[PADDING_LEFT] = i;
-        break;
-
-      case 'border-top-width':
-        this._layout_map[BORDER_TOP_WIDTH] = i;
-        break;
-
-      case 'border-right-width':
-        this._layout_map[BORDER_RIGHT_WIDTH] = i;
-        break;
-
-      case 'border-bottom-width':
-        this._layout_map[BORDER_BOTTOM_WIDTH] = i;
-        break;
-
-      case 'border-left-width':
-        this._layout_map[BORDER_LEFT_WIDTH] = i;
-        break;
-
-      case 'margin-top':
-        this._layout_map[MARGIN_TOP] = i;
-        break;
-
-      case 'margin-right':
-        this._layout_map[MARGIN_RIGHT] = i;
-        break;
-
-      case 'margin-bottom':
-        this._layout_map[MARGIN_BOTTOM] = i;
-        break;
-
-      case 'margin-left':
-        this._layout_map[MARGIN_LEFT] = i;
-        break;
-
-      case 'width':
-        this._layout_map[WIDTH] = i;
-        break;
-
-      case 'height':
-        this._layout_map[HEIGHT] = i;
-        break;
-
-      case 'top':
-        this._layout_map[TOP] = i;
-        break;
-
-      case 'right':
-        this._layout_map[RIGHT] = i;
-        break;
-
-      case 'bottom':
-        this._layout_map[BOTTOM] = i;
-        break;
-
-      case 'left':
-        this._layout_map[LEFT] = i;
-        break;
-
-      case 'position':
-        this._layout_map[POSITION] = i;
-        break;
-
-      case 'z-index':
-        this._layout_map[Z_INDEX] = i;
-        break;
-
-      case 'box-sizing':
-        this._layout_map[BOX_SIZING] = i;
-        break;
-      }
-    }
-  };
 
   this._on_element_selected = function(msg)
   {
@@ -236,8 +122,8 @@ cls.ElementLayout = function()
     var NODE_STYLE_LIST = 1;
 
     this._comp_style = message[COMPUTED_STYLE_LIST];
-    if (!this._layout_map.length)
-      this._setup_layout_map();
+    if (!this._index_map)
+      this._index_map = this._stylesheets.get_css_index_map();
 
     if (org_args && !org_args[0].__call_count)
     {
@@ -260,8 +146,8 @@ cls.ElementLayout = function()
     {
       var rt_id = this._selected_element.rt_id;
       var obj_id = this._selected_element.obj_id;
-      var tag = this._tag_manager.set_callback(null, this._handle_get_offset_data.bind(this), [rt_id, obj_id, cb] );
-      this._es_debugger.requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_offset_data.bind(this), [rt_id, obj_id, cb]);
+      this._es_debugger.requestEval(tag, [rt_id, 0, 0, OFFSETS_SCRIPT, [['ele', obj_id]]]);
     }
   };
 
@@ -293,80 +179,201 @@ cls.ElementLayout = function()
 
   this.get_metrics_template = function()
   {
-    var is_positioned = this._comp_style[this._layout_map[POSITION]] != "static";
+    var comp_style = this._comp_style;
+    var index_map = this._index_map;
+    var is_positioned = comp_style[index_map.indexOf("position")] != "static";
     return (
       ['div',
-        [['ul',
+        ['ul',
           ['li',
             ['ul',
-              [['li',['p','\u00A0',
-                        ['span', is_positioned ? 'position' : '\u00A0']]],
-              ['li', is_positioned ?
-                     this._convert_to_unitless(this._comp_style[this._layout_map[TOP]])
-                     : '\u00A0'],
-              ['li']]
+              ['li',
+                ['p',
+                  '\u00A0',
+                  ['span',
+                    is_positioned
+                    ? 'position'
+                    : '\u00A0'
+                  ]
+                ]
+              ],
+              ['li',
+                is_positioned
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("top")])
+                : '\u00A0'
+              ],
+              ['li']
             ],
             ['ul',
-              ['li', is_positioned ?
-                     this._convert_to_unitless(this._comp_style[this._layout_map[LEFT]]) :
-                     '\u00A0'],
               ['li',
-              ['ul',
-                ['li',['p','\u00a0',['span', 'margin']]],
-                ['li', this._convert_to_unitless(this._comp_style[this._layout_map[MARGIN_TOP]])],
-                ['li']
+                is_positioned
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("left")])
+                : '\u00A0'
               ],
-            ['ul', ['li', this._convert_to_unitless(this._comp_style[this._layout_map[MARGIN_LEFT]])], ['li',
-              ['ul',
-                ['li',['p','\u00a0',['span', 'border']]],
-                ['li', this._convert_to_unitless(this._comp_style[this._layout_map[BORDER_TOP_WIDTH]])],
-                ['li']
-              ],
-              ['ul', ['li', this._convert_to_unitless(this._comp_style[this._layout_map[BORDER_LEFT_WIDTH]])], ['li',
+              ['li',
                 ['ul',
-                  ['li',['p','\u00a0',['span', 'padding']]],
-                  ['li', this._convert_to_unitless(this._comp_style[this._layout_map[PADDING_TOP]])],
+                  ['li',
+                    ['p',
+                      '\u00a0',
+                      ['span',
+                        'margin'
+                      ]
+                    ]
+                  ],
+                  ['li',
+                    this._convert_to_unitless(comp_style[index_map.indexOf("margin-top")])
+                  ],
                   ['li']
                 ],
                 ['ul',
-                  ['li', this._convert_to_unitless(this._comp_style[this._layout_map[PADDING_LEFT]])],
                   ['li',
-                    ['ul', ['li', '\u00a0']],
-                    ['ul', ['li', this._convert_to_unitless(this._comp_style[this._layout_map[WIDTH]], true) + ' × ' +
-                                  this._convert_to_unitless(this._comp_style[this._layout_map[HEIGHT]], true)]],
-                    ['ul', ['li', '\u00a0']],
-                    'class', 'dimension'],
-                  ['li', this._convert_to_unitless(this._comp_style[this._layout_map[PADDING_RIGHT]])]
+                    this._convert_to_unitless(comp_style[index_map.indexOf("margin-left")])
+                  ],
+                  ['li',
+                    ['ul',
+                      ['li',
+                        ['p',
+                          '\u00a0',
+                          ['span',
+                            'border'
+                          ]
+                        ]
+                      ],
+                      ['li',
+                        this._convert_to_unitless(comp_style[index_map.indexOf("border-top-width")])
+                      ],
+                      ['li']
+                    ],
+                    ['ul',
+                      ['li',
+                        this._convert_to_unitless(comp_style[index_map.indexOf("border-left-width")])
+                      ],
+                      ['li',
+                        ['ul',
+                          ['li',
+                            ['p',
+                              '\u00a0',
+                              ['span',
+                                'padding'
+                              ]
+                            ]
+                          ],
+                          ['li',
+                            this._convert_to_unitless(comp_style[index_map.indexOf("padding-top")])
+                          ],
+                          ['li']
+                        ],
+                        ['ul',
+                          ['li',
+                            this._convert_to_unitless(comp_style[index_map.indexOf("padding-left")])
+                          ],
+                          ['li',
+                            ['ul',
+                              ['li',
+                                '\u00a0'
+                              ]
+                            ],
+                            ['ul',
+                              ['li',
+                                this._convert_to_unitless(comp_style[index_map.indexOf("width")], true) +
+                                ' × ' +
+                                this._convert_to_unitless(comp_style[index_map.indexOf("height")], true)
+                              ]
+                            ],
+                            ['ul',
+                              ['li',
+                                '\u00a0'
+                              ]
+                            ],
+                           'class', 'dimension'
+                          ],
+                          ['li',
+                            this._convert_to_unitless(comp_style[index_map.indexOf("padding-right")])
+                          ]
+                        ],
+                        ['ul',
+                          ['li'],
+                          ['li',
+                            this._convert_to_unitless(comp_style[index_map.indexOf("padding-bottom")])
+                          ],
+                          ['li']
+                        ],
+                      'class', 'padding'
+                      ],
+                      ['li',
+                        this._convert_to_unitless(comp_style[index_map.indexOf("border-right-width")])
+                      ]
+                    ],
+                    ['ul',
+                      ['li'],
+                      ['li',
+                        this._convert_to_unitless(comp_style[index_map.indexOf("border-bottom-width")])
+                      ],
+                      ['li']
+                    ],
+                   'class', 'border'
+                  ],
+                  ['li',
+                    this._convert_to_unitless(comp_style[index_map.indexOf("margin-right")])
+                  ]
                 ],
-                ['ul', [['li'],['li', this._convert_to_unitless(this._comp_style[this._layout_map[PADDING_BOTTOM]])],['li']]],
-                'class', 'padding'], ['li', this._convert_to_unitless(this._comp_style[this._layout_map[BORDER_RIGHT_WIDTH]])]],
-              ['ul', [['li'],['li', this._convert_to_unitless(this._comp_style[this._layout_map[BORDER_BOTTOM_WIDTH]])],['li']]],
-              'class', 'border'], ['li', this._convert_to_unitless(this._comp_style[this._layout_map[MARGIN_RIGHT]])]],
-            ['ul', [['li'],['li', this._convert_to_unitless(this._comp_style[this._layout_map[MARGIN_BOTTOM]])],['li']]],
-            'class', 'margin'],
-              ['li', is_positioned ?
-                     this._convert_to_unitless(this._comp_style[this._layout_map[RIGHT]]) :
-                     '\u00A0']],
-          ['ul',
-            [['li'],['li', is_positioned ?
-                           this._convert_to_unitless(this._comp_style[this._layout_map[BOTTOM]]) :
-                           '\u00A0'],['li']]],
-          'class', is_positioned ? 'position' : ''],
-        'class', this._comp_style[this._layout_map[BOX_SIZING]]]],
+                ['ul',
+                  ['li'],
+                  ['li',
+                    this._convert_to_unitless(comp_style[index_map.indexOf("margin-bottom")])
+                  ],
+                  ['li']
+                ],
+               'class', 'margin'
+              ],
+              ['li',
+                is_positioned
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("right")])
+                : '\u00A0'
+              ]
+            ],
+            ['ul',
+              ['li'],
+              ['li',
+                is_positioned
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("bottom")])
+                : '\u00A0'
+              ],
+              ['li']
+            ],
+           'class', is_positioned ? 'position' : ''
+          ],
+         'class', comp_style[index_map.indexOf("box-sizing")]
+        ],
         ['table',
           ['tr',
-            [['th', 'position:', 'data-spec', 'css#position'],
-             ['td', this._comp_style[this._layout_map[POSITION]] || "–"]],
+            ['th',
+              'position:',
+             'data-spec', 'css#position'
+            ],
+            ['td',
+              comp_style[index_map.indexOf("position")] || "–"
+            ],
           ],
           ['tr',
-            [['th', 'z-index:', 'data-spec', 'css#z-index'],
-             ['td', this._comp_style[this._layout_map[Z_INDEX]] || "–"]],
+            ['th',
+              'z-index:',
+             'data-spec', 'css#z-index'
+            ],
+            ['td',
+              comp_style[index_map.indexOf("z-index")] || "–"
+            ],
           ],
           ['tr',
-            [['th', 'box-sizing:', 'data-spec', 'css#box-sizing'],
-             ['td', this._comp_style[this._layout_map[BOX_SIZING]] || "–"]],
+            ['th',
+              'box-sizing:',
+              'data-spec', 'css#box-sizing'
+            ],
+            ['td',
+              comp_style[index_map.indexOf("box-sizing")] || "–"
+            ],
           ],
-          'id', 'layout-info'
+         'id', 'layout-info'
         ]
       ]
     );
