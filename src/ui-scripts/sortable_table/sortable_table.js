@@ -85,7 +85,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   {
     if (this.tabledef.idgetter)
     {
-      this.orgininal_data_order = data.map(this.tabledef.idgetter);
+      this._org_data_order = data.map(this.tabledef.idgetter);
     }
     this._data = data;
   };
@@ -169,7 +169,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       });
     }
 
-    if (obj.sortby && obj.orgininal_data_order)
+    if (obj.sortby && obj._org_data_order)
     { 
       menuitems.push(ContextMenu.separator);
       menuitems.push({
@@ -229,8 +229,13 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     {
       return function(a, b)
       {
-        var comp = data_order.indexOf(idgetter(a)) > data_order.indexOf(idgetter(b));
-        if (comp)
+        var ind_a = data_order.indexOf(idgetter(a));
+        var ind_b = data_order.indexOf(idgetter(b));
+        
+        if (ind_a === ind_b)
+          return 0;
+
+        if (ind_a > ind_b)
           return 1;
 
         return -1;
@@ -239,11 +244,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     return function(evt) {
       var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
-      if (obj.orgininal_data_order)
+      if (obj._org_data_order)
       {
         obj.reversed = localStorage[SORT_REVERSE] = null;
         obj.sortby = localStorage[SORTER] = null;
-        var sort_func = make_sort_function(obj.tabledef.idgetter, obj.orgininal_data_order);
+        var sort_func = make_sort_function(obj.tabledef.idgetter, obj._org_data_order);
         obj.set_data(obj.get_data().sort(sort_func));
         re_render_table(obj, evt.target.get_ancestor("table"));
       }

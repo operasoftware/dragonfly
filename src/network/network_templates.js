@@ -442,17 +442,26 @@ templates.network_log_url_list = function(ctx, selected, item_order)
             "title", res.human_url
            ];
   };
-  var items = ctx.get_resources();
+  var items = ctx.get_resources().slice(0);
+  // Could use copy_object instead, because the template doesn't need the methods of the resources.
+  // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
+  // to the old objects
   if (item_order)
   {
-    var item_ids = items.map(function(item){return item.id});
-    for (var i = 0, new_items = [], id; id = item_order[i]; i++)
-    {
-      var index = item_ids.indexOf(id);
-      if (index != -1)
-        new_items.push(items[index])
-    }
-    items = new_items;
+    items.sort(function(a, b)
+      {
+        var ind_a = item_order.indexOf(a.id);
+        var ind_b = item_order.indexOf(b.id);
+        
+        if (ind_a === ind_b)
+          return 0;
+
+        if (ind_a > ind_b)
+          return 1;
+
+        return -1;
+      }
+    );
   }
   return [
     templates.network_type_filter_buttons("all"),
