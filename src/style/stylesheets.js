@@ -159,19 +159,18 @@ cls.Stylesheets = function()
           template.push(this._templates.inherited_header(element_name, node_style.objectID));
         }
 
-        template.push(this._pretty_print_rule(rule.origin,
-              node_style.objectID, element_name, rule));
+        template.push(this._pretty_print_rule(rule, node_style.objectID, element_name));
       }
     }
 
     return template;
   };
 
-  this._pretty_print_rule = function(origin, obj_id, element_name, rule)
+  this._pretty_print_rule = function(rule, obj_id, element_name)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
     var rt_id = this._element_style.get_rt_id();
-    switch (origin)
+    switch (rule.origin)
     {
     case ORIGIN_USER_AGENT:
       return this._templates.rule_origin_user_agent(decl_list, obj_id, element_name);
