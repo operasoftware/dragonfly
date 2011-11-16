@@ -170,7 +170,7 @@ cls.ElementLayout = function()
 
   this._parse_offset_values = function(offset_values)
   {
-    var data = offset_values.split(';');
+    var data = offset_values.slice(0, -1).split(';'); // Remove the last ';' before splitting
     data[0] = data[0].split(',').map(function(item){
       return item.split('|');
     });
