@@ -161,7 +161,7 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
       },
       options: {
-        no_default_menu: true,
+        no_group_changing: true
       }
     };
     this._sortable_table = new SortableTable(

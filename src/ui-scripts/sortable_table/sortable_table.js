@@ -105,7 +105,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     // should be conditional, but doesn't matter as you don't get
     // dupes in the context menu registry anyhow.
     var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("sortable-table-grouper", [
+    contextmenu.register("sortable-table-menu", [
       { callback: this._make_context_menu }
     ]);
   }
@@ -116,7 +116,8 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
 
     var menuitems = [];
-    if (obj.tabledef.groups)
+    if (obj.tabledef.groups &&
+        !(obj.tabledef.options && obj.tabledef.options.no_group_changing))
     { 
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
@@ -374,7 +375,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
                
   if (!tabledef.options || !tabledef.options.no_default_menu)
   {
-    table.push("data-menu", "sortable-table-grouper");
+    table.push("data-menu", "sortable-table-menu");
   }
   return table;
 }
