@@ -155,7 +155,7 @@ cls.ElementStyle = function()
       {
         this.remove_property(disabled_style_dec, decl.property);
       }
-      else if (!(is_inherited && !(this._stylesheets.inheritable_properties.hasOwnProperty(decl.property))))
+      else if (!(is_inherited && !(cls.Stylesheets.inheritable_properties.hasOwnProperty(decl.property))))
       {
         var index = this.copy_property(disabled_style_dec, style_dec, decl.property);
         style_dec.declarations[index].is_disabled = true;

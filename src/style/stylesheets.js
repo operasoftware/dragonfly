@@ -216,20 +216,24 @@ cls.Stylesheets = function()
     if (!index_map)
       return;
 
-    this._index_map = index_map;
-    var temp = [];
-    for (var i = 0, prop; prop = index_map[i]; i++)
+    if (!this._index_map)
     {
-      temp[i] = {index: i, prop: prop};
-    }
+      this._index_map = index_map;
 
-    temp.sort(function(a, b) {
-      return a.prop > b.prop ? 1 : -1;
-    });
+      var temp = [];
+      for (var i = 0, prop; prop = index_map[i]; i++)
+      {
+        temp[i] = {index: i, prop: prop};
+      }
 
-    for (var i = 0; prop = temp[i]; i++)
-    {
-      this._sorted_index_map[i] = prop.index;
+      temp.sort(function(a, b) {
+        return a.prop > b.prop ? 1 : -1;
+      });
+
+      for (var i = 0; prop = temp[i]; i++)
+      {
+        this._sorted_index_map[i] = prop.index;
+      }
     }
 
     if (org_args && (!org_args[0].__call_count || org_args[0].__call_count == 1))
@@ -257,8 +261,6 @@ cls.Stylesheets = function()
   this._on_reset_state = function()
   {
     this._sheets = {};
-    this._index_map = null;
-    this._sorted_index_map = [];
     this._new_runtimes = null;
   };
 
@@ -725,7 +727,7 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "0px";
 
   case "lighting-color":
-    return "#ffffff";
+    return "rgb(255, 255, 255)";
 
   case "line-height":
     return "normal";

@@ -6,6 +6,7 @@
 cls.ElementLayout = function()
 {
   this._es_debugger = window.services['ecmascript-debugger'];
+  this._tag_manager = cls.TagManager.get_instance();
   this._stylesheets = cls.Stylesheets.get_instance();
   this._layout_map = [];
   this._selected_element = null;
@@ -205,25 +206,26 @@ cls.ElementLayout = function()
     return Boolean(this._selected_element);
   };
 
+  var self = this; // TODO: get rid of
   this.get_layout_values = function(org_args)
   {
-    if (!this._selected_element)
+    if (!self._selected_element)
       return null;
 
-    if (this._comp_style)
-      return this._comp_style;
+    if (self._comp_style)
+      return self._comp_style;
 
-    var rt_id = this._selected_element.rt_id;
-    var obj_id = this._selected_element.obj_id;
+    var rt_id = self._selected_element.rt_id;
+    var obj_id = self._selected_element.obj_id;
 
-    if (this._stylesheets.has_stylesheets_runtime(rt_id))
+    if (self._stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = tagManager.set_callback(null, this._handle_get_metrics_data.bind(this), [rt_id, obj_id, org_args]);
-      this._es_debugger.requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
+      var tag = self._tag_manager.set_callback(null, self._handle_get_metrics_data.bind(self), [rt_id, obj_id, org_args]);
+      self._es_debugger.requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
-      this._stylesheets.get_stylesheets(this._selected_element.rt_id, arguments);
+      self._stylesheets.get_stylesheets(self._selected_element.rt_id, arguments);
     }
     return null;
   };
@@ -258,7 +260,7 @@ cls.ElementLayout = function()
     {
       var rt_id = this._selected_element.rt_id;
       var obj_id = this._selected_element.obj_id;
-      var tag = tagManager.set_callback(null, this._handle_get_offset_data.bind(this), [rt_id, obj_id, cb] );
+      var tag = this._tag_manager.set_callback(null, this._handle_get_offset_data.bind(this), [rt_id, obj_id, cb] );
       this._es_debugger.requestEval(tag, [rt_id, 0, 0, GET_OFFSETS_SCRIPT, [['ele', obj_id]]]);
     }
   };

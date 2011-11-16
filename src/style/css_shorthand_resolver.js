@@ -168,7 +168,7 @@ CssShorthandResolver.shorthands = {
 
       this.properties.forEach(function(prop, idx) {
         if (prop == "background-color") return;
-        var value_list = CssShorthandResolver.parse_multiple_values(decls[prop]);
+        var value_list = CssShorthandResolver.parse_multiple_values(decls[prop].value);
         value_list.forEach(function(val, idx) {
           if (!values[idx]) values[idx] = [];
           values[idx].push(val.trim());
@@ -184,7 +184,7 @@ CssShorthandResolver.shorthands = {
                    ? val
                    : " " + val;
         }, this).join("");
-      }, this).join(", ") + " " + decls["background-color"];
+      }, this).join(", ") + " " + decls["background-color"].value;
     }
   },
 
@@ -434,7 +434,7 @@ CssShorthandResolver.shorthands = {
       var values = [];
 
       this.properties.forEach(function(prop, idx) {
-        var value_list = CssShorthandResolver.parse_multiple_values(decls[prop]);
+        var value_list = CssShorthandResolver.parse_multiple_values(decls[prop].value);
         value_list.forEach(function(val, idx) {
           if (!values[idx]) values[idx] = [];
           values[idx].push(val.trim());
