@@ -2,6 +2,11 @@
 {
   position: absolute;
   z-index: 100;
+  padding: 5px;
+}
+
+#tooltip-background
+{
   background-color: yellow;
   border-radius: 5px;
   padding: 1px 5px;

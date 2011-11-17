@@ -1,4 +1,4 @@
-var TooltipManager = function() {};
+var Tooltips = function() {};
 
 (function()
 {
@@ -25,6 +25,10 @@ var TooltipManager = function() {};
       * Called if the tooltip gets hidden.
       */
     this.onhide = function(){};
+
+    this.ontooltipenter = function(){};
+
+    this.ontooltipleave = function(){};
 
     /**
       * To show the tooltip.
@@ -58,6 +62,14 @@ var TooltipManager = function() {};
     {
       _hide_tooltip(this);
     };
+
+    /**
+      * Default implementation.
+      */
+    this.ontooltip = function(event, target)
+    {
+      this.show();
+    };
   };
 
 
@@ -68,14 +80,15 @@ var TooltipManager = function() {};
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
   const HIDE_DELAY = 120;
   const SHOW_DELAY = 110;
-  const DISTANCE_X = 7;
-  const DISTANCE_Y = 7;
+  const DISTANCE_X = 0;
+  const DISTANCE_Y = -3;
 
   /* private */
 
   var _tooltips = {};
   var _is_setup = false;
   var _tooltip_ele = null;
+  var _tooltip_ele_first_child = null;
   var _current_tooltip = null;
   var _last_handler_ele = null;
   var _last_event = null;
@@ -108,8 +121,8 @@ var TooltipManager = function() {};
         if (_current_tooltip != _tooltips[name])
         {
           _current_tooltip = _tooltips[name];
-          _tooltip_ele.innerHTML = "";
-          _tooltip_ele.appendChild(_current_tooltip._container);
+          _tooltip_ele_first_child.innerHTML = "";
+          _tooltip_ele_first_child.appendChild(_current_tooltip._container);
         }
         _last_handler_ele = ele;
         _last_event = event;
@@ -138,8 +151,8 @@ var TooltipManager = function() {};
   var _set_show_timeout = function()
   {
     _clear_hide_timeout();
-    _clear_show_timeout();
-    _show_timeouts.push(setTimeout(_handle_show_tooltip, SHOW_DELAY));
+    if (!_show_timeouts.length)
+      _show_timeouts.push(setTimeout(_handle_show_tooltip, SHOW_DELAY));
   };
 
   var _clear_show_timeout = function()
@@ -150,6 +163,7 @@ var TooltipManager = function() {};
 
   var _handle_show_tooltip = function(event, ele, name)
   {
+    _clear_show_timeout();
     if (_last_event && _last_handler_ele)
       _current_tooltip.ontooltip(_last_event, _last_handler_ele);
   };
@@ -160,7 +174,7 @@ var TooltipManager = function() {};
     if (_current_tooltip)
       _current_tooltip.onhide();
 
-    _tooltip_ele.innerHTML = "";
+    _tooltip_ele_first_child.innerHTML = "";
     _tooltip_ele.style.cssText = "";
     _current_tooltip = null;
     _last_handler_ele = null;
@@ -203,11 +217,29 @@ var TooltipManager = function() {};
       _hide_tooltip();
   };
 
+  var _on_tooltip_enter = function(event)
+  {
+    if (_current_tooltip && _current_tooltip.ontooltipenter)
+      _current_tooltip.ontooltipenter(event);
+  };
+
+  var _on_tooltip_leave = function(event)
+  {
+    if (_current_tooltip && _current_tooltip.ontooltipleave)
+      _current_tooltip.ontooltipleave(event);
+  };
+
   var _setup = function()
   {
     document.addEventListener("mouseover", _mouseover, false);
-    var tmpl = ["div", "id", "tooltip-container", "style", "top: -100px;"];
+    var tmpl = ["div", 
+                ["div", "id", "tooltip-background"],
+                "id", "tooltip-container",
+                "style", "top: -100px;"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
+    _tooltip_ele.addEventListener('mouseenter', _on_tooltip_enter, false);
+    _tooltip_ele.addEventListener('mouseleave', _on_tooltip_leave, false);
+    _tooltip_ele_first_child = _tooltip_ele.firstChild;
   };
 
   /* implementation */
@@ -234,4 +266,4 @@ var TooltipManager = function() {};
       _tooltips[name] = null;
   };
   
-}).apply(TooltipManager);
+}).apply(Tooltips);
