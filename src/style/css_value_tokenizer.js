@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @constructor
  *
@@ -53,6 +55,7 @@ var CssValueTokenizer = function()
     this._ontoken = ontoken;
     this._position = 0;
     this._token_val = "";
+    this._function_stack = 0;
 
     while (this._position < this._buffer.length)
     {
@@ -128,17 +131,13 @@ var CssValueTokenizer = function()
       this._token_val += c;
       this._position++;
       if (c == open_quote && prev_char != "\\")
-      {
         break;
-      }
       prev_char = c;
       c = this._buffer[this._position];
     }
 
     if (this._token_val.length < 2 || this._token_val.slice(-1) != open_quote)
-    {
       this._throw_error("Unterminated string");
-    }
 
     this._emit_token(CssValueTokenizer.types.STRING);
   };
@@ -153,16 +152,12 @@ var CssValueTokenizer = function()
       this._token_val += c;
       c = this._buffer[++this._position];
       if (this._token_val.length > 7)
-      {
         break;
-      }
     }
 
     // Length should be "#" + 3 or 6 hex chars
     if (!(this._token_val.length == 4 || this._token_val.length == 7))
-    {
       this._throw_error("Invalid hex color");
-    }
 
     this._emit_token(CssValueTokenizer.types.HEX_COLOR);
   };
@@ -174,9 +169,7 @@ var CssValueTokenizer = function()
       if (NUM_CHARS.test(c) || UNARY_OP_CHARS.test(c))
       {
         if (c == "." && this._token_val.indexOf(".") != -1)
-        {
           this._throw_error("Invalid number");
-        }
       }
       else if (/\d/.test(this._token_val) && UNIT_CHARS.test(c))
       {
@@ -206,9 +199,7 @@ var CssValueTokenizer = function()
       this._token_val += c;
       c = this._buffer[++this._position];
       if (!UNIT_CHARS.test(c))
-      {
         break;
-      }
     }
 
     this._emit_token(CssValueTokenizer.types.DIMENSION);
@@ -217,6 +208,7 @@ var CssValueTokenizer = function()
   this._parse_function = function(c)
   {
     this._state = this._states.INSIDE_FUNCTION;
+    this._function_stack++;
     this._token_val += c;
     this._emit_token(CssValueTokenizer.types.FUNCTION_START);
     c = this._buffer[++this._position];
@@ -234,12 +226,11 @@ var CssValueTokenizer = function()
     }
 
     if (this._token_val[0] != ")")
-    {
       this._throw_error("Malformed function syntax");
-    }
 
     this._emit_token(CssValueTokenizer.types.FUNCTION_END);
-    this._state = this._states.DEFAULT;
+    if (--this._function_stack == 0)
+      this._state = this._states.DEFAULT;
   };
 
   this._parse_identifier = function(c)
@@ -297,9 +288,7 @@ var CssValueTokenizer = function()
     }
 
     if (this._token_val.length < 4 || this._token_val.slice(-2) != "*\/")
-    {
       this._throw_error("Unterminated comment");
-    }
 
     this._emit_token(CssValueTokenizer.types.COMMENT);
   };

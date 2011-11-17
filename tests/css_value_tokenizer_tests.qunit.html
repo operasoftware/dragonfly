@@ -166,6 +166,40 @@ test("Tokenization", function() {
   );
 
   do_test(
+    "url('t'), -o-linear-gradient(top, rgb(1,2,3), rgb(1,2,3) 1px)",
+    [
+      [types.FUNCTION_START, "url("],
+      [types.STRING, "'t'"],
+      [types.FUNCTION_END, ")"],
+      [types.OPERATOR, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "-o-linear-gradient("],
+      [types.IDENT, "top"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "rgb("],
+      [types.NUMBER, "1"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "2"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "3"],
+      [types.FUNCTION_END, ")"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "rgb("],
+      [types.NUMBER, "1"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "2"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "3"],
+      [types.FUNCTION_END, ")"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "1px"],
+      [types.FUNCTION_END, ")"],
+    ]
+  );
+
+  do_test(
     "#abr",
     [],
     true
