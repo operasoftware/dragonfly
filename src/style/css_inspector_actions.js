@@ -627,12 +627,7 @@ cls.CSSInspectorActions = function(id)
     var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id"));
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
-    var ele = event.target;
-    while (ele && !ele.hasClass(".css-declaration"))
-    {
-      ele = ele.parentNode;
-    }
-    var prop = ele.querySelector(".css-property").textContent;
+    var prop = event.target.get_ancestor(".css-declaration").querySelector(".css-property").textContent;
     this.remove_property(rt_id, rule_id, prop, this._element_style.update);
   }.bind(this);
 
