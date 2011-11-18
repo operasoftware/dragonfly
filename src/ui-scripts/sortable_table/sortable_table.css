@@ -34,11 +34,6 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:last-of-type > td {
-  border-bottom-width: 1px;
-}
-
-
 .sortable-table > tr:nth-child(odd) {
   background-color: rgba(0, 0, 0, 0.03);
 }

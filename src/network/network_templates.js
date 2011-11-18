@@ -89,7 +89,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
-templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order, type_filter)
 {
   var viewmode_render = templates["network_viewmode_" + selected_viewmode];
   if (!viewmode_render)
@@ -97,7 +97,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
 
   return [
     [
-      "div", templates.network_log_url_list(ctx, selected, item_order),
+      "div", templates.network_log_url_list(ctx, selected, item_order, type_filter),
       "id", "network-url-list"
     ],
     [
@@ -147,10 +147,19 @@ templates.network_viewmode_graphs = function(ctx, width)
   // the tabs to choose between graph and data table, and the graph and data table itself
   var rows = templates.network_graph_rows(ctx, width);
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-  var stepsize = templates.grid_info(duration, width);
-  var gridwidth = Math.round((width / duration) * stepsize);
-  var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
-  return ["div", headerrow, rows, "id", "graph", "style", "background-size: " + gridwidth + "px 100%;"];
+  var template = [];
+  if (duration)
+  {
+    var stepsize = templates.grid_info(duration, width);
+    var gridwidth = Math.round((width / duration) * stepsize);
+    var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
+
+    template = ["div", headerrow, rows,
+                  "id", "graph",
+                  "style", "background-size: " + gridwidth + "px 100%;"
+               ];
+  }
+  return template;
 }
 
 templates.network_viewmode_data = function(ctx, detail_width)
@@ -421,7 +430,7 @@ templates.network_header_table = function(headers)
           "class", "header-list"];
 };
 
-templates.network_log_url_list = function(ctx, selected, item_order)
+templates.network_log_url_list = function(ctx, selected, item_order, type_filter)
 {
   var itemfun = function(res) {
     var statusclass = "status-" + res.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
@@ -464,31 +473,33 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     );
   }
   return [
-    templates.network_type_filter_buttons("all"),
+    templates.network_type_filter_buttons(type_filter),
     ["ol", items.map(itemfun),
       "class", "network-log-url-list"]
   ]
 };
 
 
-templates.network_type_filter_buttons = function(current_filter)
+templates.network_type_filter_buttons = function(type_filter)
 {
   return [
     "div", [
-      {name: "All", id: "all"}, // Todo: Strings
-      {name: "Markup", id: "markup"},
-      {name: "Scripts", id: "scripts"},
-      {name: "Images", id: "images"},
-      {name: "XHR", id: "xhr"},
-      {name: "Other", id: "other"}
+      {name: "All", val: ""}, // Todo: Strings
+      {name: "Markup", val: "markup"},
+      {name: "Stylesheets", val: "css"},
+      {name: "Scripts", val: "scripts"},
+      {name: "Images", val: "images"},
+      {name: "XHR", val: "xhr"},
+      {name: "Other", val: "markup,css,scripts,images,xhr", is_blacklist: true}
     ].map(function(filter)
           {
             var c = "ui-button container-button";
-            if (filter.id === current_filter)
+            if (filter.val === type_filter)
               c += " on";
             return [
               "span", filter.name,
-              "data-filter", filter.id,
+              "data-type-filter", filter.val,
+              "data-filter-is-blacklist", filter.is_blacklist ? "true" : "false",
               "class", c,
               "handler", "type-filter-network-view"
             ];

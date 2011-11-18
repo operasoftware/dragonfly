@@ -83,12 +83,6 @@
   padding: 5px 0 0 8px;
 }
 
-.network-log-url-list:last-child,
-.network-graph-row:last-of-type
-{
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
 .network-log-url-list li:nth-child(even),
 .network-graph-row:nth-child(odd)
 {
@@ -124,8 +118,6 @@
   border-radius: 3px;
 }
 
-.network-log-url-list li:active,
-.network-log-url-list li:nth-child(even):active,
 .network-log-url-list li.selected,
 .network-log-url-list li:nth-child(even).selected
 {

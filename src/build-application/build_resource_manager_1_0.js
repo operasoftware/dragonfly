@@ -10,6 +10,7 @@ window.app.builders.ResourceManager["1.0"] = function(service)
   new cls.NetworkOptionsView('network_options', 
                              ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS,
                              'scroll network-options-container', '', '');
+  cls.NetworkLog.create_ui_widgets();
 
   var setup_request_body_behaviour = function()
   {

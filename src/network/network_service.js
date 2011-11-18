@@ -204,13 +204,70 @@ cls.RequestContext = function()
 {
   this._resources = [];
 
+  this._filter_function_bound = function(item)
+  {
+    var success = true;
+    if (this._filters && this._filters.length)
+    {
+      for (var i = 0, filter; filter = this._filters[i]; i++)
+      {
+        if (filter.type === "text" && filter.content)
+        {
+          var passed_txt_filter = false;
+          for (var j = 0, property_object; property_object = filter.props[j]; j++)
+          {
+            var checked_value = item[property_object.id];
+            if (property_object.get_val)
+            {
+              checked_value = property_object.get_val(item);
+            }
+            if (
+              // this does mostly not exclude 0, because if a get_val func was used, 
+              // it was converted to a string to be used in a template
+              checked_value &&
+              checked_value.toLowerCase().contains(filter.content)
+            )
+            {
+              passed_txt_filter = true;
+              break;
+            }
+          }
+          if (!passed_txt_filter)
+          {
+            success = false;
+          }
+        }
+        else if (filter.type === "type" && filter.content)
+        {
+          var list = filter.content.split(",");
+          if (filter.content.contains(item.type) === filter.is_blacklist)
+          {
+            success = false;
+          }
+        }
+      }
+    }
+    return success;
+  }.bind(this);
+
   this.get_resources = function()
   {
+    var resources = this._resources;
     if (this._paused)
     {
-      return this._paused_resources;
+      resources = this._paused_resources;
     }
-    return this._resources;
+    return resources.filter(this._filter_function_bound);
+  }
+
+  this.has_resources = function()
+  {
+    return !!this._resources.length;
+  }
+
+  this.set_filters = function(filters)
+  {
+    this._filters = filters;
   }
 
   this.clear_resources = function()
@@ -234,9 +291,13 @@ cls.RequestContext = function()
   this.get_duration = function()
   {
     var resources = this.get_resources();
-    var starttimes = resources.map(function(e) { return e.starttime });
-    var endtimes = resources.map(function(e) { return e.endtime });
-    return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    if (resources.length)
+    {
+      var starttimes = resources.map(function(e) { return e.starttime });
+      var endtimes = resources.map(function(e) { return e.endtime });
+      return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    }
+    return 0;
   };
 
   /**
@@ -247,7 +308,6 @@ cls.RequestContext = function()
   this.get_coarse_duration = function(padlen, width)
   {
     var t = this.get_duration();
-
     if (padlen && width)
     {
       var millis_per_px = t / width;

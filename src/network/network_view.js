@@ -15,29 +15,42 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this.createView = function(container)
   {
-    var ctx = this._service.get_request_context();
     this._container = container;
-
-    if (ctx && ctx.get_resources().length)
+    if (this.query)
     {
-      this._render_tabbed_view(container);
+      // this triggers _create via on_before_search
+      this._text_search.update_search();
+    }
+    else
+    {
+      this._create();
+    }
+  }
+
+  this._create = function()
+  {
+    var ctx = this._service.get_request_context();
+
+    if (ctx && ctx.has_resources())
+    {
+      this._render_tabbed_view(this._container);
       if (this._selected)
       {
-        this._render_details_view(container, this._selected);
+        this._render_details_view(this._container, this._selected);
       }
     }
     else if (this._loading)
     {
-      this._render_loading_view(container);
+      this._render_loading_view(this._container);
     }
     else if (this._everrendered)
     {
       // todo: render template "No data to show." This is also for when service is paused and no resources are there now.
-      container.innerHTML = "";
+      this._container.innerHTML = "";
     }
     else
     {
-      this._render_click_to_fetch_view(container);
+      this._render_click_to_fetch_view(this._container);
     }
 
     var pause_button = document.querySelector(".toggle-paused-network-view");
@@ -52,6 +65,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._update_bound = this.update.bind(this);
 
   this.onresize = this.createView;
+
+  this._on_before_search_bound = function(message)
+  {
+    this.query = message.search_term;
+    this._create();
+  }.bind(this)
 
   this.ondestroy = function()
   {
@@ -96,38 +115,92 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._everrendered = true;
     var min_render_delay = 200;
     var timedelta = new Date().getTime() - this._rendertime;
-
+    
+    // an optimization here is extremely difficult. 
+    // most likely because after a rendering, search-highlighting can cause another render-flow, 
+    // and often the timeout caused by previous, comes back after that. that causes another timeout
+    // and as soon as it comes back, re-rendering starts, and it kicks the search-highlight again
+    // .. causes near-infinite callbacks.
+/*
     if (this._rendertimer)
       this._rendertimer = window.clearTimeout(this._rendertimer);
 
     if (timedelta < min_render_delay)
     {
-      this._rendertimer = window.setTimeout(this._update_bound, min_render_delay);
+      // this._rendertimer = window.setTimeout(this._update_bound, min_render_delay); // this causes update_search, causes _create .. and I don't know why this results in nearly infinite loops.
+      this._rendertimer = window.setTimeout(this._create.bind(this), min_render_delay);
       return;
     }
     this._rendertime = new Date().getTime();
-
+*/
     /*
       hand-calculate network-url-list's width, so it only takes one rendering
-      #network-url-list
-      {
-        width: 40%;
-        min-width: 175px; 
-      }
+      #network-url-list { width: 40%; min-width: 175px; }
     */
     var url_list_width = Math.ceil(Math.max(175, parseInt(container.style.width) * 0.4));
     var detail_width = parseInt(container.style.width) - url_list_width;
+    var selected_viewmode = settings.network_logger.get("selected_viewmode");
 
     var ctx = this._service.get_request_context();
-    var selected_viewmode = settings.network_logger.get("selected_viewmode");
+
+    var filters = [];
+    if (this.query)
+    {
+      var props_whitelist = ["url"];
+      if (selected_viewmode === "data")
+      {
+        var columns = [];
+        if (this._table)
+          columns = this._table.columns;
+
+        props_whitelist = props_whitelist.concat(columns);
+      }
+
+      filters.push(
+        {
+          type: "text",
+          content: this.query,
+          props: props_whitelist.map(
+            function(id)
+            {
+              return {
+                        id: id,
+                        get_val: this._tabledef.columns[id] && (
+                          this._tabledef.columns[id].renderer ||
+                          this._tabledef.columns[id].getter
+                        )
+                     }
+            }, this)
+        }
+      );
+    }
+    if (this._type_filters)
+    {
+      filters.push(
+        {
+          type: "type",
+          content: this._type_filters,
+          is_blacklist: this._type_filter_is_blacklist
+        }
+      );
+    };
+    var filter_compare = filters.length ? 
+                           JSON.stringify(filters) : undefined;
+    if (this._current_filters !== filter_compare)
+    {
+      ctx.set_filters(filters);
+      this._current_filters = filter_compare;
+    }
+
     var resource_order;
     if (selected_viewmode === "data")
     {
       resource_order = this._resource_order;
     }
-    var rendered = container.clearAndRender(
-                     templates.network_log_main(ctx, this._selected, selected_viewmode, detail_width, resource_order)
+    var template = templates.network_log_main(
+                     ctx, this._selected, selected_viewmode, detail_width, resource_order, this._type_filters
                    );
+    var rendered = container.clearAndRender(template);
 
     // Render sortable table
     var table_container = rendered.querySelector(".network-data-table-container");
@@ -142,12 +215,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                         null,
                         null,
                         null,
-                        "network-inspector");
-        this._table.add_listener("after-render", this._catch_up_with_sort_bound);
+                        "network-inspector"
+                      );
+        this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
       }
       this._table.set_data(ctx.get_resources().slice(0));
       table_container.clearAndRender(this._table.render());
-      this._catch_up_with_sort_bound();
+      this._catch_up_with_cols_and_sort_bound();
     }
   };
 
@@ -185,7 +259,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
         renderer: function(req) { return req.size ? String(req.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
-        getter: function(req) { return req.size },
+        getter: function(req) { return req.size }
       },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
@@ -212,18 +286,35 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }
 
-  this._catch_up_with_sort_bound = function()
+  this._catch_up_with_cols_and_sort_bound = function()
   {
-    var data = this._table.get_data();
-    if (this._table && data && data.length)
+    var needs_update = false;
+    if (this._table)
     {
-      var old_resource_order = (this._resource_order || []).join(",");
-
-      this._resource_order = data.map(function(res){return res.id});
-      if (this._resource_order.join(",") !== old_resource_order)
+      var data = this._table.get_data();
+      if (data && data.length)
       {
-        this.update();
+        var old_resource_order = this._resource_order;
+
+        this._resource_order = data.map(function(res){return res.id}).join(",");
+        if (this._resource_order !== old_resource_order)
+        {
+          needs_update = true; // todo: this causes another re-rendering for every added resource. optimize.
+        }
       }
+      // check if the visible columns are still the same, as the filters need updating if not.
+      // it's good to do this, even if needs_update is already true, because it stores the _table_columns
+      // for later reference. saves one redraw.
+      var old_table_columns = this._table_columns;
+      this._table_columns = this._table.columns.join(",");
+      if (this._table_columns !== old_table_columns)
+      {
+        needs_update = true;
+      }
+    }
+    if (needs_update)
+    {
+      this.update();
     }
   }.bind(this);
 
@@ -264,6 +355,39 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._service.request_body(rid, this.update.bind(this));
   }.bind(this);
 
+  
+
+  this._on_clear_log_bound = function(evt, target)
+  {
+    if (this._service.is_paused())
+      this._service.unpause();
+    this._service.clear_resources();
+    this.update();
+  }.bind(this);
+
+  this._on_toggle_paused_bound = function(evt, target)
+  {
+    if (this._service.is_paused())
+      this._service.unpause();
+    else
+      this._service.pause();
+
+    this.update();
+  }.bind(this);
+
+  this._on_select_network_viewmode_bound = function(evt, target)
+  {
+    settings.network_logger.set("selected_viewmode", target.getAttribute("data-select-viewmode"));
+    this.update();
+  }.bind(this);
+
+  this._on_change_type_filter_bound= function(evt, target)
+  {
+    this._type_filters = target.getAttribute("data-type-filter");
+    this._type_filter_is_blacklist = (target.getAttribute("data-filter-is-blacklist") === "true");
+    this.update();
+  }.bind(this);
+
   this._on_abouttoloaddocument_bound = function()
   {
     if (!this._service.is_paused())
@@ -290,29 +414,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
   }.bind(this);
 
-  this._on_clear_log_bound = function(evt, target)
-  {
-    if (this._service.is_paused())
-      this._service.unpause();
-    this._service.clear_resources();
-    this.update();
-  }.bind(this);
-
-  this._on_toggle_paused_bound = function(evt, target)
-  {
-    if (this._service.is_paused())
-      this._service.unpause();
-    else
-      this._service.pause();
-
-    this.update();
-  }.bind(this);
-
-  this._on_select_network_viewmode_bound = function(evt, target)
-  {
-    settings.network_logger.set("selected_viewmode", target.getAttribute("data-select-viewmode"));
-    this.update();
-  }.bind(this);
 
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
@@ -344,6 +445,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
 
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
+  eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
+
+  this.init(id, name, container_class, html, default_handler);
+};
+cls.NetworkLogView.prototype = ViewBase;
+
+cls.NetworkLog = {};
+cls.NetworkLog.create_ui_widgets = function()
+{
 
   new ToolbarConfig
   (
@@ -358,11 +468,51 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
       }
     ],
-    null,
+    [
+      {
+        handler: "network-text-filter",
+        shortcuts: "network-text-filter",
+        title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+        type: "filter"
+      }
+    ],
     null,
     null,
     true
   );
+
+  var text_search = window.views.network_logger._text_search = new TextSearch();
+  text_search.add_listener("onbeforesearch", window.views.network_logger._on_before_search_bound);
+
+  eventHandlers.input["network-text-filter"] = function(event, target)
+  {
+    text_search.searchDelayed(target.value);
+  };
+  ActionBroker.get_instance().get_global_handler().
+      register_shortcut_listener("network-text-filter", cls.Helpers.shortcut_search_cb.bind(text_search));
+
+  var on_view_created = function(msg)
+  {
+    if( msg.id === "network_logger" )
+    {
+      text_search.setContainer(msg.container);
+      text_search.setFormInput(
+        views.network_logger.getToolbarControl(msg.container, "network-text-filter")
+      );
+    }
+  }
+
+  var on_view_destroyed = function(msg)
+  {
+    if( msg.id == "network_logger" )
+    {
+      text_search.cleanup();
+    }
+  }
+
+  messages.addListener("view-created", on_view_created);
+  messages.addListener("view-destroyed", on_view_destroyed);
 
   new Settings
   (
@@ -383,7 +533,4 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     null,
     null
   );
-
-  this.init(id, name, container_class, html, default_handler);
-};
-cls.NetworkLogView.prototype = ViewBase;
+}
