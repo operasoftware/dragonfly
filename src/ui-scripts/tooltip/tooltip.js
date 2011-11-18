@@ -192,7 +192,7 @@ var Tooltips = function() {};
         if (typeof content == "string")
           _current_tooltip._container.textContent = content;
         else
-          _current_tooltip._container.render(content);
+          _current_tooltip._container.clearAndRender(content);
       }
 
       if (!box && _last_handler_ele)
