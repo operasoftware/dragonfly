@@ -218,7 +218,8 @@ var Tooltips = function() {};
 
       if (box)
       {
-        var top = box.bottom + DISTANCE_Y, max_h = 0;
+        var top = box.bottom + DISTANCE_Y;
+        var max_h = 0;
         if (top < window_height / 2)
         {
           _tooltip_ele.style.top = top + "px";
@@ -235,7 +236,8 @@ var Tooltips = function() {};
           _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
         }
         
-        var left = box.left + DISTANCE_X, max_w = 0;
+        var left = box.left + DISTANCE_X;
+        var max_w = 0;
         if (left < window_width / 2)
         {
           _tooltip_ele.style.left = left + "px";
@@ -277,19 +279,18 @@ var Tooltips = function() {};
   {
     document.addEventListener("mouseover", _mouseover, false);
     var tmpl = ["div", ["div", "id", "tooltip-background"],
-                "id", "tooltip-container",
-                "style", "top: -100px;"];
+                "id", "tooltip-container"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
-    _tooltip_ele.addEventListener('mouseenter', _on_tooltip_enter, false);
-    _tooltip_ele.addEventListener('mouseleave', _on_tooltip_leave, false);
+    _tooltip_ele.addEventListener("mouseenter", _on_tooltip_enter, false);
+    _tooltip_ele.addEventListener("mouseleave", _on_tooltip_leave, false);
     _tooltip_ele_first_child = _tooltip_ele.firstChild;
-    window.addEventListener('resize', store_window_dimensions, false);
+    window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
     var style = document.styleSheets.getDeclaration("#tooltip-container");
-    padding_width = parseInt(style.getPropertyValue('padding-left')) +
-                    parseInt(style.getPropertyValue('padding-right'));
-    padding_height = parseInt(style.getPropertyValue('padding-top')) +
-                    parseInt(style.getPropertyValue('padding-bottom'));
+    padding_width = parseInt(style.getPropertyValue("padding-left")) +
+                    parseInt(style.getPropertyValue("padding-right"));
+    padding_height = parseInt(style.getPropertyValue("padding-top")) +
+                     parseInt(style.getPropertyValue("padding-bottom"));
   };
 
   /* implementation */
