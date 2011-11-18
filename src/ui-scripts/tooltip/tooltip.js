@@ -82,6 +82,8 @@ var Tooltips = function() {};
   const SHOW_DELAY = 110;
   const DISTANCE_X = 0;
   const DISTANCE_Y = -3;
+  const MARGIN_Y = 15;
+  const MARGIN_X = 30;
 
   /* private */
 
@@ -94,6 +96,16 @@ var Tooltips = function() {};
   var _last_event = null;
   var _hide_timeouts = [];
   var _show_timeouts = [];
+  var window_width = 0;
+  var window_height = 0;
+  var padding_width = 0;
+  var padding_height = 0;
+
+  var store_window_dimensions = function()
+  {
+    window_width = window.innerWidth;
+    window_height = window.innerHeight;
+  };
 
   var _mouseover = function(event)
   {
@@ -200,13 +212,45 @@ var Tooltips = function() {};
         var handler_ele_box = _last_handler_ele.getBoundingClientRect();
         box = {top: handler_ele_box.top,
                bottom: handler_ele_box.bottom,
-               left: _last_event ? _last_event.clientX : handler_ele_box.left};          
+               left: _last_event ? _last_event.clientX : handler_ele_box.left,
+               right: _last_event ? _last_event.clientX : handler_ele_box.right};          
       }
 
       if (box)
       {
-        _tooltip_ele.style.left = (box.left + DISTANCE_X) + "px";
-        _tooltip_ele.style.top = (box.bottom + DISTANCE_Y) + "px";
+        var top = box.bottom + DISTANCE_Y, max_h = 0;
+        if (top < window_height / 2)
+        {
+          _tooltip_ele.style.top = top + "px";
+          _tooltip_ele.style.bottom = "auto";
+          max_h = window_height - top - MARGIN_Y - padding_height;
+          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+        }
+        else
+        {
+          var bottom = window_height - box.top + DISTANCE_Y;
+          _tooltip_ele.style.bottom = bottom + "px";
+          _tooltip_ele.style.top = "auto";
+          max_h = window_height - bottom - MARGIN_Y - padding_height;
+          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+        }
+        
+        var left = box.left + DISTANCE_X, max_w = 0;
+        if (left < window_width / 2)
+        {
+          _tooltip_ele.style.left = left + "px";
+          _tooltip_ele.style.right = "auto";
+          max_w = window_width - left - MARGIN_X - padding_width;
+          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+        }
+        else
+        {
+          var right = window_width - box.right + DISTANCE_X;
+          _tooltip_ele.style.right = right + "px";
+          _tooltip_ele.style.left = "auto";
+          max_w = window_width - right - MARGIN_X - padding_width;
+          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+        }
       }
     }
   };
@@ -232,14 +276,20 @@ var Tooltips = function() {};
   var _setup = function()
   {
     document.addEventListener("mouseover", _mouseover, false);
-    var tmpl = ["div", 
-                ["div", "id", "tooltip-background"],
+    var tmpl = ["div", ["div", "id", "tooltip-background"],
                 "id", "tooltip-container",
                 "style", "top: -100px;"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
     _tooltip_ele.addEventListener('mouseenter', _on_tooltip_enter, false);
     _tooltip_ele.addEventListener('mouseleave', _on_tooltip_leave, false);
     _tooltip_ele_first_child = _tooltip_ele.firstChild;
+    window.addEventListener('resize', store_window_dimensions, false);
+    store_window_dimensions();
+    var style = document.styleSheets.getDeclaration("#tooltip-container");
+    padding_width = parseInt(style.getPropertyValue('padding-left')) +
+                    parseInt(style.getPropertyValue('padding-right'));
+    padding_height = parseInt(style.getPropertyValue('padding-top')) +
+                    parseInt(style.getPropertyValue('padding-bottom'));
   };
 
   /* implementation */

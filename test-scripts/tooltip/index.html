@@ -57,6 +57,12 @@ span:hover,
 {
 	vertical-align: top;
 	padding: 0 5px;
+	 
+}
+
+.url-table td:nth-child(2)
+{
+	word-wrap: break-word;
 }
 </style>
 <script src="../../src/scripts/dom.js"></script>
@@ -232,7 +238,10 @@ window.onload = function()
   	tooltip.ontooltip = function(event, target)
   	{
   		var box = target.getBoundingClientRect();
-  		this.show(null, {top: box.top, bottom: box.bottom, left: box.left + 30});
+  		this.show(null, {top: box.top, 
+	  		               bottom: box.bottom,
+	  		               left: box.left + 30,
+	  		               right: box.left + 10});
   		last_target = target;
   	};
 
