@@ -1,4 +1,4 @@
-var TooltipManager = function() {};
+var Tooltips = function() {};
 
 (function()
 {
@@ -25,6 +25,10 @@ var TooltipManager = function() {};
       * Called if the tooltip gets hidden.
       */
     this.onhide = function(){};
+
+    this.ontooltipenter = function(){};
+
+    this.ontooltipleave = function(){};
 
     /**
       * To show the tooltip.
@@ -58,6 +62,14 @@ var TooltipManager = function() {};
     {
       _hide_tooltip(this);
     };
+
+    /**
+      * Default implementation.
+      */
+    this.ontooltip = function(event, target)
+    {
+      this.show();
+    };
   };
 
 
@@ -68,19 +80,32 @@ var TooltipManager = function() {};
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
   const HIDE_DELAY = 120;
   const SHOW_DELAY = 110;
-  const DISTANCE_X = 7;
-  const DISTANCE_Y = 7;
+  const DISTANCE_X = 0;
+  const DISTANCE_Y = -3;
+  const MARGIN_Y = 15;
+  const MARGIN_X = 30;
 
   /* private */
 
   var _tooltips = {};
   var _is_setup = false;
   var _tooltip_ele = null;
+  var _tooltip_ele_first_child = null;
   var _current_tooltip = null;
   var _last_handler_ele = null;
   var _last_event = null;
   var _hide_timeouts = [];
   var _show_timeouts = [];
+  var window_width = 0;
+  var window_height = 0;
+  var padding_width = 0;
+  var padding_height = 0;
+
+  var store_window_dimensions = function()
+  {
+    window_width = window.innerWidth;
+    window_height = window.innerHeight;
+  };
 
   var _mouseover = function(event)
   {
@@ -108,8 +133,8 @@ var TooltipManager = function() {};
         if (_current_tooltip != _tooltips[name])
         {
           _current_tooltip = _tooltips[name];
-          _tooltip_ele.innerHTML = "";
-          _tooltip_ele.appendChild(_current_tooltip._container);
+          _tooltip_ele_first_child.innerHTML = "";
+          _tooltip_ele_first_child.appendChild(_current_tooltip._container);
         }
         _last_handler_ele = ele;
         _last_event = event;
@@ -138,8 +163,8 @@ var TooltipManager = function() {};
   var _set_show_timeout = function()
   {
     _clear_hide_timeout();
-    _clear_show_timeout();
-    _show_timeouts.push(setTimeout(_handle_show_tooltip, SHOW_DELAY));
+    if (!_show_timeouts.length)
+      _show_timeouts.push(setTimeout(_handle_show_tooltip, SHOW_DELAY));
   };
 
   var _clear_show_timeout = function()
@@ -150,6 +175,7 @@ var TooltipManager = function() {};
 
   var _handle_show_tooltip = function(event, ele, name)
   {
+    _clear_show_timeout();
     if (_last_event && _last_handler_ele)
       _current_tooltip.ontooltip(_last_event, _last_handler_ele);
   };
@@ -160,7 +186,7 @@ var TooltipManager = function() {};
     if (_current_tooltip)
       _current_tooltip.onhide();
 
-    _tooltip_ele.innerHTML = "";
+    _tooltip_ele_first_child.innerHTML = "";
     _tooltip_ele.style.cssText = "";
     _current_tooltip = null;
     _last_handler_ele = null;
@@ -178,7 +204,7 @@ var TooltipManager = function() {};
         if (typeof content == "string")
           _current_tooltip._container.textContent = content;
         else
-          _current_tooltip._container.render(content);
+          _current_tooltip._container.clearAndRender(content);
       }
 
       if (!box && _last_handler_ele)
@@ -186,13 +212,47 @@ var TooltipManager = function() {};
         var handler_ele_box = _last_handler_ele.getBoundingClientRect();
         box = {top: handler_ele_box.top,
                bottom: handler_ele_box.bottom,
-               left: _last_event ? _last_event.clientX : handler_ele_box.left};          
+               left: _last_event ? _last_event.clientX : handler_ele_box.left,
+               right: _last_event ? _last_event.clientX : handler_ele_box.right};          
       }
 
       if (box)
       {
-        _tooltip_ele.style.left = (box.left + DISTANCE_X) + "px";
-        _tooltip_ele.style.top = (box.bottom + DISTANCE_Y) + "px";
+        var top = box.bottom + DISTANCE_Y;
+        var max_h = 0;
+        if (top < window_height / 2)
+        {
+          _tooltip_ele.style.top = top + "px";
+          _tooltip_ele.style.bottom = "auto";
+          max_h = window_height - top - MARGIN_Y - padding_height;
+          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+        }
+        else
+        {
+          var bottom = window_height - box.top + DISTANCE_Y;
+          _tooltip_ele.style.bottom = bottom + "px";
+          _tooltip_ele.style.top = "auto";
+          max_h = window_height - bottom - MARGIN_Y - padding_height;
+          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+        }
+        
+        var left = box.left + DISTANCE_X;
+        var max_w = 0;
+        if (left < window_width / 2)
+        {
+          _tooltip_ele.style.left = left + "px";
+          _tooltip_ele.style.right = "auto";
+          max_w = window_width - left - MARGIN_X - padding_width;
+          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+        }
+        else
+        {
+          var right = window_width - box.right + DISTANCE_X;
+          _tooltip_ele.style.right = right + "px";
+          _tooltip_ele.style.left = "auto";
+          max_w = window_width - right - MARGIN_X - padding_width;
+          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+        }
       }
     }
   };
@@ -203,11 +263,34 @@ var TooltipManager = function() {};
       _hide_tooltip();
   };
 
+  var _on_tooltip_enter = function(event)
+  {
+    if (_current_tooltip && _current_tooltip.ontooltipenter)
+      _current_tooltip.ontooltipenter(event);
+  };
+
+  var _on_tooltip_leave = function(event)
+  {
+    if (_current_tooltip && _current_tooltip.ontooltipleave)
+      _current_tooltip.ontooltipleave(event);
+  };
+
   var _setup = function()
   {
     document.addEventListener("mouseover", _mouseover, false);
-    var tmpl = ["div", "id", "tooltip-container", "style", "top: -100px;"];
+    var tmpl = ["div", ["div", "id", "tooltip-background"],
+                "id", "tooltip-container"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
+    _tooltip_ele.addEventListener("mouseenter", _on_tooltip_enter, false);
+    _tooltip_ele.addEventListener("mouseleave", _on_tooltip_leave, false);
+    _tooltip_ele_first_child = _tooltip_ele.firstChild;
+    window.addEventListener("resize", store_window_dimensions, false);
+    store_window_dimensions();
+    var style = document.styleSheets.getDeclaration("#tooltip-container");
+    padding_width = parseInt(style.getPropertyValue("padding-left")) +
+                    parseInt(style.getPropertyValue("padding-right"));
+    padding_height = parseInt(style.getPropertyValue("padding-top")) +
+                     parseInt(style.getPropertyValue("padding-bottom"));
   };
 
   /* implementation */
@@ -234,4 +317,4 @@ var TooltipManager = function() {};
       _tooltips[name] = null;
   };
   
-}).apply(TooltipManager);
+}).apply(Tooltips);
