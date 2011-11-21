@@ -140,6 +140,7 @@ var Tooltips = function() {};
           _tooltip_ele_first_child.appendChild(_current_tooltip._container);
         }
 
+        _current_tooltip._accept_call = true;
         _last_handler_ele = ele;
         _last_event = event;
         _set_show_timeout();
@@ -149,6 +150,9 @@ var Tooltips = function() {};
       ele = ele.parentNode;
     }
 
+    if (_current_tooltip)
+      _current_tooltip._accept_call = false;
+    
     _set_hide_timeout();
   };
 
@@ -198,7 +202,7 @@ var Tooltips = function() {};
 
   var _show_tooltip = function(tooltip, content, box)
   {
-    if (tooltip == _current_tooltip)
+    if (tooltip == _current_tooltip && _current_tooltip._accept_call)
     {
       if (!content && _last_handler_ele)
         content = _last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT);
@@ -263,8 +267,11 @@ var Tooltips = function() {};
 
   var _hide_tooltip = function(tooltip)
   {
-    if (tooltip == _current_tooltip)
-      _hide_tooltip();
+    if (tooltip == _current_tooltip && _current_tooltip._accept_call)
+    {
+      _clear_show_timeout();
+      _tooltip_ele.style.cssText = "";
+    }
   };
 
   var _on_tooltip_enter = function(event)
