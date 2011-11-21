@@ -366,7 +366,21 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._service.request_body(rid, this.update.bind(this));
   }.bind(this);
 
-  
+  this._on_tooltip = function(evt, target)
+  {
+    var ctx = this._service.get_request_context();
+    var resource_id = target.get_attr("parent-node-chain", "data-object-id");
+    var template = ["ol"];
+    var data = ctx.get_resource(resource_id)._my_dbg || [];
+    for (var i = 0, entry; entry = data[i]; i++)
+    {
+      template.push(["li", entry[1] + ": " + entry[0]]);
+    }
+    tooltip.show(template);
+  }
+
+  var tooltip = Tooltips.register("network-tooltip", true);
+  tooltip.ontooltip = this._on_tooltip.bind(this);
 
   this._on_clear_log_bound = function(evt, target)
   {

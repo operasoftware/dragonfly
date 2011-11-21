@@ -448,7 +448,8 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
             "handler", "select-network-request",
             "data-object-id", String(res.id),
             "class", selected === res.id ? "selected" : "",
-            "title", res.human_url
+            "data-tooltip-text" , res.human_url,
+            "data-tooltip", "network-tooltip"
            ];
   };
   var items = ctx.get_resources().slice(0);

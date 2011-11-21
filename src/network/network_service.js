@@ -427,7 +427,16 @@ cls.Request = function(id)
 
     // todo: remove me --- debug only --- dgb
     if (!this._my_dbg) this._my_dbg = [];
-    var delta = new Date(eventdata.time).getHours() + ":" + new Date(eventdata.time).getMinutes() + ":" + new Date(eventdata.time).getSeconds();
+    var h = "" + new Date(eventdata.time).getHours();
+    if (h.length < 2)
+      h = "0" + h;
+    var m = "" + new Date(eventdata.time).getMinutes();
+    if (m.length < 2)
+      m = "0" + m;
+    var s = "" + new Date(eventdata.time).getSeconds();
+    if (s.length< 2)
+      s = "0" + s;
+    var delta = h + ":" + m + ":" + s;
     if (this._my_dbg.length)
     {
       delta = eventdata.time - this._my_dbg[this._my_dbg.length - 1][2].time; // [2] is where I put eventdata in nxt step
