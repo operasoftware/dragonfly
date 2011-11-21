@@ -188,6 +188,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
 <link rel="stylesheet" href="./storage/storage_style.css"/>
 <link rel="stylesheet" href="./screenshot/style.css"/>
+<link rel="stylesheet" href="./ui-scripts/tooltip/tooltip.css"/>
 
 
 
@@ -262,6 +263,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/dialog.js"/>
 <script src="./ui-scripts/ruler/ruler.js"/>
 <script src="./ui-scripts/ruler/templates.js"/>
+<script src="./ui-scripts/tooltip/tooltip.js"/>
 <script src="./searches/TextSearch.js"/>
 <script src="./searches/searchsinglenodes.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
@@ -395,6 +397,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/watches/watches.js"/>
 <script src="./ecma-debugger/watches/view.js"/>
 <script src="./ecma-debugger/watches/propertyeditor.js"/>
+<script src="./ecma-debugger/jssourcetooltip.js"/>
 
 <script src="./searches/jssearchview.js"/>
 

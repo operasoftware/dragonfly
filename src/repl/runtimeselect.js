@@ -1,4 +1,4 @@
-cls.CommandLineRuntimeSelect = function(id, class_name)
+﻿cls.CommandLineRuntimeSelect = function(id, class_name)
 {
 
   var selected_value = "";
