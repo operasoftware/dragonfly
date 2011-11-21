@@ -3,7 +3,7 @@
   position: absolute;
   z-index: 100;
   padding: 5px;
-  top: -100px;
+  left: -5000px;
 }
 
 #tooltip-background
