@@ -292,9 +292,9 @@ var Tooltips = function() {};
     store_window_dimensions();
     var style = document.styleSheets.getDeclaration("#tooltip-container");
     _padding_width = parseInt(style.getPropertyValue("padding-left")) +
-                    parseInt(style.getPropertyValue("padding-right"));
+                     parseInt(style.getPropertyValue("padding-right"));
     _padding_height = parseInt(style.getPropertyValue("padding-top")) +
-                     parseInt(style.getPropertyValue("padding-bottom"));
+                      parseInt(style.getPropertyValue("padding-bottom"));
   };
 
   /* implementation */
