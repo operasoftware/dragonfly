@@ -8,18 +8,19 @@ var StylesheetTemplates = function()
   var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
 
+  // TODO: this should be defined somewhere external
   this._color_properties = {
-    'fill': true,
-    'stroke': true,
-    'stop-color': true,
-    'flood-color': true,
-    'lighting-color': true,
-    'color': true,
-    'border-top-color': true,
-    'border-right-color': true,
-    'border-bottom-color': true,
-    'border-left-color': true,
-    'background-color': true,
+    "fill": true,
+    "stroke": true,
+    "stop-color": true,
+    "flood-color": true,
+    "lighting-color": true,
+    "color": true,
+    "border-top-color": true,
+    "border-right-color": true,
+    "border-bottom-color": true,
+    "border-left-color": true,
+    "background-color": true
   };
 
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
@@ -151,11 +152,7 @@ var StylesheetTemplates = function()
   {
     return [
       "div",
-        this.prop_value(declaration.property,
-                        declaration.value,
-                        declaration.priority,
-                        declaration.is_disabled,
-                        is_editable),
+        this.prop_value(declaration, is_editable),
       "class", "css-declaration" +
                (declaration.is_applied ? "" : " overwritten") +
                (declaration.is_disabled ? " disabled" : ""),
@@ -163,37 +160,56 @@ var StylesheetTemplates = function()
     ];
   };
 
-  // TODO: this can simply take a declaration as first argument
-  this.prop_value = function(prop, value, priority, is_disabled, is_editable)
+  this.prop_value = function(declaration, is_editable)
   {
+    var value = this.value(declaration);
     return [
       (is_editable
        ? ["input",
           "type", "checkbox",
-          "title", (is_disabled ? "Enable" : "Disable"), // TODO: ui strings
+          "title", (declaration.is_disabled ? "Enable" : "Disable"), // TODO: ui strings
           "class", "enable-disable",
-          "checked", !is_disabled,
+          "checked", !declaration.is_disabled,
           "handler", "enable-disable",
-          "data-property", prop
+          "data-property", declaration.property
          ]
        : []),
       ["span",
-         prop,
+         declaration.property,
        "class", "css-property"
       ],
       ": ",
       ["span",
-         value + (priority ? " !important" : ""),
-         (this._color_properties.hasOwnProperty(prop) && is_editable
+         value,
+         (declaration.priority
+          ? " !important"
+          : ""),
+         (this._color_properties.hasOwnProperty(declaration.property) && is_editable
           ? ["color-sample",
              "handler", "show-color-picker",
-             "style", "background-color:" + value
+             "style", "background-color:" + declaration.value
             ]
           : []),
        "class", "css-property-value"
       ],
       ";"
     ];
+  };
+
+  this.value = function(declaration)
+  {
+    if (declaration.shorthand_tokens)
+    {
+      return declaration.shorthand_tokens.map(function(token) {
+        var value = typeof token == "string"
+                  ? token
+                  : token.value;
+        return token.is_applied != false
+               ? ["span", value]
+               : ["span", value, "class", "overwritten"];
+      });
+    }
+    return ["span", declaration.value];
   };
 
   this.inherited_header = function(element_name, obj_id)
@@ -205,7 +221,7 @@ var StylesheetTemplates = function()
            element_name,
          "obj-id", String(obj_id),
          "class", "element-name inspect-node-link",
-         "handler", "inspect-node-link",
+         "handler", "inspect-node-link"
         ]
     ];
   };

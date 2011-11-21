@@ -32,7 +32,13 @@ cls.Stylesheets = function()
   this.create_declaration = function(prop, value, priority, is_disabled)
   {
     // TODO: call the template directly, need to fix in editor.js too
-    return this._templates.prop_value(prop, value, priority, is_disabled, true);
+    var declaration = {
+      property: prop,
+      value: value,
+      priority: priority,
+      is_disabled: is_disabled
+    };
+    return this._templates.prop_value(declaration, true);
   };
 
   this.get_stylesheets = function(rt_id, org_args)

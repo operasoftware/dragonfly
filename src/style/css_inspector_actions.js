@@ -221,6 +221,15 @@ cls.CSSInspectorActions = function(id)
 
     var script = "object.style.removeProperty(\"" + property + "\");";
 
+    // HACK: workaround for CORE-42812: "border-radius" can't be removed with removeProperty()
+    if (property == "border-radius")
+    {
+      script = "object.style.removeProperty(\"border-top-left-radius\");" +
+               "object.style.removeProperty(\"border-top-right-radius\");" +
+               "object.style.removeProperty(\"border-bottom-left-radius\");" +
+               "object.style.removeProperty(\"border-bottom-right-radius\");";
+    }
+
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
             : 1;
@@ -490,15 +499,16 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['edit-css'] = function(event, target)
   {
-    if (event.target.hasClass("css-property") ||
-        event.target.hasClass("css-property-value"))
+    var ele = event.target.get_ancestor(".css-property") ||
+              event.target.get_ancestor(".css-property-value");
+    if (ele)
     {
-      if (event.target.parentElement.parentElement.hasAttribute('rule-id') &&
-          !event.target.parentNode.hasClass(CSS_CLASS_CP_TARGET))
+      if (ele.parentElement.parentElement.hasAttribute('rule-id') &&
+          !ele.parentNode.hasClass(CSS_CLASS_CP_TARGET))
       {
         this.mode = MODE_EDIT;
-        this.setSelected(event.target.parentNode);
-        this.editor.edit(event, event.target.parentNode);
+        this.setSelected(ele.parentNode);
+        this.editor.edit(event, ele.parentNode);
       }
     }
     else if (event.target.hasClass("css-declaration"))

@@ -1,31 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
-// TODO: move, rename etc
-var Rule = function(rule)
-{
-  this.declarations = [];
-  this.origin = rule.origin;
-  this.selector = rule.selector;
-  this.specificity = rule.specificity;
-  this.stylesheetID = rule.stylesheetID;
-  this.ruleID = rule.ruleID;
-  this.ruleType = rule.ruleType;
-  this.lineNumber = rule.lineNumber;
-
-  var index_map = cls.Stylesheets.get_instance().get_css_index_map();
-  var len = rule.indexList ? rule.indexList.length : 0;
-  for (var i = 0; i < len; i++)
-  {
-    this.declarations.push({
-      property: index_map[rule.indexList[i]],
-      value: rule.valueList[i],
-      priority: rule.priorityList[i],
-      is_applied: Boolean(rule.statusList[i]), // Could be inverted and renamed to overwritten
-      is_disabled: rule.disableList ? Boolean(rule.disabledList[i]) : false
-    });
-  }
-};
-
+// TODO: the shorthand resolver is relying on some methods in this class (hence
+// they're relying on each other). Those methods should be moved to Stylsheets instead.
 /**
  * @constructor
  */
@@ -38,6 +14,7 @@ cls.ElementStyle = function()
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._stylesheets = cls.Stylesheets.get_instance();
+  this._css_shorthand_resolver = CssShorthandResolver.get_instance();
   this._style_declarations = [];
   this._rt_id = null;
   this._obj_id = null;
@@ -166,10 +143,10 @@ cls.ElementStyle = function()
   };
 
   /**
-   * Get a Rule based on the rule ID.
+   * Get a CssRule based on the rule ID.
    *
    * @param {Integer} id The rule id
-   * @returns {Array|null} The Rule if it was found, otherwise null
+   * @returns {CssRule|null} The CssRule if it was found, otherwise null
    */
   this.get_rule_by_id = function(id)
   {
@@ -226,14 +203,24 @@ cls.ElementStyle = function()
     return null;
   };
 
+  this.get_property_index = function(prop, declarations)
+  {
+    for (var i = 0, decl; decl = declarations[i]; i++)
+    {
+      if (decl.property == prop)
+        return i;
+    }
+    return -1;
+  };
+
   /**
-   * Returns an empty Rule
+   * Returns an empty CssRule
    *
-   * @returns {Rule} An empty Rule
+   * @returns {CssRule} An empty CssRule
    */
   this.get_new_style_dec = function()
   {
-    return new Rule({origin: 3});
+    return new CssRule({origin: 3});
   };
 
   /**
@@ -257,7 +244,8 @@ cls.ElementStyle = function()
           value: decl.value,
           priority: decl.priority,
           is_applied: decl.is_applied,
-          is_disabled: decl.is_disabled
+          is_disabled: decl.is_disabled,
+          shorthand_tokens: decl.shorthand_tokens
         });
         break;
       }
@@ -268,9 +256,9 @@ cls.ElementStyle = function()
   /**
    * Removes a property from `rule`
    *
-   * @param {Rule} rule The Rule to remove the property from
+   * @param {CssRule} rule The CssRule to remove the property from
    * @param {String} property The property to remove
-   * @returns {Rule|null} A Rule with the removed property if it was
+   * @returns {CssRule|null} A CssRule with the removed property if it was
    *          removed, otherwise null
    */
   this.remove_property = function(rule, property)
@@ -402,8 +390,8 @@ cls.ElementStyle = function()
       {
         for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
-          var rule = new Rule(node_style);
-          CssShorthandResolver.get_instance().resolve(rule.declarations);
+          var rule = new CssRule(node_style);
+          this._css_shorthand_resolver.resolve(rule.declarations);
 
           if (rule.origin != ORIGIN_USER_AGENT)
           {

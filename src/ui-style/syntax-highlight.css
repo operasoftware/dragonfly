@@ -145,7 +145,11 @@ examine-objects key {
 
 .overwritten {
     text-decoration: line-through;
-    color: #555;
+}
+
+/* Prevent the line-through from inheriting the closest color */
+.overwritten .overwritten {
+    text-decoration: none;
 }
 
 .css-declaration.disabled {
