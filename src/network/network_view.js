@@ -275,13 +275,24 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       latency: {
         label: "Latency",
         align: "right",
-        getter: function(req) { return req.responsestart && req.starttime && req.responsestart - req.starttime + "ms" }
+        getter: function(req)
+                {
+                  if (req.responsestart && req.requesttime)
+                    return req.responsestart - req.requesttime + "ms" 
+                  
+                  return "";
+                }
       },
       duration: {
         label: "Duration",
         align: "right",
         getter: function(req) { return req.duration },
-        renderer: function(req) { return req.duration + "ms" }
+        renderer: function(req) {
+          if (req.duration)
+            return req.duration + "ms"
+
+          return "";
+        }
       }
     }
   }

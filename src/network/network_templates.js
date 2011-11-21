@@ -549,11 +549,11 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 {
   var scale = width / duration;
   var ret = [];
+  var start = (request.starttime - basetime) * scale;
 
   if (request.duration)
   {
     var reqwidth = (request.endtime - request.starttime) * scale;
-    var start = (request.starttime - basetime) * scale;
     var latency = (request.responsestart - request.requesttime) * scale;
     var req_duration = reqwidth - latency;
 
@@ -594,6 +594,12 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
                 "style", "margin-left:" + start + "px;", "title", title
               ]
       ]);
+  }
+  else
+  {
+    ret.push(["span", "class", "network-graph-no-duration",
+               "style", "margin-left:" + start + "px;", "title", title
+             ]);
   }
 
   return ["div", ret,

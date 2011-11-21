@@ -424,6 +424,15 @@ cls.Request = function(id)
     {
       opera.postError("got unknown event: " + eventname);
     }
+
+    // todo: remove me --- debug only --- dgb
+    if (!this._my_dbg) this._my_dbg = [];
+    var delta = new Date(eventdata.time).getHours() + ":" + new Date(eventdata.time).getMinutes() + ":" + new Date(eventdata.time).getSeconds();
+    if (this._my_dbg.length)
+    {
+      delta = eventdata.time - this._my_dbg[this._my_dbg.length - 1][2].time; // [2] is where I put eventdata in nxt step
+    }
+    this._my_dbg.push([eventname, delta, eventdata]);
   };
 
   this._update_event_urlload = function(event)
