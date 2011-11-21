@@ -163,8 +163,8 @@ overlay hr
 
 /* Input Fields, Drop Downs */
 
-.overlay input[type=text]:not([default-text]):not([placeholder]),
-.overlay input[type=number], 
+.overlay input[type='text']:not([default-text]):not([placeholder]),
+.overlay input[type='number'], 
 .overlay select,
 .overlay textarea,
 .scc-input,
@@ -181,8 +181,8 @@ overlay hr
   margin: 2px;
 }
 
-.overlay input[type=text]:not([default-text]):not([placeholder]):focus,
-.overlay input[type=number]:focus
+.overlay input[type='text']:not([default-text]):not([placeholder]):focus,
+.overlay input[type='number']:focus
 {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }

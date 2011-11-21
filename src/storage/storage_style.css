@@ -49,7 +49,7 @@ input[type='datetime-local']
   display: none;
 }
 
-.storage_view input[type=text],
+.storage_view input[type='text'],
 .storage_view textarea
 {
   padding: 3px 2px 1px 2px;
