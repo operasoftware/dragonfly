@@ -14,15 +14,12 @@ cls.JSSourceTooltip.prototype = new function()
 
   this._ontooltip = function(event, target)
   {
-    this._tooltip.show("test", {left: 100,
-                                right: 100,
-                                top: 100,
-                                bottom: 100});
+
   };
 
   this._onhide = function()
   {
-    opera.postError('hide')
+
   };
 
   this._ontooltipenter = function()
