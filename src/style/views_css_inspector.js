@@ -31,3 +31,36 @@ cls.CSSInspectorView = function(id, name, container_class)
   this.init(id, name, container_class);
 };
 
+cls.CSSInspectorView.create_ui_widgets = function()
+{
+  var element_style = cls.ElementStyle.get_instance();
+  new Settings
+  (
+    // id
+    "css-inspector",
+    // key-value map
+    {
+      "show-expanded-properties": false
+    },
+    // key-label map
+    {
+      "show-expanded-properties": "Expand shorthands"
+    },
+    // settings map
+    {
+      contextmenu:
+      [
+        "show-expanded-properties"
+      ]
+    },
+    null,
+    "document",
+    {
+      "show-expanded-properties": function(value) {
+        window.settings["css-inspector"].set("show-expanded-properties", value);
+        element_style.update();
+      }
+    }
+  );
+};
+

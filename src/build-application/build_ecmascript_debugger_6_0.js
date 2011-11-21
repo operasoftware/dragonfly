@@ -119,6 +119,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.CSSInspectorView('css-inspector', 
                              ui_strings.M_VIEW_LABEL_STYLES, 
                              'scroll css-inspector mono');
+    new cls.CSSInspectorView.create_ui_widgets();
     
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
     new cls.CSSInspectorCompStyleView('css-comp-style', 

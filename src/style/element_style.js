@@ -391,7 +391,9 @@ cls.ElementStyle = function()
         for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
           var rule = new CssRule(node_style);
-          this._css_shorthand_resolver.resolve(rule.declarations);
+
+          if (!window.settings["css-inspector"].get("show-expanded-properties"))
+            this._css_shorthand_resolver.resolve(rule.declarations);
 
           if (rule.origin != ORIGIN_USER_AGENT)
           {
