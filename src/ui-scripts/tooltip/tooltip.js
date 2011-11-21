@@ -306,7 +306,7 @@ var Tooltips = function() {};
       if (document.readyState == "complete")
         _setup();
       else
-        document.addEvenetListener("load", _setup, false);
+        document.addEventListener("load", _setup, false);
       _is_setup = true;  
     }
     _tooltips[name] = new Tooltip();
