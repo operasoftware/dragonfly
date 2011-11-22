@@ -1,170 +1,199 @@
 ﻿
-html, body {
+html,
+body
+{
   overflow: hidden;
-  height:100%;
-  }
+  height: 100%;
+}
 
-body {
-  padding:0;
-  margin:0;
+body
+{
+  padding: 0;
+  margin: 0;
   font-family: 'Lucida Sans Unicode', Arial, sans-serif;
-  font-size:.8em;
+  font-size: 0.8em;
   overflow: hidden;
-  }
+}
 
-body>div {
-  padding:0px .7em;
-  }
+body > div
+{
+  padding: 0 0.7em;
+}
 
-h2, h3 {
-  margin:0;
-  padding:0;
-  font-weight:normal;
-  font-size:1.6em;
-  }
+h2,
+h3
+{
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-size: 1.6em;
+}
 
-h3 {
-  font-size:1.3em;
-  }
+h3
+{
+  font-size: 1.3em;
+}
 
-ul {
-  margin:0;
-  padding:0;
-  list-style:none;
-  }
+ul
+{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
-#debug-container {
-  background-color:#ccc;
+#debug-container
+{
+  background-color: #ccc;
   overflow: hidden;
-  }
+}
 
 #debug-container input {
-  float:right;
-  }
+  float: right;
+}
 
-#debug {
-  position:absolute;
-  overflow:auto;
-  border:1px solid #666;
-  background-color:#fff;
-  top:25px;
-  left:5px;
-  right:5px;
-  bottom:5px;
-  padding:.5em;
-  margin:0;
-  }
-
-#source-view {
-  white-space: pre-wrap;
-  border:1px solid transparent; /* prevent any margin collapse */
-  position: relative;
-  }
-
-#source-view li {
-  color:#999;
-  line-height: 16px;
-  }
-
-#source-view li span {
-  color:#000;
-  }
-
-#source-view li .string {
-  color:#963;
-  }
-
-#source-view li .comment {
-  color:green;
-  }
-
-#source-view li .js_keywords {
-  color:#00f;
-  }
-
-#source-view li .js_builtins {
-  color:#f00;
-  }
-
-#source-view li .number {
-  color:#099;
-  }
-
-#source-view li .reg_exp {
-  color:#f60;
-  }
-
-#source-view li .punctuator {
-  color:#fc3;
-  }
-
-.selected {
-  background-color:#f00;
-  color:#fff;
-  }
-
-.horizontal-frame-container {
-  padding:0;
-  overflow:hidden;
-  }
-
-.frame-horizontal {
-  float:left;
-  border: 0px solid #666;
-  border-right-width:5px;
+#debug
+{
+  position: absolute;
   overflow: auto;
-  position:relative;
-  height:100%;
-  }
-
-#source-view #line-pointer, #source-view .breakpoint {
-  position:absolute;
-  content: '\25B6';
-  color:#f00;
-  font-size: 20px;
-  list-style:none;
-  line-height:24px;
-  height:24px;
-  padding:0;
-  margin:0;
-  margin-top:-4px;
-  left:-10px;
-  }
-
-#source-view .breakpoint {
-  content: '\25C9';
-  color:#f00;
-  left:0px;
-  }
-
-.frame-vertical {
   border: 1px solid #666;
-  border-bottom-width:5px;
-  overflow: auto;
-  position:relative;
-  }
+  background-color: #fff;
+  top: 25px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  padding: 0.5em;
+  margin: 0;
+}
 
-.frame-slider-vertical {
-  height:6px;
-  background-color:#09f;
+#source-view
+{
+  white-space: pre-wrap;
+  border: 1px solid transparent; /* prevent any margin collapse */
+  position: relative;
+}
+
+#source-view li
+{
+  color: #999;
+  line-height: 16px;
+}
+
+#source-view li span
+{
+  color: #000;
+}
+
+#source-view li .string
+{
+  color: #963;
+}
+
+#source-view li .comment
+{
+  color: green;
+}
+
+#source-view li .js_keywords
+{
+  color: #00f;
+}
+
+#source-view li .js_builtins
+{
+  color: #f00;
+}
+
+#source-view li .number
+{
+  color: #099;
+}
+
+#source-view li .reg_exp
+{
+  color: #f60;
+}
+
+#source-view li .punctuator
+{
+  color: #fc3;
+}
+
+.selected
+{
+  background-color: #f00;
+  color: #fff;
+}
+
+.horizontal-frame-container
+{
+  padding: 0;
+  overflow: hidden;
+}
+
+.frame-horizontal
+{
+  float: left;
+  border: 0 solid #666;
+  border-right-width: 5px;
+  overflow: auto;
+  position: relative;
+  height: 100%;
+}
+
+#source-view #line-pointer,
+#source-view .breakpoint
+{
+  position: absolute;
+  content: '\25B6';
+  color: #f00;
+  font-size: 20px;
+  list-style: none;
+  line-height: 24px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  margin-top: -4px;
+  left: -10px;
+}
+
+#source-view .breakpoint
+{
+  content: '\25C9';
+  color: #f00;
+  left: 0;
+}
+
+.frame-vertical
+{
+  border: 1px solid #666;
+  border-bottom-width: 5px;
+  overflow: auto;
+  position: relative;
+}
+
+.frame-slider-vertical
+{
+  height: 6px;
+  background-color: #09f;
   position: absolute;
   width: 100%;
   cursor: n-resize;
   z-index: 100;
-  }
+}
 
-.frame-slider-horizontal {
-  height:100%;
-  width:5px;
-  background-color:#09f;
+.frame-slider-horizontal
+{
+  height: 100%;
+  width: 5px;
+  background-color: #09f;
   position: absolute;
   cursor: w-resize;
   z-index: 100;
-  }
+}
 
-#selection_catcher_container {
+#selection_catcher_container
+{
   position: absolute;
   left: -200px;
   top: -200px;
-  }
-
+}

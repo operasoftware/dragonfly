@@ -1,150 +1,178 @@
 ﻿/* JavaScript and generic */
 
 .null,
-.undefined {
-    color: #b43;
-    font-weight: bold;
+.undefined
+{
+  color: #b43;
+  font-weight: bold;
 }
 
-.boolean {
-    color: #d60;
+.boolean
+{
+  color: #d60;
 }
 
-.error {
-    color: #f60;
-    font-style: italic;
+.error
+{
+  color: #f60;
+  font-style: italic;
 }
 
-.number {
-    color: #c32;
+.number
+{ /* TODO: use class */
+  color: #c32;
 }
 
-.string {
-    color: #a54;
+.string
+{
+  color: #a54;
 }
 
-.object {
-    color: #666;
-    background-color: rgba(0, 0, 0, .075);
+.object
+{
+  color: #666;
+  background-color: rgba(0, 0, 0, 0.075);
 }
 
-.punctuator {
-    color: #000;
+.punctuator
+{
+  color: #000;
 }
 
-.reg_exp {
-    color: #3a3;
+.reg_exp
+{
+  color: #3a3;
 }
 
-.js_builtins {
-    color: #55a;
+.js_builtins
+{
+  color: #55a;
 }
 
-.js_keywords {
-    color: #338;
-    font-weight: bold;
+.js_keywords
+{
+  color: #338;
+  font-weight: bold;
 }
 
-.non-editable {
-    background: transparent url("../ui-images/disabled_stripe_tile.png");
-}
 
 /* JavaScript */
 
-.js-source .not-error { /* TODO: Not specified */
-    background-color: #fff;
+.js-source .not-error
+{ /* TODO: Not specified */
+  background-color: #fff;
 }
 
-.js-source .first-error { /* TODO: Not specified */
-    color: #333;
-    background-color: #f90;
+.js-source .first-error
+{ /* TODO: Not specified */
+  color: #333;
+  background-color: #f90;
 }
 
-.js-source .error { /* TODO: Not specified */
-    color: #999;
+.js-source .error
+{ /* TODO: Not specified */
+  color: #999;
 }
 
 .js-source .first-error-line,
-.js-source .error-line { /* TODO: Not specified */
-    background-color: #e6e6e6;
+.js-source .error-line
+{ /* TODO: Not specified */
+  background-color: #e6e6e6;
 }
 
-.highlight-source { /* TODO: Not specified */
-    background-color: yellow;
+.highlight-source
+{ /* TODO: Not specified */
+  background-color: yellow;
 }
 
-.selected-js-source-line {
+.selected-js-source-line
+{
   background-color: #d4e3f4;
 }
+
 
 /* Property inspector */
 
 #examine-objects .key,
-examine-objects key {
-    color: #111;
+examine-objects key
+{
+  color: #111;
 }
+
 
 /* DOM */
 
 .doctype,
-.comment {
-    color: #987;
-    font-style: italic;
+.comment
+{
+  color: #987;
+  font-style: italic;
 }
 
-.document-node {
-    color: #294556; /* TODO: Not specified */
+.document-node
+{
+  color: #294556; /* TODO: Not specified */
 }
 
 .markup-tag,
 .dom node, /* TODO: use class */
 .dom-search node,
-.element-name {
-    color: #338;
+.element-name
+{
+  color: #338;
 }
 
 .markup-attribute,
 .dom key,
-.dom-search key {
-    color: #55a;
+.dom-search key
+{
+  color: #55a;
 }
 
 .markup-attribute-value,
 .dom-search value,
-.dom value {
-    color: #a54;
+.dom value
+{
+  color: #a54;
 }
 
 .markup-bogus-comment,
 .markup-comment,
 .comment-node,
 .cdata-node,
-.text-node {
-    color: #987;
-    font-style: italic;
+.text-node
+{
+  color: #987;
+  font-style: italic;
 }
 
-.dom .pseudo-element {
-    color: rgba(34, 34, 34, .5);
+.dom .pseudo-element
+{
+  color: rgba(34, 34, 34, 0.5);
 }
+
 
 /* CSS */
 
-.css-selector {
-    color: #338;
-    font-weight: bold;
+.css-selector
+{
+  color: #338;
+  font-weight: bold;
 }
 
-.css-property {
-    color: #55a;
+.css-property
+{
+  color: #55a;
 }
 
-.css-property-value {
-    color: #111;
+.css-property-value
+{
+  color: #111;
 }
 
-.overwritten {
-    text-decoration: line-through;
+.overwritten
+{
+  text-decoration: line-through;
 }
 
 /* Prevent the line-through from inheriting the closest color */
@@ -152,64 +180,82 @@ examine-objects key {
     text-decoration: none;
 }
 
-.css-declaration.disabled {
+.css-declaration.disabled
+{
     color: #999;
 }
 
-.css-rule.non-editable {
-    margin: 0 -5px; /* This is ugly */
-    padding: 5px;
+.non-editable
+{
+  background: transparent url("../ui-images/disabled_stripe_tile.png");
 }
 
-.css-rule:not(.non-editable) + .css-rule.non-editable {
-    margin: -5px -5px 0; /* Adjust this so that the spacing is always consistent between rules */
+.css-rule.non-editable
+{
+  margin: 0 -5px; /* This is ugly */
+  padding: 5px;
 }
 
-.css-inspector .non-editable .css-property {
-    color: #4c7899;
+.css-rule:not(.non-editable) + .css-rule.non-editable
+{
+  margin: -5px -5px 0; /* Adjust this so that the spacing is always consistent between rules */
 }
 
-.css-inspector .non-editable .css-property-value {
-    color: #aaa;
+.css-inspector .non-editable .css-property
+{
+  color: #4c7899;
 }
 
-.import-rule {
-    color: #279;
+.css-inspector .non-editable .css-property-value
+{
+  color: #aaa;
 }
+
+.import-rule
+{
+  color: #279;
+}
+
 
 /* Much of this does not belong here since it's not syntax highlighting */
-
 /* ecma object tree */
 
-#examine-objects li li {
-  padding-left:18px;
-  }
+#examine-objects li li
+{
+  padding-left: 18px;
+}
 
-#examine-objects .key {
-  margin-right:7px;
-  }
+#examine-objects .key
+{
+  margin-right: 7px;
+}
+
 
 /* dom */
 
-.spotlight-node { /* TODO: Use same highlighting in CSS inspector */
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 2px;
+.spotlight-node
+{ /* TODO: Use same highlighting in CSS inspector */
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
 }
 
 .spotlight-node:hover,
-.css-rule:not(.non-editable) .css-declaration:hover {
-    border-color: #e0eaf6;
-    background: #f2f5f9;
+.css-rule:not(.non-editable) .css-declaration:hover
+{
+  border-color: #e0eaf6;
+  background: #f2f5f9;
 }
 
 #target-element,
-.spotlight-node:active {
+.spotlight-node:active
+{
     border-color: #c5daf1;
     background: #d4e3f4;
 }
 
-.dom ::selection {
+.dom ::selection
+{
   /* TEMP */
   background-color: #598bec;
   color: #fff;
@@ -217,7 +263,7 @@ examine-objects key {
 
 .tree-style
 {
-  background:transparent url('../ui-images/dom-tree-style.png') scroll repeat 9px 0;
+  background: transparent url('../ui-images/dom-tree-style.png') scroll repeat 9px 0;
 }
 
 .tree-style > div
@@ -225,7 +271,7 @@ examine-objects key {
   border: 1px solid transparent;
   border-radius: 2px;
   border-bottom-color: #fefefe;
-  background-image: -o-linear-gradient(-90deg, transparent 0px,
+  background-image: -o-linear-gradient(-90deg, transparent 0,
                                                transparent 1px,
                                                #fefefe 1px);
   background-repeat: no-repeat;
@@ -233,7 +279,7 @@ examine-objects key {
 
 .tree-style > div > node:first-child:before
 {
-  display:inline-block;
+  display: inline-block;
   vertical-align: middle;
   content: '';
   width: 7px;
@@ -245,5 +291,5 @@ examine-objects key {
 
 .tree-style > div:first-child > span:first-child:before
 {
-  display:none;
+  display: none;
 }

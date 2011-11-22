@@ -237,7 +237,10 @@ cls.JsSourceView = function(id, name, container_class)
     frame_id = container.id;
     container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
-        "<div id='js-source-content' class='js-source' data-menu='js-source-content'></div>"+
+        "<div id='js-source-content' " +
+             "class='js-source' " +
+             "data-menu='js-source-content' " +
+             "data-tooltip='" + cls.JSSourceTooltip.tooltip_name + "'></div>"+
       "</div>"+
       "<div id='js-source-scroll-container' handler='scroll-js-source'>"+
         "<div id='js-source-scroller'></div>"+
@@ -936,6 +939,8 @@ cls.JsSourceView = function(id, name, container_class)
                        this._onmonospacefontchange.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
+
+  new cls.JSSourceTooltip(this);
 }
 
 cls.JsSourceView.prototype = ViewBase;

@@ -189,6 +189,8 @@
   this._handlers["toggle-commandline"] = function(action_id, event, target)
   {
     var visible = (window.views.command_line && window.views.command_line.isvisible());
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     if (!visible)
     {
@@ -201,8 +203,6 @@
     {
       UIWindowBase.closeWindow('command_line');
     }
-    var button = UI.get_instance().get_button("toggle-console");
-    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     return false;
   }.bind(this);
