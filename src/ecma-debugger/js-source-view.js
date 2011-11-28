@@ -472,7 +472,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     this.showLine(script_id, line_no);
     var line = this.get_line_element(line_no);
-    if (line)
+    if (line && typeof line_no == "number")
     {
       line.addClass('selected-js-source-line');
       setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
@@ -718,6 +718,22 @@ cls.JsSourceView = function(id, name, container_class)
   {
     return __current_script && __current_script.script_id;
   }
+
+  this.get_current_script = function()
+  {
+    return runtimes.getScript(this.getCurrentScriptId());
+  };
+
+  this.get_line_number_with_offset = function(offset)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      var cand = __top_line + Math.floor(offset / context['line-height']);
+      if (cand <= __current_script.line_arr.length)
+        return cand;
+    }
+    return -1;
+  };
 
   this.show_stop_at_error = function()
   {

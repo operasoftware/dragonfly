@@ -16,7 +16,14 @@ cls.JSSourceTooltip = function(view)
   var _last_move_event = null;
   var _is_token_selected = false;
   var _mouse_positions = [];
+  var _container = null;
   var _container_box = null;
+  var _char_width = 0;
+  var _line_height = 0;
+  var _default_offset = 10;
+  var _total_y_offset = 0;
+
+  // TODO reset char-width and line-height on the according evemnt
 
   var _onmousemove = function(event)
   {
@@ -69,38 +76,80 @@ cls.JSSourceTooltip = function(view)
       
       var center = _get_mouse_pos_center();
 
-
-
       if (center && center.r <= MIN_RADIUS)
       {
+        var script = _view.get_current_script();
+        if (script)
+        {
+          var offset_y = center.y - _container_box.top;
+          var line_number = _view.get_line_number_with_offset(offset_y);
+          var line = script.get_line(line_number);
+          var offset_x = center.x + _container.scrollLeft - _total_y_offset;
+          var char_offset = get_char_offset(line, offset_x);
+
+          _view.show_and_flash_line(script.script_id, line_number);
+          opera.postError(/*line +', '+*/offset_x +', '+char_offset +', '+line[char_offset]);
+          
+        }
+        /*
         _tooltip.show("test " + (c++), {left: center.x,
                                         top: center.y,
                                         right: center.x,
                                         bottom: center.y});
+        */
       }
       else
       {
         _tooltip.hide();
       }
-      
     }
+  };
+
+  var _get_tab_size = function()
+  {
+    var style_dec = document.styleSheets.getDeclaration("#js-source-content div");
+    return style_dec ? parseInt(style_dec.getPropertyValue("-o-tab-size")) : 0;
+  };
+
+  var get_char_offset = function(line, offset)
+  {
+    offset /= _char_width;
+    for (var i = 0, l = line.length, offset_count = 0; i < l; i++)
+    {
+      offset_count += line[i] == "\t"
+                     ? _tab_size - (offset_count % _tab_size)
+                     : 1;
+      if (offset_count > offset)
+        return i;
+    }
+
+    return -1;
   };
 
   var _ontooltip = function(event, target)
   {
     if (!_poll_interval)
     {
-      var container = _view.get_container();
+      if (!_char_width)
+      {
+        _char_width = defaults["js-source-char-width"];
+        _line_height = defaults["js-source-line-height"];
+        _tab_size = _get_tab_size();
+        _default_offset = defaults["js-default-text-offset"];
+        // TODO reset on the according event
+      }
+
+      var container = _view.get_scroll_container();
       if (container)
       {
         // TODO resize events
-
+        _container = container;
         _container_box = container.getBoundingClientRect();
         _tooltip_target_ele = target;
         _tooltip_target_ele.addEventListener('mousemove', _onmousemove, false);
         while (_mouse_positions.length)
           _mouse_positions.pop();
-
+        _total_y_offset = _container_box.left + _default_offset;
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
       }
     }    
@@ -115,6 +164,7 @@ cls.JSSourceTooltip = function(view)
       _poll_interval = 0;
       _tooltip_target_ele = null;
       _container_box = null;
+      _container = null;
     }
   };
 

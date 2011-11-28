@@ -121,6 +121,14 @@ window.cls.NewScript.prototype = new function()
          : this.line_arr[0];
   }
 
+  this.get_line = function(line_number)
+  {
+    if (line_number > 0 && this.line_arr[line_number])
+      return this.script_data.slice(this.line_arr[line_number - 1],
+                                    this.line_arr[line_number]);
+    return "";
+  };
+
   this.clear_search = function()
   {
     this.search_term = "";
