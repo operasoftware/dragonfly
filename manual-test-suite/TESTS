@@ -2522,11 +2522,11 @@ id: 00100
 label: Inspect errors
 desc:
   - Go to the url above
-  - Verify that there is one js, css, storage, and one svg error
-  - Verify that there is a tab shown for each of these error types
-  - Verify that the js and css entries can be expanded to see the details
-  - Verify that only the js error is in the JavaScript pane
-  - Verify that only the css error is in the CSS pane
+  - Verify that there are 3 JS errors, 1 CSS, 1 Storage, and 1 SVG error
+  - Verify that there is a tab shown for each error type
+  - Verify that the JS and CSS entries can be expanded to see the details
+  - Verify that only the JS errors is in the JavaScript pane
+  - Verify that only the CSS error is in the CSS pane
   - Verify that the error count on the top tab matches the number of errors shown
 
 id: 00200
@@ -2534,16 +2534,16 @@ label: Expand all
 desc:
   - Select and unselect the 'Expand all' switch
   - Verify that the entries are expanded and collapse accordingly
-  - Verify that in the 'All', 'JavaScript' and 'CSS' pane.
+  - Verify that in all tabs
 
 id: 00300
 label: Filter errors
 desc:
   - Go to the "All" tab
   - Type or paste "foo" into the filter field
-  - Verify that 3 of the 4 errors are shown and 4 matches are highlighted
+  - Verify that 3 errors are shown and 4 matches are highlighted
   - Verify that the first (JS) Error is expanded
-  - Verify that the error count on the tob tab is now 3
+  - Verify that the error count on the top tab is now 3
 
 id: 00400
 label: CSS Filter
@@ -2554,6 +2554,16 @@ desc:
   - Verify that the error count went down to 3
   - Remove "_line-height" from the field
   - Verify that the error count is back at 4
+
+id: 00450
+label: Error references
+desc:
+  - Verify that 1 JS error has the location "error.html:16"
+  - Verify that 2 JS errors have the location "error-one.js:18"
+  - Verify that the CSS error has the location "error.html:4"
+  - Verify that the SVG error has the location "error.svg"
+  - Verify that the Storage error has the location "error.html"
+  - Verify that you can click each location to see the line highlighted in Resources
 
 id: 00500
 label: Clearing
@@ -2959,9 +2969,9 @@ label: Request list hover sync
 desc:
   - Load a page
   - Hover a url on the left hand side of the graph view
-  - Verify at the url, and the graph bar are higlighted when hovered.
+  - Verify at the url, and the graph bar are highlighted when hovered.
   - Hover the graph part of a request.
-  - Verify that the url and the graph bar are higlighted
+  - Verify that the url and the graph bar are highlighted
 
 id: 00500
 label: Request details
@@ -2970,6 +2980,18 @@ desc:
   - Click a request
   - Verify that the details view is shown
 
+url: ./test-cases/network/send.html?submit_all
+id: 00600
+label: Async requests
+desc:
+  - Load test-cases/network/send.html?submit_all
+  - Verify that you see a waterfall of lots of requests, some resources take very long
+  - Verify that you see 302 redirects
+  - Verify that the details of each request makes sense
+  - Turn Content tracking on in Network-Options and reload the page
+  - Verify that you can see the Response body in the details page
+  - Submit one of the forms manually by pressing Submit
+  - Verify another entry was added to the list
 
 Network request crafter
 ***********************
