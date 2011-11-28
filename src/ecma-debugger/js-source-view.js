@@ -735,6 +735,28 @@ cls.JsSourceView = function(id, name, container_class)
     return -1;
   };
 
+  this.higlight_slice = function(line_number, offset_start, length, style)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      this._slice_highlighter.clear_hit();
+      var line_ele = this.get_line_element(line_number);
+      while (line_ele && typeof length == 'number' && length > 0)
+      {
+        this._slice_highlighter.set_hit(line_ele, 
+                                        offset_start,
+                                        length, 
+                                        TextSearch.HIGHLIGHT_STYLE,
+                                        true,
+                                        ".error-description");
+        length -= __current_script.get_line_length(line_number) - offset_start;
+        offset_start = 0;
+        line_number++;
+        line_ele = line_ele.nextElementSibling;
+      }
+    }
+  };
+
   this.show_stop_at_error = function()
   {
     if (__current_script &&
@@ -955,6 +977,8 @@ cls.JsSourceView = function(id, name, container_class)
                        this._onmonospacefontchange.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
+
+  this._slice_highlighter = new VirtualTextSearch();
 
   new cls.JSSourceTooltip(this);
 }

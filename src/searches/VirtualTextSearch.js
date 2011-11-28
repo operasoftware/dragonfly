@@ -547,6 +547,11 @@ var VirtualTextSearchBase = function()
     return this._hit;
   };
 
+  this.clear_hit = function()
+  {
+    this._clear_hits();
+  };
+
   this.highlight_matches = function(script)
   {
   

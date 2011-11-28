@@ -22,6 +22,7 @@ cls.JSSourceTooltip = function(view)
   var _line_height = 0;
   var _default_offset = 10;
   var _total_y_offset = 0;
+  var _last_poll = {};
 
   // TODO reset char-width and line-height on the according evemnt
 
@@ -73,9 +74,7 @@ cls.JSSourceTooltip = function(view)
 
       _mouse_positions.push({x: _last_move_event.clientX,
                              y: _last_move_event.clientY});
-      
       var center = _get_mouse_pos_center();
-
       if (center && center.r <= MIN_RADIUS)
       {
         var script = _view.get_current_script();
@@ -86,23 +85,40 @@ cls.JSSourceTooltip = function(view)
           var line = script.get_line(line_number);
           var offset_x = center.x + _container.scrollLeft - _total_y_offset;
           var char_offset = get_char_offset(line, offset_x);
-
-          _view.show_and_flash_line(script.script_id, line_number);
-          opera.postError(/*line +', '+*/offset_x +', '+char_offset +', '+line[char_offset]);
-          
+          if (char_offset > -1 &&
+              !(_last_poll.script == script &&
+                _last_poll.line_number == line_number && 
+                _last_poll.char_offset == char_offset))
+          {
+            _last_poll.script = script;
+            _last_poll.line_number = line_number;
+            _last_poll.char_offset = char_offset;
+            _last_poll.center = center;
+            _handle_poll_position(script, line_number, char_offset, center);
+          }
         }
-        /*
-        _tooltip.show("test " + (c++), {left: center.x,
-                                        top: center.y,
-                                        right: center.x,
-                                        bottom: center.y});
-        */
       }
       else
       {
+        // _view.higlight_slice(-1); 
         _tooltip.hide();
       }
     }
+  };
+
+  var _handle_poll_position = function(script, line_number, char_offset, center)
+  {
+    opera.postError('handle')
+    // var line = script.get_line(line_number);
+    _view.higlight_slice(line_number, char_offset, 1);
+    //_view.show_and_flash_line(script.script_id, line_number);
+    // opera.postError((c++) +', '+char_offset +', '+line[char_offset]);
+    /*
+    _tooltip.show("test " + (c++), {left: center.x,
+                                    top: center.y,
+                                    right: center.x,
+                                    bottom: center.y});
+    */
   };
 
   var _get_tab_size = function()
