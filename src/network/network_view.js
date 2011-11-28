@@ -14,7 +14,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
   this._rendertime = 0;
-  this._rendertimer = null;
+  this._rendertimer = 0;
   this._everrendered = false;
   this._url_list_width = 250;
 
@@ -112,7 +112,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var timedelta = new Date().getTime() - this._rendertime;
 
     if (this._rendertimer)
-      this._rendertimer = window.clearTimeout(this._rendertimer);
+    {
+      window.clearTimeout(this._rendertimer);
+      this._rendertimer = 0;
+    }
 
     if (timedelta < min_render_delay)
     {
@@ -207,9 +210,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       if (this._rendertimer)
       {
         window.clearTimeout(this._rendertimer);
+        this._rendertimer = 0;
       }
       this._rendertime = 0;
-      this._rendertimer = null;
       this.ondestroy(); // saves scroll pos
       this.update();
     }

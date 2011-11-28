@@ -45,8 +45,7 @@ cls.debug.Debug = function(id, name, container_class)
     return (
     [
       'textarea',
-      'class', 'debug-textarea',
-      'spellcheck', 'false'
+      'class', 'debug-textarea'
     ]);
   };
 
@@ -77,10 +76,8 @@ cls.debug.Debug = function(id, name, container_class)
     {
       this._log_entries.push(log);
     }
-    if(
-      this._textarea &&
-      this._textarea.selectionStart == this._textarea.selectionEnd
-    )
+    if(this._textarea &&
+       this._textarea.selectionStart == this._textarea.selectionEnd)
     {
       this._textarea.value = this._log_entries.filter(this._filter_log, this._filter).map(this._get_log_text).join('\n');
       this._textarea.scrollTop = this._textarea.scrollHeight;
