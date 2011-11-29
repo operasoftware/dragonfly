@@ -23,6 +23,8 @@ cls.JSSourceTooltip = function(view)
   var _default_offset = 10;
   var _total_y_offset = 0;
   var _last_poll = {};
+  var _identifier = null;
+  var _identifier_boxes = [];
 
   // TODO reset char-width and line-height on the according evemnt
 
@@ -63,11 +65,15 @@ cls.JSSourceTooltip = function(view)
 
   var _poll_position = function()
   {
-    if (_is_token_selected)
+    if (!_last_move_event)
+      return;
+
+    if (_identifier)
     {
-      
+      var is_over = _check_identifier_boxes(_last_move_event);
+      opera.postError(is_over);
     }
-    else if (_last_move_event)
+    else 
     {
       while (_mouse_positions.length > 2)
         _mouse_positions.shift();
@@ -96,6 +102,14 @@ cls.JSSourceTooltip = function(view)
             _last_poll.center = center;
             _handle_poll_position(script, line_number, char_offset, center);
           }
+          else
+          {
+            // TODO
+          }
+        }
+        else
+        {
+          // TODO
         }
       }
       else
@@ -106,10 +120,35 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
+  var _check_identifier_boxes = function(event)
+  {
+    var off_x = _total_y_offset - _container.scrollLeft;
+    var off_y = _container_box.top - _container.scrollTop;
+    var e_x = event.clientX - off_x;
+    var e_y = event.clientY - off_y;
+
+    for (var i = 0, box; box = _identifier_boxes[i]; i++)
+    {
+      if (e_x >= box.left && e_x <= box.right &&
+          e_y >= box.top && e_y <= box.bottom)
+        return true;
+    }
+    return false;
+  };
+
   var _handle_poll_position = function(script, line_number, char_offset, center)
   {
     opera.postError('handle')
-    // var line = script.get_line(line_number);
+    // _get_identifier()
+    var line = script.get_line(line_number);
+    // for now the single char
+    _identifier = {start_line: line_number,
+                   start_offset: char_offset,
+                   end_line: line_number,
+                   end_offset: char_offset};
+
+    _update_identifier_boxes(script, _identifier);
+
     _view.higlight_slice(line_number, char_offset, 1);
     //_view.show_and_flash_line(script.script_id, line_number);
     // opera.postError((c++) +', '+char_offset +', '+line[char_offset]);
@@ -119,6 +158,35 @@ cls.JSSourceTooltip = function(view)
                                     right: center.x,
                                     bottom: center.y});
     */
+  };
+
+  _update_identifier_boxes = function(script, identifier)
+  {
+    // translates the current selected identifier to dimesion boxes
+    // position and dimensions are absolute to the source text
+    var line_number = _identifier.start_line;
+    var line = script.get_line(line_number);
+    var start_offset = _identifier.start_offset;
+    var end_offset = 0;
+
+    while (true)
+    {
+      var box = {};
+      box.left = get_pixel_offset(line, start_offset);
+      if (line_number < _identifier.end_line)
+        box.right = get_pixel_offset(line, line.length + 1);
+      else
+        box.right = get_pixel_offset(line, _identifier.end_offset + 1);
+      box.top = (line_number - 1) * _line_height;
+      box.bottom = line_number * _line_height;
+      _identifier_boxes.push(box);
+      if (line_number == _identifier.end_line ||
+          line_number >= script.line_arr.length)
+        break;
+      else
+        line_number += 1;
+      start_offset = 0;
+    }
   };
 
   var _get_tab_size = function()
@@ -140,6 +208,17 @@ cls.JSSourceTooltip = function(view)
     }
 
     return -1;
+  };
+
+  var get_pixel_offset = function(line, char_offset)
+  {
+    for (var i = 0, offset_count = 0; i < char_offset; i++)
+    {
+      offset_count += line[i] == "\t"
+                     ? _tab_size - i % _tab_size
+                     : 1;
+    }
+    return offset_count * _char_width;
   };
 
   var _ontooltip = function(event, target)
