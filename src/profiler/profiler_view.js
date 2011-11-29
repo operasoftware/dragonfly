@@ -29,11 +29,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   var TIMELINE_LIST = 2;
   var TIMELINE_ID = 0;
 
+  var AGGREGATED_EVENTS_WIDTH = parseInt(document.styleSheets.getDeclaration("#profiler-timeline").left) || 0;
+
   // Parent-children relationships
   this._children = {};
   this._children[STYLE_RECALCULATION] = [CSS_SELECTOR_MATCHING];
 
-  this._default_types = [GENERIC, PROCESS, DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
+  this._default_types = [/*GENERIC, PROCESS,*/ DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
                          THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -98,7 +100,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                               MODE_REDUCE_UNIQUE_TYPES,
                               null,
                               null,
-                              null,
+                              this._default_types,
                               null,
                               this._handle_aggregated_list.bind(this));
   };
@@ -111,7 +113,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                               MODE_REDUCE_ALL,
                               null,
                               null,
-                              null,
+                              this._default_types,
                               null,
                               this._handle_reduced_list.bind(this));
   };
@@ -124,11 +126,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
-    var AGGREGATED_EVENTS_WIDTH = 240; // FIXME: calculate automatically
     this._container.clearAndRender(
         this._timeline_list.eventList && this._timeline_list.eventList[0]
-        ? this._templates.main(this._templates.event_list_aggregated(this._aggregated_list, this._reduced_list.eventList[1]),
-                               this._templates.event_list_all(this._timeline_list, this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
+        ? this._templates.main(this._templates.legend(this._aggregated_list),
+                               this._templates.event_list_all(this._timeline_list, this._event_id, this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
                                this._templates.details(this._table),
                                this._templates.status(this._templates.format_time(this._details_time)))
         : this._templates.empty("Press the Record button to start profiling")

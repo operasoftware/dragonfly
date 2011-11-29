@@ -32,19 +32,17 @@ var ProfilerTemplates = function()
   type_map[PAINT] = "Paint";
 
   var BAR_MIN_WIDTH = 5; // min-width for .profiler-event
-  var BAR_HEIGHT = 16; // offset height of .profiler-timeline-row
+  var BAR_HEIGHT = 18; // offset height of .profiler-timeline-row
 
   this._order = [DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION, THREAD_EVALUATION,
                  REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
+  this._expandables = [STYLE_RECALCULATION];
 
-  this.main = function(aggregated_events, timeline, details_list, status)
+  this.main = function(legend, timeline, details_list, status)
   {
     return [
       ["div",
-         aggregated_events,
-       "id", "profiler-aggregated"],
-      ["div",
-         this.legend(),
+         legend,
        "id", "profiler-legend"],
       ["div",
          timeline,
@@ -59,14 +57,37 @@ var ProfilerTemplates = function()
     ];
   };
 
-  this.legend = function()
+  this.legend = function(events)
   {
-    return this._order.map(function(row, idx) {
-      return (["div",
-                type_map[row],
-                "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
-              ]);
-    });
+    if (events && events.eventList && events.eventList[0])
+    {
+      // TODO: style recalc includes selector matching, so should use aggregatedTime
+      var total_time = events.eventList.reduce(function(prev, curr) {
+        return prev + curr.time;
+      }, 0);
+
+      return this._order.map(function(row, idx) {
+        // TODO: do this once outside the loop
+        var event = events.eventList.filter(function(event) {
+          return event.type == row;
+        })[0];
+        return (["div",
+                   // TODO: this might end up as less than 100%, fix
+                   ["span",
+                      type_map[row] + " ",
+                    "class", "label"
+                   ],
+                   ["span",
+                      ((Math.round(event.time / total_time * 100)) + " %"),
+                    "class", "amount"
+                   ],
+                 "class", "profiler-timeline-row" + (idx % 2 ? " odd" : ""),
+                 "title", this.get_title_aggregated(event),
+                 "data-event-type", String(event.type),
+                 "handler", "profiler-get-event-details"
+               ]);
+      }, this);
+    }
   };
 
   this.timeline_markers = function(width, interval, ms_unit)
@@ -79,31 +100,31 @@ var ProfilerTemplates = function()
     {
       var left = Math.round(marker_time * i * ms_unit);
       ret.push(["div",
-                 "class", "profiler-timeline-marker",
-                 "style", "left:" + left + "px"
+                "class", "profiler-timeline-marker",
+                "style", "left:" + left + "px"
                ],
                ["div",
-                 this.format_time(marker_time * i),
-                 "class", "profiler-timeline-marker-time",
-                 "style", "left:" + left + "px"
+                  this.format_time(marker_time * i),
+                "class", "profiler-timeline-marker-time",
+                "style", "left:" + left + "px"
                ]);
     }
 
-    // Add the last one at the exact end of the interval
-    ret.push(["div",
-               "class", "profiler-timeline-marker",
-               "style", "left:" + width + "px"
-             ],
-             ["div",
-               this.format_time(interval),
-               "class", "profiler-timeline-marker-time",
-               "style", "left:" + width + "px"
-             ]);
+    //// Add the last one at the exact end of the interval
+    //ret.push(["div",
+    //           "class", "profiler-timeline-marker",
+    //           "style", "left:" + width + "px"
+    //         ],
+    //         ["div",
+    //           this.format_time(interval),
+    //           "class", "profiler-timeline-marker-time",
+    //           "style", "left:" + width + "px"
+    //         ]);
 
     return ret;
   };
 
-  this.event_list_all = function(events, container_width)
+  this.event_list_all = function(events, selected_id, container_width)
   {
     var ret = [];
 
@@ -137,91 +158,23 @@ var ProfilerTemplates = function()
         ret.push(
           // Interval
           ["div",
-            // Self-time
-            ["div",
+             // Self-time
+             ["div",
               "style", "width: " + self_time + "px;",
               "class", "profiler-event profiler-timeline-selftime event-type-" + event.type
-            ],
-            "style",
-              "width: " + interval + "px;" +
-              "left: " + event_start + "px;" +
-              "top:" + (column * BAR_HEIGHT) + "px;",
-            "title", this.get_title_all(event),
-            "class", "profiler-event profiler-event-interval event-type-" + event.type,
-            "data-event-id", String(event.eventID),
-            "data-event-type", String(event.type),
-            "handler", "profiler-get-event-details"
-          ]
-        )
+             ],
+           "style",
+             "width: " + interval + "px;" +
+             "left: " + event_start + "px;" +
+             "top:" + ((column * BAR_HEIGHT) + 1) + "px;",
+           "title", this.get_title_all(event),
+           "class", "profiler-event profiler-event-interval event-type-" + event.type + (event.eventID == selected_id ? " selected" : ""),
+           "data-event-id", String(event.eventID),
+           "data-event-type", String(event.type),
+           "handler", "profiler-get-event-details",
+           "data-isexpandable", String(this._expandables.indexOf(event.type) != 1 && event.childCount > 1)
+          ]);
       }, this);
-    }
-    return ret;
-  };
-
-  this.event_list_aggregated = function(events, process_event)
-  {
-    var ret = [];
-    if (events && events.eventList && events.eventList[0] && process_event)
-    {
-      var total_time = events.eventList.reduce(function(prev, curr) {
-        return prev + curr.time;
-      }, 0);
-
-      // Filter out event types with zero time
-      var data = events.eventList.filter(function(event) {
-        return event.time != 0;
-      });
-
-      data = data.map(function(event) {
-        return {
-          amount: event.time,
-          data: {
-            title: this.get_title_aggregated(event),
-            class_name: "event-type-" + event.type,
-            event_type: String(event.type)
-          }
-        };
-      }, this);
-
-      // FIXME: PROCESS is currently only supported in dev builds
-      // Add the Process event (so we can show how much of the total amount
-      // that we didn't profile)
-      //data.push({
-      //  amount: process_event.time - total_time,
-      //  data: {
-      //    title: this.get_title_aggregated({
-      //             type: process_event.type,
-      //             time: process_event.time - total_time
-      //           }),
-      //    class_name: "event-type-" + process_event.type,
-      //    event_type: String(process_event.type)
-      //  }
-      //});
-
-      // Sort by time
-      data.sort(function(a, b) {
-        return b.amount - a.amount;
-      });
-
-      var chart = new Chart(data);
-      var pie_chart = chart.get_pie_chart(110);
-      var slices = pie_chart.slices.map(function(slice) {
-        return [
-          "path",
-            ["title", slice.data.title],
-          "d", slice.path,
-          "class", slice.data.class_name,
-          "handler", "profiler-get-event-details",
-          "data-event-type", slice.data.event_type
-        ];
-      });
-
-      var ret = [
-        "svg:svg",
-          slices,
-        "width", String(pie_chart.size),
-        "height", String(pie_chart.size)
-      ];
     }
     return ret;
   };
@@ -243,15 +196,15 @@ var ProfilerTemplates = function()
         var width = Math.ceil(event.time * ms_unit);
         ret.push(
           ["div",
-            "style",
-              "width: " + width + "px;" +
-              "top:" + (idx * BAR_HEIGHT) + "px;",
-            "title", this.get_title_unique_events(event),
-            "class", "profiler-event event-type-" + event.type,
-            "data-event-id", String(event.eventID),
-            "data-event-type", String(event.type),
-            "handler", "profiler-get-event-details"
-        ]);
+           "style",
+             "width: " + width + "px;" +
+             "top:" + (idx * BAR_HEIGHT) + "px;",
+           "title", this.get_title_unique_events(event),
+           "class", "profiler-event event-type-" + event.type,
+           "data-event-id", String(event.eventID),
+           "data-event-type", String(event.type),
+           "handler", "profiler-get-event-details"
+          ]);
       }, this);
     }
 
@@ -303,10 +256,7 @@ var ProfilerTemplates = function()
 
   this.get_title_aggregated = function(event)
   {
-    var details = (event.type == PROCESS) ? " (amount not profiled)" : "";
-    return type_map[event.type] + ", " +
-           this.format_time(event.time) +
-           details;
+    return this.format_time(event.time);
   }
 
   this.get_title_unique_events = function(event)
