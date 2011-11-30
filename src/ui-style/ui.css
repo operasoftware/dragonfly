@@ -368,6 +368,11 @@ toolbar-switches
   background-image: url("../ui-images/icons/icon_constrain.png");
 }
 
+.profiler-start-stop::before
+{
+    background-image: url("../ui-images/icons/icon_record.png");
+}
+
 .pseudo-items cst-icon
 {
   background-image: url("../ui-images/icons/icon_hidedefaults.png");

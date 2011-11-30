@@ -346,7 +346,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
 
   this._init = function()
   {
-    services["ecmascript-debugger"].addListener("window-filter-change", this._on_window_filter_change.bind(this));
+    services["console-logger"].addListener("window-filter-change", this._on_window_filter_change.bind(this));
     this.init();
   }
   this._init();
