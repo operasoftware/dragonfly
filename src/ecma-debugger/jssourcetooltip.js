@@ -44,6 +44,8 @@ cls.JSSourceTooltip = function(view)
   var DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR;
   var REG_EXP = cls.SimpleJSParser.REG_EXP;
   var COMMENT = cls.SimpleJSParser.COMMENT;
+  var FORWARD = 1;
+  var BACKWARDS = -1;
 
   // TODO reset char-width and line-height on the according evemnt
 
@@ -177,14 +179,18 @@ cls.JSSourceTooltip = function(view)
     _identifier = _get_identifier(script, line_number, char_offset);
     var line = script.get_line(line_number);
     // for now the single char
-    _identifier = {start_line: line_number,
-                   start_offset: char_offset,
-                   end_line: line_number,
-                   end_offset: char_offset};
+    
+    if (!_identifier)
+      _identifier = {start_line: line_number,
+                     start_offset: char_offset,
+                     end_line: line_number,
+                     end_offset: char_offset};
+    
     _identifier_out_count = 0;
     _update_identifier_boxes(script, _identifier);
 
-    _view.higlight_slice(line_number, char_offset, 1);
+    _view.higlight_slice(line_number, _identifier.start_offset, 
+                                      _identifier.end_offset - _identifier.start_offset + 1);
     //_view.show_and_flash_line(script.script_id, line_number);
     // opera.postError((c++) +', '+char_offset +', '+line[char_offset]);
     /*
@@ -254,23 +260,31 @@ cls.JSSourceTooltip = function(view)
   }
     */
 
-    if (!token[i] || ["WHITESPACE",
+    if (!tokens[i] || ["WHITESPACE",
                       "LINETERMINATOR",
                       "STRING",
                       "COMMENT",
-                      "NUMBER"].contains(token[i][TYPE]))
+                      "NUMBER"].contains(tokens[i][TYPE]))
       return null;
-
-    switch (token[i][TYPE])
+    
+    opera.postError(tokens[i][TYPE])
+    switch (tokens[i][TYPE])
     {
       case IDENTIFIER:
-        return _get_identifier_chain(script, line_number, tokens, i);
+        var end = _get_identifier_chain_end(BACKWARDS, script, line_number, tokens, i);
+        opera.postError(JSON.stringify(end))
+        return {start_line: end.end_line,
+                   start_offset: end.end_offset,
+                   end_line: line_number,
+                   end_offset: char_offset};
+      /*
       case PUNCTUATOR:
         var value = token[i][VALUE];
         if (value == ".")
-          return _get_identifier_chain(script, line_number, tokens, i);
+          return _get_identifier_chain_end(script, line_number, tokens, i);
         if (value == "[" || value == "]")
           return null;
+      */
     }
     return null;
     // opera.postError(JSON.stringify(tokens))
@@ -288,9 +302,9 @@ cls.JSSourceTooltip = function(view)
     COMMENT
     */
 
-  var _get_identifier_chain = function(script, line_number, tokens, match_index)
+  var _get_identifier_chain_end = function(direction, script, line_number, tokens, match_index)
   {
-    var ret = {start_line: 0, start_offset: 0, end_line: 0, end_offset: 0};
+    var ret = {end_line: 0, end_offset: 0};
     var start_line = line_number;
     var got_start = false;
     var bracket_count = 0;
@@ -337,8 +351,24 @@ cls.JSSourceTooltip = function(view)
           }
               
         }
+        got_start = true;
+        break;
       }
+        got_start = true;
+        break;
+    } 
+
+    while (tokens[index + 1] && 
+           (tokens[index + 1][TYPE] == WHITESPACE || tokens[index + 1][TYPE] == LINETERMINATOR))
+      index += 1;
+
+    for (var i = 0, sum = 0; i <= index; i++)
+    {
+      sum += tokens[i][VALUE].length;
+      
+      
     }
+    return {end_line: line_number, end_offset: sum}
   };
 
 
