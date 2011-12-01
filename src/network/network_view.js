@@ -192,13 +192,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       this._current_filters = filter_compare;
     }
 
-    var resource_order;
+    var item_order;
     if (selected_viewmode === "data")
     {
-      resource_order = this._resource_order;
+      item_order = this._item_order;
     }
     var template = templates.network_log_main(
-                     ctx, this._selected, selected_viewmode, detail_width, resource_order, this._type_filters
+                     ctx, this._selected, selected_viewmode, detail_width, item_order, this._type_filters
                    );
     var rendered = container.clearAndRender(template);
 
@@ -219,7 +219,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                       );
         this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
       }
-      this._table.set_data(ctx.get_resources().slice(0));
+      this._table.set_data(ctx.get_requests().slice(0));
       table_container.clearAndRender(this._table.render());
       this._catch_up_with_cols_and_sort_bound();
     }
@@ -305,10 +305,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       var data = this._table.get_data();
       if (data && data.length)
       {
-        var old_resource_order = this._resource_order;
+        var old_item_order = this._item_order;
 
-        this._resource_order = data.map(function(res){return res.id}).join(",");
-        if (this._resource_order !== old_resource_order)
+        this._item_order = data.map(function(res){return res.id}).join(",");
+        if (this._item_order !== old_item_order)
         {
           needs_update = true; // todo: this causes another re-rendering for every added resource. optimize.
         }
@@ -338,7 +338,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._on_clicked_request_bound = function(evt, target)
   {
     var rid = target.get_attr("parent-node-chain", "data-object-id");
-    rid = parseInt(rid);
     if (this._selected == rid)
     {
       this._selected = null;
@@ -368,20 +367,37 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_tooltip = function(evt, target)
   {
-    var ctx = this._service.get_request_context();
-    var resource_id = target.get_attr("parent-node-chain", "data-object-id");
-    var template = ["ol"];
-    var data = ctx.get_resource(resource_id)._my_dbg || [];
-    for (var i = 0, entry; entry = data[i]; i++)
+    if (target.hasClass("network-handle-container")) // else it's the url tooltip
     {
-      template.push(["li", entry[1] + ": " + entry[0]]);
+      var ctx = this._service.get_request_context();
+      var request_id = target.get_attr("parent-node-chain", "data-object-id");
+      var request = ctx.get_request(request_id);
+      var template = [];
+      template.push(["h2", "Request " + request.requestID + ", Resource " + request.resource.id])
+      template.push(templates.network_graph_row_bar(request, 450, false, request.duration));
+
+      var list = ["table"];
+      var data = request._my_dbg || [];
+      for (var i = 0, entry; entry = data[i]; i++)
+      {
+        list.push(
+          ["tr",
+            ["td", i + 1 + "."],
+            ["td", String(entry[0])],
+            ["td", String(entry[1])],
+            ["td", String(entry[2].requestID)]
+          ]
+        );
+      }
+      template.push(list);
+      tooltip.show(template);
     }
-    tooltip.show(template);
   }
 
+  Tooltips.register("network-url-list-tooltip", true);
   var tooltip = Tooltips.register("network-tooltip", true);
   tooltip.ontooltip = this._on_tooltip.bind(this);
-
+  
   this._on_clear_log_bound = function(evt, target)
   {
     if (this._service.is_paused())
@@ -412,7 +428,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._type_filter_is_blacklist = (target.getAttribute("data-filter-is-blacklist") === "true");
     this.update();
   }.bind(this);
-
+/*
   this._on_abouttoloaddocument_bound = function()
   {
     if (!this._service.is_paused())
@@ -438,7 +454,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       this.update();
     }
   }.bind(this);
-
+*/
 
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
@@ -459,13 +475,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   // todo: is it really just these few events that trigger update?
   // should be triggered whenever the data modell is updated, right?
-
+/*
   var doc_service = window.services['document-manager'];
   var res_service = window.services['resource-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
   res_service.addListener("urlfinished", this._on_urlfinished_bound);
-
+*/
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
 

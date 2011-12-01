@@ -179,7 +179,7 @@ templates.network_log_details = function(ctx, selected)
 
 templates.network_log_request_detail = function(ctx, selected)
 {
-  var req = ctx.get_resource(selected);
+  var req = ctx.get_request(selected);
   var responsecode = req && req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
                 "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
   return [
@@ -432,27 +432,26 @@ templates.network_header_table = function(headers)
 
 templates.network_log_url_list = function(ctx, selected, item_order, type_filter)
 {
-  var itemfun = function(res) {
-    var statusclass = "status-" + res.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
-    if (res.cached) { statusclass = "status-cached"; }
+  var itemfun = function(req) {
+    var statusclass = "status-" + req.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
+    if (req.cached) { statusclass = "status-cached"; }
 
-    var statusstring = res.responsecode || null; // todo: statusstring should probably be added to the (data-) item instead
-    if (res.responsecode && res.responsecode in cls.ResourceUtil.http_status_codes)
+    var statusstring = req.responsecode || null; // todo: statusstring should probably be added to the (data-) item instead
+    if (req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes)
     {
-      statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
+      statusstring += " " + cls.ResourceUtil.http_status_codes[req.responsecode];
     }
-
     return ["li",
-            templates.network_request_icon(res),
-            ["span", res.filename || res.human_url],
+            templates.network_request_icon(req),
+            ["span", req.filename || req.human_url], // todo: shorten the full url, even if filename can't be extracted
             "handler", "select-network-request",
-            "data-object-id", String(res.id),
-            "class", selected === res.id ? "selected" : "",
-            "data-tooltip-text" , res.human_url,
-            "data-tooltip", "network-tooltip"
+            "data-object-id", String(req.id),
+            "class", selected === req.id ? "selected" : "",
+            "data-tooltip-text" , req.human_url,
+            "data-tooltip", "network-url-list-tooltip"
            ];
   };
-  var items = ctx.get_resources().slice(0);
+  var items = ctx.get_requests().slice(0);
   // Could use copy_object instead, because the template doesn't need the methods of the resources.
   // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
   // to the old objects
@@ -483,6 +482,9 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
 
 templates.network_type_filter_buttons = function(type_filter)
 {
+  if (!type_filter)
+    type_filter = "";
+
   return [
     "div", [
       {name: "All", val: ""}, // Todo: Strings
@@ -495,8 +497,9 @@ templates.network_type_filter_buttons = function(type_filter)
     ].map(function(filter)
           {
             var c = "ui-button container-button";
-            if (filter.val === type_filter)
+            if (filter.val == type_filter)
               c += " on";
+
             return [
               "span", filter.name,
               "data-type-filter", filter.val,
@@ -539,9 +542,9 @@ templates.network_graph_rows = function(ctx, width)
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
 
   var tpls = [];
-  for (var n=0, res; res = ctx.get_resources()[n]; n++)
+  for (var n = 0, req; req = ctx.get_requests()[n]; n++)
   {
-    tpls.push(templates.network_graph_row_bar(res, width, basetime, duration));
+    tpls.push(templates.network_graph_row_bar(req, width, basetime, duration));
   }
   return tpls;
 };
@@ -550,60 +553,80 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 {
   var scale = width / duration;
   var ret = [];
-  var start = (request.starttime - basetime) * scale;
+  // without basetime, the bars will be rendered absolute.
+  var start = 0;
+  if (basetime !== false) // todo: cleanup, probably have the container that has the margin just separtately
+    start = (request.starttime - basetime) * scale;
 
+  var parts = [];
   if (request.duration)
   {
+    /*
     var reqwidth = (request.endtime - request.starttime) * scale;
     var latency = (request.responsestart - request.requesttime) * scale;
     var req_duration = reqwidth - latency;
 
-    var gradientmap = {
-      css: "blue",
-      script: "yellow",
-      markup: "purple",
-      image: "red",
-      audio: "green",
-      video: "green"
-    };
+      This will be changed to showing time between
+        * urlload and request: blocked
+        * request and requestfinished: request
+        * requestfinished and response: latency
+        * response and responsefinished: receiving bit / download
+        * responsefinished and urlfinished: what is that, encoding, parsing or sth?
+    */
+    var timestamps = {}
+    request.timestamps.forEach(function(elem){timestamps[elem.name] = elem.time});
 
-    var min_bar_width = 14; // in px
-    if (req_duration < min_bar_width)
-    {
-      req_duration = min_bar_width;
-    }
-
-    var title = "";
-    if (request.cached)
-    {
-      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED.replace("%s", request.duration || 0);
-    }
-    else
-    {
-      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL;
-      title = title.replace("%(total)s", request.duration);
-      title = title.replace("%(request)s", (request.requesttime - request.starttime));
-      title = title.replace("%(response)s", (request.endtime - request.requesttime));
-    }
-
-    var type = request.type in gradientmap ? request.type : 'unknown';
-    ret.push([
-              ["span",
-                ["span", "class", "network-graph-time network-" + type,
-                          "style", "margin-left:" + latency + "px; width: " + req_duration + "px;"],
-                "class", "network-graph-latency",
-                "style", "margin-left:" + start + "px;", "title", title
-              ]
+    var sections = [
+      {
+        id: "blocked",
+        val: (timestamps.request - timestamps.urlload) * scale
+      },
+      {
+        id: "request",
+        val: (timestamps.requestfinished - timestamps.request) * scale
+      },
+      {
+        id: "waiting",
+        val: (timestamps.response - timestamps.requestfinished) * scale
+      },
+      {
+        id: "receiving",
+        val: (timestamps.responsefinished - timestamps.response) * scale
+      },
+      {
+        id: "encoding_etc",
+        val: (timestamps.urlfinished - timestamps.responsefinished) * scale
+      }
+    ].forEach(function(section){
+      parts.push(
+        [
+          "span",
+          "class", "network-section network-" + section.id,
+          "style", "width:" + section.val + "px;"
+        ]
+      );
+    });
+    ret.push(
+      ["span", parts,
+          "class", (basetime !== false) ? "network-graph-sections" : ""
       ]);
   }
-  else
+  if (basetime !== false) // todo: clean up, make a is_in_tooltip arg or something
   {
-    ret.push(["span", "class", "network-graph-no-duration",
-               "style", "margin-left:" + start + "px;", "title", title
-             ]);
+    ret.push(
+      ["span",
+        "class", "network-timing-detail-handle"
+      ]
+    );
   }
 
-  return ["div", ret,
+  return ["div", 
+            [
+              "span", ret,
+              "class", "network-handle-container",
+              "style", "margin-left:" + start + "px;",
+              "data-tooltip", "network-tooltip"
+            ],
           "class", "network-graph-row",
           "data-object-id", String(request.id),
           "handler", "select-network-request"];

@@ -83,6 +83,13 @@ cls.NetworkLoggerService = function(view)
     this._current_context.update("requestfinished", data);
   }.bind(this);
 
+  this._on_requestretry_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
+    this._current_context.update("requestretry", data);
+  }.bind(this);
+
   this._on_responseheader_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -110,6 +117,7 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
     this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
+    this._res_service.addListener("requestretry", this._on_requestretry_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
@@ -186,16 +194,6 @@ cls.NetworkLoggerService = function(view)
     if (this._current_context)
       return this._current_context._paused;
   };
-
-  this.get_resource = function(rid)
-  {
-    if (this._current_context)
-    {
-      return this._current_context.get_resource(rid);
-    }
-    return null;
-  };
-
   this.init();
 };
 
@@ -265,6 +263,24 @@ cls.RequestContext = function()
     return !!this._resources.length;
   }
 
+  this.get_requests = function()
+  {
+    var requests = [];
+    var requests_per_resource = this.get_resources().map(function(res){return res._requests});
+    if (requests_per_resource.length)
+    {
+      requests = requests_per_resource.reduce(function(first, second){return first.concat(second)});
+    }
+
+    requests = requests.filter(function(req){
+      if (req.hidden_when_network_not_touched && !req.touched_network)
+        return false;
+      return true;
+    });
+
+    return requests;
+  }
+
   this.set_filters = function(filters)
   {
     this._filters = filters;
@@ -278,6 +294,8 @@ cls.RequestContext = function()
 
   this.pause = function()
   {
+    // this only pauses adding resources, so that updated info about a request will still show.
+    // this works good as long as we don't have things like streaming.
     this._paused_resources = this._resources.slice(0);
     this._paused = true;
   }
@@ -290,11 +308,11 @@ cls.RequestContext = function()
 
   this.get_duration = function()
   {
-    var resources = this.get_resources();
-    if (resources.length)
+    var requests = this.get_requests();
+    if (requests.length)
     {
-      var starttimes = resources.map(function(e) { return e.starttime });
-      var endtimes = resources.map(function(e) { return e.endtime });
+      var starttimes = requests.map(function(e) { return e.starttime });
+      var endtimes = requests.map(function(e) { return e.endtime });
       return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
     }
     return 0;
@@ -319,25 +337,62 @@ cls.RequestContext = function()
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.get_resources().map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_requests().map(function(e) { return e.starttime }));
   };
 
   this.update = function(eventname, event)
   {
     var res = this.get_resource(event.resourceID);
 
-    if (!res && eventname == "urlload") 
+    if (!res)
     {
-      res = new cls.Request(event.resourceID);
-      if (this._resources.length == 0) { this.topresource = event.resourceID; }
-      this._resources.push(res);
+      if (eventname == "urlload")
+      {
+        res = new cls.NetworkResource(event.resourceID);
+        this._resources.push(res);
+      }
+      else
+      {
+        // ignoring. Never saw an urlload, or it's already invalidated
+        return;
+      }
     }
-    else if (!res)
+
+    // on every urlload, add a new request
+    var current_req = res && res._requests.last;
+
+    // todo: move this to a verify req_id function (determines changed_request_id)
+    var req_ids = res._requests.filter(function(req){return req.requestID});
+    var last_request_id = req_ids.last && req_ids.last.requestID;
+    var event_request_id = event.requestID || event.fromRequestID; // fromRequestID is only for OnRequestRetry
+    var changed_request_id = event.requestID &&
+                             last_request_id &&
+                             (last_request_id != event.requestID);
+    if (changed_request_id)
     {
-      // ignoring. Never saw an urlload, or it's allready invalidated
-      return;
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      " Unexpected change in requestID on " + eventname +
+                      ": Change from " + last_request_id + " to " + 
+                      event_request_id + ", URL: " + current_req.human_url);
     }
-    res.update(eventname, event);
+
+    if (eventname == "urlload" || changed_request_id)
+    {
+      var id = event.resourceID + ":" + res._requests.length;
+      current_req = new cls.NetworkLoggerEntry(id, res);
+      if (res._requests.length)
+      {
+        // From the second request on, it's only to be rendered when it touched network. Everything 
+        // else is too much like an internal request, happens randomly and doesn't mean much.
+        current_req.hidden_when_network_not_touched = true;
+      }
+      res._requests.push(current_req);
+    }
+    // todo: this gets overwritten all the time, possibly keep this together with the updates as in "timestamps"
+    current_req.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
+    current_req.update(eventname, event);
+    // todo: maybe the request should post a message about having updated, also so the view could update only that
+    views.network_logger.update();
   };
 
   this.get_resource = function(id)
@@ -346,46 +401,24 @@ cls.RequestContext = function()
     // because that returnes paused_resources while paused.
     return this._resources.filter(function(e) { return e.id == id; })[0];
   };
-
-  this.get_resources_for_types = function()
+  
+  this.get_request = function(id)
   {
-    var types = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.get_resources().filter(filterfun);
-  };
-
-  this.get_resources_for_mimes = function()
-  {
-    var mimes = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.get_resources().filter(filterfun);
-  };
-
-  this.get_resource_groups = function()
-  {
-    var imgs = this.get_resources_for_type("image");
-    var stylesheets = this.get_resources_for_mime("text/css");
-    var markup = this.get_resources_for_mime("text/html",
-                                             "application/xhtml+xml");
-    var scripts = this.get_resources_for_mime("application/javascript",
-                                              "text/javascript");
-
-    var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.get_resources().filter(function(e) {
-      return known.indexOf(e) == -1;
-    });
-    return {
-      images: imgs, stylesheets: stylesheets, markup: markup,
-      scripts: scripts, other: other
-    };
+    return this.get_requests().filter(function(e) { return e.id == id; })[0];
   };
 };
 
-cls.Request = function(id)
+cls.NetworkResource = function(id)
 {
   this.id = id;
+  this._requests = [];
+}
+
+cls.NetworkLoggerEntry = function(id, resource)
+{
+  this.id = id;
+  this.resource = resource; // todo: apart from the debugging tooltips, this is probably unnecessarry
   this.partial = false;
-  this.finished = false;
   this.url = null;
   this.human_url = "No URL";
   this.result = null;
@@ -394,7 +427,6 @@ cls.Request = function(id)
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.invalid = false;
   this.starttime = null;
   this.requesttime = null;
   this.endtime = null;
@@ -412,10 +444,13 @@ cls.Request = function(id)
   this.body_unavailable = false;
   this.responsecode = null;
   this.responsebody = null;
+  this.timestamps = []; // todo: not final
 
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
+    this.timestamps.push({name: eventname, time: eventdata.time});
+
     if (updatefun)
     {
       updatefun.call(this, eventdata);
@@ -437,6 +472,8 @@ cls.Request = function(id)
     if (s.length< 2)
       s = "0" + s;
     var delta = h + ":" + m + ":" + s;
+    if (views.network_logger._service._current_context.get_starttime() != eventdata.time)
+      delta += " (" + Math.round(eventdata.time - views.network_logger._service._current_context.get_starttime()) + "ms after starttime)";
     if (this._my_dbg.length)
     {
       delta = eventdata.time - this._my_dbg[this._my_dbg.length - 1][2].time; // [2] is where I put eventdata in nxt step
@@ -449,10 +486,11 @@ cls.Request = function(id)
     this.url = event.url;
     this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
-    this.starttime = Math.round(event.time);
+    this.starttime = event.time;
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
     this._humanize_url();
+    this._guess_type(); // may not yet be correct before mime is set, but will be guessed again anyhow
   };
 
   this._update_event_urlfinished = function(event)
@@ -468,13 +506,13 @@ cls.Request = function(id)
     // response code, meaning no request was sent, the url was cached
     // fixme: special case for file URIs
     if (!this.responsecode) { this.cached = true }
-    this.finished = true;
     this._guess_type();
     this._humanize_url();
   };
 
   this._update_event_request = function(event)
   {
+    this.requesttime = event.time; // todo: not sure how this was set before?
     this.method = event.method;
     this.touched_network = true;
   };
@@ -503,6 +541,11 @@ cls.Request = function(id)
       this.requestbody.mimeType = this.request_type;
     }
     this.requesttime = Math.round(event.time);
+  };
+
+  this._update_event_requestretry = function(event)
+  {
+    this.requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
@@ -544,15 +587,9 @@ cls.Request = function(id)
 
   this._guess_type = function()
   {
-    if (!this.finished || !this.mime)
-    {
-      this.type = undefined;
-    }
-    else if (this.mime.toLowerCase() == "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.path_to_type(this.url);
-    }
-    else
+    this.type = cls.ResourceUtil.path_to_type(this.url);
+
+    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
     {
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
     }
