@@ -552,81 +552,73 @@ templates.network_graph_rows = function(ctx, width)
 templates.network_graph_row_bar = function(request, width, basetime, duration)
 {
   var scale = width / duration;
-  var ret = [];
-  // without basetime, the bars will be rendered absolute.
-  var start = 0;
-  if (basetime !== false) // todo: cleanup, probably have the container that has the margin just separtately
-    start = (request.starttime - basetime) * scale;
 
-  var parts = [];
-  if (request.duration)
-  {
-    /*
-    var reqwidth = (request.endtime - request.starttime) * scale;
-    var latency = (request.responsestart - request.requesttime) * scale;
-    var req_duration = reqwidth - latency;
+  var sections = [];
 
-      This will be changed to showing time between
-        * urlload and request: blocked
-        * request and requestfinished: request
-        * requestfinished and response: latency
-        * response and responsefinished: receiving bit / download
-        * responsefinished and urlfinished: what is that, encoding, parsing or sth?
-    */
-    var timestamps = {}
-    request.timestamps.forEach(function(elem){timestamps[elem.name] = elem.time});
+  /*
+  before:
+  var reqwidth = (request.endtime - request.starttime) * scale;
+  var latency = (request.responsestart - request.requesttime) * scale;
+  var req_duration = reqwidth - latency;
+  */
+  /*
+    This shows time between
+      * urlload and request: blocked
+      * request and requestfinished: request
+      * requestfinished and response: latency
+      * response and responsefinished: receiving bit / download
+      * responsefinished and urlfinished: what is that, encoding, parsing or sth?
+  */
+  var timestamps = {}
+  request.timestamps.forEach(function(elem){timestamps[elem.name] = elem.time});
 
-    var sections = [
-      {
-        id: "blocked",
-        val: (timestamps.request - timestamps.urlload) * scale
-      },
-      {
-        id: "request",
-        val: (timestamps.requestfinished - timestamps.request) * scale
-      },
-      {
-        id: "waiting",
-        val: (timestamps.response - timestamps.requestfinished) * scale
-      },
-      {
-        id: "receiving",
-        val: (timestamps.responsefinished - timestamps.response) * scale
-      },
-      {
-        id: "encoding_etc",
-        val: (timestamps.urlfinished - timestamps.responsefinished) * scale
-      }
-    ].forEach(function(section){
-      parts.push(
-        [
+  ([
+    {
+      id: "blocked",
+      val: (timestamps.request - timestamps.urlload) * scale
+    },
+    {
+      id: "request",
+      val: (timestamps.requestfinished - timestamps.request) * scale
+    },
+    {
+      id: "waiting",
+      val: (timestamps.response - timestamps.requestfinished) * scale
+    },
+    {
+      id: "receiving",
+      val: (timestamps.responsefinished - timestamps.response) * scale
+    },
+    {
+      id: "encoding_etc",
+      val: (timestamps.urlfinished - timestamps.responsefinished) * scale
+    }
+  ]).forEach(function(section){
+    if (section.val)
+    {
+      sections.push([
           "span",
           "class", "network-section network-" + section.id,
           "style", "width:" + section.val + "px;"
-        ]
-      );
-    });
-    ret.push(
-      ["span", parts,
-          "class", (basetime !== false) ? "network-graph-sections" : ""
-      ]);
-  }
-  if (basetime !== false) // todo: clean up, make a is_in_tooltip arg or something
+        ]);
+    }
+  });
+
+  var item_container = ["span",
+                          ["span", sections, "class", "network-graph-sections"],
+                        "class", "network-graph-sections-hitarea"];
+
+  if (basetime !== false)
   {
-    ret.push(
-      ["span",
-        "class", "network-timing-detail-handle"
-      ]
-    );
+    var start = (request.starttime - basetime) * scale;
+    var padding_left_hitarea = 3;
+    item_container = item_container.concat([
+      "style", "margin-left:" + (start - padding_left_hitarea) + "px;",
+      "data-tooltip", "network-tooltip"
+    ]);
   }
 
-  return ["div", 
-            [
-              "span", ret,
-              "class", "network-handle-container",
-              "style", "margin-left:" + start + "px;",
-              "data-tooltip", "network-tooltip"
-            ],
+  return ["div", item_container,
           "class", "network-graph-row",
           "data-object-id", String(request.id),
           "handler", "select-network-request"];

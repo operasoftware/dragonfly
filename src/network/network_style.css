@@ -310,71 +310,46 @@
 .network-graph-row
 {
   height: 24px;
-  line-height: 24px;
 }
 
-.network-handle-container {
-  position: relative;
-  height: 100%;
-  border-left: 1px solid #cfcfcf;
-  margin-left: -1px;
+.network-graph-sections-hitarea
+{
+  vertical-align: top;
   display: inline-block;
+  padding: 3px;
+  margin-top: 2px;
+  margin-bottom: -1px;
+  border-radius: 3px;
+}
+
+.network-graph-row.hovered .network-graph-sections-hitarea
+{
+  background-color: rgba(255, 255, 255, 0.4); /* #8a2bac */
 }
 
 .network-graph-sections
 {
-  display: inline-block;
-  margin: -1px;
-  height: 12px;
-  vertical-align: -6px;
   border: 1px solid #989898;
+  display: inline-block;
   border-radius: 2px;
+  height: 12px;
+  min-width: 1px;
 }
 
 .network-section
 {
   display: inline-block;
   vertical-align: top;
-  height: 100%;
-}
-
-.network-timing-detail-handle {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  bottom: 0;
-  width: 42px; /* actual image is 11 x 6, but padding is needed to not cause mouseout too easy */
-  bottom: -9px;
-  height: 18px;
-  left: -21px;
-  background: url("../ui-images/detail-arrow.png") no-repeat 50% 50%;
-  display: none;
-}
-
-.network-graph-row.hovered .network-timing-detail-handle {
-  display: block;
+  height: 12px;
+  margin-bottom: 1px;
 }
 
 #tooltip-background {
   overflow: hidden !important;
 }
 
-.network-graph-row.hovered .network-handle-container {
-  border-left: 1px solid #535353;
-}
-
 /* the colors are a bit as in http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/, but
-
-   encoding_etc // grey, as its a bit like the other side of "blocked" to me, often this will be under 1px and invisible
-*/
-
-/*
-.network-waiting white
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #fff 1%,
-                                       #fafafa 100%);
-}
+   encoding_etc is grey, as its a bit like the other side of "blocked" to me
 */
 
 .network-waiting /* purple */

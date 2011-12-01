@@ -367,7 +367,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_tooltip = function(evt, target)
   {
-    if (target.hasClass("network-handle-container")) // else it's the url tooltip
+    if (target.hasClass("network-graph-sections-hitarea")) // else it's the url tooltip
     {
       var ctx = this._service.get_request_context();
       var request_id = target.get_attr("parent-node-chain", "data-object-id");
