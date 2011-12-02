@@ -26,14 +26,6 @@ cls.JSSourceTooltip = function(view)
   var _identifier = null;
   var _identifier_boxes = [];
   var _identifier_out_count = 0;
-  // line states
-  /*
-  var DEFAULT_STATE = window.cls.NewScript.DEFAULT_STATE = 0;
-  var SINGLE_QUOTE_STATE = window.cls.NewScript.SINGLE_QUOTE_STATE = 1;
-  var DOUBLE_QUOTE_STATE = window.cls.NewScript.DOUBLE_QUOTE_STATE = 2;
-  var REG_EXP_STATE = window.cls.NewScript.REG_EXP_STATE = 3;
-  var COMMENT_STATE = window.cls.NewScript.COMMENT_STATE = 4;
-  */
   // token types
   var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
   var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
@@ -46,6 +38,8 @@ cls.JSSourceTooltip = function(view)
   var COMMENT = cls.SimpleJSParser.COMMENT;
   var FORWARD = 1;
   var BACKWARDS = -1;
+  var TYPE = 0;
+  var VALUE = 1;
 
   // TODO reset char-width and line-height on the according evemnt
 
@@ -82,7 +76,12 @@ cls.JSSourceTooltip = function(view)
     return center;
   };
 
-  var c = 0;
+  var _clear_selection = function()
+  {
+    _identifier = null;
+    _view.higlight_slice(-1);
+    _tooltip.hide();
+  };
 
   var _poll_position = function()
   {
@@ -99,9 +98,7 @@ cls.JSSourceTooltip = function(view)
 
       if (_identifier_out_count > 1)
       {
-        _identifier = null;
-        _view.higlight_slice(-1);
-        _tooltip.hide();
+        _clear_selection();
       }
       else
       {
@@ -139,19 +136,17 @@ cls.JSSourceTooltip = function(view)
         }
         else
         {
-          // TODO
+          _clear_selection();
         }
       }
       else
       {
-        // TODO
+        _clear_selection();
       }
     }
     else
     {
       // TODO
-      // _view.higlight_slice(-1); 
-      _tooltip.hide();
     }
 
   };
@@ -178,8 +173,7 @@ cls.JSSourceTooltip = function(view)
     opera.postError('handle')
     _identifier = _get_identifier(script, line_number, char_offset);
     var line = script.get_line(line_number);
-    // for now the single char
-    
+
     if (!_identifier)
       _identifier = {start_line: line_number,
                      start_offset: char_offset,
@@ -191,8 +185,7 @@ cls.JSSourceTooltip = function(view)
 
     _view.higlight_slice(line_number, _identifier.start_offset, 
                                       _identifier.end_offset - _identifier.start_offset + 1);
-    //_view.show_and_flash_line(script.script_id, line_number);
-    // opera.postError((c++) +', '+char_offset +', '+line[char_offset]);
+
     /*
     _tooltip.show("test " + (c++), {left: center.x,
                                     top: center.y,
@@ -221,154 +214,328 @@ cls.JSSourceTooltip = function(view)
         break;
     }
 
-    /*
-    WHITESPACE 
-    LINETERMINATOR 
-    IDENTIFIER 
-    NUMBER 
-    STRING 
-    PUNCTUATOR 
-    DIV_PUNCTUATOR 
-    REG_EXP 
-    COMMENT 
-
-  var PUNCTUATOR_CHARS =
-  {
-    '{': 1,
-    '}': 1,
-    '(': 1,
-    ')': 1,
-    '[': 1,
-    ']': 1,
-    ';': 1,
-    ',': 1,
-    '<': 1,
-    '>': 1,
-    '=': 1,
-    '!': 1,
-    '+': 1,
-    '-': 1,
-    '*': 1,
-    '%': 1,
-    '&': 1,
-    '|': 1,
-    '^': 1,
-    '~': 1,
-    '?': 1,
-    ':': 1,
-    '.': 1,
-  }
-    */
-
-    if (!tokens[i] || ["WHITESPACE",
-                      "LINETERMINATOR",
-                      "STRING",
-                      "COMMENT",
-                      "NUMBER"].contains(tokens[i][TYPE]))
-      return null;
-    
-    opera.postError(tokens[i][TYPE])
     switch (tokens[i][TYPE])
     {
       case IDENTIFIER:
-        var end = _get_identifier_chain_end(BACKWARDS, script, line_number, tokens, i);
-        opera.postError(JSON.stringify(end))
-        return {start_line: end.end_line,
-                   start_offset: end.end_offset,
-                   end_line: line_number,
-                   end_offset: char_offset};
-      /*
+      {
+        if (window.js_keywords.hasOwnProperty(tokens[i][VALUE]))
+          break;
+      }
       case PUNCTUATOR:
-        var value = token[i][VALUE];
-        if (value == ".")
-          return _get_identifier_chain_end(script, line_number, tokens, i);
-        if (value == "[" || value == "]")
-          return null;
-      */
+      {
+        var start = _get_identifier_chain_start(script, line_number, tokens, i);
+        var end = _get_identifier_chain_end(script, line_number, tokens, i);
+
+        return {start_line: start.start_line,
+                   start_offset: start.start_offset,
+                   end_line: end.end_line,
+                   end_offset: end.end_offset};
+      }
     }
     return null;
-    // opera.postError(JSON.stringify(tokens))
   };
 
-  /*
-      WHITESPACE 
-    LINETERMINATOR 
-    IDENTIFIER 
-    NUMBER 
-    STRING 
-    PUNCTUATOR 
-    DIV_PUNCTUATOR 
-    REG_EXP 
-    COMMENT
-    */
-
-  var _get_identifier_chain_end = function(direction, script, line_number, tokens, match_index)
+  var _get_identifier_chain_start = function(script, line_number, tokens, match_index)
   {
-    var ret = {end_line: 0, end_offset: 0};
+    var ret = {start_line: 0, start_offset: 0};
     var start_line = line_number;
     var got_start = false;
     var bracket_count = 0;
     var TYPE = 0;
     var VALUE = 1;
-    var index = 0;
-    var previous_was_bracket = false;
+    var previous_token = tokens[match_index];
+    var bracket_stack = [];
+    var index = match_index - 1;
 
     while (!got_start)
     {
-      for (index = match_index; index > -1; index--)
+      for (var i = match_index - 1, token = null; token = tokens[i]; i--)
       {
-        switch (tokens[index][TYPE])
+        switch (previous_token[TYPE])
         {
           case IDENTIFIER:
-          case WHITESPACE:
-          case LINETERMINATOR:
           {
-            previous_was_bracket = false;
-            continue;
+            switch (token[TYPE])
+            {
+              case WHITESPACE:
+              case LINETERMINATOR:
+              {
+                continue;
+              }
+              case PUNCTUATOR:
+              {
+                if (token[VALUE] == ".")
+                {
+                  previous_token = token;
+                  index = i - 1;
+                  continue;
+                }
+                if (token[VALUE] == "[" && bracket_stack.length)
+                {
+                  bracket_stack.pop();
+                  previous_token = token;
+                  index = i - 1;
+                  continue;
+                }
+              }
+            }
+            break;
+          }
+          case PUNCTUATOR:
+          {
+            if (previous_token[VALUE] == "." || previous_token[VALUE] == "[")
+            {
+              switch (token[TYPE])
+              {
+                case WHITESPACE:
+                case LINETERMINATOR:
+                {
+                  continue;
+                }
+                case IDENTIFIER:
+                {
+                  previous_token = token;
+                  index = i - 1;
+                  continue;
+                }
+                case PUNCTUATOR:
+                {
+                  if (token[VALUE] == "]")
+                  {
+                    bracket_stack.push(token[VALUE]);
+                    previous_token = token;
+                    index = i - 1;
+                    continue;
+                  }
+                }
+              }
+            }
+            else // must be "]"
+            {
+              switch (token[TYPE])
+              {
+                case WHITESPACE:
+                case LINETERMINATOR:
+                {
+                  continue;
+                }
+                case STRING:
+                case NUMBER:
+                case IDENTIFIER:
+                {
+                  previous_token = token;
+                  index = i - 1;
+                  continue;
+                }
+                case PUNCTUATOR:
+                {
+                  if (token[VALUE] == "]")
+                  {
+                    bracket_stack.push(token[VALUE]);
+                    previous_token = token;
+                    index = i - 1;
+                    continue;
+                  }
+                }
+              }
+            }
+            break;
           }
           case STRING:
           case NUMBER:
           {
-            if (previous_was_bracket)
+            switch (token[TYPE])
             {
-              previous_was_bracket = false; 
-              continue;
+              case WHITESPACE:
+              case LINETERMINATOR:
+              {
+                continue;
+              }
+              case PUNCTUATOR:
+              {
+                if (token[VALUE] == "[")
+                {
+                  bracket_stack.pop();
+                  previous_token = token;
+                  index = i - 1;
+                  continue;
+                }
+              }
             }
+            break;
           }
-          case PUNCTUATOR:
-          {
-            var value = tokens[index][VALUE];
-            if (value == ".")
-            {
-              previous_was_bracket = false; 
-              continue;
-            }
-            if ((value == "[" || value == "]") && bracket_count > -1)
-            {
-              previous_was_bracket = true;
-              continue;
-            }
-          }
-              
         }
+
         got_start = true;
         break;
       }
-        got_start = true;
-        break;
+      got_start = true;
+      break;
     } 
 
-    while (tokens[index + 1] && 
-           (tokens[index + 1][TYPE] == WHITESPACE || tokens[index + 1][TYPE] == LINETERMINATOR))
-      index += 1;
 
-    for (var i = 0, sum = 0; i <= index; i++)
+    for (i = 0, sum = 0; i <= index; i++)
     {
       sum += tokens[i][VALUE].length;
-      
-      
     }
-    return {end_line: line_number, end_offset: sum}
+    return {start_line: line_number, start_offset: sum}
+  };
+
+  var _get_identifier_chain_end = function(script, line_number, tokens, match_index)
+  {
+    var start_line = line_number;
+    var got_end = false;
+    var bracket_count = 0;
+    var TYPE = 0;
+    var VALUE = 1;
+    var previous_token = tokens[match_index];
+    var bracket_stack = [];
+    var index = match_index;
+
+    if (previous_token[VALUE] == "[")
+      bracket_stack.push(previous_token[TYPE]);
+
+    while (!got_end && bracket_stack.length)
+    {
+      for (var i = match_index + 1, token = null; token = tokens[i]; i++)
+      {
+        if (!bracket_stack.length)
+          break;
+
+        switch (previous_token[TYPE])
+        {
+          case IDENTIFIER:
+          {
+            switch (token[TYPE])
+            {
+              case WHITESPACE:
+              case LINETERMINATOR:
+              {
+                continue;
+              }
+              case PUNCTUATOR:
+              {
+                if (token[VALUE] == ".")
+                {
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+                if (token[VALUE] == "]")
+                {
+                  bracket_stack.pop();
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+                if (token[VALUE] == "[")
+                {
+                  bracket_stack.push(token[VALUE]);
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+              }
+            }
+            break;
+          }
+          case PUNCTUATOR:
+          {
+            if (previous_token[VALUE] == "]")
+            {
+              switch (token[TYPE])
+              {
+                case WHITESPACE:
+                case LINETERMINATOR:
+                {
+                  continue;
+                }
+                case PUNCTUATOR:
+                {
+                  if (token[VALUE] == ".")
+                  {
+                    previous_token = token;
+                    index = i - 1;
+                    continue;
+                  }
+                }
+              }
+            }
+            else if (previous_token[VALUE] == "[")
+            {
+              switch (token[TYPE])
+              {
+                case WHITESPACE:
+                case LINETERMINATOR:
+                {
+                  continue;
+                }
+                case STRING:
+                case NUMBER:
+                case IDENTIFIER:
+                {
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+              }
+            }
+            else // must be "."
+            {
+              switch (token[TYPE])
+              {
+                case WHITESPACE:
+                case LINETERMINATOR:
+                {
+                  continue;
+                }
+                case IDENTIFIER:
+                {
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+              }
+            }
+            break;
+          }
+          case STRING:
+          case NUMBER:
+          {
+            switch (token[TYPE])
+            {
+              case WHITESPACE:
+              case LINETERMINATOR:
+              {
+                continue;
+              }
+              case PUNCTUATOR:
+              {
+                if (token[VALUE] == "]")
+                {
+                  bracket_stack.pop();
+                  previous_token = token;
+                  index = i;
+                  continue;
+                }
+              }
+            }
+            break;
+          }
+        }
+
+        got_end = true;
+        break;
+      }
+      got_end = true;
+      break;
+    } 
+
+    for (i = 0, sum = 0; i <= index; i++)
+    {
+      sum += tokens[i][VALUE].length;
+    }
+    return {end_line: line_number, end_offset: sum - 1}
   };
 
 
@@ -451,12 +618,12 @@ cls.JSSourceTooltip = function(view)
       }
 
       var container = _view.get_scroll_container();
-      if (container)
+      if (container && target.parentNode)
       {
         // TODO resize events
         _container = container;
         _container_box = container.getBoundingClientRect();
-        _tooltip_target_ele = target;
+        _tooltip_target_ele = target.parentNode;
         _tooltip_target_ele.addEventListener('mousemove', _onmousemove, false);
         while (_mouse_positions.length)
           _mouse_positions.pop();
@@ -498,13 +665,9 @@ cls.JSSourceTooltip = function(view)
     _tooltip.onhide = _onhide;
     _tooltip.ontooltipenter = _ontooltipenter;
     _tooltip.ontooltipleave = _ontooltipleave;
-    
   };
 
   _init(view);
 };
 
 cls.JSSourceTooltip.tooltip_name = "js-source";
-
-
-
