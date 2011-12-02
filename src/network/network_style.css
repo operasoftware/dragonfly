@@ -336,6 +336,11 @@
   min-width: 1px;
 }
 
+.network-graph-sections:empty
+{
+  margin-bottom: -2px;
+}
+
 .network-section
 {
   display: inline-block;

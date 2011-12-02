@@ -219,7 +219,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                       );
         this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
       }
-      this._table.set_data(ctx.get_requests().slice(0));
+      this._table.set_data(ctx.get_logger_entries().slice(0));
       table_container.clearAndRender(this._table.render());
       this._catch_up_with_cols_and_sort_bound();
     }
@@ -286,10 +286,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       duration: {
         label: "Duration",
         align: "right",
-        getter: function(req) { return req.duration },
+        getter: function(req) { return req.get_duration() },
         renderer: function(req) {
-          if (req.duration)
-            return req.duration + "ms"
+          var dur = req.get_duration();
+          if (dur)
+            return dur + "ms"
 
           return "";
         }
@@ -370,14 +371,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (target.hasClass("network-graph-sections-hitarea")) // else it's the url tooltip
     {
       var ctx = this._service.get_request_context();
-      var request_id = target.get_attr("parent-node-chain", "data-object-id");
-      var request = ctx.get_request(request_id);
+      var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+      var entry = ctx.get_logger_entry(entry_id);
       var template = [];
-      template.push(["h2", "Request " + request.requestID + ", Resource " + request.resource.id])
-      template.push(templates.network_graph_row_bar(request, 450, false, request.duration));
+      template.push(["h2", "Request " + entry.requestID + ", Resource " + entry.resource.id])
+      template.push(templates.network_graph_row_bar(entry, 450, false, entry.get_duration()));
 
       var list = ["table"];
-      var data = request._my_dbg || [];
+      var data = entry._my_dbg || [];
       for (var i = 0, entry; entry = data[i]; i++)
       {
         list.push(

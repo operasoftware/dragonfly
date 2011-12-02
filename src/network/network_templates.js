@@ -179,9 +179,9 @@ templates.network_log_details = function(ctx, selected)
 
 templates.network_log_request_detail = function(ctx, selected)
 {
-  var req = ctx.get_request(selected);
-  var responsecode = req && req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
-                "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
+  var entry = ctx.get_logger_entries(selected);
+  var responsecode = entry && entry.responsecode && entry.responsecode in cls.ResourceUtil.http_status_codes ?
+                "" + entry.responsecode + " " + cls.ResourceUtil.http_status_codes[entry.responsecode] : null;
   return [
   ["div",
     ["span",
@@ -191,31 +191,31 @@ templates.network_log_request_detail = function(ctx, selected)
       "tabindex", "1"
     ],
     ["table",
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + req.method
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
+     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+      "data-spec", "http#" + entry.method
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + req.responsecode
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+      "data-spec", "http#" + entry.responsecode
      ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network && req.duration ? "" + req.duration + " ms" : "0"]],
+     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", entry.touched_network && entry.duration ? "" + entry.duration + " ms" : "0"]],
      "class", "resource-detail"
     ],
 
-    templates.request_details(req),
+    templates.request_details(entry),
 
-    templates.network_request_body(req),
+    templates.network_request_body(entry),
 
-    req.touched_network ? [
+    entry.touched_network ? [
       ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-      templates.response_details(req),
+      templates.response_details(entry),
       ["h2", ""]
     ] : [],
 
-    templates.network_response_body(req)
+    templates.network_response_body(entry)
 
     ],
-    "data-object-id", String(req.id),
+    "data-object-id", String(entry.id),
     "class", "request-details"
   ];
 };
@@ -451,7 +451,7 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
             "data-tooltip", "network-url-list-tooltip"
            ];
   };
-  var items = ctx.get_requests().slice(0);
+  var items = ctx.get_logger_entries().slice(0);
   // Could use copy_object instead, because the template doesn't need the methods of the resources.
   // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
   // to the old objects
@@ -542,75 +542,105 @@ templates.network_graph_rows = function(ctx, width)
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
 
   var tpls = [];
-  for (var n = 0, req; req = ctx.get_requests()[n]; n++)
+  for (var n = 0, entry; entry = ctx.get_logger_entries()[n]; n++)
   {
-    tpls.push(templates.network_graph_row_bar(req, width, basetime, duration));
+    tpls.push(templates.network_graph_row_bar(entry, width, basetime, duration));
   }
   return tpls;
 };
 
-templates.network_graph_row_bar = function(request, width, basetime, duration)
+templates.network_gap_def = [
+  {
+    classname: "blocked",
+    from_to_pairs: [
+      ["urlload", "request"], // [from, to]
+      ["requestfinished", "requestretry"],
+      ["requestretry", "request"],
+      ["responsefinished", "urlfinished"],
+      ["urlload", "urlfinished"] // doesn't touch network, so will rarely take long enough to be painted
+    ]
+  },
+  {
+    classname: "request",
+    from_to_pairs: [
+      ["request", "requestheader"],
+      ["requestheader", "requestfinished"]
+    ]
+  },
+  {
+    classname: "waiting",
+    from_to_pairs: [
+      ["requestfinished", "response"]
+    ]
+  },
+  {
+    classname: "receiving",
+    from_to_pairs: [
+      ["response", "responseheader"],
+      ["responseheader", "responsefinished"]
+    ]
+  }
+];
+
+templates.network_graph_row_bar = function(entry, width, basetime, duration)
 {
-  var scale = width / duration;
+  var events = entry.events;
+  var event_gaps = [];
+  // collaps event_gaps with the same classname into one. saves domnodes.
+  var collapse_same_classname = (basetime !== false);
+
+  for (var i = 0; i < events.length - 1; i++)
+  {
+    var ev_from = events[i];
+    var ev_to = events[i + 1];
+    var gap_def = templates.network_gap_def.filter(function(def){
+      return def.from_to_pairs.filter(function(from_to){
+        return from_to[0] == ev_from.name && from_to[1] == ev_to.name;
+      }).length;
+    })[0];
+
+    var classname = gap_def && gap_def.classname;
+    if (!classname)
+      classname = "unknown_phase_from_" + ev_from.name + "_to_" + ev_to.name;
+
+    if (collapse_same_classname && 
+        classname && 
+        event_gaps.last &&
+        event_gaps.last.classname &&
+        classname === event_gaps.last.classname)
+    {
+      event_gaps.last.val += (ev_to.time - ev_from.time);
+    }
+    else
+    {
+      event_gaps.push({
+        classname: classname,
+        val: ev_to.time - ev_from.time,
+        initiating_event: ev_from.name
+      });
+    }
+  }
 
   var sections = [];
-
-  /*
-  before:
-  var reqwidth = (request.endtime - request.starttime) * scale;
-  var latency = (request.responsestart - request.requesttime) * scale;
-  var req_duration = reqwidth - latency;
-  */
-  /*
-    This shows time between
-      * urlload and request: blocked
-      * request and requestfinished: request
-      * requestfinished and response: latency
-      * response and responsefinished: receiving bit / download
-      * responsefinished and urlfinished: what is that, encoding, parsing or sth?
-  */
-  var timestamps = {}
-  request.timestamps.forEach(function(elem){timestamps[elem.name] = elem.time});
-
-  ([
-    {
-      id: "blocked",
-      val: (timestamps.request - timestamps.urlload) * scale
-    },
-    {
-      id: "request",
-      val: (timestamps.requestfinished - timestamps.request) * scale
-    },
-    {
-      id: "waiting",
-      val: (timestamps.response - timestamps.requestfinished) * scale
-    },
-    {
-      id: "receiving",
-      val: (timestamps.responsefinished - timestamps.response) * scale
-    },
-    {
-      id: "encoding_etc",
-      val: (timestamps.urlfinished - timestamps.responsefinished) * scale
-    }
-  ]).forEach(function(section){
+  var scale = width / duration;
+  event_gaps.forEach(function(section){
     if (section.val)
     {
       sections.push([
-          "span",
-          "class", "network-section network-" + section.id,
-          "style", "width:" + section.val + "px;"
-        ]);
+        "span",
+        "class", "network-section network-" + section.classname + " " + section.initiating_event,
+        "style", "width:" + section.val * scale + "px;"
+      ]);
     }
   });
 
   var item_container = ["span",
-                          ["span", sections, "class", "network-graph-sections"],
+                          ["span", sections, "class", "network-graph-sections"], // todo: make this one its own template, it won't need basetime because it's containers container has the margin-left that makes the position
                         "class", "network-graph-sections-hitarea"];
 
   if (basetime !== false)
   {
-    var start = (request.starttime - basetime) * scale;
+    var start = (entry.starttime - basetime) * scale;
     var padding_left_hitarea = 3;
     item_container = item_container.concat([
       "style", "margin-left:" + (start - padding_left_hitarea) + "px;",
@@ -620,7 +650,7 @@ templates.network_graph_row_bar = function(request, width, basetime, duration)
 
   return ["div", item_container,
           "class", "network-graph-row",
-          "data-object-id", String(request.id),
+          "data-object-id", String(entry.id),
           "handler", "select-network-request"];
 };
 

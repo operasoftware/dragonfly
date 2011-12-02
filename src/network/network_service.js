@@ -263,22 +263,15 @@ cls.RequestContext = function()
     return !!this._resources.length;
   }
 
-  this.get_requests = function()
+  this.get_logger_entries = function()
   {
-    var requests = [];
-    var requests_per_resource = this.get_resources().map(function(res){return res._requests});
-    if (requests_per_resource.length)
+    var entries = [];
+    var entries_per_resource = this.get_resources().map(function(res){return res.get_logger_entries()});
+    if (entries_per_resource.length)
     {
-      requests = requests_per_resource.reduce(function(first, second){return first.concat(second)});
+      entries = entries_per_resource.reduce(function(first, second){return first.concat(second)});
     }
-
-    requests = requests.filter(function(req){
-      if (req.hidden_when_network_not_touched && !req.touched_network)
-        return false;
-      return true;
-    });
-
-    return requests;
+    return entries;
   }
 
   this.set_filters = function(filters)
@@ -308,11 +301,11 @@ cls.RequestContext = function()
 
   this.get_duration = function()
   {
-    var requests = this.get_requests();
-    if (requests.length)
+    var entries = this.get_logger_entries();
+    if (entries.length)
     {
-      var starttimes = requests.map(function(e) { return e.starttime });
-      var endtimes = requests.map(function(e) { return e.endtime });
+      var starttimes = entries.map(function(e) { return e.starttime });
+      var endtimes = entries.map(function(e) { return e.endtime });
       return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
     }
     return 0;
@@ -337,7 +330,7 @@ cls.RequestContext = function()
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.get_requests().map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_logger_entries().map(function(e) { return e.starttime }));
   };
 
   this.update = function(eventname, event)
@@ -359,10 +352,10 @@ cls.RequestContext = function()
     }
 
     // on every urlload, add a new request
-    var current_req = res && res._requests.last;
+    var logger_entry = res && res._logger_entries.last;
 
     // todo: move this to a verify req_id function (determines changed_request_id)
-    var req_ids = res._requests.filter(function(req){return req.requestID});
+    var req_ids = res._logger_entries.filter(function(entry){return entry.requestID});
     var last_request_id = req_ids.last && req_ids.last.requestID;
     var event_request_id = event.requestID || event.fromRequestID; // fromRequestID is only for OnRequestRetry
     var changed_request_id = event.requestID &&
@@ -373,24 +366,24 @@ cls.RequestContext = function()
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       " Unexpected change in requestID on " + eventname +
                       ": Change from " + last_request_id + " to " + 
-                      event_request_id + ", URL: " + current_req.human_url);
+                      event_request_id + ", URL: " + logger_entry.human_url);
     }
 
     if (eventname == "urlload" || changed_request_id)
     {
-      var id = event.resourceID + ":" + res._requests.length;
-      current_req = new cls.NetworkLoggerEntry(id, res);
-      if (res._requests.length)
+      var id = event.resourceID + ":" + res._logger_entries.length;
+      logger_entry = new cls.NetworkLoggerEntry(id, res);
+      if (res._logger_entries.length)
       {
         // From the second request on, it's only to be rendered when it touched network. Everything 
         // else is too much like an internal request, happens randomly and doesn't mean much.
-        current_req.hidden_when_network_not_touched = true;
+        logger_entry.invalid_when_network_not_touched = true;
       }
-      res._requests.push(current_req);
+      res._logger_entries.push(logger_entry);
     }
-    // todo: this gets overwritten all the time, possibly keep this together with the updates as in "timestamps"
-    current_req.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
-    current_req.update(eventname, event);
+    // todo: this gets overwritten all the time, possibly keep this together with the updates as in "events"
+    logger_entry.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
+    logger_entry.update(eventname, event);
     // todo: maybe the request should post a message about having updated, also so the view could update only that
     views.network_logger.update();
   };
@@ -401,17 +394,26 @@ cls.RequestContext = function()
     // because that returnes paused_resources while paused.
     return this._resources.filter(function(e) { return e.id == id; })[0];
   };
-  
-  this.get_request = function(id)
+
+  this.get_logger_entry = function(id)
   {
-    return this.get_requests().filter(function(e) { return e.id == id; })[0];
+    return this.get_logger_entries().filter(function(e) { return e.id == id; })[0];
   };
 };
 
 cls.NetworkResource = function(id)
 {
   this.id = id;
-  this._requests = [];
+  this._logger_entries = [];
+  this.get_logger_entries = function()
+  {
+    return this._logger_entries.filter(function(entry)
+    {
+      if (entry.invalid_when_network_not_touched && !entry.touched_network)
+        return false;
+      return true;
+    });
+  }
 }
 
 cls.NetworkLoggerEntry = function(id, resource)
@@ -432,7 +434,6 @@ cls.NetworkLoggerEntry = function(id, resource)
   this.endtime = null;
   this.cached = false;
   this.touched_network = false;
-  this.duration = null;
   this.request_headers = null;
   this.request_type = null;
   this.requestbody = null;
@@ -444,12 +445,16 @@ cls.NetworkLoggerEntry = function(id, resource)
   this.body_unavailable = false;
   this.responsecode = null;
   this.responsebody = null;
-  this.timestamps = []; // todo: not final
+  this.events = [];
 
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
-    this.timestamps.push({name: eventname, time: eventdata.time});
+    
+    if (!this.events.length)
+      this.starttime = eventdata.time;
+    this.endtime = eventdata.time;
+    this.events.push({name: eventname, time: eventdata.time});
 
     if (updatefun)
     {
@@ -481,12 +486,16 @@ cls.NetworkLoggerEntry = function(id, resource)
     this._my_dbg.push([eventname, delta, eventdata]);
   };
 
+  this.get_duration = function()
+  {
+    return this.events.length && this.endtime - this.starttime;
+  }
+
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
     this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
-    this.starttime = event.time;
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
     this._humanize_url();
@@ -499,8 +508,6 @@ cls.NetworkLoggerEntry = function(id, resource)
     this.mime = event.mimeType;
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
-    this.endtime = Math.round(event.time);
-    this.duration = this.endtime - this.starttime;
 
     // the assumption is that if we got this far, and there was no
     // response code, meaning no request was sent, the url was cached
