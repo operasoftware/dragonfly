@@ -26,6 +26,8 @@ cls.JSSourceTooltip = function(view)
   var _identifier = null;
   var _identifier_boxes = [];
   var _identifier_out_count = 0;
+  var _tagman = null;
+  var _esde = null;
   // token types
   var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
   var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
@@ -132,7 +134,15 @@ cls.JSSourceTooltip = function(view)
           _last_poll.line_number = line_number;
           _last_poll.char_offset = char_offset;
           _last_poll.center = center;
-          _handle_poll_position(script, line_number, char_offset, center);
+          var line_count = Math.floor(offset_y / _line_height); 
+          var box = 
+          {
+            left: center.x,
+            top: _container_box.top + line_count * _line_height,
+            right: center.x,
+            bottom: _container_box.top + (line_count + 1) * _line_height
+          };
+          _handle_poll_position(script, line_number, char_offset, box);
         }
         else
         {
@@ -168,39 +178,91 @@ cls.JSSourceTooltip = function(view)
     return false;
   };
 
-  var _handle_poll_position = function(script, line_number, char_offset, center)
+  var _handle_poll_position = function(script, line_number, char_offset, box)
   {
-    opera.postError('handle')
-    _identifier = _get_identifier(script, line_number, char_offset);
-    var line = script.get_line(line_number);
-
-    if (!_identifier)
-      _identifier = {start_line: line_number,
-                     start_offset: char_offset,
-                     end_line: line_number,
-                     end_offset: char_offset};
-    
-    _identifier_out_count = 0;
-    _update_identifier_boxes(script, _identifier);
-
-    _view.higlight_slice(line_number, _identifier.start_offset, 
-                                      _identifier.end_offset - _identifier.start_offset + 1);
-
-    /*
-    _tooltip.show("test " + (c++), {left: center.x,
-                                    top: center.y,
-                                    right: center.x,
-                                    bottom: center.y});
-    */
+    var selection = _get_identifier(script, line_number, char_offset);
+    if (selection)
+    {
+      // TODO pause polling
+      var start = script.line_arr[selection.start_line - 1] + selection.start_offset;
+      var end = script.line_arr[selection.end_line - 1] + selection.end_offset;
+      var script_text = script.script_data.slice(start, end + 1);
+      var rt_id = window.runtimes.getSelectedRuntimeId();
+      var thread_id = window.stop_at.getThreadId();
+      var frame_index = window.stop_at.getSelectedFrameIndex();
+      if (frame_index == -1)
+      {
+        thread_id = 0;
+        frame_index = 0;
+      }
+      var args = [script, line_number, char_offset, box, selection, rt_id];
+      var tag = _tagman.set_callback(null, _handle_script, args);
+      var msg = [rt_id, thread_id, frame_index, script_text];
+      _esde.requestEval(tag, msg);
+    }
+    else
+    {
+      // TODO?
+    }
   };
+
+  var _handle_script = function(status, 
+                                message, 
+                                script,
+                                line_number,
+                                char_offset,
+                                box,
+                                selection,
+                                rt_id)
+  {
+    var STATUS = 0;
+    var TYPE = 1;
+    var VALUE = 2;
+    var OBJECT = 3;
+    var OBJECT_ID = 0;
+    var CLASS_NAME = 4;
+
+    if (status || message[STATUS] !== "completed")
+    {
+      
+    }
+    else
+    {
+      if (message[TYPE] == "object")
+      {
+        var object = message[OBJECT];
+        var model  = new cls.InspectableJSObject(rt_id, object[OBJECT_ID]);
+        model.expand(function()
+        {
+          var tmpl = [['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
+                      [window.templates.inspected_js_object(model, false)]];
+          _tooltip.show(tmpl, box);
+        });
+      }
+      else if (message[TYPE] == "null" || message[TYPE] == "undefined")
+      {
+        _tooltip.show(message[TYPE], box);
+      }
+      else
+      {
+        _tooltip.show(message[VALUE], box);
+      }
+
+      _identifier = selection;
+      _identifier_out_count = 0;
+      _update_identifier_boxes(script, _identifier);
+      // TODO different lines
+      _view.higlight_slice(line_number, _identifier.start_offset, 
+                                        _identifier.end_offset - _identifier.start_offset + 1);
+      
+    }
+  }
 
   var _get_identifier = function(script, line_number, char_offset)
   {
     var line = script.get_line(line_number);
     var start_state = script.state_arr[line_number - 1];
     var tokens = [];
-    var TYPE = 0;
-    var VALUE = 1;
 
     _tokenizer.tokenize(line, function(token_type, token)
     {
@@ -241,8 +303,6 @@ cls.JSSourceTooltip = function(view)
     var start_line = line_number;
     var got_start = false;
     var bracket_count = 0;
-    var TYPE = 0;
-    var VALUE = 1;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
     var index = match_index - 1;
@@ -386,8 +446,6 @@ cls.JSSourceTooltip = function(view)
     var start_line = line_number;
     var got_end = false;
     var bracket_count = 0;
-    var TYPE = 0;
-    var VALUE = 1;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
     var index = match_index;
@@ -638,6 +696,7 @@ cls.JSSourceTooltip = function(view)
     if (_poll_interval)
     {
       clearInterval(_poll_interval);
+      _clear_selection();
       _tooltip_target_ele.removeEventListener('mousemove', _onmousemove, false);
       _poll_interval = 0;
       _tooltip_target_ele = null;
@@ -665,6 +724,8 @@ cls.JSSourceTooltip = function(view)
     _tooltip.onhide = _onhide;
     _tooltip.ontooltipenter = _ontooltipenter;
     _tooltip.ontooltipleave = _ontooltipleave;
+    _tagman = window.tagManager;
+    _esde = window.services['ecmascript-debugger'];
   };
 
   _init(view);
