@@ -1,4 +1,4 @@
-var Tooltips = function() {};
+﻿var Tooltips = function() {};
 
 (function()
 {

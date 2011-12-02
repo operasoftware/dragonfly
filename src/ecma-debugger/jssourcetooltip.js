@@ -1,9 +1,9 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 cls.JSSourceTooltip = function(view)
 {
 
-  var POLL_INTERVAL = 150;
+  var POLL_INTERVAL = 300;
   var MAX = Math.max;
   var MIN = Math.min;
   var POW = Math.pow;
