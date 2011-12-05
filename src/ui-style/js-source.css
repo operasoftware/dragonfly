@@ -125,8 +125,12 @@
 
 .js-tooltip
 {
-  min-width: 280px;
   padding: 5px;
+}
+
+.js-tooltip-examine
+{
+  min-width: 280px;
 }
 
 .js-tooltip-title

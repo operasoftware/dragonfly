@@ -83,6 +83,7 @@ cls.JSSourceTooltip = function(view)
   var _clear_selection = function()
   {
     _identifier = null;
+    _last_poll = {};
     _view.higlight_slice(-1);
     _tooltip.hide();
   };
@@ -237,19 +238,26 @@ cls.JSSourceTooltip = function(view)
         model.expand(function()
         {
           var tmpl = ["div",
-                      ['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
-                      [window.templates.inspected_js_object(model, false)],
-                      "class", "js-tooltip"];
+                       ['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
+                       [window.templates.inspected_js_object(model, false)],
+                       "class", "js-tooltip js-tooltip-examine"];
           _tooltip.show(tmpl, box);
         });
       }
-      else if (message[TYPE] == "null" || message[TYPE] == "undefined")
-      {
-        _tooltip.show(message[TYPE], box);
-      }
       else
       {
-        _tooltip.show(message[VALUE], box);
+        var value = "";
+        if (message[TYPE] == "null" || message[TYPE] == "undefined")
+          value = message[TYPE]
+        else if (message[TYPE] == "string")
+          value = "\"" + message[VALUE] + "\"";
+        else
+          value = message[VALUE];
+
+        var tmpl = ["div", 
+                     ["value", value, "class", message[TYPE]], 
+                     "class", "js-tooltip"];
+        _tooltip.show(tmpl, box);
       }
 
       _identifier = selection;
@@ -280,24 +288,20 @@ cls.JSSourceTooltip = function(view)
         break;
     }
 
-    switch (tokens[i][TYPE])
-    {
-      case IDENTIFIER:
-      {
-        if (window.js_keywords.hasOwnProperty(tokens[i][VALUE]))
-          break;
-      }
-      case PUNCTUATOR:
-      {
-        var start = _get_identifier_chain_start(script, line_number, tokens, i);
-        var end = _get_identifier_chain_end(script, line_number, tokens, i);
 
-        return {start_line: start.start_line,
-                   start_offset: start.start_offset,
-                   end_line: end.end_line,
-                   end_offset: end.end_offset};
-      }
+    if ((tokens[i][TYPE] == IDENTIFIER &&
+         !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
+         (tokens[i][TYPE] == PUNCTUATOR &&
+          (tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]")))
+    {
+      var start = _get_identifier_chain_start(script, line_number, tokens, i);
+      var end = _get_identifier_chain_end(script, line_number, tokens, i);
+      return {start_line: start.start_line,
+                 start_offset: start.start_offset,
+                 end_line: end.end_line,
+                 end_offset: end.end_offset};
     }
+    
     return null;
   };
 
@@ -310,6 +314,9 @@ cls.JSSourceTooltip = function(view)
     var previous_token = tokens[match_index];
     var bracket_stack = [];
     var index = match_index - 1;
+
+    if (previous_token[VALUE] == "]")
+      bracket_stack.push(previous_token);
 
     while (!got_start)
     {
@@ -518,6 +525,13 @@ cls.JSSourceTooltip = function(view)
                   {
                     previous_token = token;
                     index = i - 1;
+                    continue;
+                  }
+                  if (token[VALUE] == "]" && bracket_stack.length)
+                  {
+                    bracket_stack.pop();
+                    previous_token = token;
+                    index = i;
                     continue;
                   }
                 }
