@@ -123,13 +123,24 @@
   background-color: #f0f0f0;
 }
 
+.js-tooltip
+{
+  min-width: 280px;
+  padding: 5px;
+}
+
+.js-tooltip-title
+{
+  color: red;
+}
+
 .js-identifier-selected,
 .js-identifier-selected-first,
 .js-identifier-selected-between,
 .js-identifier-selected-last 
 {
   background-color: #d4e3f4; 
-  background-image: -o-linear-gradient(-90deg, #d4e3f4 30%, #78b1f7 100%);
+  background-image: -o-linear-gradient(-90deg, #d4e3f4 30%, #d4e3f4 100%);
   border-color: #ceba73;   
   border-top-color: #dbd3ad;
   border-bottom-color: #c7b267;

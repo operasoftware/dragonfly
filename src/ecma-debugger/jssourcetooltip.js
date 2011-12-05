@@ -236,8 +236,10 @@ cls.JSSourceTooltip = function(view)
         var model  = new cls.InspectableJSObject(rt_id, object[OBJECT_ID]);
         model.expand(function()
         {
-          var tmpl = [['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
-                      [window.templates.inspected_js_object(model, false)]];
+          var tmpl = ["div",
+                      ['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
+                      [window.templates.inspected_js_object(model, false)],
+                      "class", "js-tooltip"];
           _tooltip.show(tmpl, box);
         });
       }
