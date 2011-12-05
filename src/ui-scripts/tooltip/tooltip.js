@@ -186,7 +186,7 @@
       {
         var target = document.elementFromPoint(_last_event.clientX,
                                                _last_event.clientY);
-        while (target && target.nodeType == document.ELEMENT_NODE)
+        while (target && target.nodeType == Node.ELEMENT_NODE)
         {
           var name = target.getAttribute(DATA_TOOLTIP);
           if (name && _tooltips[name] && _current_tooltip == _tooltips[name])
