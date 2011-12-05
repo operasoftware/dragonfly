@@ -15,14 +15,14 @@
 }
 
 .network_logger {
-  min-width: 460px;
+  min-width: 580px;
 }
 
 #network-url-list
 {
   float: left;
   width: 40%;
-  min-width: 175px; /* filter buttons, should never become 3 rows. values duplicated in network_view */
+  min-width: 230px; /* filter buttons, should never become 3 rows. values duplicated in network_view */
 }
 
 .network-detail-container
@@ -327,13 +327,50 @@
   background-color: rgba(255, 255, 255, 0.4); /* #8a2bac */
 }
 
-.network-graph-sections
+.network-graph-sections,
+.network-tooltip-graph
 {
   border: 1px solid #989898;
   display: inline-block;
   border-radius: 2px;
-  height: 12px;
   min-width: 1px;
+}
+
+.network-graph-sections
+{
+  height: 12px;
+}
+
+.network-tooltip-container {
+  vertical-align: top;
+}
+
+.network-tooltip-container h2 {
+  font-size: 12px;
+  margin: 6px 0 4px 0;
+}
+
+.network-tooltip-container .mono {
+  color: #444;
+}
+
+.network-tooltip-container table {
+  border-collapse: collapse;
+}
+
+.network-tooltip-container table td {
+  padding-right: 2px;
+}
+
+.network-tooltip-container tr.summer td {
+  border-top: 1px solid #444;
+}
+
+.network-tooltip-graph,
+.network-tooltip-legend,
+.network-tooltip-legend-pointer
+{
+  float: left;
 }
 
 .network-graph-sections:empty
@@ -349,13 +386,18 @@
   margin-bottom: 1px;
 }
 
-#tooltip-background {
-  overflow: hidden !important;
+.network-tooltip-section
+{
+  width: 28px;
 }
 
-/* the colors are a bit as in http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/, but
-   encoding_etc is grey, as its a bit like the other side of "blocked" to me
-*/
+.network-tooltip-container .time_data
+{
+  text-align: right;
+  margin-bottom: 2px;
+}
+
+/* colors mostly inspired by http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/ */
 
 .network-waiting /* purple */
 {
@@ -364,15 +406,7 @@
                                        #7a7aff  100%); /* was #a7a5d6 */
 }
 
- /*
-.network-css blue
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #b8d4ff 1%,
-                                       #8bafe0 100%);
-}
-*/
-.network-lookup /* yellow */
+.network-lookup /* yellow, currently unused */
 {
   background-image: -o-linear-gradient(-90deg,
                                        #f7f2d5 1%,

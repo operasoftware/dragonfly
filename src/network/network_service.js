@@ -445,6 +445,7 @@ cls.NetworkLoggerEntry = function(id, resource)
   this.body_unavailable = false;
   this.responsecode = null;
   this.responsebody = null;
+  this.is_finished = null;
   this.events = [];
 
   this.update = function(eventname, eventdata)
@@ -452,7 +453,24 @@ cls.NetworkLoggerEntry = function(id, resource)
     var updatefun = this["_update_event_" + eventname];
     
     if (!this.events.length)
+    {
       this.starttime = eventdata.time;
+
+      var d = new Date(this.starttime);
+      var h = "" + d.getHours();
+      if (h.length < 2)
+        h = "0" + h;
+      var m = "" + d.getMinutes();
+      if (m.length < 2)
+        m = "0" + m;
+      var s = "" + d.getSeconds();
+      if (s.length < 2)
+        s = "0" + s;
+      var ms = "" + d.getMilliseconds();
+      while (ms.length < 3)
+        ms = "0" + ms;
+      this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
+    }
     this.endtime = eventdata.time;
     this.events.push({name: eventname, time: eventdata.time});
 
@@ -513,13 +531,13 @@ cls.NetworkLoggerEntry = function(id, resource)
     // response code, meaning no request was sent, the url was cached
     // fixme: special case for file URIs
     if (!this.responsecode) { this.cached = true }
+    this.is_finished = true;
     this._guess_type();
     this._humanize_url();
   };
 
   this._update_event_request = function(event)
   {
-    this.requesttime = event.time; // todo: not sure how this was set before?
     this.method = event.method;
     this.touched_network = true;
   };
@@ -547,7 +565,7 @@ cls.NetworkLoggerEntry = function(id, resource)
       // from the headers. See CORE-39597
       this.requestbody.mimeType = this.request_type;
     }
-    this.requesttime = Math.round(event.time);
+    this.requesttime = event.time;
   };
 
   this._update_event_requestretry = function(event)
@@ -557,7 +575,7 @@ cls.NetworkLoggerEntry = function(id, resource)
 
   this._update_event_response = function(event)
   {
-    this.responsestart = Math.round(event.time);
+    this.responsestart = event.time;
     this.responsecode = event.responseCode;
     if (this.responsecode == "304") { this.cached = true }
   };

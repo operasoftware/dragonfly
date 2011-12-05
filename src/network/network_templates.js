@@ -549,7 +549,7 @@ templates.network_graph_rows = function(ctx, width)
   return tpls;
 };
 
-templates.network_gap_def = [
+templates.network_gap_defs = [
   {
     classname: "blocked",
     from_to_pairs: [
@@ -557,7 +557,8 @@ templates.network_gap_def = [
       ["requestfinished", "requestretry"],
       ["requestretry", "request"],
       ["responsefinished", "urlfinished"],
-      ["urlload", "urlfinished"] // doesn't touch network, so will rarely take long enough to be painted
+      ["urlredirect", "urlfinished"],
+      ["urlload", "urlfinished"]
     ]
   },
   {
@@ -582,18 +583,18 @@ templates.network_gap_def = [
   }
 ];
 
-templates.network_graph_row_bar = function(entry, width, basetime, duration)
+templates.network_get_event_gaps = function(events, gap_defs, collapse_same_classname)
 {
-  var events = entry.events;
+  /*
+    collapse_same_classname: collapses event_gaps with the same classname into one. saves domnodes.
+    todo: right now the sections are never rendered individually, no this can probably always be done
+  */
   var event_gaps = [];
-  // collaps event_gaps with the same classname into one. saves domnodes.
-  var collapse_same_classname = (basetime !== false);
-
   for (var i = 0; i < events.length - 1; i++)
   {
     var ev_from = events[i];
     var ev_to = events[i + 1];
-    var gap_def = templates.network_gap_def.filter(function(def){
+    var gap_def = gap_defs.filter(function(def){
       return def.from_to_pairs.filter(function(from_to){
         return from_to[0] == ev_from.name && from_to[1] == ev_to.name;
       }).length;
@@ -620,10 +621,16 @@ templates.network_graph_row_bar = function(entry, width, basetime, duration)
       });
     }
   }
+  return event_gaps;
+}
 
+templates.network_graph_row_bar = function(entry, width, basetime, duration)
+{
   var sections = [];
   var scale = width / duration;
-  event_gaps.forEach(function(section){
+
+  var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs, true);
+  gaps.forEach(function(section){
     if (section.val)
     {
       sections.push([
@@ -635,24 +642,119 @@ templates.network_graph_row_bar = function(entry, width, basetime, duration)
   });
 
   var item_container = ["span",
-                          ["span", sections, "class", "network-graph-sections"], // todo: make this one its own template, it won't need basetime because it's containers container has the margin-left that makes the position
+                          ["span", sections, "class", "network-graph-sections"],
                         "class", "network-graph-sections-hitarea"];
 
-  if (basetime !== false)
-  {
-    var start = (entry.starttime - basetime) * scale;
-    var padding_left_hitarea = 3;
-    item_container = item_container.concat([
-      "style", "margin-left:" + (start - padding_left_hitarea) + "px;",
-      "data-tooltip", "network-tooltip"
-    ]);
-  }
+  var start = (entry.starttime - basetime) * scale;
+  var padding_left_hitarea = 3;
+  item_container = item_container.concat([
+    "style", "margin-left:" + (start - padding_left_hitarea) + "px;",
+    "data-tooltip", "network-tooltip"
+  ]);
 
   return ["div", item_container,
           "class", "network-graph-row",
           "data-object-id", String(entry.id),
           "handler", "select-network-request"];
 };
+
+templates.network_graph_entry_tooltip = function(entry, height)
+{
+  var duration = entry.get_duration();
+  if (duration && entry.events)
+  {
+    var graphical_sections = [];
+    var scale = height / duration;
+
+    var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs);
+    gaps.map(function(section){section.px = section.val * scale}); // or include this in the template
+    gaps.forEach(function(section){
+      if (section.val)
+      {
+        graphical_sections.push([
+          "div",
+          "class", "network-tooltip-section network-" + section.classname + " " + section.initiating_event,
+          "style", "height:" + section.px + "px;"
+        ]);
+      }
+    });
+
+    var previous_event_ms;
+    var event_rows = entry.events.map(function(ev)
+    {
+      var dist = 0;
+      if (previous_event_ms)
+      {
+        dist = ev.time - previous_event_ms;
+        ev.time_str = new Number(dist).toFixed(2) + "ms";
+      }
+      else
+      {
+        ev.time_str = "";
+      }
+
+      previous_event_ms = ev.time;
+      return ["tr",
+               ["td", ev.time_str, "class", "time_data mono"],
+               ["td", ev.name]
+             ];
+    });
+    if (entry.is_finished)
+    {
+      event_rows.push(["tr",
+               ["td", new Number(duration).toFixed(2) + "ms", "class", "time_data mono"],
+               ["td", "Total"],
+               "class", "summer"
+             ])
+    }
+
+    var pathes = [];
+    var y_start = 0;
+    var y_end = 0;
+    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
+    var max_val_length = Math.max.apply(null, entry.events.map(function(ev){return ev.time_str.length}));
+
+    var legend_pointer_width = max_val_length * CHARWIDTH;
+
+    entry.events.forEach(function(ev)
+    {
+      if (pathes.length)
+      {
+        y_start += gaps[pathes.length - 1].px;
+      }
+
+      var x_start = 1;
+      var x_end = 99;
+      if (ev.time_str.length < max_val_length)
+        x_end += ((max_val_length - ev.time_str.length) * CHARWIDTH);
+
+      y_end = (pathes.length * 16) + 9;
+
+      pathes.push(["path", "d", "M1 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
+/* fugly bezier stuff
+      var x_bez_offset = (x_end - x_start) / 3;
+      var y_bez_offset = (y_end - y_start) / 2;
+    pathes.push(["path",
+                    "d", "M" + x_start + " " + y_start + " C" + (x_start + x_bez_offset) + " " + (y_start + y_bez_offset) + "," + (x_end - x_bez_offset) + " " + (y_end - y_bez_offset) + "," + x_end + " " + y_end,
+                    "stroke", "#777",
+                    "fill", "none"]); */
+    });
+
+    return ["div",
+      [
+        ["h2", "Requested " + (entry.filename || entry.human_url) + " at " +  entry.start_time_string],
+        ["div", graphical_sections, "class", "network-tooltip-graph"],
+        ["div", 
+          ["svg:svg", pathes,
+            "width",  (100 + legend_pointer_width) + "px",
+            "height", Math.max(y_start, y_end, height) + "px",
+            "version", "1.1"
+          ], "style", "margin-right: " + "-" + legend_pointer_width + "px", "class", "network-tooltip-legend-pointer"],
+        ["div", ["table", event_rows], "class", "network-tooltip-legend"]
+      ], "class", "network-tooltip-container"
+    ];
+  }
+}
 
 
 templates.grid_info = function(duration, width)

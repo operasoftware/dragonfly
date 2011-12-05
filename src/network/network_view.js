@@ -135,9 +135,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 */
     /*
       hand-calculate network-url-list's width, so it only takes one rendering
-      #network-url-list { width: 40%; min-width: 175px; }
+      #network-url-list { width: 40%; min-width: 230px; }
     */
-    var url_list_width = Math.ceil(Math.max(175, parseInt(container.style.width) * 0.4));
+    var url_list_width = Math.ceil(Math.max(230, parseInt(container.style.width) * 0.4));
     var detail_width = parseInt(container.style.width) - url_list_width;
     var selected_viewmode = settings.network_logger.get("selected_viewmode");
 
@@ -273,7 +273,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         }
       },
       latency: {
-        label: "Latency",
+        label: "Waiting time",
         align: "right",
         getter: function(req)
                 {
@@ -373,24 +373,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       var ctx = this._service.get_request_context();
       var entry_id = target.get_attr("parent-node-chain", "data-object-id");
       var entry = ctx.get_logger_entry(entry_id);
-      var template = [];
-      template.push(["h2", "Request " + entry.requestID + ", Resource " + entry.resource.id])
-      template.push(templates.network_graph_row_bar(entry, 450, false, entry.get_duration()));
-
-      var list = ["table"];
-      var data = entry._my_dbg || [];
-      for (var i = 0, entry; entry = data[i]; i++)
-      {
-        list.push(
-          ["tr",
-            ["td", i + 1 + "."],
-            ["td", String(entry[0])],
-            ["td", String(entry[1])],
-            ["td", String(entry[2].requestID)]
-          ]
-        );
-      }
-      template.push(list);
+      var template = templates.network_graph_entry_tooltip(entry, 150);
       tooltip.show(template);
     }
   }
