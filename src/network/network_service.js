@@ -96,6 +96,7 @@ cls.NetworkLoggerService = function(view)
   this._on_debug_context_selected_bound = function()
   {
     this._current_context = null;
+    this._view.ondestroy();
     this._view.update();
   }.bind(this);
 

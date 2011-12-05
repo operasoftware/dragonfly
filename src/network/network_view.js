@@ -14,7 +14,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
   this._rendertime = 0;
-  this._rendertimer = null;
+  this._rendertimer = 0;
   this._everrendered = false;
   this._url_list_width = 250;
 
@@ -32,6 +32,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var content = this._container ? this._container.querySelector(".network-details-request") : null;
     this._contentscroll = content ? content.scrollTop : 0;
     this._everrendered = false;
+    this._loading = false;
   };
 
   this._update_bound = this.update.bind(this);
@@ -102,26 +103,26 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._render_graph_view = function(container)
   {
-    var fit_to_width = settings.network_logger.get('fit-to-width');
+    var fit_to_width = settings.network_logger.get("fit-to-width");
     var url_list_width = 250;
     var ctx = this._service.get_request_context();
 
     this._everrendered = true;
-    var min_render_delay = 1200;
+    var min_render_delay = 600;
     var timedelta = new Date().getTime() - this._rendertime;
+
+    if (this._rendertimer)
+    {
+      window.clearTimeout(this._rendertimer);
+      this._rendertimer = 0;
+    }
+
     if (timedelta < min_render_delay)
     {
-      if (!this._rendertimer)
-      {
-        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
-      }
+      this._rendertimer = window.setTimeout(this._update_bound, min_render_delay);
       return;
     }
-    else
-    {
-      this._rendertimer = null;
-      this._rendertime = new Date().getTime();
-    }
+    this._rendertime = new Date().getTime();
 
     this._contentscroll = 0;
     container.className = "";
@@ -209,9 +210,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       if (this._rendertimer)
       {
         window.clearTimeout(this._rendertimer);
+        this._rendertimer = 0;
       }
       this._rendertime = 0;
-      this._rendertimer = null;
       this.ondestroy(); // saves scroll pos
       this.update();
     }

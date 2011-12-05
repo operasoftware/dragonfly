@@ -987,6 +987,9 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
 
+/* DESC: Fallback text for no filename, used as tab label */
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+
 /* DESC: Fallback text for unknown groups */
 ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 

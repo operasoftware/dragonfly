@@ -1,8 +1,9 @@
-﻿#contextmenu {
+﻿#contextmenu
+{
   position: fixed;
   z-index: 300;
   display: none;
-  padding: 0px;
+  padding: 0;
   min-width: 100px;
   max-width: 300px;
   display: inline-block;
@@ -15,63 +16,74 @@
   background: #fff;
   background-size: auto 100%;
   color: #333;
-  text-shadow: 0 1px rgba(255,255,255,0.5);
+  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
   border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-#contextmenu::selection {
+#contextmenu::selection
+{
   background: none;
 }
 
-#contextmenu li {
+#contextmenu li
+{
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   padding: 3px 20px 3px 0;
 }
 
-#contextmenu li:first-of-type {
+#contextmenu li:first-of-type
+{
   border-top-left-radius: 1px;
   border-top-right-radius: 1px;
 }
 
-#contextmenu li:last-of-type {
+#contextmenu li:last-of-type
+{
   border-bottom-left-radius: 1px;
   border-bottom-right-radius: 1px;
 }
 
-#contextmenu li.separator {
+#contextmenu li.separator
+{
   padding: 0;
 }
 
-#contextmenu li.disabled {
+#contextmenu li.disabled
+{
   color: #aaa;
 }
 
-#contextmenu li:not(.separator):not(.disabled):hover {
+#contextmenu li:not(.separator):not(.disabled):hover
+{
   background-color: #bbcef1;
   color: #000;
   text-shadow: none;
 }
 
-#contextmenu li:not(.separator):not(.disabled):active {
+#contextmenu li:not(.separator):not(.disabled):active
+{
   background-color: #598bec;
   color: #fff;
 }
 
-#contextmenu hr {
+#contextmenu hr
+{
   margin: 0;
   padding: 0;
   height: 1px;
   border: none;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px #fff;
 }
 
+
 /* This is now general menu stuff, and should be moved to a menu.css */
 
-.menu .menu-icon {
+.menu .menu-icon
+{
   display: inline-block;
   vertical-align: middle;
   text-align: center;
@@ -81,19 +93,22 @@
   overflow: hidden;
 }
 
-.menu .check {
+.menu .check 
+{
   background: transparent url("../ui-images/menu_check.png") 50% no-repeat;
 }
 
-.menu li:not(.disabled):active .check {
+.menu li:not(.disabled):active .check
+{
   background: transparent url("../ui-images/menu_check_selected.png");
 }
 
-.menu .radio {
+.menu .radio
+{
   background: transparent url("../ui-images/menu_bullet.png") 50% no-repeat;
 }
 
-.menu li:not(.disabled):active .radio {
+.menu li:not(.disabled):active .radio
+{
   background-image: url("../ui-images/menu_bullet_selected.png");
 }
-

@@ -4,21 +4,24 @@
   border: none;
 }
 
-.shortcuts-config header {
+.shortcuts-config header
+{
   padding-left: 3px;
   margin: 2px 1px;
 }
 
-.shortcuts-config header input {
+.shortcuts-config header input
+{
   background:transparent url('../ui-images/toggle_white.png') scroll no-repeat 50% 100%;
   border:none;
   width: 9px;
   height: 7px;
   opacity: 0.66;
-  -o-transition: .2s;
+  -o-transition: 0.2s;
 }
 
-.shortcuts-config filter {
+.shortcuts-config filter
+{
   font-size: inherit;
   vertical-align: middle;
   background-image: url("../ui-images/filter_white.png");
@@ -28,7 +31,8 @@
   margin: 2px;
 }
 
-.shortcuts-config filter.focus input {
+.shortcuts-config filter.focus input
+{
   color: #fff;
 }
 
@@ -39,27 +43,34 @@
   table-layout: fixed;
   margin: 4px 4px 15px 4px;
 }
+
 .shortcuts th
 {
-  border: 1px solid rgba(255,255,255,0.0);
+  border: 1px solid rgba(255, 255, 255, 0.0);
   text-align: left;
   padding: 2px 7px;
   color: #fff;
 }
+
 .invalid-shortcut td
 {
   color: #fc6854;
-  border-color: hsl(22, 100%, 50%);;
-  border: 1px solid rgba(255,255,255,0.0);
+  border-color: hsl(22, 100%, 50%);
+  border: 1px solid rgba(255, 255, 255, 0.0);
 }
+
 .invalid-shortcut td[colspan="2"]
 {
   font-weight: bold;
   padding: 2px 7px;
 }
-.invalid-shortcut input, .invalid-shortcut input:focus {
+
+.invalid-shortcut input,
+.invalid-shortcut input:focus
+{
   border-color: #fc6854;
 }
+
 .scc-input,
 .scc-select
 {
@@ -71,13 +82,15 @@
   padding: 3px;
   margin: 2px;
 }
+
 .scc-select option {
     color: #000;
 }
 
 .scc-input:focus,
-.scc-select:focus {
-  border: 1px solid rgba(255,255,255,1.0);
+.scc-select:focus
+{
+  border: 1px solid rgba(255, 255, 255, 1.0);
 }
 
 .scc-no-match
@@ -85,10 +98,12 @@
   display: none;
 }
 
-.shortcuts .controls {
+.shortcuts .controls
+{
   border: none;
 }
 
-.shortcuts-config ul {
+.shortcuts-config ul
+{
     clear: both;
 }

@@ -1,4 +1,5 @@
-﻿.metadata-drawer {
+﻿.metadata-drawer
+{
   border-bottom: 1px solid #999;
   margin: 0;
   position: absolute;
@@ -10,17 +11,20 @@
   border-color: #999;
 }
 
-.metadata-drawer-summary-table {
+.metadata-drawer-summary-table
+{
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-.metadata-drawer-summary-table.unfolded {
+.metadata-drawer-summary-table.unfolded
+{
   border-bottom: 1px solid #999;
 }
 
-.metadata-drawer-summary-table th {
+.metadata-drawer-summary-table th
+{
   text-align: left;
   height: 32px;
 }
@@ -52,26 +56,30 @@
   padding: 10px 0;
 }
 
-.metadata-drawer .details-table tr {
+.metadata-drawer .details-table tr
+{
   border-bottom: 1px solid #999;
 }
 
-.metadata-drawer .details-table th {
+.metadata-drawer .details-table th
+{
   width: 100px;
   text-align: left;
 }
 
-.metadata-drawer .details-table th {
+.metadata-drawer .details-table th
+{
   padding-right: 10px;
   width: 82px;
   text-align: right;
 }
 
-input[handler=metadata-drawer-toggle] {
+input[handler=metadata-drawer-toggle]
+{
   background:transparent url('../../ui-images/toggle.png') scroll no-repeat 50% 100%;
-  border:none;
-  width:5px;
-  height:9px;
+  border: none;
+  width: 5px;
+  height: 9px;
   opacity: 0.66;
 }
 

@@ -1,50 +1,63 @@
-﻿.storage_view .sortable-table input.text, .storage_view .sortable-table textarea {
+﻿.storage_view .sortable-table input.text,
+.storage_view .sortable-table textarea
+{
   width: 100%;
   border: none;
   border-radius: 0;
 }
 
-input[type='datetime-local'] {
+input[type='datetime-local']
+{
   margin-top: -1px;
   margin-bottom: -1px;
 }
 
-.storage_view .sortable-table td, .storage_view .sortable-table th {
+.storage_view .sortable-table td,
+.storage_view .sortable-table th
+{
   vertical-align: top;
   word-wrap: break-word;
   min-width: 18px;
 }
 
-.storage_view .replaced-val {
-  color: #AAA;
+.storage_view .replaced-val
+{
+  color: #aaa;
 }
 
 /* editing */
 
-.storage_view .value_container {
+.storage_view .value_container
+{
   word-wrap: break-word;
   white-space: pre;
 }
 
-.storage_view .edit_container {
+.storage_view .edit_container
+{
   display: none;
   margin: -1px 0 2px -2px;
 }
 
-.storage_view .edit_mode .edit_container {
+.storage_view .edit_mode .edit_container
+{
   display: block;
 }
 
-.storage_view .edit_mode .value_container {
+.storage_view .edit_mode .value_container
+{
   display: none;
 }
 
-.storage_view input[type=text], .storage_view textarea {
+.storage_view input[type='text'],
+.storage_view textarea
+{
   padding: 3px 2px 1px 2px;
   max-height: 700px;
 }
 
-.storage_view .sortable-table .value_container > div {
+.storage_view .sortable-table .value_container > div
+{
   /* extended with height for div.ellipsis_cont */
   margin-top: 2px;
   margin-bottom: 3px;
@@ -52,13 +65,16 @@ input[type='datetime-local'] {
   max-height: 700px;
 }
 
+
 /* ellipsis */
 
-.storage_view .sortable-table .ellipsis_cont {
+.storage_view .sortable-table .ellipsis_cont
+{
   position: relative;
 }
 
-.storage_view .sortable-table td .ellipsis_cont {
+.storage_view .sortable-table td .ellipsis_cont
+{
   /*
     because .ellipsis is the only things that lives in this container,
     height needs to be specified to take room
@@ -66,18 +82,22 @@ input[type='datetime-local'] {
   height: 13px;
 }
 
-.storage_view .sortable-table th .ellipsis_cont {
+.storage_view .sortable-table th .ellipsis_cont
+{
   /* header row is lower */
   height: 1em;
   margin-top: 0;
   margin-bottom: 2px;
 }
 
-.storage_view .sortable-table th, .storage_view .sortable-table td {
+.storage_view .sortable-table th,
+.storage_view .sortable-table td
+{
   padding-right: 10px;
 }
 
-.storage_view .sortable-table .ellipsis_cont .ellipsis {
+.storage_view .sortable-table .ellipsis_cont .ellipsis
+{
   position: absolute;
   top: 0;
   left: 0;
@@ -87,29 +107,40 @@ input[type='datetime-local'] {
   text-overflow: ellipsis;
 }
 
-#contextmenu .ellipsis_cont, #contextmenu .ellipsis {
+#contextmenu .ellipsis_cont,
+#contextmenu .ellipsis
+{
   display: inline; /* hide containers in context menu */
 }
 
+
 /* "check" values */
 
-.storage_view .sortable-table .check {
+.storage_view .sortable-table .check
+{
   content: url("../ui-images/menu_check.png");
 }
+
 
 /* columns */
 /* .local_storage, .session_storage, .cookies and .widget_preferences might get their own here too */
 
-.storage_view .sortable-table .col_key {
+.storage_view .sortable-table .col_key
+{
   width: 25%;
 }
-.storage_view .sortable-table .col_value {
+
+.storage_view .sortable-table .col_value
+{
   width: 75%;
 }
 
+
 /* summation-row tweak, as it doesn't sum anything up in the cookie_manager,
   it's just for the add_cookie/add_storage button */
-.storage_view .sortable-table tr.sortable-table-summation-row td {
+
+.storage_view .sortable-table tr.sortable-table-summation-row td
+{
   border-width: 0;
   border-top-width: 1px;
   background: none;
@@ -117,17 +148,21 @@ input[type='datetime-local'] {
   padding-bottom: 11px;
 }
 
-.storage_view .sortable-table tr.sortable-table-summation-row {
+.storage_view .sortable-table tr.sortable-table-summation-row
+{
   background: none;
 }
 
-.storage_view .sortable-table tr.runtime_placeholder {
+.storage_view .sortable-table tr.runtime_placeholder
+{
   display: none;
 }
 
+
 /* other sortable-table stuff specific to storage */
 
-.storage_view .sortable-table .header td {
+.storage_view .sortable-table .header td
+{
   padding: 6px 5px 2px 20px;
   position: relative;
 }
