@@ -185,7 +185,24 @@
   {
     _clear_show_timeout();
     if (_last_event && _last_handler_ele)
+    {
+      if (!document.documentElement.contains(_last_handler_ele))
+      {
+        var target = document.elementFromPoint(_last_event.clientX,
+                                               _last_event.clientY);
+        while (target && target.nodeType == document.ELEMENT_NODE)
+        {
+          var name = target.getAttribute(DATA_TOOLTIP);
+          if (name && _tooltips[name] && _current_tooltip == _tooltips[name])
+            break;
+          target = target.parentNode;
+        }
+        _last_handler_ele = target;
+        if (!_last_handler_ele)
+          return;
+      }
       _current_tooltip.ontooltip(_last_event, _last_handler_ele);
+    }
   };
 
   var _handle_hide_tooltip = function()
