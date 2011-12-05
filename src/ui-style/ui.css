@@ -702,7 +702,7 @@ window-controls
   position: absolute;
   top: 0;
   right: 0;
-  padding: 5px 3px 3px 0;
+  padding: 5px 3px 3px 4px;
   height: 22px;
 }
 
@@ -711,16 +711,16 @@ window-controls:not(.no-tabbar)
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.75) 0,
-                                       rgba(255, 255, 255, 0.25) 100%);
-}
-
-window-controls:not(.no-tabbar)::before
-{
-  content: url("../ui-images/window_controls_border.png");
-  height: 30px;
-  position: relative;
-  left: -2px; /* width of the image */
-  top: -5px; /* adjust for top padding */
+                                       rgba(255, 255, 255, 0.25) 100%),
+                    -o-linear-gradient(-90deg,
+                                       rgba(0, 0, 0, 0.05) 0,
+                                       rgba(0, 0, 0, 0.3) 70%),
+                    -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.1) 0,
+                                       rgba(255, 255, 255, 0.6) 70%);
+  background-size: 100% 100%, 1px 100%, 1px 100%;
+  background-repeat: repeat, repeat-y, repeat-y;
+  background-position: left top, left top, 1px top;
 }
 
 window-controls.no-tabbar
