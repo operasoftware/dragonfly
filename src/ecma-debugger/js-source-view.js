@@ -978,7 +978,18 @@ cls.JsSourceView = function(id, name, container_class)
 
   ActionBroker.get_instance().register_handler(this);
 
-  this._slice_highlighter = new VirtualTextSearch();
+  var config =
+  {
+    "css_classes":
+    {
+      "selected_match_class": "js-identifier-selected",
+      "selected_match_class_first": "js-identifier-selected-first",
+      "selected_match_class_between": "js-identifier-selected-between",
+      "selected_match_class_last": "js-identifier-selected-last" 
+    }
+  }
+
+  this._slice_highlighter = new VirtualTextSearch(config);
 
   new cls.JSSourceTooltip(this);
 }

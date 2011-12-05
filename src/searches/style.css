@@ -33,7 +33,9 @@
 .search-highlight-first,
 .search-highlight-between,
 .search-highlight-selected-first,
-.search-highlight-selected-between
+.search-highlight-selected-between,
+.js-identifier-selected-first,
+.js-identifier-selected-between
 {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -44,6 +46,8 @@
 
 .search-highlight-last,
 .search-highlight-between,
+.search-highlight-selected-last,
+.search-highlight-selected-between,
 .search-highlight-selected-last,
 .search-highlight-selected-between
 {

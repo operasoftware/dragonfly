@@ -3,11 +3,25 @@
 cls.JSSourceTooltip = function(view)
 {
 
-  var POLL_INTERVAL = 300;
+  var POLL_INTERVAL = 150;
   var MAX = Math.max;
   var MIN = Math.min;
   var POW = Math.pow;
   var MIN_RADIUS = 2;
+  var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
+  var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
+  var IDENTIFIER = cls.SimpleJSParser.IDENTIFIER;
+  var NUMBER = cls.SimpleJSParser.NUMBER;
+  var STRING = cls.SimpleJSParser.STRING;
+  var PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
+  var DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR;
+  var REG_EXP = cls.SimpleJSParser.REG_EXP;
+  var COMMENT = cls.SimpleJSParser.COMMENT;
+  var FORWARD = 1;
+  var BACKWARDS = -1;
+  var TYPE = 0;
+  var VALUE = 1;
+
   var _tooltip = null;
   var _view = null;
   var _tokenizer = null;
@@ -28,20 +42,8 @@ cls.JSSourceTooltip = function(view)
   var _identifier_out_count = 0;
   var _tagman = null;
   var _esde = null;
-  // token types
-  var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
-  var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
-  var IDENTIFIER = cls.SimpleJSParser.IDENTIFIER;
-  var NUMBER = cls.SimpleJSParser.NUMBER;
-  var STRING = cls.SimpleJSParser.STRING;
-  var PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
-  var DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR;
-  var REG_EXP = cls.SimpleJSParser.REG_EXP;
-  var COMMENT = cls.SimpleJSParser.COMMENT;
-  var FORWARD = 1;
-  var BACKWARDS = -1;
-  var TYPE = 0;
-  var VALUE = 1;
+  var _is_over_tooltip = false;
+  var _selection = null;
 
   // TODO reset char-width and line-height on the according evemnt
 
@@ -87,7 +89,7 @@ cls.JSSourceTooltip = function(view)
 
   var _poll_position = function()
   {
-    if (!_last_move_event)
+    if (!_last_move_event || !_selection.isCollapsed || _is_over_tooltip)
       return;
 
     if (_identifier)
@@ -686,6 +688,7 @@ cls.JSSourceTooltip = function(view)
         while (_mouse_positions.length)
           _mouse_positions.pop();
         _total_y_offset = _container_box.left + _default_offset;
+        _selection = window.getSelection();
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
       }
     }    
@@ -702,17 +705,18 @@ cls.JSSourceTooltip = function(view)
       _tooltip_target_ele = null;
       _container_box = null;
       _container = null;
+      _selection = null;
     }
   };
 
   var _ontooltipenter = function(event)
   {
-    
+    _is_over_tooltip = true;
   };
 
   var _ontooltipleave = function(event)
   {
-    
+    _is_over_tooltip = false;
   };
 
   var _init = function(view)
