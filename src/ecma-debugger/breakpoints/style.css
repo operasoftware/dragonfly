@@ -4,13 +4,15 @@
   padding: 2px 0;
 }
 
-.breakpoint, .breakpoint .file-line {
+.breakpoint,
+.breakpoint .file-line {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.breakpoint:last-of-type {
+.breakpoint:last-of-type
+{
   border-bottom: 0;
 }
 

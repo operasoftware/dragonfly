@@ -1,4 +1,4 @@
-var Tooltips = function() {};
+﻿var Tooltips = function() {};
 
 (function()
 {
@@ -181,7 +181,24 @@ var Tooltips = function() {};
   {
     _clear_show_timeout();
     if (_last_event && _last_handler_ele)
+    {
+      if (!document.documentElement.contains(_last_handler_ele))
+      {
+        var target = document.elementFromPoint(_last_event.clientX,
+                                               _last_event.clientY);
+        while (target && target.nodeType == Node.ELEMENT_NODE)
+        {
+          var name = target.getAttribute(DATA_TOOLTIP);
+          if (name && _tooltips[name] && _current_tooltip == _tooltips[name])
+            break;
+          target = target.parentNode;
+        }
+        _last_handler_ele = target;
+        if (!_last_handler_ele)
+          return;
+      }
       _current_tooltip.ontooltip(_last_event, _last_handler_ele);
+    }
   };
 
   var _handle_hide_tooltip = function()
@@ -306,7 +323,7 @@ var Tooltips = function() {};
       if (document.readyState == "complete")
         _setup();
       else
-        document.addEvenetListener("load", _setup, false);
+        document.addEventListener("load", _setup, false);
       _is_setup = true;  
     }
     _tooltips[name] = new Tooltip();

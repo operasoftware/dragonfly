@@ -2,6 +2,7 @@
 {
   display: block;
 }
+
 .color-picker-popup
 {
   position: relative;
@@ -17,7 +18,8 @@
 .color-picker-alpha
 {
   border: 1px solid #333;
-  box-shadow:0 -1px 1px rgba(255,255,255,0.1),  0 1px rgba(0,0,0,0.2);
+  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.1),
+              0 1px rgba(0, 0, 0, 0.2);
 }
 
 .color-picker-2-d-graphic
@@ -42,6 +44,7 @@
   width: 20px;
   height: 200px;
 }
+
 .color-picker-color-old,
 .color-picker-color
 {
@@ -52,6 +55,7 @@
   height: 36px;
   margin: 0;
 }
+
 .color-picker-color-old div,
 .color-picker-color div
 {
@@ -59,10 +63,12 @@
   border-style: solid;
   border-color: black transparent transparent black;
 }
+
 .color-picker-color-old
 {
   border-right-width: 0;
 }
+
 .color-picker-color
 {
   left: 315px;
@@ -80,9 +86,10 @@
 
 .color-picker-inputs td
 {
-  padding: 0px 2px;
+  padding: 0 2px;
   text-align: left;
 }
+
 .color-picker-inputs td:first-child
 {
   text-align: right;
@@ -92,6 +99,7 @@
 {
   height: 6px;
 }
+
 .color-picker-number
 {
   width: 40px;
@@ -121,9 +129,10 @@
   position: absolute;
   margin-left: -10px;
   margin-top: -5px;
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
 }
+
 .color-picker-pointer
 {
   position: absolute;
@@ -136,10 +145,12 @@
   /* to prevent painting artefacts on moving the pointer */
   border: 1px solid transparent;
 }
+
 .color-picker-target-element
 {
   position: relative;
 }
+
 .color-picker-target-element key,
 .color-picker-target-element value
 {
@@ -151,16 +162,18 @@
 {
   position: absolute;
   z-index: 1;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, .3);
+  background: rgba(0, 0, 0, 0.3);
 }
+
 .color-picker-popup.alpha
 {
   width: 521px;
 }
+
 .color-picker-alpha
 {
   position: absolute;
@@ -169,6 +182,7 @@
   width: 20px;
   height: 200px;
 }
+
 .color-picker-input-alpha
 {
   position: absolute;
@@ -176,10 +190,12 @@
   top: 192px;
   width: 12em;
 }
+
 .color-picker-number.alpha
 {
   width: 4.4em;
 }
+
 .color-sample-alpha-bg
 {
   position: absolute;
@@ -208,6 +224,7 @@
   margin-right: 6px;
 }
 
-.color-picker-palette-item:last-of-type {
+.color-picker-palette-item:last-of-type
+{
   margin: 0;
 }

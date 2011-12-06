@@ -2,31 +2,46 @@
  * This file is only for cookie_manager specifics.
  * General .storage_view things are in storage/storage_style.css
  */
-.cookie_manager .sortable-table .add_cookie_dropdown {
+.cookie_manager .sortable-table .add_cookie_dropdown 
+{
   font-size: 11px;
 }
 
+
 /* columns */
 
-.storage_view.cookie_manager .sortable-table .col_domain {
+.storage_view.cookie_manager .sortable-table .col_domain
+{
   width: 15%;
 }
-.storage_view.cookie_manager .sortable-table .col_name {
+
+.storage_view.cookie_manager .sortable-table .col_name
+{
   width: 15%;
 }
-.storage_view.cookie_manager .sortable-table .col_value {
+
+.storage_view.cookie_manager .sortable-table .col_value
+{
   width: 25%;
 }
-.storage_view.cookie_manager .sortable-table .col_path {
+
+.storage_view.cookie_manager .sortable-table .col_path
+{
   width: 5%;
 }
-.storage_view.cookie_manager .sortable-table .col_expires {
+
+.storage_view.cookie_manager .sortable-table .col_expires
+{
   width: 15%;
   min-width: 160px; /* due too the date-picker */
 }
-.storage_view.cookie_manager .sortable-table .col_secure {
+
+.storage_view.cookie_manager .sortable-table .col_secure
+{
   width: 7.5%;
 }
-.storage_view.cookie_manager .sortable-table .col_httponly {
+
+.storage_view.cookie_manager .sortable-table .col_httponly
+{
   width: 7.5%;
 }
