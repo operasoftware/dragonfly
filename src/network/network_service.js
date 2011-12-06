@@ -128,21 +128,23 @@ cls.NetworkLoggerService = function(view)
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
-  this.request_body = function(rid, callback)
+  this.request_body = function(itemid, callback)
   {
-    var resource = this.get_resource(rid);
-    var contentmode = cls.ResourceUtil.mime_to_content_mode(resource.mime);
+    if (!this._current_context) { return; }
+    var entry = this._current_context.get_logger_entry(itemid);
+    var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, rid]);
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+    var resourceid = entry.resource.id;
+    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, resourceid]);
+    this._res_service.requestGetResource(tag, [resourceid, [typecode, 1]]);
   };
 
-  this._on_request_body_bound = function(status, data, callback, rid)
+  this._on_request_body_bound = function(status, data, callback, resourceid)
   {
     if (status != 0)
     {
       if (!this._current_context) { return; }
-      this._current_context.update("responsebody", {resourceID: rid});
+      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable
       if (callback) { callback() }
     }
     else
@@ -471,7 +473,10 @@ cls.NetworkLoggerEntry = function(id, resource)
         ms = "0" + ms;
       this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
     }
-    this.endtime = eventdata.time;
+    if (eventdata.time) // todo: could probably always be done, except for the responsebody event, check if it really needs to be listened to.
+    {
+      this.endtime = eventdata.time;
+    }
     this.events.push({name: eventname, time: eventdata.time});
 
     if (updatefun)
@@ -482,26 +487,6 @@ cls.NetworkLoggerEntry = function(id, resource)
     {
       opera.postError("got unknown event: " + eventname);
     }
-
-    // todo: remove me --- debug only --- dgb
-    if (!this._my_dbg) this._my_dbg = [];
-    var h = "" + new Date(eventdata.time).getHours();
-    if (h.length < 2)
-      h = "0" + h;
-    var m = "" + new Date(eventdata.time).getMinutes();
-    if (m.length < 2)
-      m = "0" + m;
-    var s = "" + new Date(eventdata.time).getSeconds();
-    if (s.length< 2)
-      s = "0" + s;
-    var delta = h + ":" + m + ":" + s;
-    if (views.network_logger._service._current_context.get_starttime() != eventdata.time)
-      delta += " (" + Math.round(eventdata.time - views.network_logger._service._current_context.get_starttime()) + "ms after starttime)";
-    if (this._my_dbg.length)
-    {
-      delta = eventdata.time - this._my_dbg[this._my_dbg.length - 1][2].time; // [2] is where I put eventdata in nxt step
-    }
-    this._my_dbg.push([eventname, delta, eventdata]);
   };
 
   this.get_duration = function()

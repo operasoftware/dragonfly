@@ -179,45 +179,48 @@ templates.network_log_details = function(ctx, selected)
 
 templates.network_log_request_detail = function(ctx, selected)
 {
-  var entry = ctx.get_logger_entries(selected);
-  var responsecode = entry && entry.responsecode && entry.responsecode in cls.ResourceUtil.http_status_codes ?
-                "" + entry.responsecode + " " + cls.ResourceUtil.http_status_codes[entry.responsecode] : null;
-  return [
-  ["div",
-    ["span",
-      "class", "close-request-detail container-button ui-button",
-      "handler", "close-request-detail",
-      "unselectable", "on",
-      "tabindex", "1"
-    ],
-    ["table",
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + entry.method
-     ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + entry.responsecode
-     ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", entry.touched_network && entry.duration ? "" + entry.duration + " ms" : "0"]],
-     "class", "resource-detail"
-    ],
+  var entry = ctx.get_logger_entry(selected);
+  if (entry)
+  {
+    var responsecode = entry && entry.responsecode && entry.responsecode in cls.ResourceUtil.http_status_codes ?
+                  "" + entry.responsecode + " " + cls.ResourceUtil.http_status_codes[entry.responsecode] : null;
+    return [
+    ["div",
+      ["span",
+        "class", "close-request-detail container-button ui-button",
+        "handler", "close-request-detail",
+        "unselectable", "on",
+        "tabindex", "1"
+      ],
+      ["table",
+       ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
+       ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+        "data-spec", "http#" + entry.method
+       ],
+       ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+        "data-spec", "http#" + entry.responsecode
+       ],
+       ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", entry.touched_network && entry.duration ? "" + entry.duration + " ms" : "0"]],
+       "class", "resource-detail"
+      ],
 
-    templates.request_details(entry),
+      templates.request_details(entry),
 
-    templates.network_request_body(entry),
+      templates.network_request_body(entry),
 
-    entry.touched_network ? [
-      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-      templates.response_details(entry),
-      ["h2", ""]
-    ] : [],
+      entry.touched_network ? [
+        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+        templates.response_details(entry),
+        ["h2", ""]
+      ] : [],
 
-    templates.network_response_body(entry)
+      templates.network_response_body(entry)
 
-    ],
-    "data-object-id", String(entry.id),
-    "class", "request-details"
-  ];
+      ],
+      "data-object-id", String(entry.id),
+      "class", "request-details"
+    ];
+  }
 };
 
 templates.request_details = function(req)
@@ -542,7 +545,9 @@ templates.network_graph_rows = function(ctx, width)
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
 
   var tpls = [];
-  for (var n = 0, entry; entry = ctx.get_logger_entries()[n]; n++)
+  var entries = ctx.get_logger_entries();
+
+  for (var n = 0, entry; entry = entries[n]; n++)
   {
     tpls.push(templates.network_graph_row_bar(entry, width, basetime, duration));
   }

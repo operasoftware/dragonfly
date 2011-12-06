@@ -165,9 +165,9 @@
 
 .network-details-request
 {
-  position: absolute;
+  position: fixed;
   right: 0;
-  top: 0;
+  top: 92px;
   bottom: 0;
   z-index: 2;
   left: 160px;

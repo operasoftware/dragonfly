@@ -6,7 +6,6 @@
  */
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.NetworkLoggerService(this);
-  this._loading = false;
   this._contentscroll = 0;
   this._selected = null;
   this._rendertime = 0;
@@ -38,10 +37,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       {
         this._render_details_view(this._container, this._selected);
       }
-    }
-    else if (this._loading)
-    {
-      this._render_loading_view(this._container);
     }
     else if (this._everrendered)
     {
@@ -81,9 +76,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._render_details_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    var content = container.render(templates.network_log_details(ctx, this._selected));
-    if (content && this._contentscroll)
-      content.scrollTop = this._contentscroll;
+    container.render(templates.network_log_details(ctx, this._selected));
   };
 
   this._render_click_to_fetch_view = function(container) // todo: templates
@@ -96,16 +89,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
           'tabindex', '1'],
         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
           'class', 'info-box'
-      ]
-    );
-  };
-
-  this._render_loading_view = function(container) // todo: templates
-  {
-    container.clearAndRender(
-      ['div',
-        ['p', "Loading page..."],
-         'class', 'info-box'
       ]
     );
   };
@@ -243,8 +226,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
           if (cls.ResourceUtil.http_status_codes[req.responsecode])
             return req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] +")";
         },
-        sorter: function(obj_a, obj_b) {
-          return obj_a.responsecode > obj_b.responsecode;
+        sorter: function(obj_a, obj_b) { // todo: it would be better to let the getter return 0 and keep the sorter as default. but can't pass a number.
+          var a = obj_a.responsecode || 0;
+          var b = obj_b.responsecode || 0;
+          return a > b;
         }
       },
       mime: {
@@ -273,13 +258,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         }
       },
       latency: {
-        label: "Waiting time",
+        label: "Waiting",
         align: "right",
         getter: function(req)
                 {
                   if (req.responsestart && req.requesttime)
-                    return req.responsestart - req.requesttime + "ms" 
-                  
+                    return new Number(req.responsestart - req.requesttime).toFixed(2) + "ms";
+
                   return "";
                 }
       },
@@ -290,7 +275,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         renderer: function(req) {
           var dur = req.get_duration();
           if (dur)
-            return dur + "ms"
+            return new Number(dur).toFixed(2) + "ms";
 
           return "";
         }
@@ -338,32 +323,31 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_clicked_request_bound = function(evt, target)
   {
-    var rid = target.get_attr("parent-node-chain", "data-object-id");
-    if (this._selected == rid)
+    var item_id = target.get_attr("parent-node-chain", "data-object-id");
+    if (this._selected == item_id)
     {
       this._selected = null;
     }
     else
     {
-      this._selected = rid;
+      this._selected = item_id;
     }
     this.update();
   }.bind(this);
 
   this._on_hover_request_bound = function(evt, target)
   {
-    var rid = target.get_attr("parent-node-chain", "data-object-id");
+    var item_id = target.get_attr("parent-node-chain", "data-object-id");
     var oldhovered = this._container.querySelectorAll(".hovered");
-    var newhovered = this._container.querySelectorAll("[data-object-id='" + rid + "']");
+    var newhovered = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
     for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered"); }
     for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered"); }
   }.bind(this);
 
   this._on_clicked_get_body = function(evt, target)
   {
-    var rid = target.getAttribute("data-object-id");
-    rid = parseInt(rid);
-    this._service.request_body(rid, this.update.bind(this));
+    var item_id = target.getAttribute("data-object-id");
+    this._service.request_body(item_id, this.update.bind(this));
   }.bind(this);
 
   this._on_tooltip = function(evt, target)
@@ -412,33 +396,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._type_filter_is_blacklist = (target.getAttribute("data-filter-is-blacklist") === "true");
     this.update();
   }.bind(this);
-/*
-  this._on_abouttoloaddocument_bound = function()
-  {
-    if (!this._service.is_paused())
-    {
-      this._loading = true;
-      this.update();
-    }
-  }.bind(this);
-
-  this._on_documentloaded_bound = function()
-  {
-    if (!this._service.is_paused())
-    {
-      this._loading = false;
-      this.update();
-    }
-  }.bind(this);
-
-  this._on_urlfinished_bound = function()
-  {
-    if (!this._service.is_paused() && !this._loading)
-    {
-      this.update();
-    }
-  }.bind(this);
-*/
 
   var eh = window.eventHandlers;
   // fixme: this is in the wrong place! Doesn't belong in UI and even if it
