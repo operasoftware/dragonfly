@@ -32,7 +32,7 @@ var CssShorthandResolver = function()
     var shorthands_map = CssShorthandResolver.property_to_shorthand;
     var props_map = CssShorthandResolver.shorthands;
 
-    do
+    while (true)
     {
       var converted_shorthands = [];
 
@@ -73,7 +73,10 @@ var CssShorthandResolver = function()
           this._element_style.remove_property({declarations: declarations}, prop);
         }, this);
       }, this);
-    } while (converted_shorthands.length != 0);
+
+      if (converted_shorthands.length == 0)
+        break;
+    }
   };
 
   /**
@@ -89,31 +92,66 @@ var CssShorthandResolver = function()
 
     if (props_map.hasOwnProperty(prop))
     {
-      // Check if all properties needed to create a shorthand are available
-      var props = props_map[prop].properties;
       var last_priority = null;
-      var has_all_props = props.every(function(prop) {
+      var is_applied = null;
+      var all_have_same_status = true;
+      var has_inherited = false;
+      var all_inherited = true;
+      // Check if all properties needed to create a shorthand are available
+      var has_all_props = props_map[prop].properties.every(function(prop) {
         var index = this._element_style.get_property_index(prop, declarations);
         if (index != -1)
         {
           var declaration = declarations[index];
+
+          if (declaration.value == "inherit")
+          {
+            if (!has_inherited)
+              has_inherited = true;
+          }
+          else
+          {
+            all_inherited = false;
+          }
+
+          if (all_have_same_status && is_applied !== null && is_applied != declaration.is_applied)
+            all_have_same_status = false;
+          is_applied = declaration.is_applied;
+
+          // Check that all expanded properties either has or has not an
+          // !important declaration
           if (last_priority !== null && last_priority != declaration.priority)
             return false;
-
           last_priority = declaration.priority;
 
           decls[declaration.property] = {
             value: declaration.value,
             is_applied: declaration.is_applied
           };
-          return this._element_style.get_property_index(prop, declarations) != -1;
+          return true;
         }
-
         return false;
       }, this);
 
       if (has_all_props)
-        return props_map[prop].format(decls);
+      {
+        // 'inherit' can only be used as the sole value in a shorthand, so if
+        // all values are 'inherit', we can only convert to shorthand if the
+        // status is the same for all of them (i.e. all are applied or all
+        // are not applied)
+        if (all_inherited)
+        {
+          return all_have_same_status
+                 ? [{value: "inherit", is_applied: is_applied}]
+                 : null;
+        }
+        // At least one value was 'inherit', but not all, so we can't convert
+        // to shorthand
+        else if (!has_inherited)
+        {
+          return props_map[prop].format(decls);
+        }
+      }
     }
 
     return null;
@@ -172,8 +210,13 @@ CssShorthandResolver.shorthands = (function() {
    */
   var compare_values = function(a, b)
   {
-    return JSON.stringify(a.value) == JSON.stringify(b.value) &&
-           a.is_applied == b.is_applied;
+    var first = arguments[0];
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var all_equal = rest.every(function(arg) {
+      return JSON.stringify(first.value) == JSON.stringify(arg.value) &&
+             first.is_applied == arg.is_applied;
+    });
+    return all_equal;
   };
 
   var get_tokens = function(decl)
@@ -183,6 +226,8 @@ CssShorthandResolver.shorthands = (function() {
       is_applied: decl.is_applied
     };
   };
+
+  var get_initial_value = cls.Stylesheets.get_initial_value;
 
   return {
     "background": {
@@ -202,18 +247,40 @@ CssShorthandResolver.shorthands = (function() {
         var len = declarations["background-image"].length;
         for (var i = 0; i < len; i++)
         {
-          template = template.concat(
-            [get_tokens(declarations["background-image"][i]), " ",
-             get_tokens(declarations["background-position"][i]), "/",
-             get_tokens(declarations["background-size"][i]), " ",
-             get_tokens(declarations["background-repeat"][i]), " ",
-             get_tokens(declarations["background-attachment"][i]), " ",
-             get_tokens(declarations["background-origin"][i]), " ",
-             get_tokens(declarations["background-clip"][i]), ", "]
-          );
+          var template_len = template.length;
+          var is_final_bg_layer = i == len-1;
+
+          // Always add background-image, unless we're in the final background layer and
+          // it has the default value.
+          if (!(is_final_bg_layer && declarations["background-image"][i].value == get_initial_value("background-image")))
+            template.push(" ", declarations["background-image"][i]);
+
+          if (declarations["background-position"][i].value != get_initial_value("background-position"))
+            template.push(" ", declarations["background-position"][i]);
+
+          if (declarations["background-size"][i].value != get_initial_value("background-size"))
+            template.push("/", declarations["background-size"][i]);
+
+          if (declarations["background-repeat"][i].value != get_initial_value("background-repeat"))
+            template.push(" ", declarations["background-repeat"][i]);
+
+          if (declarations["background-attachment"][i].value != get_initial_value("background-attachment"))
+            template.push(" ", declarations["background-attachment"][i]);
+
+          if (declarations["background-origin"][i].value != get_initial_value("background-origin"))
+            template.push(" ", declarations["background-origin"][i]);
+
+          if (declarations["background-clip"][i].value != get_initial_value("background-clip"))
+            template.push(" ", declarations["background-clip"][i]);
+
+          if (is_final_bg_layer)
+            template.push(" ", get_tokens(decls["background-color"]));
+          else
+            template.push(", ");
+
+          // There's always an extra space at the beginning, remove it here
+          template.splice(template_len, 1);
         }
-        template.splice(-1, 1, " "); // Replace the last ',' with ' '
-        template.push(get_tokens(decls["background-color"]));
 
         return template;
       }
@@ -227,9 +294,10 @@ CssShorthandResolver.shorthands = (function() {
         "border-left"
       ],
       format: function(decls) {
-        if (compare_values(decls["border-top"], decls["border-right"]) &&
-            compare_values(decls["border-top"], decls["border-bottom"]) &&
-            compare_values(decls["border-top"], decls["border-left"]))
+        if (compare_values(decls["border-top"],
+                           decls["border-right"],
+                           decls["border-bottom"],
+                           decls["border-left"]))
         {
           return [get_tokens(decls["border-top"])];
         }
@@ -296,9 +364,10 @@ CssShorthandResolver.shorthands = (function() {
         "border-bottom-right-radius"
       ],
       format: function(decls) {
-        if (compare_values(decls["border-top-left-radius"], decls["border-top-right-radius"]) &&
-            compare_values(decls["border-top-left-radius"], decls["border-bottom-left-radius"]) &&
-            compare_values(decls["border-top-left-radius"], decls["border-bottom-right-radius"]))
+        if (compare_values(decls["border-top-left-radius"],
+                           decls["border-top-right-radius"],
+                           decls["border-bottom-left-radius"],
+                           decls["border-bottom-right-radius"]))
         {
           return [get_tokens(decls["border-top-left-radius"])];
         }
@@ -311,8 +380,8 @@ CssShorthandResolver.shorthands = (function() {
         "column-count"
       ],
       format: function(decls) {
-        return [get_tokens(decls["column-width"].value), " ",
-                get_tokens(decls["column-count"].value)];
+        return [get_tokens(decls["column-width"]), " ",
+                get_tokens(decls["column-count"])];
       }
     },
 
@@ -339,12 +408,30 @@ CssShorthandResolver.shorthands = (function() {
         "font-family"
       ],
       format: function(decls) {
-        return [get_tokens(decls["font-style"]), " ",
-                get_tokens(decls["font-variant"]), " ",
-                get_tokens(decls["font-weight"]), " ",
-                get_tokens(decls["font-size"]), "/",
-                get_tokens(decls["line-height"]), " ",
-                get_tokens(decls["font-family"])];
+        var template = [];
+
+        if (decls["font-style"].value != get_initial_value("font-style"))
+          template.push(" ", decls["font-style"]);
+
+        if (decls["font-variant"].value != get_initial_value("font-variant"))
+          template.push(" ", decls["font-variant"]);
+
+        if (decls["font-weight"].value != get_initial_value("font-weight"))
+          template.push(" ", decls["font-weight"]);
+
+        if (decls["font-size"].value != get_initial_value("font-size"))
+          template.push(" ", decls["font-size"]);
+
+        if (decls["line-height"].value != get_initial_value("line-height"))
+          template.push("/", decls["line-height"]);
+
+        if (decls["font-family"].value != get_initial_value("font-family"))
+          template.push(" ", decls["font-family"]);
+
+        // There's always an extra space at the beginning, remove it here
+        template.splice(0, 1);
+
+        return template;
       }
     },
 
@@ -369,9 +456,10 @@ CssShorthandResolver.shorthands = (function() {
         "margin-left"
       ],
       format: function(decls) {
-        if (compare_values(decls["margin-top"], decls["margin-right"]) &&
-            compare_values(decls["margin-top"], decls["margin-bottom"]) &&
-            compare_values(decls["margin-top"], decls["margin-left"]))
+        if (compare_values(decls["margin-top"],
+                           decls["margin-right"],
+                           decls["margin-bottom"],
+                           decls["margin-left"]))
         {
           return [get_tokens(decls["margin-bottom"])];
         }
@@ -417,9 +505,10 @@ CssShorthandResolver.shorthands = (function() {
         "padding-left"
       ],
       format: function(decls) {
-        if (compare_values(decls["padding-top"], decls["padding-right"]) &&
-            compare_values(decls["padding-top"], decls["padding-bottom"]) &&
-            compare_values(decls["padding-top"], decls["padding-left"]))
+        if (compare_values(decls["padding-top"],
+                           decls["padding-right"],
+                           decls["padding-bottom"],
+                           decls["padding-left"]))
         {
           return [get_tokens(decls["padding-bottom"])];
         }
@@ -457,11 +546,11 @@ CssShorthandResolver.shorthands = (function() {
         var len = declarations["-o-transition-property"].length;
         for (var i = 0; i < len; i++)
         {
-          template = template.concat(
-            [get_tokens(declarations["-o-transition-property"][i]), " ",
-             get_tokens(declarations["-o-transition-duration"][i]), " ",
-             get_tokens(declarations["-o-transition-timing-function"][i]), " ",
-             get_tokens(declarations["-o-transition-delay"][i]), ", "]
+          template.push(
+            get_tokens(declarations["-o-transition-property"][i]), " ",
+            get_tokens(declarations["-o-transition-duration"][i]), " ",
+            get_tokens(declarations["-o-transition-timing-function"][i]), " ",
+            get_tokens(declarations["-o-transition-delay"][i]), ", "
           );
         }
         template.splice(-1, 1); // Remove the last ','

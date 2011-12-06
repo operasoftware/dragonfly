@@ -402,6 +402,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./searches/jssearchview.js"/>
 
 <script src="./style/ecmascriptdebugger.6.7.responses.cssgetstyledeclarations.js"/>
+<script src="./style/stylesheets.js"/>
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
 <script src="./style/css_rule.js"/>
@@ -409,7 +410,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./style/css_value_tokenizer.js"/>
 <script src="./style/css_shorthand_resolver.js"/>
 <script src="./style/element_style.js"/>
-<script src="./style/stylesheets.js"/>
 <script src="./style/stylesheet_templates.js"/>
 <script src="./style/views_css_inspector.js"/>
 <script src="./style/views_css_inspector_computed_style.js"/>

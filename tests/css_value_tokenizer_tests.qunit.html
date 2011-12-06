@@ -40,6 +40,13 @@ function do_test(input, expected, should_fail)
 
 test("Tokenization", function() {
   do_test(
+    "'a\\''",
+    [
+      [types.STRING, "'a\\''"]
+    ]
+  );
+
+  do_test(
     "1 /**/  red rgb(1,1) 'x' ",
     [
       [types.NUMBER, "1"],
@@ -251,7 +258,7 @@ test("Tokenization", function() {
 }
 </script>
 <body>
-<h1 id="qunit-header">Dragonfly - Command Processor</h1>
+<h1 id="qunit-header">Dragonfly - CSS Value Tokenizer</h1>
 <h2 id="qunit-banner"></h2>
 <div id="qunit-do_testrunner-toolbar"></div>
 <h2 id="qunit-userAgent"></h2>
