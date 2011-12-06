@@ -32,7 +32,7 @@ cls.NetworkLoggerService = function(view)
       this._current_context = new cls.RequestContext();
       this._current_context.partial = true;
     }
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
 
     this._current_context.update("urlload", data);
   }.bind(this);
@@ -211,36 +211,13 @@ cls.RequestContext = function()
     {
       for (var i = 0, filter; filter = this._filters[i]; i++)
       {
-        if (filter.type === "text" && filter.content)
-        {
-          var passed_txt_filter = false;
-          for (var j = 0, property_object; property_object = filter.props[j]; j++)
-          {
-            var checked_value = item[property_object.id];
-            if (property_object.get_val)
-            {
-              checked_value = property_object.get_val(item);
-            }
-            if (
-              // this does mostly not exclude 0, because if a get_val func was used, 
-              // it was converted to a string to be used in a template
-              checked_value &&
-              checked_value.toLowerCase().contains(filter.content)
-            )
-            {
-              passed_txt_filter = true;
-              break;
-            }
-          }
-          if (!passed_txt_filter)
-          {
-            success = false;
-          }
-        }
-        else if (filter.type === "type" && filter.content)
+        if (filter.content)
         {
           var list = filter.content.split(",");
-          if (filter.content.contains(item.type) === filter.is_blacklist)
+
+          // either type or load_origin matches. pass criteria then depends on is_blacklist.
+          var has_match = list.contains(item.type) || list.contains(item.load_origin);
+          if (has_match === filter.is_blacklist)
           {
             success = false;
           }
@@ -257,12 +234,7 @@ cls.RequestContext = function()
     {
       resources = this._paused_resources;
     }
-    return resources.filter(this._filter_function_bound);
-  }
-
-  this.has_resources = function()
-  {
-    return !!this._resources.length;
+    return resources;
   }
 
   this.get_logger_entries = function()
@@ -273,7 +245,7 @@ cls.RequestContext = function()
     {
       entries = entries_per_resource.reduce(function(first, second){return first.concat(second)});
     }
-    return entries;
+    return entries.filter(this._filter_function_bound);
   }
 
   this.set_filters = function(filters)
@@ -499,6 +471,8 @@ cls.NetworkLoggerEntry = function(id, resource)
     this.url = event.url;
     this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
+    if (event.loadOrigin)
+      this.load_origin = {1: "xhr"}[event.loadOrigin];
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
     this._humanize_url();

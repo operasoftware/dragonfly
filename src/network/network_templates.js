@@ -446,12 +446,14 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
     }
     return ["li",
             templates.network_request_icon(req),
-            ["span", req.filename || req.human_url], // todo: shorten the full url, even if filename can't be extracted
+            ["span",
+              req.filename || req.human_url,
+              "data-tooltip-text" , req.human_url,
+              "data-tooltip", "network-url-list-tooltip"
+            ], // todo: shorten the full url, even if filename can't be extracted
             "handler", "select-network-request",
             "data-object-id", String(req.id),
-            "class", selected === req.id ? "selected" : "",
-            "data-tooltip-text" , req.human_url,
-            "data-tooltip", "network-url-list-tooltip"
+            "class", selected === req.id ? "selected" : ""
            ];
   };
   var items = ctx.get_logger_entries().slice(0);
@@ -493,10 +495,10 @@ templates.network_type_filter_buttons = function(type_filter)
       {name: "All", val: ""}, // Todo: Strings
       {name: "Markup", val: "markup"},
       {name: "Stylesheets", val: "css"},
-      {name: "Scripts", val: "scripts"},
-      {name: "Images", val: "images"},
+      {name: "Scripts", val: "script"},
+      {name: "Images", val: "image"},
       {name: "XHR", val: "xhr"},
-      {name: "Other", val: "markup,css,scripts,images,xhr", is_blacklist: true}
+      {name: "Other", val: "markup,css,script,image,xhr", is_blacklist: true}
     ].map(function(filter)
           {
             var c = "ui-button container-button";

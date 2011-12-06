@@ -11,9 +11,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._rendertime = 0;
   this._rendertimer = null;
   this._everrendered = false;
+  this.needs_instant_update = false;
 
   this.createView = function(container)
   {
+    var min_render_delay = 200;
+    var timedelta = new Date().getTime() - this._rendertime;
+
+    if (this._rendertimer)
+      this._rendertimer = window.clearTimeout(this._rendertimer);
+
+    if (!this.needs_instant_update && timedelta < min_render_delay)
+    {
+      this._rendertimer = window.setTimeout(this._create.bind(this), min_render_delay);
+      return;
+    }
+    this._rendertime = new Date().getTime();
+    if (this.needs_instant_update)
+      this.needs_instant_update = false;
+
     this._container = container;
     if (this.query)
     {
@@ -30,7 +46,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     var ctx = this._service.get_request_context();
 
-    if (ctx && ctx.has_resources())
+    if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
       this._render_tabbed_view(this._container);
       if (this._selected)
@@ -96,26 +112,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._render_tabbed_view = function(container)
   {
     this._everrendered = true;
-    var min_render_delay = 200;
-    var timedelta = new Date().getTime() - this._rendertime;
-    
-    // an optimization here is extremely difficult. 
-    // most likely because after a rendering, search-highlighting can cause another render-flow, 
-    // and often the timeout caused by previous, comes back after that. that causes another timeout
-    // and as soon as it comes back, re-rendering starts, and it kicks the search-highlight again
-    // .. causes near-infinite callbacks.
-/*
-    if (this._rendertimer)
-      this._rendertimer = window.clearTimeout(this._rendertimer);
-
-    if (timedelta < min_render_delay)
-    {
-      // this._rendertimer = window.setTimeout(this._update_bound, min_render_delay); // this causes update_search, causes _create .. and I don't know why this results in nearly infinite loops.
-      this._rendertimer = window.setTimeout(this._create.bind(this), min_render_delay);
-      return;
-    }
-    this._rendertime = new Date().getTime();
-*/
     /*
       hand-calculate network-url-list's width, so it only takes one rendering
       #network-url-list { width: 40%; min-width: 230px; }
@@ -127,41 +123,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var ctx = this._service.get_request_context();
 
     var filters = [];
-    if (this.query)
-    {
-      var props_whitelist = ["url"];
-      if (selected_viewmode === "data")
-      {
-        var columns = [];
-        if (this._table)
-          columns = this._table.columns;
-
-        props_whitelist = props_whitelist.concat(columns);
-      }
-
-      filters.push(
-        {
-          type: "text",
-          content: this.query,
-          props: props_whitelist.map(
-            function(id)
-            {
-              return {
-                        id: id,
-                        get_val: this._tabledef.columns[id] && (
-                          this._tabledef.columns[id].renderer ||
-                          this._tabledef.columns[id].getter
-                        )
-                     }
-            }, this)
-        }
-      );
-    }
     if (this._type_filters)
     {
       filters.push(
         {
-          type: "type",
           content: this._type_filters,
           is_blacklist: this._type_filter_is_blacklist
         }
@@ -202,7 +167,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                       );
         this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
       }
-      this._table.set_data(ctx.get_logger_entries().slice(0));
+      var data = ctx.get_logger_entries().slice(0);
+      this._table.set_data(data);
       table_container.clearAndRender(this._table.render());
       this._catch_up_with_cols_and_sort_bound();
     }
@@ -219,12 +185,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       },
       status: {
         label: "Status",
-        renderer: function(req) {
-          return req.responsecode && String(req.responsecode);
+        renderer: function(entry) {
+          return entry.responsecode && String(entry.responsecode);
         },
-        title_getter: function(req) { // todo: use this in sortable_table
-          if (cls.ResourceUtil.http_status_codes[req.responsecode])
-            return req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] +")";
+        title_getter: function(entry) { // todo: use this in sortable_table
+          if (cls.ResourceUtil.http_status_codes[entry.responsecode])
+            return entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
         },
         sorter: function(obj_a, obj_b) { // todo: it would be better to let the getter return 0 and keep the sorter as default. but can't pass a number.
           var a = obj_a.responsecode || 0;
@@ -234,36 +200,36 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
-        getter: function(req) { return req.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
+        getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
       },
       protocol: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
-        getter: function(req) { return req.urltypeName },
+        getter: function(entry) { return entry.urltypeName },
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
-        renderer: function(req) { return req.size ? String(req.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
-        getter: function(req) { return req.size }
+        renderer: function(entry) { return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
+        getter: function(entry) { return entry.size }
       },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
-        getter: function(req) { return req.size },
-        renderer: function(req) {
-          return String(req.size ?
-                        cls.ResourceUtil.bytes_to_human_readable(req.size) :
+        getter: function(entry) { return entry.size },
+        renderer: function(entry) {
+          return String(entry.size ?
+                        cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
         }
       },
       latency: {
         label: "Waiting",
         align: "right",
-        getter: function(req)
+        getter: function(entry)
                 {
-                  if (req.responsestart && req.requesttime)
-                    return new Number(req.responsestart - req.requesttime).toFixed(2) + "ms";
+                  if (entry.responsestart && entry.requesttime)
+                    return new Number(entry.responsestart - entry.requesttime).toFixed(2) + "ms";
 
                   return "";
                 }
@@ -271,9 +237,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       duration: {
         label: "Duration",
         align: "right",
-        getter: function(req) { return req.get_duration() },
-        renderer: function(req) {
-          var dur = req.get_duration();
+        getter: function(entry) { return entry.get_duration() },
+        renderer: function(entry) {
+          var dur = entry.get_duration();
           if (dur)
             return new Number(dur).toFixed(2) + "ms";
 
@@ -311,6 +277,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     }
     if (needs_update)
     {
+      this.needs_instant_update = true;
       this.update();
     }
   }.bind(this);
@@ -318,6 +285,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._on_clicked_close_bound = function(evt, target)
   {
     this._selected = null;
+    this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
@@ -332,7 +300,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._selected = item_id;
     }
+    this.needs_instant_update = true;
     this.update();
+    if (this.graph_tooltip)
+    {
+      this.graph_tooltip.hide();
+    }
   }.bind(this);
 
   this._on_hover_request_bound = function(evt, target)
@@ -347,6 +320,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._on_clicked_get_body = function(evt, target)
   {
     var item_id = target.getAttribute("data-object-id");
+    this.needs_instant_update = true;
     this._service.request_body(item_id, this.update.bind(this));
   }.bind(this);
 
@@ -358,19 +332,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       var entry_id = target.get_attr("parent-node-chain", "data-object-id");
       var entry = ctx.get_logger_entry(entry_id);
       var template = templates.network_graph_entry_tooltip(entry, 150);
-      tooltip.show(template);
+      this.graph_tooltip.show(template);
     }
   }
 
   Tooltips.register("network-url-list-tooltip", true);
-  var tooltip = Tooltips.register("network-tooltip", true);
-  tooltip.ontooltip = this._on_tooltip.bind(this);
+  this.graph_tooltip = Tooltips.register("network-tooltip", true);
+  this.graph_tooltip.ontooltip = this._on_tooltip.bind(this);
   
   this._on_clear_log_bound = function(evt, target)
   {
     if (this._service.is_paused())
       this._service.unpause();
     this._service.clear_resources();
+    this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
@@ -381,12 +356,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     else
       this._service.pause();
 
+    this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
   this._on_select_network_viewmode_bound = function(evt, target)
   {
     settings.network_logger.set("selected_viewmode", target.getAttribute("data-select-viewmode"));
+    this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
@@ -394,6 +371,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     this._type_filters = target.getAttribute("data-type-filter");
     this._type_filter_is_blacklist = (target.getAttribute("data-filter-is-blacklist") === "true");
+    this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
@@ -455,8 +433,7 @@ cls.NetworkLog.create_ui_widgets = function()
         handler: "network-text-filter",
         shortcuts: "network-text-filter",
         title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
-        type: "filter"
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
       }
     ],
     null,

@@ -167,15 +167,17 @@
 {
   position: fixed;
   right: 0;
-  top: 92px;
+  top: 83px;
   bottom: 0;
   z-index: 2;
-  left: 160px;
+  left: 120px;
   overflow: auto;
   padding: 15px 20px 25px 20px;
-  border-left: 1px solid #999;
+  border-left: 1px solid #555;
   background-color: #fff;
+  /*
   box-shadow: 0 0 6px rgba(0, 0, 0, .6);
+  */
 }
 
 .network-details-request table
