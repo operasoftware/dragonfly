@@ -483,7 +483,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var source_content = document.getElementById(container_id);
     var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_no - __top_line];
+    var line = typeof line_no == "number" && lines && lines[line_no - __top_line];
     return line;
   }
 

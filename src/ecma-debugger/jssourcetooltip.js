@@ -81,7 +81,7 @@ cls.JSSourceTooltip = function(view)
   {
     _identifier = null;
     _last_poll = {};
-    _view.higlight_slice(-1);
+    _view.higlight_slice();
     _tooltip.hide();
   };
 
@@ -211,11 +211,7 @@ cls.JSSourceTooltip = function(view)
     var OBJECT_ID = 0;
     var CLASS_NAME = 4;
 
-    if (status || message[STATUS] !== "completed")
-    {
-      
-    }
-    else
+    if (!status && message[STATUS] == "completed")
     {
       if (message[TYPE] == "object")
       {
