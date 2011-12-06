@@ -554,10 +554,12 @@ templates.network_gap_defs = [
     classname: "blocked",
     from_to_pairs: [
       ["urlload", "request"], // [from, to]
+      ["urlload", "urlredirect"],
       ["requestfinished", "requestretry"],
       ["requestretry", "request"],
       ["responsefinished", "urlfinished"],
       ["urlredirect", "urlfinished"],
+      ["urlredirect", "responsefinished"],
       ["urlload", "urlfinished"]
     ]
   },
@@ -732,8 +734,8 @@ templates.network_graph_entry_tooltip = function(entry, height)
 
       pathes.push(["path", "d", "M1 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
 /* fugly bezier stuff
-      var x_bez_offset = (x_end - x_start) / 3;
-      var y_bez_offset = (y_end - y_start) / 2;
+      var x_bez_offset = (x_end - x_start) / 2;
+      var y_bez_offset = (y_end - y_start) / 3;
     pathes.push(["path",
                     "d", "M" + x_start + " " + y_start + " C" + (x_start + x_bez_offset) + " " + (y_start + y_bez_offset) + "," + (x_end - x_bez_offset) + " " + (y_end - y_bez_offset) + "," + x_end + " " + y_end,
                     "stroke", "#777",
@@ -742,7 +744,7 @@ templates.network_graph_entry_tooltip = function(entry, height)
 
     return ["div",
       [
-        ["h2", "Requested " + (entry.filename || entry.human_url) + " at " +  entry.start_time_string],
+        ["h2", "Requested at " +  entry.start_time_string],
         ["div", graphical_sections, "class", "network-tooltip-graph"],
         ["div", 
           ["svg:svg", pathes,
