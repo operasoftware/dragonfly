@@ -949,6 +949,28 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  this._on_setting_change = function(msg)
+  {
+    if (msg.id == this.id && msg.key == "show-js-tooltip")
+      this.handle_tooltip_setting();
+  }
+
+  this.handle_tooltip_setting = function()
+  {
+    if (window.settings.js_source.get("show-js-tooltip"))
+    {
+      if (!this._tooltip)
+        this._tooltip = new cls.JSSourceTooltip(this);
+    }
+    else
+    {
+      if (this._tooltip)
+        this._tooltip.unregister();
+
+      this._tooltip = null;
+    } 
+  };
+
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
   {
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
@@ -975,6 +997,7 @@ cls.JsSourceView = function(id, name, container_class)
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
   messages.addListener('monospace-font-changed',
                        this._onmonospacefontchange.bind(this));
+  messages.addListener('setting-changed', this._on_setting_change.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
 
@@ -990,8 +1013,8 @@ cls.JsSourceView = function(id, name, container_class)
   }
 
   this._slice_highlighter = new VirtualTextSearch(config);
+  this._tooltip = null;
 
-  new cls.JSSourceTooltip(this);
 }
 
 cls.JsSourceView.prototype = ViewBase;
@@ -1247,7 +1270,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-ignore-case': true,
       'js-search-all-files': false,
       'js-search-injected-scripts': true,
-      'max-displayed-search-hits': 1000
+      'max-displayed-search-hits': 1000,
+      'show-js-tooltip': true
     },
     // key-label map
     {
@@ -1257,6 +1281,7 @@ cls.JsSourceView.create_ui_widgets = function()
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
+      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP
     },
     // settings map
     {
@@ -1265,7 +1290,8 @@ cls.JsSourceView.create_ui_widgets = function()
         'script',
         'exception',
         'error',
-        'abort'
+        'abort',
+        'show-js-tooltip'
       ],
       customSettings:
       [
@@ -1275,7 +1301,8 @@ cls.JsSourceView.create_ui_widgets = function()
       ],
       contextmenu:
       [
-        'error'
+        'error',
+        'show-js-tooltip'
       ]
     },
     // custom templates
@@ -1324,6 +1351,8 @@ cls.JsSourceView.create_ui_widgets = function()
     },
     "script"
   );
+
+  window.views.js_source.handle_tooltip_setting();
 
   new Switches
   (

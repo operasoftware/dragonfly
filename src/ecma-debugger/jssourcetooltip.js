@@ -2,7 +2,6 @@
 
 cls.JSSourceTooltip = function(view)
 {
-
   var POLL_INTERVAL = 150;
   var MAX = Math.max;
   var MIN = Math.min;
@@ -44,8 +43,6 @@ cls.JSSourceTooltip = function(view)
   var _esde = null;
   var _is_over_tooltip = false;
   var _selection = null;
-
-  // TODO reset char-width and line-height on the according evemnt
 
   var _onmousemove = function(event)
   {
@@ -157,16 +154,10 @@ cls.JSSourceTooltip = function(view)
         _clear_selection();
       }
     }
-    else
-    {
-      // TODO
-    }
-
   };
 
   var _is_over_identifier_boxes = function(event)
   {
-    // TODO optimize?
     var off_x = _total_y_offset - _container.scrollLeft;
     var off_y = _container_box.top - (_view.getTopLine() - 1) * _line_height;
     var e_x = event.clientX - off_x;
@@ -183,12 +174,11 @@ cls.JSSourceTooltip = function(view)
 
   var _handle_poll_position = function(script, line_number, char_offset, box)
   {
-    var selection = _get_identifier(script, line_number, char_offset);
-    if (selection)
+    var sel = _get_identifier(script, line_number, char_offset);
+    if (sel)
     {
-      // TODO pause polling
-      var start = script.line_arr[selection.start_line - 1] + selection.start_offset;
-      var end = script.line_arr[selection.end_line - 1] + selection.end_offset;
+      var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
+      var end = script.line_arr[sel.end_line - 1] + sel.end_offset;
       var script_text = script.script_data.slice(start, end + 1);
       var rt_id = window.runtimes.getSelectedRuntimeId();
       var thread_id = window.stop_at.getThreadId();
@@ -198,14 +188,10 @@ cls.JSSourceTooltip = function(view)
         thread_id = 0;
         frame_index = 0;
       }
-      var args = [script, line_number, char_offset, box, selection, rt_id];
+      var args = [script, line_number, char_offset, box, sel, rt_id];
       var tag = _tagman.set_callback(null, _handle_script, args);
       var msg = [rt_id, thread_id, frame_index, script_text];
       _esde.requestEval(tag, msg);
-    }
-    else
-    {
-      // TODO?
     }
   };
 
@@ -685,24 +671,18 @@ cls.JSSourceTooltip = function(view)
     if (!_poll_interval)
     {
       if (!_char_width)
-      {
-        _char_width = defaults["js-source-char-width"];
-        _line_height = defaults["js-source-line-height"];
-        _tab_size = _get_tab_size();
-        _default_offset = defaults["js-default-text-offset"];
-        // TODO reset on the according event
-      }
+        _onmonospacefontchange();
 
       var container = _view.get_scroll_container();
       if (container && target.parentNode)
       {
-        // TODO resize events
         _container = container;
         _container_box = container.getBoundingClientRect();
         _tooltip_target_ele = target.parentNode;
         _tooltip_target_ele.addEventListener('mousemove', _onmousemove, false);
         while (_mouse_positions.length)
           _mouse_positions.pop();
+
         _total_y_offset = _container_box.left + _default_offset;
         _selection = window.getSelection();
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
@@ -735,6 +715,20 @@ cls.JSSourceTooltip = function(view)
     _is_over_tooltip = false;
   };
 
+  var _get_container_box = function()
+  {
+    if (_container)
+      _container_box = _container.getBoundingClientRect();
+  };
+
+  var _onmonospacefontchange = function(msg)
+  {
+    _char_width = defaults["js-source-char-width"];
+    _line_height = defaults["js-source-line-height"];
+    _tab_size = _get_tab_size();
+    _default_offset = defaults["js-default-text-offset"];
+  };
+
   var _init = function(view)
   {
     _view = view;
@@ -746,6 +740,15 @@ cls.JSSourceTooltip = function(view)
     _tooltip.ontooltipleave = _ontooltipleave;
     _tagman = window.tagManager;
     _esde = window.services['ecmascript-debugger'];
+    window.messages.addListener('monospace-font-changed', _onmonospacefontchange);
+    window.addEventListener('resize', _get_container_box, false);
+  };
+
+  this.unregister = function()
+  {
+    Tooltips.unregister(cls.JSSourceTooltip.tooltip_name, _tooltip);
+    window.messages.removeListener('monospace-font-changed', _onmonospacefontchange);
+    window.removeEventListener('resize', _get_container_box, false);
   };
 
   _init(view);

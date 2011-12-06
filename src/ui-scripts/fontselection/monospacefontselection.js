@@ -9,6 +9,12 @@ cls.MonospaceFontView = function(id, name, container_class)
 
   const STYLE_ELE_ID = 'font-style';
 
+  var FONT_PROPS =
+  [
+    'test-line-height',
+    'test-char-width',
+  ];
+
   this._onfontselection = function(event, target)
   {
     var selects = target.getElementsByTagName('select');
@@ -19,7 +25,7 @@ cls.MonospaceFontView = function(id, name, container_class)
     });
     setting.set('monospace-is-set', true);
     this.set_font_style();
-    window.ui_framework.set_default_properties('test-line-height');
+    window.ui_framework.set_default_properties(FONT_PROPS);
     window.messages.post('monospace-font-changed');
   };
 
@@ -81,7 +87,7 @@ cls.MonospaceFontView = function(id, name, container_class)
     {
       target.re_render(window.templates.monospace_font_selection(setting));
     }
-    window.ui_framework.set_default_properties('test-line-height');
+    window.ui_framework.set_default_properties(FONT_PROPS);
     window.messages.post('monospace-font-changed');
   };
 

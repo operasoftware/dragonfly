@@ -264,14 +264,14 @@ var ui_framework = new function()
     }).join('') +
   "</div>";
 
-  this.set_default_properties = function(test)
+  this.set_default_properties = function(tests)
   {
     var container = viewport.appendChild(document.createElement('div'));
     container.style.cssText = 'position:absolute;top:0;left:-1000px;';
     container.innerHTML = resolve_map_2.markup;
     for (var set = null, i = 0; set = resolve_map_2[i]; i++)
     {
-      if (!test || test == set.id)
+      if (!tests || tests.contains(set.id))
       {
         defaults[set.target] = set.getValue();
       }
