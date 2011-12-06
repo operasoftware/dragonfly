@@ -93,6 +93,7 @@
   var _tooltip_ele_first_child = null;
   var _current_tooltip = null;
   var _last_handler_ele = null;
+  var _last_box = null;
   var _last_event = null;
   var _hide_timeouts = [];
   var _show_timeouts = [];
@@ -117,6 +118,7 @@
         if (_current_tooltip && _current_tooltip._keep_on_hover)
         {
           _last_handler_ele = null;
+          _last_box = null;
           _clear_show_timeout();
           _clear_hide_timeout();
         }
@@ -142,6 +144,7 @@
 
         _current_tooltip._accept_call = true;
         _last_handler_ele = ele;
+        _last_box = ele.getBoundingClientRect();
         _last_event = event;
         _set_show_timeout();
         return;
@@ -186,21 +189,6 @@
     _clear_show_timeout();
     if (_last_event && _last_handler_ele)
     {
-      if (!document.documentElement.contains(_last_handler_ele))
-      {
-        var target = document.elementFromPoint(_last_event.clientX,
-                                               _last_event.clientY);
-        while (target && target.nodeType == Node.ELEMENT_NODE)
-        {
-          var name = target.getAttribute(DATA_TOOLTIP);
-          if (name && _tooltips[name] && _current_tooltip == _tooltips[name])
-            break;
-          target = target.parentNode;
-        }
-        _last_handler_ele = target;
-        if (!_last_handler_ele)
-          return;
-      }
       _current_tooltip.ontooltip(_last_event, _last_handler_ele);
     }
   };
@@ -215,6 +203,7 @@
     _tooltip_ele.style.cssText = "";
     _current_tooltip = null;
     _last_handler_ele = null;
+    _last_box = null;
   };
 
   var _show_tooltip = function(tooltip, content, box)
@@ -232,13 +221,12 @@
           _current_tooltip._container.clearAndRender(content);
       }
 
-      if (!box && _last_handler_ele)
+      if (!box && _last_box)
       {
-        var handler_ele_box = _last_handler_ele.getBoundingClientRect();
-        box = {top: handler_ele_box.top,
-               bottom: handler_ele_box.bottom,
-               left: _last_event ? _last_event.clientX : handler_ele_box.left,
-               right: _last_event ? _last_event.clientX : handler_ele_box.right};          
+        box = {top: _last_box.top,
+               bottom: _last_box.bottom,
+               left: _last_event ? _last_event.clientX : _last_box.left,
+               right: _last_event ? _last_event.clientX : _last_box.right};          
       }
 
       if (box)
