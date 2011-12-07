@@ -6,7 +6,8 @@
  */
 cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
   this._service = new cls.NetworkLoggerService(this);
-  this._contentscroll = 0;
+  this._content_scroll = 0;
+  this._details_scroll = 0;
   this._selected = null;
   this._rendertime = 0;
   this._rendertimer = null;
@@ -85,14 +86,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this.ondestroy = function()
   {
-    this._contentscroll = this._container ? this._container.scrollTop : 0;
     this._everrendered = false;
   };
 
   this._render_details_view = function(container)
   {
     var ctx = this._service.get_request_context();
-    container.render(templates.network_log_details(ctx, this._selected));
+    var rendered = container.render(templates.network_log_details(ctx, this._selected));
+    var details = rendered.querySelector(".network-details-request");
+    if (details)
+      details.scrollTop = this._details_scroll;
   };
 
   this._render_click_to_fetch_view = function(container) // todo: templates
@@ -148,10 +151,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var template = templates.network_log_main(
                      ctx, this._selected, selected_viewmode, detail_width, item_order, this._type_filters
                    );
-    var rendered = container.clearAndRender(template);
+    var content = container.clearAndRender(template);
+    content.scrollTop = this._content_scroll;
 
     // Render sortable table
-    var table_container = rendered.querySelector(".network-data-table-container");
+    var table_container = content.querySelector(".network-data-table-container");
     if (table_container)
     {
       if (!this._table)
@@ -317,6 +321,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered"); }
   }.bind(this);
 
+  this._on_scroll_bound = function(evt, target)
+  {
+    this._content_scroll = target.scrollTop;
+    if (evt.target.hasClass("network-details-request"))
+      this._details_scroll = evt.target.scrollTop;
+
+  }.bind(this)
+
   this._on_clicked_get_body = function(evt, target)
   {
     var item_id = target.getAttribute("data-object-id");
@@ -384,26 +396,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_hover_request_bound;
+  eh.scroll["network-logger"] = this._on_scroll_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
-
-
-  // todo: is it really just these few events that trigger update?
-  // should be triggered whenever the data modell is updated, right?
-/*
-  var doc_service = window.services['document-manager'];
-  var res_service = window.services['resource-manager'];
-  doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-  doc_service.addListener("documentloaded", this._on_documentloaded_bound);
-  res_service.addListener("urlfinished", this._on_urlfinished_bound);
-*/
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
   eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
-
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
 
