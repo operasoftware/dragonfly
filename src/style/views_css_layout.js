@@ -1,52 +1,52 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.CSSLayoutView = function(id, name, container_class)
 {
   var self = this;
+  this._container = null;
 
   this.createView = function(container)
   {
-    if (elementLayout.has_selected_element())
+    this._container = container;
+    if (window.elementLayout.has_selected_element())
     {
       if (!container.getElementsByTagName('layout-container')[0])
       {
-        container.clearAndRender(['div',
-                                  ['layout-container', 
-                                    'handler', 'spotlight-box'],
-                                  ['offsets-container'],
-                                  'class', 'padding']);
+        container.clearAndRender([
+          'div',
+            ['layout-container',
+              'handler', 'spotlight-box'],
+            ['offsets-container'],
+          'class', 'padding']);
       }
-      this.updateLayout({});
-      window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
+      this.update_layout({});
+      window.elementLayout.get_offset_values(this.update_offsets.bind(this));
     }
     else
+    {
       container.innerHTML = "";
+    }
+  };
 
-  }
-
-  this.updateLayout = function(ev)
+  this.update_layout = function(ev)
   {
-    var containers = self.getAllContainers(), c = null , i = 0;
+    var containers = self.getAllContainers();
     // TODO not good logic
-    for( ; c = containers[i]; i++)
+    for (var i = 0, c; c = containers[i]; i++)
     {
       c = c.getElementsByTagName('layout-container')[0];
-      if(elementLayout.getLayoutValues(arguments))
-      {
-        c.clearAndRender(elementLayout.metricsTemplate());
-      }
+      if (window.elementLayout.get_layout_values(arguments))
+        c.clearAndRender(window.elementLayout.get_metrics_template());
     }
-  }
-  
-  this.updateOffsets = function(container, offset_values)
+  };
+
+  this.update_offsets = function(offset_values)
   {
-    var offsets = container.getElementsByTagName('offsets-container')[0];
+    var offsets = this._container.getElementsByTagName('offsets-container')[0];
     if (offsets)
     {
       if (offset_values)
@@ -54,18 +54,18 @@ cls.CSSLayoutView = function(id, name, container_class)
       else
         offsets.innerHTML = '';
     }
-  }
-  
+  };
+
+  this._on_setting_change = function(msg)
+  {
+    if (msg.id == "dom" && msg.key == "show-id_and_classes-in-breadcrumb")
+    {
+      window.elementLayout.get_offset_values(this.update_offsets.bind(this));
+    }
+  };
+
   this.init(id, name, container_class);
 
-  var onSettingChange = function(msg)
-  {
-    if( msg.id == "dom" 
-        && ( msg.key == "show-siblings-in-breadcrumb" || msg.key == "show-id_and_classes-in-breadcrumb" ) )
-    {
-      self.updateOffsets({});
-    }
-  }
+  messages.addListener("setting-changed", this._on_setting_change.bind(this));
+};
 
-  messages.addListener("setting-changed", onSettingChange);
-}

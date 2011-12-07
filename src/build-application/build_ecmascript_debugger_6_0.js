@@ -114,23 +114,12 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMSearchView.prototype = ViewBase;
     new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
 
-    /* Stylesheets */
-    // TODO: remove, this is old
-    window.stylesheets = new cls.Stylesheets();
-    cls.StylesheetsView.prototype = ViewBase;
-    new cls.StylesheetsView('stylesheets', 
-                            ui_strings.M_VIEW_LABEL_STYLESHEET, 
-                            'scroll stylesheets mono');
-    cls.StylesheetSelect.prototype = new CstSelect();
-    new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
-    //cls.StylesheetsView.create_ui_widgets();
-
     /* CSS inspector */
-    window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', 
                              ui_strings.M_VIEW_LABEL_STYLES, 
                              'scroll css-inspector mono');
+    new cls.CSSInspectorView.create_ui_widgets();
     
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
     new cls.CSSInspectorCompStyleView('css-comp-style', 

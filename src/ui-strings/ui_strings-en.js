@@ -1092,9 +1092,6 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-sp
 /* DESC: Show prototpe objects when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_PROTOTYPES = "Show prototypes";
 
-/* DESC: Toggles the display of shorthands in computed styles view. */
-ui_strings.S_SWITCH_SHOW_SHORTHANDS = "Show shorthands in computed style panel";
-
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = "Show siblings in breadcrumb trail";
 

@@ -1,31 +1,28 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.CSSInspectorCompStyleView = function(id, name, container_class)
 {
-  var self = this;
-
-  // TODO set unfold key on show and hide view
-
   this.createView = function(container)
   {
-    container.innerHTML ='';
-    var styles = container.render(['category', ['styles']]).firstElementChild;
-    var data = elementStyle.get_computed_style();
-    var search_active = elementStyle.getSearchActive();
+    var element_style = cls.ElementStyle.get_instance();
+    var styles = container.clearAndRender(['category', ['styles']]).firstElementChild;
+    var data = element_style.get_computed_style();
     if (data)
     {
-      // stylesheets.prettyPrintCat call will also ensure 
+      // stylesheets.prettyPrintCat call will also ensure
       // that all style sheets for the given runtime and the index map
-      // will be avaible, that means the call will not return any data 
-      // before this datas are avaible
-      styles.innerHTML = stylesheets.prettyPrintCompStyle(data, arguments, search_active);
-      styles.setAttribute('rt-id', data.rt_id);
+      // will be avaible. That means the call will not return any data
+      // before this data is available.
+      var rt_id = element_style.get_rt_id();
+      styles.clearAndRender(cls.Stylesheets.get_instance().pretty_print_computed_style(data));
+      styles.setAttribute('rt-id', rt_id);
     }
-  }
+  };
+
   this.init(id, name, container_class);
-}
+};
+

@@ -311,26 +311,17 @@ cst-option.selected-runtime
 }
 
 
-/* styleseeht view */
+/* stylesheet view */
 
-stylesheet,
-import-rule,
-media-rule,
-rules,
-property
-{
-  display: block;
-}
-
-property
+.css-declaration
 {
   padding-left: 2em;
   padding-right: 3px;
 }
 
-property.disabled,
-.disabled key,
-.disabled value
+.css-declaration.disabled,
+.css-declaration.disabled .css-property,
+.css-declaration.disabled .css-property-value
 {
   color: #999 !important;
 }
@@ -345,22 +336,17 @@ property.disabled,
 }
 
 .enable-disable.hidden
-{ 
+{
   visibility: hidden;
 }
 
-property:hover .enable-disable,
+.css-declaration:hover .enable-disable,
 .disabled .enable-disable
 {
   opacity: 1;
 }
 
-rule,
-font-face-rule,
-page-rule,
-import-rule,
-charset-rule,
-media-rule
+.css-rule
 {
   display: block;
   margin: 5px 0;
@@ -371,49 +357,35 @@ media-rule
   background: red;
 }
 
-media-rule rules
+.dom-resource-link
 {
-  padding-left: 2ex;
+  cursor: pointer;
 }
 
 /* css inspector class css-inspector */
-.css-inspector rule:not(.non-editable) property
+.css-rule:not(.non-editable) .css-declaration
 {
   cursor: text;
 }
 
 category,
 header,
-styles,
-stylesheet-link
+styles
 {
   display: block;
 }
 
-stylesheet-link
+.rule-description
 {
-  text-align: right;
-  color: #999;
-  text-decoration: underline;
+  display: block;
+  text-align:right;
   float: right;
   margin-left: 10px;
-}
-
-stylesheet-link:not(.pseudo),
-.dom-resource-link
-{
-  cursor: pointer;
-}
-
-stylesheet-link:hover
-{
   color: #666;
 }
 
-stylesheet-link.pseudo,
-stylesheet-link.pseudo:hover
+.rule-description.internal-link
 {
-  text-decoration: none;
   color: #666;
 }
 
@@ -479,7 +451,7 @@ input.unfolded
   background-color: #d4e3f4;
 }
 
-.css-inspector property.selected
+.css-inspector .css-declaration.selected
 {
     border-radius: 3px;
 }
@@ -494,9 +466,12 @@ input.unfolded
 {
   font-size: 1em;
   font-weight: normal;
-  border: 0 solid #b3b3b3;
+  border: 0 solid #bfbfbf;
   border-width: 1px 0;
-  background-color: #eee;
+  background-color: #e9e9e9;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.55) 0px,
+                                       rgba(255, 255, 255, 0.25) 100%);
   margin: 5px -5px;
   padding-left: 4px;
 }
@@ -635,26 +610,16 @@ parent-offset
   padding: 0 2px;
 }
 
-offsets
+.offsets
 {
-  display: table;
+  border-spacing: 0;
 }
 
-offsets item
+.offsets th
 {
-  display: table-row;
-}
-
-offsets key,
-offsets value 
-{
-  display: table-cell;
-}
-
-offsets value
-{
-  text-align: right;
-  padding-left: 8px;
+  font-weight: normal;
+  text-align: left;
+  padding-right: 5px;
 }
 
 .info-text

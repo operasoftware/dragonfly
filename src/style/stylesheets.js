@@ -1,1043 +1,84 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor
-  */
-
-// TODO clean up pretty printing, does contain much too much code history
-
+ * @constructor
+ */
 cls.Stylesheets = function()
 {
-  var self = this;
-  // document.styleSheets dict with runtime-id as key
-  var __sheets = {};
-  // document.styleSheets[index].cssRules with runtime-id and index as keys
-  var __rules = {};
-  var __indexMap = null;
-  var __indexMapLength = 0;
-  var __sortedIndexMap = [];
-  var __initialValues = [];
-  var __shorthandIndexMap = [];
-  var __colorIndexMap = [];
-  var __selectedRules = null;
-  var __colorIndex = 0;
+  if (cls.Stylesheets._instance)
+    return cls.Stylesheets._instance;
+  cls.Stylesheets._instance = this;
 
-  var __new_rts = null;
-  var __top_rt_id = '';
-  var __on_new_stylesheets_cbs = {};
-
-  var line_height_index = 0;
-
+  this._es_debugger = window.services['ecmascript-debugger'];
+  this._tag_manager = cls.TagManager.get_instance();
+  this._element_style = cls.ElementStyle.get_instance();
+  this._templates = new StylesheetTemplates();
+  this._sheets = {}; // document.styleSheets dict with runtime-id as key
+  this._index_map = null;
+  this._sorted_index_map = [];
   this._is_getting_index_map = false;
+  this._new_runtimes = null;
 
-  var __color_properties = 
+  var SHEET_OBJECT_ID = 0;
+  var SHEET_HREF = 2;
+  var SHEET_TITLE = 3;
+
+  var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
+  var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
+  var ORIGIN_AUTHOR = cls.Stylesheets.origins.ORIGIN_AUTHOR;
+  var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
+  var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
+
+  this.create_declaration = function(prop, value, priority, is_disabled)
   {
-    'fill': true,
-    'stroke': true,
-    'stop-color': true,
-    'flood-color': true,
-    'lighting-color': true,
-    'color': true,
-    'border-top-color': true,
-    'border-right-color': true,
-    'border-bottom-color': true,
-    'border-left-color': true,
-    'background-color': true,
-  };
-
-  var onResetState = function()
-  {
-    __sheets = {};
-    __rules = {};
-    __indexMap = null;
-    __indexMapLength = 0;
-    __sortedIndexMap = [];
-    __initialValues = [];
-    __shorthandIndexMap = [];
-    __selectedRules = null;
-    __colorIndex = 0;
-    __new_rts = null;
-    __top_rt_id = '';
-    __on_new_stylesheets_cbs = {};
-  };
-
-  const
-  SHEET_OBJECT_ID = 0, // TODO use the right obj-id
-  SHEET_IS_DISABLED = 1,
-  SHEET_HREF = 2,
-  SHEET_TITLE = 3,
-  SHEET_TYPE = 4,
-  SHEET_MEDIA_LIST = 5,
-  SHEET_OWNER_NODE_ID = 6,
-  SHEET_OWNER_RULE_ID = 7,
-  SHEET_PARENT_STYLESHEET_ID = 8,
-  UNKNOWN_RULE = 0,
-  STYLE_RULE= 1,
-  CHARSET_RULE = 2,
-  IMPORT_RULE = 3,
-  MEDIA_RULE = 4,
-  FONT_FACE_RULE = 5,
-  PAGE_RULE = 6,
-  COMMON = 11,
-  // TODO <property> was introduced later, need to be cleaned up.
-  MARKUP_KEY = "<property><key>",
-  MARKUP_KEY_OW = "<property class='overwritten'><key>",
-  MARKUP_KEY_CLOSE = "</key>: ",
-  MARKUP_VALUE = "<value>",
-  MARKUP_VALUE_OW = "<value>",
-  MARKUP_VALUE_CLOSE = "</value>;</property>",
-  MARKUP_PROP_NL = "",
-  MARKUP_IMPORTANT = " !important",
-  MARKUP_SPACE = " ",
-  MARKUP_EMPTY = "",
-  HEADER = 0,
-  COMP_STYLE = 0,
-  CSS = 1,
-  PROP_LIST = 1,
-  VAL_LIST = 2,
-  PRIORITY_LIST = 3,
-  OVERWRITTEN_LIST = 4,
-  SEARCH_LIST = cls.ElementStyle.SEARCH_LIST,
-  HAS_MATCHING_SEARCH_PROPS = 11,
-  DISABLED_LIST = 12,
-
-  // new names of the scope messages
-  COMPUTED_STYLE_LIST = 0,
-  NODE_STYLE_LIST = 1,
-  // sub message NodeStyle
-  OBJECT_ID = 0,
-  ELEMENT_NAME = 1,
-  STYLE_LIST = 2,
-  // sub message StyleDeclaration
-  ORIGIN = 0,
-  INDEX_LIST = 1,
-  VALUE_LIST = 2,
-  STATUS_LIST = 4,
-  SELECTOR = 5,
-  SPECIFICITY = 6,
-  STYLESHEET_ID = 7,
-  RULE_ID = 8,
-  RULE_TYPE = 9,
-  LINE_NUMBER = 10;
-
-  var
-  SHORTHAND = [];
-
-  var short_hand_counts =
-  {
-    "background": 6,
-    "list-style": 4,
-    "font": 7
-  };
-
-  var initials =
-  {
-    "background-attachment": "scroll",
-    "background-color": "transparent",
-    "background-image": "none",
-    "background-position": "0% 0%",
-    "background-repeat": "repeat",
-    "list-style-image": "none",
-    "list-style-position": "outside",
-    "list-style-type": "disc",
-    "font-family": "",
-    "font-size": "medium",
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "400", // TODO this is a bug, see Bug 319914
-    "line-height": "normal"
-  };
-
-  var short_hand_props =
-  {
-    'font': 1,
-    'padding': 1,
-    'margin': 1,
-    'list-style': 1,
-    'border': 1,
-    'border-top': 1,
-    'border-right': 1,
-    'border-bottom': 1,
-    'border-left': 1,
-    'border-width': 1,
-    'border-style': 1,
-    'border-color': 1,
-    'background': 1,
-    'outline': 1,
-    'overflow': 1
-  };
-
-  var special_default_values = {};
-
-  special_default_values["border-bottom-color"] =
-  special_default_values["border-left-color"] =
-  special_default_values["border-right-color"] =
-  special_default_values["border-top-color"] = function(data, value)
-  {
-    return value == data[__colorIndex];
-  };
-
-  const
-  RULE_HEADER = 0,
-  INDENT = '  ';
-
-  /*
-    TODO create shorthands should probably be removed
-    as soon as we get the source stylesheets.
-    if not the shorthand code needs cleanup.
-  */
-  var shorthands = {};
-
-  shorthands.padding =
-  shorthands.margin =
-  function(prop, index_list, value_list, priority_list)
-  {
-    var
-    consistent_pri_flag = priority_list[1] == priority_list[2] &&
-        priority_list[1] == priority_list[3] && priority_list[1] == priority_list[4];
-    // ensures as well that all 4 properties are set ( if not it's not a shorthand )
-    if (consistent_pri_flag)
-    {
-      var
-      priority_flag = priority_list[1] ? MARKUP_IMPORTANT : MARKUP_EMPTY,
-      top_bottom = value_list[1] == value_list[3],
-      left_right = value_list[2] == value_list[4];
-
-      if (top_bottom && left_right && value_list[1] == value_list[2])
-      {
-        return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-               MARKUP_VALUE + value_list[1] + priority_flag + MARKUP_VALUE_CLOSE;
-      }
-
-      if (top_bottom && left_right)
-      {
-        return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-               MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + priority_flag + MARKUP_VALUE_CLOSE;
-      }
-
-      if (left_right)
-      {
-        return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-               MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + MARKUP_SPACE +
-               value_list[3] +  priority_flag + MARKUP_VALUE_CLOSE;
-      }
-
-      return INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-             MARKUP_VALUE + value_list[1] + MARKUP_SPACE + value_list[2] + MARKUP_SPACE +
-             value_list[3] + MARKUP_SPACE + value_list[4] + priority_flag + MARKUP_VALUE_CLOSE;
-    }
-    else
-    {
-      var ret = '', i = 1;
-      for ( ; i < index_list.length; i++)
-      {
-        if (value_list[i])
-        {
-          ret += (ret ? MARKUP_PROP_NL : "") +
-                 INDENT +
-                 MARKUP_KEY + __indexMap[index_list[i]] + MARKUP_KEY_CLOSE +
-                 MARKUP_VALUE + value_list[i] + (priority_list[i] ? MARKUP_IMPORTANT : MARKUP_EMPTY) +
-                 MARKUP_VALUE_CLOSE;
-        }
-      }
-      return ret;
-    }
-  };
-
-  shorthands.fallback = function(index, value, priority_flag)
-  {
-    return INDENT +
-      MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-      MARKUP_VALUE + value + (priority_flag ? MARKUP_IMPORTANT : MARKUP_EMPTY) + MARKUP_VALUE_CLOSE;
-  };
-
-  shorthands.border = function(prop, index_list, value_list, priority_list)
-  {
-    var
-    key_list = ['border-top', 'border-right', 'border-bottom', 'border-left'],
-    key_type_list = ['border-width', 'border-style', 'border-color'],
-    is_short_width = value_list[1] && value_list[4] && value_list[7] && value_list[10] && 1 || 0,
-    is_short_style = value_list[2] && value_list[5] && value_list[8] && value_list[11] && 1 || 0,
-    is_short_color = value_list[3] && value_list[6] && value_list[9] && value_list[12] && 1 || 0,
-    is_short_type = is_short_width + is_short_style + is_short_color == 1,
-    short_value_list = [],
-    is_short_priority_list = [],
-    short_priority_list = [],
-    processed_list = [],
-    i = 1,
-    j = 0,
-    index_short = 0,
-    value_list_length = value_list.length,
-    previous_value = '',
-    is_short_short = true,
-    is_all_and_consistent_pri_flag = true,
-    priority_flag = '',
-    ret = '',
-    _0_1_ = false,
-    _2_3_ = false,
-    three_equals = null;
-
-    if (is_short_type) // border-width or border-style or border-color
-    {
-      i = is_short_color && 2 || is_short_style && 1 || 0;
-
-      processed_list[i+1] =
-      processed_list[i+4] =
-      processed_list[i+7] =
-      processed_list[i+10] =
-      true;
-
-      if (priority_list[i+1] == priority_list[i+4] && priority_list[i+1] == priority_list[i+7] &&
-          priority_list[i+1] == priority_list[i+10])
-      {
-        priority_flag = priority_list[i+1] ? MARKUP_IMPORTANT : MARKUP_EMPTY;
-        if (value_list[i+1] == value_list[i+4] && value_list[i+1] == value_list[i+7] &&
-            value_list[i+1] == value_list[i+10])
-        {
-          ret = INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + value_list[i+1] + priority_flag + MARKUP_VALUE_CLOSE;
-        }
-        else // eg border-width: 10px 8px 8px 10px
-        {
-          ret = INDENT + MARKUP_KEY + key_type_list[i] + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + value_list[i+1] + MARKUP_SPACE + value_list[i+4] +
-                MARKUP_SPACE + value_list[i+7] + MARKUP_SPACE + value_list[i+10] +
-                priority_flag + MARKUP_VALUE_CLOSE;
-        }
-      }
-      else
-      {
-        for (j = 1; j < 11; j += 3)
-        {
-          ret += (ret ? MARKUP_PROP_NL : "") +
-                 this.fallback(index_list[i+j], value_list[i+j], priority_list[i+j]);
-        }
-      }
-    }
-    if (!ret)
-    {
-      // border-top or border-right or border-bottom or border-left or border
-      for (i = 1; i < 13; i += 3)
-      {
-        if (value_list[i] && value_list[i+1] && value_list[i+2])
-        {
-          processed_list[i] =
-          processed_list[i+1] =
-          processed_list[i+2] = true;
-
-          if (is_short_priority_list[index_short] = priority_list[i] == priority_list[i+1] &&
-              priority_list[i] == priority_list[i+2])
-          {
-            short_priority_list[index_short] = priority_list[i] ? MARKUP_IMPORTANT : MARKUP_EMPTY;
-            short_value_list[index_short] =
-              value_list[i+1] == 'none'
-              ? value_list[i+1]
-              : value_list[i] + MARKUP_SPACE + value_list[i+1] + MARKUP_SPACE + value_list[i+2];
-          }
-          else
-          {
-            short_value_list[index_short] = i;
-          }
-        }
-        is_short_short = is_short_short && is_short_priority_list[index_short];
-        if (index_short && is_short_short)
-        {
-          is_short_short = previous_value && previous_value == short_value_list[index_short];
-        }
-        is_all_and_consistent_pri_flag =
-          is_all_and_consistent_pri_flag &&
-          ( index_short
-          ? is_short_priority_list[index_short - 1] == is_short_priority_list[index_short]
-          : is_short_priority_list[index_short] );
-        previous_value = short_value_list[index_short];
-        index_short++;
-      }
-
-      if (is_short_short)
-      {
-        ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-              MARKUP_VALUE + short_value_list[0] + MARKUP_VALUE_CLOSE;
-      }
-      else if (is_all_and_consistent_pri_flag) // check for three identical values
-      {
-        _0_1_ = short_value_list[0] == short_value_list[1];
-        _2_3_ = short_value_list[2] == short_value_list[3];
-        three_equals =
-        [
-          _2_3_ && short_value_list[1] == short_value_list[2],
-          _2_3_ && short_value_list[0] == short_value_list[2],
-          _0_1_ && short_value_list[0] == short_value_list[3],
-          _0_1_ && short_value_list[0] == short_value_list[2],
-        ];
-
-        for (i = 0; i < 4 && !three_equals[i]; i++);
-        if (i != 4)
-        {
-          ret = INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE +
-                (i
-                ? short_value_list[0] + short_priority_list[0]
-                : short_value_list[1] + short_priority_list[1]) +
-                  MARKUP_VALUE_CLOSE +
-                  MARKUP_PROP_NL +
-                  INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
-        }
-      }
-    }
-    // index_list, value_list, priority_list,
-
-    if (!ret)
-    {
-      for (i = 0; i < 4; i++)
-      {
-        if (short_value_list[i])
-        {
-          if (is_short_priority_list[i])
-          {
-            ret += (ret ? MARKUP_PROP_NL : "") +
-                    INDENT + MARKUP_KEY + key_list[i] + MARKUP_KEY_CLOSE +
-                    MARKUP_VALUE + short_value_list[i] + short_priority_list[i] + MARKUP_VALUE_CLOSE;
-          }
-          else
-          {
-            for (j = short_value_list[i]; j < short_value_list[i] + 3; j++)
-            {
-              ret += (ret ? MARKUP_PROP_NL : "") +
-                      this.fallback(index_list[j], value_list[j], priority_list[j]);
-            }
-          }
-        }
-      }
-    }
-
-    for (i = 0; i < value_list_length; i++)
-    {
-      if (value_list[i] && !processed_list[i])
-      {
-        ret += (ret ? MARKUP_PROP_NL : "") +
-                this.fallback(index_list[i], value_list[i], priority_list[i]);
-      }
-    }
-    return ret;
-  };
-
-  shorthands.font =
-  shorthands['list-style'] =
-  shorthands.background = function(prop, index_list, value_list, priority_list)
-  {
-    var
-    priority_flag = -1,
-    count = short_hand_counts[prop],
-    i = 1,
-    short_values = '',
-    ret = '';
-
-    // check priority flags
-    for ( ; i < count; i++)
-    {
-      if (value_list[i])
-      {
-        if (priority_flag == -1)
-        {
-          priority_flag = priority_list[i];
-        }
-        else if (priority_flag != priority_list[i])
-        {
-          break;
-        }
-      }
-      else
-      {
-        // it's not a short hand, some values are missing
-        break;
-      }
-    }
-    if (i == count)
-    {
-      priority_flag = priority_flag ? MARKUP_IMPORTANT : MARKUP_EMPTY;
-      for (i = 0; i < count; i++)
-      {
-        if (value_list[i] && value_list[i] != initials[__indexMap[index_list[i]]])
-        {
-          short_values +=
-          (short_values ? (__indexMap[index_list[i]] == 'line-height' ? '/' : ' ') : '') + value_list[i];
-        }
-      }
-      ret += (ret ? MARKUP_PROP_NL : "") +
-              INDENT + MARKUP_KEY + prop + MARKUP_KEY_CLOSE +
-              MARKUP_VALUE + (short_values ? short_values : initials[__indexMap[index_list[1]]]) + priority_flag + MARKUP_VALUE_CLOSE;
-    }
-    else
-    {
-      for (i = 1; i < count; i++)
-      {
-        if (value_list[i])
-        {
-          ret += (ret ? MARKUP_PROP_NL : "") +
-                  this.fallback(index_list[i], value_list[i], priority_list[i]);
-        }
-      }
-    }
-    return ret;
-  };
-
-  var prettyPrintRule = [];
-
-  prettyPrintRule[COMMON] = function(rule, do_shortcuts, search_active, is_style_sheet)
-  {
-    const
-    HEADER = 0,
-    INDEX_LIST = is_style_sheet && 3 || 1,
-    VALUE_LIST = is_style_sheet && 4 || 2,
-    PROPERTY_LIST = is_style_sheet && 5 || 3;
-
-    var ret = '',
-    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
-    value_list = rule[VALUE_LIST],
-    priority_list = rule[PROPERTY_LIST],
-    overwrittenlist = rule[OVERWRITTEN_LIST],
-    search_list = rule[SEARCH_LIST],
-    length = index_list.length, i = 0,
-    index = 0,
-    s_h_index = [],
-    s_h_value = [],
-    s_h_priority = [],
-    s_h_prop = '',
-    s_h_count = 0;
-
-    for ( ; i < length; i++)
-    {
-      index = index_list[i];
-      if (search_active && !search_list[i])
-      {
-        continue;
-      }
-
-      if (do_shortcuts && SHORTHAND[index])
-      {
-        if (__shorthandIndexMap[index] == 'font')
-        {
-          SHORTHAND[line_height_index] = 5;
-        }
-        s_h_index = [];
-        s_h_value = [];
-        s_h_priority = [];
-        s_h_prop = __shorthandIndexMap[index];
-        do
-        {
-          if (__shorthandIndexMap[index] != 'line-height' &&
-              __shorthandIndexMap[index] != s_h_prop)
-          {
-            ret += (ret ? MARKUP_PROP_NL : "") +
-              shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-            SHORTHAND[line_height_index] = __shorthandIndexMap[index] == 'font' ? 5 : 0;
-            s_h_index = [];
-            s_h_value = [];
-            s_h_priority = [];
-            s_h_prop = __shorthandIndexMap[index];
-          }
-          s_h_index[SHORTHAND[index]] = index;
-          s_h_value[SHORTHAND[index]] = helpers.escapeTextHtml(value_list[i]);
-          s_h_priority[SHORTHAND[index]] = priority_list[i];
-          index = index_list[i + 1];
-        }
-        while (SHORTHAND[index] && ++i);
-
-        ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                shorthands[s_h_prop](s_h_prop, s_h_index, s_h_value, s_h_priority);
-        SHORTHAND[line_height_index] = 0;
-      }
-      else
-      {
-        if (overwrittenlist && overwrittenlist[i])
-        {
-          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                  INDENT +
-                  MARKUP_KEY + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE + 
-                  helpers.escapeTextHtml(value_list[i]) + (priority_list[i] ? MARKUP_IMPORTANT : "") + 
-                  MARKUP_VALUE_CLOSE;
-        }
-        else
-        {
-          ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-                  INDENT +
-                  MARKUP_KEY_OW + __indexMap[index] + MARKUP_KEY_CLOSE +
-                  MARKUP_VALUE_OW + 
-                  helpers.escapeTextHtml(value_list[i]) + ( priority_list[i] ? MARKUP_IMPORTANT : "") + 
-                  MARKUP_VALUE_CLOSE;
-        }
-      }
-    }
-    return ret;
-  };
-
-  this.create_declaration = function create_declaration(prop, value, is_important, rule_id, is_disabled, origin)
-  {
-    value = helpers.escapeTextHtml(value);
-    return (!(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ? "<input type='checkbox'" +
-                 " title='" + (is_disabled ? "Enable" : "Disable") + "'" +
-                 " class='enable-disable'" +
-                 (!is_disabled ? " checked='checked'" : "") +
-                 " handler='enable-disable'" +
-                 " data-property='" + prop + "'" +
-                 " data-rule-id='" + rule_id + "' />"
-               : "") +
-           "<key>" + prop + "</key>: " + // TODO: rename "key" to "property"
-           "<value>" + value + (is_important ? MARKUP_IMPORTANT : "") +
-              (prop in __color_properties && !(origin == ORIGIN_USER_AGENT || origin == ORIGIN_LOCAL) ?
-                  "<color-sample handler='show-color-picker' " +
-                      "style='background-color:" + value +"'/>" : "") +
-           "</value>;";
-
-  };
-
-  /* to print the stylesheets */
-  /****************************/
-  prettyPrintRule[UNKNOWN_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    return '';
-  };
-
-  prettyPrintRule[STYLE_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const
-    RULE_ID = 2,
-    SELECTOR_LIST = 6;
-
-    return "<rule rule-id='" + rule[RULE_ID] + "'>" +
-      "<selector>" + helpers.escapeTextHtml(rule[SELECTOR_LIST].join(', ')) + "</selector> {\n" +
-        prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
-      "\n}</rule>";
-  };
-
-  prettyPrintRule[CHARSET_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const
-    RULE_ID = 2,
-    CHARSET = 13; // Actually the encoding
-
-    return "<charset-rule rule-id='" + rule[RULE_ID] + "'>" +
-               "<at>@charset</at> \"" + helpers.escapeTextHtml(rule[CHARSET]) + "\";" +
-           "</charset-rule>";
-  };
-
-  /*  e.g.: @import url("bluish.css") projection, tv; */
-  prettyPrintRule[IMPORT_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const
-    RULE_ID = 2,
-    MEDIA_LIST = 8,
-    HREF = 10,
-    IMPORT_STYLESHEET_ID = 11;
-
-    return "<import-rule rule-id='" + rule[RULE_ID] +
-                  "' imported-sheet='" + rule[IMPORT_STYLESHEET_ID] + "'>" +
-              "<at>@import</at> url(\"" + rule[HREF] + "\") " +
-              rule[MEDIA_LIST].join(', ') + ";" +
-           "</import-rule>";
-  };
-
-  prettyPrintRule[MEDIA_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const
-    TYPE = 0,
-    RULE_ID = 2,
-    MEDIA_LIST = 8,
-    STYLESHEETRULE_RULE_LIST = 9;
-
-    var ret = '', _rule = null, header = null, i = 0;
-    if (rule[STYLESHEETRULE_RULE_LIST]) {
-      for ( ; _rule = rule[STYLESHEETRULE_RULE_LIST][i]; i++)
-      {
-        ret += prettyPrintRule[_rule[TYPE]](_rule, do_shortcuts, is_style_sheet);
-      }
-    }
-    return "<media-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@media</at> " + rule[MEDIA_LIST].join(', ') + " {" +
-              (ret ? "<rules>" + ret + "</rules>" : " ") +
-            "}</media-rule>";
-  };
-
-  prettyPrintRule[FONT_FACE_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const RULE_ID = 2;
-    return "<font-face-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@font-face</at> {\n" +
-              prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
-            "\n}</font-face-rule>";
-  };
-
-  prettyPrintRule[PAGE_RULE] = function(rule, do_shortcuts, is_style_sheet)
-  {
-    const RULE_ID = 2, PSEUDO_CLASS = 12;
-
-    var pseudo_class_map =
-    {
-      '1': ':first',
-      '2': ':left',
-      '4': ':right'
+    // TODO: call the template directly, need to fix in editor.js too
+    var declaration = {
+      property: prop,
+      value: value,
+      priority: priority,
+      is_disabled: is_disabled
     };
-
-    return "<page-rule rule-id='" + rule[RULE_ID] + "'>" +
-              "<at>@page</at>" +
-              ( rule[PSEUDO_CLASS]
-              ? "<selector> " + pseudo_class_map[rule[PSEUDO_CLASS]] + "</selector>"
-              : "" ) + " {\n" +
-              prettyPrintRule[COMMON](rule, do_shortcuts, 0, is_style_sheet) +
-            "\n}</page-rule>";
+    return this._templates.prop_value(declaration, true);
   };
 
-  this.prettyPrintRules = function(rules, do_shortcuts)
+  this.get_stylesheets = function(rt_id, org_args)
   {
-    const TYPE = 0;
-    var ret = '', rule = null, header = null, i = 0;
-    if (rules.length)
-    {
-      for ( ; rule = rules[i]; i++)
-      {
-        ret += prettyPrintRule[rule[TYPE]](rule, do_shortcuts, true);
-      }
-      return "<stylesheet stylesheet-id='" + rules[0][0][0] + "' runtime-id='" + rules.runtime_id + "'>"
-                + ret + "</stylesheet>";
-    }
-    return "<div class='info-box'><p>" +
-                ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES + "</p></div>";
-  };
-
-  var _pretty_print_cat = [];
-
-  _pretty_print_cat[COMP_STYLE] = function(data, search_active)
-  {
-    var ret = "", i = 0, index = 0, prop = '', value = '';
-    // setProps is used to force the display if a given property is set
-    // also if it has the initial value
-    var setProps = elementStyle.getSetProps();
-    var hideInitialValue = !settings['css-comp-style'].get('show-initial-values');
-    var hide_shorthands = settings['css-comp-style'].get('hide-shorthands'); // TODO make a setting
-    var search_term = elementStyle.getSearchTerm();
-    var is_not_initial_value = false;
-    var display = false;
-
-    for ( ; i <  __indexMapLength; i++)
-    {
-      index = __sortedIndexMap[i];
-      prop = __indexMap[index];
-      value = data[index];
-      is_not_initial_value =
-        hideInitialValue
-        && value
-        && value != __initialValues[index]
-        && !(prop in special_default_values && special_default_values[prop](data, value))
-        || false;
-      display =
-        (
-          !hideInitialValue
-          || setProps[index]
-          || is_not_initial_value
-        )
-        && !(hide_shorthands && short_hand_props[prop])
-        && !(search_term && !(prop.indexOf(search_term) != -1 ||
-                              value.indexOf(search_term) != -1));
-      if (display)
-      {
-        ret += (ret ? MARKUP_PROP_NL : "") +
-                "<property data-spec='css#" + prop + "'><key>" + prop + MARKUP_KEY_CLOSE +
-                MARKUP_VALUE + helpers.escapeTextHtml(value) + MARKUP_VALUE_CLOSE;
-      }
-    }
-    return ret;
-  };
-
-  _pretty_print_cat[CSS] = function(data, search_active)
-  {
-    var
-    node_casc = null,
-    i = 0,
-    ret = '',
-    j = 0,
-    css_style_dec = null,
-    rt_id = data.rt_id,
-    element_name = null,
-    style_dec_list = null,
-    style_dec = null;
-
-    for ( ; node_casc = data[i]; i++)
-    {
-      element_name = node_casc[ELEMENT_NAME];
-      style_dec_list = node_casc[STYLE_LIST];
-
-      if (search_active && !node_casc[HAS_MATCHING_SEARCH_PROPS])
-      {
-        continue;
-      }
-
-      var inherited_printed = false;
-      for (j = 0; style_dec = style_dec_list[j]; j++)
-      {
-        if (i && !inherited_printed && style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length)
-        {
-          inherited_printed = true;
-          ret += "<h2>" +
-                ui_strings.S_INHERITED_FROM +
-                " <code class='element-name inspect-node-link'" +
-                " handler='inspect-node-link'" +
-                " rt-id='" + rt_id + "' obj-id='" + node_casc[OBJECT_ID] + "'>" +
-                element_name +
-              "</code></h2>";
-        }
-        ret += prettyPrintStyleDec[style_dec[ORIGIN]](rt_id, node_casc[OBJECT_ID], element_name, style_dec, search_active);
-      }
-    }
-    return ret;
-  };
-
-  /* to print a matching style rule */
-  /**********************************/
-
-  const
-  ORIGIN_USER_AGENT = 1, // default
-  ORIGIN_LOCAL = 2, // user
-  ORIGIN_AUTHOR = 3, // author
-  ORIGIN_ELEMENT = 4; // inline
-  ORIGIN_SVG = 5; // SVG presentation attribute
-
-  var prettyPrintStyleDec = [];
-
-  var prettyPrintRuleInInspector = function prettyPrintRuleInInspector(rule, do_shortcuts, search_active)
-  {
-    const
-    HEADER = 0,
-    INDEX_LIST = 1,
-    VALUE_LIST = 2,
-    PROPERTY_LIST = 3,
-    VALUE = 0,
-    PRIORITY = 1,
-    STATUS = 2;
-
-    var ret = '',
-    index_list = rule[INDEX_LIST] || [], // the built-in proxy returns empty repeated values as null
-    value_list = rule[VALUE_LIST],
-    priority_list = rule[PROPERTY_LIST],
-    overwritten_list = rule[OVERWRITTEN_LIST] || [],
-    search_list = rule[SEARCH_LIST] || [],
-    disabled_list = rule[DISABLED_LIST] || [],
-    prop_index = 0,
-    index = 0;
-
-    // Create an array of [prop, prop_index] for sorting
-    var properties = index_list.map(function(index) {
-      return [__indexMap[index], index];
-    });
-
-    // Sort in alphabetical order
-    properties.sort(function(a, b) {
-      return a[0] > b[0] ? 1 : -1; // The same property can never happen
-    });
-
-    var length = index_list.length;
-    for (var i = 0; i < length; i++)
-    {
-      prop_index = properties[i][1];
-      index = index_list.indexOf(prop_index);
-
-      if (search_active && !search_list[index])
-      {
-        continue;
-      }
-
-      ret += (ret ? MARKUP_PROP_NL : MARKUP_EMPTY) +
-              INDENT +
-              // TODO: rename "property" to "declaration"
-              "<property class='" + (overwritten_list[index] ? "" : "overwritten") +
-                                    (disabled_list[index] ? " disabled" : "") + "'" +
-                                    "data-spec='css#" + __indexMap[prop_index] + "'>" +
-                self.create_declaration(__indexMap[prop_index],
-                                        value_list[index],
-                                        priority_list[index],
-                                        rule[RULE_ID],
-                                        disabled_list[index],
-                                        rule[ORIGIN]) +
-              "</property>";
-    }
-    return ret;
-  }
-
-  prettyPrintStyleDec[ORIGIN_USER_AGENT] =
-  function(rt_id, obj_id, element_name, style_dec, search_active)
-  {
-    if (!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS])
-    {
-      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
-              "<stylesheet-link class='pseudo'>default values</stylesheet-link>" +
-        "<selector>" + element_name + "</selector>" +
-        " {\n" +
-            prettyPrintRuleInInspector(style_dec, false, search_active) +
-        "\n}</rule>";
-    }
-    return "";
-  };
-
-  prettyPrintStyleDec[ORIGIN_LOCAL] =
-  function(rt_id, obj_id, element_name, style_dec, search_active)
-  {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return "<rule class='non-editable' obj-id='" + obj_id + "'>" +
-              "<stylesheet-link class='pseudo'>local user stylesheet</stylesheet-link>" +
-        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-        " {\n" +
-            prettyPrintRuleInInspector(style_dec, false, search_active) +
-        "\n}</rule>";
-    }
-    return "";
-  };
-
-  prettyPrintStyleDec[ORIGIN_AUTHOR] =
-  function(rt_id, obj_id, element_name, style_dec, search_active)
-  {
-    var
-    ret = '',
-    header = null,
-    i = 0,
-    sheet = self.getSheetWithObjId(rt_id, style_dec[STYLESHEET_ID]),
-    has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      var line_number = style_dec[LINE_NUMBER];
-      ret += "<rule data-menu='style-inspector-rule' rule-id='" + style_dec[RULE_ID] + "' obj-id='" + obj_id + "'>" +
-        (sheet ?
-         "<stylesheet-link rt-id='" + rt_id + "'"+
-           " index='" + sheet.index + "' handler='open-resource-tab'" +
-           " data-resource-url='" + helpers.escapeAttributeHtml(sheet.href) + "'" +
-           " data-resource-line-number='" + (line_number || 0) + "'" +
-         ">" +
-           helpers.escapeTextHtml(helpers.basename(sheet.href)) + (line_number ? ":" + line_number : "") +
-         "</stylesheet-link>" :
-         "") +
-        "<selector>" + helpers.escapeTextHtml(style_dec[SELECTOR]) + "</selector>" +
-        " {\n" +
-            prettyPrintRuleInInspector(style_dec, false, search_active) +
-        "\n}</rule>";
-    }
-    if (!sheet)
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        'stylesheet is missing in stylesheets, prettyPrintStyleDec[ORIGIN_AUTHOR]');
-    }
-
-    return ret;
-  };
-
-  prettyPrintStyleDec[ORIGIN_ELEMENT] =
-  function(rt_id, obj_id, element_name, style_dec, search_active)
-  {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return "<rule rule-id='element-style' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
-        "<inline-style>element.style</inline-style>" +
-        " {\n" +
-            prettyPrintRuleInInspector(style_dec, false, search_active) +
-        "\n}</rule>";
-    }
-    return "";
-  };
-
-  prettyPrintStyleDec[ORIGIN_SVG] =
-  function(rt_id, obj_id, element_name, style_dec, search_active)
-  {
-    var has_properties = style_dec[INDEX_LIST] && style_dec[INDEX_LIST].length;
-
-    if ((!search_active || style_dec[HAS_MATCHING_SEARCH_PROPS]) && has_properties)
-    {
-      return "<rule rule-id='element-svg' rt-id='" + rt_id + "' obj-id='" + obj_id + "'>" +
-        "<span style='font-style: italic;'>presentation attributes</span>" +
-        " {\n" +
-            prettyPrintRuleInInspector(style_dec, false, search_active) +
-        "\n}</rule>";
-    }
-    return "";
-  };
-
-  this.prettyPrintCompStyle = function(data, org_args, search_active)
-  {
-    return this.prettyPrintCat(COMP_STYLE, data, org_args, search_active);
-  }
-
-  this.prettyPrintStyleCasc = function(data, org_args, search_active)
-  {
-    return this.prettyPrintCat(CSS, data, org_args, search_active);
-  }
-
-  
-
-  this.prettyPrintCat = function(cat_index, data, org_args, search_active)
-  {
-    if (!__sheets[data.rt_id])
-    {
-      var tag = tagManager.set_callback(null, handleGetAllStylesheets, [data.rt_id, org_args]);
-      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [data.rt_id]);
-      return '';
-    }
-
-    if (!__indexMap && !this._is_getting_index_map)
-    {
-      this._is_getting_index_map = true;
-      var tag = tagManager.set_callback(null, handleGetIndexMap, [org_args]);
-      services['ecmascript-debugger'].requestCssGetIndexMap(tag);
-      return '';
-    }
-
-    return _pretty_print_cat[cat_index](data, search_active);
-  };
-
-  this.getStylesheets = function(rt_id, org_args)
-  {
-    if (__sheets[rt_id])
-    {
-      return __sheets[rt_id];
-    }
+    if (this._sheets[rt_id])
+      return this._sheets[rt_id];
 
     if (org_args && runtime_onload_handler.check(rt_id, org_args))
     {
-      if (!__indexMap && !this._is_getting_index_map)
+      if (!this._index_map && !this._is_getting_index_map)
       {
         this._is_getting_index_map = true;
-        var tag = tagManager.set_callback(null, handleGetIndexMap, []);
-        services['ecmascript-debugger'].requestCssGetIndexMap(tag);
+        var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), []);
+        this._es_debugger.requestCssGetIndexMap(tag);
       }
-      var tag = tagManager.set_callback(null, handleGetAllStylesheets, [rt_id, org_args]);
-      services['ecmascript-debugger'].requestCssGetAllStylesheets(tag, [rt_id]);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
+      this._es_debugger.requestCssGetAllStylesheets(tag, [rt_id]);
       return null;
     }
   };
 
-  this.hasStylesheetsRuntime = function(rt_id)
+  this.has_stylesheets_runtime = function(rt_id)
   {
-    return __sheets[rt_id] && true || false;
+    return Boolean(this._sheets[rt_id]);
   };
 
-  this.getSheetWithObjId = function(rt_id, obj_id)
+  this.get_sheet_with_obj_id = function(rt_id, obj_id)
   {
-    if (__sheets[rt_id])
+    if (this._sheets[rt_id])
     {
-      var sheet = null, i = 0;
-      for ( ; sheet = __sheets[rt_id][i]; i++)
+      for (var i = 0, sheet; sheet = this._sheets[rt_id][i]; i++)
       {
         if (sheet[SHEET_OBJECT_ID] == obj_id)
         {
           return {
             index: i,
             href: sheet[SHEET_HREF] || window.runtimes.getURI(rt_id),
-            name: ( sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
-              || sheet[SHEET_TITLE]
-              || 'stylesheet ' + i)
+            name: (sheet[SHEET_HREF] && /\/([^/]*$)/.exec(sheet[SHEET_HREF])[1]
+                   || sheet[SHEET_TITLE]
+                   || 'stylesheet ' + i)
           };
         }
       }
@@ -1045,392 +86,175 @@ cls.Stylesheets = function()
     }
   };
 
-  this.getSheetWithRtIdAndIndex = function(rt_id, index)
+  this.get_sorted_properties = function()
   {
-    return __sheets[rt_id] && __sheets[rt_id][index] || null;
+    var props = [];
+    var dashes = [];
+
+    for (var i = 0; i < this._index_map.length; i++)
+    {
+      var value = this._index_map[this._sorted_index_map[i]];
+      if (value[0] == "-")
+        dashes.push(value);
+      else
+        props.push(value);
+    }
+    return props.concat(dashes);
   };
 
-  this.invalidateSheet = function(rt_id, index)
+  this.get_css_index_map = function()
   {
-    if (__rules[rt_id] && __rules[rt_id][index])
+    return this._index_map;
+  };
+
+  this.pretty_print_computed_style = function(data)
+  {
+    var template = [];
+    // set_props is used to force the display if a given property is set
+    // even if it has the initial value
+    var set_props = this._element_style.get_set_props();
+    var search_term = this._element_style.get_search_term();
+    var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
+
+    for (var i = 0; i < this._index_map.length; i++)
     {
-      __rules[rt_id][index] = null;
-      if (__selectedRules &&
-          __selectedRules.runtime_id == rt_id &&
-          __selectedRules.index == index)
+      var index = this._sorted_index_map[i];
+      var prop = this._index_map[index];
+      var value = data[index];
+      var is_not_initial_value =
+        hide_initial_value
+        && value != ""
+        && value != cls.Stylesheets.get_initial_value(prop, data, this._index_map)
+        || false;
+      var display =
+        (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
+        && (prop.indexOf(search_term) != -1 ||
+            value.indexOf(search_term) != -1);
+
+      if (display)
+        template.push(this._templates.declaration_computed_style(prop, value));
+    }
+
+    return template;
+  };
+
+  this.pretty_print_cascaded_style = function(data)
+  {
+    var template = [];
+    var search_term = this._element_style.get_search_term();
+
+    for (var i = 0, node_style; node_style = data[i]; i++)
+    {
+      var element_name = node_style.elementName;
+      var style_dec_list = node_style.styleList;
+
+      var inherited_printed = false;
+      for (var j = 0, rule; rule = style_dec_list[j]; j++)
       {
-        __selectedRules = null;
+        rule.declarations = rule.declarations.filter(function(declaration) {
+          return declaration.property.indexOf(search_term) != -1 ||
+                 declaration.value.indexOf(search_term) != -1;
+        });
+
+        if (!rule.declarations.length)
+          continue;
+
+        if (i > 0 && !inherited_printed)
+        {
+          inherited_printed = true;
+          template.push(this._templates.inherited_header(element_name, node_style.objectID));
+        }
+
+        template.push(this._pretty_print_rule(rule, node_style.objectID, element_name));
       }
     }
+
+    return template;
   };
 
-  this.getRulesWithSheetIndex = function(rt_id, index, org_args)
+  this._pretty_print_rule = function(rule, obj_id, element_name)
   {
-    if (rt_id)
+    var decl_list = this._pretty_print_declaration_list(rule);
+    var rt_id = this._element_style.get_rt_id();
+    switch (rule.origin)
     {
-      if (__rules[rt_id][index])
+    case ORIGIN_USER_AGENT:
+      return this._templates.rule_origin_user_agent(decl_list, obj_id, element_name);
+
+    case ORIGIN_LOCAL:
+      return this._templates.rule_origin_local(decl_list, obj_id, rule.selector);
+
+    case ORIGIN_AUTHOR:
+      var sheet = this.get_sheet_with_obj_id(rt_id, rule.stylesheetID);
+      if (!sheet)
       {
-        return __rules[rt_id][index];
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+          'stylesheet is missing in stylesheets, _pretty_print_rule[ORIGIN_AUTHOR]');
       }
+      return this._templates.rule_origin_author(decl_list, obj_id, rt_id, rule, sheet);
 
-      if (__sheets[rt_id][index])
-      {
-        var tag = tagManager.set_callback(null, handleGetRulesWithIndex, [rt_id, index, org_args]);
-        var sheet_id = __sheets[rt_id][index][SHEET_OBJECT_ID];
-        services['ecmascript-debugger'].requestCssGetStylesheet(tag, [rt_id, sheet_id]);
-        return null;
-      }
-    }
-    return null;
-  };
+    case ORIGIN_ELEMENT:
+      return this._templates.rule_origin_element(decl_list, obj_id, rt_id);
 
-  this.setSelectedSheet = function(rt_id, index, rules, rule_id)
-  {
-    __selectedRules =
-    {
-      runtime_id: rt_id,
-      index: index,
-      rules: rules,
-      rule_id: rule_id || ''
+    case ORIGIN_SVG:
+      return this._templates.rule_origin_svg(decl_list, obj_id, rt_id);
     }
   };
 
-  this.getSelectedSheet = function(org_args)
+  this._pretty_print_declaration_list = function(rule)
   {
-    if (__selectedRules)
-    {
-      return __selectedRules;
-    }
+    rule.declarations.sort(function(a, b) {
+      return a.property > b.property ? 1 : -1; // The same property can never appear
+    });
 
-    if (org_args)
-    {
-      onNewStylesheets(__top_rt_id, [null, selectFirstSheet, __top_rt_id, 0, org_args]);
-    }
-    return null;
+    var is_editable = rule.origin != ORIGIN_USER_AGENT && rule.origin != ORIGIN_LOCAL;
+
+    return rule.declarations.map(function(declaration) {
+      return this._templates.declaration(declaration, is_editable);
+    }, this);
   };
 
-  var selectFirstSheet = function(rt_id, index, org_args)
+  this._handle_get_index_map = function(status, message, org_args)
   {
-    var rules = stylesheets.getRulesWithSheetIndex(rt_id, index, arguments);
-    if (rules)
-    {
-      self.setSelectedSheet(rt_id, index, rules);
-      org_args.callee.apply(null, org_args);
-    }
-    window['cst-selects']['stylesheet-select'].updateElement();
-  };
-
-  this.hasSelectedSheetRuntime = function(rt_id)
-  {
-    return __selectedRules && __selectedRules.runtime_id == rt_id || false;
-  };
-
-  this.isSelectedSheet = function(rt_id, index)
-  {
-    return (__selectedRules && rt_id == __selectedRules.runtime_id &&
-            index == __selectedRules.index && true || false );
-  };
-
-  var handleGetIndexMap = function(status, message, org_args)
-  {
-    const NAME_LIST = 0;
+    var NAME_LIST = 0;
     var index_map = message[NAME_LIST];
     if (!index_map)
-    {
       return;
-    }
-    window.css_index_map = __indexMap = index_map;
-    window.inherited_props_index_list = [];
-    var prop = '', i = 0;
-    var temp = [];
-    for ( ; prop = __indexMap[i]; i++)
+
+    if (!this._index_map)
     {
-      temp[i] = {index: i, key : prop};
-      __initialValues[i] = css_initial_values[prop];
-      if (prop in css_inheritable_properties)
+      this._index_map = index_map;
+
+      var temp = [];
+      for (var i = 0, prop; prop = index_map[i]; i++)
       {
-        inherited_props_index_list[i] = true;
+        temp[i] = {index: i, prop: prop};
       }
-      switch (prop)
+
+      temp.sort(function(a, b) {
+        return a.prop > b.prop ? 1 : -1;
+      });
+
+      for (var i = 0; prop = temp[i]; i++)
       {
-        case 'fill':
-        case 'stroke':
-        case 'stop-color':
-        case 'flood-color':
-        case 'lighting-color':
-        {
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'color':
-        {
-          __colorIndex = i;
-          __colorIndexMap[i] = true;
-          break;
-        }
-        // margin
-        case 'margin-top':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'margin';
-          break;
-        }
-        case 'margin-right':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'margin';
-          break;
-        }
-        case 'margin-bottom':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'margin';
-          break;
-        }
-        case 'margin-left':
-        {
-          SHORTHAND[i] = 4;
-          __shorthandIndexMap[i] = 'margin';
-          break;
-        }
-        // padding
-        case 'padding-top':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'padding';
-          break;
-        }
-        case 'padding-right':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'padding';
-          break;
-        }
-        case 'padding-bottom':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'padding';
-          break;
-        }
-        case 'padding-left':
-        {
-          SHORTHAND[i] = 4;
-          __shorthandIndexMap[i] = 'padding';
-          break;
-        }
-        // border top
-        case 'border-top-width':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-top-style':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-top-color':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'border';
-          __colorIndexMap[i] = true;
-          break;
-        }
-        // border rigth
-        case 'border-right-width':
-        {
-          SHORTHAND[i] = 4;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-right-style':
-        {
-          SHORTHAND[i] = 5;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-right-color':
-        {
-          SHORTHAND[i] = 6;
-          __shorthandIndexMap[i] = 'border';
-          __colorIndexMap[i] = true;
-          break;
-        }
-        // border bottom
-        case 'border-bottom-width':
-        {
-          SHORTHAND[i] = 7;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-bottom-style':
-        {
-          SHORTHAND[i] = 8;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-bottom-color':
-        {
-          SHORTHAND[i] = 9;
-          __shorthandIndexMap[i] = 'border';
-          __colorIndexMap[i] = true;
-          break;
-        }
-        // border left
-        case 'border-left-width':
-        {
-          SHORTHAND[i] = 10;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-left-style':
-        {
-          SHORTHAND[i] = 11;
-          __shorthandIndexMap[i] = 'border';
-          break;
-        }
-        case 'border-left-color':
-        {
-          SHORTHAND[i] = 12;
-          __shorthandIndexMap[i] = 'border';
-          __colorIndexMap[i] = true;
-          break;
-        }
-        // background
-        case 'background-color':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'background';
-          __colorIndexMap[i] = true;
-          break;
-        }
-        case 'background-image':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'background';
-          break;
-        }
-        case 'background-attachment':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'background';
-          break;
-        }
-        case 'background-repeat':
-        {
-          SHORTHAND[i] = 4;
-          __shorthandIndexMap[i] = 'background';
-          break;
-        }
-        case 'background-position':
-        {
-          SHORTHAND[i] = 5;
-          __shorthandIndexMap[i] = 'background';
-          break;
-        }
-
-        // 'list-style-type'> || <'list-style-position'> || <'list-style-image'
-        // list-style
-        case 'list-style-type':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'list-style';
-          break;
-        }
-        case 'list-style-position':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'list-style';
-          break;
-        }
-        case 'list-style-image':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'list-style';
-          break;
-        }
-
-        // [ [ <'font-style'> || <'font-variant'> || <'font-weight'> ]? <'font-size'> [ / <'line-height'> ]? <'font-family'> ] |
-        case 'font-style':
-        {
-          SHORTHAND[i] = 1;
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
-        case 'font-variant':
-        {
-          SHORTHAND[i] = 2;
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
-        case 'font-weight':
-        {
-          SHORTHAND[i] = 3;
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
-        case 'font-size':
-        {
-          SHORTHAND[i] = 4;
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
-        case 'line-height':
-        {
-          line_height_index = i;
-          SHORTHAND[i] = 0; // | 5
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
-        case 'font-family':
-        {
-          SHORTHAND[i] = 6;
-          __shorthandIndexMap[i] = 'font';
-          break;
-        }
+        this._sorted_index_map[i] = prop.index;
       }
     }
-
-    temp.sort(function(a,b){return a.key < b.key ? -1 : a.key > b.key ? 1 : 0});
-
-    for (i = 0; prop = temp[i]; i++)
-    {
-      __sortedIndexMap[i] = prop.index;
-    }
-
-    __indexMapLength = __indexMap.length;
 
     if (org_args && (!org_args[0].__call_count || org_args[0].__call_count == 1))
     {
       org_args[0].__call_count = org_args[0].__call_count ? org_args[0].__call_count + 1 : 1;
-      org_args.callee.apply(null, org_args)
+      org_args.callee.apply(null, org_args);
     }
   };
 
-  var handleGetRulesWithIndex = function(status, message, rt_id, index, org_args)
+  this._handle_get_all_stylesheets = function(status, message, rt_id, org_args)
   {
-    if (status == 0 && __rules[rt_id])
-    {
-      __rules[rt_id][index] = message[0] || [];
-      __rules[rt_id][index].runtime_id = rt_id;
-      if (org_args && !org_args[0].__call_count)
-      {
-        org_args[0].__call_count = 1
-        org_args.callee.apply(null, org_args);
-      }
-    }
-  };
-
-  var handleGetAllStylesheets = function(status, message, rt_id, org_args)
-  {
-    const STYLESHEET_LIST = 0;
+    var STYLESHEET_LIST = 0;
     if (status == 0)
     {
-      __sheets[rt_id] = message[STYLESHEET_LIST] || [];
-      __sheets[rt_id].runtime_id = rt_id;
-      __rules[rt_id] = [];
+      this._sheets[rt_id] = message[STYLESHEET_LIST] || [];
+      this._sheets[rt_id].runtime_id = rt_id;
       if (org_args && !org_args[0].__call_count)
       {
         org_args[0].__call_count = 1;
@@ -1439,141 +263,894 @@ cls.Stylesheets = function()
     }
   };
 
-  var onRuntimeDestroyed = function(msg)
+  this._on_reset_state = function()
   {
-    if (__selectedRules &&  __selectedRules.runtime_id == msg.id)
-    {
-      views.stylesheets.clearAllContainers();
-    }
+    this._sheets = {};
+    this._new_runtimes = null;
   };
 
-  var onNewStylesheets = function(rt_id, cb_arr/* obj, cb_method, arg 1, arg 2, ... */)
+  this._on_active_tab = function(msg)
   {
-    // cb_arr: [cb_obj, cb_method, arg 1, arg 2, ... ]
-    if (__on_new_stylesheets_cbs[rt_id])
-    {
-      __on_new_stylesheets_cbs[rt_id][__on_new_stylesheets_cbs[rt_id].length] = cb_arr;
-    }
-    else
-    {
-      cb_arr[1].apply(cb_arr[0], cb_arr.slice(2));
-    }
-  };
-
-  var updateOnNewStylesheets = function(rt_ids) // rt_ids is an array
-  {
-    var
-    rt_id_c_1 = '',
-    rt_id_c_2 = '',
-    i = 0;
-
-    for (rt_id_c_1 in __on_new_stylesheets_cbs)
-    {
-      for (i = 0; ( rt_id_c_2 = rt_ids[i] ) && rt_id_c_1 != rt_id_c_2 ; i++);
-      if (!rt_id_c_2)
-      {
-        delete __on_new_stylesheets_cbs[rt_id_c_1];
-      }
-    }
-
-    for (i = 0; rt_id_c_1 = rt_ids[i]; i++)
-    {
-      if (!(rt_id_c_1 in __on_new_stylesheets_cbs))
-      {
-        __on_new_stylesheets_cbs[rt_id_c_1] = [];
-      }
-    }
-
-    __new_rts = rt_ids;
-
-    if (rt_ids[0] != __top_rt_id)
-    {
-      __top_rt_id = rt_ids[0] || 0;
-      __selectedRules = null;
-      views['stylesheets'].update();
-    }
-  };
-
-  var checkNewRts = function(obj)
-  {
-    var
-    cursor = null,
-    cbs = null,
-    cb = null,
-    i = 0;
-
-    for (i = 0; cursor = __new_rts[i]; i++)
-    {
-      // TODO: the handling of stylesheets needs to be cleaned up.
-      if (!__sheets[cursor])
-      {
-        self.getStylesheets(cursor, arguments);
-      }
-      else
-      {
-        if (cbs = __on_new_stylesheets_cbs[cursor])
-        {
-          for (i = 0; cb = cbs[i]; i++)
-          {
-            cb[1].apply(cb[0], cb.slice(2));
-          }
-          delete __on_new_stylesheets_cbs[cursor];
-        }
-      }
-    }
-  };
-
-  var onActiveTab = function(msg)
-  {
-    if (__selectedRules)
-    {
-      var rt_id = __selectedRules.runtime_id, cur_rt_id = '', i = 0;
-
-      for ( ; (cur_rt_id = msg.runtimes_with_dom[i]) && cur_rt_id != rt_id ; i++);
-      if (!cur_rt_id)
-      {
-        views.stylesheets.clearAllContainers();
-      }
-    }
-
     if (!msg.runtimes_with_dom.length)
     {
-      __sheets = {};
-      // document.styleSheets[index].cssRules with runtime-id and index as keys
-      __rules = {};
-      __selectedRules = null;
-      __new_rts = null;
-      __top_rt_id = '';
-      __on_new_stylesheets_cbs = {};
+      this._on_reset_state();
     }
     else
     {
-      updateOnNewStylesheets(msg.runtimes_with_dom.slice(0));
-      checkNewRts({});
+      this._new_runtimes = msg.runtimes_with_dom.slice(0);
+      this._check_new_runtimes({});
     }
   };
 
-  this.getSortedProperties = function()
+  var self = this; // TODO: get rid of this and fix stylesheet handling
+  this._check_new_runtimes = function()
   {
-    var ret = [], i = 0, dashs = [], value = '';
-
-    for ( ; i < __indexMapLength; i++)
+    for (var i = 0, rt_id; rt_id = self._new_runtimes[i]; i++)
     {
-      value = __indexMap[__sortedIndexMap[i]];
-      if (value.indexOf('-') == 0)
-      {
-        dashs[dashs.length] = value;
-      }
-      else
-      {
-        ret[ret.length] = value;
-      }
+      if (!self._sheets[rt_id])
+        self.get_stylesheets(rt_id, arguments);
     }
-    return ret.concat(dashs);
   };
 
-  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-  messages.addListener('active-tab', onActiveTab);
-  messages.addListener('reset-state', onResetState);
+  window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+  window.messages.addListener('reset-state', this._on_reset_state.bind(this));
+};
+
+cls.Stylesheets.get_instance = function()
+{
+  return new cls.Stylesheets();
+};
+
+cls.Stylesheets.origins = {
+  ORIGIN_USER_AGENT: 1, // default
+  ORIGIN_LOCAL: 2, // user
+  ORIGIN_AUTHOR: 3, // author
+  ORIGIN_ELEMENT: 4, // inline
+  ORIGIN_SVG: 5 // SVG presentation attribute
+};
+
+cls.Stylesheets.get_initial_value = function(prop, data, index_map)
+{
+  // TODO: we only need to check for the special initial values here (e.g. border-color
+  // being the same as color unless overridden). The rest could simply return the first value
+  // of the suggested values (this needs to be arranged so that the first is actually the
+  // initial value).
+  switch (prop)
+  {
+  case "-apple-dashboard-region":
+    return "";
+
+  case "-o-border-image":
+    return "";
+
+  case "-o-focus-opacity":
+    return "";
+
+  case "-o-link":
+    return "";
+
+  case "-o-link-source":
+    return "";
+
+  case "-o-mini-fold":
+    return "";
+
+  case "-o-object-fit":
+    return "auto"; // this is 'fill' according to new spec, update when the imlementation changes
+
+  case "-o-object-position":
+    return "50% 50%";
+
+  case "-o-tab-size":
+    return "";
+
+  case "-o-table-baseline":
+    return "";
+
+  case "-o-text-overflow":
+    return "";
+
+  case "-o-transform":
+    return "none";
+
+  case "-o-transform-origin":
+    return "0px 0px";
+
+  case "-o-transition":
+    return "";
+
+  case "-o-transition-delay":
+    return "0";
+
+  case "-o-transition-duration":
+    return "0";
+
+  case "-o-transition-property":
+    return "all";
+
+  case "-o-transition-timing-function":
+    return "ease";
+
+  case "-wap-accesskey":
+    return "";
+
+  case "-wap-input-format":
+    return "";
+
+  case "-wap-input-required":
+    return "";
+
+  case "-wap-marquee-dir":
+    return "";
+
+  case "-wap-marquee-loop":
+    return "";
+
+  case "-wap-marquee-speed":
+    return "";
+
+  case "-wap-marquee-style":
+    return "";
+
+  case "-xv-interpret-as":
+    return "";
+
+  case "-xv-phonemes":
+    return "";
+
+  case "-xv-voice-balance":
+    return "";
+
+  case "-xv-voice-duration":
+    return "";
+
+  case "-xv-voice-pitch":
+    return "";
+
+  case "-xv-voice-pitch-range":
+    return "";
+
+  case "-xv-voice-rate":
+    return "";
+
+  case "-xv-voice-stress":
+    return "";
+
+  case "-xv-voice-volume":
+    return "";
+
+  case "alignment-baseline":
+    return "auto";
+
+  case "audio-level":
+    return "1";
+
+  case "background":
+    return "transparent 0% 0%";
+
+  case "background-attachment":
+    return "scroll";
+
+  case "background-clip":
+    return "border-box";
+
+  case "background-color":
+    return "transparent";
+
+  case "background-image":
+    return "none";
+
+  case "background-origin":
+    return "padding-box";
+
+  case "background-position":
+    return "0% 0%";
+
+  case "background-repeat":
+    return "repeat";
+
+  case "background-size":
+    return "auto";
+
+  case "baseline-shift":
+    return "baseline";
+
+  case "border":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-bottom":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-bottom-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-bottom-style":
+    return "none";
+
+  case "border-bottom-width":
+    return "0px";
+
+  case "border-collapse":
+    return "separate";
+
+  case "border-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-left":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-left-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-left-style":
+    return "none";
+
+  case "border-left-width":
+    return "0px";
+
+  case "border-right":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-right-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-right-style":
+    return "none";
+
+  case "border-right-width":
+    return "0px";
+
+  case "border-spacing":
+    return "0px";
+
+  case "border-style":
+    return "none";
+
+  case "border-top":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "border-top-color":
+    return data[index_map.indexOf("color")];
+
+  case "border-top-style":
+    return "none";
+
+  case "border-top-width":
+    return "0px";
+
+  case "border-width":
+    return "0px";
+
+  case "border-radius":
+    return "";
+
+  case "border-bottom-left-radius":
+    return "0px";
+
+  case "border-bottom-right-radius":
+    return "0px";
+
+  case "border-bottom-width":
+    return "0px";
+
+  case "border-top-left-radius":
+    return "0px";
+
+  case "border-top-right-radius":
+    return "0px";
+
+  case "bottom":
+    return "auto";
+
+  case "box-decoration-break":
+    return "slice";
+
+  case "box-sizing":
+    return "content-box";
+
+  case "box-shadow":
+    return "none";
+
+  case "break-after":
+    return "auto";
+
+  case "break-before":
+    return "auto";
+
+  case "break-inside":
+    return "auto";
+
+  case "buffered-rendering":
+    return "auto";
+
+  case "caption-side":
+    return "top";
+
+  case "clear":
+    return "none";
+
+  case "clip":
+    return "rect(0px, 0px, 0px, 0px)";
+
+  case "clip-path":
+    return "none";
+
+  case "clip-rule":
+    return "nonzero";
+
+  case "color":
+    return "rgb(0, 0, 0)";
+
+  case "color-interpolation":
+    return "sRGB";
+
+  case "color-interpolation-filters":
+    return "linearRGB";
+
+  case "color-profile":
+    return "auto";
+
+  case "color-rendering":
+    return "auto";
+
+  case "column-count":
+    return "auto";
+
+  case "column-fill":
+    return "balance";
+
+  case "column-gap":
+    return data[index_map.indexOf("font-size")];
+
+  case "column-rule":
+    return "0px " + data[index_map.indexOf("color")];
+
+  case "column-rule-color":
+    return data[index_map.indexOf("color")];
+
+  case "column-rule-style":
+    return "none";
+
+  case "column-rule-width":
+    return "0px";
+
+  case "column-span":
+    return "none";
+
+  case "column-width":
+    return "auto";
+
+  case "columns":
+    return "auto";
+
+  case "content":
+    return "none";
+
+  case "counter-increment":
+    return "none";
+
+  case "counter-reset":
+    return "none";
+
+  case "cue":
+    return "";
+
+  case "cue-after":
+    return "none";
+
+  case "cue-before":
+    return "none";
+
+  case "cursor":
+    return "auto";
+
+  case "direction":
+    return "ltr";
+
+  case "display":
+    return "inline";
+
+  case "display-align":
+    return "auto";
+
+  case "dominant-baseline":
+    return "auto";
+
+  case "empty-cells":
+    return "show";
+
+  case "enable-background":
+    return "accumulate";
+
+  case "fill":
+    return "rgb(0, 0, 0)";
+
+  case "fill-opacity":
+    return "1";
+
+  case "fill-rule":
+    return "nonzero";
+
+  case "filter":
+    return "none";
+
+  case "float":
+    return "none";
+
+  case "flood-color":
+    return "rgb(0, 0, 0)";
+
+  case "flood-opacity":
+    return "1";
+
+  case "font":
+    return "";
+
+  case "font-family":
+    return "";
+
+  case "font-size":
+    return "16px";
+
+  case "font-size-adjust":
+    return "none";
+
+  case "font-stretch":
+    return "normal";
+
+  case "font-style":
+    return "normal";
+
+  case "font-variant":
+    return "normal";
+
+  case "font-weight":
+    return "400";
+
+  case "glyph-orientation-horizontal":
+    return "0";
+
+  case "glyph-orientation-vertical":
+    return "auto";
+
+  case "height":
+    return "0px";
+
+  case "image-rendering":
+    return "auto";
+
+  case "input-format":
+    return "";
+
+  case "kerning":
+    return "auto";
+
+  case "left":
+    return "auto";
+
+  case "letter-spacing":
+    return "0px";
+
+  case "lighting-color":
+    return "rgb(255, 255, 255)";
+
+  case "line-height":
+    return "normal";
+
+  case "line-increment":
+    return "auto";
+
+  case "list-style":
+    return "disc outside none";
+
+  case "list-style-image":
+    return "none";
+
+  case "list-style-position":
+    return "outside";
+
+  case "list-style-type":
+    return "disc";
+
+  case "margin":
+    return "0px";
+
+  case "margin-bottom":
+    return "0px";
+
+  case "margin-left":
+    return "0px";
+
+  case "margin-right":
+    return "0px";
+
+  case "margin-top":
+    return "0px";
+
+  case "mark":
+    return "";
+
+  case "mark-after":
+    return "";
+
+  case "mark-before":
+    return "";
+
+  case "marker":
+    return "none";
+
+  case "marker-end":
+    return "none";
+
+  case "marker-mid":
+    return "none";
+
+  case "marker-offset":
+    return "";
+
+  case "marker-start":
+    return "none";
+
+  case "marks":
+    return "none";
+
+  case "mask":
+    return "none";
+
+  case "max-height":
+    return "none";
+
+  case "max-width":
+    return "none";
+
+  case "max-zoom":
+    return "auto";
+
+  case "min-height":
+    return "0px";
+
+  case "min-width":
+    return "0px";
+
+  case "min-zoom":
+    return "auto";
+
+  case "nav-down":
+    return "auto";
+
+  case "nav-index":
+    return "auto";
+
+  case "nav-left":
+    return "auto";
+
+  case "nav-right":
+    return "auto";
+
+  case "nav-up":
+    return "auto";
+
+  case "opacity":
+    return "1";
+
+  case "orientation":
+    return "";
+
+  case "orphans":
+    return "2";
+
+  case "outline":
+    return "3px";
+
+  case "outline-color":
+    return "invert";
+
+  case "outline-offset":
+    return "0";
+
+  case "outline-style":
+    return "none";
+
+  case "outline-width":
+    return "3px";
+
+  case "overflow":
+    return "visible";
+
+  case "overflow-x":
+    return "visible";
+
+  case "overflow-y":
+    return "visible";
+
+  case "padding":
+    return "0px";
+
+  case "padding-bottom":
+    return "0px";
+
+  case "padding-left":
+    return "0px";
+
+  case "padding-right":
+    return "0px";
+
+  case "padding-top":
+    return "0px";
+
+  case "page":
+    return "auto";
+
+  case "page-break-after":
+    return "auto";
+
+  case "page-break-before":
+    return "auto";
+
+  case "page-break-inside":
+    return "auto";
+
+  case "pause":
+    return "";
+
+  case "pause-after":
+    return "";
+
+  case "pause-before":
+    return "";
+
+  case "pointer-events":
+    return "visiblePainted";
+
+  case "position":
+    return "static";
+
+  case "quotes":
+    return "none";
+
+  case "resolution":
+    return "";
+
+  case "rest":
+    return "";
+
+  case "rest-after":
+    return "";
+
+  case "rest-before":
+    return "";
+
+  case "right":
+    return "auto";
+
+  case "row-span":
+    return "";
+
+  case "scrollbar-3dlight-color":
+    return "";
+
+  case "scrollbar-arrow-color":
+    return "";
+
+  case "scrollbar-base-color":
+    return "";
+
+  case "scrollbar-darkshadow-color":
+    return "";
+
+  case "scrollbar-face-color":
+    return "";
+
+  case "scrollbar-highlight-color":
+    return "";
+
+  case "scrollbar-shadow-color":
+    return "";
+
+  case "scrollbar-track-color":
+    return "";
+
+  case "shape-rendering":
+    return "auto";
+
+  case "size":
+    return "portrait";
+
+  case "src":
+    return "";
+
+  case "solid-color":
+    return "rgb(0, 0, 0)";
+
+  case "solid-opacity":
+    return "1";
+
+  case "speak":
+    return "";
+
+  case "stop-color":
+    return "rgb(0, 0, 0)";
+
+  case "stop-opacity":
+    return "1";
+
+  case "stroke":
+    return "none";
+
+  case "stroke-dasharray":
+    return "none";
+
+  case "stroke-dashoffset":
+    return "0";
+
+  case "stroke-linecap":
+    return "butt";
+
+  case "stroke-linejoin":
+    return "miter";
+
+  case "stroke-miterlimit":
+    return "4";
+
+  case "stroke-opacity":
+    return "1";
+
+  case "stroke-width":
+    return "1";
+
+  case "table-layout":
+    return "auto";
+
+  case "text-align":
+    return "left";
+
+  case "text-anchor":
+    return "start";
+
+  case "text-decoration":
+    return "none";
+
+  case "text-indent":
+    return "0px";
+
+  case "text-overflow":
+    return "clip";
+
+  case "text-rendering":
+    return "auto";
+
+  case "text-shadow":
+    return "none";
+
+  case "text-transform":
+    return "none";
+
+  case "top":
+    return "auto";
+
+  case "unicode-bidi":
+    return "normal";
+
+  case "user-zoom":
+    return "zoom";
+
+  case "vector-effect":
+    return "none";
+
+  case "vertical-align":
+    return "baseline";
+
+  case "viewport-fill":
+    return "none";
+
+  case "viewport-fill-opacity":
+    return "1";
+
+  case "visibility":
+    return "visible";
+
+  case "voice-family":
+    return "";
+
+  case "white-space":
+    return "normal";
+
+  case "widows":
+    return "2";
+
+  case "width":
+    return "0px";
+
+  case "word-spacing":
+    return "0px";
+
+  case "word-wrap":
+    return "normal";
+
+  case "writing-mode":
+    return "lr-tb";
+
+  case "zoom":
+    return "auto";
+
+  case "z-index":
+    return "auto";
+
+  default:
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+      "Initial value missing for " + prop + " in cls.Stylesheets.get_initial_value");
+  }
+};
+
+cls.Stylesheets.inheritable_properties = {
+  "-xv-voice-balance": true,
+  "-xv-voice-pitch": true,
+  "-xv-voice-pitch-range": true,
+  "-xv-voice-rate": true,
+  "-xv-voice-stress": true,
+  "-xv-voice-volume": true,
+  "alignment-baseline": true,
+  "border-collapse": true,
+  "border-spacing": true,
+  "box-sizing": true,
+  "caption-side": true,
+  "cell-spacing": true,
+  "color": true,
+  "color-interpolation": true,
+  "color-interpolation-filters": true,
+  "color-rendering": true,
+  "cursor": true,
+  "direction": true,
+  // "display": true, inherited in svg
+  "display-align": true,
+  "empty-cells": true,
+  "font": true,
+  "font-family": true,
+  "font-size": true,
+  "font-stretch": true,
+  "font-style": true,
+  "font-variant": true,
+  "font-weight": true,
+  "image-rendering": true,
+  "letter-spacing": true,
+  "line-height": true,
+  "line-increment": true,
+  "list-style": true,
+  "list-style-image": true,
+  "list-style-position": true,
+  "list-style-type": true,
+  "marker": true,
+  "orphans": true,
+  "overflow": true,
+  "page": true,
+  "page-break-inside": true,
+  "pointer-events": true,
+  "quotes": true,
+  "scrollbar-3dlight-color": true,
+  "scrollbar-arrow-color": true,
+  "scrollbar-base-color": true,
+  "scrollbar-darkshadow-color": true,
+  "scrollbar-face-color": true,
+  "scrollbar-highlight-color": true,
+  "scrollbar-shadow-color": true,
+  "scrollbar-track-color": true,
+  "shape-rendering": true,
+  "size": true,
+  "speak": true,
+  "stroke-linecap": true,
+  "stroke-linejoin": true,
+  "text-align": true,
+  "text-anchor": true,
+  "text-indent": true,
+  "text-rendering": true,
+  "text-shadow": true,
+  "text-transform": true,
+  "unicode-bidi": true,
+  "visibility": true,
+  "voice-family": true,
+  "white-space": true,
+  "widows": true,
+  "word-spacing": true,
+  "writing-mode": true
 };
 

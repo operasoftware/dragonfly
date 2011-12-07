@@ -284,7 +284,7 @@
       ['h2', runtime['title'] || display_uri.uri].
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ],
-    sheets = stylesheets.getStylesheets(runtime.runtime_id),
+    sheets = cls.Stylesheets.get_instance().get_stylesheets(runtime.runtime_id),
     sheet = null,
     i = 0,
     container = [],

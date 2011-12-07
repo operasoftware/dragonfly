@@ -124,10 +124,10 @@ window.eventHandlers.click['show-scripts'] = function(event)
 window.eventHandlers.click['show-stylesheets'] = function(event, target)
 {
   var rt_id = target.getAttribute('runtime_id');
-  // stylesheets.getStylesheets will call this function again if data is not avaible
+  // stylesheets.get_stylesheets will call this function again if data is not avaible
   // handleGetAllStylesheets in stylesheets will
   // set for this reason __call_count on the event object
-  var sheets = stylesheets.getStylesheets(rt_id, arguments);
+  var sheets = cls.Stylesheets.get_instance().get_stylesheets(rt_id, arguments);
   if (sheets)
   {
     var container = event.target.parentNode.getElementsByTagName('ul')[0];

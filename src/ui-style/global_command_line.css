@@ -100,8 +100,7 @@ container.console
   font-style: italic;
 }
 
-.console .number,
-offsets value
+.console .number
 {
   color: #ff4d40;
 }
