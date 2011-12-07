@@ -16,7 +16,11 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, just ignore. This usually means it's an iframe
+    // if not a top resource, don't reset the context. This usually means it's an iframe
+
+    // When paused, the context will still be reset and the paused status and what
+    // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
+    // RequestContext object, and when unpausing, that one should be rendered. Hard.
     if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
   }.bind(this);
@@ -28,7 +32,7 @@ cls.NetworkLoggerService = function(view)
       this._current_context = new cls.RequestContext();
       this._current_context.partial = true;
     }
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
 
     this._current_context.update("urlload", data);
   }.bind(this);
@@ -79,6 +83,13 @@ cls.NetworkLoggerService = function(view)
     this._current_context.update("requestfinished", data);
   }.bind(this);
 
+  this._on_requestretry_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
+    this._current_context.update("requestretry", data);
+  }.bind(this);
+
   this._on_responseheader_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -96,7 +107,6 @@ cls.NetworkLoggerService = function(view)
   this._on_debug_context_selected_bound = function()
   {
     this._current_context = null;
-    this._view.ondestroy();
     this._view.update();
   }.bind(this);
 
@@ -107,6 +117,7 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
     this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
+    this._res_service.addListener("requestretry", this._on_requestretry_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
@@ -117,21 +128,23 @@ cls.NetworkLoggerService = function(view)
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
-  this.request_body = function(rid, callback)
+  this.request_body = function(itemid, callback)
   {
-    var resource = this.get_resource(rid);
-    var contentmode = cls.ResourceUtil.mime_to_content_mode(resource.mime);
+    if (!this._current_context) { return; }
+    var entry = this._current_context.get_logger_entry(itemid);
+    var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, rid]);
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+    var resourceid = entry.resource.id;
+    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, resourceid]);
+    this._res_service.requestGetResource(tag, [resourceid, [typecode, 1]]);
   };
 
-  this._on_request_body_bound = function(status, data, callback, rid)
+  this._on_request_body_bound = function(status, data, callback, resourceid)
   {
     if (status != 0)
     {
       if (!this._current_context) { return; }
-      this._current_context.update("responsebody", {resourceID: rid});
+      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable
       if (callback) { callback() }
     }
     else
@@ -162,117 +175,226 @@ cls.NetworkLoggerService = function(view)
 
   this.clear_resources = function()
   {
-    this._current_context.resources = [];
+    if (this._current_context)
+      this._current_context.clear_resources();
   };
 
-  this.get_resource = function(rid)
+  this.pause = function()
   {
     if (this._current_context)
-    {
-      return this._current_context.get_resource(rid);
-    }
-    return null;
+      this._current_context.pause();
   };
 
+  this.unpause = function()
+  {
+    if (this._current_context)
+      this._current_context.unpause();
+  };
+
+  this.is_paused = function()
+  {
+    if (this._current_context)
+      return this._current_context._paused;
+  };
   this.init();
 };
 
 
 cls.RequestContext = function()
 {
-  this.resources = [];
+  this._resources = [];
+
+  this._filter_function_bound = function(item)
+  {
+    var success = true;
+    if (this._filters && this._filters.length)
+    {
+      for (var i = 0, filter; filter = this._filters[i]; i++)
+      {
+        if (filter.content)
+        {
+          var list = filter.content.split(",");
+
+          // either type or load_origin matches. pass criteria then depends on is_blacklist.
+          var has_match = list.contains(item.type) || list.contains(item.load_origin);
+          if (has_match === filter.is_blacklist)
+          {
+            success = false;
+          }
+        }
+      }
+    }
+    return success;
+  }.bind(this);
+
+  this.get_resources = function()
+  {
+    var resources = this._resources;
+    if (this._paused)
+    {
+      resources = this._paused_resources;
+    }
+    return resources;
+  }
+
+  this.get_logger_entries = function()
+  {
+    var entries = [];
+    var entries_per_resource = this.get_resources().map(function(res){return res.get_logger_entries()});
+    if (entries_per_resource.length)
+    {
+      entries = entries_per_resource.reduce(function(first, second){return first.concat(second)});
+    }
+    return entries.filter(this._filter_function_bound);
+  }
+
+  this.set_filters = function(filters)
+  {
+    this._filters = filters;
+  }
+
+  this.clear_resources = function()
+  {
+    this._paused_resources = [];
+    this._resources = [];
+  }
+
+  this.pause = function()
+  {
+    // this only pauses adding resources, so that updated info about a request will still show.
+    // this works good as long as we don't have things like streaming.
+    this._paused_resources = this._resources.slice(0);
+    this._paused = true;
+  }
+
+  this.unpause = function()
+  {
+    this._paused_resources = null;
+    this._paused = false;
+  }
+
   this.get_duration = function()
   {
-    var starttimes = this.resources.map(function(e) { return e.starttime });
-    var endtimes = this.resources.map(function(e) { return e.endtime });
-    return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    var entries = this.get_logger_entries();
+    if (entries.length)
+    {
+      var starttimes = entries.map(function(e) { return e.starttime });
+      var endtimes = entries.map(function(e) { return e.endtime });
+      return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    }
+    return 0;
   };
 
   /**
-   * Return duration of request context, rounded upp to closest full second.
+   * Return duration of request context.
    * if width and padlen is set, add the ammount of milliseconds needed to
    * the duration needed to accomodate padlen pixels.
    */
   this.get_coarse_duration = function(padlen, width)
   {
     var t = this.get_duration();
-
     if (padlen && width)
     {
       var millis_per_px = t / width;
       t += (millis_per_px * padlen);
     }
 
-    return Math.ceil(t/1000)*1000;
+    return t;
   };
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_logger_entries().map(function(e) { return e.starttime }));
   };
 
   this.update = function(eventname, event)
   {
     var res = this.get_resource(event.resourceID);
 
-    if (!res && eventname == "urlload")
+    if (!res)
     {
-      res = new cls.Request(event.resourceID);
-      if (this.resources.length == 0) { this.topresource = event.resourceID; }
-      this.resources.push(res);
+      if (eventname == "urlload")
+      {
+        res = new cls.NetworkResource(event.resourceID);
+        this._resources.push(res);
+      }
+      else
+      {
+        // ignoring. Never saw an urlload, or it's already invalidated
+        return;
+      }
     }
-    else if (!res)
+
+    // on every urlload, add a new request
+    var logger_entry = res && res._logger_entries.last;
+
+    // todo: move this to a verify req_id function (determines changed_request_id)
+    var req_ids = res._logger_entries.filter(function(entry){return entry.requestID});
+    var last_request_id = req_ids.last && req_ids.last.requestID;
+    var event_request_id = event.requestID || event.fromRequestID; // fromRequestID is only for OnRequestRetry
+    var changed_request_id = event.requestID &&
+                             last_request_id &&
+                             (last_request_id != event.requestID);
+    if (changed_request_id)
     {
-      // ignoring. Never saw an urlload, or it's allready invalidated
-      return
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      " Unexpected change in requestID on " + eventname +
+                      ": Change from " + last_request_id + " to " + 
+                      event_request_id + ", URL: " + logger_entry.human_url);
     }
-    res.update(eventname, event);
+
+    if (eventname == "urlload" || changed_request_id)
+    {
+      var id = event.resourceID + ":" + res._logger_entries.length;
+      logger_entry = new cls.NetworkLoggerEntry(id, res);
+      if (res._logger_entries.length)
+      {
+        // From the second request on, it's only to be rendered when it touched network. Everything 
+        // else is too much like an internal request, happens randomly and doesn't mean much.
+        logger_entry.invalid_when_network_not_touched = true;
+      }
+      res._logger_entries.push(logger_entry);
+    }
+    // todo: this gets overwritten all the time, possibly keep this together with the updates as in "events"
+    logger_entry.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
+    logger_entry.update(eventname, event);
+    // todo: maybe the request should post a message about having updated, also so the view could update only that
+    views.network_logger.update();
   };
 
   this.get_resource = function(id)
   {
-    return this.resources.filter(function(e) { return e.id == id; })[0];
+    // as this is to return a resource explicitely, it doesn't use get_resources()
+    // because that returnes paused_resources while paused.
+    return this._resources.filter(function(e) { return e.id == id; })[0];
   };
 
-  this.get_resources_for_types = function()
+  this.get_logger_entry = function(id)
   {
-    var types = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resources_for_mimes = function()
-  {
-    var mimes = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resource_groups = function()
-  {
-    var imgs = this.get_resources_for_type("image");
-    var stylesheets = this.get_resources_for_mime("text/css");
-    var markup = this.get_resources_for_mime("text/html",
-                                             "application/xhtml+xml");
-    var scripts = this.get_resources_for_mime("application/javascript",
-                                              "text/javascript");
-
-    var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.resources.filter(function(e) {
-      return known.indexOf(e) == -1;
-    });
-    return {
-      images: imgs, stylesheets: stylesheets, markup: markup,
-      scripts: scripts, other: other
-    };
+    return this.get_logger_entries().filter(function(e) { return e.id == id; })[0];
   };
 };
 
-cls.Request = function(id)
+cls.NetworkResource = function(id)
 {
   this.id = id;
+  this._logger_entries = [];
+  this.get_logger_entries = function()
+  {
+    return this._logger_entries.filter(function(entry)
+    {
+      if (entry.invalid_when_network_not_touched && !entry.touched_network)
+        return false;
+      return true;
+    });
+  }
+}
+
+cls.NetworkLoggerEntry = function(id, resource)
+{
+  this.id = id;
+  this.resource = resource; // todo: apart from the debugging tooltips, this is probably unnecessarry
   this.partial = false;
-  this.finished = false;
   this.url = null;
   this.human_url = "No URL";
   this.result = null;
@@ -281,13 +403,11 @@ cls.Request = function(id)
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.invalid = false;
   this.starttime = null;
   this.requesttime = null;
   this.endtime = null;
   this.cached = false;
   this.touched_network = false;
-  this.duration = null;
   this.request_headers = null;
   this.request_type = null;
   this.requestbody = null;
@@ -299,10 +419,38 @@ cls.Request = function(id)
   this.body_unavailable = false;
   this.responsecode = null;
   this.responsebody = null;
+  this.is_finished = null;
+  this.events = [];
 
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
+    
+    if (!this.events.length)
+    {
+      this.starttime = eventdata.time;
+
+      var d = new Date(this.starttime);
+      var h = "" + d.getHours();
+      if (h.length < 2)
+        h = "0" + h;
+      var m = "" + d.getMinutes();
+      if (m.length < 2)
+        m = "0" + m;
+      var s = "" + d.getSeconds();
+      if (s.length < 2)
+        s = "0" + s;
+      var ms = "" + d.getMilliseconds();
+      while (ms.length < 3)
+        ms = "0" + ms;
+      this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
+    }
+    if (eventdata.time) // todo: could probably always be done, except for the responsebody event, check if it really needs to be listened to.
+    {
+      this.endtime = eventdata.time;
+    }
+    this.events.push({name: eventname, time: eventdata.time});
+
     if (updatefun)
     {
       updatefun.call(this, eventdata);
@@ -313,14 +461,22 @@ cls.Request = function(id)
     }
   };
 
+  this.get_duration = function()
+  {
+    return this.events.length && this.endtime - this.starttime;
+  }
+
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
+    this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
-    this.starttime = Math.round(event.time);
+    if (event.loadOrigin)
+      this.load_origin = {1: "xhr"}[event.loadOrigin];
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
     this._humanize_url();
+    this._guess_type(); // may not yet be correct before mime is set, but will be guessed again anyhow
   };
 
   this._update_event_urlfinished = function(event)
@@ -329,14 +485,12 @@ cls.Request = function(id)
     this.mime = event.mimeType;
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
-    this.endtime = Math.round(event.time);
-    this.duration = this.endtime - this.starttime;
 
     // the assumption is that if we got this far, and there was no
     // response code, meaning no request was sent, the url was cached
     // fixme: special case for file URIs
     if (!this.responsecode) { this.cached = true }
-    this.finished = true;
+    this.is_finished = true;
     this._guess_type();
     this._humanize_url();
   };
@@ -370,12 +524,17 @@ cls.Request = function(id)
       // from the headers. See CORE-39597
       this.requestbody.mimeType = this.request_type;
     }
-    this.requesttime = Math.round(event.time);
+    this.requesttime = event.time;
+  };
+
+  this._update_event_requestretry = function(event)
+  {
+    this.requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
   {
-    this.responsestart = Math.round(event.time);
+    this.responsestart = event.time;
     this.responsecode = event.responseCode;
     if (this.responsecode == "304") { this.cached = true }
   };
@@ -412,15 +571,9 @@ cls.Request = function(id)
 
   this._guess_type = function()
   {
-    if (!this.finished || !this.mime)
-    {
-      this.type = undefined;
-    }
-    else if (this.mime.toLowerCase() == "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.path_to_type(this.url);
-    }
-    else
+    this.type = cls.ResourceUtil.path_to_type(this.url);
+
+    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
     {
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
     }

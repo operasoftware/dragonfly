@@ -452,7 +452,7 @@ cls.StorageDataBase = new function()
         }
       },
       options: {
-        no_default_menu: true,
+        no_group_changing: true,
       }
     }
   };

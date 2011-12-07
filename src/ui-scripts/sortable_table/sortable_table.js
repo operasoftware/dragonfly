@@ -11,11 +11,19 @@
  *         columns: {
  *
  */
-function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
+function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
 {
+  // consts for where the table-options are stored
+  const GROUPER = "table-groupby-" + id,
+        SORTER = "table-sort-col-" + id,
+        SORT_REVERSE = "table-sort-reversed-" + id,
+        COLUMNS = "table-columns-" + id;
+
   this._init = function()
   {
     window.cls.MessageMixin.apply(this);
+
+    // if cols is not passed or restored from localStorage, all tabledef.columns are shown by default
     if (!cols || !cols.length) {
       cols = [];
       for (var key in tabledef.columns) {
@@ -46,29 +54,46 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       }
     }
 
-    if (!sortby)
+    groupby = localStorage[GROUPER] || groupby;
+    sortby = localStorage[SORTER] || sortby;
+    if (localStorage[COLUMNS])
+      var stored_cols = localStorage[COLUMNS].split(",");
+
+    if (
+      localStorage[SORT_REVERSE] !== null &&
+      localStorage[SORT_REVERSE] !== undefined
+    )
     {
-      for (var n=0, key; key=cols[n]; n++)
-      {
-        if (tabledef.columns[key].sorter != "unsortable")
-        {
-          sortby = key;
-          break;
-        }
-      }
+      reversed = localStorage[SORT_REVERSE] === "true";
     }
 
+    this.id = id;
     this.sortby = sortby;
     this.tabledef = tabledef;
-    this.data = data;
-    this.columns = cols;
-    this.orgininal_columns = this.columns.slice(0);
+    if (data)
+      this.set_data(data);
+    this.columns = stored_cols || cols; // the visible columns
+    this.default_columns = cols.slice(0); // the visible columns, as originally passed in. used for restore.
     this.reversed = !!reversed;
     this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
     this._init_handlers();
   }
+
+  this.set_data = function(data)
+  {
+    if (this.tabledef.idgetter)
+    {
+      this._org_data_order = data.map(this.tabledef.idgetter);
+    }
+    this._data = data;
+  };
+
+  this.get_data = function()
+  {
+    return this._data;
+  };
 
   this._init_handlers = function()
   {
@@ -80,7 +105,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     // should be conditional, but doesn't matter as you don't get
     // dupes in the context menu registry anyhow.
     var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("sortable-table-grouper", [
+    contextmenu.register("sortable-table-menu", [
       { callback: this._make_context_menu }
     ]);
   }
@@ -89,25 +114,26 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   {
     var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
-    if (!obj.tabledef.groups) { return [] }
 
-    var menuitems = [{
-      label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
-      selected: !obj.groupby,
-      handler: obj._make_group_handler(null, obj._re_render_table)
-    }];
-
-    for (var group in obj.tabledef.groups)
-    {
+    var menuitems = [];
+    if (obj.tabledef.groups &&
+        !(obj.tabledef.options && obj.tabledef.options.no_group_changing))
+    { 
       menuitems.push({
-        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
-        selected: obj.groupby == group,
-        handler: obj._make_group_handler(group, obj._re_render_table)
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
+        selected: !obj.groupby,
+        handler: obj._make_group_handler(null, obj._re_render_table)
       });
-    }
 
-    // visible column selection stuff
-    menuitems.push(ContextMenu.separator);
+      for (var group in obj.tabledef.groups)
+      {
+        menuitems.push({
+          label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
+          selected: obj.groupby == group,
+          handler: obj._make_group_handler(group, obj._re_render_table)
+        });
+      }
+    }
 
     var allcols = obj.tabledef.column_order;
     if (!allcols)
@@ -119,13 +145,37 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
       }
     }
 
-    for (var n=0, colname; colname=allcols[n]; n++)
+    // When all columns are shown by default, there will be no column selection in
+    // the context menu. Could be an explicite option too, but right now, this is a good fit.
+    if (allcols.join(",") !== obj.default_columns.join(","))
     {
-      coldef = obj.tabledef.columns[colname];
+      // visible column selection stuff
+      menuitems.push(ContextMenu.separator);
+
+      for (var n=0, colname; colname=allcols[n]; n++)
+      {
+        coldef = obj.tabledef.columns[colname];
+        menuitems.push({
+          label: coldef.label,
+          checked: obj.columns.indexOf(colname) != -1,
+          handler: obj._make_colselect_handler(colname, obj._re_render_table)
+        });
+      }
+
+      var is_default_cols = obj.columns.join(",") === obj.default_columns.join(",");
       menuitems.push({
-        label: coldef.label,
-        checked: obj.columns.indexOf(colname) != -1,
-        handler: obj._make_colselect_handler(colname, obj._re_render_table)
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS,
+        handler: !is_default_cols && obj._make_restore_columns_handler(obj._re_render_table),
+        disabled: is_default_cols
+      });
+    }
+
+    if (obj.sortby && obj._org_data_order)
+    { 
+      menuitems.push(ContextMenu.separator);
+      menuitems.push({
+        label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT,
+        handler: obj._make_reset_sort_handler(obj._re_render_table)
       });
     }
     return menuitems;
@@ -164,11 +214,53 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     }
   }
 
+  this._make_restore_columns_handler = function(re_render_table)
+  {
+    return function(evt) {
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
+      obj.restore_columns();
+      re_render_table(obj, evt.target.get_ancestor("table"));
+    }
+  }
+
+  this._make_reset_sort_handler = function(re_render_table)
+  {
+    var make_sort_function = function(idgetter, data_order)
+    {
+      return function(a, b)
+      {
+        var ind_a = data_order.indexOf(idgetter(a));
+        var ind_b = data_order.indexOf(idgetter(b));
+        
+        if (ind_a === ind_b)
+          return 0;
+
+        if (ind_a > ind_b)
+          return 1;
+
+        return -1;
+      }
+    }
+    return function(evt) {
+      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
+      var obj = ObjectRegistry.get_instance().get_object(obj_id);
+      if (obj._org_data_order)
+      {
+        obj.reversed = localStorage[SORT_REVERSE] = null;
+        obj.sortby = localStorage[SORTER] = null;
+        var sort_func = make_sort_function(obj.tabledef.idgetter, obj._org_data_order);
+        obj.set_data(obj.get_data().sort(sort_func));
+        re_render_table(obj, evt.target.get_ancestor("table"));
+      }
+    }
+  }
+
   this._sort_handler = function(evt, target)
   {
     var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
     var obj = ObjectRegistry.get_instance().get_object(obj_id);
-    var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id')
+    var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id');
     obj.sort(col_id);
     obj._re_render_table(obj, target.parentNode.parentNode);
   }
@@ -190,15 +282,15 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
 
   this.render = function()
   {
-    return templates.sortable_table(this.tabledef, this.data, this.objectid,
+    return templates.sortable_table(this.tabledef, this._data, this.objectid,
                                     this.columns, this.groupby, this.sortby,
                                     this.reversed);
   };
 
-  this.restore_columns = function(table)
+  this.restore_columns = function()
   {
-    this.columns = this.orgininal_columns.slice(0);
-    this._re_render_table(this, table);
+    this.columns = this.default_columns.slice(0);
+    localStorage[COLUMNS] = this.columns.join(",");
   }
 
   this._prop_getter = function(name)
@@ -223,10 +315,16 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
   {
     if (col == this.sortby) {
       this.reversed = !this.reversed;
+      if (this.id)
+        localStorage[SORT_REVERSE] = this.reversed;
+
     }
     else
     {
       this.sortby = col;
+      if (this.id)
+        localStorage[SORTER] = col;
+
     }
   };
 
@@ -240,6 +338,9 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     {
       this.groupby = group;
     }
+    if (this.id)
+      localStorage[GROUPER] = this.groupby;
+
   }
 
   this.togglecol = function(col)
@@ -254,6 +355,8 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed)
     {
       this.columns.splice(index, 1);
     }
+    if (this.id)
+      localStorage[COLUMNS] = this.columns.join(",");
   }
 
   this._init();
@@ -272,7 +375,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
                
   if (!tabledef.options || !tabledef.options.no_default_menu)
   {
-    table.push("data-menu", "sortable-table-grouper");
+    table.push("data-menu", "sortable-table-menu");
   }
   return table;
 }
@@ -341,7 +444,7 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
   }
   else
   {
-    groupnames.sort()
+    groupnames.sort();
   }
 
   var render_group_headers = groupby && groupnames.length > 0;
@@ -355,9 +458,10 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
 
 templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, groupby, sortby, reversed)
 {
-  var sorter = tabledef.columns[sortby].sorter;
-  if (sorter) { data.sort(sorter) }
+  var sorter = sortby && tabledef.columns[sortby].sorter;
+  if (sorter) { data.sort(sorter); }
   if (reversed) { data.reverse() }
+
   var tpl = [];
   if (render_header) {
     var renderer = tabledef.groups[groupby].renderer || function(g) { return g };
@@ -374,7 +478,7 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
     tpl.push(row);
   }
 
-  var ret =  tpl.concat(data.map(function(item) {
+  var ret = tpl.concat(data.map(function(item) {
     return templates.sortable_table_row(tabledef, item, cols)
   }));
 
@@ -411,7 +515,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
-              var title_templ=[];
+              var title_templ = [];
               if (typeof content == "string")
               {
                 title_templ = ["title", content]; // fixme: use custom title renderer.
