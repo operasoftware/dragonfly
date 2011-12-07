@@ -311,7 +311,7 @@ cst-option.selected-runtime
 }
 
 
-/* styleseeht view */
+/* stylesheet view */
 
 .css-declaration
 {
@@ -336,7 +336,7 @@ cst-option.selected-runtime
 }
 
 .enable-disable.hidden
-{ 
+{
   visibility: hidden;
 }
 
@@ -348,7 +348,7 @@ cst-option.selected-runtime
 
 .css-rule
 {
-  display:block;
+  display: block;
   margin: 5px 0;
 }
 
@@ -612,7 +612,7 @@ parent-offset
 
 .offsets
 {
-    border-spacing: 0;
+  border-spacing: 0;
 }
 
 .offsets th

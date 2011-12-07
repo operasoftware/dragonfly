@@ -56,7 +56,8 @@ cls.CSSInspectorView.create_ui_widgets = function()
     null,
     "document",
     {
-      "show-expanded-properties": function(value) {
+      "show-expanded-properties": function(value)
+      {
         window.settings["css-inspector"].set("show-expanded-properties", value);
         element_style.update();
       }

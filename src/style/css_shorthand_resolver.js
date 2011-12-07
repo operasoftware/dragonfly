@@ -2,7 +2,7 @@
 
 /**
  * Resolve expanded properties (e.g. margin-{top,right,bottom,left})
- * a shorthand.
+ * to a shorthand.
  *
  * @constructor
  * @requires CssValueTokenizer
@@ -32,6 +32,7 @@ var CssShorthandResolver = function()
     var shorthands_map = CssShorthandResolver.property_to_shorthand;
     var props_map = CssShorthandResolver.shorthands;
 
+    // This loop terminates when all shorthands are converted
     while (true)
     {
       var converted_shorthands = [];
@@ -160,7 +161,7 @@ var CssShorthandResolver = function()
 
 CssShorthandResolver.get_instance = function()
 {
-  return new CssShorthandResolver();
+  return CssShorthandResolver._instance || new CssShorthandResolver();
 };
 
 /**
@@ -213,8 +214,7 @@ CssShorthandResolver.shorthands = (function() {
     var first = arguments[0];
     var rest = Array.prototype.slice.call(arguments, 1);
     var all_equal = rest.every(function(arg) {
-      return JSON.stringify(first.value) == JSON.stringify(arg.value) &&
-             first.is_applied == arg.is_applied;
+      return JSON.stringify(first) == JSON.stringify(arg);
     });
     return all_equal;
   };
@@ -225,6 +225,26 @@ CssShorthandResolver.shorthands = (function() {
       value: decl.value,
       is_applied: decl.is_applied
     };
+  };
+
+  var convert_border_radius_values = function(declarations) {
+    var values = {};
+    for (var decl in declarations)
+    {
+      var split_values = declarations[decl].value.split(" ");
+      values[decl] = {
+        horizontal: {
+          value: split_values[0],
+          is_applied: declarations[decl].is_applied
+        },
+        vertical: {
+          // If there is no vertical radius, it's the same as the horizontal one
+          value: split_values[1] || split_values[0],
+          is_applied: declarations[decl].is_applied
+        }
+      };
+    }
+    return values;
   };
 
   var get_initial_value = cls.Stylesheets.get_initial_value;
@@ -360,17 +380,102 @@ CssShorthandResolver.shorthands = (function() {
       properties: [
         "border-top-left-radius",
         "border-top-right-radius",
-        "border-bottom-left-radius",
-        "border-bottom-right-radius"
+        "border-bottom-right-radius",
+        "border-bottom-left-radius"
       ],
       format: function(decls) {
-        if (compare_values(decls["border-top-left-radius"],
-                           decls["border-top-right-radius"],
-                           decls["border-bottom-left-radius"],
-                           decls["border-bottom-right-radius"]))
+        var template = [];
+        var declarations = convert_border_radius_values(decls);
+
+        if (compare_values(declarations["border-top-left-radius"].horizontal,
+                           declarations["border-top-right-radius"].horizontal,
+                           declarations["border-bottom-right-radius"].horizontal,
+                           declarations["border-bottom-left-radius"].horizontal)
+        )
         {
-          return [get_tokens(decls["border-top-left-radius"])];
+          template.push(declarations["border-top-left-radius"].horizontal);
         }
+        else if (compare_values(declarations["border-top-right-radius"].horizontal,
+                                declarations["border-bottom-left-radius"].horizontal)
+        )
+        {
+          if (compare_values(declarations["border-top-left-radius"].horizontal,
+                             declarations["border-bottom-right-radius"].horizontal))
+          {
+            template.push(declarations["border-top-left-radius"].horizontal, " ",
+                          declarations["border-top-right-radius"].horizontal);
+          }
+          else
+          {
+            template.push(declarations["border-top-left-radius"].horizontal, " ",
+                          declarations["border-top-right-radius"].horizontal, " ",
+                          declarations["border-bottom-right-radius"].horizontal);
+          }
+        }
+        else
+        {
+          template.push(declarations["border-top-left-radius"].horizontal, " ",
+                        declarations["border-top-right-radius"].horizontal, " ",
+                        declarations["border-bottom-right-radius"].horizontal, " ",
+                        declarations["border-bottom-left-radius"].horizontal);
+        }
+
+        // If horizontal and vertical radii match, and all statuses (is_applied)
+        // matches, skip the vertical radius as it's the same as the horizontal
+        if (compare_values(declarations["border-top-left-radius"].horizontal,
+                           declarations["border-top-left-radius"].vertical)
+         && compare_values(declarations["border-top-right-radius"].horizontal,
+                           declarations["border-top-right-radius"].vertical)
+         && compare_values(declarations["border-bottom-right-radius"].horizontal,
+                           declarations["border-bottom-right-radius"].vertical)
+         && compare_values(declarations["border-bottom-left-radius"].horizontal,
+                           declarations["border-bottom-left-radius"].vertical)
+         && (compare_values(decls["border-top-left-radius"].is_applied,
+                            decls["border-top-right-radius"].is_applied,
+                            decls["border-bottom-right-radius"].is_applied,
+                            decls["border-bottom-left-radius"].is_applied, true))
+        )
+        {
+          return template;
+        }
+
+        // Add vertical radii
+        template.push("/");
+
+        if (compare_values(declarations["border-top-left-radius"].vertical,
+                           declarations["border-top-right-radius"].vertical,
+                           declarations["border-bottom-right-radius"].vertical,
+                           declarations["border-bottom-left-radius"].vertical)
+        )
+        {
+          template.push(declarations["border-top-left-radius"].vertical);
+        }
+        else if (compare_values(declarations["border-top-right-radius"].vertical,
+                                declarations["border-bottom-left-radius"].vertical)
+        )
+        {
+          if (compare_values(declarations["border-top-left-radius"].vertical,
+                             declarations["border-bottom-right-radius"].vertical))
+          {
+            template.push(declarations["border-top-left-radius"].vertical, " ",
+                          declarations["border-top-right-radius"].vertical);
+          }
+          else
+          {
+            template.push(declarations["border-top-left-radius"].vertical, " ",
+                          declarations["border-top-right-radius"].vertical, " ",
+                          declarations["border-bottom-right-radius"].vertical);
+          }
+        }
+        else
+        {
+          template.push(declarations["border-top-left-radius"].vertical, " ",
+                        declarations["border-top-right-radius"].vertical, " ",
+                        declarations["border-bottom-right-radius"].vertical, " ",
+                        declarations["border-bottom-left-radius"].vertical);
+        }
+
+        return template;
       }
     },
 
