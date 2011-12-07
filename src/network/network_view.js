@@ -434,7 +434,7 @@ cls.NetworkLog.create_ui_widgets = function()
         handler: "network-text-filter",
         shortcuts: "network-text-filter",
         title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER
+        label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
     ],
     null,
