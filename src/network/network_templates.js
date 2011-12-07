@@ -462,6 +462,7 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
   // to the old objects
   if (item_order)
   {
+    item_order = item_order.split(","); // todo: this could also be passed as an array, but it needs to be joined to compare, and for easy copying
     items.sort(function(a, b)
       {
         var ind_a = item_order.indexOf(a.id);

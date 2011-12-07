@@ -269,7 +269,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
           needs_update = true; // todo: this causes another re-rendering for every added resource. optimize.
         }
       }
-      // check if the visible columns are still the same, as the filters need updating if not.
+      // check if the visible columns are still the same, as the filters need updating if not. todo: no, the string filter is gone now.
       // it's good to do this, even if needs_update is already true, because it stores the _table_columns
       // for later reference. saves one redraw.
       var old_table_columns = this._table_columns;
