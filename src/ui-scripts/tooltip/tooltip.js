@@ -302,11 +302,29 @@
     _tooltip_ele_first_child = _tooltip_ele.firstChild;
     window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
-    var style = document.styleSheets.getDeclaration("#tooltip-container");
-    _padding_width = parseInt(style.getPropertyValue("padding-left")) +
-                     parseInt(style.getPropertyValue("padding-right"));
-    _padding_height = parseInt(style.getPropertyValue("padding-top")) +
-                      parseInt(style.getPropertyValue("padding-bottom"));
+    ["#tooltip-container",
+     "#tooltip-background"].forEach(function(selector)
+    {
+      var style = document.styleSheets.getDeclaration(selector);
+      ["padding-left",
+       "border-left-width",
+       "padding-right",
+       "border-right-width",
+       "padding-top",
+       "border-top-width",
+       "padding-bottom",
+       "border-bottom-width"].forEach(function(prop)
+      {
+        var value = parseInt(style.getPropertyValue(prop));
+        if (value)
+        {
+          if (prop.contains("left") || prop.contains("right")) 
+            _padding_width += value;
+          else
+            _padding_height += value;
+        }
+      });
+    })
   };
 
   /* implementation */
