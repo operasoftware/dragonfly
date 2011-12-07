@@ -674,6 +674,7 @@ templates.network_graph_entry_tooltip = function(entry, height)
   {
     var graphical_sections = [];
     var scale = height / duration;
+    var total_length_string = new Number(duration).toFixed(2) + "ms";
 
     var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs);
     gaps.map(function(section){section.px = section.val * scale}); // or include this in the template
@@ -711,19 +712,23 @@ templates.network_graph_entry_tooltip = function(entry, height)
     if (entry.is_finished)
     {
       event_rows.push(["tr",
-               ["td", new Number(duration).toFixed(2) + "ms", "class", "time_data mono"],
+               ["td", total_length_string, "class", "time_data mono"],
                ["td", "Total"],
                "class", "summer"
              ])
     }
+    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
+    var base_width = 100;
+    var svg_width = base_width;
+    var svg_height = height;
 
     var pathes = [];
     var y_start = 0;
     var y_end = 0;
-    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
     var max_val_length = Math.max.apply(null, entry.events.map(function(ev){return ev.time_str.length}));
+    max_val_length = Math.max(max_val_length, total_length_string.length);
 
-    var legend_pointer_width = max_val_length * CHARWIDTH;
+    var pointer_extra_width = max_val_length * CHARWIDTH;
 
     entry.events.forEach(function(ev)
     {
@@ -732,34 +737,36 @@ templates.network_graph_entry_tooltip = function(entry, height)
         y_start += gaps[pathes.length - 1].px;
       }
 
-      var x_start = 1;
-      var x_end = 99;
-      if (ev.time_str.length < max_val_length)
-        x_end += ((max_val_length - ev.time_str.length) * CHARWIDTH);
+      var x_start = 0;
+      var x_end = base_width + ((max_val_length - ev.time_str.length) * CHARWIDTH);
+      svg_width = Math.max(x_end, svg_width);
 
       y_end = (pathes.length * 16) + 9;
+      svg_height = Math.max(y_start, y_end, svg_height);
 
       pathes.push(["path", "d", "M1 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
-/* fugly bezier stuff
-      var x_bez_offset = (x_end - x_start) / 2;
-      var y_bez_offset = (y_end - y_start) / 3;
-    pathes.push(["path",
-                    "d", "M" + x_start + " " + y_start + " C" + (x_start + x_bez_offset) + " " + (y_start + y_bez_offset) + "," + (x_end - x_bez_offset) + " " + (y_end - y_bez_offset) + "," + x_end + " " + y_end,
-                    "stroke", "#777",
-                    "fill", "none"]); */
     });
 
     return ["div",
       [
         ["h2", "Requested at " +  entry.start_time_string],
-        ["div", graphical_sections, "class", "network-tooltip-graph"],
-        ["div", 
-          ["svg:svg", pathes,
-            "width",  (100 + legend_pointer_width) + "px",
-            "height", Math.max(y_start, y_end, height) + "px",
-            "version", "1.1"
-          ], "style", "margin-right: " + "-" + legend_pointer_width + "px", "class", "network-tooltip-legend-pointer"],
-        ["div", ["table", event_rows], "class", "network-tooltip-legend"]
+        ["div",
+          ["div",
+            ["div", graphical_sections, "class", "network-tooltip-graph-sections"],
+            "class", "network-tooltip-graph"
+          ],
+          ["div", 
+            ["svg:svg", pathes,
+              "width",  svg_width + "px",
+              "height", svg_height + "px",
+              "version", "1.1",
+              "style", "position: absolute;"
+            ], "class", "network-tooltip-pointers"],
+          ["div",
+            ["table", event_rows],
+            "class", "network-tooltip-legend"
+          ],
+        "class", "network-tooltip-row"]
       ], "class", "network-tooltip-container"
     ];
   }
