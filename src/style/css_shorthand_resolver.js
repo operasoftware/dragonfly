@@ -433,7 +433,7 @@ CssShorthandResolver.shorthands = (function() {
          && (compare_values(decls["border-top-left-radius"].is_applied,
                             decls["border-top-right-radius"].is_applied,
                             decls["border-bottom-right-radius"].is_applied,
-                            decls["border-bottom-left-radius"].is_applied, true))
+                            decls["border-bottom-left-radius"].is_applied))
         )
         {
           return template;
