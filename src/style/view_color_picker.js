@@ -55,7 +55,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
           break;
       }
 
-      context.ele_value.firstChild.nodeValue = color_value + (context.is_important ? " !important" : "");
+      context.ele_value.firstChild.textContent = color_value + (context.is_important ? " !important" : "");
       context.ele_color_sample.style.backgroundColor = color_value;
       var script = "";
       if (!context.is_svg)

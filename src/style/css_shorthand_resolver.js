@@ -189,7 +189,7 @@ CssShorthandResolver.shorthands = (function() {
       tokenizer.tokenize(decls[prop].value, function(type, value) {
         if (type == CssValueTokenizer.types.OPERATOR && value == ",")
         {
-          value_list[value_list.length] = [];
+          value_list.push("");
           return;
         }
         value_list[value_list.length-1] += value;
