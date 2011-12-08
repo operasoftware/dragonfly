@@ -43,6 +43,7 @@ cls.JSSourceTooltip = function(view)
   var _esde = null;
   var _is_over_tooltip = false;
   var _selection = null;
+  var _last_script_text = "";
 
   var _onmousemove = function(event)
   {
@@ -80,6 +81,7 @@ cls.JSSourceTooltip = function(view)
   var _clear_selection = function()
   {
     _identifier = null;
+    _last_script_text = "";
     _last_poll = {};
     _view.higlight_slice();
     _tooltip.hide();
@@ -95,17 +97,13 @@ cls.JSSourceTooltip = function(view)
       if (_is_over_identifier_boxes(_last_move_event))
       {
         _identifier_out_count = 0;
-        return;
-      }
-
-      if (_identifier_out_count > 1)
-      {
-        _clear_selection();
       }
       else
       {
-        _identifier_out_count += 1;
-        return;
+        if (_identifier_out_count > 1)
+          _clear_selection();
+        else
+          _identifier_out_count += 1;
       }
     }
     
@@ -144,10 +142,6 @@ cls.JSSourceTooltip = function(view)
           };
           _handle_poll_position(script, line_number, char_offset, box);
         }
-        else
-        {
-          _clear_selection();
-        }
       }
       else
       {
@@ -180,18 +174,22 @@ cls.JSSourceTooltip = function(view)
       var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
       var end = script.line_arr[sel.end_line - 1] + sel.end_offset;
       var script_text = script.script_data.slice(start, end + 1);
-      var rt_id = window.runtimes.getSelectedRuntimeId();
-      var thread_id = window.stop_at.getThreadId();
-      var frame_index = window.stop_at.getSelectedFrameIndex();
-      if (frame_index == -1)
+      if (script_text != _last_script_text)
       {
-        thread_id = 0;
-        frame_index = 0;
+        _last_script_text = script_text;
+        var rt_id = window.runtimes.getSelectedRuntimeId();
+        var thread_id = window.stop_at.getThreadId();
+        var frame_index = window.stop_at.getSelectedFrameIndex();
+        if (frame_index == -1)
+        {
+          thread_id = 0;
+          frame_index = 0;
+        }
+        var args = [script, line_number, char_offset, box, sel, rt_id];
+        var tag = _tagman.set_callback(null, _handle_script, args);
+        var msg = [rt_id, thread_id, frame_index, script_text];
+        _esde.requestEval(tag, msg);
       }
-      var args = [script, line_number, char_offset, box, sel, rt_id];
-      var tag = _tagman.set_callback(null, _handle_script, args);
-      var msg = [rt_id, thread_id, frame_index, script_text];
-      _esde.requestEval(tag, msg);
     }
   };
 
