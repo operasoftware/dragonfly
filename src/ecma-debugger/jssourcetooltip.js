@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 cls.JSSourceTooltip = function(view)
 {
@@ -33,6 +35,7 @@ cls.JSSourceTooltip = function(view)
   var _container_box = null;
   var _char_width = 0;
   var _line_height = 0;
+  var _tab_size = 0;
   var _default_offset = 10;
   var _total_y_offset = 0;
   var _last_poll = {};
@@ -44,48 +47,6 @@ cls.JSSourceTooltip = function(view)
   var _is_over_tooltip = false;
   var _selection = null;
   var _last_script_text = "";
-
-  var _onmousemove = function(event)
-  {
-    _last_move_event = event;
-  };
-
-  var _get_mouse_pos_center = function()
-  {
-    var center = null;
-    if (_mouse_positions.length > 2)
-    {
-      var min_x = MIN(_mouse_positions[0].x,
-                      _mouse_positions[1].x,
-                      _mouse_positions[2].x);
-      var max_x = MAX(_mouse_positions[0].x,
-                      _mouse_positions[1].x,
-                      _mouse_positions[2].x);
-      var min_y = MIN(_mouse_positions[0].y,
-                      _mouse_positions[1].y,
-                      _mouse_positions[2].y);
-      var max_y = MAX(_mouse_positions[0].y,
-                      _mouse_positions[1].y,
-                      _mouse_positions[2].y);
-      var dx = max_x - min_x;
-      var dy = max_y - min_y;
-
-      center = {x: min_x + dx / 2,
-                y: min_y + dy / 2,
-                r: POW(POW(dx / 2, 2) + POW(dy / 2, 2), 0.5)};
-    }
-
-    return center;
-  };
-
-  var _clear_selection = function()
-  {
-    _identifier = null;
-    _last_script_text = "";
-    _last_poll = {};
-    _view.higlight_slice();
-    _tooltip.hide();
-  };
 
   var _poll_position = function()
   {
@@ -148,22 +109,6 @@ cls.JSSourceTooltip = function(view)
         _clear_selection();
       }
     }
-  };
-
-  var _is_over_identifier_boxes = function(event)
-  {
-    var off_x = _total_y_offset - _container.scrollLeft;
-    var off_y = _container_box.top - (_view.getTopLine() - 1) * _line_height;
-    var e_x = event.clientX - off_x;
-    var e_y = event.clientY - off_y;
-
-    for (var i = 0, box; box = _identifier_boxes[i]; i++)
-    {
-      if (e_x >= box.left && e_x <= box.right &&
-          e_y >= box.top && e_y <= box.bottom)
-        return true;
-    }
-    return false;
   };
 
   var _handle_poll_position = function(script, line_number, char_offset, box)
@@ -239,14 +184,12 @@ cls.JSSourceTooltip = function(view)
                      "class", "js-tooltip"];
         _tooltip.show(tmpl, box);
       }
-
       _identifier = selection;
       _identifier_out_count = 0;
       _update_identifier_boxes(script, _identifier);
       // TODO different lines
       _view.higlight_slice(line_number, _identifier.start_offset, 
                                         _identifier.end_offset - _identifier.start_offset + 1);
-      
     }
   }
 
@@ -268,7 +211,6 @@ cls.JSSourceTooltip = function(view)
         break;
     }
 
-
     if ((tokens[i][TYPE] == IDENTIFIER &&
          !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
          (tokens[i][TYPE] == PUNCTUATOR &&
@@ -277,9 +219,9 @@ cls.JSSourceTooltip = function(view)
       var start = _get_identifier_chain_start(script, line_number, tokens, i);
       var end = _get_identifier_chain_end(script, line_number, tokens, i);
       return {start_line: start.start_line,
-                 start_offset: start.start_offset,
-                 end_line: end.end_line,
-                 end_offset: end.end_offset};
+              start_offset: start.start_offset,
+              end_line: end.end_line,
+              end_offset: end.end_offset};
     }
     
     return null;
@@ -298,6 +240,7 @@ cls.JSSourceTooltip = function(view)
     if (previous_token[VALUE] == "]")
       bracket_stack.push(previous_token);
 
+    // TODO handle multiple lines
     while (!got_start)
     {
       for (var i = match_index - 1, token = null; token = tokens[i]; i--)
@@ -425,7 +368,7 @@ cls.JSSourceTooltip = function(view)
     } 
 
 
-    for (i = 0, sum = 0; i <= index; i++)
+    for (var i = 0, sum = 0; i <= index; i++)
     {
       sum += tokens[i][VALUE].length;
     }
@@ -444,6 +387,7 @@ cls.JSSourceTooltip = function(view)
     if (previous_token[VALUE] == "[")
       bracket_stack.push(previous_token[TYPE]);
 
+    // TODO handle multiple lines
     while (!got_end && bracket_stack.length)
     {
       for (var i = match_index + 1, token = null; token = tokens[i]; i++)
@@ -587,15 +531,41 @@ cls.JSSourceTooltip = function(view)
       break;
     } 
 
-    for (i = 0, sum = 0; i <= index; i++)
+    for (var i = 0, sum = 0; i <= index; i++)
     {
       sum += tokens[i][VALUE].length;
     }
     return {end_line: line_number, end_offset: sum - 1}
   };
 
+  var _get_mouse_pos_center = function()
+  {
+    var center = null;
+    if (_mouse_positions.length > 2)
+    {
+      var min_x = MIN(_mouse_positions[0].x,
+                      _mouse_positions[1].x,
+                      _mouse_positions[2].x);
+      var max_x = MAX(_mouse_positions[0].x,
+                      _mouse_positions[1].x,
+                      _mouse_positions[2].x);
+      var min_y = MIN(_mouse_positions[0].y,
+                      _mouse_positions[1].y,
+                      _mouse_positions[2].y);
+      var max_y = MAX(_mouse_positions[0].y,
+                      _mouse_positions[1].y,
+                      _mouse_positions[2].y);
+      var dx = max_x - min_x;
+      var dy = max_y - min_y;
 
-  _update_identifier_boxes = function(script, identifier)
+      center = {x: min_x + dx / 2,
+                y: min_y + dy / 2,
+                r: POW(POW(dx / 2, 2) + POW(dy / 2, 2), 0.5)};
+    }
+    return center;
+  };
+
+  var _update_identifier_boxes = function(script, identifier)
   {
     // translates the current selected identifier to dimesion boxes
     // position and dimensions are absolute to the source text
@@ -624,10 +594,29 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
-  var _get_tab_size = function()
+  var _is_over_identifier_boxes = function(event)
   {
-    var style_dec = document.styleSheets.getDeclaration("#js-source-content div");
-    return style_dec ? parseInt(style_dec.getPropertyValue("-o-tab-size")) : 0;
+    var off_x = _total_y_offset - _container.scrollLeft;
+    var off_y = _container_box.top - (_view.getTopLine() - 1) * _line_height;
+    var e_x = event.clientX - off_x;
+    var e_y = event.clientY - off_y;
+
+    for (var i = 0, box; box = _identifier_boxes[i]; i++)
+    {
+      if (e_x >= box.left && e_x <= box.right &&
+          e_y >= box.top && e_y <= box.bottom)
+        return true;
+    }
+    return false;
+  };
+
+  var _clear_selection = function()
+  {
+    _identifier = null;
+    _last_script_text = "";
+    _last_poll = {};
+    _view.higlight_slice();
+    _tooltip.hide();
   };
 
   var _get_char_offset = function(line, offset)
@@ -641,7 +630,6 @@ cls.JSSourceTooltip = function(view)
       if (offset_count > offset)
         return i;
     }
-
     return -1;
   };
 
@@ -658,6 +646,25 @@ cls.JSSourceTooltip = function(view)
                      : 1;
     }
     return offset_count * _char_width;
+  };
+
+  var _get_tab_size = function()
+  {
+    var style_dec = document.styleSheets.getDeclaration("#js-source-content div");
+    return style_dec ? parseInt(style_dec.getPropertyValue("-o-tab-size")) : 0;
+  };
+
+  var _get_container_box = function()
+  {
+    if (_container)
+      _container_box = _container.getBoundingClientRect();
+  };
+
+  /* event handlers */
+
+  var _onmousemove = function(event)
+  {
+    _last_move_event = event;
   };
 
   var _ontooltip = function(event, target)
@@ -707,12 +714,6 @@ cls.JSSourceTooltip = function(view)
   var _ontooltipleave = function(event)
   {
     _is_over_tooltip = false;
-  };
-
-  var _get_container_box = function()
-  {
-    if (_container)
-      _container_box = _container.getBoundingClientRect();
   };
 
   var _onmonospacefontchange = function(msg)
