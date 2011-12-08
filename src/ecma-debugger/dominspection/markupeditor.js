@@ -161,6 +161,7 @@ var DOMMarkupEditor = function()
 
   this.set_textarea_dimensions = function()
   {
+    this.textarea.style.height = 0;
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
