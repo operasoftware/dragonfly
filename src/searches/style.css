@@ -177,15 +177,13 @@
   width: 100%;
 }
 
-.advanced-search .container-button
+.advanced-search .ui-button
 {
-  height: 17px;
-  border-radius: 0px;
-  padding: 1px 6px;
-  box-shadow: none;
-  border-right: none;
-  border-top: none;
-  border-bottom: none;
+  border-radius: 0;
+  margin: 0;
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
 }
 
 .advanced-search .search-move-highlight-down
