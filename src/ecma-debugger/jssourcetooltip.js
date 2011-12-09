@@ -130,7 +130,7 @@ cls.JSSourceTooltip = function(view)
           thread_id = 0;
           frame_index = 0;
         }
-        var args = [script, line_number, char_offset, box, sel, rt_id];
+        var args = [script, line_number, char_offset, box, sel, rt_id, script_text];
         var tag = _tagman.set_callback(null, _handle_script, args);
         var msg = [rt_id, thread_id, frame_index, script_text];
         _esde.requestEval(tag, msg);
@@ -145,7 +145,8 @@ cls.JSSourceTooltip = function(view)
                                 char_offset,
                                 box,
                                 selection,
-                                rt_id)
+                                rt_id,
+                                script_text)
   {
     var STATUS = 0;
     var TYPE = 1;
@@ -188,21 +189,34 @@ cls.JSSourceTooltip = function(view)
       _identifier_out_count = 0;
       _update_identifier_boxes(script, _identifier);
       // TODO different lines
-      _view.higlight_slice(line_number, _identifier.start_offset, 
-                                        _identifier.end_offset - _identifier.start_offset + 1);
+      _view.higlight_slice(_identifier.start_line, _identifier.start_offset,
+                                        script_text.length);
+                                        //_identifier.end_offset - _identifier.start_offset + 1);
     }
-  }
+  };
+
+  var _get_tokens_of_line = function(script, line_number)
+  {
+    var tokens = [];
+    if (script)
+    {
+      var line = script.get_line(line_number);
+      var start_state = script.state_arr[line_number - 1];
+
+      if (line)
+      {
+        _tokenizer.tokenize(line, function(token_type, token)
+        {
+          tokens.push([token_type, token]);
+        }, false, start_state);
+      }
+    }
+    return tokens;
+  };
 
   var _get_identifier = function(script, line_number, char_offset)
   {
-    var line = script.get_line(line_number);
-    var start_state = script.state_arr[line_number - 1];
-    var tokens = [];
-
-    _tokenizer.tokenize(line, function(token_type, token)
-    {
-      tokens.push([token_type, token]);
-    }, false, start_state);
+    var tokens = _get_tokens_of_line(script, line_number);
 
     for (var i = 0, sum = 0; i < tokens.length; i++)
     {
@@ -359,20 +373,38 @@ cls.JSSourceTooltip = function(view)
             break;
           }
         }
+        break;
+      }
 
+      if (i == -1)
+      {
+        start_line--;
+        var new_tokens = _get_tokens_of_line(script, start_line);
+
+        if (new_tokens.length)
+        {
+          match_index = new_tokens.length;
+          index += match_index;
+          tokens = new_tokens.extend(tokens);
+        }
+        else
+        {
+          got_start = true;
+          break;
+        }
+      }
+      else
+      {
         got_start = true;
         break;
       }
-      got_start = true;
-      break;
     } 
-
 
     for (var i = 0, sum = 0; i <= index; i++)
     {
       sum += tokens[i][VALUE].length;
     }
-    return {start_line: line_number, start_offset: sum}
+    return {start_line: start_line, start_offset: sum}
   };
 
   var _get_identifier_chain_end = function(script, line_number, tokens, match_index)
