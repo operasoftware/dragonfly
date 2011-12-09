@@ -215,6 +215,8 @@
 
       if (content)
       {
+        _tooltip_ele_first_child.scrollTop = 0;
+        _tooltip_ele_first_child.scrollLeft = 0;
         if (typeof content == "string")
           _current_tooltip._container.textContent = content;
         else
