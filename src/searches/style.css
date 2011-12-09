@@ -50,8 +50,8 @@
 .search-highlight-between,
 .search-highlight-selected-last,
 .search-highlight-selected-between,
-.search-highlight-selected-last,
-.search-highlight-selected-between
+.js-identifier-selected-last,
+.js-identifier-selected-between
 {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
