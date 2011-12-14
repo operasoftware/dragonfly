@@ -144,7 +144,7 @@ cls.NetworkLoggerService = function(view)
     if (status != 0)
     {
       if (!this._current_context) { return; }
-      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable
+      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable, the object passed represents empty event_data
       if (callback) { callback() }
     }
     else
@@ -357,7 +357,12 @@ cls.RequestContext = function()
     }
     // todo: this gets overwritten all the time, possibly keep this together with the updates as in "events"
     logger_entry.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
-    logger_entry.update(eventname, event);
+
+    // for the responsebody event, call update_event_responsebody directly, as this is not recorded in the events of an entry
+    if (eventname === "responsebody")
+      logger_entry.update_event_responsebody(event);
+    else
+      logger_entry.update(eventname, event);
     // todo: maybe the request should post a message about having updated, also so the view could update only that
     views.network_logger.update();
   };
@@ -425,7 +430,7 @@ cls.NetworkLoggerEntry = function(id, resource)
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
-    
+
     if (!this.events.length)
     {
       this.starttime = eventdata.time;
@@ -449,7 +454,7 @@ cls.NetworkLoggerEntry = function(id, resource)
     {
       this.endtime = eventdata.time;
     }
-    this.events.push({name: eventname, time: eventdata.time});
+    this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
 
     if (updatefun)
     {
@@ -553,7 +558,7 @@ cls.NetworkLoggerEntry = function(id, resource)
     }
   };
 
-  this._update_event_responsebody = function(event)
+  this.update_event_responsebody = function(event)
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
@@ -562,11 +567,6 @@ cls.NetworkLoggerEntry = function(id, resource)
   this._update_event_urlredirect = function(event)
   {
       // code
-  };
-
-  this.get_source = function()
-  {
-    // cache, file, http, https ..
   };
 
   this._guess_type = function()

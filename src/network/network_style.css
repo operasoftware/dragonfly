@@ -314,6 +314,12 @@
   height: 24px;
 }
 
+.network_logger .network-data-container table tr .network-graph-column
+{
+  line-height: 0;
+  padding-top: 1px;
+}
+
 .network-graph-sections-hitarea
 {
   vertical-align: top;
@@ -409,15 +415,40 @@
   width: 28px;
 }
 
-.network-tooltip-container .time_data
+.network-tooltip-legend table td
 {
-  text-align: right;
-  padding-bottom: 0;
+  padding: 3px 0;
 }
 
-.network-tooltip-container td {
-  padding-bottom: 1px; /* todo: I don't know why the monospaced .time_data is not aligned propperly without that */
+.network-tooltip-legend .time_data
+{
+  text-align: right;
+  position: relative;
+  top: -9px;
+  padding-left: 4px;
 }
+
+.network-log-url-list li .request-origin-xhr:before {
+  content: "XHR";
+  display: inline-block;
+  background: yellow;
+  font-size: 7px;
+  border-radius: 2px;
+  border: 1px solid #BABABA;
+  position: relative;
+  top: 2px;
+}
+
+/* debug styles
+.network-unexpected_network_event_sequence {
+  outline: 1px dashed red;
+}
+
+.network-graph-sections.has-unexpected-events
+{
+  border: 1px dashed red;
+}
+*/
 
 /* colors mostly inspired by http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/ */
 

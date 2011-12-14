@@ -897,6 +897,9 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
+/* DESC: Message about not yet available response body */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
+
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
 

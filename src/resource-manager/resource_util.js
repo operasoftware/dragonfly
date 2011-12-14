@@ -68,6 +68,7 @@ cls.ResourceUtil.extension_type_map = { // todo: maybe only list extensions & mi
   pcx: "image",
   ico: "image",
   jpeg: "image",
+  gif: "image",
 
   oex: "extension",
 

@@ -137,7 +137,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     };
     var filter_compare = filters.length ? 
                            JSON.stringify(filters) : undefined;
-    if (this._current_filters !== filter_compare)
+    if (this._current_filters !== filter_compare)  // todo: without a get_filters method, we can't actually compare if they are set. it's probably cheap to set it always and remove _current_filters
     {
       ctx.set_filters(filters);
       this._current_filters = filter_compare;
@@ -179,7 +179,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   };
 
   this._tabledef = {
-    column_order: ["method", "status", "mime", "protocol", "size", "size_h", "latency", "duration"],
+    column_order: ["method", "status", "mime", "protocol", "size", "size_h", "latency", "duration", "graph"],
     handler: "select-network-request",
     idgetter: function(res) { return String(res.id) },
     columns: {
@@ -248,6 +248,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
             return new Number(dur).toFixed(2) + "ms";
 
           return "";
+        }
+      },
+      graph: {
+        label: "Graph",
+        attributes: ["class", "network-graph-column"],
+        getter: function(entry) { return entry.requesttime },
+        renderer: function(entry) {
+          return templates.network_graph_sections(entry, 50, entry.get_duration());
         }
       }
     }
@@ -336,21 +344,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._service.request_body(item_id, this.update.bind(this));
   }.bind(this);
 
-  this._on_tooltip = function(evt, target)
+  this._on_graph_tooltip = function(evt, target)
   {
-    if (target.hasClass("network-graph-sections-hitarea")) // else it's the url tooltip
-    {
-      var ctx = this._service.get_request_context();
-      var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-      var entry = ctx.get_logger_entry(entry_id);
-      var template = templates.network_graph_entry_tooltip(entry, 150);
-      this.graph_tooltip.show(template);
-    }
+    var ctx = this._service.get_request_context();
+    var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+    var entry = ctx.get_logger_entry(entry_id);
+    var template = templates.network_graph_entry_tooltip(entry, 165);
+    this.graph_tooltip.show(template);
   }
 
   Tooltips.register("network-url-list-tooltip", true);
-  this.graph_tooltip = Tooltips.register("network-tooltip", true);
-  this.graph_tooltip.ontooltip = this._on_tooltip.bind(this);
+  this.graph_tooltip = Tooltips.register("network-graph-tooltip", true);
+  this.graph_tooltip.ontooltip = this._on_graph_tooltip.bind(this);
   
   this._on_clear_log_bound = function(evt, target)
   {

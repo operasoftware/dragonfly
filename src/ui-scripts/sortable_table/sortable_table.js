@@ -532,7 +532,10 @@ templates.sortable_table_row = function(tabledef, item, cols)
                   content = content.slice(0, coldef.maxlength) + "…";
                 }
               }
-              return ["td", content].concat(title_templ).concat(coldef.align ? ["class", "align-" + coldef.align] : [])
+              return ["td", content]
+                        .concat(title_templ)
+                        .concat(coldef.align ? ["class", "align-" + coldef.align] : [])
+                        .concat(coldef.attributes ? coldef.attributes : [])
             }
             return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])

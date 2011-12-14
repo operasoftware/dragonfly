@@ -2,7 +2,7 @@
 
 (function(templates) {
 
-const MIN_BAR_WIDTH = 16; // pixels
+const MIN_BAR_WIDTH = 22; // 16 + 6 padding from network-graph-sections-hitarea
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
@@ -278,7 +278,6 @@ templates.network_request_body = function(req)
 {
   var ret = [["h2", ui_strings.S_NETWORK_REQUEST_BODY_TITLE]];
   // when this is undefined/null the request was one that did not send data
-
   if (!req.requestbody)
   {
     ret.push(["p", ui_strings.S_NETWORK_NO_REQUEST_DATA]);
@@ -300,8 +299,11 @@ templates.network_request_body = function(req)
       }
     }
   }
-  else if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
+  else if (req.requestbody.mimeType === "application/x-www-form-urlencoded")
   {
+  // todo: hard to support for example "application/x-www-form-urlencoded; charset=windows-1252" -
+  // req.requestbody.content.characterEncoding is properly set to iso-8859-1 then, but its hard to get
+  // content.stringData into utf-8
     var parts = req.requestbody.content.stringData.split("&");
     var tab = ["table",
               ["tr", ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
@@ -352,7 +354,6 @@ templates.network_request_body = function(req)
         ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
       }
     }
-
     ret.push(tpl);
   }
   return ret;
@@ -366,6 +367,10 @@ templates.network_response_body = function(req)
   if (req.body_unavailable)
   {
     return ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY];
+  }
+  else if (!req.responsebody && !req.is_finished)
+  {
+    return ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED];
   }
   else if (!req.responsebody)
   {
@@ -435,7 +440,8 @@ templates.network_header_table = function(headers)
 
 templates.network_log_url_list = function(ctx, selected, item_order, type_filter)
 {
-  var itemfun = function(req) {
+  var itemfun = function(req)
+  {
     var statusclass = "status-" + req.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
     if (req.cached) { statusclass = "status-cached"; }
 
@@ -467,7 +473,7 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
       {
         var ind_a = item_order.indexOf(a.id);
         var ind_b = item_order.indexOf(b.id);
-        
+
         if (ind_a === ind_b)
           return 0;
 
@@ -520,7 +526,10 @@ templates.network_type_filter_buttons = function(type_filter)
 
 templates.network_request_icon = function(request)
 {
-  return ["span", "class", "resource-icon resource-type-" + request.type];
+  var classname = "resource-icon resource-type-" + request.type;
+  if (request.load_origin) // === "xhr"
+    classname += " request-origin-" + request.load_origin;
+  return ["span", "class", classname];
 };
 
 templates.network_timeline_row = function(width, stepsize, gridwidth)
@@ -552,7 +561,7 @@ templates.network_graph_rows = function(ctx, width)
 
   for (var n = 0, entry; entry = entries[n]; n++)
   {
-    tpls.push(templates.network_graph_row_bar(entry, width, basetime, duration));
+    tpls.push(templates.network_graph_row(entry, width, basetime, duration));
   }
   return tpls;
 };
@@ -562,6 +571,7 @@ templates.network_gap_defs = [
     classname: "blocked",
     from_to_pairs: [
       ["urlload", "request"], // [from, to]
+      ["responseheader", "urlredirect"],
       ["urlload", "urlredirect"],
       ["requestfinished", "requestretry"],
       ["requestretry", "request"],
@@ -593,6 +603,8 @@ templates.network_gap_defs = [
   }
 ];
 
+templates.network_error_store = {};
+
 templates.network_get_event_gaps = function(events, gap_defs, collapse_same_classname)
 {
   /*
@@ -611,8 +623,6 @@ templates.network_get_event_gaps = function(events, gap_defs, collapse_same_clas
     })[0];
 
     var classname = gap_def && gap_def.classname;
-    if (!classname)
-      classname = "unknown_phase_from_" + ev_from.name + "_to_" + ev_to.name;
 
     if (collapse_same_classname && 
         classname && 
@@ -624,6 +634,18 @@ templates.network_get_event_gaps = function(events, gap_defs, collapse_same_clas
     }
     else
     {
+      if (!classname)
+      {
+        classname = "unexpected_network_event_sequence";
+        var error_str = ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+              "Unexpected event sequence between " + ev_from.name + " and " + ev_to.name + " (" + (ev_to.time - ev_from.time) + "ms spent)";
+        if (!templates.network_error_store[error_str])
+        {
+          opera.postError(error_str);
+          templates.network_error_store[error_str] = true;
+        }
+        events.has_unexpected_events = true;
+      }
       event_gaps.push({
         classname: classname,
         val: ev_to.time - ev_from.time,
@@ -633,8 +655,24 @@ templates.network_get_event_gaps = function(events, gap_defs, collapse_same_clas
   }
   return event_gaps;
 }
+templates.network_graph_row = function(entry, width, basetime, duration)
+{
+  var scale = width / duration;
+  var start = (entry.starttime - basetime) * scale;
+  var padding_left_hitarea = 3;
+  var item_container = ["span",
+                        templates.network_graph_sections(entry, width, duration),
+                        "class", "network-graph-sections-hitarea",
+                        "data-tooltip", "network-graph-tooltip",
+                        "data-object-id", String(entry.id),
+                        "style", "margin-left:" + (start - padding_left_hitarea) + "px;"];
 
-templates.network_graph_row_bar = function(entry, width, basetime, duration)
+  return ["div", item_container,
+          "class", "network-graph-row",
+          "handler", "select-network-request"];
+}
+
+templates.network_graph_sections = function(entry, width, duration)
 {
   var sections = [];
   var scale = width / duration;
@@ -651,21 +689,15 @@ templates.network_graph_row_bar = function(entry, width, basetime, duration)
     }
   });
 
-  var item_container = ["span",
-                          ["span", sections, "class", "network-graph-sections"],
-                        "class", "network-graph-sections-hitarea"];
+  var item_classname = "network-graph-sections";
+  if (entry.events.has_unexpected_events)
+    item_classname += " has-unexpected-events";
 
-  var start = (entry.starttime - basetime) * scale;
-  var padding_left_hitarea = 3;
-  item_container = item_container.concat([
-    "style", "margin-left:" + (start - padding_left_hitarea) + "px;",
-    "data-tooltip", "network-tooltip"
-  ]);
-
-  return ["div", item_container,
-          "class", "network-graph-row",
-          "data-object-id", String(entry.id),
-          "handler", "select-network-request"];
+  return ["span", sections,
+           "class", item_classname,
+           "data-tooltip", "network-graph-tooltip", // the tooltip is now on the sections and the hitarea.
+           "data-object-id", String(entry.id)
+         ];
 };
 
 templates.network_graph_entry_tooltip = function(entry, height)
@@ -706,26 +738,19 @@ templates.network_graph_entry_tooltip = function(entry, height)
 
       previous_event_ms = ev.time;
       return ["tr",
-               ["td", ev.time_str, "class", "time_data mono"],
-               ["td", ev.name]
+               ["td", ev.name],
+               // ["td", ev.request_id ? "(" + ev.request_id + ")" : ""], // debug code
+               ["td", ev.time_str, "class", "time_data mono"]
              ];
     });
-    if (entry.is_finished)
-    {
-      event_rows.push(["tr",
-               ["td", total_length_string, "class", "time_data mono"],
-               ["td", "Total"],
-               "class", "summer"
-             ])
-    }
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
-    var base_width = 100;
+    var base_width = 100.5;
     var svg_width = base_width;
     var svg_height = height;
 
     var pathes = [];
-    var y_start = 0;
-    var y_end = 0;
+    var y_start = 0.5;
+    var y_end = 0.5;
     var max_val_length = Math.max.apply(null, entry.events.map(function(ev){return ev.time_str.length}));
     max_val_length = Math.max(max_val_length, total_length_string.length);
 
@@ -735,21 +760,21 @@ templates.network_graph_entry_tooltip = function(entry, height)
     {
       if (pathes.length)
       {
-        y_start += gaps[pathes.length - 1].px;
+        y_start += Math.round(gaps[pathes.length - 1].px);
       }
 
-      var x_start = 0;
-      var x_end = base_width + ((max_val_length - ev.time_str.length) * CHARWIDTH);
+      var x_end = base_width; // + ((max_val_length - ev.time_str.length) * CHARWIDTH);
       svg_width = Math.max(x_end, svg_width);
 
-      y_end = (pathes.length * 16) + 9;
+      y_end = (pathes.length * 21) + 10.5;
       svg_height = Math.max(y_start, y_end, svg_height);
 
-      pathes.push(["path", "d", "M1 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
+      pathes.push(["path", "d", "M1.5 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
     });
 
     return ["div",
       [
+        // ["h2", "Requested " + entry.resource.id + " at " +  entry.start_time_string], // debug code
         ["h2", "Requested at " +  entry.start_time_string],
         ["div",
           ["div",
@@ -758,8 +783,8 @@ templates.network_graph_entry_tooltip = function(entry, height)
           ],
           ["div", 
             ["svg:svg", pathes,
-              "width",  svg_width + "px",
-              "height", svg_height + "px",
+              "width",  Math.ceil(svg_width) + "px",
+              "height", Math.ceil(svg_height) + "px",
               "version", "1.1",
               "style", "position: absolute;"
             ], "class", "network-tooltip-pointers"],
