@@ -1299,7 +1299,7 @@ color-sample
   width: 24em;
 }
 
-property.disabled color-sample
+.css-declaration.disabled color-sample
 {
   opacity: 0.35;
 }

@@ -40,13 +40,6 @@ function do_test(input, expected, should_fail)
 
 test("Tokenization", function() {
   do_test(
-    "'a\\''",
-    [
-      [types.STRING, "'a\\''"]
-    ]
-  );
-
-  do_test(
     "1 /**/  red rgb(1,1) 'x' ",
     [
       [types.NUMBER, "1"],
@@ -204,6 +197,12 @@ test("Tokenization", function() {
       [types.DIMENSION, "1px"],
       [types.FUNCTION_END, ")"],
     ]
+  );
+
+  do_test(
+    "'a\\\\''",
+    [],
+    true
   );
 
   do_test(

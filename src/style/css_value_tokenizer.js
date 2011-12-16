@@ -123,16 +123,16 @@ var CssValueTokenizer = function()
   {
     this._token_val = c;
     var open_quote = c;
-    var prev_char = "";
+    var next_escaped = false;
     c = this._buffer[++this._position];
 
     while (c)
     {
       this._token_val += c;
       this._position++;
-      if (c == open_quote && prev_char != "\\")
+      if (c == open_quote && !next_escaped)
         break;
-      prev_char = c;
+      next_escaped = (!next_escaped && c == "\\");
       c = this._buffer[this._position];
     }
 

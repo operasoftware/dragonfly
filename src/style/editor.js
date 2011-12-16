@@ -6,14 +6,14 @@
  */
 var Editor = function(actions)
 {
-  var SELECTION = 1;
-  var TOKEN = 2;
-  var VALUE = 3;
+  var REPLACE_TYPE_SELECTION = 1;
+  var REPLACE_TYPE_TOKEN = 2;
+  var REPLACE_TYPE_VALUE = 3;
   var MINUS = -1;
   var PLUS = 1;
 
   // Positions returned from get_properties()
-  var INDEX = 0;
+  var PROPERTY = 0;
   var VALUE = 1;
   var PRIORITY = 2;
 
@@ -21,6 +21,7 @@ var Editor = function(actions)
   this.MODE_CSS = 1;
   this.MODE_SVG = 2;
 
+  // TODO: some of these should be private
   this.char_width = 0;
   this.line_height = 0;
   this.textarea_container = null;
@@ -36,6 +37,7 @@ var Editor = function(actions)
 
   this._stylesheets = cls.Stylesheets.get_instance();
   this._element_style = cls.ElementStyle.get_instance();
+  this._templates = new StylesheetTemplates();
   this._actions = actions;
   this._tab_context_value = '';
   this._tab_context_tokens = null;
@@ -209,6 +211,7 @@ var Editor = function(actions)
     return null;
   };
 
+  // TODO: this should return a CssDeclaration
   this.get_properties = function()
   {
     var re_str = /(?:"(?:[^"]|\\")*")|(?:'(?:[^']|\\')*')/g;
@@ -257,9 +260,7 @@ var Editor = function(actions)
 
         last_pos = re_token.lastIndex;
         if (last_pos + 1 >= value.length)
-        {
           break;
-        }
       }
     }
 
@@ -361,9 +362,9 @@ var Editor = function(actions)
 
     var props = this.get_properties();
 
-    this.context_cur_prop = props[0] || '';
-    this.context_cur_value = props[1] || '';
-    this.context_cur_priority = props[2] || 0;
+    this.context_cur_prop = props[PROPERTY] || '';
+    this.context_cur_value = props[VALUE] || '';
+    this.context_cur_priority = props[PRIORITY] || 0;
     this.textarea.style.height = ele.offsetHeight + 'px';
     ele.textContent = '';
     ele.appendChild(this.textarea_container);
@@ -501,20 +502,20 @@ var Editor = function(actions)
     {
       switch (suggest.replace_type)
       {
-      case SELECTION:
-      case TOKEN:
+      case REPLACE_TYPE_SELECTION:
+      case REPLACE_TYPE_TOKEN:
         new_start = this._tab_context_tokens[i];
         this.textarea.value =
           value.slice(0, new_start) +
           suggest.value +
           value.slice(this._tab_context_tokens[i+1]);
-        this.textarea.selectionStart = suggest.replace_type == SELECTION
+        this.textarea.selectionStart = suggest.replace_type == REPLACE_TYPE_SELECTION
                                      ? cur_start
                                      : new_start;
         this.textarea.selectionEnd = new_start + suggest.value.length;
         break;
 
-      case VALUE:
+      case REPLACE_TYPE_VALUE:
         new_start = this._tab_context_tokens[2] + 2;
         this.textarea.value =
           this._tab_context_tokens[0] + ': ' + suggest.value + (this.context_cur_priority ? " !important" : "") + ";";
@@ -541,7 +542,6 @@ var Editor = function(actions)
 
     suggest_handler.cursor = this._set_cursor
     (
-      suggest_type,
       suggest_handler.cursor,
       suggest_handler.matches = this[suggest_type](token, cur_start, cur_end, action_id, match),
       action_id
@@ -575,9 +575,9 @@ var Editor = function(actions)
     return ret;
   };
 
-  this._set_cursor = function(iterate, cur_cursor, matches, action_id)
+  this._set_cursor = function(cur_cursor, matches, action_id)
   {
-    if (iterate && matches)
+    if (matches)
     {
       cur_cursor += action_id;
       if (cur_cursor > matches.length - 1)
@@ -611,7 +611,7 @@ var Editor = function(actions)
         this.textarea.value.slice(this._tab_context_tokens[1], cur_start));
   };
 
-  this.suggest_property.replace_type = SELECTION;
+  this.suggest_property.replace_type = REPLACE_TYPE_SELECTION;
   this.suggest_property.cursor = 0;
   this.suggest_property.matches = null;
 
@@ -625,7 +625,7 @@ var Editor = function(actions)
     return [(parseInt(match[1] + match[2]) + action_id).toString() + match[3]];
   };
 
-  this.suggest_number.replace_type = TOKEN;
+  this.suggest_number.replace_type = REPLACE_TYPE_TOKEN;
   this.suggest_number.cursor = 0;
   this.suggest_number.matches = null;
 
@@ -665,7 +665,7 @@ var Editor = function(actions)
     return null;
   }
 
-  this.suggest_value.replace_type = VALUE;
+  this.suggest_value.replace_type = REPLACE_TYPE_VALUE;
   this.suggest_value.cursor = 0;
   this.suggest_value.matches = null;
   this.suggest_value.last_set = '';
@@ -675,28 +675,28 @@ var Editor = function(actions)
   {
     var props = this.get_properties();
     var decl_ele = this.textarea.get_ancestor(".css-declaration");
-    var disabled = decl_ele.hasClass("disabled"); // TODO: should use the model
+    var decl = new CssDeclaration(
+      props[PROPERTY],
+      props[VALUE],
+      props[PRIORITY],
+      true,
+      decl_ele.hasClass("disabled") // TODO: should use the model
+    );
 
-    if (props[INDEX])
+    if (decl.value)
     {
       // Only add property if something has changed (new or updated value)
-      if (!(this.context_cur_prop == props[INDEX] &&
-            this.context_cur_value == props[VALUE] &&
-            this.context_cur_priority == props[PRIORITY]))
+      if (!(this.context_cur_prop == decl.property &&
+            this.context_cur_value == decl.value &&
+            this.context_cur_priority == decl.priority))
       {
-        this._actions.set_property(this.context_rt_id, this.context_rule_id, props, this.context_cur_prop);
+        this._actions.set_property(this.context_rt_id, this.context_rule_id, decl, this.context_cur_prop);
       }
-      decl_ele.clearAndRender(this._stylesheets.create_declaration(
-        props[INDEX],
-        props[VALUE],
-        props[PRIORITY],
-        disabled)
-      );
+      decl_ele.clearAndRender(this._templates.prop_value(decl, true));
     }
-    else if (props[VALUE] === "") // If someone deletes just the value and then submits, just re-display it
+    else if (decl.value === "") // If someone deletes just the value and then submits, just re-display it
     {
-      decl_ele.clearAndRender(this._stylesheets.create_declaration(props[0],
-        this.context_cur_value, this.context_cur_priority, disabled));
+      decl_ele.clearAndRender(this._templates.prop_value(decl, true));
     }
     else
     {
@@ -712,22 +712,23 @@ var Editor = function(actions)
     while (props.length > 3)
     {
       reset = true;
-      var prop = this.textarea_container.parentElement.parentElement.
+      var decl_ele = this.textarea_container.parentElement.parentElement.
         insertBefore(document.createElement('div'), this.textarea_container.parentElement);
-
-      prop.clearAndRender(this._stylesheets.create_declaration(
-        props[INDEX],
+      var decl = new CssDeclaration(
+        props[PROPERTY],
         props[VALUE],
         props[PRIORITY],
-        this.textarea_container.parentNode.hasClass("disabled"))
+        true,
+        this.textarea_container.parentNode.hasClass("disabled")
       );
+      decl_ele.clearAndRender(this._templates.declaration(decl, true));
       props.splice(0, 3);
     }
 
     if (reset)
     {
       this.textarea.value =
-        props[INDEX] + (props[VALUE] ? ': ' + props[VALUE] + (props[PRIORITY] ? ' !important' : '') + ';' : '');
+        props[PROPERTY] + (props[VALUE] ? ': ' + props[VALUE] + (props[PRIORITY] ? ' !important' : '') + ';' : '');
 
       this.context_cur_text_content =
       this.context_cur_prop =
@@ -735,10 +736,19 @@ var Editor = function(actions)
       this.context_cur_priority = 0;
     }
 
-    if (props[1])
-      this._actions.set_property(this.context_rt_id, this.context_rule_id, props);
-    else if ((!props[INDEX] || props[INDEX] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
+    if (props[VALUE])
+    {
+      var decl = new CssDeclaration(
+        props[PROPERTY],
+        props[VALUE],
+        props[PRIORITY]
+      );
+      this._actions.set_property(this.context_rt_id, this.context_rule_id, decl);
+    }
+    else if ((!props[PROPERTY] || props[PROPERTY] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
+    {
       this._actions.remove_property(this.context_rt_id, this.context_rule_id, this.context_cur_prop);
+    }
   };
 
   this.enter = function()
@@ -749,16 +759,16 @@ var Editor = function(actions)
 
     if (props && props.length == 3)
     {
-      if (props[1] === "") // If someone deletes the value and then presses enter, just re-display it
+      if (props[VALUE] === "") // If someone deletes the value and then presses enter, just re-display it
       {
-        this.textarea_container.parentElement.clearAndRender(
-          this._stylesheets.create_declaration(
-            props[INDEX],
-            this.context_cur_value,
-            this.context_cur_priority,
-            is_disabled
-          )
+        var decl = new CssDeclaration(
+          props[PROPERTY],
+          this.context_cur_value,
+          this.context_cur_priority,
+          true,
+          is_disabled
         );
+        this.textarea_container.parentElement.clearAndRender(this._templates.prop_value(decl, true));
         return false;
       }
       else if (this.textarea.selectionEnd == this.textarea.value.length ||
@@ -766,11 +776,11 @@ var Editor = function(actions)
       {
         // We don't know if the property is valid or not at this point, but
         // it will simply be discarded when setting it back if it's not.
-        this.saved_style_dec.declarations.push({
-          property: this._stylesheets.get_css_index_map().indexOf(props[INDEX]),
-          value: props[VALUE],
-          priority: props[PRIORITY]
-        });
+        this.saved_style_dec.declarations.push(new CssDeclaration(
+          props[PROPERTY],
+          props[VALUE],
+          props[PRIORITY]
+        ));
 
         var decl_ele = document.createElement('div');
         decl_ele.className = "css-declaration";
@@ -783,16 +793,16 @@ var Editor = function(actions)
 
         this.textarea_container.parentNode.removeClass("overwritten");
         this.textarea_container.parentNode.removeClass("disabled");
-        var decl = this.textarea_container.get_ancestor(".css-rule").
+        var decl_ele = this.textarea_container.get_ancestor(".css-rule").
           insertBefore(decl_ele, this.textarea_container.parentElement);
-        decl.clearAndRender(
-          this._stylesheets.create_declaration(
-            props[INDEX],
-            props[VALUE],
-            props[PRIORITY],
-            is_disabled
-          )
+        var decl = new CssDeclaration(
+          props[PROPERTY],
+          props[VALUE],
+          props[PRIORITY],
+          true,
+          is_disabled
         );
+        decl_ele.clearAndRender(this._templates.prop_value(decl, true));
         this.textarea.value = "";
         this.context_cur_text_content = "";
         this.context_cur_prop = "";
@@ -802,14 +812,14 @@ var Editor = function(actions)
       }
       else
       {
-        this.textarea_container.parentElement.clearAndRender(
-          this._stylesheets.create_declaration(
-            props[INDEX],
-            props[VALUE],
-            props[PRIORITY],
-            is_disabled
-          )
+        var decl = new CssDeclaration(
+          props[PROPERTY],
+          props[VALUE],
+          props[PRIORITY],
+          true,
+          is_disabled
         );
+        this.textarea_container.parentElement.clearAndRender(this._templates.prop_value(decl, true));
       }
     }
     else
@@ -826,14 +836,14 @@ var Editor = function(actions)
     if (this.context_cur_prop)
     {
       this.textarea.value = this.context_cur_text_content;
-      this.textarea_container.parentElement.clearAndRender(
-        this._stylesheets.create_declaration(
-          this.context_cur_prop,
-          this.context_cur_value,
-          this.context_cur_priority,
-          this.textarea_container.parentNode.hasClass("disabled")
-        )
+      var decl = new CssDeclaration(
+        this.context_cur_prop,
+        this.context_cur_value,
+        this.context_cur_priority,
+        true,
+        this.textarea_container.parentNode.hasClass("disabled")
       );
+      this.textarea_container.parentElement.clearAndRender(this._templates.prop_value(decl, true));
       return true;
     }
     else

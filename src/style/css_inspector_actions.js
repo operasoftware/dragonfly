@@ -1,4 +1,4 @@
-﻿var cls = window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 /**
  * @constructor
@@ -144,17 +144,17 @@ cls.CSSInspectorActions = function(id)
   /**
    * Sets a single CSS property (and optionally removes another one, resulting in an overwrite).
    *
-   * @param {Array} declaration An array according to [prop, value, is_important]
+   * @param {CssDeclaration} declaration A CssDeclaration
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
   this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
-    var prop = this.normalize_property(declaration[0]);
+    var prop = this.normalize_property(declaration.property);
     var script = "object.style.setProperty(\"" +
                    prop + "\", \"" +
-                   helpers.escape_input(declaration[1]) + "\", " +
-                   (declaration[2] ? "\"important\"" : null) +
+                   helpers.escape_input(declaration.value) + "\", " +
+                   (declaration.priority ? "\"important\"" : null) +
                  ");";
 
     // If a property is added by overwriting another one, remove the other property
@@ -163,23 +163,23 @@ cls.CSSInspectorActions = function(id)
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
-            : 1;
+            : cls.TagManager.IGNORE_RESPONSE;
     this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
   /**
    * Sets a single SVG property (and optionally removes another one, resulting in an overwrite).
    *
-   * @param {Array} declaration An array according to [prop, value, is_important]
+   * @param {CssDeclaration} declaration An CssDeclaration
    * @param {String} prop_to_remove An optional property to remove
    * @param {Function} callback Callback to execute when the proeprty has been added
    */
   this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
-    var prop = this.normalize_property(declaration[0]);
+    var prop = this.normalize_property(declaration.property);
     var script = "object.setAttribute(\"" +
                    prop + "\", \"" +
-                   declaration[1].replace(/"/g, "\\\"") + "\"" +
+                   declaration.value.replace(/"/g, "\\\"") + "\"" +
                  ");";
 
     // If a property is added by overwriting another one, remove the other property
@@ -188,7 +188,7 @@ cls.CSSInspectorActions = function(id)
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
-            : 1;
+            : cls.TagManager.IGNORE_RESPONSE;
     this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
@@ -232,7 +232,7 @@ cls.CSSInspectorActions = function(id)
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
-            : 1;
+            : cls.TagManager.IGNORE_RESPONSE;
     this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
@@ -253,7 +253,7 @@ cls.CSSInspectorActions = function(id)
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
-            : 1;
+            : cls.TagManager.IGNORE_RESPONSE;
     this._es_debugger.requestEval(tag, [rt_id, 0, 0, script, [["object", rule_id]]]);
   };
 
@@ -301,7 +301,8 @@ cls.CSSInspectorActions = function(id)
 
     if (script)
     {
-      this._es_debugger.requestEval(null,
+      var tag = this._tag_manager.set_callback(null, this._element_style.update);
+      this._es_debugger.requestEval(tag,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
   };
@@ -336,7 +337,8 @@ cls.CSSInspectorActions = function(id)
 
     if (script)
     {
-      this._es_debugger.requestEval(null,
+      var tag = this._tag_manager.set_callback(null, this._element_style.update);
+      this._es_debugger.requestEval(tag,
         [this.editor.context_rt_id, 0, 0, script, [["object", rule_id]]]);
     }
   };
@@ -346,18 +348,14 @@ cls.CSSInspectorActions = function(id)
    *
    * @param {String} property The property to enable
    */
-  this.enable_property = function enable_property(rt_id, rule_id, obj_id, property)
+  this.enable_property = function(rt_id, rule_id, obj_id, property)
   {
     var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var disabled_style_dec = this._element_style.disabled_style_dec_list[id];
     var style_dec = this._element_style.remove_property(disabled_style_dec, property);
     var declarations = style_dec.declarations;
     if (declarations)
-    {
-      this.set_property(rt_id, rule_id || obj_id, [declarations[0].property,
-                        declarations[0].value,
-                        declarations[0].priority], null, this._element_style.update);
-    }
+      this.set_property(rt_id, rule_id || obj_id, declarations[0], null, this._element_style.update);
   };
 
   /**
@@ -365,7 +363,7 @@ cls.CSSInspectorActions = function(id)
    *
    * @param {String} property The property to disable
    */
-  this.disable_property = function disable_property(rt_id, rule_id, obj_id, property)
+  this.disable_property = function(rt_id, rule_id, obj_id, property)
   {
     var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var style_dec = rule_id
@@ -384,7 +382,7 @@ cls.CSSInspectorActions = function(id)
   /**
    * Disables all properties.
    */
-  this.disable_all_properties = function disable_property(rt_id, rule_id, obj_id)
+  this.disable_all_properties = function(rt_id, rule_id, obj_id)
   {
     var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var style_dec = rule_id
@@ -418,7 +416,7 @@ cls.CSSInspectorActions = function(id)
    * @param {String} prop The property to normalize
    * @returns {String} A normalized property
    */
-  this.normalize_property = function normalize_property(prop)
+  this.normalize_property = function(prop)
   {
     return (prop || "").trim().toLowerCase();
   };
@@ -523,7 +521,7 @@ cls.CSSInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers['enable-disable-property'] = function enable_disable_property(event, target)
+  this._handlers['enable-disable-property'] = function(event, target)
   {
     var is_disabled = target.checked;
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
@@ -601,11 +599,6 @@ cls.CSSInspectorActions = function(id)
       cur_target.parentElement.removeChild(cur_target);
     }
     this.mode = MODE_DEFAULT;
-    // this.editor.escape() will reset the style
-    // to ensure the command to reset the style is dispatched before
-    // ElementStyle queries again the current style the update call
-    // is done asynchronously
-    setTimeout(this._element_style.update, 1);
 
     return false;
   }.bind(this);

@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 // TODO: the shorthand resolver is relying on some methods in this class (hence
-// they're relying on each other). Those methods should be moved to Stylsheets instead.
+// they're relying on each other). Those methods should be moved to Stylesheets instead.
 /**
  * @constructor
  */
@@ -128,7 +128,7 @@ cls.ElementStyle = function()
     var declarations = disabled_style_dec.declarations;
     for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      if (this.has_property(style_dec, decl.property))
+      if (this.get_property_index(style_dec, decl.property) != -1)
       {
         this.remove_property(disabled_style_dec, decl.property);
       }
@@ -189,25 +189,27 @@ cls.ElementStyle = function()
    */
   this.get_declaration = function(rule_id, property)
   {
-    for (var i = 0, node_style; node_style = this._style_declarations.nodeStyleList[i]; i++)
+    var rule = this.get_rule_by_id(rule_id);
+    for (var i = 0, decl; decl = rule.declarations[i]; i++)
     {
-      for (var j = 0, rule; rule = node_style.styleList[j]; j++)
-      {
-        for (var k = 0, decl; decl = rule.declarations[k]; k++)
-        {
-          if (rule.ruleID == rule_id && decl.property == property)
-            return decl;
-        }
-      }
+      if (decl.property == property)
+        return decl;
     }
     return null;
   };
 
-  this.get_property_index = function(prop, declarations)
+  /**
+   * Get the index of a property in a declarations
+   *
+   * @param {Array} declarations An array of CssDeclaration
+   * @param {String} property The property to get the index for
+   * @returns {int} The index if found, otherwise -1
+   */
+  this.get_property_index = function(declarations, property)
   {
     for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      if (decl.property == prop)
+      if (decl.property == property)
         return i;
     }
     return -1;
@@ -220,7 +222,7 @@ cls.ElementStyle = function()
    */
   this.get_new_style_dec = function()
   {
-    return new CssRule({origin: 3});
+    return new CssRule({origin: ORIGIN_AUTHOR});
   };
 
   /**
@@ -239,14 +241,15 @@ cls.ElementStyle = function()
     {
       if (decl.property == property)
       {
-        target.declarations.push({
-          property: decl.property,
-          value: decl.value,
-          priority: decl.priority,
-          is_applied: decl.is_applied,
-          is_disabled: decl.is_disabled,
-          shorthand_tokens: decl.shorthand_tokens
-        });
+        var new_decl = new CssDeclaration(
+          decl.property,
+          decl.value,
+          decl.priority,
+          decl.is_applied,
+          decl.is_disabled
+        );
+        new_decl.shorthand_tokens = decl.shorthand_tokens;
+        target.declarations.push(new_decl);
         break;
       }
     }
@@ -275,20 +278,6 @@ cls.ElementStyle = function()
       }
     }
     return null;
-  };
-
-  /**
-   * Checks if a certain StyleDeclaration has a property
-   *
-   * @param {Array} style_dec The StyleDeclaration to check
-   * @param {String} property The property to check for
-   * @returns {Boolean} True if the StyleDeclaration has the property, false otherwise
-   */
-  this.has_property = function(style_dec, property)
-  {
-    return style_dec.declarations.some(function(decl) {
-      return decl.property == property;
-    });
   };
 
   this.get_inline_obj_id = function(obj_id)

@@ -18,13 +18,22 @@ var CssRule = function(rule)
   var len = rule.indexList ? rule.indexList.length : 0;
   for (var i = 0; i < len; i++)
   {
-    this.declarations.push({
-      property: index_map[rule.indexList[i]],
-      value: rule.valueList[i],
-      priority: rule.priorityList[i],
-      is_applied: Boolean(rule.statusList[i]), // TODO: Could be inverted and renamed to overwritten
-      is_disabled: false
-    });
+    this.declarations.push(new CssDeclaration(
+      index_map[rule.indexList[i]],
+      rule.valueList[i],
+      rule.priorityList[i],
+      Boolean(rule.statusList[i]),
+      false
+    ));
   }
+};
+
+var CssDeclaration = function(property, value, priority, is_applied, is_disabled)
+{
+  this.property = property;
+  this.value = value;
+  this.priority = priority || 0;
+  this.is_applied = is_applied || true; // TODO: Could be inverted and renamed to overwritten
+  this.is_disabled = is_disabled || false;
 };
 

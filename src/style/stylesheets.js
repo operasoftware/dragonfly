@@ -29,18 +29,6 @@ cls.Stylesheets = function()
   var ORIGIN_ELEMENT = cls.Stylesheets.origins.ORIGIN_ELEMENT;
   var ORIGIN_SVG = cls.Stylesheets.origins.ORIGIN_SVG;
 
-  this.create_declaration = function(prop, value, priority, is_disabled)
-  {
-    // TODO: call the template directly, need to fix in editor.js too
-    var declaration = {
-      property: prop,
-      value: value,
-      priority: priority,
-      is_disabled: is_disabled
-    };
-    return this._templates.prop_value(declaration, true);
-  };
-
   this.get_stylesheets = function(rt_id, org_args)
   {
     if (this._sheets[rt_id])

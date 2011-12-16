@@ -49,7 +49,7 @@ var CssShorthandResolver = function()
               return prev + (typeof curr == "string" ? curr : curr.value);
             }, "");
             var is_applied = props_map[prop].properties.some(function(p) {
-              var index = this._element_style.get_property_index(p, declarations);
+              var index = this._element_style.get_property_index(declarations, p);
               return declarations[index].is_applied;
             }, this);
             declarations.push({
@@ -100,7 +100,7 @@ var CssShorthandResolver = function()
       var all_inherited = true;
       // Check if all properties needed to create a shorthand are available
       var has_all_props = props_map[prop].properties.every(function(prop) {
-        var index = this._element_style.get_property_index(prop, declarations);
+        var index = this._element_style.get_property_index(declarations, prop);
         if (index != -1)
         {
           var declaration = declarations[index];

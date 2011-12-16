@@ -146,7 +146,7 @@ cls.ElementLayout = function()
     {
       var rt_id = this._selected_element.rt_id;
       var obj_id = this._selected_element.obj_id;
-      var tag = this._tag_manager.set_callback(null, this._handle_get_offset_data.bind(this), [rt_id, obj_id, cb]);
+      var tag = this._tag_manager.set_callback(null, this._handle_get_offset_data_bound, [rt_id, obj_id, cb]);
       this._es_debugger.requestEval(tag, [rt_id, 0, 0, OFFSETS_SCRIPT, [['ele', obj_id]]]);
     }
   };
@@ -167,6 +167,8 @@ cls.ElementLayout = function()
         '_handle_get_offset_data failed')
     }
   };
+
+  this._handle_get_offset_data_bound = this._handle_get_offset_data.bind(this);
 
   this._parse_offset_values = function(offset_values)
   {
