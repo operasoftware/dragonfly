@@ -2,7 +2,8 @@
 
 (function(templates) {
 
-const MIN_BAR_WIDTH = 22; // 16 + 6 padding from network-graph-sections-hitarea
+const MIN_BAR_WIDTH = 22; // todo: this is 16 + 6 padding from network-graph-sections-hitarea, should be done separately
+const TIMELINE_MARKER_WIDTH = 60;
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
@@ -150,7 +151,7 @@ templates.network_viewmode_graphs = function(ctx, width)
   var template = [];
   if (duration)
   {
-    var stepsize = templates.grid_info(duration, width);
+    var stepsize = templates.grid_info(duration, width, (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH);
     var gridwidth = Math.round((width / duration) * stepsize);
     var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
 
@@ -179,7 +180,7 @@ templates.network_log_details = function(ctx, selected)
 
 templates.network_log_request_detail = function(ctx, selected)
 {
-  var entry = ctx.get_logger_entry(selected);
+  var entry = ctx.get_entry(selected);
   if (entry)
   {
     var responsecode = entry && entry.responsecode && entry.responsecode in cls.ResourceUtil.http_status_codes ?
@@ -462,7 +463,7 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
             "class", selected === req.id ? "selected" : ""
            ];
   };
-  var items = ctx.get_logger_entries().slice(0);
+  var items = ctx.get_entries_filtered().slice(0);
   // Could use copy_object instead, because the template doesn't need the methods of the resources.
   // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
   // to the old objects
@@ -492,10 +493,10 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
 };
 
 
-templates.network_type_filter_buttons = function(type_filter)
+templates.network_type_filter_buttons = function(current_filter)
 {
-  if (!type_filter)
-    type_filter = "";
+  if (!current_filter)
+    current_filter = "";
 
   return [
     "div", [
@@ -509,9 +510,11 @@ templates.network_type_filter_buttons = function(type_filter)
     ].map(function(filter)
           {
             var c = "ui-button container-button";
-            if (filter.val == type_filter)
+            if (filter.val == current_filter.content &&
+                filter.is_blacklist == current_filter.val)
+            {
               c += " on";
-
+            }
             return [
               "span", filter.name,
               "data-type-filter", filter.val,
@@ -536,13 +539,18 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
   var cnt = Math.ceil(width / gridwidth);
-  var timeline_marker_width = 60;
-  var offset = 1; // background-position in #graph is adjusted by that, to hide the 0s line
-
+  var offset = -1; // background-position in #graph is adjusted by that, to hide the 0s line
+  var max_val = stepsize * cnt;
+  var unit = [1, "ms"];
+  if (max_val > 1000)
+    unit = [1000, "s"];
+  
   while (stepsize && --cnt > 0) // skips last one on purpose (0s marker)
   {
-    var left_val = gridwidth * cnt - timeline_marker_width / 2 - offset;
-    labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
+    var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2 + offset;
+    var val_str = (stepsize * cnt) / unit[0];
+    val_str = Math.round(val_str * 100) / 100;
+    labels.push(["span", "" + val_str + unit[1],
                  "style", "left: " + left_val + "px;",
                  "class", "timeline-marker"
                  ]);
@@ -557,7 +565,7 @@ templates.network_graph_rows = function(ctx, width)
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
 
   var tpls = [];
-  var entries = ctx.get_logger_entries();
+  var entries = ctx.get_entries_filtered();
 
   for (var n = 0, entry; entry = entries[n]; n++)
   {
@@ -655,6 +663,7 @@ templates.network_get_event_gaps = function(events, gap_defs, collapse_same_clas
   }
   return event_gaps;
 }
+
 templates.network_graph_row = function(entry, width, basetime, duration)
 {
   var scale = width / duration;
@@ -664,12 +673,12 @@ templates.network_graph_row = function(entry, width, basetime, duration)
                         templates.network_graph_sections(entry, width, duration),
                         "class", "network-graph-sections-hitarea",
                         "data-tooltip", "network-graph-tooltip",
-                        "data-object-id", String(entry.id),
                         "style", "margin-left:" + (start - padding_left_hitarea) + "px;"];
 
   return ["div", item_container,
           "class", "network-graph-row",
-          "handler", "select-network-request"];
+          "handler", "select-network-request",
+          "data-object-id", String(entry.id)];
 }
 
 templates.network_graph_sections = function(entry, width, duration)
@@ -739,7 +748,7 @@ templates.network_graph_entry_tooltip = function(entry, height)
       previous_event_ms = ev.time;
       return ["tr",
                ["td", ev.name],
-               // ["td", ev.request_id ? "(" + ev.request_id + ")" : ""], // debug code
+               ini.debug ? ["td", ev.request_id ? "(" + ev.request_id + ")" : ""] : [],
                ["td", ev.time_str, "class", "time_data mono"]
              ];
     });
@@ -774,8 +783,8 @@ templates.network_graph_entry_tooltip = function(entry, height)
 
     return ["div",
       [
-        // ["h2", "Requested " + entry.resource.id + " at " +  entry.start_time_string], // debug code
-        ["h2", "Requested at " +  entry.start_time_string],
+        ini.debug ?
+          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : ["h2", "Requested at " +  entry.start_time_string],
         ["div",
           ["div",
             ["div", graphical_sections, "class", "network-tooltip-graph-sections"],
@@ -799,14 +808,25 @@ templates.network_graph_entry_tooltip = function(entry, height)
 }
 
 
-templates.grid_info = function(duration, width)
+templates.grid_info = function(duration, width, padding)
 {
   if (duration > 0)
   {
     var draw_line_every = 150; // px
     var draw_lines = Math.round(width / draw_line_every);
-  
-    var value = Number(duration / draw_lines).toPrecision(1);
+    
+    var value = oldval = Number(Number(duration / draw_lines).toPrecision(1)); // what this returns is the duration of one section
+    var val_in_px = width / duration * Number(value);
+
+    // if the last line comes too close to the edge, the value until it fits.
+    // need to modify the actual ms value to keep it nice labels on the result,
+    // at least while it gets shown in ms
+    while (width % (val_in_px * draw_lines) < padding)
+    {
+      value--;
+      val_in_px = width / duration * value;
+    }
+
     return value;
   }
 }

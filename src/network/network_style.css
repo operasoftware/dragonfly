@@ -332,7 +332,7 @@
 
 .network-graph-row.hovered .network-graph-sections-hitarea
 {
-  background-color: rgba(255, 255, 255, 0.4); /* #8a2bac */
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .network-graph-sections,

@@ -49,6 +49,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
     if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
+      // the filters need to be set when creating the view, the request_context may have changed in between
+      ctx.set_filter(this._type_filter);
+
       this._render_tabbed_view(this._container);
       if (this._selected)
       {
@@ -125,31 +128,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
     var ctx = this._service.get_request_context();
 
-    var filters = [];
-    if (this._type_filters)
-    {
-      filters.push(
-        {
-          content: this._type_filters,
-          is_blacklist: this._type_filter_is_blacklist
-        }
-      );
-    };
-    var filter_compare = filters.length ? 
-                           JSON.stringify(filters) : undefined;
-    if (this._current_filters !== filter_compare)  // todo: without a get_filters method, we can't actually compare if they are set. it's probably cheap to set it always and remove _current_filters
-    {
-      ctx.set_filters(filters);
-      this._current_filters = filter_compare;
-    }
-
     var item_order;
     if (selected_viewmode === "data")
     {
       item_order = this._item_order;
     }
     var template = templates.network_log_main(
-                     ctx, this._selected, selected_viewmode, detail_width, item_order, this._type_filters
+                     ctx, this._selected, selected_viewmode, detail_width, item_order, this._type_filter
                    );
     var content = container.clearAndRender(template);
     content.scrollTop = this._content_scroll;
@@ -163,7 +148,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._table = new SortableTable(
                         this._tabledef,
                         null,
-                        ["method", "status", "mime", "protocol", "size", "latency", "duration"],
+                        ["method", "status", "mime", "size", "latency", "duration", "graph"],
                         null,
                         null,
                         null,
@@ -171,7 +156,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
                       );
         this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
       }
-      var data = ctx.get_logger_entries().slice(0);
+      var data = ctx.get_entries_filtered().slice(0);
       this._table.set_data(data);
       table_container.clearAndRender(this._table.render());
       this._catch_up_with_cols_and_sort_bound();
@@ -179,7 +164,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   };
 
   this._tabledef = {
-    column_order: ["method", "status", "mime", "protocol", "size", "size_h", "latency", "duration", "graph"],
+    column_order: ["method", "status", "mime", "protocol", "size", "size_h", "latency", "duration", "started", "graph"],
     handler: "select-network-request",
     idgetter: function(res) { return String(res.id) },
     columns: {
@@ -231,12 +216,29 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         label: "Waiting",
         align: "right",
         getter: function(entry)
-                {
-                  if (entry.responsestart && entry.requesttime)
-                    return new Number(entry.responsestart - entry.requesttime).toFixed(2) + "ms";
-
-                  return "";
-                }
+        {
+          if (entry.responsestart && entry.requesttime)
+            return entry.responsestart - entry.requesttime;
+          return "";
+        },
+        renderer: function(entry)
+        {
+          if (entry.responsestart && entry.requesttime)
+            return new Number(entry.responsestart - entry.requesttime).toFixed(2) + "ms";
+          return "";
+        }
+      },
+      started: {
+        label: "Started",
+        align: "right",
+        getter: function(entry)
+        {
+          return new Number(entry.starttime_relative);
+        },
+        renderer: function(entry)
+        {
+          return new Number(entry.starttime_relative).toFixed(2) + "ms";
+        }
       },
       duration: {
         label: "Duration",
@@ -341,14 +343,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     var item_id = target.getAttribute("data-object-id");
     this.needs_instant_update = true;
-    this._service.request_body(item_id, this.update.bind(this));
+    this._service.get_body(item_id, this.update.bind(this));
   }.bind(this);
 
   this._on_graph_tooltip = function(evt, target)
   {
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_logger_entry(entry_id);
+    var entry = ctx.get_entry(entry_id);
     var template = templates.network_graph_entry_tooltip(entry, 165);
     this.graph_tooltip.show(template);
   }
@@ -361,7 +363,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     if (this._service.is_paused())
       this._service.unpause();
-    this._service.clear_resources();
+    this._service.clear_entries();
     this.needs_instant_update = true;
     this.update();
   }.bind(this);
@@ -386,8 +388,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_change_type_filter_bound= function(evt, target)
   {
-    this._type_filters = target.getAttribute("data-type-filter");
-    this._type_filter_is_blacklist = (target.getAttribute("data-filter-is-blacklist") === "true");
+    this._type_filter = {
+      content: target.getAttribute("data-type-filter"),
+      is_blacklist: (target.getAttribute("data-filter-is-blacklist") === "true")
+    }
     this.needs_instant_update = true;
     this.update();
   }.bind(this);

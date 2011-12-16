@@ -17,12 +17,13 @@ cls.NetworkLoggerService = function(view)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
     // if not a top resource, don't reset the context. This usually means it's an iframe
+    if (data.parentDocumentID) { return; }
 
     // When paused, the context will still be reset and the paused status and what
     // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
     // RequestContext object, and when unpausing, that one should be rendered. Hard.
-    if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
+    this._current_context.saw_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -128,18 +129,17 @@ cls.NetworkLoggerService = function(view)
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
-  this.request_body = function(itemid, callback)
+  this.get_body = function(itemid, callback)
   {
     if (!this._current_context) { return; }
-    var entry = this._current_context.get_logger_entry(itemid);
+    var entry = this._current_context.get_entry(itemid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var resourceid = entry.resource.id;
-    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, resourceid]);
-    this._res_service.requestGetResource(tag, [resourceid, [typecode, 1]]);
+    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource]);
+    this._res_service.requestGetResource(tag, [entry.resource, [typecode, 1]]);
   };
 
-  this._on_request_body_bound = function(status, data, callback, resourceid)
+  this._on_get_resource_bound = function(status, data, callback, resourceid)
   {
     if (status != 0)
     {
@@ -149,19 +149,7 @@ cls.NetworkLoggerService = function(view)
     }
     else
     {
-      // fixme: generate class for this.
-      var msg = {
-        resourceID: data[0],
-        mimeType: data[2],
-        characterEncoding: data[3],
-        contentLength: data[4],
-        content: {
-          length: data[5][0],
-          characterEncoding: data[5][1],
-          byteData: data[5][2],
-          stringData: data[5][3]
-        }
-      };
+      var msg = new cls.ResourceManager["1.2"].ResourceData(data);
       if (!this._current_context) { return; }
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
@@ -173,10 +161,10 @@ cls.NetworkLoggerService = function(view)
     return this._current_context;
   };
 
-  this.clear_resources = function()
+  this.clear_entries = function()
   {
     if (this._current_context)
-      this._current_context.clear_resources();
+      this._current_context.clear_entries();
   };
 
   this.pause = function()
@@ -202,80 +190,73 @@ cls.NetworkLoggerService = function(view)
 
 cls.RequestContext = function()
 {
-  this._resources = [];
+  this._logger_entries = [];
 
   this._filter_function_bound = function(item)
   {
     var success = true;
-    if (this._filters && this._filters.length)
+    var filter = this._filter;
+    if (filter && filter.content)
     {
-      for (var i = 0, filter; filter = this._filters[i]; i++)
-      {
-        if (filter.content)
-        {
-          var list = filter.content.split(",");
+      var list = filter.content.split(",");
 
-          // either type or load_origin matches. pass criteria then depends on is_blacklist.
-          var has_match = list.contains(item.type) || list.contains(item.load_origin);
-          if (has_match === filter.is_blacklist)
-          {
-            success = false;
-          }
-        }
+      // either type or load_origin matches. pass criteria then depends on is_blacklist.
+      var has_match = list.contains(item.type) || list.contains(item.load_origin);
+      if (has_match === filter.is_blacklist)
+      {
+        success = false;
       }
     }
     return success;
   }.bind(this);
 
-  this.get_resources = function()
+  this.get_entries_filtered = function()
   {
-    var resources = this._resources;
-    if (this._paused)
-    {
-      resources = this._paused_resources;
-    }
-    return resources;
-  }
+    var entries = this._logger_entries;
+    if (this.is_paused())
+      entries = this._paused_entries;
 
-  this.get_logger_entries = function()
-  {
-    var entries = [];
-    var entries_per_resource = this.get_resources().map(function(res){return res.get_logger_entries()});
-    if (entries_per_resource.length)
-    {
-      entries = entries_per_resource.reduce(function(first, second){return first.concat(second)});
-    }
     return entries.filter(this._filter_function_bound);
   }
 
-  this.set_filters = function(filters)
+  this.get_entries_with_res_id = function(res_id)
   {
-    this._filters = filters;
+    return this._logger_entries.filter(function(e){return e.resource === res_id});
   }
 
-  this.clear_resources = function()
+  this.set_filter = function(filter)
   {
-    this._paused_resources = [];
-    this._resources = [];
+    this._filter = filter;
+  }
+
+  this.clear_entries = function()
+  {
+    this._paused_entries = [];
+    this._logger_entries = [];
   }
 
   this.pause = function()
   {
-    // this only pauses adding resources, so that updated info about a request will still show.
+    // this only freezes what entries are shown, but they still get updates themselves
     // this works good as long as we don't have things like streaming.
-    this._paused_resources = this._resources.slice(0);
+    this._paused_entries = this._logger_entries.slice(0);
     this._paused = true;
   }
 
   this.unpause = function()
   {
-    this._paused_resources = null;
+    this._paused_entries = null;
     this._paused = false;
   }
 
+  this.is_paused = function()
+  {
+    return this._paused
+  };
+
   this.get_duration = function()
   {
-    var entries = this.get_logger_entries();
+    var entries = this.get_entries_filtered();
     if (entries.length)
     {
       var starttimes = entries.map(function(e) { return e.starttime });
@@ -304,101 +285,75 @@ cls.RequestContext = function()
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.get_logger_entries().map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_entries_filtered().map(function(e) { return e.starttime }));
   };
+
+  this._event_changes_req_id = function(event, last_entry)
+  {
+    /* 
+      Checks if the events requestID is different from the one in the last_entry.
+      That shouldn't happen, because "urlload" doesn't have a requestID, and that
+      will initiate a new entry.
+    */
+    return event.requestID &&
+           (last_entry.requestID !== event.requestID);
+  }
 
   this.update = function(eventname, event)
   {
-    var res = this.get_resource(event.resourceID);
-
-    if (!res)
+    var logger_entry = this.get_entries_with_res_id(event.resourceID).last;
+    if (!logger_entry && eventname !== "urlload")
     {
-      if (eventname == "urlload")
-      {
-        res = new cls.NetworkResource(event.resourceID);
-        this._resources.push(res);
-      }
-      else
-      {
-        // ignoring. Never saw an urlload, or it's already invalidated
-        return;
-      }
+      // ignoring. Never saw an urlload, or it's already invalidated
+      return;
     }
 
-    // on every urlload, add a new request
-    var logger_entry = res && res._logger_entries.last;
-
-    // todo: move this to a verify req_id function (determines changed_request_id)
-    var req_ids = res._logger_entries.filter(function(entry){return entry.requestID});
-    var last_request_id = req_ids.last && req_ids.last.requestID;
-    var event_request_id = event.requestID || event.fromRequestID; // fromRequestID is only for OnRequestRetry
-    var changed_request_id = event.requestID &&
-                             last_request_id &&
-                             (last_request_id != event.requestID);
-    if (changed_request_id)
+    if (logger_entry && logger_entry.requestID)
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      " Unexpected change in requestID on " + eventname +
-                      ": Change from " + last_request_id + " to " + 
-                      event_request_id + ", URL: " + logger_entry.human_url);
+      var changed_request_id = this._event_changes_req_id(event, logger_entry);
+      if (changed_request_id)
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        " Unexpected change in requestID on " + eventname +
+                        ": Change from " + logger_entry.requestID + " to " + 
+                        event.requestID + ", URL: " + logger_entry.human_url);
+      }
     }
 
     if (eventname == "urlload" || changed_request_id)
     {
-      var id = event.resourceID + ":" + res._logger_entries.length;
-      logger_entry = new cls.NetworkLoggerEntry(id, res);
-      if (res._logger_entries.length)
+      var id = event.resourceID + ":" + this._logger_entries.length;
+      logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID);
+      if (this.get_entries_with_res_id(event.resourceID).length)
       {
-        // From the second request on, it's only to be rendered when it touched network. Everything 
-        // else is too much like an internal request, happens randomly and doesn't mean much.
+        // A second request to a resource is only to be rendered when it touched network. Everything 
+        // else is most likely an internal request, happens randomly and doesn't mean much.
         logger_entry.invalid_when_network_not_touched = true;
       }
-      res._logger_entries.push(logger_entry);
+      this._logger_entries.push(logger_entry);
     }
-    // todo: this gets overwritten all the time, possibly keep this together with the updates as in "events"
-    logger_entry.requestID = event_request_id; // order is important here, for OnRequestRetry requestID gets set again right away
+    logger_entry.requestID = event.requestID; // In case of OnRequestRetry, requestID is changed again in the acc. update method
 
-    // for the responsebody event, call update_event_responsebody directly, as this is not recorded in the events of an entry
+    // For the responsebody event, call update_event_responsebody directly, as this is not recorded in the events of an entry
     if (eventname === "responsebody")
       logger_entry.update_event_responsebody(event);
     else
       logger_entry.update(eventname, event);
-    // todo: maybe the request should post a message about having updated, also so the view could update only that
+
     views.network_logger.update();
   };
 
-  this.get_resource = function(id)
+  this.get_entry = function(id)
   {
-    // as this is to return a resource explicitely, it doesn't use get_resources()
-    // because that returnes paused_resources while paused.
-    return this._resources.filter(function(e) { return e.id == id; })[0];
-  };
-
-  this.get_logger_entry = function(id)
-  {
-    return this.get_logger_entries().filter(function(e) { return e.id == id; })[0];
+    return this.get_entries_filtered().filter(function(e) { return e.id == id; })[0];
   };
 };
 
-cls.NetworkResource = function(id)
+cls.NetworkLoggerEntry = function(id, context, resource)
 {
   this.id = id;
-  this._logger_entries = [];
-  this.get_logger_entries = function()
-  {
-    return this._logger_entries.filter(function(entry)
-    {
-      if (entry.invalid_when_network_not_touched && !entry.touched_network)
-        return false;
-      return true;
-    });
-  }
-}
-
-cls.NetworkLoggerEntry = function(id, resource)
-{
-  this.id = id;
-  this.resource = resource; // todo: apart from the debugging tooltips, this is probably unnecessarry
+  this.context = context;
+  this.resource = resource;
   this.partial = false;
   this.url = null;
   this.human_url = "No URL";
@@ -409,6 +364,7 @@ cls.NetworkLoggerEntry = function(id, resource)
   this.type = null;
   this.urltype = null;
   this.starttime = null;
+  this.starttime_relative = null;
   this.requesttime = null;
   this.endtime = null;
   this.cached = false;
@@ -434,6 +390,7 @@ cls.NetworkLoggerEntry = function(id, resource)
     if (!this.events.length)
     {
       this.starttime = eventdata.time;
+      this.starttime_relative = this.starttime - this.context.get_starttime();
 
       var d = new Date(this.starttime);
       var h = "" + d.getHours();
@@ -450,10 +407,7 @@ cls.NetworkLoggerEntry = function(id, resource)
         ms = "0" + ms;
       this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
     }
-    if (eventdata.time) // todo: could probably always be done, except for the responsebody event, check if it really needs to be listened to.
-    {
-      this.endtime = eventdata.time;
-    }
+    this.endtime = eventdata.time;
     this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
 
     if (updatefun)
