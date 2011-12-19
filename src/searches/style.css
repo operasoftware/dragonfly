@@ -177,21 +177,9 @@
   width: 100%;
 }
 
-.advanced-search .container-button
+.advanced-search .ui-button
 {
-  height: 17px;
-  border-radius: 0px;
-  padding: 1px 6px;
-  box-shadow: none;
-  border-right: none;
-  border-top: none;
-  border-bottom: none;
-}
-
-.advanced-search .search-move-highlight-down
-{
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  margin-top: -1px;
 }
 
 .advanced-search .search-move-highlight-up::before
