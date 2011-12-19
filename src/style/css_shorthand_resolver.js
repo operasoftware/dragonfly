@@ -69,9 +69,7 @@ var CssShorthandResolver = function()
       converted_shorthands.forEach(function(shorthand_prop) {
         var props = props_map[shorthand_prop].properties;
         props.forEach(function(prop) {
-          // TODO: faking a CSS rule here, it should be changed so that remove_property
-          // (and related methods) takes a list of declarations instead
-          this._element_style.remove_property({declarations: declarations}, prop);
+          this._element_style.remove_property(declarations, prop);
         }, this);
       }, this);
 
@@ -119,7 +117,7 @@ var CssShorthandResolver = function()
             all_have_same_status = false;
           is_applied = declaration.is_applied;
 
-          // Check that all expanded properties either has or has not an
+          // Check that all expanded properties either have or don't have an
           // !important declaration
           if (last_priority !== null && last_priority != declaration.priority)
             return false;
@@ -138,8 +136,8 @@ var CssShorthandResolver = function()
       {
         // 'inherit' can only be used as the sole value in a shorthand, so if
         // all values are 'inherit', we can only convert to shorthand if the
-        // status is the same for all of them (i.e. all are applied or all
-        // are not applied)
+        // status is the same for all of them (i.e. all are applied or none is
+        // applied)
         if (all_inherited)
         {
           return all_have_same_status

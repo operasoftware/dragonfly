@@ -130,11 +130,11 @@ cls.ElementStyle = function()
     {
       if (this.get_property_index(style_dec, decl.property) != -1)
       {
-        this.remove_property(disabled_style_dec, decl.property);
+        this.remove_property(disabled_style_dec.declarations, decl.property);
       }
       else if (!(is_inherited && !(cls.Stylesheets.inheritable_properties.hasOwnProperty(decl.property))))
       {
-        var index = this.copy_property(disabled_style_dec, style_dec, decl.property);
+        var index = this.copy_property(disabled_style_dec.declarations, style_dec.declarations, decl.property);
         style_dec.declarations[index].is_disabled = true;
       }
     }
@@ -226,18 +226,17 @@ cls.ElementStyle = function()
   };
 
   /**
-   * Copies a property from one StyleDeclaration to another
+   * Copies a property from one CssDeclaration to another
    *
-   * @param {Array} source The source StyleDeclaration
-   * @param {Array} target The target StyleDeclaration
+   * @param {Array} source The source array of CssDeclarations
+   * @param {Array} target The target array of CssDeclarations
    * @param {String} property The property to copy
    * @returns {Integer} The index where the property was inserted (the last index)
    */
   this.copy_property = function(source, target, property)
   {
     var new_style_dec = this.get_new_style_dec();
-    var declarations = source.declarations;
-    for (var i = 0, decl; decl = declarations[i]; i++)
+    for (var i = 0, decl; decl = source[i]; i++)
     {
       if (decl.property == property)
       {
@@ -249,31 +248,30 @@ cls.ElementStyle = function()
           decl.is_disabled
         );
         new_decl.shorthand_tokens = decl.shorthand_tokens;
-        target.declarations.push(new_decl);
+        target.push(new_decl);
         break;
       }
     }
-    return target.declarations.length - 1;
+    return target.length - 1;
   };
 
   /**
-   * Removes a property from `rule`
+   * Removes a property from `declarations`
    *
-   * @param {CssRule} rule The CssRule to remove the property from
+   * @param {Array} declarations An array of CssDeclarations
    * @param {String} property The property to remove
    * @returns {CssRule|null} A CssRule with the removed property if it was
    *          removed, otherwise null
    */
-  this.remove_property = function(rule, property)
+  this.remove_property = function(declarations, property)
   {
     var new_rule = this.get_new_style_dec();
-    var declarations = rule.declarations;
     for (var i = 0, decl; decl = declarations[i]; i++)
     {
       if (decl.property == property)
       {
-        this.copy_property(rule, new_rule, property);
-        rule.declarations.splice(i, 1);
+        this.copy_property(declarations, new_rule.declarations, property);
+        declarations.splice(i, 1);
         return new_rule;
       }
     }
@@ -424,4 +422,3 @@ cls.ElementStyle.get_instance = function()
 {
   return new cls.ElementStyle();
 };
-

@@ -217,7 +217,7 @@ cls.CSSInspectorActions = function(id)
     property = this.normalize_property(property);
     var disabled_style_dec = this._element_style.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-      this._element_style.remove_property(disabled_style_dec, property);
+      this._element_style.remove_property(disabled_style_dec.declarations, property);
 
     var script = "object.style.removeProperty(\"" + property + "\");";
 
@@ -247,7 +247,7 @@ cls.CSSInspectorActions = function(id)
     property = this.normalize_property(property);
     var disabled_style_dec = this._element_style.disabled_style_dec_list[rule_id];
     if (disabled_style_dec)
-      this._element_style.remove_property(disabled_style_dec, property);
+      this._element_style.remove_property(disabled_style_dec.declarations, property);
 
     var script = "object.removeAttribute(\"" + property + "\");";
 
@@ -352,7 +352,7 @@ cls.CSSInspectorActions = function(id)
   {
     var id = rule_id || this._element_style.get_inline_obj_id(obj_id);
     var disabled_style_dec = this._element_style.disabled_style_dec_list[id];
-    var style_dec = this._element_style.remove_property(disabled_style_dec, property);
+    var style_dec = this._element_style.remove_property(disabled_style_dec.declarations, property);
     var declarations = style_dec.declarations;
     if (declarations)
       this.set_property(rt_id, rule_id || obj_id, declarations[0], null, this._element_style.update);
@@ -375,8 +375,8 @@ cls.CSSInspectorActions = function(id)
       disabled_style_dec_list[id] = this._element_style.get_new_style_dec();
 
     this.remove_property(rt_id, rule_id || obj_id, property, this._element_style.update);
-    this._element_style.copy_property(style_dec, disabled_style_dec_list[id], property);
-    this._element_style.remove_property(style_dec, property);
+    this._element_style.copy_property(style_dec.declarations, disabled_style_dec_list[id].declarations, property);
+    this._element_style.remove_property(style_dec.declarations, property);
   };
 
   /**
@@ -398,10 +398,10 @@ cls.CSSInspectorActions = function(id)
       while (style_dec.declarations.length)
       {
         var property = style_dec.declarations[0].property;
-        this._element_style.copy_property(style_dec,
-                                          disabled_style_dec_list[id],
+        this._element_style.copy_property(style_dec.declarations,
+                                          disabled_style_dec_list[id].declarations,
                                           property);
-        this._element_style.remove_property(style_dec, property);
+        this._element_style.remove_property(style_dec.declarations, property);
       }
 
       var tag = this._tag_manager.set_callback(null, this._element_style.update);
