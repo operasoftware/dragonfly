@@ -9,7 +9,7 @@
   padding: 1px 3px;
   margin: 2px 3px;
   border-radius: 3px;
-  line-height: 1.72em; /* 11px × 1.72 ≈ 19px */
+  line-height: 19px;
 }
 
 .shortcuts-config header:active

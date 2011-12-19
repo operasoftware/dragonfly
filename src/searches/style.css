@@ -179,17 +179,7 @@
 
 .advanced-search .ui-button
 {
-  border-radius: 0;
-  margin: 0;
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-}
-
-.advanced-search .search-move-highlight-down
-{
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  margin-top: -1px;
 }
 
 .advanced-search .search-move-highlight-up::before
