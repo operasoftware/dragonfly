@@ -152,6 +152,11 @@ var ToolbarBase = function()
   {
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
+    this.buttons_arr = null;
+    if (this.buttons.length && this.buttons[0].constructor === Array)
+      this.buttons_arr = this.buttons;
+    else
+      this.buttons_arr = [this.buttons];
     this.switches = switches[view_id] && switches[view_id].keys || [];
     this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
@@ -162,7 +167,6 @@ var ToolbarBase = function()
     {
       this.__is_visible = toolbars[view_id].getVisibility();
     }
-    var set_separator = this.buttons.length;
     var search = this.has_search_button && UI.get_instance().get_search(view_id);
     if(this.__is_visible)
     {
@@ -174,9 +178,9 @@ var ToolbarBase = function()
       {
         toolbar.render(templates.search_button(search));
       }
-      if( this.buttons.length )
+      for (var i = 0, buttons; buttons = this.buttons_arr[i]; i++)
       {
-        toolbar.render(templates.buttons(this.buttons));
+        toolbar.render(templates.buttons(buttons));
       }
       if(this.switches.length)
       {

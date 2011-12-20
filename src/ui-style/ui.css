@@ -313,6 +313,17 @@ toolbar-switches
   background-image: url("../ui-images/icons/icon_clear.png");
 }
 
+.network-view-toggle-graphs:before
+{
+  background-image: url("../ui-images/icons/icon_graph.png");
+}
+
+.network-view-toggle-data:before
+{
+  background-image: url("../ui-images/icons/icon_table.png");
+}
+
+
 .request_list\.clear-log-on-runtime-switch::before
 {
   background-image: url("../ui-images/icons/icon_clearonreload.png");

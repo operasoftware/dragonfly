@@ -103,45 +103,13 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
     ],
     [
       "div", [
-        [
-          templates.network_viewmode_select(selected_viewmode),
-          "class", "network-details-container-tabbar"
-        ],
-        [
-          "div", viewmode_render(ctx, detail_width),
-          "class", "network-data-container " + selected_viewmode
-        ]
+        "div", viewmode_render(ctx, detail_width),
+        "class", "network-data-container " + selected_viewmode
       ],
       "class", "network-detail-container"
     ]
   ]
 };
-
-templates.network_viewmode_select = function(selected_viewmode)
-{
-  return [
-    "tabs", [
-      {
-        id: "graphs",
-        label: "Graphs" // Todo: Strings
-      },
-      {
-        id: "data",
-        label: "Data" // Todo: Strings
-      }
-    ].map(function(tab)
-        {
-          var arr = [
-            "tab", tab.label,
-            "handler", "select-network-viewmode",
-            "data-select-viewmode", tab.id
-          ]
-          if (selected_viewmode === tab.id)
-            arr.push("class", "active");
-          return arr;
-    })
-  ];
-}
 
 templates.network_viewmode_graphs = function(ctx, width)
 {
@@ -486,40 +454,44 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
     );
   }
   return [
-    templates.network_type_filter_buttons(type_filter),
     ["ol", items.map(itemfun),
       "class", "network-log-url-list"]
   ]
 };
 
 
-templates.network_type_filter_buttons = function(current_filter)
+templates.network_type_filter_buttons = function(view)
 {
+  var filter_options = [
+    {name: "All", val: ""}, // Todo: Strings
+    {name: "Markup", val: "markup"},
+    {name: "Stylesheets", val: "css"},
+    {name: "Scripts", val: "script"},
+    {name: "Images", val: "image"},
+    {name: "XHR", val: "xhr"},
+    {name: "Other", val: "markup,css,script,image,xhr", is_blacklist: true}
+  ];
+
+  var current_filter = view._type_filter; // todo: public
   if (!current_filter)
-    current_filter = "";
+    current_filter = filter_options[0];
+
 
   return [
-    "div", [
-      {name: "All", val: ""}, // Todo: Strings
-      {name: "Markup", val: "markup"},
-      {name: "Stylesheets", val: "css"},
-      {name: "Scripts", val: "script"},
-      {name: "Images", val: "image"},
-      {name: "XHR", val: "xhr"},
-      {name: "Other", val: "markup,css,script,image,xhr", is_blacklist: true}
-    ].map(function(filter)
+    "div", filter_options.map(function(filter)
           {
-            var c = "ui-button container-button";
-            if (filter.val == current_filter.content &&
-                filter.is_blacklist == current_filter.val)
+            var c = "ui-button ui-control text-button";
+            if (filter.val == current_filter.val &&
+                !!filter.is_blacklist == !!current_filter.is_blacklist)
             {
-              c += " on";
+              c += " is-active";
             }
             return [
               "span", filter.name,
               "data-type-filter", filter.val,
               "data-filter-is-blacklist", filter.is_blacklist ? "true" : "false",
               "class", c,
+              "tabindex", "1",
               "handler", "type-filter-network-view"
             ];
           }),
@@ -582,6 +554,7 @@ templates.network_gap_defs = [
       ["responseheader", "urlredirect"],
       ["urlload", "urlredirect"],
       ["requestfinished", "requestretry"],
+      ["responseheader", "requestretry"],
       ["requestretry", "request"],
       ["responsefinished", "urlfinished"],
       ["urlredirect", "urlfinished"],

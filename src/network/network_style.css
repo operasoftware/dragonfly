@@ -33,12 +33,12 @@
 
 .network-data-container.graphs {
   position: relative;
-  top: 44px;
+  top: 10px;
 }
 
-.network-data-container.data {
+.network-data-container.data { /* todo: slow selector */
   position: relative;
-  top: 43px;
+  top: 9px;
 }
 
 /* Network log / Overview */
@@ -74,7 +74,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  padding-top: 10px;
+  padding-top: 34px;
 }
 
 .network-log-url-list li

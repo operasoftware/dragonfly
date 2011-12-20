@@ -181,7 +181,7 @@
     var ret = ['toolbar-buttons'], button = '', i = 0;
     for( ; button = buttons[i]; i++)
     {
-      ret[ret.length] =
+      var template =
         ['span',
           button.text || "",
           'handler', button.handler,
@@ -193,7 +193,13 @@
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
             button.param ? ['param', button.param] :[]
-        );
+        ); 
+      if (button.data)
+      {
+        for (var j = 0, attr; attr = button.data[j]; j++)
+          template = template.concat(["data-" + attr[0], attr[1]]);
+      }
+      ret[ret.length] = template;
     }
     return ret;
   }

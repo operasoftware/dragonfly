@@ -196,9 +196,9 @@ cls.RequestContext = function()
   {
     var success = true;
     var filter = this._filter;
-    if (filter && filter.content)
+    if (filter && filter.val)
     {
-      var list = filter.content.split(",");
+      var list = filter.val.split(",");
 
       // either type or load_origin matches. pass criteria then depends on is_blacklist.
       var has_match = list.contains(item.type) || list.contains(item.load_origin);

@@ -47,9 +47,21 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     var ctx = this._service.get_request_context();
 
+    if (this.toolbar_config)
+    {
+      // this.toolbar_config.updateButtons(); // todo: I would have guessed this would re-render the templates I passed when initializing toolbar_config, but it doesn't.
+      var bar = this.toolbar_config.container_ids.length && document.getElementById(this.toolbar_config.container_ids[0]);
+      var filter_button_cont = bar && bar.querySelector(".type-filter-buttons");
+      if (filter_button_cont)
+      {
+        filter_button_cont.clearAndRender(this.toolbar_config.customs[0].template(this));
+      }
+    }
+
     if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
+      // console.log("_type_filter", this._type_filter);
       ctx.set_filter(this._type_filter);
 
       this._render_tabbed_view(this._container);
@@ -76,6 +88,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       else
         pause_button.removeClass("is-active");
     }
+
+    var selected_viewmode = settings.network_logger.get("selected_viewmode") || "graphs";
+    var buttons = document.querySelectorAll(".select-network-viewmode");
+    for (var i = 0, btn; btn = buttons[i]; i++)
+    {
+      if (btn.hasClass("network-view-toggle-" + selected_viewmode))
+        btn.addClass("is-active");
+      else
+        btn.removeClass("is-active");
+    };
   };
   this._update_bound = this.update.bind(this);
 
@@ -124,7 +146,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     */
     var url_list_width = Math.ceil(Math.max(230, parseInt(container.style.width) * 0.4));
     var detail_width = parseInt(container.style.width) - url_list_width;
-    var selected_viewmode = settings.network_logger.get("selected_viewmode");
+    var selected_viewmode = settings.network_logger.get("selected_viewmode") || "graphs";
 
     var ctx = this._service.get_request_context();
 
@@ -381,7 +403,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_select_network_viewmode_bound = function(evt, target)
   {
-    settings.network_logger.set("selected_viewmode", target.getAttribute("data-select-viewmode"));
+    var mode = target.getAttribute("data-selected-viewmode");
+    settings.network_logger.set("selected_viewmode", mode);
     this.needs_instant_update = true;
     this.update();
   }.bind(this);
@@ -389,7 +412,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._on_change_type_filter_bound= function(evt, target)
   {
     this._type_filter = {
-      content: target.getAttribute("data-type-filter"),
+      val: target.getAttribute("data-type-filter"),
       is_blacklist: (target.getAttribute("data-filter-is-blacklist") === "true")
     }
     this.needs_instant_update = true;
@@ -425,41 +448,67 @@ cls.NetworkLog = {};
 cls.NetworkLog.create_ui_widgets = function()
 {
 
-  new ToolbarConfig
-  (
-    'network_logger',
-    [
-      {
-        handler: 'clear-log-network-view',
-        title: ui_strings.S_CLEAR_NETWORK_LOG
-      },
-      {
-        handler: 'toggle-paused-network-view',
-        title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
-      }
+  window.views.network_logger.toolbar_config = new ToolbarConfig(
+    "network_logger",
+    [ // buttons
+      [
+        {
+          handler: "clear-log-network-view",
+          title: ui_strings.S_CLEAR_NETWORK_LOG
+        }
+      ],
+      [
+        {
+          handler: "toggle-paused-network-view",
+          title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
+        }
+      ]
     ],
-    [
+    [ // filters
       {
-        handler: "network-text-filter",
-        shortcuts: "network-text-filter",
+        handler: "network-text-search",
+        shortcuts: "network-text-search",
         title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
     ],
-    null,
-    null,
-    true
+    [ // special button
+      {
+        handler: "select-network-viewmode",
+        data: [
+                ["selected-viewmode", "graphs"]
+              ],
+        title: "Graph view",
+        class_name: "network-view-toggle-graphs"
+      },
+      {
+        handler: "select-network-viewmode",
+        data: [
+                ["selected-viewmode", "data"]
+              ],
+        title: "Data view",
+        class_name: "network-view-toggle-data"
+      }
+    ],
+    [ // custom button
+      {
+        handler: "type-filter-network-view",
+        title: "type-filter-network-view", // todo: strings
+        template: templates.network_type_filter_buttons
+      }
+    ],
+    true // has_search_button
   );
 
   var text_search = window.views.network_logger._text_search = new TextSearch();
   text_search.add_listener("onbeforesearch", window.views.network_logger._on_before_search_bound);
 
-  eventHandlers.input["network-text-filter"] = function(event, target)
+  eventHandlers.input["network-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
   ActionBroker.get_instance().get_global_handler().
-      register_shortcut_listener("network-text-filter", cls.Helpers.shortcut_search_cb.bind(text_search));
+      register_shortcut_listener("network-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
 
   var on_view_created = function(msg)
   {
@@ -467,7 +516,7 @@ cls.NetworkLog.create_ui_widgets = function()
     {
       text_search.setContainer(msg.container);
       text_search.setFormInput(
-        views.network_logger.getToolbarControl(msg.container, "network-text-filter")
+        views.network_logger.getToolbarControl(msg.container, "network-text-search")
       );
     }
   }
