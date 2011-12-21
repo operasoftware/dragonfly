@@ -46,18 +46,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._create = function()
   {
     var ctx = this._service.get_request_context();
-
-    if (this.toolbar_config)
-    {
-      // this.toolbar_config.updateButtons(); // todo: I would have guessed this would re-render the templates I passed when initializing toolbar_config, but it doesn't.
-      var bar = this.toolbar_config.container_ids.length && document.getElementById(this.toolbar_config.container_ids[0]);
-      var filter_button_cont = bar && bar.querySelector(".type-filter-buttons");
-      if (filter_button_cont)
-      {
-        filter_button_cont.clearAndRender(this.toolbar_config.customs[0].template(this));
-      }
-    }
-
     if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
@@ -401,8 +389,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
+  this._handle_one_state_only_button = function(active_button)
+  {
+    var buttons = active_button.parentNode.childNodes;
+    for (var i=0, button; button = buttons[i]; i++)
+      if (button !== active_button)
+        button.removeClass("is-active");
+    active_button.addClass("is-active");
+  }
+
   this._on_select_network_viewmode_bound = function(evt, target)
   {
+    this._handle_one_state_only_button(target);
     var mode = target.getAttribute("data-selected-viewmode");
     settings.network_logger.set("selected_viewmode", mode);
     this.needs_instant_update = true;
@@ -411,6 +409,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._on_change_type_filter_bound= function(evt, target)
   {
+    this._handle_one_state_only_button(target);
     this._type_filter = {
       val: target.getAttribute("data-type-filter"),
       is_blacklist: (target.getAttribute("data-filter-is-blacklist") === "true")
@@ -447,7 +446,6 @@ cls.NetworkLogView.prototype = ViewBase;
 cls.NetworkLog = {};
 cls.NetworkLog.create_ui_widgets = function()
 {
-
   window.views.network_logger.toolbar_config = new ToolbarConfig(
     "network_logger",
     [ // buttons
@@ -462,6 +460,31 @@ cls.NetworkLog.create_ui_widgets = function()
           handler: "toggle-paused-network-view",
           title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
         }
+      ],
+      [
+        {
+          handler: "type-filter-network-view", // todo: this actually results in a whole bunch of buttons, because of what the template returns. should probably make into indidual buttons, because of the title for example
+          title: "type-filter-network-view", // todo: strings
+          template: templates.network_type_filter_buttons
+        }
+      ],
+      [
+        {
+          handler: "select-network-viewmode",
+          data: [
+                  ["selected-viewmode", "graphs"]
+                ],
+          title: "Graph view",
+          class_name: "network-view-toggle-graphs"
+        },
+        {
+          handler: "select-network-viewmode",
+          data: [
+                  ["selected-viewmode", "data"]
+                ],
+          title: "Data view",
+          class_name: "network-view-toggle-data"
+        }
       ]
     ],
     [ // filters
@@ -471,33 +494,7 @@ cls.NetworkLog.create_ui_widgets = function()
         title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
         label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
       }
-    ],
-    [ // special button
-      {
-        handler: "select-network-viewmode",
-        data: [
-                ["selected-viewmode", "graphs"]
-              ],
-        title: "Graph view",
-        class_name: "network-view-toggle-graphs"
-      },
-      {
-        handler: "select-network-viewmode",
-        data: [
-                ["selected-viewmode", "data"]
-              ],
-        title: "Data view",
-        class_name: "network-view-toggle-data"
-      }
-    ],
-    [ // custom button
-      {
-        handler: "type-filter-network-view",
-        title: "type-filter-network-view", // todo: strings
-        template: templates.network_type_filter_buttons
-      }
-    ],
-    true // has_search_button
+    ]
   );
 
   var text_search = window.views.network_logger._text_search = new TextSearch();

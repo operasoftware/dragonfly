@@ -178,30 +178,35 @@
 
   this.buttons = function(buttons)
   {
-    var ret = ['toolbar-buttons'], button = '', i = 0;
-    for( ; button = buttons[i]; i++)
-    {
-      var template =
-        ['span',
-          button.text || "",
-          'handler', button.handler,
-          'title', button.title,
-          'tabindex', '1',
-          'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
-                          button.class_name : '') + (button.text ? ' text-button' : '')
-        ].concat(
-            button.id ? ['id', button.id] : [],
-            button.disabled ? ['disabled', 'disabled'] : [],
-            button.param ? ['param', button.param] :[]
-        ); 
-      if (button.data)
-      {
-        for (var j = 0, attr; attr = button.data[j]; j++)
-          template = template.concat(["data-" + attr[0], attr[1]]);
-      }
-      ret[ret.length] = template;
-    }
+    var ret = ['toolbar-buttons'];
+    if (buttons)
+      for(var i = 0, button; button = buttons[i]; i++)
+        ret[ret.length] = this.button(button);
+
     return ret;
+  }
+
+  this.toolbar_button = function(button) // todo: there is window.templates["button"], defined in button.js
+  {
+    var template =
+      ['span',
+        button.text || "",
+        'handler', button.handler,
+        'title', button.title,
+        'tabindex', '1',
+        'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
+                        button.class_name : '') + (button.text ? ' text-button' : '')
+      ].concat(
+          button.id ? ['id', button.id] : [],
+          button.disabled ? ['disabled', 'disabled'] : [],
+          button.param ? ['param', button.param] :[]
+      ); 
+    if (button.data)
+    {
+      for (var j = 0, attr; attr = button.data[j]; j++)
+        template = template.concat(["data-" + attr[0], attr[1]]);
+    }
+    return template;
   }
 
   this.toolbar_settings = function(toolbar_settings)

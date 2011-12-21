@@ -152,22 +152,26 @@ var ToolbarBase = function()
   {
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
-    this.buttons_arr = null;
+    this.buttons_arr = [];
     if (this.buttons.length && this.buttons[0].constructor === Array)
+    {
+      // Was initialized with an array of button-arrays
       this.buttons_arr = this.buttons;
-    else
+    }
+    else if (this.buttons.length)
+    {
       this.buttons_arr = [this.buttons];
+    }
     this.switches = switches[view_id] && switches[view_id].keys || [];
     this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
-    this.has_search_button = toolbars[view_id] && toolbars[view_id].has_search_button;
     this.__view_id = view_id;
     if(toolbars[view_id])
     {
       this.__is_visible = toolbars[view_id].getVisibility();
     }
-    var search = this.has_search_button && UI.get_instance().get_search(view_id);
+    var search = this.filters.length && UI.get_instance().get_search(view_id);
     if(this.__is_visible)
     {
       if(this.filters.length)
@@ -178,11 +182,30 @@ var ToolbarBase = function()
       {
         toolbar.render(templates.search_button(search));
       }
-      for (var i = 0, buttons; buttons = this.buttons_arr[i]; i++)
+      if (this.buttons_arr.length)
       {
-        toolbar.render(templates.buttons(buttons));
+        // the button templates are done here, so they can have an individual templates
+        var buttons_template = [];
+        for (var i = 0, buttons; buttons = this.buttons_arr[i]; i++)
+        {
+          var button_arr = [];
+          for (var j = 0, button; button = buttons[j]; j++)
+          {
+            if (button.template)
+            {
+              button_arr.push(button.template(views[view_id]));
+            }
+            else
+            {
+              button_arr.push(templates.toolbar_button(button));
+            }
+          }
+          // templates.buttons() returns only the container
+          buttons_template.push(templates.buttons().concat(button_arr));
+        }
+        toolbar.render(buttons_template);
       }
-      if(this.switches.length)
+      if(this.switches.length) // switches, specials and customs can now just be passed as button-arrays
       {
         toolbar.render(templates.switches(this.switches));
       }
