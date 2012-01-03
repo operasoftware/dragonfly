@@ -594,6 +594,30 @@ addTest("Resolving CSS shorthands", function () {
       ]
     }
   );
+
+  clear_properties();
+
+  // One missing value in background-attachment has to be repeated
+  set_properties(
+    {
+      "background": "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px)",
+      "background-attachment": "fixed, scroll",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "background",
+      ],
+      values: [
+        "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) scroll, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed",
+      ],
+      priorities: [
+        true,
+      ]
+    }
+  );
 });
 
 

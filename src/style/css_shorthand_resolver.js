@@ -179,7 +179,7 @@ CssShorthandResolver.shorthands = (function() {
   var split_values = function(decls)
   {
     var tokenizer = new CssValueTokenizer();
-    var declarations = [];
+    var declarations = {};
     for (var prop in decls)
     {
       declarations[prop] = [];
@@ -211,10 +211,9 @@ CssShorthandResolver.shorthands = (function() {
   {
     var first = arguments[0];
     var rest = Array.prototype.slice.call(arguments, 1);
-    var all_equal = rest.every(function(arg) {
+    return rest.every(function(arg) {
       return JSON.stringify(first) == JSON.stringify(arg);
     });
-    return all_equal;
   };
 
   var get_tokens = function(decl)
@@ -245,6 +244,27 @@ CssShorthandResolver.shorthands = (function() {
     return values;
   };
 
+  var resolve_multiple_values = function(declarations, len)
+  {
+    for (var decl in declarations)
+    {
+      var decl_len = declarations[decl].length;
+
+      if (decl_len > len)
+        declarations[decl].splice(len);
+
+      // If some property has too few values, repeat the rest
+      while (declarations[decl].length < len)
+      {
+        var index = declarations[decl].length % decl_len;
+        declarations[decl].push({
+          value: declarations[decl][index].value,
+          is_applied: declarations[decl][index].is_applied
+        });
+      }
+    }
+  };
+
   var get_initial_value = cls.Stylesheets.get_initial_value;
 
   return {
@@ -263,10 +283,11 @@ CssShorthandResolver.shorthands = (function() {
         var declarations = split_values(decls);
         var template = [];
         var len = declarations["background-image"].length;
+        resolve_multiple_values(declarations, len); // Will repeat background-color too, but that won't be used
         for (var i = 0; i < len; i++)
         {
           var template_len = template.length;
-          var is_final_bg_layer = i == len-1;
+          var is_final_bg_layer = (i == len-1);
 
           // Always add background-image, unless we're in the final background layer and
           // it has the default value.
@@ -647,6 +668,7 @@ CssShorthandResolver.shorthands = (function() {
         var declarations = split_values(decls);
         var template = [];
         var len = declarations["-o-transition-property"].length;
+        resolve_multiple_values(declarations, len);
         for (var i = 0; i < len; i++)
         {
           template.push(
