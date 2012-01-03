@@ -16,7 +16,7 @@
  *
  * Caveats:
  * - All numbers with units (including '%') are reported as DIMENSION,
- *   even if the unit is a recognized unit from the specification.
+ *   even if the unit is not a recognized unit from the specification.
  * - Does not handle escaping.
  * - Does not handle comments in all cases, see next point.
  * - According to the specification e.g. `-1` is treated as two separate
@@ -34,7 +34,7 @@ var CssValueTokenizer = function()
   var HEX_CHARS = /[0-9a-f]/i;
   var IDENT_START_CHARS = /[a-z-]/i;
   var IDENT_CHARS = /[a-z0-9-]/i;
-  var UNARY_OP_CHARS = /[-+]/i;
+  var UNARY_OP_CHARS = /[-+]/;
   var UNIT_CHARS = /[a-z%]/i;
 
   this._states = {
