@@ -204,6 +204,30 @@ CssShorthandResolver.shorthands = (function() {
   };
 
   /**
+   * If some property in with multiple values has too few values for some
+   * property, repeat the value
+   */
+  var resolve_multiple_values = function(declarations, len)
+  {
+    for (var decl in declarations)
+    {
+      var decl_len = declarations[decl].length;
+
+      if (decl_len > len)
+        declarations[decl].splice(len);
+
+      while (declarations[decl].length < len)
+      {
+        var index = declarations[decl].length % decl_len;
+        declarations[decl].push({
+          value: declarations[decl][index].value,
+          is_applied: declarations[decl][index].is_applied
+        });
+      }
+    }
+  };
+
+  /**
    * Compares two values. Returns true if both values are equal and both
    * values are applied.
    */
@@ -242,27 +266,6 @@ CssShorthandResolver.shorthands = (function() {
       };
     }
     return values;
-  };
-
-  var resolve_multiple_values = function(declarations, len)
-  {
-    for (var decl in declarations)
-    {
-      var decl_len = declarations[decl].length;
-
-      if (decl_len > len)
-        declarations[decl].splice(len);
-
-      // If some property has too few values, repeat the rest
-      while (declarations[decl].length < len)
-      {
-        var index = declarations[decl].length % decl_len;
-        declarations[decl].push({
-          value: declarations[decl][index].value,
-          is_applied: declarations[decl][index].is_applied
-        });
-      }
-    }
   };
 
   var get_initial_value = cls.Stylesheets.get_initial_value;

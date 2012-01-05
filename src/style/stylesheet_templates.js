@@ -28,7 +28,7 @@ var StylesheetTemplates = function()
     return [
       "div",
         ["span",
-           "user agent stylesheet", // TODO: ui string
+           ui_strings.S_STYLE_ORIGIN_USER_AGENT,
          "class", "rule-description"
         ],
         ["span",
@@ -48,7 +48,7 @@ var StylesheetTemplates = function()
     return [
       "div",
         ["span",
-           "user stylesheet", // TODO: ui string
+           ui_strings.S_STYLE_ORIGIN_LOCAL,
          "class", "rule-description"
         ],
         ["span",
@@ -115,7 +115,7 @@ var StylesheetTemplates = function()
     return [
       "div",
         ["span",
-           "presentation attributes", // TODO: ui string
+           ui_strings.S_STYLE_ORIGIN_SVG,
          "style", "font-style: italic;" // TODO: use a class
         ],
         " {\n",
@@ -167,7 +167,9 @@ var StylesheetTemplates = function()
       (is_editable
        ? ["input",
           "type", "checkbox",
-          "title", (declaration.is_disabled ? "Enable" : "Disable"), // TODO: ui strings
+          "title", (declaration.is_disabled
+                    ? ui_strings.S_ENABLE_DECLARATION
+                    : ui_strings.S_DISABLE_DECLARATION),
           "class", "enable-disable",
           "checked", !declaration.is_disabled,
           "handler", "enable-disable",

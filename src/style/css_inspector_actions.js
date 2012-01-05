@@ -221,13 +221,21 @@ cls.CSSInspectorActions = function(id)
 
     var script = "object.style.removeProperty(\"" + property + "\");";
 
-    // HACK: workaround for CORE-42812: "border-radius" can't be removed with removeProperty()
+    // HACK: workarounds for CORE-42812 and CORE-43566: border-radius and -o-transition
+    // shorthands can't be removed with removeProperty().
     if (property == "border-radius")
     {
       script = "object.style.removeProperty(\"border-top-left-radius\");" +
                "object.style.removeProperty(\"border-top-right-radius\");" +
                "object.style.removeProperty(\"border-bottom-left-radius\");" +
                "object.style.removeProperty(\"border-bottom-right-radius\");";
+    }
+    else if (property == "-o-transition")
+    {
+      script = "object.style.removeProperty(\"-o-transition-delay\");" +
+               "object.style.removeProperty(\"-o-transition-duration\");" +
+               "object.style.removeProperty(\"-o-transition-property\");" +
+               "object.style.removeProperty(\"-o-transition-timing-function\");";
     }
 
     var tag = (typeof callback == "function")
@@ -630,8 +638,12 @@ cls.CSSInspectorActions = function(id)
     var rule_id = parseInt(target.get_attr("parent-node-chain", "rule-id"));
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
-    var prop = event.target.get_ancestor(".css-declaration").querySelector(".css-property").textContent;
-    this.remove_property(rt_id, rule_id, prop, this._element_style.update);
+    var declaration = event.target.get_ancestor(".css-declaration");
+    var prop = declaration && declaration.querySelector(".css-property").textContent;
+    if (prop)
+    {
+      this.remove_property(rt_id, rule_id, prop, this._element_style.update);
+    }
   }.bind(this);
 
   this._handlers["disable-all-properties"] = function(event, target)

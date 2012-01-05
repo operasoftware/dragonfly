@@ -1396,4 +1396,20 @@ ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
 
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
-ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression."
+ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
+
+/* DESC: Description for CSS rules with the origin being the UA */
+ui_strings.S_STYLE_ORIGIN_USER_AGENT = "user agent stylesheet";
+
+/* DESC: Description for CSS rules with the origin being the user */
+ui_strings.S_STYLE_ORIGIN_LOCAL = "user stylesheet";
+
+/* DESC: Description for CSS rules with the origin being the SVG presentation attributes */
+ui_strings.S_STYLE_ORIGIN_SVG = "presentation attributes";
+
+/* DESC: Tooltip for enabling a declaration */
+ui_strings.S_ENABLE_DECLARATION = "Enable";
+
+/* DESC: Tooltip for disabling a declaration */
+ui_strings.S_DISABLE_DECLARATION = "Disable";
+
