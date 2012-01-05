@@ -33,16 +33,20 @@
     /**
       * To show the tooltip.
       * By default the tooltip is positioned in relation to the element
-      * with the data-tooltip attribute. If the method is called with
-      * the optional 'box' argument that box is used instead to position
-      * the tooltip.
+      * with the data-tooltip attribute, the tooltip-target. If the method 
+      * is called with the optional 'box' argument that box is used 
+      * instead to position the tooltip.
       * @param content {String or Template} The content for the tooltip. Optional.
       * If not set the 'data-tooltip-text' value on the target element will be 
       * used instead.
-      * @param box The box to position the tootip. Optional. Only left, top and 
-      * bottom are used. By default the box is given by the intersection of the 
-      * vertical line given by the mouse event left postion and the dimension
-      * and position of the target element.
+      * @param box The box to position the tooltip. Optional. The top, bottom, 
+      * right and left property describe the position and dimension of the 
+      * tooltip-target. Additionally the box needs a mouse_x and a mouse_y 
+      * position. If the height of the tooltip-target is less than 1/3 of 
+      * the window height, it is displayed above or beyond the tooltip-target, 
+      * either on the left or the right side of the mouse-x position and vice 
+      * versa if the hight is bigger. By default the box is created 
+      * automatically with the mouse position and the target.
       */
     this.show = function(content, box){};
 
@@ -227,46 +231,101 @@
       {
         box = {top: _last_box.top,
                bottom: _last_box.bottom,
-               left: _last_event ? _last_event.clientX : _last_box.left,
-               right: _last_event ? _last_event.clientX : _last_box.right};          
+               left: _last_box.left,
+               right: _last_box.right};
+
+        if (_last_event)
+        {
+          box.mouse_x = _last_event.clientX;
+          box.mouse_y = _last_event.clientY;
+        } 
+        else
+        {
+          box.mouse_x = Math.floor(box.left + (box.right - box.left) / 2);
+          box.mouse_y = Math.floor(box.top + (box.bottom - box.top) / 2);
+        }        
       }
 
       if (box)
       {
-        var top = box.bottom + DISTANCE_Y;
         var max_h = 0;
-        if (top < _window_height / 2)
-        {
-          _tooltip_ele.style.top = top + "px";
-          _tooltip_ele.style.bottom = "auto";
-          max_h = _window_height - top - MARGIN_Y - _padding_height;
-          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
-        }
-        else
-        {
-          var bottom = _window_height - box.top + DISTANCE_Y;
-          _tooltip_ele.style.bottom = bottom + "px";
-          _tooltip_ele.style.top = "auto";
-          max_h = _window_height - bottom - MARGIN_Y - _padding_height;
-          _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
-        }
-        
-        var left = box.left + DISTANCE_X;
         var max_w = 0;
-        if (left < _window_width / 2)
+
+        if (box.bottom - box.top < _window_height / 3 ||
+            Math.max(box.left, _window_width - box.right) < _window_height / 3)
         {
-          _tooltip_ele.style.left = left + "px";
-          _tooltip_ele.style.right = "auto";
-          max_w = _window_width - left - MARGIN_X - _padding_width;
-          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+          // positioning horizontally
+          if (_window_height - box.bottom > box.top)
+          {
+            var top = box.bottom + DISTANCE_Y;
+            _tooltip_ele.style.top = top + "px";
+            _tooltip_ele.style.bottom = "auto";
+            max_h = _window_height - top - MARGIN_Y - _padding_height;
+            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+          }
+          else
+          {
+            var bottom = _window_height - box.top + DISTANCE_Y;
+            _tooltip_ele.style.bottom = bottom + "px";
+            _tooltip_ele.style.top = "auto";
+            max_h = _window_height - bottom - MARGIN_Y - _padding_height;
+            _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+          }
+
+          if (box.mouse_x < _window_width / 2)
+          {
+            var left = box.mouse_x + DISTANCE_X;
+            _tooltip_ele.style.left = left + "px";
+            _tooltip_ele.style.right = "auto";
+            max_w = _window_width - left - MARGIN_X - _padding_width;
+            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+          }
+          else
+          {
+            var right = _window_width - box.right + DISTANCE_X;
+            _tooltip_ele.style.right = right + "px";
+            _tooltip_ele.style.left = "auto";
+            max_w = _window_width - right - MARGIN_X - _padding_width;
+            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+          }
+          
         }
         else
         {
-          var right = _window_width - box.right + DISTANCE_X;
-          _tooltip_ele.style.right = right + "px";
-          _tooltip_ele.style.left = "auto";
-          max_w = _window_width - right - MARGIN_X - _padding_width;
-          _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+          // positioning vertically 
+          if (_window_width - box.right > box.left)
+          {
+            var left = box.right + DISTANCE_X;
+            _tooltip_ele.style.left = left + "px";
+            _tooltip_ele.style.right = "auto";
+            max_w = _window_width - left - MARGIN_X - _padding_width;
+            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+          }
+          else
+          {
+            var right = box.left - DISTANCE_X;
+            _tooltip_ele.style.right = right + "px";
+            _tooltip_ele.style.left = "auto";
+            max_w = right - MARGIN_X - _padding_width;
+            _tooltip_ele_first_child.style.maxWidth = max_w + "px";
+          }
+
+          if (box.mouse_y < _window_height / 2)
+          {
+            var top = box.mouse_y + DISTANCE_Y;
+            _tooltip_ele.style.top = top + "px";
+            _tooltip_ele.style.bottom = "auto";
+            max_h = _window_height - top - MARGIN_Y - _padding_height;
+            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+          }
+          else
+          {
+            var bottom = _window_height - box.mouse_y - DISTANCE_Y;
+            _tooltip_ele.style.bottom = bottom + "px";
+            _tooltip_ele.style.top = "auto";
+            max_h = box.mouse_y - MARGIN_Y - _padding_height;
+            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+          }
         }
       }
     }

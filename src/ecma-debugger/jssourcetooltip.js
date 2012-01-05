@@ -96,10 +96,10 @@ cls.JSSourceTooltip = function(view)
           var line_count = Math.floor(offset_y / _line_height); 
           var box = 
           {
-            left: center.x,
             top: _container_box.top + line_count * _line_height,
-            right: center.x,
-            bottom: _container_box.top + (line_count + 1) * _line_height
+            bottom: _container_box.top + (line_count + 1) * _line_height,
+            mouse_x: Math.floor(center.x),
+            mouse_y: Math.floor(center.y)
           };
           _handle_poll_position(script, line_number, char_offset, box);
         }
@@ -119,6 +119,7 @@ cls.JSSourceTooltip = function(view)
       var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
       var end = script.line_arr[sel.end_line - 1] + sel.end_offset;
       var script_text = script.script_data.slice(start, end + 1);
+
       if (script_text != _last_script_text)
       {
         _last_script_text = script_text;
@@ -157,6 +158,28 @@ cls.JSSourceTooltip = function(view)
 
     if (!status && message[STATUS] == "completed")
     {
+      _identifier = selection;
+      _identifier_out_count = 0;
+      _update_identifier_boxes(script, _identifier);
+
+      if (selection.start_line != selection.end_line)
+      {
+        var line_count = selection.start_line - _view.getTopLine();
+        if (line_count < 0)
+          line_count = 0;
+        
+        box.top = _container_box.top + line_count * _line_height;
+        var end_line = selection.end_line;
+        if (end_line > _view.getBottomLine())
+          end_line = _view.getBottomLine();
+
+        line_count = selection.end_line - _view.getTopLine() + 1;
+        box.bottom = _container_box.top + line_count * _line_height;
+        var max_right = _get_max_right();
+        box.left = _total_y_offset;
+        box.right = _total_y_offset + max_right - _container.scrollLeft;        
+      }
+
       if (message[TYPE] == "object")
       {
         var object = message[OBJECT];
@@ -185,13 +208,23 @@ cls.JSSourceTooltip = function(view)
                      "class", "js-tooltip"];
         _tooltip.show(tmpl, box);
       }
-      _identifier = selection;
-      _identifier_out_count = 0;
-      _update_identifier_boxes(script, _identifier);
-      // TODO different lines
-      _view.higlight_slice(_identifier.start_line, _identifier.start_offset,
-                                        script_text.length);
-                                        //_identifier.end_offset - _identifier.start_offset + 1);
+
+      var start_line = _identifier.start_line;
+      var start_offset = _identifier.start_offset;
+      var length = script_text.length;
+
+      if (start_line < _view.getTopLine())
+      {
+        if (_identifier.end_line < _view.getTopLine())
+          return;
+
+        start_line = _view.getTopLine();
+        start_offset = 0;
+        var start = script.line_arr[start_line - 1];
+        var end = script.line_arr[selection.end_line - 1] + selection.end_offset;
+        length = end + 1 - start;
+      }
+      _view.higlight_slice(start_line, start_offset, length);
     }
   };
 
@@ -241,11 +274,17 @@ cls.JSSourceTooltip = function(view)
     return null;
   };
 
+  var _get_max_right = function()
+  {
+    return Math.max.apply(null, _identifier_boxes.map(function(box)
+    {
+      return box.right;
+    }));
+  };
+
   var _get_identifier_chain_start = function(script, line_number, tokens, match_index)
   {
-    var ret = {start_line: 0, start_offset: 0};
     var start_line = line_number;
-    var got_start = false;
     var bracket_count = 0;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
@@ -254,8 +293,7 @@ cls.JSSourceTooltip = function(view)
     if (previous_token[VALUE] == "]")
       bracket_stack.push(previous_token);
 
-    // TODO handle multiple lines
-    while (!got_start)
+    while (true)
     {
       for (var i = match_index - 1, token = null; token = tokens[i]; i--)
       {
@@ -267,6 +305,7 @@ cls.JSSourceTooltip = function(view)
             {
               case WHITESPACE:
               case LINETERMINATOR:
+              case COMMENT:
               {
                 continue;
               }
@@ -297,6 +336,7 @@ cls.JSSourceTooltip = function(view)
               {
                 case WHITESPACE:
                 case LINETERMINATOR:
+                case COMMENT:
                 {
                   continue;
                 }
@@ -324,6 +364,7 @@ cls.JSSourceTooltip = function(view)
               {
                 case WHITESPACE:
                 case LINETERMINATOR:
+                case COMMENT:
                 {
                   continue;
                 }
@@ -356,6 +397,7 @@ cls.JSSourceTooltip = function(view)
             {
               case WHITESPACE:
               case LINETERMINATOR:
+              case COMMENT:
               {
                 continue;
               }
@@ -388,29 +430,48 @@ cls.JSSourceTooltip = function(view)
           tokens = new_tokens.extend(tokens);
         }
         else
-        {
-          got_start = true;
           break;
-        }
       }
       else
-      {
-        got_start = true;
         break;
-      }
     } 
 
-    for (var i = 0, sum = 0; i <= index; i++)
+    while (true)
     {
-      sum += tokens[i][VALUE].length;
+      var nl_index = _get_index_of_newline(tokens);
+      if (nl_index > -1 && nl_index <= index)
+      {
+        index -= tokens.splice(0, nl_index + 1).length;
+        start_line++;
+      }
+      else
+        break
     }
-    return {start_line: start_line, start_offset: sum}
+
+    return {start_line: start_line, start_offset: _get_sum(tokens, index)};
+  };
+
+  var _get_index_of_newline = function(tokens)
+  {
+    for (var i = 0, token; token = tokens[i]; i++)
+    {
+      if (token[TYPE] == LINETERMINATOR)
+        return i;
+    }
+    return -1;
+  };
+
+  var _get_sum = function(tokens, index)
+  {
+    for (var i = 0, sum = 0; i <= index; i++)
+      sum += tokens[i][VALUE].length;
+
+    return sum;
   };
 
   var _get_identifier_chain_end = function(script, line_number, tokens, match_index)
   {
     var start_line = line_number;
-    var got_end = false;
     var bracket_count = 0;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
@@ -419,8 +480,7 @@ cls.JSSourceTooltip = function(view)
     if (previous_token[VALUE] == "[")
       bracket_stack.push(previous_token[TYPE]);
 
-    // TODO handle multiple lines
-    while (!got_end && bracket_stack.length)
+    while (bracket_stack.length)
     {
       for (var i = match_index + 1, token = null; token = tokens[i]; i++)
       {
@@ -435,6 +495,7 @@ cls.JSSourceTooltip = function(view)
             {
               case WHITESPACE:
               case LINETERMINATOR:
+              case COMMENT:
               {
                 continue;
               }
@@ -472,6 +533,7 @@ cls.JSSourceTooltip = function(view)
               {
                 case WHITESPACE:
                 case LINETERMINATOR:
+                case COMMENT:
                 {
                   continue;
                 }
@@ -499,6 +561,7 @@ cls.JSSourceTooltip = function(view)
               {
                 case WHITESPACE:
                 case LINETERMINATOR:
+                case COMMENT:
                 {
                   continue;
                 }
@@ -518,6 +581,7 @@ cls.JSSourceTooltip = function(view)
               {
                 case WHITESPACE:
                 case LINETERMINATOR:
+                case COMMENT:
                 {
                   continue;
                 }
@@ -538,6 +602,7 @@ cls.JSSourceTooltip = function(view)
             {
               case WHITESPACE:
               case LINETERMINATOR:
+              case COMMENT:
               {
                 continue;
               }
@@ -556,18 +621,36 @@ cls.JSSourceTooltip = function(view)
           }
         }
 
-        got_end = true;
-        break;
+
       }
-      got_end = true;
-      break;
+
+      if (i == tokens.length && bracket_stack.length)
+      {
+        start_line++;
+        var new_tokens = _get_tokens_of_line(script, start_line);
+
+        if (new_tokens.length)
+        {
+          match_index = i;
+          tokens.extend(new_tokens);
+        }
+        else
+          break;
+      }
+      else
+        break;
     } 
 
-    for (var i = 0, sum = 0; i <= index; i++)
+    while (true)
     {
-      sum += tokens[i][VALUE].length;
+      var nl_index = _get_index_of_newline(tokens);
+      if (nl_index > -1 && nl_index <= index)
+        index -= tokens.splice(0, nl_index + 1).length;
+      else
+        break
     }
-    return {end_line: line_number, end_offset: sum - 1}
+
+    return {end_line: start_line, end_offset: _get_sum(tokens, index) - 1};
   };
 
   var _get_mouse_pos_center = function()
@@ -602,13 +685,14 @@ cls.JSSourceTooltip = function(view)
     // translates the current selected identifier to dimesion boxes
     // position and dimensions are absolute to the source text
     var line_number = _identifier.start_line;
-    var line = script.get_line(line_number);
+    
     var start_offset = _identifier.start_offset;
     var end_offset = 0;
     _identifier_boxes = [];
     while (true)
     {
       var box = {};
+      var line = script.get_line(line_number);
       box.left = _get_pixel_offset(line, start_offset);
       if (line_number < _identifier.end_line)
         box.right = _get_pixel_offset(line, line.length + 1);
