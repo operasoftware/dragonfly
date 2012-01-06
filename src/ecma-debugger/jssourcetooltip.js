@@ -50,8 +50,14 @@ cls.JSSourceTooltip = function(view)
 
   var _poll_position = function()
   {
-    if (!_last_move_event || !_selection.isCollapsed || _is_over_tooltip)
+    if (!_last_move_event || _is_over_tooltip)
       return;
+    
+    if (!_selection.isCollapsed)
+    {
+      _clear_selection();
+      return;
+    }
 
     if (_identifier)
     {
@@ -101,7 +107,8 @@ cls.JSSourceTooltip = function(view)
             mouse_x: Math.floor(center.x),
             mouse_y: Math.floor(center.y)
           };
-          _handle_poll_position(script, line_number, char_offset, box);
+          _handle_poll_position(script, line_number, char_offset, 
+                                box, _last_move_event.shiftKey);
         }
       }
       else
@@ -111,9 +118,10 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
-  var _handle_poll_position = function(script, line_number, char_offset, box)
+  var _handle_poll_position = function(script, line_number, char_offset,
+                                       box, shift_key)
   {
-    var sel = _get_identifier(script, line_number, char_offset);
+    var sel = _get_identifier(script, line_number, char_offset, shift_key);
     if (sel)
     {
       var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
@@ -247,7 +255,7 @@ cls.JSSourceTooltip = function(view)
     return tokens;
   };
 
-  var _get_identifier = function(script, line_number, char_offset)
+  var _get_identifier = function(script, line_number, char_offset, shift_key)
   {
     var tokens = _get_tokens_of_line(script, line_number);
 
@@ -261,10 +269,11 @@ cls.JSSourceTooltip = function(view)
     if ((tokens[i][TYPE] == IDENTIFIER &&
          !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
          (tokens[i][TYPE] == PUNCTUATOR &&
-          (tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]")))
+          ((tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]") ||
+           (shift_key && (tokens[i][VALUE] == "(" || tokens[i][VALUE] == ")")))))
     {
-      var start = _get_identifier_chain_start(script, line_number, tokens, i);
-      var end = _get_identifier_chain_end(script, line_number, tokens, i);
+      var start = _get_identifier_chain_start(script, line_number, tokens, i, shift_key);
+      var end = _get_identifier_chain_end(script, line_number, tokens, i, shift_key);
       return {start_line: start.start_line,
               start_offset: start.start_offset,
               end_line: end.end_line,
@@ -282,21 +291,48 @@ cls.JSSourceTooltip = function(view)
     }));
   };
 
-  var _get_identifier_chain_start = function(script, line_number, tokens, match_index)
+  var _get_identifier_chain_start = function(script, line_number, tokens,
+                                             match_index, shift_key)
   {
     var start_line = line_number;
     var bracket_count = 0;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
+    var parens_stack = [];
     var index = match_index - 1;
 
     if (previous_token[VALUE] == "]")
-      bracket_stack.push(previous_token);
+      bracket_stack.push(previous_token[VALUE]);
+
+    if (shift_key && previous_token[VALUE] == ")")
+      parens_stack.push(previous_token[VALUE]);
+
+
 
     while (true)
     {
       for (var i = match_index - 1, token = null; token = tokens[i]; i--)
       {
+        // consume everything between parentheses if shiftKey is pressed
+        if (shift_key && parens_stack.length)
+        {
+          if (token[TYPE] == PUNCTUATOR)
+          {
+            if (token[VALUE] == ")")
+            {
+              parens_stack.push(token[VALUE])
+              previous_token = token;
+            }
+            if (token[VALUE] == "(")
+            {
+              parens_stack.pop();
+              previous_token = token;
+            }
+          }
+          index = i - 1;
+          continue;
+        }
+
         switch (previous_token[TYPE])
         {
           case IDENTIFIER:
@@ -330,6 +366,15 @@ cls.JSSourceTooltip = function(view)
           }
           case PUNCTUATOR:
           {
+            //previous_token[VALUE] is one of '.', '[', ']', '(', ')'
+            if (shift_key && token[VALUE] == ")")
+            {
+              parens_stack.push(token[VALUE]);
+              previous_token = token;
+              index = i - 1;
+              continue;
+            }
+
             if (previous_token[VALUE] == "." || previous_token[VALUE] == "[")
             {
               switch (token[TYPE])
@@ -451,39 +496,48 @@ cls.JSSourceTooltip = function(view)
     return {start_line: start_line, start_offset: _get_sum(tokens, index)};
   };
 
-  var _get_index_of_newline = function(tokens)
-  {
-    for (var i = 0, token; token = tokens[i]; i++)
-    {
-      if (token[TYPE] == LINETERMINATOR)
-        return i;
-    }
-    return -1;
-  };
-
-  var _get_sum = function(tokens, index)
-  {
-    for (var i = 0, sum = 0; i <= index; i++)
-      sum += tokens[i][VALUE].length;
-
-    return sum;
-  };
-
-  var _get_identifier_chain_end = function(script, line_number, tokens, match_index)
+  var _get_identifier_chain_end = function(script, line_number, tokens,
+                                           match_index, shift_key)
   {
     var start_line = line_number;
     var bracket_count = 0;
     var previous_token = tokens[match_index];
     var bracket_stack = [];
+    var parens_stack = [];
     var index = match_index;
 
     if (previous_token[VALUE] == "[")
-      bracket_stack.push(previous_token[TYPE]);
+      bracket_stack.push(previous_token[VALUE]); 
 
-    while (bracket_stack.length)
+    if (shift_key && previous_token[VALUE] == "(")
+      parens_stack.push(previous_token[VALUE]);
+
+
+
+    while (bracket_stack.length || (shift_key && parens_stack.length))
     {
       for (var i = match_index + 1, token = null; token = tokens[i]; i++)
       {
+        // consume everything between parentheses if shiftKey is pressed
+        if (shift_key && parens_stack.length)
+        {
+          if (token[TYPE] == PUNCTUATOR)
+          {
+            if (token[VALUE] == "(")
+            {
+              parens_stack.push(token[VALUE])
+              previous_token = token;
+            }
+            if (token[VALUE] == ")")
+            {
+              parens_stack.pop();
+              previous_token = token;
+            }
+          }
+          index = i;
+          continue;
+        }
+
         if (!bracket_stack.length)
           break;
 
@@ -651,6 +705,24 @@ cls.JSSourceTooltip = function(view)
     }
 
     return {end_line: start_line, end_offset: _get_sum(tokens, index) - 1};
+  };
+
+  var _get_index_of_newline = function(tokens)
+  {
+    for (var i = 0, token; token = tokens[i]; i++)
+    {
+      if (token[TYPE] == LINETERMINATOR)
+        return i;
+    }
+    return -1;
+  };
+
+  var _get_sum = function(tokens, index)
+  {
+    for (var i = 0, sum = 0; i <= index; i++)
+      sum += tokens[i][VALUE].length;
+
+    return sum;
   };
 
   var _get_mouse_pos_center = function()
