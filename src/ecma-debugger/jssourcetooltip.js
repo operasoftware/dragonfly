@@ -53,7 +53,7 @@ cls.JSSourceTooltip = function(view)
     if (!_last_move_event || _is_over_tooltip)
       return;
     
-    if (!_selection.isCollapsed)
+    if (!_selection.isCollapsed && !_last_move_event.shiftKey)
     {
       _clear_selection();
       return;
@@ -93,12 +93,14 @@ cls.JSSourceTooltip = function(view)
         if (char_offset > -1 &&
             !(_last_poll.script == script &&
               _last_poll.line_number == line_number && 
-              _last_poll.char_offset == char_offset))
+              _last_poll.char_offset == char_offset &&
+              _last_poll.shift_key == _last_move_event.shiftKey))
         {
           _last_poll.script = script;
           _last_poll.line_number = line_number;
           _last_poll.char_offset = char_offset;
           _last_poll.center = center;
+          _last_poll.shift_key = _last_move_event.shiftKey;
           var line_count = Math.floor(offset_y / _line_height); 
           var box = 
           {
@@ -232,6 +234,10 @@ cls.JSSourceTooltip = function(view)
         var end = script.line_arr[selection.end_line - 1] + selection.end_offset;
         length = end + 1 - start;
       }
+
+      if (!_selection.isCollapsed)
+        _selection.collapseToStart()
+
       _view.higlight_slice(start_line, start_offset, length);
     }
   };
@@ -257,38 +263,47 @@ cls.JSSourceTooltip = function(view)
 
   var _get_identifier = function(script, line_number, char_offset, shift_key)
   {
-    var tokens = _get_tokens_of_line(script, line_number);
-
-    for (var i = 0, sum = 0; i < tokens.length; i++)
+    if (_selection.isCollapsed)
     {
-      sum += tokens[i][VALUE].length;
-      if (sum > char_offset)
-        break;
+      var tokens = _get_tokens_of_line(script, line_number);
+
+      for (var i = 0, sum = 0; i < tokens.length; i++)
+      {
+        sum += tokens[i][VALUE].length;
+        if (sum > char_offset)
+          break;
+      }
+
+      if ((tokens[i][TYPE] == IDENTIFIER &&
+           !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
+           (tokens[i][TYPE] == PUNCTUATOR &&
+            ((tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]") ||
+             (shift_key && (tokens[i][VALUE] == "(" || tokens[i][VALUE] == ")")))))
+      {
+        var start = _get_identifier_chain_start(script, line_number, tokens, i, shift_key);
+        var end = _get_identifier_chain_end(script, line_number, tokens, i, shift_key);
+        return {start_line: start.start_line,
+                start_offset: start.start_offset,
+                end_line: end.end_line,
+                end_offset: end.end_offset};
+      }
     }
-
-    if ((tokens[i][TYPE] == IDENTIFIER &&
-         !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
-         (tokens[i][TYPE] == PUNCTUATOR &&
-          ((tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]") ||
-           (shift_key && (tokens[i][VALUE] == "(" || tokens[i][VALUE] == ")")))))
+    else
     {
-      var start = _get_identifier_chain_start(script, line_number, tokens, i, shift_key);
-      var end = _get_identifier_chain_end(script, line_number, tokens, i, shift_key);
-      return {start_line: start.start_line,
-              start_offset: start.start_offset,
-              end_line: end.end_line,
-              end_offset: end.end_offset};
+      var range = _selection.getRangeAt(0);
+      if (range.intersectsNode(_last_move_event.target))
+      {
+        var start = _get_line_and_offset(range.startContainer, range.startOffset);
+        var end = _get_line_and_offset(range.endContainer, range.endOffset);
+        if (start && end)
+          return {start_line: start.line_number,
+                  start_offset: start.offset,
+                  end_line: end.line_number,
+                  end_offset: end.offset - 1};
+      }
     }
     
     return null;
-  };
-
-  var _get_max_right = function()
-  {
-    return Math.max.apply(null, _identifier_boxes.map(function(box)
-    {
-      return box.right;
-    }));
   };
 
   var _get_identifier_chain_start = function(script, line_number, tokens,
@@ -705,6 +720,46 @@ cls.JSSourceTooltip = function(view)
     }
 
     return {end_line: start_line, end_offset: _get_sum(tokens, index) - 1};
+  };
+
+  var _get_line_and_offset = function(node, offset)
+  {
+    var line_ele = node.parentNode.has_attr("parent-node-chain", "data-line-number");
+    if (line_ele)
+    {
+      var ctx = {target_node: node, sum: offset, is_found: false};
+      return {line_number: parseInt(line_ele.getAttribute("data-line-number")),
+              offset: _walk_dom(ctx, line_ele).sum};
+    }
+    return null;
+  };
+
+  var _walk_dom = function(ctx, node) // node, target_node, sum, is_found
+  {
+    // ctx.target_node, ctx.sum, ctx.is_found
+    while (!ctx.is_found && node)
+    {
+      if (node.nodeType == Node.ELEMENT_NODE)
+        _walk_dom(ctx, node.firstChild);
+      
+      if (node.nodeType == Node.TEXT_NODE)
+      {
+        if (node == ctx.target_node)
+          ctx.is_found = true;
+        else
+          ctx.sum += node.nodeValue.length;
+      }
+      node = node.nextSibling;
+    }
+    return ctx; 
+  };
+
+  var _get_max_right = function()
+  {
+    return Math.max.apply(null, _identifier_boxes.map(function(box)
+    {
+      return box.right;
+    }));
   };
 
   var _get_index_of_newline = function(tokens)
