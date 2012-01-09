@@ -6,6 +6,7 @@
 
   this.register = function(name, keep_on_hover) {};
   this.unregister = function(name, tooltip) {};
+  this.is_inside_tooltip = function(event, close_if_not_inside) {};
 
   var Tooltip = function() {};
 
@@ -91,6 +92,7 @@
 
   /* private */
 
+  var _contextmenu = null;
   var _tooltips = {};
   var _is_setup = false;
   var _tooltip_ele = null;
@@ -114,6 +116,9 @@
 
   var _mouseover = function(event)
   {
+    if (_contextmenu.is_visible)
+      return; 
+
     var ele = event.target;
     while (ele && ele.nodeType == document.ELEMENT_NODE)
     {
@@ -354,6 +359,7 @@
 
   var _setup = function()
   {
+    _contextmenu = ContextMenu.get_instance();
     document.addEventListener("mouseover", _mouseover, false);
     var tmpl = ["div", ["div", "id", "tooltip-background"],
                 "id", "tooltip-container"];
@@ -410,6 +416,15 @@
   {
     if (_tooltips[name] && _tooltips[name] == tooltip)
       _tooltips[name] = null;
+  };
+
+  this.is_inside_tooltip = function(event, close_if_not_inside)
+  {
+    var is_inside = _tooltip_ele.contains(event.target);
+    if (!is_inside && close_if_not_inside)
+      _handle_hide_tooltip();
+
+    return is_inside;
   };
   
 }).apply(Tooltips);
