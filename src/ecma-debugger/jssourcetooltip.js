@@ -275,7 +275,8 @@ cls.JSSourceTooltip = function(view)
       }
 
       if ((tokens[i][TYPE] == IDENTIFIER &&
-           !window.js_keywords.hasOwnProperty(tokens[i][VALUE])) ||
+           (!window.js_keywords.hasOwnProperty(tokens[i][VALUE]) ||
+             tokens[i][VALUE] == "this")) ||
            (tokens[i][TYPE] == PUNCTUATOR &&
             ((tokens[i][VALUE] == "[" || tokens[i][VALUE] == "]") ||
              (shift_key && (tokens[i][VALUE] == "(" || tokens[i][VALUE] == ")")))))
