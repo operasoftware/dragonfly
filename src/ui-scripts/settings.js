@@ -13,46 +13,11 @@
 var SettingsBase = function()
 {
   /**
-   * Update the view according to the new value of the setting key.
-   * @private
-   */
-  this._sync_view = function(key, value)
-  {
-    var 
-    switches = document.getElementsByTagName('toolbar-switches'),
-    _switch = null,
-    butttons = null,
-    button = null, 
-    i = 0,
-    j = 0,
-    key_id = this.view_id + '.' + key,
-    force_reflow = false;
-
-    for( ; _switch = switches[i]; i++)
-    {
-      force_reflow = false;
-      buttons = _switch.getElementsByClassName('ui-button');
-      for( j = 0; button = buttons[j]; j++)
-      {
-        if( button.getAttribute('key') == key_id )
-        {
-          value ? button.addClass('is-active') : button.removeClass('is-active');
-          force_reflow = true;
-        }
-      }
-    }
-  }
-
-  /**
    * Set the value of key.
    */
   this.set = function(key, value, sync_switches) 
   {
-    window.localStorage.setItem(key, JSON.stringify(this.map[key] = value))
-    if (sync_switches && typeof value == 'boolean')
-    {
-      this._sync_view(key, value);
-    }
+    window.localStorage.setItem(key, JSON.stringify(this.map[key] = value));
     if (this.callback_map.hasOwnProperty(key))
     {
       this.callback_map[key].call(this, value);

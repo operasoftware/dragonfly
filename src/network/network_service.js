@@ -24,6 +24,8 @@ cls.NetworkLoggerService = function(view)
     // RequestContext object, and when unpausing, that one should be rendered. Hard.
     this._current_context = new cls.RequestContext();
     this._current_context.saw_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
+    // The new context is not paused, so the setting needs to be reset
+    settings.network_logger.set("pause", false);
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -196,12 +198,10 @@ cls.RequestContext = function()
   {
     var success = true;
     var filter = this._filter;
-    if (filter && filter.val)
+    if (filter && filter.value_list && filter.value_list.length)
     {
-      var list = filter.val.split(",");
-
-      // either type or load_origin matches. pass criteria then depends on is_blacklist.
-      var has_match = list.contains(item.type) || list.contains(item.load_origin);
+      var has_match = filter.value_list.contains(item.type) || 
+                      filter.value_list.contains(item.load_origin);
       if (has_match === filter.is_blacklist)
       {
         success = false;
@@ -226,7 +226,16 @@ cls.RequestContext = function()
 
   this.set_filter = function(filter)
   {
-    this._filter = filter;
+    if (filter)
+    {
+      var blacklist_split = filter.split("|");
+      this._filter = {
+        value_list: blacklist_split[0].split(","),
+        is_blacklist: (blacklist_split[1] === "true")
+      }
+    }
+    else
+      this._filter = null;
   }
 
   this.clear_entries = function()
@@ -251,7 +260,7 @@ cls.RequestContext = function()
 
   this.is_paused = function()
   {
-    return this._paused
+    return this._paused;
   };
 
   this.get_duration = function()

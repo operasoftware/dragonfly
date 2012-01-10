@@ -369,7 +369,7 @@ toolbar-switches
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.toggle-paused-network-view::before
+.network_logger\.pause::before
 {
   background-image: url("../ui-images/icons/icon_pause.png");
 }

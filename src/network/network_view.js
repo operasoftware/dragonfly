@@ -49,7 +49,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
-      // console.log("_type_filter", this._type_filter);
       ctx.set_filter(this._type_filter);
 
       this._render_tabbed_view(this._container);
@@ -67,25 +66,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._render_click_to_fetch_view(this._container);
     }
-
-    var pause_button = document.querySelector(".toggle-paused-network-view");
-    if (pause_button)
-    {
-      if (this._service.is_paused())
-        pause_button.addClass("is-active");
-      else
-        pause_button.removeClass("is-active");
-    }
-
-    var selected_viewmode = settings.network_logger.get("selected_viewmode") || "graphs";
-    var buttons = document.querySelectorAll(".select-network-viewmode");
-    for (var i = 0, btn; btn = buttons[i]; i++)
-    {
-      if (btn.hasClass("network-view-toggle-" + selected_viewmode))
-        btn.addClass("is-active");
-      else
-        btn.removeClass("is-active");
-    };
   };
   this._update_bound = this.update.bind(this);
 
@@ -134,7 +114,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     */
     var url_list_width = Math.ceil(Math.max(230, parseInt(container.style.width) * 0.4));
     var detail_width = parseInt(container.style.width) - url_list_width;
-    var selected_viewmode = settings.network_logger.get("selected_viewmode") || "graphs";
+    var selected_viewmode = settings.network_logger.get("selected-viewmode");
 
     var ctx = this._service.get_request_context();
 
@@ -337,8 +317,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
     var oldhovered = this._container.querySelectorAll(".hovered");
     var newhovered = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
-    for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered"); }
-    for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered"); }
+    for (var n=0, e; e = oldhovered[n]; n++) { e.removeClass("hovered"); }
+    for (var n=0, e; e = newhovered[n]; n++) { e.addClass("hovered"); }
   }.bind(this);
 
   this._on_scroll_bound = function(evt, target)
@@ -368,7 +348,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   Tooltips.register("network-url-list-tooltip", true);
   this.graph_tooltip = Tooltips.register("network-graph-tooltip", true);
   this.graph_tooltip.ontooltip = this._on_graph_tooltip.bind(this);
-  
+
   this._on_clear_log_bound = function(evt, target)
   {
     if (this._service.is_paused())
@@ -378,44 +358,38 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.update();
   }.bind(this);
 
-  this._on_toggle_paused_bound = function(evt, target)
+  this._on_setting_changed_bound = function(message)
   {
-    if (this._service.is_paused())
-      this._service.unpause();
-    else
-      this._service.pause();
+    if (message.id === "network_logger" &&
+        message.key === "pause")
+    {
+      var is_paused = this._service.is_paused();
+      var pause = settings.network_logger.get(message.key);
+      if (is_paused && !pause)
+        this._service.unpause();
+      else if (!is_paused && pause)
+        this._service.pause();
 
-    this.needs_instant_update = true;
-    this.update();
-  }.bind(this);
-
-  this._handle_one_state_only_button = function(active_button)
-  {
-    var buttons = active_button.parentNode.childNodes;
-    for (var i=0, button; button = buttons[i]; i++)
-      if (button !== active_button)
-        button.removeClass("is-active");
-    active_button.addClass("is-active");
-  }
-
-  this._on_select_network_viewmode_bound = function(evt, target)
-  {
-    this._handle_one_state_only_button(target);
-    var mode = target.getAttribute("data-selected-viewmode");
-    settings.network_logger.set("selected_viewmode", mode);
-    this.needs_instant_update = true;
-    this.update();
-  }.bind(this);
-
-  this._on_change_type_filter_bound= function(evt, target)
-  {
-    this._handle_one_state_only_button(target);
-    this._type_filter = {
-      val: target.getAttribute("data-type-filter"),
-      is_blacklist: (target.getAttribute("data-filter-is-blacklist") === "true")
+      this.needs_instant_update = true;
+      this.update();
     }
-    this.needs_instant_update = true;
-    this.update();
+  }.bind(this);
+
+  this._on_single_select_changed_bound = function(message)
+  {
+    if (message.view_id === "network_logger")
+    {
+      if (message.key === "selected-viewmode")
+      {
+        settings.network_logger.set(message.key, message.value);
+      }
+      else if (message.key === "type-filter")
+      {
+        this._type_filter = message.value;
+      }
+      this.needs_instant_update = true;
+      this.update();
+    }
   }.bind(this);
 
   var eh = window.eventHandlers;
@@ -435,7 +409,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
-  eh.click["toggle-paused-network-view"] = this._on_toggle_paused_bound;
+  
+  messages.addListener("single-select-changed", this._on_single_select_changed_bound);
+  messages.addListener("setting-changed", this._on_setting_changed_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
 
@@ -446,55 +422,118 @@ cls.NetworkLogView.prototype = ViewBase;
 cls.NetworkLog = {};
 cls.NetworkLog.create_ui_widgets = function()
 {
-  window.views.network_logger.toolbar_config = new ToolbarConfig(
+  new Settings(
+    // id
     "network_logger",
-    [ // buttons
-      [
+    // key-value map
+    {
+      "selected-viewmode": "graphs",
+      "pause": false
+    },
+    // key-label map
+    {
+      "selected-viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW, // todo: fix strings
+      "pause": ""
+    },
+    // settings map
+    {
+      customSettings: ["selected-viewmode", "pause"]
+    },
+    null,
+    null
+  );
+
+  window.views.network_logger.toolbar_config = new ToolbarConfig(
+    {
+      view: "network_logger",
+      groups: [
         {
-          handler: "clear-log-network-view",
-          title: ui_strings.S_CLEAR_NETWORK_LOG
-        }
-      ],
-      [
-        {
-          handler: "toggle-paused-network-view",
-          title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW
-        }
-      ],
-      [
-        {
-          handler: "type-filter-network-view", // todo: this actually results in a whole bunch of buttons, because of what the template returns. should probably make into indidual buttons, because of the title for example
-          title: "type-filter-network-view", // todo: strings
-          template: templates.network_type_filter_buttons
-        }
-      ],
-      [
-        {
-          handler: "select-network-viewmode",
-          data: [
-                  ["selected-viewmode", "graphs"]
-                ],
-          title: "Graph view",
-          class_name: "network-view-toggle-graphs"
+          type: "buttons",
+          items: [
+            {
+              handler: "clear-log-network-view",
+              icon: "clear-log-network-view",
+              title: ui_strings.S_CLEAR_NETWORK_LOG
+            }
+          ]
         },
         {
-          handler: "select-network-viewmode",
-          data: [
-                  ["selected-viewmode", "data"]
-                ],
-          title: "Data view",
-          class_name: "network-view-toggle-data"
+          type: "switch",
+          items: [
+            {
+              key: "network_logger.pause",
+              icon: "pause-network-view",
+              title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW // todo: this has no effect, since the title comes from the setting
+            }
+          ]
+        },
+        {
+          type: "single-select", // UI CONSTANTS
+          name: "type-filter",
+          items: [
+            {
+              text: "All",
+              value: ""
+            },
+            {
+              text: "Markup",
+              value: "markup"
+            },
+            {
+              text: "Stylesheets",
+              value: "css"
+            },
+            {
+              text: "Scripts",
+              value: "script"
+            },
+            {
+              text: "Images",
+              value: "image"
+            },
+            {
+              text: "Other",
+                      // the value it the comma-sparated list of strings to match type or load_origin,
+                      // "|is_blacklist" can optionally be appended.
+                      // This is parsed in network_service, in the data model in set_filter
+              value: "markup,css,script,image|true"
+            },
+            {
+              text: "XHR",
+              value: "xhr"
+            }
+          ]
+        },
+        { // group
+          type: "single-select", // UI CONSTANTS
+          name: "selected-viewmode",
+          default_value: window.settings.network_logger.get("selected-viewmode"),
+          items: [
+            {
+              value: "graphs",
+              title: "Graph view", // todo: strings
+              icon: "network-view-toggle-graphs"
+            },
+            {
+              value: "data",
+              title: "Data view", // todo: strings
+              icon: "network-view-toggle-data"
+            }
+          ]
+        },
+        {
+          type: "input", // UI CONSTANTS
+          items: [
+            {
+              handler: "network-text-search",
+              shortcuts: "network-text-search",
+              title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+              label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+            }
+          ]
         }
       ]
-    ],
-    [ // filters
-      {
-        handler: "network-text-search",
-        shortcuts: "network-text-search",
-        title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
-        label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
-      }
-    ]
+    }
   );
 
   var text_search = window.views.network_logger._text_search = new TextSearch();
@@ -528,24 +567,4 @@ cls.NetworkLog.create_ui_widgets = function()
 
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
-
-  new Settings
-  (
-    // id
-    "network_logger",
-    // key-value map
-    {
-      "selected_viewmode": "graphs"
-    },
-    // key-label map
-    {
-      "selected_viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW // todo: fix string? does this ever show up?
-    },
-    // settings map
-    {
-      customSettings: ["selected_viewmode"]
-    },
-    null,
-    null
-  );
 }

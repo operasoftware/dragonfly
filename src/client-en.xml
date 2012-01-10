@@ -290,6 +290,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/viewSlider.js"/>
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
+<script src="./ui-scripts/single_selects.js"/>
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/button.js"/>

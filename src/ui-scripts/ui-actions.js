@@ -241,25 +241,44 @@ eventHandlers.click['toggle-console'] = function(event, target)
 eventHandlers.click['toolbar-switch'] = function(event)
 {
   var target = event.target;
-  var arr = target.getAttribute('key').split('.');
-  var setting = arr[0], key = arr[1];
-  var is_active = !target.hasClass('is-active');
-  is_active ? target.addClass("is-active") : target.removeClass("is-active");
+  var arr = target.getAttribute('key') && target.getAttribute('key').split('.');
+  if (arr && arr.length)
+  {
+    var view_id = arr[0], key = arr[1];
+    var is_active = !target.hasClass('is-active');
 
-  settings[setting].set(key, is_active);
-  views.settings_view.syncSetting(setting, key, is_active);
-  views[setting].update();
-  /*
-  // if the switch view is different, e.g. 'setting' is not the actual view
-  // getViewWithHandler is a bit expensive
-  var view = UIBase.getViewWithHandler(target);
-  view && view.update();
-  */
-  // hack to trigger a repaint while
-  target.style.backgroundColor = "transparent";
-  target.style.removeProperty('background-color');
+    settings[view_id].set(key, is_active);
+    views.settings_view.syncSetting(view_id, key, is_active);
+    views[view_id].update();
+  }
 }
 
+eventHandlers.click["toolbar-single-select"] = function(event, target)
+{
+  var selected = event.target;
+  var view_id = selected.getAttribute("data-view-id");
+  var key = selected.getAttribute("data-single-select-key");
+  var value = selected.getAttribute("data-single-select-value");
+
+  if (view_id && key && value !== null)
+  {
+    var single_select = window.single_selects &&
+                        window.single_selects[view_id] &&
+                        window.single_selects[view_id][key]; // todo: leaked "name" var here?
+    if (single_select)
+    {
+      single_select.value = value;
+
+      selected.addClass("is-active");
+      var buttons_in_group = target.querySelectorAll("[data-single-select-key='" + key + "']");
+      for (var i = 0, button; button = buttons_in_group[i]; i++)
+        if (button != selected)
+          button.removeClass("is-active");
+
+      messages.post("single-select-changed", {view_id: view_id, key: key, value: value});
+    }
+  }
+}
 
 
 /***** change handler *****/

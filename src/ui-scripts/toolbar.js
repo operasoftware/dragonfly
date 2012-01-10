@@ -149,63 +149,74 @@ var ToolbarBase = function()
   }
 
   this.create_toolbar_content = function(view_id, toolbar)
-  {
+  {        
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
-    this.buttons_arr = [];
-    if (this.buttons.length && this.buttons[0].constructor === Array)
-    {
-      // Was initialized with an array of button-arrays
-      this.buttons_arr = this.buttons;
-    }
-    else if (this.buttons.length)
-    {
-      this.buttons_arr = [this.buttons];
-    }
+    this.groups = toolbars[view_id] && toolbars[view_id].groups || [];
     this.switches = switches[view_id] && switches[view_id].keys || [];
+    this.single_selects = single_selects[view_id];
     this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
     this.__view_id = view_id;
-    if(toolbars[view_id])
+
+    if (toolbars[view_id])
     {
       this.__is_visible = toolbars[view_id].getVisibility();
     }
     var search = this.filters.length && UI.get_instance().get_search(view_id);
-    if(this.__is_visible)
+    if (this.__is_visible)
     {
-      if(this.filters.length)
+      if (this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
       }
-      if(search)
+      if (search)
       {
         toolbar.render(templates.search_button(search));
       }
-      if (this.buttons_arr.length)
+      if (this.groups.length)
       {
-        // the button templates are done here, so they can have an individual templates
         var buttons_template = [];
-        for (var i = 0, buttons; buttons = this.buttons_arr[i]; i++)
+        for (var i = 0, group; group = this.groups[i]; i++)
         {
-          var button_arr = [];
-          for (var j = 0, button; button = buttons[j]; j++)
+          var button_templates = [];
+          if (group.items && group.type !== "input")
           {
-            if (button.template)
+            var current_value = null;
+            for (var j = 0, button; button = group.items[j]; j++)
             {
-              button_arr.push(button.template(views[view_id]));
+              var view = view_id;
+              var key = group.name;
+              if (group.type === "single-select")
+              {
+                var value = window.single_selects &&
+                            window.single_selects[view] &&
+                            window.single_selects[view][key] &&
+                            window.single_selects[view][key].value;
+                button_templates.push(templates.single_select_button(view, key, button, value));
+              }
+              else if (group.type === "switch")
+              {
+                button_templates.push(templates._switch(button.key));
+              }
+              else if (button.template)
+              {
+                button_templates.push(button.template(views[view_id]));
+              }
+              else
+              {
+                button_templates.push(templates.toolbar_button(button));
+              }
             }
-            else
-            {
-              button_arr.push(templates.toolbar_button(button));
-            }
+            // Handling templates to a template function, a bit ugly, but they need to be built individually 
+            // so they can have their own templates. Todo: Possible handle this all in the template instead.
+            buttons_template.push(templates.toolbar_buttons(button_templates, group.type));
           }
-          // templates.buttons() returns only the container
-          buttons_template.push(templates.buttons().concat(button_arr));
         }
         toolbar.render(buttons_template);
       }
-      if(this.switches.length) // switches, specials and customs can now just be passed as button-arrays
+      if(this.switches.length) // the following is legacy support
       {
         toolbar.render(templates.switches(this.switches));
       }

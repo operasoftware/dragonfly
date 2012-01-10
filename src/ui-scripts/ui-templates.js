@@ -186,26 +186,56 @@
     return ret;
   }
 
-  this.toolbar_button = function(button) // todo: there is window.templates["button"], defined in button.js
+  this.toolbar_buttons = function(button_templates, type)
   {
-    var template =
-      ['span',
+    var ret = ['toolbar-buttons', button_templates];
+    if (type)  // single-select or switch
+      ret.push("handler", "toolbar-" + type);
+    return ret;
+  }
+
+  this.toolbar_button = function(button)
+  {
+    var icon_classname = button.icon;
+    if (!icon_classname && !button.text)
+      icon_classname = button.handler;
+    return ["span",
         button.text || "",
-        'handler', button.handler,
-        'title', button.title,
-        'tabindex', '1',
-        'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
-                        button.class_name : '') + (button.text ? ' text-button' : '')
+        "title", button.title,
+        "tabindex", "1",
+        "class", "ui-button ui-control " +
+                 (icon_classname ? icon_classname + " " : " ") +
+                 (button.class_name ? button.class_name + " " : " ") +
+                 (button.text ? "text-button" : " ")
       ].concat(
-          button.id ? ['id', button.id] : [],
-          button.disabled ? ['disabled', 'disabled'] : [],
-          button.param ? ['param', button.param] :[]
-      ); 
-    if (button.data)
-    {
-      for (var j = 0, attr; attr = button.data[j]; j++)
-        template = template.concat(["data-" + attr[0], attr[1]]);
-    }
+          button.id ? ["id", button.id] : [],
+          button.disabled ? ["disabled", "disabled"] : [],
+          button.param ? ["param", button.param] : [],
+          button.handler ? ["handler", button.handler] : [],
+          button.key ? ["key", button.key] : []
+      );
+  }
+
+  this.single_select_button = function(view_id, groupname, button, value)
+  {
+    var icon_classname = button.icon;
+    if (!icon_classname && !button.text)
+      icon_classname = button.handler;
+    var is_active = button.value === value;
+    var template =
+      ["span",
+        button.text || "",
+        "title", button.title,
+        "data-single-select-key", groupname,
+        "data-single-select-value", button.value,
+        "data-view-id", view_id,
+        "tabindex", "1",
+        "class", "ui-button ui-control " +
+                 (icon_classname ? icon_classname + " " : " ") +
+                 (button.class_name ? button.class_name + " " : "") +
+                 (button.text ? "text-button " : " ") +
+                 (is_active ? "is-active " : " ")
+      ];
     return template;
   }
 
@@ -227,24 +257,28 @@
     setting = null;
 
     for( ; _switch = switches[i]; i++)
-    {
-      if(setting = Settings.get_setting_with_view_key_token(_switch))
-      {
-        ret[ret.length] =
-          ['span',
-            'handler', 'toolbar-switch',
-            'title', setting.label,
-            'key', _switch,
-            'tabindex', '1',
-            'class', _switch + ' ui-control ui-button switch ' + (setting.value ? "is-active" : "")
-          ];
-      }
-      else
-      {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          "Can't attach switch to a setting that does not exist: " + _switch );
-      }
+      ret[ret.length] = this._switch(_switch);
 
+    return ret;
+  }
+
+  this._switch = function(_switch)
+  {
+    var ret = "";
+    if(setting = Settings.get_setting_with_view_key_token(_switch))
+    {
+      ret = ['span',
+          'handler', 'toolbar-switch',
+          'title', setting.label,
+          'key', _switch,
+          'tabindex', '1',
+          'class', _switch + ' ui-control ui-button switch ' + (setting.value ? "is-active" : "")
+        ];
+    }
+    else
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+        "Can't attach switch to a setting that does not exist: " + _switch );
     }
     return ret;
   }
