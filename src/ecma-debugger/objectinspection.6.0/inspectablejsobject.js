@@ -60,6 +60,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this.has_data = function(){};
 
+  this.get_object_with_id = function(id) {};
+
   /* private */
 
   // The expanded property tree on which we would like to use that function 
@@ -486,6 +488,31 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.has_data = function()
   {
     return this._has_data;
+  };
+
+  this.get_object_with_id = function(id)
+  {
+    var PROPERTY_LIST = 1;
+    var OBJECT_VALUE = 3;
+    var OBJECT_ID = 0;
+
+    for (var ex_id in this._obj_map)
+    {
+      var proto_chain = this._obj_map[ex_id];
+      if (proto_chain)
+      {
+        for (var i = 0, proto; proto = proto_chain[i]; i++)
+        {
+          var property_list = proto[PROPERTY_LIST];
+          for (var j = 0, prop; prop = property_list[j]; j++)
+          {
+            if (prop[OBJECT_VALUE] && prop[OBJECT_VALUE][OBJECT_ID] == id)
+              return prop;
+          }
+        }
+      }
+    }
+    return null;
   };
 
   this.__defineGetter__('runtime_id', function()
