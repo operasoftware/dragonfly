@@ -218,6 +218,23 @@ var DOMMarkupEditor = function()
     timeout = 0,
     new_str = '',
     enter_node = null,
+    disable_scripts = function(node)
+    {
+      while (node)
+      {
+        if (node.nodeType == Node.ELEMENT_NODE)
+        {
+          if (node.nodeName.toLowerCase() == "script")
+          {
+            var attr = node.getAttribute('type');
+            node.setAttribute('type', (attr && attr != "edited" ? attr + "/" : "") + "edited");
+          }
+          else
+            disable_scripts(node.firstElementChild);
+        }
+        node = node.nextElementSibling;
+      }
+    },
     update = function(str)
     {
       var fragment = range.createContextualFragment(new_str);
@@ -227,14 +244,8 @@ var DOMMarkupEditor = function()
           range.deleteContents();
         else
           enter_node = range.extractContents();
-        for (var i = 0, node, attr; node = fragment.childNodes[i]; i++)
-        {
-          if (node.nodeName.toLowerCase() == "script")
-          {
-            attr = node.getAttribute('type');
-            node.setAttribute('type', (attr ? attr + '/' : '' ) + 'edited');
-          }
-        }
+        
+        disable_scripts(fragment.childNodes[0]);
         var first = fragment.childNodes[0];
         var last = fragment.childNodes[fragment.childNodes.length - 1];
         range.insertNode(fragment);
