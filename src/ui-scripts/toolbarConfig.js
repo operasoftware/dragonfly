@@ -141,8 +141,7 @@ var ToolbarConfigBase = new function()
         else if (group.type === "single-select")
         {
           var values = group.items.map(function(button){return button.value});
-          // new SingleSelect(this.id, group.name, values, group.default_value || values[0]);
-          new SingleSelect(name, group.name, values, group.default_value || values[0]);
+          new SingleSelect(name, group.name, values, group.default_value || values[0], group.allow_multiple_select);
         }
         else if (group.type === "input")
         {

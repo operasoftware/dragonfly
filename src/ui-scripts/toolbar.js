@@ -186,15 +186,13 @@ var ToolbarBase = function()
             var current_value = null;
             for (var j = 0, button; button = group.items[j]; j++)
             {
-              var view = view_id;
-              var key = group.name;
               if (group.type === "single-select")
               {
-                var value = window.single_selects &&
-                            window.single_selects[view] &&
-                            window.single_selects[view][key] &&
-                            window.single_selects[view][key].value;
-                button_templates.push(templates.single_select_button(view, key, button, value));
+                var values = window.single_selects &&
+                             window.single_selects[view_id] &&
+                             window.single_selects[view_id][group.name] &&
+                             window.single_selects[view_id][group.name].values;
+                button_templates.push(templates.single_select_button(button, values));
               }
               else if (group.type === "switch")
               {
@@ -211,7 +209,7 @@ var ToolbarBase = function()
             }
             // Handling templates to a template function, a bit ugly, but they need to be built individually 
             // so they can have their own templates. Todo: Possible handle this all in the template instead.
-            buttons_template.push(templates.toolbar_buttons(button_templates, group.type));
+            buttons_template.push(templates.toolbar_buttons(button_templates, group, view_id));
           }
         }
         toolbar.render(buttons_template);

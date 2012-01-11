@@ -191,27 +191,14 @@
 .network-details-request td,
 .network-details-request th
 {
-  /* border-top: 1px solid #eee; */
-  padding: 6px 5px 4px 0;
+  vertical-align: top;
+  /* padding: 3px 0; */
 }
 
 .network-details-request th
 {
   text-align: left;
-  vertical-align: top;
-  width: 110px;
-}
-
-.network-details-header-list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 0;
-  padding-top: 0;
-}
-
-.network-details-header-list span
-{
-  font-weight: bold;
+  min-width: 110px;
 }
 
 .network-details-request p
@@ -426,17 +413,6 @@
   position: relative;
   top: -9px;
   padding-left: 4px;
-}
-
-.network-log-url-list li .request-origin-xhr:before {
-  content: "XHR";
-  display: inline-block;
-  background: yellow;
-  font-size: 7px;
-  border-radius: 2px;
-  border: 1px solid #BABABA;
-  position: relative;
-  top: 2px;
 }
 
 /* debug styles

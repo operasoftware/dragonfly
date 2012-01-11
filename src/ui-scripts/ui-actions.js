@@ -255,27 +255,46 @@ eventHandlers.click['toolbar-switch'] = function(event)
 
 eventHandlers.click["toolbar-single-select"] = function(event, target)
 {
-  var selected = event.target;
-  var view_id = selected.getAttribute("data-view-id");
-  var key = selected.getAttribute("data-single-select-key");
-  var value = selected.getAttribute("data-single-select-value");
+  var button = event.target;
+  var view_id = target.getAttribute("data-view-id");
+  var name = target.getAttribute("data-single-select-name");
+  var value = button.getAttribute("data-single-select-value");
 
-  if (view_id && key && value !== null)
+  if (view_id && name && value !== null)
   {
     var single_select = window.single_selects &&
                         window.single_selects[view_id] &&
-                        window.single_selects[view_id][key]; // todo: leaked "name" var here?
+                        window.single_selects[view_id][name];
     if (single_select)
     {
-      single_select.value = value;
+      var select_multiple = event.ctrlKey && single_select.allow_multiple_select;
+      if (!select_multiple)
+        single_select.values = [];
 
-      selected.addClass("is-active");
-      var buttons_in_group = target.querySelectorAll("[data-single-select-key='" + key + "']");
-      for (var i = 0, button; button = buttons_in_group[i]; i++)
-        if (button != selected)
-          button.removeClass("is-active");
+      var index = single_select.values.indexOf(value);
+      if (index === -1)
+      {
+        single_select.values.push(value);
+        button.addClass("is-active");
+      }
+      else if (select_multiple && single_select.values.length > 1)
+      {
+        single_select.values.splice(index, 1);
+        button.removeClass("is-active");
+      }
 
-      messages.post("single-select-changed", {view_id: view_id, key: key, value: value});
+      if (!select_multiple)
+      {
+        var buttons_in_group = target.querySelectorAll(".ui-button");
+        for (var i = 0, group_button; group_button = buttons_in_group[i]; i++)
+          if (group_button != button)
+            group_button.removeClass("is-active");
+      }
+      messages.post("single-select-changed", {
+                                                view_id: view_id,
+                                                name: name,
+                                                values: single_select.values
+                                              });
     }
   }
 }

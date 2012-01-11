@@ -49,7 +49,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     if (ctx) // todo: had a has_resources() check before, should maybe check for entries
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
-      ctx.set_filter(this._type_filter);
+      ctx.set_filter(this._type_filters || []);
 
       this._render_tabbed_view(this._container);
       if (this._selected)
@@ -124,7 +124,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       item_order = this._item_order;
     }
     var template = templates.network_log_main(
-                     ctx, this._selected, selected_viewmode, detail_width, item_order, this._type_filter
+                     ctx, this._selected, selected_viewmode, detail_width, item_order
                    );
     var content = container.clearAndRender(template);
     content.scrollTop = this._content_scroll;
@@ -379,13 +379,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   {
     if (message.view_id === "network_logger")
     {
-      if (message.key === "selected-viewmode")
+      if (message.name === "selected-viewmode")
       {
-        settings.network_logger.set(message.key, message.value);
+        settings.network_logger.set(message.name, message.values[0]);
       }
-      else if (message.key === "type-filter")
+      else if (message.name === "type-filter")
       {
-        this._type_filter = message.value;
+        this._type_filters = message.values;
       }
       this.needs_instant_update = true;
       this.update();
@@ -470,6 +470,7 @@ cls.NetworkLog.create_ui_widgets = function()
         {
           type: "single-select", // UI CONSTANTS
           name: "type-filter",
+          allow_multiple_select: true,
           items: [
             {
               text: "All",

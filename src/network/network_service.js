@@ -193,18 +193,31 @@ cls.NetworkLoggerService = function(view)
 cls.RequestContext = function()
 {
   this._logger_entries = [];
+  this._filters = [];
 
   this._filter_function_bound = function(item)
   {
-    var success = true;
-    var filter = this._filter;
-    if (filter && filter.value_list && filter.value_list.length)
+    var success = false;
+    var filters = this._filters;
+    if (!filters.length)
     {
-      var has_match = filter.value_list.contains(item.type) || 
-                      filter.value_list.contains(item.load_origin);
-      if (has_match === filter.is_blacklist)
+      success = true;
+    }
+    else
+    {
+      for (var i = 0, filter; filter = filters[i]; i++)
       {
-        success = false;
+        if (filter && filter.value_list && filter.value_list.length)
+        {
+          var has_match = filter.value_list.contains(item.type) || 
+                          filter.value_list.contains(item.load_origin) || 
+                          filter.value_list.contains("");
+          if (has_match !== filter.is_blacklist)
+          {
+            success = true;
+            break;
+          }
+        }
       }
     }
     return success;
@@ -224,18 +237,18 @@ cls.RequestContext = function()
     return this._logger_entries.filter(function(e){return e.resource === res_id});
   }
 
-  this.set_filter = function(filter)
+  this.set_filter = function(filters)
   {
-    if (filter)
+    this._filters = [];
+    for (var i = 0; i < filters.length; i++)
     {
+      var filter = filters[i];
       var blacklist_split = filter.split("|");
-      this._filter = {
+      this._filters.push({
         value_list: blacklist_split[0].split(","),
         is_blacklist: (blacklist_split[1] === "true")
-      }
+      })
     }
-    else
-      this._filter = null;
   }
 
   this.clear_entries = function()

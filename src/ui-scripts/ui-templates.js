@@ -186,11 +186,19 @@
     return ret;
   }
 
-  this.toolbar_buttons = function(button_templates, type)
+  this.toolbar_buttons = function(button_templates, group, view_id)
   {
     var ret = ['toolbar-buttons', button_templates];
-    if (type)  // single-select or switch
-      ret.push("handler", "toolbar-" + type);
+    if (group.type)  // single-select or switch
+    {
+      ret.push("handler", "toolbar-" + group.type);
+      if (group.type === "single-select") // todo: possibly make it two templates instead.
+      {
+        ret = ret.concat(["handler", "toolbar-" + group.type,
+                    "data-single-select-name", group.name,
+                    "data-view-id", view_id]);
+      }
+    }
     return ret;
   }
 
@@ -216,19 +224,17 @@
       );
   }
 
-  this.single_select_button = function(view_id, groupname, button, value)
+  this.single_select_button = function(button, values)
   {
     var icon_classname = button.icon;
     if (!icon_classname && !button.text)
       icon_classname = button.handler;
-    var is_active = button.value === value;
+    var is_active = values.contains(button.value);
     var template =
       ["span",
         button.text || "",
         "title", button.title,
-        "data-single-select-key", groupname,
         "data-single-select-value", button.value,
-        "data-view-id", view_id,
         "tabindex", "1",
         "class", "ui-button ui-control " +
                  (icon_classname ? icon_classname + " " : " ") +

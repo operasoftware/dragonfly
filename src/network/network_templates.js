@@ -90,7 +90,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
-templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order, type_filter)
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
 {
   var viewmode_render = templates["network_viewmode_" + selected_viewmode];
   if (!viewmode_render)
@@ -98,7 +98,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
 
   return [
     [
-      "div", templates.network_log_url_list(ctx, selected, item_order, type_filter),
+      "div", templates.network_log_url_list(ctx, selected, item_order),
       "id", "network-url-list"
     ],
     [
@@ -232,14 +232,14 @@ templates.network_headers_list = function(headers, firstline)
 {
   if (!headers) { return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL; }
   var lis = headers.map(function(header) {
-      return [["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]];
+      return ["tr", [["th", header.name], ["td", header.value]], "data-spec", "http#" + header.name];
   });
 
   if (firstline)
   {
-    lis.unshift(["li", firstline]);
+    lis.unshift(["tr", ["td", firstline, "colspan", "3"]]);
   }
-  return ["ol", lis, "class", "network-details-header-list mono"];
+  return ["table", lis, "class", "network-details-header-list mono"];
 };
 
 
@@ -407,7 +407,7 @@ templates.network_header_table = function(headers)
           "class", "header-list"];
 };
 
-templates.network_log_url_list = function(ctx, selected, item_order, type_filter)
+templates.network_log_url_list = function(ctx, selected, item_order)
 {
   var itemfun = function(req)
   {
@@ -458,46 +458,6 @@ templates.network_log_url_list = function(ctx, selected, item_order, type_filter
       "class", "network-log-url-list"]
   ]
 };
-
-
-templates.network_type_filter_buttons = function(view)
-{
-  var filter_options = [
-    {name: "All", val: ""}, // Todo: Strings
-    {name: "Markup", val: "markup"},
-    {name: "Stylesheets", val: "css"},
-    {name: "Scripts", val: "script"},
-    {name: "Images", val: "image"},
-    {name: "XHR", val: "xhr"},
-    {name: "Other", val: "markup,css,script,image,xhr", is_blacklist: true}
-  ];
-
-  var current_filter = view._type_filter; // todo: public
-  if (!current_filter)
-    current_filter = filter_options[0];
-
-
-  return [
-    "div", filter_options.map(function(filter)
-          {
-            var c = "ui-button ui-control text-button";
-            if (filter.val == current_filter.val &&
-                !!filter.is_blacklist == !!current_filter.is_blacklist)
-            {
-              c += " is-active";
-            }
-            return [
-              "span", filter.name,
-              "data-type-filter", filter.val,
-              "data-filter-is-blacklist", filter.is_blacklist ? "true" : "false",
-              "class", c,
-              "tabindex", "1",
-              "handler", "type-filter-network-view"
-            ];
-          }),
-    "class", "type-filter-buttons"
-  ];
-}
 
 templates.network_request_icon = function(request)
 {
