@@ -223,13 +223,22 @@ cls.RequestContext = function()
     return success;
   }.bind(this);
 
+  this._invalid_if_not_touched_network_filter = function(entry)
+  {
+    if (entry.invalid_if_not_touched_network && !entry.touched_network)
+      return false;
+    return true;
+  }
+
   this.get_entries_filtered = function()
   {
     var entries = this._logger_entries;
     if (this.is_paused())
       entries = this._paused_entries;
 
-    return entries.filter(this._filter_function_bound);
+    return entries
+            .filter(this._filter_function_bound)
+            .filter(this._invalid_if_not_touched_network_filter);
   }
 
   this.get_entries_with_res_id = function(res_id)
@@ -350,7 +359,7 @@ cls.RequestContext = function()
       {
         // A second request to a resource is only to be rendered when it touched network. Everything 
         // else is most likely an internal request, happens randomly and doesn't mean much.
-        logger_entry.invalid_when_network_not_touched = true;
+        logger_entry.invalid_if_not_touched_network = true;
       }
       this._logger_entries.push(logger_entry);
     }
