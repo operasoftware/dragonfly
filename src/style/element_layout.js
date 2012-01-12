@@ -123,7 +123,7 @@ cls.ElementLayout = function()
 
     this._comp_style = message[COMPUTED_STYLE_LIST];
     if (!this._index_map)
-      this._index_map = this._stylesheets.get_css_index_map();
+      this._index_map = cls.Stylesheets.get_css_index_map();
 
     if (org_args && !org_args[0].__call_count)
     {

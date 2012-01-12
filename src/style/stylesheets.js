@@ -14,7 +14,6 @@ cls.Stylesheets = function()
   this._element_style = cls.ElementStyle.get_instance();
   this._templates = new StylesheetTemplates();
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
-  this._index_map = null;
   this._sorted_index_map = [];
   this._is_getting_index_map = false;
   this._new_runtimes = null;
@@ -36,7 +35,7 @@ cls.Stylesheets = function()
 
     if (org_args && runtime_onload_handler.check(rt_id, org_args))
     {
-      if (!this._index_map && !this._is_getting_index_map)
+      if (!cls.Stylesheets._css_index_map && !this._is_getting_index_map)
       {
         this._is_getting_index_map = true;
         var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), []);
@@ -79,9 +78,9 @@ cls.Stylesheets = function()
     var props = [];
     var dashes = [];
 
-    for (var i = 0; i < this._index_map.length; i++)
+    for (var i = 0; i < cls.Stylesheets._css_index_map.length; i++)
     {
-      var value = this._index_map[this._sorted_index_map[i]];
+      var value = cls.Stylesheets._css_index_map[this._sorted_index_map[i]];
       if (value[0] == "-")
         dashes.push(value);
       else
@@ -92,7 +91,7 @@ cls.Stylesheets = function()
 
   this.get_css_index_map = function()
   {
-    return this._index_map;
+    return cls.Stylesheets.get_css_index_map();
   };
 
   this.pretty_print_computed_style = function(data)
@@ -104,15 +103,15 @@ cls.Stylesheets = function()
     var search_term = this._element_style.get_search_term();
     var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
 
-    for (var i = 0; i < this._index_map.length; i++)
+    for (var i = 0; i < cls.Stylesheets._css_index_map.length; i++)
     {
       var index = this._sorted_index_map[i];
-      var prop = this._index_map[index];
+      var prop = cls.Stylesheets._css_index_map[index];
       var value = data[index];
       var is_not_initial_value =
         hide_initial_value
         && value != ""
-        && value != cls.Stylesheets.get_initial_value(prop, data, this._index_map)
+        && value != cls.Stylesheets.get_initial_value(prop, data, cls.Stylesheets._css_index_map)
         || false;
       var display =
         (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
@@ -209,9 +208,9 @@ cls.Stylesheets = function()
     if (!index_map)
       return;
 
-    if (!this._index_map)
+    if (!cls.Stylesheets._css_index_map)
     {
-      this._index_map = index_map;
+      cls.Stylesheets._css_index_map = index_map;
 
       var temp = [];
       for (var i = 0, prop; prop = index_map[i]; i++)
@@ -289,12 +288,11 @@ cls.Stylesheets.get_instance = function()
   return new cls.Stylesheets();
 };
 
-cls.Stylesheets.origins = {
-  ORIGIN_USER_AGENT: 1, // default
-  ORIGIN_LOCAL: 2, // user
-  ORIGIN_AUTHOR: 3, // author
-  ORIGIN_ELEMENT: 4, // inline
-  ORIGIN_SVG: 5 // SVG presentation attribute
+cls.Stylesheets._css_index_map = null;
+
+cls.Stylesheets.get_css_index_map = function()
+{
+  return cls.Stylesheets._css_index_map;
 };
 
 cls.Stylesheets.get_initial_value = function(prop, data, index_map)
@@ -1140,5 +1138,13 @@ cls.Stylesheets.inheritable_properties = {
   "widows": true,
   "word-spacing": true,
   "writing-mode": true
+};
+
+cls.Stylesheets.origins = {
+  ORIGIN_USER_AGENT: 1, // default
+  ORIGIN_LOCAL: 2, // user
+  ORIGIN_AUTHOR: 3, // author
+  ORIGIN_ELEMENT: 4, // inline
+  ORIGIN_SVG: 5 // SVG presentation attribute
 };
 

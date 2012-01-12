@@ -281,14 +281,15 @@ cls.CSSInspectorActions = function(id)
    */
   this.restore_property_css = function()
   {
-    var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var initial_property = this.editor.context_cur_prop;
     var new_property = this.editor.get_properties()[PROPERTY];
     var script = "object.style.removeProperty(\"" + new_property + "\");";
 
-    // TODO: don't set back if the property was disabled
-    if (initial_property)
+    // Set the property back to what it was before we started editing
+    var initial_property = this.editor.context_cur_prop;
+    var disabled_rule = this._element_style.disabled_style_dec_list[rule_id];
+    var disabled_decl = disabled_rule && this._element_style.get_declaration(disabled_rule, initial_property);
+    if (initial_property && !disabled_decl)
     {
       script += "object.style.setProperty(\"" +
                   initial_property + "\", \"" +
@@ -297,8 +298,10 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var decl = this._element_style.get_declaration(rule_id, new_property);
-    if (decl)
+    // If we overwrote some other property, set it back
+    var rule = this._element_style.get_rule_by_id(rule_id);
+    var decl = this._element_style.get_declaration(rule, new_property);
+    if (decl && !decl.is_disabled)
     {
       script += "object.style.setProperty(\"" +
                   new_property + "\", \"" +
@@ -320,13 +323,15 @@ cls.CSSInspectorActions = function(id)
    */
   this.restore_property_svg = function()
   {
-    var rule = this.editor.saved_style_dec;
     var rule_id = this.editor.context_rule_id;
-    var initial_property = this.editor.context_cur_prop;
+    var disabled_decls = this._element_style.disabled_style_dec_list[rule_id];
     var new_property = this.editor.get_properties()[PROPERTY];
     var script = "object.removeAttribute(\"" + new_property + "\");";
 
-    if (initial_property)
+    var initial_property = this.editor.context_cur_prop;
+    var disabled_rule = this._element_style.disabled_style_dec_list[rule_id];
+    var disabled_decl = disabled_rule && this._element_style.get_declaration(disabled_rule, initial_property);
+    if (initial_property && !disabled_decl)
     {
       script += "object.setAttribute(\"" +
                   initial_property + "\", \"" +
@@ -334,8 +339,10 @@ cls.CSSInspectorActions = function(id)
                 ");";
     }
 
-    var decl = this._element_style.get_declaration(rule_id, new_property);
-    if (decl)
+    // If we overwrote some other property, set it back
+    var rule = this._element_style.get_rule_by_id(rule_id);
+    var decl = this._element_style.get_declaration(rule, new_property);
+    if (decl && !decl.is_disabled)
     {
       script += "object.setAttribute(\"" +
                   new_property + "\", \"" +

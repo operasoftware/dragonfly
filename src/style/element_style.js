@@ -181,15 +181,14 @@ cls.ElementStyle = function()
   };
 
   /**
-   * Get a declaration based on a rule ID and the property
+   * Get a declaration based on the rule and the property
    *
-   * @param {Integer} id The rule id
+   * @param {CssRule} rule The rule
    * @param {String} property The name of the property
    * @returns {Object|null} The declaration if found, oterwise null
    */
-  this.get_declaration = function(rule_id, property)
+  this.get_declaration = function(rule, property)
   {
-    var rule = this.get_rule_by_id(rule_id);
     for (var i = 0, decl; decl = rule.declarations[i]; i++)
     {
       if (decl.property == property)
@@ -377,6 +376,7 @@ cls.ElementStyle = function()
       {
         for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
+            debugger;
           var rule = new CssRule(node_style);
 
           if (!window.settings["css-inspector"].get("show-expanded-properties"))

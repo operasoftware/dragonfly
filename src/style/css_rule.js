@@ -14,7 +14,7 @@ var CssRule = function(rule)
   this.ruleType = rule.ruleType;
   this.lineNumber = rule.lineNumber;
 
-  var index_map = cls.Stylesheets.get_instance().get_css_index_map();
+  var index_map = cls.Stylesheets.get_css_index_map();
   var len = rule.indexList ? rule.indexList.length : 0;
   for (var i = 0; i < len; i++)
   {
