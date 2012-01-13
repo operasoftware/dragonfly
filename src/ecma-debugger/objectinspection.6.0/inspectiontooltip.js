@@ -15,77 +15,135 @@ cls.JSInspectionTooltip = function()
   var FUNCTION = 3;
   var ERROR = 4;
   var REGEXP = 5;
+  var CLASS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _tooltip = null;
-  var _tagman = null;
-  var _esde = null;
-  var _print = {};
-  var _printable_classes = {};
-  _printable_classes["Date"] = DATE;
-  _printable_classes["Function"] = FUNCTION;
-  _printable_classes["RegExp"] = REGEXP;
   var _cur_target = null;
   var _cur_object = null;
+  var _cur_rt_id = 0;
+  var _cur_obj_id = 0;
   var _cur_class_name = "";
-  var _cur_prin_type = NON_PRINTABLE;
+  var _cur_type = NON_PRINTABLE;
+  var _printable_classes = {"Date": DATE,
+                            "Function": FUNCTION,
+                            "RegExp": REGEXP};
+  var _print = {};
 
-  _print[DATE] = 
-  _print[FUNCTION] = 
-  _print[ERROR] = 
-  _print[REGEXP] = 
-  function(obj, obj_id)
+  _print[DATE] =
+  _print[FUNCTION] =
+  _print[ERROR] =
+  _print[REGEXP] = function(obj, obj_id)
   {
-    var rt_id = window.runtimes.getSelectedRuntimeId();
-    var thread_id = window.stop_at.getThreadId();
-    var frame_index = window.stop_at.getSelectedFrameIndex();
+    var rt_id = runtimes.getSelectedRuntimeId();
+    var thread_id = stop_at.getThreadId();
+    var frame_index = stop_at.getSelectedFrameIndex();
     if (frame_index == -1)
     {
       thread_id = 0;
       frame_index = 0;
     }
     var script = "";
-
-    if (_cur_prin_type == DATE)
-      script = "new Date(obj.getTime() - obj.getTimezoneOffset() * 1000 * 60)" +
-               ".toISOString().replace('Z','')";
-    
-    else if (_cur_prin_type == FUNCTION || _cur_prin_type == REGEXP)
-      script = "obj.toString()";
-
-    else if (_cur_prin_type == ERROR)
-      script = "obj.message";
-
-    var tag = _tagman.set_callback(null, _handle_printable_object, [obj]);
-    var msg = [rt_id, thread_id, frame_index, script, [["obj", obj_id]]];
-    _esde.requestEval(tag, msg);
-  };
-
-  var _handle_printable_object = function(status, message, obj)
-  {
-    if (!status && message[STATUS] == "completed" && obj == _cur_object &&
-        document.documentElement.contains(_cur_target))
+    switch (_cur_type)
     {
-      _tooltip.show(["pre", message[VALUE]]);
-    }
-    else
-      _tooltip.hide();
+      case DATE:      
+        script = "new Date(obj.getTime() - obj.getTimezoneOffset() * 1000 * 60)" +
+                 ".toISOString().replace(\"Z\", \"\")";
+        break;
+    
+      case FUNCTION:
+      case REGEXP:
+        script = "obj.toString()";
+        break
+
+      case ERROR:
+        script = "obj.message";
+        break;
+    } 
+    var tag = tagManager.set_callback(null, _handle_print_object, [obj]);
+    var msg = [rt_id, thread_id, frame_index, script, [["obj", obj_id]]];
+    services["ecmascript-debugger"].requestEval(tag, msg);
   };
 
   _print[ELEMENT] = function(obj, obj_id)
   {
-    var tag = _tagman.set_callback(null, _handle_printable_element, [obj]);
+    var tag = tagManager.set_callback(null, _handle_printable_element, [obj]);
     var msg = [obj_id, "node"];
-    _esde.requestInspectDom(tag, msg);
+    services["ecmascript-debugger"].requestInspectDom(tag, msg);
+  };
+
+  var _handle_print_object = function(status, message, obj)
+  {
+    if (!status && message[STATUS] == "completed")
+      _show_tooltip(obj, message);
+
+    else
+      _hide_tooltip();
   };
 
   var _handle_printable_element = function(status, message, obj)
   {
-    if (!status && obj == _cur_object &&
+    if (!status)
+      _show_tooltip(obj, message);
+
+    else
+      _hide_tooltip();
+  };
+
+  var _show_tooltip = function(obj, message)
+  {
+    if (_cur_object && obj == _cur_object &&
         document.documentElement.contains(_cur_target))
     {
-      var tmpl = _templates[ELEMENT](message);
-      _tooltip.show(tmpl);
+      var tmpl = null;
+      switch (_cur_type)
+      {
+        case ELEMENT:
+          tmpl = _templates[ELEMENT](message);
+          break;
+
+        case DATE:
+          tmpl = message[VALUE];  
+          break;
+            
+        case REGEXP:
+          tmpl = ["span", message[VALUE], "class", "reg_exp"];    
+          break;
+      
+        case FUNCTION:
+          tmpl = templates.highlight_js_source(message[VALUE]);
+          break
+
+        case ERROR:
+          tmpl = "Unhandled " + _cur_class_name + ": " + message[VALUE];    
+          break;
+          
+      }
+
+      if (tmpl)
+      {
+        _cur_target.addClass(CLASS_TOOLTIP_SELECTED);
+        _tooltip.show(tmpl);
+      }
+
+      else
+        _hide_tooltip();        
     }
+    else
+      _hide_tooltip();
+  };
+
+  var _hide_tooltip = function()
+  {
+    if (_cur_target)
+      _cur_target.removeClass(CLASS_TOOLTIP_SELECTED);
+
+    _cur_target = null;
+    _cur_object = null;
+    _cur_rt_id = 0;
+    _cur_obj_id = 0;
+    _cur_class_name = "";
+    _cur_type = NON_PRINTABLE;
+    _tooltip.hide();
   };
 
   var _templates = {};
@@ -106,20 +164,21 @@ cls.JSInspectionTooltip = function()
 
     if (node)
     {
-      var force_lower_case = window.settings.dom.get('force-lowercase');
+      var force_lower_case = settings.dom.get("force-lowercase");
+      var is_tree_style = settings.dom.get("dom-tree-style");
       var node_name = node[NAMESPACE]
-                    ? node[NAMESPACE] + ':'
-                    : '';
+                    ? node[NAMESPACE] + ":"
+                    : "";
       node_name += node[NAME];
       if (force_lower_case)
         node_name = node_name.toLowerCase();
 
       if (node[ATTRS] && node[ATTRS].length)
       {
-        tmpl.push("node", "<" + node_name + " ");
+        tmpl.push("node", (is_tree_style ? "" : "<") + node_name + " ");
         node[ATTRS].forEach(function(attr)
         {
-          var attr_key = attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '';
+          var attr_key = attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ":" : "";
           attr_key += force_lower_case
                     ? attr[ATTR_KEY].toLowerCase()
                     : attr[ATTR_KEY];
@@ -129,14 +188,69 @@ cls.JSInspectionTooltip = function()
           tmpl.push(" ");
         });
         tmpl.pop();
-        tmpl.push(">");
+        if (!is_tree_style)
+          tmpl.push(">");
       }
       else
-        tmpl.push("node", "<" + node_name + ">");
+        tmpl.push("node", is_tree_style ? node_name : "<" + node_name + ">");
       
       tmpl = ["div", tmpl, "class", "dom"];
     }
     return tmpl;
+  };
+
+
+  var _ontooltipenter = function(event)
+  {
+    if (!_cur_object)
+      return;
+    
+    switch (_cur_type)
+    {
+      case ELEMENT:
+        if (settings.dom.get("highlight-on-hover"))
+          hostspotlighter.spotlight(_cur_obj_id, true);
+        break;
+
+    }
+  };
+
+  var _ontooltipleave = function(event)
+  {
+    if (!_cur_object)
+      return;
+
+    switch (_cur_type)
+    {
+      case ELEMENT:
+        if (settings.dom.get("highlight-on-hover"))
+        {
+          if (views.dom.isvisible() && dom_data.target)
+            hostspotlighter.spotlight(dom_data.target, true);
+          
+          else
+            hostspotlighter.clearSpotlight();
+            
+        }
+        break;
+        
+    }
+  };
+  
+  var _ontooltipclick = function(event)
+  {
+    if (!_cur_object)
+      return;
+
+    switch (_cur_type)
+    {
+      case ELEMENT:
+        UI.get_instance().show_view("dom");
+        dom_data.get_dom(_cur_rt_id, _cur_obj_id);
+        _hide_tooltip();
+        break;
+        
+    }
   };
 
   var _get_print_type = function(class_name)
@@ -155,53 +269,38 @@ cls.JSInspectionTooltip = function()
 
   var _ontooltip = function(event, target)
   {
+    if (_cur_target && _cur_target == target)
+      return;
+
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var model_id = target.get_attr("parent-node-chain", "data-id");
-    var model = window.inspections[model_id];
+    var model = inspections[model_id];
     var obj = model && model.get_object_with_id(obj_id);
     var class_name = obj && obj[OBJECT_VALUE] && obj[OBJECT_VALUE][CLASS_NAME] || "";
     var print_type = _get_print_type(class_name);
+    var rt_id = model && model.runtime_id;
 
+    _hide_tooltip();
     if (print_type)
     {
       _cur_object = obj;
+      _cur_rt_id = rt_id;
+      _cur_obj_id = obj_id;
       _cur_target = target; 
       _cur_class_name = class_name;
-      _cur_prin_type = print_type;
+      _cur_type = print_type;
       _print[print_type](obj, obj_id);
     }
-    else
-      _tooltip.hide();
-  };
-
-  var _onhide = function()
-  {
-
-  };
-
-  var _ontooltipenter = function(event)
-  {
-
-  };
-
-  var _ontooltipleave = function(event)
-  {
-
   };
 
   var _init = function(view)
   {
     _tooltip = Tooltips.register(cls.JSInspectionTooltip.tooltip_name, true);
     _tooltip.ontooltip = _ontooltip;
-    _tooltip.onhide = _onhide;
+    _tooltip.onhide = _hide_tooltip;
     _tooltip.ontooltipenter = _ontooltipenter;
     _tooltip.ontooltipleave = _ontooltipleave;
-    _tagman = window.tagManager;
-    _esde = window.services['ecmascript-debugger'];
-    /*
-    window.messages.addListener('monospace-font-changed', _onmonospacefontchange);
-    window.addEventListener('resize', _get_container_box, false);
-    */
+    _tooltip.ontooltipclick = _ontooltipclick;
   };
 
   _init();
@@ -214,5 +313,3 @@ cls.JSInspectionTooltip.register = function()
 {
   this._tooltip = new cls.JSInspectionTooltip();
 };
-
-

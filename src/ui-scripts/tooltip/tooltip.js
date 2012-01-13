@@ -31,6 +31,8 @@
 
     this.ontooltipleave = function(){};
 
+    this.ontoolclick = function(){};
+
     /**
       * To show the tooltip.
       * By default the tooltip is positioned in relation to the element
@@ -287,7 +289,7 @@
           }
           else
           {
-            var right = _window_width - box.right + DISTANCE_X;
+            var right = _window_width - box.mouse_x + DISTANCE_X;
             _tooltip_ele.style.right = right + "px";
             _tooltip_ele.style.left = "auto";
             max_w = _window_width - right - MARGIN_X - _padding_width;
@@ -357,6 +359,12 @@
       _current_tooltip.ontooltipleave(event);
   };
 
+  var _on_tooltip_click = function(event)
+  {
+    if (_current_tooltip && _current_tooltip.ontooltipclick)
+      _current_tooltip.ontooltipclick(event);
+  };
+
   var _setup = function()
   {
     _contextmenu = ContextMenu.get_instance();
@@ -364,9 +372,10 @@
     var tmpl = ["div", ["div", "id", "tooltip-background"],
                 "id", "tooltip-container"];
     _tooltip_ele = (document.body || document.documentElement).render(tmpl);
-    _tooltip_ele.addEventListener("mouseenter", _on_tooltip_enter, false);
-    _tooltip_ele.addEventListener("mouseleave", _on_tooltip_leave, false);
     _tooltip_ele_first_child = _tooltip_ele.firstChild;
+    _tooltip_ele_first_child.addEventListener("mouseenter", _on_tooltip_enter, false);
+    _tooltip_ele_first_child.addEventListener("mouseleave", _on_tooltip_leave, false);
+    _tooltip_ele_first_child.addEventListener("click", _on_tooltip_click, false);
     window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
     ["#tooltip-container",
