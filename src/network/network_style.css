@@ -282,19 +282,6 @@
   margin: 10px 0;
 }
 
-#graph
-{
-  background-image: -o-linear-gradient(0deg,
-                                       #e5e5e5 0px,
-                                       #e5e5e5 1px,
-                                       transparent 1px); /* time scale */
-
-  /* background-size is duplicated in templates.network_log_graph to replace 41px */
-  background-size: 41px 100%;
-  background-position: -1px 0%;
-  background-repeat: repeat;
-}
-
 .network-timeline-row,
 .network-graph-row
 {

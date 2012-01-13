@@ -23,9 +23,57 @@ cls.NetworkLoggerService = function(view)
     // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
     // RequestContext object, and when unpausing, that one should be rendered. Hard.
     this._current_context = new cls.RequestContext();
-    this._current_context.saw_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
-    // The new context is not paused, so the setting needs to be reset
-    settings.network_logger.set("pause", false);
+    this._current_context.saw_main_document_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
+  }.bind(this);
+
+  this._on_documentnotification_bound = function(msg)
+  {
+/*
+    message DocumentEvent 
+{ 
+    enum EventType 
+    { 
+        NAVIGATION_START = 0; // not handled currently - we have equivalent already: OnAboutToLoadDocument 
+        DOMCONTENTLOADED_START = 1; // before DOMContentLoaded event ran 
+        DOMCONTENTLOADED_END = 2; // after DOMContentLoaded ran 
+        LOAD_START = 3; // before load event ran 
+        LOAD_END = 4; // afer load event ran 
+        UNLOAD_START = 5; // not handled currently - hard to do properly due to our flaky support for unload - core3 is supposed to address that 
+        UNLOAD_END = 6; // same as above 
+    } 
+
+    required uint32 windowID = 1; 
+    required uint32 frameID = 2; 
+    required uint32 documentID = 3; 
+    required uint32 resourceID = 4; 
+    required EventType eventType = 5; 
+
+     ** 
+     * Milliseconds since Unix epoch. 
+     *
+    required double time = 6; 
+}
+*/
+    var data = {
+      windowID: msg[0],
+      frameID: msg[1],
+      documentID: msg[2],
+      resourceID: msg[3],
+      eventType: msg[4],
+      time: msg[5]
+    };
+    var event_name = [
+      "NAVIGATION_START",
+      "DOMCONTENTLOADED_START",
+      "DOMCONTENTLOADED_END",
+      "LOAD_START",
+      "LOAD_END",
+      "UNLOAD_START",
+      "UNLOAD_END"][data.eventType];
+    if (data.eventType === 1 || data.eventType === 3)
+    {
+      this._current_context._add_document_notification(event_name, data);
+    }
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -33,7 +81,6 @@ cls.NetworkLoggerService = function(view)
     if (!this._current_context)
     {
       this._current_context = new cls.RequestContext();
-      this._current_context.partial = true;
     }
     var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
 
@@ -128,6 +175,7 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    this._doc_service.addListener("documentnotification", this._on_documentnotification_bound);
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
@@ -193,7 +241,11 @@ cls.NetworkLoggerService = function(view)
 cls.RequestContext = function()
 {
   this._logger_entries = [];
+  this._document_notifications = {};
   this._filters = [];
+
+  // When this is constructed, the context is not paused. Reset the setting.
+  settings.network_logger.set("pause", false);
 
   this._filter_function_bound = function(item)
   {
@@ -223,6 +275,13 @@ cls.RequestContext = function()
     return success;
   }.bind(this);
 
+  this._add_document_notification = function(event_name, data)
+  {
+    if (!this._document_notifications[data.documentID])
+      this._document_notifications[data.documentID] = {};
+    this._document_notifications[data.documentID][event_name] = data;
+  }
+
   this._invalid_if_not_touched_network_filter = function(entry)
   {
     if (entry.invalid_if_not_touched_network && !entry.touched_network)
@@ -232,13 +291,16 @@ cls.RequestContext = function()
 
   this.get_entries_filtered = function()
   {
+    return this.get_entries().filter(this._filter_function_bound);
+  }
+
+  this.get_entries = function()
+  {
     var entries = this._logger_entries;
     if (this.is_paused())
       entries = this._paused_entries;
 
-    return entries
-            .filter(this._filter_function_bound)
-            .filter(this._invalid_if_not_touched_network_filter);
+    return entries.filter(this._invalid_if_not_touched_network_filter);
   }
 
   this.get_entries_with_res_id = function(res_id)
@@ -354,7 +416,7 @@ cls.RequestContext = function()
     if (eventname == "urlload" || changed_request_id)
     {
       var id = event.resourceID + ":" + this._logger_entries.length;
-      logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID);
+      logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID, event.documentID);
       if (this.get_entries_with_res_id(event.resourceID).length)
       {
         // A second request to a resource is only to be rendered when it touched network. Everything 
@@ -380,12 +442,12 @@ cls.RequestContext = function()
   };
 };
 
-cls.NetworkLoggerEntry = function(id, context, resource)
+cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 {
   this.id = id;
   this.context = context;
   this.resource = resource;
-  this.partial = false;
+  this.document_id = document_id;
   this.url = null;
   this.human_url = "No URL";
   this.result = null;
@@ -461,10 +523,10 @@ cls.NetworkLoggerEntry = function(id, context, resource)
     this.url = event.url;
     this.filename = helpers.basename(event.url);
     this.urltype = event.urlType;
+    this.document_id = event.documentID;
     if (event.loadOrigin)
-      this.load_origin = {1: "xhr"}[event.loadOrigin];
-    // fixme: complete list
-    this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
+      this.load_origin = {1: "xhr"}[event.loadOrigin]; // todo: use consts from cls.ResourceManager["1.2"].UrlLoad
+    this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType].toLowerCase();
     this._humanize_url();
     this._guess_type(); // may not yet be correct before mime is set, but will be guessed again anyhow
   };

@@ -113,9 +113,10 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
 
 templates.network_viewmode_graphs = function(ctx, width)
 {
-  // the tabs to choose between graph and data table, and the graph and data table itself
-  var rows = templates.network_graph_rows(ctx, width);
+  var basetime = ctx.get_starttime();
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+  var rows = templates.network_graph_rows(ctx, width, basetime, duration);
+
   var template = [];
   if (duration)
   {
@@ -123,9 +124,55 @@ templates.network_viewmode_graphs = function(ctx, width)
     var gridwidth = Math.round((width / duration) * stepsize);
     var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
 
+    var domcontentloaded = -1;
+    var load = -1;
+    // place the domcontentloaded and load events if available
+    if (ctx.saw_main_document_abouttoloaddocument)
+    {
+      var first_document_id = ctx.get_entries().map(function(entry){return entry.document_id})[0];
+      // todo: in case of a redirect, there is a documentID on it, but it's not the top document. no notifications then.
+      var notifications = ctx._document_notifications[first_document_id];
+      if (notifications)
+      {
+        var scale = width / duration;
+        if (notifications["DOMCONTENTLOADED_START"])
+        {
+          domcontentloaded = (notifications["DOMCONTENTLOADED_START"].time - basetime) * scale;
+          // console.log("DOMCONTENTLOADED_START of main resource:", notifications["DOMCONTENTLOADED_START"].time - basetime, "after basetime");
+        }
+        if (notifications["LOAD_START"])
+        {
+          load = (notifications["LOAD_START"].time - basetime) * scale;
+          // console.log("LOAD_START of main resource:", notifications["LOAD_START"].time - basetime, "after basetime");
+        }
+      }
+    }
+
     template = ["div", headerrow, rows,
                   "id", "graph",
-                  "style", "background-size: " + gridwidth + "px 100%;"
+                  "style", ["background-image: -o-linear-gradient(",
+                                               "0deg,",
+                                               "#e5e5e5 0px,",
+                                               "#e5e5e5 1px,",
+                                               "transparent 1px",
+                                              "),",
+                                              "-o-linear-gradient(",
+                                               "0deg,",
+                                               "#5acaec 0px,",
+                                               "#5acaec 1px,",
+                                               "transparent 1px",
+                                              "),",
+                                              "-o-linear-gradient(",
+                                               "0deg,",
+                                               "#64b56b 0px,",
+                                               "#64b56b 1px,",
+                                               "transparent 1px",
+                                              ");",
+                           "background-position: -1px 0%, ",
+                            domcontentloaded + "px 0,",
+                            load + "px 0;",
+                           "background-repeat: repeat, no-repeat, no-repeat;",
+                           "background-size: " + gridwidth + "px 100%;"].join("")
                ];
   }
   return template;
@@ -491,11 +538,8 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   return ["div", labels, "class", "network-timeline-row"];
 };
 
-templates.network_graph_rows = function(ctx, width)
+templates.network_graph_rows = function(ctx, width, basetime, duration)
 {
-  var basetime = ctx.get_starttime();
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-
   var tpls = [];
   var entries = ctx.get_entries_filtered();
 
