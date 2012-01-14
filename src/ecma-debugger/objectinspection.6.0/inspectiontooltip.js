@@ -18,6 +18,8 @@ cls.JSInspectionTooltip = function()
   var CLASS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _tooltip = null;
+  var _pretty_printer = null;
+  var _cur_ctx = null;
   var _cur_target = null;
   var _cur_object = null;
   var _cur_rt_id = 0;
@@ -89,11 +91,13 @@ cls.JSInspectionTooltip = function()
       _hide_tooltip();
   };
 
-  var _show_tooltip = function(obj, message)
+  var _handle_ontooltip = function(ctx)
   {
-    if (_cur_object && obj == _cur_object &&
-        document.documentElement.contains(_cur_target))
+    if (_cur_object && ctx.object == _cur_object &&
+        document.documentElement.contains(ctx.target) &&
+        ctx.template)
     {
+      /*
       var tmpl = null;
       switch (_cur_type)
       {
@@ -118,15 +122,12 @@ cls.JSInspectionTooltip = function()
           break;
           
       }
+      */
 
-      if (tmpl)
-      {
-        _cur_target.addClass(CLASS_TOOLTIP_SELECTED);
-        _tooltip.show(tmpl);
-      }
-
-      else
-        _hide_tooltip();        
+        _cur_ctx = ctx;
+        _cur_ctx.target.addClass(CLASS_TOOLTIP_SELECTED);
+        _tooltip.show(ctx.template);
+       
     }
     else
       _hide_tooltip();
@@ -134,15 +135,16 @@ cls.JSInspectionTooltip = function()
 
   var _hide_tooltip = function()
   {
-    if (_cur_target)
-      _cur_target.removeClass(CLASS_TOOLTIP_SELECTED);
+    if (_cur_ctx)
+      _cur_ctx.target.removeClass(CLASS_TOOLTIP_SELECTED);
 
-    _cur_target = null;
+    _cur_ctx = null;
     _cur_object = null;
-    _cur_rt_id = 0;
-    _cur_obj_id = 0;
-    _cur_class_name = "";
-    _cur_type = NON_PRINTABLE;
+    // _cur_object = null;
+    // _cur_rt_id = 0;
+    // _cur_obj_id = 0;
+    // _cur_class_name = "";
+    // _cur_type = NON_PRINTABLE;
     _tooltip.hide();
   };
 
@@ -202,14 +204,14 @@ cls.JSInspectionTooltip = function()
 
   var _ontooltipenter = function(event)
   {
-    if (!_cur_object)
+    if (!_cur_ctx)
       return;
     
-    switch (_cur_type)
+    switch (_cur_ctx.type.type)
     {
-      case ELEMENT:
+      case cls.PrettyPrinter.ELEMENT:
         if (settings.dom.get("highlight-on-hover"))
-          hostspotlighter.spotlight(_cur_obj_id, true);
+          hostspotlighter.spotlight(_cur_ctx.obj_id, true);
         break;
 
     }
@@ -217,12 +219,12 @@ cls.JSInspectionTooltip = function()
 
   var _ontooltipleave = function(event)
   {
-    if (!_cur_object)
+    if (!_cur_ctx)
       return;
 
-    switch (_cur_type)
+    switch (_cur_ctx.type.type)
     {
-      case ELEMENT:
+      case cls.PrettyPrinter.ELEMENT:
         if (settings.dom.get("highlight-on-hover"))
         {
           if (views.dom.isvisible() && dom_data.target)
@@ -239,14 +241,14 @@ cls.JSInspectionTooltip = function()
   
   var _ontooltipclick = function(event)
   {
-    if (!_cur_object)
+    if (!_cur_ctx)
       return;
 
-    switch (_cur_type)
+    switch (_cur_ctx.type.type)
     {
-      case ELEMENT:
+      case cls.PrettyPrinter.ELEMENT:
         UI.get_instance().show_view("dom");
-        dom_data.get_dom(_cur_rt_id, _cur_obj_id);
+        dom_data.get_dom(_cur_ctx.rt_id, _cur_ctx.obj_id);
         _hide_tooltip();
         break;
         
@@ -269,33 +271,36 @@ cls.JSInspectionTooltip = function()
 
   var _ontooltip = function(event, target)
   {
-    if (_cur_target && _cur_target == target)
+    if (_cur_ctx && _cur_ctx.target == target)
       return;
 
-    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
+    _hide_tooltip();
+
     var model_id = target.get_attr("parent-node-chain", "data-id");
+    var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var model = inspections[model_id];
     var obj = model && model.get_object_with_id(obj_id);
-    var class_name = obj && obj[OBJECT_VALUE] && obj[OBJECT_VALUE][CLASS_NAME] || "";
-    var print_type = _get_print_type(class_name);
-    var rt_id = model && model.runtime_id;
 
-    _hide_tooltip();
-    if (print_type)
+    if (obj && obj[OBJECT_VALUE])
     {
-      _cur_object = obj;
-      _cur_rt_id = rt_id;
-      _cur_obj_id = obj_id;
-      _cur_target = target; 
-      _cur_class_name = class_name;
-      _cur_type = print_type;
-      _print[print_type](obj, obj_id);
+      _cur_object = obj; 
+      _pretty_printer.print({target: target,
+                             rt_id: model.runtime_id,
+                             obj_id: obj_id,
+                             class_name: obj[OBJECT_VALUE][CLASS_NAME] || "",
+                             object: obj,
+                             callback: _handle_ontooltip});
     }
   };
 
   var _init = function(view)
   {
     _tooltip = Tooltips.register(cls.JSInspectionTooltip.tooltip_name, true);
+    _pretty_printer = new cls.PrettyPrinter();
+    _pretty_printer.register_types([cls.PrettyPrinter.ELEMENT,
+                                    cls.PrettyPrinter.DATE,
+                                    cls.PrettyPrinter.FUNCTION,
+                                    ]);
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
     _tooltip.ontooltipenter = _ontooltipenter;

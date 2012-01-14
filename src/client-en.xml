@@ -357,6 +357,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 
+<script src="./ecma-debugger/objectinspection.6.0/prettyprinter.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/inspectiontooltip.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/inspectablejsobject.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/objectandframeview.js"/>
