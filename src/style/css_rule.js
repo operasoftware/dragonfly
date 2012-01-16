@@ -3,7 +3,7 @@
 /**
  * @constructor
  */
-var CssRule = function(rule)
+var CssRule = function(rule, index_map)
 {
   this.declarations = [];
   this.origin = rule.origin;
@@ -14,7 +14,6 @@ var CssRule = function(rule)
   this.ruleType = rule.ruleType;
   this.lineNumber = rule.lineNumber;
 
-  var index_map = cls.Stylesheets.get_css_index_map();
   var len = rule.indexList ? rule.indexList.length : 0;
   for (var i = 0; i < len; i++)
   {
@@ -32,8 +31,8 @@ var CssDeclaration = function(property, value, priority, is_applied, is_disabled
 {
   this.property = property;
   this.value = value;
-  this.priority = priority || 0;
-  this.is_applied = is_applied || true; // TODO: Could be inverted and renamed to overwritten
+  this.priority = priority || false;
+  this.is_applied = is_applied !== false; // TODO: Could be inverted and renamed to overwritten
   this.is_disabled = is_disabled || false;
 };
 

@@ -376,8 +376,7 @@ cls.ElementStyle = function()
       {
         for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
         {
-            debugger;
-          var rule = new CssRule(node_style);
+          var rule = new CssRule(node_style, cls.Stylesheets.get_css_index_map());
 
           if (!window.settings["css-inspector"].get("show-expanded-properties"))
             this._css_shorthand_resolver.resolve(rule.declarations);
@@ -409,16 +408,28 @@ cls.ElementStyle = function()
     }
   };
 
-  window.messages.addListener('element-selected', this._on_element_selected.bind(this));
-  window.messages.addListener('reset-state', this._on_reset_state.bind(this));
-
-  window.eventHandlers.input['css-inspector-text-search'] = function(event, target)
+  this._init = function()
   {
-    this._search(target.value);
-  }.bind(this);
+    if (window.messages)
+    {
+      window.messages.addListener('element-selected', this._on_element_selected.bind(this));
+      window.messages.addListener('reset-state', this._on_reset_state.bind(this));
+    }
+
+    if (window.eventHandlers)
+    {
+      window.eventHandlers.input['css-inspector-text-search'] = function(event, target)
+      {
+        this._search(target.value);
+      }.bind(this);
+    }
+  };
+
+  this._init();
 };
 
 cls.ElementStyle.get_instance = function()
 {
   return new cls.ElementStyle();
 };
+

@@ -1,3 +1,6 @@
+// Test dependencies (included with testFile):
+// css_shorthand_tests.js, stylesheets.js, css_shorthand_resolver.js, element_style.js, css_rule.js, css_value_tokenizer.js
+
 addModule("CSS shorthands");
 
 setServiceRequirements({
@@ -5,6 +8,10 @@ setServiceRequirements({
   "ecmascript-debugger": "",
   "window-manager": ""
 });
+
+// Override some things not needed for the tests
+cls.TagManager.get_instance = function() {};
+StylesheetTemplates = function() {};
 
 var set_properties = function(props)
 {
@@ -34,23 +41,7 @@ var remove_properties = function(props)
 
 var clear_properties = function()
 {
-    evalBasic("document.body.style.cssText = '';");
-};
-
-var Rule = function(rule)
-{
-  this.declarations = [];
-
-  for (var i = 0, len = rule.indexList.length; i < len; i++)
-  {
-    this.declarations.push({
-      property: window.css_index_map.nameList[rule.indexList[i]],
-      value: rule.valueList[i],
-      priority: rule.priorityList[i]
-      //is_applied: true,
-      //is_disabled: false
-    });
-  }
+  evalBasic("document.body.style.cssText = '';");
 };
 
 var fix_rule = function(rule)
@@ -58,24 +49,30 @@ var fix_rule = function(rule)
   var new_rule = {declarations: []};
   for (var i = 0, len = rule.properties.length; i < len; i++)
   {
-    new_rule.declarations[i] = {
-      property: rule.properties[i],
-      value: rule.values[i],
-      priority: rule.priorities ? rule.priorities[i] : false
-    };
+    new_rule.declarations.push(
+      new CssDeclaration(
+        rule.properties[i],
+        rule.values[i],
+        rule.priorities && rule.priorities[i]
+      )
+    );
   }
   return new_rule;
 };
 
 var assert_rule = function(expected)
 {
-  var css_decl = ecmascript_debugger.CssGetStyleDeclarations({
+  var css_decls = ecmascript_debugger.CssGetStyleDeclarations({
     runtimeID: window.rt_id,
     objectID: window.body_el_id
   });
 
-  var rule = new Rule(css_decl.nodeStyleList[0].styleList[0]);
+  var rule = new CssRule(css_decls.nodeStyleList[0].styleList[0], window.css_index_map.nameList);
   CssShorthandResolver.get_instance().resolve(rule.declarations);
+
+  rule.declarations.forEach(function(decl) {
+    delete decl.shorthand_tokens;
+  });
 
   assertEquals(JSON.stringify(rule.declarations), JSON.stringify(fix_rule(expected).declarations));
 };
@@ -91,7 +88,6 @@ addTest("Resolving CSS shorthands", function () {
 
   window.rt_id = getCurrentRuntimeID();
   window.body_el_id = evalObjectID("document.body");
-
   set_properties(
     {
       "margin": "1px",
@@ -376,40 +372,12 @@ addTest("Resolving CSS shorthands", function () {
   assert_rule(
     {
       properties: [
-        "outline-style",
         "outline-color",
+        "outline-style",
       ],
       values: [
-        "none",
         "invert",
-      ]
-    }
-  );
-
-  clear_properties();
-
-  set_properties({"overflow-x": "auto", "overflow-y": "auto"});
-
-  assert_rule(
-    {
-      properties: [
-        "overflow",
-      ],
-      values: [
-        "auto",
-      ]
-    }
-  );
-
-  set_properties({"overflow-y": "hidden"});
-
-  assert_rule(
-    {
-      properties: [
-        "overflow",
-      ],
-      values: [
-        "auto hidden",
+        "none",
       ]
     }
   );
@@ -424,7 +392,7 @@ addTest("Resolving CSS shorthands", function () {
         "font",
       ],
       values: [
-        "normal normal 400 12px/normal sans-serif",
+        "12px sans-serif",
       ]
     }
   );
@@ -439,7 +407,7 @@ addTest("Resolving CSS shorthands", function () {
         "background",
       ],
       values: [
-        "none 0% 0%/auto repeat scroll padding-box border-box rgb(255, 0, 0)",
+        "rgb(255, 0, 0)",
       ]
     }
   );
@@ -454,7 +422,7 @@ addTest("Resolving CSS shorthands", function () {
         "background",
       ],
       values: [
-        "none 0% 0%/auto repeat scroll padding-box border-box, none 0% 0%/auto repeat scroll padding-box border-box rgb(255, 0, 0)",
+        "none, rgb(255, 0, 0)",
       ]
     }
   );
@@ -478,7 +446,7 @@ addTest("Resolving CSS shorthands", function () {
         "background",
       ],
       values: [
-        "url(\",\") 0% 0%/auto repeat scroll padding-box border-box, none 0% 0%/auto repeat scroll padding-box border-box rgb(255, 0, 0)",
+        "url(\",\"), rgb(255, 0, 0)",
       ]
     }
   );
@@ -611,11 +579,8 @@ addTest("Resolving CSS shorthands", function () {
         "background",
       ],
       values: [
-        "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) scroll, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed",
+        "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed transparent",
       ],
-      priorities: [
-        true,
-      ]
     }
   );
 });
