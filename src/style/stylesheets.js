@@ -89,11 +89,6 @@ cls.Stylesheets = function()
     return props.concat(dashes);
   };
 
-  this.get_css_index_map = function()
-  {
-    return cls.Stylesheets.get_css_index_map();
-  };
-
   this.pretty_print_computed_style = function(data)
   {
     var template = [];
