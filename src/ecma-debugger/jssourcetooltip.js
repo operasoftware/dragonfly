@@ -22,6 +22,7 @@ cls.JSSourceTooltip = function(view)
   var BACKWARDS = -1;
   var TYPE = 0;
   var VALUE = 1;
+  var SHIFT_KEY = 16;
 
   var _tooltip = null;
   var _view = null;
@@ -47,13 +48,14 @@ cls.JSSourceTooltip = function(view)
   var _is_over_tooltip = false;
   var _selection = null;
   var _last_script_text = "";
+  var _shift_key = false;
 
   var _poll_position = function()
-  {
+  {    
     if (!_last_move_event || _is_over_tooltip)
       return;
     
-    if (!_selection.isCollapsed && !_last_move_event.shiftKey)
+    if (!_selection.isCollapsed && !_shift_key)
     {
       _clear_selection();
       return;
@@ -94,13 +96,13 @@ cls.JSSourceTooltip = function(view)
             !(_last_poll.script == script &&
               _last_poll.line_number == line_number && 
               _last_poll.char_offset == char_offset &&
-              _last_poll.shift_key == _last_move_event.shiftKey))
+              _last_poll.shift_key == _shift_key))
         {
           _last_poll.script = script;
           _last_poll.line_number = line_number;
           _last_poll.char_offset = char_offset;
           _last_poll.center = center;
-          _last_poll.shift_key = _last_move_event.shiftKey;
+          _last_poll.shift_key = _shift_key;
           var line_count = Math.floor(offset_y / _line_height); 
           var box = 
           {
@@ -110,7 +112,7 @@ cls.JSSourceTooltip = function(view)
             mouse_y: Math.floor(center.y)
           };
           _handle_poll_position(script, line_number, char_offset, 
-                                box, _last_move_event.shiftKey);
+                                box, _shift_key);
         }
       }
       else
@@ -968,6 +970,18 @@ cls.JSSourceTooltip = function(view)
     _default_offset = defaults["js-default-text-offset"];
   };
 
+  var _onkeydown = function(event)
+  {
+    if (event.keyCode == SHIFT_KEY)
+      _shift_key = true;
+  };
+
+  var _onkeyup = function(event)
+  {
+    if (event.keyCode == SHIFT_KEY)
+      _shift_key = false;
+  };
+
   var _init = function(view)
   {
     _view = view;
@@ -981,6 +995,8 @@ cls.JSSourceTooltip = function(view)
     _esde = window.services['ecmascript-debugger'];
     window.messages.addListener('monospace-font-changed', _onmonospacefontchange);
     window.addEventListener('resize', _get_container_box, false);
+    document.addEventListener('keydown', _onkeydown, false);
+    document.addEventListener('keyup', _onkeyup, false);
   };
 
   this.unregister = function()
