@@ -37,7 +37,7 @@ cls.JSSourceTooltip = function(view)
   var _line_height = 0;
   var _tab_size = 0;
   var _default_offset = 10;
-  var _total_y_offset = 0;
+  var _total_x_offset = 0;
   var _last_poll = {};
   var _identifier = null;
   var _identifier_boxes = [];
@@ -88,7 +88,7 @@ cls.JSSourceTooltip = function(view)
         var offset_y = center.y - _container_box.top;
         var line_number = _view.get_line_number_with_offset(offset_y);
         var line = script.get_line(line_number);
-        var offset_x = center.x + _container.scrollLeft - _total_y_offset;
+        var offset_x = center.x + _container.scrollLeft - _total_x_offset;
         var char_offset = _get_char_offset(line, offset_x);
         if (char_offset > -1 &&
             !(_last_poll.script == script &&
@@ -186,8 +186,8 @@ cls.JSSourceTooltip = function(view)
         line_count = selection.end_line - _view.getTopLine() + 1;
         box.bottom = _container_box.top + line_count * _line_height;
         var max_right = _get_max_right();
-        box.left = _total_y_offset;
-        box.right = _total_y_offset + max_right - _container.scrollLeft;        
+        box.left = _total_x_offset;
+        box.right = _total_x_offset + max_right - _container.scrollLeft;        
       }
 
       if (message[TYPE] == "object")
@@ -840,7 +840,7 @@ cls.JSSourceTooltip = function(view)
 
   var _is_over_identifier_boxes = function(event)
   {
-    var off_x = _total_y_offset - _container.scrollLeft;
+    var off_x = _total_x_offset - _container.scrollLeft;
     var off_y = _container_box.top - (_view.getTopLine() - 1) * _line_height;
     var e_x = event.clientX - off_x;
     var e_y = event.clientY - off_y;
@@ -928,7 +928,7 @@ cls.JSSourceTooltip = function(view)
         while (_mouse_positions.length)
           _mouse_positions.pop();
 
-        _total_y_offset = _container_box.left + _default_offset;
+        _total_x_offset = _container_box.left + _default_offset;
         _selection = window.getSelection();
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
       }
