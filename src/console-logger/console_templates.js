@@ -80,7 +80,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
        "data-logid", entry.id,
        "data-viewid", viewId,
        "unselectable", "on",
-       "class", "expander ui-button",
+       "class", "expander",
        "tabindex", "1"
   ];
 
