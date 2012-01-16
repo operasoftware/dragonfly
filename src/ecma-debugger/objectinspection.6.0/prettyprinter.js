@@ -27,7 +27,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.DATE] =
   },
   script: "new Date(object.getTime() - object.getTimezoneOffset() * 1000 * 60)" +
           ".toISOString().replace(\"Z\", \"\")",
-  template: function(message)
+  template: function(message, ctx)
   {
     var VALUE = 2;
     return message[VALUE];
@@ -42,10 +42,40 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
     return class_name == "Function";
   },
   script: "object.toString()",
-  template: function(message)
+  template: function(message, ctx)
   {
     var VALUE = 2;
     return templates.highlight_js_source(message[VALUE]);
+  }
+};
+
+cls.PrettyPrinter.types[cls.PrettyPrinter.ERROR] =
+{
+  type: cls.PrettyPrinter.ERROR,
+  is_type: function(class_name)
+  {
+    return /(Error|Exception)$/.test(class_name);
+  },
+  script: "object.message",
+  template: function(message, ctx)
+  {
+    var VALUE = 2;
+    return message[VALUE];
+  }
+};
+
+cls.PrettyPrinter.types[cls.PrettyPrinter.REGEXP] =
+{
+  type: cls.PrettyPrinter.REGEXP,
+  is_type: function(class_name)
+  {
+    return class_name == "RegExp";
+  },
+  script: "object.toString()",
+  template: function(message, ctx)
+  {
+    var VALUE = 2;
+    return ["span", message[VALUE], "class", "reg_exp"];
   }
 };
 
@@ -155,7 +185,7 @@ cls.PrettyPrinter.prototype = new function()
 
   this._handle_element = function(status, message, ctx)
   {
-      ctx.template = !status && ctx.type.template(message)
+      ctx.template = !status && ctx.type.template(message, ctx)
       ctx.callback(ctx);
   };
 
@@ -179,7 +209,7 @@ cls.PrettyPrinter.prototype = new function()
   {
     var STATUS = 0;
     ctx.template = !status && message[STATUS] == "completed" &&
-                   ctx.type.template(message);
+                   ctx.type.template(message, ctx);
     ctx.callback(ctx);
   };
 

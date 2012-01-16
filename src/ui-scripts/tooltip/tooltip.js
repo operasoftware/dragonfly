@@ -148,9 +148,12 @@
 
         if (_current_tooltip != _tooltips[name])
         {
+          if (_current_tooltip)
+            _current_tooltip.onhide();
           _current_tooltip = _tooltips[name];
           _tooltip_ele_first_child.innerHTML = "";
           _tooltip_ele_first_child.appendChild(_current_tooltip._container);
+          _tooltip_ele.removeAttribute("style");
         }
 
         _current_tooltip._accept_call = true;
