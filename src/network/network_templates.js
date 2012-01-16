@@ -168,10 +168,10 @@ templates.network_viewmode_graphs = function(ctx, width)
                                                "#64b56b 1px,",
                                                "transparent 1px",
                                               ");",
-                           "background-position: -1px 0%, ",
-                            domcontentloaded + "px 0,",
-                            load + "px 0;",
-                           "background-repeat: repeat, no-repeat, no-repeat;",
+                           "background-position: -1px 21px, ",
+                            domcontentloaded + "px 21px,",
+                            load + "px 21px;",
+                           "background-repeat: repeat-x, no-repeat, no-repeat;",
                            "background-size: " + gridwidth + "px 100%;"].join("")
                ];
   }

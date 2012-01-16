@@ -525,10 +525,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     this.urltype = event.urlType;
     this.document_id = event.documentID;
     if (event.loadOrigin)
-      this.load_origin = {1: "xhr"}[event.loadOrigin]; // todo: use consts from cls.ResourceManager["1.2"].UrlLoad
+      this.load_origin = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
     this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType].toLowerCase();
     this._humanize_url();
-    this._guess_type(); // may not yet be correct before mime is set, but will be guessed again anyhow
+    this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
   };
 
   this._update_event_urlfinished = function(event)
