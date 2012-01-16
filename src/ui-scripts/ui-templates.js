@@ -187,8 +187,8 @@
           'handler', button.handler,
           'title', button.title,
           'tabindex', '1',
-          'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
-                          button.class_name : '') + (button.text ? ' text-button' : '')
+          'class', button.handler + ' ui-button ui-control' +
+                   (button.class_name ? ' ' + button.class_name : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],

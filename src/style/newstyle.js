@@ -17,7 +17,7 @@ cls.NewStyle = function(id, name, container_class)
            ],
            ['span',
               ui_strings.S_BUTTON_TEXT_APPLY,
-            'class', 'container-button ui-button',
+            'class', 'ui-button',
             'handler', 'apply-new-style',
             'tabindex', '1'
            ],

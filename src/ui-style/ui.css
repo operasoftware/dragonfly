@@ -433,11 +433,6 @@ toolbar-switches .is-active
   background-repeat: no-repeat;
 }
 
-.ui-button img,
-{ /* leftover from .container-button */
-  vertical-align: middle;
-}
-
 
 /* Toolbar buttons */
 

@@ -52,7 +52,7 @@ templates.network_options_override_list = function(headers, overrides)
           ["br"],
           ["span", ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE,
            "handler", "update-header-overrides",
-           "class", "container-button ui-button",
+           "class", "ui-button",
            "tabindex", "1"
           ].concat(overrides ? [] : ["disabled", "disabled"])
          ];
@@ -80,7 +80,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
            ["p", ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
             "handler", "request-crafter-send",
             "unselectable", "on",
-            "class", "container-button ui-button",
+            "class", "ui-button",
             "tabindex", "1"]],
            ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
            ["p", ["textarea", loading ? ui_strings.M_NETWORK_CRAFTER_SEND : response]],
@@ -137,7 +137,7 @@ templates.network_log_request_detail = function(ctx, selected)
   return [
   ["div",
     ["span",
-      "class", "close-request-detail container-button ui-button",
+      "class", "close-request-detail ui-button",
       "handler", "close-request-detail",
       "unselectable", "on",
       "tabindex", "1"
@@ -326,7 +326,7 @@ templates.network_response_body = function(req)
           // unselectable attribute works around bug CORE-35118
           "unselectable", "on",
           "handler", "get-response-body",
-          "class", "container-button ui-button",
+          "class", "ui-button",
           "tabindex", "1"
       ]],
       "class", "response-view-body-container"
