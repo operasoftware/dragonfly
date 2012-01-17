@@ -16,8 +16,12 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, don't reset the context. This usually means it's an iframe
+    // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect
     if (data.parentDocumentID) { return; }
+    // todo: The last _on_abouttoloaddocument without parentDocumentID is not always the top document,
+    // so we need a way of finding out which one it really is.
+    // If the document was loaded because of a redirect, the redirect is the parentDocumentID.
+    // Need to also check what happens in case of more top documents that were added to the context.
 
     // When paused, the context will still be reset and the paused status and what
     // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
@@ -54,25 +58,29 @@ cls.NetworkLoggerService = function(view)
     required double time = 6; 
 }
 */
-    var data = {
-      windowID: msg[0],
-      frameID: msg[1],
-      documentID: msg[2],
-      resourceID: msg[3],
-      eventType: msg[4],
-      time: msg[5]
-    };
-    var event_name = [
-      "NAVIGATION_START",
-      "DOMCONTENTLOADED_START",
-      "DOMCONTENTLOADED_END",
-      "LOAD_START",
-      "LOAD_END",
-      "UNLOAD_START",
-      "UNLOAD_END"][data.eventType];
-    if (data.eventType === 1 || data.eventType === 3)
+    if (this._current_context)
     {
-      this._current_context._add_document_notification(event_name, data);
+      var data = {
+        windowID: msg[0],
+        frameID: msg[1],
+        documentID: msg[2],
+        resourceID: msg[3],
+        eventType: msg[4],
+        time: msg[5]
+      };
+      var event_name = [
+        "NAVIGATION_START",
+        "DOMCONTENTLOADED_START",
+        "DOMCONTENTLOADED_END",
+        "LOAD_START",
+        "LOAD_END",
+        "UNLOAD_START",
+        "UNLOAD_END"][data.eventType];
+      if (data.eventType === 1 || data.eventType === 3)
+      {
+        this._current_context._add_document_notification(event_name, data);
+        this._view.update();
+      }
     }
   }.bind(this);
 
@@ -419,13 +427,14 @@ cls.RequestContext = function()
       logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID, event.documentID);
       if (this.get_entries_with_res_id(event.resourceID).length)
       {
-        // A second request to a resource is only to be rendered when it touched network. Everything 
-        // else is most likely an internal request, happens randomly and doesn't mean much.
+        // A second request to a resource is only to be rendered when it touched network. 
+        // Everything else is most likely an internal request, happens randomly and 
+        // doesn't mean much. See CORE-43063.
         logger_entry.invalid_if_not_touched_network = true;
       }
       this._logger_entries.push(logger_entry);
     }
-    logger_entry.requestID = event.requestID; // In case of OnRequestRetry, requestID is changed again in the acc. update method
+    logger_entry.requestID = event.requestID;
 
     // For the responsebody event, call update_event_responsebody directly, as this is not recorded in the events of an entry
     if (eventname === "responsebody")

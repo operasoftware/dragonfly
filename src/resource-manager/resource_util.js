@@ -61,6 +61,7 @@ cls.ResourceUtil.extension_type_map = { // todo: maybe only list extensions & mi
   xslt: "markup",
   xsl: "markup",
   wml: "markup",
+  rss: "markup",
 
   png: "image",
   jpg: "image",

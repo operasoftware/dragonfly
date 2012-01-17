@@ -143,12 +143,6 @@
   padding-top: 6px;
 }
 
-.response-body-content textarea
-{
-  width: 80%;
-  height: 300px;
-}
-
 /* Network log / Detail view */
 
 .close-request-detail::before
@@ -156,7 +150,8 @@
   background-image: url("../ui-images/icons/icon_button_back.png");
 }
 
-.network-details-url-list {
+.network-details-url-list
+{
   height: 100%;
   padding: 0;
   overflow: hidden;
@@ -180,6 +175,23 @@
   */
 }
 
+.network-details-request pre.network-body
+{
+  margin: 0;
+}
+/*
+.network-details-request pre.network-body::before
+{
+  content: "\\n\\n";
+  white-space: pre;
+}
+*/
+
+.network-details-request img.network-body
+{
+  margin-top: 2em;
+}
+
 .network-details-request table
 {
   width: 100%;
@@ -192,20 +204,26 @@
 .network-details-request th
 {
   vertical-align: top;
-  /* padding: 3px 0; */
+  padding: 2px 0;
 }
+/*
+.network-details-request .network-body {
+  margin-top: 2em;
+}
+*/
 
 .network-details-request th
 {
   text-align: left;
-  min-width: 110px;
+  padding-right: 30px;
+  min-width: 140px;
+  max-width: 290px;
 }
 
-.network-details-request p
-{
+.network-details-request hr {
+  border: none;
+  border-top: 1px solid #a4a4a4;
   margin-top: 0;
-  max-width: 60em;
-  line-height: 150%;
 }
 
 .network-details-request h2,
@@ -213,7 +231,7 @@
 .network-options h2
 {
   font-size: 125%;
-  margin: 15px 0 0 0;
+  margin: 15px 0 10px 0;
 }
 
 /* Request crafter */
