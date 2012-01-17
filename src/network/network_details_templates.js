@@ -26,9 +26,8 @@ templates.network_log_detail = function(ctx, selected)
                   "" + entry.responsecode + " " + cls.ResourceUtil.http_status_codes[entry.responsecode] : null;
     return ["div",
       ["span",
-        "class", "close-request-detail container-button ui-button",
+        "class", "close-request-detail",
         "handler", "close-request-detail",
-        "unselectable", "on",
         "tabindex", "1"
       ],
       ["table",

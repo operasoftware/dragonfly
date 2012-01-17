@@ -144,10 +144,33 @@
 }
 
 /* Network log / Detail view */
+.close-request-detail
+{
+  position: fixed;
+  left: 108px;
+  top: 87px;
+  z-index: 3;
+  background-color: #FFF;
+  border: 1px solid #bababa;
+  border-radius: 16px;
+  width: 23px;
+  height: 23px;
+}
+
+.close-request-detail:active
+{
+  background-color: #CACACA;
+}
 
 .close-request-detail::before
 {
-  background-image: url("../ui-images/icons/icon_button_back.png");
+  content: "";
+  background-image: url("../ui-images/icons/icon_close.png");
+  display: block;
+  height: 23px;
+  width: 23px;
+  background-position: 50%;
+  background-repeat: no-repeat;
 }
 
 .network-details-url-list
@@ -168,7 +191,7 @@
   left: 120px;
   overflow: auto;
   padding: 15px 20px 25px 20px;
-  border-left: 1px solid #555;
+  border-left: 1px solid #707070;
   background-color: #fff;
   /*
   box-shadow: 0 0 6px rgba(0, 0, 0, .6);
