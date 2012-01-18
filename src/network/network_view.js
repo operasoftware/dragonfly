@@ -46,7 +46,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._create = function()
   {
     var ctx = this._service.get_request_context();
-    if (ctx) // todo: had a has_resources() check before, should maybe check for entries
+    if (ctx) // todo: had a has_resources() check before, should maybe check for entries. bug when switching debug context, stays empty
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filter(this._type_filters || []);

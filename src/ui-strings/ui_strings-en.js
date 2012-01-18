@@ -1312,7 +1312,7 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
 ui_strings.S_INFO_IS_SEARCHING = "searching…";
 
 /* DESC: Title of request body section when the body is multpart encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE = "Request body - multipart";
+ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
 /* DESC: Settings checkbox label for toggling usage tracking */
 ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";

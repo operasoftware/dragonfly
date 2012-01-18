@@ -56,7 +56,12 @@ templates.network_log_detail = function(ctx, selected)
 
 templates.request_details = function(req)
 {
-  var ret = [templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE])];
+  var ret = []
+
+  if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
+    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
+  else
+    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
 
   if (!req.touched_network) {
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
@@ -111,6 +116,10 @@ templates.network_headers_list = function(headers, firstline)
   return lis;
 };
 
+templates.network_body_sperator = function()
+{
+  return ["pre", " ", "class", "mono"];
+}
 
 templates.network_request_body = function(req)
 {
@@ -118,11 +127,11 @@ templates.network_request_body = function(req)
   {
     return [];
   }
-  var ret = [];
+  var ret = [templates.network_detail_row(templates.network_body_sperator())];
   // when this is undefined/null the request was one that did not send data
   if (req.requestbody.partList.length)
   {
-    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]));
+    // ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]));
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
       ret.push(templates.network_headers_list(part.headerList));
@@ -205,28 +214,27 @@ templates.network_response_body = function(req)
     return [templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY)];
   }
 
-  var ret = [];
+  var ret = [templates.network_detail_row(templates.network_body_sperator())];
   if (!req.responsebody && !req.is_finished)
   {
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED)); // todo: body may be empty? came from cache, so we didn't see it?
   }
   else if (!req.responsebody)
   {
-    /*
-    ret.push(["p",
-      ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-      ["p", ["span",
-          ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-          "data-object-id", String(req.id),
-          // unselectable attribute works around bug CORE-35118
-          "unselectable", "on",
-          "handler", "get-response-body",
-          "class", "container-button ui-button",
-          "tabindex", "1"
-      ]],
-      "class", "response-view-body-container"
-    ]);
-    */
+    ret.push(templates.network_detail_row(
+      ["p",
+        ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
+        ["p", ["span",
+            ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
+            "data-object-id", String(req.id),
+            // unselectable attribute works around bug CORE-35118
+            "unselectable", "on",
+            "handler", "get-response-body",
+            "class", "container-button ui-button",
+            "tabindex", "1"
+        ]],
+        "class", "response-view-body-container"
+      ]));
     // todo: somehow prevent this from happening, always try to get it via this._res_service.requestGetResource when clicking details
     // probably replace this with "please wait" in case it's not yet there in this round of rendering
   }

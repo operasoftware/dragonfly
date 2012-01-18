@@ -151,7 +151,7 @@
   top: 87px;
   z-index: 3;
   background-color: #FFF;
-  border: 1px solid #bababa;
+  border: 1px solid #999;
   border-radius: 16px;
   width: 23px;
   height: 23px;
@@ -191,24 +191,16 @@
   left: 120px;
   overflow: auto;
   padding: 15px 20px 25px 20px;
-  border-left: 1px solid #707070;
+  border-left: 1px solid #999;
   background-color: #fff;
-  /*
-  box-shadow: 0 0 6px rgba(0, 0, 0, .6);
-  */
+  box-shadow: 0 0 6px rgba(0, 0, 0, .4);
 }
 
-.network-details-request pre.network-body
+.network-details-request pre,
+.network-details-request p
 {
   margin: 0;
 }
-/*
-.network-details-request pre.network-body::before
-{
-  content: "\\n\\n";
-  white-space: pre;
-}
-*/
 
 .network-details-request img.network-body
 {
@@ -227,20 +219,13 @@
 .network-details-request th
 {
   vertical-align: top;
-  padding: 2px 0;
 }
-/*
-.network-details-request .network-body {
-  margin-top: 2em;
-}
-*/
 
 .network-details-request th
 {
   text-align: left;
   padding-right: 30px;
-  min-width: 140px;
-  max-width: 290px;
+  width: 140px;
 }
 
 .network-details-request hr {
