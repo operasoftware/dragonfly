@@ -89,8 +89,36 @@ cls.Stylesheets = function()
     return props.concat(dashes);
   };
 
-  this.pretty_print_computed_style = function(data)
+  /**
+   * Checks if we have gotten a reset-state message since last time. If that's the case,
+   * re-request everything.
+   */
+  this._has_been_reset = function(org_args)
   {
+    var rt_id = this._element_style.get_rt_id();
+    if (!this._sheets[rt_id])
+    {
+      var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
+      this._es_debugger.requestCssGetAllStylesheets(tag, [rt_id]);
+      return true;
+    }
+
+    if (!cls.Stylesheets._css_index_map && !this._is_getting_index_map)
+    {
+      this._is_getting_index_map = true;
+      var tag = this._tag_manager.set_callback(null, this._handle_get_index_map.bind(this), [org_args]);
+      this._es_debugger.requestCssGetIndexMap(tag);
+      return true;
+    }
+
+    return false;
+  };
+
+  this.pretty_print_computed_style = function(data, org_args)
+  {
+    if (this._has_been_reset(org_args))
+      return [];
+
     var template = [];
     // set_props is used to force the display if a given property is set
     // even if it has the initial value
@@ -120,8 +148,11 @@ cls.Stylesheets = function()
     return template;
   };
 
-  this.pretty_print_cascaded_style = function(data)
+  this.pretty_print_cascaded_style = function(data, org_args)
   {
+    if (this._has_been_reset(org_args))
+      return [];
+
     var template = [];
     var search_term = this._element_style.get_search_term();
 
@@ -249,6 +280,8 @@ cls.Stylesheets = function()
   {
     this._sheets = {};
     this._new_runtimes = null;
+    this._is_getting_index_map = false;
+    cls.Stylesheets._css_index_map = null;
   };
 
   this._on_active_tab = function(msg)
@@ -288,7 +321,7 @@ cls.Stylesheets = function()
 
 cls.Stylesheets.get_instance = function()
 {
-  return new cls.Stylesheets();
+  return cls.Stylesheets._instance || new cls.Stylesheets();
 };
 
 cls.Stylesheets._css_index_map = null;

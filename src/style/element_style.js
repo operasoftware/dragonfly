@@ -348,7 +348,7 @@ cls.ElementStyle = function()
   {
     self._rt_id = rt_id;
     self._obj_id = obj_id;
-    if (self._stylesheets.has_stylesheets_runtime(rt_id))
+    if (self._stylesheets.has_stylesheets_runtime(rt_id) && cls.Stylesheets.get_css_index_map())
     {
       var tag = self._tag_manager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)];

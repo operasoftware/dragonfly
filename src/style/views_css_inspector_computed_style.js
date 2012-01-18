@@ -18,7 +18,7 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
       // will be avaible. That means the call will not return any data
       // before this data is available.
       var rt_id = element_style.get_rt_id();
-      styles.clearAndRender(cls.Stylesheets.get_instance().pretty_print_computed_style(data));
+      styles.clearAndRender(cls.Stylesheets.get_instance().pretty_print_computed_style(data, arguments));
       styles.setAttribute('rt-id', rt_id);
     }
   };
