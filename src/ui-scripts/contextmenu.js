@@ -54,8 +54,7 @@ function ContextMenu() {
     // Hide the currently visible context menu, if any
     this.dismiss();
 
-    if (Tooltips.is_inside_tooltip(event, true))
-      return;
+    Tooltips.handle_contextmenu_event(event);
 
     CstSelectBase.close_opened_select();
 
@@ -384,4 +383,3 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
-

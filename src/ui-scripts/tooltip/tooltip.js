@@ -8,7 +8,10 @@
   this.unregister = function(name, tooltip) {};
   this.is_inside_tooltip = function(event, close_if_not_inside) {};
 
-  var Tooltip = function() {};
+  var Tooltip = function(keep_on_hover) 
+  {
+    this._init(keep_on_hover);
+  };
 
   Tooltip.prototype = new function()
   {
@@ -57,6 +60,11 @@
       * To hide the tooltip.
       */
     this.hide = function(){};
+
+    this._init = function(keep_on_hover)
+    {
+      this.keep_on_hover = keep_on_hover;
+    }
     
     /* implementation */
     
@@ -79,8 +87,6 @@
     };
   };
 
-
-
   /* constants */
 
   const DATA_TOOLTIP = "data-tooltip";
@@ -96,15 +102,11 @@
 
   var _contextmenu = null;
   var _tooltips = {};
+  var _tooltip_ctxs = [];
+  var _ctx_stack = [];
+  var _cur_ctx = null;
   var _is_setup = false;
-  var _tooltip_ele = null;
-  var _tooltip_ele_first_child = null;
-  var _current_tooltip = null;
-  var _last_handler_ele = null;
-  var _last_box = null;
-  var _last_event = null;
-  var _hide_timeouts = [];
-  var _show_timeouts = [];
+
   var _window_width = 0;
   var _window_height = 0;
   var _padding_width = 0;
@@ -116,138 +118,125 @@
     _window_height = window.innerHeight;
   };
 
+  var _push_ctx = function()
+  {
+    if (!_tooltip_ctxs[_ctx_stack.length])
+      _tooltip_ctxs.push(new TooltipContext());
+
+    _ctx_stack.push(_tooltip_ctxs[_ctx_stack.length]);
+    _cur_ctx = _ctx_stack.last;
+  }
+
   var _mouseover = function(event)
   {
     if (_contextmenu.is_visible)
       return; 
 
     var ele = event.target;
-    while (ele && ele.nodeType == document.ELEMENT_NODE)
+    var index = _ctx_stack.length - 1;
+    var ctx = null;
+
+    for (; ctx = _ctx_stack[index]; index--)
     {
-      if (ele == _tooltip_ele)
+      if (ctx.tooltip_ele.contains(ele))
+        break;
+    }
+
+    if (index > -1 && ctx == _ctx_stack.last)
+    {
+      if (ctx.current_tooltip && ctx.current_tooltip.keep_on_hover)
       {
-        if (_current_tooltip && _current_tooltip._keep_on_hover)
-        {
-          _last_handler_ele = null;
-          _last_box = null;
-          _clear_show_timeout();
-          _clear_hide_timeout();
-        }
-        else
-        {
-          _set_hide_timeout();
-        }
+        ctx.handle_mouse_enter(event);
+        ctx.last_handler_ele = null;
+        ctx.last_box = null;
+        ctx.clear_show_timeout();
+        ctx.clear_hide_timeout();
+        _push_ctx();
+      }
+      else
+      {
+        ctx.set_hide_timeout();
         return;
       }
-      
+    }
+    else
+    {
+      while (_ctx_stack.length > index + 1)
+      {
+        _ctx_stack.last.handle_mouse_leave(event);
+        if (_ctx_stack.length == index + 2)
+          break;
+        
+        else
+          _ctx_stack.pop().hide_tooltip();
+      }
+    }
+
+    _cur_ctx = _ctx_stack.last;
+
+    while (ele && ele.nodeType == Node.ELEMENT_NODE)
+    {      
       var name = ele.getAttribute(DATA_TOOLTIP);
       if (name && _tooltips[name]) 
       {
-        if (ele == _last_handler_ele)
+        if (ele == _cur_ctx.last_handler_ele)
           return;
 
-        if (_current_tooltip != _tooltips[name])
+        if (_cur_ctx.current_tooltip != _tooltips[name])
         {
-          if (_current_tooltip)
-            _current_tooltip.onhide();
-          _current_tooltip = _tooltips[name];
-          _tooltip_ele_first_child.innerHTML = "";
-          _tooltip_ele_first_child.appendChild(_current_tooltip._container);
-          _tooltip_ele.removeAttribute("style");
+          if (_cur_ctx.current_tooltip)
+            _cur_ctx.current_tooltip.onhide();
+          _cur_ctx.current_tooltip = _tooltips[name];
+          _cur_ctx.tooltip_ele_first_child.innerHTML = "";
+          _cur_ctx.tooltip_ele.removeAttribute("style");
         }
 
-        _current_tooltip._accept_call = true;
-        _last_handler_ele = ele;
-        _last_box = ele.getBoundingClientRect();
-        _last_event = event;
-        _set_show_timeout();
+        _cur_ctx.accept_call = true;
+        _cur_ctx.last_handler_ele = ele;
+        _cur_ctx.last_box = ele.getBoundingClientRect();
+        _cur_ctx.last_event = event;
+        _cur_ctx.set_show_timeout();
         return;
       }
 
       ele = ele.parentNode;
     }
 
-    if (_current_tooltip)
-      _current_tooltip._accept_call = false;
+    if (_cur_ctx.current_tooltip)
+      _cur_ctx.accept_call = false;
     
-    _set_hide_timeout();
-  };
-
-  var _set_hide_timeout = function()
-  {
-    _clear_hide_timeout();
-    _hide_timeouts.push(setTimeout(_handle_hide_tooltip, HIDE_DELAY));
-  };
-
-  var _clear_hide_timeout = function()
-  {
-    while(_hide_timeouts.length)
-      clearTimeout(_hide_timeouts.pop());
-  };
-
-  var _set_show_timeout = function()
-  {
-    _clear_hide_timeout();
-    if (!_show_timeouts.length)
-      _show_timeouts.push(setTimeout(_handle_show_tooltip, SHOW_DELAY));
-  };
-
-  var _clear_show_timeout = function()
-  {
-    while(_show_timeouts.length)
-      clearTimeout(_show_timeouts.pop());
-  };
-
-  var _handle_show_tooltip = function(event, ele, name)
-  {
-    _clear_show_timeout();
-    if (_last_event && _last_handler_ele)
-    {
-      _current_tooltip.ontooltip(_last_event, _last_handler_ele);
-    }
-  };
-
-  var _handle_hide_tooltip = function()
-  {
-    _clear_show_timeout();
-    if (_current_tooltip)
-      _current_tooltip.onhide();
-
-    _tooltip_ele_first_child.innerHTML = "";
-    _tooltip_ele.style.cssText = "";
-    _current_tooltip = null;
-    _last_handler_ele = null;
-    _last_box = null;
+    _cur_ctx.set_hide_timeout();
   };
 
   var _show_tooltip = function(tooltip, content, box)
   {
-    if (tooltip == _current_tooltip && _current_tooltip._accept_call)
+    if (_cur_ctx &&  tooltip == _cur_ctx.current_tooltip &&
+        _cur_ctx.accept_call)
     {
-      if (!content && _last_handler_ele)
-        content = _last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT);
+      if (!content && _cur_ctx.last_handler_ele)
+        content = _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT);
 
       if (content)
       {
-        _tooltip_ele_first_child.scrollTop = 0;
-        _tooltip_ele_first_child.scrollLeft = 0;
+        _cur_ctx.tooltip_ele_first_child.scrollTop = 0;
+        _cur_ctx.tooltip_ele_first_child.scrollLeft = 0;
         if (typeof content == "string")
-          _current_tooltip._container.textContent = content;
+          _cur_ctx.tooltip_ele_first_child.textContent = content;
         else
-          _current_tooltip._container.clearAndRender(content);
+          _cur_ctx.tooltip_ele_first_child.clearAndRender(content);
       }
 
-      if (!box && _last_box)
+      if (!box && _cur_ctx.last_box)
       {
-        box = {top: _last_box.top,
-               bottom: _last_box.bottom,
-               left: _last_box.left,
-               right: _last_box.right};
+        box = {top: _cur_ctx.last_box.top,
+               bottom: _cur_ctx.last_box.bottom,
+               left: _cur_ctx.last_box.left,
+               right: _cur_ctx.last_box.right};
 
-        if (_last_event)
+        if (_cur_ctx.last_event)
         {
-          box.mouse_x = _last_event.clientX;
-          box.mouse_y = _last_event.clientY;
+          box.mouse_x = _cur_ctx.last_event.clientX;
+          box.mouse_y = _cur_ctx.last_event.clientY;
         } 
         else
         {
@@ -268,35 +257,35 @@
           if (_window_height - box.bottom > box.top)
           {
             var top = box.bottom + DISTANCE_Y;
-            _tooltip_ele.style.top = top + "px";
-            _tooltip_ele.style.bottom = "auto";
+            _cur_ctx.tooltip_ele.style.top = top + "px";
+            _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
           }
           else
           {
             var bottom = _window_height - box.top + DISTANCE_Y;
-            _tooltip_ele.style.bottom = bottom + "px";
-            _tooltip_ele.style.top = "auto";
+            _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
+            _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = _window_height - bottom - MARGIN_Y - _padding_height;
-            _tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
           }
 
           if (box.mouse_x < _window_width / 2)
           {
             var left = box.mouse_x + DISTANCE_X;
-            _tooltip_ele.style.left = left + "px";
-            _tooltip_ele.style.right = "auto";
+            _cur_ctx.tooltip_ele.style.left = left + "px";
+            _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
           }
           else
           {
             var right = _window_width - box.mouse_x + DISTANCE_X;
-            _tooltip_ele.style.right = right + "px";
-            _tooltip_ele.style.left = "auto";
+            _cur_ctx.tooltip_ele.style.right = right + "px";
+            _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = _window_width - right - MARGIN_X - _padding_width;
-            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
           }
           
         }
@@ -306,35 +295,35 @@
           if (_window_width - box.right > box.left)
           {
             var left = box.right + DISTANCE_X;
-            _tooltip_ele.style.left = left + "px";
-            _tooltip_ele.style.right = "auto";
+            _cur_ctx.tooltip_ele.style.left = left + "px";
+            _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
           }
           else
           {
             var right = box.left - DISTANCE_X;
-            _tooltip_ele.style.right = right + "px";
-            _tooltip_ele.style.left = "auto";
+            _cur_ctx.tooltip_ele.style.right = right + "px";
+            _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = right - MARGIN_X - _padding_width;
-            _tooltip_ele_first_child.style.maxWidth = max_w + "px";
+            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px";
           }
 
           if (box.mouse_y < _window_height / 2)
           {
             var top = box.mouse_y + DISTANCE_Y;
-            _tooltip_ele.style.top = top + "px";
-            _tooltip_ele.style.bottom = "auto";
+            _cur_ctx.tooltip_ele.style.top = top + "px";
+            _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
           }
           else
           {
             var bottom = _window_height - box.mouse_y - DISTANCE_Y;
-            _tooltip_ele.style.bottom = bottom + "px";
-            _tooltip_ele.style.top = "auto";
+            _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
+            _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = box.mouse_y - MARGIN_Y - _padding_height;
-            _tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
           }
         }
       }
@@ -343,46 +332,25 @@
 
   var _hide_tooltip = function(tooltip)
   {
-    if (tooltip == _current_tooltip && _current_tooltip._accept_call)
+    if (_cur_ctx && _cur_ctx.current_tooltip && 
+        tooltip == _cur_ctx.current_tooltip &&
+        _cur_ctx.accept_call)
     {
-      _clear_show_timeout();
-      _tooltip_ele.style.cssText = "";
+      _cur_ctx.clear_show_timeout();
+      _cur_ctx.tooltip_ele.removeAttribute("style");
     }
-  };
-
-  var _on_tooltip_enter = function(event)
-  {
-    if (_current_tooltip && _current_tooltip.ontooltipenter)
-      _current_tooltip.ontooltipenter(event);
-  };
-
-  var _on_tooltip_leave = function(event)
-  {
-    if (_current_tooltip && _current_tooltip.ontooltipleave)
-      _current_tooltip.ontooltipleave(event);
-  };
-
-  var _on_tooltip_click = function(event)
-  {
-    if (_current_tooltip && _current_tooltip.ontooltipclick)
-      _current_tooltip.ontooltipclick(event);
   };
 
   var _setup = function()
   {
     _contextmenu = ContextMenu.get_instance();
+    _push_ctx();
     document.addEventListener("mouseover", _mouseover, false);
-    var tmpl = ["div", ["div", "id", "tooltip-background"],
-                "id", "tooltip-container"];
-    _tooltip_ele = (document.body || document.documentElement).render(tmpl);
-    _tooltip_ele_first_child = _tooltip_ele.firstChild;
-    _tooltip_ele_first_child.addEventListener("mouseenter", _on_tooltip_enter, false);
-    _tooltip_ele_first_child.addEventListener("mouseleave", _on_tooltip_leave, false);
-    _tooltip_ele_first_child.addEventListener("click", _on_tooltip_click, false);
+    document.documentElement.addEventListener("mouseleave", _mouseover, false);
     window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
-    ["#tooltip-container",
-     "#tooltip-background"].forEach(function(selector)
+    [".tooltip-container",
+     ".tooltip-background"].forEach(function(selector)
     {
       var style = document.styleSheets.getDeclaration(selector);
       ["padding-left",
@@ -418,9 +386,7 @@
         document.addEventListener("load", _setup, false);
       _is_setup = true;  
     }
-    _tooltips[name] = new Tooltip();
-    _tooltips[name]._container = document.render(["div", "class", "tooltip"]);
-    _tooltips[name]._keep_on_hover = Boolean(keep_on_hover);
+    _tooltips[name] = new Tooltip(keep_on_hover);
     return _tooltips[name];
   };
 
@@ -430,13 +396,10 @@
       _tooltips[name] = null;
   };
 
-  this.is_inside_tooltip = function(event, close_if_not_inside)
+  this.handle_contextmenu_event = function(event)
   {
-    var is_inside = _tooltip_ele.contains(event.target);
-    if (!is_inside && close_if_not_inside)
-      _handle_hide_tooltip();
-
-    return is_inside;
+    if (_cur_ctx && !_cur_ctx.tooltip_ele.contains(event.target))
+      _cur_ctx.hide_tooltip();
   };
-  
+
 }).apply(Tooltips);

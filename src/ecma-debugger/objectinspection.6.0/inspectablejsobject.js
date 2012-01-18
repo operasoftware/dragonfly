@@ -24,7 +24,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 {
   /* interface */
 
+  this.id;
   this.runtime_id;
+  this.object_id;
 
   /**
     * To expand a given level of the inspected object.
@@ -521,6 +523,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   });
 
   this.__defineSetter__('runtime_id', function(){});
+
+  this.__defineGetter__('object_id', function()
+  {
+    return this._obj_id;
+  });
+
+  this.__defineSetter__('object_id', function(){});
 
 };
 

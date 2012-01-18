@@ -99,7 +99,7 @@ cls.JSInspectionTooltip = function()
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var model = inspections[model_id];
     var obj = model && model.get_object_with_id(obj_id);
-
+    
     if (obj && obj[OBJECT_VALUE])
     {
       _cur_object = obj; 

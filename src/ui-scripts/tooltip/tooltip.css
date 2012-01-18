@@ -1,4 +1,4 @@
-﻿#tooltip-container
+﻿.tooltip-container
 {
   position: absolute;
   z-index: 100;
@@ -6,7 +6,7 @@
   left: -5000px;
 }
 
-#tooltip-background
+.tooltip-background
 {
   background-color: #ececec;
   background-image: -o-linear-gradient(-90deg,

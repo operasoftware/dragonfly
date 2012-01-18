@@ -108,7 +108,9 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
   template: function(message, ctx)
   {
     var VALUE = 2;
-    return templates.highlight_js_source(message[VALUE]);
+    var tmpl = templates.highlight_js_source(message[VALUE]);
+    tmpl.push("class", "pretty-printed-code");
+    return tmpl;
   }
 };
 

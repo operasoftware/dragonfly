@@ -23,6 +23,7 @@ cls.JSSourceTooltip = function(view)
   var TYPE = 0;
   var VALUE = 1;
   var SHIFT_KEY = 16;
+  var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
 
   var _tooltip = null;
   var _view = null;
@@ -51,7 +52,7 @@ cls.JSSourceTooltip = function(view)
   var _shift_key = false;
 
   var _poll_position = function()
-  {    
+  {
     if (!_last_move_event || _is_over_tooltip)
       return;
     
@@ -195,11 +196,18 @@ cls.JSSourceTooltip = function(view)
       if (message[TYPE] == "object")
       {
         var object = message[OBJECT];
-        var model  = new cls.InspectableJSObject(rt_id, object[OBJECT_ID]);
+        var model  = new cls.InspectableJSObject(rt_id, 
+                                                 object[OBJECT_ID],
+                                                 "",
+                                                 object[CLASS_NAME]);
         model.expand(function()
         {
           var tmpl = ["div",
-                       ['h2', object[CLASS_NAME], 'class', 'js-tooltip-title'],
+                       ["h2", ["span", object[CLASS_NAME],
+                                       "data-tooltip", TOOLTIP_NAME], 
+                              'data-id', String(model.id),
+                              'obj-id', String(model.object_id),
+                              'class', 'js-tooltip-title'],
                        [window.templates.inspected_js_object(model, false)],
                        "class", "js-tooltip js-tooltip-examine"];
           _tooltip.show(tmpl, box);
