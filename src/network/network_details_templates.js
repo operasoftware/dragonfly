@@ -218,9 +218,9 @@ templates.network_response_body = function(resp, entry)
   }
 
   var ret = [templates.network_detail_row(templates.network_body_sperator())];
-  if (!resp.responsebody && !resp.is_finished)
+  if (!resp.responsebody && !entry.is_finished)
   {
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED)); // todo: body may be empty? came from cache, so we didn't see it?
+    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
   }
   else if (!resp.responsebody)
   {

@@ -595,7 +595,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
   this._update_event_response = function(event)
   {
-    this._current_response = new cls.NetworkLoggerResponse();
+    this._current_response = new cls.NetworkLoggerResponse(this);
     this.responses.push(this._current_response);
     this._current_response._update_event_response(event);
   };
@@ -606,7 +606,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     // therefor have to init NetworkLoggerResponse here. See CORE-43935.
     if (!this._current_response)
     {
-      this._current_response = new cls.NetworkLoggerResponse();
+      this._current_response = new cls.NetworkLoggerResponse(this);
       this.responses.push(this._current_response);
     }
     this._current_response._update_event_responseheader(event);
@@ -656,7 +656,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   };
 };
 
-cls.NetworkLoggerResponse = function()
+cls.NetworkLoggerResponse = function(entry)
 {
   this.responsestart = null;
   this.responsecode = null;
@@ -664,7 +664,7 @@ cls.NetworkLoggerResponse = function()
   this.response_raw = null;
   this.responsebody = null;
   this.cached = false;
-  
+
   this._update_event_response = function(event)
   {
     this.responsestart = event.time;
@@ -680,10 +680,14 @@ cls.NetworkLoggerResponse = function()
 
   this._update_event_responsefinished = function(event)
   {
+    // This is only fired for the last response, and it always has the entire payload.
+    // Not really sure if that means that the payload has to be all from the last response.
+    // Because of that, we set is_finished on the Entry
     if (event.data && event.data.content)
     {
       this.responsebody = event.data;
     }
+    entry.is_finished = true;
   };
 
   this.update_event_responsebody = function(event)
