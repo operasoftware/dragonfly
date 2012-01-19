@@ -469,19 +469,17 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this.starttime_relative = null;
   this.requesttime = null;
   this.endtime = null;
-  this.cached = false;
   this.touched_network = false;
   this.request_headers = null;
   this.request_type = null;
   this.requestbody = null;
-  this.response_headers = null;
+  this.responses = []; // this should probably be .request_response_flow and contain the requests too.
+                       // for example when we get the authentication requests or the SSL handshake, 
+                       // or also when a 100-continue response is actually followed by another request.
   this.request_raw = null;
-  this.response_raw = null;
   this.method = null;
   this.status = null;
   this.body_unavailable = false;
-  this.responsecode = null;
-  this.responsebody = null;
   this.is_finished = null;
   this.events = [];
 
@@ -550,7 +548,9 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     // the assumption is that if we got this far, and there was no
     // response code, meaning no request was sent, the url was cached
     // fixme: special case for file URIs
-    if (!this.responsecode) { this.cached = true }
+
+    // todo: decide if the cached flag should be for the whole entry or per response. the former may make more sense.
+    if (this._current_response && !this._current_response.responsecode) { this._current_response.cached = true }
     this.is_finished = true;
     this._guess_type();
     this._humanize_url();
@@ -595,29 +595,33 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
   this._update_event_response = function(event)
   {
-    this.responsestart = event.time;
-    this.responsecode = event.responseCode;
-    if (this.responsecode == "304") { this.cached = true }
+    this._current_response = new cls.NetworkLoggerResponse();
+    this.responses.push(this._current_response);
+    this._current_response._update_event_response(event);
   };
 
   this._update_event_responseheader = function(event)
   {
-    this.response_headers = event.headerList;
-    this.response_raw = event.raw;
+    // Sometimes we see no "response" event before we see responseheader,
+    // therefor have to init NetworkLoggerResponse here. See CORE-43935.
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse();
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responseheader(event);
   };
 
   this._update_event_responsefinished = function(event)
   {
-    if (event.data && event.data.content)
-    {
-      this.responsebody = event.data;
-    }
+    if (this._current_response)
+      this._current_response._update_event_responsefinished(event);
   };
 
   this.update_event_responsebody = function(event)
   {
-    if (!event.mimeType) { this.body_unavailable = true; }
-    this.responsebody = event;
+    if (this._current_response)
+      this._current_response.update_event_responsebody(event);
   };
 
   this._update_event_urlredirect = function(event)
@@ -651,3 +655,40 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     }
   };
 };
+
+cls.NetworkLoggerResponse = function()
+{
+  this.responsestart = null;
+  this.responsecode = null;
+  this.response_headers = null;
+  this.response_raw = null;
+  this.responsebody = null;
+  this.cached = false;
+  
+  this._update_event_response = function(event)
+  {
+    this.responsestart = event.time;
+    this.responsecode = event.responseCode;
+    if (this.responsecode == "304") { this.cached = true }
+  };
+
+  this._update_event_responseheader = function(event)
+  {
+    this.response_headers = event.headerList;
+    this.response_raw = event.raw;
+  };
+
+  this._update_event_responsefinished = function(event)
+  {
+    if (event.data && event.data.content)
+    {
+      this.responsebody = event.data;
+    }
+  };
+
+  this.update_event_responsebody = function(event)
+  {
+    if (!event.mimeType) { this.body_unavailable = true; }
+    this.responsebody = event;
+  };
+}

@@ -22,8 +22,10 @@ templates.network_log_detail = function(ctx, selected)
   var entry = ctx.get_entry(selected);
   if (entry)
   {
-    var responsecode = entry && entry.responsecode && entry.responsecode in cls.ResourceUtil.http_status_codes ?
-                  "" + entry.responsecode + " " + cls.ResourceUtil.http_status_codes[entry.responsecode] : null;
+    var responsecode = entry.responses.length && entry.responses.last.responsecode;
+    if (responsecode in cls.ResourceUtil.http_status_codes)
+       responsecode = "" + responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+
     return ["div",
       ["span",
         "class", "close-request-detail",
@@ -40,19 +42,22 @@ templates.network_log_detail = function(ctx, selected)
         ],
         templates.request_details(entry),
         templates.network_request_body(entry),
-        entry.touched_network ? [ // todo: .touched_network is also checked in request_details
-          [
-            templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]),
-            templates.response_details(entry)
-          ]
-        ] : [],
-        templates.network_response_body(entry)
+        entry.touched_network ? entry.responses.map(templates.network_response) : []
       ],
       "data-object-id", String(entry.id),
       "class", "request-details"
     ];
   }
 };
+
+templates.network_response = function(response)
+{
+  return [
+    templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]),
+    templates.response_details(response),
+    templates.network_response_body(response)
+  ]
+}
 
 templates.request_details = function(req)
 {
@@ -86,11 +91,10 @@ templates.request_details = function(req)
   return ret;
 };
 
-templates.response_details = function(req)
+templates.response_details = function(resp)
 {
-  // if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL]; }
-  if (!req.response_headers) { return []; }
-  var firstline = req.response_raw.split("\n")[0];
+  if (!resp.response_headers) { return []; }
+  var firstline = resp.response_raw.split("\n")[0];
   var parts = firstline.split(" ", 2);
   if (parts.length == 2)
   {
@@ -100,7 +104,7 @@ templates.response_details = function(req)
       ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
     ];
   }
-  return templates.network_headers_list(req.response_headers, firstline);
+  return templates.network_headers_list(resp.response_headers, firstline);
 };
 
 templates.network_headers_list = function(headers, firstline)
@@ -131,7 +135,6 @@ templates.network_request_body = function(req)
   // when this is undefined/null the request was one that did not send data
   if (req.requestbody.partList.length)
   {
-    // ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]));
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
       ret.push(templates.network_headers_list(part.headerList));
@@ -152,8 +155,8 @@ templates.network_request_body = function(req)
     var parts = req.requestbody.content.stringData.split("&");
     var tab = [
                 ["tr",
-                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME, "class", "body_heading"],
-                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE, "class", "body_heading"]
+                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
+                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
                 ]
               ].concat(parts.map(function(e) {
                   e = e.replace(/\+/g, "%20").split("=");
@@ -207,26 +210,26 @@ templates.network_request_body = function(req)
 };
 
 
-templates.network_response_body = function(req)
+templates.network_response_body = function(resp, entry)
 {
-  if (req.body_unavailable)
+  if (resp.body_unavailable)
   {
     return [templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY)];
   }
 
   var ret = [templates.network_detail_row(templates.network_body_sperator())];
-  if (!req.responsebody && !req.is_finished)
+  if (!resp.responsebody && !resp.is_finished)
   {
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED)); // todo: body may be empty? came from cache, so we didn't see it?
   }
-  else if (!req.responsebody)
+  else if (!resp.responsebody)
   {
     ret.push(templates.network_detail_row(
       ["p",
         ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
         ["p", ["span",
             ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-            "data-object-id", String(req.id),
+            "data-object-id", String(entry.id),
             // unselectable attribute works around bug CORE-35118
             "unselectable", "on",
             "handler", "get-response-body",
@@ -240,13 +243,13 @@ templates.network_response_body = function(req)
   }
   else
   {
-    if (["script", "markup", "css", "text"].contains(req.type)) // todo: probably mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+    if (["script", "markup", "css", "text"].contains(entry.type)) // todo: probably mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
     {
-      ret.push(templates.network_detail_row(["pre", req.responsebody.content.stringData, "class", "network-body mono"]));
+      ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
     }
-    else if (req.type == "image")
+    else if (entry.type == "image")
     {
-      ret.push(templates.network_detail_row(["img", "src", req.responsebody.content.stringData, "class", "network-body"]));
+      ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
     }
     else // todo: font display
     {
