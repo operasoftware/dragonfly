@@ -47,7 +47,7 @@ cls.NewStyle = function(id, name, container_class)
       var script = "try{style.textContent = \"" +
                      window.helpers.escape_input(rt_style.css_text).replace(/\r?\n/g, "") +
                    "\";}catch(e){};";
-      var tag = this._tag_manager.set_callback(this, cls.ElementStyle.get_instance().update);
+      var tag = this._tag_manager.set_callback(this, window.element_style.update);
       this._es_debugger.requestEval(tag,
           [this._rt_id, 0, 0, script, [['style', rt_style.stylesheet_id]]]);
     }

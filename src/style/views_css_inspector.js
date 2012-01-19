@@ -8,7 +8,7 @@ cls.CSSInspectorView = function(id, name, container_class)
 {
   this.createView = function(container)
   {
-    var element_style = cls.ElementStyle.get_instance();
+    var element_style = window.element_style;
     var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
     var data = element_style.get_style();
     if (data)
@@ -18,7 +18,7 @@ cls.CSSInspectorView = function(id, name, container_class)
       // will be avaible. That means the call will not return any data
       // before this data is available.
       var rt_id = element_style.get_rt_id();
-      styles.clearAndRender(cls.Stylesheets.get_instance().pretty_print_cascaded_style(data, arguments));
+      styles.clearAndRender(window.stylesheets.pretty_print_cascaded_style(data, arguments));
       styles.setAttribute('rt-id', rt_id);
     }
   };
@@ -33,7 +33,7 @@ cls.CSSInspectorView = function(id, name, container_class)
 
 cls.CSSInspectorView.create_ui_widgets = function()
 {
-  var element_style = cls.ElementStyle.get_instance();
+  var element_style = window.element_style;
   new Settings
   (
     // id

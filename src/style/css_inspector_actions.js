@@ -10,7 +10,7 @@ cls.CSSInspectorActions = function(id)
 
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
-  this._element_style = cls.ElementStyle.get_instance();
+  this._element_style = window.element_style;
   this._active_container = null;
   this._target = null;
 

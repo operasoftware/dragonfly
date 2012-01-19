@@ -35,8 +35,8 @@ var Editor = function(actions)
   this.context_edit_mode = this.MODE_CSS;
   this.colors = new Color();
 
-  this._stylesheets = cls.Stylesheets.get_instance();
-  this._element_style = cls.ElementStyle.get_instance();
+  this._stylesheets = window.stylesheets;
+  this._element_style = window.element_style;
   this._templates = new StylesheetTemplates();
   this._actions = actions;
   this._tab_context_value = '';

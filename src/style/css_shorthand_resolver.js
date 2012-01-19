@@ -16,8 +16,6 @@ var CssShorthandResolver = function()
   }
   CssShorthandResolver._instance = this;
 
-  this._element_style = cls.ElementStyle.get_instance();
-
   /**
    * Resolve all shorthands in a rule. All properties have to be fully
    * expanded for this to work propertly. Most shorthands only have one
@@ -49,7 +47,7 @@ var CssShorthandResolver = function()
               return prev + (typeof curr == "string" ? curr : curr.value);
             }, "");
             var is_applied = props_map[prop].properties.some(function(p) {
-              var index = this._element_style.get_property_index(declarations, p);
+              var index = window.element_style.get_property_index(declarations, p);
               return declarations[index].is_applied;
             }, this);
             declarations.push({
@@ -69,7 +67,7 @@ var CssShorthandResolver = function()
       converted_shorthands.forEach(function(shorthand_prop) {
         var props = props_map[shorthand_prop].properties;
         props.forEach(function(prop) {
-          this._element_style.remove_property(declarations, prop);
+          window.element_style.remove_property(declarations, prop);
         }, this);
       }, this);
 
@@ -98,7 +96,7 @@ var CssShorthandResolver = function()
       var all_inherited = true;
       // Check if all properties needed to create a shorthand are available
       var has_all_props = props_map[prop].properties.every(function(prop) {
-        var index = this._element_style.get_property_index(declarations, prop);
+        var index = window.element_style.get_property_index(declarations, prop);
         if (index != -1)
         {
           var declaration = declarations[index];

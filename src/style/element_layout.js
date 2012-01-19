@@ -7,7 +7,7 @@ cls.ElementLayout = function()
 {
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
-  this._stylesheets = cls.Stylesheets.get_instance();
+  this._stylesheets = window.stylesheets;
   this._index_map = null;
   this._selected_element = null;
   this._comp_style = null;

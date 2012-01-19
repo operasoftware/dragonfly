@@ -79,6 +79,7 @@ var assert_rule = function(expected)
 
 addTest("Resolving CSS shorthands", function () {
   window.css_index_map = ecmascript_debugger.CssGetIndexMap();
+  window.element_style = new cls.ElementStyle();
 
   const html = [
     "<!doctype html><title>shorthands</title><p>"

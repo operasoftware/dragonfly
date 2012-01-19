@@ -7,13 +7,8 @@
  */
 cls.ElementStyle = function()
 {
-  if (cls.ElementStyle._instance)
-    return cls.ElementStyle._instance;
-  cls.ElementStyle._instance = this;
-
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
-  this._stylesheets = cls.Stylesheets.get_instance();
   this._css_shorthand_resolver = CssShorthandResolver.get_instance();
   this._style_declarations = [];
   this._rt_id = null;
@@ -348,7 +343,7 @@ cls.ElementStyle = function()
   {
     self._rt_id = rt_id;
     self._obj_id = obj_id;
-    if (self._stylesheets.has_stylesheets_runtime(rt_id) && cls.Stylesheets.get_css_index_map())
+    if (window.stylesheets.has_stylesheets_runtime(rt_id) && cls.Stylesheets.get_css_index_map())
     {
       var tag = self._tag_manager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)];
@@ -356,7 +351,7 @@ cls.ElementStyle = function()
     }
     else
     {
-      self._stylesheets.get_stylesheets(rt_id, arguments);
+      window.stylesheets.get_stylesheets(rt_id, arguments);
     }
   };
 
@@ -426,10 +421,5 @@ cls.ElementStyle = function()
   };
 
   this._init();
-};
-
-cls.ElementStyle.get_instance = function()
-{
-  return new cls.ElementStyle();
 };
 

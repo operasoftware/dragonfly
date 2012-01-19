@@ -5,13 +5,8 @@
  */
 cls.Stylesheets = function()
 {
-  if (cls.Stylesheets._instance)
-    return cls.Stylesheets._instance;
-  cls.Stylesheets._instance = this;
-
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
-  this._element_style = cls.ElementStyle.get_instance();
   this._templates = new StylesheetTemplates();
   this._sheets = {}; // document.styleSheets dict with runtime-id as key
   this._sorted_index_map = [];
@@ -95,7 +90,7 @@ cls.Stylesheets = function()
    */
   this._has_been_reset = function(org_args)
   {
-    var rt_id = this._element_style.get_rt_id();
+    var rt_id = window.element_style.get_rt_id();
     if (!this._sheets[rt_id])
     {
       var tag = this._tag_manager.set_callback(null, this._handle_get_all_stylesheets.bind(this), [rt_id, org_args]);
@@ -122,8 +117,8 @@ cls.Stylesheets = function()
     var template = [];
     // set_props is used to force the display if a given property is set
     // even if it has the initial value
-    var set_props = this._element_style.get_set_props();
-    var search_term = this._element_style.get_search_term();
+    var set_props = window.element_style.get_set_props();
+    var search_term = window.element_style.get_search_term();
     var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
 
     for (var i = 0; i < cls.Stylesheets._css_index_map.length; i++)
@@ -154,7 +149,7 @@ cls.Stylesheets = function()
       return [];
 
     var template = [];
-    var search_term = this._element_style.get_search_term();
+    var search_term = window.element_style.get_search_term();
 
     for (var i = 0, node_style; node_style = data[i]; i++)
     {
@@ -188,7 +183,7 @@ cls.Stylesheets = function()
   this._pretty_print_rule = function(rule, obj_id, element_name)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
-    var rt_id = this._element_style.get_rt_id();
+    var rt_id = window.element_style.get_rt_id();
     switch (rule.origin)
     {
     case ORIGIN_USER_AGENT:
@@ -317,11 +312,6 @@ cls.Stylesheets = function()
   };
 
   this._init();
-};
-
-cls.Stylesheets.get_instance = function()
-{
-  return cls.Stylesheets._instance || new cls.Stylesheets();
 };
 
 cls.Stylesheets._css_index_map = null;

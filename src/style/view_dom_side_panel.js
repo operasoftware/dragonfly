@@ -7,7 +7,7 @@ cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
   {
     this._super_createView(container);
     var quick_find = this.getToolbarControl(container, 'css-inspector-text-search');
-    var search_term = cls.ElementStyle.get_instance().get_search_term();
+    var search_term = window.element_style.get_search_term();
     if (quick_find && search_term)
     {
       quick_find.value = search_term;
@@ -20,7 +20,7 @@ cls.DOMSidePanelView.prototype = SidePanelView.prototype;
 
 cls.DOMSidePanelView.create_ui_widgets = function()
 {
-  var element_style = cls.ElementStyle.get_instance();
+  var element_style = window.element_style;
 
   new ToolbarConfig
   (
