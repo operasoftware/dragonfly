@@ -19,6 +19,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   {
 
     cls.InspectableJSObject = namespace.InspectableJSObject;
+    cls.JSInspectionTooltip.register();
     // disabled for now. see CORE-32113
     // cls.InspectableJSObject.register_enabled_listener();
     // for now we are filtering on the client side

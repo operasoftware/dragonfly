@@ -94,20 +94,24 @@ TextSearch.prototype = new function()
     {
       if (index == 0)
       {
-        span.className = SELECTED_MATCH_CLASS_FIRST;
+        span.className = this._selected_match_class_first ||
+                         SELECTED_MATCH_CLASS_FIRST;
       }
       else if (index == length - 1)
       {
-        span.className = SELECTED_MATCH_CLASS_LAST;
+        span.className = this._selected_match_class_last ||
+                         SELECTED_MATCH_CLASS_LAST;
       }
       else
       {
-        span.className = SELECTED_MATCH_CLASS_BETWEEN;
+        span.className = this._selected_match_class_between ||
+                         SELECTED_MATCH_CLASS_BETWEEN;
       }
     }
     else
     {
-      span.className = SELECTED_MATCH_CLASS;
+      span.className = this._selected_match_class ||
+                       SELECTED_MATCH_CLASS;
     }
   };
 
@@ -188,7 +192,7 @@ TextSearch.prototype = new function()
             node = span;
             if (this._length_to_consume < 1)
             {
-              this._curent_search_result.forEach(this._set_default_style);
+              this._curent_search_result.forEach(this._set_default_style, this);
             }
           }
           else

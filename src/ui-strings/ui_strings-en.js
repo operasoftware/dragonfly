@@ -1400,3 +1400,6 @@ ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scr
 
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression."
+
+/* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show a tooltip in the source view";
