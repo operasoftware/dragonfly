@@ -1413,3 +1413,6 @@ ui_strings.S_ENABLE_DECLARATION = "Enable";
 /* DESC: Tooltip for disabling a declaration */
 ui_strings.S_DISABLE_DECLARATION = "Disable";
 
+/* DESC: Context menu item for expanding shorthands */
+ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
+

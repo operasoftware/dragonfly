@@ -44,7 +44,7 @@ cls.CSSInspectorView.create_ui_widgets = function()
     },
     // key-label map
     {
-      "show-expanded-properties": "Expand shorthands"
+      "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS
     },
     // settings map
     {
