@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 // TODO: the shorthand resolver is relying on some methods in this class (hence
 // they're relying on each other). Those methods should be moved to Stylesheets instead.
