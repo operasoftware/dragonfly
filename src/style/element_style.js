@@ -17,6 +17,7 @@ cls.ElementStyle = function()
   this._selected_element = null;
   this._search_term = "";
   this._set_props = [];
+  this._css_index_map = null;
   this._views = ['css-comp-style', 'css-inspector'];
 
   this.disabled_style_dec_list = {};
@@ -337,69 +338,80 @@ cls.ElementStyle = function()
     }
   };
 
-  // TODO: This whole stylesheet handling has to be rewritten
-  var self = this;
   this._get_data = function(rt_id, obj_id)
   {
-    self._rt_id = rt_id;
-    self._obj_id = obj_id;
-    if (window.stylesheets.has_stylesheets_runtime(rt_id) && cls.Stylesheets.get_css_index_map())
+    this._rt_id = rt_id;
+    this._obj_id = obj_id;
+    if (window.stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = self._tag_manager.set_callback(null, self._handle_get_data.bind(self), [rt_id, obj_id]);
-      var callback_params = [rt_id, obj_id, self._pseudo_item_list.concat(self._pseudo_element_list)];
-      self._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_data.bind(this), [rt_id, obj_id]);
+      var callback_params = [rt_id, obj_id, this._pseudo_item_list.concat(this._pseudo_element_list)];
+      this._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else
     {
-      window.stylesheets.get_stylesheets(rt_id, arguments);
+      window.stylesheets.get_stylesheets(rt_id, this._get_data.bind(this, rt_id, obj_id));
     }
   };
 
-  this._handle_get_data = function(status, message, rt_id, obj_id)
+  this._handle_get_data = function(status, message, rt_id, obj_id, index_map)
   {
-    if (status == 0)
+    if (status !== 0)
+      return;
+
+    if (!this._css_index_map)
     {
-      this._style_declarations = new cls.EcmascriptDebugger["6.7"].CssStyleDeclarations(message);
-      this._has_data = true;
-
-      var disabled_style_dec_list = this.disabled_style_dec_list;
-
-      // this is to ensure that a set property is always displayed in computed style,
-      // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
-      this._set_props = [];
-      for (var i = 0, node_style_list; node_style_list = this._style_declarations.nodeStyleList[i]; i++)
+      if (!index_map)
       {
-        for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
+        window.stylesheets.get_css_index_map(this._handle_get_data.bind(this, status, message, rt_id, obj_id));
+        return;
+      }
+      else
+      {
+        this._css_index_map = index_map;
+      }
+    }
+
+    this._style_declarations = new cls.EcmascriptDebugger["6.7"].CssStyleDeclarations(message);
+    this._has_data = true;
+
+    var disabled_style_dec_list = this.disabled_style_dec_list;
+
+    // this is to ensure that a set property is always displayed in computed style,
+    // also if it maps the initial value and the setting "Hide Initial Values" is set to true.
+    this._set_props = [];
+    for (var i = 0, node_style_list; node_style_list = this._style_declarations.nodeStyleList[i]; i++)
+    {
+      for (var j = 0, node_style; node_style = node_style_list.styleList[j]; j++)
+      {
+        var rule = new CssRule(node_style, this._css_index_map);
+
+        if (!window.settings["css-inspector"].get("show-expanded-properties"))
+          this._css_shorthand_resolver.resolve(rule.declarations);
+
+        if (rule.origin != ORIGIN_USER_AGENT)
         {
-          var rule = new CssRule(node_style, cls.Stylesheets.get_css_index_map());
-
-          if (!window.settings["css-inspector"].get("show-expanded-properties"))
-            this._css_shorthand_resolver.resolve(rule.declarations);
-
-          if (rule.origin != ORIGIN_USER_AGENT)
+          if (disabled_style_dec_list)
           {
-            if (disabled_style_dec_list)
-            {
-              var disabled_style_dec = (rule.origin != ORIGIN_ELEMENT && rule.origin != ORIGIN_SVG)
-                                     ? disabled_style_dec_list[rule.ruleID]
-                                     : disabled_style_dec_list[this.get_inline_obj_id(node_style_list.objectID)];
-              if (disabled_style_dec)
-                rule = this.sync_declarations(rule, disabled_style_dec, i > 0);
-            }
-
-            rule.declarations.forEach(function(decl) {
-              if (decl.is_applied && !decl.is_disabled)
-                this._set_props.push(decl.property);
-            }, this);
+            var disabled_style_dec = (rule.origin != ORIGIN_ELEMENT && rule.origin != ORIGIN_SVG)
+                                   ? disabled_style_dec_list[rule.ruleID]
+                                   : disabled_style_dec_list[this.get_inline_obj_id(node_style_list.objectID)];
+            if (disabled_style_dec)
+              rule = this.sync_declarations(rule, disabled_style_dec, i > 0);
           }
-          node_style_list.styleList[j] = rule;
-        }
-      }
 
-      for (var i = 0, view_id; view_id = this._views[i]; i++)
-      {
-        window.views[view_id].update();
+          rule.declarations.forEach(function(decl) {
+            if (decl.is_applied && !decl.is_disabled)
+              this._set_props.push(decl.property);
+          }, this);
+        }
+        node_style_list.styleList[j] = rule;
       }
+    }
+
+    for (var i = 0, view_id; view_id = this._views[i]; i++)
+    {
+      window.views[view_id].update();
     }
   };
 

@@ -8,7 +8,7 @@ cls.ElementLayout = function()
   this._es_debugger = window.services['ecmascript-debugger'];
   this._tag_manager = cls.TagManager.get_instance();
   this._stylesheets = window.stylesheets;
-  this._index_map = null;
+  this._css_index_map = null;
   this._selected_element = null;
   this._comp_style = null;
   this._offset_values = "";
@@ -92,44 +92,50 @@ cls.ElementLayout = function()
     return Boolean(this._selected_element);
   };
 
-  var self = this; // TODO: get rid of
-  this.get_layout_values = function(org_args)
+  this.get_layout_values = function(callback)
   {
-    if (!self._selected_element)
+    if (!this._selected_element)
       return null;
 
-    if (self._comp_style)
-      return self._comp_style;
+    if (this._comp_style)
+      return this._comp_style;
 
-    var rt_id = self._selected_element.rt_id;
-    var obj_id = self._selected_element.obj_id;
+    var rt_id = this._selected_element.rt_id;
+    var obj_id = this._selected_element.obj_id;
 
-    if (self._stylesheets.has_stylesheets_runtime(rt_id))
+    if (this._stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = self._tag_manager.set_callback(null, self._handle_get_metrics_data.bind(self), [rt_id, obj_id, org_args]);
-      self._es_debugger.requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_metrics_data.bind(this), [rt_id, obj_id, callback]);
+      this._es_debugger.requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
     {
-      self._stylesheets.get_stylesheets(self._selected_element.rt_id, arguments);
+      this._stylesheets.get_stylesheets(this._selected_element.rt_id, this.get_layout_values.bind(this, callback));
     }
     return null;
   };
 
-  this._handle_get_metrics_data = function(status, message, rt_id, obj_id, org_args)
+  this._handle_get_metrics_data = function(status, message, rt_id, obj_id, callback, index_map)
   {
     var COMPUTED_STYLE_LIST = 0;
     var NODE_STYLE_LIST = 1;
 
     this._comp_style = message[COMPUTED_STYLE_LIST];
-    if (!this._index_map)
-      this._index_map = cls.Stylesheets.get_css_index_map();
-
-    if (org_args && !org_args[0].__call_count)
+    if (!this._css_index_map)
     {
-      org_args[0].__call_count = 1;
-      org_args.callee.apply(null, org_args)
+      if (!index_map)
+      {
+        window.stylesheets.get_css_index_map(this._handle_get_metrics_data.bind(this, status, message, rt_id, obj_id, callback));
+        return;
+      }
+      else
+      {
+        this._css_index_map = index_map;
+      }
     }
+
+    if (callback)
+      callback();
   };
 
   this.get_offset_values = function(cb)
@@ -182,7 +188,7 @@ cls.ElementLayout = function()
   this.get_metrics_template = function()
   {
     var comp_style = this._comp_style;
-    var index_map = this._index_map;
+    var index_map = this._css_index_map;
     var is_positioned = comp_style[index_map.indexOf("position")] != "static";
     return (
       ['div',

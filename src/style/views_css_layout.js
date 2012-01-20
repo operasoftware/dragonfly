@@ -32,17 +32,19 @@ cls.CSSLayoutView = function(id, name, container_class)
     }
   };
 
-  this.update_layout = function(ev)
+  this.update_layout = function()
   {
     var containers = self.getAllContainers();
     // TODO not good logic
     for (var i = 0, c; c = containers[i]; i++)
     {
       c = c.getElementsByTagName('layout-container')[0];
-      if (window.elementLayout.get_layout_values(arguments))
+      if (window.elementLayout.get_layout_values(this.update_layout_bound))
         c.clearAndRender(window.elementLayout.get_metrics_template());
     }
   };
+
+  this.update_layout_bound = this.update_layout.bind(this);
 
   this.update_offsets = function(offset_values)
   {
