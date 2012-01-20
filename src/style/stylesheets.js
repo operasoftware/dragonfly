@@ -83,7 +83,7 @@ cls.Stylesheets = function()
     if (!this._css_index_map && !this._is_getting_index_map)
     {
       this._is_getting_index_map = true;
-      var tag = this._tag_manager.set_callback(this, this._handle_get_index_map.bind(this),
+      var tag = this._tag_manager.set_callback(this, this._handle_get_css_index_map.bind(this),
                                                [callback]);
       this._es_debugger.requestCssGetIndexMap(tag);
     }
@@ -216,7 +216,7 @@ cls.Stylesheets = function()
     }, this);
   };
 
-  this._handle_get_index_map = function(status, message, callback)
+  this._handle_get_css_index_map = function(status, message, callback)
   {
     var NAME_LIST = 0;
     var index_map = message[NAME_LIST];
