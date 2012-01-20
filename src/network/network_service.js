@@ -435,12 +435,7 @@ cls.RequestContext = function()
       this._logger_entries.push(logger_entry);
     }
     logger_entry.requestID = event.requestID;
-
-    // For the responsebody event, call update_event_responsebody directly, as this is not recorded in the events of an entry
-    if (eventname === "responsebody")
-      logger_entry.update_event_responsebody(event);
-    else
-      logger_entry.update(eventname, event);
+    logger_entry.update(eventname, event);
 
     views.network_logger.update();
   };
@@ -489,7 +484,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
     if (!this.events.length)
     {
-      this.starttime = eventdata.time;
+      this.starttime = eventdata.time; // todo: if we tune in in the middle of a request, this will be wrong.
       this.starttime_relative = this.starttime - this.context.get_starttime();
 
       var d = new Date(this.starttime);
@@ -507,8 +502,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         ms = "0" + ms;
       this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
     }
-    this.endtime = eventdata.time;
-    this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
+    if (eventname !== "responsebody")
+    {
+      this.endtime = eventdata.time;
+      this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
+    }
 
     if (updatefun)
     {
@@ -549,8 +547,9 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     // response code, meaning no request was sent, the url was cached
     // fixme: special case for file URIs
 
-    // todo: decide if the cached flag should be for the whole entry or per response. the former may make more sense.
-    if (this._current_response && !this._current_response.responsecode) { this._current_response.cached = true }
+    if (!this._current_response || !this._current_response.responsecode)
+      this.cached = true;
+
     this.is_finished = true;
     this._guess_type();
     this._humanize_url();
@@ -618,15 +617,19 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       this._current_response._update_event_responsefinished(event);
   };
 
-  this.update_event_responsebody = function(event)
+  this._update_event_responsebody = function(event)
   {
-    if (this._current_response)
-      this._current_response.update_event_responsebody(event);
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse(this);
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responsebody(event);
   };
 
   this._update_event_urlredirect = function(event)
   {
-      // code
+    // this does not add any information, the event is only used to change the requestID
   };
 
   this._guess_type = function()
@@ -658,11 +661,12 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
 cls.NetworkLoggerResponse = function(entry)
 {
+  this.entry = entry;
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
-  this.responsebody = null;
+  this.responsebody = null; // todo: this can be here or on the entry. if there is any way a responsebody can be sent more than once, so per response, it belongs here.
   this.cached = false;
 
   this._update_event_response = function(event)
@@ -680,17 +684,14 @@ cls.NetworkLoggerResponse = function(entry)
 
   this._update_event_responsefinished = function(event)
   {
-    // This is only fired for the last response, and it always has the entire payload.
-    // Not really sure if that means that the payload has to be all from the last response.
-    // Because of that, we set is_finished on the Entry
+    // This is only fired for the last response
     if (event.data && event.data.content)
     {
       this.responsebody = event.data;
     }
-    entry.is_finished = true;
   };
 
-  this.update_event_responsebody = function(event)
+  this._update_event_responsebody = function(event)
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;

@@ -165,7 +165,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       status: {
         label: "Status",
         renderer: function(entry) {
-          return entry.responsecode && String(entry.responsecode);
+          return entry.responses.length &&
+                 entry.responses.last.responsecode &&
+                 String(entry.responses.last.responsecode) || "";
         },
         title_getter: function(entry) { // todo: use this in sortable_table
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])

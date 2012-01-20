@@ -68,7 +68,8 @@ templates.request_details = function(req)
   else
     ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
 
-  if (!req.touched_network) {
+  if (req.is_finnished && !req.touched_network)
+  {
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
   }
   else if (!req.request_headers)
@@ -210,7 +211,7 @@ templates.network_request_body = function(req)
 };
 
 
-templates.network_response_body = function(resp, entry)
+templates.network_response_body = function(resp)
 {
   if (resp.body_unavailable)
   {
@@ -218,18 +219,18 @@ templates.network_response_body = function(resp, entry)
   }
 
   var ret = [templates.network_detail_row(templates.network_body_sperator())];
-  if (!resp.responsebody && !entry.is_finished)
+  if (!resp.responsebody && !resp.entry.is_finished)
   {
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
   }
-  else if (!resp.responsebody)
+  else if (!resp.responsebody) // todo: ideally this would only be on the last response, since that will always be retunred.
   {
     ret.push(templates.network_detail_row(
       ["p",
         ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
         ["p", ["span",
             ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-            "data-object-id", String(entry.id),
+            "data-object-id", String(resp.entry.id),
             // unselectable attribute works around bug CORE-35118
             "unselectable", "on",
             "handler", "get-response-body",
@@ -238,12 +239,10 @@ templates.network_response_body = function(resp, entry)
         ]],
         "class", "response-view-body-container"
       ]));
-    // todo: somehow prevent this from happening, always try to get it via this._res_service.requestGetResource when clicking details
-    // probably replace this with "please wait" in case it's not yet there in this round of rendering
   }
   else
   {
-    if (["script", "markup", "css", "text"].contains(entry.type)) // todo: probably mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+    if (["script", "markup", "css", "text"].contains(resp.entry.type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
     {
       ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
     }

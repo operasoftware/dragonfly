@@ -306,7 +306,8 @@ templates.network_gap_defs = [
   {
     classname: "waiting",
     from_to_pairs: [
-      ["requestfinished", "response"]
+      ["requestfinished", "response"],
+      ["responseheader", "response"], // This represents waiting for another response to come in. See CORE-43264.
     ]
   },
   {
