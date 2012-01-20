@@ -300,7 +300,7 @@ cls.CSSInspectorActions = function(id)
 
     // If we overwrote some other property, set it back
     var rule = this._element_style.get_rule_by_id(rule_id);
-    var decl = this._element_style.get_declaration(rule, new_property);
+    var decl = rule && this._element_style.get_declaration(rule, new_property);
     if (decl && !decl.is_disabled)
     {
       script += "object.style.setProperty(\"" +
@@ -341,7 +341,7 @@ cls.CSSInspectorActions = function(id)
 
     // If we overwrote some other property, set it back
     var rule = this._element_style.get_rule_by_id(rule_id);
-    var decl = this._element_style.get_declaration(rule, new_property);
+    var decl = rule && this._element_style.get_declaration(rule, new_property);
     if (decl && !decl.is_disabled)
     {
       script += "object.setAttribute(\"" +

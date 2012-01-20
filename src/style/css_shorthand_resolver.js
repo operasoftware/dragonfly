@@ -231,10 +231,10 @@ CssShorthandResolver.shorthands = (function() {
    */
   var compare_values = function(a, b)
   {
-    var first = arguments[0];
+    var first = JSON.stringify(arguments[0]);
     var rest = Array.prototype.slice.call(arguments, 1);
-    return rest.every(function(arg) {
-      return JSON.stringify(first) == JSON.stringify(arg);
+    return rest.map(JSON.stringify).every(function(arg) {
+      return first == arg;
     });
   };
 
