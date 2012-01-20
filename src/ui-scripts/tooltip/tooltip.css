@@ -2,12 +2,7 @@
 {
   position: absolute;
   z-index: 100;
-  padding: 8px;
   left: -5000px;
-}
-
-.tooltip-background
-{
   background-color: #ececec;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.65) 0,

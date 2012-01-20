@@ -1,5 +1,7 @@
 ﻿var Tooltips = function() {};
 
+Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
+
 (function()
 {
   /* static methods of TooltipManager */
@@ -8,9 +10,9 @@
   this.unregister = function(name, tooltip) {};
   this.is_inside_tooltip = function(event, close_if_not_inside) {};
 
-  var Tooltip = function(keep_on_hover) 
+  var Tooltip = function(keep_on_hover, set_selected) 
   {
-    this._init(keep_on_hover);
+    this._init(keep_on_hover, set_selected);
   };
 
   Tooltip.prototype = new function()
@@ -61,9 +63,10 @@
       */
     this.hide = function(){};
 
-    this._init = function(keep_on_hover)
+    this._init = function(keep_on_hover, set_selected)
     {
       this.keep_on_hover = keep_on_hover;
+      this.set_selected = set_selected;
     }
     
     /* implementation */
@@ -93,8 +96,8 @@
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
   const HIDE_DELAY = 120;
   const SHOW_DELAY = 110;
-  const DISTANCE_X = 0;
-  const DISTANCE_Y = -3;
+  const DISTANCE_X = 5;
+  const DISTANCE_Y = 5;
   const MARGIN_Y = 15;
   const MARGIN_X = 30;
 
@@ -129,7 +132,7 @@
 
   var _mouseover = function(event)
   {
-    if (_contextmenu.is_visible)
+    if (_contextmenu && _contextmenu.is_visible)
       return; 
 
     var ele = event.target;
@@ -184,11 +187,8 @@
 
         if (_cur_ctx.current_tooltip != _tooltips[name])
         {
-          if (_cur_ctx.current_tooltip)
-            _cur_ctx.current_tooltip.onhide();
+          _cur_ctx.hide_tooltip();
           _cur_ctx.current_tooltip = _tooltips[name];
-          _cur_ctx.tooltip_ele_first_child.innerHTML = "";
-          _cur_ctx.tooltip_ele.removeAttribute("style");
         }
 
         _cur_ctx.accept_call = true;
@@ -218,12 +218,12 @@
 
       if (content)
       {
-        _cur_ctx.tooltip_ele_first_child.scrollTop = 0;
-        _cur_ctx.tooltip_ele_first_child.scrollLeft = 0;
+        _cur_ctx.tooltip_ele.scrollTop = 0;
+        _cur_ctx.tooltip_ele.scrollLeft = 0;
         if (typeof content == "string")
-          _cur_ctx.tooltip_ele_first_child.textContent = content;
+          _cur_ctx.tooltip_ele.textContent = content;
         else
-          _cur_ctx.tooltip_ele_first_child.clearAndRender(content);
+          _cur_ctx.tooltip_ele.clearAndRender(content);
       }
 
       if (!box && _cur_ctx.last_box)
@@ -250,6 +250,8 @@
         var max_h = 0;
         var max_w = 0;
 
+        _cur_ctx.select_last_handler_ele();
+
         if (box.bottom - box.top < _window_height / 3 ||
             Math.max(box.left, _window_width - box.right) < _window_height / 3)
         {
@@ -260,7 +262,7 @@
             _cur_ctx.tooltip_ele.style.top = top + "px";
             _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
           }
           else
           {
@@ -268,7 +270,7 @@
             _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
             _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = _window_height - bottom - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px"; 
+            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px"; 
           }
 
           if (box.mouse_x < _window_width / 2)
@@ -277,7 +279,7 @@
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
           }
           else
           {
@@ -285,7 +287,7 @@
             _cur_ctx.tooltip_ele.style.right = right + "px";
             _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = _window_width - right - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
           }
           
         }
@@ -298,7 +300,7 @@
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px"; 
+            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
           }
           else
           {
@@ -306,7 +308,7 @@
             _cur_ctx.tooltip_ele.style.right = right + "px";
             _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = right - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele_first_child.style.maxWidth = max_w + "px";
+            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px";
           }
 
           if (box.mouse_y < _window_height / 2)
@@ -315,7 +317,7 @@
             _cur_ctx.tooltip_ele.style.top = top + "px";
             _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
           }
           else
           {
@@ -323,7 +325,7 @@
             _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
             _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = box.mouse_y - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele_first_child.style.maxHeight = max_h + "px";
+            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
           }
         }
       }
@@ -336,47 +338,44 @@
         tooltip == _cur_ctx.current_tooltip &&
         _cur_ctx.accept_call)
     {
-      _cur_ctx.clear_show_timeout();
-      _cur_ctx.tooltip_ele.removeAttribute("style");
+      _cur_ctx.hide_tooltip(true);
     }
   };
 
   var _setup = function()
   {
-    _contextmenu = ContextMenu.get_instance();
+    if ("ContextMenu" in window)
+      _contextmenu = ContextMenu.get_instance();
+    
     _push_ctx();
     document.addEventListener("mouseover", _mouseover, false);
     document.documentElement.addEventListener("mouseleave", _mouseover, false);
     window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
-    [".tooltip-container",
-     ".tooltip-background"].forEach(function(selector)
+    var style = document.styleSheets.getDeclaration(".tooltip-container");
+    ["padding-left",
+     "border-left-width",
+     "padding-right",
+     "border-right-width",
+     "padding-top",
+     "border-top-width",
+     "padding-bottom",
+     "border-bottom-width"].forEach(function(prop)
     {
-      var style = document.styleSheets.getDeclaration(selector);
-      ["padding-left",
-       "border-left-width",
-       "padding-right",
-       "border-right-width",
-       "padding-top",
-       "border-top-width",
-       "padding-bottom",
-       "border-bottom-width"].forEach(function(prop)
+      var value = parseInt(style.getPropertyValue(prop));
+      if (value)
       {
-        var value = parseInt(style.getPropertyValue(prop));
-        if (value)
-        {
-          if (prop.contains("left") || prop.contains("right")) 
-            _padding_width += value;
-          else
-            _padding_height += value;
-        }
-      });
-    })
+        if (prop.contains("left") || prop.contains("right")) 
+          _padding_width += value;
+        else
+          _padding_height += value;
+      }
+    });
   };
 
   /* implementation */
 
-  this.register = function(name, keep_on_hover)
+  this.register = function(name, keep_on_hover, set_selected)
   {
     if (!_is_setup)
     {
@@ -386,7 +385,11 @@
         document.addEventListener("load", _setup, false);
       _is_setup = true;  
     }
-    _tooltips[name] = new Tooltip(keep_on_hover);
+
+    if (typeof set_selected != "boolean")
+      set_selected = true;
+
+    _tooltips[name] = new Tooltip(keep_on_hover, set_selected);
     return _tooltips[name];
   };
 

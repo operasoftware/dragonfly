@@ -51,18 +51,32 @@ TooltipContext.prototype = new function()
     }
   };
 
-  this.hide_tooltip = function()
+  this.hide_tooltip = function(keep_context)
   {
     this.clear_show_timeout();
-    if (this.current_tooltip)
+    if (!keep_context && this.current_tooltip)
       this.current_tooltip.onhide();
 
-    this.tooltip_ele_first_child.innerHTML = "";
+    this._clear_last_handler_eles();
+    this.tooltip_ele.innerHTML = "";
     this.tooltip_ele.removeAttribute("style");
-    this.current_tooltip = null;
-    this.last_handler_ele = null;
-    this.last_box = null;
+    if (!keep_context)
+    {
+      this.current_tooltip = null;
+      this.last_handler_ele = null;
+      this.last_box = null;
+    }
   };
+
+  this.select_last_handler_ele = function()
+  {
+    if (this.current_tooltip && this.current_tooltip.set_selected)
+    {
+      this._clear_last_handler_eles();
+      this._push_last_handler_ele();
+      this.last_handler_ele.addClass(Tooltips.CSS_TOOLTIP_SELECTED);
+    }
+  }; 
 
   this.handle_mouse_enter = function(event)
   {
@@ -84,6 +98,18 @@ TooltipContext.prototype = new function()
     }
   };
 
+  this._clear_last_handler_eles = function()
+  {
+    while (this._last_handler_eles.length)
+      this._last_handler_eles.pop().removeClass(Tooltips.CSS_TOOLTIP_SELECTED);
+  };
+
+  this._push_last_handler_ele = function()
+  {
+    if (this.last_handler_ele && !this._last_handler_eles.contains(this.last_handler_ele))
+      this._last_handler_eles.push(this.last_handler_ele);
+  };
+
   this._ontooltipclick = function(event)
   {
     if (this.current_tooltip && this.current_tooltip.ontooltipclick)
@@ -92,22 +118,21 @@ TooltipContext.prototype = new function()
 
   this._init = function()
   {
+    this._hide_timeouts = [];
+    this._show_timeouts = [];
+    this._last_handler_eles = [];
     this.current_tooltip = null;
     this.last_handler_ele = null;
     this.last_box = null;
     this.last_event = null;
-    this._hide_timeouts = [];
-    this._show_timeouts = [];
     this.accept_call = false;
     this.show_tooltip = this.show_tooltip.bind(this);
     this.hide_tooltip = this.hide_tooltip.bind(this);
-    var tmpl = ["div", ["div", "class", "tooltip-background"],
-                       "class", "tooltip-container"];
+    var tmpl = ["div", "class", "tooltip-container"];
     this.tooltip_ele = (document.body || document.documentElement).render(tmpl);
-    this.tooltip_ele_first_child = this.tooltip_ele.firstChild;
-    this.tooltip_ele_first_child.addEventListener("click",
-                                                  this._ontooltipclick.bind(this),
-                                                  false);
+    this.tooltip_ele.addEventListener("click", 
+                                      this._ontooltipclick.bind(this),
+                                      false);
   }
 
 };
