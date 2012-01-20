@@ -13,10 +13,6 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
     var data = element_style.get_computed_style();
     if (data)
     {
-      // stylesheets.prettyPrintCat call will also ensure
-      // that all style sheets for the given runtime and the index map
-      // will be avaible. That means the call will not return any data
-      // before this data is available.
       var rt_id = element_style.get_rt_id();
       styles.clearAndRender(window.stylesheets.pretty_print_computed_style(data));
       styles.setAttribute('rt-id', rt_id);

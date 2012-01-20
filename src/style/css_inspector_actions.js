@@ -646,7 +646,8 @@ cls.CSSInspectorActions = function(id)
     var rt_id = parseInt(target.get_attr("parent-node-chain", "rt-id"));
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var declaration = event.target.get_ancestor(".css-declaration");
-    var prop = declaration && declaration.querySelector(".css-property").textContent;
+    var prop_ele = declaration && declaration.querySelector(".css-property")
+    var prop = prop_ele && prop_ele.textContent;
     if (prop)
     {
       this.remove_property(rt_id, rule_id, prop, this._element_style.update);
