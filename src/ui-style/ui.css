@@ -811,12 +811,12 @@ view-slider
 
 view-slider.vertical
 {
-  cursor: w-resize;
+  cursor: col-resize;
 }
 
 view-slider.horizontal
 {
-  cursor: s-resize;
+  cursor: row-resize;
   border-top: 1px solid #b3b3b3;
 }
 
@@ -938,7 +938,7 @@ windows-container .window-scale-top
   right: 5px;
   top: -5px;
   height: 10px;
-  cursor: s-resize;
+  cursor: n-resize;
 }
 
 windows-container .window-scale-top-right
@@ -947,7 +947,7 @@ windows-container .window-scale-top-right
   width: 10px;
   height: 10px;
   top: -5px;
-  cursor: sw-resize;
+  cursor: ne-resize;
 }
 
 windows-container .window-scale-right
@@ -956,7 +956,7 @@ windows-container .window-scale-right
   width: 10px;
   top: 5px;
   bottom: 5px;
-  cursor: w-resize;
+  cursor: e-resize;
 }
 
 windows-container .window-scale-left
@@ -983,7 +983,7 @@ windows-container .window-scale-bottom-right
   height: 10px;
   width: 10px;
   right: -5px;
-  cursor: nw-resize;
+  cursor: se-resize;
 }
 
 windows-container .window-scale-bottom-left
@@ -1063,8 +1063,14 @@ window.hud window-container
   padding-bottom: 3px;
 }
 
-.hud cst-select cst-value {
+.hud cst-select cst-value
+{
   text-shadow: none;
+}
+
+.hud .window-scale-top
+{
+  cursor: row-resize;
 }
 
 /* editing */
