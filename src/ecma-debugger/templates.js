@@ -196,19 +196,33 @@
 
   this.runtime_script = function(runtime)
   {
-    var 
-    ret = [], 
+    var
+    ret = [],
     script_list = null,
+    script_uri_paths = {};
     title = runtime.type == "extension" ?
             ['cst-title', runtime.title] :
             ['h2', runtime.title];
-    
+
     if (runtime.selected)
       title.push('class', 'selected-runtime');
     if (runtime.title_attr)
       title.push('title', runtime.title_attr);
     ret.push(title);
-    script_list = runtime.scripts.map(this.script_option, this);
+
+    var me = this;
+    runtime.scripts.forEach(function(script){
+      var ret_script = me.script_option(script);
+      var display_uri = helpers.shortenURI(script.uri);
+      var root_uri = me._uri_path(runtime.uri, script, display_uri.uri);
+      if(script_uri_paths.hasOwnProperty(root_uri)){
+        script_uri_paths[root_uri].push(ret_script);
+      } else {
+        script_uri_paths[root_uri] = [ret_script];
+      }
+    });
+    script_list = this.flatten_uri_scripts(script_uri_paths);
+
     if (runtime.type == "extension")
       ret.push(['cst-group', script_list]);
     else
@@ -226,6 +240,29 @@
       {
         ret.push.apply(ret, runtime.extensions.map(this.runtime_script, this));
       }
+    }
+    return ret;
+  }
+
+  this._uri_path = function(uri, script, script_name)
+  {
+    var uri_path = '';
+    if( script.script_type === 'linked' )
+    {
+      uri_path = script.uri.replace(uri, '');
+      uri_path = uri_path.replace(script_name, '');
+      uri_path = uri_path.replace(/\?.*/,'');
+    } else {
+      uri_path = 'Anonymous';
+    }
+    return uri_path === "" ? script_name : uri_path;
+  }
+
+  this.flatten_uri_scripts = function(uri_paths){
+    var ret = [];
+    for(uri in uri_paths){
+      ret.push(['cst-title',uri]);
+      uri_paths[uri].forEach(function(script){ret.push(script);});
     }
     return ret;
   }
@@ -267,6 +304,7 @@
       ret.push('title', display_uri.title);
     if (class_name)
       ret.push('class', class_name);
+
     return ret;
   }
 
