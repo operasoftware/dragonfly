@@ -93,7 +93,7 @@ cls.Stylesheets = function()
     {
       this._is_getting_index_map = true;
       this._on_index_map_listeners.push(callback);
-      var tag = this._tag_manager.set_callback(this, this._handle_get_css_index_map.bind(this));
+      var tag = this._tag_manager.set_callback(this, this._handle_get_css_index_map);
       this._es_debugger.requestCssGetIndexMap(tag);
     }
   };
@@ -283,7 +283,7 @@ cls.Stylesheets = function()
     else
     {
       this._new_runtimes = msg.runtimes_with_dom.slice(0);
-      //this._check_new_runtimes({});
+      this._check_new_runtimes();
     }
   };
 

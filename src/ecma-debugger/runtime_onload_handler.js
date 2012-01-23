@@ -91,7 +91,8 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
     }
     var onload_handlers = __onload_handlers[rt_id];
     // if the callback already exists, it will be replaced
-    for (var i = 0, cb; (cb = onload_handlers[i]) && cb != callback; i++);
+    var i = 0;
+    for (var cb; (cb = onload_handlers[i]) && cb != callback; i++) {};
     onload_handlers[i] = callback;
   }
 

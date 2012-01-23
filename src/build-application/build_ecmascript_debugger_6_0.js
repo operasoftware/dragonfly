@@ -116,6 +116,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     window.stylesheets = new cls.Stylesheets();
     window.element_style = new cls.ElementStyle();
+    cls.CssStyleDeclarations = cls.EcmascriptDebugger["6.7"].CssStyleDeclarations;
 
     /* CSS inspector */
     cls.CSSInspectorView.prototype = ViewBase;

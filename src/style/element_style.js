@@ -346,7 +346,7 @@ cls.ElementStyle = function()
     this._obj_id = obj_id;
     if (window.stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = this._tag_manager.set_callback(this, this._handle_get_data.bind(this), [rt_id, obj_id]);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_data, [rt_id, obj_id]);
       var callback_params = [rt_id, obj_id, this._pseudo_item_list.concat(this._pseudo_element_list)];
       this._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
@@ -374,7 +374,7 @@ cls.ElementStyle = function()
       }
     }
 
-    this._style_declarations = new cls.EcmascriptDebugger["6.7"].CssStyleDeclarations(message);
+    this._style_declarations = new cls.CssStyleDeclarations(message);
     this._has_data = true;
 
     var disabled_style_dec_list = this.disabled_style_dec_list;

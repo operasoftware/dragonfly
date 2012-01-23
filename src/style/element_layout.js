@@ -113,7 +113,7 @@ cls.ElementLayout = function()
 
     if (this._stylesheets.has_stylesheets_runtime(rt_id))
     {
-      var tag = this._tag_manager.set_callback(this, this._handle_get_metrics_data.bind(this), [rt_id, obj_id, callback]);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_metrics_data, [rt_id, obj_id, callback]);
       this._es_debugger.requestCssGetStyleDeclarations(tag, [rt_id, obj_id]);
     }
     else
