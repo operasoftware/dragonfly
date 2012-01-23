@@ -144,7 +144,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */
-    window.elementLayout = new cls.ElementLayout();
+    window.element_layout = new cls.ElementLayout();
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', 
                           ui_strings.M_VIEW_LABEL_LAYOUT, 

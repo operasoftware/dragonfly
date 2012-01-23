@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
  * @constructor
@@ -6,25 +8,24 @@
  */
 cls.CSSLayoutView = function(id, name, container_class)
 {
-  var self = this;
-  this._container = null;
-
   this.createView = function(container)
   {
     this._container = container;
-    if (window.elementLayout.has_selected_element())
+    if (window.element_layout.has_selected_element())
     {
-      if (!container.getElementsByTagName('layout-container')[0])
+      if (!container.querySelector("layout-container"))
       {
         container.clearAndRender([
-          'div',
-            ['layout-container',
-              'handler', 'spotlight-box'],
-            ['offsets-container'],
-          'class', 'padding']);
+          "div",
+            ["layout-container",
+              "handler", "spotlight-box"
+            ],
+            ["offsets-container"],
+          "class", "padding"
+        ]);
       }
-      this.update_layout({});
-      window.elementLayout.get_offset_values(this.update_offsets.bind(this));
+      window.element_layout.get_layout_values(this._update_layout_bound);
+      window.element_layout.get_offset_values(this._update_offsets_bound);
     }
     else
     {
@@ -32,29 +33,27 @@ cls.CSSLayoutView = function(id, name, container_class)
     }
   };
 
-  this.update_layout = function()
+  this.update_layout = function(comp_style)
   {
-    var containers = self.getAllContainers();
-    // TODO not good logic
-    for (var i = 0, c; c = containers[i]; i++)
+    var layout_container = this._container.querySelector("layout-container");
+    if (layout_container)
     {
-      c = c.getElementsByTagName('layout-container')[0];
-      if (window.elementLayout.get_layout_values(this.update_layout_bound))
-        c.clearAndRender(window.elementLayout.get_metrics_template());
+      if (comp_style)
+        layout_container.clearAndRender(window.element_layout.get_metrics_template(comp_style));
+      else
+        layout_container.innerHTML = "";
     }
   };
 
-  this.update_layout_bound = this.update_layout.bind(this);
-
   this.update_offsets = function(offset_values)
   {
-    var offsets = this._container.getElementsByTagName('offsets-container')[0];
-    if (offsets)
+    var offsets_container = this._container.querySelector("offsets-container");
+    if (offsets_container)
     {
       if (offset_values)
-        offsets.clearAndRender(window.templates.offset_values(offset_values));
+        offsets_container.clearAndRender(window.templates.offset_values(offset_values));
       else
-        offsets.innerHTML = '';
+        offsets_container.innerHTML = "";
     }
   };
 
@@ -62,12 +61,19 @@ cls.CSSLayoutView = function(id, name, container_class)
   {
     if (msg.id == "dom" && msg.key == "show-id_and_classes-in-breadcrumb")
     {
-      window.elementLayout.get_offset_values(this.update_offsets.bind(this));
+      window.element_layout.get_offset_values(this.update_offsets.bind(this));
     }
   };
 
-  this.init(id, name, container_class);
+  this._init = function()
+  {
+    this.init(id, name, container_class);
+    this._container = null;
+    this._update_layout_bound = this.update_layout.bind(this);
+    this._update_offsets_bound = this.update_offsets.bind(this)
+    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
+  };
 
-  messages.addListener("setting-changed", this._on_setting_change.bind(this));
+  this._init();
 };
 

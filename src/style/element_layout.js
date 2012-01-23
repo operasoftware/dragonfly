@@ -97,10 +97,16 @@ cls.ElementLayout = function()
   this.get_layout_values = function(callback)
   {
     if (!this._selected_element)
-      return null;
+    {
+      callback(null);
+      return;
+    }
 
     if (this._comp_style)
-      return this._comp_style;
+    {
+      callback(this._comp_style);
+      return;
+    }
 
     var rt_id = this._selected_element.rt_id;
     var obj_id = this._selected_element.obj_id;
@@ -114,7 +120,6 @@ cls.ElementLayout = function()
     {
       this._stylesheets.get_stylesheets(this._selected_element.rt_id, this.get_layout_values.bind(this, callback));
     }
-    return null;
   };
 
   this._handle_get_metrics_data = function(status, message, rt_id, obj_id, callback, index_map)
@@ -137,7 +142,7 @@ cls.ElementLayout = function()
     }
 
     if (callback)
-      callback();
+      callback(this._comp_style);
   };
 
   this.get_offset_values = function(cb)
@@ -187,9 +192,8 @@ cls.ElementLayout = function()
     return data;
   }
 
-  this.get_metrics_template = function()
+  this.get_metrics_template = function(comp_style)
   {
-    var comp_style = this._comp_style;
     var index_map = this._css_index_map;
     var is_positioned = comp_style[index_map.indexOf("position")] != "static";
     return (
