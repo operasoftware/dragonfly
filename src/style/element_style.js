@@ -126,7 +126,7 @@ cls.ElementStyle = function()
     var declarations = disabled_style_dec.declarations;
     for (var i = 0, decl; decl = declarations[i]; i++)
     {
-      if (this.get_property_index(style_dec, decl.property) != -1)
+      if (this.get_property_index(style_dec.declarations, decl.property) != -1)
       {
         this.remove_property(disabled_style_dec.declarations, decl.property);
       }
