@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 /**
  * Resolve expanded properties (e.g. margin-{top,right,bottom,left})
