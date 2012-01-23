@@ -14,6 +14,7 @@ cls.Stylesheets = function()
   this._css_index_map = null;
   this._sorted_index_map = [];
   this._is_getting_index_map = false;
+  this._on_index_map_listeners = [];
   this._new_runtimes = null;
 
   var SHEET_OBJECT_ID = 0;
@@ -33,7 +34,7 @@ cls.Stylesheets = function()
 
     if (callback)
     {
-      if (!this._css_index_map && !this._is_getting_index_map)
+      if (!this._css_index_map)
       {
         this.get_css_index_map(this.get_stylesheets.bind(this, rt_id, callback));
         return;
@@ -80,16 +81,20 @@ cls.Stylesheets = function()
 
   this.get_css_index_map = function(callback)
   {
-    if (!this._css_index_map && !this._is_getting_index_map)
+    if (this._css_index_map)
     {
-      this._is_getting_index_map = true;
-      var tag = this._tag_manager.set_callback(this, this._handle_get_css_index_map.bind(this),
-                                               [callback]);
-      this._es_debugger.requestCssGetIndexMap(tag);
+      callback(this._css_index_map);
+    }
+    else if (this._is_getting_index_map)
+    {
+      this._on_index_map_listeners.push(callback);
     }
     else
     {
-      callback(this._css_index_map);
+      this._is_getting_index_map = true;
+      this._on_index_map_listeners.push(callback);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_css_index_map.bind(this));
+      this._es_debugger.requestCssGetIndexMap(tag);
     }
   };
 
@@ -243,8 +248,10 @@ cls.Stylesheets = function()
       }
     }
 
-    if (callback)
-      callback();
+    while (this._on_index_map_listeners.length)
+    {
+      this._on_index_map_listeners.shift()();
+    }
   };
 
   this._handle_get_all_stylesheets = function(status, message, rt_id, callback)
