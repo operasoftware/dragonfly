@@ -379,6 +379,7 @@
                                ':not(.screenshot-controls),' +
                       'panel-container,' +
                       'window-container,' +
+                      '.tooltip-container,' +
                       '.selectable';
 
   this._selection_controller = new SelectionController(is_selectable, if_check);
