@@ -55,7 +55,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
           break;
       }
 
-      context.ele_value.firstChild.nodeValue = color_value + (context.is_important ? " !important" : "");
+      context.ele_value.firstChild.textContent = color_value + (context.is_important ? " !important" : "");
       context.ele_color_sample.style.backgroundColor = color_value;
       var script = "";
       if (!context.is_svg)
@@ -102,7 +102,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
         ele_value: parent,
         ele_color_sample: target,
         ele_container: parent.parentNode,
-        prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
+        prop_name: parent.parentNode.querySelector('.css-property').textContent,
         is_important: parent.innerText.endswith("!important"),
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
         rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||

@@ -13,7 +13,7 @@
  *
  * or you can call
  *
- * var instance = cls.TagManager.getInstance()
+ * var instance = cls.TagManager.get_instance()
  *
  * The result will be the same. Calling new cls.TagManager() multiple times
  * will only result in a single instance being created
@@ -40,7 +40,7 @@ window.cls.TagManager = function()
   this._tags = [];
 
   // use tag with value 1 to explicitly ignore the response
-  this._tags[1] = [null, function(status, message){}, []];
+  this._tags[cls.TagManager.IGNORE_RESPONSE] = [null, function(status, message){}, []];
 
   /**
    * Helper that returns the first available tag slot.
@@ -88,6 +88,9 @@ window.cls.TagManager = function()
  * Static method for getting the global instance of the tag manager
  * class.
  */
-window.cls.TagManager.getInstance = function() {
+window.cls.TagManager.get_instance = function() {
   return new window.cls.TagManager();
 };
+
+cls.TagManager.IGNORE_RESPONSE = 1;
+

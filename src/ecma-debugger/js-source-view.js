@@ -472,7 +472,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     this.showLine(script_id, line_no);
     var line = this.get_line_element(line_no);
-    if (line)
+    if (line && typeof line_no == "number")
     {
       line.addClass('selected-js-source-line');
       setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
@@ -483,7 +483,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var source_content = document.getElementById(container_id);
     var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_no - __top_line];
+    var line = typeof line_no == "number" && lines && lines[line_no - __top_line];
     return line;
   }
 
@@ -719,6 +719,44 @@ cls.JsSourceView = function(id, name, container_class)
     return __current_script && __current_script.script_id;
   }
 
+  this.get_current_script = function()
+  {
+    return runtimes.getScript(this.getCurrentScriptId());
+  };
+
+  this.get_line_number_with_offset = function(offset)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      var cand = __top_line + Math.floor(offset / context['line-height']);
+      if (cand <= __current_script.line_arr.length)
+        return cand;
+    }
+    return -1;
+  };
+
+  this.higlight_slice = function(line_number, offset_start, length, style)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      this._slice_highlighter.clear_hit();
+      var line_ele = this.get_line_element(line_number);
+      while (line_ele && typeof length == 'number' && length > 0)
+      {
+        this._slice_highlighter.set_hit(line_ele, 
+                                        offset_start,
+                                        length, 
+                                        TextSearch.HIGHLIGHT_STYLE,
+                                        true,
+                                        ".error-description");
+        length -= __current_script.get_line_length(line_number) - offset_start;
+        offset_start = 0;
+        line_number++;
+        line_ele = line_ele.nextElementSibling;
+      }
+    }
+  };
+
   this.show_stop_at_error = function()
   {
     if (__current_script &&
@@ -911,6 +949,28 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  this._on_setting_change = function(msg)
+  {
+    if (msg.id == this.id && msg.key == "show-js-tooltip")
+      this.handle_tooltip_setting();
+  }
+
+  this.handle_tooltip_setting = function()
+  {
+    if (window.settings.js_source.get("show-js-tooltip"))
+    {
+      if (!this._tooltip)
+        this._tooltip = new cls.JSSourceTooltip(this);
+    }
+    else
+    {
+      if (this._tooltip)
+        this._tooltip.unregister();
+
+      this._tooltip = null;
+    } 
+  };
+
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
   {
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
@@ -937,10 +997,24 @@ cls.JsSourceView = function(id, name, container_class)
   messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
   messages.addListener('monospace-font-changed',
                        this._onmonospacefontchange.bind(this));
+  messages.addListener('setting-changed', this._on_setting_change.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
 
-  new cls.JSSourceTooltip(this);
+  var config =
+  {
+    "css_classes":
+    {
+      "selected_match_class": "js-identifier-selected",
+      "selected_match_class_first": "js-identifier-selected-first",
+      "selected_match_class_between": "js-identifier-selected-between",
+      "selected_match_class_last": "js-identifier-selected-last" 
+    }
+  }
+
+  this._slice_highlighter = new VirtualTextSearch(config);
+  this._tooltip = null;
+
 }
 
 cls.JsSourceView.prototype = ViewBase;
@@ -1196,7 +1270,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-ignore-case': true,
       'js-search-all-files': false,
       'js-search-injected-scripts': true,
-      'max-displayed-search-hits': 1000
+      'max-displayed-search-hits': 1000,
+      'show-js-tooltip': true
     },
     // key-label map
     {
@@ -1206,6 +1281,7 @@ cls.JsSourceView.create_ui_widgets = function()
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
+      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP
     },
     // settings map
     {
@@ -1214,7 +1290,8 @@ cls.JsSourceView.create_ui_widgets = function()
         'script',
         'exception',
         'error',
-        'abort'
+        'abort',
+        'show-js-tooltip'
       ],
       customSettings:
       [
@@ -1224,7 +1301,8 @@ cls.JsSourceView.create_ui_widgets = function()
       ],
       contextmenu:
       [
-        'error'
+        'error',
+        'show-js-tooltip'
       ]
     },
     // custom templates
@@ -1273,6 +1351,8 @@ cls.JsSourceView.create_ui_widgets = function()
     },
     "script"
   );
+
+  window.views.js_source.handle_tooltip_setting();
 
   new Switches
   (

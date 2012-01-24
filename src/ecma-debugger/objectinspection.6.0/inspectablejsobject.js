@@ -24,7 +24,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 {
   /* interface */
 
+  this.id;
   this.runtime_id;
+  this.object_id;
 
   /**
     * To expand a given level of the inspected object.
@@ -59,6 +61,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this.collapse_scope_chain = function(){};
 
   this.has_data = function(){};
+
+  this.get_object_with_id = function(id) {};
 
   /* private */
 
@@ -488,12 +492,44 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     return this._has_data;
   };
 
+  this.get_object_with_id = function(id)
+  {
+    var PROPERTY_LIST = 1;
+    var OBJECT_VALUE = 3;
+    var OBJECT_ID = 0;
+
+    for (var ex_id in this._obj_map)
+    {
+      var proto_chain = this._obj_map[ex_id];
+      if (proto_chain)
+      {
+        for (var i = 0, proto; proto = proto_chain[i]; i++)
+        {
+          var property_list = proto[PROPERTY_LIST];
+          for (var j = 0, prop; prop = property_list[j]; j++)
+          {
+            if (prop[OBJECT_VALUE] && prop[OBJECT_VALUE][OBJECT_ID] == id)
+              return prop;
+          }
+        }
+      }
+    }
+    return null;
+  };
+
   this.__defineGetter__('runtime_id', function()
   {
     return this._rt_id;
   });
 
   this.__defineSetter__('runtime_id', function(){});
+
+  this.__defineGetter__('object_id', function()
+  {
+    return this._obj_id;
+  });
+
+  this.__defineSetter__('object_id', function(){});
 
 };
 

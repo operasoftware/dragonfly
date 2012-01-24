@@ -3,14 +3,14 @@ this.cls || (this.cls = {});
 cls.SimpleJSParser = function() {};
 
 // CONSTS for external code that needs to know about token types
-cls.SimpleJSParser.WHITESPACE = 1,
-cls.SimpleJSParser.LINETERMINATOR = 2,
-cls.SimpleJSParser.IDENTIFIER = 3,
-cls.SimpleJSParser.NUMBER = 4,
-cls.SimpleJSParser.STRING = 5,
-cls.SimpleJSParser.PUNCTUATOR = 6,
-cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
-cls.SimpleJSParser.REG_EXP = 8,
+cls.SimpleJSParser.WHITESPACE = 1;
+cls.SimpleJSParser.LINETERMINATOR = 2;
+cls.SimpleJSParser.IDENTIFIER = 3;
+cls.SimpleJSParser.NUMBER = 4;
+cls.SimpleJSParser.STRING = 5;
+cls.SimpleJSParser.PUNCTUATOR = 6;
+cls.SimpleJSParser.DIV_PUNCTUATOR = 7;
+cls.SimpleJSParser.REG_EXP = 8;
 cls.SimpleJSParser.COMMENT = 9;
 
 cls.SimpleJSParser.prototype = new function()
@@ -59,7 +59,7 @@ cls.SimpleJSParser.prototype = new function()
     * @param {String} escape. Optional. Currently supports only "html" 
     * to escape "<" and "&" to "&lt;" and "&amp;".
     */
-  this.tokenize = function(script_source, ontoken, escape){};
+  this.tokenize = function(script_source, ontoken, espace, start_state){};
 
   /* privat */
 

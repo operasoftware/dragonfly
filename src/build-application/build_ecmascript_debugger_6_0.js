@@ -19,6 +19,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
   {
 
     cls.InspectableJSObject = namespace.InspectableJSObject;
+    cls.JSInspectionTooltip.register();
     // disabled for now. see CORE-32113
     // cls.InspectableJSObject.register_enabled_listener();
     // for now we are filtering on the client side
@@ -114,23 +115,16 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMSearchView.prototype = ViewBase;
     new cls.DOMSearchView('dom-search', ui_strings.M_VIEW_LABEL_SEARCH);
 
-    /* Stylesheets */
-    // TODO: remove, this is old
     window.stylesheets = new cls.Stylesheets();
-    cls.StylesheetsView.prototype = ViewBase;
-    new cls.StylesheetsView('stylesheets', 
-                            ui_strings.M_VIEW_LABEL_STYLESHEET, 
-                            'scroll stylesheets mono');
-    cls.StylesheetSelect.prototype = new CstSelect();
-    new cls.StylesheetSelect('stylesheet-select', 'stylesheet-options');
-    //cls.StylesheetsView.create_ui_widgets();
+    window.element_style = new cls.ElementStyle();
+    cls.CssStyleDeclarations = cls.EcmascriptDebugger["6.7"].CssStyleDeclarations;
 
     /* CSS inspector */
-    window.elementStyle = new cls.ElementStyle();
     cls.CSSInspectorView.prototype = ViewBase;
     new cls.CSSInspectorView('css-inspector', 
                              ui_strings.M_VIEW_LABEL_STYLES, 
                              'scroll css-inspector mono');
+    new cls.CSSInspectorView.create_ui_widgets();
     
     cls.CSSInspectorCompStyleView.prototype = ViewBase;
     new cls.CSSInspectorCompStyleView('css-comp-style', 
@@ -152,7 +146,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     cls.DOMSidePanelView.create_ui_widgets();
 
     /* Layout */
-    window.elementLayout = new cls.ElementLayout();
+    window.element_layout = new cls.ElementLayout();
     cls.CSSLayoutView.prototype = ViewBase;
     new cls.CSSLayoutView('css-layout', 
                           ui_strings.M_VIEW_LABEL_LAYOUT, 

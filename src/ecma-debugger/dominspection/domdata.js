@@ -457,9 +457,13 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   {
     if (obj_id)
       this._get_dom_sub(rt_id, obj_id, do_highlight, scroll_into_view);
-    else if ( !(rt_id == this._data_runtime_id && this._data.length) &&
-          runtime_onload_handler.check(rt_id, arguments))
-      this._get_initial_view(rt_id);
+    else if (!(rt_id == this._data_runtime_id && this._data.length))
+    {
+      if (runtime_onload_handler.is_loaded(rt_id))
+        this._get_initial_view(rt_id);
+      else
+        runtime_onload_handler.register(rt_id, this._get_initial_view.bind(this, rt_id));
+    }
     this._is_waiting = true;
   }).bind(this);
 

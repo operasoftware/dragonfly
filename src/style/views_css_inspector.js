@@ -1,38 +1,63 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.CSSInspectorView = function(id, name, container_class)
 {
-  var self = this;
-
   this.createView = function(container)
   {
-    // TODO set unfold key on show and hide view
-
+    var element_style = window.element_style;
     var styles = container.clearAndRender(['category', ['styles'], 'edit-handler', 'edit-css']).firstElementChild;
-    var search_active = elementStyle.getSearchActive();
-    var cat_index = 1;
-    var data = elementStyle.getCategoryData(cat_index);
+    var data = element_style.get_style();
     if (data)
     {
-      // stylesheets.prettyPrintCat call will also ensure 
-      // that all style sheets for the given runtime and the index map
-      // will be avaible, that means the call will not return any data 
-      // before this datas are avaible
-      styles.innerHTML = 
-        stylesheets.prettyPrintStyleCasc(data, arguments, search_active);
-      styles.setAttribute('rt-id', data.rt_id);
+      var rt_id = element_style.get_rt_id();
+      styles.clearAndRender(window.stylesheets.pretty_print_cascaded_style(data));
+      styles.setAttribute('rt-id', rt_id);
     }
-  }
+  };
 
   this.ondestroy = function()
   {
     UIWindowBase.closeWindow('color-selector');
-  }
+  };
 
   this.init(id, name, container_class);
-}
+};
+
+cls.CSSInspectorView.create_ui_widgets = function()
+{
+  var element_style = window.element_style;
+  new Settings
+  (
+    // id
+    "css-inspector",
+    // key-value map
+    {
+      "show-expanded-properties": false
+    },
+    // key-label map
+    {
+      "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS
+    },
+    // settings map
+    {
+      contextmenu:
+      [
+        "show-expanded-properties"
+      ]
+    },
+    null,
+    "document",
+    {
+      "show-expanded-properties": function(value)
+      {
+        window.settings["css-inspector"].set("show-expanded-properties", value);
+        element_style.update();
+      }
+    }
+  );
+};
+

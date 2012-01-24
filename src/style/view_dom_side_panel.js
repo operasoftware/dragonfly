@@ -7,18 +7,20 @@ cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
   {
     this._super_createView(container);
     var quick_find = this.getToolbarControl(container, 'css-inspector-text-search');
-    if (quick_find && elementStyle.getSearchTerm())
+    var search_term = window.element_style.get_search_term();
+    if (quick_find && search_term)
     {
-      quick_find.value = elementStyle.getSearchTerm();
+      quick_find.value = search_term;
     }
   }
   this.init(id, name, view_list, default_unfolded_list);
-}
+};
 
 cls.DOMSidePanelView.prototype = SidePanelView.prototype;
 
 cls.DOMSidePanelView.create_ui_widgets = function()
 {
+  var element_style = window.element_style;
 
   new ToolbarConfig
   (
@@ -40,20 +42,17 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     'css-comp-style', 
     // key-value map
     {
-      'show-initial-values': false,
-      'hide-shorthands': true
-    }, 
+      'show-initial-values': false
+    },
     // key-label map
     {
-      'show-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES,
-      'hide-shorthands': ui_strings.S_SWITCH_SHOW_SHORTHANDS
+      'show-initial-values': ui_strings.S_SWITCH_SHOW_INITIAL_VALUES
     },
     // settings map
     {
       checkboxes:
       [
-        'show-initial-values',
-        'hide-shorthands',
+        'show-initial-values'
       ]
     },
     null,
@@ -132,19 +131,19 @@ cls.DOMSidePanelView.create_ui_widgets = function()
   {
     if (is_active)
     {
-      window.elementStyle.add_pseudo_item(pseudo_item);
+      element_style.add_pseudo_item(pseudo_item);
     }
     else
     {
-      window.elementStyle.remove_pseudo_item(pseudo_item);
+      element_style.remove_pseudo_item(pseudo_item);
     }
-    window.elementStyle.update();
+    element_style.update();
   }
 
   ["link", "visited", "hover", "active", "focus", "selection"].forEach(function(pseudo_item) {
     if (window.settings["css-inspector"].get(pseudo_item))
     {
-      window.elementStyle.add_pseudo_item(pseudo_item);
+     element_style.add_pseudo_item(pseudo_item);
     }
   });
 
@@ -186,9 +185,9 @@ cls.DOMSidePanelView.create_ui_widgets = function()
         ];
 
         // Only add this for a declaration, not on the whole rule
-        while (target && target.nodeName.toLowerCase() != "property")
+        while (target && !target.hasClass("css-declaration"))
         {
-          target = target.parentNode;
+          target = target.parentElement;
         }
 
         if (target)
@@ -226,4 +225,5 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       }
     }
   ]);
-}
+};
+
