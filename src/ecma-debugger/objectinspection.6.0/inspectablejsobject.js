@@ -506,10 +506,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         for (var i = 0, proto; proto = proto_chain[i]; i++)
         {
           var property_list = proto[PROPERTY_LIST];
-          for (var j = 0, prop; prop = property_list[j]; j++)
+          if (property_list)
           {
-            if (prop[OBJECT_VALUE] && prop[OBJECT_VALUE][OBJECT_ID] == id)
-              return prop;
+            for (var j = 0, prop; prop = property_list[j]; j++)
+            {
+              if (prop[OBJECT_VALUE] && prop[OBJECT_VALUE][OBJECT_ID] == id)
+                return prop;
+            }
           }
         }
       }
