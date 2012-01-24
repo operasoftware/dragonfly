@@ -1,0 +1,60 @@
+<!doctype html>
+<style>
+textarea
+{
+  padding: 6px;
+  border: 8px solid blue;
+  margin: 10px;
+  height: 70px;
+}
+
+#a
+{
+  display: block;
+  box-sizing: border-box;
+  font-size: 36px;
+}
+
+#b
+{
+  display: inline-block;
+  box-sizing: border-box;
+  font-size: 24px;
+}
+
+#c
+{
+  display: block;
+  box-sizing: content-box;
+  font-size: 16px;
+}
+
+#d
+{
+  display: inline-block;
+  box-sizing: content-box;
+  font-size: 12px;
+}
+
+</style>
+<script src="../src/scripts/dom.js"></script>
+<script>
+window.onload = function()
+{
+  ["a", "b", "c", "d"].forEach(function(id)
+  {
+    document.body.render(["div", ["_auto_height_textarea", "id", id]]);
+    /*
+    var t = div.querySelector('textarea');
+    var style = getComputedStyle(t, null);
+    var span = div.appendChild(document.createElement('span'));
+    var box = t.getBoundingClientRect();
+    span.textContent = "height: " + style.getPropertyValue('height') + '\n' +
+                       "box.height: " + box.height + '\n' +
+                       "offsetHeight: " + t.offsetHeight + '\n' +
+                       "clientHeight: " + t.clientHeight + '\n' +
+                       "scrollHeight: " + t.scrollHeight;
+    */
+  })
+}
+</script>

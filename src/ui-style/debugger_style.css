@@ -1383,3 +1383,8 @@ color-sample
   border: 1px solid black;
   border-radius: 2px;
 }
+
+.pretty-printed-code
+{
+  margin: 0;
+}

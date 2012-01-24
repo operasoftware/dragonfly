@@ -122,3 +122,47 @@
 {
   background-color: #f0f0f0;
 }
+
+.js-tooltip-examine
+{
+  min-width: 280px;
+}
+
+.js-tooltip-title
+{
+  width: 100%;
+  font-size: 1em;
+  font-weight: normal;
+  line-height: 1.72em;
+  color: #000;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.9);
+  padding: 3px 8px 2px 8px;
+  margin-top: -8px;
+  margin-bottom: 5px;
+  margin-left: -8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.js-tooltip examine-objects key 
+{
+  color: #404040;
+}
+
+.js-identifier-selected,
+.js-identifier-selected-first,
+.js-identifier-selected-between,
+.js-identifier-selected-last 
+{
+  color: #000000;
+  background-color: #c5daf1;
+  border-color: transparent;
+}
+
+.selected-js-source-line .js-identifier-selected,
+.selected-js-source-line .js-identifier-selected-first,
+.selected-js-source-line .js-identifier-selected-between,
+.selected-js-source-line .js-identifier-selected-last
+{
+  background-color: #a2c3e8;
+}

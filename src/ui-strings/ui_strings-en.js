@@ -1416,3 +1416,5 @@ ui_strings.S_DISABLE_DECLARATION = "Disable";
 /* DESC: Context menu item for expanding shorthands */
 ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 
+/* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show a tooltip in the source view";
