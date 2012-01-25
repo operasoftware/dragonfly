@@ -121,7 +121,7 @@ cls.Stylesheets = function()
     // even if it has the initial value
     var set_props = window.element_style.get_set_props();
     var search_term = window.element_style.get_search_term();
-    var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
+    var hide_initial_value = !window.settings["css-comp-style"].get("show-initial-values");
 
     for (var i = 0; i < this._css_index_map.length; i++)
     {
@@ -135,6 +135,7 @@ cls.Stylesheets = function()
         || false;
       var display =
         (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
+        && this._show_prop_in_computed_style(prop)
         && (prop.indexOf(search_term) != -1 ||
             value.indexOf(search_term) != -1);
 
@@ -143,6 +144,30 @@ cls.Stylesheets = function()
     }
 
     return template;
+  };
+
+  /**
+   * To avoid getting the computed style section messy, hide some of the border-*
+   * properties.
+   */
+  this._show_prop_in_computed_style = function(prop)
+  {
+    if (window.settings["css-comp-style"].get("show-initial-values"))
+      return true;
+
+    if (prop == "border")
+      return false;
+
+    if (window.settings["css-inspector"].get("show-expanded-properties"))
+    {
+      return ["border-color", "border-style", "border-width"].indexOf(prop) != -1
+             ? false
+             : !CssShorthandResolver.shorthands[prop];
+    }
+
+    return ["border-top", "border-right", "border-bottom", "border-left"].indexOf(prop) != -1
+           ? true
+           : !CssShorthandResolver.property_to_shorthand[prop];
   };
 
   this.pretty_print_cascaded_style = function(data)
