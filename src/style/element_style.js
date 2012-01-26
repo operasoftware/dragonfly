@@ -93,11 +93,6 @@ cls.ElementStyle = function()
     return null;
   };
 
-  this.get_rt_id = function()
-  {
-    return this._rt_id;
-  };
-
   this.get_set_props = function()
   {
     return this._set_props.slice(0);
