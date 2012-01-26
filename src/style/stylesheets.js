@@ -175,8 +175,9 @@ cls.Stylesheets = function()
   {
     var template = [];
     var search_term = window.element_style.get_search_term();
+    var style_list = data.style_list;
 
-    for (var i = 0, node_style; node_style = data.style_list[i]; i++)
+    for (var i = 0, node_style; node_style = style_list[i]; i++)
     {
       var element_name = node_style.elementName;
       var style_dec_list = node_style.styleList;
