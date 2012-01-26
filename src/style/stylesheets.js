@@ -128,11 +128,11 @@ cls.Stylesheets = function()
     {
       var index = this._sorted_index_map[i];
       var prop = this._css_index_map[index];
-      var value = data[index];
+      var value = data.style_list[index];
       var is_not_initial_value =
         !show_initial_value
         && value != ""
-        && value != cls.Stylesheets.get_initial_value(prop, data, this._css_index_map)
+        && value != cls.Stylesheets.get_initial_value(prop, data.style_list, this._css_index_map)
         || false;
       var display =
         (show_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
@@ -176,7 +176,7 @@ cls.Stylesheets = function()
     var template = [];
     var search_term = window.element_style.get_search_term();
 
-    for (var i = 0, node_style; node_style = data[i]; i++)
+    for (var i = 0, node_style; node_style = data.style_list[i]; i++)
     {
       var element_name = node_style.elementName;
       var style_dec_list = node_style.styleList;
@@ -198,17 +198,16 @@ cls.Stylesheets = function()
           template.push(this._templates.inherited_header(element_name, node_style.objectID));
         }
 
-        template.push(this._pretty_print_rule(rule, node_style.objectID, element_name));
+        template.push(this._pretty_print_rule(rule, data.rt_id, node_style.objectID, element_name));
       }
     }
 
     return template;
   };
 
-  this._pretty_print_rule = function(rule, obj_id, element_name)
+  this._pretty_print_rule = function(rule, rt_id, obj_id, element_name)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
-    var rt_id = window.element_style.get_rt_id();
     switch (rule.origin)
     {
     case ORIGIN_USER_AGENT:
