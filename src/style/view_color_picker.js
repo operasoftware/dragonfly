@@ -55,21 +55,22 @@ window.cls.ColorPickerView = function(id, name, container_class)
           break;
       }
 
-      context.ele_value.firstChild.textContent = color_value + (context.is_important ? " !important" : "");
+      context.ele_value.firstChild.textContent = color_value;
       context.ele_color_sample.style.backgroundColor = color_value;
+      var new_value = context.ele_container.textContent;
       var script = "";
       if (!context.is_svg)
       {
         // Removing it first is a workaround for CORE-31191
         script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
                  "rule.style.setProperty(\"" + context.prop_name + "\", " +
-                                        "\"" + color_value + "\", " +
-                                        "\"" + (context.is_important ? "important" : "null") + "\")";
+                                        "\"" + new_value + "\", " +
+                                        "\"" + (context.is_important ? "important" : "") + "\")";
       }
       else
       {
         script = "rule.setAttribute(\"" + context.prop_name + "\", " +
-                                   "\"" + color_value + "\")";
+                                   "\"" + new_value + "\")";
       }
       var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
       services['ecmascript-debugger'].requestEval(1, msg);
@@ -93,17 +94,24 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var parent = target.parentNode;
     if (!parent.parentNode.hasClass('disabled'))
     {
+      var declaration_ele = target.get_ancestor(".css-declaration");
+      var property_ele = declaration_ele && declaration_ele.querySelector(".css-property");
+      var value_ele = declaration_ele && declaration_ele.querySelector(".css-property-value");
+      var property = property_ele && property_ele.textContent;
+      var value = value_ele && value_ele.textContent;
+
       if (this._edit_context)
         this._edit_context.ele_container.removeClass(this._edit_context.edit_class ||
                                                      CSS_CLASS_TARGET);
+
       this._edit_context = edit_context ||
       {
         initial_color: new Color().parseCSSColor(target.style.backgroundColor),
         ele_value: parent,
         ele_color_sample: target,
         ele_container: parent.parentNode,
-        prop_name: parent.parentNode.querySelector('.css-property').textContent,
-        is_important: parent.innerText.endswith("!important"),
+        prop_name: property,
+        is_important: value.endswith("!important"),
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
         rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||
                  parseInt(parent.get_attr('parent-node-chain', 'obj-id')),

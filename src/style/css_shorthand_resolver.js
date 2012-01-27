@@ -29,6 +29,13 @@ var CssShorthandResolver = function()
   {
     var shorthands_map = CssShorthandResolver.property_to_shorthand;
     var props_map = CssShorthandResolver.shorthands;
+    var decls = {};
+    declarations.forEach(function(decl) {
+      decls[decl.property] = {
+        value: decl.value,
+        is_applied: decl.is_applied
+      };
+    });
 
     // This loop terminates when all shorthands are converted
     while (true)
@@ -40,7 +47,7 @@ var CssShorthandResolver = function()
         var prop = shorthands_map[declaration.property];
         if (prop && converted_shorthands.indexOf(prop) == -1)
         {
-          var tokens = this.get_shorthand_val_for_property(prop, declarations);
+          var tokens = this.get_shorthand_val_for_property(prop, declarations, decls);
           if (tokens)
           {
             var val = tokens.reduce(function(prev, curr) {
@@ -81,11 +88,11 @@ var CssShorthandResolver = function()
    *
    * @param {String} prop The property for which to get the shorthand.
    * @param {Array} declarations CSS declarations as returned by Scope.
+   * @param {Array} all_decls All CSS declarations, original, and converted ones.
    */
-  this.get_shorthand_val_for_property = function(prop, declarations)
+  this.get_shorthand_val_for_property = function(prop, declarations, all_decls)
   {
     var props_map = CssShorthandResolver.shorthands;
-    var decls = {};
 
     if (props_map.hasOwnProperty(prop))
     {
@@ -121,7 +128,7 @@ var CssShorthandResolver = function()
             return false;
           last_priority = declaration.priority;
 
-          decls[declaration.property] = {
+          all_decls[declaration.property] = {
             value: declaration.value,
             is_applied: declaration.is_applied
           };
@@ -146,7 +153,7 @@ var CssShorthandResolver = function()
         // to shorthand
         else if (!has_inherited)
         {
-          return props_map[prop].format(decls);
+          return props_map[prop].format(all_decls);
         }
       }
     }
@@ -164,6 +171,8 @@ CssShorthandResolver.get_instance = function()
  * Shorthand to property map, and formatters
  */
 CssShorthandResolver.shorthands = (function() {
+  var css_value_tokenizer = new CssValueTokenizer();
+
   /**
    * Splits values for properties that can take multiple values.
    *
@@ -176,13 +185,12 @@ CssShorthandResolver.shorthands = (function() {
    */
   var split_values = function(decls)
   {
-    var tokenizer = new CssValueTokenizer();
     var declarations = {};
     for (var prop in decls)
     {
       declarations[prop] = [];
       var value_list = [""];
-      tokenizer.tokenize(decls[prop].value, function(type, value) {
+      css_value_tokenizer.tokenize(decls[prop].value, function(type, value) {
         if (type == CssValueTokenizer.types.OPERATOR && value == ",")
         {
           value_list.push("");
@@ -231,10 +239,11 @@ CssShorthandResolver.shorthands = (function() {
    */
   var compare_values = function(a, b)
   {
-    var first = JSON.stringify(arguments[0]);
+    var first = arguments[0];
     var rest = Array.prototype.slice.call(arguments, 1);
-    return rest.map(JSON.stringify).every(function(arg) {
-      return first == arg;
+    return rest.every(function(arg) {
+      return first.value == arg.value &&
+             first.is_applied == arg.is_applied;
     });
   };
 
@@ -339,7 +348,9 @@ CssShorthandResolver.shorthands = (function() {
                            decls["border-bottom"],
                            decls["border-left"]))
         {
-          return [get_tokens(decls["border-top"])];
+          return [get_tokens(decls["border-top-width"]), " ",
+                  get_tokens(decls["border-top-style"]), " ",
+                  get_tokens(decls["border-top-color"])];
         }
       }
     },

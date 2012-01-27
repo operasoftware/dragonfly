@@ -170,6 +170,11 @@ examine-objects key
   color: #111;
 }
 
+.css-priority
+{
+  white-space: nowrap;
+}
+
 .overwritten
 {
   text-decoration: line-through;
