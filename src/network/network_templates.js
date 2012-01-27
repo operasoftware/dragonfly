@@ -188,33 +188,42 @@ templates.network_log_url_list = function(ctx, selected, item_order)
 {
   var itemfun = function(req)
   {
-    var statusclass = "status-" + req.responsecode; // todo: currently unused, may be useful to make error responses stand out mode?
-    if (req.cached) { statusclass = "status-cached"; }
+    var error_responses = /5\d{2}|4\d{2}/;
+    var had_error_response = error_responses.test(req.responsecode);
+    var disqualified = !req.touched_network || req.unloaded;
 
-    var statusstring = req.responsecode || null; // todo: statusstring should probably be added to the (data-) item instead
-    if (req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes)
-    {
-      statusstring += " " + cls.ResourceUtil.http_status_codes[req.responsecode];
-    }
+    var url_tooltip = req.human_url;
+    var context_info;
+    if (req.unloaded)
+      context_info = "Unloaded"; // todo: strings
+    else if (req.cached)
+      context_info = "Cached";
+    else if (had_error_response)
+      context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
+
+    if (context_info)
+      url_tooltip = context_info + " - " + url_tooltip;
+
     return ["li",
             templates.network_request_icon(req),
             ["span",
               req.filename || req.human_url,
-              "data-tooltip-text" , req.human_url,
+              "data-tooltip-text" , url_tooltip,
               "data-tooltip", "network-url-list-tooltip"
             ], // todo: shorten the full url, even if filename can't be extracted
             "handler", "select-network-request",
             "data-object-id", String(req.id),
-            "class", selected === req.id ? "selected" : ""
+            "class", (selected === req.id ? "selected" : " ") + (had_error_response ? "error" : " ") + (disqualified ? "disqualified" : "")
            ];
   };
+
   var items = ctx.get_entries_filtered().slice(0);
   // Could use copy_object instead, because the template doesn't need the methods of the resources.
   // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
   // to the old objects
   if (item_order)
   {
-    item_order = item_order.split(","); // todo: this could also be passed as an array, but it needs to be joined to compare, and for easy copying
+    item_order = item_order.split(",");
     items.sort(function(a, b)
       {
         var ind_a = item_order.indexOf(a.id);
@@ -239,8 +248,11 @@ templates.network_log_url_list = function(ctx, selected, item_order)
 templates.network_request_icon = function(request)
 {
   var classname = "resource-icon resource-type-" + request.type;
+/*
+  // todo: long lasting discussion to add some XHR indicator to the icon
   if (request.load_origin) // === "xhr"
     classname += " request-origin-" + request.load_origin;
+*/
   return ["span", "class", classname];
 };
 
@@ -417,8 +429,12 @@ templates.network_graph_sections = function(entry, width, duration)
          ];
 };
 
-templates.network_graph_entry_tooltip = function(entry, height)
+templates.network_graph_entry_tooltip = function(entry)
 {
+  if (!entry)
+    return;
+
+  const height = 165;
   var duration = entry.get_duration();
   if (duration && entry.events)
   {

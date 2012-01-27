@@ -246,13 +246,13 @@ templates.network_response_body = function(resp)
     {
       ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
     }
-    else if (entry.type == "image")
+    else if (resp.entry.type == "image")
     {
       ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
     }
     else // todo: font display
     {
-      ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", req.mime), "class", "network-body"]));
+      ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.entry.mime), "class", "network-body"]));
     }
   }
   return ret;

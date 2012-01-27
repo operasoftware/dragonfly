@@ -4,14 +4,14 @@
  * @constructor
  * @extends ViewBase
  */
-cls.NetworkLogView = function(id, name, container_class, html, default_handler) {
+cls.NetworkLogView = function(id, name, container_class, html, default_handler)
+{
   this._service = new cls.NetworkLoggerService(this);
   this._content_scroll = 0;
   this._details_scroll = 0;
   this._selected = null;
   this._rendertime = 0;
   this._rendertimer = null;
-  this._everrendered = false;
   this.needs_instant_update = false;
 
   this.createView = function(container)
@@ -27,7 +27,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       this._rendertimer = window.setTimeout(this._create.bind(this), min_render_delay);
       return;
     }
-    this._rendertime = new Date().getTime();
     if (this.needs_instant_update)
       this.needs_instant_update = false;
 
@@ -41,6 +40,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     {
       this._create();
     }
+    this._rendertime = new Date().getTime();
   }
 
   this._create = function()
@@ -57,11 +57,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
         this._render_details_view(this._container, this._selected);
       }
     }
-    else if (this._everrendered)
-    {
-      // todo: render template "No data to show." This is also for when service is paused and no resources are there now.
-      this._container.innerHTML = "";
-    }
     else
     {
       this._render_click_to_fetch_view(this._container);
@@ -76,11 +71,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this.query = message.search_term;
     this._create();
   }.bind(this)
-
-  this.ondestroy = function()
-  {
-    this._everrendered = false;
-  };
 
   this._render_details_view = function(container)
   {
@@ -107,7 +97,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
 
   this._render_tabbed_view = function(container)
   {
-    this._everrendered = true;
     /*
       hand-calculate network-url-list's width, so it only takes one rendering
       #network-url-list { width: 40%; min-width: 230px; }
@@ -343,7 +332,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
     var entry = ctx.get_entry(entry_id);
-    var template = templates.network_graph_entry_tooltip(entry, 165);
+    var template = templates.network_graph_entry_tooltip(entry);
     this.graph_tooltip.show(template);
   }
 

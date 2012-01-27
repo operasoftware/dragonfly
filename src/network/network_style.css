@@ -22,7 +22,7 @@
 {
   float: left;
   width: 40%;
-  min-width: 230px; /* filter buttons, should never become 3 rows. values duplicated in network_view */
+  min-width: 230px; /* value duplicated in network_view */
 }
 
 .network-detail-container
@@ -31,7 +31,7 @@
   width: 60%;
 }
 
-.network-data-container.graphs {
+.network-data-container.graphs { /* todo: slow selector */
   position: relative;
   top: 10px;
 }
@@ -81,6 +81,16 @@
 {
   height: 19px;
   padding: 5px 0 0 8px;
+}
+
+.network_logger .network-log-url-list li.disqualified
+{
+  color: #8a8a8a;
+}
+
+.network_logger .network-log-url-list li.error
+{
+  color: #d2001c;
 }
 
 .network-log-url-list li:nth-child(even),
@@ -231,7 +241,6 @@
 .network-details-request hr {
   border: none;
   border-top: 1px solid #a4a4a4;
-  margin-top: 0;
 }
 
 .network-details-request h2,

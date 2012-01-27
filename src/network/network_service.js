@@ -18,70 +18,26 @@ cls.NetworkLoggerService = function(view)
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
     // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect
     if (data.parentDocumentID) { return; }
-    // todo: The last _on_abouttoloaddocument without parentDocumentID is not always the top document,
-    // so we need a way of finding out which one it really is.
-    // If the document was loaded because of a redirect, the redirect is the parentDocumentID.
-    // Need to also check what happens in case of more top documents that were added to the context.
-
-    // When paused, the context will still be reset and the paused status and what
-    // you were looking at is trashed. Ideally, the new stuff should be kept on a new 
-    // RequestContext object, and when unpausing, that one should be rendered. Hard.
     this._current_context = new cls.RequestContext();
     this._current_context.saw_main_document_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
   }.bind(this);
 
-  this._on_documentnotification_bound = function(msg)
+  this._on_documentevent_bound = function(msg)
   {
+    // todo: This will be only store for top documents.
+    // the last _on_abouttoloaddocument without parentDocumentID is not always the top document,
+    // but it can be a redirect instead.
+
+    // todo: there can be more then one top document, this needs to be reflected in the structure.
 /*
-    message DocumentEvent 
-{ 
-    enum EventType 
-    { 
-        NAVIGATION_START = 0; // not handled currently - we have equivalent already: OnAboutToLoadDocument 
-        DOMCONTENTLOADED_START = 1; // before DOMContentLoaded event ran 
-        DOMCONTENTLOADED_END = 2; // after DOMContentLoaded ran 
-        LOAD_START = 3; // before load event ran 
-        LOAD_END = 4; // afer load event ran 
-        UNLOAD_START = 5; // not handled currently - hard to do properly due to our flaky support for unload - core3 is supposed to address that 
-        UNLOAD_END = 6; // same as above 
-    } 
-
-    required uint32 windowID = 1; 
-    required uint32 frameID = 2; 
-    required uint32 documentID = 3; 
-    required uint32 resourceID = 4; 
-    required EventType eventType = 5; 
-
-     ** 
-     * Milliseconds since Unix epoch. 
-     *
-    required double time = 6; 
-}
-*/
-    if (this._current_context)
+    var data = new cls.DocumentManager["1.2"].DocumentEvent(msg);
+    var type = new cls.DocumentManager["1.2"].DocumentEventType[data.eventType];
+    if (this._current_context &&
+        type === "DOMCONTENTLOADED_START" || type === "LOAD_START")
     {
-      var data = {
-        windowID: msg[0],
-        frameID: msg[1],
-        documentID: msg[2],
-        resourceID: msg[3],
-        eventType: msg[4],
-        time: msg[5]
-      };
-      var event_name = [
-        "NAVIGATION_START",
-        "DOMCONTENTLOADED_START",
-        "DOMCONTENTLOADED_END",
-        "LOAD_START",
-        "LOAD_END",
-        "UNLOAD_START",
-        "UNLOAD_END"][data.eventType];
-      if (data.eventType === 1 || data.eventType === 3)
-      {
-        this._current_context._add_document_notification(event_name, data);
-        this._view.update();
-      }
+        this._current_context.update_document_event(event_name, data);
     }
+*/
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -162,6 +118,13 @@ cls.NetworkLoggerService = function(view)
     this._current_context.update("responsefinished", data);
   }.bind(this);
 
+  this._on_urlunload_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
+    this._current_context.update("urlunload", data);
+  }.bind(this);
+
   this._on_debug_context_selected_bound = function()
   {
     this._current_context = null;
@@ -181,9 +144,10 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
+    this._res_service.addListener("urlunload", this._on_urlunload_bound);
     this._doc_service = window.services['document-manager'];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-    this._doc_service.addListener("documentnotification", this._on_documentnotification_bound);
+   //  this._doc_service.addListener("documentevent", this._on_documentevent_bound);
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
   };
 
@@ -253,6 +217,8 @@ cls.RequestContext = function()
   this._filters = [];
 
   // When this is constructed, the context is not paused. Reset the setting.
+  // Todo: Ideally, when paused, the new context should be created in a different
+  // place, so the old one can be kept while we're on pause.
   settings.network_logger.set("pause", false);
 
   this._filter_function_bound = function(item)
@@ -283,11 +249,13 @@ cls.RequestContext = function()
     return success;
   }.bind(this);
 
-  this._add_document_notification = function(event_name, data)
+  this.update_document_event = function(event_name, data)
   {
     if (!this._document_notifications[data.documentID])
       this._document_notifications[data.documentID] = {};
     this._document_notifications[data.documentID][event_name] = data;
+
+    views.network_logger.update();
   }
 
   this._invalid_if_not_touched_network_filter = function(entry)
@@ -468,13 +436,13 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this.request_headers = null;
   this.request_type = null;
   this.requestbody = null;
-  this.responses = []; // this should probably be .request_response_flow and contain the requests too.
-                       // for example when we get the authentication requests or the SSL handshake, 
-                       // or also when a 100-continue response is actually followed by another request.
+  this.responses = [];
+  this.responsecode = null;
   this.request_raw = null;
   this.method = null;
   this.status = null;
   this.body_unavailable = false;
+  this.unloaded = false;
   this.is_finished = null;
   this.events = [];
 
@@ -502,7 +470,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         ms = "0" + ms;
       this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
     }
-    if (eventname !== "responsebody")
+    var unlisted_events = ["responsebody", "urlunload"];
+    if (!unlisted_events.contains(eventname))
     {
       this.endtime = eventdata.time;
       this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
@@ -526,7 +495,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
-    this.filename = helpers.basename(event.url);
+    this.filename = helpers.basename(event.url, true);
     this.urltype = event.urlType;
     this.document_id = event.documentID;
     if (event.loadOrigin)
@@ -534,6 +503,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType].toLowerCase();
     this._humanize_url();
     this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
+  };
+
+  this._update_event_urlunload = function(event)
+  {
+    this.unloaded = true;
   };
 
   this._update_event_urlfinished = function(event)
@@ -544,11 +518,12 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     this.size = event.contentLength;
 
     // the assumption is that if we got this far, and there was no
-    // response code, meaning no request was sent, the url was cached
-    // fixme: special case for file URIs
-
-    if (!this._current_response || !this._current_response.responsecode)
+    // response code, meaning no request was sent, the url was cached.
+    // except for DATA URIs
+    if (!this.responsecode && this.urltype != cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
+    {
       this.cached = true;
+    }
 
     this.is_finished = true;
     this._guess_type();
@@ -557,6 +532,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
   this._update_event_request = function(event)
   {
+    // We assume that there is never more then one network-request,
+    // as opposed to responses which are kept in a list.
     this.method = event.method;
     this.touched_network = true;
   };
@@ -594,6 +571,12 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
   this._update_event_response = function(event)
   {
+    // entry.responsecode always gets overwritten on the entry,
+    // but also stored per NetworkLoggerResponse.
+    this.responsecode = event.responseCode;
+    if (!this.responsestart)
+      this.responsestart = event.time;
+
     this._current_response = new cls.NetworkLoggerResponse(this);
     this.responses.push(this._current_response);
     this._current_response._update_event_response(event);
@@ -666,14 +649,14 @@ cls.NetworkLoggerResponse = function(entry)
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
-  this.responsebody = null; // todo: this can be here or on the entry. if there is any way a responsebody can be sent more than once, so per response, it belongs here.
-  this.cached = false;
+  this.responsebody = null;
 
   this._update_event_response = function(event)
   {
-    this.responsestart = event.time;
     this.responsecode = event.responseCode;
-    if (this.responsecode == "304") { this.cached = true }
+    // if (this.responsecode == "304") { this.entry.cached = true }
+    // todo: from the network side of things, this is not cached in the same sense as we use .cached in other places. 
+    // it should probably be differentiated, I tend to not treat this any different at all.
   };
 
   this._update_event_responseheader = function(event)
@@ -684,7 +667,6 @@ cls.NetworkLoggerResponse = function(entry)
 
   this._update_event_responsefinished = function(event)
   {
-    // This is only fired for the last response
     if (event.data && event.data.content)
     {
       this.responsebody = event.data;
