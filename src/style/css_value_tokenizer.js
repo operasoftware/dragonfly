@@ -147,7 +147,7 @@ var CssValueTokenizer = function()
     this._token_val = c;
     c = this._buffer[++this._position];
 
-    while (HEX_CHARS.test(c))
+    while (c && HEX_CHARS.test(c))
     {
       this._token_val += c;
       c = this._buffer[++this._position];

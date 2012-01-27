@@ -70,6 +70,13 @@ test("Tokenization", function() {
   );
 
   do_test(
+    "#112233",
+    [
+      [types.HEX_COLOR, "#112233"],
+    ]
+  );
+
+  do_test(
     "#abc ",
     [
       [types.HEX_COLOR, "#abc"],
