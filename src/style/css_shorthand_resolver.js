@@ -633,6 +633,20 @@ CssShorthandResolver.shorthands = (function() {
       }
     },
 
+    "overflow": {
+      properties: [
+        "overflow-x",
+        "overflow-y"
+      ],
+      format: function(decls) {
+        if (compare_values(decls["overflow-x"],
+                           decls["overflow-y"]))
+        {
+          return [get_tokens(decls["overflow-x"])];
+        }
+      }
+    },
+
     "padding": {
       properties: [
         "padding-top",
@@ -758,6 +772,9 @@ CssShorthandResolver.property_to_shorthand = {
   "outline-color": "outline",
   "outline-style": "outline",
   "outline-width": "outline",
+
+  "overflow-x": "overflow",
+  "overflow-y": "overflow",
 
   "padding-top": "padding",
   "padding-right": "padding",
