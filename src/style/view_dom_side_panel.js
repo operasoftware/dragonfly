@@ -110,19 +110,6 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     ]
   );
 
-  function update_pseudo_item(pseudo_item, is_active)
-  {
-    if (is_active)
-    {
-      element_style.add_pseudo_item(pseudo_item);
-    }
-    else
-    {
-      element_style.remove_pseudo_item(pseudo_item);
-    }
-    element_style.update();
-  }
-
   ["link", "visited", "hover", "active", "focus", "selection"].forEach(function(pseudo_item) {
     if (window.settings["css-inspector"].get(pseudo_item))
     {

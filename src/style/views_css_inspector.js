@@ -85,5 +85,18 @@ cls.CSSInspectorView.create_ui_widgets = function()
       }
     }
   );
+
+  function update_pseudo_item(pseudo_item, is_active)
+  {
+    if (is_active)
+    {
+      element_style.add_pseudo_item(pseudo_item);
+    }
+    else
+    {
+      element_style.remove_pseudo_item(pseudo_item);
+    }
+    element_style.update();
+  }
 };
 
