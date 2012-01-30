@@ -71,7 +71,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     // key-label map
     {
       "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS,
-      "color-notation": "Color notation"
+      "color-notation": ui_strings.S_COLOR_NOTATION
     },
     // settings map
     {
