@@ -57,23 +57,27 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
       context.ele_value.firstChild.textContent = color_value;
       context.ele_color_sample.style.backgroundColor = color_value;
-      var new_value = context.ele_container.textContent;
-      var script = "";
-      if (!context.is_svg)
+      var property_value_ele = context.ele_container.get_ancestor(".css-property-value");
+      if (property_value_ele)
       {
-        // Removing it first is a workaround for CORE-31191
-        script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
-                 "rule.style.setProperty(\"" + context.prop_name + "\", " +
-                                        "\"" + new_value + "\", " +
-                                        "\"" + (context.is_important ? "important" : "") + "\")";
+        var new_value = window.helpers.escape_input(property_value_ele.textContent);
+        var script = "";
+        if (!context.is_svg)
+        {
+          // Removing it first is a workaround for CORE-31191
+          script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
+                   "rule.style.setProperty(\"" + context.prop_name + "\", " +
+                                          "\"" + new_value + "\", " +
+                                          "\"" + (context.is_important ? "important" : "") + "\")";
+        }
+        else
+        {
+          script = "rule.setAttribute(\"" + context.prop_name + "\", " +
+                                     "\"" + new_value + "\")";
+        }
+        var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
+        services['ecmascript-debugger'].requestEval(cls.TagManager.IGNORE_RESPONSE, msg);
       }
-      else
-      {
-        script = "rule.setAttribute(\"" + context.prop_name + "\", " +
-                                   "\"" + new_value + "\")";
-      }
-      var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
-      services['ecmascript-debugger'].requestEval(1, msg);
     }
   }
 

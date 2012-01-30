@@ -188,35 +188,23 @@ var StylesheetTemplates = function()
 
   this.value = function(declaration, is_editable)
   {
-    var color_notation = window.settings["dom-side-panel"].get("color-notation");
-
-    // Handle shorthands
+    // Shorthands
     if (declaration.shorthand_tokens)
     {
       return declaration.shorthand_tokens.map(function(token) {
-        var color_swatch = [];
         var value = typeof token == "string"
                   ? token
                   : token.value;
-        // Add a color swatch if the value is a color
-        if (is_editable && this._is_color(value))
-        {
-          value = window.helpers.get_color_in_notation(value, color_notation);
-          color_swatch = this.color_swatch(value, is_editable);
-        }
 
         return ["span",
-                  value,
-                  color_swatch,
+                  this._parsed_value(value, is_editable),
                 "class", token.is_applied === false && "overwritten"
                ];
       }, this);
     }
 
-    // Handle non-shorthands
-    var value = this._parsed_value(declaration.value, is_editable);
-
-    return ["span", value];
+    // Non-shorthands
+    return ["span", this._parsed_value(declaration.value, is_editable)];
   };
 
   this._parsed_value = function(orig_value, is_editable)
@@ -224,6 +212,7 @@ var StylesheetTemplates = function()
     var color_notation = window.settings["dom-side-panel"].get("color-notation");
     var color_value = [];
     var prop_value = [];
+    var next_is_url = false;
     new CssValueTokenizer().tokenize(orig_value, function(type, value) {
       var color_swatch = [];
       if (color_value.length && type === TYPE_FUNCTION_END)
@@ -243,6 +232,16 @@ var StylesheetTemplates = function()
         value = window.helpers.get_color_in_notation(value, color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
+      else if (type === TYPE_FUNCTION_START && value === "url(")
+      {
+        next_is_url = true;
+      }
+      else if (next_is_url)
+      {
+        if (type !== TYPE_FUNCTION_END)
+          value = this.linkify_value(value);
+        next_is_url = false;
+      }
 
       prop_value.push(["span", value, color_swatch]);
     }.bind(this));
@@ -259,6 +258,22 @@ var StylesheetTemplates = function()
       "style", "background-color:" + value
     ];
   };
+
+  this.linkify_value = function(value)
+  {
+    if (value.startswith("\"") || value.startswith("'"))
+      value = value.slice(1, -1);
+    return ["span",
+              "\"",
+                ["span",
+                   value,
+                 "handler", "open-resource-tab",
+                 "data-resource-url", value,
+                 "class", "internal-link"
+                ],
+              "\""
+           ];
+  }
 
   this.inherited_header = function(element_name, obj_id)
   {
