@@ -59,6 +59,47 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     "document"
   );
 
+  new Settings
+  (
+    // id
+    "dom-side-panel",
+    // key-value map
+    {
+      "show-expanded-properties": false,
+      "color-notation": "hhex"
+    },
+    // key-label map
+    {
+      "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS,
+      "color-notation": "Color notation"
+    },
+    // settings map
+    {
+      contextmenu:
+      [
+        "show-expanded-properties"
+      ],
+      customSettings:
+      [
+        "color-notation"
+      ]
+    },
+    {
+      "color-notation": function(setting)
+      {
+        return new StylesheetTemplates().color_notation_setting(setting);
+      }
+    },
+    "document",
+    {
+      "show-expanded-properties": function(value)
+      {
+        window.settings["css-inspector"].set("show-expanded-properties", value);
+        element_style.update();
+      }
+    }
+  );
+
   new ToolbarConfig('css-comp-style');
 
   new Switches
@@ -67,64 +108,6 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     [
       'show-initial-values'
     ]
-  );
-
-  new Settings
-  (
-    // id
-    'css-inspector',
-    // key-value map
-    {
-      'link': false,
-      'visited': false,
-      'hover': false,
-      'active': false,
-      'focus': false,
-      'selection': false
-    },
-    // key-label map
-    {
-      'link': ":link",
-      'visited': ":visited",
-      'hover': ":hover",
-      'active': ":active",
-      'focus': ":focus",
-      'selection': "::selection"
-    },
-    // settings map
-    {
-      checkboxes:
-      [
-        'link',
-        'visited',
-        'hover',
-        'active',
-        'focus',
-        'selection'
-      ]
-    },
-    null,
-    null,
-    {
-      "link": function(is_active) {
-        update_pseudo_item("link", is_active);
-      },
-      "visited": function(is_active) {
-        update_pseudo_item("visited", is_active);
-      },
-      "hover": function(is_active) {
-        update_pseudo_item("hover", is_active);
-      },
-      "active": function(is_active) {
-        update_pseudo_item("active", is_active);
-      },
-      "focus": function(is_active) {
-        update_pseudo_item("focus", is_active);
-      },
-      "selection": function(is_active) {
-        update_pseudo_item("selection", is_active);
-      }
-    }
   );
 
   function update_pseudo_item(pseudo_item, is_active)
@@ -207,7 +190,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
         }
 
         // Only add this for the color swatch
-        var swatch = target && target.querySelector("color-sample");
+        var swatch = target && target.querySelector(".color-swatch");
         if (swatch)
         {
           items.push(
@@ -225,5 +208,12 @@ cls.DOMSidePanelView.create_ui_widgets = function()
       }
     }
   ]);
+
+  window.eventHandlers.change["color-notation"] = function(event, target)
+  {
+    var notation = target.selectedOptions[0].value;
+    window.settings["dom-side-panel"].set("color-notation", notation);
+    window.element_style.update();
+  };
 };
 

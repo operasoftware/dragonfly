@@ -1284,24 +1284,28 @@ d
   white-space: pre;
 }
 
-color-sample
+.color-swatch
 {
   display: inline-block;
   width: 7px;
   height: 7px;
   border: 1px solid #333;
   margin-left: 5px;
+}
+
+.color-swatch:not(.non-editable)
+{
   cursor: pointer;
+}
+
+.css-declaration.disabled .color-swatch
+{
+  opacity: 0.35;
 }
 
 .collapsed-prototypes
 {
   width: 24em;
-}
-
-.css-declaration.disabled color-sample
-{
-  opacity: 0.35;
 }
 
 

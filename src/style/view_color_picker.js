@@ -42,7 +42,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       switch (color.type)
       {
         case color.HEX:
-          color_value = color.hhex;
+          color_value = color.hhex.toUpperCase();
           break;
         case color.RGB:
         case color.RGBA:
@@ -106,7 +106,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
       this._edit_context = edit_context ||
       {
-        initial_color: new Color().parseCSSColor(target.style.backgroundColor),
+        initial_color: new Color().parseCSSColor(target.parentNode.textContent),
         ele_value: parent,
         ele_color_sample: target,
         ele_container: parent.parentNode,

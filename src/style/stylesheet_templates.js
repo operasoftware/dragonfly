@@ -12,8 +12,6 @@ var StylesheetTemplates = function()
   var TYPE_FUNCTION_START = CssValueTokenizer.types.FUNCTION_START;
   var TYPE_FUNCTION_END = CssValueTokenizer.types.FUNCTION_END;
 
-  this._css_value_tokenizer = new CssValueTokenizer();
-
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
   {
     return [
@@ -122,6 +120,8 @@ var StylesheetTemplates = function()
 
   this.declaration_computed_style = function(prop, value)
   {
+    value = this._parsed_value(value, false);
+
     return [
       "div",
         ["span",
@@ -174,10 +174,12 @@ var StylesheetTemplates = function()
       ": ",
       ["span",
          value,
-         ["span",
-           (declaration.priority ? " !important": ""),
-          "class", "css-priority"
-         ],
+         (declaration.priority
+          ? ["span",
+               " !important",
+             "class", "css-priority"
+            ]
+          : []),
        "class", "css-property-value"
       ],
       ";"
@@ -186,62 +188,74 @@ var StylesheetTemplates = function()
 
   this.value = function(declaration, is_editable)
   {
-    var color_swatch = [];
+    var color_notation = window.settings["dom-side-panel"].get("color-notation");
 
     // Handle shorthands
     if (declaration.shorthand_tokens)
     {
       return declaration.shorthand_tokens.map(function(token) {
+        var color_swatch = [];
         var value = typeof token == "string"
                   ? token
                   : token.value;
         // Add a color swatch if the value is a color
-        if (is_editable && (/^#([0-9a-f]{3}){1,2}$/i.test(value) || /^(rgb|hsl)a?\(/.test(value)))
-          color_swatch = this.color_swatch(token.property, value);
-        return token.is_applied != false
-               ? ["span", value, color_swatch]
-               : ["span", value, color_swatch, "class", "overwritten"];
+        if (is_editable && this._is_color(value))
+        {
+          value = window.helpers.get_color_in_notation(value, color_notation);
+          color_swatch = this.color_swatch(value, is_editable);
+        }
+
+        return ["span",
+                  value,
+                  color_swatch,
+                "class", token.is_applied === false && "overwritten"
+               ];
       }, this);
     }
 
     // Handle non-shorthands
-    var prop_value = ["span", declaration.value];
+    var value = this._parsed_value(declaration.value, is_editable);
 
-    if (is_editable)
-    {
-      prop_value = [];
-      var color_value = [];
-      // Add a color swatch if the value is a color
-      this._css_value_tokenizer.tokenize(declaration.value, function(type, value) {
-        if (color_value.length && type === TYPE_FUNCTION_END)
-        {
-          color_value.push(value);
-          value = color_value.join("");
-          color_swatch = this.color_swatch(declaration.property, value);
-          color_value = [];
-        }
-        else if ((type === TYPE_FUNCTION_START && /^(rgb|hsl)a?\(/.test(value)) || color_value.length)
-        {
-          color_value.push(value);
-          return;
-        }
-        else if (type === TYPE_HEX_COLOR)
-        {
-          color_swatch = this.color_swatch(declaration.property, value);
-        }
-
-        prop_value.push(["span", value, color_swatch]);
-      }.bind(this));
-    }
-
-    return ["span", prop_value];
+    return ["span", value];
   };
 
-  this.color_swatch = function(property, value)
+  this._parsed_value = function(orig_value, is_editable)
+  {
+    var color_notation = window.settings["dom-side-panel"].get("color-notation");
+    var color_value = [];
+    var prop_value = [];
+    new CssValueTokenizer().tokenize(orig_value, function(type, value) {
+      var color_swatch = [];
+      if (color_value.length && type === TYPE_FUNCTION_END)
+      {
+        color_value.push(value);
+        value = window.helpers.get_color_in_notation(color_value.join(""), color_notation);
+        color_swatch = this.color_swatch(value, is_editable);
+        color_value = [];
+      }
+      else if ((type === TYPE_FUNCTION_START && this._is_color(value)) || color_value.length)
+      {
+        color_value.push(value);
+        return;
+      }
+      else if (type === TYPE_HEX_COLOR)
+      {
+        value = window.helpers.get_color_in_notation(value, color_notation);
+        color_swatch = this.color_swatch(value, is_editable);
+      }
+
+      prop_value.push(["span", value, color_swatch]);
+    }.bind(this));
+
+    return prop_value;
+  };
+
+  this.color_swatch = function(value, is_editable)
   {
     return [
-      "color-sample",
-      "handler", "show-color-picker",
+      "span",
+      "class", "color-swatch " + (is_editable ? "" : " non-editable"),
+      "handler", is_editable && "show-color-picker",
       "style", "background-color:" + value
     ];
   };
@@ -258,6 +272,36 @@ var StylesheetTemplates = function()
          "handler", "inspect-node-link"
         ]
     ];
+  };
+
+  this.color_notation_setting = function(settings)
+  {
+    var options = [
+        ["Hex", "hhex"],
+        ["RGB", "rgb"],
+        ["HSL", "hsl"]
+      ].map(function(notation) {
+        return [
+          "option",
+            notation[0],
+          "value", notation[1],
+          "selected", notation[1] == settings.map["color-notation"]
+        ];
+      });
+
+    return [
+      "label",
+        settings.label_map["color-notation"] + ": ",
+        ["select",
+           options,
+         "handler", "color-notation"
+        ]
+    ];
+  };
+
+  this._is_color = function(value)
+  {
+    return /^(rgb|hsl)a?\(/.test(value) || /^#([0-9a-f]{3}){1,2}$/i.test(value);
   };
 };
 
