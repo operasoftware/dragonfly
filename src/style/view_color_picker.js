@@ -115,7 +115,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
         ele_color_sample: target,
         ele_container: parent.parentNode,
         prop_name: property,
-        is_important: value.endswith("!important"),
+        is_important: Boolean(value_ele.querySelector(".css-priority")),
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
         rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||
                  parseInt(parent.get_attr('parent-node-chain', 'obj-id')),
