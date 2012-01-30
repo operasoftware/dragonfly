@@ -145,18 +145,18 @@ var types =
 
   types.forEach(function(type, index)
   { 
-    var comment = [Color.HSL, Color.HSLA].indexOf(type) > -1
-                ? " converting a hsl(a) value back to hex or rgb(a) is expected to fail "
-                : "";
-
-    test(t[type] + comment, function()
-    { 
-      var c = new Color().parseCSSColor(t[type]);
-      types.forEach(function(type)
+    // converting hsl values back to rgb or hex is not precise.
+    if ([Color.HSL, Color.HSLA].indexOf(type) == -1)
+    {
+      test(t[type], function()
       { 
-        equals(c.serializeToCSSColor(type), t[type]);
+        var c = new Color().parseCSSColor(t[type]);
+        types.forEach(function(type)
+        { 
+          equals(c.serializeToCSSColor(type), t[type]);
+        });
       });
-    });
+    }
   });
 });
 
