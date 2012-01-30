@@ -149,9 +149,11 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.prop_value = function(declaration, is_editable)
+  this.prop_value = function(declaration, is_editable, no_parsing)
   {
-    var value = this.value(declaration, is_editable);
+    var value = !no_parsing
+              ? this.parsed_value(declaration, is_editable, no_parsing)
+              : this.value(declaration);
     return [
       (is_editable
        ? ["input",
@@ -184,7 +186,12 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.value = function(declaration, is_editable)
+  this.value = function(declaration)
+  {
+    return ["span", declaration.value];
+  };
+
+  this.parsed_value = function(declaration, is_editable)
   {
     // Shorthands
     if (declaration.shorthand_tokens)
