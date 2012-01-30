@@ -120,8 +120,6 @@ var StylesheetTemplates = function()
 
   this.declaration_computed_style = function(prop, value)
   {
-    value = this._parsed_value(value, false);
-
     return [
       "div",
         ["span",
@@ -130,7 +128,7 @@ var StylesheetTemplates = function()
         ],
         ": ",
         ["span",
-           value,
+           this._parse_value(value, false),
          "class", "css-property-value"
         ],
         ";",
@@ -197,17 +195,17 @@ var StylesheetTemplates = function()
                   : token.value;
 
         return ["span",
-                  this._parsed_value(value, is_editable),
+                  this._parse_value(value, is_editable),
                 "class", token.is_applied === false && "overwritten"
                ];
       }, this);
     }
 
     // Non-shorthands
-    return ["span", this._parsed_value(declaration.value, is_editable)];
+    return ["span", this._parse_value(declaration.value, is_editable)];
   };
 
-  this._parsed_value = function(orig_value, is_editable)
+  this._parse_value = function(orig_value, is_editable)
   {
     var color_notation = window.settings["dom-side-panel"].get("color-notation");
     var color_value = [];
