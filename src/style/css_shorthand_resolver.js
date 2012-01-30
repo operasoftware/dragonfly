@@ -627,9 +627,9 @@ CssShorthandResolver.shorthands = (function() {
         "outline-width"
       ],
       format: function(decls) {
-        return [get_tokens(decls["outline-color"]), " ",
+        return [get_tokens(decls["outline-width"]), " ",
                 get_tokens(decls["outline-style"]), " ",
-                get_tokens(decls["outline-width"])];
+                get_tokens(decls["outline-color"])];
       }
     },
 
