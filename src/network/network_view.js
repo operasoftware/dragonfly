@@ -342,25 +342,39 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_clear_log_bound = function(evt, target)
   {
-    if (this._service.is_paused())
-      this._service.unpause();
-    this._service.clear_entries();
+    this._service.clear_request_context();
     this.needs_instant_update = true;
     this.update();
   }.bind(this);
 
+  this._on_close_incomplete_warning_bound = function(evt, target)
+  {
+    var ctx = this._service.get_request_context();
+    if (ctx)
+      ctx.incomplete_warn_discarded = true;
+
+    this.needs_instant_update = true;
+    this.update();
+  }.bind(this);
+
+  this._on_turn_off_incomplete_warning = function(evt, target)
+  {
+    settings.network_logger.set("show-incomplete-warning", false);
+  };
+
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger" &&
-        message.key === "pause")
+    if (message.id === "network_logger")
     {
-      var is_paused = this._service.is_paused();
-      var pause = settings.network_logger.get(message.key);
-      if (is_paused && !pause)
-        this._service.unpause();
-      else if (!is_paused && pause)
-        this._service.pause();
-
+      if (message.key === "pause")
+      {
+        var is_paused = this._service.is_paused();
+        var pause = settings.network_logger.get(message.key);
+        if (is_paused && !pause)
+          this._service.unpause();
+        else if (!is_paused && pause)
+          this._service.pause();
+      }
       this.needs_instant_update = true;
       this.update();
     }
@@ -406,6 +420,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
 
+  eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
+  eh.click["turn-off-incomplete-warning"] = this._on_turn_off_incomplete_warning;
+
   this.init(id, name, container_class, html, default_handler);
 };
 cls.NetworkLogView.prototype = ViewBase;
@@ -413,25 +430,33 @@ cls.NetworkLogView.prototype = ViewBase;
 cls.NetworkLog = {};
 cls.NetworkLog.create_ui_widgets = function()
 {
-  new Settings(
-    // id
+  new Settings( // view_id, key_map, label_map, setting_map, template, group, callback_map)
+    // view_id
     "network_logger",
     // key-value map
     {
       "selected-viewmode": "graphs",
-      "pause": false
+      "pause": false,
+      "show-incomplete-warning": true
     },
     // key-label map
     {
       "selected-viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW, // todo: fix strings
-      "pause": ""
+      "pause": "",
+      "show-incomplete-warning": "Warn me when not all Network requests are shown"
     },
     // settings map
     {
-      customSettings: ["selected-viewmode", "pause"]
+      customSettings: ["selected-viewmode", "pause"],
+      checkboxes: ["show-incomplete-warning"]
     },
-    null,
-    null
+    // templates
+    {
+      "selected-viewmode": function(){return ""}, // todo: this should not be necessary.
+      "pause": function(){return ""}
+    },
+    // group
+    "general"
   );
 
   window.views.network_logger.toolbar_config = new ToolbarConfig(

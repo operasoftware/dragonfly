@@ -90,13 +90,30 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
+templates.network_incomplete_warning = function()
+{
+  return ["div",
+           [
+             ["span", "This only shows resources that were loaded while Dragonfly was open. "], ["span", "Reload", "class", "text_handler", "handler", "reload-window"], ["span", " to see the complete page-load. "],
+             ["span", "Don't show again", "class", "text_handler", "handler", "turn-off-incomplete-warning"],
+             ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"]
+           ],
+         "class", "network_incomplete_warning"];
+};
+
 templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
 {
   var viewmode_render = templates["network_viewmode_" + selected_viewmode];
   if (!viewmode_render)
     viewmode_render = templates["network_viewmode_graphs"];
 
+  var show_incomplete_warning = settings.network_logger.get("show-incomplete-warning") &&
+                                !ctx.saw_main_document_abouttoloaddocument &&
+                                !ctx.incomplete_warn_discarded;
+
   return [
+    show_incomplete_warning ?
+    templates.network_incomplete_warning() : [],
     [
       "div", templates.network_log_url_list(ctx, selected, item_order),
       "id", "network-url-list"
@@ -210,7 +227,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
               req.filename || req.human_url,
               "data-tooltip-text" , url_tooltip,
               "data-tooltip", "network-url-list-tooltip"
-            ], // todo: shorten the full url, even if filename can't be extracted
+            ],
             "handler", "select-network-request",
             "data-object-id", String(req.id),
             "class", (selected === req.id ? "selected" : " ") + (had_error_response ? "error" : " ") + (disqualified ? "disqualified" : "")

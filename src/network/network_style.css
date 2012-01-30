@@ -128,6 +128,41 @@
   border-radius: 3px;
 }
 
+.network_incomplete_warning {
+  display: block;
+  background-color: #ebebeb;
+  padding: 10px 24px 10px 10px;
+  margin: 5px auto;
+  width: 70%;
+  text-align: center;
+  position: relative;
+  line-height: 1.6em;
+}
+
+.network_incomplete_warning .text_handler {
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.close_incomplete_warning {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  cursor: pointer;
+}
+
+.close_incomplete_warning::before
+{
+  content: "";
+  background-image: url("../ui-images/icons/icon_close.png");
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+}
+
 .network-log-url-list li.selected,
 .network-log-url-list li:nth-child(even).selected
 {

@@ -183,10 +183,9 @@ cls.NetworkLoggerService = function(view)
     return this._current_context;
   };
 
-  this.clear_entries = function()
+  this.clear_request_context = function()
   {
-    if (this._current_context)
-      this._current_context.clear_entries();
+    this._current_context = null;
   };
 
   this.pause = function()
@@ -296,12 +295,6 @@ cls.RequestContext = function()
         is_blacklist: (blacklist_split[1] === "true")
       })
     }
-  }
-
-  this.clear_entries = function()
-  {
-    this._paused_entries = [];
-    this._logger_entries = [];
   }
 
   this.pause = function()
