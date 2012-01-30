@@ -76,7 +76,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
                                      "\"" + new_value + "\")";
         }
         var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
-        services['ecmascript-debugger'].requestEval(cls.TagManager.IGNORE_RESPONSE, msg);
+        var tag = window.tag_manager.set_callback(this, window.element_style.update);
+        services['ecmascript-debugger'].requestEval(tag, msg);
       }
     }
   }
@@ -133,7 +134,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
             var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
             var script = "window.getComputedStyle(ele, null)." +
                          "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
-            var tag = tag_manager.set_callback(this, this._handle_get_color);
+            var tag = window.tag_manager.set_callback(this, this._handle_get_color);
             var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
             window.services['ecmascript-debugger'].requestEval(tag, msg);
             break;
