@@ -14,6 +14,8 @@
  *   });
  *   console.log(tokens); // [[7, "1px"], [3, " "], [5, "solid"]]
  *
+ * @parameters {Boolean} throw_on_error Whether or not to throw on errors.
+ *
  * Caveats:
  * - All numbers with units (including '%') are reported as DIMENSION,
  *   even if the unit is not a recognized unit from the specification.
@@ -26,8 +28,10 @@
  * - Some other small limitations. For example, it accepts `1%%` as a
  *   valid dimension.
  */
-var CssValueTokenizer = function()
+var CssValueTokenizer = function(throw_on_error)
 {
+  throw_on_error = Boolean(throw_on_error);
+
   var WHITESPACE_CHARS = /[ \t\r\n\f]/;
   var STRING_CHARS = /["']/;
   var NUM_CHARS = /[\d\.]/;
@@ -72,9 +76,12 @@ var CssValueTokenizer = function()
   this._throw_error = function(msg)
   {
     var dashes = (new Array(this._position + 1)).join("-");
-    throw msg + ":\n" +
-          this._buffer + "\n" +
-          dashes + "^";
+    if (throw_on_error)
+    {
+      throw msg + ":\n" +
+            this._buffer + "\n" +
+            dashes + "^";
+    }
   };
 
   this._parse = function(c)
