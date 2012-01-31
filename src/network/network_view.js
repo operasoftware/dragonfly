@@ -303,13 +303,19 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
   }.bind(this);
 
-  this._on_hover_request_bound = function(evt, target)
+  this._on_mouseover_entry_bound = function(evt, target)
   {
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
-    var oldhovered = this._container.querySelectorAll(".hovered");
-    var newhovered = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
-    for (var n=0, e; e = oldhovered[n]; n++) { e.removeClass("hovered"); }
-    for (var n=0, e; e = newhovered[n]; n++) { e.addClass("hovered"); }
+    var over = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
+    for (var n=0, e; e = over[n]; n++) { e.addClass("hovered"); }
+    // todo: store here and restore when re-rendering
+  }.bind(this);
+
+  this._on_mouseout_entry_bound = function(evt, target)
+  {
+    var item_id = target.get_attr("parent-node-chain", "data-object-id");
+    var out = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
+    for (var n=0, e; e = out[n]; n++) { e.removeClass("hovered"); }
   }.bind(this);
 
   this._on_scroll_bound = function(evt, target)
@@ -405,7 +411,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   //  eh.click["resources-all-open"] = this._handle_open_resource_bound;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
-  eh.mouseover["select-network-request"] = this._on_hover_request_bound;
+  eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
+  eh.mouseout["select-network-request"] = this._on_mouseout_entry_bound;
   eh.scroll["network-logger"] = this._on_scroll_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;

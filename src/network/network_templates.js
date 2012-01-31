@@ -488,16 +488,16 @@ templates.network_graph_entry_tooltip = function(entry)
       }
 
       var event_name_map = {
-        "urlload": "Queued",
+        "urlload": "URL started",
         "request": "Request started",
-        "requestheader": "Request header written",
+        "requestheader": "Request headers written",
         "urlredirect": "Redirected",
         "requestretry": "Request retried",
-        "requestfinished": "Request phase finished",
+        "requestfinished": "Request finished",
         "response": "Response started",
         "responseheader": "Response header written",
         "responsefinished": "Response phase finished",
-        "urlfinished": "URL finished"
+        "urlfinished": "URL completed"
       };
 
       previous_event_ms = ev.time;
