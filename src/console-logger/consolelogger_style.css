@@ -1,29 +1,34 @@
-﻿.errors-table tr {
+﻿.errors-table tr
+{
   vertical-align: top;
 }
 
 /* Expander cell */
 .errors-table > tr:not(.error-details) > td:nth-child(1),
 /* Icon cell */
-.errors-table tr td.icon_cell {
+.errors-table tr td.icon_cell
+{
   text-align: center;
   width: 16px;
 }
 
-.errors-table tr td.location {
+.errors-table tr td.location
+{
   max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.errors-table tr td.context {
+.errors-table tr td.context
+{
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.errors-table button {
+.errors-table .ui-button
+{
   height: 7px;
   width: 9px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
@@ -31,47 +36,58 @@
   margin: 0 5px 0 2px;
   padding: 0;
   cursor: pointer;
-  -o-transition: -o-transform .2s;
+  -o-transition: -o-transform 0.2s;
 }
 
-.errors-table > tr.expanded button {
+.errors-table > tr.expanded .ui-button
+{
     -o-transform: rotate(90deg);
 }
 
-.errors-table .expand_cell {
+.errors-table .expand_cell
+{
   border-right: none;
   padding-right: 0;
   width: 16px;
 }
 
-.errors-table .main {
+.errors-table .main
+{
   border-left: none;
   padding-left: 3px;
 }
 
-.errors-table tr, .errors-table tr pre {
+.errors-table tr,
+.errors-table tr pre
+{
   color: rgb(68, 68, 68);
 }
 
-.errors-table tr:hover, .errors-table tr:hover pre {
+.errors-table tr:hover,
+.errors-table tr:hover pre
+{
   color: rgb(0, 0, 0);
 }
 
-.errors-table .main pre {
+.errors-table .main pre
+{
   margin: 0;
 }
 
 /* collapse */
-.errors-table .main .details {
+.errors-table .main .details
+{
   display: none;
 }
 
 /* expand */
-.errors-table .expanded .main .details {
+.errors-table .expanded .main .details
+{
   display: block;
 }
 
-.errors-table .severity {
+.errors-table .severity
+{
   display: inline-block;
   vertical-align: middle;
   width: 16px;
@@ -79,34 +95,39 @@
   background: url('../ui-images/error-console-info.png') no-repeat;
 }
 
-.errors-table .severity.debug {
+.errors-table .severity.debug
+{
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.errors-table .severity.information {
+.errors-table .severity.information
+{
   background-image: url('../ui-images/error-console-info.png');
 }
 
-.errors-table .severity.verbose {
+.errors-table .severity.verbose
+{
   background-image: url('../ui-images/error-console-warning.png');
 }
 
-.errors-table .severity.error {
+.errors-table .severity.error
+{
   background-image: url('../ui-images/error-console-error.png');
 }
 
-.errors-table .severity.critical {
+.errors-table .severity.critical
+{
   background-image: url('../ui-images/error-console-error.png');
 }
 
-button[key="request_list.expand-all-entries"]:before
+.ui-button[key="request_list.expand-all-entries"]:before
 {
   background-image: url('../ui-images/btn-log-threads.png');
 }
 
 #error-console-css-filter
 {
-  width: 99%;
+  width: 98%;
   display: block;
   margin: 3px 0;
 }

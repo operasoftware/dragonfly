@@ -96,6 +96,7 @@ cls.NetworkLoggerService = function(view)
   this._on_debug_context_selected_bound = function()
   {
     this._current_context = null;
+    this._view.ondestroy();
     this._view.update();
   }.bind(this);
 
@@ -123,7 +124,7 @@ cls.NetworkLoggerService = function(view)
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
     var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, rid]);
     this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
-  }
+  };
 
   this._on_request_body_bound = function(status, data, callback, rid)
   {
@@ -147,12 +148,12 @@ cls.NetworkLoggerService = function(view)
           byteData: data[5][2],
           stringData: data[5][3]
         }
-      }
+      };
       if (!this._current_context) { return; }
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
     }
-  }.bind(this)
+  }.bind(this);
 
   this.get_request_context = function()
   {
@@ -171,7 +172,7 @@ cls.NetworkLoggerService = function(view)
       return this._current_context.get_resource(rid);
     }
     return null;
-  }
+  };
 
   this.init();
 };
@@ -185,7 +186,7 @@ cls.RequestContext = function()
     var starttimes = this.resources.map(function(e) { return e.starttime });
     var endtimes = this.resources.map(function(e) { return e.endtime });
     return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
-  }
+  };
 
   /**
    * Return duration of request context, rounded upp to closest full second.
@@ -202,14 +203,13 @@ cls.RequestContext = function()
       t += (millis_per_px * padlen);
     }
 
-    var nt = Math.ceil(t/1000)*1000;
-    return nt;
-  }
+    return Math.ceil(t/1000)*1000;
+  };
 
   this.get_starttime = function()
   {
     return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));
-  }
+  };
 
   this.update = function(eventname, event)
   {
@@ -217,7 +217,7 @@ cls.RequestContext = function()
 
     if (!res && eventname == "urlload")
     {
-      res = new cls.Request(event.resourceID)
+      res = new cls.Request(event.resourceID);
       if (this.resources.length == 0) { this.topresource = event.resourceID; }
       this.resources.push(res);
     }
@@ -227,7 +227,7 @@ cls.RequestContext = function()
       return
     }
     res.update(eventname, event);
-  }
+  };
 
   this.get_resource = function(id)
   {
@@ -264,9 +264,9 @@ cls.RequestContext = function()
     return {
       images: imgs, stylesheets: stylesheets, markup: markup,
       scripts: scripts, other: other
-    }
-  }
-}
+    };
+  };
+};
 
 cls.Request = function(id)
 {
@@ -311,7 +311,7 @@ cls.Request = function(id)
     {
       opera.postError("got unknown event: " + eventname);
     }
-  }
+  };
 
   this._update_event_urlload = function(event)
   {
@@ -321,7 +321,7 @@ cls.Request = function(id)
     // fixme: complete list
     this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
     this._humanize_url();
-  }
+  };
 
   this._update_event_urlfinished = function(event)
   {
@@ -339,13 +339,13 @@ cls.Request = function(id)
     this.finished = true;
     this._guess_type();
     this._humanize_url();
-  }
+  };
 
   this._update_event_request = function(event)
   {
     this.method = event.method;
     this.touched_network = true;
-  }
+  };
 
   this._update_event_requestheader = function(event)
   {
@@ -359,7 +359,7 @@ cls.Request = function(id)
         break;
       }
     }
-  }
+  };
 
   this._update_event_requestfinished = function(event)
   {
@@ -371,20 +371,20 @@ cls.Request = function(id)
       this.requestbody.mimeType = this.request_type;
     }
     this.requesttime = Math.round(event.time);
-  }
+  };
 
   this._update_event_response = function(event)
   {
     this.responsestart = Math.round(event.time);
     this.responsecode = event.responseCode;
     if (this.responsecode == "304") { this.cached = true }
-  }
+  };
 
   this._update_event_responseheader = function(event)
   {
     this.response_headers = event.headerList;
     this.response_raw = event.raw;
-  }
+  };
 
   this._update_event_responsefinished = function(event)
   {
@@ -392,22 +392,23 @@ cls.Request = function(id)
     {
       this.responsebody = event.data;
     }
-  }
+  };
 
   this._update_event_responsebody = function(event)
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
-  }
+  };
 
   this._update_event_urlredirect = function(event)
   {
-  }
+      // code
+  };
 
   this.get_source = function()
   {
     // cache, file, http, https ..
-  }
+  };
 
   this._guess_type = function()
   {
@@ -423,7 +424,7 @@ cls.Request = function(id)
     {
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
     }
-  }
+  };
 
   this._humanize_url = function()
   {
@@ -439,5 +440,5 @@ cls.Request = function(id)
         this.human_url = "data URI";
       }
     }
-  }
-}
+  };
+};

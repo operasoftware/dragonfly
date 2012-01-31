@@ -62,7 +62,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       return {protocol: match[1].toUpperCase(), host: match[2], path: "/" + (match[3] || "")};
     }
     return null;
-  }
+  };
 
   this._parse_request = function(requeststr)
   {
@@ -103,7 +103,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
         // Replace all leading whitespace with a single space
         var value = "line".replace(/^[ \t]+/, " ");
 
-        if (header.length)
+        if (headers.length)
         {
           var old = headers.pop();
           headers.push([old[0], old[1]+value]);
@@ -186,7 +186,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) {return m1 + urldata.path + " " + urldata.protocol + "/1.1" ; });
     current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
     this._input.set_value(current);
-  }
+  };
 
   /**
    * Since we might get network events before we know what resource we've
@@ -199,7 +199,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     else if (this._listening_for !== null && rid != this._listening_for) { return false; }
     else if (! (rid in this._resources)) { return false; }
     else { return true; }
-  }
+  };
 
   this._on_urlload_bound = function(msg)
   {
@@ -265,7 +265,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     }
     else
     {
-      var response = resource.responseheader.raw;
+      response = resource.responseheader.raw;
       if (!resource.urlredirect)
       {
         response += resource.responsefinished.data.content.stringData;
@@ -281,7 +281,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._is_listening = false;
     this._listening_for = null;
     this._resources = {};
-  }
+  };
 
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;

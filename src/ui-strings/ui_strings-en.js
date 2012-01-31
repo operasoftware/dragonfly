@@ -987,6 +987,9 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
 
+/* DESC: Fallback text for no filename, used as tab label */
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+
 /* DESC: Fallback text for unknown groups */
 ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 
@@ -1088,9 +1091,6 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-sp
 
 /* DESC: Show prototpe objects when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_PROTOTYPES = "Show prototypes";
-
-/* DESC: Toggles the display of shorthands in computed styles view. */
-ui_strings.S_SWITCH_SHOW_SHORTHANDS = "Show shorthands in computed style panel";
 
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = "Show siblings in breadcrumb trail";
@@ -1394,3 +1394,28 @@ ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
 
 /* DESC: Tooltip for the injected scripts search settings label. */
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
+
+/* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
+ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
+
+/* DESC: Description for CSS rules with the origin being the UA */
+ui_strings.S_STYLE_ORIGIN_USER_AGENT = "user agent stylesheet";
+
+/* DESC: Description for CSS rules with the origin being the user */
+ui_strings.S_STYLE_ORIGIN_LOCAL = "user stylesheet";
+
+/* DESC: Description for CSS rules with the origin being the SVG presentation attributes */
+ui_strings.S_STYLE_ORIGIN_SVG = "presentation attributes";
+
+/* DESC: Tooltip for enabling a declaration */
+ui_strings.S_ENABLE_DECLARATION = "Enable";
+
+/* DESC: Tooltip for disabling a declaration */
+ui_strings.S_DISABLE_DECLARATION = "Disable";
+
+/* DESC: Context menu item for expanding shorthands */
+ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
+
+/* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
+ui_strings.S_COLOR_NOTATION = "Color format";
+

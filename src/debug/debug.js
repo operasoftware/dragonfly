@@ -39,28 +39,13 @@ cls.debug.Debug = function(id, name, container_class)
   this.show_in_views_menu = true;
   this._log_entries = [];
   this._textarea = null;
-  this._is_textarea_focused = false;
-
-  this._textarea_focus_handler = function()
-  {
-    self._is_textarea_focused = true;
-  };
-
-  this._textarea_blur_handler = function()
-  {
-    self._is_textarea_focused = false;
-    self._display_log();
-  };
 
   this._main_template = function()
   {
     return (
     [
       'textarea',
-      'class', 'debug-textarea',
-      'spellcheck', 'false',
-      'onfocus', this._textarea_focus_handler,
-      'onblur', this._textarea_blur_handler
+      'class', 'debug-textarea'
     ]);
   };
 
@@ -91,7 +76,8 @@ cls.debug.Debug = function(id, name, container_class)
     {
       this._log_entries.push(log);
     }
-    if(this._textarea && !this._is_textarea_focused)
+    if(this._textarea &&
+       this._textarea.selectionStart == this._textarea.selectionEnd)
     {
       this._textarea.value = this._log_entries.filter(this._filter_log, this._filter).map(this._get_log_text).join('\n');
       this._textarea.scrollTop = this._textarea.scrollHeight;

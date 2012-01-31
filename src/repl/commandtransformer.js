@@ -25,13 +25,61 @@
  * token list to be re-processed, by returning true. This may be
  * useful if a handler inserts something that is itself a host command.
  *
+ * commandline API (http://getfirebug.com/wiki/index.php/Command_Line_API)
+ * 
+ *   $(id)
+ *   $$(selector)
+ *   $x(xpath)
+ *   $0
+ *   $1
+ *   $n(index)
+ *   dir(object)
+ *   dirxml(node)
+ *   cd(window)
+ *   clear()
+ *   inspect(object[, tabName])
+ *   keys(object)
+ *   values(object)
+ *   debug(fn)
+ *   undebug(fn)
+ *   monitor(fn)
+ *   unmonitor(fn)
+ *   monitorEvents(object[, types])
+ *   unmonitorEvents(object[, types])
+ *   profile([title])
+ *   profileEnd()
+ * 
+ * console API (http://getfirebug.com/wiki/index.php/Console_API)
+ * 
+ *   console.log(object[, object, ...])
+ *   console.debug(object[, object, ...])
+ *   console.info(object[, object, ...])
+ *   console.warn(object[, object, ...])
+ *   console.error(object[, object, ...])
+ *   console.assert(expression[, object, ...])
+ *   console.clear()
+ *   console.dir(object)
+ *   console.dirxml(node)
+ *   console.trace()
+ *   console.group(object[, object, ...])
+ *   console.groupCollapsed(object[, object, ...])
+ *   console.groupEnd()
+ *   console.time(name)
+ *   console.timeEnd(name)
+ *   console.profile([title])
+ *   console.profileEnd()
+ *   console.count([title])
+ *   console.exception(error-object[, object, ...])
+ *   console.table(data[, columns])
+ * 
  */
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
   this.parser = null;
-  this.client_command_map = {};
-  this.df_command_map = {};
-  this.transform_map = {};
+  this._clientcommands = {};
+  this._dfcommands = {};
+  this._hostcommands = {};
+  this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
 
 
   //local copy of token types, local vars have better performance. :
@@ -44,137 +92,103 @@ cls.HostCommandTransformer = function() {
   PUNCTUATOR = window.cls.SimpleJSParser.PUNCTUATOR,
   DIV_PUNCTUATOR = window.cls.SimpleJSParser.DIV_PUNCTUATOR,
   REG_EXP = window.cls.SimpleJSParser.REG_EXP,
-  COMMENT = window.cls.SimpleJSParser.COMMENT;
-
-  this.init = function() {
-    // window.simple_js_parser is default location for the parser instance
-    // in dragonfly. Use it if it exists.
-    this.parser = window.simple_js_parser || new window.cls.SimpleJSParser();
-
-    for (var methodname in this) {
-      var type = methodname.split("_", 1)[0];
-      if (type == "hostcommand")
-      {
-        var name = methodname.split("hostcommand_")[1];
-        this.transform_map[name] = this[methodname];
-      }
-      else if (type == "clientcommand")
-      {
-        var name = methodname.split("clientcommand_")[1];
-        this.client_command_map[name] = this[methodname];
-      }
-      else if (type == "dfcommand")
-      {
-        var name = methodname.split("dfcommand_")[1];
-        this.df_command_map[name] = this[methodname];
-      }
-    }
-  };
+  COMMENT = window.cls.SimpleJSParser.COMMENT,
+  TYPE = 0,
+  VALUE = 1;
 
   this.transform = function(source)
   {
-    var types = [];
-    var values = [];
     var tokens = [];
-    this.parser.parse(source, values, types);
+    this.parser.tokenize(source, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
 
-    // make a more straightforward representation of tokens. Command line
-    // stuff is small, so the cost of this doesn't matter much.
-    tokens = this.zip_tokens(types, values);
-
-    dirty: // we jump back here if we need to re-process all tokens
-    for (var n=0, token; token=tokens[n]; n++) {
-      if (token.type == IDENTIFIER && this.transform_map.hasOwnProperty(token.value)) {
-        var fun = this.transform_map[token.value];
-        if (fun.call(this, token, tokens)) {
-          break dirty;
+    for (var n = 0, token; token = tokens[n]; n++)
+    {
+      if (token[TYPE] == IDENTIFIER &&
+          this._hostcommands.hasOwnProperty(token[VALUE]))
+      {
+        var fun = this._hostcommands[token[VALUE]];
+        if (fun.call(this, token, tokens, n))
+        {
+          // re-process all tokens. do we really need this?
+          n = -1;
         }
       }
     }
-    return tokens.map(function(e) {return e.value;}).join("");
+    
+    return tokens.map(function(e) {return e[VALUE];}).join("");
   };
 
   this.get_command = function(source)
   {
-    var types = [];
-    var values = [];
     var tokens = [];
-    this.parser.parse(source, values, types);
-
-    // make a more straightforward representation of tokens. Command line
-    // stuff is small, so the cost of this doesn't matter much.
-    tokens = this.zip_tokens(types, values);
+    this.parser.tokenize(source, function(token_type, token)
+    {
+      tokens.push([token_type, token]);
+    });
 
     if (!tokens.length)
     {
       return null;
     }
-    else if (this.is_call(tokens, 0) && tokens[0].value in this.client_command_map)
+    else if (this.is_global_call(tokens, 0) &&
+             this._clientcommands.hasOwnProperty(tokens[0][VALUE]))
     {
-      return this.client_command_map[tokens[0].value];
+      return this._clientcommands[tokens[0][VALUE]];
     }
 
-    if (tokens[0].type == COMMENT)
+    if (tokens[0][TYPE] == COMMENT)
     {
-      // regex matches "// command()" . Whitespace is allowed inbetween most tokens
-      var match = tokens[0].value.match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
+      // regex matches "// command()" .
+      // Whitespace is allowed inbetween most tokens
+      var match = tokens[0][VALUE].match(/\s*\/\/\s*(\w+)\s*\(\s*\)\s*/);
       if (match)
       {
         var command = match[1];
-        if (command in this.df_command_map)
+        if (this._dfcommands.hasOwnProperty(command))
         {
-          return this.df_command_map[command];
+          return this._dfcommands[command];
         }
       }
     }
     return null;
   };
 
-  this.zip_tokens = function(types, values) {
-    var tokens = [];
-    for (var n=0; n<types.length; n++) {
-      tokens.push({type: types[n], value: values[n]});
-    }
-    return tokens;
-  };
-
   /**
-   * Check if the token at index looks like it's a function/method being
-   * called by looking at the following tokens. This is a naïve check, but
-   * should work fine in most cases.
+   * Check if the token at index looks like it's a global function call.
    */
-  this.is_call = function(tokens, index) {
-    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+  this.is_global_call = function(tokens, index)
+  {
+    if (!tokens[index] || tokens[index][TYPE] != IDENTIFIER)
       return false;
-    }
 
-    var open_paren_seen = false;
-    for (var n=index+1, token; token=tokens[n]; n++) {
-      switch (token.type) {
-        case WHITESPACE:
-          continue;
+    for (var n = index - 1, token; token = tokens[n]; n--)
+      switch (token[TYPE])
+      {
         case PUNCTUATOR:
-          if (token.value == "(")
-          {
-            open_paren_seen = true;
-          }
-          else if (token.value == ")" && open_paren_seen)
-          {
-            // if there's no junk after, assume it's fine
-            return !tokens[n+1];
-          }
-          else {
+          if (!["=", ":", "?", "||", "&&", "(", ")"].contains(token[VALUE]))
             return false;
-          }
+          n = -1;
+        case WHITESPACE:
           break;
         default:
-          if (open_paren_seen)
-          {
-            continue;
-          }
           return false;
       }
-    }
+
+    for (n = index + 1; token = tokens[n]; n++)
+      switch (token[TYPE])
+      {
+        case WHITESPACE:
+          break;
+        case PUNCTUATOR:
+          if (token[VALUE] == "(")
+            return true;
+        default:
+          return false;
+      }
+
     return false;
   };
 
@@ -182,18 +196,18 @@ cls.HostCommandTransformer = function() {
    * Check if the token at index is a property of name
    */
   this.is_property_of = function(name, tokens, index) {
-    if (!tokens[index] || tokens[index].type != IDENTIFIER) {
+    if (!tokens[index] || tokens[index][TYPE] != IDENTIFIER) {
       return false;
     }
 
     var n = index-1;
 
     for (var token; token=tokens[n]; n--) {
-      if (token.type == WHITESPACE)
+      if (token[TYPE] == WHITESPACE)
       {
         continue;
       }
-      else if (token.type == PUNCTUATOR && token.value == ".")
+      else if (token[TYPE] == PUNCTUATOR && token[VALUE] == ".")
       {
         break;
       }
@@ -206,11 +220,11 @@ cls.HostCommandTransformer = function() {
     n--; // if the break triggered n didn't decr
 
     for (var token; token=tokens[n]; n--) {
-      switch (token.type) {
+      switch (token[TYPE]) {
         case WHITESPACE:
           break;
         case IDENTIFIER:
-          if (token.value == name) { return true; }
+          if (token[VALUE] == name) { return true; }
         default:
           return false;
       }
@@ -222,143 +236,98 @@ cls.HostCommandTransformer = function() {
 
   // Host commands:
 
-  this.hostcommand_dir = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-    if (!this.is_call(tokenlist, index) ||
-         this.is_property_of("console", tokenlist, index)) {
-      return;
-    }
-
-    token.value = "(window.dir || function(e) { return console.dir(e)})";
+  this._hostcommands.dir = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof dir == 'function' && dir || \
+                       function(e) { return console.dir(e) })";
   };
 
-  this.hostcommand_dirxml = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (!this.is_call(tokenlist, index) ||
-         this.is_property_of("console", tokenlist, index)) {
-      return;
-    }
-
-    token.value = "(window.dirxml || function(e) { return console.dirxml(e)})";
+  this._hostcommands.dirxml = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof dirxml == 'function' && dirxml || \
+                       function(e) { return console.dirxml(e) })";
   };
 
-  this.hostcommand_$ = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (this.is_call(tokenlist, index)) {
-      token.value = "(window.$ || function(e) { return document.getElementById(e)})";
-    }
+  this._hostcommands.$ = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof $ == 'function' && $ || \
+                       function(e) { return document.getElementById(e); })";
   };
 
-  this.hostcommand_$$ = function(token, tokenlist) {
-    var index = tokenlist.indexOf(token);
-
-    if (this.is_call(tokenlist, index)) {
-      token.value = "(window.$$ || function(e) { return document.querySelectorAll(e)})";
-    }
+  this._hostcommands.$$ = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof $$ == 'function' && $$ || \
+                       function(e) { return document.querySelectorAll(e); })";
   };
 
-  this.hostcommand_$x = function(token, tokenlist) {
-    var funstr = "(window.$x || function(e)\
-                  {\
-                    var res = document.evaluate(e, document, null, XPathResult.ANY_TYPE, null);\
-                    var ret = [];\
-                    var ele = res.iterateNext();\
-                    while (ele) { ret.push(ele); ele=res.iterateNext() };\
-                    return ret;\
-                  })";
-    token.value = funstr;
+  this._hostcommands.$x = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof $x == 'function' && $x || \
+                       function(e)\
+                       {\
+                         var res = document.evaluate(e, document, null,\
+                                                     XPathResult.ANY_TYPE, null);\
+                         var ret = [], ele = null;\
+                         while (ele = res.iterateNext())\
+                           ret.push(ele);\
+                         return ret;\
+                       })";
   };
 
-  this.hostcommand_keys = function(token, tokenlist) {
-    var funstr = "(window.keys || function(o) {var arr=[], key; for (key in o) {arr.push(key)}; return arr})";
-    token.value = funstr;
+  this._hostcommands.keys = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof keys == 'function' && keys || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(key)};\
+                         return arr;\
+                       })";
   };
 
-  this.hostcommand_values = function(token, tokenlist) {
-    var funstr = "(window.values || function(o) {var arr=[], key; for (key in o) {arr.push(o[key])}; return arr})";
-    token.value = funstr;
+  this._hostcommands.values = function(token, tokenlist, index)
+  {
+    if (this.is_global_call(tokenlist, index))
+      token[VALUE] = "(typeof values == 'function' && values || \
+                       function(o)\
+                       {\
+                         var arr = [], key;\
+                         for (key in o) {arr.push(o[key])}\
+                         return arr;\
+                       })";
   };
 
-  this.clientcommand_clear = function(view, data, input)
+  this._clientcommands.clear = function(view, data, input)
   {
     view._handle_action_clear();
   };
 
-  // TODO: these special client commands should be defined outside of this class here.
-  this.dfcommand_help = function(view, data, service)
+  this.register_dflcommands = function(commands)
   {
-    data.add_message("Available commands:");
-    var names = [];
-    for (var key in this.df_command_map) { names.push(key) }
-    names.sort();
-    for (var n=0, name; name=names[n]; n++)
+    for (var name in commands)
     {
-      var cmd = this.df_command_map[name];
-      data.add_message(name + (cmd.description ? ": " + cmd.description : ""));
-    }
-    data.add_message("\n");
-    data.add_message(ui_strings.S_SETTINGS_HEADER_KEYBOARD_SHORTCUTS + ":");
-    data.add_message("\n");
-    const CMD_LINE_VIEW_ID = 'command_line';
-    var broker = ActionBroker.get_instance();
-    var shortcuts = broker.get_shortcuts();
-    shortcuts = shortcuts && shortcuts[CMD_LINE_VIEW_ID];
-    var label_map = {};
-    var all_keys = [];
-    for (var mode in shortcuts)
-    {
-      mode_label = broker.get_label_with_handler_id_and_mode(CMD_LINE_VIEW_ID, mode);
-      if (mode_label)
+      if (['command', 'description'].every(function(prop)
+          {
+            return commands[name].hasOwnProperty(prop);
+          }))
       {
-        var mode_shortcuts = shortcuts[mode];
-        var keys = [];
-        for (var mode_shortcut in mode_shortcuts)
-        {
-          keys.push(mode_shortcut);
-        }
-        keys.sort();
-        all_keys.extend(keys)  
-        label_map[mode] = {label: mode_label, keys: keys};
+        this._dfcommands[name] = commands[name].command;
+        this._dfcommands[name].description = commands[name].description;
+        if (commands[name].hasOwnProperty('alias'))
+          this._dfcommands[commands[name].alias] = this._dfcommands[name];
       }
-    }
-    var width = Math.max.apply(Math, all_keys.map(function(k)
-    {
-      return k.length;
-    }));
-    for (mode in label_map)
-    {
-      data.add_message(label_map[mode].label);
-      label_map[mode].keys.forEach(function(key)
+      else
       {
-        data.add_message("    " + key.ljust(width + 4) + shortcuts[mode][key]);
-      });
-      data.add_message("\n");
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        "not a valid DFL command " + name);
+      }
     }
   };
 
-  this.dfcommand_help.description = ui_strings.S_REPL_HELP_COMMAND_DESC;
-
-  this.dfcommand_man = this.dfcommand_help; // man is alias for help
-
-  this.dfcommand_jquery = function(view, data, service)
-  {
-    var url = "http://code.jquery.com/jquery.min.js";
-    var code = ["(function(){",
-                "  var script = document.createElement('script');",
-                "  script.setAttribute('src', '" + url + "');",
-                "  var cb = function() {",
-                "    script.parentNode.removeChild(script);",
-                "    console.log('jquery loaded');",
-                "  };",
-                "  script.addEventListener('load', cb, false);",
-                "  document.body.appendChild(script);",
-                "  return 'Loading jquery'",
-                "})();"].join("\n");
-    service.evaluate_input(code);
-  }
-  this.dfcommand_jquery.description = ui_strings.S_REPL_JQUERY_COMMAND_DESC;
-
-  this.init();
 };

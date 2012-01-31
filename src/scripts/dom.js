@@ -40,11 +40,9 @@ if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
   {
-    if (ele == this)
-      return true;
-    var all = this.getElementsByTagName('*'), i = 0, cur = null;
-    for (; (cur = all[i]) && cur != ele; i++);
-    return Boolean(cur);
+    while (ele && ele != this)
+      ele = ele.parentNode;
+    return Boolean(ele);
   }
 }
 
@@ -191,6 +189,7 @@ Element.prototype.re_render = function(args)
     parent.replaceChild(doc_frag, this);
     return ret;
   }
+  return null;
 }
 
 /**

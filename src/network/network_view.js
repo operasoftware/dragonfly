@@ -14,7 +14,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._hscrollcontainer = null;
   this._vscrollcontainer = null;
   this._rendertime = 0;
-  this._rendertimer = null;
+  this._rendertimer = 0;
   this._everrendered = false;
   this._url_list_width = 250;
 
@@ -32,7 +32,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var content = this._container ? this._container.querySelector(".network-details-request") : null;
     this._contentscroll = content ? content.scrollTop : 0;
     this._everrendered = false;
-  }
+    this._loading = false;
+  };
 
   this._update_bound = this.update.bind(this);
 
@@ -74,20 +75,21 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._vscrollcontainer.scrollTop = this._vscroll;
     var content = container.querySelector(".network-details-request");
     content.scrollTop = this._contentscroll;
-  }
+  };
 
   this._render_click_to_fetch_view = function(container)
   {
     container.clearAndRender(
       ['div',
-        ['button',
-          'class', 'container-button',
-          'handler', 'reload-window'],
+        ['span',
+          'class', 'container-button ui-button',
+          'handler', 'reload-window',
+          'tabindex', '1'],
         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
           'class', 'info-box'
       ]
     );
-  }
+  };
 
   this._render_loading_view = function(container)
   {
@@ -97,30 +99,30 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
          'class', 'info-box'
       ]
     );
-  }
+  };
 
   this._render_graph_view = function(container)
   {
-    var fit_to_width = settings.network_logger.get('fit-to-width');
+    var fit_to_width = settings.network_logger.get("fit-to-width");
     var url_list_width = 250;
     var ctx = this._service.get_request_context();
 
     this._everrendered = true;
-    var min_render_delay = 1200;
+    var min_render_delay = 600;
     var timedelta = new Date().getTime() - this._rendertime;
+
+    if (this._rendertimer)
+    {
+      window.clearTimeout(this._rendertimer);
+      this._rendertimer = 0;
+    }
+
     if (timedelta < min_render_delay)
     {
-      if (!this._rendertimer)
-      {
-        this._rendertimer = window.setTimeout(this._update_bound, min_render_delay/2);
-      }
+      this._rendertimer = window.setTimeout(this._update_bound, min_render_delay);
       return;
     }
-    else
-    {
-      this._rendertimer = null;
-      this._rendertime = new Date().getTime();
-    }
+    this._rendertime = new Date().getTime();
 
     this._contentscroll = 0;
     container.className = "";
@@ -148,7 +150,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     this._hscrollfun_bound({target:this._hscrollcontainer});
     this._vscrollcontainer.addEventListener("scroll", this._vscrollfun_bound, false);
     this._hscrollcontainer.addEventListener("scroll", this._hscrollfun_bound, false);
-  }
+  };
 
   this._vscrollfun_bound = function()
   {
@@ -190,8 +192,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     var rid = target.getAttribute("data-resource-id");
     var oldhovered = this._container.querySelectorAll(".hovered");
     var newhovered = this._container.querySelectorAll("li[data-resource-id='" + rid + "'], div[data-resource-id='" + rid + "']");
-    for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered") }
-    for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered") }
+    for (var n=0, e; e=oldhovered[n]; n++) { e.removeClass("hovered"); }
+    for (var n=0, e; e=newhovered[n]; n++) { e.addClass("hovered"); }
   }.bind(this);
 
   this._on_clicked_get_body = function(evt, target)
@@ -208,9 +210,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
       if (this._rendertimer)
       {
         window.clearTimeout(this._rendertimer);
+        this._rendertimer = 0;
       }
       this._rendertime = 0;
-      this._rendertimer = null;
       this.ondestroy(); // saves scroll pos
       this.update();
     }
@@ -301,12 +303,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     // key-value map
     {
       "paused-update": false,
-      "fit-to-width": false,
+      "fit-to-width": false
     },
     // key-label map
     {
       "paused-update": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW,
+      "fit-to-width": ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW
     },
     // settings map
     {
@@ -321,7 +323,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
     'network_logger',
     [
       'paused-update',
-      'fit-to-width',
+      'fit-to-width'
     ]
   );
 

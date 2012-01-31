@@ -1,6 +1,5 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
-cls.EcmascriptDebugger["5.0"] || (cls.EcmascriptDebugger["5.0"] = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
@@ -8,8 +7,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   * @extends InspectableDOMNode
   */
 
-cls.EcmascriptDebugger["6.0"].DOMData =
-cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
+cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 {
 
   /* interface */
@@ -441,7 +439,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   this._handle_snapshot = function(status, message, runtime_id)
   {
     const STATUS = 0, OBJECT_VALUE = 3, OBJECT_ID = 0;
-    if(message[STATUS] == 'completed' )
+    if (message[STATUS] == 'completed' && message[OBJECT_VALUE])
     {
       this._data = [];
       this._get_dom(message[OBJECT_VALUE][OBJECT_ID], 'subtree',
@@ -459,16 +457,20 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   {
     if (obj_id)
       this._get_dom_sub(rt_id, obj_id, do_highlight, scroll_into_view);
-    else if ( !(rt_id == this._data_runtime_id && this._data.length) &&
-          runtime_onload_handler.check(rt_id, arguments))
-      this._get_initial_view(rt_id);
+    else if (!(rt_id == this._data_runtime_id && this._data.length))
+    {
+      if (runtime_onload_handler.is_loaded(rt_id))
+        this._get_initial_view(rt_id);
+      else
+        runtime_onload_handler.register(rt_id, this._get_initial_view.bind(this, rt_id));
+    }
     this._is_waiting = true;
   }).bind(this);
 
   this.get_snapshot = function()
   {
     var tag = tagManager.set_callback(this, this._handle_snapshot, [this._data_runtime_id]);
-    var script_data = 'return document.document';
+    var script_data = 'return document.documentElement && document.documentElement.ownerDocument;';
     services['ecmascript-debugger'].requestEval(tag, [this._data_runtime_id, 0, 0, script_data]);
   }
 
@@ -513,7 +515,7 @@ cls.EcmascriptDebugger["5.0"].DOMData = function(view_id)
   messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
 };
 
-cls.EcmascriptDebugger["5.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
+cls.EcmascriptDebugger["6.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
 
 // Disable forced lowercase for some elements
-cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];
+cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST = ["svg", "math"];

@@ -66,7 +66,7 @@ window.cls.Client = function()
       }
       handle_fallback.call(new XMLHttpRequest(), fallback_version);
     }
-  }
+  };
 
   var _on_host_quit = function(client)
   {
@@ -102,7 +102,7 @@ window.cls.Client = function()
     {
       show_info(ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port), port);
     }
-  }
+  };
 
   var get_quit_callback = function(client)
   {
@@ -116,7 +116,7 @@ window.cls.Client = function()
         _on_host_quit(client);
       }
     }
-  }
+  };
 
   var _get_port_number = function()
   {
@@ -133,7 +133,7 @@ window.cls.Client = function()
       (settings.debug_remote_setting.get('port') ||
       JSON.parse(window.helpers.getCookie('port'))) ||
       0);
-  }
+  };
 
   this.connection_is_remote = function(client)
   {
@@ -231,9 +231,9 @@ window.cls.Client = function()
     viewport.innerHTML =
       "<div class='padding' id='waiting-for-connection'>" +
         "<div class='info-box'>" + msg +
-            (port ? "<p><button class='container-button' handler='cancel-remote-debug'>" +
+            (port ? "<p><span class='ui-button container-button' handler='cancel-remote-debug' tabindex='1'>" +
                       ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
-                    "</button></p>"
+                    "</span></p>" 
                   : "") +
         "</div>" +
       "</div>";
@@ -243,7 +243,7 @@ window.cls.Client = function()
       window_controls.parentNode.removeChild(window_controls);
     }
     document.documentElement.render(templates.window_controls_close());
-  }
+  };
 
   var handle_fallback = function(version)
   {
@@ -256,8 +256,7 @@ window.cls.Client = function()
     file_name = path.slice(path.lastIndexOf('/') + 1),
     fallback_filename = '/app/fall-back-urls.json',
     type = href.indexOf('cutting-edge') > -1 && 'cutting-edge' || 'default',
-    search = location.search,
-    pos = 0;
+    search = location.search;
 
     file_name = file_name.indexOf('.') > -1 && file_name || '';
     this.onload = function()
@@ -265,25 +264,33 @@ window.cls.Client = function()
       if (this.status != 200)
       {
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-            "could not load fallback urls. (during local development this is OK!)")
+            "could not load fallback urls. (during local development this is OK!)");
         return;
       }
-      var fallback_urls = eval( "(" + this.responseText + ")" );
-      if( fallback_urls && fallback_urls[type] && version in fallback_urls[type] )
+      var fallback_urls = JSON.parse(this.responseText);
+      if (fallback_urls && fallback_urls[type] && version in fallback_urls[type])
       {
-        if( confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION) )
+        if (confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION))
         {
-          location = protocol + hostname + port + fallback_urls[type][version] + file_name + search;
+          location = protocol + 
+                     hostname + port + 
+                     fallback_urls[type][version] + 
+                     file_name + search;
         }
       }
       else
       {
         alert(ui_strings.S_INFO_NO_COMPATIBLE_VERSION);
       }
-    }
+    };
     this.open('GET', protocol + hostname + port + fallback_filename);
     this.send(null);
-  }
+  };
+
+  this.handle_fallback = function(version)
+  {
+    handle_fallback.call(new XMLHttpRequest(), version); 
+  };
 
   this.create_top_level_views = function(services)
   {
@@ -327,12 +334,7 @@ window.cls.Client = function()
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
 
-    new CompositeView('old_http_logger',
-                      ui_strings.M_VIEW_LABEL_NETWORK,
-                      layouts.old_http_logger_rough_layout
-                    )
-
-  }
+  };
 
   this.create_window_controls = function()
   {
@@ -351,7 +353,7 @@ window.cls.Client = function()
       new Button("toggle-remote-debug-overlay", "", ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG, "toggle-overlay", {"data-overlay-id": "remote-debug-overlay"}),
       new ToolbarSeparator(),
       window['cst-selects']['debugger-menu'],
-      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW),
+      new Button("top-window-toggle-attach", is_attached ? "attached" : "", is_attached ? ui_strings.S_SWITCH_DETACH_WINDOW : ui_strings.S_SWITCH_ATTACH_WINDOW)
     ];
 
     if (is_attached)
@@ -393,9 +395,7 @@ window.cls.Client = function()
         }
       }
       // a short workaround to hide some tabs as long as we don't have the dynamic tabs
-      var
-      is_disbaled = null,
-      tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
+      var tabs = ui_framework.layouts.error_console_rough_layout.children[0].tabs,
       tab = '',
       i = 1;
 
@@ -407,7 +407,7 @@ window.cls.Client = function()
       }
       arguments.callee._called_once = true;
     }
-  }
+  };
 
   this.setup_top_cell = function(services)
   {
@@ -479,7 +479,7 @@ window.cls.Client = function()
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
 
-}
+};
 
 ui_framework.layouts.error_console_rough_layout =
 {
@@ -498,7 +498,7 @@ ui_framework.layouts.error_console_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.environment_rough_layout =
 {
@@ -507,7 +507,7 @@ ui_framework.layouts.environment_rough_layout =
   [
     { height: 200, tabs: ['environment'] }
   ]
-}
+};
 
 ui_framework.layouts.dom_rough_layout =
 {
@@ -515,11 +515,11 @@ ui_framework.layouts.dom_rough_layout =
   children:
   [
     {
-      width: 700,
       tabbar: { tabs: ['dom'], is_hidden: true }
     },
     {
-      width: 250,
+      name: 'dom_panel',
+      width: 350,
       tabs: function(services)
       {
         return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
@@ -528,7 +528,7 @@ ui_framework.layouts.dom_rough_layout =
       }
     }
   ]
-}
+};
 
 ui_framework.layouts.js_rough_layout =
 {
@@ -536,7 +536,6 @@ ui_framework.layouts.js_rough_layout =
   children:
   [
     {
-      width: 700,
       children:
       [
         {
@@ -546,11 +545,11 @@ ui_framework.layouts.js_rough_layout =
       ]
     },
     {
-      width: 250,
+      name: 'js_panel',
+      width: 350,
       children:
       [
         {
-          height: 250,
           tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ?
@@ -561,7 +560,7 @@ ui_framework.layouts.js_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.network_rough_layout =
 {
@@ -576,7 +575,7 @@ ui_framework.layouts.network_rough_layout =
                   ]
                 }
               ]
-}
+};
 
 
 ui_framework.layouts.resource_rough_layout =
@@ -584,10 +583,8 @@ ui_framework.layouts.resource_rough_layout =
     dir: 'v',
     width: 1000,
     height: 1000,
-    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all',
-                                                                  // 'resource_fonts', 'resource_images'
-                                                                 ] } } ]
-}
+    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all'] } } ]
+};
 
 ui_framework.layouts.utils_rough_layout =
 {
@@ -595,7 +592,6 @@ ui_framework.layouts.utils_rough_layout =
   children:
   [
     {
-      width: 700,
       children:
       [
         {
@@ -604,7 +600,8 @@ ui_framework.layouts.utils_rough_layout =
       ]
     },
     {
-      width: 250,
+      name: 'utils_panel',
+      width: 350,
       children:
       [
         {
@@ -613,7 +610,7 @@ ui_framework.layouts.utils_rough_layout =
       ]
     }
   ]
-}
+};
 
 ui_framework.layouts.storage_rough_layout =
 {
@@ -632,7 +629,7 @@ ui_framework.layouts.storage_rough_layout =
         return [cookie_module, 'local_storage', 'session_storage', 'widget_preferences']
       }
     } ]
-}
+};
 
 ui_framework.layouts.console_rough_layout =
 {
@@ -640,15 +637,7 @@ ui_framework.layouts.console_rough_layout =
     width: 1000,
     height: 1000,
     children: [{ height: 1000, tabbar: { tabs: ["command_line"], is_hidden: true } }]
-}
-
-ui_framework.layouts.old_http_logger_rough_layout =
-{
-    dir: 'v',
-    width: 1000,
-    height: 1000,
-    children: [{ height: 1000, tabbar: { tabs: ["request_list"], is_hidden: true } }]
-}
+};
 
 ui_framework.layouts.main_layout =
 {
@@ -662,30 +651,15 @@ ui_framework.layouts.main_layout =
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
     // e.g. services['ecmascript-debugger'].is_implemented
-    if (services['resource-manager'].is_implemented)
-    {
-      return [
-        'dom_mode',
-        {view: 'js_mode', tab_class: JavaScriptTab},
-        'network_mode',
-        'resource_panel',
-        'storage',
-        {view: 'console_mode', tab_class: ErrorConsoleTab},
-        'utils',
-        'console_panel'
-      ];
-    }
-    else
-    {
-      return [
-        'dom_mode',
-        {view: 'js_mode', tab_class: JavaScriptTab},
-        'old_http_logger',
-        'storage',
-        {view: 'console_mode', tab_class: ErrorConsoleTab},
-        'utils',
-        'console_panel'
-      ];
-    }
+    return [
+      'dom_mode',
+      {view: 'js_mode', tab_class: JavaScriptTab},
+      'network_mode',
+      'resource_panel',
+      'storage',
+      {view: 'console_mode', tab_class: ErrorConsoleTab},
+      'utils',
+      'console_panel'
+    ];
   }
 };

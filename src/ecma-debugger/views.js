@@ -89,7 +89,7 @@ cls.AboutView.create_ui_widgets = function()
             authors.textContent = response_text;
           }
         });
-        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding']];
+        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding selectable']];
       }
     },
     "about"
@@ -222,7 +222,12 @@ cls.GeneralView.create_ui_widgets = function()
               templates.uiLangOptions(),
               'handler', 'set-ui-language'
             ],
-            ["button", ui_strings.S_BUTTON_LOAD_PO_FILE, "handler", "show-po-selector"]
+            [
+              "span", ui_strings.S_BUTTON_LOAD_PO_FILE,
+              "handler", "show-po-selector",
+              "class", "ui-button",
+              "tabindex", "1"
+            ]
           ]
         ];
       }
@@ -241,7 +246,7 @@ cls.GeneralView.create_ui_widgets = function()
     helpers.setCookie('ui-lang-set', '1');
     var parent = event.target.parentNode;
     var container = parent.getElementsByClassName('change-ui-lang-info')[0] ||
-                    parent.render(['div', 'class', 'change-ui-lang-info']);
+                    parent.render(['div', 'class', 'change-ui-lang-info selectable']);
     var ui_str = ui_strings.S_LABEL_CHANGE_UI_LANGUAGE_INFO.split("%s");
     var tmpl =
     [
@@ -422,10 +427,11 @@ cls.DebugRemoteSettingView.create_ui_widgets = function()
         else
         {
           return ['setting-composite',
-            ['input',
-              'type', 'button',
-              'value', ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
-              'handler', 'cancel-remote-debug'
+            ['span',
+              ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG,
+              'handler', 'cancel-remote-debug',
+              'class', 'ui-button',
+              'tabindex', '1'
             ]
           ]
         }

@@ -23,7 +23,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._render_main_view = function(container)
   {
-    var headers = [{name:"foo", value:"bar"}];
     container.clearAndRender(templates.network_options_main(this._bypass_cache,
                                                             this._track_bodies,
                                                             this._headers,
@@ -38,7 +37,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
    */
   this._update_header_table = function()
   {
-    var rows = this._headertable.querySelectorAll("tr");
     var emptyrows = [];
     for (var n=1, row; row=this._headertable[n]; n++)
     {
@@ -68,7 +66,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
       var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
                         "application/xslt+xml", "text/xsl", "application/xml",
                         "text/css", "text/plain", "application/x-javascript",
-                        "application/javascript", "text/javascript",
+                        "application/json", "application/javascript", "text/javascript",
                         "application/x-www-form-urlencoded"];
 
       var resparg = [[DATA_URI, DECODE],
@@ -105,7 +103,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
       if (parts.length != 2) { return null }
       return {name: parts[0], value: parts[1].trim()};
     }).filter(Boolean);
-  }
+  };
 
   this._handle_update_header_overrides_bound = function(evt, target)
   {
@@ -123,14 +121,14 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
   this._clear_header_overrides = function()
   {
     this._service.requestClearHeaderOverrides(null, []);
-  }
+  };
 
   this._set_header_overrides = function(headers)
   {
     this._clear_header_overrides();
     var args = [headers.map(function(e) {return [e.name, e.value] })];
     this._service.requestAddHeaderOverrides(null, args);
-  }
+  };
 
   var eh = window.eventHandlers;
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;

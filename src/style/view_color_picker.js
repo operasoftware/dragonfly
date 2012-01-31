@@ -42,7 +42,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       switch (color.type)
       {
         case color.HEX:
-          color_value = color.hhex;
+          color_value = color.hhex.toUpperCase();
           break;
         case color.RGB:
         case color.RGBA:
@@ -55,24 +55,30 @@ window.cls.ColorPickerView = function(id, name, container_class)
           break;
       }
 
-      context.ele_value.firstChild.nodeValue = color_value + (context.is_important ? " !important" : "");
+      context.ele_value.firstChild.textContent = color_value;
       context.ele_color_sample.style.backgroundColor = color_value;
-      var script = "";
-      if (!context.is_svg)
+      var property_value_ele = context.ele_container.get_ancestor(".css-property-value");
+      if (property_value_ele)
       {
-        // Removing it first is a workaround for CORE-31191
-        script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
-                 "rule.style.setProperty(\"" + context.prop_name + "\", " +
-                                        "\"" + color_value + "\", " +
-                                        "\"" + (context.is_important ? "important" : "null") + "\")";
+        var new_value = window.helpers.escape_input(property_value_ele.textContent);
+        var script = "";
+        if (!context.is_svg)
+        {
+          // Removing it first is a workaround for CORE-31191
+          script = "rule.style.removeProperty(\"" + context.prop_name + "\");" +
+                   "rule.style.setProperty(\"" + context.prop_name + "\", " +
+                                          "\"" + new_value + "\", " +
+                                          "\"" + (context.is_important ? "important" : "") + "\")";
+        }
+        else
+        {
+          script = "rule.setAttribute(\"" + context.prop_name + "\", " +
+                                     "\"" + new_value + "\")";
+        }
+        var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
+        var tag = window.tag_manager.set_callback(this, window.element_style.update);
+        services['ecmascript-debugger'].requestEval(tag, msg);
       }
-      else
-      {
-        script = "rule.setAttribute(\"" + context.prop_name + "\", " +
-                                   "\"" + color_value + "\")";
-      }
-      var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
-      services['ecmascript-debugger'].requestEval(1, msg);
     }
   }
 
@@ -93,17 +99,24 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var parent = target.parentNode;
     if (!parent.parentNode.hasClass('disabled'))
     {
+      var declaration_ele = target.get_ancestor(".css-declaration");
+      var property_ele = declaration_ele && declaration_ele.querySelector(".css-property");
+      var value_ele = declaration_ele && declaration_ele.querySelector(".css-property-value");
+      var property = property_ele && property_ele.textContent;
+      var value = value_ele && value_ele.textContent;
+
       if (this._edit_context)
         this._edit_context.ele_container.removeClass(this._edit_context.edit_class ||
                                                      CSS_CLASS_TARGET);
+
       this._edit_context = edit_context ||
       {
-        initial_color: new Color().parseCSSColor(target.style.backgroundColor),
+        initial_color: new Color().parseCSSColor(value),
         ele_value: parent,
         ele_color_sample: target,
         ele_container: parent.parentNode,
-        prop_name: parent.parentNode.getElementsByTagName('key')[0].textContent,
-        is_important: parent.innerText.endswith("!important"),
+        prop_name: property,
+        is_important: Boolean(value_ele.querySelector(".css-priority")),
         rt_id: parseInt(parent.get_attr('parent-node-chain', 'rt-id')),
         rule_id: parseInt(parent.get_attr('parent-node-chain', 'rule-id')) ||
                  parseInt(parent.get_attr('parent-node-chain', 'obj-id')),
@@ -121,7 +134,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
             var obj_id = parseInt(parent.get_attr('parent-node-chain', 'obj-id'));
             var script = "window.getComputedStyle(ele, null)." +
                          "getPropertyValue(\"" + this._edit_context.prop_name+ "\");";
-            var tag = tag_manager.set_callback(this, this._handle_get_color);
+            var tag = window.tag_manager.set_callback(this, this._handle_get_color);
             var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
             window.services['ecmascript-debugger'].requestEval(tag, msg);
             break;

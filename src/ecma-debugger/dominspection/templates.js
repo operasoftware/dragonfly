@@ -45,7 +45,7 @@
   this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
 
   var disregard_force_lower_case_whitelist = 
-      cls.EcmascriptDebugger["5.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
+      cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
 
   var disregard_force_lower_case = function(node)
   {
@@ -807,10 +807,13 @@
     if (!this._OFFSETS)
       this._OFFSETS = cls.ElementLayout.OFFSETS
     return (Boolean(index) ?
-    ['item',
-      ['key', this._OFFSETS[index]],
-      ['value', value],
-      "data-spec", "dom#" + this._OFFSETS[index]
+    ['tr',
+      ['th', this._OFFSETS[index]],
+      ['td',
+        value,
+       "class", "number"
+      ],
+     "data-spec", "dom#" + this._OFFSETS[index]
     ] : []);
   }
   
@@ -843,7 +846,10 @@
           'class', 'mono'
         ],
         ['h2', ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES],
-        ['offsets', offsets_values.map(this._offsets)]
+        ['table',
+          offsets_values.map(this._offsets),
+         "class", "offsets"
+        ]
       ];
     }
     return ret;

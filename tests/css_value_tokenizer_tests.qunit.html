@@ -1,0 +1,285 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Value Tokenizer</title>
+<link rel="stylesheet" href="qunit/qunit.css" media="screen">
+<script src="qunit/qunit.js"></script>
+<script src="../src/style/css_value_tokenizer.js"></script>
+<script>
+window.onload = function() {
+
+var css_value_tokenizer = new CssValueTokenizer(true);
+var types = CssValueTokenizer.types;
+
+function do_test(input, expected, should_fail)
+{
+  var tokens = [];
+  try {
+    css_value_tokenizer.tokenize(input, function(type, value) {
+      tokens.push([type, value]);
+    });
+  }
+  catch (o_O)
+  {
+    if (!should_fail) opera.postError(o_O);
+    return;
+  }
+
+  // We're doing no normalization, so the strings should match
+  strictEqual(input, tokens.map(function(token) {
+    return token[1]; // 1 is the value
+  }).join(""));
+
+  deepEqual(tokens, expected)
+
+  // Check that everything is back to normal
+  strictEqual(css_value_tokenizer._buffer[css_value_tokenizer._position], undefined);
+  strictEqual(css_value_tokenizer._position, input.length);
+  strictEqual(css_value_tokenizer._token_val, "");
+  strictEqual(css_value_tokenizer._state, css_value_tokenizer._states.DEFAULT);
+}
+
+test("Tokenization", function() {
+  do_test(
+    "",
+    [
+    ]
+  );
+
+  do_test(
+    " ",
+    [
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "1 /**/  red rgb(1,1) 'x' ",
+    [
+      [types.NUMBER, "1"],
+      [types.WHITESPACE, " "],
+      [types.COMMENT, "/**/"],
+      [types.WHITESPACE, "  "],
+      [types.IDENT, "red"],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "rgb("],
+      [types.NUMBER, "1"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "1"],
+      [types.FUNCTION_END, ")"],
+      [types.WHITESPACE, " "],
+      [types.STRING, "'x'"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "x\t\r\n\fx ",
+    [
+      [types.IDENT, "x"],
+      [types.WHITESPACE, "\t\r\n\f"],
+      [types.IDENT, "x"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "#112233",
+    [
+      [types.HEX_COLOR, "#112233"],
+    ]
+  );
+
+  do_test(
+    "#abc ",
+    [
+      [types.HEX_COLOR, "#abc"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "'x\\'x' ",
+    [
+      [types.STRING, "'x\\'x'"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    " 1em 2% 1.1 ",
+    [
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "1em"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "2%"],
+      [types.WHITESPACE, " "],
+      [types.NUMBER, "1.1"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "value-one, value-two ",
+    [
+      [types.IDENT, "value-one"],
+      [types.OPERATOR, ","],
+      [types.WHITESPACE, " "],
+      [types.IDENT, "value-two"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "10px/1.2em ",
+    [
+      [types.DIMENSION, "10px"],
+      [types.OPERATOR, "/"],
+      [types.DIMENSION, "1.2em"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    ".9 .9em ",
+    [
+      [types.NUMBER, ".9"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, ".9em"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "-1 +1 -1px +1px -.9 ",
+    [
+      [types.NUMBER, "-1"],
+      [types.WHITESPACE, " "],
+      [types.NUMBER, "+1"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "-1px"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "+1px"],
+      [types.WHITESPACE, " "],
+      [types.NUMBER, "-.9"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "-i0 -0 ",
+    [
+      [types.IDENT, "-i0"],
+      [types.WHITESPACE, " "],
+      [types.NUMBER, "-0"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "_o_ ",
+    [
+      [types.UNKNOWN, "_"],
+      [types.IDENT, "o"],
+      [types.UNKNOWN, "_"],
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "url('t'), -o-linear-gradient(top, rgb(1,2,3), rgb(1,2,3) 1px)",
+    [
+      [types.FUNCTION_START, "url("],
+      [types.STRING, "'t'"],
+      [types.FUNCTION_END, ")"],
+      [types.OPERATOR, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "-o-linear-gradient("],
+      [types.IDENT, "top"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "rgb("],
+      [types.NUMBER, "1"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "2"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "3"],
+      [types.FUNCTION_END, ")"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.WHITESPACE, " "],
+      [types.FUNCTION_START, "rgb("],
+      [types.NUMBER, "1"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "2"],
+      [types.OPERATOR_IN_FUNCTION, ","],
+      [types.NUMBER, "3"],
+      [types.FUNCTION_END, ")"],
+      [types.WHITESPACE, " "],
+      [types.DIMENSION, "1px"],
+      [types.FUNCTION_END, ")"],
+    ]
+  );
+
+  do_test(
+    "'a\\\\''",
+    [],
+    true
+  );
+
+  do_test(
+    "#abr",
+    [],
+    true
+  );
+
+  do_test(
+    "#12",
+    [],
+    true
+  );
+
+  do_test(
+    "#1234567",
+    [],
+    true
+  );
+
+  do_test(
+    "1.1.",
+    [],
+    true
+  );
+
+  do_test(
+    "rgb(",
+    [],
+    true
+  );
+
+  do_test(
+    "\"",
+    [],
+    true
+  );
+
+  do_test(
+    "/**",
+    [],
+    true
+  );
+
+  do_test(
+    "/*/",
+    [],
+    true
+  );
+});
+
+}
+</script>
+<body>
+<h1 id="qunit-header">Dragonfly - CSS Value Tokenizer</h1>
+<h2 id="qunit-banner"></h2>
+<div id="qunit-do_testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-do_tests"></ol>
+</body>

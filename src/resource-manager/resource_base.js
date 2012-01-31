@@ -108,11 +108,10 @@ cls.ResourceDetailBase = function()
 
     if (!data || !(data.lines && data.lines[0])) return;
     this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
-    this.clear_line_numbers(this._root_ele)
-    this._line = parseInt(data.lines[0]);
     if (this._root_ele)
     {
-      this._current_line = 1;
+      this.clear_line_numbers(this._root_ele)
+      this._line = parseInt(data.lines[0]);
       this._traverse_ele(this._root_ele);
     }
 
@@ -171,7 +170,7 @@ cls.ResourceDetailBase = function()
     this.service = service;
     this.resource = res;
     this.resourcedata = null;
-    this.filename = cls.ResourceUtil.url_filename(res.url) || "<no name>";
+    this.filename = cls.ResourceUtil.url_filename(res.url) || ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME;
     this.drawer = new MetadataDrawer(res);
     this.drawer.expanded = false;
     cls.ResourceDetailBase.prototype.init.call(this, this.filename);
@@ -193,7 +192,9 @@ cls.GenericResourceDetail = function(res, service)
 {
   this.render_type_details = function(container, resource, resourcedata)
   {
-    return ["h1", "Don't know what this resource is"];
+    return ["div",
+            ["h1", "Don't know what this resource is"],
+            "class", "resource-detail-container"];
   }
 
   this.init(res, service);

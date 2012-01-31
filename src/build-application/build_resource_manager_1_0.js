@@ -7,15 +7,18 @@ window.app.builders.ResourceManager["1.0"] = function(service)
   //new cls.ResourceManagerImageView('resource_images', "Images", 'scroll', '', '');
   new cls.NetworkLogView('network_logger', ui_strings.M_VIEW_LABEL_NETWORK_LOG, 'scroll', '', '');
   new cls.RequestCraftingView('request_crafter', ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER, 'scroll', '', '');
-  new cls.NetworkOptionsView('network_options', ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS, 'scroll', '', '');
+  new cls.NetworkOptionsView('network_options', 
+                             ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS,
+                             'scroll network-options-container', '', '');
 
   var setup_request_body_behaviour = function()
   {
     var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
                      "application/xslt+xml", "text/xsl", "application/xml",
                      "text/css", "text/plain", "application/x-javascript",
-                     "application/javascript", "text/javascript",
+                     "application/json", "application/javascript", "text/javascript",
                      "application/x-www-form-urlencoded",
+                     "text/xml",
                      ""]; // <- Yes really.
                      // It's frelling silly, but there's a bug with core not giving us content types
                      // for post data, even though core generates that itself. See CORE-39597

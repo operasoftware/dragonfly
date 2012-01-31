@@ -68,20 +68,7 @@
   const
   MODE_DEFAULT = "default",
   MODE_EDIT = "edit",
-  RE_TEXT_INPUTS = new RegExp(["text",
-                               "search",
-                               "tel",
-                               "url",
-                               "email",
-                               "password",
-                               "datetime", 
-                               "date",
-                               "month",
-                               "week", 
-                               "time",
-                               "datetime-local", 
-                               "number",
-                               "file"].join("|"), "i");
+  RE_TEXT_INPUTS = GlobalActionHandler.RE_TEXT_INPUTS;
 
   this.mode = MODE_DEFAULT;
 
@@ -92,7 +79,6 @@
   }
 
   /* privat */
-
 
   this._broker = ActionBroker.get_instance();
   this._handlers = {};
@@ -135,13 +121,16 @@
     
   this._handlers["select-all"] = function(action_id, event, target)
   {
-    var selection = getSelection();
-    var range = document.createRange();
-    selection.removeAllRanges()
-    range.selectNodeContents(target);
-    selection.addRange(range);
+    if (this._selection_controller.is_selectable(target))
+    {
+      var selection = getSelection();
+      var range = document.createRange();
+      selection.removeAllRanges();
+      range.selectNodeContents(target);
+      selection.addRange(range);
+    }
     return false;
-  };
+  }.bind(this);
 
   this._handlers["invert-spotlight-colors"] = function(action_id, event, target)
   {
@@ -200,6 +189,8 @@
   this._handlers["toggle-commandline"] = function(action_id, event, target)
   {
     var visible = (window.views.command_line && window.views.command_line.isvisible());
+    var button = UI.get_instance().get_button("toggle-console");
+    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     if (!visible)
     {
@@ -212,17 +203,22 @@
     {
       UIWindowBase.closeWindow('command_line');
     }
-    var button = UI.get_instance().get_button("toggle-console");
-    visible ? button.removeClass("is-active") : button.addClass("is-active");
 
     return false;
   }.bind(this);
 
+  this._handlers["reload-context"] = function(action_id, event, target)
+  {
+    runtimes.reloadWindow();
+
+    return false;
+  };
 
   this._handlers["show-overlay"] = function(action_id, event, target)
   {
     const OVERLAY_TOP_MARGIN = 10;
     const OVERLAY_RIGHT_MARGIN = 20;
+    const ADJUST = 2; // TODO: where does this actually come from
 
     var overlay = Overlay.get_instance();
     var ui = UI.get_instance();
@@ -237,12 +233,14 @@
       var button_dims = target.getBoundingClientRect();
       var element = overlay.element.querySelector("overlay-window");
       var arrow = overlay.element.querySelector("overlay-arrow");
+      var arrow_width = arrow.getBoundingClientRect().width;
       element.style.top = button_dims.bottom + OVERLAY_TOP_MARGIN + "px";
       element.addClass("attached");
-      arrow.style.right = document.documentElement.clientWidth - button_dims.right - OVERLAY_RIGHT_MARGIN + "px";
+      arrow.style.right = Math.floor(document.documentElement.clientWidth - OVERLAY_RIGHT_MARGIN -
+          button_dims.right - (arrow_width / 2) + (button_dims.width / 2) - ADJUST) + "px";
     }
 
-    var first_button = overlay.element.querySelector("button, input[type='button']");
+    var first_button = overlay.element.querySelector("button, input[type='button'], .ui-button");
     if (first_button)
     {
       first_button.focus();
@@ -371,8 +369,21 @@
 
   /* instatiation */
 
-  /* message handling */
+  var if_check = function(container)
+  {
+    return container && !container.querySelector(".info-box");
+  };
 
+  var is_selectable = 'container:not(.side-panel)' +
+                               ':not(.network-options-container)' +
+                               ':not(.screenshot-controls),' +
+                      'panel-container,' +
+                      'window-container,' +
+                      '.selectable';
+
+  this._selection_controller = new SelectionController(is_selectable, if_check);
+
+  /* message handling */
   messages.addListener("before-show-view", function(msg) {
     if (msg.id == "console_panel")
     {
@@ -385,6 +396,22 @@
       }
     }
   });
-}
+
+};
+
+GlobalActionHandler.RE_TEXT_INPUTS = new RegExp(["text",
+                                                 "search",
+                                                 "tel",
+                                                 "url",
+                                                 "email",
+                                                 "password",
+                                                 "datetime", 
+                                                 "date",
+                                                 "month",
+                                                 "week", 
+                                                 "time",
+                                                 "datetime-local", 
+                                                 "number",
+                                                 "file"].join("|"), "i");
 
 

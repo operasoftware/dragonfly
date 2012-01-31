@@ -229,6 +229,21 @@
 
   this.init = function(rough_cell, dir, parent, container_id, services)
   {
+    this.has_explicit_width = rough_cell.width !== undefined;
+    this.has_explicit_height = rough_cell.height !== undefined;
+
+    if (rough_cell.name)
+    {
+      var stored_width;
+      var stored_height;
+
+      if (this.has_explicit_width && (stored_width = window.settings.general.get('view-width-' + rough_cell.name)))
+        rough_cell.width = stored_width;
+
+      if (this.has_explicit_height && (stored_height = window.settings.general.get('view-height-' + rough_cell.name)))
+        rough_cell.height = stored_height;
+    }
+
     this.width =
       rough_cell.width && rough_cell.width > defaults.min_view_width ?
       rough_cell.width : defaults.min_view_width;
@@ -241,6 +256,7 @@
     this.checked_width = 0;
 
     this.type = '';
+    this.name = rough_cell.name;
     this.children = [];
     this.previous = null;
     this.next = null;
@@ -445,22 +461,35 @@
       }
     }
 
+    if (this.name)
+    {
+      if (this.has_explicit_width)
+        window.settings.general.set('view-width-' + this.name, this.width);
+
+      if (this.has_explicit_height)
+        window.settings.general.set('view-height-' + this.name, this.height);
+    }
+
     return ( this.dir == VER ? this.width : this.height ) +
           2 * defaults.view_border_width + defaults.slider_border_width;
   }
 
   // helper to get the totalised dimension
 
-  this.checkChildren = function(dim)
+  this.get_total_children_dimension = function(dim, explicit_only)
   {
     var child = null, i = 0, sum = 0, length = this.children.length;
-    for( ; child = this.children[i]; i++)
+    for ( ; child = this.children[i]; i++)
     {
-      sum += child[dim] + 2 * defaults.view_border_width;
-      if( i != length - 1 )
+      if (i != length - 1)
       {
         sum += defaults.slider_border_width;
       }
+      if (explicit_only && !child['has_explicit_' + dim])
+      {
+        continue;
+      }
+      sum += child[dim] + 2 * defaults.view_border_width;
     }
     return sum;
   }
@@ -471,44 +500,75 @@
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, sum = 0, length = this.children.length, prov = 0;
-    if( length )
+    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0;
+    var auto_dim_count = 0, average_dim = 0;
+    if (length)
     {
-      while( length )
+      // check how many implicit (auto) dimensions were specified
+      for (i = 0; child = this.children[i++]; )
       {
-        sum = this.checkChildren(dim);
-        length--;
-        prov = max - ( sum - this.children[length][dim] - 2 * defaults.view_border_width );
-        if( sum < max || defaults['min_view_' + dim ] < prov )
+        if (!child['has_explicit_' + dim])
+          auto_dim_count++;
+      }
+
+      if (auto_dim_count)
+      {
+        sum = this.get_total_children_dimension(dim, true);
+        if (sum < max)
         {
-          this.children[length][dim] = prov;
+          // calculate average that should be allocated for each auto dimension
+          average_dim = ((max - sum - auto_dim_count * 2 * defaults.view_border_width) / auto_dim_count) >> 0;
+
+          // allocate space
+          for (i = 0; child = this.children[i++]; )
+          {
+            if (child['has_explicit_' + dim] && child[dim] < defaults['min_view_' + dim])
+            {
+              // if the dimension is below the minimum limit, set minimum value
+              // and reduce the average to compensate for the distributed pixels
+              average_dim -= (defaults['min_view_' + dim] - child[dim]) / auto_dim_count;
+              child[dim] = defaults['min_view_' + dim];
+            }
+            else if (!child['has_explicit_' + dim])
+              child[dim] = average_dim > defaults['min_view_' + dim] ? average_dim : defaults['min_view_' + dim];
+          }
+        }
+      }
+
+      while (--length)
+      {
+        sum = this.get_total_children_dimension(dim);
+        temp = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
+        if (sum <= max || defaults['min_view_' + dim] < temp)
+        {
+          this.children[length][dim] = temp;
           length = this.children.length;
           break;
         }
         else
         {
-          this.children[length][dim] = defaults['min_view_' + dim ];
+          this.children[length][dim] = defaults['min_view_' + dim];
         }
       }
 
-      // min_width is to big
+      // min_width is too big
 
-      if( !length )
+      if (!length)
       {
         length = this.children.length;
-        sum = max - ( length - 1 ) * ( 2 * defaults.view_border_width ) - ( length - 1 ) * defaults.slider_border_width;
+        sum = max - (length - 1) * (2 * defaults.view_border_width) - (length - 1) * defaults.slider_border_width;
         var average_width = sum / length >> 0;
-        for( i = 0 ; i < length - 1 ; i++)
+        for (i = 0 ; i < length - 1 ; i++)
         {
           this.children[i][dim] = average_width;
         }
-        this.children[length - 1][dim] = sum - ( length - 1 ) * average_width;
+        this.children[length - 1][dim] = sum - (length - 1) * average_width;
       }
 
       // inherit one dimension from the parent
 
       dim = this.dir == HOR ? 'height' : 'width';
-      for( i = 0 ; child = this.children[i]; i++)
+      for (i = 0 ; child = this.children[i]; i++)
       {
         child[dim] = this[dim];
         child.setDefaultDimensions();

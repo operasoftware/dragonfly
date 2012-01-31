@@ -23,11 +23,18 @@ window.cls.ListUnpacker = function(callback)
         arg_list.push([obj_id_str, obj_id]);
       }
     };
-    var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
-                                        [ctx, obj_ids]);
-    var script = this._is_list_alike_to_string.replace("%s", call_list.join(','));
-    var msg = [ctx.rt_id, 0, 0, script, arg_list];
-    this._edservice.requestEval(tag, msg);
+    if (arg_list.length)
+    {
+      var tag = this._tagman.set_callback(this, this._handle_list_alikes_list,
+                                          [ctx, obj_ids]);
+      var script = this._is_list_alike_to_string.replace("%s", call_list.join(','));
+      var msg = [ctx.rt_id, 0, 0, script, arg_list];
+      this._edservice.requestEval(tag, msg);
+    }
+    else
+    {
+      this._callback(ctx);
+    }
   }
 
   // Boolean(document.all) === false

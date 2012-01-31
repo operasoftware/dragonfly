@@ -1,40 +1,51 @@
-﻿#ui-dialog-background {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, .5);
-    z-index: 500;
+﻿#ui-dialog-background
+{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
 }
-#ui-dialog {
-    display: inline-block;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-    border: 2px solid rgb(177, 177, 177);
-    border-radius: 7px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, .6);
-    background: rgba(0, 0, 0, .7);
-    color: #fff;
-    padding: 10px;
-    max-width: 500px;
-    visibility: hidden;
-    z-index: 501;
+
+#ui-dialog
+{
+  display: inline-block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  border: 2px solid rgb(177, 177, 177);
+  border-radius: 7px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px;
+  max-width: 500px;
+  visibility: hidden;
+  z-index: 501;
 }
-#ui-dialog.visible {
-    position: absolute;
-    visibility: visible;
+
+#ui-dialog.visible
+{
+  position: absolute;
+  visibility: visible;
 }
-#ui-dialog-buttons {
-    margin-top: 5px;
-    text-align: right;
+
+#ui-dialog-buttons
+{
+  margin-top: 5px;
+  text-align: right;
 }
-#ui-dialog-buttons button {
-    margin-left: 5px;
+
+#ui-dialog-buttons .ui-button
+{
+  margin-left: 5px;
 }
-#ui-dialog-message {
-    white-space: pre-wrap;
+
+#ui-dialog-message
+{
+  white-space: pre-wrap;
 }

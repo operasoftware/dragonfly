@@ -6,6 +6,9 @@
  */
 cls.NewStyle = function(id, name, container_class)
 {
+  this._es_debugger = window.services['ecmascript-debugger'];
+  this._tag_manager = cls.TagManager.get_instance();
+
   this._template = function(value)
   {
     return (
@@ -15,10 +18,11 @@ cls.NewStyle = function(id, name, container_class)
             'handler', 'css-update-new-style',
             'class', 'css-new-style-sheet'
            ],
-           ['button',
+           ['span',
               ui_strings.S_BUTTON_TEXT_APPLY,
-            'class', 'container-button',
-            'handler', 'apply-new-style'
+            'class', 'container-button ui-button',
+            'handler', 'apply-new-style',
+            'tabindex', '1'
            ],
          'class', 'padding'
         ]);
@@ -26,7 +30,9 @@ cls.NewStyle = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    var css_text = this._rt_style_map[this._rt_id] ? this._rt_style_map[this._rt_id].css_text : "";
+    var css_text = this._rt_style_map[this._rt_id]
+                 ? this._rt_style_map[this._rt_id].css_text
+                 : "";
     var ele = container.clearAndRender(this._template(css_text));
     this._textarea = ele.querySelector("textarea");
     this._textarea.value = css_text;
@@ -39,10 +45,10 @@ cls.NewStyle = function(id, name, container_class)
     {
       rt_style.css_text = this._textarea.value;
       var script = "try{style.textContent = \"" +
-                     helpers.escape_input(rt_style.css_text).replace(/\r?\n/g, "") +
+                     window.helpers.escape_input(rt_style.css_text).replace(/\r?\n/g, "") +
                    "\";}catch(e){};";
-      var tag = window.tag_manager.set_callback(this, window.elementStyle.update);
-      window.services['ecmascript-debugger'].requestEval(tag,
+      var tag = this._tag_manager.set_callback(this, window.element_style.update);
+      this._es_debugger.requestEval(tag,
           [this._rt_id, 0, 0, script, [['style', rt_style.stylesheet_id]]]);
     }
     else
@@ -53,20 +59,20 @@ cls.NewStyle = function(id, name, container_class)
 
   this._create_new_stylesheet = function(event, target)
   {
-    var tag = window.tag_manager.set_callback(this, this._handle_new_style);
+    var tag = this._tag_manager.set_callback(this, this._handle_new_style);
     var script =
       "(function() {" +
       "  return (document.head || document.body || document.documentElement)." +
       "    appendChild(document.createElement('style'));" +
       "})();";
-    window.services['ecmascript-debugger'].requestEval(tag, [this._rt_id, 0, 0, script]);
+    this._es_debugger.requestEval(tag, [this._rt_id, 0, 0, script]);
   };
 
   this._handle_new_style = function(status, message)
   {
-    const STATUS = 0;
-    const OBJECT_VALUE = 3;
-    const OBJECT_ID = 0;
+    var STATUS = 0;
+    var OBJECT_VALUE = 3;
+    var OBJECT_ID = 0;
     if (status || message[STATUS] != 'completed' || !message[OBJECT_VALUE])
     {
       opera.postError("Not possible to add a new style elment.")
@@ -93,26 +99,20 @@ cls.NewStyle = function(id, name, container_class)
       }
 
       if (this._textarea)
-      {
         this._textarea.value = this._rt_style_map[this._rt_id].css_text;
-      }
     }
   };
-
-  // ViewBase init
-  this._super_init = this.init;
 
   this._init = function(id, name, container_class)
   {
     this._rt_id = 0;
     this._rt_style_map = {};
     this._textarea = null;
-
-    window.messages.addListener('element-selected', this._on_element_selected.bind(this));
-    window.eventHandlers.click['apply-new-style'] = this._update_style.bind(this);
-
-    this._super_init(id, name, container_class);
+    View.prototype.init.call(this, id, name, container_class);
   };
+
+  window.messages.addListener('element-selected', this._on_element_selected.bind(this));
+  window.eventHandlers.click['apply-new-style'] = this._update_style.bind(this);
 
   this._init(id, name, container_class);
 };

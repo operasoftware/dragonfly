@@ -25,6 +25,7 @@
     }
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
     ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
+    ret.push('class', 'selectable');
     return ['div', ret, 'class', 'padding'];
   }
 
@@ -151,7 +152,7 @@
           };
           if (get_scripts)
           {
-            scripts = window.runtimes.getScripts(rt_id);
+            scripts = window.runtimes.getScripts(rt_id, true);
             browser_js = null;
             user_js_s = [];
             for (j = scripts.length - 1; script = scripts[j]; j--)
@@ -283,7 +284,7 @@
       ['h2', runtime['title'] || display_uri.uri].
       concat( display_uri.title ? ['title', display_uri.title] : [] )
     ],
-    sheets = stylesheets.getStylesheets(runtime.runtime_id),
+    sheets = cls.Stylesheets.get_instance().get_stylesheets(runtime.runtime_id),
     sheet = null,
     i = 0,
     container = [],
@@ -390,14 +391,15 @@ MODE ::= "<mode>"
 
   this.continueWithMode = function(name, mode)
   {
-    return ['input',
-          'type', 'button',
+    return ['span',
+          'tabindex', '1',
           'value', '',
           'title', name,
           'mode', mode,
           'id', 'continue-' + mode,
           'handler', 'continue',
-          'disabled', true
+          'disabled', true,
+          'class', 'ui-button'
         ]
   }
 
@@ -474,48 +476,6 @@ MODE ::= "<mode>"
   {
     return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
   }
-
-  this.cssInspector = function(categories)
-  {
-    var ret = [], cat = null, i = 0;
-    for( ; cat = categories[i]; i++)
-    {
-      ret[ret.length] = this.cssInspectorCategory(cat);
-    }
-    return ret;
-  }
-
-  this.cssInspectorCategory = function(cat)
-  {
-    //<input type="button"  handler="toggle-setting"  view-id="css-inspector"  tab-id="css-inspector"  class="unfolded" />
-    var ret = ['category',
-        ['header',
-          ['input',
-            'type', 'button',
-            'handler', 'css-toggle-category',
-            'cat-id', cat.id
-          ].concat( cat.is_unfolded() ? ['class', 'unfolded'] : [] ),
-          cat.name,
-          'handler', 'css-toggle-category'
-        ],
-        ['styles']
-      ];
-
-    if( cat.is_unfolded() )
-    {
-      ret.splice(ret.length, 0, 'class', 'unfolded');
-    }
-
-    if( cat.handler )
-    {
-      ret.splice(ret.length, 0, 'edit-handler', cat.handler);
-    }
-
-    return ret;
-
-
-  }
-
 
   this['js-script-select'] = function(ui_obj)
   {
