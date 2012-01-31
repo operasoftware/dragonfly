@@ -234,10 +234,10 @@ CssShorthandResolver.shorthands = (function() {
   };
 
   /**
-   * Compares two values. Returns true if both values are equal and both
+   * Compares a number of values. Returns true if all values are equal and all
    * values are applied.
    */
-  var compare_values = function(a, b)
+  var compare_values = function()
   {
     var first = arguments[0];
     var rest = Array.prototype.slice.call(arguments, 1);

@@ -198,8 +198,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
 
   window.eventHandlers.change["color-notation"] = function(event, target)
   {
-    var notation = target.selectedOptions[0].value;
-    window.settings["dom-side-panel"].set("color-notation", notation);
+    window.settings["dom-side-panel"].set("color-notation", target.value);
     window.element_style.update();
   };
 };

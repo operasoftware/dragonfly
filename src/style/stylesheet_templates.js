@@ -12,6 +12,8 @@ var StylesheetTemplates = function()
   var TYPE_FUNCTION_START = CssValueTokenizer.types.FUNCTION_START;
   var TYPE_FUNCTION_END = CssValueTokenizer.types.FUNCTION_END;
 
+  this._css_value_tokenizer = new CssValueTokenizer();
+
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
   {
     return [
@@ -218,7 +220,7 @@ var StylesheetTemplates = function()
     var color_value = [];
     var prop_value = [];
     var next_is_url = false;
-    new CssValueTokenizer().tokenize(orig_value, function(type, value) {
+    this._css_value_tokenizer.tokenize(orig_value, function(type, value) {
       var color_swatch = [];
       if (color_value.length && type === TYPE_FUNCTION_END)
       {
