@@ -322,7 +322,8 @@ templates.network_gap_defs = [
       ["responsefinished", "urlfinished"],
       ["urlredirect", "urlfinished"],
       ["urlredirect", "responsefinished"],
-      ["urlload", "urlfinished"]
+      ["urlload", "urlfinished"],
+      ["requestfinished", "responsefinished"] // Known bug, also in CORE-43284. Is fixed and will stop showing up when it's integrated.
     ]
   },
   {
@@ -336,7 +337,8 @@ templates.network_gap_defs = [
     classname: "waiting",
     from_to_pairs: [
       ["requestfinished", "response"],
-      ["responseheader", "response"], // This represents waiting for another response to come in. See CORE-43264.
+      ["requestfinished", "responsefinished"], // This means the response-phase was closed without seing a response event. For example because the request was aborted. See CORE-43284.
+      ["responseheader", "response"] // This represents waiting for another response to come in. See CORE-43264.
     ]
   },
   {
@@ -393,8 +395,7 @@ templates.network_get_event_gaps = function(events, gap_defs, collapse_same_clas
       }
       event_gaps.push({
         classname: classname,
-        val: ev_to.time - ev_from.time,
-        initiating_event: ev_from.name
+        val: ev_to.time - ev_from.time
       });
     }
   }
@@ -429,7 +430,7 @@ templates.network_graph_sections = function(entry, width, duration)
     {
       sections.push([
         "span",
-        "class", "network-section network-" + section.classname + " " + section.initiating_event,
+        "class", "network-section network-" + section.classname,
         "style", "width:" + section.val * scale + "px;"
       ]);
     }
@@ -460,13 +461,13 @@ templates.network_graph_entry_tooltip = function(entry)
     var total_length_string = new Number(duration).toFixed(2) + "ms";
 
     var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs);
-    gaps.map(function(section){section.px = section.val * scale}); // or include this in the template
+    gaps.map(function(section){section.px = section.val * scale});
     gaps.forEach(function(section){
       if (section.val)
       {
         graphical_sections.push([
           "div",
-          "class", "network-tooltip-section network-" + section.classname + " " + section.initiating_event,
+          "class", "network-tooltip-section network-" + section.classname,
           "style", "height:" + section.px + "px;"
         ]);
       }
@@ -486,9 +487,22 @@ templates.network_graph_entry_tooltip = function(entry)
         ev.time_str = "";
       }
 
+      var event_name_map = {
+        "urlload": "Queued",
+        "request": "Request started",
+        "requestheader": "Request header written",
+        "urlredirect": "Redirected",
+        "requestretry": "Request retried",
+        "requestfinished": "Request phase finished",
+        "response": "Response started",
+        "responseheader": "Response header written",
+        "responsefinished": "Response phase finished",
+        "urlfinished": "URL finished"
+      };
+
       previous_event_ms = ev.time;
       return ["tr",
-               ["td", ev.name],
+               ["td", event_name_map[ev.name] || ev.name],
                ini.debug ? ["td", ev.request_id ? "(" + ev.request_id + ")" : ""] : [],
                ["td", ev.time_str, "class", "time_data mono"]
              ];
@@ -506,8 +520,7 @@ templates.network_graph_entry_tooltip = function(entry)
 
     var pointer_extra_width = max_val_length * CHARWIDTH;
 
-    entry.events.forEach(function(ev)
-    {
+    entry.events.forEach(function(ev) {
       if (pathes.length)
       {
         y_start += Math.round(gaps[pathes.length - 1].px);
