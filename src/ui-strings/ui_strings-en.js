@@ -108,6 +108,12 @@ ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: General settings label. */
 ui_strings.M_SETTING_LABEL_GENERAL = "General";
 
+/* DESC: Context menu entry to reset the columns that are shown */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
+
+/* DESC: Context menu entry to reset the sort order */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
+
 /* DESC: Context menu entry to selecting to group by %s */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 
@@ -891,11 +897,11 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
+/* DESC: Message about not yet available response body */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
+
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
-
-/* DESC: Title for response body section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
 
 /* DESC: Help text about how a response could not be show because resource tracking is not on. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not available. Enable resource tracking and reload the page to view the resource.";
@@ -904,10 +910,10 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not availabl
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY = "Response body not available. Enable resource tracking and reload the page to view the resource.";
 
 /* DESC: Title for request details section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request details";
+ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request";
 
 /* DESC: Title for response details section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
+ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response";
 
 /* DESC: Message about file types we have no good way of showing. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show data of type %s";
@@ -1302,17 +1308,8 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching…";
 
-/* DESC: Title of request body section of the request details view. */
-ui_strings.S_NETWORK_REQUEST_BODY_TITLE = "Request body";
-
 /* DESC: Title of request body section when the body is multpart encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE = "Request body - multipart";
-
-/* DESC: String used when a request has no data. */
-ui_strings.S_NETWORK_NO_REQUEST_DATA = "No request data";
-
-/* DESC: Part number label */
-ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
+ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
 /* DESC: Settings checkbox label for toggling usage tracking */
 ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";

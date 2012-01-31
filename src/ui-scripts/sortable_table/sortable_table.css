@@ -42,12 +42,6 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:last-of-type > td
-{
-  border-bottom-width: 1px;
-}
-
-
 .sortable-table > tr:nth-child(odd)
 {
   background-color: rgba(0, 0, 0, 0.03);
@@ -55,12 +49,56 @@
 
 .sort-column
 {
-  background: url("../../ui-images/dropdown.png") no-repeat 100% 50%;
+  position: relative;
 }
 
-.sort-column.reversed
+.sort-column:before
 {
-  background-image: url("../../ui-images/dropup.png");
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  display: block;
+  background: url("../../ui-images/dropdown.png"),
+              -o-linear-gradient(-90deg,
+                                 rgb(249, 249, 249) 0,
+                                 rgb(239, 239, 239) 100%);
+}
+.sort-column:active:before
+{
+  background: url("../../ui-images/dropdown.png"),
+              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+}
+
+.sort-column.reversed:before
+{
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  display: block;
+  background: url("../../ui-images/dropup.png"),
+              -o-linear-gradient(-90deg,
+                                 rgb(249, 249, 249) 0,
+                                 rgb(239, 239, 239) 100%);
+}
+.sort-column.reversed:active:before
+{
+  background: url("../../ui-images/dropup.png"),
+              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+}
+
+th.sort-column
+{
+  padding-right: 12px;
 }
 
 .sortable-table > tr.header:first-child
@@ -106,5 +144,5 @@
 
 .sortable-table > tr.header > th:not(.sortable-table-group-header):active
 {
-  background-color: rgba(0, 0, 0, 0.06); 
+  background-color: rgba(0, 0, 0, 0.06);
 }

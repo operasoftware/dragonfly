@@ -76,7 +76,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     }
     else
     {
-      var resparg = reqarg = [[OFF]];
+      var resparg = [[OFF]];
     }
     this._service.requestSetResponseMode(null, resparg);
   }.bind(this);

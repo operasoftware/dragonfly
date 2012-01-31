@@ -1,4 +1,4 @@
-﻿/**
+/**
   * @constructor 
   */
 
@@ -113,20 +113,54 @@ var ToolbarConfigBase = new function()
     return this.__is_visible;
   }
 
-  this.init = function(name, 
-                       optional_button_array, 
-                       optional_filter_array, 
-                       optional_special_button_array, 
-                       optional_custom_button_array,
-                       has_search_button)
+  this.init = function(name_or_config_object, 
+                       button_array, 
+                       filter_array, 
+                       special_button_array, 
+                       custom_button_array)
   {
     ids [ this.id = getId() ] = this;
-    this.buttons = optional_button_array || [];
-    this.filters = optional_filter_array || [];
-    this.specials = optional_special_button_array || [];
-    this.customs = optional_custom_button_array || [];
+    if (typeof name_or_config_object === "object")
+    {
+      var name = name_or_config_object.view;
+      this.groups = name_or_config_object.groups;
+      // Add a plain button array to support deactivating etc.,
+      // initialize Switches and SingleSelect objects 
+      this.buttons = [];
+      for (var i = 0, group; group = this.groups[i]; i++)
+      {
+        if (group.type !== "input" && group.items)
+          this.buttons = this.buttons.concat(group.items);
+
+        // inititalize switches here
+        if (group.type === "switch")
+        {
+          var keys = group.items.map(function(_switch){return _switch.key});
+          new Switches(this.id, keys);
+        }
+        else if (group.type === "single-select")
+        {
+          var values = group.items.map(function(button){return button.value});
+          new SingleSelect(name, group.name, values, group.default_value || values[0], group.allow_multiple_select);
+        }
+        else if (group.type === "input")
+        {
+          filter_array = filter_array || [];
+          for (var k = 0, search; search = group.items[k]; k++)
+            filter_array.push(search);
+        }
+      }
+    }
+    else
+    {
+      var name = name_or_config_object;
+      this.buttons = button_array || [];
+      this.groups = [{items: this.buttons}];
+    }
+    this.filters = filter_array || [];
+    this.specials = special_button_array || [];
+    this.customs = custom_button_array || [];
     this.container_ids = [];
-    this.has_search_button = Boolean(has_search_button)
     this.__is_visible = true;
     if(!window.toolbars)
     {
@@ -151,19 +185,17 @@ var ToolbarConfigBase = new function()
   * @extends ToolbarConfigBase
   */
 
-var ToolbarConfig = function(name, 
-                             optional_button_array, 
-                             optional_filter_array, 
-                             optional_special_button_array, 
-                             optional_custom_button_array,
-                             has_search_button)
+var ToolbarConfig = function(name_or_config_object, 
+                             button_array, 
+                             filter_array, 
+                             special_button_array, 
+                             custom_button_array)
 {
-  this.init(name, 
-            optional_button_array, 
-            optional_filter_array, 
-            optional_special_button_array, 
-            optional_custom_button_array,
-            has_search_button);
+  this.init(name_or_config_object, 
+            button_array, 
+            filter_array, 
+            special_button_array, 
+            custom_button_array);
 }
 
 ToolbarConfig.prototype = ToolbarConfigBase;
