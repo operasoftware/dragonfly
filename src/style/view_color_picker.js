@@ -111,7 +111,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
       this._edit_context = edit_context ||
       {
-        initial_color: new Color().parseCSSColor(target.parentNode.textContent),
+        initial_color: new Color().parseCSSColor(value),
         ele_value: parent,
         ele_color_sample: target,
         ele_container: parent.parentNode,
