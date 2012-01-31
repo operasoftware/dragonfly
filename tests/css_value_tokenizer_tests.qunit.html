@@ -7,7 +7,7 @@
 <script>
 window.onload = function() {
 
-var css_value_tokenizer = new CssValueTokenizer();
+var css_value_tokenizer = new CssValueTokenizer(true);
 var types = CssValueTokenizer.types;
 
 function do_test(input, expected, should_fail)
@@ -40,6 +40,19 @@ function do_test(input, expected, should_fail)
 
 test("Tokenization", function() {
   do_test(
+    "",
+    [
+    ]
+  );
+
+  do_test(
+    " ",
+    [
+      [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
     "1 /**/  red rgb(1,1) 'x' ",
     [
       [types.NUMBER, "1"],
@@ -66,6 +79,13 @@ test("Tokenization", function() {
       [types.WHITESPACE, "\t\r\n\f"],
       [types.IDENT, "x"],
       [types.WHITESPACE, " "],
+    ]
+  );
+
+  do_test(
+    "#112233",
+    [
+      [types.HEX_COLOR, "#112233"],
     ]
   );
 

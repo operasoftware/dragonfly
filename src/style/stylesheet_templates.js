@@ -8,20 +8,11 @@ var StylesheetTemplates = function()
   var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
 
-  // TODO: this should be defined somewhere external
-  this._color_properties = {
-    "fill": true,
-    "stroke": true,
-    "stop-color": true,
-    "flood-color": true,
-    "lighting-color": true,
-    "color": true,
-    "border-top-color": true,
-    "border-right-color": true,
-    "border-bottom-color": true,
-    "border-left-color": true,
-    "background-color": true
-  };
+  var TYPE_HEX_COLOR = CssValueTokenizer.types.HEX_COLOR;
+  var TYPE_FUNCTION_START = CssValueTokenizer.types.FUNCTION_START;
+  var TYPE_FUNCTION_END = CssValueTokenizer.types.FUNCTION_END;
+
+  this._css_value_tokenizer = new CssValueTokenizer();
 
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
   {
@@ -139,7 +130,7 @@ var StylesheetTemplates = function()
         ],
         ": ",
         ["span",
-           value,
+           this._parse_value(value, false),
          "class", "css-property-value"
         ],
         ";",
@@ -160,9 +151,11 @@ var StylesheetTemplates = function()
     ];
   };
 
-  this.prop_value = function(declaration, is_editable)
+  this.prop_value = function(declaration, is_editable, no_parsing)
   {
-    var value = this.value(declaration);
+    var value = !no_parsing
+              ? this.parsed_value(declaration, is_editable, no_parsing)
+              : this.value(declaration);
     return [
       (is_editable
        ? ["input",
@@ -184,12 +177,9 @@ var StylesheetTemplates = function()
       ["span",
          value,
          (declaration.priority
-          ? " !important"
-          : ""),
-         (this._color_properties.hasOwnProperty(declaration.property) && is_editable
-          ? ["color-sample",
-             "handler", "show-color-picker",
-             "style", "background-color:" + declaration.value
+          ? ["span",
+               " !important",
+             "class", "css-priority"
             ]
           : []),
        "class", "css-property-value"
@@ -200,19 +190,97 @@ var StylesheetTemplates = function()
 
   this.value = function(declaration)
   {
+    return ["span", declaration.value];
+  };
+
+  this.parsed_value = function(declaration, is_editable)
+  {
+    // Shorthands
     if (declaration.shorthand_tokens)
     {
       return declaration.shorthand_tokens.map(function(token) {
         var value = typeof token == "string"
                   ? token
                   : token.value;
-        return token.is_applied != false
-               ? ["span", value]
-               : ["span", value, "class", "overwritten"];
-      });
+
+        return ["span",
+                  this._parse_value(value, is_editable),
+                "class", token.is_applied === false && "overwritten"
+               ];
+      }, this);
     }
-    return ["span", declaration.value];
+
+    // Non-shorthands
+    return ["span", this._parse_value(declaration.value, is_editable)];
   };
+
+  this._parse_value = function(orig_value, is_editable)
+  {
+    var color_notation = window.settings["dom-side-panel"].get("color-notation");
+    var color_value = [];
+    var prop_value = [];
+    var next_is_url = false;
+    this._css_value_tokenizer.tokenize(orig_value, function(type, value) {
+      var color_swatch = [];
+      if (color_value.length && type === TYPE_FUNCTION_END)
+      {
+        color_value.push(value);
+        value = window.helpers.get_color_in_notation(color_value.join(""), color_notation);
+        color_swatch = this.color_swatch(value, is_editable);
+        color_value = [];
+      }
+      else if ((type === TYPE_FUNCTION_START && this._is_color(value)) || color_value.length)
+      {
+        color_value.push(value);
+        return;
+      }
+      else if (type === TYPE_HEX_COLOR)
+      {
+        value = window.helpers.get_color_in_notation(value, color_notation);
+        color_swatch = this.color_swatch(value, is_editable);
+      }
+      else if (type === TYPE_FUNCTION_START && value === "url(")
+      {
+        next_is_url = true;
+      }
+      else if (next_is_url)
+      {
+        if (type !== TYPE_FUNCTION_END)
+          value = this.linkify_value(value);
+        next_is_url = false;
+      }
+
+      prop_value.push(["span", value, color_swatch]);
+    }.bind(this));
+
+    return prop_value;
+  };
+
+  this.color_swatch = function(value, is_editable)
+  {
+    return [
+      "span",
+      "class", "color-swatch " + (is_editable ? "" : " non-editable"),
+      "handler", is_editable && "show-color-picker",
+      "style", "background-color:" + value
+    ];
+  };
+
+  this.linkify_value = function(value)
+  {
+    if (value.startswith("\"") || value.startswith("'"))
+      value = value.slice(1, -1);
+    return ["span",
+              "\"",
+                ["span",
+                   value,
+                 "handler", "open-resource-tab",
+                 "data-resource-url", value,
+                 "class", "internal-link"
+                ],
+              "\""
+           ];
+  }
 
   this.inherited_header = function(element_name, obj_id)
   {
@@ -226,6 +294,36 @@ var StylesheetTemplates = function()
          "handler", "inspect-node-link"
         ]
     ];
+  };
+
+  this.color_notation_setting = function(settings)
+  {
+    var options = [
+        ["Hex", "hhex"],
+        ["RGB", "rgb"],
+        ["HSL", "hsl"]
+      ].map(function(notation) {
+        return [
+          "option",
+            notation[0],
+          "value", notation[1],
+          "selected", notation[1] == settings.map["color-notation"]
+        ];
+      });
+
+    return [
+      "label",
+        settings.label_map["color-notation"] + ": ",
+        ["select",
+           options,
+         "handler", "color-notation"
+        ]
+    ];
+  };
+
+  this._is_color = function(value)
+  {
+    return /^(rgb|hsl)a?\(/.test(value) || /^#([0-9a-f]{3}){1,2}$/i.test(value);
   };
 };
 

@@ -28,35 +28,75 @@ cls.CSSInspectorView = function(id, name, container_class)
 
 cls.CSSInspectorView.create_ui_widgets = function()
 {
-  var element_style = window.element_style;
   new Settings
   (
     // id
-    "css-inspector",
+    'css-inspector',
     // key-value map
     {
-      "show-expanded-properties": false
+      'link': false,
+      'visited': false,
+      'hover': false,
+      'active': false,
+      'focus': false,
+      'selection': false
     },
     // key-label map
     {
-      "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS
+      'link': ":link",
+      'visited': ":visited",
+      'hover': ":hover",
+      'active': ":active",
+      'focus': ":focus",
+      'selection': "::selection"
     },
     // settings map
     {
-      contextmenu:
+      checkboxes:
       [
-        "show-expanded-properties"
+        'link',
+        'visited',
+        'hover',
+        'active',
+        'focus',
+        'selection'
       ]
     },
     null,
-    "document",
+    null,
     {
-      "show-expanded-properties": function(value)
-      {
-        window.settings["css-inspector"].set("show-expanded-properties", value);
-        element_style.update();
+      "link": function(is_active) {
+        update_pseudo_item("link", is_active);
+      },
+      "visited": function(is_active) {
+        update_pseudo_item("visited", is_active);
+      },
+      "hover": function(is_active) {
+        update_pseudo_item("hover", is_active);
+      },
+      "active": function(is_active) {
+        update_pseudo_item("active", is_active);
+      },
+      "focus": function(is_active) {
+        update_pseudo_item("focus", is_active);
+      },
+      "selection": function(is_active) {
+        update_pseudo_item("selection", is_active);
       }
     }
   );
+
+  function update_pseudo_item(pseudo_item, is_active)
+  {
+    if (is_active)
+    {
+      element_style.add_pseudo_item(pseudo_item);
+    }
+    else
+    {
+      element_style.remove_pseudo_item(pseudo_item);
+    }
+    element_style.update();
+  }
 };
 
