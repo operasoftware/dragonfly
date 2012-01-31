@@ -1,7 +1,7 @@
 ﻿.tooltip-container
 {
   position: absolute;
-  z-index: 300;
+  z-index: 200;
   left: -5000px;
   background-color: #ececec;
   background-image: -o-linear-gradient(-90deg,
