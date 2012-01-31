@@ -5,6 +5,8 @@
  *
  * Tokenize a single CSS value.
  *
+ * @parameters {Boolean} throw_on_error Whether or not to throw on errors.
+ *
  * Example usage:
  *
  *   var css_value_tokenizer = new CssValueTokenizer();
@@ -13,8 +15,6 @@
  *     tokens.push([type, value]); // type is a constant in CssValueTokenizer.types
  *   });
  *   console.log(tokens); // [[7, "1px"], [3, " "], [5, "solid"]]
- *
- * @parameters {Boolean} throw_on_error Whether or not to throw on errors.
  *
  * Caveats:
  * - All numbers with units (including '%') are reported as DIMENSION,
@@ -30,8 +30,11 @@
  */
 var CssValueTokenizer = function(throw_on_error)
 {
-  throw_on_error = Boolean(throw_on_error);
+  this._throw_on_error = Boolean(throw_on_error);
+};
 
+CssValueTokenizer.prototype = new function()
+{
   var WHITESPACE_CHARS = /[ \t\r\n\f]/;
   var STRING_CHARS = /["']/;
   var NUM_CHARS = /[\d\.]/;
@@ -75,13 +78,13 @@ var CssValueTokenizer = function(throw_on_error)
 
   this._throw_error = function(msg)
   {
+    if (!this._throw_on_error)
+      return;
+
     var dashes = (new Array(this._position + 1)).join("-");
-    if (throw_on_error)
-    {
-      throw msg + ":\n" +
-            this._buffer + "\n" +
-            dashes + "^";
-    }
+    throw msg + ":\n" +
+          this._buffer + "\n" +
+          dashes + "^";
   };
 
   this._parse = function(c)
@@ -118,7 +121,7 @@ var CssValueTokenizer = function(throw_on_error)
 
   this._parse_whitespace = function(c)
   {
-    while (WHITESPACE_CHARS.test(c))
+    while (c && WHITESPACE_CHARS.test(c))
     {
       this._token_val += c;
       c = this._buffer[++this._position];
@@ -128,9 +131,9 @@ var CssValueTokenizer = function(throw_on_error)
 
   this._parse_string = function(c)
   {
-    this._token_val = c;
-    var open_quote = c;
     var next_escaped = false;
+    var open_quote = c;
+    this._token_val = c;
     c = this._buffer[++this._position];
 
     while (c)
@@ -163,7 +166,7 @@ var CssValueTokenizer = function(throw_on_error)
     }
 
     // Length should be "#" + 3 or 6 hex chars
-    if (!(this._token_val.length == 4 || this._token_val.length == 7))
+    if (this._token_val.length != 4 || this._token_val.length != 7)
       this._throw_error("Invalid hex color");
 
     this._emit_token(CssValueTokenizer.types.HEX_COLOR);
