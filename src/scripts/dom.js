@@ -686,6 +686,20 @@ if (!"".trim)
   }
 }
 
+if (!Object.getOwnPropertyNames)
+{
+  Object.getOwnPropertyNames = function(obj)
+  {
+    var ret = [];
+    for (var p in obj)
+    {
+      if (obj.hasOwnProperty(p))
+        ret.push(p);
+    }
+    return ret;
+  }
+}
+
 /**
  * Check if a string appears to be a number, that is, all letters in the
  * string are numbers. Does not take in to account decimals. Clones the

@@ -196,49 +196,62 @@
 
   this.runtime_script = function(runtime)
   {
-    var
-    ret = [],
-    script_list = null,
-    script_uri_paths = {};
-    title = runtime.type == "extension" ?
-            ['cst-title', runtime.title] :
-            ['h2', runtime.title];
+    var ret = [];
+    var script_list = null;
+    var script_uri_paths = {};
+    var inline_and_evals = [];
+    var title = runtime.type == "extension"
+              ? ['cst-title', runtime.title]
+              : ['h2', runtime.title];
 
     if (runtime.selected)
       title.push('class', 'selected-runtime');
+
     if (runtime.title_attr)
       title.push('title', runtime.title_attr);
+
     ret.push(title);
 
-    var me = this;
-    runtime.scripts.forEach(function(script){
-      var ret_script = me.script_option(script);
-      var display_uri = helpers.shortenURI(script.uri);
-      var root_uri = me._uri_path(runtime.uri, script, display_uri.uri);
-      if(script_uri_paths.hasOwnProperty(root_uri)){
-        script_uri_paths[root_uri].push(ret_script);
-      } else {
-        script_uri_paths[root_uri] = [ret_script];
+    runtime.scripts.forEach(function(script)
+    {
+      var ret_script = this.script_option(script);
+      if (script.script_type === "linked")
+      {
+        opera.postError(script.abs_dir)
+        var display_uri = helpers.shortenURI(script.uri);
+        var root_uri = this._uri_path(runtime.uri, script, display_uri.uri);
+        if (script_uri_paths.hasOwnProperty(root_uri))
+          script_uri_paths[root_uri].push(ret_script);
+        else
+          script_uri_paths[root_uri] = [ret_script];
       }
-    });
-    script_list = this.flatten_uri_scripts(script_uri_paths);
+      else
+        inline_and_evals.push(ret_script);
+
+    }, this);
+
+    script_list = this._flatten_uri_scripts(script_uri_paths);
+    script_list.push(['cst-title', "Anonymous"]);
+    script_list.extend(inline_and_evals);
 
     if (runtime.type == "extension")
+    { 
       ret.push(['cst-group', script_list]);
+    }
     else
     {
-      ret.push.apply(ret, script_list);
+      ret.extend(script_list);
       if (runtime.browser_js)
         ret.push(['cst-title', 'Browser JS'], 
                  this.script_option(runtime.browser_js));
       if (runtime.user_js_s && runtime.user_js_s.length)
       {
         ret.push(['cst-title', 'User JS']);
-        ret.push.apply(ret, runtime.user_js_s.map(this.script_option, this));
+        ret.extend(runtime.user_js_s.map(this.script_option, this));
       }
       if (runtime.extensions && runtime.extensions.length)
       {
-        ret.push.apply(ret, runtime.extensions.map(this.runtime_script, this));
+        ret.extend(runtime.extensions.map(this.runtime_script, this));
       }
     }
     return ret;
@@ -246,24 +259,25 @@
 
   this._uri_path = function(uri, script, script_name)
   {
-    var uri_path = '';
-    if( script.script_type === 'linked' )
-    {
-      uri_path = script.uri.replace(uri, '');
-      uri_path = uri_path.replace(script_name, '');
-      uri_path = uri_path.replace(/\?.*/,'');
-    } else {
-      uri_path = 'Anonymous';
-    }
+    var uri_path = "";
+    uri = uri.replace(/[^\/]*$/, "");
+    uri_path = script.uri.replace(uri, "./");
+    uri_path = uri_path.replace(/\?.*/, "");
+    var pos = uri_path.length - script_name.length;
+    if (uri_path.indexOf(script_name) == pos)
+      uri_path = uri_path.slice(0, pos);
+
     return uri_path === "" ? script_name : uri_path;
   }
 
-  this.flatten_uri_scripts = function(uri_paths){
+  this._flatten_uri_scripts = function(uri_paths)
+  {
     var ret = [];
-    for(uri in uri_paths){
-      ret.push(['cst-title',uri]);
-      uri_paths[uri].forEach(function(script){ret.push(script);});
-    }
+    Object.getOwnPropertyNames(uri_paths).sort().forEach(function(uri)
+    {
+      ret.push(['cst-title', uri]);
+      ret.extend(uri_paths[uri]);
+    });
     return ret;
   }
 
@@ -306,7 +320,7 @@
       ret.push('class', class_name);
 
     return ret;
-  }
+  };
 
   this['runtime-css'] = function(runtime, org_args)
   {

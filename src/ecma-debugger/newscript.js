@@ -36,7 +36,7 @@ window.cls.NewScript.DOUBLE_QUOTE_STATE = 2;
 window.cls.NewScript.REG_EXP_STATE = 3;
 window.cls.NewScript.COMMENT_STATE = 4;
 
-window.cls.NewScript.prototype = new function()
+window.cls.NewScriptPrototype = function()
 {
   /**
     * Searches the actual data.
@@ -472,4 +472,7 @@ window.cls.NewScript.prototype = new function()
       }
     }
   }
-}
+};
+
+window.cls.NewScriptPrototype.prototype = new URIPrototype("uri");
+window.cls.NewScript.prototype = new window.cls.NewScriptPrototype();
