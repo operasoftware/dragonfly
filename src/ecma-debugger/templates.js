@@ -65,7 +65,20 @@
       'rt-id', runtime.runtime_id.toString()
     ].concat( display_uri.title ? ['title', display_uri.title] : [] )
     ;
-  }
+  };
+
+  var DOMRuntime = function(rt)
+  {
+    this.type = "document";
+    this.id = rt.runtime_id;
+    this.uri = rt.uri;
+    this.title = rt.title || rt.uri; // TODO
+    this.selected = rt.selected;
+    this.extensions = [];
+  };
+
+  DOMRuntime.prototype = new URIPrototype("uri");
+
 
   // to extract the extension runtimes from the runtimes list
   // and push them to a extension property of the owner runtime
@@ -140,16 +153,7 @@
         default:
         {
           display_uri = helpers.shortenURI(rt.uri);
-          rt_obj = 
-          {
-            type: "document",
-            id: rt_id,
-            uri: rt.uri,
-            title: rt.title || display_uri.uri,
-            title_attr: display_uri.title,
-            selected: rt.selected,
-            extensions: [],
-          };
+          rt_obj =  new DOMRuntime(rt);
           if (get_scripts)
           {
             scripts = window.runtimes.getScripts(rt_id, true);
@@ -217,9 +221,7 @@
       var ret_script = this.script_option(script);
       if (script.script_type === "linked")
       {
-        opera.postError(script.abs_dir)
-        var display_uri = helpers.shortenURI(script.uri);
-        var root_uri = this._uri_path(runtime.uri, script, display_uri.uri);
+        var root_uri = this._uri_path(runtime, script);
         if (script_uri_paths.hasOwnProperty(root_uri))
           script_uri_paths[root_uri].push(ret_script);
         else
@@ -257,17 +259,16 @@
     return ret;
   }
 
-  this._uri_path = function(uri, script, script_name)
+  this._uri_path = function(runtime, script)
   {
-    var uri_path = "";
-    uri = uri.replace(/[^\/]*$/, "");
-    uri_path = script.uri.replace(uri, "./");
-    uri_path = uri_path.replace(/\?.*/, "");
-    var pos = uri_path.length - script_name.length;
-    if (uri_path.indexOf(script_name) == pos)
-      uri_path = uri_path.slice(0, pos);
+    var uri_path = script.abs_dir;
 
-    return uri_path === "" ? script_name : uri_path;
+    if (script.abs_dir.indexOf(runtime.abs_dir) == 0)
+      uri_path = "./" + script.abs_dir.slice(runtime.abs_dir.length);
+    else if (script.host == runtime.host && script.protocol == runtime.protocol)
+      uri_path = "/" + script.dir_pathname;
+
+    return uri_path;
   }
 
   this._flatten_uri_scripts = function(uri_paths)
@@ -275,7 +276,9 @@
     var ret = [];
     Object.getOwnPropertyNames(uri_paths).sort().forEach(function(uri)
     {
-      ret.push(['cst-title', uri]);
+      if (uri != "./")
+        ret.push(['cst-title', uri]);
+        
       ret.extend(uri_paths[uri]);
     });
     return ret;
@@ -294,28 +297,36 @@
 
   this.script_option = function(script)
   {
-    var display_uri = helpers.shortenURI(script.uri);
-    var script_type = this._script_type_map[script.script_type] || script.script_type;
-    var ret = 
-    [
-      'cst-option',
-      ["span", (script.script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
-        [(
-          display_uri.uri ?
-          ["span", display_uri.uri] :
-          ["code", 
-            script.script_data.slice(0, 360).replace(/\s+/g, " ").slice(0, 120), 
-            "class", "code-snippet"]
-        )]
-      ],
-      'script-id', script.script_id.toString()
-    ];
-    var class_name = script.script_id == this.selected_script_id ? 
-                     'selected' : '';
+    var script_type = this._script_type_map[script.script_type] ||
+                      script.script_type;
+    var ret = null;
+
+    if (script.script_type == "linked")
+    {
+      ret = ["cst-option",
+              ["span", script.filename], 
+              "script-id", script.script_id.toString()];
+    }
+    else
+    {
+      var code_snippet = script.script_data.slice(0, 360)
+                               .replace(/\s+/g, " ").slice(0, 120);
+      ret = ["cst-option",
+              ["span", script_type.capitalize(true) + " – ",
+                ["code", code_snippet, "class", "code-snippet"]],
+              "script-id", script.script_id.toString()];
+    }
+
+    var class_name = script.script_id == this.selected_script_id
+                   ? 'selected'
+                   : '';
+
     if (this.stopped_script_id == script.script_id)
       class_name += ( class_name && ' ' || '' ) + 'stopped';
-    if (display_uri.title)
-      ret.push('title', display_uri.title);
+
+    if (script.uri)
+      ret.push('title', script.uri);
+    
     if (class_name)
       ret.push('class', class_name);
 

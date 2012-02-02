@@ -2,6 +2,25 @@
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
+cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
+{
+  var RUNTIME_ID = 0;
+  var HTML_FRAME_PATH = 1;
+  var WINDOW_ID = 2;
+  var OBJECT_ID = 3;
+  var URI = 4;
+  var DESCRIPTION = 5;
+
+  this.runtime_id = runtime[RUNTIME_ID];
+  this.html_frame_path = runtime[HTML_FRAME_PATH];
+  this.window_id = runtime[WINDOW_ID];
+  this.object_id = runtime[OBJECT_ID];
+  this.uri = runtime[URI];
+  this.description = runtime[DESCRIPTION];
+};
+
+cls.EcmascriptDebugger["6.0"].Runtime.prototype = new URIPrototype("uri");
+
 /**
   * @constructor
   */
@@ -24,6 +43,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   THREAD_FINISHED = 2;
 
   var __runtimes = {};
+
+  var __runtime_class = cls.EcmascriptDebugger["6.0"].Runtime;
 
   var __old_runtimes = {};
 
@@ -294,15 +315,11 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       {
         __runtimes_arr[k] = runtimeId;
       }
-      runtime =
-      {
-        runtime_id: r_t[RUNTIME_ID],
-        html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID] || __selected_window,
-        object_id: r_t[OBJECT_ID],
-        uri: r_t[URI],
-        description: r_t[DESCRIPTION],
-      };
+
+      runtime = new __runtime_class(r_t);
+
+      if (!runtime.window_id)
+        runtime.window_id = __selected_window;
 
       checkOldRuntimes(runtime);
       if( runtime.is_top = isTopRuntime(runtime) )
@@ -954,35 +971,6 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     }
   }
 
-  // windows means runtime containers here to stay in sync with the xml protocol
-
-  this.getWindows = function()
-  {
-    var ret = [], r = '', is_unfolded = true;
-    for( r in __runtimes )
-    {
-      if( __runtimes[r] && __runtimes[r].html_frame_path && __runtimes[r].html_frame_path.indexOf('[') == -1 )
-      {
-        is_unfolded = true;
-        if( __windowsFolding[__runtimes[r].window_id] === false )
-        {
-          is_unfolded = false;
-        }
-        ret[ret.length] =
-        {
-          id: __runtimes[r].window_id,
-          uri: __runtimes[r].uri,
-          title: __runtimes[r]['title'] || '',
-          is_unfolded: is_unfolded,
-          is_selected: __selected_window == __runtimes[r].window_id ||
-            __selected_window == __runtimes[r].opener_window_id,
-          runtimes: this.getRuntimes( __runtimes[r].window_id )
-        }
-      }
-    }
-    return ret;
-  }
-
   this.getActiveWindowId = function()
   {
     return __selected_window;
@@ -1369,3 +1357,5 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   }
 
 }
+
+

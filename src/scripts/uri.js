@@ -3,7 +3,7 @@ var URI = function(uri)
   this._init(uri);
 };
 
-URIPrototype = function(uri_prop_name)
+var URIPrototype = function(uri_prop_name)
 {
   /*
     interface
@@ -38,9 +38,8 @@ URIPrototype = function(uri_prop_name)
       if (!this._a)
         this._init();
 
-      return this._a[prop];  
+      return this._a ? this._a[prop] : undefined;  
     });
-
     this.__defineSetter__(prop, function() {});
     
   }, this);
@@ -48,25 +47,27 @@ URIPrototype = function(uri_prop_name)
   this.__defineGetter__("filename", function()
   {
         
-    if (!this._filename)
+    if (!this._filename && (this._a || this[uri_prop_name]))
       this._filename = this.pathname.slice(this.pathname.lastIndexOf("/") + 1);
 
     return this._filename;  
   });
 
+  this.__defineSetter__("filename", function() {});
+
   this.__defineGetter__("dir_pathname", function()
   {
-    if (!this._dir_pathname)
+    if (!this._dir_pathname && (this._a || this[uri_prop_name]))
       this._dir_pathname = this.pathname.slice(0, this.pathname.lastIndexOf("/") + 1);
 
     return this._dir_pathname;  
   });
 
-  this.__defineSetter__("abs_dir", function() {});
+  this.__defineSetter__("dir_pathname", function() {});
 
   this.__defineGetter__("abs_dir", function()
   {
-    if (!this._abs_dir)
+    if (!this._abs_dir && (this._a || this[uri_prop_name]))
       this._abs_dir = this.protocol + "//" + this.host + this.dir_pathname;
 
     return this._abs_dir;  
