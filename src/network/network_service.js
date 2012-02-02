@@ -438,6 +438,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this.unloaded = false;
   this.is_finished = null;
   this.events = [];
+  this.event_gaps = [];
 
   this.update = function(eventname, eventdata)
   {
@@ -467,7 +468,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     if (!unlisted_events.contains(eventname))
     {
       this.endtime = eventdata.time;
-      this.events.push({name: eventname, time: eventdata.time, request_id: eventdata.requestID});
+      this._add_event(eventname, eventdata);
     }
 
     if (updatefun)
@@ -479,6 +480,114 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       opera.postError("got unknown event: " + eventname);
     }
   };
+
+  
+// gap_def format: 
+/* {
+     "classname": "type of sequence",
+     "sequences": {
+       "from_event_name": [
+         "to_event_name_one",
+         "to_event_name_two"
+       ]
+     }
+   } */
+
+  this._gap_defs = [
+    {
+      classname: "blocked",
+      sequences: {
+        "urlload": [
+          "request",
+          "urlredirect",
+          "urlfinished"
+        ],
+        "responseheader": [
+          "urlredirect",
+          "requestretry"
+        ],
+        "requestfinished": [
+          "requestretry",
+          "responsefinished"
+        ],
+        "requestretry": [
+          "request"
+        ],
+        "responsefinished": [
+          "urlfinished",
+          // responsefinished can occur twice, see CORE-43284.
+          // This is fixed and stops showing up when integrated.
+          "responsefinished"
+        ],
+        "urlredirect": [
+          "urlfinished",
+          "responsefinished"
+        ]
+      }
+    },
+    {
+      classname: "request",
+      sequences: {
+        "request": ["requestheader"],
+        "requestheader": ["requestfinished"]
+      }
+    },
+    {
+      classname: "waiting",
+      sequences: {
+        "requestfinished": [
+          "response",
+          // The response-phase can be closed without ever seeing a response event, for 
+          // example because the request was aborted. See CORE-43284.
+          "responsefinished"
+        ],
+        "responseheader": [
+          // Occurs when a 100-Continue response was sent. In this timespan the client has
+          // ignored it and waits for another response to come in. See CORE-43264.
+          "response"
+        ]
+      }
+    },
+    {
+      classname: "receiving",
+      sequences: {
+        "response": ["responseheader"],
+        "responseheader": ["responsefinished"]
+      }
+    }
+  ];
+
+  this.get_gap_classname = function(gap)
+  {
+    return this._gap_defs.filter(function(def){
+      return def.sequences[gap.from_event.name] &&
+             def.sequences[gap.from_event.name].contains(gap.to_event.name);
+    })[0].classname;
+  };
+
+  this._add_event = function(eventname, eventdata)
+  {
+    var evt = {name: eventname, time: eventdata.time, request_id: eventdata.requestID};
+    // add to events
+    this.events.push(evt);
+
+    // add to event gaps.
+    if (this.event_gaps.length)
+    {
+      var gap = this.event_gaps.last;
+      gap.to_event = evt;
+      // gap now has from and to. Add val, val_string and classname.
+      gap.val = gap.to_event.time - gap.from_event.time;
+      gap.val_string = gap.val.toFixed(2) + "ms";
+      gap.classname = this.get_gap_classname(gap);
+
+      if (!gap.classname)
+        opera.postError("Unexpected event sequence between " + gap.from_event.name + 
+                        " and " + gap.to_event.name + " (" + gap.val_string + " spent)");
+    }
+    // the evt is also the next gaps from_event.
+    this.event_gaps.push({from_event: evt});
+  }
 
   this.get_duration = function()
   {

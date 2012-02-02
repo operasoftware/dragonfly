@@ -309,120 +309,6 @@ templates.network_graph_rows = function(ctx, width, basetime, duration)
   return tpls;
 };
 
-// gap_def format: 
-/* {
-     "classname": "type of sequence",
-     "sequences": {
-       "from_event_name": [
-         "to_event_name_one",
-         "to_event_name_two"
-       ]
-     }
-   } */
-
-templates.network_gap_defs = [
-  {
-    classname: "blocked",
-    sequences: {
-      "urlload": [
-        "request",
-        "urlredirect",
-        "urlfinished"
-      ],
-      "responseheader": [
-        "urlredirect",
-        "requestretry"
-      ],
-      "requestfinished": [
-        "requestretry",
-        "responsefinished"
-      ],
-      "requestretry": [
-        "request"
-      ],
-      "responsefinished": [
-        "urlfinished",
-        // responsefinished can occur twice, see CORE-43284.
-        // This is fixed and stops showing up when integrated.
-        "responsefinished"
-      ],
-      "urlredirect": [
-        "urlfinished",
-        "responsefinished"
-      ]
-    }
-  },
-  {
-    classname: "request",
-    sequences: {
-      "request": ["requestheader"],
-      "requestheader": ["requestfinished"]
-    }
-  },
-  {
-    classname: "waiting",
-    sequences: {
-      "requestfinished": [
-        "response",
-        // The response-phase can be closed without ever seeing a response event, for 
-        // example because the request was aborted. See CORE-43284.
-        "responsefinished"
-      ],
-      "responseheader": [
-        // Occurs when a 100-Continue response was sent. In this timespan the client has
-        // ignored it and waits for another response to come in. See CORE-43264.
-        "response"
-      ]
-    }
-  },
-  {
-    classname: "receiving",
-    sequences: {
-      "response": ["responseheader"],
-      "responseheader": ["responsefinished"]
-    }
-  }
-];
-templates.network_error_store = {};
-
-templates.network_get_event_gaps = function(events)
-{
-  var gap_defs = templates.network_gap_defs;
-
-  var event_gaps = [];
-  // todo: do this when we see the network event, with just that one.
-  for (var i = 0; i < events.length - 1; i++)
-  {
-    var from_event = events[i];
-    var to_event = events[i + 1];
-    var gap_def = gap_defs.filter(function(def){
-      return def.sequences[from_event.name] &&
-             def.sequences[from_event.name].contains(to_event.name);
-    })[0];
-
-    var classname = gap_def && gap_def.classname;
-    if (!classname)
-    {
-      classname = "unexpected_network_event_sequence";
-      var error_str = ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-            "Unexpected event sequence between " + from_event.name + " and " + to_event.name + " (" + (to_event.time - from_event.time) + "ms spent)";
-      if (!templates.network_error_store[error_str])
-      {
-        opera.postError(error_str);
-        templates.network_error_store[error_str] = true;
-      }
-    }
-    event_gaps.push({
-      classname: classname,
-      val: to_event.time - from_event.time,
-      from_event: from_event.name,
-      to_event: to_event.name,
-      val_string: new Number((to_event.time - from_event.time).toFixed(2)) + "ms"
-    });
-  }
-  return event_gaps;
-}
-
 templates.network_graph_row = function(entry, width, basetime, duration)
 {
   var scale = width / duration;
@@ -443,13 +329,16 @@ templates.network_graph_row = function(entry, width, basetime, duration)
 templates.network_graph_sections = function(entry, width, duration)
 {
   var scale = width / duration;
-  var gaps = templates.network_get_event_gaps(entry.events, false);
-  var sections = gaps.map(function(section){
+  var gaps = entry.event_gaps;
+  var sections = entry.event_gaps.map(function(section){
+    if (section.val)
+    {
       return [
         "span",
         "class", "network-section network-" + section.classname,
-        "style", "width:" + (section.val || 0) * scale + "px;"
+        "style", "width:" + section.val * scale + "px;"
       ];
+    }
   });
 
   return ["span", sections,
@@ -472,20 +361,18 @@ templates.network_graph_entry_tooltip = function(entry)
     var scale = height / duration;
     var total_length_string = new Number(duration).toFixed(2) + "ms";
 
-    var gaps = templates.network_get_event_gaps(entry.events);
-    gaps.map(function(section){section.px = section.val * scale});
-    gaps.forEach(function(section){
+    entry.event_gaps.forEach(function(section){
       if (section.val)
       {
         graphical_sections.push([
           "div",
           "class", "network-tooltip-section network-" + section.classname,
-          "style", "height:" + section.px + "px;"
+          "style", "height:" + section.val * scale + "px;"
         ]);
       }
     });
 
-    var event_name_map = {
+    var event_name_map = { // todo: take me to the service?
       "urlload": "URL started",
       "request": "Request started",
       "requestheader": "Request headers written",
@@ -498,15 +385,19 @@ templates.network_graph_entry_tooltip = function(entry)
       "urlfinished": "URL completed"
     };
 
-    var previous_event_ms;
-    var event_rows = gaps.map(function(gap, index, arr)
+    var event_rows = entry.event_gaps.map(function(gap, index, arr)
     {
-      return [
-               ["tr", 
-                 ["td", gap.val_string, "class", "time_data mono"], ["td", event_name_map[gap.from_event], "class", "event_name"]
-               ],
-               arr.length - 1 === index ? ["tr",["td"], ["td", event_name_map[gap.to_event], "class", "event_name"]] : []
-             ];
+      if (gap.to_event)
+      {
+        return ["tr", 
+                 ["td", gap.val_string, "class", "time_data mono"], ["td", event_name_map[gap.from_event.name], "class", "event_name"]
+               ];
+      }
+      else
+      {
+        // The last one never has a to_event, but it's from_event closes the sequence. And when it's only 1, it also opens it.
+        return ["tr",["td"], ["td", event_name_map[gap.from_event.name], "class", "event_name"]]
+      }
     });
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
@@ -517,9 +408,10 @@ templates.network_graph_entry_tooltip = function(entry)
     var y_start = 0.5;
     var y_ref = 0;
     var x_end = svg_width;
+    var y_end = 0;
 
-    entry.events.forEach(function(ev, index) {
-      if (!index) // todo: omg fix it!
+    entry.events.forEach(function(ev, index) { // todo: this should most likely just go over the event_gaps
+      if (!index)
       {
         pathes.push([]);
       }
@@ -527,11 +419,11 @@ templates.network_graph_entry_tooltip = function(entry)
       {
         if (pathes.length)
         {
-          var event_height = Math.round(gaps[pathes.length - 1].px);
+          var event_height = Math.round(entry.event_gaps[pathes.length - 1].val * scale);
           y_start = y_ref + (event_height / 2);
           y_ref += event_height;
         }
-        var y_end = (pathes.length * 19) - 2;
+        y_end = (pathes.length * 19) - 2;
         pathes.push(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
       }
     });
