@@ -725,13 +725,15 @@ breadcrumb span
   margin-left: -20px;
 }
 
-.script-options h2,
-.stylesheet-options h2
+/* js source file drop down */
+
+.js-dd-runtime
 {
   padding: 2px 4px;
   border: 0 solid #b3b3b3;
   border-width: 1px 0;
   background-color: #e6e6e6;
+  color: black;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -739,30 +741,46 @@ breadcrumb span
   font-weight: normal;
 }
 
-.script-options h2.selected-runtime,
-.stylesheet-options h2.selected-runtime
+.js-dd-ext-runtime
+{
+  padding: 2px 4px;
+  border-width: 1px 0;
+  background-color: #eee;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.js-dd-dir-path
+{
+  font-style: italic;
+  color: #666;
+  background-color: transparent;
+
+}
+
+.js-dd-runtime.selected-runtime
 {
   color: #000;
 }
 
-.script-options h2:first-child,
-.stylesheet-options h2:first-child,
-.script-options h2 + h2,
-.stylesheet-options h2 + h2
+.js-dd-runtime:first-child,
+.js-dd-runtime + .js-dd-runtime
 {
   border-top: none;
 }
 
-.script-options h2:last-child,
-.stylesheet-options h2:last-child
+.js-dd-runtime:last-child
 {
   border-bottom: none;
 }
 
-.script-options cst-option,
-.stylesheet-options cst-option
+.script-options cst-option
 {
-  padding-left: 2.5em;
+  padding-left: 2em;
 }
 
 .script-options cst-option
@@ -781,6 +799,7 @@ breadcrumb span
 {
   background-position: 5px 50%;
 }
+
 
 parent-node-chain breadcrumb span
 {

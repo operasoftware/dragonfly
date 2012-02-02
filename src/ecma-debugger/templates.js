@@ -41,7 +41,7 @@
 
   this.runtime_dropdown = function(runtimes)
   {
-    return this._group_runtimes(runtimes, false).map(this.runtime, this);
+    return runtimes.map(this.runtime, this);
   }
 
   this.runtime = function(runtime)
@@ -67,158 +67,38 @@
     ;
   };
 
-  var DOMRuntime = function(rt)
-  {
-    this.type = "document";
-    this.id = rt.runtime_id;
-    this.uri = rt.uri;
-    this.title = rt.title || rt.uri; // TODO
-    this.selected = rt.selected;
-    this.extensions = [];
-  };
-
-  DOMRuntime.prototype = new URIPrototype("uri");
-
-
-  // to extract the extension runtimes from the runtimes list
-  // and push them to a extension property of the owner runtime
-  // if the get_script flag is set, the scripts of the runtime are sorted to 
-  // scripts, browser_js and user_js_s.
-  this._group_runtimes = function(runtimes, get_scripts)
-  {
-    /*
-      runtime =
-      {
-        runtime_id: r_t[RUNTIME_ID],
-        html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID] || __selected_window,
-        object_id: r_t[OBJECT_ID],
-        uri: r_t[URI],
-        description: r_t[DESCRIPTION],
-      };
-
-      script =
-      {
-        runtime_id: message[RUNTIME_ID],
-        script_id: message[SCRIPT_ID],
-        script_type: message[SCRIPT_TYPE],
-        script_data: message[SCRIPT_DATA],
-        uri: message[URI]
-      };
-    */
-
-    var 
-    rts = [],
-    rt_map = {},
-    rt = null, 
-    rt_obj = null,
-    i = 0,
-    display_uri = null,
-    rt_id = 0,
-    scripts = null,
-    script = null,
-    j = 0,
-    browser_js = null,
-    user_js_s = null;
-    
-    for ( ; rt = runtimes[i]; i++)
-    {
-      rt_id = rt.runtime_id;
-      switch (rt.description)
-      {
-        case "extensionjs":
-        {
-          var owner_rt = rt_map[rt.uri];
-          if (owner_rt)
-          {
-            rt_obj =
-            {
-              type: "extension",
-              id: rt_id,
-              uri: rt.uri,
-              title: "Extension Runtime " + rt.runtime_id,
-            };
-            if (get_scripts)
-              rt_obj.scripts = window.runtimes.getScripts(rt_id);
-            owner_rt.extensions.push(rt_obj);
-            runtimes.splice(i, 1);
-            i--;
-          }
-          else
-            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
-                            'extension rt without owner rt in templates.script_dropdown')
-          break
-        }
-        
-        default:
-        {
-          display_uri = helpers.shortenURI(rt.uri);
-          rt_obj =  new DOMRuntime(rt);
-          if (get_scripts)
-          {
-            scripts = window.runtimes.getScripts(rt_id, true);
-            browser_js = null;
-            user_js_s = [];
-            for (j = scripts.length - 1; script = scripts[j]; j--)
-            {
-              switch (script.script_type)
-              {
-                case "Browser JS":
-                  browser_js = scripts.splice(j, 1)[0];
-                  break;
-
-                case "User JS":
-                  user_js_s.push(scripts.splice(j, 1)[0]); 
-                  break;
-              }
-            }
-            rt_obj.scripts = scripts;
-            rt_obj.browser_js = browser_js;
-            rt_obj.user_js_s = user_js_s;
-          }
-          rt_map[rt.uri] = rt_obj;
-          rts.push(rt_obj);
-        }
-      }
-    }
-    return rts;
-  }
-
   this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
   {
-    var context = new this._ScriptsContext(stopped_script_id, selected_script_id);
-    return context._group_runtimes(runtimes, true).map(context.runtime_script, context);
-  }
+    var ret = [["input", "type", "text", "class", "js-dd-filter"]];
+    for (var i = 0, rt; rt = runtimes[i]; i++)
+    {
+      ret.push(this.runtime_script(rt, stopped_script_id, selected_script_id));
+    }
+    return ret;
+  };
 
-  this._ScriptsContext = function(stopped_script_id, selected_script_id)
-  {
-    this.stopped_script_id = stopped_script_id;
-    this.selected_script_id = selected_script_id;
-  }
-
-  this._ScriptsContext.prototype = this;
-
-  this.runtime_script = function(runtime)
+  this.runtime_script = function(runtime, stopped_script_id, selected_script_id)
   {
     var ret = [];
-    var script_list = null;
     var script_uri_paths = {};
     var inline_and_evals = [];
-    var title = runtime.type == "extension"
-              ? ['cst-title', runtime.title]
-              : ['h2', runtime.title];
+    var title = ['cst-title', runtime.title];
+    var class_name = runtime.type == "extension"
+                   ? 'js-dd-ext-runtime'
+                   : 'js-dd-runtime';
+      
+    title.push('class', class_name + (runtime.selected ? " selected-runtime" : ""));
 
-    if (runtime.selected)
-      title.push('class', 'selected-runtime');
-
-    if (runtime.title_attr)
-      title.push('title', runtime.title_attr);
+    if (runtime.title != runtime.uri)
+      title.push('title', runtime.uri);
 
     ret.push(title);
 
     runtime.scripts.forEach(function(script)
     {
-      var ret_script = this.script_option(script);
+      var ret_script = this.script_option(script, 
+                                          stopped_script_id, 
+                                          selected_script_id);
       if (script.script_type === "linked")
       {
         var root_uri = this._uri_path(runtime, script);
@@ -232,28 +112,48 @@
 
     }, this);
 
-    script_list = this._flatten_uri_scripts(script_uri_paths);
-    script_list.push(['cst-title', "Anonymous"]);
-    script_list.extend(inline_and_evals);
-
-    if (runtime.type == "extension")
-    { 
-      ret.push(['cst-group', script_list]);
-    }
-    else
+    var script_list = [];
+    Object.getOwnPropertyNames(script_uri_paths).sort().forEach(function(uri)
     {
-      ret.extend(script_list);
-      if (runtime.browser_js)
-        ret.push(['cst-title', 'Browser JS'], 
-                 this.script_option(runtime.browser_js));
-      if (runtime.user_js_s && runtime.user_js_s.length)
+      if (uri != "./")
+        ret.push(['cst-title', uri, 'class', 'js-dd-dir-path']);
+
+      ret.extend(script_uri_paths[uri]);
+    });
+
+    if (runtime.type != "extension" && inline_and_evals.length)
+      script_list.push(['cst-title', 
+                          "Inline, Eval, Timeout and Event handler scripts",
+                          'class', 'js-dd-dir-path']);
+
+    script_list.extend(inline_and_evals);
+    ret.extend(script_list);
+    if (runtime.type != "extension")
+    {
+      if (runtime.browser_js || (runtime.user_js_s && runtime.user_js_s.length))
       {
-        ret.push(['cst-title', 'User JS']);
-        ret.extend(runtime.user_js_s.map(this.script_option, this));
+        ret.push(['cst-title', 'Browser and User JS', 'class', 'js-dd-dir-path']);
+
+        if (runtime.browser_js)
+          ret.push(this.script_option(runtime.browser_js))
+
+        if (runtime.user_js_s && runtime.user_js_s.length)
+        {
+          for (var i = 0, script; script = runtime.user_js_s[i]; i++)
+          {
+            ret.push(this.script_option(script,
+                                        stopped_script_id,
+                                        selected_script_id));
+          }
+        }
       }
-      if (runtime.extensions && runtime.extensions.length)
+
+      if (runtime.extensions)
       {
-        ret.extend(runtime.extensions.map(this.runtime_script, this));
+        for (var i = 0, rt; rt = runtime.extensions[i]; i++)
+        {
+          ret.push(this.runtime_script(rt, stopped_script_id, selected_script_id));
+        }
       }
     }
     return ret;
@@ -269,20 +169,7 @@
       uri_path = "/" + script.dir_pathname;
 
     return uri_path;
-  }
-
-  this._flatten_uri_scripts = function(uri_paths)
-  {
-    var ret = [];
-    Object.getOwnPropertyNames(uri_paths).sort().forEach(function(uri)
-    {
-      if (uri != "./")
-        ret.push(['cst-title', uri]);
-        
-      ret.extend(uri_paths[uri]);
-    });
-    return ret;
-  }
+  };
 
   // script types in the protocol:
   // "inline", "event", "linked", "timeout",
@@ -295,7 +182,7 @@
     "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
   };
 
-  this.script_option = function(script)
+  this.script_option = function(script, stopped_script_id, selected_script_id)
   {
     var script_type = this._script_type_map[script.script_type] ||
                       script.script_type;
@@ -317,11 +204,11 @@
               "script-id", script.script_id.toString()];
     }
 
-    var class_name = script.script_id == this.selected_script_id
+    var class_name = script.script_id == selected_script_id
                    ? 'selected'
                    : '';
 
-    if (this.stopped_script_id == script.script_id)
+    if (stopped_script_id == script.script_id)
       class_name += ( class_name && ' ' || '' ) + 'stopped';
 
     if (script.uri)

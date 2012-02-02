@@ -42,9 +42,15 @@
   {
     var ele = event.target;
 
-    event.stopPropagation();
-    event.preventDefault();
     while (ele != modal_box && (ele = ele.parentElement));
+
+    if (!ele || !(event.target.nodeName.toLowerCase() == "input" &&
+                  event.target.type == "text"))
+    {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  
     if (!ele)
     {
       self.remove_select();

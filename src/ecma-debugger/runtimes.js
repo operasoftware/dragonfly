@@ -21,6 +21,26 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
 
 cls.EcmascriptDebugger["6.0"].Runtime.prototype = new URIPrototype("uri");
 
+cls.EcmascriptDebugger["6.0"].DOMRuntime = function(rt)
+{
+  this.type = "document";
+  this.id = rt.runtime_id;
+  this.uri = rt.uri;
+  this.title = rt.title || rt.uri; // TODO
+  this.selected = rt.selected;
+  this.extensions = [];
+};
+
+cls.EcmascriptDebugger["6.0"].DOMRuntime.prototype = new URIPrototype("uri");
+
+cls.EcmascriptDebugger["6.0"].ExtensionRuntime = function(rt)
+{
+  this.type = "extension";
+  this.id = rt.runtime_id;
+  this.uri = rt.uri;
+  this.title = "Extension Runtime " + rt.runtime_id;
+};
+
 /**
   * @constructor
   */
@@ -44,7 +64,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var __runtimes = {};
 
-  var __runtime_class = cls.EcmascriptDebugger["6.0"].Runtime;
+  var __rt_class = cls.EcmascriptDebugger["6.0"].Runtime;
+  var __dom_rt_class = cls.EcmascriptDebugger["6.0"].DOMRuntime;
+  var __ext_rt_class = cls.EcmascriptDebugger["6.0"].ExtensionRuntime;
 
   var __old_runtimes = {};
 
@@ -316,7 +338,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         __runtimes_arr[k] = runtimeId;
       }
 
-      runtime = new __runtime_class(r_t);
+      runtime = new __rt_class(r_t);
 
       if (!runtime.window_id)
         runtime.window_id = __selected_window;
@@ -976,7 +998,69 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return __selected_window;
   }
 
+  this.get_dom_runtimes = function(get_scripts)
+  {
+    var rts = this.getRuntimes(__selected_window);
+    var rt = null; 
+    for (var i = 0; (rt = rts[i]) && !rt.selected; i++);
+    if (!rt && rts[0])
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected');
+      return;
+    }
 
+    var dom_rts = [];
+    var rt_map = {};
+    
+    for (var i = 0, rt_id = 0; rt = rts[i]; i++)
+    {
+      rt_id = rt.runtime_id;
+      if (rt.description == "extensionjs")
+      {
+        var owner_rt = rt_map[rt.uri];
+        if (owner_rt)
+        {
+          var rt_obj = new __ext_rt_class(rt);
+          if (get_scripts)
+            rt_obj.scripts = this.getScripts(rt_id, true);
+
+          owner_rt.extensions.push(rt_obj);
+        }
+        else
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+                          'extension rt without owner rt in get_dom_runtimes');
+      }
+      else
+      {
+        var rt_obj =  new __dom_rt_class(rt);
+        if (get_scripts)
+        {
+          var scripts = this.getScripts(rt_id, true);
+          var browser_js = null;
+          var user_js_s = [];
+          for (var j = scripts.length - 1, script; script = scripts[j]; j--)
+          {
+            switch (script.script_type)
+            {
+              case "Browser JS":
+                browser_js = scripts.splice(j, 1)[0];
+                break;
+
+              case "User JS":
+                user_js_s.push(scripts.splice(j, 1)[0]); 
+                break;
+            }
+          }
+          rt_obj.scripts = scripts;
+          rt_obj.browser_js = browser_js;
+          rt_obj.user_js_s = user_js_s;
+        }
+        rt_map[rt.uri] = rt_obj;
+        dom_rts.push(rt_obj);
+      }
+    }
+    return dom_rts;
+  };
 
   this.getRuntimes = function(window_id)
   {
