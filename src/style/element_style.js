@@ -64,7 +64,12 @@ cls.ElementStyle = function()
   this.get_style = function()
   {
     if (this._has_data)
-      return window.helpers.copy_object(this._style_declarations.nodeStyleList);
+    {
+      return {
+        rt_id: this._style_declarations.rt_id,
+        style_list: window.helpers.copy_object(this._style_declarations.nodeStyleList)
+      };
+    }
 
     if (this._selected_element)
       this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
@@ -75,17 +80,17 @@ cls.ElementStyle = function()
   this.get_computed_style = function()
   {
     if (this._has_data)
-      return window.helpers.copy_object(this._style_declarations.computedStyleList);
+    {
+      return {
+        rt_id: this._style_declarations.rt_id,
+        style_list: window.helpers.copy_object(this._style_declarations.computedStyleList)
+      };
+    }
 
     if (this._selected_element)
       this._get_data(this._selected_element.rt_id, this._selected_element.obj_id);
 
     return null;
-  };
-
-  this.get_rt_id = function()
-  {
-    return this._rt_id;
   };
 
   this.get_set_props = function()
@@ -375,6 +380,7 @@ cls.ElementStyle = function()
     }
 
     this._style_declarations = new cls.CssStyleDeclarations(message);
+    this._style_declarations.rt_id = rt_id;
     this._has_data = true;
 
     var disabled_style_dec_list = this.disabled_style_dec_list;

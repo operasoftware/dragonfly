@@ -823,6 +823,6 @@ Color.prototype = new function()
   {
     return this._rgb_to_hsl_or_hsv ( r, g, b, true );
   }
-
 }
+
 Color.prototype.constructor = Color;

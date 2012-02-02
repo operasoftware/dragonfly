@@ -121,20 +121,22 @@ cls.Stylesheets = function()
     // even if it has the initial value
     var set_props = window.element_style.get_set_props();
     var search_term = window.element_style.get_search_term();
-    var hide_initial_value = !window.settings['css-comp-style'].get('show-initial-values');
+    var show_initial_value = window.settings["css-comp-style"].get("show-initial-values");
+    var show_expanded_props = window.settings["css-inspector"].get("show-expanded-properties");
 
     for (var i = 0; i < this._css_index_map.length; i++)
     {
       var index = this._sorted_index_map[i];
       var prop = this._css_index_map[index];
-      var value = data[index];
+      var value = data.style_list[index];
       var is_not_initial_value =
-        hide_initial_value
+        !show_initial_value
         && value != ""
-        && value != cls.Stylesheets.get_initial_value(prop, data, this._css_index_map)
+        && value != cls.Stylesheets.get_initial_value(prop, data.style_list, this._css_index_map)
         || false;
       var display =
-        (!hide_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
+        (show_initial_value || set_props.indexOf(prop) != -1 || is_not_initial_value)
+        && this._show_prop_in_computed_style(prop, show_initial_value, show_expanded_props)
         && (prop.indexOf(search_term) != -1 ||
             value.indexOf(search_term) != -1);
 
@@ -145,12 +147,37 @@ cls.Stylesheets = function()
     return template;
   };
 
+  /**
+   * To avoid getting the computed style section messy, hide some of the border-*
+   * properties.
+   */
+  this._show_prop_in_computed_style = function(prop, show_initial_value, show_expanded_props)
+  {
+    if (show_initial_value)
+      return true;
+
+    if (prop == "border")
+      return false;
+
+    if (show_expanded_props)
+    {
+      return ["border-color", "border-style", "border-width"].indexOf(prop) != -1
+             ? false
+             : !CssShorthandResolver.shorthands[prop];
+    }
+
+    return ["border-top", "border-right", "border-bottom", "border-left"].indexOf(prop) != -1
+           ? true
+           : !CssShorthandResolver.property_to_shorthand[prop];
+  };
+
   this.pretty_print_cascaded_style = function(data)
   {
     var template = [];
     var search_term = window.element_style.get_search_term();
+    var style_list = data.style_list;
 
-    for (var i = 0, node_style; node_style = data[i]; i++)
+    for (var i = 0, node_style; node_style = style_list[i]; i++)
     {
       var element_name = node_style.elementName;
       var style_dec_list = node_style.styleList;
@@ -172,17 +199,16 @@ cls.Stylesheets = function()
           template.push(this._templates.inherited_header(element_name, node_style.objectID));
         }
 
-        template.push(this._pretty_print_rule(rule, node_style.objectID, element_name));
+        template.push(this._pretty_print_rule(rule, data.rt_id, node_style.objectID, element_name));
       }
     }
 
     return template;
   };
 
-  this._pretty_print_rule = function(rule, obj_id, element_name)
+  this._pretty_print_rule = function(rule, rt_id, obj_id, element_name)
   {
     var decl_list = this._pretty_print_declaration_list(rule);
-    var rt_id = window.element_style.get_rt_id();
     switch (rule.origin)
     {
     case ORIGIN_USER_AGENT:

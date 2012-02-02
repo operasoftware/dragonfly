@@ -13,9 +13,8 @@ cls.CSSInspectorCompStyleView = function(id, name, container_class)
     var data = element_style.get_computed_style();
     if (data)
     {
-      var rt_id = element_style.get_rt_id();
       styles.clearAndRender(window.stylesheets.pretty_print_computed_style(data));
-      styles.setAttribute('rt-id', rt_id);
+      styles.setAttribute('rt-id', data.rt_id);
     }
   };
 

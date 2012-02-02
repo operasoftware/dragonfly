@@ -584,6 +584,39 @@ addTest("Resolving CSS shorthands", function () {
       ],
     }
   );
+
+  clear_properties();
+
+  set_properties(
+    {
+      "overflow-x": "hidden",
+      "overflow-y": "hidden",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "overflow",
+      ],
+      values: [
+        "hidden",
+      ],
+    }
+  );
+
+  remove_properties(["overflow-x"]);
+
+  assert_rule(
+    {
+      properties: [
+        "overflow-y",
+      ],
+      values: [
+        "hidden",
+      ],
+    }
+  );
 });
 
 
