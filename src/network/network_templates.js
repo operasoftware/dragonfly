@@ -309,95 +309,116 @@ templates.network_graph_rows = function(ctx, width, basetime, duration)
   return tpls;
 };
 
+// gap_def format: 
+/* {
+     "classname": "type of sequence",
+     "sequences": {
+       "from_event_name": [
+         "to_event_name_one",
+         "to_event_name_two"
+       ]
+     }
+   } */
+
 templates.network_gap_defs = [
   {
     classname: "blocked",
-    from_to_pairs: [
-      ["urlload", "request"], // [from, to]
-      ["responseheader", "urlredirect"],
-      ["urlload", "urlredirect"],
-      ["requestfinished", "requestretry"],
-      ["responseheader", "requestretry"],
-      ["requestretry", "request"],
-      ["responsefinished", "urlfinished"],
-      ["urlredirect", "urlfinished"],
-      ["urlredirect", "responsefinished"],
-      ["urlload", "urlfinished"],
-      ["requestfinished", "responsefinished"] // Known bug, also in CORE-43284. Is fixed and will stop showing up when it's integrated.
-    ]
+    sequences: {
+      "urlload": [
+        "request",
+        "urlredirect",
+        "urlfinished"
+      ],
+      "responseheader": [
+        "urlredirect",
+        "requestretry"
+      ],
+      "requestfinished": [
+        "requestretry",
+        "responsefinished"
+      ],
+      "requestretry": [
+        "request"
+      ],
+      "responsefinished": [
+        "urlfinished",
+        // responsefinished can occur twice, see CORE-43284.
+        // This is fixed and stops showing up when integrated.
+        "responsefinished"
+      ],
+      "urlredirect": [
+        "urlfinished",
+        "responsefinished"
+      ]
+    }
   },
   {
     classname: "request",
-    from_to_pairs: [
-      ["request", "requestheader"],
-      ["requestheader", "requestfinished"]
-    ]
+    sequences: {
+      "request": ["requestheader"],
+      "requestheader": ["requestfinished"]
+    }
   },
   {
     classname: "waiting",
-    from_to_pairs: [
-      ["requestfinished", "response"],
-      ["requestfinished", "responsefinished"], // This means the response-phase was closed without seing a response event. For example because the request was aborted. See CORE-43284.
-      ["responseheader", "response"] // This represents waiting for another response to come in. See CORE-43264.
-    ]
+    sequences: {
+      "requestfinished": [
+        "response",
+        // The response-phase can be closed without ever seeing a response event, for 
+        // example because the request was aborted. See CORE-43284.
+        "responsefinished"
+      ],
+      "responseheader": [
+        // Occurs when a 100-Continue response was sent. In this timespan the client has
+        // ignored it and waits for another response to come in. See CORE-43264.
+        "response"
+      ]
+    }
   },
   {
     classname: "receiving",
-    from_to_pairs: [
-      ["response", "responseheader"],
-      ["responseheader", "responsefinished"]
-    ]
+    sequences: {
+      "response": ["responseheader"],
+      "responseheader": ["responsefinished"]
+    }
   }
 ];
-
 templates.network_error_store = {};
 
-templates.network_get_event_gaps = function(events, gap_defs, collapse_same_classname)
+templates.network_get_event_gaps = function(events)
 {
-  /*
-    collapse_same_classname: collapses event_gaps with the same classname into one. saves domnodes.
-    todo: right now the sections are never rendered individually, no this can probably always be done
-  */
+  var gap_defs = templates.network_gap_defs;
+
   var event_gaps = [];
+  // todo: do this when we see the network event, with just that one.
   for (var i = 0; i < events.length - 1; i++)
   {
-    var ev_from = events[i];
-    var ev_to = events[i + 1];
+    var from_event = events[i];
+    var to_event = events[i + 1];
     var gap_def = gap_defs.filter(function(def){
-      return def.from_to_pairs.filter(function(from_to){
-        return from_to[0] == ev_from.name && from_to[1] == ev_to.name;
-      }).length;
+      return def.sequences[from_event.name] &&
+             def.sequences[from_event.name].contains(to_event.name);
     })[0];
 
     var classname = gap_def && gap_def.classname;
-
-    if (collapse_same_classname && 
-        classname && 
-        event_gaps.last &&
-        event_gaps.last.classname &&
-        classname === event_gaps.last.classname)
+    if (!classname)
     {
-      event_gaps.last.val += (ev_to.time - ev_from.time);
-    }
-    else
-    {
-      if (!classname)
+      classname = "unexpected_network_event_sequence";
+      var error_str = ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+            "Unexpected event sequence between " + from_event.name + " and " + to_event.name + " (" + (to_event.time - from_event.time) + "ms spent)";
+      if (!templates.network_error_store[error_str])
       {
-        classname = "unexpected_network_event_sequence";
-        var error_str = ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-              "Unexpected event sequence between " + ev_from.name + " and " + ev_to.name + " (" + (ev_to.time - ev_from.time) + "ms spent)";
-        if (!templates.network_error_store[error_str])
-        {
-          opera.postError(error_str);
-          templates.network_error_store[error_str] = true;
-        }
-        events.has_unexpected_events = true;
+        opera.postError(error_str);
+        templates.network_error_store[error_str] = true;
       }
-      event_gaps.push({
-        classname: classname,
-        val: ev_to.time - ev_from.time
-      });
     }
+    event_gaps.push({
+      classname: classname,
+      val: to_event.time - from_event.time,
+      from_event: from_event.name,
+      to_event: to_event.name,
+      val_string: new Number((to_event.time - from_event.time).toFixed(2)) + "ms"
+    });
   }
   return event_gaps;
 }
@@ -421,27 +442,18 @@ templates.network_graph_row = function(entry, width, basetime, duration)
 
 templates.network_graph_sections = function(entry, width, duration)
 {
-  var sections = [];
   var scale = width / duration;
-
-  var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs, true);
-  gaps.forEach(function(section){
-    if (section.val)
-    {
-      sections.push([
+  var gaps = templates.network_get_event_gaps(entry.events, false);
+  var sections = gaps.map(function(section){
+      return [
         "span",
         "class", "network-section network-" + section.classname,
-        "style", "width:" + section.val * scale + "px;"
-      ]);
-    }
+        "style", "width:" + (section.val || 0) * scale + "px;"
+      ];
   });
 
-  var item_classname = "network-graph-sections";
-  if (entry.events.has_unexpected_events)
-    item_classname += " has-unexpected-events";
-
   return ["span", sections,
-           "class", item_classname,
+           "class", "network-graph-sections",
            "data-tooltip", "network-graph-tooltip", // the tooltip is now on the sections and the hitarea.
            "data-object-id", String(entry.id)
          ];
@@ -460,7 +472,7 @@ templates.network_graph_entry_tooltip = function(entry)
     var scale = height / duration;
     var total_length_string = new Number(duration).toFixed(2) + "ms";
 
-    var gaps = templates.network_get_event_gaps(entry.events, templates.network_gap_defs);
+    var gaps = templates.network_get_event_gaps(entry.events);
     gaps.map(function(section){section.px = section.val * scale});
     gaps.forEach(function(section){
       if (section.val)
@@ -473,72 +485,63 @@ templates.network_graph_entry_tooltip = function(entry)
       }
     });
 
+    var event_name_map = {
+      "urlload": "URL started",
+      "request": "Request started",
+      "requestheader": "Request headers written",
+      "urlredirect": "Redirected",
+      "requestretry": "Request retried",
+      "requestfinished": "Request finished",
+      "response": "Response started",
+      "responseheader": "Response header written",
+      "responsefinished": "Response phase finished",
+      "urlfinished": "URL completed"
+    };
+
     var previous_event_ms;
-    var event_rows = entry.events.map(function(ev)
+    var event_rows = gaps.map(function(gap, index, arr)
     {
-      var dist = 0;
-      if (previous_event_ms)
+      return [
+               ["tr", 
+                 ["td", gap.val_string, "class", "time_data mono"], ["td", event_name_map[gap.from_event], "class", "event_name"]
+               ],
+               arr.length - 1 === index ? ["tr",["td"], ["td", event_name_map[gap.to_event], "class", "event_name"]] : []
+             ];
+    });
+
+    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
+    var svg_width = 100.5;
+
+    var pathes = [];
+    var x_start = 1.5;
+    var y_start = 0.5;
+    var y_ref = 0;
+    var x_end = svg_width;
+
+    entry.events.forEach(function(ev, index) {
+      if (!index) // todo: omg fix it!
       {
-        dist = ev.time - previous_event_ms;
-        ev.time_str = new Number(dist).toFixed(2) + "ms";
+        pathes.push([]);
       }
       else
       {
-        ev.time_str = "";
+        if (pathes.length)
+        {
+          var event_height = Math.round(gaps[pathes.length - 1].px);
+          y_start = y_ref + (event_height / 2);
+          y_ref += event_height;
+        }
+        var y_end = (pathes.length * 19) - 2;
+        pathes.push(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
       }
-
-      var event_name_map = {
-        "urlload": "URL started",
-        "request": "Request started",
-        "requestheader": "Request headers written",
-        "urlredirect": "Redirected",
-        "requestretry": "Request retried",
-        "requestfinished": "Request finished",
-        "response": "Response started",
-        "responseheader": "Response header written",
-        "responsefinished": "Response phase finished",
-        "urlfinished": "URL completed"
-      };
-
-      previous_event_ms = ev.time;
-      return ["tr",
-               ["td", event_name_map[ev.name] || ev.name],
-               ini.debug ? ["td", ev.request_id ? "(" + ev.request_id + ")" : ""] : [],
-               ["td", ev.time_str, "class", "time_data mono"]
-             ];
     });
-    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
-    var base_width = 100.5;
-    var svg_width = base_width;
-    var svg_height = height;
-
-    var pathes = [];
-    var y_start = 0.5;
-    var y_end = 0.5;
-    var max_val_length = Math.max.apply(null, entry.events.map(function(ev){return ev.time_str.length}));
-    max_val_length = Math.max(max_val_length, total_length_string.length);
-
-    var pointer_extra_width = max_val_length * CHARWIDTH;
-
-    entry.events.forEach(function(ev) {
-      if (pathes.length)
-      {
-        y_start += Math.round(gaps[pathes.length - 1].px);
-      }
-
-      var x_end = base_width; // + ((max_val_length - ev.time_str.length) * CHARWIDTH);
-      svg_width = Math.max(x_end, svg_width);
-
-      y_end = (pathes.length * 21) + 10.5;
-      svg_height = Math.max(y_start, y_end, svg_height);
-
-      pathes.push(["path", "d", "M1.5 " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
-    });
+    var svg_height = Math.max(y_start, y_end, y_ref);
 
     return ["div",
       [
+        /*
         ini.debug ?
-          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : ["h2", "Requested at " +  entry.start_time_string],
+          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : ["h2", "Requested at " +  entry.start_time_string], */
         ["div",
           ["div",
             ["div", graphical_sections, "class", "network-tooltip-graph-sections"],

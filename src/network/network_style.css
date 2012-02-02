@@ -398,8 +398,10 @@
   height: 12px;
 }
 
-.network-tooltip-container {
+.network-tooltip-container
+{
   vertical-align: top;
+  padding: 6px 0;
 }
 
 .network-tooltip-container h2 {
@@ -467,10 +469,16 @@
 .network-tooltip-legend .time_data
 {
   text-align: right;
+  padding: 0 8px 0 4px;
   position: relative;
-  top: -9px;
-  padding-left: 4px;
+  top: 9px;
 }
+
+.network-tooltip-legend .event_name
+{
+  white-space: nowrap;
+}
+
 
 /* debug styles
 .network-unexpected_network_event_sequence {
