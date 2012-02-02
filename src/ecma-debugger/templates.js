@@ -1,6 +1,4 @@
-﻿window.templates = window.templates || {};
-
-(function()
+﻿(function()
 {
   var self = this;
   this.hello = function(enviroment)
@@ -54,18 +52,6 @@
       ret.push(['cst-group', runtime.extensions.map(this.runtime, this)]);
     return ret;
   }
-
-  this['runtime-runtime'] = function(runtime, arg_list)
-  {
-    var display_uri = helpers.shortenURI(runtime.uri);
-
-    return [
-      'cst-option',
-      runtime['title'] || display_uri.uri,
-      'rt-id', runtime.runtime_id.toString()
-    ].concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ;
-  };
 
   this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
   {
@@ -220,55 +206,7 @@
     return ret;
   };
 
-  this['runtime-css'] = function(runtime, org_args)
-  {
-    const
-    OBJECT_ID = 0,
-    HREF = 2,
-    TITLE = 7;
-
-    var
-    display_uri = helpers.shortenURI(runtime.uri),
-    ret =
-    [
-      ['h2', runtime['title'] || display_uri.uri].
-      concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ],
-    sheets = cls.Stylesheets.get_instance().get_stylesheets(runtime.runtime_id),
-    sheet = null,
-    i = 0,
-    container = [],
-    rt_id = runtime.runtime_id,
-    title = '';
-
-    if(sheets)
-    {
-      for( ; sheet = sheets[i]; i++)
-      {
-        title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( i + 1 ) ;
-        container[container.length] =
-        [
-          'cst-option',
-          title,
-          'runtime-id', '' + rt_id,
-          'index', '' + i
-        ];
-      }
-    }
-    /*
-    else
-    {
-      container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
-    }
-    */
-    //container.splice(container.length, 0, 'runtime-id', runtime.runtime_id);
-    ret = ret.concat([container])
-
-    return ret;
-  }
-
-
-  this['runtime-dom'] = function(runtime)
+  this.runtime_dom = function(runtime)
   {
     var display_uri = runtime['title'] || helpers.shortenURI(runtime.uri).uri;
     return (
@@ -322,95 +260,6 @@
     }
     return ['div'].concat([ret]);
   }
-/*
-
-MODE ::= "<mode>"
-             ( "run" | "step-into-call" | "step-next-line" | "step-out-of-call" )
-           "</mode>" ;
-
-           */
-  this.continues = function()
-  {
-    var ret = [];
-    ret[ret.length] = self.continueWithMode('run ( F5 )', 'run');
-    ret[ret.length] = self.continueWithMode('step into call ( F11 )', 'step-into-call');
-    ret[ret.length] = self.continueWithMode('step next line ( F10 )', 'step-next-line');
-    ret[ret.length] = self.continueWithMode('step out of call ( Shift F11 )', 'step-out-of-call');
-    return ret;
-  }
-
-  this.continueWithMode = function(name, mode)
-  {
-    return ['span',
-          'tabindex', '1',
-          'value', '',
-          'title', name,
-          'mode', mode,
-          'id', 'continue-' + mode,
-          'handler', 'continue',
-          'disabled', true,
-          'class', 'ui-button'
-        ]
-  }
-
-  this.examineObject = function( data )
-  {
-    var prop = null,
-    i = 0,
-    ret = ['ul'];
-
-
-    for( i=0 ; prop = data[i]; i++)
-    {
-      switch(prop.type)
-      {
-        case 'object':
-        {
-          ret[ret.length] = self.key_value_folder(prop.key, i);
-          break;
-        }
-        case 'undefined':
-        case 'null':
-        {
-          ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
-          break;
-        }
-        default:
-        {
-          ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
-          break;
-        }
-      }
-    }
-
-    if( window.__profiling__ )
-    {
-      window.__times__[4] =  new Date().getTime(); // creating markup
-    }
-
-    return ret;
-  }
-
-
-
-  this.key_value = function(key, value, value_class, ref_index)
-  {
-    return ['li',
-        ['span', key, 'class', 'key'],
-        ['span', value].concat( value_class ? ['class', value_class] : []),
-      'ref_index', ref_index
-    ];
-  }
-
-  this.key_value_folder = function(key, ref_index)
-  {
-    return ['li',
-      ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
-      ['span', key, 'class', 'key'],
-      ['span', 'object', 'class', 'object'],
-      'ref_index', ref_index
-    ];
-  }
 
   this.breakpoint = function(line_nr, top)
   {
@@ -419,17 +268,6 @@ MODE ::= "<mode>"
           'line_nr', line_nr,
           'style', 'top:'+ top +'px'
         ]
-  }
-
-
-  this.runtimes_dropdown = function(ele)
-  {
-    return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
-  }
-
-  this['js-script-select'] = function(ui_obj)
-  {
-    return self['cst-select'](ui_obj.script_select);
   }
 
   this.breadcrumb = function(model, obj_id, parent_node_chain, target_id, show_combinator)
@@ -691,4 +529,4 @@ MODE ::= "<mode>"
     return ret;
   }
 
-}).apply(window.templates);
+}).apply(window.templates || (window.templates = {}));
