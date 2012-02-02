@@ -469,9 +469,7 @@
 .network-tooltip-legend .time_data
 {
   text-align: right;
-  padding: 0 8px 0 4px;
-  position: relative;
-  top: 9px;
+  padding: 2px 8px 0 4px;
 }
 
 .network-tooltip-legend .event_name

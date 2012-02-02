@@ -387,46 +387,35 @@ templates.network_graph_entry_tooltip = function(entry)
 
     var event_rows = entry.event_gaps.map(function(gap, index, arr)
     {
-      if (gap.to_event)
+      if (gap.val_string)
       {
         return ["tr", 
-                 ["td", gap.val_string, "class", "time_data mono"], ["td", event_name_map[gap.from_event.name], "class", "event_name"]
+                 ["td", gap.val_string, "class", "time_data mono"], ["td", gap.title, "class", "gap_title"]
                ];
-      }
-      else
-      {
-        // The last one never has a to_event, but it's from_event closes the sequence. And when it's only 1, it also opens it.
-        return ["tr",["td"], ["td", event_name_map[gap.from_event.name], "class", "event_name"]]
       }
     });
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
     var svg_width = 100.5;
 
-    var pathes = [];
     var x_start = 1.5;
     var y_start = 0.5;
     var y_ref = 0;
     var x_end = svg_width;
     var y_end = 0;
 
-    entry.events.forEach(function(ev, index) { // todo: this should most likely just go over the event_gaps
-      if (!index)
+    var pathes = entry.event_gaps.map(function(gap, index, arr)
+    {
+      if (gap.val)
       {
-        pathes.push([]);
-      }
-      else
-      {
-        if (pathes.length)
-        {
-          var event_height = Math.round(entry.event_gaps[pathes.length - 1].val * scale);
-          y_start = y_ref + (event_height / 2);
-          y_ref += event_height;
-        }
-        y_end = (pathes.length * 19) - 2;
-        pathes.push(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
+        var height = Math.round(gap.val * scale);
+        y_start = y_ref + (height / 2);
+        y_ref += height;
+        y_end = (index * 19) + 7.5;
+        return ["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]
       }
     });
+
     var svg_height = Math.max(y_start, y_end, y_ref);
 
     return ["div",

@@ -497,72 +497,80 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     {
       classname: "blocked",
       sequences: {
-        "urlload": [
-          "request",
-          "urlredirect",
-          "urlfinished"
-        ],
-        "responseheader": [
-          "urlredirect",
-          "requestretry"
-        ],
-        "requestfinished": [
-          "requestretry",
-          "responsefinished"
-        ],
-        "requestretry": [
-          "request"
-        ],
-        "responsefinished": [
-          "urlfinished",
+        "urlload": {
+          "request": "Waiting to request",
+          "urlredirect": "Redirecting",
+          "urlfinished": "Reading cache"
+        },
+        "responseheader": {
+          "urlredirect": "Redirecting",
+          "requestretry": "Retrying" // Todo: Not really. How should we call it?
+        },
+        "requestfinished": {
+          "requestretry": "Retrying", // Todo: Not really. How should we call it?
+          // The response-phase can be closed without ever seeing a response event, for 
+          // example because the request was aborted. See CORE-43284.
+        },
+        "requestretry": {
+          "request": "Waiting to request"
+        },
+        "responsefinished": {
+          "urlfinished": "Finishing url", // not sure what is really going on now
           // responsefinished can occur twice, see CORE-43284.
           // This is fixed and stops showing up when integrated.
-          "responsefinished"
-        ],
-        "urlredirect": [
-          "urlfinished",
-          "responsefinished"
-        ]
+          "responsefinished": ""
+        },
+        "urlredirect": {
+          "urlfinished": "Finishing url",
+          "responsefinished": "Closing request" // responsefinished means we stopped listening. So the time is used to close the request
+        }
       }
     },
     {
       classname: "request",
       sequences: {
-        "request": ["requestheader"],
-        "requestheader": ["requestfinished"]
+        "request": {
+          "requestheader": "Writing request header"
+        },
+        "requestheader": {
+          "requestfinished": "Writing request body"
+        }
       }
     },
     {
       classname: "waiting",
       sequences: {
-        "requestfinished": [
-          "response",
-          // The response-phase can be closed without ever seeing a response event, for 
-          // example because the request was aborted. See CORE-43284.
-          "responsefinished"
-        ],
-        "responseheader": [
+        "requestfinished": {
+          "response": "Waiting for response",
+          "responsefinished": "Closing response" // This also means "Aborted waiting for response". We can add responsefinished as an event and make it stand out more.
+        },
+        "responseheader": {
           // Occurs when a 100-Continue response was sent. In this timespan the client has
           // ignored it and waits for another response to come in. See CORE-43264.
-          "response"
-        ]
+          "response": "Waiting for response"
+        }
       }
     },
     {
       classname: "receiving",
       sequences: {
-        "response": ["responseheader"],
-        "responseheader": ["responsefinished"]
+        "response": {
+          "responseheader": "Reading header"
+        },
+        "responseheader": {
+          "responsefinished": "Reading body"
+        }
       }
     }
   ];
 
-  this.get_gap_classname = function(gap)
+  this.get_gap_def = function(gap)
   {
-    return this._gap_defs.filter(function(def){
+    var def = this._gap_defs.filter(function(def){
       return def.sequences[gap.from_event.name] &&
-             def.sequences[gap.from_event.name].contains(gap.to_event.name);
-    })[0].classname;
+             def.sequences[gap.from_event.name][gap.to_event.name];
+    })[0];
+    return {classname: def.classname, title: def.sequences[gap.from_event.name][gap.to_event.name]};
   };
 
   this._add_event = function(eventname, eventdata)
@@ -575,15 +583,17 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     if (this.event_gaps.length)
     {
       var gap = this.event_gaps.last;
-      gap.to_event = evt;
-      // gap now has from and to. Add val, val_string and classname.
+      gap.to_event = evt; // it's probably not needed to even store these
+
+      // gap now has from and to. Add val, val_string, classname, title.
       gap.val = gap.to_event.time - gap.from_event.time;
       gap.val_string = gap.val.toFixed(2) + "ms";
-      gap.classname = this.get_gap_classname(gap);
-
-      if (!gap.classname)
+      var gap_def = this.get_gap_def(gap); // pass from and to names instead
+      if (!gap_def)
         opera.postError("Unexpected event sequence between " + gap.from_event.name + 
                         " and " + gap.to_event.name + " (" + gap.val_string + " spent)");
+      gap.classname = gap_def.classname;
+      gap.title = gap_def.title;
     }
     // the evt is also the next gaps from_event.
     this.event_gaps.push({from_event: evt});
