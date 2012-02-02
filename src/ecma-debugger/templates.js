@@ -27,16 +27,6 @@
     return ['div', ret, 'class', 'padding'];
   }
 
-  this.runtimes = function(runtimes, type, arg_list)
-  {
-    var ret = [], rt = null, i = 0;
-    for( ; rt = runtimes[i]; i++)
-    {
-      ret[ret.length] = self['runtime-' + type](rt, arg_list);
-    }
-    return ret;
-  }
-
   this.runtime_dropdown = function(runtimes)
   {
     return runtimes.map(this.runtime, this);
