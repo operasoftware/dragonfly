@@ -571,7 +571,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       return def.sequences[gap.from_event.name] &&
              def.sequences[gap.from_event.name][gap.to_event.name];
     })[0];
-    return {classname: def.classname, title: def.sequences[gap.from_event.name][gap.to_event.name]};
+    if (def)
+      return {classname: def.classname, title: def.sequences[gap.from_event.name][gap.to_event.name]};
+    else
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+            "Unexpected event sequence between " + gap.from_event.name + " and " + gap.to_event.name);
   };
 
   this._add_event = function(eventname, eventdata)
@@ -590,11 +594,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       gap.val = gap.to_event.time - gap.from_event.time;
       gap.val_string = gap.val.toFixed(2) + "ms";
       var gap_def = this.get_gap_def(gap); // pass from and to names instead
-      if (!gap_def)
-        opera.postError("Unexpected event sequence between " + gap.from_event.name + 
-                        " and " + gap.to_event.name + " (" + gap.val_string + " spent)");
-      gap.classname = gap_def.classname;
-      gap.title = gap_def.title;
+      gap.classname = (gap_def && gap_def.classname) || "";
+      gap.title = (gap_def && gap_def.title) || "";
     }
     // the evt is also the next gaps from_event.
     this.event_gaps.push({from_event: evt});

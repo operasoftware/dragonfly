@@ -341,7 +341,7 @@ templates.network_graph_sections = function(entry, width, duration)
     }
   });
 
-  return ["span", sections,
+  return ["span", sections || [],
            "class", "network-graph-sections",
            "data-tooltip", "network-graph-tooltip", // the tooltip is now on the sections and the hitarea.
            "data-object-id", String(entry.id)

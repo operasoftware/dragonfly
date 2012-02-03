@@ -14,6 +14,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._rendertimer = null;
   this.needs_instant_update = false;
 
+  // modes
+  var DEFAULT = "default";
+  var DETAILS = "details";
+
   this.createView = function(container)
   {
     var min_render_delay = 200;
@@ -280,8 +284,44 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_clicked_close_bound = function(evt, target)
   {
     this._selected = null;
+    this.mode = DEFAULT;
     this.needs_instant_update = true;
     this.update();
+    return false;
+  }.bind(this);
+
+  this._on_select_next_bound = function(evt, target)
+  {
+    if (this._selected)
+    {
+      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+      if (selected_node && 
+          selected_node.nextElementSibling && 
+          selected_node.nextElementSibling.dataset.objectId)
+      {
+        this._selected = selected_node.nextElementSibling.dataset.objectId;
+        this.needs_instant_update = true;
+        this.update();
+        return false;
+      }
+    }
+  }.bind(this);
+
+  this._on_select_previous_bound = function(evt, target)
+  {
+    if (this._selected)
+    {
+      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+      if (selected_node && 
+          selected_node.previousElementSibling && 
+          selected_node.previousElementSibling.dataset.objectId)
+      {
+        this._selected = selected_node.previousElementSibling.dataset.objectId;
+        this.needs_instant_update = true;
+        this.update();
+        return false;
+      }
+    }
   }.bind(this);
 
   this._on_clicked_request_bound = function(evt, target)
@@ -290,10 +330,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (this._selected == item_id)
     {
       this._selected = null;
+      this.mode = DEFAULT;
     }
     else
     {
       this._selected = item_id;
+      this.mode = DETAILS;
     }
     this.needs_instant_update = true;
     this.update();
@@ -430,6 +472,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
   eh.click["turn-off-incomplete-warning"] = this._on_turn_off_incomplete_warning;
 
+  ActionHandlerInterface.apply(this);
+  this._handlers = {
+    "select-next-entry": this._on_select_next_bound,
+    "select-previous-entry": this._on_select_previous_bound,
+    "close-details": this._on_clicked_close_bound
+  };
+  this.id = id;
+  ActionBroker.get_instance().register_handler(this);
+
   this.init(id, name, container_class, html, default_handler);
 };
 cls.NetworkLogView.prototype = ViewBase;
@@ -492,6 +543,23 @@ cls.NetworkLog.create_ui_widgets = function()
         },
         {
           type: "single-select", // UI CONSTANTS
+          name: "selected-viewmode",
+          default_value: window.settings.network_logger.get("selected-viewmode"),
+          items: [
+            {
+              value: "graphs",
+              title: "Graph view", // todo: strings
+              icon: "network-view-toggle-graphs"
+            },
+            {
+              value: "data",
+              title: "Data view", // todo: strings
+              icon: "network-view-toggle-data"
+            }
+          ]
+        },
+        {
+          type: "single-select", // UI CONSTANTS
           name: "type-filter",
           allow_multiple_select: true,
           items: [
@@ -525,23 +593,6 @@ cls.NetworkLog.create_ui_widgets = function()
             {
               text: "XHR",
               value: "xhr"
-            }
-          ]
-        },
-        { // group
-          type: "single-select", // UI CONSTANTS
-          name: "selected-viewmode",
-          default_value: window.settings.network_logger.get("selected-viewmode"),
-          items: [
-            {
-              value: "graphs",
-              title: "Graph view", // todo: strings
-              icon: "network-view-toggle-graphs"
-            },
-            {
-              value: "data",
-              title: "Data view", // todo: strings
-              icon: "network-view-toggle-data"
             }
           ]
         },
