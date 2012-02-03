@@ -13,6 +13,19 @@ var StylesheetTemplates = function()
   var TYPE_FUNCTION_END = CssValueTokenizer.types.FUNCTION_END;
 
   this._css_value_tokenizer = new CssValueTokenizer();
+  this._color_properties = {
+    "fill": true,
+    "stroke": true,
+    "stop-color": true,
+    "flood-color": true,
+    "lighting-color": true,
+    "color": true,
+    "border-top-color": true,
+    "border-right-color": true,
+    "border-bottom-color": true,
+    "border-left-color": true,
+    "background-color": true
+  };
 
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
   {
@@ -130,7 +143,7 @@ var StylesheetTemplates = function()
         ],
         ": ",
         ["span",
-           this._parse_value(value, false),
+           this._parse_value(prop, value, false),
          "class", "css-property-value"
         ],
         ";",
@@ -204,17 +217,17 @@ var StylesheetTemplates = function()
                   : token.value;
 
         return ["span",
-                  this._parse_value(value, is_editable),
+                  this._parse_value(declaration.property, value, is_editable),
                 "class", token.is_applied === false && "overwritten"
                ];
       }, this);
     }
 
     // Non-shorthands
-    return ["span", this._parse_value(declaration.value, is_editable)];
+    return ["span", this._parse_value(declaration.property, declaration.value, is_editable)];
   };
 
-  this._parse_value = function(orig_value, is_editable)
+  this._parse_value = function(prop, orig_value, is_editable)
   {
     var color_notation = window.settings["dom-side-panel"].get("color-notation");
     var color_value = [];
@@ -239,6 +252,11 @@ var StylesheetTemplates = function()
         value = window.helpers.get_color_in_notation(value, color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
+      else if ((value === "currentColor") ||
+               (value === "inherit" && this._color_properties.hasOwnProperty(prop)))
+      {
+        color_swatch = this.color_swatch(value, is_editable);
+      }
       else if (type === TYPE_FUNCTION_START && value === "url(")
       {
         next_is_url = true;
@@ -258,11 +276,14 @@ var StylesheetTemplates = function()
 
   this.color_swatch = function(value, is_editable)
   {
+    var is_special = value === "currentColor" || value === "inherit";
     return [
       "span",
-      "class", "color-swatch " + (is_editable ? "" : " non-editable"),
+      "class", "color-swatch " +
+               (is_editable ? "" : " non-editable") +
+               (is_special ? " special" : ""),
       "handler", is_editable && "show-color-picker",
-      "style", "background-color:" + value
+      "style", !is_special ? ("background-color:" + value) : ""
     ];
   };
 

@@ -1303,6 +1303,15 @@ d
   opacity: 0.35;
 }
 
+.color-swatch.special
+{
+  background: no-repeat transparent;
+  background-image: -o-linear-gradient(-45deg,
+                                       transparent 4px,
+                                       rgba(34, 34, 34, 0.4) 5px,
+                                       transparent 6px);
+}
+
 .collapsed-prototypes
 {
   width: 24em;
