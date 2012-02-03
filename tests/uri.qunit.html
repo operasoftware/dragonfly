@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Command Processor</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/scripts/uri.js"></script>
+
+
+<script>
+
+
+test("uri", function()
+{ 
+  var uri = new URI("http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/banner.html?csiID=csi1");
+
+  equals(uri.filename, "banner.html");
+  equals(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
+  equals(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
+});
+
+
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Color class</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
