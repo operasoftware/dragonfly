@@ -14,17 +14,20 @@ var StylesheetTemplates = function()
 
   this._css_value_tokenizer = new CssValueTokenizer();
   this._color_properties = {
-    "fill": true,
-    "stroke": true,
-    "stop-color": true,
-    "flood-color": true,
-    "lighting-color": true,
-    "color": true,
+    "background-color": true,
+    "border-color": true,
     "border-top-color": true,
     "border-right-color": true,
     "border-bottom-color": true,
     "border-left-color": true,
-    "background-color": true
+    "color": true,
+    "fill": true,
+    "flood-color": true,
+    "lighting-color": true,
+    "outline-color": true,
+    "solid-color": true,
+    "stop-color": true,
+    "stroke": true
   };
 
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
