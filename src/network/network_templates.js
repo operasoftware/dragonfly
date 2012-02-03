@@ -353,7 +353,7 @@ templates.network_graph_entry_tooltip = function(entry)
   if (!entry)
     return;
 
-  const height = 165;
+  const height = 155;
   var duration = entry.get_duration();
   if (duration && entry.events)
   {
@@ -372,25 +372,14 @@ templates.network_graph_entry_tooltip = function(entry)
       }
     });
 
-    var event_name_map = { // todo: take me to the service?
-      "urlload": "URL started",
-      "request": "Request started",
-      "requestheader": "Request headers written",
-      "urlredirect": "Redirected",
-      "requestretry": "Request retried",
-      "requestfinished": "Request finished",
-      "response": "Response started",
-      "responseheader": "Response header written",
-      "responsefinished": "Response phase finished",
-      "urlfinished": "URL completed"
-    };
-
     var event_rows = entry.event_gaps.map(function(gap, index, arr)
     {
       if (gap.val_string)
       {
         return ["tr", 
-                 ["td", gap.val_string, "class", "time_data mono"], ["td", gap.title, "class", "gap_title"]
+                 ["td", gap.val_string, "class", "time_data mono"],
+                 ["td", gap.title, "class", "gap_title"],
+                 ini.debug ? ["td", "(" + gap.from_event.name + " to " + gap.to_event.name + ")", "class", "gap_title"] : []
                ];
       }
     });
@@ -411,7 +400,7 @@ templates.network_graph_entry_tooltip = function(entry)
         var height = Math.round(gap.val * scale);
         y_start = y_ref + (height / 2);
         y_ref += height;
-        y_end = (index * 19) + 7.5;
+        y_end = (index * 19) + 9.5;
         return ["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]
       }
     });

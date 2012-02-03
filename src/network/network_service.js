@@ -500,7 +500,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         "urlload": {
           "request": "Waiting to request",
           "urlredirect": "Redirecting",
-          "urlfinished": "Reading cache"
+          "urlfinished": "Reading cache",
+          // The response-phase can be closed without ever seeing a response event, for 
+          // example because the request was aborted. See CORE-43284.
+          "responsefinished": "(aborted)"
         },
         "responseheader": {
           "urlredirect": "Redirecting",
@@ -508,14 +511,12 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         },
         "requestfinished": {
           "requestretry": "Retrying", // Todo: Not really. How should we call it?
-          // The response-phase can be closed without ever seeing a response event, for 
-          // example because the request was aborted. See CORE-43284.
         },
         "requestretry": {
           "request": "Waiting to request"
         },
         "responsefinished": {
-          "urlfinished": "Finishing url", // not sure what is really going on now
+          "urlfinished": "Processing url", // not sure what is really going on now
           // responsefinished can occur twice, see CORE-43284.
           // This is fixed and stops showing up when integrated.
           "responsefinished": ""
@@ -555,10 +556,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       classname: "receiving",
       sequences: {
         "response": {
-          "responseheader": "Reading header"
+          "responseheader": "Reading response header"
         },
         "responseheader": {
-          "responsefinished": "Reading body"
+          "responsefinished": "Reading response body"
         }
       }
     }
