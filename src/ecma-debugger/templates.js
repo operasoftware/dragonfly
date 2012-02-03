@@ -3,8 +3,8 @@
   var self = this;
   this.hello = function(enviroment)
   {
-    var ret = ['ul'];
-    var prop = '';
+    var ret = ["ul"];
+    var prop = "";
     var prop_dict =
     {
       "stpVersion": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
@@ -15,16 +15,16 @@
     }
     for( prop in prop_dict)
     {
-      ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
+      ret[ret.length] = ["li", prop_dict[prop] + ": " + enviroment[prop]];
     }
     if( ini.revision_number.indexOf("$") != -1 && ini.mercurial_revision )
     {
       ini.revision_number = ini.mercurial_revision;
     }
-    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
-    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
-    ret.push('class', 'selectable');
-    return ['div', ret, 'class', 'padding'];
+    ret[ret.length] = ["li", ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ": " + ini.dragonfly_version];
+    ret[ret.length] = ["li", ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ": " + ini.revision_number];
+    ret.push("class", "selectable");
+    return ["div", ret, "class", "padding"];
   }
 
   this.runtime_dropdown = function(runtimes)
@@ -34,18 +34,20 @@
 
   this.runtime = function(runtime)
   {
-    var option = ['cst-option', runtime.title, 'rt-id', String(runtime.id)];
+    var option = ["cst-option", runtime.title, "rt-id", String(runtime.id)];
     if (runtime.title_attr)
-      option.push('title', runtime.title_attr);
+      option.push("title", runtime.title_attr);
     var ret = [option];
     if (runtime.extensions && runtime.extensions.length)
-      ret.push(['cst-group', runtime.extensions.map(this.runtime, this)]);
+      ret.push(["cst-group", runtime.extensions.map(this.runtime, this)]);
     return ret;
   }
 
   this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
   {
-    var ret = [["input", "type", "text", "class", "js-dd-filter"]];
+    var ret = [["div", 
+                 ["input", "type", "text", "class", "js-dd-filter"],
+                 "class", "js-dd-filter-container"]];
     for (var i = 0, rt; rt = runtimes[i]; i++)
     {
       ret.push(this.runtime_script(rt, stopped_script_id, selected_script_id));
@@ -58,15 +60,15 @@
     var ret = [];
     var script_uri_paths = {};
     var inline_and_evals = [];
-    var title = ['cst-title', runtime.title];
+    var title = ["cst-title", runtime.title];
     var class_name = runtime.type == "extension"
-                   ? 'js-dd-ext-runtime'
-                   : 'js-dd-runtime';
+                   ? "js-dd-ext-runtime"
+                   : "js-dd-runtime";
       
-    title.push('class', class_name + (runtime.selected ? " selected-runtime" : ""));
+    title.push("class", class_name + (runtime.selected ? " selected-runtime" : ""));
 
     if (runtime.title != runtime.uri)
-      title.push('title', runtime.uri);
+      title.push("title", runtime.uri);
 
     ret.push(title);
 
@@ -91,37 +93,49 @@
     var script_list = [];
     Object.getOwnPropertyNames(script_uri_paths).sort().forEach(function(uri)
     {
+      var group = ["div"];
       if (uri != "./")
-        ret.push(['cst-title', uri, 'class', 'js-dd-dir-path']);
+        group.push(["cst-title", uri, "class", "js-dd-dir-path"]);
 
-      ret.extend(script_uri_paths[uri]);
+      group.extend(script_uri_paths[uri]);
+      group.push("class", "js-dd-group js-dd-dir-group");
+      ret.push(group);
     });
 
-    if (runtime.type != "extension" && inline_and_evals.length)
-      script_list.push(['cst-title', 
-                          "Inline, Eval, Timeout and Event handler scripts",
-                          'class', 'js-dd-dir-path']);
+    if (inline_and_evals.length)
+    {
+      var group = ["div"];
+      if (runtime.type != "extension")
+        group.push(["cst-title",
+                      "Inline, Eval, Timeout and Event handler scripts",
+                      "class", "js-dd-dir-path"]);
 
-    script_list.extend(inline_and_evals);
-    ret.extend(script_list);
+      group.extend(inline_and_evals);
+      group.push("class", "js-dd-group");
+      ret.push(group);
+    }
+
     if (runtime.type != "extension")
     {
       if (runtime.browser_js || (runtime.user_js_s && runtime.user_js_s.length))
       {
-        ret.push(['cst-title', 'Browser and User JS', 'class', 'js-dd-dir-path']);
+        var group = ["div"];
+        group.push(["cst-title", "Browser and User JS", "class", "js-dd-dir-path"]);
 
         if (runtime.browser_js)
-          ret.push(this.script_option(runtime.browser_js))
+          group.push(this.script_option(runtime.browser_js))
 
         if (runtime.user_js_s && runtime.user_js_s.length)
         {
           for (var i = 0, script; script = runtime.user_js_s[i]; i++)
           {
-            ret.push(this.script_option(script,
-                                        stopped_script_id,
-                                        selected_script_id));
+            group.push(this.script_option(script,
+                                          stopped_script_id,
+                                          selected_script_id));
           }
         }
+        group.push("class", "js-dd-group");
+        ret.push(group);
       }
 
       if (runtime.extensions)
@@ -166,57 +180,65 @@
 
     if (script.script_type == "linked")
     {
-      ret = ["cst-option",
-              ["span", script.filename], 
-              "script-id", script.script_id.toString()];
+      ret = ["cst-option", 
+              ["span", 
+                 script.filename,
+                 "data-tooltip", "js-script-select", 
+                 "data-tooltip-text", script.uri]];
+
+      if (script.search)
+        ret.push(["span", script.search, "class", "js-dd-scr-query"]);
+
+      if (script.hash)
+        ret.push(["span", script.query, "class", "js-dd-scr-hash"]);
+            
+      ret.push("script-id", script.script_id.toString());
     }
     else
     {
       var code_snippet = script.script_data.slice(0, 360)
                                .replace(/\s+/g, " ").slice(0, 120);
       ret = ["cst-option",
-              ["span", script_type.capitalize(true) + " – ",
-                ["code", code_snippet, "class", "code-snippet"]],
+              ["span", script_type.capitalize(true), "class", "js-dd-type"],
+              " – ",
+              ["code", code_snippet, "class", "code-snippet"],
               "script-id", script.script_id.toString()];
     }
 
     var class_name = script.script_id == selected_script_id
-                   ? 'selected'
-                   : '';
+                   ? "selected"
+                   : "";
 
     if (stopped_script_id == script.script_id)
-      class_name += ( class_name && ' ' || '' ) + 'stopped';
-
-    if (script.uri)
-      ret.push('title', script.uri);
+      class_name += ( class_name && " " || "" ) + "stopped";
     
     if (class_name)
-      ret.push('class', class_name);
+      ret.push("class", class_name);
 
     return ret;
   };
 
   this.runtime_dom = function(runtime)
   {
-    var display_uri = runtime['title'] || helpers.shortenURI(runtime.uri).uri;
+    var display_uri = runtime["title"] || helpers.shortenURI(runtime.uri).uri;
     return (
     [
-      'cst-option',
-       runtime['title'] || runtime.uri,
-      'runtime-id', runtime.runtime_id.toString()
-    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected'] : [] ).
-      concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
+      "cst-option",
+       runtime["title"] || runtime.uri,
+      "runtime-id", runtime.runtime_id.toString()
+    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ["class", "selected"] : [] ).
+      concat( display_uri != runtime.uri ? ["title", runtime.uri] : [] ) )
   }
 
   this.checkbox = function(settingName, settingValue)
   {
-    return ['li',
-      ['label',
-        ['input',
-        'type', 'checkbox',
-        'value', settingName,
-        'checked', settingValue ?  true : false,
-        'handler', 'set-stop-at'
+    return ["li",
+      ["label",
+        ["input",
+        "type", "checkbox",
+        "value", settingName,
+        "checked", settingValue ?  true : false,
+        "handler", "set-stop-at"
         ],
         settingName
       ]
@@ -229,34 +251,34 @@
     var uri = frame.script_id && runtimes.getScript(frame.script_id)
             ? (runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri)
             : null;
-    return ['li',
-             ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span',
-              " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
-              'class', 'file-line'],
-      'handler', 'show-frame',
-      'ref-id', String(frame.id),
-      'title', uri
-    ].concat( is_top ? ['class', 'selected'] : [] );
+    return ["li",
+             ["span", frame.fn_name, "class", "scope-name"],
+             ["span",
+              " " + (uri && frame.line ? helpers.basename(uri) + ":" + frame.line : ""),
+              "class", "file-line"],
+      "handler", "show-frame",
+      "ref-id", String(frame.id),
+      "title", uri
+    ].concat( is_top ? ["class", "selected"] : [] );
   }
 
   this.configStopAt = function(config)
   {
-    var ret =['ul'];
-    var arr = ["script", "exception", "error", "abort"], n='', i=0;
+    var ret =["ul"];
+    var arr = ["script", "exception", "error", "abort"], n="", i=0;
     for( ; n = arr[i]; i++)
     {
       ret[ret.length] = this.checkbox(n, config[n]);
     }
-    return ['div'].concat([ret]);
+    return ["div"].concat([ret]);
   }
 
   this.breakpoint = function(line_nr, top)
   {
-    return ['li',
-          'class', 'breakpoint',
-          'line_nr', line_nr,
-          'style', 'top:'+ top +'px'
+    return ["li",
+          "class", "breakpoint",
+          "line_nr", line_nr,
+          "style", "top:"+ top +"px"
         ]
   }
 
@@ -264,9 +286,9 @@
   {
     var setting = window.settings.dom;
     var css_path = model._get_css_path(obj_id, parent_node_chain,
-                                       setting.get('force-lowercase'),
-                                       setting.get('show-id_and_classes-in-breadcrumb'),
-                                       setting.get('show-siblings-in-breadcrumb'));
+                                       setting.get("force-lowercase"),
+                                       setting.get("show-id_and_classes-in-breadcrumb"),
+                                       setting.get("show-siblings-in-breadcrumb"));
     var ret = [];
     target_id || (target_id = obj_id)
     if (css_path)
@@ -276,11 +298,11 @@
         ret[ret.length] =
         [
           "breadcrumb", css_path[i].name,
-          'ref-id', css_path[i].id.toString(),
-          'handler', 'breadcrumb-link',
-          'data-menu', 'breadcrumb',
-          'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
-                   (css_path[i].id == target_id ? ' active' : ''),
+          "ref-id", css_path[i].id.toString(),
+          "handler", "breadcrumb-link",
+          "data-menu", "breadcrumb",
+          "class", (css_path[i].is_parent_offset ? "parent-offset" : "") + 
+                   (css_path[i].id == target_id ? " active" : ""),
         ];
         if (show_combinator)
         {
@@ -513,8 +535,8 @@
 
     for( ; lang = dict[i]; i++)
     {
-      ret[ret.length] = ['option', lang.name, 'value', lang.key].
-        concat( selected_lang == lang.key ? ['selected', 'selected'] : [] );
+      ret[ret.length] = ["option", lang.name, "value", lang.key].
+        concat( selected_lang == lang.key ? ["selected", "selected"] : [] );
     }
     return ret;
   }

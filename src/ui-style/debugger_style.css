@@ -727,6 +727,26 @@ breadcrumb span
 
 /* js source file drop down */
 
+.script-options
+{
+  margin-top: 25px;
+}
+
+.js-dd-filter-container
+{
+  position: absolute;
+  top: -22px;
+  left: 0;
+  width: 100%;
+  background-color: gray;
+  border: 1px solid blue;
+}
+
+.js-dd-group
+{
+  padding-bottom: 10px;
+}
+
 .js-dd-runtime
 {
   padding: 2px 4px;
@@ -780,7 +800,12 @@ breadcrumb span
 
 .script-options cst-option
 {
-  padding-left: 2em;
+  padding-left: 2.5em;
+}
+
+.js-dd-scr-query
+{
+  color: #666;
 }
 
 .script-options cst-option

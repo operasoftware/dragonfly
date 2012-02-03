@@ -399,6 +399,16 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       _tooltips[name] = null;
   };
 
+  this.is_in_target_chain = function(event)
+  {
+    for (var i = 0, ctx; ctx = _ctx_stack[i]; i++)
+    {
+      if (ctx.tooltip_ele.contains(event.target))
+        return true;
+    }
+    return false;
+  };
+
   this.handle_contextmenu_event = function(event)
   {
     if (_cur_ctx && !_cur_ctx.tooltip_ele.contains(event.target))

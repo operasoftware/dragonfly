@@ -1147,12 +1147,17 @@ cls.ScriptSelect = function(id, class_name)
     eventHandlers.change['set-tab-size']({target: {value:  settings.js_source.get('tab-size')}});
   }
 
-  messages.addListener("thread-stopped-event", onThreadStopped);
-  messages.addListener("thread-continue-event", onThreadContinue);
-  messages.addListener("application-setup", onApplicationSetup);
+  this._init = function(id, class_name)
+  {
+    this.init(id, class_name);
+    messages.addListener("thread-stopped-event", onThreadStopped);
+    messages.addListener("thread-continue-event", onThreadContinue);
+    messages.addListener("application-setup", onApplicationSetup);
+    this._tooltip = Tooltips.register("js-script-select", true);
+  }
 
+  this._init(id, class_name);
 
-  this.init(id, class_name);
 }
 
 cls.ScriptSelect.prototype = new CstSelect();

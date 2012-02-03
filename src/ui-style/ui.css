@@ -1182,6 +1182,11 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
+  z-index: 150;
+}
+
+.cmd-line-runtimes
+{
   z-index: 302;
 }
 

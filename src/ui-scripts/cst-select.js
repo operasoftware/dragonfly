@@ -42,6 +42,9 @@
   {
     var ele = event.target;
 
+    if (window.Tooltips && Tooltips.is_in_target_chain(event))
+      return;
+
     while (ele != modal_box && (ele = ele.parentElement));
 
     if (!ele || !(event.target.nodeName.toLowerCase() == "input" &&
@@ -50,11 +53,9 @@
       event.stopPropagation();
       event.preventDefault();
     }
-  
+
     if (!ele)
-    {
       self.remove_select();
-    }
   }
 
   var modal_mouseup_handler = function(event)
@@ -63,6 +64,9 @@
     ele = event.target,
     target = event.target,
     select = null;
+
+    if (window.Tooltips && Tooltips.is_in_target_chain(event))
+      return;
 
     event.stopPropagation();
     event.preventDefault();
@@ -137,6 +141,7 @@
       modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
 
       var box = select.getBoundingClientRect(),
+      has_search_bar = Boolean(modal_box.querySelector("input[type=\"text\"]")),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
       cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
       left = box.left - cursor_left,
@@ -146,7 +151,7 @@
       _innerWidth = innerWidth,
       _innerHeight = innerHeight,
       max_width = _innerWidth - left - 30,
-      max_height = _innerHeight - bottom - 30,
+      max_height = _innerHeight - bottom - (30 + (has_search_bar ? 25 : 0)),
       modal_box_width = modal_box.offsetWidth,
       modal_box_height = modal_box.offsetHeight,
       max_width_2 = right - 30,
