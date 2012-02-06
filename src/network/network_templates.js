@@ -123,7 +123,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
         "div", viewmode_render(ctx, detail_width),
         "class", "network-data-container " + selected_viewmode
       ],
-      "class", "network-detail-container"
+      "class", "network-main-container"
     ]
   ]
 };

@@ -579,4 +579,9 @@ TextSearch.prototype = new function()
            this._match_style_default;
   }
 
+  this.set_query_selector = function(query_selector)
+  {
+    this._query_selector = query_selector;
+  }
+
 };

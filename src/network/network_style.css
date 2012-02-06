@@ -25,7 +25,7 @@
   min-width: 230px; /* value duplicated in network_view */
 }
 
-.network-detail-container
+.network-main-container
 {
   float: left;
   width: 60%;
@@ -231,7 +231,7 @@
   overflow-y: auto;
 }
 
-.network-details-request
+.network-details-container
 {
   position: fixed;
   right: 0;
@@ -246,18 +246,18 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, .4);
 }
 
-.network-details-request pre,
-.network-details-request p
+.network-details-container pre,
+.network-details-container p
 {
   margin: 0;
 }
 
-.network-details-request img.network-body
+.network-details-container img.network-body
 {
   margin-top: 2em;
 }
 
-.network-details-request table
+.network-details-container table
 {
   width: 100%;
   border-collapse: collapse;
@@ -265,25 +265,25 @@
   margin-top: 12px;
 }
 
-.network-details-request td,
-.network-details-request th
+.network-details-container td,
+.network-details-container th
 {
   vertical-align: top;
 }
 
-.network-details-request th
+.network-details-container th
 {
   text-align: left;
   padding-right: 30px;
   width: 140px;
 }
 
-.network-details-request hr {
+.network-details-container hr {
   border: none;
   border-top: 1px solid #a4a4a4;
 }
 
-.network-details-request h2,
+.network-details-container h2,
 .request-crafter h2,
 .network-options h2
 {

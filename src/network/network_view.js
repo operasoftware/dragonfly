@@ -35,6 +35,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this.needs_instant_update = false;
 
     this._container = container;
+
+    // the query_selector for the mode needs to be set even when there is currently no query.
+    if (this.mode == DETAILS)
+      this._text_search.set_query_selector("tbody:not(.network_info)");
+    else
+      this._text_search.set_query_selector("[handler='select-network-request']");
+
     if (this.query)
     {
       // this triggers _create via on_before_search
@@ -80,7 +87,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     var rendered = container.render(templates.network_log_details(ctx, selected));
-    var details = rendered.querySelector(".network-details-request");
+    var details = rendered.querySelector(".network-details-container");
     if (details)
       details.scrollTop = this._details_scroll;
   };
@@ -363,7 +370,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_scroll_bound = function(evt, target)
   {
     this._content_scroll = target.scrollTop;
-    if (evt.target.hasClass("network-details-request"))
+    if (evt.target.hasClass("network-details-container"))
       this._details_scroll = evt.target.scrollTop;
 
   }.bind(this)
@@ -623,7 +630,7 @@ cls.NetworkLog.create_ui_widgets = function()
 
   var on_view_created = function(msg)
   {
-    if( msg.id === "network_logger" )
+    if (msg.id === "network_logger")
     {
       text_search.setContainer(msg.container);
       text_search.setFormInput(
@@ -634,7 +641,7 @@ cls.NetworkLog.create_ui_widgets = function()
 
   var on_view_destroyed = function(msg)
   {
-    if( msg.id == "network_logger" )
+    if (msg.id == "network_logger")
     {
       text_search.cleanup();
     }

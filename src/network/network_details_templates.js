@@ -12,7 +12,7 @@ templates.network_log_details = function(ctx, selected)
   return [
     [
       "div", templates.network_log_detail(ctx, selected),
-      "class", "network-details-request"
+      "class", "network-details-container"
     ]
   ];
 };
@@ -33,12 +33,14 @@ templates.network_log_detail = function(ctx, selected)
         "tabindex", "1"
       ],
       ["table",
-        ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
-        ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-         "data-spec", "http#" + entry.method
-        ],
-        ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-         "data-spec", "http#" + entry.responsecode
+        ["tbody",
+          ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
+          ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+           "data-spec", "http#" + entry.method
+          ],
+          ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+           "data-spec", "http#" + entry.responsecode
+          ]
         ],
         templates.request_details(entry),
         templates.network_request_body(entry),
@@ -68,13 +70,14 @@ templates.request_details = function(req)
   else
     ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
 
+  var tbody = ["tbody"];
   if (req.is_finnished && !req.touched_network)
   {
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
+    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
   }
   else if (!req.request_headers)
   {
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
+    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
   }
   else {
     var firstline = req.request_raw.split("\n")[0];
@@ -87,8 +90,9 @@ templates.request_details = function(req)
         ["span", parts[2] + " "]
       ];
     }
-    ret = ret.concat(templates.network_headers_list(req.request_headers, firstline));
+    tbody = tbody.concat(templates.network_headers_list(req.request_headers, firstline));
   }
+  ret.push(tbody);
   return ret;
 };
 
@@ -105,7 +109,7 @@ templates.response_details = function(resp)
       ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
     ];
   }
-  return templates.network_headers_list(resp.response_headers, firstline);
+  return ["tbody", templates.network_headers_list(resp.response_headers, firstline)];
 };
 
 templates.network_headers_list = function(headers, firstline)
@@ -213,49 +217,56 @@ templates.network_request_body = function(req)
 
 templates.network_response_body = function(resp)
 {
+  var ret = [];
+  ret.push(templates.network_detail_row(templates.network_body_sperator()));
+  var classname = "";
   if (resp.body_unavailable)
   {
-    return [templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY)];
-  }
-
-  var ret = [templates.network_detail_row(templates.network_body_sperator())];
-  if (!resp.responsebody && !resp.entry.is_finished)
-  {
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
-  }
-  else if (!resp.responsebody) // todo: ideally this would only be on the last response, since that will always be retunred.
-  {
-    ret.push(templates.network_detail_row(
-      ["p",
-        ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-        ["p", ["span",
-            ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-            "data-object-id", String(resp.entry.id),
-            // unselectable attribute works around bug CORE-35118
-            "unselectable", "on",
-            "handler", "get-response-body",
-            "class", "container-button ui-button",
-            "tabindex", "1"
-        ]],
-        "class", "response-view-body-container"
-      ]));
+    classname = "network_info";
+    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
   }
   else
   {
-    if (["script", "markup", "css", "text"].contains(resp.entry.type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+    if (!resp.responsebody && !resp.entry.is_finished)
     {
-      ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
+      classname = "network_info";
+      ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
     }
-    else if (resp.entry.type == "image")
+    else if (!resp.responsebody) // todo: ideally this would only be on the last response, since that will always be retunred.
     {
-      ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
+      classname = "network_info";
+      ret.push(templates.network_detail_row(
+        ["p",
+          ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
+          ["p", ["span",
+              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
+              "data-object-id", String(resp.entry.id),
+              // unselectable attribute works around bug CORE-35118
+              "unselectable", "on",
+              "handler", "get-response-body",
+              "class", "container-button ui-button",
+              "tabindex", "1"
+          ]],
+          "class", "response-view-body-container info-box"
+        ]));
     }
-    else // todo: font display
+    else
     {
-      ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.entry.mime), "class", "network-body"]));
+      if (["script", "markup", "css", "text"].contains(resp.entry.type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+      {
+        ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
+      }
+      else if (resp.entry.type == "image")
+      {
+        ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
+      }
+      else // todo: font display
+      {
+        ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.entry.mime), "class", "network-body"]));
+      }
     }
   }
-  return ret;
+  return ["tbody", ret, "class", classname];
 };
 
 })(window.templates);
