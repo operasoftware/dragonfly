@@ -186,7 +186,7 @@ templates.network_viewmode_graphs = function(ctx, width)
                                                "#64b56b 1px,",
                                                "transparent 1px",
                                               ");",
-                           "background-position: -1px 21px, ",
+                           "background-position: 0 21px, ",
                             domcontentloaded + "px 21px,",
                             load + "px 21px;",
                            "background-repeat: repeat-x, no-repeat, no-repeat;",
@@ -279,15 +279,14 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
   var cnt = Math.ceil(width / gridwidth);
-  var offset = -1; // background-position in #graph is adjusted by that, to hide the 0s line
   var max_val = stepsize * cnt;
   var unit = [1, "ms"];
   if (max_val > 1000)
     unit = [1000, "s"];
   
-  while (stepsize && --cnt > 0) // skips last one on purpose (0s marker)
+  while (stepsize && --cnt >= 0)
   {
-    var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2 + offset;
+    var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
     var val_str = (stepsize * cnt) / unit[0];
     val_str = Math.round(val_str * 100) / 100;
     labels.push(["span", "" + val_str + unit[1],
