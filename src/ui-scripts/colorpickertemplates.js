@@ -252,12 +252,12 @@
     return (
     ['div',
       ['div',
-        ['div', 'class', 'height-100'],
+        ['canvas', 'class', 'cp-canvas'],
         'data-handler', 'onxy',
         'class', cp_2d_class
       ],
       ['div',
-        ['div', 'class', 'height-100'],
+        ['canvas', 'class', 'cp-canvas'],
         'data-handler', 'onz',
         'class', cp_1d_class
       ],
@@ -307,11 +307,15 @@
 
   this.color_picker_palette = function()
   {
-    var palette = cls.ColorPalette.get_instance().get_color_palette();
-    return (
-    ['div',
-      palette.map(this.color_picker_palette_item, this),
-      'class', 'color-picker-palette']);
+    if (window.cls && cls.ColorPalette)
+    {
+      var palette = cls.ColorPalette.get_instance().get_color_palette();
+      return (
+      ['div',
+        palette.map(this.color_picker_palette_item, this),
+        'class', 'color-picker-palette']);
+    }
+    return [];
   };
 
   this.color_picker_palette_item = function(item)
