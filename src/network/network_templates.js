@@ -230,7 +230,9 @@ templates.network_log_url_list = function(ctx, selected, item_order)
             ],
             "handler", "select-network-request",
             "data-object-id", String(req.id),
-            "class", (selected === req.id ? "selected" : " ") + (had_error_response ? "error" : " ") + (disqualified ? "disqualified" : "")
+            "class", (selected === req.id ? "selected " : " ") + 
+                     (had_error_response ? "network-error " : " ") + 
+                     (disqualified ? "disqualified " : "")
            ];
   };
 
@@ -385,8 +387,9 @@ templates.network_graph_entry_tooltip = function(entry)
     });
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
-    var svg_width = 100.5;
+    const LINEHEIGHT = 18;
 
+    var svg_width = 100.5;
     var x_start = 1.5;
     var y_start = 0.5;
     var y_ref = 0;
@@ -400,7 +403,7 @@ templates.network_graph_entry_tooltip = function(entry)
         var height = Math.round(gap.val * scale);
         y_start = y_ref + (height / 2);
         y_ref += height;
-        y_end = (index * 19) + 9.5;
+        y_end = (index * LINEHEIGHT) + (LINEHEIGHT / 2) + 0.5;
         return ["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]
       }
     });

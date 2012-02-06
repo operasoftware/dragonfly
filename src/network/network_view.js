@@ -76,10 +76,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._create();
   }.bind(this)
 
-  this._render_details_view = function(container)
+  this._render_details_view = function(container, selected)
   {
     var ctx = this._service.get_request_context();
-    var rendered = container.render(templates.network_log_details(ctx, this._selected));
+    var rendered = container.render(templates.network_log_details(ctx, selected));
     var details = rendered.querySelector(".network-details-request");
     if (details)
       details.scrollTop = this._details_scroll;
