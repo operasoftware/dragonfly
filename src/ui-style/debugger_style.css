@@ -726,6 +726,7 @@ breadcrumb span
 }
 
 /* js source file drop down */
+/* Don't use .js-dd-s-scope for styling. */
 
 .script-options
 {

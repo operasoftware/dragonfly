@@ -34,6 +34,8 @@
             target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
   };
 
+  this.onshowoptionlist = function(container) {};
+
   var modal_box = null;
   var select_obj = null;
   var self = this;
@@ -65,7 +67,9 @@
     target = event.target,
     select = null;
 
-    if (window.Tooltips && Tooltips.is_in_target_chain(event))
+    if ((window.Tooltips && Tooltips.is_in_target_chain(event)) || 
+        (event.target.nodeName.toLowerCase() == "input" &&
+         event.target.type == "text"))
       return;
 
     event.stopPropagation();
@@ -138,8 +142,8 @@
       document.addEventListener('mousedown', modal_mousedown_handler, true);
       document.addEventListener('mouseup', modal_mouseup_handler, true);
       select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
-
+      var tmpl = templates['cst-select-option-list'](select_obj, select);
+      modal_box = (cursor || document.documentElement).render(tmpl);
       var box = select.getBoundingClientRect(),
       has_search_bar = Boolean(modal_box.querySelector("input[type=\"text\"]")),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
@@ -190,6 +194,12 @@
         }
       }
       EventHandler.__modal_mode = true;
+      if (select_obj.onshowoptionlist)
+      {
+        var option_list = modal_box.querySelector("cst-select-option-list");
+        if (option_list)
+          select_obj.onshowoptionlist(option_list);
+      }
     }
   }
 

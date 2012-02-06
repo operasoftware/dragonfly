@@ -75,6 +75,16 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineSetter__("abs_dir", function() {});
 
+  this.__defineGetter__("origin", function()
+  {
+    if (!this._origin && (this._a || this[uri_prop_name]))
+      this._origin = this.protocol + "//" + this.host;
+
+    return this._origin;  
+  });
+
+  this.__defineSetter__("origin", function() {});
+
   this._init = function(uri)
   {
     if (!uri && this[uri_prop_name])

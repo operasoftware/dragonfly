@@ -1064,7 +1064,7 @@ cls.ScriptSelect = function(id, class_name)
   var selected_value = "";
   var selected_script_id = 0;
 
-  var stopped_script_id = '';
+  var _stopped_script_id = '';
 
   this.getSelectedOptionText = function()
   {
@@ -1074,6 +1074,7 @@ cls.ScriptSelect = function(id, class_name)
       var script = runtimes.getScript(selected_script_id);
       if (script)
       {
+        // TODO
         var display_uri = helpers.shortenURI(script.uri);
         var script_type = script.script_type.capitalize(true);
         return display_uri.uri ?
@@ -1106,9 +1107,23 @@ cls.ScriptSelect = function(id, class_name)
 
   this.templateOptionList = function(select_obj)
   {
-    return templates.script_dropdown(runtimes.get_dom_runtimes(true),
-                                     stopped_script_id,
-                                     runtimes.getSelectedScript());
+    this._runtimes = runtimes.get_dom_runtimes(true);
+    this._selected_script = runtimes.getSelectedScript();
+    return templates.script_dropdown(this._id,
+                                     this._runtimes,
+                                     _stopped_script_id,
+                                     this._selected_script);
+  };
+
+  this.onshowoptionlist = function(container)
+  {
+    var input = container.querySelector("input");
+    if (input)
+    {
+      this._script_list = container.querySelector(".js-dd-script-list");
+      this._filter.setContainer(container);
+      this._filter.setFormInput(input);
+    }
   };
 
   this.checkChange = function(target_ele)
@@ -1134,12 +1149,12 @@ cls.ScriptSelect = function(id, class_name)
 
   var onThreadStopped = function(msg)
   {
-    stopped_script_id = msg.stop_at.script_id;
+    _stopped_script_id = msg.stop_at.script_id;
   }
 
   var onThreadContinue = function(msg)
   {
-    stopped_script_id = '';
+    _stopped_script_id = '';
   }
 
   var onApplicationSetup = function()
@@ -1147,9 +1162,52 @@ cls.ScriptSelect = function(id, class_name)
     eventHandlers.change['set-tab-size']({target: {value:  settings.js_source.get('tab-size')}});
   }
 
+  this._onfilterinput = function(event, target)
+  {
+    this._filter.searchDelayed(target.value);
+  };
+
+  this._onshortcut = function(action_id, event, target)
+  {
+    switch (action_id)
+    {
+      case "highlight-next-match":
+        this._filter.highlight_next();
+        break;
+      
+      case "highlight-previous-match":
+        this._filter.highlight_previous();
+        break;
+    }
+  };
+
+  this._onbeforesearch = function(msg)
+  {
+    if (this._script_list)
+    {
+      var tmpl = templates.script_dropdown_options(this._id,
+                                                   this._runtimes,
+                                                   _stopped_script_id,
+                                                   this._selected_script,
+                                                   msg.search_term);
+      this._script_list.clearAndRender(tmpl);
+    }
+  };
+
   this._init = function(id, class_name)
   {
     this.init(id, class_name);
+    this._filter = new TextSearch();
+    this._filter.set_query_selector(".js-dd-s-scope");
+    this._onbeforesearch_bound = this._onbeforesearch.bind(this);
+    this._filter.addListener("onbeforesearch", this._onbeforesearch_bound);
+    eventHandlers.input[this._id + "-filter"] = this._onfilterinput.bind(this);
+    this._onshortcut_bound = this._onshortcut.bind(this);
+    var gl_h = ActionBroker.get_instance().get_global_handler();
+    gl_h.register_shortcut_listener(this._id + "-filter", 
+                                    this._onshortcut_bound, 
+                                    ["highlight-next-match",
+                                     "highlight-previous-match"]);
     messages.addListener("thread-stopped-event", onThreadStopped);
     messages.addListener("thread-continue-event", onThreadContinue);
     messages.addListener("application-setup", onApplicationSetup);

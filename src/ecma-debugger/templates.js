@@ -43,20 +43,37 @@
     return ret;
   }
 
-  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
+  this.script_dropdown = function(select_id, runtimes, stopped_script_id, selected_script_id)
   {
-    var ret = [["div", 
-                 ["input", "type", "text", "class", "js-dd-filter"],
-                 "class", "js-dd-filter-container"]];
-    for (var i = 0, rt; rt = runtimes[i]; i++)
-    {
-      ret.push(this.runtime_script(rt, stopped_script_id, selected_script_id));
-    }
-    return ret;
+    var option_list = this.script_dropdown_options(select_id,
+                                                   runtimes,
+                                                   stopped_script_id,
+                                                   selected_script_id);
+    return [["div", ["input", "type", "text", 
+                              "handler", select_id + "-filter",
+                              "shortcuts", select_id + "-filter",
+                              "class", "js-dd-filter"],
+                    "class", "js-dd-filter-container"],
+            option_list];
   };
 
-  this.runtime_script = function(runtime, stopped_script_id, selected_script_id)
+  this.script_dropdown_options = function(select_id, runtimes, stopped_script_id,
+                                          selected_script_id, search_term)
   {
+    var script_list = ["div"];
+    for (var i = 0, rt; rt = runtimes[i]; i++)
+    {
+      script_list.push(this.runtime_script(rt, stopped_script_id, 
+                                           selected_script_id, search_term));
+    }
+    script_list.push("class", "js-dd-script-list");
+    return script_list;
+  };
+
+  this.runtime_script = function(runtime, stopped_script_id, 
+                                 selected_script_id, search_term)
+  {
+    // search_term only applies to .js-dd-dir-group and.js-dd-type
     var ret = [];
     var script_uri_paths = {};
     var inline_and_evals = [];
@@ -70,23 +87,25 @@
     if (runtime.title != runtime.uri)
       title.push("title", runtime.uri);
 
-    ret.push(title);
-
     runtime.scripts.forEach(function(script)
     {
       var ret_script = this.script_option(script, 
                                           stopped_script_id, 
-                                          selected_script_id);
-      if (script.script_type === "linked")
+                                          selected_script_id,
+                                          search_term);
+      if (ret_script)
       {
-        var root_uri = this._uri_path(runtime, script);
-        if (script_uri_paths.hasOwnProperty(root_uri))
-          script_uri_paths[root_uri].push(ret_script);
+        if (script.script_type === "linked")
+        {
+          var root_uri = this._uri_path(runtime, script, search_term);
+          if (script_uri_paths.hasOwnProperty(root_uri))
+            script_uri_paths[root_uri].push(ret_script);
+          else
+            script_uri_paths[root_uri] = [ret_script];
+        }
         else
-          script_uri_paths[root_uri] = [ret_script];
+          inline_and_evals.push(ret_script);
       }
-      else
-        inline_and_evals.push(ret_script);
 
     }, this);
 
@@ -98,7 +117,7 @@
         group.push(["cst-title", uri, "class", "js-dd-dir-path"]);
 
       group.extend(script_uri_paths[uri]);
-      group.push("class", "js-dd-group js-dd-dir-group");
+      group.push("class", "js-dd-group js-dd-s-scope");
       ret.push(group);
     });
 
@@ -111,7 +130,7 @@
                       "class", "js-dd-dir-path"]);
 
       group.extend(inline_and_evals);
-      group.push("class", "js-dd-group");
+      group.push("class", "js-dd-group js-dd-s-scope");
       ret.push(group);
     }
 
@@ -119,43 +138,63 @@
     {
       if (runtime.browser_js || (runtime.user_js_s && runtime.user_js_s.length))
       {
-        var group = ["div"];
-        group.push(["cst-title", "Browser and User JS", "class", "js-dd-dir-path"]);
-
+        var scripts = [];
+        var sc_op = null;
         if (runtime.browser_js)
-          group.push(this.script_option(runtime.browser_js))
+        {
+          sc_op = this.script_option(runtime.browser_js, stopped_script_id,
+                                     selected_script_id, search_term);
+          if (sc_op)
+            scripts.push(sc_op);
+        }
 
-        if (runtime.user_js_s && runtime.user_js_s.length)
+        if (runtime.user_js_s)
         {
           for (var i = 0, script; script = runtime.user_js_s[i]; i++)
           {
-            group.push(this.script_option(script,
-                                          stopped_script_id,
-                                          selected_script_id));
+            sc_op = this.script_option(script, stopped_script_id,
+                                       selected_script_id, search_term)
+            if (sc_op)
+              scripts.push(sc_op);
           }
         }
-        group.push("class", "js-dd-group");
-        ret.push(group);
+        
+        if (scripts.length)
+        {
+          ret.push(["div", 
+                     ["cst-title", "Browser and User JS", "class", "js-dd-dir-path"],
+                     scripts,
+                     "class", "js-dd-group js-dd-s-scope"]);
+        }
       }
 
       if (runtime.extensions)
       {
         for (var i = 0, rt; rt = runtime.extensions[i]; i++)
         {
-          ret.push(this.runtime_script(rt, stopped_script_id, selected_script_id));
+          var ext_scripts = this.runtime_script(rt, stopped_script_id, 
+                                                selected_script_id, search_term)
+          if (ext_scripts.length)
+            ret.push(ext_scripts);
         }
       }
     }
+
+    if (ret.length)
+      ret.unshift(title);
+
     return ret;
   }
 
-  this._uri_path = function(runtime, script)
+  this._uri_path = function(runtime, script, search_term)
   {
     var uri_path = script.abs_dir;
 
-    if (script.abs_dir.indexOf(runtime.abs_dir) == 0)
+    if (script.abs_dir.indexOf(runtime.abs_dir) == 0 &&
+        (!search_term || !runtime.abs_dir.contains(search_term)))
       uri_path = "./" + script.abs_dir.slice(runtime.abs_dir.length);
-    else if (script.host == runtime.host && script.protocol == runtime.protocol)
+    else if (script.origin == runtime.origin &&
+             (!search_term || !(script.origin.contains(search_term))))
       uri_path = "/" + script.dir_pathname;
 
     return uri_path;
@@ -172,13 +211,19 @@
     "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
   };
 
-  this.script_option = function(script, stopped_script_id, selected_script_id)
+  this.script_option = function(script, stopped_script_id,
+                                selected_script_id, search_term)
   {
     var script_type = this._script_type_map[script.script_type] ||
                       script.script_type;
     var ret = null;
 
-    if (script.script_type == "linked")
+    if (search_term &&
+        !((script.uri && script.uri.toLowerCase().contains(search_term)) ||
+          (!script.uri && script_type.toLowerCase().contains(search_term))))
+      return ret;
+
+    if (script.uri)
     {
       ret = ["cst-option", 
               ["span", 
@@ -199,7 +244,7 @@
       var code_snippet = script.script_data.slice(0, 360)
                                .replace(/\s+/g, " ").slice(0, 120);
       ret = ["cst-option",
-              ["span", script_type.capitalize(true), "class", "js-dd-type"],
+              ["span", script_type.capitalize(true), "class", "js-dd-s-scope"],
               " – ",
               ["code", code_snippet, "class", "code-snippet"],
               "script-id", script.script_id.toString()];
