@@ -17,9 +17,7 @@
 .color-picker-color,
 .color-picker-alpha
 {
-  border: 1px solid #333;
-  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.1),
-              0 1px rgba(0, 0, 0, 0.2);
+
 }
 
 .color-picker-2-d-graphic
@@ -125,19 +123,46 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
   top: 0;
   left: 0;
+  border: 1px solid rgba(0, 0, 0, .3);
 }
 
 .color-picker-slider
 {
-  width: 40px;
+  width: 38px;
   height: 10px;
   position: absolute;
   margin-left: -10px;
   margin-top: -5px;
   left: 0;
   top: 0;
+  background-image: -o-linear-gradient(0deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 4px),
+                    -o-linear-gradient(-45deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(45deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(0deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 4px),
+                    -o-linear-gradient(-135deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(135deg,
+                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px);
+    background-size: 4px 9px, 5px 5px, 5px 5px, 4px 9px, 5px 5px, 5px 5px;
+    background-position: 0 0, 4px 4px, 4px 0, 34px 0, 29px 4px, 29px 0;
+    background-repeat: no-repeat;
 }
 
 .color-picker-pointer

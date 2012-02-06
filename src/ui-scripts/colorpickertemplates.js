@@ -358,7 +358,7 @@
     return (
     ['div',
       ['div',
-        slider_template || this.svg_slider_z(),
+        slider_template || [], 
         'class', slider_class
       ],
       'class', slider_base_class

@@ -435,7 +435,6 @@ ColorPicker.prototype = new function()
         container: ele_z,
         slider_base_class: SLIDER_BASE_CLASS,
         slider_class: SLIDER_CLASS,
-        slider_template: window.templates.svg_slider_z(),
         ony: this._onz.bind(this),
         min_y: 1,
         max_y: 0
