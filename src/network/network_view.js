@@ -502,22 +502,24 @@ cls.NetworkLog.create_ui_widgets = function()
     {
       "selected-viewmode": "graphs",
       "pause": false,
-      "show-incomplete-warning": true
+      "show-incomplete-warning": true,
+      "track-content": true
     },
     // key-label map
     {
       "selected-viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW, // todo: fix strings
       "pause": "",
-      "show-incomplete-warning": "Warn me when not all Network requests are shown"
+      "show-incomplete-warning": "Warn me when not all Network requests are shown",
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC
     },
     // settings map
     {
       customSettings: ["selected-viewmode", "pause"],
-      checkboxes: ["show-incomplete-warning"]
+      checkboxes: ["show-incomplete-warning", "track-content"]
     },
     // templates
     {
-      "selected-viewmode": function(){return ""}, // todo: this should not be necessary.
+      "selected-viewmode": function(){return ""},
       "pause": function(){return ""}
     },
     // group

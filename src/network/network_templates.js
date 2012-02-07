@@ -19,16 +19,6 @@ templates.network_options_main = function(nocaching, tracking, headers, override
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL
            ]],
-           ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
-           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC],
-           ["p", ["label",
-            ["input", "type", "checkbox",
-             "name", "network-options-track-bodies",
-             "handler", "network-options-toggle-body-tracking",
-             "checked", tracking ? true : false
-            ],
-            ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
-           ]],
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
            ["p", ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
@@ -212,9 +202,9 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     var url_tooltip = req.human_url;
     var context_info;
     if (req.unloaded)
-      context_info = "Unloaded"; // todo: strings
+      context_info = "Resource unreferenced"; // todo: strings
     else if (req.cached)
-      context_info = "Cached";
+      context_info = "Resource loaded from cache";
     else if (had_error_response)
       context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
 

@@ -29,9 +29,10 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                  text_types.map(function(e) { return [e, [STRING, DECODE]]})
                 ];
 
-    window.services['resource-manager'].requestSetRequestMode(null, reqarg);
+    window.services["resource-manager"].requestSetRequestMode(null, reqarg);
+    cls.NetworkLoggerService.instance.setup_content_tracking_bound();
   }
 
-  window.services['resource-manager'].addListener('enable-success', setup_request_body_behaviour);
+  window.services["resource-manager"].addListener("enable-success", setup_request_body_behaviour);
   return true;
 };

@@ -19,7 +19,7 @@ cls.NetworkLoggerService = function(view)
     // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect
     if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
-    this._current_context.saw_main_document_abouttoloaddocument = true; // todo: it would be good to make an indicator in the view that all requests may be shown
+    this._current_context.saw_main_document_abouttoloaddocument = true;
   }.bind(this);
 
   this._on_documentevent_bound = function(msg)
@@ -145,11 +145,45 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._res_service.addListener("urlunload", this._on_urlunload_bound);
-    this._doc_service = window.services['document-manager'];
+    this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
    //  this._doc_service.addListener("documentevent", this._on_documentevent_bound);
-    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
+    messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
+    messages.addListener("setting-changed", this._on_setting_changed_bound);
   };
+
+  this._on_setting_changed_bound = function(message)
+  {
+    if (message.id === "network_logger" && 
+        message.key === "track-content")
+    {
+      this.setup_content_tracking_bound();
+    }
+  }.bind(this);
+
+  this.setup_content_tracking_bound = function()
+  {
+    const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
+    this._track_bodies = settings.network_logger.get("track-content");
+
+    if (this._track_bodies)
+    {
+      var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
+                        "application/xslt+xml", "text/xsl", "application/xml",
+                        "text/css", "text/plain", "application/x-javascript",
+                        "application/json", "application/javascript", "text/javascript",
+                        "application/x-www-form-urlencoded"];
+
+      var resparg = [[DATA_URI, DECODE],
+                     text_types.map(function(e) { return [e, [STRING, DECODE]]})
+                    ];
+    }
+    else
+    {
+      var resparg = [[OFF]];
+    }
+    this._res_service.requestSetResponseMode(null, resparg);
+  }.bind(this);
 
   this.get_body = function(itemid, callback)
   {
