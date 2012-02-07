@@ -49,11 +49,16 @@
                                                    runtimes,
                                                    stopped_script_id,
                                                    selected_script_id);
-    return [["div", ["input", "type", "text", 
-                              "handler", select_id + "-filter",
-                              "shortcuts", select_id + "-filter",
-                              "class", "js-dd-filter"],
-                    "class", "js-dd-filter-container"],
+    return [["div", 
+              ["div",
+                ["input", "type", "text", 
+                          "handler", select_id + "-filter",
+                          "shortcuts", select_id + "-filter",
+                          "class", "js-dd-filter"],
+                "class", "js-dd-filter-container"],
+                ["span", "class", "js-dd-clear-filter",
+                         "handler", "js-dd-clear-filter"],
+              "class", "js-dd-filter-bar"],
             option_list];
   };
 
@@ -73,7 +78,7 @@
   this.runtime_script = function(runtime, stopped_script_id, 
                                  selected_script_id, search_term)
   {
-    // search_term only applies to .js-dd-dir-group and.js-dd-type
+    // search_term only applies to .js-dd-s-scope
     var ret = [];
     var script_uri_paths = {};
     var inline_and_evals = [];
@@ -123,15 +128,21 @@
 
     if (inline_and_evals.length)
     {
-      var group = ["div"];
-      if (runtime.type != "extension")
+      if (runtime.type == "extension")
+      {
+        ret.push(["div", inline_and_evals, "class", "js-dd-group js-dd-s-scope"]);
+      }
+      else
+      {
+        var group = ["div"];
         group.push(["cst-title",
                       "Inline, Eval, Timeout and Event handler scripts",
                       "class", "js-dd-dir-path"]);
 
-      group.extend(inline_and_evals);
-      group.push("class", "js-dd-group js-dd-s-scope");
-      ret.push(group);
+        group.extend(inline_and_evals);
+        group.push("class", "js-dd-group");
+        ret.push(group);
+      }
     }
 
     if (runtime.type != "extension")
@@ -163,8 +174,8 @@
         {
           ret.push(["div", 
                      ["cst-title", "Browser and User JS", "class", "js-dd-dir-path"],
-                     scripts,
-                     "class", "js-dd-group js-dd-s-scope"]);
+                     ["div", scripts, "class", "js-dd-s-scope"],
+                     "class", "js-dd-group"]);
         }
       }
 
@@ -225,11 +236,12 @@
 
     if (script.uri)
     {
+      var is_linked = script.script_type == "linked";
       ret = ["cst-option", 
               ["span", 
                  script.filename,
-                 "data-tooltip", "js-script-select", 
-                 "data-tooltip-text", script.uri]];
+                 "data-tooltip", is_linked && "js-script-select", 
+                 "data-tooltip-text", is_linked && script.uri]];
 
       if (script.search)
         ret.push(["span", script.search, "class", "js-dd-scr-query"]);

@@ -730,18 +730,49 @@ breadcrumb span
 
 .script-options
 {
-  margin-top: 25px;
+  margin-top: 26px;
+}
+
+.js-dd-filter-bar
+{
+  position: absolute;
+  top: -25px;
+  left: 0;
+  width: 100%;
+  background-color: hsl(0, 0%, 70%);
+  padding: 3px;
+  box-sizing: border-box;
 }
 
 .js-dd-filter-container
 {
-  position: absolute;
-  top: -22px;
-  left: 0;
-  width: 100%;
-  background-color: gray;
-  border: 1px solid blue;
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: white;
 }
+
+.js-dd-filter
+{
+  width: 100%;
+  box-sizing: border-box;
+  border: 0px solid transparent;
+  border-right-width: 20px;
+  padding: 2px;
+  background-color: transparent;
+}
+
+.js-dd-clear-filter
+{
+  display: block;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  background: transparent url("../ui-images/icons/icon_close_tab_small.png") 50% 50% no-repeat;
+}
+
+
 
 .js-dd-group
 {

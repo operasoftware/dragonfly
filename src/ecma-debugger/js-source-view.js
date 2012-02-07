@@ -1120,11 +1120,20 @@ cls.ScriptSelect = function(id, class_name)
     var input = container.querySelector("input");
     if (input)
     {
+      this._input = input;
       this._script_list = container.querySelector(".js-dd-script-list");
       this._filter.setContainer(container);
       this._filter.setFormInput(input);
+      input.focus();
     }
   };
+
+  this.onhideoptionlist = function()
+  {
+    this._filter.cleanup();
+    this._filter.set_search_term("");
+    this._input = null;
+  }
 
   this.checkChange = function(target_ele)
   {
@@ -1178,6 +1187,15 @@ cls.ScriptSelect = function(id, class_name)
       case "highlight-previous-match":
         this._filter.highlight_previous();
         break;
+
+      case "show-script":
+        var match_target = this._filter.get_match_target();
+        if (match_target)
+        {
+          match_target.dispatchMouseEvent("mouseup");
+        }
+
+        break;
     }
   };
 
@@ -1194,20 +1212,28 @@ cls.ScriptSelect = function(id, class_name)
     }
   };
 
+  this._onclearfilter = function(event, target)
+  {
+    this._filter.searchDelayed(this._input.value = "");
+  };
+
   this._init = function(id, class_name)
   {
     this.init(id, class_name);
-    this._filter = new TextSearch();
+    this.ignore_option_handlers = true;
+    this._filter = new TextSearch(1);
     this._filter.set_query_selector(".js-dd-s-scope");
     this._onbeforesearch_bound = this._onbeforesearch.bind(this);
     this._filter.addListener("onbeforesearch", this._onbeforesearch_bound);
     eventHandlers.input[this._id + "-filter"] = this._onfilterinput.bind(this);
+    eventHandlers.click["js-dd-clear-filter"] = this._onclearfilter.bind(this);
     this._onshortcut_bound = this._onshortcut.bind(this);
     var gl_h = ActionBroker.get_instance().get_global_handler();
     gl_h.register_shortcut_listener(this._id + "-filter", 
                                     this._onshortcut_bound, 
                                     ["highlight-next-match",
-                                     "highlight-previous-match"]);
+                                     "highlight-previous-match",
+                                     "show-script"]);
     messages.addListener("thread-stopped-event", onThreadStopped);
     messages.addListener("thread-continue-event", onThreadContinue);
     messages.addListener("application-setup", onApplicationSetup);

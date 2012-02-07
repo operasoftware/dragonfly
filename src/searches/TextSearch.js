@@ -586,7 +586,15 @@ TextSearch.prototype = new function()
   this.set_query_selector = function(selector)
   {
     this._query_selector = selector;
-  }
+  };
+
+  this.get_match_target = function()
+  {
+    return this._hits && 
+           this._hits[this._match_cursor] &&
+           this._hits[this._match_cursor][0] &&
+           this._hits[this._match_cursor][0].parentElement || null;
+  };
 
 
 };
