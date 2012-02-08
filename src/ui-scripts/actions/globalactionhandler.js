@@ -138,6 +138,13 @@
     return false;
   };
 
+  this._handlers["show-script-dropdown"] = function(action_id, event, target)
+  {
+    var ui = UI.get_instance();
+    ui.show_view("js_source");
+    ui.show_dropdown("js-script-select");
+  };
+
   this._close_open_menus = function()
   {
     var contextmenu = ContextMenu.get_instance();

@@ -1191,17 +1191,58 @@ cls.ScriptSelect = function(id, class_name)
       case "show-script":
         var match_target = this._filter.get_match_target();
         if (match_target)
+        {
+          if (!this._setting)
+            this._init_match_history();
+          
+          if (this._input && !this._match_history.contains(this._input.value))
+          {
+            this._match_history.push(this._input.value);
+            while (this._match_history.length > 10)
+              this._match_history.shift();
+            
+            if (this._setting)
+              this._setting.set("js-dd-match-history", this._match_history);
+          }          
           match_target.dispatchMouseEvent("mouseup");
+        }
 
         break;
 
       case "up":
-      
+        if (!this._setting)
+          this._init_match_history();
+
+        this._match_cursor++;
+        if (this._match_cursor > this._match_history.length - 1)
+          this._match_cursor = 0;
+        
+        this._set_filter_value();
         break;
 
       case "down":
+        if (!this._setting)
+          this._init_match_history();
 
+        this._match_cursor--;
+        if (this._match_cursor < 0)
+          this._match_cursor = this._match_history.length
+                             ? this._match_history.length - 1
+                             : 0;
+        
+        this._set_filter_value();
         break;
+    }
+  };
+
+  this._set_filter_value = function()
+  {
+    if (this._match_history[this._match_cursor] && this._input)
+    {
+      this._input.value = this._match_history[this._match_cursor];
+      this._input.selectionStart = 0;
+      this._input.selectionEnd = this._input.value.length;
+      this._filter.search(this._input.value);
     }
   };
 
@@ -1222,6 +1263,13 @@ cls.ScriptSelect = function(id, class_name)
   {
     this._filter.searchDelayed(this._input.value = "");
   };
+
+  this._init_match_history = function()
+  {
+    this._setting = window.settings.js_source;
+    this._match_history = this._setting && this._setting.get("js-dd-match-history");
+    this._match_cursor = 0;
+  }
 
   this._init = function(id, class_name)
   {
@@ -1246,6 +1294,9 @@ cls.ScriptSelect = function(id, class_name)
     messages.addListener("thread-continue-event", onThreadContinue);
     messages.addListener("application-setup", onApplicationSetup);
     this._tooltip = Tooltips.register("js-script-select", true);
+    this._setting = null;
+    this._match_history = [];
+    this._match_cursor = 0;
   }
 
   this._init(id, class_name);
@@ -1351,7 +1402,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-all-files': false,
       'js-search-injected-scripts': true,
       'max-displayed-search-hits': 1000,
-      'show-js-tooltip': true
+      'show-js-tooltip': true,
+      'js-dd-match-history': [],
     },
     // key-label map
     {

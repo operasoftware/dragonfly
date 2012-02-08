@@ -27,7 +27,8 @@
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search",
-          "ctrl r": "reload-context"
+          "ctrl r": "reload-context",
+          "ctrl f3": "show-script-dropdown",
         },
         "edit":
         {
@@ -44,6 +45,7 @@
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
           "ctrl f": "show-search",
+          "ctrl f3": "show-script-dropdown",
           "up": "up",
           "down": "down",
         }
@@ -229,7 +231,9 @@
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
           "f3": "show-search",
-          "cmd r": "reload-context"
+          "cmd r": "reload-context",
+          "cmd f3": "show-script-dropdown",
+
         },
         "edit":
         {
@@ -247,6 +251,9 @@
           "escape": "toggle-console",
           // "ctrl tab": "navigate-next-top-tab",
           // "ctrl shift tab": "navigate-previous-top-tab",
+          "cmd f3": "show-script-dropdown",
+          "up": "up",
+          "down": "down",
         }
       },
       "dom":
