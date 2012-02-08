@@ -7,12 +7,13 @@ templates.network_detail_row = function(wrap)
   return ["tr", ["td", wrap, "colspan", "2"]];
 }
 
-templates.network_log_details = function(ctx, selected)
+templates.network_log_details = function(ctx, selected, left_val)
 {
   return [
     [
       "div", templates.network_log_detail(ctx, selected),
-      "class", "network-details-container"
+      "class", "network-details-container",
+      "style", "left:" + left_val + "px"
     ]
   ];
 };
@@ -27,6 +28,10 @@ templates.network_log_detail = function(ctx, selected)
        responsecode = "" + responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
     return ["div",
+      ["span",
+        "class", "resize-request-detail",
+        "handler", "resize-request-detail"
+      ],
       ["span",
         "class", "close-request-detail",
         "handler", "close-request-detail",

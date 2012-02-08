@@ -86,10 +86,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._render_details_view = function(container, selected)
   {
     var ctx = this._service.get_request_context();
-    var rendered = container.render(templates.network_log_details(ctx, selected));
+    var left_val = settings.network_logger.get("detail-view-left-pos");
+    var rendered = container.render(templates.network_log_details(ctx, selected, left_val));
     var details = rendered.querySelector(".network-details-container");
-    if (details)
-      details.scrollTop = this._details_scroll;
+    this._details_scroll && (details.scrollTop = this._details_scroll);
   };
 
   this._render_click_to_fetch_view = function(container) // todo: templates
@@ -149,6 +149,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var data = ctx.get_entries_filtered().slice(0);
       this._table.set_data(data);
       table_container.clearAndRender(this._table.render());
+      if (this._selected)
+      {
+        var sel_row = table_container.querySelector("[data-object-id='" + this._selected + "']");
+        sel_row && sel_row.addClass("selected");
+      }
       this._catch_up_with_cols_and_sort_bound();
     }
   };
@@ -247,7 +252,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       graph: {
         label: "Graph",
         attributes: ["class", "network-graph-column"],
-        getter: function(entry) { return entry.requesttime },
+        getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
           return templates.network_graph_sections(entry, 50, entry.get_duration());
         }
@@ -295,6 +300,38 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.needs_instant_update = true;
     this.update();
     return false;
+  }.bind(this);
+
+  this._on_start_resize_detail_bound = function(evt, target)
+  {
+    document.addEventListener("mousemove", this._on_drag_detail_bound, false);
+    document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
+    this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+  }.bind(this);
+
+  this._on_drag_detail_bound = function(evt)
+  {
+    this._resize_detail_evt = evt;
+    evt.preventDefault();
+  }.bind(this);
+
+  this._on_drag_interval_bound = function()
+  {
+    var container = document.querySelector(".network-details-container");
+    if (container && this._resize_detail_evt)
+    {
+      this._detail_left = Math.max(this._resize_detail_evt.clientX, 15);
+      container.style.left = this._detail_left + "px";
+    }
+  }.bind(this);
+
+  this._on_stop_resize_detail_bound = function(evt)
+  {
+    document.removeEventListener("mousemove", this._on_drag_detail_bound, false);
+    document.removeEventListener("mouseup", this._on_stop_resize_detail_bound, false);
+    settings.network_logger.set("detail-view-left-pos", this._detail_left);
+    this._resize_interval = clearInterval(this._resize_interval);
+    this._resize_detail_evt = null;
   }.bind(this);
 
   this._on_select_next_bound = function(evt, target)
@@ -465,6 +502,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.scroll["network-logger"] = this._on_scroll_bound;
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
+  eh.mousedown["resize-request-detail"] = this._on_start_resize_detail_bound;
   eh.click["get-response-body"] = this._on_clicked_get_body;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
@@ -503,24 +541,27 @@ cls.NetworkLog.create_ui_widgets = function()
       "selected-viewmode": "graphs",
       "pause": false,
       "show-incomplete-warning": true,
-      "track-content": true
+      "track-content": true,
+      "detail-view-left-pos": 120
     },
     // key-label map
     {
       "selected-viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW, // todo: fix strings
       "pause": "",
       "show-incomplete-warning": "Warn me when not all Network requests are shown",
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL, // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
+      "detail-view-left-pos": ""
     },
     // settings map
     {
-      customSettings: ["selected-viewmode", "pause"],
+      customSettings: ["selected-viewmode", "pause", "detail-view-left-pos"],
       checkboxes: ["show-incomplete-warning", "track-content"]
     },
     // templates
     {
       "selected-viewmode": function(){return ""},
-      "pause": function(){return ""}
+      "pause": function(){return ""},
+      "detail-view-left-pos": function(){return ""}
     },
     // group
     "general"

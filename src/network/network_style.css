@@ -105,8 +105,8 @@
 }
 
 .network-log-url-list li.hovered,
-#graph div.hovered,
-.network_logger .network-data-table-container .sortable-table > tr.hovered > td {
+.network-main-container .network-data-container .hovered,
+.network-main-container .network-data-container .network-data-table-container .hovered {
   background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
@@ -169,22 +169,12 @@
 }
 
 .network-log-url-list li.selected,
-.network-log-url-list li:nth-child(even).selected
+.network-log-url-list li:nth-child(even).selected,
+.network-main-container .network-data-container .selected,
+.network-main-container .network-data-container .network-data-table-container .selected
 {
   background-color: rgba(55, 115, 211, 0.8);
   color: #fff;
-}
-
-.network_logger tabs
-{ 
-  top: 6px; /* have to do that because otherwise I get -1000px from ui.css */
-  width: 60%;
-  padding-right: 0;
-}
-
-.network_logger tab.active
-{ 
-  box-shadow: none;
 }
 
 .network_logger .sortable-table tr td, .network_logger .sortable-table tr th
@@ -196,15 +186,23 @@
 /* Network log / Detail view */
 .close-request-detail
 {
-  position: fixed;
-  left: 108px;
-  top: 87px;
-  z-index: 3;
+  position: absolute;
+  left: 5px;
+  top: 5px;
   background-color: #FFF;
   border: 1px solid #999;
   border-radius: 16px;
-  width: 23px;
-  height: 23px;
+  width: 19px;
+  height: 19px;
+}
+
+.resize-request-detail {
+  cursor: col-resize;
+  top: 83px;
+  height: 100%;
+  margin-left: -24px;
+  position: fixed;
+  width: 12px;
 }
 
 .close-request-detail:active
@@ -217,8 +215,8 @@
   content: "";
   background-image: url("../ui-images/icons/icon_close.png");
   display: block;
-  height: 23px;
-  width: 23px;
+  height: 19px;
+  width: 19px;
   background-position: 50%;
   background-repeat: no-repeat;
 }

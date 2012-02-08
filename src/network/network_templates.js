@@ -110,7 +110,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
     ],
     [
       "div", [
-        "div", viewmode_render(ctx, detail_width),
+        "div", viewmode_render(ctx, selected, detail_width),
         "class", "network-data-container " + selected_viewmode
       ],
       "class", "network-main-container"
@@ -118,11 +118,11 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
   ]
 };
 
-templates.network_viewmode_graphs = function(ctx, width)
+templates.network_viewmode_graphs = function(ctx, selected, width)
 {
   var basetime = ctx.get_starttime();
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-  var rows = templates.network_graph_rows(ctx, width, basetime, duration);
+  var rows = templates.network_graph_rows(ctx, selected, width, basetime, duration);
 
   var template = [];
   if (duration)
@@ -186,7 +186,7 @@ templates.network_viewmode_graphs = function(ctx, width)
   return template;
 }
 
-templates.network_viewmode_data = function(ctx, detail_width)
+templates.network_viewmode_data = function(ctx, selected, detail_width)
 {
   return ["div", "class", "network-data-table-container"];
 }
@@ -288,19 +288,19 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   return ["div", labels, "class", "network-timeline-row"];
 };
 
-templates.network_graph_rows = function(ctx, width, basetime, duration)
+templates.network_graph_rows = function(ctx, selected, width, basetime, duration)
 {
   var tpls = [];
   var entries = ctx.get_entries_filtered();
 
   for (var n = 0, entry; entry = entries[n]; n++)
   {
-    tpls.push(templates.network_graph_row(entry, width, basetime, duration));
+    tpls.push(templates.network_graph_row(entry, selected, width, basetime, duration));
   }
   return tpls;
 };
 
-templates.network_graph_row = function(entry, width, basetime, duration)
+templates.network_graph_row = function(entry, selected, width, basetime, duration)
 {
   var scale = width / duration;
   var start = (entry.starttime - basetime) * scale;
@@ -312,7 +312,7 @@ templates.network_graph_row = function(entry, width, basetime, duration)
                         "style", "margin-left:" + (start - padding_left_hitarea) + "px;"];
 
   return ["div", item_container,
-          "class", "network-graph-row",
+          "class", "network-graph-row " + (selected === entry.id ? "selected " : ""),
           "handler", "select-network-request",
           "data-object-id", String(entry.id)];
 }
