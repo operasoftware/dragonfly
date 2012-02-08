@@ -151,15 +151,17 @@ cls.CSSInspectorActions = function(id)
   this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration.property);
-    var script = "object.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   helpers.escape_input(declaration.value) + "\", " +
-                   (declaration.priority ? "\"important\"" : null) +
-                 ");";
+    var script = "";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
-      script += "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
+      script = "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
+
+    script += "object.style.setProperty(\"" +
+                prop + "\", \"" +
+                window.helpers.escape_input(declaration.value) + "\", " +
+                (declaration.priority ? "\"important\"" : null) +
+              ");";
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
@@ -177,14 +179,16 @@ cls.CSSInspectorActions = function(id)
   this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration.property);
-    var script = "object.setAttribute(\"" +
-                   prop + "\", \"" +
-                   declaration.value.replace(/"/g, "\\\"") + "\"" +
-                 ");";
+    var script = "";
 
     // If a property is added by overwriting another one, remove the other property
     if (prop_to_remove && prop != prop_to_remove)
-      script += "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
+      script = "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
+
+    script += "object.setAttribute(\"" +
+                prop + "\", \"" +
+                window.helpers.escape_input(declaration.value) + "\"" +
+              ");";
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
@@ -293,7 +297,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                   initial_property + "\", \"" +
-                  helpers.escape_input(this.editor.context_cur_value) + "\", " +
+                  window.helpers.escape_input(this.editor.context_cur_value) + "\", " +
                   (this.editor.context_cur_priority ? "\"important\"" : null) +
                 ");";
     }
@@ -305,7 +309,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                   new_property + "\", \"" +
-                  helpers.escape_input(decl.value) + "\", " +
+                  window.helpers.escape_input(decl.value) + "\", " +
                   (decl.priority ? "\"important\"" : null) +
                 ");";
     }
@@ -346,7 +350,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.setAttribute(\"" +
                   new_property + "\", \"" +
-                  helpers.escape_input(decl.value) + "\"" +
+                  window.helpers.escape_input(decl.value) + "\"" +
                 ");";
     }
 
