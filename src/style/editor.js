@@ -28,10 +28,11 @@ var Editor = function(actions)
   this.textarea = null;
   this.host_element_border_padding_left = 0;
   this.host_element_border_padding_top = 0;
-  this.context_cur_prop = '';
-  this.context_cur_value = '';
-  this.context_cur_priority = '';
-  this.context_cur_text_content = '';
+  this.context_cur_prop = "";
+  this.context_cur_value = "";
+  this.context_cur_priority = "";
+  this.context_cur_text_content = "";
+  this.context_last_prop = null;
   this.context_edit_mode = this.MODE_CSS;
   this.colors = new Color();
 
@@ -743,7 +744,9 @@ var Editor = function(actions)
         props[VALUE],
         props[PRIORITY]
       );
-      this._actions.set_property(this.context_rt_id, this.context_rule_id, decl);
+      var prop_to_remove = this.context_last_prop || this.context_cur_prop;
+      this._actions.set_property(this.context_rt_id, this.context_rule_id, decl, prop_to_remove);
+      this.context_last_prop = props[PROPERTY];
     }
     else if ((!props[PROPERTY] || props[PROPERTY] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
@@ -756,6 +759,7 @@ var Editor = function(actions)
     var props = this.get_properties();
     var keep_edit = false;
     var is_disabled = this.textarea_container.parentNode.hasClass("disabled");
+    this.context_last_prop = null;
 
     if (props && props.length == 3)
     {
@@ -832,6 +836,7 @@ var Editor = function(actions)
 
   this.escape = function()
   {
+    this.context_last_prop = null;
     this._actions.restore_property();
     if (this.context_cur_prop)
     {
