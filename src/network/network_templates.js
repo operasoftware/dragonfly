@@ -330,6 +330,7 @@ templates.network_graph_sections = function(entry, width, duration)
         "style", "width:" + section.val * scale + "px;"
       ];
     }
+    return "";
   });
 
   return ["span", sections || [],

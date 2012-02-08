@@ -802,9 +802,6 @@ cls.NetworkLoggerResponse = function(entry)
   this._update_event_response = function(event)
   {
     this.responsecode = event.responseCode;
-    // if (this.responsecode == "304") { this.entry.cached = true }
-    // todo: from the network side of things, this is not cached in the same sense as we use .cached in other places. 
-    // it should probably be differentiated, I tend to not treat this any different at all.
   };
 
   this._update_event_responseheader = function(event)

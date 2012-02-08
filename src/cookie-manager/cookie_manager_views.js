@@ -69,6 +69,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       groups: {
         runtime: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME,
+          use_ellipsis: true,
           grouper: function(obj) {
             return obj._rt_id;
           },

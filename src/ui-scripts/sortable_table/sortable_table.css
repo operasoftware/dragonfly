@@ -146,3 +146,44 @@ th.sort-column
 {
   background-color: rgba(0, 0, 0, 0.06);
 }
+
+/* ellipsis */
+
+.sortable-table .ellipsis_cont
+{
+  position: relative;
+}
+
+.sortable-table td .ellipsis_cont
+{
+  /*
+    because .ellipsis is the only things that lives in this container,
+    height needs to be specified to take room
+  */
+  height: 13px;
+}
+
+.sortable-table th .ellipsis_cont
+{
+  /* header row is lower */
+  height: 1em;
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
+.sortable-table .ellipsis_cont .ellipsis
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#contextmenu .ellipsis_cont,
+#contextmenu .ellipsis
+{
+  display: inline; /* hide containers in context menu */
+}

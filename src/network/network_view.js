@@ -165,14 +165,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     columns: {
       method: {
         label: "Method", // todo: strings
-        headerlabel: ""
+        headerlabel: "",
+        use_ellipsis: true,
+        renderer: function(entry) {
+          return entry.method;
+        }
       },
       status: {
         label: "Status",
+        use_ellipsis: true,
         renderer: function(entry) {
-          return entry.responses.length &&
-                 entry.responses.last.responsecode &&
-                 String(entry.responses.last.responsecode) || "";
+          return (entry.responsecode && String(entry.responsecode)) || "";
         },
         title_getter: function(entry) { // todo: use this in sortable_table
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
@@ -186,22 +189,31 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
-        getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE }
+        use_ellipsis: true,
+        getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
+        renderer: function(entry, getter) {
+          return getter(entry)
+        }
       },
       protocol: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
-        getter: function(entry) { return entry.urltypeName },
+        use_ellipsis: true,
+        getter: function(entry) { return entry.urltypeName }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
-        renderer: function(entry) { return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
-        getter: function(entry) { return entry.size }
+        use_ellipsis: true,
+        getter: function(entry) { return entry.size },
+        renderer: function(entry) {
+          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+        }
       },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
+        use_ellipsis: true,
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
           return String(entry.size ?
@@ -212,45 +224,45 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       latency: {
         label: "Waiting",
         align: "right",
+        use_ellipsis: true,
         getter: function(entry)
         {
           if (entry.responsestart && entry.requesttime)
             return entry.responsestart - entry.requesttime;
           return "";
         },
-        renderer: function(entry)
+        renderer: function(entry, getter)
         {
-          if (entry.responsestart && entry.requesttime)
-            return new Number(entry.responsestart - entry.requesttime).toFixed(2) + "ms";
-          return "";
+          var val = getter(entry);
+          return val && val.toFixed(2) + "ms";
         }
       },
       started: {
         label: "Started",
         align: "right",
+        use_ellipsis: true,
         getter: function(entry)
         {
-          return new Number(entry.starttime_relative);
+          return entry.starttime_relative;
         },
         renderer: function(entry)
         {
-          return new Number(entry.starttime_relative).toFixed(2) + "ms";
+          return entry.starttime_relative.toFixed(2) + "ms";
         }
       },
       duration: {
         label: "Duration",
         align: "right",
+        use_ellipsis: true,
         getter: function(entry) { return entry.get_duration() },
         renderer: function(entry) {
           var dur = entry.get_duration();
-          if (dur)
-            return new Number(dur).toFixed(2) + "ms";
-
-          return "";
+          return (dur && dur.toFixed(2) + "ms") || "";
         }
       },
       graph: {
         label: "Graph",
+        use_ellipsis: true,
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
@@ -275,15 +287,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         {
           needs_update = true; // todo: this causes another re-rendering for every added resource. optimize.
         }
-      }
-      // check if the visible columns are still the same, as the filters need updating if not. todo: no, the string filter is gone now.
-      // it's good to do this, even if needs_update is already true, because it stores the _table_columns
-      // for later reference. saves one redraw.
-      var old_table_columns = this._table_columns;
-      this._table_columns = this._table.columns.join(",");
-      if (this._table_columns !== old_table_columns)
-      {
-        needs_update = true;
       }
     }
     if (needs_update)
