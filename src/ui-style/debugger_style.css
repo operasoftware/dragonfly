@@ -1298,6 +1298,11 @@ d
   cursor: pointer;
 }
 
+.color-swatch.non-editable
+{
+  background-image: none;
+}
+
 .css-declaration.disabled .color-swatch
 {
   opacity: 0.35;
