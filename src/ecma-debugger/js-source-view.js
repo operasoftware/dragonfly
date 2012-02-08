@@ -1191,9 +1191,15 @@ cls.ScriptSelect = function(id, class_name)
       case "show-script":
         var match_target = this._filter.get_match_target();
         if (match_target)
-        {
           match_target.dispatchMouseEvent("mouseup");
-        }
+
+        break;
+
+      case "up":
+      
+        break;
+
+      case "down":
 
         break;
     }
@@ -1233,7 +1239,9 @@ cls.ScriptSelect = function(id, class_name)
                                     this._onshortcut_bound, 
                                     ["highlight-next-match",
                                      "highlight-previous-match",
-                                     "show-script"]);
+                                     "show-script",
+                                     "next",
+                                     "previous"]);
     messages.addListener("thread-stopped-event", onThreadStopped);
     messages.addListener("thread-continue-event", onThreadContinue);
     messages.addListener("application-setup", onApplicationSetup);

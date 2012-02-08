@@ -43,7 +43,9 @@
           "escape": "toggle-console",
           "ctrl tab": "navigate-next-top-tab",
           "ctrl shift tab": "navigate-previous-top-tab",
-          "ctrl f": "show-search"
+          "ctrl f": "show-search",
+          "up": "up",
+          "down": "down",
         }
       },
       "dom":
