@@ -1,4 +1,4 @@
-var URI = function(uri)
+﻿var URI = function(uri)
 {
   this._init(uri);
 };
