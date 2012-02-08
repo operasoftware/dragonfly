@@ -36,7 +36,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     this.ontooltipleave = function(){};
 
-    this.ontoolclick = function(){};
+    this.ontooltipclick = function(){};
 
     /**
       * To show the tooltip.
