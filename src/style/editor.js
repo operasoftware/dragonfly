@@ -493,7 +493,7 @@ var Editor = function(actions)
     var suggest = this._get_suggestion(
       this._tab_context_tokens && this._tab_context_tokens[0] || '',
       this._tab_context_tokens && cur_end <= this._tab_context_tokens[2],
-      cur_token,
+      cur_token.toLowerCase(),
       cur_start,
       cur_end,
       action_id
@@ -609,7 +609,7 @@ var Editor = function(actions)
       this.property_list = this._stylesheets.get_sorted_properties();
     }
     return this._get_matches_from_list(this.property_list,
-        this.textarea.value.slice(this._tab_context_tokens[1], cur_start));
+        this._tab_context_tokens[0].toLowerCase().slice(this._tab_context_tokens[1], cur_start));
   };
 
   this.suggest_property.replace_type = REPLACE_TYPE_SELECTION;
@@ -637,7 +637,7 @@ var Editor = function(actions)
 
     var prop = this._tab_context_tokens[0];
     var set = this._tab_context_tokens[3]
-            ? this.textarea.value.slice(this._tab_context_tokens[3], cur_start)
+            ? this.textarea.value.toLowerCase().slice(this._tab_context_tokens[3], cur_start)
             : "";
     var re_hex = /^#([0-9a-f]{6})$/i;
     var match = null;
