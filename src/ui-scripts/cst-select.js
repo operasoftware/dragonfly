@@ -8,6 +8,10 @@
     */
   this.getSelectedOptionText = function(){};
   /**
+    * get the text string for the tooltip of the selected option 
+    */
+  this.getSelectedOptionTooltipText = function(){};
+  /**
     * get the text value of the selected option 
     */
   this.getSelectedOptionValue = function(){};
@@ -229,7 +233,16 @@
     var firstElementChild = select_ele.firstElementChild;
     if(firstElementChild && firstElementChild.nodeName.toLowerCase() == "cst-value" )
     {
-      firstElementChild.textContent = this.getSelectedOptionText();
+      var tooltip_text = this.getSelectedOptionTooltipText();
+      if (tooltip_text)
+      {
+        var tmpl = ["span", this.getSelectedOptionText(),
+                            "data-tooltip", "js-script-select",
+                            "data-tooltip-text", tooltip_text];
+        firstElementChild.clearAndRender(tmpl);
+      }
+      else
+        firstElementChild.textContent = this.getSelectedOptionText();
     }
   }
 
@@ -391,20 +404,20 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
-  return (
-  [
-    "cst-select",
-      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
-        concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
-      ["cst-drop-down"],
-    "cst-id", select.getId(),
-    "handler", select.getId(),
-    "unselectable", "on",
-    "class", "ui-control"
-  ].
-  concat( select.type ? ['class', select.type] : [] ).
-  concat( disabled ? ['disabled', 'disabled'] : [] ).
-  concat( select.handler? ['handler', select.handler] : [] ) ); 
+  var tooltip_text = select.getSelectedOptionTooltipText();
+  return ["cst-select",
+           ["cst-value", 
+             ["span", select.getSelectedOptionText(),
+                      "data-tooltip", tooltip_text && "js-script-select", 
+                      "data-tooltip-text", tooltip_text],
+             "unselectable", "on"],
+           ["cst-drop-down"],
+           "cst-id", select.getId(),
+           "handler", select.getId(),
+           "unselectable", "on",
+           "class", "ui-control",
+           "disabled", disabled && "disabled",
+           "handler", select.handler]; 
 }
 
 templates['cst-select-option-list'] = function(_select_obj, select_ele)

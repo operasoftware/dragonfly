@@ -99,7 +99,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     window.services["ecmascript-debugger"].requestEval(tag, msg);
   };
 
-  var handle_get_root_id = function(sytatus, message, cb)
+  var handle_get_root_id = function(status, message, cb)
   {
     var STATUS = 0;
     var TYPE = 1;

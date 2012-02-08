@@ -741,7 +741,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       this._slice_highlighter.clear_hit();
       var line_ele = this.get_line_element(line_number);
-      while (line_ele && typeof length == 'number' && length > 0)
+      while (line_ele && typeof length == "number" && length > 0)
       {
         this._slice_highlighter.set_hit(line_ele, 
                                         offset_start,
@@ -986,18 +986,18 @@ cls.JsSourceView = function(id, name, container_class)
     return false;
   }.bind(this);
 
-  this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
-  this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
-  this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
-  this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class, null, 'scroll-js-source-view');
+  this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
+  this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
+  this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
+  this.init(id, name, container_class, null, "scroll-js-source-view");
   this._go_to_line = new cls.GoToLine(this);
-  messages.addListener('update-layout', updateLayout);
-  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-  messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
-  messages.addListener('monospace-font-changed',
+  messages.addListener("update-layout", updateLayout);
+  messages.addListener("runtime-destroyed", onRuntimeDestroyed);
+  messages.addListener("breakpoint-updated", this._onbreakpointupdated.bind(this));
+  messages.addListener("monospace-font-changed",
                        this._onmonospacefontchange.bind(this));
-  messages.addListener('setting-changed', this._on_setting_change.bind(this));
+  messages.addListener("setting-changed", this._on_setting_change.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
 
@@ -1061,28 +1061,32 @@ cls.GoToLine.prototype = ViewBase;
 cls.ScriptSelect = function(id, class_name)
 {
 
-  var selected_value = "";
-  var selected_script_id = 0;
+  var _selected_value = "";
+  var _selected_script_id = 0;
+  var _stopped_script_id = "";
 
-  var _stopped_script_id = '';
+  this.getSelectedOptionTooltipText = function()
+  {
+    _selected_script_id = runtimes.getSelectedScript();
+    var script = _selected_script_id && runtimes.getScript(_selected_script_id);
+    return script && script.script_type == "linked" && script.uri || null
+  }
 
   this.getSelectedOptionText = function()
   {
-    selected_script_id = runtimes.getSelectedScript();
-    if (selected_script_id)
+    _selected_script_id = runtimes.getSelectedScript();
+    if (_selected_script_id)
     {
-      var script = runtimes.getScript(selected_script_id);
+      var script = runtimes.getScript(_selected_script_id);
       if (script)
       {
-        // TODO
-        var display_uri = helpers.shortenURI(script.uri);
         var script_type = script.script_type.capitalize(true);
-        return display_uri.uri ?
-               display_uri.uri :
+        return script.uri ?
+               script.filename :
                script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
                ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
       }
-      else if(selected_script_id == -1)
+      else if(_selected_script_id == -1)
       {
         return ' ';
       }
@@ -1142,13 +1146,13 @@ cls.ScriptSelect = function(id, class_name)
     if (script_id)
     {
       // TODO is this needed?
-      if (script_id != selected_script_id)
+      if (script_id != _selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
         topCell.showView(views.js_source.id);
-        selected_script_id = script_id;
+        _selected_script_id = script_id;
       }
-      selected_value = target_ele.textContent;
+      _selected_value = target_ele.textContent;
       return true;
     }
     return false;
@@ -1163,7 +1167,7 @@ cls.ScriptSelect = function(id, class_name)
 
   var onThreadContinue = function(msg)
   {
-    _stopped_script_id = '';
+    _stopped_script_id = "";
   }
 
   var onApplicationSetup = function()
