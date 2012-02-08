@@ -246,9 +246,9 @@ var ui_framework = new function()
       "William Monospace",
     ].map(function(font)
     {
-      return "<span title='" + font + "'style='font-family:" + font + "'>test</span>";
+      return "<span title='" + font + "' style='font-family:" + font + "'>test</span>";
     }).join('') +
-  "</div>";
+  "</div></div>";
 
   this.set_default_properties = function(test)
   {

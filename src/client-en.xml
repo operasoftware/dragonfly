@@ -133,7 +133,7 @@ window.load_screen_timeout = window.setTimeout(function()
     left:50%; \
     margin-top:-90px; \
     margin-left:-250px; \
-    text-align:center;'> \
+    text-align:center;'/> \
   <style>/*\u003c\u0021\u005bCDATA\u005b*/ \
     #start-window-close {float: right;} \
     #start-window-reload {float: left;} \
