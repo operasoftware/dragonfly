@@ -25,7 +25,7 @@
 })();
 */
 
-/* testing in Chrome or FF
+/* testing in Chrome or FF *
 if (document.createElementNS &&
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {
@@ -34,7 +34,7 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-*/
+/* */
 
 if (!Element.prototype.contains)
 {
