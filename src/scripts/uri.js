@@ -21,10 +21,7 @@ var URIPrototype = function(uri_prop_name)
   [
     "hash",
     "host",
-    "hostname",
-    "href",
     "pathname",
-    "port",
     "protocol",
     "search"
   ].forEach(function(prop)

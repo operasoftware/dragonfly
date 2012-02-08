@@ -21,7 +21,7 @@
     * this template will be displayed in a <'cst-select-option-list> element, 
     * absolute positioned 
     */
-  this.templateOptionList = function(_select_obj){};
+  this.templateOptionList = function(select_obj){};
   /**
     * the call to check if a new selected option has actually changed 
     */
@@ -31,7 +31,7 @@
     * for more complex selects like colors 
     * return 0 submit, 1 cancel, 2 keep modal state
     */
-  this.handleClick = function(target_ele, _modal_box, _select_obj)
+  this.handleClick = function(target_ele, modal_box, _select_obj)
   {
     return ((!_select_obj.ignore_option_handlers &&
              target_ele.hasAttribute('handler')) || 
@@ -295,11 +295,11 @@
   }
 
   /* default interface implemetation */
-  this.templateOptionList = function(_select_obj)
+  this.templateOptionList = function(select_obj)
   {
     var 
     ret = [],
-    opt_list = _select_obj._option_list,
+    opt_list = select_obj._option_list,
     opt = null, 
     i = 0;
 
@@ -364,11 +364,11 @@ var CstSelectWithActionBase = function(id, class_name, type)
     ]
   }
 
-  this.templateOptionList = function(_select_obj)
+  this.templateOptionList = function(select_obj)
   {
     var 
-    ret = _select_obj._action_entries.map(this._action_entry),
-    opt_list = _select_obj._option_list,
+    ret = select_obj._action_entries.map(this._action_entry),
+    opt_list = select_obj._option_list,
     opt = null, 
     i = 0;
 

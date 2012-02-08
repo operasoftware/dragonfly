@@ -11,7 +11,7 @@ cls.PrettyPrinter.REGEXP = 5;
 cls.PrettyPrinter.types = {};
 
 /**
-  * Add more types to here.
+  * Add more types here.
   * A type must have an is_type function which takes a class name to check 
   * if a given object is of this type.
   * The type must either have a script or a traversal property. The script is 

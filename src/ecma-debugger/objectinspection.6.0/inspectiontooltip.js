@@ -120,8 +120,7 @@ cls.JSInspectionTooltip = function()
                                     cls.PrettyPrinter.DATE,
                                     cls.PrettyPrinter.FUNCTION,
                                     cls.PrettyPrinter.ERROR,
-                                    cls.PrettyPrinter.REGEXP,
-                                    ]);
+                                    cls.PrettyPrinter.REGEXP]);
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
     _tooltip.ontooltipenter = _ontooltipenter;

@@ -745,7 +745,7 @@ cls.JSSourceTooltip = function(view)
     return null;
   };
 
-  var _walk_dom = function(ctx, node) // node, target_node, sum, is_found
+  var _walk_dom = function(ctx, node)
   {
     // ctx.target_node, ctx.sum, ctx.is_found
     while (!ctx.is_found && node)
@@ -896,8 +896,8 @@ cls.JSSourceTooltip = function(view)
         continue;
 
       offset_count += char == "\t"
-                     ? _tab_size - offset_count % _tab_size
-                     : 1;
+                    ? _tab_size - offset_count % _tab_size
+                    : 1;
     }
     return offset_count * _char_width;
   };
