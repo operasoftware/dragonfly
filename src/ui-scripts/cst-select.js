@@ -114,6 +114,8 @@
       }
 
       self.remove_select();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
     }
   }
 
@@ -138,9 +140,9 @@
   var mouse_handler = function(event)
   {
     var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName))
+    if (/^cst-/i.test(ele.nodeName) || /^cst-/i.test(ele.parentNode.nodeName))
     {
-      var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
+      var select = ele.get_ancestor("cst-select");
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
@@ -148,6 +150,9 @@
       }
       event.stopPropagation();
       event.preventDefault();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+
       while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
       document.addEventListener('mousedown', modal_mousedown_handler, true);
       document.addEventListener('mouseup', modal_mouseup_handler, true);

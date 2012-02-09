@@ -415,4 +415,10 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       _cur_ctx.hide_tooltip();
   };
 
+  this.hide_tooltip = function()
+  {
+    if (_cur_ctx)
+      _cur_ctx.hide_tooltip();
+  }
+
 }).apply(Tooltips);

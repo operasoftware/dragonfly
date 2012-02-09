@@ -136,7 +136,7 @@
       {
         var group = ["div"];
         group.push(["cst-title",
-                      "Inline, Eval, Timeout and Event handler scripts",
+                      ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS,
                       "class", "js-dd-dir-path"]);
 
         group.extend(inline_and_evals);
@@ -173,7 +173,9 @@
         if (scripts.length)
         {
           ret.push(["div", 
-                     ["cst-title", "Browser and User JS", "class", "js-dd-dir-path"],
+                     ["cst-title",
+                        ui_strings.S_SCRIPT_SELECT_SECTION_BRÒWSER_AND_USER_JS,
+                        "class", "js-dd-dir-path"],
                      ["div", scripts, "class", "js-dd-s-scope"],
                      "class", "js-dd-group"]);
         }
