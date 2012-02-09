@@ -71,7 +71,7 @@
       script_list.push(this.runtime_script(rt, stopped_script_id, 
                                            selected_script_id, search_term));
     }
-    script_list.push("class", "js-dd-script-list");
+    script_list.push("class", "js-dd-script-list", "handler", "js-dd-mouseover");
     return script_list;
   };
 

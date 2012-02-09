@@ -68,6 +68,7 @@ TextSearch.prototype = new function()
     this._search_bound = this.search.bind(this);
     this.ignore_case = 1;
     this.search_type = TextSearch.PLAIN_TEXT;
+    this.no_highlight = false;
   }
 
   this._set_default_style = function(span, index, array)
@@ -320,7 +321,8 @@ TextSearch.prototype = new function()
               this._hits.length == this._old_hits_length)
           {
             this._match_cursor = old_cursor;
-            this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+            if (!this.no_highlight)
+              this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
             if (this._onhighlightstyle)
             {
               this._onhighlightstyle(this._hits[this._match_cursor]);
@@ -372,6 +374,9 @@ TextSearch.prototype = new function()
    */
   this.highlight = function(check_position, direction)
   {
+    if (this.no_highlight)
+      return;
+      
     if (this._search_term && 
         this._search_term.length < this._min_term_length &&
         !this._search_forced)

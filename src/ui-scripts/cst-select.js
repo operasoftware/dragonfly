@@ -427,9 +427,10 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 templates['cst-select-option-list'] = function(_select_obj, select_ele)
 {
-  return (
-  ['cst-select-option-list-container',
-    ['cst-select-option-list', _select_obj.templateOptionList(_select_obj)],
-    'style', 'top: -1000px; left: -1000px;'
-  ].concat('class', 'menu ' + (_select_obj.class_name ? _select_obj.class_name : "")));
+  var cln = "menu" + (_select_obj.class_name ? " " + _select_obj.class_name : "");
+  return ["cst-select-option-list-container",
+           ["cst-select-option-list",
+              _select_obj.templateOptionList(_select_obj)],
+              "style", "top: -1000px; left: -1000px;",
+              "class", cln];
 }

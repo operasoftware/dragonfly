@@ -48,6 +48,8 @@
           "ctrl f3": "show-script-dropdown",
           "up": "up",
           "down": "down",
+          "shift up": "shift-up",
+          "shift down": "shift-down",
         }
       },
       "dom":
@@ -254,6 +256,8 @@
           "cmd f3": "show-script-dropdown",
           "up": "up",
           "down": "down",
+          "shift up": "shift-up",
+          "shift down": "shift-down",
         }
       },
       "dom":
