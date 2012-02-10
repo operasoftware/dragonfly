@@ -504,10 +504,13 @@ templates.sortable_table_sumrow = function(tabledef, groupname, data, cols)
 {
   return ["tr",
           cols.map(function(e) {
+            var coldef = tabledef.columns[e];
             var val = "";
-            var summer = tabledef.columns[e].summer;
+            var summer = coldef.summer;
             if (summer) { val = summer(data, groupname) }
-            return ["td", val];
+            if (coldef.use_ellipsis)
+              val = templates.sortable_table_wrap_ellipsis(val);
+            return ["td", val, "class", coldef.align ? "align-" + coldef.align : ""];
           }),
           "class", "sortable-table-summation-row"
          ];

@@ -203,8 +203,8 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     var context_info;
     if (req.unloaded)
       context_info = "Unreferenced"; // todo: strings
-    else if (req.cached)
-      context_info = "Loaded from cache";
+    else if (req.no_request_made)
+      context_info = "No request made";
     else if (had_error_response)
       context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
 

@@ -207,6 +207,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
           return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+        },
+        summer: function(data, groupname) {
+          return String(data.map(function(entry){return entry.size || 0}).reduce(function(prev, curr) {
+              return prev + curr;
+            }
+          ));
         }
       },
       size_h: {
@@ -219,6 +225,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
+        },
+        summer: function(data, groupname) {
+          var size = (data.map(function(entry){return entry.size || 0}).reduce(function(prev, curr) {
+              return prev + curr;
+            }
+          ))
+          return size ? cls.ResourceUtil.bytes_to_human_readable(size) :
+                        ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
         }
       },
       latency: {
@@ -258,7 +272,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         renderer: function(entry) {
           var dur = entry.get_duration();
           return (dur && dur.toFixed(2) + "ms") || "";
-        }
+        },
+        summer: function(data, groupname) {
+          var ctx = this._service.get_request_context();
+          return (ctx && ctx.get_duration().toFixed(2) + "ms") || 0;
+        }.bind(this)
       },
       graph: {
         label: "Graph",
@@ -310,12 +328,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     document.addEventListener("mousemove", this._on_drag_detail_bound, false);
     document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
     this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+    evt.preventDefault();
   }.bind(this);
 
   this._on_drag_detail_bound = function(evt)
   {
     this._resize_detail_evt = evt;
-    evt.preventDefault();
   }.bind(this);
 
   this._on_drag_interval_bound = function()

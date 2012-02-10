@@ -42,7 +42,7 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:nth-child(odd)
+.sortable-table > tr:nth-child(odd):not(.sortable-table-summation-row)
 {
   background-color: rgba(0, 0, 0, 0.03);
 }
@@ -145,6 +145,10 @@ th.sort-column
 .sortable-table > tr.header > th:not(.sortable-table-group-header):active
 {
   background-color: rgba(0, 0, 0, 0.06);
+}
+
+.sortable-table .sortable-table-summation-row {
+  border-top: 1px solid #8e8e8e;
 }
 
 /* ellipsis */

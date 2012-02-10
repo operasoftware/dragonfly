@@ -637,7 +637,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 
   this.get_duration = function()
   {
-    return this.events.length && this.endtime - this.starttime;
+    return (this.events.length && this.endtime - this.starttime) || 0;
   }
 
   this._update_event_urlload = function(event)
@@ -665,12 +665,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
 
-    // the assumption is that if we got this far, and there was no
-    // response code, meaning no request was sent, the url was cached.
-    // except for DATA URIs
-    if (!this.responsecode && this.urltype != cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
+    // if we got this far, and there was no
+    // response code, no request was performed for this entry
+    if (!this.responsecode)
     {
-      this.cached = true;
+      this.no_request_made = true;
     }
 
     this.is_finished = true;
