@@ -11,7 +11,7 @@ cls.ScriptSelect = function(id, class_name)
   {
     _selected_script_id = runtimes.getSelectedScript();
     var script = _selected_script_id && runtimes.getScript(_selected_script_id);
-    return script && script.script_type == "linked" && script.uri || null
+    return script && script.script_type == "linked" && script.uri || null;
   }
 
   this.getSelectedOptionText = function()
@@ -23,9 +23,9 @@ cls.ScriptSelect = function(id, class_name)
       if (script)
       {
         var script_type = script.script_type.capitalize(true);
-        return script.uri ?
-               script.filename :
-               script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
+        return script.uri
+             ? script.filename
+             : script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
                ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
       }
       else if(_selected_script_id == -1)
@@ -139,13 +139,13 @@ cls.ScriptSelect = function(id, class_name)
         {
           if (!this._setting)
             this._init_match_history();
-          
+
           if (this._input && !this._match_history.contains(this._input.value))
           {
             this._match_history.push(this._input.value);
             while (this._match_history.length > 10)
               this._match_history.shift();
-            
+
             if (this._setting)
               this._setting.set("js-dd-match-history", this._match_history);
           }          

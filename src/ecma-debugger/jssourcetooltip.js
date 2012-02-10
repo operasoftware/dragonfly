@@ -24,6 +24,7 @@ cls.JSSourceTooltip = function(view)
   var VALUE = 1;
   var SHIFT_KEY = 16;
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
+  var MAX_MOUSE_POS_COUNT = 2;
 
   var _tooltip = null;
   var _view = null;
@@ -47,7 +48,7 @@ cls.JSSourceTooltip = function(view)
   var _tagman = null;
   var _esde = null;
   var _is_over_tooltip = false;
-  var _selection = null;
+  var _win_selection = null;
   var _last_script_text = "";
   var _shift_key = false;
 
@@ -56,7 +57,7 @@ cls.JSSourceTooltip = function(view)
     if (!_last_move_event || _is_over_tooltip)
       return;
     
-    if (!_selection.isCollapsed && !_shift_key)
+    if (!_win_selection.isCollapsed && !_shift_key)
     {
       _clear_selection();
       return;
@@ -77,7 +78,7 @@ cls.JSSourceTooltip = function(view)
       }
     }
     
-    while (_mouse_positions.length > 2)
+    while (_mouse_positions.length > MAX_MOUSE_POS_COUNT)
       _mouse_positions.shift();
 
     _mouse_positions.push({x: _last_move_event.clientX,
@@ -169,7 +170,7 @@ cls.JSSourceTooltip = function(view)
     var OBJECT_ID = 0;
     var CLASS_NAME = 4;
 
-    if (!status && message[STATUS] == "completed")
+    if (status === 0 && message[STATUS] == "completed")
     {
       _identifier = selection;
       _identifier_out_count = 0;
@@ -190,7 +191,7 @@ cls.JSSourceTooltip = function(view)
         box.bottom = _container_box.top + line_count * _line_height;
         var max_right = _get_max_right();
         box.left = _total_x_offset;
-        box.right = _total_x_offset + max_right - _container.scrollLeft;        
+        box.right = _total_x_offset + max_right - _container.scrollLeft;
       }
 
       if (message[TYPE] == "object")
@@ -205,9 +206,9 @@ cls.JSSourceTooltip = function(view)
           var tmpl = ["div",
                        ["h2", ["span", object[CLASS_NAME],
                                        "data-tooltip", TOOLTIP_NAME], 
-                              'data-id', String(model.id),
-                              'obj-id', String(model.object_id),
-                              'class', 'js-tooltip-title'],
+                              "data-id", String(model.id),
+                              "obj-id", String(model.object_id),
+                              "class", "js-tooltip-title"],
                        [window.templates.inspected_js_object(model, false)],
                        "class", "js-tooltip js-tooltip-examine"];
           _tooltip.show(tmpl, box);
@@ -245,8 +246,8 @@ cls.JSSourceTooltip = function(view)
         length = end + 1 - start;
       }
 
-      if (!_selection.isCollapsed)
-        _selection.collapseToStart()
+      if (!_win_selection.isCollapsed)
+        _win_selection.collapseToStart()
 
       _view.higlight_slice(start_line, start_offset, length);
     }
@@ -273,7 +274,7 @@ cls.JSSourceTooltip = function(view)
 
   var _get_identifier = function(script, line_number, char_offset, shift_key)
   {
-    if (_selection.isCollapsed)
+    if (_win_selection.isCollapsed)
     {
       var tokens = _get_tokens_of_line(script, line_number);
 
@@ -301,7 +302,7 @@ cls.JSSourceTooltip = function(view)
     }
     else
     {
-      var range = _selection.getRangeAt(0);
+      var range = _win_selection.getRangeAt(0);
       if (range.intersectsNode(_last_move_event.target))
       {
         var start = _get_line_and_offset(range.startContainer, range.startOffset);
@@ -332,8 +333,6 @@ cls.JSSourceTooltip = function(view)
 
     if (shift_key && previous_token[VALUE] == ")")
       parens_stack.push(previous_token[VALUE]);
-
-
 
     while (true)
     {
@@ -538,8 +537,6 @@ cls.JSSourceTooltip = function(view)
     if (shift_key && previous_token[VALUE] == "(")
       parens_stack.push(previous_token[VALUE]);
 
-
-
     while (bracket_stack.length || (shift_key && parens_stack.length))
     {
       for (var i = match_index + 1, token = null; token = tokens[i]; i++)
@@ -700,8 +697,6 @@ cls.JSSourceTooltip = function(view)
             break;
           }
         }
-
-
       }
 
       if (i == tokens.length && bracket_stack.length)
@@ -820,7 +815,7 @@ cls.JSSourceTooltip = function(view)
 
   var _update_identifier_boxes = function(script, identifier)
   {
-    // translates the current selected identifier to dimesion boxes
+    // translates the current selected identifier to dimension boxes
     // position and dimensions are absolute to the source text
     var line_number = _identifier.start_line;
     
@@ -879,8 +874,8 @@ cls.JSSourceTooltip = function(view)
     for (var i = 0, l = line.length, offset_count = 0; i < l; i++)
     {
       offset_count += line[i] == "\t"
-                     ? _tab_size - (offset_count % _tab_size)
-                     : 1;
+                    ? _tab_size - (offset_count % _tab_size)
+                    : 1;
       if (offset_count > offset)
         return i;
     }
@@ -934,12 +929,12 @@ cls.JSSourceTooltip = function(view)
         _container = container;
         _container_box = container.getBoundingClientRect();
         _tooltip_target_ele = target.parentNode;
-        _tooltip_target_ele.addEventListener('mousemove', _onmousemove, false);
+        _tooltip_target_ele.addEventListener("mousemove", _onmousemove, false);
         while (_mouse_positions.length)
           _mouse_positions.pop();
 
         _total_x_offset = _container_box.left + _default_offset;
-        _selection = window.getSelection();
+        _win_selection = window.getSelection();
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
       }
     }    
@@ -956,7 +951,7 @@ cls.JSSourceTooltip = function(view)
       _tooltip_target_ele = null;
       _container_box = null;
       _container = null;
-      _selection = null;
+      _win_selection = null;
     }
   };
 
@@ -1010,7 +1005,7 @@ cls.JSSourceTooltip = function(view)
   this.unregister = function()
   {
     Tooltips.unregister(cls.JSSourceTooltip.tooltip_name, _tooltip);
-    window.messages.removeListener('monospace-font-changed', _onmonospacefontchange);
+    window.messages.removeListener("monospace-font-changed", _onmonospacefontchange);
     window.removeEventListener('resize', _get_container_box, false);
   };
 

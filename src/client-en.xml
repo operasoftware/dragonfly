@@ -215,6 +215,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/selectioncontroller.js"/>
 <script src="./scripts/dblclickmenucontroller.js"/>
 <script src="./scripts/uri.js"/>
+<script src="./scripts/hashmap.js"/>
 
 
 

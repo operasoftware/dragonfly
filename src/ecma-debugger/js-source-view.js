@@ -728,7 +728,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if (__current_script && __current_script.script_id)
     {
-      var cand = __top_line + Math.floor(offset / context['line-height']);
+      var cand = __top_line + Math.floor(offset / context["line-height"]);
       if (cand <= __current_script.line_arr.length)
         return cand;
     }
@@ -741,7 +741,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       this._slice_highlighter.clear_hit();
       var line_ele = this.get_line_element(line_number);
-      while (line_ele && typeof length == "number" && length > 0)
+      while (line_ele && typeof length == "number" && !isNaN(length) && length > 0)
       {
         this._slice_highlighter.set_hit(line_ele, 
                                         offset_start,

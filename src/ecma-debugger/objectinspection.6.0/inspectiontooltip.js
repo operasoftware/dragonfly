@@ -64,12 +64,10 @@ cls.JSInspectionTooltip = function()
         {
           if (views.dom.isvisible() && dom_data.target)
             hostspotlighter.spotlight(dom_data.target, true);
-          
           else
             hostspotlighter.clearSpotlight();
         }
         break;
-        
     }
   };
   
@@ -129,7 +127,6 @@ cls.JSInspectionTooltip = function()
   };
 
   _init();
-
 };
 
 cls.JSInspectionTooltip.tooltip_name = "js-inspection";

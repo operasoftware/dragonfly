@@ -1,4 +1,6 @@
-﻿var URI = function(uri)
+﻿"use strict";
+
+var URI = function(uri)
 {
   this._init(uri);
 };
@@ -73,7 +75,7 @@ var URIPrototype = function(uri_prop_name)
   this.__defineGetter__("abs_dir", function()
   {
     if (!this._abs_dir && (this._is_parsed || this[uri_prop_name]))
-      this._abs_dir = (this.protocol ? this.protocol + "//": "") +
+      this._abs_dir = (this.protocol ? this.protocol + "//" : "") +
                       this.host + this.dir_pathname;
 
     return this._abs_dir;  

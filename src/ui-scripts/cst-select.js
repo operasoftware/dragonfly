@@ -33,10 +33,14 @@
     */
   this.handleClick = function(target_ele, modal_box, _select_obj)
   {
-    return ((!_select_obj.ignore_option_handlers &&
-             target_ele.hasAttribute('handler')) || 
-            _select_obj.checkChange(target_ele)) && 1 ||
-            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
+    if ((!_select_obj.ignore_option_handlers && target_ele.hasAttribute('handler')) ||
+        _select_obj.checkChange(target_ele))
+      return 1;
+    
+    if (target_ele.nodeName.toLowerCase() != 'cst-option')
+      return 2;
+
+    return 0;
   };
 
   this.onshowoptionlist = function(container) {};

@@ -693,7 +693,7 @@ if (!Object.getOwnPropertyNames)
     var ret = [];
     for (var p in obj)
     {
-      if (obj.hasOwnProperty(p))
+      if (Object.prototype.hasOwnProperty.call(obj, p))
         ret.push(p);
     }
     return ret;

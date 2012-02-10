@@ -1426,5 +1426,5 @@ ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show a tooltip in the source view";
 ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
 
 /* DESC: Section header in the script drop-down select for Browser and User JS. */
-ui_strings.S_SCRIPT_SELECT_SECTION_BRÒWSER_AND_USER_JS = "Browser and User JS"
+ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
 
