@@ -798,7 +798,7 @@ breadcrumb span
 .js-dd-runtime,
 .cmd-line-runtimes cst-option
 {
-  padding: 4px 8px;
+  padding: 4px 8px 3px 8px;
   border: 0 solid rgba(0, 0, 0, 0.06);
   border-width: 1px 0;
   margin-top: 16px;
@@ -823,7 +823,7 @@ breadcrumb span
   padding: 3px 4px 3px 28px;
   margin-top: 8px;
   background: #e8e8e8 url("../ui-images/icons/icon_extension.png") 6px 50% no-repeat;
-  color: #333;
+  color: #595959;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -862,7 +862,7 @@ breadcrumb span
 {
   margin-top: 8px;
   font-style: italic;
-  color: #666;
+  color: #8f8f8f;
   background-color: transparent;
 }
 
