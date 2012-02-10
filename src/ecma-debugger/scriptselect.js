@@ -30,7 +30,7 @@ cls.ScriptSelect = function(id, class_name)
       }
       else if(_selected_script_id == -1)
       {
-        return ' ';
+        return " ";
       }
       else
       {
@@ -293,7 +293,7 @@ cls.ScriptSelect = function(id, class_name)
     this._filter.addListener("onbeforesearch", this._onbeforesearch_bound);
     eventHandlers.input[this._id + "-filter"] = this._onfilterinput.bind(this);
     eventHandlers.click["js-dd-clear-filter"] = this._onclearfilter.bind(this);
-    eventHandlers.mouseover["js-dd-mouseover"] = this._onmouseover.bind(this);
+    eventHandlers.mouseover["js-dd-move-highlight"] = this._onmouseover.bind(this);
     this._onshortcut_bound = this._onshortcut.bind(this);
     var gl_h = ActionBroker.get_instance().get_global_handler();
     gl_h.register_shortcut_listener(this._id + "-filter", 

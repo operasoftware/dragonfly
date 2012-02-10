@@ -1205,7 +1205,7 @@ cst-select-option-list-container
   display: block;
   position:absolute;
   z-index: 150;
-  margin-top: 1px; /* position top is set inline */
+  border: 1px solid transparent;
 }
 
 .cmd-line-runtimes
