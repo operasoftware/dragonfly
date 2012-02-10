@@ -202,9 +202,9 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     var url_tooltip = req.human_url;
     var context_info;
     if (req.unloaded)
-      context_info = "Resource unreferenced"; // todo: strings
+      context_info = "Unreferenced"; // todo: strings
     else if (req.cached)
-      context_info = "Resource loaded from cache";
+      context_info = "Loaded from cache";
     else if (had_error_response)
       context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
 
@@ -317,7 +317,7 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
           "data-object-id", String(entry.id)];
 }
 
-templates.network_graph_sections = function(entry, width, duration)
+templates.network_graph_sections = function(entry, width, duration, do_tooltip)
 {
   var scale = width / duration;
   var gaps = entry.event_gaps;
@@ -330,12 +330,11 @@ templates.network_graph_sections = function(entry, width, duration)
         "style", "width:" + section.val * scale + "px;"
       ];
     }
-    return "";
   });
 
-  return ["span", sections || [],
+  return ["span", sections.length && sections || [],
            "class", "network-graph-sections",
-           "data-tooltip", "network-graph-tooltip", // the tooltip is now on the sections and the hitarea.
+           "data-tooltip", do_tooltip && "network-graph-tooltip",
            "data-object-id", String(entry.id)
          ];
 };
@@ -374,10 +373,12 @@ templates.network_graph_entry_tooltip = function(entry)
                  ini.debug ? ["td", "(" + gap.from_event.name + " to " + gap.to_event.name + ")", "class", "gap_title"] : []
                ];
       }
+      return [];
     });
+    event_rows.push(["tr", ["td", total_length_string, "class", "time_data mono"], ["td", "Total time"], "class", "sum"]);
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
-    const LINEHEIGHT = 18;
+    const LINEHEIGHT = 19;
 
     var svg_width = 100.5;
     var x_start = 1.5;
@@ -402,15 +403,15 @@ templates.network_graph_entry_tooltip = function(entry)
 
     return ["div",
       [
-        /*
         ini.debug ?
-          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : ["h2", "Requested at " +  entry.start_time_string], */
+          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
+          ["h2", "Requested at " +  entry.start_time_string],
         ["div",
           ["div",
             ["div", graphical_sections, "class", "network-tooltip-graph-sections"],
             "class", "network-tooltip-graph"
           ],
-          ["div", 
+          ["div",
             ["svg:svg", pathes,
               "width",  Math.ceil(svg_width) + "px",
               "height", Math.ceil(svg_height) + "px",

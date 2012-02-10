@@ -266,7 +266,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
-          return templates.network_graph_sections(entry, 50, entry.get_duration());
+          return templates.network_graph_sections(entry, 50, entry.get_duration(), true);
         }
       }
     }

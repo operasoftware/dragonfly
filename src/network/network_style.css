@@ -412,6 +412,10 @@
   margin: 6px 0 4px 0;
 }
 
+.network-tooltip-container .sum {
+  border-top: 1px solid #444;
+}
+
 .network-tooltip-container .mono {
   color: #444;
 }

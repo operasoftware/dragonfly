@@ -496,7 +496,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       var ms = "" + d.getMilliseconds();
       while (ms.length < 3)
         ms = "0" + ms;
-      this.start_time_string = h + ":" + m + ":" + s + ":" + ms;
+      this.start_time_string = h + ":" + m + ":" + s + "." + ms;
     }
     var unlisted_events = ["responsebody", "urlunload"];
     if (!unlisted_events.contains(eventname))
