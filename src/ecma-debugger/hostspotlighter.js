@@ -95,11 +95,11 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     }
     var script = "return document.documentElement";
     var msg = [rt_id, thread_id, frame_index, script];
-    var tag = window.tagManager.set_callback(null, handle_get_root_id, [cb]);
+    var tag = window.tag_manager.set_callback(null, handle_get_root_id, [cb]);
     window.services["ecmascript-debugger"].requestEval(tag, msg);
   };
 
-  var handle_get_root_id = function(sytatus, message, cb)
+  var handle_get_root_id = function(status, message, cb)
   {
     var STATUS = 0;
     var TYPE = 1;

@@ -19,12 +19,12 @@ var Color = function()
   this.__hsv = [0, 50, 50]; 
 }
 
-Color.KEYWORD = 'keyword';
-Color.HEX = 'hex';
-Color.RGB = 'rgb';
-Color.RGBA = 'rgba';
-Color.HSL = 'hsl';
-Color.HSLA = 'hsla';
+Color.KEYWORD = "keyword";
+Color.HEX = "hex";
+Color.RGB = "rgb";
+Color.RGBA = "rgba";
+Color.HSL = "hsl";
+Color.HSLA = "hsla";
 
 Color.prototype = new function()
 {

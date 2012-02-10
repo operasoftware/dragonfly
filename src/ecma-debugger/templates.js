@@ -71,7 +71,7 @@
       script_list.push(this.runtime_script(rt, stopped_script_id, 
                                            selected_script_id, search_term));
     }
-    script_list.push("class", "js-dd-script-list");
+    script_list.push("class", "js-dd-script-list", "handler", "js-dd-mouseover");
     return script_list;
   };
 
@@ -80,13 +80,13 @@
   {
     // search_term only applies to .js-dd-s-scope
     var ret = [];
-    var script_uri_paths = {};
+    var script_uri_paths = new HashMap();
     var inline_and_evals = [];
     var title = ["cst-title", runtime.title];
     var class_name = runtime.type == "extension"
                    ? "js-dd-ext-runtime"
                    : "js-dd-runtime";
-      
+
     title.push("class", class_name + (runtime.selected ? " selected-runtime" : ""));
 
     if (runtime.title != runtime.uri)
@@ -103,7 +103,7 @@
         if (script.script_type === "linked")
         {
           var root_uri = this._uri_path(runtime, script, search_term);
-          if (script_uri_paths.hasOwnProperty(root_uri))
+          if (script_uri_paths[root_uri])
             script_uri_paths[root_uri].push(ret_script);
           else
             script_uri_paths[root_uri] = [ret_script];
@@ -136,7 +136,7 @@
       {
         var group = ["div"];
         group.push(["cst-title",
-                      "Inline, Eval, Timeout and Event handler scripts",
+                      ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS,
                       "class", "js-dd-dir-path"]);
 
         group.extend(inline_and_evals);
@@ -173,7 +173,9 @@
         if (scripts.length)
         {
           ret.push(["div", 
-                     ["cst-title", "Browser and User JS", "class", "js-dd-dir-path"],
+                     ["cst-title",
+                        ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS,
+                        "class", "js-dd-dir-path"],
                      ["div", scripts, "class", "js-dd-s-scope"],
                      "class", "js-dd-group"]);
         }
@@ -267,7 +269,7 @@
                    : "";
 
     if (stopped_script_id == script.script_id)
-      class_name += ( class_name && " " || "" ) + "stopped";
+      class_name += (class_name ? " " : "") + "stopped";
     
     if (class_name)
       ret.push("class", class_name);
@@ -593,7 +595,7 @@
     for( ; lang = dict[i]; i++)
     {
       ret[ret.length] = ["option", lang.name, "value", lang.key].
-        concat( selected_lang == lang.key ? ["selected", "selected"] : [] );
+        concat(selected_lang == lang.key ? ["selected", "selected"] : []);
     }
     return ret;
   }

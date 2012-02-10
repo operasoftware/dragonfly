@@ -26,7 +26,7 @@ cls.EcmascriptDebugger["6.0"].DOMRuntime = function(rt)
   this.type = "document";
   this.id = rt.runtime_id;
   this.uri = rt.uri;
-  this.title = rt.title || rt.uri; // TODO
+  this.title = rt.title || rt.uri;
   this.selected = rt.selected;
   this.extensions = [];
 };

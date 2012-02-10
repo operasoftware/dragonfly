@@ -133,7 +133,7 @@ window.load_screen_timeout = window.setTimeout(function()
     left:50%; \
     margin-top:-90px; \
     margin-left:-250px; \
-    text-align:center;'> \
+    text-align:center;'/> \
   <style>/*\u003c\u0021\u005bCDATA\u005b*/ \
     #start-window-close {float: right;} \
     #start-window-reload {float: left;} \
@@ -215,6 +215,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/selectioncontroller.js"/>
 <script src="./scripts/dblclickmenucontroller.js"/>
 <script src="./scripts/uri.js"/>
+<script src="./scripts/hashmap.js"/>
 
 
 
@@ -375,6 +376,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./searches/domsearchview.js"/>
 
 <script src="./ecma-debugger/js-source-view.js"/>
+<script src="./ecma-debugger/scriptselect.js"/>
 
 <script src="./ecma-debugger/dominspection/templates.js"/>
 <script src="./ecma-debugger/dominspection/domserializer.js"/>

@@ -206,7 +206,7 @@ var ui_framework = new function()
           "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +
             "<div id='test-scrollbar-width' style='height:300px'></div> " +
           "</div> " +
-          "<div><span id='test-text-left-offset'>&nbsp;</span></div>" +
+          "<div><span id='test-text-left-offset'>&amp;nbsp;</span></div>" +
         "</div> " +
       "</div> " +
     "</div> " +
@@ -260,9 +260,9 @@ var ui_framework = new function()
       "William Monospace",
     ].map(function(font)
     {
-      return "<span title='" + font + "'style='font-family:" + font + "'>test</span>";
+      return "<span title='" + font + "' style='font-family:" + font + "'>test</span>";
     }).join('') +
-  "</div>";
+  "</div></div>";
 
   this.set_default_properties = function(tests)
   {

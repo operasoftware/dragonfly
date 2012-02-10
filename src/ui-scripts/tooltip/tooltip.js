@@ -36,7 +36,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     this.ontooltipleave = function(){};
 
-    this.ontoolclick = function(){};
+    this.ontooltipclick = function(){};
 
     /**
       * To show the tooltip.
@@ -414,5 +414,11 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     if (_cur_ctx && !_cur_ctx.tooltip_ele.contains(event.target))
       _cur_ctx.hide_tooltip();
   };
+
+  this.hide_tooltip = function()
+  {
+    if (_cur_ctx)
+      _cur_ctx.hide_tooltip();
+  }
 
 }).apply(Tooltips);

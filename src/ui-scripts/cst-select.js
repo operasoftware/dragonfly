@@ -8,6 +8,10 @@
     */
   this.getSelectedOptionText = function(){};
   /**
+    * get the text string for the tooltip of the selected option 
+    */
+  this.getSelectedOptionTooltipText = function(){};
+  /**
     * get the text value of the selected option 
     */
   this.getSelectedOptionValue = function(){};
@@ -17,7 +21,7 @@
     * this template will be displayed in a <'cst-select-option-list> element, 
     * absolute positioned 
     */
-  this.templateOptionList = function(_select_obj){};
+  this.templateOptionList = function(select_obj){};
   /**
     * the call to check if a new selected option has actually changed 
     */
@@ -27,12 +31,16 @@
     * for more complex selects like colors 
     * return 0 submit, 1 cancel, 2 keep modal state
     */
-  this.handleClick = function(target_ele, _modal_box, _select_obj)
+  this.handleClick = function(target_ele, modal_box, _select_obj)
   {
-    return ((!_select_obj.ignore_option_handlers &&
-             target_ele.hasAttribute('handler')) || 
-            _select_obj.checkChange(target_ele)) && 1 ||
-            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
+    if ((!_select_obj.ignore_option_handlers && target_ele.hasAttribute('handler')) ||
+        _select_obj.checkChange(target_ele))
+      return 1;
+    
+    if (target_ele.nodeName.toLowerCase() != 'cst-option')
+      return 2;
+
+    return 0;
   };
 
   this.onshowoptionlist = function(container) {};
@@ -110,6 +118,8 @@
       }
 
       self.remove_select();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
     }
   }
 
@@ -134,9 +144,9 @@
   var mouse_handler = function(event)
   {
     var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName))
+    if (/^cst-/i.test(ele.nodeName) || /^cst-/i.test(ele.parentNode.nodeName))
     {
-      var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
+      var select = ele.get_ancestor("cst-select");
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
@@ -144,6 +154,9 @@
       }
       event.stopPropagation();
       event.preventDefault();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+
       while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
       document.addEventListener('mousedown', modal_mousedown_handler, true);
       document.addEventListener('mouseup', modal_mouseup_handler, true);
@@ -229,7 +242,16 @@
     var firstElementChild = select_ele.firstElementChild;
     if(firstElementChild && firstElementChild.nodeName.toLowerCase() == "cst-value" )
     {
-      firstElementChild.textContent = this.getSelectedOptionText();
+      var tooltip_text = this.getSelectedOptionTooltipText();
+      if (tooltip_text)
+      {
+        var tmpl = ["span", this.getSelectedOptionText(),
+                            "data-tooltip", "js-script-select",
+                            "data-tooltip-text", tooltip_text];
+        firstElementChild.clearAndRender(tmpl);
+      }
+      else
+        firstElementChild.textContent = this.getSelectedOptionText();
     }
   }
 
@@ -282,11 +304,11 @@
   }
 
   /* default interface implemetation */
-  this.templateOptionList = function(_select_obj)
+  this.templateOptionList = function(select_obj)
   {
     var 
     ret = [],
-    opt_list = _select_obj._option_list,
+    opt_list = select_obj._option_list,
     opt = null, 
     i = 0;
 
@@ -351,11 +373,11 @@ var CstSelectWithActionBase = function(id, class_name, type)
     ]
   }
 
-  this.templateOptionList = function(_select_obj)
+  this.templateOptionList = function(select_obj)
   {
     var 
-    ret = _select_obj._action_entries.map(this._action_entry),
-    opt_list = _select_obj._option_list,
+    ret = select_obj._action_entries.map(this._action_entry),
+    opt_list = select_obj._option_list,
     opt = null, 
     i = 0;
 
@@ -391,27 +413,28 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
-  return (
-  [
-    "cst-select",
-      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
-        concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
-      ["cst-drop-down"],
-    "cst-id", select.getId(),
-    "handler", select.getId(),
-    "unselectable", "on",
-    "class", "ui-control"
-  ].
-  concat( select.type ? ['class', select.type] : [] ).
-  concat( disabled ? ['disabled', 'disabled'] : [] ).
-  concat( select.handler? ['handler', select.handler] : [] ) ); 
+  var tooltip_text = select.getSelectedOptionTooltipText();
+  return ["cst-select",
+           ["cst-value", 
+             ["span", select.getSelectedOptionText(),
+                      "data-tooltip", tooltip_text && "js-script-select", 
+                      "data-tooltip-text", tooltip_text],
+             "unselectable", "on"],
+           ["cst-drop-down"],
+           "cst-id", select.getId(),
+           "handler", select.getId(),
+           "unselectable", "on",
+           "class", "ui-control",
+           "disabled", disabled && "disabled",
+           "handler", select.handler]; 
 }
 
 templates['cst-select-option-list'] = function(_select_obj, select_ele)
 {
-  return (
-  ['cst-select-option-list-container',
-    ['cst-select-option-list', _select_obj.templateOptionList(_select_obj)],
-    'style', 'top: -1000px; left: -1000px;'
-  ].concat('class', 'menu ' + (_select_obj.class_name ? _select_obj.class_name : "")));
+  var cln = "menu" + (_select_obj.class_name ? " " + _select_obj.class_name : "");
+  return ["cst-select-option-list-container",
+           ["cst-select-option-list",
+              _select_obj.templateOptionList(_select_obj)],
+              "style", "top: -1000px; left: -1000px;",
+              "class", cln];
 }

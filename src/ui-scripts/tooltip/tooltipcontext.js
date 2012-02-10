@@ -106,7 +106,8 @@ TooltipContext.prototype = new function()
 
   this._push_last_handler_ele = function()
   {
-    if (this.last_handler_ele && !this._last_handler_eles.contains(this.last_handler_ele))
+    if (this.last_handler_ele &&
+        !this._last_handler_eles.contains(this.last_handler_ele))
       this._last_handler_eles.push(this.last_handler_ele);
   };
 
