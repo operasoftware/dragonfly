@@ -87,6 +87,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     var left_val = settings.network_logger.get("detail-view-left-pos");
+    left_val = Math.min(left_val, window.innerWidth - 100);
     var rendered = container.render(templates.network_log_details(ctx, selected, left_val));
     var details = rendered.querySelector(".network-details-container");
     this._details_scroll && (details.scrollTop = this._details_scroll);
@@ -342,7 +343,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (container && this._resize_detail_evt)
     {
       this._detail_left = Math.max(this._resize_detail_evt.clientX, 15);
+      this._detail_left = Math.min(this._detail_left, window.innerWidth - 100);
       container.style.left = this._detail_left + "px";
+      settings.network_logger.set("detail-view-left-pos", this._detail_left);
     }
   }.bind(this);
 
@@ -350,7 +353,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     document.removeEventListener("mousemove", this._on_drag_detail_bound, false);
     document.removeEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-    settings.network_logger.set("detail-view-left-pos", this._detail_left);
     this._resize_interval = clearInterval(this._resize_interval);
     this._resize_detail_evt = null;
   }.bind(this);
@@ -488,8 +490,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         else if (!is_paused && pause)
           this._service.pause();
       }
-      this.needs_instant_update = true;
-      this.update();
+      if (message.key !== "detail-view-left-pos")
+      {
+        this.needs_instant_update = true;
+        this.update();
+      }
     }
   }.bind(this);
 
