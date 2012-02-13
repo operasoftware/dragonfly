@@ -576,11 +576,50 @@ ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
 /* DESC: label for url in http request details */
 ui_strings.S_HTTP_LABEL_URL = "URL";
 
-/* DESC: shown in response view of http logger when request isn't finished */
-ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
+/* DESC: label for table header that shows http response code (short) */
+ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 
-/* DESC: Toolbar text telling how many requests are in http the log */
-ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT = "%s requests";
+/* DESC: label for table header that shows waiting time (short) */
+ui_strings.S_HTTP_LABEL_WAITING = "ui_strings.S_HTTP_LABEL_WAITING_RELATIVE";
+
+/* DESC: label for table header that shows relative starting time */
+ui_strings.S_HTTP_LABEL_STARTED = "Started (Relative)";
+
+/* DESC: label for table header that shows starting time (short) */
+ui_strings.S_HTTP_LABEL_STARTED_SHORT = "Started";
+
+/* DESC: label for table header that shows duration (short) */
+ui_strings.S_HTTP_LABEL_DURATION = "Duration";
+
+/* DESC: label for table header that shows loading equence as a graph (short) */
+ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
+
+/* DESC: title for the network graph view button */
+ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";
+
+/* DESC: title for the network data view button */
+ui_strings.S_HTTP_LABEL_DATA_VIEW = "Data view";
+
+/* DESC: label for the network filter that shows all items */
+ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
+
+/* DESC: label for the network filter that shows markup items */
+ui_strings.S_HTTP_LABEL_FILTER_MARKUP = "Markup";
+
+/* DESC: label for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS = "Stylesheets";
+
+/* DESC: label for the network filter that shows script items */
+ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS = "Scripts";
+
+/* DESC: label for the network filter that shows image items */
+ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
+
+/* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
+
+/* DESC: label for the network filter that shows items requested over xmlHttpRequest */
+ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
 
 /* DESC: Information shown if the document does not hold any style sheet. */
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
@@ -858,14 +897,11 @@ ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
 /* DESC: Help text for explaing content tracking setting in global network options */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Opera Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate.";
 
-/* DESC: Name of content tracking setting for no tracking */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Do not track content (default)";
-
-/* DESC: Title for content tracking settings section in global network options */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE = "Content tracking behaviour";
-
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
+
+/* DESC: Name of content tracking setting for tracking content */
+ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Warn me when not all Network requests are shown";
 
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
@@ -1031,9 +1067,6 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
-
-/* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
-ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";

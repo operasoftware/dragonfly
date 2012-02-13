@@ -93,7 +93,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._details_scroll && (details.scrollTop = this._details_scroll);
   };
 
-  this._render_click_to_fetch_view = function(container) // todo: templates
+  this._render_click_to_fetch_view = function(container)
   {
     container.clearAndRender(
       ['div',
@@ -139,7 +139,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         this._table = new SortableTable(
                         this._tabledef,
                         null,
-                        ["method", "status", "mime", "size", "latency", "duration", "graph"],
+                        ["method", "responsecode", "mime", "size", "waiting", "duration", "graph"],
                         null,
                         null,
                         null,
@@ -160,20 +160,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   };
 
   this._tabledef = {
-    column_order: ["method", "status", "mime", "protocol", "size", "size_h", "latency", "duration", "started", "graph"],
+    column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
     handler: "select-network-request",
     idgetter: function(res) { return String(res.id) },
     columns: {
       method: {
-        label: "Method", // todo: strings
+        label: ui_strings.S_HTTP_LABEL_METHOD,
         headerlabel: "",
         use_ellipsis: true,
         renderer: function(entry) {
           return entry.method;
         }
       },
-      status: {
-        label: "Status",
+      responsecode: {
+        label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
         use_ellipsis: true,
         renderer: function(entry) {
           return (entry.responsecode && String(entry.responsecode)) || "";
@@ -236,8 +236,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
         }
       },
-      latency: {
-        label: "Waiting",
+      waiting: {
+        label: ui_strings.S_HTTP_LABEL_STARTED,
+        headerlabel: ui_strings.S_HTTP_LABEL_STARTED_SHORT,
         align: "right",
         use_ellipsis: true,
         getter: function(entry)
@@ -253,7 +254,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }
       },
       started: {
-        label: "Started",
+        label: ui_strings.S_HTTP_LABEL_STARTED,
         align: "right",
         use_ellipsis: true,
         getter: function(entry)
@@ -266,7 +267,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }
       },
       duration: {
-        label: "Duration",
+        label: ui_strings.S_HTTP_LABEL_DURATION,
         align: "right",
         use_ellipsis: true,
         getter: function(entry) { return entry.get_duration() },
@@ -280,7 +281,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }.bind(this)
       },
       graph: {
-        label: "Graph",
+        label: ui_strings.S_HTTP_LABEL_GRAPH,
         use_ellipsis: true,
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
@@ -417,7 +418,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
     var over = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
     for (var n=0, e; e = over[n]; n++) { e.addClass("hovered"); }
-    // todo: store here and restore when re-rendering
   }.bind(this);
 
   this._on_mouseout_entry_bound = function(evt, target)
@@ -559,24 +559,24 @@ cls.NetworkLogView.prototype = ViewBase;
 cls.NetworkLog = {};
 cls.NetworkLog.create_ui_widgets = function()
 {
-  new Settings( // view_id, key_map, label_map, setting_map, template, group, callback_map)
+  new Settings(
     // view_id
     "network_logger",
     // key-value map
     {
       "selected-viewmode": "graphs",
       "pause": false,
+      "detail-view-left-pos": 120,
       "show-incomplete-warning": true,
-      "track-content": true,
-      "detail-view-left-pos": 120
+      "track-content": true
     },
     // key-label map
     {
-      "selected-viewmode": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW, // todo: fix strings
-      "pause": "",
-      "show-incomplete-warning": "Warn me when not all Network requests are shown",
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL, // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
-      "detail-view-left-pos": ""
+      "selected-viewmode": "",
+      "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
+      "detail-view-left-pos": "",
+      "show-incomplete-warning": ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL,
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
     },
     // settings map
     {
@@ -612,8 +612,7 @@ cls.NetworkLog.create_ui_widgets = function()
           items: [
             {
               key: "network_logger.pause",
-              icon: "pause-network-view",
-              title: ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW // todo: this has no effect, since the title comes from the setting
+              icon: "pause-network-view"
             }
           ]
         },
@@ -624,12 +623,12 @@ cls.NetworkLog.create_ui_widgets = function()
           items: [
             {
               value: "graphs",
-              title: "Graph view", // todo: strings
+              title: ui_strings.S_HTTP_LABEL_GRAPH_VIEW,
               icon: "network-view-toggle-graphs"
             },
             {
               value: "data",
-              title: "Data view", // todo: strings
+              title: ui_strings.S_HTTP_LABEL_DATA_VIEW,
               icon: "network-view-toggle-data"
             }
           ]
@@ -640,34 +639,34 @@ cls.NetworkLog.create_ui_widgets = function()
           allow_multiple_select: true,
           items: [
             {
-              text: "All",
+              text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
               value: ""
             },
             {
-              text: "Markup",
+              text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
               value: "markup"
             },
             {
-              text: "Stylesheets",
+              text: ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
               value: "css"
             },
             {
-              text: "Scripts",
+              text: ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
               value: "script"
             },
             {
-              text: "Images",
+              text: ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
               value: "image"
             },
             {
-              text: "Other",
+              text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
                       // the value it the comma-sparated list of strings to match type or load_origin,
                       // "|is_blacklist" can optionally be appended.
                       // This is parsed in network_service, in the data model in set_filter
               value: "markup,css,script,image|true"
             },
             {
-              text: "XHR",
+              text: ui_strings.S_HTTP_LABEL_FILTER_XHR,
               value: "xhr"
             }
           ]
