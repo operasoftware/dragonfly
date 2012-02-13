@@ -4,6 +4,11 @@
   border-collapse: collapse;
 }
 
+.sortable-table.nowrap
+{
+  white-space: nowrap;
+}
+
 .sortable-table > tr > td,
 .sortable-table > tr > th
 {

@@ -579,14 +579,20 @@ ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 /* DESC: label for table header that shows waiting time (short) */
 ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
 
-/* DESC: label for table header that shows relative starting time */
-ui_strings.S_HTTP_LABEL_STARTED = "Started (Relative)";
+/* DESC: tooltip for table header that shows waiting time */
+ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent between writing the request and receiving a response";
 
 /* DESC: label for table header that shows starting time (short) */
-ui_strings.S_HTTP_LABEL_STARTED_SHORT = "Started";
+ui_strings.S_HTTP_LABEL_STARTED = "Started";
+
+/* DESC: tooltip for table header that shows relative starting time */
+ui_strings.S_HTTP_TOOLTIP_STARTED = "Starting time, relative to the main document";
 
 /* DESC: label for table header that shows duration (short) */
 ui_strings.S_HTTP_LABEL_DURATION = "Duration";
+
+/* DESC: tooltip for table header that shows duration */
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this url";
 
 /* DESC: label for table header that shows loading sequence as a graph (short) */
 ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
@@ -615,10 +621,10 @@ ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
 /* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
 ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
 
-/* DESC: label for the network filter that shows items requested over xmlHttpRequest */
+/* DESC: label for the network filter that shows items requested over XMLHttpRequest */
 ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
 
-/* DESC: tooltip for resources that have been marked unloaded, which means they are no longer reference in the document */
+/* DESC: tooltip-prefix for resources that have been marked unloaded, which means they are no longer reference in the document */
 ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 
 /* DESC: tooltip for resources that have not been requested over network (cached, data-uri etc) */
@@ -897,14 +903,11 @@ ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 /* DESC: Title for caching settings section in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
 
-/* DESC: Help text for explaing content tracking setting in global network options */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Opera Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate.";
-
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
 /* DESC: Name of content tracking setting for tracking content */
-ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Warn me when not all Network requests are shown";
+ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
 
 /* DESC: String describing duration of a request when hovering it in the graph. Applied to cached requests */
 ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";

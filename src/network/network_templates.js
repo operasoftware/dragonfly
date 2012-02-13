@@ -82,7 +82,7 @@ templates.network_request_crafter_main = function(url, loading, request, respons
 
 templates.network_incomplete_warning = function()
 {
-  return ["div",
+  return ["div", // todo: strings
            [
              ["span", "This only shows resources that were loaded while Dragonfly was open. "], ["span", "Reload", "class", "text_handler", "handler", "reload-window"], ["span", " to see the complete page-load. "],
              ["span", "Don't show again", "class", "text_handler", "handler", "turn-off-incomplete-warning"],

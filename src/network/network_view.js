@@ -139,7 +139,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         this._table = new SortableTable(
                         this._tabledef,
                         null,
-                        ["method", "responsecode", "mime", "size", "waiting", "duration", "graph"],
+                        ["method", "responsecode", "mime", "size_h", "waiting", "duration", "graph"],
                         null,
                         null,
                         null,
@@ -162,25 +162,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._tabledef = {
     column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
     handler: "select-network-request",
+    nowrap: true,
     idgetter: function(res) { return String(res.id) },
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
         headerlabel: "",
-        use_ellipsis: true,
         renderer: function(entry) {
           return entry.method;
         }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
-        use_ellipsis: true,
         renderer: function(entry) {
           return (entry.responsecode && String(entry.responsecode)) || "";
         },
-        title_getter: function(entry) { // todo: use this in sortable_table
+        title_getter: function(entry, getter) {
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
             return entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
+          return getter(entry);
         },
         sorter: function(obj_a, obj_b) { // todo: it would be better to let the getter return 0 and keep the sorter as default. but can't pass a number.
           var a = obj_a.responsecode || 0;
@@ -190,7 +190,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
-        use_ellipsis: true,
         getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
         renderer: function(entry, getter) {
           return getter(entry)
@@ -198,13 +197,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       protocol: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
-        use_ellipsis: true,
         getter: function(entry) { return entry.urltypeName }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
-        use_ellipsis: true,
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
           return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
@@ -220,7 +217,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
         align: "right",
-        use_ellipsis: true,
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
           return String(entry.size ?
@@ -238,8 +234,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       waiting: {
         label: ui_strings.S_HTTP_LABEL_WAITING,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_WAITING,
         align: "right",
-        use_ellipsis: true,
         getter: function(entry)
         {
           if (entry.responsestart && entry.requesttime)
@@ -254,9 +250,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       started: {
         label: ui_strings.S_HTTP_LABEL_STARTED,
-        headerlabel: ui_strings.S_HTTP_LABEL_STARTED_SHORT,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_STARTED,
         align: "right",
-        use_ellipsis: true,
         getter: function(entry)
         {
           return entry.starttime_relative;
@@ -268,8 +263,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       duration: {
         label: ui_strings.S_HTTP_LABEL_DURATION,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_DURATION,
         align: "right",
-        use_ellipsis: true,
         getter: function(entry) { return entry.get_duration() },
         renderer: function(entry) {
           var dur = entry.get_duration();
@@ -282,7 +277,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       graph: {
         label: ui_strings.S_HTTP_LABEL_GRAPH,
-        use_ellipsis: true,
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
@@ -576,7 +570,7 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "detail-view-left-pos": "",
       "show-incomplete-warning": ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL,
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL // todo: maybe add ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC,
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
     {

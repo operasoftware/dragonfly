@@ -369,7 +369,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
   var table =  ["table",
                 templates.sortable_table_header(tabledef, cols, sortby, reversed),
                 templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
-                "class", "sortable-table",
+                "class", "sortable-table" + (tabledef.nowrap ? " nowrap" : ""),
                 "data-table-object-id", objectid,
                ]
                
@@ -409,8 +409,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
             }
             var headerlabel = tabledef.columns[c].headerlabel !== undefined ? 
                               tabledef.columns[c].headerlabel : tabledef.columns[c].label;
-            if (coldef.use_ellipsis)
-              headerlabel = templates.sortable_table_wrap_ellipsis(headerlabel);
+            headerlabel = templates.sortable_table_wrap_ellipsis(headerlabel, coldef.headertooltip);
             return ["th", headerlabel,
                     "class", tdclass,
                     "data-column-id", c,
@@ -470,8 +469,7 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
     var groupdef = tabledef.groups[groupby];
     var renderer = groupdef.renderer || function(g) { return g };
     var content = renderer(groupname, data);
-    if (groupdef.use_ellipsis)
-      content = templates.sortable_table_wrap_ellipsis(content);
+    content = templates.sortable_table_wrap_ellipsis(content);
     var row = ["tr",
                 ["th", content,
                  "colspan", String(cols.length),
@@ -522,18 +520,20 @@ templates.sortable_table_row = function(tabledef, item, cols)
           cols.map(function(col) {
             var coldef = tabledef.columns[col];
             var content = coldef.renderer(item, coldef.getter);
-            if (coldef.use_ellipsis)
-              content = templates.sortable_table_wrap_ellipsis(content);
 
             if (typeof content !== "undefined" && typeof content !== "null")
             {
-              var title_templ = [];
-              if (typeof content == "string")
+              var title;
+              if (coldef.title_getter)
+                title = coldef.title_getter(item, coldef.getter);
+
+              if (coldef.use_ellipsis)
               {
-                title_templ = ["title", content]; // fixme: use custom title renderer.
+                content = templates.sortable_table_wrap_ellipsis(content, title); // falls back to using content as title, if its of type string.
               }
+              var add_title_to_td = !coldef.use_ellipsis && title;
               return ["td", content]
-                        .concat(title_templ)
+                        .concat(add_title_to_td ? ["title", title] : []) // todo: use custom tooltips instead
                         .concat(coldef.align ? ["class", "align-" + coldef.align] : [])
                         .concat(coldef.attributes ? coldef.attributes : [])
             }
@@ -543,8 +543,9 @@ templates.sortable_table_row = function(tabledef, item, cols)
          ];
 }
 
-templates.sortable_table_wrap_ellipsis = function(content)
+templates.sortable_table_wrap_ellipsis = function(content, title)
 {
+  var title = title || (typeof content === "string" && content);
    return [
     "div",
       [
@@ -552,5 +553,5 @@ templates.sortable_table_wrap_ellipsis = function(content)
         "class", "ellipsis"
       ],
     "class", "ellipsis_cont"
-  ].concat((typeof content === "string") ? ["title", content] : []);
+  ].concat(title ? ["title", title] : []); // todo: use custom tooltips instead
 }

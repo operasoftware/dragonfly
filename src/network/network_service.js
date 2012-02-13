@@ -532,32 +532,32 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       classname: "blocked",
       sequences: {
         "urlload": {
-          "request": "Waiting to request",
-          "urlredirect": "Redirecting",
-          "urlfinished": "Reading cache",
+          "request": "Scheduling request",
+          "urlredirect": "Scheduling request",
+          "urlfinished": "Reading local data",
           // The response-phase can be closed without ever seeing a response event, for 
           // example because the request was aborted. See CORE-43284.
-          "responsefinished": "(aborted)"
+          "responsefinished": "Aborted"
         },
         "responseheader": {
           "urlredirect": "Redirecting",
-          "requestretry": "Retrying" // Todo: Not really. How should we call it?
+          "requestretry": "Processing header"
         },
         "requestfinished": {
-          "requestretry": "Retrying", // Todo: Not really. How should we call it?
+          "requestretry": "Waiting for response"
         },
         "requestretry": {
-          "request": "Waiting to request"
+          "request": "Scheduling request"
         },
         "responsefinished": {
-          "urlfinished": "Processing url", // not sure what is really going on now
+          "urlfinished": "Processing",
           // responsefinished can occur twice, see CORE-43284.
           // This is fixed and stops showing up when integrated.
           "responsefinished": ""
         },
         "urlredirect": {
-          "urlfinished": "Finishing url",
-          "responsefinished": "Closing request" // responsefinished means we stopped listening. So the time is used to close the request
+          "urlfinished": "Reading local data",
+          "responsefinished": "Closing request" // todo: Find out what really happened here. The significant part is probably "Closing request" though.
         }
       }
     },
@@ -598,6 +598,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       }
     }
   ];
+
+  this._highlighted_network_events = ["requestretry", "urlredirect"]; // todo: make these show up in tooltip
 
   this.get_gap_def = function(gap)
   {
