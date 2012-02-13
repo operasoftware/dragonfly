@@ -202,9 +202,9 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     var url_tooltip = req.human_url;
     var context_info;
     if (req.unloaded)
-      context_info = "Unreferenced"; // todo: strings
+      context_info = ui_strings.S_HTTP_UNREFERENCED;
     else if (req.no_request_made)
-      context_info = "No request made";
+      context_info = ui_strings.S_HTTP_NOT_REQUESTED;
     else if (had_error_response)
       context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
 

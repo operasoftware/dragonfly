@@ -507,9 +507,6 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 
-/* DESC: Toolbar text telling how many messages are in the error console */
-ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
-
 /* DESC: In 1 hour */
 ui_strings.S_COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
 
@@ -620,6 +617,12 @@ ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
 
 /* DESC: label for the network filter that shows items requested over xmlHttpRequest */
 ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
+
+/* DESC: tooltip for resources that have been marked unloaded, which means they are no longer reference in the document */
+ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
+
+/* DESC: tooltip for resources that have not been requested over network (cached, data-uri etc) */
+ui_strings.S_HTTP_NOT_REQUESTED = "No request made";
 
 /* DESC: Information shown if the document does not hold any style sheet. */
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
