@@ -320,8 +320,8 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
 templates.network_graph_sections = function(entry, width, duration, do_tooltip)
 {
   var scale = width / duration;
-  var gaps = entry.event_gaps;
-  var sections = entry.event_gaps.map(function(section){
+  var gaps = entry.event_sequence;
+  var sections = entry.event_sequence.map(function(section){
     if (section.val)
     {
       return [
@@ -330,6 +330,7 @@ templates.network_graph_sections = function(entry, width, duration, do_tooltip)
         "style", "width:" + section.val * scale + "px;"
       ];
     }
+    return [];
   });
 
   return ["span", sections.length && sections || [],
@@ -352,7 +353,7 @@ templates.network_graph_entry_tooltip = function(entry)
     var scale = height / duration;
     var total_length_string = new Number(duration).toFixed(2) + "ms";
 
-    entry.event_gaps.forEach(function(section){
+    entry.event_sequence.forEach(function(section){
       if (section.val)
       {
         graphical_sections.push([
@@ -363,19 +364,29 @@ templates.network_graph_entry_tooltip = function(entry)
       }
     });
 
-    var event_rows = entry.event_gaps.map(function(gap, index, arr)
+    var event_rows = entry.event_sequence.map(function(stop, index, arr)
     {
-      if (gap.val_string)
+      // a stop can be a highlighted_event, which will be printed without duration
+      if (stop.highlighted_event)
+        return ["tr", ["td"], ["td", stop.highlighted_event.name, "class", "gap_title"]]; // todo: make a string instead of using the raw name
+
+      // or it's a gap, and has only a from_event and no val.
+      // these are ommited and they only mark the start of a gap
+      if (!stop.val_string)
+        return [];
+      // or it's a gap that has a from_event, val and to_event
+      else
       {
-        return ["tr", 
-                 ["td", gap.val_string, "class", "time_data mono"],
-                 ["td", gap.title, "class", "gap_title"],
-                 ini.debug ? ["td", "(" + gap.from_event.name + " to " + gap.to_event.name + ")", "class", "gap_title"] : []
+        return ["tr",
+                 ["td", stop.val_string, "class", "time_data mono"],
+                 ["td", stop.title, "class", "gap_title"],
+                 ini.debug ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
                ];
       }
-      return [];
     });
-    event_rows.push(["tr", ["td", total_length_string, "class", "time_data mono"], ["td", "Total time"], "class", "sum"]);
+    event_rows.push(["tr",
+                      ["td", total_length_string, "class", "time_data mono"],
+                      ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
     const LINEHEIGHT = 19;
@@ -387,16 +398,17 @@ templates.network_graph_entry_tooltip = function(entry)
     var x_end = svg_width;
     var y_end = 0;
 
-    var pathes = entry.event_gaps.map(function(gap, index, arr)
+    var pathes = entry.event_sequence.map(function(row, index, arr)
     {
-      if (gap.val)
+      if (row.val)
       {
-        var height = Math.round(gap.val * scale);
+        var height = Math.round(row.val * scale);
         y_start = y_ref + (height / 2);
         y_ref += height;
         y_end = (index * LINEHEIGHT) + (LINEHEIGHT / 2) + 0.5;
-        return ["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]
+        return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
       }
+      return "";
     });
 
     var svg_height = Math.max(y_start, y_end, y_ref);
@@ -405,7 +417,7 @@ templates.network_graph_entry_tooltip = function(entry)
       [
         ini.debug ?
           ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
-          ["h2", "Requested at " +  entry.start_time_string],
+          ["h2", "Requested at " +  entry.start_time_string], // todo: strings
         ["div",
           ["div",
             ["div", graphical_sections, "class", "network-tooltip-graph-sections"],

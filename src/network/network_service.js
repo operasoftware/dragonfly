@@ -472,7 +472,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this.unloaded = false;
   this.is_finished = null;
   this.events = [];
-  this.event_gaps = [];
+  this.event_sequence = [];
 
   this.update = function(eventname, eventdata)
   {
@@ -599,7 +599,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     }
   ];
 
-  this._highlighted_network_events = ["requestretry", "urlredirect"]; // todo: make these show up in tooltip
+  this._highlighted_network_events = ["requestretry", "urlredirect"];
 
   this.get_gap_def = function(gap)
   {
@@ -621,20 +621,25 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     this.events.push(evt);
 
     // add to event gaps.
-    if (this.event_gaps.length)
+    if (this.event_sequence.length)
     {
-      var gap = this.event_gaps.last;
-      gap.to_event = evt; // it's probably not needed to even store these
+      var gap = this.event_sequence.last;
+      gap.to_event = evt;
 
       // gap now has from and to. Add val, val_string, classname, title.
       gap.val = gap.to_event.time - gap.from_event.time;
       gap.val_string = gap.val.toFixed(2) + "ms";
-      var gap_def = this.get_gap_def(gap); // pass from and to names instead
+      var gap_def = this.get_gap_def(gap);
       gap.classname = (gap_def && gap_def.classname) || "";
       gap.title = (gap_def && gap_def.title) || "";
     }
+    // add highlighted events
+    if (this._highlighted_network_events.contains(evt.name))
+    {
+      this.event_sequence.push({highlighted_event: evt});
+    }
     // the evt is also the next gaps from_event.
-    this.event_gaps.push({from_event: evt});
+    this.event_sequence.push({from_event: evt});
   }
 
   this.get_duration = function()
