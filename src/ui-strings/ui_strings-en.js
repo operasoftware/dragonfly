@@ -591,7 +591,7 @@ ui_strings.S_HTTP_LABEL_STARTED_SHORT = "Started";
 /* DESC: label for table header that shows duration (short) */
 ui_strings.S_HTTP_LABEL_DURATION = "Duration";
 
-/* DESC: label for table header that shows loading equence as a graph (short) */
+/* DESC: label for table header that shows loading sequence as a graph (short) */
 ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
 
 /* DESC: title for the network graph view button */
