@@ -154,7 +154,7 @@ cls.CSSInspectorActions = function(id)
     var script = "";
 
     // If a property is added by overwriting another one, remove the other property
-    if (prop_to_remove && prop != prop_to_remove)
+    if (prop_to_remove)
       script = "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
 
     script += "object.style.setProperty(\"" +
@@ -182,7 +182,7 @@ cls.CSSInspectorActions = function(id)
     var script = "";
 
     // If a property is added by overwriting another one, remove the other property
-    if (prop_to_remove && prop != prop_to_remove)
+    if (prop_to_remove)
       script = "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
 
     script += "object.setAttribute(\"" +
