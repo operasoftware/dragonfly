@@ -237,8 +237,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }
       },
       waiting: {
-        label: ui_strings.S_HTTP_LABEL_STARTED,
-        headerlabel: ui_strings.S_HTTP_LABEL_STARTED_SHORT,
+        label: ui_strings.S_HTTP_LABEL_WAITING,
         align: "right",
         use_ellipsis: true,
         getter: function(entry)
@@ -255,6 +254,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       started: {
         label: ui_strings.S_HTTP_LABEL_STARTED,
+        headerlabel: ui_strings.S_HTTP_LABEL_STARTED_SHORT,
         align: "right",
         use_ellipsis: true,
         getter: function(entry)

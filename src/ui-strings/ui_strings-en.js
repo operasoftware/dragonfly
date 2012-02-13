@@ -577,7 +577,7 @@ ui_strings.S_HTTP_LABEL_URL = "URL";
 ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 
 /* DESC: label for table header that shows waiting time (short) */
-ui_strings.S_HTTP_LABEL_WAITING = "ui_strings.S_HTTP_LABEL_WAITING_RELATIVE";
+ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
 
 /* DESC: label for table header that shows relative starting time */
 ui_strings.S_HTTP_LABEL_STARTED = "Started (Relative)";
