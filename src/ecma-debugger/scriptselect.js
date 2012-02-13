@@ -67,12 +67,14 @@ cls.ScriptSelect = function(id, class_name)
     if (input)
     {
       this._input = input;
+      this._clear_button = container.querySelector(".js-dd-clear-filter");
       this._container = container;
       this._script_list = container.querySelector(".js-dd-script-list");
       this._filter.setContainer(container);
       this._filter.setFormInput(input);
       input.focus();
       this._get_option_ele_list();
+      this._update_clear_button_state();
     }
   };
 
@@ -81,6 +83,7 @@ cls.ScriptSelect = function(id, class_name)
     this._filter.cleanup();
     this._filter.set_search_term("");
     this._input = null;
+    this._clear_button = null;
     this._container = null;
     this._option_eles = null;
     this._option_box = null;
@@ -125,7 +128,25 @@ cls.ScriptSelect = function(id, class_name)
 
   this._onfilterinput = function(event, target)
   {
+    this._update_clear_button_state();
     this._filter.searchDelayed(target.value);
+  };
+
+  this._update_clear_button_state = function()
+  {
+    if (this._input && this._clear_button)
+    {
+      if (this._input.value && !this._is_clear_button_visible)
+      {
+        this._is_clear_button_visible = true; 
+        this._clear_button.addClass("js-dd-visible");
+      }
+      else if (!this._input.value && this._is_clear_button_visible)
+      {
+        this._is_clear_button_visible = false; 
+        this._clear_button.removeClass("js-dd-visible");
+      }
+    }
   };
 
   this._onshortcut = function(action_id, event, target)
@@ -210,6 +231,7 @@ cls.ScriptSelect = function(id, class_name)
       this._input.selectionStart = 0;
       this._input.selectionEnd = this._input.value.length;
       this._filter.search(this._input.value);
+      this._update_clear_button_state();
     }
   };
 
@@ -243,6 +265,7 @@ cls.ScriptSelect = function(id, class_name)
   this._onclearfilter = function(event, target)
   {
     this._filter.searchDelayed(this._input.value = "");
+    this._update_clear_button_state();
   };
 
   this._onmouseover = function(event, target)
@@ -286,9 +309,11 @@ cls.ScriptSelect = function(id, class_name)
   {
     this.init(id, class_name);
     this.ignore_option_handlers = true;
+    this._is_clear_button_visible = false;
     this._filter = new TextSearch(1);
     this._filter.set_query_selector(".js-dd-s-scope");
     this._filter.no_highlight = true;
+    this._clear_button = null;
     this._onbeforesearch_bound = this._onbeforesearch.bind(this);
     this._filter.addListener("onbeforesearch", this._onbeforesearch_bound);
     eventHandlers.input[this._id + "-filter"] = this._onfilterinput.bind(this);

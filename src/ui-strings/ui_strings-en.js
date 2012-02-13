@@ -1420,7 +1420,7 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_COLOR_NOTATION = "Color format";
 
 /* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
-ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show a tooltip in the source view";
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
 /* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
 ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
