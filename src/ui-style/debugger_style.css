@@ -752,7 +752,7 @@ breadcrumb span
   padding-right: 0px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  border-width: 0 0 1px 0;
+  border-width: 0 0 1px;
 }
 
 .js-dd-filter-container

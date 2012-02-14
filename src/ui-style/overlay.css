@@ -43,7 +43,7 @@ overlay-arrow
 
 overlay-arrow:before
 {
-  content: '';
+  content: "";
   display: inline-block;
   position: relative;
   width: 12px;
