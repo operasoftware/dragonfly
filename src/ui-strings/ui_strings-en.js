@@ -630,6 +630,51 @@ ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 /* DESC: tooltip for resources that have not been requested over network (cached, data-uri etc) */
 ui_strings.S_HTTP_NOT_REQUESTED = "No request made";
 
+/* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
+ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
+
+/* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
+ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH_1 ="Only showing requests that occured while Dragonfly was open.";
+
+/* DESC: Label for http event sequence when the event was scheduled */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
+
+/* DESC: Label for http event sequence when reading local data (data-uri, caches, file:// etc) */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
+
+/* DESC: Label for http event sequence when closing response phase */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
+
+/* DESC: Label for http event sequence when processing header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_HEADER = "Processing header";
+
+/* DESC: Label for http event sequence when processing */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_BODY = "Processing body";
+
+/* DESC: Label for http event sequence when waiting for response from network */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
+
+/* DESC: Label for http event sequence when writing request header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
+
+/* DESC: Label for http event sequence when writing request body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
+
+/* DESC: Label for http event sequence when reading response header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER = "Reading response header";
+
+/* DESC: Label for http event sequence when reading response body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY = "Reading response body";
+
+/* DESC: Label for http event requestretry */
+ui_strings.S_HTTP_EVENT_REQUESTRETRY = "Request retry";
+
+/* DESC: Label for http event urlredirect */
+ui_strings.S_HTTP_EVENT_URLREDIRECT = "Redirect";
+
 /* DESC: Information shown if the document does not hold any style sheet. */
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
 
@@ -885,8 +930,14 @@ ui_strings.S_MENU_DEBUG_CONTEXT = "Select the debugging context";
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = "Reload Debugging Context";
 
+/* DESC: Reload the debug context (short). */
+ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT = "Reload";
+
 /* DESC: Select the active window as debugger context. */
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = "Select Active Window";
+
+/* DESC: Label for a button in a dialog to dismiss in so it won't be shown again */
+ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
 
 /* DESC: String used when the user has clicked to get a resource body, but dragonfly wasn't able to do so. */
 ui_strings.S_NETWORK_BODY_NOT_AVAILABLE = "Request body not available. Enable resource tracking and reload the page to view the resource.";

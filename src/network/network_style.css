@@ -244,12 +244,14 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, .4);
 }
 
-.network_logger .network-summary {
+.network_logger .network-summary
+{
   clear: both;
   text-align: center;
 }
 
-.network_logger .network-summary div {
+.network_logger .network-summary div
+{
   text-align: center;
   display: inline-block;
   font-size: 1.4em;

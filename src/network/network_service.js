@@ -527,37 +527,37 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
      }
    } */
 
-  this._gap_defs = [
+  this._gap_defs = [ // todo: move the def out of the entry
     {
       classname: "blocked",
       sequences: {
         "urlload": {
-          "request": "Scheduling request",
-          "urlredirect": "Scheduling request",
-          "urlfinished": "Reading local data",
+          "request": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          "urlredirect": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
           // The response-phase can be closed without ever seeing a response event, for 
           // example because the request was aborted. See CORE-43284.
-          "responsefinished": "Aborted"
+          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
         },
         "responseheader": {
-          "urlredirect": "Redirecting",
-          "requestretry": "Processing header"
+          "urlredirect": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
+          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_HEADER
         },
         "requestfinished": {
-          "requestretry": "Waiting for response"
+          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE // we probably haven't really been waiting, as we decide to retry after we are done writing the request
         },
         "requestretry": {
-          "request": "Scheduling request"
+          "request": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING
         },
         "responsefinished": {
-          "urlfinished": "Processing",
+          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_BODY,
           // responsefinished can occur twice, see CORE-43284.
           // This is fixed and stops showing up when integrated.
           "responsefinished": ""
         },
         "urlredirect": {
-          "urlfinished": "Reading local data",
-          "responsefinished": "Closing request" // todo: Find out what really happened here. The significant part is probably "Closing request" though.
+          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
+          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
         }
       }
     },
@@ -565,10 +565,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       classname: "request",
       sequences: {
         "request": {
-          "requestheader": "Writing request header"
+          "requestheader": ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER
         },
         "requestheader": {
-          "requestfinished": "Writing request body"
+          "requestfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY
         }
       }
     },
@@ -576,13 +576,13 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       classname: "waiting",
       sequences: {
         "requestfinished": {
-          "response": "Waiting for response",
-          "responsefinished": "Closing response" // This also means "Aborted waiting for response". We can add responsefinished as an event and make it stand out more.
+          "response": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
+          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
         },
         "responseheader": {
           // Occurs when a 100-Continue response was sent. In this timespan the client has
           // ignored it and waits for another response to come in. See CORE-43264.
-          "response": "Waiting for response"
+          "response": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE
         }
       }
     },
@@ -590,16 +590,19 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       classname: "receiving",
       sequences: {
         "response": {
-          "responseheader": "Reading response header"
+          "responseheader": ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER
         },
         "responseheader": {
-          "responsefinished": "Reading response body"
+          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY
         }
       }
     }
   ];
 
-  this._highlighted_network_events = ["requestretry", "urlredirect"];
+  this._highlighted_events = {
+    "requestretry": ui_strings.S_HTTP_EVENT_REQUESTRETRY,
+    "urlredirect": ui_strings.S_HTTP_EVENT_URLREDIRECT
+  };
 
   this.get_gap_def = function(gap)
   {
@@ -620,13 +623,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     // add to events
     this.events.push(evt);
 
-    // add to event gaps.
+    // add event to existing gap
     if (this.event_sequence.length)
     {
       var gap = this.event_sequence.last;
       gap.to_event = evt;
-
-      // gap now has from and to. Add val, val_string, classname, title.
       gap.val = gap.to_event.time - gap.from_event.time;
       gap.val_string = gap.val.toFixed(2) + "ms";
       var gap_def = this.get_gap_def(gap);
@@ -634,11 +635,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       gap.title = (gap_def && gap_def.title) || "";
     }
     // add highlighted events
-    if (this._highlighted_network_events.contains(evt.name))
-    {
-      this.event_sequence.push({highlighted_event: evt});
-    }
-    // the evt is also the next gaps from_event.
+    if (this._highlighted_events[evt.name])
+      this.event_sequence.push({highlighted_event: evt, string: this._highlighted_events[evt.name]});
+
+    // add new gap
     this.event_sequence.push({from_event: evt});
   }
 

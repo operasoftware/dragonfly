@@ -82,12 +82,14 @@ templates.network_request_crafter_main = function(url, loading, request, respons
 
 templates.network_incomplete_warning = function()
 {
-  return ["div", // todo: strings
-           [
-             ["span", "This only shows resources that were loaded while Dragonfly was open. "], ["span", "Reload", "class", "text_handler", "handler", "reload-window"], ["span", " to see the complete page-load. "],
-             ["span", "Don't show again", "class", "text_handler", "handler", "turn-off-incomplete-warning"],
-             ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"]
+  return ["div",
+           ["span", ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH_1],
+           ["div",
+             ["span", ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT, "class", "text_handler", "handler", "reload-window"],
+             " ",
+             ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN, "class", "text_handler", "handler", "turn-off-incomplete-warning"]
            ],
+           ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"],
          "class", "network_incomplete_warning"];
 };
 
@@ -391,10 +393,10 @@ templates.network_graph_entry_tooltip = function(entry)
     {
       // a stop can be a highlighted_event, which will be printed without duration
       if (stop.highlighted_event)
-        return ["tr", ["td"], ["td", stop.highlighted_event.name, "class", "gap_title"]]; // todo: make a string instead of using the raw name
+        return ["tr", ["td"], ["td", stop.string, "class", "gap_title"]];
 
       // or it's a gap, and has only a from_event and no val.
-      // these are ommited and they only mark the start of a gap
+      // these are ommited as they only mark the start of a gap
       if (!stop.val_string)
         return [];
       // or it's a gap that has a from_event, val and to_event
@@ -440,7 +442,7 @@ templates.network_graph_entry_tooltip = function(entry)
       [
         ini.debug ?
           ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
-          ["h2", "Requested at " +  entry.start_time_string], // todo: strings
+          ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
         ["div",
           ["div",
             ["div", graphical_sections, "class", "network-tooltip-graph-sections"],

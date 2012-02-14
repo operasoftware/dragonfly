@@ -130,7 +130,7 @@ templates.network_headers_list = function(headers, firstline)
   return lis;
 };
 
-templates.network_body_sperator = function()
+templates.network_body_seperator = function()
 {
   return ["pre", " ", "class", "mono"];
 }
@@ -141,7 +141,7 @@ templates.network_request_body = function(req)
   {
     return [];
   }
-  var ret = [templates.network_detail_row(templates.network_body_sperator())];
+  var ret = [templates.network_detail_row(templates.network_body_seperator())];
   // when this is undefined/null the request was one that did not send data
   if (req.requestbody.partList.length)
   {
@@ -223,7 +223,7 @@ templates.network_request_body = function(req)
 templates.network_response_body = function(resp)
 {
   var ret = [];
-  ret.push(templates.network_detail_row(templates.network_body_sperator()));
+  ret.push(templates.network_detail_row(templates.network_body_seperator()));
   var classname = "";
   if (resp.body_unavailable)
   {
