@@ -1369,8 +1369,9 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
         }
+        
         if (items.length)
-          items.push(ContextMenu.separator)
+          items.push(ContextMenu.separator);
 
         return items;
       }
