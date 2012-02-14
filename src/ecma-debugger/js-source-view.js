@@ -1368,8 +1368,11 @@ cls.JsSourceView.create_ui_widgets = function()
               }
             });
           }
-          return items;
         }
+        if (items.length)
+          items.push(ContextMenu.separator)
+
+        return items;
       }
     }
   ], true); // extend the default existing menu
