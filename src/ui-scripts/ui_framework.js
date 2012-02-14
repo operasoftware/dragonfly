@@ -141,6 +141,19 @@ var ui_framework = new function()
       }
     },
     {
+      id: 'test-text-left-offset',
+      target: 'js-default-text-offset',
+      getValue: function()
+      {
+        var container = document.getElementById('js-source-scroll-content');
+        var text = document.getElementById(this.id);
+        return container && text
+             ? text.getBoundingClientRect().left - 
+               container.getBoundingClientRect().left
+             : 0;
+      }
+    },
+    {
       id: 'test-scrollbar-width',
       target: 'scrollbar-width',
       getValue: function(){return ( 100 - document.getElementById(this.id).offsetWidth )}
@@ -193,6 +206,7 @@ var ui_framework = new function()
           "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +
             "<div id='test-scrollbar-width' style='height:300px'></div> " +
           "</div> " +
+          "<div><span id='test-text-left-offset'>&amp;nbsp;</span></div>" +
         "</div> " +
       "</div> " +
     "</div> " +
@@ -250,14 +264,14 @@ var ui_framework = new function()
     }).join('') +
   "</div></div>";
 
-  this.set_default_properties = function(test)
+  this.set_default_properties = function(tests)
   {
     var container = viewport.appendChild(document.createElement('div'));
     container.style.cssText = 'position:absolute;top:0;left:-1000px;';
     container.innerHTML = resolve_map_2.markup;
     for (var set = null, i = 0; set = resolve_map_2[i]; i++)
     {
-      if (!test || test == set.id)
+      if (!tests || tests.contains(set.id))
       {
         defaults[set.target] = set.getValue();
       }

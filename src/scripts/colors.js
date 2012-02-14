@@ -19,6 +19,13 @@ var Color = function()
   this.__hsv = [0, 50, 50]; 
 }
 
+Color.KEYWORD = "keyword";
+Color.HEX = "hex";
+Color.RGB = "rgb";
+Color.RGBA = "rgba";
+Color.HSL = "hsl";
+Color.HSLA = "hsla";
+
 Color.prototype = new function()
 {
 
@@ -238,12 +245,12 @@ Color.prototype = new function()
     yellowgreen: '9acd32'
   }
 
-  this.KEYWORD = 'keyword';
-  this.HEX = 'hex';
-  this.RGB = 'rgb';
-  this.RGBA = 'rgba';
-  this.HSL = 'hsl';
-  this.HSLA = 'hsla';
+  this.KEYWORD = Color.KEYWORD;
+  this.HEX = Color.HEX;
+  this.RGB = Color.RGB;
+  this.RGBA = Color.RGBA;
+  this.HSL = Color.HSL;
+  this.HSLA = Color.HSLA;
   this._double_hex = function(c){return c + c};
   this._trim_int = function(c){return parseInt(c.trim())};
   this._re_hex6 = /^#[0-9a-fA-F]{6}$/;
@@ -336,6 +343,29 @@ Color.prototype = new function()
     }
     return null;
   }
+
+    
+  this.serializeToCSSColor = function(type)
+  {
+    switch (type)
+    {
+      case Color.HEX:
+        return this.hhex;
+
+      case Color.RGB:
+        return this.rgb;
+      
+      case Color.RGBA:
+        return this.rgba;
+
+      case Color.HSL:
+        return this.hsl;
+
+      case Color.HSLA:
+        return this.hsla;
+    }
+    throw new Error("NOT_VALID_COLOR_TYPE");
+  };
 
   this.invert = function()
   {
@@ -474,6 +504,21 @@ Color.prototype = new function()
   {
     return this.rgb_to_hex_c(this.__rgb);
   }
+
+  this._alpha2string = function()
+  {
+    if (typeof this.alpha == 'number')
+    {
+      if (this.alpha == 1)
+        return "1";
+
+      if (this.alpha == 0)
+        return "0";
+
+      return this.alpha.toFixed(3);
+    }
+    return "1";
+  }
   
   // convenience 
   
@@ -507,7 +552,7 @@ Color.prototype = new function()
       this.getHue() + ', ' +
       this.getSaturation() + '%, ' +
       this.getLuminosity() + '%, ' +
-      (typeof this.alpha == 'number' ? this.alpha.toFixed(3) : '1') +
+      this._alpha2string() +
       ")");
   });
   this.__defineSetter__('hsla', function(val){}); // parse hsl?
@@ -541,7 +586,7 @@ Color.prototype = new function()
       this.getRed() + ', ' +
       this.getGreen() + ', ' +
       this.getBlue() + ', ' +
-      (typeof this.alpha == 'number' ? this.alpha.toFixed(3) : '1') +
+      this._alpha2string() +
       ")");
   });
   this.__defineSetter__('rgba', function(val){}); // parse rgb?

@@ -24,26 +24,7 @@
 
   this.templateOptionList = function(select_obj)
   {
-    // TODO this is a relict of protocol 3, needs cleanup
-
-    var active_window_id = runtimes.getActiveWindowId();
-
-    if( active_window_id )
-    {
-      var
-      _runtimes = runtimes.getRuntimes(active_window_id),
-      rt = null,
-      i = 0;
-
-      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
-      if( !rt && _runtimes[0] )
-      {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
-        return;
-      }
-      return templates.runtime_dropdown(_runtimes);
-    }
-
+    return templates.runtime_dropdown(runtimes.get_dom_runtimes());
   }
 
   this.checkChange = function(target_ele)

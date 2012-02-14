@@ -1,12 +1,10 @@
-﻿window.templates = window.templates || {};
-
-(function()
+﻿(function()
 {
   var self = this;
   this.hello = function(enviroment)
   {
-    var ret = ['ul'];
-    var prop = '';
+    var ret = ["ul"];
+    var prop = "";
     var prop_dict =
     {
       "stpVersion": ui_strings.S_TEXT_ENVIRONMENT_PROTOCOL_VERSION,
@@ -17,218 +15,204 @@
     }
     for( prop in prop_dict)
     {
-      ret[ret.length] = ['li', prop_dict[prop] + ': ' + enviroment[prop]];
+      ret[ret.length] = ["li", prop_dict[prop] + ": " + enviroment[prop]];
     }
     if( ini.revision_number.indexOf("$") != -1 && ini.mercurial_revision )
     {
       ini.revision_number = ini.mercurial_revision;
     }
-    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ': ' + ini.dragonfly_version];
-    ret[ret.length] = ['li', ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ': ' + ini.revision_number];
-    ret.push('class', 'selectable');
-    return ['div', ret, 'class', 'padding'];
-  }
-
-  this.runtimes = function(runtimes, type, arg_list)
-  {
-    var ret = [], rt = null, i = 0;
-    for( ; rt = runtimes[i]; i++)
-    {
-      ret[ret.length] = self['runtime-' + type](rt, arg_list);
-    }
-    return ret;
+    ret[ret.length] = ["li", ui_strings.S_TEXT_ENVIRONMENT_DRAGONFLY_VERSION + ": " + ini.dragonfly_version];
+    ret[ret.length] = ["li", ui_strings.S_TEXT_ENVIRONMENT_REVISION_NUMBER + ": " + ini.revision_number];
+    ret.push("class", "selectable");
+    return ["div", ret, "class", "padding"];
   }
 
   this.runtime_dropdown = function(runtimes)
   {
-    return this._group_runtimes(runtimes, false).map(this.runtime, this);
+    return runtimes.map(this.runtime, this);
   }
 
   this.runtime = function(runtime)
   {
-    var option = ['cst-option', runtime.title, 'rt-id', String(runtime.id)];
+    var option = ["cst-option", runtime.title, "rt-id", String(runtime.id)];
     if (runtime.title_attr)
-      option.push('title', runtime.title_attr);
+      option.push("title", runtime.title_attr);
     var ret = [option];
     if (runtime.extensions && runtime.extensions.length)
-      ret.push(['cst-group', runtime.extensions.map(this.runtime, this)]);
+      ret.push(["cst-group", runtime.extensions.map(this.runtime, this)]);
     return ret;
   }
 
-  this['runtime-runtime'] = function(runtime, arg_list)
+  this.script_dropdown = function(select_id, runtimes, stopped_script_id, selected_script_id)
   {
-    var display_uri = helpers.shortenURI(runtime.uri);
+    var option_list = this.script_dropdown_options(select_id,
+                                                   runtimes,
+                                                   stopped_script_id,
+                                                   selected_script_id);
+    return [["div", 
+              ["div",
+                ["input", "type", "text", 
+                          "handler", select_id + "-filter",
+                          "shortcuts", select_id + "-filter",
+                          "class", "js-dd-filter"],
+                "class", "js-dd-filter-container"],
+                ["span", "class", "js-dd-clear-filter",
+                         "handler", "js-dd-clear-filter"],
+              "class", "js-dd-filter-bar"],
+            option_list];
+  };
 
-    return [
-      'cst-option',
-      runtime['title'] || display_uri.uri,
-      'rt-id', runtime.runtime_id.toString()
-    ].concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ;
-  }
-
-  // to extract the extension runtimes from the runtimes list
-  // and push them to a extension property of the owner runtime
-  // if the get_script flag is set, the scripts of the runtime are sorted to 
-  // scripts, browser_js and user_js_s.
-  this._group_runtimes = function(runtimes, get_scripts)
+  this.script_dropdown_options = function(select_id, runtimes, stopped_script_id,
+                                          selected_script_id, search_term)
   {
-    /*
-      runtime =
-      {
-        runtime_id: r_t[RUNTIME_ID],
-        html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID] || __selected_window,
-        object_id: r_t[OBJECT_ID],
-        uri: r_t[URI],
-        description: r_t[DESCRIPTION],
-      };
-
-      script =
-      {
-        runtime_id: message[RUNTIME_ID],
-        script_id: message[SCRIPT_ID],
-        script_type: message[SCRIPT_TYPE],
-        script_data: message[SCRIPT_DATA],
-        uri: message[URI]
-      };
-    */
-
-    var 
-    rts = [],
-    rt_map = {},
-    rt = null, 
-    rt_obj = null,
-    i = 0,
-    display_uri = null,
-    rt_id = 0,
-    scripts = null,
-    script = null,
-    j = 0,
-    browser_js = null,
-    user_js_s = null;
-    
-    for ( ; rt = runtimes[i]; i++)
+    var script_list = ["div"];
+    for (var i = 0, rt; rt = runtimes[i]; i++)
     {
-      rt_id = rt.runtime_id;
-      switch (rt.description)
+      script_list.push(this.runtime_script(rt, stopped_script_id, 
+                                           selected_script_id, search_term));
+    }
+    script_list.push("class", "js-dd-script-list",
+                     "handler", "js-dd-move-highlight");
+    return script_list;
+  };
+
+  this.runtime_script = function(runtime, stopped_script_id, 
+                                 selected_script_id, search_term)
+  {
+    // search_term only applies to .js-dd-s-scope
+    var ret = [];
+    var script_uri_paths = new HashMap();
+    var inline_and_evals = [];
+    var title = ["cst-title", runtime.title];
+    var class_name = runtime.type == "extension"
+                   ? "js-dd-ext-runtime"
+                   : "js-dd-runtime";
+
+    title.push("class", class_name + (runtime.selected ? " selected-runtime" : ""));
+
+    if (runtime.title != runtime.uri)
+      title.push("title", runtime.uri);
+
+    runtime.scripts.forEach(function(script)
+    {
+      var ret_script = this.script_option(script, 
+                                          stopped_script_id, 
+                                          selected_script_id,
+                                          search_term);
+      if (ret_script)
       {
-        case "extensionjs":
+        if (script.script_type === "linked")
         {
-          var owner_rt = rt_map[rt.uri];
-          if (owner_rt)
-          {
-            rt_obj =
-            {
-              type: "extension",
-              id: rt_id,
-              uri: rt.uri,
-              title: "Extension Runtime " + rt.runtime_id,
-            };
-            if (get_scripts)
-              rt_obj.scripts = window.runtimes.getScripts(rt_id);
-            owner_rt.extensions.push(rt_obj);
-            runtimes.splice(i, 1);
-            i--;
-          }
+          var root_uri = this._uri_path(runtime, script, search_term);
+          if (script_uri_paths[root_uri])
+            script_uri_paths[root_uri].push(ret_script);
           else
-            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
-                            'extension rt without owner rt in templates.script_dropdown')
-          break
+            script_uri_paths[root_uri] = [ret_script];
+        }
+        else
+          inline_and_evals.push(ret_script);
+      }
+
+    }, this);
+
+    var script_list = [];
+    Object.getOwnPropertyNames(script_uri_paths).sort().forEach(function(uri)
+    {
+      var group = ["div"];
+      if (uri != "./")
+        group.push(["cst-title", uri, "class", "js-dd-dir-path"]);
+
+      group.extend(script_uri_paths[uri]);
+      group.push("class", "js-dd-group js-dd-s-scope");
+      ret.push(group);
+    });
+
+    if (inline_and_evals.length)
+    {
+      if (runtime.type == "extension")
+      {
+        ret.push(["div", inline_and_evals, "class", "js-dd-group js-dd-s-scope"]);
+      }
+      else
+      {
+        var group = ["div"];
+        group.push(["cst-title",
+                      ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS,
+                      "class", "js-dd-dir-path"]);
+
+        group.extend(inline_and_evals);
+        group.push("class", "js-dd-group");
+        ret.push(group);
+      }
+    }
+
+    if (runtime.type != "extension")
+    {
+      if (runtime.browser_js || (runtime.user_js_s && runtime.user_js_s.length))
+      {
+        var scripts = [];
+        var sc_op = null;
+        if (runtime.browser_js)
+        {
+          sc_op = this.script_option(runtime.browser_js, stopped_script_id,
+                                     selected_script_id, search_term);
+          if (sc_op)
+            scripts.push(sc_op);
+        }
+
+        if (runtime.user_js_s)
+        {
+          for (var i = 0, script; script = runtime.user_js_s[i]; i++)
+          {
+            sc_op = this.script_option(script, stopped_script_id,
+                                       selected_script_id, search_term)
+            if (sc_op)
+              scripts.push(sc_op);
+          }
         }
         
-        default:
+        if (scripts.length)
         {
-          display_uri = helpers.shortenURI(rt.uri);
-          rt_obj = 
-          {
-            type: "document",
-            id: rt_id,
-            uri: rt.uri,
-            title: rt.title || display_uri.uri,
-            title_attr: display_uri.title,
-            selected: rt.selected,
-            extensions: [],
-          };
-          if (get_scripts)
-          {
-            scripts = window.runtimes.getScripts(rt_id, true);
-            browser_js = null;
-            user_js_s = [];
-            for (j = scripts.length - 1; script = scripts[j]; j--)
-            {
-              switch (script.script_type)
-              {
-                case "Browser JS":
-                  browser_js = scripts.splice(j, 1)[0];
-                  break;
+          ret.push(["div", 
+                     ["cst-title",
+                        ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS,
+                        "class", "js-dd-dir-path"],
+                     ["div", scripts, "class", "js-dd-s-scope"],
+                     "class", "js-dd-group"]);
+        }
+      }
 
-                case "User JS":
-                  user_js_s.push(scripts.splice(j, 1)[0]); 
-                  break;
-              }
-            }
-            rt_obj.scripts = scripts;
-            rt_obj.browser_js = browser_js;
-            rt_obj.user_js_s = user_js_s;
-          }
-          rt_map[rt.uri] = rt_obj;
-          rts.push(rt_obj);
+      if (runtime.extensions)
+      {
+        for (var i = 0, rt; rt = runtime.extensions[i]; i++)
+        {
+          var ext_scripts = this.runtime_script(rt, stopped_script_id, 
+                                                selected_script_id, search_term)
+          if (ext_scripts.length)
+            ret.push(ext_scripts);
         }
       }
     }
-    return rts;
-  }
 
-  this.script_dropdown = function(runtimes, stopped_script_id, selected_script_id)
-  {
-    var context = new this._ScriptsContext(stopped_script_id, selected_script_id);
-    return context._group_runtimes(runtimes, true).map(context.runtime_script, context);
-  }
+    if (ret.length)
+      ret.unshift(title);
 
-  this._ScriptsContext = function(stopped_script_id, selected_script_id)
-  {
-    this.stopped_script_id = stopped_script_id;
-    this.selected_script_id = selected_script_id;
-  }
-
-  this._ScriptsContext.prototype = this;
-
-  this.runtime_script = function(runtime)
-  {
-    var 
-    ret = [], 
-    script_list = null,
-    title = runtime.type == "extension" ?
-            ['cst-title', runtime.title] :
-            ['h2', runtime.title];
-    
-    if (runtime.selected)
-      title.push('class', 'selected-runtime');
-    if (runtime.title_attr)
-      title.push('title', runtime.title_attr);
-    ret.push(title);
-    script_list = runtime.scripts.map(this.script_option, this);
-    if (runtime.type == "extension")
-      ret.push(['cst-group', script_list]);
-    else
-    {
-      ret.push.apply(ret, script_list);
-      if (runtime.browser_js)
-        ret.push(['cst-title', 'Browser JS'], 
-                 this.script_option(runtime.browser_js));
-      if (runtime.user_js_s && runtime.user_js_s.length)
-      {
-        ret.push(['cst-title', 'User JS']);
-        ret.push.apply(ret, runtime.user_js_s.map(this.script_option, this));
-      }
-      if (runtime.extensions && runtime.extensions.length)
-      {
-        ret.push.apply(ret, runtime.extensions.map(this.runtime_script, this));
-      }
-    }
     return ret;
   }
+
+  this._uri_path = function(runtime, script, search_term)
+  {
+    var uri_path = script.abs_dir;
+
+    if (script.abs_dir.indexOf(runtime.abs_dir) == 0 &&
+        (!search_term || !runtime.abs_dir.contains(search_term)))
+      uri_path = "./" + script.abs_dir.slice(runtime.abs_dir.length);
+    else if (script.origin == runtime.origin &&
+             (!search_term || !(script.origin.contains(search_term))))
+      uri_path = "/" + script.dir_pathname;
+
+    return uri_path;
+  };
 
   // script types in the protocol:
   // "inline", "event", "linked", "timeout",
@@ -241,104 +225,80 @@
     "unknown": ui_strings.S_TEXT_ECMA_SCRIPT_TYPE_UNKNOWN
   };
 
-  this.script_option = function(script)
+  this.script_option = function(script, stopped_script_id,
+                                selected_script_id, search_term)
   {
-    var display_uri = helpers.shortenURI(script.uri);
-    var script_type = this._script_type_map[script.script_type] || script.script_type;
-    var ret = 
-    [
-      'cst-option',
-      ["span", (script.script_type != "linked" ? script_type.capitalize(true) + ' – ' : ''),
-        [(
-          display_uri.uri ?
-          ["span", display_uri.uri] :
-          ["code", 
-            script.script_data.slice(0, 360).replace(/\s+/g, " ").slice(0, 120), 
-            "class", "code-snippet"]
-        )]
-      ],
-      'script-id', script.script_id.toString()
-    ];
-    var class_name = script.script_id == this.selected_script_id ? 
-                     'selected' : '';
-    if (this.stopped_script_id == script.script_id)
-      class_name += ( class_name && ' ' || '' ) + 'stopped';
-    if (display_uri.title)
-      ret.push('title', display_uri.title);
-    if (class_name)
-      ret.push('class', class_name);
-    return ret;
-  }
+    var script_type = this._script_type_map[script.script_type] ||
+                      script.script_type;
+    var ret = null;
 
-  this['runtime-css'] = function(runtime, org_args)
-  {
-    const
-    OBJECT_ID = 0,
-    HREF = 2,
-    TITLE = 7;
+    if (search_term &&
+        !((script.uri && script.uri.toLowerCase().contains(search_term)) ||
+          (!script.uri && script_type.toLowerCase().contains(search_term))))
+      return ret;
 
-    var
-    display_uri = helpers.shortenURI(runtime.uri),
-    ret =
-    [
-      ['h2', runtime['title'] || display_uri.uri].
-      concat( display_uri.title ? ['title', display_uri.title] : [] )
-    ],
-    sheets = cls.Stylesheets.get_instance().get_stylesheets(runtime.runtime_id),
-    sheet = null,
-    i = 0,
-    container = [],
-    rt_id = runtime.runtime_id,
-    title = '';
-
-    if(sheets)
+    if (script.uri)
     {
-      for( ; sheet = sheets[i]; i++)
-      {
-        title = sheet[HREF] ? sheet[HREF] : 'inline stylesheet ' + ( i + 1 ) ;
-        container[container.length] =
-        [
-          'cst-option',
-          title,
-          'runtime-id', '' + rt_id,
-          'index', '' + i
-        ];
-      }
+      var is_linked = script.script_type == "linked";
+      ret = ["cst-option", 
+              ["span", 
+                 script.filename,
+                 "data-tooltip", is_linked && "js-script-select", 
+                 "data-tooltip-text", is_linked && script.uri]];
+
+      if (script.search)
+        ret.push(["span", script.search, "class", "js-dd-scr-query"]);
+
+      if (script.hash)
+        ret.push(["span", script.query, "class", "js-dd-scr-hash"]);
+            
+      ret.push("script-id", script.script_id.toString());
     }
-    /*
     else
     {
-      container = ['p', ui_strings.S_INFO_DOCUMNENT_LOADING, 'class', 'info-text'];
+      var code_snippet = script.script_data.slice(0, 360)
+                               .replace(/\s+/g, " ").slice(0, 120);
+      ret = ["cst-option",
+              ["span", script_type.capitalize(true), "class", "js-dd-s-scope"],
+              " – ",
+              ["code", code_snippet, "class", "code-snippet"],
+              "script-id", script.script_id.toString()];
     }
-    */
-    //container.splice(container.length, 0, 'runtime-id', runtime.runtime_id);
-    ret = ret.concat([container])
+
+    var class_name = script.script_id == selected_script_id
+                   ? "selected"
+                   : "";
+
+    if (stopped_script_id == script.script_id)
+      class_name += (class_name ? " " : "") + "stopped";
+    
+    if (class_name)
+      ret.push("class", class_name);
 
     return ret;
-  }
+  };
 
-
-  this['runtime-dom'] = function(runtime)
+  this.runtime_dom = function(runtime)
   {
-    var display_uri = runtime['title'] || helpers.shortenURI(runtime.uri).uri;
+    var display_uri = runtime["title"] || helpers.shortenURI(runtime.uri).uri;
     return (
     [
-      'cst-option',
-       runtime['title'] || runtime.uri,
-      'runtime-id', runtime.runtime_id.toString()
-    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ['class', 'selected'] : [] ).
-      concat( display_uri != runtime.uri ? ['title', runtime.uri] : [] ) )
+      "cst-option",
+       runtime["title"] || runtime.uri,
+      "runtime-id", runtime.runtime_id.toString()
+    ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ["class", "selected"] : [] ).
+      concat( display_uri != runtime.uri ? ["title", runtime.uri] : [] ) )
   }
 
   this.checkbox = function(settingName, settingValue)
   {
-    return ['li',
-      ['label',
-        ['input',
-        'type', 'checkbox',
-        'value', settingName,
-        'checked', settingValue ?  true : false,
-        'handler', 'set-stop-at'
+    return ["li",
+      ["label",
+        ["input",
+        "type", "checkbox",
+        "value", settingName,
+        "checked", settingValue ?  true : false,
+        "handler", "set-stop-at"
         ],
         settingName
       ]
@@ -351,144 +311,44 @@
     var uri = frame.script_id && runtimes.getScript(frame.script_id)
             ? (runtimes.getScript(frame.script_id).uri || runtimes.getRuntime(frame.rt_id).uri)
             : null;
-    return ['li',
-             ['span', frame.fn_name, 'class', 'scope-name'],
-             ['span',
-              " " + (uri && frame.line ? helpers.basename(uri) + ':' + frame.line : ""),
-              'class', 'file-line'],
-      'handler', 'show-frame',
-      'ref-id', String(frame.id),
-      'title', uri
-    ].concat( is_top ? ['class', 'selected'] : [] );
+    return ["li",
+             ["span", frame.fn_name, "class", "scope-name"],
+             ["span",
+              " " + (uri && frame.line ? helpers.basename(uri) + ":" + frame.line : ""),
+              "class", "file-line"],
+      "handler", "show-frame",
+      "ref-id", String(frame.id),
+      "title", uri
+    ].concat( is_top ? ["class", "selected"] : [] );
   }
 
   this.configStopAt = function(config)
   {
-    var ret =['ul'];
-    var arr = ["script", "exception", "error", "abort"], n='', i=0;
+    var ret =["ul"];
+    var arr = ["script", "exception", "error", "abort"], n="", i=0;
     for( ; n = arr[i]; i++)
     {
       ret[ret.length] = this.checkbox(n, config[n]);
     }
-    return ['div'].concat([ret]);
-  }
-/*
-
-MODE ::= "<mode>"
-             ( "run" | "step-into-call" | "step-next-line" | "step-out-of-call" )
-           "</mode>" ;
-
-           */
-  this.continues = function()
-  {
-    var ret = [];
-    ret[ret.length] = self.continueWithMode('run ( F5 )', 'run');
-    ret[ret.length] = self.continueWithMode('step into call ( F11 )', 'step-into-call');
-    ret[ret.length] = self.continueWithMode('step next line ( F10 )', 'step-next-line');
-    ret[ret.length] = self.continueWithMode('step out of call ( Shift F11 )', 'step-out-of-call');
-    return ret;
-  }
-
-  this.continueWithMode = function(name, mode)
-  {
-    return ['span',
-          'tabindex', '1',
-          'value', '',
-          'title', name,
-          'mode', mode,
-          'id', 'continue-' + mode,
-          'handler', 'continue',
-          'disabled', true,
-          'class', 'ui-button'
-        ]
-  }
-
-  this.examineObject = function( data )
-  {
-    var prop = null,
-    i = 0,
-    ret = ['ul'];
-
-
-    for( i=0 ; prop = data[i]; i++)
-    {
-      switch(prop.type)
-      {
-        case 'object':
-        {
-          ret[ret.length] = self.key_value_folder(prop.key, i);
-          break;
-        }
-        case 'undefined':
-        case 'null':
-        {
-          ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
-          break;
-        }
-        default:
-        {
-          ret[ret.length] = ret[ret.length] = self.key_value(prop.key, prop.value, prop.type, i);
-          break;
-        }
-      }
-    }
-
-    if( window.__profiling__ )
-    {
-      window.__times__[4] =  new Date().getTime(); // creating markup
-    }
-
-    return ret;
-  }
-
-
-
-  this.key_value = function(key, value, value_class, ref_index)
-  {
-    return ['li',
-        ['span', key, 'class', 'key'],
-        ['span', value].concat( value_class ? ['class', value_class] : []),
-      'ref_index', ref_index
-    ];
-  }
-
-  this.key_value_folder = function(key, ref_index)
-  {
-    return ['li',
-      ['input', 'type', 'button', 'handler', 'examine-object', 'class', 'folder-key'],
-      ['span', key, 'class', 'key'],
-      ['span', 'object', 'class', 'object'],
-      'ref_index', ref_index
-    ];
+    return ["div"].concat([ret]);
   }
 
   this.breakpoint = function(line_nr, top)
   {
-    return ['li',
-          'class', 'breakpoint',
-          'line_nr', line_nr,
-          'style', 'top:'+ top +'px'
+    return ["li",
+          "class", "breakpoint",
+          "line_nr", line_nr,
+          "style", "top:"+ top +"px"
         ]
-  }
-
-
-  this.runtimes_dropdown = function(ele)
-  {
-    return ['div', ['ul', 'id', 'runtimes'], 'class', 'window-container'];
-  }
-
-  this['js-script-select'] = function(ui_obj)
-  {
-    return self['cst-select'](ui_obj.script_select);
   }
 
   this.breadcrumb = function(model, obj_id, parent_node_chain, target_id, show_combinator)
   {
     var setting = window.settings.dom;
     var css_path = model._get_css_path(obj_id, parent_node_chain,
-                                       setting.get('force-lowercase'),
-                                       setting.get('show-id_and_classes-in-breadcrumb'),
-                                       setting.get('show-siblings-in-breadcrumb'));
+                                       setting.get("force-lowercase"),
+                                       setting.get("show-id_and_classes-in-breadcrumb"),
+                                       setting.get("show-siblings-in-breadcrumb"));
     var ret = [];
     target_id || (target_id = obj_id)
     if (css_path)
@@ -498,11 +358,11 @@ MODE ::= "<mode>"
         ret[ret.length] =
         [
           "breadcrumb", css_path[i].name,
-          'ref-id', css_path[i].id.toString(),
-          'handler', 'breadcrumb-link',
-          'data-menu', 'breadcrumb',
-          'class', (css_path[i].is_parent_offset ? 'parent-offset' : '') + 
-                   (css_path[i].id == target_id ? ' active' : ''),
+          "ref-id", css_path[i].id.toString(),
+          "handler", "breadcrumb-link",
+          "data-menu", "breadcrumb",
+          "class", (css_path[i].is_parent_offset ? "parent-offset" : "") + 
+                   (css_path[i].id == target_id ? " active" : ""),
         ];
         if (show_combinator)
         {
@@ -735,10 +595,10 @@ MODE ::= "<mode>"
 
     for( ; lang = dict[i]; i++)
     {
-      ret[ret.length] = ['option', lang.name, 'value', lang.key].
-        concat( selected_lang == lang.key ? ['selected', 'selected'] : [] );
+      ret[ret.length] = ["option", lang.name, "value", lang.key].
+        concat(selected_lang == lang.key ? ["selected", "selected"] : []);
     }
     return ret;
   }
 
-}).apply(window.templates);
+}).apply(window.templates || (window.templates = {}));

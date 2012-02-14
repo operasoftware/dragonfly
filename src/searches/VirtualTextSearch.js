@@ -9,9 +9,9 @@
  * @see ListTextSearch
  * @constructor 
  */
-var VirtualTextSearch = function()
+var VirtualTextSearch = function(config)
 {
-  this._init();
+  this._init(config);
 };
 
 var JSSearchWindowHighlight = function()
@@ -137,7 +137,7 @@ var VirtualTextSearchBase = function()
 
   /* private */
 
-  this._init = function()
+  this._init = function(config)
   {
     this._search_term = '';
     this._cursor = -1;
@@ -157,6 +157,20 @@ var VirtualTextSearchBase = function()
     this._input = null;
     this._last_match_cursor = 0;
     this._search_bound = this._search.bind(this);
+    if (config)
+    {
+      if (config.css_classes)
+      {
+        ["selected_match_class",
+         "selected_match_class_first",
+         "selected_match_class_between",
+         "selected_match_class_last"].forEach(function(class_)
+        {
+          if (config.css_classes.hasOwnProperty(class_))
+            this["_" + class_] = config.css_classes[class_];
+        }, this);
+      }
+    }
   };
 
   /**
@@ -355,7 +369,7 @@ var VirtualTextSearchBase = function()
       this._search_node(this._source_container.getElementsByTagName('div')[line - this._top_line]);
       this._hit.forEach(index == this._script.match_cursor ?
                         this._set_highlight_style :
-                        this._set_default_style);
+                        this._set_default_style, this);
     }
   };
 
@@ -543,8 +557,13 @@ var VirtualTextSearchBase = function()
     this._search_node(node, skip_query);
     this._hit.forEach(style == TextSearch.HIGHLIGHT_STYLE ?
                       this._set_highlight_style :
-                      this._set_default_style);
+                      this._set_default_style, this);
     return this._hit;
+  };
+
+  this.clear_hit = function()
+  {
+    this._clear_hits();
   };
 
   this.highlight_matches = function(script)
