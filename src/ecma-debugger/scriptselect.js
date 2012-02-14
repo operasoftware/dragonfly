@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 cls.ScriptSelect = function(id, class_name)
 {
