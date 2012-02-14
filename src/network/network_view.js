@@ -205,12 +205,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
           return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
-        },
-        summer: function(data, groupname) {
-          return String(data.map(function(entry){return entry.size || 0}).reduce(function(prev, curr) {
-              return prev + curr;
-            }
-          ));
         }
       },
       size_h: {
@@ -222,14 +216,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
-        },
-        summer: function(data, groupname) {
-          var size = (data.map(function(entry){return entry.size || 0}).reduce(function(prev, curr) {
-              return prev + curr;
-            }
-          ))
-          return size ? cls.ResourceUtil.bytes_to_human_readable(size) :
-                        ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
         }
       },
       waiting: {
@@ -254,7 +240,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          return entry.starttime_relative;
+          return entry.starttime_relative;  
         },
         renderer: function(entry)
         {
@@ -269,11 +255,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         renderer: function(entry) {
           var dur = entry.get_duration();
           return (dur && dur.toFixed(2) + "ms") || "";
-        },
-        summer: function(data, groupname) {
-          var ctx = this._service.get_request_context();
-          return (ctx && ctx.get_duration().toFixed(2) + "ms") || 0;
-        }.bind(this)
+        }
       },
       graph: {
         label: ui_strings.S_HTTP_LABEL_GRAPH,

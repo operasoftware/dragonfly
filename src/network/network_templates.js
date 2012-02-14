@@ -114,6 +114,11 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
         "class", "network-data-container " + selected_viewmode
       ],
       "class", "network-main-container"
+    ],
+    [
+      "div", [
+        templates.network_log_summary(ctx)
+      ], "class", "network-summary"
     ]
   ]
 };
@@ -252,6 +257,24 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     ["ol", items.map(itemfun),
       "class", "network-log-url-list"]
   ]
+};
+
+templates.network_log_summary = function(ctx)
+{
+  var items = ctx.get_entries_filtered().slice(0);
+  var total_size = items.map(function(entry){
+                        return entry.size || 0
+                      }).reduce(function(prev, curr){
+                        return prev + curr;
+                      }, 0);
+  var str = items.length;
+  str += str === 1 ? " " + ui_strings.S_NETWORK_REQUEST :
+                     " " + ui_strings.S_NETWORK_REQUESTS;
+
+  if (total_size)
+    str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
+
+  return ["div", str];
 };
 
 templates.network_request_icon = function(request)
