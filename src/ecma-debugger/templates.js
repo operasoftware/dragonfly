@@ -1,4 +1,4 @@
-﻿(function()
+﻿;(function()
 {
   var self = this;
   this.hello = function(enviroment)
