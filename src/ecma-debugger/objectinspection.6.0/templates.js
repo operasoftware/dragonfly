@@ -28,11 +28,13 @@
 
   /* private */
 
+  var _has_own_prop = Object.prototype.hasOwnProperty;
+
   var _is_unfolded = function(tree, index, name, collapsed_protos)
   {
     if (!index) // the properties of the object itself
       return true;
-    if (!tree.protos.hasOwnProperty(index.toString()))
+    if (!_has_own_prop.call(tree.protos, index.toString()))
       return collapsed_protos[0] == '*' ?
              false :
              (collapsed_protos.indexOf(name) == -1);
@@ -247,7 +249,7 @@
         case "object":
         {
           obj_id = prop[OBJECT_VALUE][OBJECT_ID];
-          expanded_prop = tree.hasOwnProperty(prop[NAME]) &&
+          expanded_prop = _has_own_prop.call(tree, prop[NAME]) &&
                           _pretty_print_object(model,
                                                tree[prop[NAME]],
                                                obj_id,
@@ -268,7 +270,7 @@
                 "class='folder-key" + (has_match ? "" : " no-match") + "' "
             );
             // 'in' is true for all non enumarables
-            if (tree.hasOwnProperty(prop[NAME]) && tree[prop[NAME]])
+            if (_has_own_prop.call(tree, prop[NAME]) && tree[prop[NAME]])
               ret.push(STYLE_EXPANDED);
             ret.push(
               "/>" +
@@ -279,7 +281,7 @@
                      "data-spec='dom#" + value + "' " +
                      "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
-            if (tree.hasOwnProperty(prop[NAME]))
+            if (_has_own_prop.call(tree, prop[NAME]))
             {
               ret.extend(expanded_prop);
             }
