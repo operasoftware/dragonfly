@@ -588,13 +588,6 @@ TextSearch.prototype = new function()
            this._match_style_default;
   }
 
-<<<<<<< mine
-  this.set_query_selector = function(query_selector)
-  {
-    this._query_selector = query_selector;
-  }
-
-=======
   this.set_query_selector = function(selector)
   {
     this._query_selector = selector;
@@ -609,5 +602,4 @@ TextSearch.prototype = new function()
   };
 
 
->>>>>>> theirs
 };
