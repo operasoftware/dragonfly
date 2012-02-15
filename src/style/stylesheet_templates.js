@@ -5,6 +5,8 @@
  */
 var StylesheetTemplates = function()
 {
+  var DATA_URI_MAX_LENGTH = 30;
+
   var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
 
@@ -299,12 +301,27 @@ var StylesheetTemplates = function()
   {
     if (value.startswith("\"") || value.startswith("'"))
       value = value.slice(1, -1);
+
+    var url = value;
+    var rest = [];
+
+    // Shoten data URIs
+    if (value.startswith("data:") && value.length > DATA_URI_MAX_LENGTH)
+    {
+      rest = ["span",
+                value.slice(DATA_URI_MAX_LENGTH),
+              "class", "rest-of-url"
+             ];
+      value = value.slice(0, DATA_URI_MAX_LENGTH);
+    }
+
     return ["span",
               "\"",
                 ["span",
                    value,
+                   rest,
                  "handler", "open-resource-tab",
-                 "data-resource-url", value,
+                 "data-resource-url", url,
                  "class", "internal-link"
                 ],
               "\""

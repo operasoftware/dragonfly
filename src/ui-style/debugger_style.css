@@ -389,6 +389,11 @@ styles
   color: #666;
 }
 
+.rest-of-url
+{
+  content:"…";
+}
+
 styles
 {
   padding: 8px 4px;
