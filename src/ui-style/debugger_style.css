@@ -1451,14 +1451,9 @@ d
   height: 8px;
 }
 
-.color-swatch:not(.non-editable)
+.color-swatch:not(.non-interactive)
 {
   cursor: pointer;
-}
-
-.color-swatch.non-editable
-{
-  background-image: none;
 }
 
 .css-declaration.disabled .color-swatch

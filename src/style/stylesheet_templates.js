@@ -291,7 +291,7 @@ var StylesheetTemplates = function()
          "style", !is_special ? ("background-color:" + value) : ""
         ],
       "class", "color-swatch " +
-               (is_editable ? "" : " non-editable") +
+               (is_editable ? "" : " non-interactive") +
                (is_special ? " special" : ""),
       "handler", is_editable && "show-color-picker"
     ];
