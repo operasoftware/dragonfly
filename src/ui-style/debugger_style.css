@@ -389,9 +389,9 @@ styles
   color: #666;
 }
 
-.rest-of-url
+.shortened-url
 {
-  content:"…";
+  content: "…";
 }
 
 styles

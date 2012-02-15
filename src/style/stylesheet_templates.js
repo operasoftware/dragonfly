@@ -310,7 +310,7 @@ var StylesheetTemplates = function()
     {
       rest = ["span",
                 value.slice(DATA_URI_MAX_LENGTH),
-              "class", "rest-of-url"
+              "class", "shortened-url"
              ];
       value = value.slice(0, DATA_URI_MAX_LENGTH);
     }
