@@ -305,7 +305,7 @@ var StylesheetTemplates = function()
     var url = value;
     var rest = [];
 
-    // Shoten data URIs
+    // Shorten data URIs
     if (value.startswith("data:") && value.length > DATA_URI_MAX_LENGTH)
     {
       rest = ["span",
