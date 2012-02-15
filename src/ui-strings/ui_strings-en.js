@@ -1503,3 +1503,15 @@ ui_strings.S_DISABLE_DECLARATION = "Disable";
 /* DESC: Context menu item for expanding shorthands */
 ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 
+/* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
+ui_strings.S_COLOR_NOTATION = "Color format";
+
+/* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
+
+/* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
+ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
+
+/* DESC: Section header in the script drop-down select for Browser and User JS. */
+ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
+

@@ -1,5 +1,5 @@
-// Test dependencies (included with testFile):
-// css_shorthand_tests.js, stylesheets.js, css_shorthand_resolver.js, element_style.js, css_rule.js, css_value_tokenizer.js
+// This test has dependencies. Example of running:
+// sniper.html?testFile=stylesheets.js&testFile=element_style.js&testFile=css_rule.js&testFile=css_value_tokenizer.js&testFile=css_shorthand_resolver.js&testFile=css_shorthand_tests.js
 
 addModule("CSS shorthands");
 
@@ -581,6 +581,59 @@ addTest("Resolving CSS shorthands", function () {
       ],
       values: [
         "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed transparent",
+      ],
+    }
+  );
+
+  clear_properties();
+
+  set_properties(
+    {
+      "background": "url(\"data:image/png;1\")",
+      "background-size": "1px",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "background",
+      ],
+      values: [
+        "url(\"data:image/png;1\") 0% 0%/1px transparent",
+      ],
+    }
+  );
+
+  clear_properties();
+
+  set_properties(
+    {
+      "overflow-x": "hidden",
+      "overflow-y": "hidden",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "overflow",
+      ],
+      values: [
+        "hidden",
+      ],
+    }
+  );
+
+  remove_properties(["overflow-x"]);
+
+  assert_rule(
+    {
+      properties: [
+        "overflow-y",
+      ],
+      values: [
+        "hidden",
       ],
     }
   );

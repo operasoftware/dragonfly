@@ -802,7 +802,7 @@ var Editor = function(actions)
           true,
           is_disabled
         );
-        decl_ele.clearAndRender(this._templates.prop_value(decl, true));
+        decl_ele.clearAndRender(this._templates.prop_value(decl, true, true));
         this.textarea.value = "";
         this.context_cur_text_content = "";
         this.context_cur_prop = "";

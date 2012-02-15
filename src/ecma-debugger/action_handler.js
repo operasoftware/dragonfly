@@ -153,28 +153,6 @@ window.eventHandlers.click['show-stylesheets'] = function(event, target)
   }
 };
 
-window.eventHandlers.click['show-runtimes'] = function(event)
-{
-  var window_id = event.target.parentNode.getAttribute('window_id');
-  var rts = runtimes.getRuntimes(window_id);
-  var runtime_container = event.target.parentNode.getElementsByTagName('ul')[0];
-  var rt = null, i = 0;
-  var template_type = event.target.parentNode.parentNode.getAttribute('template-type');
-
-  if (runtime_container)
-  {
-    event.target.parentNode.removeChild(runtime_container);
-    event.target.style.removeProperty('background-position');
-    runtimes.setWindowUnfolded(window_id, false);
-  }
-  else
-  {
-    event.target.parentNode.render(templates.runtimes(rts, template_type));
-    event.target.style.backgroundPosition = '0 -11px';
-    runtimes.setWindowUnfolded(window_id, true);
-  }
-};
-
 window.eventHandlers.click['continue'] = function(event)
 {
   this.broker.dispatch_action('global', event.target.id);

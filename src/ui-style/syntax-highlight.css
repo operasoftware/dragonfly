@@ -30,8 +30,9 @@
 
 .object
 {
-  color: #666;
+  color: #555;
   background-color: rgba(0, 0, 0, 0.075);
+  border-radius: 2px;
 }
 
 .punctuator
@@ -65,8 +66,11 @@
 
 .js-source .first-error
 { /* TODO: Not specified */
-  color: #333;
-  background-color: #f90;
+  color: #fff;
+  padding: 1px;
+  margin: -1px;
+  background-color: #8a2929;
+  border-radius: 3px;
 }
 
 .js-source .error
@@ -168,6 +172,11 @@ examine-objects key
 .css-property-value
 {
   color: #111;
+}
+
+.css-priority
+{
+  white-space: nowrap;
 }
 
 .overwritten

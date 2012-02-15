@@ -23,7 +23,8 @@
   MAX_VALUE_LENGTH = 30,
   STYLE_EXPANDED = "style='background-position: 0px -11px' ",
   IS_EDITABLE = 5,
-  UID = 6;
+  UID = 6,
+  TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
 
   /* private */
 
@@ -275,7 +276,8 @@
                         "data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key> " +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
-                     "data-spec='dom#" + value + "'>" + value + "</value>"
+                     "data-spec='dom#" + value + "' " +
+                     "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
             if (tree.hasOwnProperty(prop[NAME]))
             {

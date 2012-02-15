@@ -25,7 +25,7 @@
 })();
 */
 
-/* testing in Chrome or FF
+/* testing in Chrome or FF *
 if (document.createElementNS &&
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {
@@ -34,7 +34,7 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-*/
+/* */
 
 if (!Element.prototype.contains)
 {
@@ -700,6 +700,20 @@ if (!"".trim)
   }
 }
 
+if (!Object.getOwnPropertyNames)
+{
+  Object.getOwnPropertyNames = function(obj)
+  {
+    var ret = [];
+    for (var p in obj)
+    {
+      if (Object.prototype.hasOwnProperty.call(obj, p))
+        ret.push(p);
+    }
+    return ret;
+  }
+}
+
 /**
  * Check if a string appears to be a number, that is, all letters in the
  * string are numbers. Does not take in to account decimals. Clones the
@@ -904,83 +918,40 @@ window.CustomElements.PlaceholderFeature = function()
 
 window.CustomElements.AutoScrollHeightFeature = function()
 {
-  this.adjust_height = function()
+  this._adjust_height = function(delta, event)
   {
-    if (this.scrollHeight != this.offsetHeight)
+    if (!this.value)
     {
-      // TODO values should not be hardcoded
-      this.style.height = (4 + (this.scrollHeight > 16 ? this.scrollHeight : 16)) + 'px';
+      this.style.height = "auto";
+      this.rows = 1;
+    }
+    else
+    {
+      this.rows = 0;
+      this.style.height = "0";
+      this.style.height = this.scrollHeight + delta + "px";
     }
   };
 
-  this._get_adjust_height = function(count_lines, line_height, border_padding)
+  this._get_delta = function(ele)
   {
-    var lines = -1;
-    return function()
-    {
-      var new_count = count_lines(this.value);
-      if (new_count != lines)
-      {
-        lines = new_count;
-        this.style.height = (border_padding + (lines) * line_height) + 'px';
-      }
-    }
-  }
+    var style = window.getComputedStyle(ele, null);
+    var is_border_box = style.getPropertyValue("box-sizing") == "border-box";
+    var prop = is_border_box ? "border" : "padding";
+    var sign = is_border_box ? 1 : -1;
 
-  this._count_lines = (function(re)
-  {
-    return function(str)
-    {
-      for (var count = 1; re.exec(str); count++);
-      return count;
-    };
-  })(/\r\n/g);
-
-  this._get_line_height = function(textarea)
-  {
-    // computed style returns by default just "normal"
-    var
-    CRLF = "\r\n",
-    offset_height = textarea.offsetHeight,
-    textarea_value = textarea._get_value(),
-    line_height = 0,
-    test_value = "\r\n\r\n\r\n\r\n\r\n\r\n";
-
-    textarea.value = test_value;
-    while (textarea.scrollHeight < offset_height)
-    {
-      textarea.value = (test_value += CRLF);
-    }
-    line_height = textarea.scrollHeight;
-    textarea.value = (test_value += CRLF);
-    line_height = textarea.scrollHeight - line_height;
-    textarea.value = textarea_value;
-    return line_height;
-  };
-
-  this._get_border_padding = function(ele)
-  {
-    var
-    border_padding = 0,
-    style_dec = window.getComputedStyle(ele, null);
-
-    if (style_dec.getPropertyValue('box-sizing') == 'border-box')
-    {
-      ['padding-top', 'padding-bottom', 'border-top', 'border-bottom'].forEach(function(prop)
-      {
-        border_padding += parseInt(style_dec.getPropertyValue(prop)) || 0;
-      })
-    };
-    return border_padding;
+    return (sign * parseInt(style.getPropertyValue(prop + "-bottom")) || 0) +
+           (sign * parseInt(style.getPropertyValue(prop + "-top")) || 0);
   };
 
   (this._inits || (this._inits = [])).push(function(ele)
   {
-    var adjust_height = this._get_adjust_height(this._count_lines,
-        this._get_line_height(ele), this._get_border_padding(ele));
-    adjust_height.call(ele);
+    var delta = this._get_delta(ele);
+    var adjust_height = this._adjust_height.bind(ele, delta);
+    adjust_height();
     ele.addEventListener('input', adjust_height, false);
   });
+
 };
 
 CustomElements.add(function()
@@ -1002,7 +973,57 @@ CustomElements.add(function()
   this.type = '_auto_height_textarea';
   this.html_name = 'textarea';
 },
-'PlaceholderFeature',
 'AutoScrollHeightFeature');
+
+CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
+                                                               bottom_color_list,
+                                                               flip)
+{
+  if (typeof bottom_color_list == "boolean")
+  {
+    flip = bottom_color_list;
+    bottom_color_list = null;
+  }
+
+  if (!this._src_canvas)
+  {
+    this._src_canvas = document.createElement("canvas");
+    this._src_ctx = this._src_canvas.getContext("2d");
+  }
+  var width = this._src_canvas.width = this.canvas.width;
+  var height = this._src_canvas.height = this.canvas.height;
+  var set_stop = function(color, index, list)
+  {
+    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);  
+  };
+  var lg = flip
+         ? this._src_ctx.createLinearGradient(0, 0, 0, height)
+         : this._src_ctx.createLinearGradient(0, 0, width, 0);
+  this._src_ctx.clearRect(0, 0, width, height);
+  top_color_list.forEach(set_stop, lg);
+  this._src_ctx.fillStyle = lg;
+  this._src_ctx.globalCompositeOperation = "source-over";
+  this._src_ctx.fillRect(0, 0, width, height);
+  this.drawImage(this._src_canvas, 0, 0);
+  if (bottom_color_list)
+  {
+    this._src_ctx.clearRect(0, 0, width, height);
+    lg = flip
+         ? this._src_ctx.createLinearGradient(0, 0, width, 0)
+         : this._src_ctx.createLinearGradient(0, 0, 0, height);
+    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");  
+    lg.addColorStop(1, "hsla(0, 0%, 0%, 1)");
+    this._src_ctx.fillStyle = lg;
+    this._src_ctx.fillRect(0, 0, width, height);
+    this._src_ctx.globalCompositeOperation = "source-in";
+    lg = flip
+         ? this._src_ctx.createLinearGradient(0, 0, 0, height)
+         : this._src_ctx.createLinearGradient(0, 0, width, 0);  
+    bottom_color_list.forEach(set_stop, lg);
+    this._src_ctx.fillStyle = lg;
+    this._src_ctx.fillRect(0, 0, width, height);
+    this.drawImage(this._src_canvas, 0, 0);
+  }
+};
 
 

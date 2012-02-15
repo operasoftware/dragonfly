@@ -327,6 +327,24 @@ window.cls.Helpers = function()
     return Math.floor(value) + .5;
   };
 
+  this.get_color_in_notation = function(value, notation)
+  {
+    var color = new Color().parseCSSColor(value);
+
+    if (!color)
+      return value; // Fall back if we can't parse as color
+
+    if (color.alpha !== null)
+    {
+      notation = {
+        "hhex": "rgba", // Fall back since hex cannot represent alpha
+        "rgb": "rgba",
+        "hsl": "hsla"
+      }[notation] || "rgba";
+    }
+
+    return notation === "hhex" ? color[notation].toUpperCase() : color[notation];
+  };
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)

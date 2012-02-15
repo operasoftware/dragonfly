@@ -17,7 +17,6 @@ cls.ReplService = function(view, data)
   const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
   const INLINE_MODEL = cls.ReplService.INLINE_MODEL;
   const INLINE_MODEL_TMPL = cls.ReplService.INLINE_MODEL_TMPL;
-  const FRIENDLY_PRINTED = cls.ReplService.FRIENDLY_PRINTED;
   const RE_DOM_OBJECT = cls.InlineExpander.RE_DOM_OBJECT;
   const IS_EXPAND_INLINE_KEY = "expand-objects-inline";
   const CLASS_NAME = 4;

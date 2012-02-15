@@ -190,7 +190,7 @@ cls.DocumentSelect = function(id)
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'dom');
+      return _runtimes.map(templates.runtime_dom, templates);
     }
     
   }
