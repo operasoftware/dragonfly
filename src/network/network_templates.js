@@ -210,10 +210,20 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     var context_info;
     if (req.unloaded)
       context_info = ui_strings.S_HTTP_UNREFERENCED;
-    else if (req.no_request_made)
-      context_info = ui_strings.S_HTTP_NOT_REQUESTED;
     else if (had_error_response)
       context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
+    else if (req.no_request_made)
+    {
+      // file
+      if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
+        context_info = ui_strings.S_HTTP_SERVED_OVER_FILE;
+      // data uri
+      else if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
+        context_info = null; // the tooltip is explicit enough in these cases
+      // or otherise probably chached, but that is not explicit info we have
+      else
+        context_info = ui_strings.S_HTTP_NOT_REQUESTED;
+    }
 
     if (context_info)
       url_tooltip = context_info + " - " + url_tooltip;

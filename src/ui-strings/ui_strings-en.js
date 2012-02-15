@@ -627,8 +627,11 @@ ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
 /* DESC: tooltip-prefix for resources that have been marked unloaded, which means they are no longer reference in the document */
 ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 
-/* DESC: tooltip for resources that have not been requested over network (cached, data-uri etc) */
+/* DESC: tooltip for resources that have not been requested over network (mostly that means cached) */
 ui_strings.S_HTTP_NOT_REQUESTED = "No request made";
+
+/* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
+ui_strings.S_HTTP_SERVED_OVER_FILE = "Served locally";
 
 /* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
 ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
