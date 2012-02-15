@@ -255,8 +255,10 @@ var StylesheetTemplates = function()
         value = window.helpers.get_color_in_notation(value, color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
-      else if ((value === "currentColor") ||
-               (value === "inherit" && this._color_properties.hasOwnProperty(prop)))
+      else if (this._color_properties.hasOwnProperty(prop)
+            || value === "currentColor"
+            || value === "transparent"
+      )
       {
         color_swatch = this.color_swatch(value, is_editable);
       }
@@ -282,11 +284,14 @@ var StylesheetTemplates = function()
     var is_special = value === "currentColor" || value === "inherit";
     return [
       "span",
+        ["span",
+         "class", "color-swatch-fg-color",
+         "style", !is_special ? ("background-color:" + value) : ""
+        ],
       "class", "color-swatch " +
                (is_editable ? "" : " non-editable") +
                (is_special ? " special" : ""),
-      "handler", is_editable && "show-color-picker",
-      "style", !is_special ? ("background-color:" + value) : ""
+      "handler", is_editable && "show-color-picker"
     ];
   };
 

@@ -220,5 +220,5 @@ window.cls.ColorPickerView.prototype = ViewBase;
 
 window.eventHandlers.click['show-color-picker'] = function(event, target)
 {
-  window.views['color-selector'].show_color_picker(event.target);
+  window.views['color-selector'].show_color_picker(event.target.get_ancestor(".color-swatch"));
 };

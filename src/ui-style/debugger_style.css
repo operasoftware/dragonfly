@@ -1287,10 +1287,27 @@ d
 .color-swatch
 {
   display: inline-block;
-  width: 7px;
-  height: 7px;
-  border: 1px solid rgba(34, 34, 34, 0.4);
+  width: 10px;
+  height: 10px;
   margin-left: 5px;
+  background: #fff no-repeat;
+  background-image: -o-linear-gradient(0deg,
+                                       #c8c8c8 100%,
+                                       #c8c8c8 0),
+                    -o-linear-gradient(0deg,
+                                       #c8c8c8 100%,
+                                       #c8c8c8 0);
+  background-position: 1px 1px, 5px 5px;
+  background-size: 4px;
+  vertical-align: -1px;
+}
+
+.color-swatch-fg-color
+{
+  border: 1px solid rgba(34, 34, 34, 0.4);
+  display: block;
+  width: 8px;
+  height: 8px;
 }
 
 .color-swatch:not(.non-editable)
@@ -1308,13 +1325,16 @@ d
   opacity: 0.35;
 }
 
-.color-swatch.special
+.color-swatch.special .color-swatch-fg-color
 {
-  background: no-repeat transparent;
+  background: no-repeat #fff;
+  /* This is an approximation, the color will be slightly off */
   background-image: -o-linear-gradient(-45deg,
-                                       transparent 4px,
+                                       transparent 5px,
                                        rgba(34, 34, 34, 0.4) 5px,
+                                       rgba(34, 34, 34, 0.4) 6px,
                                        transparent 6px);
+  border-color: #aaa;
 }
 
 .collapsed-prototypes
