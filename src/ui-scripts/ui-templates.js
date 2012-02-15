@@ -233,7 +233,7 @@
     var template =
       ["span",
         button.text || "",
-        "title", button.title,
+        "title", button.title || button.text,
         "data-single-select-value", button.value,
         "tabindex", "1",
         "class", "ui-button ui-control " +

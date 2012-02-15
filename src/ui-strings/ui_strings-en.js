@@ -628,7 +628,7 @@ ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
 ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 
 /* DESC: tooltip for resources that have not been requested over network (mostly that means cached) */
-ui_strings.S_HTTP_NOT_REQUESTED = "No request made";
+ui_strings.S_HTTP_NOT_REQUESTED = "Cached";
 
 /* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
 ui_strings.S_HTTP_SERVED_OVER_FILE = "Served locally";

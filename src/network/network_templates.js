@@ -217,10 +217,10 @@ templates.network_log_url_list = function(ctx, selected, item_order)
       // file
       if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
         context_info = ui_strings.S_HTTP_SERVED_OVER_FILE;
-      // data uri
+      // data uri, the tooltip is explicit enough in these cases
       else if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
-        context_info = null; // the tooltip is explicit enough in these cases
-      // or otherise probably chached, but that is not explicit info we have
+        context_info = null;
+      // or otherise probably chached
       else
         context_info = ui_strings.S_HTTP_NOT_REQUESTED;
     }

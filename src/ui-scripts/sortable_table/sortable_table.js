@@ -108,6 +108,8 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     contextmenu.register("sortable-table-menu", [
       { callback: this._make_context_menu }
     ]);
+    // and not in tooltips either
+    Tooltips.register("sortable-table-tooltip", true, false);
   }
 
   this._make_context_menu = function(evt)
@@ -360,7 +362,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   }
 
   this._init();
-}
+};
 
 window.templates = window.templates || {};
 
@@ -533,7 +535,8 @@ templates.sortable_table_row = function(tabledef, item, cols)
               }
               var add_title_to_td = !coldef.use_ellipsis && title;
               return ["td", content]
-                        .concat(add_title_to_td ? ["title", title] : []) // todo: use custom tooltips instead
+                        .concat(add_title_to_td ? ["data-tooltip", "sortable-table-tooltip",
+                                                   "data-tooltip-text", title] : [])
                         .concat(coldef.align ? ["class", "align-" + coldef.align] : [])
                         .concat(coldef.attributes ? coldef.attributes : [])
             }
@@ -553,5 +556,6 @@ templates.sortable_table_wrap_ellipsis = function(content, title)
         "class", "ellipsis"
       ],
     "class", "ellipsis_cont"
-  ].concat(title ? ["title", title] : []); // todo: use custom tooltips instead
+  ].concat(title ? ["data-tooltip", "sortable-table-tooltip",
+                    "data-tooltip-text", title] : []);
 }
