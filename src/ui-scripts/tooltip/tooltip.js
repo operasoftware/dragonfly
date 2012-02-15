@@ -6,13 +6,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 {
   /* static methods of TooltipManager */
 
-  this.register = function(name, keep_on_hover) {};
+  this.register = function(name, keep_on_hover, set_selected, max_height_target) {};
   this.unregister = function(name, tooltip) {};
   this.is_inside_tooltip = function(event, close_if_not_inside) {};
 
-  var Tooltip = function(keep_on_hover, set_selected) 
+  var Tooltip = function(keep_on_hover, set_selected, max_height_target) 
   {
-    this._init(keep_on_hover, set_selected);
+    this._init(keep_on_hover, set_selected, max_height_target);
   };
 
   Tooltip.prototype = new function()
@@ -63,17 +63,18 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       */
     this.hide = function(){};
 
-    this._init = function(keep_on_hover, set_selected)
+    this._init = function(keep_on_hover, set_selected, max_height_target)
     {
       this.keep_on_hover = keep_on_hover;
       this.set_selected = set_selected;
+      this.max_height_target = max_height_target;
     }
     
     /* implementation */
     
     this.show = function(content, box)
     {
-      _show_tooltip(this, content, box);
+      return _show_tooltip(this, content, box);
     };
 
     this.hide = function()
@@ -98,7 +99,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   const SHOW_DELAY = 110;
   const DISTANCE_X = 5;
   const DISTANCE_Y = 5;
-  const MARGIN_Y = 15;
+  const MARGIN_Y = 30;
   const MARGIN_X = 30;
 
   /* private */
@@ -112,8 +113,8 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _window_width = 0;
   var _window_height = 0;
-  var _padding_width = 0;
-  var _padding_height = 0;
+  var _padding_width = -1;
+  var _padding_height = -1;
 
   var store_window_dimensions = function()
   {
@@ -210,9 +211,35 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _show_tooltip = function(tooltip, content, box)
   {
+    var ret = null;
     if (_cur_ctx &&  tooltip == _cur_ctx.current_tooltip &&
         _cur_ctx.accept_call)
     {
+      if (_padding_width == -1)
+      {
+        var style = getComputedStyle(_cur_ctx.tooltip_ele, null);
+        _padding_width = 0;
+        _padding_height = 0;
+        ["padding-left",
+         "border-left-width",
+         "padding-right",
+         "border-right-width",
+         "padding-top",
+         "border-top-width",
+         "padding-bottom",
+         "border-bottom-width"].forEach(function(prop)
+        {
+          var value = parseInt(style.getPropertyValue(prop));
+          if (value)
+          {
+            if (prop.contains("left") || prop.contains("right")) 
+              _padding_width += value;
+            else
+              _padding_height += value;
+          }
+        });      
+      }
+                                     
       if (!content && _cur_ctx.last_handler_ele)
         content = _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT);
 
@@ -220,10 +247,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       {
         _cur_ctx.tooltip_ele.scrollTop = 0;
         _cur_ctx.tooltip_ele.scrollLeft = 0;
-        if (typeof content == "string")
-          _cur_ctx.tooltip_ele.textContent = content;
-        else
-          _cur_ctx.tooltip_ele.clearAndRender(content);
+        ret = typeof content == "string"
+            ? (_cur_ctx.tooltip_ele.textContent = content)
+            : _cur_ctx.tooltip_ele.clearAndRender(content);
       }
 
       if (!box && _cur_ctx.last_box)
@@ -249,6 +275,14 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       {
         var max_h = 0;
         var max_w = 0;
+        var max_height_target = _cur_ctx.tooltip_ele;
+
+        if (tooltip.max_height_target)
+        {
+          var ele = _cur_ctx.tooltip_ele.querySelector(tooltip.max_height_target);
+          if (ele)
+            max_height_target = ele;
+        }
 
         _cur_ctx.select_last_handler_ele();
 
@@ -262,7 +296,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.top = top + "px";
             _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
+            max_height_target.style.maxHeight = max_h + "px";
           }
           else
           {
@@ -270,7 +304,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
             _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = _window_height - bottom - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px"; 
+            max_height_target.style.maxHeight = max_h + "px"; 
           }
 
           if (box.mouse_x < _window_width / 2)
@@ -279,7 +313,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px"; 
           }
           else
           {
@@ -287,7 +321,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.right = right + "px";
             _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = _window_width - right - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px"; 
           }
           
         }
@@ -300,7 +334,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px"; 
           }
           else
           {
@@ -308,7 +342,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.right = right + "px";
             _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = right - MARGIN_X - _padding_width;
-            _cur_ctx.tooltip_ele.style.maxWidth = max_w + "px";
+            max_height_target.style.maxWidth = max_w + "px";
           }
 
           if (box.mouse_y < _window_height / 2)
@@ -317,7 +351,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.top = top + "px";
             _cur_ctx.tooltip_ele.style.bottom = "auto";
             max_h = _window_height - top - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
+            max_height_target.style.maxHeight = max_h + "px";
           }
           else
           {
@@ -325,11 +359,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
             _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = box.mouse_y - MARGIN_Y - _padding_height;
-            _cur_ctx.tooltip_ele.style.maxHeight = max_h + "px";
+            max_height_target.style.maxHeight = max_h + "px";
           }
         }
       }
     }
+    
+    return ret;
   };
 
   var _hide_tooltip = function(tooltip)
@@ -352,30 +388,11 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     document.documentElement.addEventListener("mouseleave", _mouseover, false);
     window.addEventListener("resize", store_window_dimensions, false);
     store_window_dimensions();
-    var style = document.styleSheets.getDeclaration(".tooltip-container");
-    ["padding-left",
-     "border-left-width",
-     "padding-right",
-     "border-right-width",
-     "padding-top",
-     "border-top-width",
-     "padding-bottom",
-     "border-bottom-width"].forEach(function(prop)
-    {
-      var value = parseInt(style.getPropertyValue(prop));
-      if (value)
-      {
-        if (prop.contains("left") || prop.contains("right")) 
-          _padding_width += value;
-        else
-          _padding_height += value;
-      }
-    });
   };
 
   /* implementation */
 
-  this.register = function(name, keep_on_hover, set_selected)
+  this.register = function(name, keep_on_hover, set_selected, max_height_target)
   {
     if (!_is_setup)
     {
@@ -389,7 +406,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     if (typeof set_selected != "boolean")
       set_selected = true;
 
-    _tooltips[name] = new Tooltip(keep_on_hover, set_selected);
+    _tooltips[name] = new Tooltip(keep_on_hover, set_selected, max_height_target);
     return _tooltips[name];
   };
 
