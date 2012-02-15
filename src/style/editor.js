@@ -39,6 +39,7 @@ var Editor = function(actions)
   this._stylesheets = window.stylesheets;
   this._element_style = window.element_style;
   this._templates = new StylesheetTemplates();
+  this._event = document.createEvent("Event");
   this._actions = actions;
   this._tab_context_value = '';
   this._tab_context_tokens = null;
@@ -84,8 +85,7 @@ var Editor = function(actions)
     }
 
     this.textarea_container = document.createElement('textarea-container');
-    this.textarea = this.textarea_container.
-      appendChild(document.createElement('textarea'));
+    this.textarea = this.textarea_container.render(["_auto_height_textarea"]);
     this.textarea.style.cssText = css_text;
     this.textarea.oninput = this._input_handler;
   };
@@ -366,9 +366,12 @@ var Editor = function(actions)
     this.context_cur_prop = props[PROPERTY] || '';
     this.context_cur_value = props[VALUE] || '';
     this.context_cur_priority = props[PRIORITY] || 0;
-    this.textarea.style.height = ele.offsetHeight + 'px';
     ele.textContent = '';
     ele.appendChild(this.textarea_container);
+
+    // Fire an 'input' event in case the textarea needs to be resized
+    this._event.initEvent("input", true, true);
+    this.textarea.dispatchEvent(this._event);
 
     // only for click events
     if (event)
