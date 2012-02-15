@@ -447,6 +447,14 @@
   border-top: 1px solid #444;
 }
 
+.network_get_params {
+  margin: 4px 2px 0 0;
+}
+
+.network_get_params td {
+  padding: 0 4px;
+}
+
 .network-tooltip-row {
   display: table-row;
 }

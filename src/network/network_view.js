@@ -418,18 +418,41 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._service.get_body(item_id, this.update.bind(this));
   }.bind(this);
 
-  this._on_graph_tooltip = function(evt, target)
+  this._on_graph_tooltip_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
     var entry = ctx.get_entry(entry_id);
     var template = templates.network_graph_entry_tooltip(entry);
     this.graph_tooltip.show(template);
-  }
+  }.bind(this);
 
-  Tooltips.register("network-url-list-tooltip", true, false);
+  this._on_url_tooltip_bound = function(evt, target)
+  {
+    var url = target.get_attr("parent-node-chain", "data-tooltip-text");
+    if (url)
+    {
+      var uri = new URI(url);
+      var template = url;
+      if (uri.search)
+      {
+        var table = ["table"]
+        for (var i = 0, param; param = uri.params[i]; i++)
+        {
+          table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
+        };
+        table = table.concat(["class", "network_get_params"]);
+        template = [["span", url], table];
+      }
+      this.url_tooltip.show(template);
+    }
+  }.bind(this);
+
+  this.url_tooltip = Tooltips.register("network-url-list-tooltip", true, false);
+  this.url_tooltip.ontooltip = this._on_url_tooltip_bound;
+
   this.graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
-  this.graph_tooltip.ontooltip = this._on_graph_tooltip.bind(this);
+  this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
 
   this._on_clear_log_bound = function(evt, target)
   {
