@@ -502,7 +502,7 @@ Color.prototype = new function()
    */
   this.getHex = function()
   {
-    return this.rgb_to_hex_c(this.__rgb);
+    return this.rgb_to_hex_c(this.__rgb).toUpperCase();
   }
 
   this._alpha2string = function()

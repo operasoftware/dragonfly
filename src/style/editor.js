@@ -28,10 +28,11 @@ var Editor = function(actions)
   this.textarea = null;
   this.host_element_border_padding_left = 0;
   this.host_element_border_padding_top = 0;
-  this.context_cur_prop = '';
-  this.context_cur_value = '';
-  this.context_cur_priority = '';
-  this.context_cur_text_content = '';
+  this.context_cur_prop = "";
+  this.context_cur_value = "";
+  this.context_cur_priority = "";
+  this.context_cur_text_content = "";
+  this.context_last_prop = null;
   this.context_edit_mode = this.MODE_CSS;
   this.colors = new Color();
 
@@ -492,7 +493,7 @@ var Editor = function(actions)
     var suggest = this._get_suggestion(
       this._tab_context_tokens && this._tab_context_tokens[0] || '',
       this._tab_context_tokens && cur_end <= this._tab_context_tokens[2],
-      cur_token,
+      cur_token.toLowerCase(),
       cur_start,
       cur_end,
       action_id
@@ -608,7 +609,7 @@ var Editor = function(actions)
       this.property_list = this._stylesheets.get_sorted_properties();
     }
     return this._get_matches_from_list(this.property_list,
-        this.textarea.value.slice(this._tab_context_tokens[1], cur_start));
+        this._tab_context_tokens[0].toLowerCase().slice(this._tab_context_tokens[1], cur_start));
   };
 
   this.suggest_property.replace_type = REPLACE_TYPE_SELECTION;
@@ -636,7 +637,7 @@ var Editor = function(actions)
 
     var prop = this._tab_context_tokens[0];
     var set = this._tab_context_tokens[3]
-            ? this.textarea.value.slice(this._tab_context_tokens[3], cur_start)
+            ? this.textarea.value.toLowerCase().slice(this._tab_context_tokens[3], cur_start)
             : "";
     var re_hex = /^#([0-9a-f]{6})$/i;
     var match = null;
@@ -743,7 +744,9 @@ var Editor = function(actions)
         props[VALUE],
         props[PRIORITY]
       );
-      this._actions.set_property(this.context_rt_id, this.context_rule_id, decl);
+      var prop_to_remove = this.context_last_prop || this.context_cur_prop;
+      this._actions.set_property(this.context_rt_id, this.context_rule_id, decl, prop_to_remove);
+      this.context_last_prop = props[PROPERTY];
     }
     else if ((!props[PROPERTY] || props[PROPERTY] != this.context_cur_prop) && this.context_cur_prop) // if it's overwritten
     {
@@ -756,6 +759,7 @@ var Editor = function(actions)
     var props = this.get_properties();
     var keep_edit = false;
     var is_disabled = this.textarea_container.parentNode.hasClass("disabled");
+    this.context_last_prop = null;
 
     if (props && props.length == 3)
     {
@@ -832,6 +836,7 @@ var Editor = function(actions)
 
   this.escape = function()
   {
+    this.context_last_prop = null;
     this._actions.restore_property();
     if (this.context_cur_prop)
     {

@@ -27,7 +27,12 @@ container.console
   color: #fff;
 }
 
-.console ::selection
+.console value
+{
+  white-space: normal;
+}
+
+.console::selection
 {
   color: #fff;
   background-color: #006ad4;

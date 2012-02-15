@@ -215,6 +215,11 @@ examine-objects key
   color: #4c7899;
 }
 
+.css-inspector .css-property-value
+{
+  word-wrap: break-word;
+}
+
 .css-inspector .non-editable .css-property-value
 {
   color: #aaa;

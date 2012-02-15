@@ -268,14 +268,25 @@ cls.HostCommandTransformer = function() {
   {
     if (this.is_global_call(tokenlist, index))
       token[VALUE] = "(typeof $x == 'function' && $x || \
-                       function(e)\
+                       function(xpath, context)\
                        {\
-                         var res = document.evaluate(e, document, null,\
+                         var context = context || document;\
+                         var res = document.evaluate(xpath, context, null,\
                                                      XPathResult.ANY_TYPE, null);\
-                         var ret = [], ele = null;\
-                         while (ele = res.iterateNext())\
-                           ret.push(ele);\
-                         return ret;\
+                         switch (res.resultType)\
+                         {\
+                         case XPathResult.NUMBER_TYPE:\
+                           return res.numberValue;\
+                         case XPathResult.STRING_TYPE:\
+                           return res.stringValue;\
+                         case XPathResult.BOOLEAN_TYPE:\
+                           return res.booleanValue;\
+                         default:\
+                           var ret = [], ele = null;\
+                           while (ele = res.iterateNext())\
+                             ret.push(ele);\
+                           return ret;\
+                         }\
                        })";
   };
 
