@@ -427,8 +427,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.graph_tooltip.show(template);
   }
 
-  Tooltips.register("network-url-list-tooltip", true);
-  this.graph_tooltip = Tooltips.register("network-graph-tooltip", true);
+  Tooltips.register("network-url-list-tooltip", true, false);
+  this.graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
   this.graph_tooltip.ontooltip = this._on_graph_tooltip.bind(this);
 
   this._on_clear_log_bound = function(evt, target)
