@@ -257,7 +257,7 @@ var StylesheetTemplates = function()
         value = window.helpers.get_color_in_notation(value, color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
-      else if (this._color_properties.hasOwnProperty(prop)
+      else if ((this._color_properties.hasOwnProperty(prop) && value !== "invert")
             || value === "currentColor"
             || value === "transparent"
       )
