@@ -143,10 +143,14 @@
 
   var mouse_handler = function(event)
   {
-    var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName) || /^cst-/i.test(ele.parentNode.nodeName))
+    var select = (/^cst-/i.test(event.target.nodeName) ||
+                  /^cst-/i.test(event.target.parentNode.nodeName)) && event.target;
+    
+    while (select && !/^cst-select/i.test(select.nodeName))
+        select = select.parentNode;
+
+    if (select)
     {
-      var select = ele.get_ancestor("cst-select");
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
