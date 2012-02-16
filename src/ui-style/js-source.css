@@ -123,6 +123,7 @@
 
 .js-tooltip-examine-container
 {
+  box-sizing: border-box;
   overflow: auto;
   border-top: 30px solid transparent;
   margin: -8px;

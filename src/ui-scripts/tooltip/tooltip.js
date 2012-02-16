@@ -275,14 +275,10 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       {
         var max_h = 0;
         var max_w = 0;
-        var max_height_target = _cur_ctx.tooltip_ele;
 
-        if (tooltip.max_height_target)
-        {
-          var ele = _cur_ctx.tooltip_ele.querySelector(tooltip.max_height_target);
-          if (ele)
-            max_height_target = ele;
-        }
+        var max_height_target = tooltip.max_height_target
+                             && _cur_ctx.tooltip_ele.querySelector(tooltip.max_height_target)
+                             || _cur_ctx.tooltip_ele;
 
         _cur_ctx.select_last_handler_ele();
 
