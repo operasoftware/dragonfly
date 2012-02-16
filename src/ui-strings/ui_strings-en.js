@@ -637,7 +637,7 @@ ui_strings.S_HTTP_SERVED_OVER_FILE = "Served locally";
 ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
 
 /* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
-ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Only showing requests that occured while Dragonfly was open.";
+ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Showing only requests that occurred while Dragonfly was open.";
 
 /* DESC: Label for http event sequence when the event was scheduled */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
