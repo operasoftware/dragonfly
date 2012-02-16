@@ -290,7 +290,7 @@ var StylesheetTemplates = function()
          "class", "color-swatch-fg-color",
          "style", !is_special ? ("background-color:" + value) : ""
         ],
-      "class", "color-swatch " +
+      "class", "color-swatch" +
                (is_editable ? "" : " non-interactive") +
                (is_special ? " special" : ""),
       "handler", is_editable && "show-color-picker"

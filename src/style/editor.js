@@ -611,8 +611,10 @@ var Editor = function(actions)
     {
       this.property_list = this._stylesheets.get_sorted_properties();
     }
-    return this._get_matches_from_list(this.property_list,
-        this._tab_context_tokens[0].toLowerCase().slice(this._tab_context_tokens[1], cur_start));
+    return this._tab_context_tokens
+         ? this._get_matches_from_list(this.property_list,
+             this._tab_context_tokens[0].toLowerCase().slice(this._tab_context_tokens[1], cur_start))
+         : [];
   };
 
   this.suggest_property.replace_type = REPLACE_TYPE_SELECTION;

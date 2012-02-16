@@ -270,7 +270,7 @@ cls.HostCommandTransformer = function() {
       token[VALUE] = "(typeof $x == 'function' && $x || \
                        function(xpath, context)\
                        {\
-                         var context = context || document;\
+                         context = context || document;\
                          var res = document.evaluate(xpath, context, null,\
                                                      XPathResult.ANY_TYPE, null);\
                          switch (res.resultType)\

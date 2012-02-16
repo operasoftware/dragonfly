@@ -56,8 +56,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       }
 
       context.ele_value.firstChild.textContent = color_value;
-      if (color_value !== "currentColor" && color_value !== "inherit") // Avoid flickering of the color swatch
-        context.ele_color_swatch.style.backgroundColor = color_value;
+      context.ele_color_swatch.style.backgroundColor = color_value;
       var property_value_ele = context.ele_container.get_ancestor(".css-property-value");
       if (property_value_ele)
       {
