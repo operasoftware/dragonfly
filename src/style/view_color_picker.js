@@ -108,17 +108,16 @@ window.cls.ColorPickerView = function(id, name, container_class)
       this._edit_context.ele_container.removeClass(this._edit_context.edit_class ||
                                                    CSS_CLASS_TARGET);
 
-    this._edit_context = edit_context ||
-    {
+    this._edit_context = edit_context || {
       initial_color: new Color().parseCSSColor(color_value),
       ele_value: parent,
       ele_color_swatch: target,
       ele_container: parent.parentNode,
       prop_name: property,
       is_important: Boolean(value_ele.querySelector(".css-priority")),
-      rt_id: parseInt(parent.get_attr("parent-node-chain", "rt-id")),
-      rule_id: parseInt(parent.get_attr("parent-node-chain", "rule-id")) ||
-               parseInt(parent.get_attr("parent-node-chain", "obj-id")),
+      rt_id: Number(parent.get_attr("parent-node-chain", "rt-id")),
+      rule_id: Number(parent.get_attr("parent-node-chain", "rule-id")) ||
+               Number(parent.get_attr("parent-node-chain", "obj-id")),
       is_svg: parent.get_attr("parent-node-chain", "rule-id") == "element-svg"
     };
 
@@ -132,7 +131,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
         "inherit": property,
         "currentColor": "color"
       }[color_value];
-      var obj_id = parseInt(parent.get_attr("parent-node-chain", "obj-id"));
+      var obj_id = Number(parent.get_attr("parent-node-chain", "obj-id"));
       var script = "window.getComputedStyle(ele, null)." +
                    "getPropertyValue(\"" + prop + "\");";
       var tag = window.tag_manager.set_callback(this, this._handle_get_color, [color_value]);
@@ -154,7 +153,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this._handle_get_color = function(status, message, color_value)
   {
-    var TYPE = 1
+    var TYPE = 1;
     var VALUE = 2;
     var context = this._edit_context;
     if (!status && message[TYPE] == 'string')
