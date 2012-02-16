@@ -253,10 +253,23 @@ cls.ScriptSelect = function(id, class_name)
   { 
     var list = this._script_list.querySelectorAll("cst-option");
     this._option_eles = Array.prototype.slice.call(list);
-    if (this._option_eles.length)
-      this._option_eles[0].addClass("hover");
+    var index = 0;
 
-    this._option_ele_cursor = 0;
+    if (this._option_eles.length)
+    {
+      for (var opt; opt = this._option_eles[index]; index++)
+      {
+        if (opt.hasClass("selected"))
+          break;
+      }
+
+      if (!this._option_eles[index])
+        index = 0;
+             
+      this._option_eles[index].addClass("hover");
+    }
+
+    this._option_ele_cursor = index;
     this._option_box = this._container
                      ? this._container.getBoundingClientRect()
                      : null;

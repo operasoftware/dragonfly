@@ -25,6 +25,7 @@ cls.JSSourceTooltip = function(view)
   var SHIFT_KEY = 16;
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
   var MAX_MOUSE_POS_COUNT = 2;
+  var FILTER_HANDLER = "js-tooltip-filter";
 
   var _tooltip = null;
   var _view = null;
@@ -51,10 +52,22 @@ cls.JSSourceTooltip = function(view)
   var _win_selection = null;
   var _last_script_text = "";
   var _shift_key = false;
+  var _filter = null;
+  var _filter_input = null;
+  var _tooltip_container = null;
+  var _tooltip_model = null;
+  var _filter_shortcuts_cb = null;
+  var _filter_config = {"handler": FILTER_HANDLER,
+                        "shortcuts": FILTER_HANDLER,
+                        "type": "filter",
+                        "label": ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+                        "focus-handler": FILTER_HANDLER,
+                        "blur-handler": FILTER_HANDLER};
+  var _is_filter_focus = false;
 
   var _poll_position = function()
   {
-    if (!_last_move_event || _is_over_tooltip)
+    if (!_last_move_event || _is_over_tooltip || (_filter && _is_filter_focus))
       return;
     
     if (!_win_selection.isCollapsed && !_shift_key)
@@ -201,17 +214,24 @@ cls.JSSourceTooltip = function(view)
                                                  object[OBJECT_ID],
                                                  "",
                                                  object[CLASS_NAME]);
+        _tooltip_model = model;
         model.expand(function()
         {
           var tmpl = ["div",
-                       ["h2", ["span", object[CLASS_NAME],
-                                       "data-tooltip", TOOLTIP_NAME], 
+                       ["h2", templates.default_filter(_filter_config),
+                              ["span", object[CLASS_NAME],
+                                       "data-tooltip", TOOLTIP_NAME],
                               "data-id", String(model.id),
                               "obj-id", String(model.object_id),
                               "class", "js-tooltip-title"],
-                       [window.templates.inspected_js_object(model, false)],
+                       ["div", [window.templates.inspected_js_object(model, false)],
+                               "class", "js-tooltip-examine-container"],
                        "class", "js-tooltip js-tooltip-examine"];
-          _tooltip.show(tmpl, box);
+          var ele = _tooltip.show(tmpl, box);
+          _filter_input = ele.querySelector("input");
+          _tooltip_container = ele.querySelector(".js-tooltip-examine-container");
+          _filter.set_form_input(_filter_input);
+          _filter.set_container(_tooltip_container);
         });
       }
       else
@@ -866,6 +886,11 @@ cls.JSSourceTooltip = function(view)
     _last_poll = {};
     _view.higlight_slice();
     _tooltip.hide();
+    _filter.set_search_term("");
+    _filter.cleanup();
+    _tooltip_model = null;
+    _tooltip_container = null;
+
   };
 
   var _get_char_offset = function(line, offset)
@@ -985,21 +1010,48 @@ cls.JSSourceTooltip = function(view)
       _shift_key = false;
   };
 
+  var _onbeforefilter = function(msg)
+  {
+    if (_tooltip_model && _tooltip_container)
+    {
+      var tmpl = window.templates.inspected_js_object(_tooltip_model, false,
+                                                      null, msg.search_term);
+      _tooltip_container.clearAndRender(tmpl);
+    }
+  };
+
   var _init = function(view)
   {
     _view = view;
     _tokenizer = new cls.SimpleJSParser();
-    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name, true, false);
+    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name, true, false,
+                                 ".js-tooltip-examine-container");
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _onhide;
     _tooltip.ontooltipenter = _ontooltipenter;
     _tooltip.ontooltipleave = _ontooltipleave;
     _tagman = window.tagManager;
-    _esde = window.services['ecmascript-debugger'];
-    window.messages.addListener('monospace-font-changed', _onmonospacefontchange);
-    window.addEventListener('resize', _get_container_box, false);
-    document.addEventListener('keydown', _onkeydown, false);
-    document.addEventListener('keyup', _onkeyup, false);
+    _esde = window.services["ecmascript-debugger"];
+    _filter = new TextSearch();
+    _filter_shortcuts_cb = cls.Helpers.shortcut_search_cb.bind(_filter);
+    window.event_handlers.input[FILTER_HANDLER] =
+    window.event_handlers.focus[FILTER_HANDLER] =
+    window.event_handlers.blur[FILTER_HANDLER] = function(event, target)
+    {        
+      if (event.type == "focus")
+        _is_filter_focus = true; 
+      else if (event.type == "blur")
+        _is_filter_focus = false
+      else
+        _filter.search_delayed(target.value);
+    };
+    _filter.add_listener("onbeforesearch", _onbeforefilter);
+    ActionBroker.get_instance().get_global_handler().
+    register_shortcut_listener(FILTER_HANDLER, _filter_shortcuts_cb);
+    window.messages.addListener("monospace-font-changed", _onmonospacefontchange);
+    window.addEventListener("resize", _get_container_box, false);
+    document.addEventListener("keydown", _onkeydown, false);
+    document.addEventListener("keyup", _onkeyup, false);
   };
 
   this.unregister = function()
