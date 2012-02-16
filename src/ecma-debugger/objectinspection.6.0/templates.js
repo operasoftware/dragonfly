@@ -34,10 +34,12 @@
   {
     if (!index) // the properties of the object itself
       return true;
+
     if (!_has_own_prop.call(tree.protos, index.toString()))
-      return collapsed_protos[0] == '*' ?
-             false :
-             (collapsed_protos.indexOf(name) == -1);
+      return collapsed_protos[0] == '*'
+           ? false
+           :  (collapsed_protos.indexOf(name) == -1);
+
     return Boolean(tree.protos[index]);
   }
 
@@ -281,10 +283,10 @@
                      "data-spec='dom#" + value + "' " +
                      "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
+            
             if (_has_own_prop.call(tree, prop[NAME]))
-            {
               ret.extend(expanded_prop);
-            }
+
             ret.push("</item>");
           }
           break;

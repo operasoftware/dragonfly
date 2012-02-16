@@ -1034,9 +1034,9 @@ cls.JSSourceTooltip = function(view)
     _esde = window.services["ecmascript-debugger"];
     _filter = new TextSearch();
     _filter_shortcuts_cb = cls.Helpers.shortcut_search_cb.bind(_filter);
-    eventHandlers.input[FILTER_HANDLER] =
-    eventHandlers.focus[FILTER_HANDLER] =
-    eventHandlers.blur[FILTER_HANDLER] = function(event, target)
+    window.event_handlers.input[FILTER_HANDLER] =
+    window.event_handlers.focus[FILTER_HANDLER] =
+    window.event_handlers.blur[FILTER_HANDLER] = function(event, target)
     {        
       if (event.type == "focus")
         _is_filter_focus = true; 
