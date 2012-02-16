@@ -473,7 +473,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   this.checkChange = function(target_ele)
   {
     var win_id = parseInt(target_ele.getAttribute('value'));
-    if( win_id != window_manager_data.get_debug_context() )
+    if (!isNaN(win_id) && win_id != window_manager_data.get_debug_context())
     {
       window_manager_data.set_debug_context(win_id);
       return true;
