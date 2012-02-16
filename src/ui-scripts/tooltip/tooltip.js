@@ -215,6 +215,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     if (_cur_ctx &&  tooltip == _cur_ctx.current_tooltip &&
         _cur_ctx.accept_call)
     {
+      // read and store the style properties of the tooltip container
       if (_padding_width == -1)
       {
         var style = getComputedStyle(_cur_ctx.tooltip_ele, null);
