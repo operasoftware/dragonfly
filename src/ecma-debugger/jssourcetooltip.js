@@ -57,14 +57,17 @@ cls.JSSourceTooltip = function(view)
   var _tooltip_container = null;
   var _tooltip_model = null;
   var _filter_shortcuts_cb = null;
-  var _filter_config = {handler: FILTER_HANDLER,
-                        shortcuts: FILTER_HANDLER,
-                        type: "filter",
-                        label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER};
+  var _filter_config = {"handler": FILTER_HANDLER,
+                        "shortcuts": FILTER_HANDLER,
+                        "type": "filter",
+                        "label": ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+                        "focus-handler": FILTER_HANDLER,
+                        "blur-handler": FILTER_HANDLER};
+  var _is_filter_focus = false;
 
   var _poll_position = function()
   {
-    if (!_last_move_event || _is_over_tooltip)
+    if (!_last_move_event || _is_over_tooltip || (_filter && _is_filter_focus))
       return;
     
     if (!_win_selection.isCollapsed && !_shift_key)
@@ -1031,9 +1034,16 @@ cls.JSSourceTooltip = function(view)
     _esde = window.services["ecmascript-debugger"];
     _filter = new TextSearch();
     _filter_shortcuts_cb = cls.Helpers.shortcut_search_cb.bind(_filter);
-    eventHandlers.input[FILTER_HANDLER] = function(event, target)
-    {
-      _filter.search_delayed(target.value);
+    eventHandlers.input[FILTER_HANDLER] =
+    eventHandlers.focus[FILTER_HANDLER] =
+    eventHandlers.blur[FILTER_HANDLER] = function(event, target)
+    {        
+      if (event.type == "focus")
+        _is_filter_focus = true; 
+      else if (event.type == "blur")
+        _is_filter_focus = false
+      else
+        _filter.search_delayed(target.value);
     };
     _filter.add_listener("onbeforesearch", _onbeforefilter);
     ActionBroker.get_instance().get_global_handler().
