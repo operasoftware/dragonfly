@@ -103,9 +103,7 @@ var URIPrototype = function(uri_prop_name)
         var pairs = this._search.slice(1).split("&");
         pairs.forEach(function(pair) {
           var first_eq = pair.indexOf("=");
-          // can't just split, since if make b=b=b into [b,b,b], but we need [b,b=b]
-          if (first_eq === -1)
-            first_eq = pair.length; // for empty values
+          if (first_eq === -1) { first_eq = pair.length; }
           var key = pair.slice(0, first_eq);
           if (key)
           {

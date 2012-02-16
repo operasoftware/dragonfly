@@ -84,7 +84,8 @@ templates.request_details = function(req)
   {
     tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
   }
-  else {
+  else
+  {
     var firstline = req.request_raw.split("\n")[0];
     var parts = firstline.split(" ");
     if (parts.length == 3)
@@ -133,7 +134,7 @@ templates.network_headers_list = function(headers, firstline)
 templates.network_body_seperator = function()
 {
   return ["pre", " ", "class", "mono"];
-}
+};
 
 templates.network_request_body = function(req)
 {
@@ -159,9 +160,9 @@ templates.network_request_body = function(req)
   }
   else if (req.requestbody.mimeType === "application/x-www-form-urlencoded")
   {
-  // todo: hard to support for example "application/x-www-form-urlencoded; charset=windows-1252" -
-  // req.requestbody.content.characterEncoding is properly set to iso-8859-1 then, but its hard to get
-  // content.stringData into utf-8
+    // todo: hard to support for example "application/x-www-form-urlencoded; charset=windows-1252" -
+    // req.requestbody.content.characterEncoding is properly set to iso-8859-1 then, but its hard to get
+    // content.stringData into utf-8
     var parts = req.requestbody.content.stringData.split("&");
     var tab = [
                 ["tr",
@@ -177,7 +178,7 @@ templates.network_request_body = function(req)
     }));
     ret.push(tab);
   }
-  // else // There is content, but we're not tracking
+  // else // There is content, but we're not tracking // todo: really?
   // {
   //   ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
   // }

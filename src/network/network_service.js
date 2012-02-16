@@ -16,28 +16,11 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect
+    // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect.
+    // todo: handle multiple top-runtimes
     if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
     this._current_context.saw_main_document_abouttoloaddocument = true;
-  }.bind(this);
-
-  this._on_documentevent_bound = function(msg)
-  {
-    // todo: This will be only store for top documents.
-    // the last _on_abouttoloaddocument without parentDocumentID is not always the top document,
-    // but it can be a redirect instead.
-
-    // todo: there can be more then one top document, this needs to be reflected in the structure.
-/*
-    var data = new cls.DocumentManager["1.2"].DocumentEvent(msg);
-    var type = new cls.DocumentManager["1.2"].DocumentEventType[data.eventType];
-    if (this._current_context &&
-        type === "DOMCONTENTLOADED_START" || type === "LOAD_START")
-    {
-        this._current_context.update_document_event(event_name, data);
-    }
-*/
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -145,9 +128,10 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
     this._res_service.addListener("urlunload", this._on_urlunload_bound);
+
     this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-   //  this._doc_service.addListener("documentevent", this._on_documentevent_bound);
+
     messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
     messages.addListener("setting-changed", this._on_setting_changed_bound);
   };
@@ -327,7 +311,7 @@ cls.RequestContext = function()
       this._filters.push({
         value_list: blacklist_split[0].split(","),
         is_blacklist: (blacklist_split[1] === "true")
-      })
+      });
     }
   }
 
@@ -544,7 +528,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
           "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_HEADER
         },
         "requestfinished": {
-          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE // we probably haven't really been waiting, as we decide to retry after we are done writing the request
+          // we probably haven't really been waiting, as we decide to retry after we are done writing the request
+          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE
         },
         "requestretry": {
           "request": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING
@@ -557,7 +542,8 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         },
         "urlredirect": {
           "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
-          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
+          // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
+          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
         }
       }
     },
@@ -782,7 +768,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this._humanize_url = function()
   {
     this.human_url = this.url;
-    if (this.urltype == 4) // data URI
+    if (this.urltype == cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
     {
       if (this.type)
       {

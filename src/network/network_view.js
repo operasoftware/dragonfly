@@ -96,13 +96,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._render_click_to_fetch_view = function(container)
   {
     container.clearAndRender(
-      ['div',
-        ['span',
-          'class', 'container-button ui-button',
-          'handler', 'reload-window',
-          'tabindex', '1'],
-        ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
-          'class', 'info-box'
+      ["div",
+        ["span",
+          "class", "container-button ui-button",
+          "handler", "reload-window",
+          "tabindex", "1"],
+        ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
+          "class", "info-box"
       ]
     );
   };
@@ -515,12 +515,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   }.bind(this);
 
   var eh = window.eventHandlers;
-  // fixme: this is in the wrong place! Doesn't belong in UI and even if it
-  // did, the event handler doesn't get added until the view is created
-  // which means you can't open tabs from elsewhere if you haven't opened
-  // the resources view first
-  //  eh.click["resources-all-open"] = this._handle_open_resource_bound;
-
+  // fixme: this is in the wrong place!
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
   eh.mouseout["select-network-request"] = this._on_mouseout_entry_bound;

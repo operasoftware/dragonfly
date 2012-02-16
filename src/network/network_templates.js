@@ -105,7 +105,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
 
   return [
     show_incomplete_warning ?
-    templates.network_incomplete_warning() : [],
+      templates.network_incomplete_warning() : [],
     [
       "div", templates.network_log_url_list(ctx, selected, item_order),
       "id", "network-url-list"
@@ -138,31 +138,6 @@ templates.network_viewmode_graphs = function(ctx, selected, width)
     var gridwidth = Math.round((width / duration) * stepsize);
     var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
 
-    var domcontentloaded = -1;
-    var load = -1;
-    // place the domcontentloaded and load events if available
-    // todo: very much work in progress
-    if (ctx.saw_main_document_abouttoloaddocument)
-    {
-      var first_document_id = ctx.get_entries().map(function(entry){return entry.document_id})[0];
-      // todo: an initial redirect look like the top document, but it's not. no notifications are shown then.
-      var notifications = ctx._document_notifications[first_document_id];
-      if (notifications)
-      {
-        var scale = width / duration;
-        if (notifications["DOMCONTENTLOADED_START"])
-        {
-          domcontentloaded = (notifications["DOMCONTENTLOADED_START"].time - basetime) * scale;
-          // console.log("DOMCONTENTLOADED_START of main resource:", notifications["DOMCONTENTLOADED_START"].time - basetime, "after basetime");
-        }
-        if (notifications["LOAD_START"])
-        {
-          load = (notifications["LOAD_START"].time - basetime) * scale;
-          // console.log("LOAD_START of main resource:", notifications["LOAD_START"].time - basetime, "after basetime");
-        }
-      }
-    }
-
     template = ["div", headerrow, rows,
                   "id", "graph",
                   "style", ["background-image: -o-linear-gradient(",
@@ -170,23 +145,9 @@ templates.network_viewmode_graphs = function(ctx, selected, width)
                                                "#e5e5e5 0px,",
                                                "#e5e5e5 1px,",
                                                "transparent 1px",
-                                              "),",
-                                              "-o-linear-gradient(",
-                                               "0deg,",
-                                               "#5acaec 0px,",
-                                               "#5acaec 1px,",
-                                               "transparent 1px",
-                                              "),",
-                                              "-o-linear-gradient(",
-                                               "0deg,",
-                                               "#64b56b 0px,",
-                                               "#64b56b 1px,",
-                                               "transparent 1px",
                                               ");",
-                           "background-position: 0 21px, ",
-                            domcontentloaded + "px 21px,",
-                            load + "px 21px;",
-                           "background-repeat: repeat-x, no-repeat, no-repeat;",
+                           "background-position: 0 21px;",
+                           "background-repeat: repeat-x;",
                            "background-size: " + gridwidth + "px 100%;"].join("")
                ];
   }
@@ -202,8 +163,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
 {
   var itemfun = function(req)
   {
-    var error_responses = /5\d{2}|4\d{2}/;
-    var had_error_response = error_responses.test(req.responsecode);
+    var had_error_response = /5\d{2}|4\d{2}/.test(req.responsecode);
     var disqualified = !req.touched_network || req.unloaded;
 
     var url_tooltip = req.human_url;
@@ -220,7 +180,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
       // data uri, the tooltip is explicit enough in these cases
       else if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
         context_info = null;
-      // or otherise probably chached
+      // or otherwise probably chached
       else
         context_info = ui_strings.S_HTTP_NOT_REQUESTED;
     }
@@ -386,7 +346,7 @@ templates.network_graph_entry_tooltip = function(entry)
   {
     var graphical_sections = [];
     var scale = height / duration;
-    var total_length_string = new Number(duration).toFixed(2) + "ms";
+    var total_length_string = duration.toFixed(2) + "ms";
 
     entry.event_sequence.forEach(function(section){
       if (section.val)
@@ -483,10 +443,10 @@ templates.grid_info = function(duration, width, padding)
     var draw_line_every = 150; // px
     var draw_lines = Math.round(width / draw_line_every);
     
-    var value = oldval = Number(Number(duration / draw_lines).toPrecision(1)); // what this returns is the duration of one section
+    var value = oldval = Number((duration / draw_lines).toPrecision(1)); // what this returns is the duration of one section
     var val_in_px = width / duration * Number(value);
 
-    // if the last line comes too close to the edge, the value until it fits.
+    // if the last line comes too close to the edge, decrease the value until it fits.
     // need to modify the actual ms value to keep it nice labels on the result,
     // at least while it gets shown in ms
     while (width % (val_in_px * draw_lines) < padding)
