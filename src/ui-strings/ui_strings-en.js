@@ -666,6 +666,9 @@ ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
 /* DESC: Label for http event sequence when redirecting */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING = "Sequence terminated, retry";
 
+/* DESC: Label for http event sequence when urlfinished follows after some other event, meaning it was aborted */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST = "Request aborted";
+
 /* DESC: Label for http event sequence when the event was scheduled */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
 

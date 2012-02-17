@@ -586,6 +586,24 @@
                                        #adadad 100%);
 }
 
+.network-irregular /* striped */
+{
+  background-image: -o-repeating-linear-gradient(45deg,
+                                                 #b9b9b9 0,
+                                                 #b9b9b9 10px,
+                                                 #d6d6d6 10px,
+                                                 #d6d6d6 20px);
+}
+
+.network-tooltip-graph .network-irregular /* striped */
+{
+  background-image: -o-repeating-linear-gradient(315deg,
+                                                 #b9b9b9 0,
+                                                 #b9b9b9 10px,
+                                                 #d6d6d6 10px,
+                                                 #d6d6d6 20px);
+}
+
 .timeline-marker {
   display: inline-block;
   width: 60px;

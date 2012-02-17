@@ -504,25 +504,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   var CLASSNAME_REQUEST = "request";
   var CLASSNAME_WAITING = "waiting";
   var CLASSNAME_RECEIVING = "receiving";
-
-  // What is terminated by retry or redirect will be named regardless of the preceding event
-  // gap_def_to_phase format: 
-  /* {
-       classname: type of sequence,
-       sequences: {
-         to_event_name: string
-       }
-     } */
-  this._gap_defs_to_phase = {
-    "urlredirect": {
-      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
-      classname: CLASSNAME_BLOCKED
-    },
-    "requestretry": {
-      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
-      classname: CLASSNAME_BLOCKED
-    }
-  };
+  var CLASSNAME_IRREGULAR = "irregular";
 
 // gap_def format: 
 /* {
@@ -627,13 +609,38 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
       }
   };
 
+  // What is not defined as it's own case by the above, but it terminated by 
+  // retry, redirect or urlfinished, will be defined regardless of the preceding event
+
+  // gap_def_to_phase format: 
+  /* {
+       classname: type of sequence,
+       sequences: {
+         to_event_name: string
+       }
+     } */
+  this._gap_defs_to_phase = {
+    "urlredirect": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
+      classname: CLASSNAME_BLOCKED
+    },
+    "requestretry": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
+      classname: CLASSNAME_IRREGULAR
+    },
+    "urlfinished": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST,
+      classname: CLASSNAME_IRREGULAR
+    }
+  };
+
   this.get_gap_def = function(gap)
   {
-    var def = this._gap_defs_to_phase[gap.to_event.name];
+    var def = this._gap_defs[gap.from_event.name]
+              && this._gap_defs[gap.from_event.name][gap.to_event.name];
 
     if (!def)
-      def = this._gap_defs[gap.from_event.name]
-            && this._gap_defs[gap.from_event.name][gap.to_event.name];
+      def = this._gap_defs_to_phase[gap.to_event.name];
 
     if (!def)
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
