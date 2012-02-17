@@ -576,10 +576,25 @@ ui_strings.S_HTTP_LABEL_URL = "URL";
 /* DESC: label for table header that shows http response code (short) */
 ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 
+/* DESC: tooltip on table header that shows http response code */
+ui_strings.S_HTTP_TOOLTIP_RESPONSECODE = "HTTP status code";
+
+/* DESC: tooltip on mime type table header */
+ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
+
+/* DESC: tooltip on protocol table header */
+ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
+
+/* DESC: tooltip on size table header */
+ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED = "Content-length of the response";
+
+/* DESC: tooltip on size table header */
+ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in octets (8-bit bytes)";
+
 /* DESC: label for table header that shows waiting time (short) */
 ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
 
-/* DESC: tooltip for table header that shows waiting time */
+/* DESC: tooltip on table header that shows waiting time */
 ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
 
 /* DESC: label for table header that shows starting time (short) */
@@ -596,6 +611,9 @@ ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing 
 
 /* DESC: label for table header that shows loading sequence as a graph (short) */
 ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
+
+/* DESC: tooltip for table header that shows loading sequence as a graph */
+ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip for the network graph view button */
 ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";

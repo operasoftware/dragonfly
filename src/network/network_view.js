@@ -90,7 +90,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     left_val = Math.min(left_val, window.innerWidth - 100);
     var rendered = container.render(templates.network_log_details(ctx, selected, left_val));
     var details = rendered.querySelector(".network-details-container");
-    this._details_scroll && (details.scrollTop = this._details_scroll);
+    if (details && this._details_scroll)
+      details.scrollTop = this._details_scroll;
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -174,6 +175,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_RESPONSECODE,
         renderer: function(entry) {
           return (entry.responsecode && String(entry.responsecode)) || "";
         },
@@ -190,6 +192,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_MIME,
         getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
         renderer: function(entry, getter) {
           return getter(entry)
@@ -197,10 +200,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       protocol: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
-        getter: function(entry) { return entry.urltypeName }
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_PROTOCOL,
+        getter: function(entry) { return entry.urltypeName.toLowerCase() }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_SIZE,
         align: "right",
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
@@ -210,6 +215,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED,
         align: "right",
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
@@ -259,6 +265,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       },
       graph: {
         label: ui_strings.S_HTTP_LABEL_GRAPH,
+        headertooltip: ui_strings.S_HTTP_TOOLTIP_GRAPH,
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
