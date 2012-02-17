@@ -828,6 +828,18 @@ breadcrumb span
   margin-bottom: 0;
 }
 
+.js-dd-script-list cst-option:hover
+{
+  background-color: inherit;
+  color: inherit;
+}
+
+.js-dd-script-list cst-option.hover
+{
+  background-color: #bbcef1;
+  color: #000;
+}
+
 .js-dd-ext-runtime,
 .cmd-line-runtimes cst-group cst-option
 {
