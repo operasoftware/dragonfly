@@ -108,6 +108,12 @@ ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: General settings label. */
 ui_strings.M_SETTING_LABEL_GENERAL = "General";
 
+/* DESC: Context menu entry to reset the columns that are shown */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
+
+/* DESC: Context menu entry to reset the sort order */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
+
 /* DESC: Context menu entry to selecting to group by %s */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 
@@ -501,9 +507,6 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 
-/* DESC: Toolbar text telling how many messages are in the error console */
-ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
-
 /* DESC: In 1 hour */
 ui_strings.S_COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
 
@@ -570,11 +573,137 @@ ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
 /* DESC: label for url in http request details */
 ui_strings.S_HTTP_LABEL_URL = "URL";
 
-/* DESC: shown in response view of http logger when request isn't finished */
-ui_strings.S_HTTP_REQUEST_IN_PROGRESS = "Request in progress";
+/* DESC: label for table header that shows http response code (short) */
+ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 
-/* DESC: Toolbar text telling how many requests are in http the log */
-ui_strings.S_HTTP_TOOLBAR_REQUEST_COUNT = "%s requests";
+/* DESC: label for table header that shows waiting time (short) */
+ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
+
+/* DESC: tooltip for table header that shows waiting time */
+ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
+
+/* DESC: label for table header that shows starting time (short) */
+ui_strings.S_HTTP_LABEL_STARTED = "Started";
+
+/* DESC: tooltip for table header that shows relative starting time */
+ui_strings.S_HTTP_TOOLTIP_STARTED = "Starting time, relative to the main document";
+
+/* DESC: label for table header that shows duration (short) */
+ui_strings.S_HTTP_LABEL_DURATION = "Duration";
+
+/* DESC: tooltip for table header that shows duration */
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this url";
+
+/* DESC: label for table header that shows loading sequence as a graph (short) */
+ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
+
+/* DESC: tooltip for the network graph view button */
+ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";
+
+/* DESC: tooltip for the network data view button */
+ui_strings.S_HTTP_LABEL_DATA_VIEW = "Data view";
+
+/* DESC: label for the network filter that shows all items */
+ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
+
+/* DESC: tooltip for the network filter that shows all items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
+
+/* DESC: label for the network filter that shows markup items */
+ui_strings.S_HTTP_LABEL_FILTER_MARKUP = "Markup";
+
+/* DESC: tooltip for the network filter that shows markup items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP = "Show only markup";
+
+/* DESC: label for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS = "Stylesheets";
+
+/* DESC: tooltip for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS = "Show only stylesheets";
+
+/* DESC: label for the network filter that shows script items */
+ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS = "Scripts";
+
+/* DESC: tooltip for the network filter that shows script items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
+
+/* DESC: label for the network filter that shows image items */
+ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
+
+/* DESC: tooltip for the network filter that shows image items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES = "Show only images";
+
+/* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
+
+/* DESC: tooltip for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show only requests that are of other types than mentioned before";
+
+/* DESC: label for the network filter that shows items requested over XMLHttpRequest */
+ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
+
+/* DESC: tooltip for the network filter that shows items requested over XMLHttpRequest */
+ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only requests requested over XMLHttpRequest";
+
+/* DESC: tooltip-prefix for resources that have been marked unloaded, which means they are no longer reference in the document */
+ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
+
+/* DESC: tooltip for resources that have not been requested over network (mostly that means cached) */
+ui_strings.S_HTTP_NOT_REQUESTED = "Cached";
+
+/* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
+ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
+
+/* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
+ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
+
+/* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
+ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Reload to show all page requests";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING = "Sequence terminated, retry";
+
+/* DESC: Label for http event sequence when urlfinished follows after some other event, meaning it was aborted */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST = "Request aborted";
+
+/* DESC: Label for http event sequence when the event was scheduled */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
+
+/* DESC: Label for http event sequence when reading local data (data-uri, caches, file:// etc) */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
+
+/* DESC: Label for http event sequence when closing response phase */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
+
+/* DESC: Label for http event sequence when processing response */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE = "Processing response";
+
+/* DESC: Label for http event sequence when processing */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING = "Processing";
+
+/* DESC: Label for http event sequence when waiting for response from network */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
+
+/* DESC: Label for http event sequence when writing request header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
+
+/* DESC: Label for http event sequence when writing request body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
+
+/* DESC: Label for http event sequence when reading response header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER = "Reading response header";
+
+/* DESC: Label for http event sequence when reading response body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY = "Reading response body";
+
+/* DESC: Label for http event requestretry */
+ui_strings.S_HTTP_EVENT_REQUESTRETRY = "Request retry";
+
+/* DESC: Label for http event urlredirect */
+ui_strings.S_HTTP_EVENT_URLREDIRECT = "Redirect";
 
 /* DESC: Information shown if the document does not hold any style sheet. */
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
@@ -831,8 +960,14 @@ ui_strings.S_MENU_DEBUG_CONTEXT = "Select the debugging context";
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = "Reload Debugging Context";
 
+/* DESC: Reload the debug context (short). */
+ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT = "Reload";
+
 /* DESC: Select the active window as debugger context. */
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = "Select Active Window";
+
+/* DESC: Label for a button in a dialog to dismiss in so it won't be shown again */
+ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
 
 /* DESC: String used when the user has clicked to get a resource body, but dragonfly wasn't able to do so. */
 ui_strings.S_NETWORK_BODY_NOT_AVAILABLE = "Request body not available. Enable resource tracking and reload the page to view the resource.";
@@ -849,23 +984,17 @@ ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 /* DESC: Title for caching settings section in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
 
-/* DESC: Help text for explaing content tracking setting in global network options */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC = "This setting controls if the bodies of responses will be available to Opera Dragonfly when a page loads. Enabling it will make load operations slower, and use more memory. It will also make network body reporting more accurate.";
-
-/* DESC: Name of content tracking setting for no tracking */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_NO_TRACK_LABEL = "Do not track content (default)";
-
-/* DESC: Title for content tracking settings section in global network options */
-ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE = "Content tracking behaviour";
-
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
-/* DESC: String describing duration of a request when hovering it in the graph. Applied to cached requests */
-ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED = "Cached: %s ms";
+/* DESC: Name of content tracking setting for tracking content */
+ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
 
-/* DESC: String describing duration of a request when hovering it in the graph. Applied to NON-cached requests */
-ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL = "Total duration: %(total)s ms \nRequest time: %(request)s ms \nResponse time: %(response)s ms";
+/* DESC: Name of entry in Network Log, used in summary at the end */
+ui_strings.S_NETWORK_REQUEST = "Request";
+
+/* DESC: Name of entry in Network Log, plural, used in summary at the end */
+ui_strings.S_NETWORK_REQUESTS = "Requests";
 
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers.";
@@ -891,11 +1020,11 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
+/* DESC: Message about not yet available response body */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
+
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
-
-/* DESC: Title for response body section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE = "Body";
 
 /* DESC: Help text about how a response could not be show because resource tracking is not on. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not available. Enable resource tracking and reload the page to view the resource.";
@@ -904,10 +1033,10 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not availabl
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY = "Response body not available. Enable resource tracking and reload the page to view the resource.";
 
 /* DESC: Title for request details section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request details";
+ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request";
 
 /* DESC: Title for response details section */
-ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response details";
+ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE = "Response";
 
 /* DESC: Message about file types we have no good way of showing. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show data of type %s";
@@ -1025,9 +1154,6 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
-
-/* DESC: Switch for controlling if the request log is cleared whenever a new site is loaded */
-ui_strings.S_SWITCH_CLEAR_REQUESTS_ON_NEW_CONTEXT = "Clear request log when loading a new site";
 
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
@@ -1302,17 +1428,8 @@ ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "searching…";
 
-/* DESC: Title of request body section of the request details view. */
-ui_strings.S_NETWORK_REQUEST_BODY_TITLE = "Request body";
-
 /* DESC: Title of request body section when the body is multpart encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE = "Request body - multipart";
-
-/* DESC: String used when a request has no data. */
-ui_strings.S_NETWORK_NO_REQUEST_DATA = "No request data";
-
-/* DESC: Part number label */
-ui_strings.S_NETWORK_MULTIPART_PART = "Part %s";
+ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
 /* DESC: Settings checkbox label for toggling usage tracking */
 ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";

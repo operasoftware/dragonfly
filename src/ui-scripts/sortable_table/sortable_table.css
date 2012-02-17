@@ -4,6 +4,11 @@
   border-collapse: collapse;
 }
 
+.sortable-table.nowrap
+{
+  white-space: nowrap;
+}
+
 .sortable-table > tr > td,
 .sortable-table > tr > th
 {
@@ -42,25 +47,63 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:last-of-type > td
-{
-  border-bottom-width: 1px;
-}
-
-
-.sortable-table > tr:nth-child(odd)
+.sortable-table > tr:nth-child(odd):not(.sortable-table-summation-row)
 {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
 .sort-column
 {
-  background: url("../../ui-images/dropdown.png") no-repeat 100% 50%;
+  position: relative;
 }
 
-.sort-column.reversed
+.sort-column:before
 {
-  background-image: url("../../ui-images/dropup.png");
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  display: block;
+  background: url("../../ui-images/dropdown.png"),
+              -o-linear-gradient(-90deg,
+                                 rgb(249, 249, 249) 0,
+                                 rgb(239, 239, 239) 100%);
+}
+.sort-column:active:before
+{
+  background: url("../../ui-images/dropdown.png"),
+              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+}
+
+.sort-column.reversed:before
+{
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  display: block;
+  background: url("../../ui-images/dropup.png"),
+              -o-linear-gradient(-90deg,
+                                 rgb(249, 249, 249) 0,
+                                 rgb(239, 239, 239) 100%);
+}
+.sort-column.reversed:active:before
+{
+  background: url("../../ui-images/dropup.png"),
+              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+}
+
+th.sort-column
+{
+  padding-right: 12px;
 }
 
 .sortable-table > tr.header:first-child
@@ -106,5 +149,50 @@
 
 .sortable-table > tr.header > th:not(.sortable-table-group-header):active
 {
-  background-color: rgba(0, 0, 0, 0.06); 
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.sortable-table .sortable-table-summation-row {
+  border-top: 1px solid #8e8e8e;
+}
+
+/* ellipsis */
+
+.sortable-table .ellipsis_cont
+{
+  position: relative;
+}
+
+.sortable-table td .ellipsis_cont
+{
+  /*
+    because .ellipsis is the only things that lives in this container,
+    height needs to be specified to take room
+  */
+  height: 13px;
+}
+
+.sortable-table th .ellipsis_cont
+{
+  /* header row is lower */
+  height: 1em;
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
+.sortable-table .ellipsis_cont .ellipsis
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#contextmenu .ellipsis_cont,
+#contextmenu .ellipsis
+{
+  display: inline; /* hide containers in context menu */
 }

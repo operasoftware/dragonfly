@@ -207,6 +207,14 @@
           "escape": "cancel"
         }
       },
+      "network_logger": {
+        "details":
+        {
+          "escape": "close-details",
+          "up": "select-previous-entry",
+          "down": "select-next-entry"
+        }
+      },
       "search":
       {
         "default":
@@ -416,6 +424,14 @@
         {
           "enter": "submit",
           "escape": "cancel"
+        }
+      },
+      "network_logger": {
+        "details":
+        {
+          "escape": "close-details",
+          "up": "select-previous-entry",
+          "down": "select-next-entry"
         }
       },
       "search":

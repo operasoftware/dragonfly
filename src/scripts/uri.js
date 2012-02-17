@@ -90,7 +90,33 @@ var URIPrototype = function(uri_prop_name)
 
     return this._origin;  
   });
+  
+  this.__defineSetter__("params", function() {});
 
+  this.__defineGetter__("params", function()
+  {
+    if (!this._params && (this._is_parsed || this[uri_prop_name]))
+    {
+      this._params = [];
+      if (this._search[0] === "?")
+      {
+        var pairs = this._search.slice(1).split("&");
+        pairs.forEach(function(pair) {
+          var first_eq = pair.indexOf("=");
+          if (first_eq === -1) { first_eq = pair.length; }
+          var key = pair.slice(0, first_eq);
+          if (key)
+          {
+            var value = pair.slice(first_eq + 1);
+            this._params.push({"key": decodeURIComponent(key),
+                               "value": decodeURIComponent(value)});
+          }
+        }, this);
+      }
+    }
+    return this._params;  
+  });
+  
   this.__defineSetter__("origin", function() {});
 
   this._init = function(uri)

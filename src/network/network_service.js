@@ -16,9 +16,11 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, just ignore. This usually means it's an iframe
+    // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect.
+    // todo: handle multiple top-runtimes
     if (data.parentDocumentID) { return; }
     this._current_context = new cls.RequestContext();
+    this._current_context.saw_main_document_abouttoloaddocument = true;
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -26,9 +28,8 @@ cls.NetworkLoggerService = function(view)
     if (!this._current_context)
     {
       this._current_context = new cls.RequestContext();
-      this._current_context.partial = true;
     }
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
 
     this._current_context.update("urlload", data);
   }.bind(this);
@@ -79,6 +80,13 @@ cls.NetworkLoggerService = function(view)
     this._current_context.update("requestfinished", data);
   }.bind(this);
 
+  this._on_requestretry_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
+    this._current_context.update("requestretry", data);
+  }.bind(this);
+
   this._on_responseheader_bound = function(msg)
   {
     if (!this._current_context) { return; }
@@ -93,10 +101,16 @@ cls.NetworkLoggerService = function(view)
     this._current_context.update("responsefinished", data);
   }.bind(this);
 
+  this._on_urlunload_bound = function(msg)
+  {
+    if (!this._current_context) { return; }
+    var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
+    this._current_context.update("urlunload", data);
+  }.bind(this);
+
   this._on_debug_context_selected_bound = function()
   {
     this._current_context = null;
-    this._view.ondestroy();
     this._view.update();
   }.bind(this);
 
@@ -107,48 +121,75 @@ cls.NetworkLoggerService = function(view)
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
     this._res_service.addListener("requestfinished", this._on_requestfinished_bound);
+    this._res_service.addListener("requestretry", this._on_requestretry_bound);
     this._res_service.addListener("responseheader", this._on_responseheader_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("responsefinished", this._on_responsefinished_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
     this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
-    this._doc_service = window.services['document-manager'];
+    this._res_service.addListener("urlunload", this._on_urlunload_bound);
+
+    this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound)
+
+    messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
+    messages.addListener("setting-changed", this._on_setting_changed_bound);
   };
 
-  this.request_body = function(rid, callback)
+  this._on_setting_changed_bound = function(message)
   {
-    var resource = this.get_resource(rid);
-    var contentmode = cls.ResourceUtil.mime_to_content_mode(resource.mime);
+    if (message.id === "network_logger" && 
+        message.key === "track-content")
+    {
+      this.setup_content_tracking_bound();
+    }
+  }.bind(this);
+
+  this.setup_content_tracking_bound = function()
+  {
+    const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
+    this._track_bodies = settings.network_logger.get("track-content");
+
+    if (this._track_bodies)
+    {
+      var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
+                        "application/xslt+xml", "text/xsl", "application/xml",
+                        "text/css", "text/plain", "application/x-javascript",
+                        "application/json", "application/javascript", "text/javascript",
+                        "application/x-www-form-urlencoded"];
+
+      var resparg = [[DATA_URI, DECODE],
+                     text_types.map(function(e) { return [e, [STRING, DECODE]]})
+                    ];
+    }
+    else
+    {
+      var resparg = [[OFF]];
+    }
+    this._res_service.requestSetResponseMode(null, resparg);
+  }.bind(this);
+
+  this.get_body = function(itemid, callback)
+  {
+    if (!this._current_context) { return; }
+    var entry = this._current_context.get_entry(itemid);
+    var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_request_body_bound, [callback, rid]);
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1]]);
+    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource]);
+    this._res_service.requestGetResource(tag, [entry.resource, [typecode, 1]]);
   };
 
-  this._on_request_body_bound = function(status, data, callback, rid)
+  this._on_get_resource_bound = function(status, data, callback, resourceid)
   {
     if (status != 0)
     {
       if (!this._current_context) { return; }
-      this._current_context.update("responsebody", {resourceID: rid});
+      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable, the object passed represents empty event_data
       if (callback) { callback() }
     }
     else
     {
-      // fixme: generate class for this.
-      var msg = {
-        resourceID: data[0],
-        mimeType: data[2],
-        characterEncoding: data[3],
-        contentLength: data[4],
-        content: {
-          length: data[5][0],
-          characterEncoding: data[5][1],
-          byteData: data[5][2],
-          stringData: data[5][3]
-        }
-      };
+      var msg = new cls.ResourceManager["1.2"].ResourceData(data);
       if (!this._current_context) { return; }
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
@@ -160,119 +201,236 @@ cls.NetworkLoggerService = function(view)
     return this._current_context;
   };
 
-  this.clear_resources = function()
+  this.clear_request_context = function()
   {
-    this._current_context.resources = [];
+    this._current_context = null;
   };
 
-  this.get_resource = function(rid)
+  this.pause = function()
   {
     if (this._current_context)
-    {
-      return this._current_context.get_resource(rid);
-    }
-    return null;
+      this._current_context.pause();
   };
 
+  this.unpause = function()
+  {
+    if (this._current_context)
+      this._current_context.unpause();
+  };
+
+  this.is_paused = function()
+  {
+    if (this._current_context)
+      return this._current_context._paused;
+  };
   this.init();
 };
 
 
 cls.RequestContext = function()
 {
-  this.resources = [];
+  this._logger_entries = [];
+  this._document_notifications = {};
+  this._filters = [];
+
+  // When this is constructed, the context is not paused. Reset the setting.
+  // Todo: Ideally, when paused, the new context should be created in a different
+  // place, so the old one can be kept while we're on pause.
+  settings.network_logger.set("pause", false);
+
+  this._filter_function_bound = function(item)
+  {
+    var success = false;
+    var filters = this._filters;
+    if (!filters.length)
+    {
+      success = true;
+    }
+    else
+    {
+      for (var i = 0, filter; filter = filters[i]; i++)
+      {
+        if (filter && filter.value_list && filter.value_list.length)
+        {
+          var has_match = filter.value_list.contains(item.type) || 
+                          filter.value_list.contains(item.load_origin) || 
+                          filter.value_list.contains("");
+          if (has_match !== filter.is_blacklist)
+          {
+            success = true;
+            break;
+          }
+        }
+      }
+    }
+    return success;
+  }.bind(this);
+
+  this.update_document_event = function(event_name, data)
+  {
+    if (!this._document_notifications[data.documentID])
+      this._document_notifications[data.documentID] = {};
+    this._document_notifications[data.documentID][event_name] = data;
+
+    views.network_logger.update();
+  }
+
+  this._invalid_if_not_touched_network_filter = function(entry)
+  {
+    if (entry.invalid_if_not_touched_network && !entry.touched_network)
+      return false;
+    return true;
+  }
+
+  this.get_entries_filtered = function()
+  {
+    return this.get_entries().filter(this._filter_function_bound);
+  }
+
+  this.get_entries = function()
+  {
+    var entries = this._logger_entries;
+    if (this.is_paused())
+      entries = this._paused_entries;
+
+    return entries.filter(this._invalid_if_not_touched_network_filter);
+  }
+
+  this.get_entries_with_res_id = function(res_id)
+  {
+    return this._logger_entries.filter(function(e){return e.resource === res_id});
+  }
+
+  this.set_filter = function(filters)
+  {
+    this._filters = [];
+    for (var i = 0; i < filters.length; i++)
+    {
+      var filter = filters[i];
+      var blacklist_split = filter.split("|");
+      this._filters.push({
+        value_list: blacklist_split[0].split(","),
+        is_blacklist: (blacklist_split[1] === "true")
+      });
+    }
+  }
+
+  this.pause = function()
+  {
+    // this only freezes what entries are shown, but they still get updates themselves
+    // this works good as long as we don't have things like streaming.
+    this._paused_entries = this._logger_entries.slice(0);
+    this._paused = true;
+  }
+
+  this.unpause = function()
+  {
+    this._paused_entries = null;
+    this._paused = false;
+  }
+
+  this.is_paused = function()
+  {
+    return this._paused;
+  };
+
   this.get_duration = function()
   {
-    var starttimes = this.resources.map(function(e) { return e.starttime });
-    var endtimes = this.resources.map(function(e) { return e.endtime });
-    return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    var entries = this.get_entries_filtered();
+    if (entries.length)
+    {
+      var starttimes = entries.map(function(e) { return e.starttime });
+      var endtimes = entries.map(function(e) { return e.endtime });
+      return Math.max.apply(null, endtimes) - Math.min.apply(null, starttimes);
+    }
+    return 0;
   };
 
   /**
-   * Return duration of request context, rounded upp to closest full second.
+   * Return duration of request context.
    * if width and padlen is set, add the ammount of milliseconds needed to
    * the duration needed to accomodate padlen pixels.
    */
   this.get_coarse_duration = function(padlen, width)
   {
     var t = this.get_duration();
-
     if (padlen && width)
     {
       var millis_per_px = t / width;
       t += (millis_per_px * padlen);
     }
 
-    return Math.ceil(t/1000)*1000;
+    return t;
   };
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.resources.map(function(e) { return e.starttime }));
+    return Math.min.apply(null, this.get_entries_filtered().map(function(e) { return e.starttime }));
   };
+
+  this._event_changes_req_id = function(event, last_entry)
+  {
+    /* 
+      Checks if the events requestID is different from the one in the last_entry.
+      That shouldn't happen, because "urlload" doesn't have a requestID, and that
+      will initiate a new entry.
+    */
+    return event.requestID &&
+           (last_entry.requestID !== event.requestID);
+  }
 
   this.update = function(eventname, event)
   {
-    var res = this.get_resource(event.resourceID);
-
-    if (!res && eventname == "urlload")
+    var logger_entry = this.get_entries_with_res_id(event.resourceID).last;
+    if (!logger_entry && eventname !== "urlload")
     {
-      res = new cls.Request(event.resourceID);
-      if (this.resources.length == 0) { this.topresource = event.resourceID; }
-      this.resources.push(res);
+      // ignoring. Never saw an urlload, or it's already invalidated
+      return;
     }
-    else if (!res)
+
+    if (logger_entry && logger_entry.requestID)
     {
-      // ignoring. Never saw an urlload, or it's allready invalidated
-      return
+      var changed_request_id = this._event_changes_req_id(event, logger_entry);
+      if (changed_request_id)
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        " Unexpected change in requestID on " + eventname +
+                        ": Change from " + logger_entry.requestID + " to " + 
+                        event.requestID + ", URL: " + logger_entry.human_url);
+      }
     }
-    res.update(eventname, event);
+
+    if (eventname == "urlload" || changed_request_id)
+    {
+      var id = event.resourceID + ":" + this._logger_entries.length;
+      logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID, event.documentID);
+      if (this.get_entries_with_res_id(event.resourceID).length)
+      {
+        // A second request to a resource is only to be rendered when it touched network. 
+        // Everything else is most likely an internal request, happens randomly and 
+        // doesn't mean much. See CORE-43063.
+        logger_entry.invalid_if_not_touched_network = true;
+      }
+      this._logger_entries.push(logger_entry);
+    }
+    logger_entry.requestID = event.requestID;
+    logger_entry.update(eventname, event);
+
+    views.network_logger.update();
   };
 
-  this.get_resource = function(id)
+  this.get_entry = function(id)
   {
-    return this.resources.filter(function(e) { return e.id == id; })[0];
-  };
-
-  this.get_resources_for_types = function()
-  {
-    var types = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resources_for_mimes = function()
-  {
-    var mimes = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resource_groups = function()
-  {
-    var imgs = this.get_resources_for_type("image");
-    var stylesheets = this.get_resources_for_mime("text/css");
-    var markup = this.get_resources_for_mime("text/html",
-                                             "application/xhtml+xml");
-    var scripts = this.get_resources_for_mime("application/javascript",
-                                              "text/javascript");
-
-    var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.resources.filter(function(e) {
-      return known.indexOf(e) == -1;
-    });
-    return {
-      images: imgs, stylesheets: stylesheets, markup: markup,
-      scripts: scripts, other: other
-    };
+    return this.get_entries_filtered().filter(function(e) { return e.id == id; })[0];
   };
 };
 
-cls.Request = function(id)
+cls.NetworkLoggerEntry = function(id, context, resource, document_id)
 {
   this.id = id;
-  this.partial = false;
-  this.finished = false;
+  this.context = context;
+  this.resource = resource;
+  this.document_id = document_id;
   this.url = null;
   this.human_url = "No URL";
   this.result = null;
@@ -281,28 +439,56 @@ cls.Request = function(id)
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.invalid = false;
   this.starttime = null;
+  this.starttime_relative = null;
   this.requesttime = null;
   this.endtime = null;
-  this.cached = false;
   this.touched_network = false;
-  this.duration = null;
   this.request_headers = null;
   this.request_type = null;
   this.requestbody = null;
-  this.response_headers = null;
+  this.responses = [];
+  this.responsecode = null;
   this.request_raw = null;
-  this.response_raw = null;
   this.method = null;
   this.status = null;
   this.body_unavailable = false;
-  this.responsecode = null;
-  this.responsebody = null;
+  this.unloaded = false;
+  this.is_finished = null;
+  this.events = [];
+  this.event_sequence = [];
 
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
+
+    if (!this.events.length)
+    {
+      this.starttime = eventdata.time; // todo: if we tune in in the middle of a request, this will be wrong.
+      this.starttime_relative = this.starttime - this.context.get_starttime();
+
+      var d = new Date(this.starttime);
+      var h = "" + d.getHours();
+      if (h.length < 2)
+        h = "0" + h;
+      var m = "" + d.getMinutes();
+      if (m.length < 2)
+        m = "0" + m;
+      var s = "" + d.getSeconds();
+      if (s.length < 2)
+        s = "0" + s;
+      var ms = "" + d.getMilliseconds();
+      while (ms.length < 3)
+        ms = "0" + ms;
+      this.start_time_string = h + ":" + m + ":" + s + "." + ms;
+    }
+    var unlisted_events = ["responsebody", "urlunload"];
+    if (!unlisted_events.contains(eventname))
+    {
+      this.endtime = eventdata.time;
+      this._add_event(eventname, eventdata);
+    }
+
     if (updatefun)
     {
       updatefun.call(this, eventdata);
@@ -313,14 +499,203 @@ cls.Request = function(id)
     }
   };
 
+  // todo: move the following defs out of the entry
+  var CLASSNAME_BLOCKED = "blocked";
+  var CLASSNAME_REQUEST = "request";
+  var CLASSNAME_WAITING = "waiting";
+  var CLASSNAME_RECEIVING = "receiving";
+  var CLASSNAME_IRREGULAR = "irregular";
+
+// gap_def format: 
+/* {
+     classname: type of sequence,
+     sequences: {
+       from_event_name: {
+         to_event_name_one: string,
+         to_event_name_two: string
+       ]
+     }
+   } */
+  
+  this._gap_defs = {
+    "urlload": {
+        "request": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          classname: CLASSNAME_BLOCKED
+        },
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
+          classname: CLASSNAME_BLOCKED
+        },
+        // The response-phase can be closed without ever seeing a response event, for 
+        // example because the request was aborted. See CORE-43284.
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "requestretry": {
+        "request": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "responsefinished": {
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE,
+          classname: CLASSNAME_BLOCKED
+        },
+        // responsefinished can occur twice, see CORE-43284.
+        // This is fixed and stops showing up when integrated.
+        "responsefinished": {
+          title: "",
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "urlredirect": {
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
+          classname: CLASSNAME_BLOCKED
+        },
+        // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "requestheader": {
+        "requestfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY,
+          classname: CLASSNAME_REQUEST
+        }
+    },
+    "request": {
+        "requestheader": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER,
+          classname: CLASSNAME_REQUEST
+        },
+        "requestfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY,
+          classname: CLASSNAME_REQUEST
+        }
+    },
+    "requestfinished": {
+        "response": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
+          classname: CLASSNAME_WAITING
+        },
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_WAITING
+        }
+    },
+    "response": {
+        "responseheader": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER,
+          classname: CLASSNAME_RECEIVING
+        }
+    },
+    "responseheader": {
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY,
+          classname: CLASSNAME_RECEIVING
+        },
+        // Occurs when a 100-Continue response was sent. In this timespan the client has
+        // ignored it and waits for another response to come in. See CORE-43264.
+        "response": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
+          classname: CLASSNAME_WAITING
+        },
+        // For example on a HEAD request, the url is finished after headers came in
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING,
+          classname: CLASSNAME_BLOCKED
+        }
+      }
+  };
+
+  // What is not defined as it's own case by the above, but it terminated by 
+  // retry, redirect or urlfinished, will be defined regardless of the preceding event
+
+  // gap_def_to_phase format: 
+  /* {
+       classname: type of sequence,
+       sequences: {
+         to_event_name: string
+       }
+     } */
+  this._gap_defs_to_phase = {
+    "urlredirect": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
+      classname: CLASSNAME_BLOCKED
+    },
+    "requestretry": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
+      classname: CLASSNAME_IRREGULAR
+    },
+    "urlfinished": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST,
+      classname: CLASSNAME_IRREGULAR
+    }
+  };
+
+  this.get_gap_def = function(gap)
+  {
+    var def = this._gap_defs[gap.from_event.name]
+              && this._gap_defs[gap.from_event.name][gap.to_event.name];
+
+    if (!def)
+      def = this._gap_defs_to_phase[gap.to_event.name];
+
+    if (!def)
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+            "Unexpected event sequence between " + gap.from_event.name + " and " + gap.to_event.name);
+
+    return def;
+  };
+
+  this._add_event = function(eventname, eventdata)
+  {
+    var evt = {name: eventname, time: eventdata.time, request_id: eventdata.requestID};
+    // add to events
+    this.events.push(evt);
+    // add event to existing gap
+    if (this.event_sequence.length)
+    {
+      var gap = this.event_sequence.last;
+      gap.to_event = evt;
+
+      gap.val = gap.to_event.time - gap.from_event.time;
+      gap.val_string = gap.val.toFixed(2) + "ms";
+      var gap_def = this.get_gap_def(gap);
+      gap.classname = gap_def && gap_def.classname || "";
+      gap.title = gap_def && gap_def.title || "";
+    }
+    // add new gap
+    this.event_sequence.push({from_event: evt});
+  }
+
+  this.get_duration = function()
+  {
+    return (this.events.length && this.endtime - this.starttime) || 0;
+  }
+
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
+    this.filename = helpers.basename(event.url, true);
     this.urltype = event.urlType;
-    this.starttime = Math.round(event.time);
-    // fixme: complete list
-    this.urltypeName = {0: "unknown", 1: "http", 2: "https", 3: "file", 4: "data" }[event.urlType];
+    this.document_id = event.documentID;
+    if (event.loadOrigin)
+      this.load_origin = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
+    this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
     this._humanize_url();
+    this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
+  };
+
+  this._update_event_urlunload = function(event)
+  {
+    this.unloaded = true;
   };
 
   this._update_event_urlfinished = function(event)
@@ -329,20 +704,23 @@ cls.Request = function(id)
     this.mime = event.mimeType;
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
-    this.endtime = Math.round(event.time);
-    this.duration = this.endtime - this.starttime;
 
-    // the assumption is that if we got this far, and there was no
-    // response code, meaning no request was sent, the url was cached
-    // fixme: special case for file URIs
-    if (!this.responsecode) { this.cached = true }
-    this.finished = true;
+    // if we got this far, and there was no
+    // response code, no request was performed for this entry
+    if (!this.responsecode)
+    {
+      this.no_request_made = true;
+    }
+
+    this.is_finished = true;
     this._guess_type();
     this._humanize_url();
   };
 
   this._update_event_request = function(event)
   {
+    // We assume that there is never more then one network-request,
+    // as opposed to responses which are kept in a list.
     this.method = event.method;
     this.touched_network = true;
   };
@@ -370,14 +748,99 @@ cls.Request = function(id)
       // from the headers. See CORE-39597
       this.requestbody.mimeType = this.request_type;
     }
-    this.requesttime = Math.round(event.time);
+    this.requesttime = event.time;
+  };
+
+  this._update_event_requestretry = function(event)
+  {
+    this.requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
   {
-    this.responsestart = Math.round(event.time);
+    // entry.responsecode always gets overwritten on the entry,
+    // but also stored per NetworkLoggerResponse.
     this.responsecode = event.responseCode;
-    if (this.responsecode == "304") { this.cached = true }
+    if (!this.responsestart)
+      this.responsestart = event.time;
+
+    this._current_response = new cls.NetworkLoggerResponse(this);
+    this.responses.push(this._current_response);
+    this._current_response._update_event_response(event);
+  };
+
+  this._update_event_responseheader = function(event)
+  {
+    // Sometimes we see no "response" event before we see responseheader,
+    // therefor have to init NetworkLoggerResponse here. See CORE-43935.
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse(this);
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responseheader(event);
+  };
+
+  this._update_event_responsefinished = function(event)
+  {
+    if (this._current_response)
+      this._current_response._update_event_responsefinished(event);
+  };
+
+  this._update_event_responsebody = function(event)
+  {
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse(this);
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responsebody(event);
+  };
+
+  this._update_event_urlredirect = function(event)
+  {
+    // this does not add any information, the event is only used to change the requestID
+  };
+
+  this._guess_type = function()
+  {
+    this.type = cls.ResourceUtil.path_to_type(this.url);
+
+    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
+    {
+      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    }
+  };
+
+  this._humanize_url = function()
+  {
+    this.human_url = this.url;
+    if (this.urltype == cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
+    {
+      if (this.type)
+      {
+        this.human_url = this.type + " data URI";
+      }
+      else
+      {
+        this.human_url = "data URI";
+      }
+    }
+  };
+};
+
+cls.NetworkLoggerResponse = function(entry)
+{
+  this.entry = entry;
+  this.responsestart = null;
+  this.responsecode = null;
+  this.response_headers = null;
+  this.response_raw = null;
+  this.responsebody = null;
+
+  this._update_event_response = function(event)
+  {
+    this.responsecode = event.responseCode;
   };
 
   this._update_event_responseheader = function(event)
@@ -399,46 +862,4 @@ cls.Request = function(id)
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
   };
-
-  this._update_event_urlredirect = function(event)
-  {
-      // code
-  };
-
-  this.get_source = function()
-  {
-    // cache, file, http, https ..
-  };
-
-  this._guess_type = function()
-  {
-    if (!this.finished || !this.mime)
-    {
-      this.type = undefined;
-    }
-    else if (this.mime.toLowerCase() == "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.path_to_type(this.url);
-    }
-    else
-    {
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
-    }
-  };
-
-  this._humanize_url = function()
-  {
-    this.human_url = this.url;
-    if (this.urltype == 4) // data URI
-    {
-      if (this.type)
-      {
-        this.human_url = this.type + " data URI";
-      }
-      else
-      {
-        this.human_url = "data URI";
-      }
-    }
-  };
-};
+}

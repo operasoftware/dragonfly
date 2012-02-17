@@ -149,36 +149,72 @@ var ToolbarBase = function()
   }
 
   this.create_toolbar_content = function(view_id, toolbar)
-  {
+  {        
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
+    this.groups = toolbars[view_id] && toolbars[view_id].groups || [];
     this.switches = switches[view_id] && switches[view_id].keys || [];
+    this.single_selects = single_selects[view_id];
     this.toolbar_settings = window.toolbar_settings && window.toolbar_settings[view_id] || null;
     this.specials = toolbars[view_id] && toolbars[view_id].specials || [];
     this.customs = toolbars[view_id] && toolbars[view_id].customs || [];
-    this.has_search_button = toolbars[view_id] && toolbars[view_id].has_search_button;
     this.__view_id = view_id;
-    if(toolbars[view_id])
+
+    if (toolbars[view_id])
     {
       this.__is_visible = toolbars[view_id].getVisibility();
     }
-    var set_separator = this.buttons.length;
-    var search = this.has_search_button && UI.get_instance().get_search(view_id);
-    if(this.__is_visible)
+    var search = this.filters.length && UI.get_instance().get_search(view_id);
+    if (this.__is_visible)
     {
-      if(this.filters.length)
+      if (this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
       }
-      if(search)
+      if (search)
       {
         toolbar.render(templates.search_button(search));
       }
-      if( this.buttons.length )
+      if (this.groups.length)
       {
-        toolbar.render(templates.buttons(this.buttons));
+        var buttons_template = [];
+        for (var i = 0, group; group = this.groups[i]; i++)
+        {
+          var button_templates = [];
+          if (group.items && group.type !== "input")
+          {
+            var current_value = null;
+            for (var j = 0, button; button = group.items[j]; j++)
+            {
+              if (group.type === "single-select")
+              {
+                var values = window.single_selects &&
+                             window.single_selects[view_id] &&
+                             window.single_selects[view_id][group.name] &&
+                             window.single_selects[view_id][group.name].values;
+                button_templates.push(templates.single_select_button(button, values));
+              }
+              else if (group.type === "switch")
+              {
+                button_templates.push(templates._switch(button.key));
+              }
+              else if (button.template)
+              {
+                button_templates.push(button.template(views[view_id]));
+              }
+              else
+              {
+                button_templates.push(templates.toolbar_button(button));
+              }
+            }
+            // Handling templates to a template function, a bit ugly, but they need to be built individually 
+            // so they can have their own templates. Todo: Possible handle this all in the template instead.
+            buttons_template.push(templates.toolbar_buttons(button_templates, group, view_id));
+          }
+        }
+        toolbar.render(buttons_template);
       }
-      if(this.switches.length)
+      if(this.switches.length) // the following is legacy support
       {
         toolbar.render(templates.switches(this.switches));
       }

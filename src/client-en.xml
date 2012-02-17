@@ -293,6 +293,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/viewSlider.js"/>
 <script src="./ui-scripts/animator.js"/>
 <script src="./ui-scripts/Switches.js"/>
+<script src="./ui-scripts/single_selects.js"/>
 <script src="./ui-scripts/cst-select.js"/>
 <script src="./ui-scripts/toolbarcstselect.js"/>
 <script src="./ui-scripts/button.js"/>
@@ -467,17 +468,19 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/metadata_drawer/metadata_drawer.js"/>
 <script src="./resource-manager/resource_display_broker.js"/>
 <script src="./resource-manager/opensingleresource.js"/>
-<script src="./resource-manager/resourcemanager.1.0.events.onurlload.js"/>
+<script src="./resource-manager/resourcemanager.1.2.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlredirect.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onrequest.js"/>
-<script src="./resource-manager/resourcemanager.1.0.events.onrequestretry.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onrequestheader.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onrequestfinished.js"/>
+<script src="./resource-manager/resourcemanager.1.0.events.onrequestretry.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponse.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
+<script src="./resource-manager/resourcemanager.1.2.events.onurlunload.js"/>
+<script src="./resource-manager/resourcemanager.1.2.responses.getresource.js"/>
 
 
 <script src="./network/network_service.js"/>
@@ -485,6 +488,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./network/network_request_crafting_view.js"/>
 <script src="./network/network_global_options_view.js"/>
 <script src="./network/network_templates.js"/>
+<script src="./network/network_details_templates.js"/>
 
 <script src="./screenshot/screenshot.js"/>
 <script src="./screenshot/screenshotcontrols.js"/>

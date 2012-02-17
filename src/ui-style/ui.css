@@ -333,6 +333,17 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_clear.png");
 }
 
+.network-view-toggle-graphs:before
+{
+  background-image: url("../ui-images/icons/icon_graph.png");
+}
+
+.network-view-toggle-data:before
+{
+  background-image: url("../ui-images/icons/icon_table.png");
+}
+
+
 .request_list\.clear-log-on-runtime-switch::before
 {
   background-image: url("../ui-images/icons/icon_clearonreload.png");
@@ -378,14 +389,9 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.network_logger\.paused-update::before
+.network_logger\.pause::before
 {
   background-image: url("../ui-images/icons/icon_pause.png");
-}
-
-.network_logger\.fit-to-width::before
-{
-  background-image: url("../ui-images/icons/icon_constrain.png");
 }
 
 .pseudo-items cst-icon

@@ -2,7 +2,8 @@
 
 (function(templates) {
 
-const MIN_BAR_WIDTH = 16; // pixels
+const MIN_BAR_WIDTH = 22; // todo: this is 16 + 6 padding from network-graph-sections-hitarea, should be done separately
+const TIMELINE_MARKER_WIDTH = 60;
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
@@ -17,16 +18,6 @@ templates.network_options_main = function(nocaching, tracking, headers, override
              "checked", nocaching ? true : false
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL
-           ]],
-           ["h2", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TITLE],
-           ["p", ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_DESC],
-           ["p", ["label",
-            ["input", "type", "checkbox",
-             "name", "network-options-track-bodies",
-             "handler", "network-options-toggle-body-tracking",
-             "checked", tracking ? true : false
-            ],
-            ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
            ]],
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
@@ -89,478 +80,377 @@ templates.network_request_crafter_main = function(url, loading, request, respons
          ];
 };
 
-templates.network_log_main = function(ctx, graphwidth)
+templates.network_incomplete_warning = function()
 {
+  return ["div",
+           ["span", ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH],
+           ["div",
+             ["span", ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT, "class", "text_handler", "handler", "reload-window"],
+             " ",
+             ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN, "class", "text_handler", "handler", "turn-off-incomplete-warning"]
+           ],
+           ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"],
+         "class", "network_incomplete_warning"];
+};
+
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
+{
+  var viewmode_render = templates["network_viewmode_" + selected_viewmode];
+  if (!viewmode_render)
+    viewmode_render = templates["network_viewmode_graphs"];
+
+  var show_incomplete_warning = settings.network_logger.get("show-incomplete-warning") &&
+                                !ctx.saw_main_document_abouttoloaddocument &&
+                                !ctx.incomplete_warn_discarded;
+
   return [
-    ["div",
-     ["div",
-      ["div", templates.network_log_url_list(ctx), "id", "left-side-content"],
-      ["div",
-       ["div", templates.network_log_graph(ctx, graphwidth),
-        "id", "right-side-content",
-         "style", "width: " + graphwidth + "px"
-       ],
-       "id", "right-side-container"
+    show_incomplete_warning ?
+      templates.network_incomplete_warning() : [],
+    [
+      "div", templates.network_log_url_list(ctx, selected, item_order),
+      "id", "network-url-list"
+    ],
+    [
+      "div", [
+        "div", viewmode_render(ctx, selected, detail_width),
+        "class", "network-data-container " + selected_viewmode
       ],
-      "id", "main-scroll-content"
-     ],
-     "class", "network-log",
-     "id", "main-scroll-container"
+      "class", "network-main-container"
     ],
-    ["div", ["div",
-             "id", "scrollbar",
-             "style", "width: " + graphwidth + "px"],
-     "id", "scrollbar-container"
+    [
+      "div", [
+        templates.network_log_summary(ctx)
+      ], "class", "network-summary"
     ]
-  ];
+  ]
 };
 
-templates.network_log_details = function(ctx, selected, listwidth)
+templates.network_viewmode_graphs = function(ctx, selected, width)
 {
-  return [
-    ["div", templates.network_log_url_list(ctx, selected, listwidth),
-     "class", "network-details-url-list",
-     "style", "width: " + listwidth + "px"
-    ],
-    ["div", templates.network_log_request_detail(ctx, selected),
-     "class", "network-details-request",
-     "style", "left: " + listwidth + "px;"
-    ]
-  ];
-};
+  var basetime = ctx.get_starttime();
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+  var rows = templates.network_graph_rows(ctx, selected, width, basetime, duration);
 
-templates.network_log_request_detail = function(ctx, selected)
-{
-  var req = ctx.get_resource(selected);
-  var responsecode = req && req.responsecode && req.responsecode in cls.ResourceUtil.http_status_codes ?
-                "" + req.responsecode + " " + cls.ResourceUtil.http_status_codes[req.responsecode] : null;
-  return [
-  ["div",
-    ["span",
-      "class", "close-request-detail container-button ui-button",
-      "handler", "close-request-detail",
-      "unselectable", "on",
-      "tabindex", "1"
-    ],
-    ["table",
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", req.human_url]],
-     ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", req.touched_network ? req.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + req.method
-     ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", req.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-      "data-spec", "http#" + req.responsecode
-     ],
-     ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION + ":"], ["td", req.touched_network && req.duration ? "" + req.duration + " ms" : "0"]],
-     "class", "resource-detail"
-    ],
-
-    templates.request_details(req),
-
-    templates.network_request_body(req),
-
-    req.touched_network ? [
-      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-      templates.response_details(req),
-      ["h2", ""]
-    ] : [],
-
-    templates.network_response_body(req)
-
-    ],
-    "data-resource-id", String(req.id),
-    "class", "request-details"
-  ];
-};
-
-templates.request_details = function(req)
-{
-  if (!req.touched_network) { return ["p", ui_strings.S_NETWORK_SERVED_FROM_CACHE]; }
-  if (!req.request_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL]; }
-  var firstline = req.request_raw.split("\n")[0];
-  var parts = firstline.split(" ");
-  if (parts.length == 3)
+  var template = [];
+  if (duration)
   {
-    firstline = [
-      ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
-      ["span", parts[1] + " "],
-      ["span", parts[2] + " "]
-    ];
+    var stepsize = templates.grid_info(duration, width, (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH);
+    var gridwidth = Math.round((width / duration) * stepsize);
+    var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
+
+    template = ["div", headerrow, rows,
+                  "id", "graph",
+                  "style", ["background-image: -o-linear-gradient(",
+                                               "0deg,",
+                                               "#e5e5e5 0px,",
+                                               "#e5e5e5 1px,",
+                                               "transparent 1px",
+                                              ");",
+                           "background-position: 0 21px;",
+                           "background-repeat: repeat-x;",
+                           "background-size: " + gridwidth + "px 100%;"].join("")
+               ];
   }
+  return template;
+}
 
-  return [["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
-          templates.network_headers_list(req.request_headers, firstline)
-         ];
-};
-
-templates.response_details = function(req)
+templates.network_viewmode_data = function(ctx, selected, detail_width)
 {
-  if (!req.response_headers) { return ["p", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL]; }
-  var firstline = req.response_raw.split("\n")[0];
-  var parts = firstline.split(" ", 2);
-  if (parts.length == 2)
-  {
-    firstline = [
-      ["span", parts[0] + " "],
-      ["span", parts[1], "data-spec", "http#" + parts[1]],
-      ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
-    ];
-  }
-  return templates.network_headers_list(req.response_headers, firstline);
-};
+  return ["div", "class", "network-data-table-container"];
+}
 
-templates.network_headers_list = function(headers, firstline)
+templates.network_log_url_list = function(ctx, selected, item_order)
 {
-  if (!headers) { return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL; }
-  var lis = headers.map(function(header) {
-      return [["li", ["span", header.name + ": "], header.value,  "data-spec", "http#" + header.name]];
-  });
-
-  if (firstline)
+  var itemfun = function(req)
   {
-    lis.unshift(["li", firstline]);
-  }
-  return ["ol", lis, "class", "network-details-header-list mono"];
-};
+    var had_error_response = /5\d{2}|4\d{2}/.test(req.responsecode);
+    var disqualified = !req.touched_network || req.unloaded;
 
-
-templates.network_request_body = function(req)
-{
-  var ret = [["h2", ui_strings.S_NETWORK_REQUEST_BODY_TITLE]];
-  // when this is undefined/null the request was one that did not send data
-
-  if (!req.requestbody)
-  {
-    ret.push(["p", ui_strings.S_NETWORK_NO_REQUEST_DATA]);
-  }
-  else if (req.requestbody.partList.length)
-  {
-    ret = [["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_BODY_TITLE]];
-    for (var n=0, part; part=req.requestbody.partList[n]; n++)
+    var url_tooltip = req.human_url;
+    var context_info;
+    if (req.unloaded)
+      context_info = ui_strings.S_HTTP_UNREFERENCED;
+    else if (had_error_response)
+      context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
+    else if (req.no_request_made)
     {
-      ret.push(["h4", ui_strings.S_NETWORK_MULTIPART_PART.replace("%s", (n + 1))]);
-      ret.push(templates.network_headers_list(part.headerList));
-      if (part.content && part.content.stringData)
-      {
-        ret.push(["pre", part.content.stringData]);
-      }
+      // file
+      if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
+        context_info = ui_strings.S_HTTP_SERVED_OVER_FILE;
+      // data uri, the tooltip is explicit enough in these cases
+      else if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
+        context_info = null;
+      // or otherwise probably chached
       else
-      {
-        ret.push(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)])
-      }
-    }
-  }
-  else if (req.requestbody.mimeType == "application/x-www-form-urlencoded")
-  {
-    var parts = req.requestbody.content.stringData.split("&");
-    var tab = ["table",
-              ["tr", ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
-              ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
-    ].concat(parts.map(function(e) {
-        e = e.replace(/\+/g, "%20").split("=");
-        return ["tr",
-            ["td", decodeURIComponent(e[0])],
-            ["td", decodeURIComponent(e[1])]
-        ];
-    }));
-    ret.push(tab);
-  }
-  // else // There is content, but we're not tracking
-  // {
-  //   ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
-  // }
-  else // not multipart or form.
-  {
-    var tpl = [];
-    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
-    if (type == "markup")
-    {
-      tpl = window.templates.highlight_markup(req.requestbody.content.stringData);
-    }
-    else if (type == "script")
-    {
-      tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
-    }
-    else if (type == "css")
-    {
-      tpl = window.templates.highlight_css(req.requestbody.content.stringData);
-    }
-    else if (type == "text")
-    {
-      tpl = ["p", req.requestbody.content ? 
-                  req.requestbody.content.stringData :
-                  ""];
-    }
-    else
-    {
-      if (req.requestbody.mimeType)
-      {
-        ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
-      }
-      else
-      {
-        ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
-      }
+        context_info = ui_strings.S_HTTP_NOT_REQUESTED;
     }
 
-    ret.push(tpl);
-  }
-  return ret;
-};
+    if (context_info)
+      url_tooltip = context_info + " - " + url_tooltip;
 
-
-templates.network_response_body = function(req)
-{
-  var ret = [["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_TITLE]];
-
-  if (req.body_unavailable)
-  {
-    return ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY];
-  }
-  else if (!req.responsebody)
-  {
-    ret.push(["p",
-      ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-      ["p", ["span",
-          ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-          "data-resource-id", String(req.id),
-          // unselectable attribute works around bug CORE-35118
-          "unselectable", "on",
-          "handler", "get-response-body",
-          "class", "container-button ui-button",
-          "tabindex", "1"
-      ]],
-      "class", "response-view-body-container"
-    ]);
-  }
-  else
-  {
-    var bodytpl;
-    if (["script", "markup", "css", "text"].contains(req.type))
-    {
-      bodytpl = ["textarea", req.responsebody.content.stringData];
-    }
-    else if (req.type == "image")
-    {
-      bodytpl = ["img", "src", req.responsebody.content.stringData];
-    }
-    else
-    {
-      bodytpl = ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", req.mime)];
-    }
-
-    ret.push(["div",
-                bodytpl,
-               "class", "response-body-content"
-             ]);
-  }
-  return ret;
-};
-
-templates.network_header_table = function(headers)
-{
-  if (!headers)
-  {
-    return ["table", ["tr", ["td", "No headers"]]];
-  }
-
-  var rowfun = function(header)
-  {
-    return ["tr",
-            ["th", header.name],
-            ["td", header.value],
-            "data-spec", "http#" + header.name
-           ];
-  };
-
-  var headers = headers.slice(0); // copy so we can sort withouth nuking original
-  headers.sort(function(a, b) {
-    if (a.name>b.name) { return 1; }
-    else if (b.name>a.name) { return -1; }
-    else { return 0; }
-  });
-  return ["table", headers.map(rowfun),
-          "class", "header-list"];
-};
-
-templates.network_log_url_list = function(ctx, selected)
-{
-  var itemfun = function(res) {
-    var statusclass = "status-" + res.responsecode;
-    var statusstring = res.responsecode || null;
-    if (res.responsecode && res.responsecode in cls.ResourceUtil.http_status_codes)
-    {
-      statusstring += " " + cls.ResourceUtil.http_status_codes[res.responsecode];
-    }
-
-    if (res.cached) { statusclass = "status-cached"; }
     return ["li",
-            templates.network_request_icon(res),
-            ["span", res.human_url],
-            ["span", res.touched_network && res.responsecode ? String(res.responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE,
-             "class", "log-url-list-status " + statusclass,
-             "title", String(statusstring || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
-             ],
+            templates.network_request_icon(req),
+            ["span",
+              req.filename || req.human_url,
+              "data-tooltip-text" , url_tooltip,
+              "data-tooltip", "network-url-list-tooltip"
+            ],
             "handler", "select-network-request",
-            "data-resource-id", String(res.id),
-            "class", selected===res.id ? "selected" : "",
-            "title", res.human_url
+            "data-object-id", String(req.id),
+            "class", (selected === req.id ? "selected " : " ") + 
+                     (had_error_response ? "network-error " : " ") + 
+                     (disqualified ? "disqualified " : "")
            ];
   };
-  return ["ol", ctx.resources.map(itemfun),
-          "class", "network-log-url-list"];
+
+  var items = ctx.get_entries_filtered().slice(0);
+  // Could use copy_object instead, because the template doesn't need the methods of the resources.
+  // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
+  // to the old objects
+  if (item_order)
+  {
+    item_order = item_order.split(",");
+    items.sort(function(a, b)
+      {
+        var ind_a = item_order.indexOf(a.id);
+        var ind_b = item_order.indexOf(b.id);
+
+        if (ind_a === ind_b)
+          return 0;
+
+        if (ind_a > ind_b)
+          return 1;
+
+        return -1;
+      }
+    );
+  }
+  return [
+    ["ol", items.map(itemfun),
+      "class", "network-log-url-list"]
+  ]
+};
+
+templates.network_log_summary = function(ctx)
+{
+  var items = ctx.get_entries_filtered().slice(0);
+  var total_size = items.map(function(entry){
+                        return entry.size || 0
+                      }).reduce(function(prev, curr){
+                        return prev + curr;
+                      }, 0);
+  var str = items.length;
+  str += str === 1 ? " " + ui_strings.S_NETWORK_REQUEST :
+                     " " + ui_strings.S_NETWORK_REQUESTS;
+
+  if (total_size)
+    str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
+
+  return ["div", str];
 };
 
 templates.network_request_icon = function(request)
 {
-  return ["span", "class", "resource-icon resource-type-" + request.type];
-};
-
-templates.network_log_graph = function(ctx, width)
-{
-  var rows = templates.network_graph_rows(ctx, width);
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-  var stepsize = templates.grid_info(duration, width);
-  var gridwidth = Math.round((width / duration) * stepsize);
-  var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
-  return ["div", headerrow, rows, "id", "graph", "style", "width: " + width + "px; background-size: " + gridwidth + "px 100%, 50px 50px;"];
+  var classname = "resource-icon resource-type-" + request.type;
+/*
+  // todo: long lasting discussion to add some XHR indicator to the icon
+  if (request.load_origin) // === "xhr"
+    classname += " request-origin-" + request.load_origin;
+*/
+  return ["span", "class", classname];
 };
 
 templates.network_timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
-  var cnt = Math.round(width / gridwidth);
-
-  while (stepsize && --cnt > 0) // skips last one on purpose
+  var cnt = Math.ceil(width / gridwidth);
+  var max_val = stepsize * cnt;
+  var unit = [1, "ms"];
+  if (max_val > 1000)
+    unit = [1000, "s"];
+  
+  while (stepsize && --cnt >= 0)
   {
-    labels.push(["span", "" + ((stepsize * cnt) / 1000) + "s",
-                 "style", "left: " + ((gridwidth * cnt)-30) + "px;",
+    var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
+    var val_str = (stepsize * cnt) / unit[0];
+    val_str = Math.round(val_str * 100) / 100;
+    labels.push(["span", "" + val_str + unit[1],
+                 "style", "left: " + left_val + "px;",
                  "class", "timeline-marker"
                  ]);
   }
 
-  return ["div", labels, "class", "network-graph-row"];
+  return ["div", labels, "class", "network-timeline-row"];
 };
 
-templates.network_graph_rows = function(ctx, width)
+templates.network_graph_rows = function(ctx, selected, width, basetime, duration)
 {
-  var basetime = ctx.get_starttime();
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
-
   var tpls = [];
-  for (var n=0, res; res=ctx.resources[n]; n++)
+  var entries = ctx.get_entries_filtered();
+
+  for (var n = 0, entry; entry = entries[n]; n++)
   {
-    tpls.push(templates.network_graph_row_bar(res, width, basetime, duration));
+    tpls.push(templates.network_graph_row(entry, selected, width, basetime, duration));
   }
   return tpls;
 };
 
-templates.network_graph_row_bar = function(request, width, basetime, duration)
+templates.network_graph_row = function(entry, selected, width, basetime, duration)
 {
   var scale = width / duration;
-  var ret = [];
+  var start = (entry.starttime - basetime) * scale;
+  var padding_left_hitarea = 3;
+  var item_container = ["span",
+                        templates.network_graph_sections(entry, width, duration),
+                        "class", "network-graph-sections-hitarea",
+                        "data-tooltip", "network-graph-tooltip",
+                        "style", "margin-left:" + (start - padding_left_hitarea) + "px;"];
 
-  if (request.duration)
-  {
-    var reqwidth = (request.endtime - request.starttime) * scale;
-    var start = (request.starttime - basetime) * scale;
-    var latency = (request.responsestart - request.requesttime) * scale;
-    var req_duration = reqwidth - latency;
+  return ["div", item_container,
+          "class", "network-graph-row " + (selected === entry.id ? "selected " : ""),
+          "handler", "select-network-request",
+          "data-object-id", String(entry.id)];
+}
 
-    var gradientmap = {
-      css: "blue",
-      script: "yellow",
-      markup: "purple",
-      image: "red",
-      audio: "green",
-      video: "green"
-    };
-
-    var min_bar_width = 14; // in px
-    if (req_duration < min_bar_width)
+templates.network_graph_sections = function(entry, width, duration, do_tooltip)
+{
+  var scale = width / duration;
+  var gaps = entry.event_sequence;
+  var sections = entry.event_sequence.map(function(section){
+    if (section.val)
     {
-      req_duration = min_bar_width;
+      return [
+        "span",
+        "class", "network-section network-" + section.classname,
+        "style", "width:" + section.val * scale + "px;"
+      ];
     }
+    return [];
+  });
 
-    var title = "";
-    if (request.cached)
-    {
-      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_CACHED.replace("%s", request.duration || 0);
-    }
-    else
-    {
-      title = ui_strings.S_NETWORK_GRAPH_DURATION_HOVER_NORMAL;
-      title = title.replace("%(total)s", request.duration);
-      title = title.replace("%(request)s", (request.requesttime - request.starttime));
-      title = title.replace("%(response)s", (request.endtime - request.requesttime));
-    }
-
-    var type = request.type in gradientmap ? request.type : 'unknown';
-    ret.push([
-              ["span",
-                ["span", "class", "network-graph-time network-" + type,
-                          "style", "margin-left:" + latency + "px; width: " + req_duration + "px;"],
-                "class", "network-graph-latency",
-                "style", "margin-left:" + start + "px;", "title", title
-              ]
-      ]);
-  }
-
-  return ["div", ret,
-          "class", "network-graph-row",
-          "data-resource-id", String(request.id),
-          "handler", "select-network-request"];
+  return ["span", sections.length && sections || [],
+           "class", "network-graph-sections",
+           "data-tooltip", do_tooltip && "network-graph-tooltip",
+           "data-object-id", String(entry.id)
+         ];
 };
 
-
-templates.grid_info = function(duration, width)
+templates.network_graph_entry_tooltip = function(entry)
 {
-  var density = (width / duration) * 1000;
-  var step = 2000;
+  if (!entry)
+    return;
 
-  if (density > 1000) {
-    step = 100;
-  }
-  else if (density > 600)
+  const height = 155;
+  var duration = entry.get_duration();
+  if (duration && entry.events)
   {
-    step = 200;
-  }
-  else if (density > 400)
-  {
-    step = 500;
-  }
-  else if (density > 160)
-  {
-    step = 1000;
-  }
-  else if (density > 120)
-  {
-    step = 2000;
-  }
-  else if (density > 90)
-  {
-    step = 5000;
-  }
-  else if (density > 40)
-  {
-    step = 10000;
-  }
-  else if (density > 25)
-  {
-    step = 15000;
-  }
-  else if (density > 5)
-  {
-    step = 20000;
-  }
-  else if (density > 2)
-  {
-    step = 30000;
-  }
-  else {
-    step = 0; // don't render lines. too much crap on the screen
-  }
+    var graphical_sections = [];
+    var scale = height / duration;
+    var total_length_string = duration.toFixed(2) + "ms";
 
-  return step;
+    entry.event_sequence.forEach(function(section){
+      if (section.val)
+      {
+        graphical_sections.push([
+          "div",
+          "class", "network-tooltip-section network-" + section.classname,
+          "style", "height:" + section.val * scale + "px;"
+        ]);
+      }
+    });
+
+    var event_rows = entry.event_sequence.map(function(stop, index, arr)
+    {
+      // sequences with only from_event are ommited as they only mark the start of a gap
+      if (!stop.val_string)
+        return [];
+      else
+      {
+        return ["tr",
+                 ["td", stop.val_string, "class", "time_data mono"],
+                 ["td", stop.title, "class", "gap_title"],
+                 ini.debug ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
+               ];
+      }
+    });
+    event_rows.push(["tr",
+                      ["td", total_length_string, "class", "time_data mono"],
+                      ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
+
+    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
+    const LINEHEIGHT = 19;
+
+    var svg_width = 100.5;
+    var x_start = 1.5;
+    var y_start = 0.5;
+    var y_ref = 0;
+    var x_end = svg_width;
+    var y_end = 0;
+
+    var pathes = entry.event_sequence.map(function(row, index, arr)
+    {
+      if (row.val)
+      {
+        var height = Math.round(row.val * scale);
+        y_start = y_ref + (height / 2);
+        y_ref += height;
+        y_end = (index * LINEHEIGHT) + (LINEHEIGHT / 2) + 0.5;
+        return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
+      }
+      return "";
+    });
+
+    var svg_height = Math.max(y_start, y_end, y_ref);
+
+    return ["div",
+      [
+        ini.debug ?
+          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
+          ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
+        ["div",
+          ["div",
+            ["div", graphical_sections, "class", "network-tooltip-graph-sections"],
+            "class", "network-tooltip-graph"
+          ],
+          ["div",
+            ["svg:svg", pathes,
+              "width",  Math.ceil(svg_width) + "px",
+              "height", Math.ceil(svg_height) + "px",
+              "version", "1.1",
+              "style", "position: absolute;"
+            ], "class", "network-tooltip-pointers"],
+          ["div",
+            ["table", event_rows],
+            "class", "network-tooltip-legend"
+          ],
+        "class", "network-tooltip-row"]
+      ], "class", "network-tooltip-container"
+    ];
+  }
+}
+
+
+templates.grid_info = function(duration, width, padding)
+{
+  if (duration > 0)
+  {
+    var draw_line_every = 150; // px
+    var draw_lines = Math.round(width / draw_line_every);
+    
+    var value = oldval = Number((duration / draw_lines).toPrecision(1)); // what this returns is the duration of one section
+    var val_in_px = width / duration * Number(value);
+
+    // if the last line comes too close to the edge, decrease the value until it fits.
+    // need to modify the actual ms value to keep it nice labels on the result,
+    // at least while it gets shown in ms
+    while (width % (val_in_px * draw_lines) < padding)
+    {
+      value--;
+      val_in_px = width / duration * value;
+    }
+
+    return value;
+  }
 }
 
 })(window.templates);

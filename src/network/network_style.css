@@ -1,4 +1,8 @@
-﻿#main-scroll-container
+﻿.network_logger {
+  min-width: 410px; /* when smaler, the filter box takes 3 lines and the alignments break */
+}
+
+#main-scroll-container
 {
   height: 100%;
   overflow: auto;
@@ -10,124 +14,211 @@
   position: relative;
 }
 
-#left-side-content
-{
-  width: 250px;
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
+.network_logger {
+  min-width: 580px;
 }
 
-#right-side-container
+#network-url-list
 {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: 251px;
-  right: 0;
-  overflow: hidden;
+  float: left;
+  width: 40%;
+  min-width: 230px; /* value duplicated in network_view */
 }
 
-#right-side-content
+.network-main-container
 {
-  height: 100%;
+  float: left;
+  width: 60%;
 }
 
-#scrollbar-container
-{
-  margin-right: 13px;
-  overflow: auto;
+.network-data-container.graphs { /* todo: slow selector */
+  position: relative;
+  top: 10px;
 }
 
-#scrollbar
-{
-  height: 1px;
+.network-data-container.data { /* todo: slow selector */
+  position: relative;
+  top: 9px;
 }
-
 
 /* Network log / Overview */
 
-.network-log-url-list
-{
+.network_logger .type-filter-buttons {
+  text-align: center;
+  margin-top: 4px;
+  padding: 0 10px;
+  min-height: 54px;
+}
+
+.network_logger .type-filter-buttons .ui-button {
+  margin: 5px 1px 0 1px;
+  padding: 1px 8px;
+  height: 17px;
+  line-height: 17px;
+  color: #8b8b8b;
+  background-image: -o-linear-gradient(270deg,
+                        rgba(255, 255, 255, 0.5) 0,
+                        rgba(255, 255, 255, 0.251) 85%,
+                        rgba(255, 255, 255, 0.5059) 100%);
+}
+
+.network_logger .type-filter-buttons .ui-button.on {
+  color: #444;
+  background-image: -o-linear-gradient(270deg,
+                        rgba(255, 255, 255, 0.898) 0,
+                        rgba(255, 255, 255, 0.251) 85%,
+                        rgba(255, 255, 255, 0.5059) 100%);
+}
+
+.network-log-url-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  padding-top: 25px;
+  padding-top: 34px;
 }
 
 .network-log-url-list li
 {
   height: 19px;
-  padding: 4px 0 1px 8px;
+  padding: 5px 0 0 8px;
 }
 
-.network-log-url-list:last-child,
-.network-graph-row:last-of-type
+.network_logger #network-url-list .network-log-url-list li.disqualified
 {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #8a8a8a;
 }
 
-.network-log-url-list li:nth-child(odd),
-.network-graph-row:nth-child(even)
+.network_logger #network-url-list .network-log-url-list li.network-error
 {
-  background-color: rgba(0, 0, 0, 0.03)
+  color: #d2001c;
+}
+
+.network_logger #network-url-list .network-log-url-list li.network-error.selected
+{
+  color: #3d0008;
+}
+
+.network-log-url-list li:nth-child(even),
+.network-graph-row:nth-child(odd)
+{
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .network-log-url-list li.hovered,
-#graph div.hovered
-{
+.network-main-container .network-data-container .hovered,
+.network-main-container .network-data-container .network-data-table-container .hovered {
   background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
 
-.network-log-url-list li span
-{
+.network-log-url-list li .resource-icon {
   display: inline-block;
 }
 
-.network-log-url-list li span + span
-{
+.network-log-url-list li span + span {
   padding-left: 5px;
-  width: 186px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   vertical-align: middle;
+  display: inline-block;
+  max-width: 88%;
 }
 
-.network-log-url-list .log-url-list-status
-{
+.network-log-url-list .log-url-list-status {
   width: 30px;
   text-align: center;
   margin: 0 2px;
-  padding: 2px 0;
+  padding: 2px 2px;
   border-radius: 3px;
 }
 
-.status-cached
-{
-  background: rgba(0, 0, 0, 0.15);
+.network_incomplete_warning {
+  display: block;
+  background-color: #ebebeb;
+  padding: 10px 24px 10px 10px;
+  margin: 5px auto;
+  width: 70%;
+  text-align: center;
+  position: relative;
+  line-height: 1.6em;
 }
 
-.network-log-url-list li:active,
-.network-log-url-list li:nth-child(even):active,
+.network_incomplete_warning .text_handler {
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.close_incomplete_warning {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  cursor: pointer;
+}
+
+.close_incomplete_warning::before
+{
+  content: "";
+  background-image: url("../ui-images/icons/icon_close.png");
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+}
+
 .network-log-url-list li.selected,
-.network-log-url-list li:nth-child(even).selected
+.network-log-url-list li:nth-child(even).selected,
+.network-main-container .network-data-container .selected,
+.network-main-container .network-data-container .network-data-table-container .selected
 {
   background-color: rgba(55, 115, 211, 0.8);
   color: #fff;
 }
 
-.response-body-content textarea
+.network_logger .sortable-table tr td, .network_logger .sortable-table tr th
 {
-  width: 80%;
-  height: 300px;
+  padding-bottom: 5px;
+  padding-top: 6px;
 }
 
-
 /* Network log / Detail view */
+.close-request-detail
+{
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  background-color: #FFF;
+  border: 1px solid #999;
+  border-radius: 16px;
+  width: 19px;
+  height: 19px;
+}
+
+.resize-request-detail {
+  cursor: col-resize;
+  top: 83px;
+  height: 100%;
+  margin-left: -24px;
+  position: fixed;
+  width: 12px;
+}
+
+.close-request-detail:active
+{
+  background-color: #CACACA;
+}
 
 .close-request-detail::before
 {
-  background-image: url("../ui-images/icons/icon_button_back.png");
+  content: "";
+  background-image: url("../ui-images/icons/icon_close.png");
+  display: block;
+  height: 19px;
+  width: 19px;
+  background-position: 50%;
+  background-repeat: no-repeat;
 }
 
 .network-details-url-list
@@ -138,20 +229,48 @@
   overflow-y: auto;
 }
 
-.network-details-request
+.network-details-container
 {
-  position: absolute;
+  position: fixed;
   right: 0;
-  top: 0;
+  top: 83px;
   bottom: 0;
-  overflow: hidden;
-  overflow-y: auto;
+  z-index: 2;
+  left: 120px;
+  overflow: auto;
   padding: 15px 20px 25px 20px;
   border-left: 1px solid #999;
   background-color: #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, .4);
 }
 
-.network-details-request table
+.network_logger .network-summary
+{
+  clear: both;
+  text-align: center;
+}
+
+.network_logger .network-summary div
+{
+  text-align: center;
+  display: inline-block;
+  font-size: 1.4em;
+  margin: 18px 0;
+  color: #919191;
+}
+
+.network-details-container pre,
+.network-details-container p
+{
+  margin: 0;
+}
+
+.network-details-container img.network-body
+{
+  margin-top: 2em;
+}
+
+.network-details-container table
 {
   width: 100%;
   border-collapse: collapse;
@@ -159,50 +278,33 @@
   margin-top: 12px;
 }
 
-.network-details-request td,
-.network-details-request th
+.network-details-container td,
+.network-details-container th
 {
-  border-top: 1px solid #eee;
-  padding: 6px 5px 4px 0;
+  vertical-align: top;
 }
 
-.network-details-request th
+.network-details-container th
 {
   text-align: left;
-  vertical-align: top;
-  width: 110px;
+  padding-right: 30px;
+  width: 140px;
 }
 
-.network-details-header-list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 0;
-  padding-top: 0;
+.network-details-container hr {
+  border: none;
+  border-top: 1px solid #a4a4a4;
 }
 
-.network-details-header-list span
-{
-  font-weight: bold;
-}
-
-.network-details-request p
-{
-  margin-top: 0;
-  max-width: 60em;
-  line-height: 150%;
-}
-
-.network-details-request h2,
+.network-details-container h2,
 .request-crafter h2,
 .network-options h2
 {
   font-size: 125%;
-  margin: 15px 0 0 0;
+  margin: 15px 0 10px 0;
 }
 
-
 /* Request crafter */
-
 .request-crafter
 {
   padding: 5px 20px;
@@ -212,6 +314,7 @@
 {
   margin-top: 0;
 }
+
 
 .request-crafter input
 {
@@ -233,21 +336,18 @@
 
 
 /* Options */
-
 .network-options
 {
   padding: 5px 20px 25px 20px;
 }
 
-.network-options label
-{
+.network-options label {
   margin: 5px 0 0 0;
   display: block;
   color: #444;
 }
 
-.network-options input[type='checkbox']
-{
+.network-options input[type=checkbox] {
   padding: 0 10px 0 5px;
 }
 
@@ -257,6 +357,7 @@
   max-width: 60em;
   line-height: 150%;
 }
+
 
 .network-options select
 {
@@ -269,100 +370,244 @@
   margin: 10px 0;
 }
 
-#graph
-{
-  position: absolute;
-  left: 0;
-  padding-top: 1px;
-  background-image: -o-linear-gradient(0deg,
-                                       rgba(0, 0, 0, 0.06) 0,
-                                       rgba(0, 0, 0, 0.06) 1px,
-                                       transparent 1px);
-  background-size: 41px 100%;
-  background-repeat: repeat;
-  background-position: -1px 50%;
-}
-
+.network-timeline-row,
 .network-graph-row
 {
   height: 24px;
-  line-height: 24px;
 }
 
-.network-graph-latency
+.network_logger .network-data-container table tr .network-graph-column
 {
-  display: inline-block;
-  vertical-align: -5px;
-  height: 13px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.20);
+  line-height: 0;
+  padding-top: 1px;
 }
 
-.network-graph-time
+.network-graph-sections-hitarea
+{
+  vertical-align: top;
+  display: inline-block;
+  padding: 3px;
+  margin-top: 2px;
+  margin-bottom: -1px;
+  border-radius: 3px;
+}
+
+.network-graph-row.hovered .network-graph-sections-hitarea
+{
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.network-graph-sections,
+.network-tooltip-graph-sections
+{
+  border: 1px solid #989898;
+  display: inline-block;
+  border-radius: 2px;
+  min-width: 1px;
+}
+
+.network-tooltip-graph-sections
+{
+  border-radius: 0;
+}
+
+.network-graph-sections
+{
+  height: 12px;
+}
+
+.network-tooltip-container
+{
+  vertical-align: top;
+  padding: 6px 0;
+}
+
+.network-tooltip-container h2 {
+  font-size: 12px;
+  margin: 6px 0 4px 0;
+}
+
+.network-tooltip-container .sum {
+  border-top: 1px solid #444;
+}
+
+.network-tooltip-container .mono {
+  color: #444;
+}
+
+.network-tooltip-container table {
+  border-collapse: collapse;
+}
+
+.network-tooltip-container table td {
+  padding-right: 2px;
+}
+
+.network-tooltip-container tr.summer td {
+  border-top: 1px solid #444;
+}
+
+.network_get_params {
+  margin: 4px 2px 0 0;
+}
+
+.network_get_params td {
+  padding: 0 4px;
+}
+
+.network-tooltip-row {
+  display: table-row;
+}
+
+.network-tooltip-graph,
+.network-tooltip-legend,
+.network-tooltip-pointers
+{
+  display: table-cell;
+  vertical-align: top;
+}
+
+.network-tooltip-pointers
+{
+  position: relative;
+  width: 103px; /* the base_width in the svg plus some padding */
+}
+
+.network-graph-sections:empty
+{
+  margin-bottom: -2px;
+}
+
+.network-section
 {
   display: inline-block;
   vertical-align: top;
-  margin: -1px;
-  height: 13px;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  height: 12px;
+  margin-bottom: 1px;
 }
 
-.network-markup /* purple */
+.network-tooltip-section
 {
-  border-color: #383f77;
+  width: 28px;
+}
+
+.network-tooltip-legend table td
+{
+  padding: 3px;
+}
+
+.network-tooltip-legend .time_data
+{
+  text-align: right;
+  padding: 2px 8px 0 4px;
+}
+
+.network-tooltip-legend .event_name
+{
+  white-space: nowrap;
+}
+
+
+/* debug styles
+.network-unexpected_network_event_sequence {
+  outline: 1px dashed red;
+}
+
+.network-graph-sections.has-unexpected-events
+{
+  border: 1px dashed red;
+}
+*/
+
+/* colors mostly inspired by http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/ */
+
+.network-waiting /* purple */
+{
   background-image: -o-linear-gradient(-90deg,
-                                       #c9c9ff 1%,
-                                       #a7a5d6 100%);
+                                       #a7a7f7 1%,
+                                       #7a7aff 100%);
+}
+.network-tooltip-graph .network-waiting
+{
+  background-image: -o-linear-gradient(0deg,
+                                       #a7a7f7 0%,
+                                       #7a7aff 100%);
 }
 
-.network-css /* blue */
+.network-lookup /* yellow, currently unused */
 {
-  border-color: #266099;
-  background-image: -o-linear-gradient(-90deg,
-                                       #b8d4ff 1%,
-                                       #8bafe0 100%);
-}
-
-.network-script /* yellow */
-{
-  border-color: #807040;
   background-image: -o-linear-gradient(-90deg,
                                        #f7f2d5 1%,
                                        #e3d696 100%);
 }
-
-.network-image /* red */
+.network-tooltip-graph .network-lookup
 {
-  border-color: #922424;
+  background-image: -o-linear-gradient(0deg,
+                                       #f7f2d5 0%,
+                                       #e3d696 100%);
+}
+
+.network-request /* red */
+{
   background-image: -o-linear-gradient(-90deg,
                                        #ed9696 1%,
                                        #d46868 100%);
 }
-
-.network-video /* green */
+.network-tooltip-graph .network-request
 {
-  border-color: #333;
-  background-image: -o-linear-gradient(-90deg,
-                                       #cae6ca 1%,
-                                       #9ec59e 100%);
+  background-image: -o-linear-gradient(0deg,
+                                       #ed9696 0%,
+                                       #d46868 100%);
 }
 
-.network-unknown /* gray */
+.network-receiving /* green */
 {
-  border-color: #333;
   background-image: -o-linear-gradient(-90deg,
-                                       #d9d9d9 1%,
+                                       #b6e3b6 1%,
+                                       #93e093 100%);
+}
+.network-tooltip-graph .network-receiving
+{
+  background-image: -o-linear-gradient(0deg,
+                                       #b6e3b6 0%,
+                                       #93e093 100%);
+}
+
+.network-blocked /* gray */
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       #cfcfcf 1%,
                                        #adadad 100%);
+}
+.network-tooltip-graph .network-blocked
+{
+  background-image: -o-linear-gradient(0deg,
+                                       #cfcfcf 0%,
+                                       #adadad 100%);
+}
+
+.network-irregular /* striped */
+{
+  background-image: -o-repeating-linear-gradient(45deg,
+                                                 #b9b9b9 0,
+                                                 #b9b9b9 10px,
+                                                 #d6d6d6 10px,
+                                                 #d6d6d6 20px);
+}
+
+.network-tooltip-graph .network-irregular /* striped */
+{
+  background-image: -o-repeating-linear-gradient(315deg,
+                                                 #b9b9b9 0,
+                                                 #b9b9b9 10px,
+                                                 #d6d6d6 10px,
+                                                 #d6d6d6 20px);
 }
 
 .timeline-marker {
   display: inline-block;
   width: 60px;
   line-height: 21px;
-  background-color: #fefefe;
   position: absolute;
   top: 0;
   text-align: center;

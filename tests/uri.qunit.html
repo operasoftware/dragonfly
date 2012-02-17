@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dragonfly - Command Processor</title>
+    <title>Dragonfly - URI class</title>
     <link rel="stylesheet" href="qunit/qunit.css" media="screen">
     <script src="qunit/qunit.js"></script>
     <script src="../src/scripts/uri.js"></script>
@@ -14,26 +14,49 @@ test("uri", function()
 { 
   var uri = new URI("http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/banner.html?csiID=csi1#hello");
 
-  equals(uri.protocol, "http:");
-  equals(uri.host, "edition.cnn.com");
-  equals(uri.pathname, "/.element/ssi/intl/breaking_news/3.0/banner.html");
-  equals(uri.search, "?csiID=csi1");
-  equals(uri.hash, "#hello");
-  equals(uri.filename, "banner.html");
-  equals(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
-  equals(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
+  equal(uri.protocol, "http:");
+  equal(uri.host, "edition.cnn.com");
+  equal(uri.pathname, "/.element/ssi/intl/breaking_news/3.0/banner.html");
+  equal(uri.search, "?csiID=csi1");
+  equal(uri.hash, "#hello");
+  equal(uri.filename, "banner.html");
+  equal(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
+  equal(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
+  deepEqual(uri.params, [{key: "csiID", value: "csi1"}]);
 
   var uri = new URI("foo.txt");
 
-  equals(uri.protocol, "");
-  equals(uri.host, "");
-  equals(uri.pathname, "foo.txt");
-  equals(uri.search, "");
-  equals(uri.hash, "");
-  equals(uri.filename, "foo.txt");
-  equals(uri.dir_pathname, "");
-  equals(uri.abs_dir, "");
+  equal(uri.protocol, "");
+  equal(uri.host, "");
+  equal(uri.pathname, "foo.txt");
+  equal(uri.search, "");
+  equal(uri.hash, "");
+  equal(uri.filename, "foo.txt");
+  equal(uri.dir_pathname, "");
+  equal(uri.abs_dir, "");
+  deepEqual(uri.params, []);
 
+  var uri = new URI("foo?one=two&one=three");
+  deepEqual(uri.params, [{key: "one", value: "two"}, {key: "one", value: "three"}]);
+
+  var uri = new URI("foo?one=two&one=&do=true");
+  deepEqual(uri.params, [{key: "one", value: "two"}, {key: "one", value: ""}, {key: "do", value:"true"}]);
+
+  var uri = new URI("foo?one=two&one&do=true");
+  deepEqual(uri.params, [{key: "one", value: "two"}, {key: "one", value: ""},{key: "do", value: "true"}]);
+
+  var uri = new URI("foo?hasOwnProperty=yup&constructor=me=true");
+  deepEqual(uri.params, [{key: "hasOwnProperty", value: "yup"}, {key: "constructor", value: "me=true"}]);
+
+  var uri = new URI("foo.txt?on?e=two&one");
+  deepEqual(uri.params, [{key: "on?e", value: "two"}, {key: "one", value: ""}]);
+
+  var uri = new URI("foo.txt?one=two&&&ne&do=true");
+  deepEqual(uri.params, [{key: "one", value: "two"}, {key: "ne", value: ""}, {key: "do", value: "true"}]);
+
+  var uri = new URI("?do=true%20%26amp;%20for_real&true%20%26amp;%20for_real=yes");
+  deepEqual(uri.params, [{key: "do", value: "true &amp; for_real"}, {key: "true &amp; for_real", value: "yes"}]);
+  
 });
 
 
@@ -42,7 +65,7 @@ test("uri", function()
 
 </head>
 <body>
-    <h1 id="qunit-header">Dragonfly - Color class</h1>
+    <h1 id="qunit-header">Dragonfly - URI class</h1>
     <h2 id="qunit-banner"></h2>
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>
