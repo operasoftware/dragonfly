@@ -148,6 +148,9 @@
 
   var mouse_handler = function(event)
   {
+    if (_modal_box)
+      return;
+      
     var select = (/^cst-/i.test(event.target.nodeName) ||
                   /^cst-/i.test(event.target.parentNode.nodeName)) && event.target;
     
@@ -161,8 +164,13 @@
       {
         return;
       }
-      event.stopPropagation();
-      event.preventDefault();
+
+      if (event.stopPropagation)
+      {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+
       if (window.Tooltips)
         window.Tooltips.hide_tooltip();
 
@@ -298,6 +306,16 @@
     this.template = this.getTemplate();
   }
 
+  this.show_dropdown = function(id)
+  {
+    if (window['cst-selects'][id])
+    {
+      var select = document.querySelector("cst-select[cst-id=\"" + id + "\"]");
+      if (select)
+        mouse_handler({target: select});
+    }
+  }
+
   /* default interface implemetation */
   this.getSelectedOptionText = function()
   {
@@ -370,6 +388,11 @@ CstSelect.__defineGetter__("is_active", function()
 });
 
 CstSelect.__defineSetter__("is_active", function() {});
+
+CstSelect.show_dropdown = function(id)
+{
+  CstSelectBase.show_dropdown(id);
+}
 
 var CstSelectWithActionBase = function(id, class_name, type)
 {
