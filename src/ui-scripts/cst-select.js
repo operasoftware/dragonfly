@@ -141,6 +141,11 @@
     return false;
   }
 
+  this.is_modal_box_visible = function()
+  {
+    return Boolean(_modal_box);
+  };
+
   var mouse_handler = function(event)
   {
     var select = (/^cst-/i.test(event.target.nodeName) ||
@@ -358,6 +363,13 @@ var CstSelect = function(id, class_name, type, handler)
 {
   this.init(id, class_name, type, handler);
 }
+
+CstSelect.__defineGetter__("is_active", function()
+{
+  return CstSelectBase.is_modal_box_visible();
+});
+
+CstSelect.__defineSetter__("is_active", function() {});
 
 var CstSelectWithActionBase = function(id, class_name, type)
 {
