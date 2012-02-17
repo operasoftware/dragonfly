@@ -580,7 +580,7 @@ ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
 
 /* DESC: tooltip for table header that shows waiting time */
-ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent between writing the request and receiving a response";
+ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
 
 /* DESC: label for table header that shows starting time (short) */
 ui_strings.S_HTTP_LABEL_STARTED = "Started";
@@ -597,32 +597,53 @@ ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing 
 /* DESC: label for table header that shows loading sequence as a graph (short) */
 ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
 
-/* DESC: title for the network graph view button */
+/* DESC: tooltip for the network graph view button */
 ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";
 
-/* DESC: title for the network data view button */
+/* DESC: tooltip for the network data view button */
 ui_strings.S_HTTP_LABEL_DATA_VIEW = "Data view";
 
 /* DESC: label for the network filter that shows all items */
 ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
 
+/* DESC: tooltip for the network filter that shows all items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
+
 /* DESC: label for the network filter that shows markup items */
 ui_strings.S_HTTP_LABEL_FILTER_MARKUP = "Markup";
+
+/* DESC: tooltip for the network filter that shows markup items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP = "Show only markup";
 
 /* DESC: label for the network filter that shows stylesheet items */
 ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS = "Stylesheets";
 
+/* DESC: tooltip for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS = "Show only stylesheets";
+
 /* DESC: label for the network filter that shows script items */
 ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS = "Scripts";
+
+/* DESC: tooltip for the network filter that shows script items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
 
 /* DESC: label for the network filter that shows image items */
 ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
 
+/* DESC: tooltip for the network filter that shows image items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES = "Show only images";
+
 /* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
 ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
 
+/* DESC: tooltip for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show only requests that are of other types than mentioned before";
+
 /* DESC: label for the network filter that shows items requested over XMLHttpRequest */
 ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
+
+/* DESC: tooltip for the network filter that shows items requested over XMLHttpRequest */
+ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only requests requested over XMLHttpRequest";
 
 /* DESC: tooltip-prefix for resources that have been marked unloaded, which means they are no longer reference in the document */
 ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
@@ -631,13 +652,19 @@ ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 ui_strings.S_HTTP_NOT_REQUESTED = "Cached";
 
 /* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
-ui_strings.S_HTTP_SERVED_OVER_FILE = "Served locally";
+ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
 
 /* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
 ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
 
 /* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
-ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Showing only requests that occurred while Dragonfly was open.";
+ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Reload to show all page requests";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING = "Sequence terminated, retry";
 
 /* DESC: Label for http event sequence when the event was scheduled */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
@@ -648,14 +675,8 @@ ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
 /* DESC: Label for http event sequence when closing response phase */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
 
-/* DESC: Label for http event sequence when redirecting */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
-
-/* DESC: Label for http event sequence when processing header */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_HEADER = "Processing header";
-
 /* DESC: Label for http event sequence when processing */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_BODY = "Processing body";
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE = "Processing response";
 
 /* DESC: Label for http event sequence when waiting for response from network */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";

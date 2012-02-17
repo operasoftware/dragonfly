@@ -499,108 +499,147 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     }
   };
 
-  
+  // todo: move the following defs out of the entry
+  var CLASSNAME_BLOCKED = "blocked";
+  var CLASSNAME_REQUEST = "request";
+  var CLASSNAME_WAITING = "waiting";
+  var CLASSNAME_RECEIVING = "receiving";
+
+  // What is terminated by retry or redirect will be named regardless of the preceding event
+  // gap_def_to_phase format: 
+  /* {
+       classname: type of sequence,
+       sequences: {
+         to_event_name: string
+       }
+     } */
+  this._gap_defs_to_phase = {
+    "urlredirect": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
+      classname: CLASSNAME_BLOCKED
+    },
+    "requestretry": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
+      classname: CLASSNAME_BLOCKED
+    }
+  };
+
 // gap_def format: 
 /* {
-     "classname": "type of sequence",
-     "sequences": {
-       "from_event_name": [
-         "to_event_name_one",
-         "to_event_name_two"
+     classname: type of sequence,
+     sequences: {
+       from_event_name: {
+         to_event_name_one: string,
+         to_event_name_two: string
        ]
      }
    } */
-
-  this._gap_defs = [ // todo: move the def out of the entry
-    {
-      classname: "blocked",
-      sequences: {
-        "urlload": {
-          "request": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
-          "urlredirect": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
-          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
-          // The response-phase can be closed without ever seeing a response event, for 
-          // example because the request was aborted. See CORE-43284.
-          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
+  
+  this._gap_defs = {
+    "urlload": {
+        "request": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          classname: CLASSNAME_BLOCKED
         },
-        "responseheader": {
-          "urlredirect": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING,
-          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_HEADER
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
+          classname: CLASSNAME_BLOCKED
+        },
+        // The response-phase can be closed without ever seeing a response event, for 
+        // example because the request was aborted. See CORE-43284.
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "requestretry": {
+        "request": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "responsefinished": {
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE,
+          classname: CLASSNAME_BLOCKED
+        },
+        // responsefinished can occur twice, see CORE-43284.
+        // This is fixed and stops showing up when integrated.
+        "responsefinished": {
+          title: "",
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "urlredirect": {
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
+          classname: CLASSNAME_BLOCKED
+        },
+        // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_BLOCKED
+        }
+    },
+    "requestheader": {
+        "requestfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY,
+          classname: CLASSNAME_REQUEST
+        }
+    },
+    "request": {
+        "requestheader": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER,
+          classname: CLASSNAME_REQUEST
         },
         "requestfinished": {
-          // we probably haven't really been waiting, as we decide to retry after we are done writing the request
-          "requestretry": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE
-        },
-        "requestretry": {
-          "request": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY,
+          classname: CLASSNAME_REQUEST
+        }
+    },
+    "requestfinished": {
+        "response": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
+          classname: CLASSNAME_WAITING
         },
         "responsefinished": {
-          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_BODY,
-          // responsefinished can occur twice, see CORE-43284.
-          // This is fixed and stops showing up when integrated.
-          "responsefinished": ""
-        },
-        "urlredirect": {
-          "urlfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
-          // This probably means that the request is closed because it was decided to redirect instead of waiting for a response
-          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
+          classname: CLASSNAME_WAITING
         }
-      }
     },
-    {
-      classname: "request",
-      sequences: {
-        "request": {
-          "requestheader": ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER
-        },
-        "requestheader": {
-          "requestfinished": ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY
-        }
-      }
-    },
-    {
-      classname: "waiting",
-      sequences: {
-        "requestfinished": {
-          "response": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
-          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE
-        },
+    "response": {
         "responseheader": {
-          // Occurs when a 100-Continue response was sent. In this timespan the client has
-          // ignored it and waits for another response to come in. See CORE-43264.
-          "response": ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER,
+          classname: CLASSNAME_RECEIVING
         }
-      }
     },
-    {
-      classname: "receiving",
-      sequences: {
+    "responseheader": {
+        "responsefinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY,
+          classname: CLASSNAME_RECEIVING
+        },
+        // Occurs when a 100-Continue response was sent. In this timespan the client has
+        // ignored it and waits for another response to come in. See CORE-43264.
         "response": {
-          "responseheader": ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER
-        },
-        "responseheader": {
-          "responsefinished": ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
+          classname: CLASSNAME_WAITING
         }
       }
-    }
-  ];
-
-  this._highlighted_events = {
-    "requestretry": ui_strings.S_HTTP_EVENT_REQUESTRETRY,
-    "urlredirect": ui_strings.S_HTTP_EVENT_URLREDIRECT
   };
 
   this.get_gap_def = function(gap)
   {
-    var def = this._gap_defs.filter(function(def){
-      return def.sequences[gap.from_event.name] &&
-             def.sequences[gap.from_event.name][gap.to_event.name];
-    })[0];
-    if (def)
-      return {classname: def.classname, title: def.sequences[gap.from_event.name][gap.to_event.name]};
-    else
+    var def = this._gap_defs_to_phase[gap.to_event.name];
+
+    if (!def)
+      def = this._gap_defs[gap.from_event.name]
+            && this._gap_defs[gap.from_event.name][gap.to_event.name];
+
+    if (!def)
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             "Unexpected event sequence between " + gap.from_event.name + " and " + gap.to_event.name);
+
+    return def;
   };
 
   this._add_event = function(eventname, eventdata)
@@ -608,22 +647,18 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     var evt = {name: eventname, time: eventdata.time, request_id: eventdata.requestID};
     // add to events
     this.events.push(evt);
-
     // add event to existing gap
     if (this.event_sequence.length)
     {
       var gap = this.event_sequence.last;
       gap.to_event = evt;
+
       gap.val = gap.to_event.time - gap.from_event.time;
       gap.val_string = gap.val.toFixed(2) + "ms";
       var gap_def = this.get_gap_def(gap);
-      gap.classname = (gap_def && gap_def.classname) || "";
-      gap.title = (gap_def && gap_def.title) || "";
+      gap.classname = gap_def && gap_def.classname || "";
+      gap.title = gap_def && gap_def.title || "";
     }
-    // add highlighted events
-    if (this._highlighted_events[evt.name])
-      this.event_sequence.push({highlighted_event: evt, string: this._highlighted_events[evt.name]});
-
     // add new gap
     this.event_sequence.push({from_event: evt});
   }

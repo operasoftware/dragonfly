@@ -231,9 +231,7 @@
       icon_classname = button.handler;
     var is_active = values.contains(button.value);
     var template =
-      ["span",
-        button.text || "",
-        "title", button.title || button.text,
+      ["span", button.text || "",
         "data-single-select-value", button.value,
         "tabindex", "1",
         "class", "ui-button ui-control " +
@@ -241,7 +239,7 @@
                  (button.class_name ? button.class_name + " " : "") +
                  (button.text ? "text-button " : " ") +
                  (is_active ? "is-active " : " ")
-      ];
+      ].concat(button.title ? ["title", button.title] : []);
     return template;
   }
 

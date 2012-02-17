@@ -361,15 +361,9 @@ templates.network_graph_entry_tooltip = function(entry)
 
     var event_rows = entry.event_sequence.map(function(stop, index, arr)
     {
-      // a stop can be a highlighted_event, which will be printed without duration
-      if (stop.highlighted_event)
-        return ["tr", ["td"], ["td", stop.string, "class", "gap_title"]];
-
-      // or it's a gap, and has only a from_event and no val.
-      // these are ommited as they only mark the start of a gap
+      // sequences with only from_event are ommited as they only mark the start of a gap
       if (!stop.val_string)
         return [];
-      // or it's a gap that has a from_event, val and to_event
       else
       {
         return ["tr",

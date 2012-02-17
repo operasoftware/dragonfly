@@ -634,26 +634,32 @@ cls.NetworkLog.create_ui_widgets = function()
           items: [
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_ALL,
               value: ""
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP,
               value: "markup"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS,
               value: "css"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS,
               value: "script"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES,
               value: "image"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
                       // the value it the comma-sparated list of strings to match type or load_origin,
                       // "|is_blacklist" can optionally be appended.
                       // This is parsed in network_service, in the data model in set_filter
@@ -661,6 +667,7 @@ cls.NetworkLog.create_ui_widgets = function()
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_XHR,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_XHR,
               value: "xhr"
             }
           ]
