@@ -605,6 +605,11 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
         "response": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE,
           classname: CLASSNAME_WAITING
+        },
+        // For example on a HEAD request, the url is finished after headers came in
+        "urlfinished": {
+          title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING,
+          classname: CLASSNAME_BLOCKED
         }
       }
   };

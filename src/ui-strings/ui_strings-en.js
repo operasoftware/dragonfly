@@ -678,8 +678,11 @@ ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
 /* DESC: Label for http event sequence when closing response phase */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
 
-/* DESC: Label for http event sequence when processing */
+/* DESC: Label for http event sequence when processing response */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE = "Processing response";
+
+/* DESC: Label for http event sequence when processing */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING = "Processing";
 
 /* DESC: Label for http event sequence when waiting for response from network */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
