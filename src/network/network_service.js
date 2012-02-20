@@ -275,13 +275,6 @@ cls.RequestContext = function()
     views.network_logger.update();
   }
 
-  this._invalid_if_not_touched_network_filter = function(entry)
-  {
-    if (entry.invalid_if_not_touched_network && !entry.touched_network)
-      return false;
-    return true;
-  }
-
   this.get_entries_filtered = function()
   {
     return this.get_entries().filter(this._filter_function_bound);
@@ -293,7 +286,7 @@ cls.RequestContext = function()
     if (this.is_paused())
       entries = this._paused_entries;
 
-    return entries.filter(this._invalid_if_not_touched_network_filter);
+    return entries;
   }
 
   this.get_entries_with_res_id = function(res_id)
@@ -404,13 +397,6 @@ cls.RequestContext = function()
     {
       var id = event.resourceID + ":" + this._logger_entries.length;
       logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID, event.documentID);
-      if (this.get_entries_with_res_id(event.resourceID).length)
-      {
-        // A second request to a resource is only to be rendered when it touched network. 
-        // Everything else is most likely an internal request, happens randomly and 
-        // doesn't mean much. See CORE-43063.
-        logger_entry.invalid_if_not_touched_network = true;
-      }
       this._logger_entries.push(logger_entry);
     }
     logger_entry.requestID = event.requestID;
