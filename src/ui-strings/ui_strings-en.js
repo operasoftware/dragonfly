@@ -594,7 +594,7 @@ ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in octets (8-bi
 /* DESC: label for table header that shows waiting time (short) */
 ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
 
-/* DESC: tooltip on table header that shows waiting time */
+/* DESC: tooltip for table header that shows waiting time */
 ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
 
 /* DESC: label for table header that shows starting time (short) */
