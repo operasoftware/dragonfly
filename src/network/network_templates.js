@@ -104,8 +104,6 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
                                 !ctx.incomplete_warn_discarded;
 
   return [
-    show_incomplete_warning ?
-      templates.network_incomplete_warning() : [],
     [
       "div", templates.network_log_url_list(ctx, selected, item_order),
       "id", "network-url-list"
@@ -121,7 +119,9 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
       "div", [
         templates.network_log_summary(ctx)
       ], "class", "network-summary"
-    ]
+    ],
+    show_incomplete_warning ?
+      templates.network_incomplete_warning() : []
   ]
 };
 

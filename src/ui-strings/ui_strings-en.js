@@ -585,11 +585,11 @@ ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
 
-/* DESC: tooltip on size table header */
+/* DESC: tooltip on prettyprinted size table header */
 ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED = "Content-length of the response";
 
 /* DESC: tooltip on size table header */
-ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in octets (8-bit bytes)";
+ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in bytes";
 
 /* DESC: label for table header that shows waiting time (short) */
 ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
