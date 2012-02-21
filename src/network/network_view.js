@@ -57,7 +57,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._create = function()
   {
     var ctx = this._service.get_request_context();
-    if (ctx) // todo: had a has_resources() check before, should maybe check for entries. bug when switching debug context, stays empty
+    if (ctx)
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filter(this._type_filters || []);
@@ -179,15 +179,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         renderer: function(entry) {
           return (entry.responsecode && String(entry.responsecode)) || "";
         },
-        title_getter: function(entry, getter) {
+        title_getter: function(entry, renderer) {
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
             return entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
-          return getter(entry);
+          return renderer(entry);
         },
-        sorter: function(obj_a, obj_b) { // todo: it would be better to let the getter return 0 and keep the sorter as default. but can't pass a number.
-          var a = obj_a.responsecode || 0;
-          var b = obj_b.responsecode || 0;
-          return a > b;
+        getter: function(entry) {
+          return entry.responsecode || 0;
         }
       },
       mime: {

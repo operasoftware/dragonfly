@@ -527,7 +527,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
             {
               var title;
               if (coldef.title_getter)
-                title = coldef.title_getter(item, coldef.getter);
+                title = coldef.title_getter(item, coldef.renderer);
 
               if (coldef.use_ellipsis)
               {
