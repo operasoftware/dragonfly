@@ -284,11 +284,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       if (data && data.length)
       {
         var old_item_order = this._item_order;
-
         this._item_order = data.map(function(res){return res.id}).join(",");
-        if (this._item_order !== old_item_order)
+        // a changed item_order means we need to re-render. except when just the last item is added.
+        if (this._item_order !== old_item_order
+            && this._item_order !== old_item_order + "," + data.last.id)
         {
-          needs_update = true; // todo: this causes another re-rendering for every added resource. optimize.
+          needs_update = true;
         }
       }
     }
