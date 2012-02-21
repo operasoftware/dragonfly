@@ -22,7 +22,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var min_render_delay = 200;
     var timedelta = new Date().getTime() - this._rendertime;
-
     if (this._rendertimer)
       this._rendertimer = window.clearTimeout(this._rendertimer);
 
@@ -33,6 +32,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
     if (this.needs_instant_update)
       this.needs_instant_update = false;
+    this._rendertime = new Date().getTime();
 
     this._container = container;
 
