@@ -1,4 +1,4 @@
-﻿window.ui_strings || ( window.ui_strings  = {} );
+window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -12,11 +12,20 @@ window.ui_strings.lang_code = "en";
  * M        Menus
  */
 
+/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
+ui_strings.D_REDO_SEARCH = "The searched document no longer exist.\nRepeat search in the current document?";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
+ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
+
 /* DESC: Context menu item for adding an attribute in the DOM view. */
 ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = "Add attribute";
 
 /* DESC: Context menu item for adding a breakpoint. */
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = "Add breakpoint";
+
+/* DESC: Context menu item to add a color in the color palette. */
+ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
 
 /* DESC: Context menu item for breakpoints to add a condition. */
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = "Add condition";
@@ -27,14 +36,32 @@ ui_strings.M_CONTEXTMENU_ADD_DECLARATION = "Add declaration";
 /* DESC: Context menu item for adding a something to watches. */
 ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 
+/* DESC: Context menu item for collapsing a node subtree. */
+ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
+
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
 
 /* DESC: Context menu item, general "Delete all" in a context, e.g. breakpoints */
 ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
 
+/* DESC: Context menu item for deleting all breakpoints */
+ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
+
+/* DESC: Context menu item for deleting a breakpoint. */
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
+
+/* DESC: Context menu item to delete a color in the color palette. */
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+
+/* DESC: Context menu item for breakpoints to delete a condition. */
+ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
+
 /* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
 ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
+
+/* DESC: Context menu item for disabling all breakpoints */
+ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
 
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
@@ -44,6 +71,9 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = "Edit attribute";
 
 /* DESC: Context menu item for editing an attribute value in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = "Edit attribute value";
+
+/* DESC: Context menu item to edit a color in the color palette. */
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
 
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = "Edit condition";
@@ -57,17 +87,32 @@ ui_strings.M_CONTEXTMENU_EDIT_MARKUP = "Edit markup";
 /* DESC: Context menu item for editing text in the DOM view. */
 ui_strings.M_CONTEXTMENU_EDIT_TEXT = "Edit text";
 
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Context menu item for enabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
+
+/* DESC: Context menu item for expanding a node subtree. */
+ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = 'Expand subtree';
+
 /* DESC: Context menu item for showing the color picker. */
 ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = "Open color picker";
 
 /* DESC: Context menu item for removing a breakpoint. */
 ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = "Remove breakpoint";
 
+/* DESC: Context menu item for removing a breakpoint. */
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+
 /* DESC: Context menu item for removing a property in a rule. */
 ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = "Remove declaration";
 
 /* DESC: Context menu item for removing a node in the DOM view. */
 ui_strings.M_CONTEXTMENU_REMOVE_NODE = "Remove node";
+
+/* DESC: Show resource context menu entry. */
+ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
 
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = "Specification for \"%s\"";
@@ -78,14 +123,20 @@ ui_strings.M_CONTEXTMENU_STORAGE_ADD = "Add item";
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = "Delete item";
 
+/* DESC: Context menu item for editing an item in the storage view. */
+ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
+
 /* DESC: Context menu item for deleting multiple items in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
 
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
 
-/* DESC: Context menu item for editing an item in the storage view. */
-ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
+/* DESC: Label for option that clears all errors */
+ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
+
+/* DESC: Label for user interface language dropdown in settings */
+ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
 
 /* DESC: Label for request body input in network crafter */
 ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";
@@ -108,17 +159,17 @@ ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 /* DESC: General settings label. */
 ui_strings.M_SETTING_LABEL_GENERAL = "General";
 
-/* DESC: Context menu entry to reset the columns that are shown */
-ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
-
-/* DESC: Context menu entry to reset the sort order */
-ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
-
 /* DESC: Context menu entry to selecting to group by %s */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY = "Group by \"%s\"";
 
 /* DESC: Context menu entry to select that there should be no grouping in the table */
 ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
+
+/* DESC: Context menu entry to reset the columns that are shown */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
+
+/* DESC: Context menu entry to reset the sort order */
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
 
 /* DESC: view that shows all resources */
 ui_strings.M_VIEW_LABEL_ALL_RESOURCES = "All resources";
@@ -131,6 +182,15 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = "Call Stack";
 
 /* DESC: Label of the pixel magnifier and color picker view */
 ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = "Pixel Magnifier and Color Picker";
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
+
+/* DESC: View of the palette of the stored colors. */
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = 'Palette';
+
+/* DESC: View with a screenshot to select a color. */
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
 
 /* DESC: Label of the section for selecting a color in color picker */
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = "Color Select";
@@ -183,14 +243,23 @@ ui_strings.M_VIEW_LABEL_ERROR_HTML = "HTML";
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Java errors. */
 ui_strings.M_VIEW_LABEL_ERROR_JAVA = "Java";
 
+/* DESC: Tooltip that explains File:Line notation (e.g. in Error Log) */
+ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE = "Line %(LINE)s in %(URI)s";
+
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Mail errors. */
 ui_strings.M_VIEW_LABEL_ERROR_M2 = "Mail";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Network errors. */
 ui_strings.M_VIEW_LABEL_ERROR_NETWORK = "Network";
 
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing errors that we don't have a dedicated tab for. */
+ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
+
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all JS errors. */
 ui_strings.M_VIEW_LABEL_ERROR_SCRIPT = "JavaScript";
+
+/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Storage errors. */
+ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all SVG errors. */
 ui_strings.M_VIEW_LABEL_ERROR_SVG = "SVG";
@@ -203,18 +272,6 @@ ui_strings.M_VIEW_LABEL_ERROR_XML = "XML";
 
 /* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all XSLT errors. */
 ui_strings.M_VIEW_LABEL_ERROR_XSLT = "XSLT";
-
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing all Storage errors. */
-ui_strings.M_VIEW_LABEL_ERROR_STORAGE = "Storage";
-
-/* DESC: Tab heading, subhead under the Error Console tab for the error view filter for showing errors that we don't have a dedicated tab for. */
-ui_strings.M_VIEW_LABEL_ERROR_OTHER = "Other";
-
-/* DESC: Tooltip that explains File:Line notation (e.g. in Error Log) */
-ui_strings.M_VIEW_LABEL_ERROR_LOCATION_TITLE = "Line %(LINE)s in %(URI)s";
-
-/* DESC: Label for option that clears all errors */
-ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";
@@ -294,6 +351,9 @@ ui_strings.M_VIEW_LABEL_RUNTIME_STATE = "State";
 /* DESC: Subhead located under the Scripts area, for scripts contained in runtime. */
 ui_strings.M_VIEW_LABEL_SCRIPTS = "Scripts";
 
+/* DESC: Tab heading for the search panel. */
+ui_strings.M_VIEW_LABEL_SEARCH = "Search";
+
 /* DESC: view for the session storage */
 ui_strings.M_VIEW_LABEL_SESSION_STORAGE = "Session Storage";
 
@@ -338,6 +398,12 @@ ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 
 /* DESC: Label for the layout subview showing the parent node chain used to calculate the offset. */
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+
+/* DESC: Anonymous function label. */
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
 
 /* DESC: Missing description! */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -429,6 +495,9 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH = "Less";
 /* DESC: Leave anvanced search mode tooltip */
 ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 
+/* DESC: Button label to show window for loading a PO file */
+ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
+
 /* DESC: Missing description! */
 ui_strings.S_BUTTON_OK = "Ok";
 
@@ -437,9 +506,6 @@ ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
 
 /* DESC: Reset all keyboard shortcuts to the default values. */
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
-
-/* DESC: Label for the global keyboard shortcuts section */
-ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset default values";
@@ -474,6 +540,12 @@ ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 /* DESC: Missing description! */
 ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
+/* DESC: Button label to store the color */
+ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+
+/* DESC: Button label to take a screenshot */
+ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
+
 /* DESC: Label for button in Remote Debugging that applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = "Apply";
 
@@ -486,11 +558,20 @@ ui_strings.S_BUTTON_TOGGLE_REMOTE_DEBUG = "Remote debug configuration";
 /* DESC: Global settings toggle */
 ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 
+/* DESC: Button label to update the screenshot */
+ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
 
+/* DESC: Label on button to clear network graph */
+ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
+
 /* DESC: Close command line window */
 ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
+
+/* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
+ui_strings.S_COLOR_NOTATION = "Color format";
 
 /* DESC: Average color setting, " x pixels" will be added */
 ui_strings.S_COLOR_PICKER_AVERAGE_COLOR_OF = "Average color of";
@@ -506,6 +587,9 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
+
+/* DESC: Label for the list of function when doing console.trace(). */
+ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
 
 /* DESC: In 1 hour */
 ui_strings.S_COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
@@ -546,14 +630,113 @@ ui_strings.S_COOKIE_MANAGER_SOONER_THEN_1_MINUTE = "< 1 minute";
 /* DESC: Tomorrow */
 ui_strings.S_COOKIE_MANAGER_TOMORROW = "Tomorrow";
 
+/* DESC: Tooltip for disabling a declaration */
+ui_strings.S_DISABLE_DECLARATION = "Disable";
+
 /* DESC: Prefix before debug output */
 ui_strings.S_DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
+
+/* DESC: Tooltip for enabling a declaration */
+ui_strings.S_ENABLE_DECLARATION = "Enable";
 
 /* DESC: List of filters that will be hidden in the Error log */
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 
+/* DESC: Context menu item for expanding shorthands */
+ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
+
+/* DESC: Label for the global keyboard shortcuts section */
+ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
+/* DESC: Global scope label. */
+ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
+
+/* DESC: Label for http event requestretry */
+ui_strings.S_HTTP_EVENT_REQUESTRETRY = "Request retry";
+
+/* DESC: Label for http event sequence when urlfinished follows after some other event, meaning it was aborted */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST = "Request aborted";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING = "Sequence terminated, retry";
+
+/* DESC: Label for http event sequence when closing response phase */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
+
+/* DESC: Label for http event sequence when processing */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING = "Processing";
+
+/* DESC: Label for http event sequence when processing response */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE = "Processing response";
+
+/* DESC: Label for http event sequence when reading local data (data-uri, caches, file:// etc) */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
+
+/* DESC: Label for http event sequence when redirecting */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
+
+/* DESC: Label for http event sequence when the event was scheduled */
+ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
+
+/* DESC: Label for http event sequence when reading response body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY = "Reading response body";
+
+/* DESC: Label for http event sequence when reading response header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER = "Reading response header";
+
+/* DESC: Label for http event sequence when waiting for response from network */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
+
+/* DESC: Label for http event sequence when writing request body */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
+
+/* DESC: Label for http event sequence when writing request header */
+ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
+
+/* DESC: Label for http event urlredirect */
+ui_strings.S_HTTP_EVENT_URLREDIRECT = "Redirect";
+
+/* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
+ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Reload to show all page requests";
+
+/* DESC: tooltip for the network data view button */
+ui_strings.S_HTTP_LABEL_DATA_VIEW = "Data view";
+
+/* DESC: label for table header that shows duration (short) */
+ui_strings.S_HTTP_LABEL_DURATION = "Duration";
+
+/* DESC: label for the network filter that shows all items */
+ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
+
+/* DESC: label for the network filter that shows image items */
+ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
+
+/* DESC: label for the network filter that shows markup items */
+ui_strings.S_HTTP_LABEL_FILTER_MARKUP = "Markup";
+
+/* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
+
+/* DESC: label for the network filter that shows script items */
+ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS = "Scripts";
+
+/* DESC: label for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS = "Stylesheets";
+
+/* DESC: label for the network filter that shows items requested over XMLHttpRequest */
+ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
+
+/* DESC: label for table header that shows loading sequence as a graph (short) */
+ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
+
+/* DESC: tooltip for the network graph view button */
+ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";
 
 /* DESC: label for host in http request details */
 ui_strings.S_HTTP_LABEL_HOST = "Host";
@@ -570,14 +753,53 @@ ui_strings.S_HTTP_LABEL_QUERY_ARGS = "Query arguments";
 /* DESC: label for response in http request details */
 ui_strings.S_HTTP_LABEL_RESPONSE = "Response";
 
-/* DESC: label for url in http request details */
-ui_strings.S_HTTP_LABEL_URL = "URL";
-
 /* DESC: label for table header that shows http response code (short) */
 ui_strings.S_HTTP_LABEL_RESPONSECODE = "Status";
 
-/* DESC: tooltip on table header that shows http response code */
-ui_strings.S_HTTP_TOOLTIP_RESPONSECODE = "HTTP status code";
+/* DESC: label for table header that shows starting time (short) */
+ui_strings.S_HTTP_LABEL_STARTED = "Started";
+
+/* DESC: label for url in http request details */
+ui_strings.S_HTTP_LABEL_URL = "URL";
+
+/* DESC: label for table header that shows waiting time (short) */
+ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
+
+/* DESC: tooltip for resources that have not been requested over network (mostly that means cached) */
+ui_strings.S_HTTP_NOT_REQUESTED = "Cached";
+
+/* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
+ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
+
+/* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
+ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
+
+/* DESC: tooltip for table header that shows duration */
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this url";
+
+/* DESC: tooltip for the network filter that shows all items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
+
+/* DESC: tooltip for the network filter that shows image items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES = "Show only images";
+
+/* DESC: tooltip for the network filter that shows markup items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP = "Show only markup";
+
+/* DESC: tooltip for the network filter that shows items that are not markup, stylesheet, script or image */
+ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show only requests that are of other types than mentioned before";
+
+/* DESC: tooltip for the network filter that shows script items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
+
+/* DESC: tooltip for the network filter that shows stylesheet items */
+ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS = "Show only stylesheets";
+
+/* DESC: tooltip for the network filter that shows items requested over XMLHttpRequest */
+ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only requests requested over XMLHttpRequest";
+
+/* DESC: tooltip for table header that shows loading sequence as a graph */
+ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip on mime type table header */
 ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
@@ -585,143 +807,23 @@ ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
 
-/* DESC: tooltip on prettyprinted size table header */
-ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED = "Content-length of the response";
+/* DESC: tooltip on table header that shows http response code */
+ui_strings.S_HTTP_TOOLTIP_RESPONSECODE = "HTTP status code";
 
 /* DESC: tooltip on size table header */
 ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in bytes";
 
-/* DESC: label for table header that shows waiting time (short) */
-ui_strings.S_HTTP_LABEL_WAITING = "Waiting";
-
-/* DESC: tooltip for table header that shows waiting time */
-ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
-
-/* DESC: label for table header that shows starting time (short) */
-ui_strings.S_HTTP_LABEL_STARTED = "Started";
+/* DESC: tooltip on prettyprinted size table header */
+ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED = "Content-length of the response";
 
 /* DESC: tooltip for table header that shows relative starting time */
 ui_strings.S_HTTP_TOOLTIP_STARTED = "Starting time, relative to the main document";
 
-/* DESC: label for table header that shows duration (short) */
-ui_strings.S_HTTP_LABEL_DURATION = "Duration";
-
-/* DESC: tooltip for table header that shows duration */
-ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this url";
-
-/* DESC: label for table header that shows loading sequence as a graph (short) */
-ui_strings.S_HTTP_LABEL_GRAPH = "Graph";
-
-/* DESC: tooltip for table header that shows loading sequence as a graph */
-ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
-
-/* DESC: tooltip for the network graph view button */
-ui_strings.S_HTTP_LABEL_GRAPH_VIEW = "Graph view";
-
-/* DESC: tooltip for the network data view button */
-ui_strings.S_HTTP_LABEL_DATA_VIEW = "Data view";
-
-/* DESC: label for the network filter that shows all items */
-ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
-
-/* DESC: tooltip for the network filter that shows all items */
-ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
-
-/* DESC: label for the network filter that shows markup items */
-ui_strings.S_HTTP_LABEL_FILTER_MARKUP = "Markup";
-
-/* DESC: tooltip for the network filter that shows markup items */
-ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP = "Show only markup";
-
-/* DESC: label for the network filter that shows stylesheet items */
-ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS = "Stylesheets";
-
-/* DESC: tooltip for the network filter that shows stylesheet items */
-ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS = "Show only stylesheets";
-
-/* DESC: label for the network filter that shows script items */
-ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS = "Scripts";
-
-/* DESC: tooltip for the network filter that shows script items */
-ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
-
-/* DESC: label for the network filter that shows image items */
-ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
-
-/* DESC: tooltip for the network filter that shows image items */
-ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES = "Show only images";
-
-/* DESC: label for the network filter that shows items that are not markup, stylesheet, script or image */
-ui_strings.S_HTTP_LABEL_FILTER_OTHER = "Other";
-
-/* DESC: tooltip for the network filter that shows items that are not markup, stylesheet, script or image */
-ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show only requests that are of other types than mentioned before";
-
-/* DESC: label for the network filter that shows items requested over XMLHttpRequest */
-ui_strings.S_HTTP_LABEL_FILTER_XHR = "XHR";
-
-/* DESC: tooltip for the network filter that shows items requested over XMLHttpRequest */
-ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only requests requested over XMLHttpRequest";
+/* DESC: tooltip for table header that shows waiting time */
+ui_strings.S_HTTP_TOOLTIP_WAITING = "Time spent requesting this resource";
 
 /* DESC: tooltip-prefix for resources that have been marked unloaded, which means they are no longer reference in the document */
 ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
-
-/* DESC: tooltip for resources that have not been requested over network (mostly that means cached) */
-ui_strings.S_HTTP_NOT_REQUESTED = "Cached";
-
-/* DESC: tooltip for resources served over file:// to make it explicit that this didn't touch the network */
-ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
-
-/* DESC: Headline for network-sequence tooltip that shows the absolute time when the resource was requested internally */
-ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
-
-/* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
-ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Reload to show all page requests";
-
-/* DESC: Label for http event sequence when redirecting */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
-
-/* DESC: Label for http event sequence when redirecting */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING = "Sequence terminated, retry";
-
-/* DESC: Label for http event sequence when urlfinished follows after some other event, meaning it was aborted */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST = "Request aborted";
-
-/* DESC: Label for http event sequence when the event was scheduled */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
-
-/* DESC: Label for http event sequence when reading local data (data-uri, caches, file:// etc) */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA = "Reading local data";
-
-/* DESC: Label for http event sequence when closing response phase */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE = "Closing response phase";
-
-/* DESC: Label for http event sequence when processing response */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE = "Processing response";
-
-/* DESC: Label for http event sequence when processing */
-ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING = "Processing";
-
-/* DESC: Label for http event sequence when waiting for response from network */
-ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
-
-/* DESC: Label for http event sequence when writing request header */
-ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
-
-/* DESC: Label for http event sequence when writing request body */
-ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
-
-/* DESC: Label for http event sequence when reading response header */
-ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER = "Reading response header";
-
-/* DESC: Label for http event sequence when reading response body */
-ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY = "Reading response body";
-
-/* DESC: Label for http event requestretry */
-ui_strings.S_HTTP_EVENT_REQUESTRETRY = "Request retry";
-
-/* DESC: Label for http event urlredirect */
-ui_strings.S_HTTP_EVENT_URLREDIRECT = "Redirect";
 
 /* DESC: Information shown if the document does not hold any style sheet. */
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
@@ -732,6 +834,18 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 
+/* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
+ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
+
+/* DESC: Info text in the settings to invert the highlight color for elements. */
+ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the “%s” shortcut.";
+
+/* DESC: The info text to notify the user that the application is performing the search. */
+ui_strings.S_INFO_IS_SEARCHING = "searching…";
+
+/* DESC: Info text in the network view when a page starts to load while screen updats are paused */
+ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
+
 /* DESC: Message about there being no version of dragonfly compatible with the browser being debugged */
 ui_strings.S_INFO_NO_COMPATIBLE_VERSION = "There is no compatible Opera Dragonfly version.";
 
@@ -741,8 +855,14 @@ ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
 
+/* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
+ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
+
 /* DESC: Currently no scripts are loaded and a reload of the page will resolve all linked scripts. */
 ui_strings.S_INFO_RELOAD_FOR_SCRIPT = "Click the reload button above to fetch the scripts for the selected debugging context";
+
+/* DESC: Info text in when a request in the request crafter failed. */
+ui_strings.S_INFO_REQUEST_FAILED = "The request failed.";
 
 /* DESC: Information shown if the document does not hold any scripts. Appears in Scripts view. */
 ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS = "This document has no scripts";
@@ -752,6 +872,9 @@ ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";
 
 /* DESC: Information shown if the stylesheet does not hold any style rules. */
 ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = "This style sheet has no rules";
+
+/* DESC: The info text to notify the user that only a part of the search results are displayed. */
+ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
 
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
@@ -786,14 +909,17 @@ ui_strings.S_LABEL_COLOR_LUMINOSITY = "Luminosity";
 /* DESC: Label for the opacity of a color value. */
 ui_strings.S_LABEL_COLOR_OPACITY = "Opacity";
 
+/* DESC: Setting label to select the sample size of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
+
+/* DESC: Setting label to select the zoom level of the color picker  */
+ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
+
 /* DESC: Label for the saturation of a color value. */
 ui_strings.S_LABEL_COLOR_SATURATION = "Saturation";
 
 /* DESC: Context menu entry that brings up "Add cookie" UI, Label for "Add Cookie" button */
 ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE = "Add cookie";
-
-/* DESC: Label for "Add storage_type" button */
-ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE = "Add %s";
 
 /* DESC: Label for the domain that is set for a cookie */
 ui_strings.S_LABEL_COOKIE_MANAGER_COOKIE_DOMAIN = "Domain";
@@ -840,11 +966,17 @@ ui_strings.S_LABEL_COOKIE_MANAGER_REMOVE_COOKIES_OF = "Delete cookies from %s";
 /* DESC: Label for isSecure flag on a cookie, set if cookie is only transmitted on secure connections */
 ui_strings.S_LABEL_COOKIE_MANAGER_SECURE_CONNECTIONS_ONLY = "Secure";
 
-/* DESC: Label for the key (identifier) of a storage item */
-ui_strings.S_LABEL_STORAGE_KEY = "Key";
+/* DESC: Setting label to switch back to the default setting */
+ui_strings.S_LABEL_DEFAULT_SELECTION = "Default";
+
+/* DESC: Context menu entry that removes all watches */
+ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
 
 /* DESC: Context menu entry that removes watch */
 ui_strings.S_LABEL_DELETE_WATCH = "Delete watch";
+
+/* DESC: Label for a button in a dialog to dismiss in so it won't be shown again */
+ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
@@ -857,9 +989,6 @@ ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
 
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
-
-/* DESC: Setting label to switch back to the default setting */
-ui_strings.S_LABEL_DEFAULT_SELECTION = "Default";
 
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = "Keyboard shortcuts %s";
@@ -879,11 +1008,20 @@ ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_ATTR_AND_TEXT = "Edit Attributes and
 /* DESC: Label of a subsection in the keyboard configuration */
 ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT_MARKUP = "Edit markup";
 
+/* DESC: Settings label for the maximum number of search hits in the search panel. */
+ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
+
 /* DESC: Button tooltip */
 ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN = "Find next";
 
 /* DESC: Button tooltip */
 ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP = "Find previous";
+
+/* DESC: Label for the name column header of a form field in a POST */
+ui_strings.S_LABEL_NETWORK_POST_DATA_NAME = "Name";
+
+/* DESC: Label for the value column header of a form value in a POST */
+ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE = "Value";
 
 /* DESC: Label for the network port to connect to. */
 ui_strings.S_LABEL_PORT = "Port";
@@ -905,6 +1043,33 @@ ui_strings.S_LABEL_REPL_MODE_SINGLELINE = "Single-line edit";
 
 /* DESC: Label of the section with the scope chain in the Inspection view */
 ui_strings.S_LABEL_SCOPE_CHAIN = "Scope Chain";
+
+/* DESC: Checkbox label to search in all files in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
+
+/* DESC: Checkbox label to set the 'ignore case' flag search panel. */
+ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
+
+/* DESC: Checkbox label to search in injected scripts in the JS search pane. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
+
+/* DESC: Tooltip for the injected scripts search settings label. */
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
+
+/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
+
+/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
+
+/* DESC: Radio label for the search type 'Text' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
+
+/* DESC: Radio label for the search type 'XPath' in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
+
+/* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
 /* DESC: Missing description! */
 ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "Border";
@@ -954,11 +1119,17 @@ ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Highlight Metrics";
 /* DESC: Missing description! */
 ui_strings.S_LABEL_STORAGE_ADD = "Add";
 
+/* DESC: Label for "Add storage_type" button */
+ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE = "Add %s";
+
 /* DESC: Missing description! */
 ui_strings.S_LABEL_STORAGE_DELETE = "Delete";
 
 /* DESC: Missing description! */
 ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
+
+/* DESC: Label for the key (identifier) of a storage item */
+ui_strings.S_LABEL_STORAGE_KEY = "Key";
 
 /* DESC: Missing description! */
 ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
@@ -984,9 +1155,6 @@ ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT = "Reload";
 /* DESC: Select the active window as debugger context. */
 ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = "Select Active Window";
 
-/* DESC: Label for a button in a dialog to dismiss in so it won't be shown again */
-ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
-
 /* DESC: String used when the user has clicked to get a resource body, but dragonfly wasn't able to do so. */
 ui_strings.S_NETWORK_BODY_NOT_AVAILABLE = "Request body not available. Enable resource tracking and reload the page to view the resource.";
 
@@ -1002,17 +1170,20 @@ ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 /* DESC: Title for caching settings section in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
 
+/* DESC: Can't show request data, as we don't know the type of it. */
+ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Can't display content of type %s";
+
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
-/* DESC: Name of content tracking setting for tracking content */
-ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
+/* DESC: Explanation of how to enable content tracking. */
+ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the \"network options\" panel to be able to see request bodies";
 
-/* DESC: Name of entry in Network Log, used in summary at the end */
-ui_strings.S_NETWORK_REQUEST = "Request";
+/* DESC: Example value to show what header formats look like. Header-name */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_NAME = "Header-name";
 
-/* DESC: Name of entry in Network Log, plural, used in summary at the end */
-ui_strings.S_NETWORK_REQUESTS = "Requests";
+/* DESC: Example value to show what header formats look like. Header-value */
+ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_VALUE = "Header-value";
 
 /* DESC: Description of network header overrides feature. */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC = "Headers in the override box will be used for all requests in the debugged browser. They will override normal headers.";
@@ -1023,26 +1194,35 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
 
-/* DESC: Label for selecting an empty preset */
-ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
-
-/* DESC: Example value to show what header formats look like. Header-name */
-ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_NAME = "Header-name";
-
-/* DESC: Example value to show what header formats look like. Header-value */
-ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_VALUE = "Header-value";
-
 /* DESC: Label for save nbutton */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
+
+/* DESC: Label for selecting an empty preset */
+ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
 
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
-/* DESC: Message about not yet available response body */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
+/* DESC: Title of request body section when the body is multpart encoded */
+ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
+
+/* DESC: String used when there is a request body we can't show the contents of directly. */
+ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
+
+/* DESC: Name of entry in Network Log, used in summary at the end */
+ui_strings.S_NETWORK_REQUEST = "Request";
+
+/* DESC: Name of entry in Network Log, plural, used in summary at the end */
+ui_strings.S_NETWORK_REQUESTS = "Requests";
+
+/* DESC: Name of content tracking setting for tracking content */
+ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
 
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
+
+/* DESC: Message about not yet available response body */
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
 
 /* DESC: Help text about how a response could not be show because resource tracking is not on. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not available. Enable resource tracking and reload the page to view the resource.";
@@ -1061,6 +1241,12 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
+
+/* DESC: Explanation about why a network requests lacks headers. */
+ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made.  All data was retrieved from cache without accessing the network";
+
+/* DESC: Unknown mime type for content */
+ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
 /* DESC: The string "None" used wherever there's an absense of something */
 ui_strings.S_NONE = "None";
@@ -1131,17 +1317,29 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
 /* DESC: Name of hosts size group */
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 
-/* DESC: Fallback text for no host */
-ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
-
 /* DESC: Fallback text for no filename, used as tab label */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+
+/* DESC: Fallback text for no host */
+ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
 
 /* DESC: Fallback text for unknown groups */
 ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
+
+/* DESC: Label for the global scope in the Scope Chain. */
+ui_strings.S_SCOPE_GLOBAL = "Global";
+
+/* DESC: Label for the scopes other than local and global in the Scope Chain. */
+ui_strings.S_SCOPE_INNER = "Scope %s";
+
+/* DESC: Section header in the script drop-down select for Browser and User JS. */
+ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
+
+/* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
+ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
 
 /* DESC: Tooltip for filtering text-input boxes */
 ui_strings.S_SEARCH_INPUT_TOOLTIP = "text search";
@@ -1167,6 +1365,15 @@ ui_strings.S_SETTINGS_HEADER_NETWORK = "Network";
 /* DESC: Header for settings group "Script" */
 ui_strings.S_SETTINGS_HEADER_SCRIPT = "Scripts";
 
+/* DESC: Description for CSS rules with the origin being the user */
+ui_strings.S_STYLE_ORIGIN_LOCAL = "user stylesheet";
+
+/* DESC: Description for CSS rules with the origin being the SVG presentation attributes */
+ui_strings.S_STYLE_ORIGIN_SVG = "presentation attributes";
+
+/* DESC: Description for CSS rules with the origin being the UA */
+ui_strings.S_STYLE_ORIGIN_USER_AGENT = "user agent stylesheet";
+
 /* DESC: Tooltip text for a button that attaches Opera Dragonfly to the main browser window. */
 ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 
@@ -1178,6 +1385,9 @@ ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
 
 /* DESC: Expand all (entries in a list) */
 ui_strings.S_SWITCH_EXPAND_ALL = "Expand all";
+
+/* DESC: If enabled objects can be expanded inline in the console. */
+ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
 
 /* DESC: Will select the element when clicked. */
 ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING = "Select an element in the page to inspect it";
@@ -1236,6 +1446,9 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-sp
 /* DESC: Show prototpe objects when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_PROTOTYPES = "Show prototypes";
 
+/* DESC: Show pseudo elements in the DOM view */
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = "Show siblings in breadcrumb trail";
 
@@ -1283,6 +1496,12 @@ ui_strings.S_SWITCH_SHOW_VIEWS_MENU = "Show Views menu";
 
 /* DESC: Shows or hides white space nodes in DOM. */
 ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = "Show whitespace nodes";
+
+/* DESC: When enabled, a screenshot is taken automatically on showing utilities */
+ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
+
+/* DESC: Settings checkbox label for toggling usage tracking */
+ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";
 
 /* DESC: When enabled, list alike objects will be unpacked in the command line */
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack objects which have list-like behavior in the console";
@@ -1341,225 +1560,6 @@ ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 /* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
 ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to the window width";
 
-/* DESC: Label on button to clear network graph */
-ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
-
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
-
-/* DESC: Context menu item for expanding a node subtree. */
-ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = 'Expand subtree';
-
-/* DESC: Context menu item for collapsing a node subtree. */
-ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
-
-/* DESC: Context menu item for breakpoints to delete a condition. */
-ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
-
-/* DESC: View with a screenshot to select a color. */
-ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
-
-/* DESC: View of the palette of the stored colors. */
-ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
-
-/* DESC: View of the palette of the stored colors. */
-ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = 'Palette';
-
-/* DESC: Context menu item to add a color in the color palette. */
-ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
-
-/* DESC: Context menu item to edit a color in the color palette. */
-ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
-
-/* DESC: Context menu item to delete a color in the color palette. */
-ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
-
-/* DESC: Setting label to select the zoom level of the color picker  */
-ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
-
-/* DESC: Setting label to select the sample size of the color picker  */
-ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
-
-/* DESC: Button label to update the screenshot */
-ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
-
-/* DESC: Button label to store the color */
-ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
-
-/* DESC: Context menu item for removing a breakpoint. */
-ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
-
-/* DESC: Context menu item for deleting a breakpoint. */
-ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
-
-/* DESC: Context menu entry that removes all watches */
-ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
-
-/* DESC: Explanation about why a network requests lacks headers. */
-ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made.  All data was retrieved from cache without accessing the network";
-
-/* DESC: Show resource context menu entry. */
-ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
-
-/* DESC: Info text in the settings to invert the highlight color for elements. */
-ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the “%s” shortcut.";
-
-/* DESC: Info text in when a request in the request crafter failed. */
-ui_strings.S_INFO_REQUEST_FAILED = "The request failed.";
-
-/* DESC: Info text in the network view when a page starts to load while screen updats are paused */
-ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
-
-/* DESC: When enabled, a screenshot is taken automatically on showing utilities */
-ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
-
-/* DESC: Button label to take a screenshot */
-ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
-
-/* DESC: Context menu item for enabling a breakpoint. */
-ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
-
-/* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
-
-/* DESC: Button label to show window for loading a PO file */
-ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
-
-/* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
-
-/* DESC: Label for user interface language dropdown in settings */
-ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
-
-/* DESC: Show pseudo elements in the DOM view */
-ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
-
-/* DESC: Tab heading for the search panel. */
-ui_strings.M_VIEW_LABEL_SEARCH = "Search";
-
-/* DESC: The info text to notify the user that only a part of the search results are displayed. */
-ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
-
-/* DESC: Settings label for the maximum number of search hits in the search panel. */
-ui_strings.S_LABEL_MAX_SEARCH_HITS = "Maximum number of search results";
-
-/* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "searching…";
-
-/* DESC: Title of request body section when the body is multpart encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
-
-/* DESC: Settings checkbox label for toggling usage tracking */
-ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";
-
-/* DESC: Explanation of how to enable content tracking. */
-ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the \"network options\" panel to be able to see request bodies";
-
-/* DESC: Context menu item for enabling a breakpoint. */
-ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
-
-/* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
-
-/* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
-
-/* DESC: Label for the list of function when doing console.trace(). */
-ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
-
-/* DESC: Context menu item for deleting all breakpoints */
-ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
-
-/* DESC: Context menu item for disabling all breakpoints */
-ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
-
-/* DESC: Label for the global scope in the Scope Chain. */
-ui_strings.S_SCOPE_GLOBAL = "Global";
-
-/* DESC: Label for the scopes other than local and global in the Scope Chain. */
-ui_strings.S_SCOPE_INNER = "Scope %s";
-
-/* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
-ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
-
-/* DESC: String used when there is a request body we can't show the contents of directly. */
-ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
-
-/* DESC: Can't show request data, as we don't know the type of it. */
-ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Can't display content of type %s";
-
-/* DESC: Radio label for the search type 'Text' in the DOM search panel. */
-ui_strings.S_LABEL_SEARCH_TYPE_TEXT = "Text";
-
-/* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
-ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
-
-/* DESC: Unknown mime type for content */
-ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
-
-/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
-ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
-
-/* DESC: Label for the name column header of a form field in a POST */
-ui_strings.S_LABEL_NETWORK_POST_DATA_NAME = "Name";
-
-/* DESC: Radio label for the search type 'XPath' in the DOM search panel. */
-ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
-
-/* DESC: Label for the value column header of a form value in a POST */
-ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE = "Value";
-
-/* DESC: Checkbox label to set the 'ignore case' flag search panel. */
-ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
-
-/* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
-ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
-
-/* DESC: If enabled objects can be expanded inline in the console. */
-ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE = "Expand objects inline in the console";
-
-/* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
-ui_strings.D_REDO_SEARCH = "The searched document no longer exist.\nRepeat search in the current document?";
-
-/* DESC: Checkbox label to search in all files in the JS search pane. */
-ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
-
-/* DESC: Checkbox label to search in injected scripts in the JS search pane. */
-ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
-
-/* DESC: Tooltip for the injected scripts search settings label. */
-ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
-
-/* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
-ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
-
-/* DESC: Description for CSS rules with the origin being the UA */
-ui_strings.S_STYLE_ORIGIN_USER_AGENT = "user agent stylesheet";
-
-/* DESC: Description for CSS rules with the origin being the user */
-ui_strings.S_STYLE_ORIGIN_LOCAL = "user stylesheet";
-
-/* DESC: Description for CSS rules with the origin being the SVG presentation attributes */
-ui_strings.S_STYLE_ORIGIN_SVG = "presentation attributes";
-
-/* DESC: Tooltip for enabling a declaration */
-ui_strings.S_ENABLE_DECLARATION = "Enable";
-
-/* DESC: Tooltip for disabling a declaration */
-ui_strings.S_DISABLE_DECLARATION = "Disable";
-
-/* DESC: Context menu item for expanding shorthands */
-ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
-
-/* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
-ui_strings.S_COLOR_NOTATION = "Color format";
-
-/* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
-ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
-
-/* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
-ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
-
-/* DESC: Section header in the script drop-down select for Browser and User JS. */
-ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
 
