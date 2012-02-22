@@ -126,7 +126,8 @@
   min-width: 280px;
 }
 
-.js-tooltip-title
+.js-tooltip-title,
+.network-tooltip-container h2
 {
   width: 100%;
   font-size: 1em;

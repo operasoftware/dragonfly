@@ -436,6 +436,8 @@ cst-icon[class="debugger-menu"]
   width: auto;
   padding-right: 5px;
   padding-left: 5px;
+  line-height: 17px;
+  vertical-align: middle;
 }
 
 .ui-button.text-button:active

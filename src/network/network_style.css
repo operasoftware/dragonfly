@@ -1,4 +1,4 @@
-﻿.network_logger {
+.network_logger {
   min-width: 410px; /* when smaler, the filter box takes 3 lines and the alignments break */
 }
 
@@ -83,39 +83,61 @@
   padding: 5px 0 0 8px;
 }
 
-.network_logger #network-url-list .network-log-url-list li.disqualified
+.network_logger #network-url-list .network-log-url-list li.disqualified:not(.selected)
 {
-  color: #8a8a8a;
+  color: rgba(0, 0, 0, 0.50);
 }
 
-.network_logger #network-url-list .network-log-url-list li.network-error
+.network_logger #network-url-list .network-log-url-list li.network-error:not(.selected)
 {
   color: #d2001c;
 }
 
-.network_logger #network-url-list .network-log-url-list li.network-error.selected
+.network_logger #network-url-list .network-log-url-list li.network-error.selected:not(.selected)
 {
   color: #3d0008;
 }
 
-.network-log-url-list li:nth-child(even),
-.network-graph-row:nth-child(odd)
-{
+.network-log-url-list li:nth-child(odd),
+.network-graph-row:nth-child(even),
+.network-data-table-container .sortable-table > tr:nth-child(even)
+{ 
   background-color: rgba(0, 0, 0, 0.03);
+}
+
+.network-data-table-container .sortable-table > tr:nth-child(odd)
+{ /*Overriding the sortable_table.css definitions*/
+  background: transparent;
+}
+
+.network-log-url-list li:last-child,
+.network-graph-row:last-child,
+.network-data-table-container .sortable-table > tr:last-child
+{ 
+  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.network-data-table-container .sortable-table > tr.header:first-child
+{
+  border-width: 0px;
+  color: #808080;
 }
 
 .network-log-url-list li.hovered,
 .network-main-container .network-data-container .hovered,
-.network-main-container .network-data-container .network-data-table-container .hovered {
+.network-main-container .network-data-container .network-data-table-container .hovered,
+.network_logger .sortable-table tr th:hover {
   background-color: rgba(55, 115, 211, 0.2);
   color: #000;
 }
 
-.network-log-url-list li .resource-icon {
+.network-log-url-list li .resource-icon
+{
   display: inline-block;
 }
 
-.network-log-url-list li span + span {
+.network-log-url-list li span + span
+{
   padding-left: 5px;
   overflow: hidden;
   white-space: nowrap;
@@ -125,7 +147,8 @@
   max-width: 88%;
 }
 
-.network-log-url-list .log-url-list-status {
+.network-log-url-list .log-url-list-status
+{
   width: 30px;
   text-align: center;
   margin: 0 2px;
@@ -133,10 +156,11 @@
   border-radius: 3px;
 }
 
-.network_incomplete_warning {
+.network_incomplete_warning
+{
   display: block;
   background-color: #ebebeb;
-  padding: 10px 24px 10px 10px;
+  padding: 10px;
   margin: 5px auto;
   width: 70%;
   text-align: center;
@@ -144,28 +168,21 @@
   line-height: 1.6em;
 }
 
-.network_incomplete_warning .text_handler {
+.network_incomplete_warning div
+{
+  display: inline;
+}
+
+.network_incomplete_warning div:before
+{
+  content: " ";
+}
+
+.network_incomplete_warning .text_handler
+{
   text-decoration: underline;
   cursor: pointer;
   white-space: nowrap;
-}
-
-.close_incomplete_warning {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  cursor: pointer;
-}
-
-.close_incomplete_warning::before
-{
-  content: "";
-  background-image: url("../ui-images/icons/icon_close.png");
-  display: inline-block;
-  height: 16px;
-  width: 16px;
-  background-position: 50%;
-  background-repeat: no-repeat;
 }
 
 .network-log-url-list li.selected,
@@ -177,30 +194,68 @@
   color: #fff;
 }
 
-.network_logger .sortable-table tr td, .network_logger .sortable-table tr th
+.network_logger .sortable-table tr td
 {
   padding-bottom: 5px;
   padding-top: 6px;
 }
+.network_logger .sortable-table tr th 
+{
+  padding-bottom: 7px;
+  padding-top: 5px;
+  border-left-color: rgba(0, 0, 0, 0.09);
+}
 
 /* Network log / Detail view */
-.close-request-detail
+.close-request-detail,
+.close_incomplete_warning
 {
   position: absolute;
-  left: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  padding: 1px;
+  background-color: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.close-request-detail::before,
+.close_incomplete_warning::before
+{
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background: transparent url("../ui-images/icons/icon_close_tab_small.png") 50% 50% no-repeat;
+}
+
+.close-request-detail:active,
+.close_incomplete_warning:active
+{
+  padding-top: 2px;
+  padding-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1px #fff,
+              inset 0 1px 1px rgba(0, 0, 0, 0.15),
+              inset 0 0 4px rgba(0, 0, 0, 0.05);
+}
+.close-request-detail
+{
+  left: 10px;
   top: 5px;
-  background-color: #FFF;
-  border: 1px solid #999;
-  border-radius: 16px;
-  width: 19px;
-  height: 19px;
+}
+
+.close_incomplete_warning
+{
+  right: 3px;
+  top: 3px;
 }
 
 .resize-request-detail {
   cursor: col-resize;
   top: 83px;
   height: 100%;
-  margin-left: -24px;
+  margin-left: -34px;
   position: fixed;
   width: 12px;
 }
@@ -208,17 +263,6 @@
 .close-request-detail:active
 {
   background-color: #CACACA;
-}
-
-.close-request-detail::before
-{
-  content: "";
-  background-image: url("../ui-images/icons/icon_close.png");
-  display: block;
-  height: 19px;
-  width: 19px;
-  background-position: 50%;
-  background-repeat: no-repeat;
 }
 
 .network-details-url-list
@@ -238,12 +282,9 @@
   z-index: 2;
   left: 120px;
   overflow: auto;
-  padding: 15px 20px 25px 20px;
-  border-left: 1px solid #999;
-  background-color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, .4);
+  padding: 15px 20px 25px 33px;
+  background: transparent -o-linear-gradient(0deg, transparent 0, rgba(0, 0, 0, 0.15) 3px, rgba(0, 0, 0, 0.45) 5px, #fff 5px);
 }
-
 .network_logger .network-summary
 {
   clear: both;
@@ -256,7 +297,7 @@
   display: inline-block;
   font-size: 1.4em;
   margin: 18px 0;
-  color: #919191;
+  color: #808080;
 }
 
 .network-details-container pre,
@@ -344,7 +385,7 @@
 .network-options label {
   margin: 5px 0 0 0;
   display: block;
-  color: #444;
+  color: #333;
 }
 
 .network-options input[type=checkbox] {
@@ -379,7 +420,7 @@
 .network_logger .network-data-container table tr .network-graph-column
 {
   line-height: 0;
-  padding-top: 1px;
+  padding-top: 5px;
 }
 
 .network-graph-sections-hitarea
@@ -388,7 +429,6 @@
   display: inline-block;
   padding: 3px;
   margin-top: 2px;
-  margin-bottom: -1px;
   border-radius: 3px;
 }
 
@@ -400,10 +440,52 @@
 .network-graph-sections,
 .network-tooltip-graph-sections
 {
-  border: 1px solid #989898;
   display: inline-block;
   border-radius: 2px;
   min-width: 1px;
+  background-color: #999;
+  position: relative;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.network-graph-sections:before,
+.network-tooltip-graph-sections:before
+{/* A workaround until it's possible for the border radius to clip the content */
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background-image: -o-linear-gradient(90deg,
+                                       transparent 0%,
+                                       rgba(255, 255, 255, 0.25) 100%);
+  box-shadow: 0 0 0 1px #fefefe, /* masking to achieve roundness */
+              inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.network-tooltip-graph-sections:before {
+  background: transparent;
+}
+
+.network-main-container .network-data-container .selected .network-graph-sections::before,
+.network-main-container .network-data-container .network-data-table-container .selected .network-tooltip-graph-sections::before
+{
+  box-shadow: 0 0 0 1px #5e8edc, /* masking to achieve roundness */
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.28);
+}
+
+.network-main-container .network-data-container .selected:hover .network-graph-sections-hitarea .network-graph-sections::before,
+.network-main-container .network-data-container .network-data-table-container .selected:hover .network-graph-sections-hitarea .network-tooltip-graph-sections::before
+{
+  box-shadow: 0 0 0 1px #8eafe6, /* masking to achieve roundness */
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.28);
 }
 
 .network-tooltip-graph-sections
@@ -413,27 +495,31 @@
 
 .network-graph-sections
 {
-  height: 12px;
+  height: 14px;
 }
 
 .network-tooltip-container
 {
   vertical-align: top;
-  padding: 6px 0;
 }
 
 .network-tooltip-container h2 {
-  font-size: 12px;
-  margin: 6px 0 4px 0;
+  margin-bottom: 1em;
 }
 
 .network-tooltip-container .sum {
-  border-top: 1px solid #444;
+  border-top: 1px solid #bababa;
+}
+
+.network-tooltip-legend table td {
+  color: #666
+
 }
 
 .network-tooltip-container .mono {
-  color: #444;
+  color: #333;
 }
+
 
 .network-tooltip-container table {
   border-collapse: collapse;
@@ -444,7 +530,7 @@
 }
 
 .network-tooltip-container tr.summer td {
-  border-top: 1px solid #444;
+  border-top: 1px solid #333;
 }
 
 .network_get_params {
@@ -482,7 +568,7 @@
 {
   display: inline-block;
   vertical-align: top;
-  height: 12px;
+  height: 14px;
   margin-bottom: 1px;
 }
 
@@ -521,69 +607,34 @@
 
 /* colors mostly inspired by http://www.stevesouders.com/blog/2011/08/26/waterfall-ui-conventions/ */
 
-.network-waiting /* purple */
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #a7a7f7 1%,
-                                       #7a7aff 100%);
-}
+.network-waiting, /* purple */
 .network-tooltip-graph .network-waiting
 {
-  background-image: -o-linear-gradient(0deg,
-                                       #a7a7f7 0%,
-                                       #7a7aff 100%);
+  background-color: #7381FF;
 }
 
-.network-lookup /* yellow, currently unused */
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #f7f2d5 1%,
-                                       #e3d696 100%);
-}
+.network-lookup, /* yellow, currently unused */
 .network-tooltip-graph .network-lookup
 {
-  background-image: -o-linear-gradient(0deg,
-                                       #f7f2d5 0%,
-                                       #e3d696 100%);
+  background-color: #e3d696;
 }
 
-.network-request /* red */
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #ed9696 1%,
-                                       #d46868 100%);
-}
+.network-request, /* red */
 .network-tooltip-graph .network-request
 {
-  background-image: -o-linear-gradient(0deg,
-                                       #ed9696 0%,
-                                       #d46868 100%);
+  background-color: #de5b5b;
 }
 
-.network-receiving /* green */
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #b6e3b6 1%,
-                                       #93e093 100%);
-}
+.network-receiving, /* green */
 .network-tooltip-graph .network-receiving
 {
-  background-image: -o-linear-gradient(0deg,
-                                       #b6e3b6 0%,
-                                       #93e093 100%);
+  background-color: #79db86;
 }
 
-.network-blocked /* gray */
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       #cfcfcf 1%,
-                                       #adadad 100%);
-}
+.network-blocked, /* gray */
 .network-tooltip-graph .network-blocked
 {
-  background-image: -o-linear-gradient(0deg,
-                                       #cfcfcf 0%,
-                                       #adadad 100%);
+  background-color: #adadad;
 }
 
 .timeline-marker {
@@ -593,4 +644,5 @@
   position: absolute;
   top: 0;
   text-align: center;
+  color: #808080;
 }

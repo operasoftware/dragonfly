@@ -68,15 +68,11 @@
   width: 15px;
   height: 19px;
   display: block;
-  background: url("../../ui-images/dropdown.png"),
-              -o-linear-gradient(-90deg,
-                                 rgb(249, 249, 249) 0,
-                                 rgb(239, 239, 239) 100%);
+  background: transparent url("../../ui-images/dropdown.png");
 }
 .sort-column:active:before
 {
-  background: url("../../ui-images/dropdown.png"),
-              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+  background: transparent url("../../ui-images/dropdown.png");
 }
 
 .sort-column.reversed:before
@@ -90,10 +86,7 @@
   width: 15px;
   height: 19px;
   display: block;
-  background: url("../../ui-images/dropup.png"),
-              -o-linear-gradient(-90deg,
-                                 rgb(249, 249, 249) 0,
-                                 rgb(239, 239, 239) 100%);
+  background: url("../../ui-images/dropup.png");
 }
 .sort-column.reversed:active:before
 {
