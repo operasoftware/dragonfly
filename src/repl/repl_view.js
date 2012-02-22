@@ -969,7 +969,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   // when adding stuff to data will fail.
   var hostinfo =  window.services['scope'].get_hello_message();
   this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
-  ui_strings.S_REPL_WELCOME_TEXT.split("\n").forEach(function(s) {
+  var welcome_text = ui_strings.S_REPL_WELCOME_TEXT
+                                             .replace("%(CLEAR_COMMAND)", "\"clear()\"")
+                                             .replace("%(HELP_COMMAND)", "\"// help()\"");
+  welcome_text.split("\n").forEach(function(s) {
     this._data.add_message(s);
   }, this);
 

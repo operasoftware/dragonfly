@@ -1219,7 +1219,7 @@ ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jQuery in the active tab";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
-ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information.";
+ui_strings.S_REPL_WELCOME_TEXT = "Type %(CLEAR_COMMAND) command to clear the console.\nType %(HELP_COMMAND) for more information.";
 
 /* DESC: "Not applicable" abbreviation */
 ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
