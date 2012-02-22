@@ -13,7 +13,7 @@ window.ui_strings.lang_code = "en";
  */
 
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
-ui_strings.D_REDO_SEARCH = "The searched document no longer exist.\nRepeat search in the current document?";
+ui_strings.D_REDO_SEARCH = "The searched document no longer exists.\nRepeat search in the current document?";
 
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
 ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
@@ -25,7 +25,7 @@ ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = "Add attribute";
 ui_strings.M_CONTEXTMENU_ADD_BREAKPOINT = "Add breakpoint";
 
 /* DESC: Context menu item to add a color in the color palette. */
-ui_strings.M_CONTEXTMENU_ADD_COLOR = 'Add color';
+ui_strings.M_CONTEXTMENU_ADD_COLOR = "Add color";
 
 /* DESC: Context menu item for breakpoints to add a condition. */
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = "Add condition";
@@ -37,7 +37,7 @@ ui_strings.M_CONTEXTMENU_ADD_DECLARATION = "Add declaration";
 ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 
 /* DESC: Context menu item for collapsing a node subtree. */
-ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = 'Collapse subtree';
+ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = "Collapse subtree";
 
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
@@ -49,13 +49,13 @@ ui_strings.M_CONTEXTMENU_DELETE_ALL = "Delete all";
 ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS = "Delete all breakpoints";
 
 /* DESC: Context menu item for deleting a breakpoint. */
-ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = 'Delete breakpoint';
+ui_strings.M_CONTEXTMENU_DELETE_BREAKPOINT = "Delete breakpoint";
 
 /* DESC: Context menu item to delete a color in the color palette. */
-ui_strings.M_CONTEXTMENU_DELETE_COLOR = 'Delete color';
+ui_strings.M_CONTEXTMENU_DELETE_COLOR = "Delete color";
 
 /* DESC: Context menu item for breakpoints to delete a condition. */
-ui_strings.M_CONTEXTMENU_DELETE_CONDITION = 'Delete condition';
+ui_strings.M_CONTEXTMENU_DELETE_CONDITION = "Delete condition";
 
 /* DESC: Context menu item, general "Disable all" in a context, e.g. breakpoints */
 ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
@@ -73,7 +73,7 @@ ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE = "Edit attribute";
 ui_strings.M_CONTEXTMENU_EDIT_ATTRIBUTE_VALUE = "Edit attribute value";
 
 /* DESC: Context menu item to edit a color in the color palette. */
-ui_strings.M_CONTEXTMENU_EDIT_COLOR = 'Edit color';
+ui_strings.M_CONTEXTMENU_EDIT_COLOR = "Edit color";
 
 /* DESC: Context menu item for breakpoints to edit a condition. */
 ui_strings.M_CONTEXTMENU_EDIT_CONDITION = "Edit condition";
@@ -90,29 +90,23 @@ ui_strings.M_CONTEXTMENU_EDIT_TEXT = "Edit text";
 /* DESC: Context menu item for enabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
 
-/* DESC: Context menu item for enabling a breakpoint. */
-ui_strings.M_CONTEXTMENU_ENABLE_BREAKPOINT = "Enable breakpoint";
-
 /* DESC: Context menu item for expanding a node subtree. */
-ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = 'Expand subtree';
+ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = "Expand subtree";
 
 /* DESC: Context menu item for showing the color picker. */
 ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = "Open color picker";
 
 /* DESC: Context menu item for removing a breakpoint. */
-ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = "Remove breakpoint";
-
-/* DESC: Context menu item for removing a breakpoint. */
-ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = 'Disable breakpoint';
+ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = "Delete breakpoint";
 
 /* DESC: Context menu item for removing a property in a rule. */
-ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = "Remove declaration";
+ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = "Delete declaration";
 
 /* DESC: Context menu item for removing a node in the DOM view. */
-ui_strings.M_CONTEXTMENU_REMOVE_NODE = "Remove node";
+ui_strings.M_CONTEXTMENU_REMOVE_NODE = "Delete node";
 
 /* DESC: Show resource context menu entry. */
-ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = 'Show resource';
+ui_strings.M_CONTEXTMENU_SHOW_RESOURCE = "Show resource";
 
 /* DESC: Context menu item for specification links. */
 ui_strings.M_CONTEXTMENU_SPEC_LINK = "Specification for \"%s\"";
@@ -123,7 +117,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_ADD = "Add item";
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = "Delete item";
 
-/* DESC: Context menu item for editing an item in the storage view. */
+/* DESC: Context menu item for editing an item in the storage view, where %s is the domain name. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
 
 /* DESC: Context menu item for deleting multiple items in the storage view. */
@@ -136,7 +130,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
 ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 
 /* DESC: Label for user interface language dropdown in settings */
-ui_strings.M_LABEL_UI_LANGUAGE = "User Interface Language";
+ui_strings.M_LABEL_UI_LANGUAGE = "User interface language";
 
 /* DESC: Label for request body input in network crafter */
 ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";
@@ -184,13 +178,13 @@ ui_strings.M_VIEW_LABEL_CALLSTACK = "Call Stack";
 ui_strings.M_VIEW_LABEL_COLOR_MAGNIFIER_AND_PICKER = "Pixel Magnifier and Color Picker";
 
 /* DESC: View of the palette of the stored colors. */
-ui_strings.M_VIEW_LABEL_COLOR_PALETTE = 'Color Palette';
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE = "Color Palette";
 
 /* DESC: View of the palette of the stored colors. */
-ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = 'Palette';
+ui_strings.M_VIEW_LABEL_COLOR_PALETTE_SHORT = "Palette";
 
 /* DESC: View with a screenshot to select a color. */
-ui_strings.M_VIEW_LABEL_COLOR_PICKER = 'Color Picker';
+ui_strings.M_VIEW_LABEL_COLOR_PICKER = "Color Picker";
 
 /* DESC: Label of the section for selecting a color in color picker */
 ui_strings.M_VIEW_LABEL_COLOR_SELECT = "Color Select";
@@ -282,7 +276,7 @@ ui_strings.M_VIEW_LABEL_EXPORT = "Export";
 /* DESC: Tab heading for the area displaying JS properties of a frame or object and a Settings label. */
 ui_strings.M_VIEW_LABEL_FRAME_INSPECTION = "Inspection";
 
-/* DESC: utility window to go to a line. */
+/* DESC: Label for a utility window that enables the user to enter a line number, and go to that line. */
 ui_strings.M_VIEW_LABEL_GO_TO_LINE = "Go to line";
 
 /* DESC: Tab heading for the box model layout display and a Settings label. */
@@ -402,10 +396,7 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 /* DESC: Anonymous function label. */
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
 
-/* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
-
-/* DESC: Missing description! */
+/* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
 
 /* DESC: Cancel button while the client is waiting for a host connection. */
@@ -434,9 +425,6 @@ ui_strings.S_BUTTON_LABEL_AT_ERROR = "Show parse errors and break on exceptions"
 
 /* DESC: Execution stops when encountering an exception. */
 ui_strings.S_BUTTON_LABEL_AT_EXCEPTION = "Break when an exception is thrown";
-
-/* DESC: Clears thread log. */
-ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear thread log";
 
 /* DESC: Empties the log entries. */
 ui_strings.S_BUTTON_LABEL_CLEAR_LOG = "Clear visible errors";
@@ -472,7 +460,7 @@ ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
 
 /* DESC: For selecting which window to debug. */
-ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you’d like to debug";
+ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you'd like to debug";
 
 /* DESC: Tooltip text for the Settings button that launches the Settings view. */
 ui_strings.S_BUTTON_LABEL_SETTINGS = "Settings";
@@ -498,11 +486,11 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
-/* DESC: Missing description! */
-ui_strings.S_BUTTON_OK = "Ok";
+/* DESC: Generic label for an OK button */
+ui_strings.S_BUTTON_OK = "OK";
 
 /* DESC: Remove all event breakpoints */
-ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
+ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Delete all event breakpoints";
 
 /* DESC: Reset all keyboard shortcuts to the default values. */
 ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
@@ -510,7 +498,7 @@ ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset default values";
 
-/* DESC: Missing description! */
+/* DESC: Generic label for a save button */
 ui_strings.S_BUTTON_SAVE = "Save";
 
 /* DESC: Search for an event in the event breakpoints view */
@@ -531,20 +519,17 @@ ui_strings.S_BUTTON_SHOW_REQUEST_RAW = "Raw";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
 
-/* DESC: Missing description! */
-ui_strings.S_BUTTON_SPOTLIGHT_ADVANCED = "Advanced";
-
-/* DESC: Missing description! */
+/* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
-/* DESC: Missing description! */
+/* DESC: Button label to delete all items in a storage, e.g. the local storage */
 ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
 /* DESC: Button label to store the color */
-ui_strings.S_BUTTON_STORE_COLOR = 'Store color';
+ui_strings.S_BUTTON_STORE_COLOR = "Store color";
 
 /* DESC: Button label to take a screenshot */
-ui_strings.S_BUTTON_TAKE_SCREENSHOT = 'Take screenshot';
+ui_strings.S_BUTTON_TAKE_SCREENSHOT = "Take screenshot";
 
 /* DESC: Label for button in Remote Debugging that applies the changes. */
 ui_strings.S_BUTTON_TEXT_APPLY = "Apply";
@@ -651,14 +636,8 @@ ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 /* DESC: Global scope label. */
 ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
 
-/* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
-
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
-
-/* DESC: Label for http event requestretry */
-ui_strings.S_HTTP_EVENT_REQUESTRETRY = "Request retry";
 
 /* DESC: Label for http event sequence when urlfinished follows after some other event, meaning it was aborted */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST = "Request aborted";
@@ -698,9 +677,6 @@ ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
 
 /* DESC: Label for http event sequence when writing request header */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
-
-/* DESC: Label for http event urlredirect */
-ui_strings.S_HTTP_EVENT_URLREDIRECT = "Redirect";
 
 /* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
 ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH = "Reload to show all page requests";
@@ -838,10 +814,10 @@ ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port 
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 
 /* DESC: Info text in the settings to invert the highlight color for elements. */
-ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the “%s” shortcut.";
+ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the \"%s\" shortcut.";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "searching…";
+ui_strings.S_INFO_IS_SEARCHING = "Searching…";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
@@ -874,7 +850,7 @@ ui_strings.S_INFO_STORAGE_TYPE_DOES_NOT_EXIST = "%s does not exist.";
 ui_strings.S_INFO_STYLESHEET_HAS_NO_RULES = "This style sheet has no rules";
 
 /* DESC: The info text to notify the user that only a part of the search results are displayed. */
-ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
+ui_strings.S_INFO_TOO_MANY_SEARCH_RESULTS = "Displaying %(MAX)s of %(COUNT)s";
 
 /* DESC: Dragonfly is waiting for host connection */
 ui_strings.S_INFO_WAITING_FORHOST_CONNECTION = "Waiting for a host connection on port %s.";
@@ -909,10 +885,10 @@ ui_strings.S_LABEL_COLOR_LUMINOSITY = "Luminosity";
 /* DESC: Label for the opacity of a color value. */
 ui_strings.S_LABEL_COLOR_OPACITY = "Opacity";
 
-/* DESC: Setting label to select the sample size of the color picker  */
+/* DESC: Setting label to select the sample size of the color picker */
 ui_strings.S_LABEL_COLOR_PICKER_SAMPLE_SIZE = "Sample Size";
 
-/* DESC: Setting label to select the zoom level of the color picker  */
+/* DESC: Setting label to select the zoom level of the color picker */
 ui_strings.S_LABEL_COLOR_PICKER_ZOOM = "Zoom";
 
 /* DESC: Label for the saturation of a color value. */
@@ -982,13 +958,13 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
 /* DESC: Setting label to select the font face */
-ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font Face";
+ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font face";
 
 /* DESC: Setting label to select the line height */
-ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line Height";
+ui_strings.S_LABEL_FONT_SELECTION_LINE_HEIGHT = "Line height";
 
 /* DESC: Setting label to select the font face */
-ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font Size";
+ui_strings.S_LABEL_FONT_SELECTION_SIZE = "Font size";
 
 /* DESC: Label of a section in the keyboard configuration for a specific view */
 ui_strings.S_LABEL_KEYBOARDCONFIG_FOR_VIEW = "Keyboard shortcuts %s";
@@ -1045,13 +1021,13 @@ ui_strings.S_LABEL_REPL_MODE_SINGLELINE = "Single-line edit";
 ui_strings.S_LABEL_SCOPE_CHAIN = "Scope Chain";
 
 /* DESC: Checkbox label to search in all files in the JS search pane. */
-ui_strings.S_LABEL_SEARCH_ALL_FILES = "all files";
+ui_strings.S_LABEL_SEARCH_ALL_FILES = "All files";
 
 /* DESC: Checkbox label to set the 'ignore case' flag search panel. */
-ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "ignore case";
+ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE = "Ignore case";
 
 /* DESC: Checkbox label to search in injected scripts in the JS search pane. */
-ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "injected";
+ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "Injected";
 
 /* DESC: Tooltip for the injected scripts search settings label. */
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
@@ -1071,67 +1047,25 @@ ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 /* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
 ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_BORDER = "Border";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_DIMENSION = "Dimension";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_HOVER = "hover";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER = "hover inner";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_INNER_ANY = "hover inner any";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_MARGIN = "Margin";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_BOX_TYPE_PADDING = "Padding";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_COLOR_THEME = "Color Theme";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FILL = "Fill";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_FRAME = "Frame";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_PROPERTY_GRID = "Grid";
-
 /* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
 
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_DEFAULT = "Default Highlight";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_LOCKED_ELEMENTS = "Highlight for Unselected Elements";
-
-/* DESC: Missing description! */
-ui_strings.S_LABEL_SPOTLIGHT_TITLE_METRICS = "Highlight Metrics";
-
-/* DESC: Missing description! */
+/* DESC: Button label to add an item in a storage, e.g. in the local storage */
 ui_strings.S_LABEL_STORAGE_ADD = "Add";
 
 /* DESC: Label for "Add storage_type" button */
 ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE = "Add %s";
 
-/* DESC: Missing description! */
+/* DESC: Button label to delete an item in a storage, e.g. in the local storage */
 ui_strings.S_LABEL_STORAGE_DELETE = "Delete";
 
-/* DESC: Missing description! */
-ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double click to edit";
+/* DESC: Tool tip in a storage view to inform the user how to edit an item */
+ui_strings.S_LABEL_STORAGE_DOUBLE_CLICK_TO_EDIT = "Double-click to edit";
 
 /* DESC: Label for the key (identifier) of a storage item */
 ui_strings.S_LABEL_STORAGE_KEY = "Key";
 
-/* DESC: Missing description! */
+/* DESC: Button label to update a view with all items of a storage, e.g. of the local storage */
 ui_strings.S_LABEL_STORAGE_UPDATE = "Update";
 
 /* DESC: Tab size in source view. */
@@ -1159,7 +1093,7 @@ ui_strings.S_MENU_SELECT_ACTIVE_WINDOW = "Select Active Window";
 ui_strings.S_NETWORK_BODY_NOT_AVAILABLE = "Request body not available. Enable resource tracking and reload the page to view the resource.";
 
 /* DESC: Name of network caching setting for default browser caching policy */
-ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL = "Standard browser caching behaviour";
+ui_strings.S_NETWORK_CACHING_SETTING_DEFAULT_LABEL = "Standard browser caching behavior";
 
 /* DESC: Help text for explaining caching setting in global network options */
 ui_strings.S_NETWORK_CACHING_SETTING_DESC = "This setting controls how caching works when Opera Dragonfly is running. When caching is disabled, Opera always reloads the page.";
@@ -1168,16 +1102,16 @@ ui_strings.S_NETWORK_CACHING_SETTING_DESC = "This setting controls how caching w
 ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL = "Disable all caching";
 
 /* DESC: Title for caching settings section in global network options */
-ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behaviour";
+ui_strings.S_NETWORK_CACHING_SETTING_TITLE = "Caching behavior";
 
 /* DESC: Can't show request data, as we don't know the type of it. */
-ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Can't display content of type %s";
+ui_strings.S_NETWORK_CANT_DISPLAY_TYPE = "Cannot display content of type %s";
 
 /* DESC: Name of content tracking setting for tracking content */
 ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL = "Track content (affects speed/memory)";
 
 /* DESC: Explanation of how to enable content tracking. */
-ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the \"network options\" panel to be able to see request bodies";
+ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST = "Enable content tracking in the \"network options\" panel to see request bodies";
 
 /* DESC: Example value to show what header formats look like. Header-name */
 ui_strings.S_NETWORK_HEADER_EXAMPLE_VAL_NAME = "Header-name";
@@ -1243,12 +1177,12 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
 /* DESC: Explanation about why a network requests lacks headers. */
-ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made.  All data was retrieved from cache without accessing the network";
+ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
-/* DESC: The string "None" used wherever there's an absense of something */
+/* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";
 
 /* DESC: Remote debug guide, connection setup */
@@ -1258,7 +1192,7 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debu
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_1 = "Specify the port number you wish to connect to, or leave as the default";
 
 /* DESC: Remote debug guide, connection setup */
-ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click “Apply”";
+ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_STEP_2 = "Click \"Apply\"";
 
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_HEADER = "On the remote device:";
@@ -1273,7 +1207,7 @@ ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_2 = "Enter the IP address of the ma
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_3 = "Enter the port number %s";
 
 /* DESC: Remote debug guide, waiting for connection */
-ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click “Connect”";
+ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_4 = "Click \"Connect\"";
 
 /* DESC: Remote debug guide, waiting for connection */
 ui_strings.S_REMOTE_DEBUG_GUIDE_WAITING_STEP_5 = "Once connected navigate to the page you wish to debug";
@@ -1285,7 +1219,7 @@ ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jQuery in the active tab";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
-ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information";
+ui_strings.S_REPL_WELCOME_TEXT = "Use the clear() command to clear the console.\nType \"// help()\" for more information.";
 
 /* DESC: "Not applicable" abbreviation */
 ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
@@ -1432,7 +1366,7 @@ ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = "Show JavaScript errors in the console
 ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = "Show default values if they are null or empty strings";
 
 /* DESC: Showing the id's and class names in the breadcrumb in the statusbar. */
-ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id’s and classes in breadcrumb trail";
+ui_strings.S_SWITCH_SHOW_ID_AND_CLASSES_IN_BREAD_CRUMB = "Show id's and classes in breadcrumb trail";
 
 /* DESC: Toggles the display of pre-set values in the computed styles view. */
 ui_strings.S_SWITCH_SHOW_INITIAL_VALUES = "Show initial values";
@@ -1447,7 +1381,7 @@ ui_strings.S_SWITCH_SHOW_ONLY_NORMAL_AND_GADGETS_TYPE_WINDOWS = "Hide browser-sp
 ui_strings.S_SWITCH_SHOW_PROTOTYPES = "Show prototypes";
 
 /* DESC: Show pseudo elements in the DOM view */
-ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo elements"
+ui_strings.S_SWITCH_SHOW_PSEUDO_ELEMENTS = "Show pseudo-elements";
 
 /* DESC: Showing the siblings in the breadcrumb in the statusbar. */
 ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB = "Show siblings in breadcrumb trail";
@@ -1500,8 +1434,8 @@ ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES = "Show whitespace nodes";
 /* DESC: When enabled, a screenshot is taken automatically on showing utilities */
 ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY = "Take a screenshot automatically when opening Utilities";
 
-/* DESC: Settings checkbox label for toggling usage tracking */
-ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly generated user ID to track usage numbers";
+/* DESC: Settings checkbox label for toggling usage tracking. Add one to a running total each time the user starts Dragonfly. */
+ui_strings.S_SWITCH_TRACK_USAGE = "Track usage. Sends a randomly-generated user ID to the Opera Dragonfly servers each time Opera Dragonfly is started.";
 
 /* DESC: When enabled, list alike objects will be unpacked in the command line */
 ui_strings.S_SWITCH_UNPACK_LIST_ALIKES = "Unpack objects which have list-like behavior in the console";
@@ -1556,9 +1490,6 @@ ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
-
-/* DESC: Label on button to toggle if network graph is fit to width of screen or has horizontal scrolling */
-ui_strings.S_TOGGLE_FIT_NETWORK_GRAPH_TO_VIEW = "Fit network graph to the window width";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
