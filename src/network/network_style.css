@@ -77,10 +77,18 @@
   padding-top: 34px;
 }
 
+.network-log-url-list li,
+.network-timeline-row,
+.network-graph-row
+{
+  height: 22px;
+  padding-top: 2px;
+}
+
 .network-log-url-list li
 {
-  height: 19px;
-  padding: 5px 0 0 8px;
+  padding-left: 8px;
+  line-height: 22px;
 }
 
 .network_logger #network-url-list .network-log-url-list li.disqualified:not(.selected)
@@ -98,37 +106,16 @@
   color: #3d0008;
 }
 
-.network-log-url-list li:nth-child(odd),
-.network-graph-row:nth-child(even),
-.network-data-table-container .sortable-table > tr:nth-child(even)
-{ 
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.network-data-table-container .sortable-table > tr:nth-child(odd)
-{ /*Overriding the sortable_table.css definitions*/
-  background: transparent;
-}
-
 .network-log-url-list li:last-child,
-.network-graph-row:last-child,
-.network-data-table-container .sortable-table > tr:last-child
+.network-graph-row:last-child
 { 
-  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+  border-bottom-width: 1px;
 }
 
 .network-data-table-container .sortable-table > tr.header:first-child
 {
   border-width: 0px;
   color: #808080;
-}
-
-.network-log-url-list li.hovered,
-.network-main-container .network-data-container .hovered,
-.network-main-container .network-data-container .network-data-table-container .hovered,
-.network_logger .sortable-table tr th:hover {
-  background-color: rgba(55, 115, 211, 0.2);
-  color: #000;
 }
 
 .network-log-url-list li .resource-icon
@@ -185,13 +172,10 @@
   white-space: nowrap;
 }
 
-.network-log-url-list li.selected,
-.network-log-url-list li:nth-child(even).selected,
-.network-main-container .network-data-container .selected,
-.network-main-container .network-data-container .network-data-table-container .selected
+.network-data-container .sortable-table > tr.header,
+.network-data-container .sortable-table > tr.header:hover
 {
-  background-color: rgba(55, 115, 211, 0.8);
-  color: #fff;
+  background: transparent;
 }
 
 .network_logger .sortable-table tr td
@@ -241,7 +225,7 @@
 }
 .close-request-detail
 {
-  left: 10px;
+  left: 5px;
   top: 5px;
 }
 
@@ -251,18 +235,19 @@
   top: 3px;
 }
 
-.resize-request-detail {
+.resize-request-detail
+{
   cursor: col-resize;
   top: 83px;
   height: 100%;
-  margin-left: -34px;
+  margin-left: -35px;
   position: fixed;
   width: 12px;
 }
 
 .close-request-detail:active
 {
-  background-color: #CACACA;
+  background-color: #cacaca;
 }
 
 .network-details-url-list
@@ -282,9 +267,14 @@
   z-index: 2;
   left: 120px;
   overflow: auto;
-  padding: 15px 20px 25px 33px;
-  background: transparent -o-linear-gradient(0deg, transparent 0, rgba(0, 0, 0, 0.15) 3px, rgba(0, 0, 0, 0.45) 5px, #fff 5px);
+  padding: 15px 20px 25px 28px;
+  background-color: #fff;
+  border-bottom: 0px;
+  box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
+              0 2px 4px rgba(0, 0, 0, 0.45),
+              -1px 0 0 rgba(0, 0, 0, 0.05);
 }
+
 .network_logger .network-summary
 {
   clear: both;
@@ -411,12 +401,6 @@
   margin: 10px 0;
 }
 
-.network-timeline-row,
-.network-graph-row
-{
-  height: 24px;
-}
-
 .network_logger .network-data-container table tr .network-graph-column
 {
   line-height: 0;
@@ -428,7 +412,6 @@
   vertical-align: top;
   display: inline-block;
   padding: 3px;
-  margin-top: 2px;
   border-radius: 3px;
 }
 
