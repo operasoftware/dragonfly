@@ -747,6 +747,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     // entry.responsecode always gets overwritten on the entry,
     // but also stored per NetworkLoggerResponse.
     this.responsecode = event.responseCode;
+    this.had_error_response = this.had_error_response || /5\d{2}|4\d{2}/.test(this.responsecode);
     if (!this.responsestart)
       this.responsestart = event.time;
 

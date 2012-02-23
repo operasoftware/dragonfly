@@ -163,36 +163,14 @@ templates.network_log_url_list = function(ctx, selected, item_order)
 {
   var itemfun = function(req)
   {
-    var had_error_response = /5\d{2}|4\d{2}/.test(req.responsecode);
+    var had_error_response = req.had_error_response;
     var disqualified = !req.touched_network || req.unloaded;
-
-    var url_tooltip = req.human_url;
-    var context_info;
-    if (req.unloaded)
-      context_info = ui_strings.S_HTTP_UNREFERENCED;
-    else if (had_error_response)
-      context_info = req.responsecode + " (" + cls.ResourceUtil.http_status_codes[req.responsecode] + ")";
-    else if (req.no_request_made)
-    {
-      // file
-      if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
-        context_info = ui_strings.S_HTTP_SERVED_OVER_FILE;
-      // data uri, the tooltip is explicit enough in these cases
-      else if (req.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
-        context_info = null;
-      // or otherwise probably chached
-      else
-        context_info = ui_strings.S_HTTP_NOT_REQUESTED;
-    }
-
-    if (context_info)
-      url_tooltip = context_info + " - " + url_tooltip;
+    // todo: sync the classname with what is used in templates.network_log_url_tooltip
 
     return ["li",
             templates.network_request_icon(req),
             ["span",
               req.filename || req.human_url,
-              "data-tooltip-text" , url_tooltip,
               "data-tooltip", "network-url-list-tooltip"
             ],
             "handler", "select-network-request",
@@ -229,6 +207,65 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     ["ol", items.map(itemfun),
       "class", "network-log-url-list"]
   ]
+};
+
+templates.network_log_url_tooltip = function(entry)
+{
+  var UNREFERENCED = "unreferenced";
+  var ERROR_RESPONSE = "error_response";
+  var NOT_REQUESTED = "not_requested";
+
+  var template = [];
+
+  var context_string;
+  var context_type;
+
+  if (entry.unloaded)
+  {
+    context_string = ui_strings.S_HTTP_UNREFERENCED;
+    context_type = UNREFERENCED;
+  }
+  else if (entry.had_error_response)
+  {
+    context_string = entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] + ")";
+    context_type = ERROR_RESPONSE;
+  }
+  else if (entry.no_request_made)
+  {
+    if (entry.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
+    {
+      context_string = ui_strings.S_HTTP_SERVED_OVER_FILE;
+      context_type = NOT_REQUESTED;
+    }
+    else if (entry.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
+    {
+      // data uri, the tooltip is explicit enough in these cases
+    }
+    else
+    {
+      // otherwise just not requested, probably chached
+      context_string = ui_strings.S_HTTP_NOT_REQUESTED;
+      context_type = NOT_REQUESTED;
+    }
+  }
+
+  if (context_string && context_type)
+  {
+    template.push(["span", context_string, "class", context_type]);
+  }
+  template.push(["span", " " + entry.human_url]);
+  var uri = new URI(entry.human_url);
+  if (uri.search)
+  {
+    var table = ["table"];
+    for (var i = 0, param; param = uri.params[i]; i++)
+    {
+      table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
+    };
+    table = table.concat(["class", "network_get_params"]);    
+    template.push(table);
+  }
+  return template;
 };
 
 templates.network_log_summary = function(ctx)

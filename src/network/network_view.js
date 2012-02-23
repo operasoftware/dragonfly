@@ -435,21 +435,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_url_tooltip_bound = function(evt, target)
   {
-    var url = target.get_attr("parent-node-chain", "data-tooltip-text");
-    if (url)
+    var ctx = this._service.get_request_context();
+    var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+    // var context_info = target.get_attr("parent-node-chain", "data-tooltip-context-info");
+    var entry = ctx.get_entry(entry_id);
+    if (entry)
     {
-      var uri = new URI(url);
-      var template = url;
-      if (uri.search)
-      {
-        var table = ["table"]
-        for (var i = 0, param; param = uri.params[i]; i++)
-        {
-          table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
-        };
-        table = table.concat(["class", "network_get_params"]);
-        template = [["span", url], table];
-      }
+      var template = templates.network_log_url_tooltip(entry);
       this.url_tooltip.show(template);
     }
   }.bind(this);
