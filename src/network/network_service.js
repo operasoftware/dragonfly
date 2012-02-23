@@ -643,22 +643,21 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this._add_event = function(eventname, eventdata)
   {
     var evt = {name: eventname, time: eventdata.time, request_id: eventdata.requestID};
-    // add to events
-    this.events.push(evt);
-    // add event to existing gap
-    if (this.event_sequence.length)
+    if (this.events.length)
     {
-      var gap = this.event_sequence.last;
-      gap.to_event = evt;
-
-      gap.val = gap.to_event.time - gap.from_event.time;
-      gap.val_string = gap.val.toFixed(2) + "ms";
+      var gap = {
+        from_event: this.events.last,
+        to_event: evt,
+        val: evt.time - this.events.last.time
+      };
       var gap_def = this.get_gap_def(gap);
+      gap.val_string = gap.val.toFixed(2) + "ms";
       gap.classname = gap_def && gap_def.classname || "";
       gap.title = gap_def && gap_def.title || "";
+
+      this.event_sequence.push(gap);
     }
-    // add new gap
-    this.event_sequence.push({from_event: evt});
+    this.events.push(evt);
   }
 
   this.get_duration = function()

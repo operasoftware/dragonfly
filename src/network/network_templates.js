@@ -351,27 +351,49 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
           "data-object-id", String(entry.id)];
 }
 
+templates.network_graph_section_color = {
+  waiting: "#a7a7f7",
+  request: "#ed9696",
+  receiving: "#b6e3b6",
+  blocked: "#cfcfcf",
+  irregular: "#b9b9b9" // todo: this used to be striped, but it's a bit diffcult now..
+}
+
 templates.network_graph_sections = function(entry, width, duration, do_tooltip)
 {
   var scale = width / duration;
-  var gaps = entry.event_sequence;
-  var sections = entry.event_sequence.map(function(section){
-    if (section.val)
-    {
-      return [
-        "span",
-        "class", "network-section network-" + section.classname,
-        "style", "width:" + section.val * scale + "px;"
-      ];
-    }
-    return [];
-  });
+  var px_duration = entry.get_duration() * scale;
 
-  return ["span", sections.length && sections || [],
+  return ["span",
            "class", "network-graph-sections",
            "data-tooltip", do_tooltip && "network-graph-tooltip",
-           "data-object-id", String(entry.id)
+           "data-object-id", String(entry.id),
+           "style", "width: " + px_duration + "px;" +
+                    "background-image: -o-linear-gradient(0deg," +
+                      templates.network_graph_sections_style(entry, width, duration) +
+                    ");"
          ];
+};
+
+templates.network_graph_sections_style = function(entry, size, duration)
+{
+  if (!entry.event_sequence.length)
+    return "transparent 0, transparent 100%";
+
+  var scale = size / duration;
+  var to = 0;
+  var gradient_vals = entry.event_sequence.map(function(section){
+    var from = to;
+    var val = section.val * scale;
+    to += val;
+
+    var color = templates.network_graph_section_color[section.classname];
+    // todo: also add the 90deg gradient that makes it shiny
+    return color + " " + Math.round(from) + "px," +  color + " " + Math.round(to) + "px";
+  }).join(",");
+  // End transparent. This will let the fallback background-color show in case min-width applies.
+  gradient_vals += ",transparent " + Math.round(to) + "px";
+  return gradient_vals;
 };
 
 templates.network_graph_entry_tooltip = function(entry)
@@ -381,39 +403,20 @@ templates.network_graph_entry_tooltip = function(entry)
 
   const height = 155;
   var duration = entry.get_duration();
+  var scale = height / duration;
   if (duration && entry.events)
   {
-    var graphical_sections = [];
-    var scale = height / duration;
-    var total_length_string = duration.toFixed(2) + "ms";
-
-    entry.event_sequence.forEach(function(section){
-      if (section.val)
-      {
-        graphical_sections.push([
-          "div",
-          "class", "network-tooltip-section network-" + section.classname,
-          "style", "height:" + section.val * scale + "px;"
-        ]);
-      }
-    });
-
     var event_rows = entry.event_sequence.map(function(stop, index, arr)
     {
       // sequences with only from_event are ommited as they only mark the start of a gap
-      if (!stop.val_string)
-        return [];
-      else
-      {
-        return ["tr",
-                 ["td", stop.val_string, "class", "time_data mono"],
-                 ["td", stop.title, "class", "gap_title"],
-                 ini.debug ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
-               ];
-      }
+      return ["tr",
+               ["td", stop.val_string, "class", "time_data mono"],
+               ["td", stop.title, "class", "gap_title"],
+               ini.debug ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
+             ];
     });
     event_rows.push(["tr",
-                      ["td", total_length_string, "class", "time_data mono"],
+                      ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
     const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
@@ -448,7 +451,10 @@ templates.network_graph_entry_tooltip = function(entry)
           ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
         ["div",
           ["div",
-            ["div", graphical_sections, "class", "network-tooltip-graph-sections"],
+            "style", "height: " + height + "px; " +
+                     "background-image: -o-linear-gradient(270deg," +
+                        templates.network_graph_sections_style(entry, height, duration) +
+                      ");",
             "class", "network-tooltip-graph"
           ],
           ["div",
