@@ -161,11 +161,13 @@ templates.network_viewmode_data = function(ctx, selected, detail_width)
 
 templates.network_log_url_list = function(ctx, selected, item_order)
 {
+  var ERROR_RESPONSE = "error_response";
+  var NOT_REQUESTED = "not_requested";
+
   var itemfun = function(req)
   {
     var had_error_response = req.had_error_response;
-    var disqualified = !req.touched_network || req.unloaded;
-    // todo: sync the classname with what is used in templates.network_log_url_tooltip
+    var not_requested = !req.touched_network;
 
     return ["li",
             templates.network_request_icon(req),
@@ -176,8 +178,8 @@ templates.network_log_url_list = function(ctx, selected, item_order)
             "handler", "select-network-request",
             "data-object-id", String(req.id),
             "class", (selected === req.id ? "selected " : " ") + 
-                     (had_error_response ? "network-error " : " ") + 
-                     (disqualified ? "disqualified " : "")
+                     (had_error_response ? ERROR_RESPONSE + " " : " ") + 
+                     (not_requested ? NOT_REQUESTED : "")
            ];
   };
 

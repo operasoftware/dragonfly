@@ -83,17 +83,17 @@
   padding: 5px 0 0 8px;
 }
 
-.network_logger #network-url-list .network-log-url-list li.disqualified
+.network_logger #network-url-list .network-log-url-list li.not_requested
 {
   color: #8a8a8a;
 }
 
-.network_logger #network-url-list .network-log-url-list li.network-error
+.network_logger #network-url-list .network-log-url-list li.error_response
 {
   color: #d2001c;
 }
 
-.network_logger #network-url-list .network-log-url-list li.network-error.selected
+.network_logger #network-url-list .network-log-url-list li.error_response.selected
 {
   color: #3d0008;
 }
