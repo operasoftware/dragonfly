@@ -317,22 +317,16 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
         while (ele)
         {
           if (ele.nodeName.toLowerCase() == "item")
-          {
             props.unshift(ele.querySelector("key").textContent);
-          }
           ele = ele.parentNode;
         }
 
         // If we're in the scope chain, remove "scope <n>"
         if (target.get_ancestor(".scope-chain"))
-        {
           props.shift();
-        }
 
         if (!props.length)
-        {
           return;
-        }
 
         var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
         var prop = props.reduce(function(prev, curr) {
@@ -343,9 +337,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           else
           {
             if (!is_number_without_leading_zero.test(curr))
-            {
               curr = '"' + curr + '"';
-            }
             curr = "[" + curr + "]";
           }
           return prev + curr;
