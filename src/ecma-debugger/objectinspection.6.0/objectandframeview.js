@@ -334,12 +334,6 @@ cls.EcmascriptDebugger["6.0"].InspectionView.create_ui_widgets = function()
           return;
         }
 
-        // If the leftmost part is not a valid identifier, and not 'this', we prepend 'this'
-        if (!JSSyntax.is_valid_identifier(props[0]) && props[0] != "this")
-        {
-          props.unshift("this");
-        }
-
         var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
         var prop = props.reduce(function(prev, curr) {
           if (JSSyntax.is_valid_identifier(curr))
