@@ -352,10 +352,10 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
 }
 
 templates.network_graph_section_color = {
-  waiting: "#a7a7f7",
-  request: "#ed9696",
-  receiving: "#b6e3b6",
-  blocked: "#cfcfcf",
+  waiting: "#7381FF",
+  request: "#de5b5b",
+  receiving: "#79db86",
+  blocked: "#adadad",
   irregular: "#b9b9b9" // todo: this used to be striped, but it's a bit diffcult now..
 }
 
