@@ -369,8 +369,8 @@ var Editor = function(actions)
     ele.textContent = '';
     ele.appendChild(this.textarea_container);
 
-    // Fire an 'input' event in case the textarea needs to be resized
-    this._event.initEvent("input", true, true);
+    // Force height adjust
+    this._event.initEvent("heightadjust", true, true);
     this.textarea.dispatchEvent(this._event);
 
     // only for click events
@@ -528,7 +528,6 @@ var Editor = function(actions)
         break;
       }
 
-      this.textarea.style.height = this.textarea.scrollHeight + 'px';
       this.commit();
     }
 
@@ -867,7 +866,6 @@ var Editor = function(actions)
 
   this._input_handler = function(event)
   {
-    event.target.style.height = event.target.scrollHeight + 'px';
     this.commit();
   }.bind(this);
 };
