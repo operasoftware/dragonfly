@@ -77,15 +77,23 @@
   padding-top: 34px;
 }
 
+.network-log-url-list li,
+.network-timeline-row,
+.network-graph-row
+{
+  height: 22px;
+  padding-top: 2px;
+}
+
 .network-log-url-list li
 {
-  height: 19px;
-  padding: 5px 0 0 8px;
+  padding-left: 8px;
+  line-height: 22px;
 }
 
 .network_logger #network-url-list .network-log-url-list li.not_requested
 {
-  color: #8a8a8a;
+  color: rgba(0, 0, 0, 0.50);
 }
 
 .network_logger #network-url-list .network-log-url-list li.error_response
@@ -98,24 +106,25 @@
   color: #3d0008;
 }
 
-.network-log-url-list li:nth-child(even),
-.network-graph-row:nth-child(odd)
+.network-log-url-list li:last-child,
+.network-graph-row:last-child
+{ 
+  border-bottom-width: 1px;
+}
+
+.network-data-table-container .sortable-table > tr.header:first-child
 {
-  background-color: rgba(0, 0, 0, 0.03);
+  border-width: 0px;
+  color: #808080;
 }
 
-.network-log-url-list li.hovered,
-.network-main-container .network-data-container .hovered,
-.network-main-container .network-data-container .network-data-table-container .hovered {
-  background-color: rgba(55, 115, 211, 0.2);
-  color: #000;
-}
-
-.network-log-url-list li .resource-icon {
+.network-log-url-list li .resource-icon
+{
   display: inline-block;
 }
 
-.network-log-url-list li span + span {
+.network-log-url-list li span + span
+{
   padding-left: 5px;
   overflow: hidden;
   white-space: nowrap;
@@ -125,7 +134,8 @@
   max-width: 88%;
 }
 
-.network-log-url-list .log-url-list-status {
+.network-log-url-list .log-url-list-status
+{
   width: 30px;
   text-align: center;
   margin: 0 2px;
@@ -133,10 +143,11 @@
   border-radius: 3px;
 }
 
-.network_incomplete_warning {
+.network_incomplete_warning
+{
   display: block;
   background-color: #ebebeb;
-  padding: 10px 24px 10px 10px;
+  padding: 10px;
   margin: 5px auto;
   width: 70%;
   text-align: center;
@@ -144,81 +155,99 @@
   line-height: 1.6em;
 }
 
-.network_incomplete_warning .text_handler {
+.network_incomplete_warning div
+{
+  display: inline;
+}
+
+.network_incomplete_warning div:before
+{
+  content: " ";
+}
+
+.network_incomplete_warning .text_handler
+{
   text-decoration: underline;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.close_incomplete_warning {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  cursor: pointer;
-}
-
-.close_incomplete_warning::before
+.network-data-container .sortable-table > tr.header,
+.network-data-container .sortable-table > tr.header:hover
 {
-  content: "";
-  background-image: url("../ui-images/icons/icon_close.png");
-  display: inline-block;
-  height: 16px;
-  width: 16px;
-  background-position: 50%;
-  background-repeat: no-repeat;
+  background: transparent;
 }
 
-.network-log-url-list li.selected,
-.network-log-url-list li:nth-child(even).selected,
-.network-main-container .network-data-container .selected,
-.network-main-container .network-data-container .network-data-table-container .selected
-{
-  background-color: rgba(55, 115, 211, 0.8);
-  color: #fff;
-}
-
-.network_logger .sortable-table tr td, .network_logger .sortable-table tr th
+.network_logger .sortable-table tr td
 {
   padding-bottom: 5px;
   padding-top: 6px;
 }
-
-/* Network log / Detail view */
-.close-request-detail
+.network_logger .sortable-table tr th 
 {
-  position: absolute;
-  left: 5px;
-  top: 5px;
-  background-color: #FFF;
-  border: 1px solid #999;
-  border-radius: 16px;
-  width: 19px;
-  height: 19px;
+  padding-bottom: 7px;
+  padding-top: 5px;
+  border-left-color: rgba(0, 0, 0, 0.09);
 }
 
-.resize-request-detail {
+/* Network log / Detail view */
+.close-request-detail,
+.close_incomplete_warning
+{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  padding: 1px;
+  background-color: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.close-request-detail::before,
+.close_incomplete_warning::before
+{
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background: transparent url("../ui-images/icons/icon_close_tab_small.png") 50% 50% no-repeat;
+}
+
+.close-request-detail:active,
+.close_incomplete_warning:active
+{
+  padding-top: 2px;
+  padding-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1px #fff,
+              inset 0 1px 1px rgba(0, 0, 0, 0.15),
+              inset 0 0 4px rgba(0, 0, 0, 0.05);
+}
+.close-request-detail
+{
+  left: 5px;
+  top: 5px;
+}
+
+.close_incomplete_warning
+{
+  right: 3px;
+  top: 3px;
+}
+
+.resize-request-detail
+{
   cursor: col-resize;
   top: 83px;
   height: 100%;
-  margin-left: -24px;
+  margin-left: -35px;
   position: fixed;
   width: 12px;
 }
 
 .close-request-detail:active
 {
-  background-color: #CACACA;
-}
-
-.close-request-detail::before
-{
-  content: "";
-  background-image: url("../ui-images/icons/icon_close.png");
-  display: block;
-  height: 19px;
-  width: 19px;
-  background-position: 50%;
-  background-repeat: no-repeat;
+  background-color: #cacaca;
 }
 
 .network-details-url-list
@@ -238,10 +267,12 @@
   z-index: 2;
   left: 120px;
   overflow: auto;
-  padding: 15px 20px 25px 20px;
-  border-left: 1px solid #999;
+  padding: 15px 20px 25px 28px;
   background-color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, .4);
+  border-bottom: 0px;
+  box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
+              0 2px 4px rgba(0, 0, 0, 0.45),
+              -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 .network_logger .network-summary
@@ -256,7 +287,7 @@
   display: inline-block;
   font-size: 1.4em;
   margin: 18px 0;
-  color: #919191;
+  color: #808080;
 }
 
 .network-details-container pre,
@@ -344,7 +375,7 @@
 .network-options label {
   margin: 5px 0 0 0;
   display: block;
-  color: #444;
+  color: #333;
 }
 
 .network-options input[type=checkbox] {
@@ -370,16 +401,10 @@
   margin: 10px 0;
 }
 
-.network-timeline-row,
-.network-graph-row
-{
-  height: 24px;
-}
-
 .network_logger .network-data-container table tr .network-graph-column
 {
   line-height: 0;
-  padding-top: 1px;
+  padding-top: 5px;
 }
 
 .network-graph-sections-hitarea
@@ -387,8 +412,6 @@
   vertical-align: top;
   display: inline-block;
   padding: 3px;
-  margin-top: 2px;
-  margin-bottom: -1px;
   border-radius: 3px;
 }
 
@@ -415,21 +438,25 @@
 .network-tooltip-container
 {
   vertical-align: top;
-  padding: 6px 0;
 }
 
 .network-tooltip-container h2 {
-  font-size: 12px;
-  margin: 6px 0 4px 0;
+  margin-bottom: 1em;
 }
 
 .network-tooltip-container .sum {
-  border-top: 1px solid #444;
+  border-top: 1px solid #bababa;
+}
+
+.network-tooltip-legend table td {
+  color: #666
+
 }
 
 .network-tooltip-container .mono {
-  color: #444;
+  color: #333;
 }
+
 
 .network-tooltip-container table {
   border-collapse: collapse;
@@ -469,7 +496,7 @@
 {
   display: inline-block;
   vertical-align: top;
-  height: 12px;
+  height: 14px;
   margin-bottom: 1px;
 }
 
@@ -501,4 +528,5 @@
   position: absolute;
   top: 0;
   text-align: center;
+  color: #808080;
 }
