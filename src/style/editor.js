@@ -369,9 +369,7 @@ var Editor = function(actions)
     ele.textContent = '';
     ele.appendChild(this.textarea_container);
 
-    // Force height adjust
-    this._event.initEvent("heightadjust", true, true);
-    this.textarea.dispatchEvent(this._event);
+    this._resize_textarea();
 
     // only for click events
     if (event)
@@ -530,6 +528,8 @@ var Editor = function(actions)
 
       this.commit();
     }
+
+    this._resize_textarea();
 
     return false;
   };
@@ -862,6 +862,13 @@ var Editor = function(actions)
       this.textarea_container.parentElement.innerHTML = '';
       return false;
     }
+  };
+
+  this._resize_textarea = function()
+  {
+    // Force height adjust
+    this._event.initEvent("heightadjust", true, true);
+    this.textarea.dispatchEvent(this._event);
   };
 
   this._input_handler = function(event)
