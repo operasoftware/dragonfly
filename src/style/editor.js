@@ -811,8 +811,9 @@ var Editor = function(actions)
           true,
           is_disabled
         );
-        decl_ele.clearAndRender(this._templates.prop_value(decl, true, true));
         this.textarea.value = "";
+        decl_ele.clearAndRender(this._templates.prop_value(decl, true, true));
+        this._resize_textarea();
         this.context_cur_text_content = "";
         this.context_cur_prop = "";
         this.context_cur_value = "";
