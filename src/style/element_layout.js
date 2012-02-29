@@ -417,8 +417,8 @@ cls.ElementLayout = function()
 
     if (is_border_box)
     {
-      dim += props[direction].reduce(function(prev, curr) {
-        return prev - parseInt(comp_style[index_map.indexOf(curr)]);
+      dim -= props[direction].reduce(function(prev, curr) {
+        return prev + parseInt(comp_style[index_map.indexOf(curr)]);
       }, 0);
     }
 
