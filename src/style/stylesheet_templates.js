@@ -93,8 +93,12 @@ var StylesheetTemplates = function()
          "class", "css-selector"
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "data-menu", "style-inspector-rule",
       "rule-id", rule.ruleID && String(rule.ruleID),
@@ -110,8 +114,12 @@ var StylesheetTemplates = function()
            "element.style"
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "rule-id", "element-style",
       "rt-id", String(rt_id),
@@ -128,8 +136,12 @@ var StylesheetTemplates = function()
          "style", "font-style: italic;" // TODO: use a class
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "data-menu", "style-inspector-rule",
       "rule-id", "element-svg",

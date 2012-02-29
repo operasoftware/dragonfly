@@ -196,8 +196,6 @@ var ActionBroker = function()
     {
       if (this._action_context)
         this._action_context.blur();
-      if (this._container && this._container.hasClass('edit-mode'))
-        this._container.removeClass('edit-mode');
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};

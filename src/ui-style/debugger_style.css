@@ -1562,3 +1562,13 @@ d
 {
   margin: 0;
 }
+
+.css-inspector:not(.edit-mode) .closing-brace:hover::after
+{
+  content: "";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  vertical-align: middle;
+  background: url("../ui-images/icons/icon_add_small.png") 50% no-repeat;
+}

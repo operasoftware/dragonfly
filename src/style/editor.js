@@ -321,12 +321,12 @@ var Editor = function(actions)
 
   this.insert_declaration_edit = function(event, target)
   {
-    var rule = event.target.has_attr("parent-node-chain", "rule-id");
-    var last_decl = rule.querySelector(".css-declaration:last-of-type");
+    var rule_ele = event.target.has_attr("parent-node-chain", "rule-id");
+    var brace_ele = rule_ele.querySelector(".closing-brace");
     var new_decl = document.createElement("div");
     new_decl.className = "css-declaration";
     new_decl.textContent = "\u00A0"; // Need some content for the height to be set correctly
-    rule.insertBefore(new_decl, last_decl.nextSibling);
+    rule_ele.insertBefore(new_decl, brace_ele);
     this.edit(event, new_decl, true);
     this.textarea.value = "";
   };
@@ -347,7 +347,6 @@ var Editor = function(actions)
                            : this.MODE_CSS;
     this.context_rt_id = parseInt(ele.get_attr('parent-node-chain', 'rt-id'));
     this.context_rule_id = parseInt(ele.get_attr('parent-node-chain', 'rule-id'));
-    var textContent = ele.textContent;
 
     if (this.context_rule_id)
     {
