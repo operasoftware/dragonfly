@@ -196,9 +196,8 @@ cls.ElementLayout = function()
   {
     var index_map = this._css_index_map;
     var is_positioned = comp_style[index_map.indexOf("position")] != "static";
-    var is_border_box = comp_style[index_map.indexOf("box-sizing")] == "border-box";
-    var width = this._get_dimension("width", comp_style, is_border_box);
-    var height = this._get_dimension("height", comp_style, is_border_box);
+    var width = this._get_dimension("width", comp_style);
+    var height = this._get_dimension("height", comp_style);
     return (
       ['div',
         ['ul',
@@ -396,10 +395,11 @@ cls.ElementLayout = function()
     );
   };
 
-  this._get_dimension = function(direction, comp_style, is_border_box)
+  this._get_dimension = function(direction, comp_style)
   {
     var index_map = this._css_index_map;
     var dim = parseInt(comp_style[index_map.indexOf(direction)]);
+    var is_border_box = comp_style[index_map.indexOf("box-sizing")] == "border-box";
     var props = {
       "width": [
         "border-left",
