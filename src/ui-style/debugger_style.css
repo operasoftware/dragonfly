@@ -1563,12 +1563,32 @@ d
   margin: 0;
 }
 
-.css-inspector:not(.edit-mode) .closing-brace:hover::after
+.css-inspector:not(.edit-mode) .closing-brace
 {
-  content: "";
-  display: inline-block;
-  width: 11px;
-  height: 11px;
-  vertical-align: middle;
-  background: url("../ui-images/icons/icon_add_small.png") 50% no-repeat;
+  border-top: 1px solid transparent;
+  margin-top : -1px;
+  position: relative;
 }
+
+.css-inspector:not(.edit-mode) .closing-brace:hover
+{
+  border-top: 1px dotted rgba(0, 0, 0, 0.4);
+}
+
+.css-inspector:not(.edit-mode) .closing-brace:hover::before
+{
+  content: "+";
+  display: block;
+  position: absolute;
+  top: -50%;
+  left: 6px;
+  height: 11px;
+  width: 11px;
+  line-height: 11px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  background: #fefefe ;
+  color: rgba(0, 0, 0, 0.5);
+}
+
