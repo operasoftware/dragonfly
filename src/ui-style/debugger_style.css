@@ -1577,7 +1577,7 @@ d
 
 .css-inspector:not(.edit-mode) .closing-brace:hover::before
 {
-  content: "+";
+  content: "";
   display: block;
   position: absolute;
   top: -50%;
@@ -1588,7 +1588,17 @@ d
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 3px;
-  background: #fefefe ;
+  background-color: #fefefe;
+  background-image: -o-linear-gradient(90deg,
+                                       #7e7e7e 0px,
+                                       #7e7e7e 5px),
+                    -o-linear-gradient(0deg,
+                                       #7e7e7e 0px,
+                                       #7e7e7e 5px);
+  background-size: 1px 5px, 
+                   5px 1px;
+  background-position: center;
+  background-repeat: no-repeat;
   color: rgba(0, 0, 0, 0.5);
 }
 
