@@ -1566,7 +1566,7 @@ d
 .css-inspector:not(.edit-mode) .closing-brace
 {
   border-top: 1px solid transparent;
-  margin-top : -1px;
+  margin-top: -1px;
   position: relative;
 }
 
@@ -1578,24 +1578,21 @@ d
 .css-inspector:not(.edit-mode) .closing-brace:hover::before
 {
   content: "";
-  display: block;
   position: absolute;
-  top: -50%;
-  left: 6px;
-  height: 11px;
-  width: 11px;
-  line-height: 11px;
-  text-align: center;
+  top: -6px;
+  left: 8px;
+  height: 9px;
+  width: 9px;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 3px;
   background-color: #fefefe;
   background-image: -o-linear-gradient(90deg,
-                                       #7e7e7e 0px,
+                                       #7e7e7e 0,
                                        #7e7e7e 5px),
                     -o-linear-gradient(0deg,
-                                       #7e7e7e 0px,
+                                       #7e7e7e 0,
                                        #7e7e7e 5px);
-  background-size: 1px 5px, 
+  background-size: 1px 5px,
                    5px 1px;
   background-position: center;
   background-repeat: no-repeat;
