@@ -624,8 +624,7 @@ cls.ConsoleLogger.ConsoleView = function(id, name, container_class)
 {
   this.is_hidden = true;
   this.createView = function(container){};
-  // this is the only sub-section in it's settings tab, therefor it doesn't need a title
-  this.init(id, "", container_class);
+  this.init(id, ui_strings.S_SETTINGS_HEADER_CONSOLE, container_class);
 };
 cls.ConsoleLogger.ConsoleView.prototype = ViewBase;
 

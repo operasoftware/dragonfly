@@ -1,11 +1,15 @@
-﻿/**
+﻿"use strict";
+
+/**
  * @fileoverview
  * This file contains arrays of valid values for various CSS properties.
  * They are used for autocompletion in the CSS editor
  * @see Editor
  */
 
-const COLORS =
+window.suggest_values = (function() {
+
+var COLORS =
 [
   'transparent',
   'currentColor',
@@ -326,6 +330,8 @@ suggest_values['background-image'] =
   'none',
   '-o-linear-gradient()',
   '-o-repeating-linear-gradient()',
+  '-o-radial-gradient()',
+  '-o-repeating-radial-gradient()',
   'inherit'
 ];
 
@@ -378,8 +384,6 @@ suggest_values['border-collapse'] =
   'collapse',
   'separate'
 ];
-
-
 
 suggest_values['border-spacing'] =
 [
@@ -791,6 +795,10 @@ suggest_values['line-height'] =
 suggest_values['list-style-image'] =
 [
   'none',
+  '-o-linear-gradient()',
+  '-o-repeating-linear-gradient()',
+  '-o-radial-gradient()',
+  '-o-repeating-radial-gradient()',
   'inherit'
 ];
 
@@ -1575,4 +1583,8 @@ suggest_values["viewport-fill-opacity"] =
   // <opacity-value>
   'inherit'
 ];
+
+return suggest_values;
+
+})();
 

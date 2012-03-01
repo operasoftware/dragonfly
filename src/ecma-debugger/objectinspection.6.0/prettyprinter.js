@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 cls.PrettyPrinter = function() {};
 
@@ -11,7 +13,7 @@ cls.PrettyPrinter.REGEXP = 5;
 cls.PrettyPrinter.types = {};
 
 /**
-  * Add more types to here.
+  * Add more types here.
   * A type must have an is_type function which takes a class name to check 
   * if a given object is of this type.
   * The type must either have a script or a traversal property. The script is 
@@ -193,7 +195,7 @@ cls.PrettyPrinter.prototype = new function()
 
   this._print_element = function(ctx)
   {
-    var tag = tagManager.set_callback(this, this._handle_element, [ctx]);
+    var tag = tag_manager.set_callback(this, this._handle_element, [ctx]);
     var msg = [ctx.obj_id, ctx.type.traversal];
     services["ecmascript-debugger"].requestInspectDom(tag, msg);
   };
@@ -234,14 +236,12 @@ cls.PrettyPrinter.prototype = new function()
     {
       if (ctx.type.traversal)
         this._print_element(ctx);
-
       else
         this._print_object(ctx);
     }
     else
       ctx.callback(ctx);
   };
-
 };
 
 

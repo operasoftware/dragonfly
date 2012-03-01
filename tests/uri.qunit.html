@@ -12,11 +12,28 @@
 
 test("uri", function()
 { 
-  var uri = new URI("http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/banner.html?csiID=csi1");
+  var uri = new URI("http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/banner.html?csiID=csi1#hello");
 
+  equals(uri.protocol, "http:");
+  equals(uri.host, "edition.cnn.com");
+  equals(uri.pathname, "/.element/ssi/intl/breaking_news/3.0/banner.html");
+  equals(uri.search, "?csiID=csi1");
+  equals(uri.hash, "#hello");
   equals(uri.filename, "banner.html");
   equals(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
   equals(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
+
+  var uri = new URI("foo.txt");
+
+  equals(uri.protocol, "");
+  equals(uri.host, "");
+  equals(uri.pathname, "foo.txt");
+  equals(uri.search, "");
+  equals(uri.hash, "");
+  equals(uri.filename, "foo.txt");
+  equals(uri.dir_pathname, "");
+  equals(uri.abs_dir, "");
+
 });
 
 

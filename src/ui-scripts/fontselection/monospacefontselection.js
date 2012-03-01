@@ -11,8 +11,8 @@ cls.MonospaceFontView = function(id, name, container_class)
 
   var FONT_PROPS =
   [
-    'test-line-height',
-    'test-char-width',
+    "test-line-height",
+    "test-char-width",
   ];
 
   this._onfontselection = function(event, target)

@@ -1,4 +1,4 @@
-﻿(function()
+﻿;(function()
 {
   var self = this;
   this.hello = function(enviroment)
@@ -49,11 +49,16 @@
                                                    runtimes,
                                                    stopped_script_id,
                                                    selected_script_id);
-    return [["div", ["input", "type", "text", 
-                              "handler", select_id + "-filter",
-                              "shortcuts", select_id + "-filter",
-                              "class", "js-dd-filter"],
-                    "class", "js-dd-filter-container"],
+    return [["div", 
+              ["div",
+                ["input", "type", "text", 
+                          "handler", select_id + "-filter",
+                          "shortcuts", select_id + "-filter",
+                          "class", "js-dd-filter"],
+                "class", "js-dd-filter-container"],
+                ["span", "class", "js-dd-clear-filter",
+                         "handler", "js-dd-clear-filter"],
+              "class", "js-dd-filter-bar"],
             option_list];
   };
 
@@ -66,22 +71,23 @@
       script_list.push(this.runtime_script(rt, stopped_script_id, 
                                            selected_script_id, search_term));
     }
-    script_list.push("class", "js-dd-script-list");
+    script_list.push("class", "js-dd-script-list",
+                     "handler", "js-dd-move-highlight");
     return script_list;
   };
 
   this.runtime_script = function(runtime, stopped_script_id, 
                                  selected_script_id, search_term)
   {
-    // search_term only applies to .js-dd-dir-group and.js-dd-type
+    // search_term only applies to .js-dd-s-scope
     var ret = [];
-    var script_uri_paths = {};
+    var script_uri_paths = new HashMap();
     var inline_and_evals = [];
     var title = ["cst-title", runtime.title];
     var class_name = runtime.type == "extension"
                    ? "js-dd-ext-runtime"
                    : "js-dd-runtime";
-      
+
     title.push("class", class_name + (runtime.selected ? " selected-runtime" : ""));
 
     if (runtime.title != runtime.uri)
@@ -98,7 +104,7 @@
         if (script.script_type === "linked")
         {
           var root_uri = this._uri_path(runtime, script, search_term);
-          if (script_uri_paths.hasOwnProperty(root_uri))
+          if (script_uri_paths[root_uri])
             script_uri_paths[root_uri].push(ret_script);
           else
             script_uri_paths[root_uri] = [ret_script];
@@ -123,15 +129,21 @@
 
     if (inline_and_evals.length)
     {
-      var group = ["div"];
-      if (runtime.type != "extension")
+      if (runtime.type == "extension")
+      {
+        ret.push(["div", inline_and_evals, "class", "js-dd-group js-dd-s-scope"]);
+      }
+      else
+      {
+        var group = ["div"];
         group.push(["cst-title",
-                      "Inline, Eval, Timeout and Event handler scripts",
+                      ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS,
                       "class", "js-dd-dir-path"]);
 
-      group.extend(inline_and_evals);
-      group.push("class", "js-dd-group js-dd-s-scope");
-      ret.push(group);
+        group.extend(inline_and_evals);
+        group.push("class", "js-dd-group");
+        ret.push(group);
+      }
     }
 
     if (runtime.type != "extension")
@@ -162,9 +174,11 @@
         if (scripts.length)
         {
           ret.push(["div", 
-                     ["cst-title", "Browser and User JS", "class", "js-dd-dir-path"],
-                     scripts,
-                     "class", "js-dd-group js-dd-s-scope"]);
+                     ["cst-title",
+                        ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS,
+                        "class", "js-dd-dir-path"],
+                     ["div", scripts, "class", "js-dd-s-scope"],
+                     "class", "js-dd-group"]);
         }
       }
 
@@ -225,11 +239,12 @@
 
     if (script.uri)
     {
+      var is_linked = script.script_type == "linked";
       ret = ["cst-option", 
               ["span", 
                  script.filename,
-                 "data-tooltip", "js-script-select", 
-                 "data-tooltip-text", script.uri]];
+                 "data-tooltip", is_linked && "js-script-select", 
+                 "data-tooltip-text", is_linked && script.uri]];
 
       if (script.search)
         ret.push(["span", script.search, "class", "js-dd-scr-query"]);
@@ -255,7 +270,7 @@
                    : "";
 
     if (stopped_script_id == script.script_id)
-      class_name += ( class_name && " " || "" ) + "stopped";
+      class_name += (class_name ? " " : "") + "stopped";
     
     if (class_name)
       ret.push("class", class_name);
@@ -581,7 +596,7 @@
     for( ; lang = dict[i]; i++)
     {
       ret[ret.length] = ["option", lang.name, "value", lang.key].
-        concat( selected_lang == lang.key ? ["selected", "selected"] : [] );
+        concat(selected_lang == lang.key ? ["selected", "selected"] : []);
     }
     return ret;
   }

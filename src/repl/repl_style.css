@@ -42,12 +42,6 @@
   margin: 0;    
 }
 
-.repl-lines::selection
-{
-  color: #cce5f3;
-  background-color: black;
-}
-    
 li > .repl-lines
 {
   margin-left: 2em;

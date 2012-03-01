@@ -196,8 +196,6 @@ var ActionBroker = function()
     {
       if (this._action_context)
         this._action_context.blur();
-      if (this._container && this._container.hasClass('edit-mode'))
-        this._container.removeClass('edit-mode');
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
@@ -343,6 +341,9 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event)
   {
+    if (this._action_context.check_mode)
+      this._action_context.check_mode(event);
+
     var shortcuts = this._current_shortcuts[this._action_context.mode] || {};
     var shared_shortcuts = this._current_shared_shortcuts[this._action_context.mode] || {};
     var action = shortcuts[key_id] || shared_shortcuts[key_id] || '';

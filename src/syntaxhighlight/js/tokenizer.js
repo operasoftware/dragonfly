@@ -59,7 +59,7 @@ cls.SimpleJSParser.prototype = new function()
     * @param {String} escape. Optional. Currently supports only "html" 
     * to escape "<" and "&" to "&lt;" and "&amp;".
     */
-  this.tokenize = function(script_source, ontoken, espace, start_state){};
+  this.tokenize = function(script_source, ontoken, escape, start_state){};
 
   /* privat */
 
@@ -1081,12 +1081,12 @@ cls.SimpleJSParser.prototype = new function()
     parser(__source.charAt(__pointer));
   }
 
-  this.tokenize = function(script_source, ontoken, espace, start_state)
+  this.tokenize = function(script_source, ontoken, escape, start_state)
   {
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
-    __escape = espace == "html" && ESCAPE || {};
+    __escape = escape == "html" && ESCAPE || {};
     __source = script_source;
     __pointer = 0;
     __ontoken = ontoken;

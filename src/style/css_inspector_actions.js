@@ -151,15 +151,17 @@ cls.CSSInspectorActions = function(id)
   this.set_property_css = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration.property);
-    var script = "object.style.setProperty(\"" +
-                   prop + "\", \"" +
-                   helpers.escape_input(declaration.value) + "\", " +
-                   (declaration.priority ? "\"important\"" : null) +
-                 ");";
+    var script = "";
 
     // If a property is added by overwriting another one, remove the other property
-    if (prop_to_remove && prop != prop_to_remove)
-      script += "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
+    if (prop_to_remove)
+      script = "object.style.removeProperty(\"" + this.normalize_property(prop_to_remove) + "\");";
+
+    script += "object.style.setProperty(\"" +
+                prop + "\", \"" +
+                window.helpers.escape_input(declaration.value) + "\", " +
+                (declaration.priority ? "\"important\"" : null) +
+              ");";
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
@@ -177,14 +179,16 @@ cls.CSSInspectorActions = function(id)
   this.set_property_svg = function(rt_id, rule_id, declaration, prop_to_remove, callback)
   {
     var prop = this.normalize_property(declaration.property);
-    var script = "object.setAttribute(\"" +
-                   prop + "\", \"" +
-                   declaration.value.replace(/"/g, "\\\"") + "\"" +
-                 ");";
+    var script = "";
 
     // If a property is added by overwriting another one, remove the other property
-    if (prop_to_remove && prop != prop_to_remove)
-      script += "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
+    if (prop_to_remove)
+      script = "object.removeAttribute(\"" + this.normalize_property(prop_to_remove) + "\");";
+
+    script += "object.setAttribute(\"" +
+                prop + "\", \"" +
+                window.helpers.escape_input(declaration.value) + "\"" +
+              ");";
 
     var tag = (typeof callback == "function")
             ? this._tag_manager.set_callback(null, callback)
@@ -293,7 +297,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                   initial_property + "\", \"" +
-                  helpers.escape_input(this.editor.context_cur_value) + "\", " +
+                  window.helpers.escape_input(this.editor.context_cur_value) + "\", " +
                   (this.editor.context_cur_priority ? "\"important\"" : null) +
                 ");";
     }
@@ -305,7 +309,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.style.setProperty(\"" +
                   new_property + "\", \"" +
-                  helpers.escape_input(decl.value) + "\", " +
+                  window.helpers.escape_input(decl.value) + "\", " +
                   (decl.priority ? "\"important\"" : null) +
                 ");";
     }
@@ -346,7 +350,7 @@ cls.CSSInspectorActions = function(id)
     {
       script += "object.setAttribute(\"" +
                   new_property + "\", \"" +
-                  helpers.escape_input(decl.value) + "\"" +
+                  window.helpers.escape_input(decl.value) + "\"" +
                 ");";
     }
 
@@ -440,6 +444,7 @@ cls.CSSInspectorActions = function(id)
 
   var MODE_DEFAULT = "default";
   var MODE_EDIT = "edit";
+  var MODE_EDIT_CLASS = "edit-mode";
   var MINUS = -1;
   var PLUS = 1;
 
@@ -447,13 +452,25 @@ cls.CSSInspectorActions = function(id)
   this._broker = ActionBroker.get_instance();
   this._broker.register_handler(this);
   this._handlers = {};
-  this.mode = MODE_DEFAULT;
+  this._mode = MODE_DEFAULT;
 
   this.mode_labels =
   {
     "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
     "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
   };
+
+  this.__defineSetter__("mode", function(mode) {
+    if (mode === MODE_EDIT)
+      this._active_container.addClass(MODE_EDIT_CLASS);
+    else
+      this._active_container.removeClass(MODE_EDIT_CLASS);
+    this._mode = mode;
+  });
+
+  this.__defineGetter__("mode", function() {
+    return this._mode;
+  });
 
   this.get_action_list = function()
   {
@@ -685,7 +702,8 @@ cls.CSSInspectorActions = function(id)
       // (meaning that actions of the contextmenu would e.g. refer
       // to an already replaced view).
       // See e.g. DFL-2307.
-      this.edit_onclick(event);
+      if (this.edit_onclick(event))
+        event.stopPropagation();
       return false;
     }
   };

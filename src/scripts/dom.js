@@ -25,7 +25,7 @@
 })();
 */
 
-/* testing in Chrome or FF
+/* testing in Chrome or FF *
 if (document.createElementNS &&
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {
@@ -34,7 +34,7 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-*/
+/* */
 
 if (!Element.prototype.contains)
 {
@@ -693,7 +693,7 @@ if (!Object.getOwnPropertyNames)
     var ret = [];
     for (var p in obj)
     {
-      if (obj.hasOwnProperty(p))
+      if (Object.prototype.hasOwnProperty.call(obj, p))
         ret.push(p);
     }
     return ret;
@@ -936,6 +936,8 @@ window.CustomElements.AutoScrollHeightFeature = function()
     var adjust_height = this._adjust_height.bind(ele, delta);
     adjust_height();
     ele.addEventListener('input', adjust_height, false);
+    // Custom event to force adjust of height
+    ele.addEventListener('heightadjust', adjust_height, false);
   });
 
 };

@@ -298,16 +298,17 @@ CssShorthandResolver.shorthands = (function() {
         {
           var template_len = template.length;
           var is_final_bg_layer = (i == len-1);
+          var is_default_bg_size = declarations["background-size"][i].value == get_initial_value("background-size");
 
           // Always add background-image, unless we're in the final background layer and
           // it has the default value.
           if (!(is_final_bg_layer && declarations["background-image"][i].value == get_initial_value("background-image")))
             template.push(" ", declarations["background-image"][i]);
 
-          if (declarations["background-position"][i].value != get_initial_value("background-position"))
+          if (!is_default_bg_size || declarations["background-position"][i].value != get_initial_value("background-position"))
             template.push(" ", declarations["background-position"][i]);
 
-          if (declarations["background-size"][i].value != get_initial_value("background-size"))
+          if (!is_default_bg_size)
             template.push("/", declarations["background-size"][i]);
 
           if (declarations["background-repeat"][i].value != get_initial_value("background-repeat"))

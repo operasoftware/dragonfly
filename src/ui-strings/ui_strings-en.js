@@ -1420,4 +1420,17 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_COLOR_NOTATION = "Color format";
 
 /* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
-ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show a tooltip in the source view";
+ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
+
+/* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
+ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
+
+/* DESC: Section header in the script drop-down select for Browser and User JS. */
+ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
+
+/* DESC: Heading for the area where the user can configure keyboard shortcuts in settings. */
+ui_strings.S_KEYBOARD_SHORTCUTS_CONFIGURATION = "Configuration";
+
+/* DESC: Heading for the setting that toggles the breadcrumb trail */
+ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
+

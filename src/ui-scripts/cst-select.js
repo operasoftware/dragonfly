@@ -8,6 +8,10 @@
     */
   this.getSelectedOptionText = function(){};
   /**
+    * get the text string for the tooltip of the selected option 
+    */
+  this.getSelectedOptionTooltipText = function(){};
+  /**
     * get the text value of the selected option 
     */
   this.getSelectedOptionValue = function(){};
@@ -27,17 +31,24 @@
     * for more complex selects like colors 
     * return 0 submit, 1 cancel, 2 keep modal state
     */
-  this.handleClick = function(target_ele, modal_box, select_obj)
+  this.handleClick = function(target_ele, modal_box, _select_obj)
   {
-    return ( target_ele.hasAttribute('handler') || 
-            select_obj.checkChange(target_ele) ) && 1 ||
-            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
+    if ((!_select_obj.ignore_option_handlers && target_ele.hasAttribute('handler')) ||
+        _select_obj.checkChange(target_ele))
+      return 1;
+    
+    if (target_ele.nodeName.toLowerCase() != 'cst-option')
+      return 2;
+
+    return 0;
   };
 
   this.onshowoptionlist = function(container) {};
+  this.onhideoptionlist = function(container) {};
+  this.ignore_option_handlers = false;
 
-  var modal_box = null;
-  var select_obj = null;
+  var _modal_box = null;
+  var _select_obj = null;
   var self = this;
 
   var modal_mousedown_handler = function(event)
@@ -47,7 +58,7 @@
     if (window.Tooltips && Tooltips.is_in_target_chain(event))
       return;
 
-    while (ele != modal_box && (ele = ele.parentElement));
+    while (ele != _modal_box && (ele = ele.parentElement));
 
     if (!ele || !(event.target.nodeName.toLowerCase() == "input" &&
                   event.target.type == "text"))
@@ -74,10 +85,10 @@
 
     event.stopPropagation();
     event.preventDefault();
-    while (ele != modal_box && (ele = ele.parentElement));
+    while (ele != _modal_box && (ele = ele.parentElement));
     if (ele)
     {
-      switch (select_obj.handleClick(target, modal_box, select_obj))
+      switch (_select_obj.handleClick(target, _modal_box, _select_obj))
       {
         // cancel
         case 0: break;
@@ -94,7 +105,7 @@
           }
           else
           {
-            select = select_obj.updateElement();
+            select = _select_obj.updateElement();
             if (select)
             {
               select.releaseEvent('change');
@@ -107,18 +118,23 @@
       }
 
       self.remove_select();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
     }
   }
 
   this.remove_select = function()
   {
-    if (modal_box)
+    if (_modal_box)
     {
       document.removeEventListener('mousedown', modal_mousedown_handler, true);
       document.removeEventListener('mouseup', modal_mouseup_handler, true);
-      modal_box.parentElement.removeChild(modal_box);
-      modal_box = null;
-      select_obj = null;
+      _modal_box.parentElement.removeChild(_modal_box);
+      if (_select_obj.onhideoptionlist)
+        _select_obj.onhideoptionlist();
+
+      _modal_box = null;
+      _select_obj = null;
       EventHandler.__modal_mode = false;
       return true;
     }
@@ -128,9 +144,9 @@
   var mouse_handler = function(event)
   {
     var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName))
+    if (/^cst-/i.test(ele.nodeName) || /^cst-/i.test(ele.parentNode.nodeName))
     {
-      var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
+      var select = ele.get_ancestor("cst-select");
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
@@ -138,14 +154,17 @@
       }
       event.stopPropagation();
       event.preventDefault();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+
       while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
       document.addEventListener('mousedown', modal_mousedown_handler, true);
       document.addEventListener('mouseup', modal_mouseup_handler, true);
-      select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      var tmpl = templates['cst-select-option-list'](select_obj, select);
-      modal_box = (cursor || document.documentElement).render(tmpl);
+      _select_obj = window['cst-selects'][select.getAttribute("cst-id")];
+      var tmpl = templates['cst-select-option-list'](_select_obj, select);
+      _modal_box = (cursor || document.documentElement).render(tmpl);
       var box = select.getBoundingClientRect(),
-      has_search_bar = Boolean(modal_box.querySelector("input[type=\"text\"]")),
+      has_search_bar = Boolean(_modal_box.querySelector("input[type=\"text\"]")),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
       cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
       left = box.left - cursor_left,
@@ -156,8 +175,8 @@
       _innerHeight = innerHeight,
       max_width = _innerWidth - left - 30,
       max_height = _innerHeight - bottom - (30 + (has_search_bar ? 25 : 0)),
-      modal_box_width = modal_box.offsetWidth,
-      modal_box_height = modal_box.offsetHeight,
+      modal_box_width = _modal_box.offsetWidth,
+      modal_box_height = _modal_box.offsetHeight,
       max_width_2 = right - 30,
       max_height_2 = top - 30,
       style = '';
@@ -169,7 +188,7 @@
       else
       {
         style += "top: " + (bottom - 1) + "px;";
-        modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
+        _modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
       }
       if (modal_box_width > max_width && max_width_2 > max_width)
       {
@@ -181,24 +200,24 @@
         style += "left: " + left + "px; max-width: " + max_width + "px;";
       }
       style += "min-width:" + (select.offsetWidth < max_width ? select.offsetWidth : (max_width > 0 ? max_width : 0)) + "px;";
-      modal_box.style.cssText = style;
-      var selected_option = modal_box.querySelector("cst-option.selected");
+      _modal_box.style.cssText = style;
+      var selected_option = _modal_box.querySelector("cst-option.selected");
       if (selected_option)
       {
         var offset_top = selected_option.offsetTop;
         var offset_height = selected_option.offsetHeight;
-        var box_height = modal_box.offsetHeight;
+        var box_height = _modal_box.offsetHeight;
         if (offset_top + offset_height > box_height)
         {
-          modal_box.firstElementChild.scrollTop = offset_top + (offset_height / 2) - (box_height / 2);
+          _modal_box.firstElementChild.scrollTop = offset_top + (offset_height / 2) - (box_height / 2);
         }
       }
       EventHandler.__modal_mode = true;
-      if (select_obj.onshowoptionlist)
+      if (_select_obj.onshowoptionlist)
       {
-        var option_list = modal_box.querySelector("cst-select-option-list");
+        var option_list = _modal_box.querySelector("cst-select-option-list");
         if (option_list)
-          select_obj.onshowoptionlist(option_list);
+          _select_obj.onshowoptionlist(option_list);
       }
     }
   }
@@ -223,7 +242,16 @@
     var firstElementChild = select_ele.firstElementChild;
     if(firstElementChild && firstElementChild.nodeName.toLowerCase() == "cst-value" )
     {
-      firstElementChild.textContent = this.getSelectedOptionText();
+      var tooltip_text = this.getSelectedOptionTooltipText();
+      if (tooltip_text)
+      {
+        var tmpl = ["span", this.getSelectedOptionText(),
+                            "data-tooltip", "js-script-select",
+                            "data-tooltip-text", tooltip_text];
+        firstElementChild.clearAndRender(tmpl);
+      }
+      else
+        firstElementChild.textContent = this.getSelectedOptionText();
     }
   }
 
@@ -385,27 +413,28 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
-  return (
-  [
-    "cst-select",
-      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
-        concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
-      ["cst-drop-down"],
-    "cst-id", select.getId(),
-    "handler", select.getId(),
-    "unselectable", "on",
-    "class", "ui-control"
-  ].
-  concat( select.type ? ['class', select.type] : [] ).
-  concat( disabled ? ['disabled', 'disabled'] : [] ).
-  concat( select.handler? ['handler', select.handler] : [] ) ); 
+  var tooltip_text = select.getSelectedOptionTooltipText();
+  return ["cst-select",
+           ["cst-value", 
+             ["span", select.getSelectedOptionText(),
+                      "data-tooltip", tooltip_text && "js-script-select", 
+                      "data-tooltip-text", tooltip_text],
+             "unselectable", "on"],
+           ["cst-drop-down"],
+           "cst-id", select.getId(),
+           "handler", select.getId(),
+           "unselectable", "on",
+           "class", "ui-control",
+           "disabled", disabled && "disabled",
+           "handler", select.handler]; 
 }
 
-templates['cst-select-option-list'] = function(select_obj, select_ele)
+templates['cst-select-option-list'] = function(_select_obj, select_ele)
 {
-  return (
-  ['cst-select-option-list-container',
-    ['cst-select-option-list', select_obj.templateOptionList(select_obj)],
-    'style', 'top: -1000px; left: -1000px;'
-  ].concat('class', 'menu ' + (select_obj.class_name ? select_obj.class_name : "")));
+  var cln = "menu" + (_select_obj.class_name ? " " + _select_obj.class_name : "");
+  return ["cst-select-option-list-container",
+           ["cst-select-option-list",
+              _select_obj.templateOptionList(_select_obj)],
+              "style", "top: -1000px; left: -1000px;",
+              "class", cln];
 }

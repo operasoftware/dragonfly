@@ -19,12 +19,12 @@ var Color = function()
   this.__hsv = [0, 50, 50]; 
 }
 
-Color.KEYWORD = 'keyword';
-Color.HEX = 'hex';
-Color.RGB = 'rgb';
-Color.RGBA = 'rgba';
-Color.HSL = 'hsl';
-Color.HSLA = 'hsla';
+Color.KEYWORD = "keyword";
+Color.HEX = "hex";
+Color.RGB = "rgb";
+Color.RGBA = "rgba";
+Color.HSL = "hsl";
+Color.HSLA = "hsla";
 
 Color.prototype = new function()
 {
@@ -502,7 +502,7 @@ Color.prototype = new function()
    */
   this.getHex = function()
   {
-    return this.rgb_to_hex_c(this.__rgb);
+    return this.rgb_to_hex_c(this.__rgb).toUpperCase();
   }
 
   this._alpha2string = function()

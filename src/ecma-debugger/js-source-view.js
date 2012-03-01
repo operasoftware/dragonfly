@@ -728,7 +728,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     if (__current_script && __current_script.script_id)
     {
-      var cand = __top_line + Math.floor(offset / context['line-height']);
+      var cand = __top_line + Math.floor(offset / context["line-height"]);
       if (cand <= __current_script.line_arr.length)
         return cand;
     }
@@ -741,7 +741,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       this._slice_highlighter.clear_hit();
       var line_ele = this.get_line_element(line_number);
-      while (line_ele && typeof length == 'number' && length > 0)
+      while (line_ele && typeof length == "number" && !isNaN(length) && length > 0)
       {
         this._slice_highlighter.set_hit(line_ele, 
                                         offset_start,
@@ -986,18 +986,18 @@ cls.JsSourceView = function(id, name, container_class)
     return false;
   }.bind(this);
 
-  this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
-  this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
-  this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
-  this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class, null, 'scroll-js-source-view');
+  this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
+  this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
+  this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
+  this.init(id, name, container_class, null, "scroll-js-source-view");
   this._go_to_line = new cls.GoToLine(this);
-  messages.addListener('update-layout', updateLayout);
-  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-  messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
-  messages.addListener('monospace-font-changed',
+  messages.addListener("update-layout", updateLayout);
+  messages.addListener("runtime-destroyed", onRuntimeDestroyed);
+  messages.addListener("breakpoint-updated", this._onbreakpointupdated.bind(this));
+  messages.addListener("monospace-font-changed",
                        this._onmonospacefontchange.bind(this));
-  messages.addListener('setting-changed', this._on_setting_change.bind(this));
+  messages.addListener("setting-changed", this._on_setting_change.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
 
@@ -1057,169 +1057,6 @@ cls.GoToLine = function(js_source_view)
 };
 
 cls.GoToLine.prototype = ViewBase;
-
-cls.ScriptSelect = function(id, class_name)
-{
-
-  var selected_value = "";
-  var selected_script_id = 0;
-
-  var _stopped_script_id = '';
-
-  this.getSelectedOptionText = function()
-  {
-    selected_script_id = runtimes.getSelectedScript();
-    if (selected_script_id)
-    {
-      var script = runtimes.getScript(selected_script_id);
-      if (script)
-      {
-        // TODO
-        var display_uri = helpers.shortenURI(script.uri);
-        var script_type = script.script_type.capitalize(true);
-        return display_uri.uri ?
-               display_uri.uri :
-               script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
-               ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
-      }
-      else if(selected_script_id == -1)
-      {
-        return ' ';
-      }
-      else
-      {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          'missing script in getSelectedOptionText in cls.ScriptSelect');
-      }
-    }
-    else if(runtimes.getSelectedRuntimeId() &&
-            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
-    {
-      return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
-    }
-    return '';
-  }
-
-  this.getSelectedOptionValue = function()
-  {
-
-  }
-
-  this.templateOptionList = function(select_obj)
-  {
-    this._runtimes = runtimes.get_dom_runtimes(true);
-    this._selected_script = runtimes.getSelectedScript();
-    return templates.script_dropdown(this._id,
-                                     this._runtimes,
-                                     _stopped_script_id,
-                                     this._selected_script);
-  };
-
-  this.onshowoptionlist = function(container)
-  {
-    var input = container.querySelector("input");
-    if (input)
-    {
-      this._script_list = container.querySelector(".js-dd-script-list");
-      this._filter.setContainer(container);
-      this._filter.setFormInput(input);
-    }
-  };
-
-  this.checkChange = function(target_ele)
-  {
-    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
-    var script_id = script_id_str && parseInt(script_id_str);
-    if (script_id)
-    {
-      // TODO is this needed?
-      if (script_id != selected_script_id)
-      {
-        runtimes.setSelectedScript(script_id);
-        topCell.showView(views.js_source.id);
-        selected_script_id = script_id;
-      }
-      selected_value = target_ele.textContent;
-      return true;
-    }
-    return false;
-  }
-
-  // this.updateElement
-
-  var onThreadStopped = function(msg)
-  {
-    _stopped_script_id = msg.stop_at.script_id;
-  }
-
-  var onThreadContinue = function(msg)
-  {
-    _stopped_script_id = '';
-  }
-
-  var onApplicationSetup = function()
-  {
-    eventHandlers.change['set-tab-size']({target: {value:  settings.js_source.get('tab-size')}});
-  }
-
-  this._onfilterinput = function(event, target)
-  {
-    this._filter.searchDelayed(target.value);
-  };
-
-  this._onshortcut = function(action_id, event, target)
-  {
-    switch (action_id)
-    {
-      case "highlight-next-match":
-        this._filter.highlight_next();
-        break;
-      
-      case "highlight-previous-match":
-        this._filter.highlight_previous();
-        break;
-    }
-  };
-
-  this._onbeforesearch = function(msg)
-  {
-    if (this._script_list)
-    {
-      var tmpl = templates.script_dropdown_options(this._id,
-                                                   this._runtimes,
-                                                   _stopped_script_id,
-                                                   this._selected_script,
-                                                   msg.search_term);
-      this._script_list.clearAndRender(tmpl);
-    }
-  };
-
-  this._init = function(id, class_name)
-  {
-    this.init(id, class_name);
-    this._filter = new TextSearch();
-    this._filter.set_query_selector(".js-dd-s-scope");
-    this._onbeforesearch_bound = this._onbeforesearch.bind(this);
-    this._filter.addListener("onbeforesearch", this._onbeforesearch_bound);
-    eventHandlers.input[this._id + "-filter"] = this._onfilterinput.bind(this);
-    this._onshortcut_bound = this._onshortcut.bind(this);
-    var gl_h = ActionBroker.get_instance().get_global_handler();
-    gl_h.register_shortcut_listener(this._id + "-filter", 
-                                    this._onshortcut_bound, 
-                                    ["highlight-next-match",
-                                     "highlight-previous-match"]);
-    messages.addListener("thread-stopped-event", onThreadStopped);
-    messages.addListener("thread-continue-event", onThreadContinue);
-    messages.addListener("application-setup", onApplicationSetup);
-    this._tooltip = Tooltips.register("js-script-select", true);
-  }
-
-  this._init(id, class_name);
-
-}
-
-cls.ScriptSelect.prototype = new CstSelect();
-
 
 cls.JsSourceView.create_ui_widgets = function()
 {
@@ -1317,7 +1154,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-all-files': false,
       'js-search-injected-scripts': true,
       'max-displayed-search-hits': 1000,
-      'show-js-tooltip': true
+      'show-js-tooltip': true,
+      'js-dd-match-history': [],
     },
     // key-label map
     {
@@ -1530,8 +1368,12 @@ cls.JsSourceView.create_ui_widgets = function()
               }
             });
           }
-          return items;
         }
+        
+        if (items.length)
+          items.push(ContextMenu.separator);
+
+        return items;
       }
     }
   ], true); // extend the default existing menu
