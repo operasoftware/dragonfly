@@ -396,7 +396,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       if (document.readyState == "complete")
         _setup();
       else
-        document.addEventListener("load", _setup, false);
+        document.addEventListener("DOMContentLoaded", _setup, false);
       _is_setup = true;  
     }
 
