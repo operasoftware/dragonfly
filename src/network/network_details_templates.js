@@ -258,6 +258,7 @@ templates.network_response_body = function(resp)
     }
     else
     {
+      // todo: find out when resp.entry is null here, add check
       if (["script", "markup", "css", "text"].contains(resp.entry.type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
       {
         ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));

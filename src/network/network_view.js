@@ -255,9 +255,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         label: ui_strings.S_HTTP_LABEL_DURATION,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_DURATION,
         align: "right",
-        getter: function(entry) { return entry.get_duration() },
+        getter: function(entry) { return entry.duration },
         renderer: function(entry) {
-          var dur = entry.get_duration();
+          var dur = entry.duration;
           return (dur && dur.toFixed(2) + "ms") || "";
         }
       },
@@ -267,7 +267,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
-          return templates.network_graph_sections(entry, 50, entry.get_duration(), true);
+          return templates.network_graph_sections(entry, 50, entry.duration, true);
         }
       }
     }
@@ -284,6 +284,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         var old_item_order = this._item_order;
         this._item_order = data.map(function(res){return res.id}).join(",");
         // a changed item_order means we need to re-render. except when just the last item is added.
+        // todo: when updates contain more than one additional item, this will always need a full update.
         if (this._item_order !== old_item_order
             && this._item_order !== old_item_order + "," + data.last.id)
         {
@@ -437,7 +438,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    // var context_info = target.get_attr("parent-node-chain", "data-tooltip-context-info");
     var entry = ctx.get_entry(entry_id);
     if (entry)
     {
@@ -711,6 +711,7 @@ cls.NetworkLog.create_ui_widgets = function()
     if (msg.id == "network_logger")
     {
       text_search.cleanup();
+      views.network_logger._item_order = null;
     }
   }
 

@@ -505,18 +505,13 @@
   display: table-row;
 }
 
-.network-tooltip-graph,
-.network-tooltip-legend,
-.network-tooltip-pointers
-{
+.network-tooltip-col {
   display: table-cell;
   vertical-align: top;
 }
 
-.network-tooltip-pointers
-{
-  position: relative;
-  width: 103px; /* the base_width in the svg plus some padding */
+.network-tooltip-container .gap_title {
+  white-space: nowrap;
 }
 
 .network-section

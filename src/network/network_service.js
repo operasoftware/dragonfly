@@ -230,7 +230,6 @@ cls.NetworkLoggerService = function(view)
 cls.RequestContext = function()
 {
   this._logger_entries = [];
-  this._document_notifications = {};
   this._filters = [];
 
   // When this is constructed, the context is not paused. Reset the setting.
@@ -265,15 +264,6 @@ cls.RequestContext = function()
     }
     return success;
   }.bind(this);
-
-  this.update_document_event = function(event_name, data)
-  {
-    if (!this._document_notifications[data.documentID])
-      this._document_notifications[data.documentID] = {};
-    this._document_notifications[data.documentID][event_name] = data;
-
-    views.network_logger.update();
-  }
 
   this.get_entries_filtered = function()
   {
@@ -396,7 +386,7 @@ cls.RequestContext = function()
     if (eventname == "urlload" || changed_request_id)
     {
       var id = event.resourceID + ":" + this._logger_entries.length;
-      logger_entry = new cls.NetworkLoggerEntry(id, this, event.resourceID, event.documentID);
+      logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
       this._logger_entries.push(logger_entry);
     }
     logger_entry.requestID = event.requestID;
@@ -411,12 +401,12 @@ cls.RequestContext = function()
   };
 };
 
-cls.NetworkLoggerEntry = function(id, context, resource, document_id)
+cls.NetworkLoggerEntry = function(id, resource, document_id, context_starttime)
 {
   this.id = id;
-  this.context = context;
   this.resource = resource;
   this.document_id = document_id;
+  this.context_starttime = context_starttime;
   this.url = null;
   this.human_url = "No URL";
   this.result = null;
@@ -444,6 +434,14 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
   this.events = [];
   this.event_sequence = [];
 
+  this.__defineGetter__("duration", function()
+  {
+    return (this.events.length && this.endtime - this.starttime) || 0;
+  });
+};
+
+cls.NetworkLoggerEntry.prototype = new function()
+{
   this.update = function(eventname, eventdata)
   {
     var updatefun = this["_update_event_" + eventname];
@@ -451,7 +449,7 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     if (!this.events.length)
     {
       this.starttime = eventdata.time; // todo: if we tune in in the middle of a request, this will be wrong.
-      this.starttime_relative = this.starttime - this.context.get_starttime();
+      this.starttime_relative = this.starttime - this.context_starttime;
 
       var d = new Date(this.starttime);
       var h = "" + d.getHours();
@@ -482,6 +480,155 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     else
     {
       opera.postError("got unknown event: " + eventname);
+    }
+  };
+
+  this._update_event_urlload = function(event)
+  {
+    this.url = event.url;
+    this.filename = helpers.basename(event.url, true);
+    this.urltype = event.urlType;
+    this.document_id = event.documentID;
+    if (event.loadOrigin)
+      this.load_origin = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
+    this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
+    this._humanize_url();
+    this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
+  };
+
+  this._update_event_urlunload = function(event)
+  {
+    this.unloaded = true;
+  };
+
+  this._update_event_urlfinished = function(event)
+  {
+    this.result = event.result;
+    this.mime = event.mimeType;
+    this.encoding = event.characterEncoding;
+    this.size = event.contentLength;
+
+    // if we got this far, and there was no
+    // response code, no request was performed for this entry
+    if (!this.responsecode)
+    {
+      this.no_request_made = true;
+    }
+
+    this.is_finished = true;
+    this._guess_type();
+    this._humanize_url();
+  };
+
+  this._update_event_request = function(event)
+  {
+    // We assume that there is never more then one network-request,
+    // as opposed to responses which are kept in a list.
+    this.method = event.method;
+    this.touched_network = true;
+  };
+
+  this._update_event_requestheader = function(event)
+  {
+    this.request_headers = event.headerList;
+    this.request_raw = event.raw;
+    for (var n=0, header; header = this.request_headers[n]; n++)
+    {
+      if (header.name.toLowerCase() == "content-type")
+      {
+        this.request_type = header.value;
+        break;
+      }
+    }
+  };
+
+  this._update_event_requestfinished = function(event)
+  {
+    if (event.data)
+    {
+      this.requestbody = event.data;
+      // in time we can use the mime-type member here rather than grabbing it
+      // from the headers. See CORE-39597
+      this.requestbody.mimeType = this.request_type;
+    }
+    this.requesttime = event.time;
+  };
+
+  this._update_event_requestretry = function(event)
+  {
+    this.requestID = event.toRequestID;
+  };
+
+  this._update_event_response = function(event)
+  {
+    // entry.responsecode always gets overwritten on the entry,
+    // but also stored per NetworkLoggerResponse.
+    this.responsecode = event.responseCode;
+    this.had_error_response = this.had_error_response || /5\d{2}|4\d{2}/.test(this.responsecode);
+    if (!this.responsestart)
+      this.responsestart = event.time;
+
+    this._current_response = new cls.NetworkLoggerResponse();
+    this.responses.push(this._current_response);
+    this._current_response._update_event_response(event);
+  };
+
+  this._update_event_responseheader = function(event)
+  {
+    // Sometimes we see no "response" event before we see responseheader,
+    // therefor have to init NetworkLoggerResponse here. See CORE-43935.
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse();
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responseheader(event);
+  };
+
+  this._update_event_responsefinished = function(event)
+  {
+    if (this._current_response)
+      this._current_response._update_event_responsefinished(event);
+  };
+
+  this._update_event_responsebody = function(event)
+  {
+    if (!this._current_response)
+    {
+      this._current_response = new cls.NetworkLoggerResponse();
+      this.responses.push(this._current_response);
+    }
+    this._current_response._update_event_responsebody(event);
+  };
+
+  this._update_event_urlredirect = function(event)
+  {
+    // this does not add any information, the event is only used to change the requestID
+  };
+
+  this._guess_type = function()
+  {
+    this.type = cls.ResourceUtil.path_to_type(this.url);
+
+    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
+    {
+      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    }
+  };
+
+  this._humanize_url = function()
+  {
+    this.human_url = this.url;
+    if (this.urltype == cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
+    {
+      if (this.type)
+      {
+        this.human_url = this.type + " data URI";
+      }
+      else
+      {
+        this.human_url = "data URI";
+      }
     }
   };
 
@@ -659,165 +806,10 @@ cls.NetworkLoggerEntry = function(id, context, resource, document_id)
     }
     this.events.push(evt);
   }
+}
 
-  this.get_duration = function()
-  {
-    return (this.events.length && this.endtime - this.starttime) || 0;
-  }
-
-  this._update_event_urlload = function(event)
-  {
-    this.url = event.url;
-    this.filename = helpers.basename(event.url, true);
-    this.urltype = event.urlType;
-    this.document_id = event.documentID;
-    if (event.loadOrigin)
-      this.load_origin = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
-    this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
-    this._humanize_url();
-    this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
-  };
-
-  this._update_event_urlunload = function(event)
-  {
-    this.unloaded = true;
-  };
-
-  this._update_event_urlfinished = function(event)
-  {
-    this.result = event.result;
-    this.mime = event.mimeType;
-    this.encoding = event.characterEncoding;
-    this.size = event.contentLength;
-
-    // if we got this far, and there was no
-    // response code, no request was performed for this entry
-    if (!this.responsecode)
-    {
-      this.no_request_made = true;
-    }
-
-    this.is_finished = true;
-    this._guess_type();
-    this._humanize_url();
-  };
-
-  this._update_event_request = function(event)
-  {
-    // We assume that there is never more then one network-request,
-    // as opposed to responses which are kept in a list.
-    this.method = event.method;
-    this.touched_network = true;
-  };
-
-  this._update_event_requestheader = function(event)
-  {
-    this.request_headers = event.headerList;
-    this.request_raw = event.raw;
-    for (var n=0, header; header = this.request_headers[n]; n++)
-    {
-      if (header.name.toLowerCase() == "content-type")
-      {
-        this.request_type = header.value;
-        break;
-      }
-    }
-  };
-
-  this._update_event_requestfinished = function(event)
-  {
-    if (event.data)
-    {
-      this.requestbody = event.data;
-      // in time we can use the mime-type member here rather than grabbing it
-      // from the headers. See CORE-39597
-      this.requestbody.mimeType = this.request_type;
-    }
-    this.requesttime = event.time;
-  };
-
-  this._update_event_requestretry = function(event)
-  {
-    this.requestID = event.toRequestID;
-  };
-
-  this._update_event_response = function(event)
-  {
-    // entry.responsecode always gets overwritten on the entry,
-    // but also stored per NetworkLoggerResponse.
-    this.responsecode = event.responseCode;
-    this.had_error_response = this.had_error_response || /5\d{2}|4\d{2}/.test(this.responsecode);
-    if (!this.responsestart)
-      this.responsestart = event.time;
-
-    this._current_response = new cls.NetworkLoggerResponse(this);
-    this.responses.push(this._current_response);
-    this._current_response._update_event_response(event);
-  };
-
-  this._update_event_responseheader = function(event)
-  {
-    // Sometimes we see no "response" event before we see responseheader,
-    // therefor have to init NetworkLoggerResponse here. See CORE-43935.
-    if (!this._current_response)
-    {
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.responses.push(this._current_response);
-    }
-    this._current_response._update_event_responseheader(event);
-  };
-
-  this._update_event_responsefinished = function(event)
-  {
-    if (this._current_response)
-      this._current_response._update_event_responsefinished(event);
-  };
-
-  this._update_event_responsebody = function(event)
-  {
-    if (!this._current_response)
-    {
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.responses.push(this._current_response);
-    }
-    this._current_response._update_event_responsebody(event);
-  };
-
-  this._update_event_urlredirect = function(event)
-  {
-    // this does not add any information, the event is only used to change the requestID
-  };
-
-  this._guess_type = function()
-  {
-    this.type = cls.ResourceUtil.path_to_type(this.url);
-
-    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
-    }
-  };
-
-  this._humanize_url = function()
-  {
-    this.human_url = this.url;
-    if (this.urltype == cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
-    {
-      if (this.type)
-      {
-        this.human_url = this.type + " data URI";
-      }
-      else
-      {
-        this.human_url = "data URI";
-      }
-    }
-  };
-};
-
-cls.NetworkLoggerResponse = function(entry)
+cls.NetworkLoggerResponse = function()
 {
-  this.entry = entry;
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;

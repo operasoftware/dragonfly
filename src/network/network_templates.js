@@ -362,16 +362,20 @@ templates.network_graph_section_color = {
 templates.network_graph_sections = function(entry, width, duration, do_tooltip)
 {
   var scale = width / duration;
-  var px_duration = entry.get_duration() * scale;
+  var px_duration = entry.duration * scale;
 
   return ["span",
            "class", "network-graph-sections",
            "data-tooltip", do_tooltip && "network-graph-tooltip",
            "data-object-id", String(entry.id),
            "style", "width: " + px_duration + "px;" +
-                    "background-image: -o-linear-gradient(0deg," +
-                      templates.network_graph_sections_style(entry, width, duration) +
-                    ");"
+                    "background-image: " +
+                        "-o-linear-gradient(90deg," +
+                                  "transparent 0%," +
+                                  "rgba(255, 255, 255, 0.25) 100%), " +
+                        "-o-linear-gradient(0deg," +
+                          templates.network_graph_sections_style(entry, width, duration) +
+                        ");"
          ];
 };
 
@@ -402,7 +406,7 @@ templates.network_graph_entry_tooltip = function(entry)
     return;
 
   const height = 155;
-  var duration = entry.get_duration();
+  var duration = entry.duration;
   var scale = height / duration;
   if (duration && entry.events)
   {
@@ -412,7 +416,7 @@ templates.network_graph_entry_tooltip = function(entry)
       return ["tr",
                ["td", stop.val_string, "class", "time_data mono"],
                ["td", stop.title, "class", "gap_title"],
-               ini.debug ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
+               (window.ini && ini.debug) ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
              ];
     });
     event_rows.push(["tr",
@@ -446,27 +450,29 @@ templates.network_graph_entry_tooltip = function(entry)
 
     return ["div",
       [
-        ini.debug ?
+        (window.ini && ini.debug) ?
           ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
           ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
         ["div",
           ["div",
-            "style", "height: " + height + "px; " +
-                     "background-image: -o-linear-gradient(270deg," +
-                        templates.network_graph_sections_style(entry, height, duration) +
-                      ");",
-            "class", "network-tooltip-graph"
+            ["div",
+              "style", "height: " + height + "px; " +
+                       "background-image: -o-linear-gradient(270deg," +
+                          templates.network_graph_sections_style(entry, height, duration) +
+                        ");",
+              "class", "network-tooltip-graph"
+            ],
+            "class", "network-tooltip-col"
           ],
           ["div",
             ["svg:svg", pathes,
               "width",  Math.ceil(svg_width) + "px",
               "height", Math.ceil(svg_height) + "px",
-              "version", "1.1",
-              "style", "position: absolute;"
-            ], "class", "network-tooltip-pointers"],
+              "version", "1.1"
+            ], "class", "network-tooltip-col network-tooltip-pointers"],
           ["div",
             ["table", event_rows],
-            "class", "network-tooltip-legend"
+            "class", "network-tooltip-col network-tooltip-legend"
           ],
         "class", "network-tooltip-row"]
       ], "class", "network-tooltip-container"
