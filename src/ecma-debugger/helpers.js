@@ -342,6 +342,11 @@ window.cls.Helpers = function()
 
     return color[notation];
   };
+
+  this.has_version = function(service, major_version, minor_version)
+  {
+    return service.major_version > major_version || service.minor_version >= minor_version;
+  };
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)
