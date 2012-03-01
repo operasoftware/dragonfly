@@ -679,6 +679,7 @@ var Editor = function(actions)
 
   this.submit = function()
   {
+    this.context_last_prop = null;
     var props = this.get_properties();
     var decl_ele = this.textarea.get_ancestor(".css-declaration");
     var decl = new CssDeclaration(
@@ -761,10 +762,10 @@ var Editor = function(actions)
 
   this.enter = function()
   {
+    this.context_last_prop = null;
     var props = this.get_properties();
     var keep_edit = false;
     var is_disabled = this.textarea_container.parentNode.hasClass("disabled");
-    this.context_last_prop = null;
 
     if (props && props.length == 3)
     {
