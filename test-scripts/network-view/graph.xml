@@ -1,85 +1,95 @@
-<html xmlns='http://www.w3.org/1999/xhtml'
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      spellcheck="false">
-  <head>
-    <link rel="stylesheet" href="../../src/ui-style/ui.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/overlay.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/tabs.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/debugger_style.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/js-source.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css"/>
-    <link rel="stylesheet" href="../../src/http-logger/httplogger_style.css"/>
-    <link rel="stylesheet" href="../../src/console-logger/consolelogger_style.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/colorpickerstyle.css"/>
-    <link rel="stylesheet" href="../../src/ui-scripts/sortable_table/sortable_table.css"/>
-    <link rel="stylesheet" href="../../src/ui-scripts/metadata_drawer/metadata_drawer.css"/>
-    <link rel="stylesheet" href="../../src/repl/repl_style.css"/>
-    <link rel="stylesheet" href="../../src/resource-manager/resource_style.css"/>
-    <link rel="stylesheet" href="../../src/network/network_style.css"/>
-    <link rel="stylesheet" href="../../src/shortcutconfig/style.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/global_command_line.css"/>
-    <link rel="stylesheet" href="../../src/ui-style/contextmenu.css"/>
-    <link rel="stylesheet" href="../../src/cookie-manager/cookie_manager_style.css"/>
-    <link rel="stylesheet" href="../../src/searches/style.css"/>
-    <link rel="stylesheet" href="../../src/ecma-debugger/breakpoints/style.css"/>
-    <link rel="stylesheet" href="../../src/screenshot/style.css"/>
-    <style><![CDATA[
-    body
-    {
-      margin: 0;
-    }
-    p
-    {
-      margin: 10px;
-    }
-    #right-side-content
-    {
-      height: 3000px;
-    }
-    ]]></style>
-    <script src="../../src/ui-strings/ui_strings-en.js"/>
-    <script src="../../src/scripts/dom.js"/>
-    <script src="../../src/ecma-debugger/helpers.js"/>
-    <script src="../../src/network/network_service.js"/>
-    <script src="../../src/network/network_templates.js"/>
-    <script><![CDATA[
+<viewport xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          spellcheck="false">
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
+<link rel="stylesheet" href="../../src/network/network_style.css"/>
+<link rel="stylesheet" href="../../src/ui-scripts/tooltip/tooltip.css"/>
 
-    window.helpers = new window.cls.Helpers();
-    
-    var TestContext = function(ctx)
-    {
-      this.resources = ctx.resources;
-    };
-    
-    TestContext.prototype = new cls.RequestContext();
+<!--
 
-    var test = function()
-    {
-      var t = Date.now();
-      var tpl = templates.network_log_graph(ctx, 1000)
-      document.getElementById('right-side-content').clearAndRender(tpl);
-      var c = document.documentElement.offsetHeight + document.documentElement.offsetWidth;
-      document.getElementsByTagName('code')[0].textContent = " time: " + (Date.now() - t) + " millisec";
-    };
+  This is to test the basic loading graphs and tooltips. It uses the actual templates and styles
+  and static data stringified from the service:
 
-    window.onload = function()
-    {
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function()
-      {
-        window.ctx = new TestContext(JSON.parse(this.responseText));
-        test();
-      }
-      xhr.open('GET', './data.json');
-      xhr.send();
-    };
+    var sdata = "{\"entries\":" + JSON.stringify(views.network_logger._service._current_context._logger_entries) + "}";
 
-    ]]></script>
-  </head>
-  <body>
-    <p><input type="button" value="test" onclick="test()"/><code></code></p>
-    <div id="right-side-content"></div>
-  </body>
-</html>
+  Data can be stored by running node writedata.node.js and then posting to localhost:9001
+
+    var client = new XMLHttpRequest();
+    client.open("POST", "http://127.0.0.1:9001/");
+    client.send(sdata);
+
+-->
+
+<style>
+
+viewport {
+  height: auto;
+  width: auto;
+  overflow: visible;
+}
+
+</style>
+
+<script src="../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/network/network_service.js"></script>
+<script src="../../src/network/network_templates.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltipcontext.js"></script>
+
+
+<script>
+
+window.helpers = new window.cls.Helpers();
+window.settings = {network_logger:{ set: function(){}}};
+window.messages = {post: function(){}};
+
+var TestContext = function(ctx)
+{
+  this._logger_entries = ctx.entries;
+};
+
+TestContext.prototype = new cls.RequestContext();
+
+var test = function()
+{
+  var t = Date.now();
+  var basetime = ctx._logger_entries[0].starttime;
+  var duration = ctx._logger_entries.last.endtime - basetime;
+  var tpl = templates.network_graph_rows(ctx, null, 1000, basetime, duration); // ctx, selected, width, basetime, duration
+  document.getElementById("graph").clearAndRender(tpl);
+  var c = document.documentElement.offsetHeight + document.documentElement.offsetWidth;
+  document.getElementsByTagName('code')[0].textContent = "time: " + (Date.now() - t) + " millisec";
+};
+
+var _on_graph_tooltip = function(evt, target)
+{
+  var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+  var entry = ctx.get_entry(entry_id);
+  var template = templates.network_graph_entry_tooltip(entry);
+  graph_tooltip.show(template);
+}.bind(this);
+var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
+graph_tooltip.ontooltip = _on_graph_tooltip;
+
+window.addEventListener("load", function()
+{
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    if (!this.responseText)
+      console.log("please enable opera:config#UserPrefs|AllowFileXMLHttpRequest");
+
+    window.ctx = new TestContext(JSON.parse(this.responseText));
+    test();
+  }
+  xhr.open('GET', './data.json');
+  xhr.send();
+}, false);
+</script>
+<p><input type="button" value="test" onclick="test()"/><code></code></p>
+<div id="graph"></div>
+</viewport>
 
