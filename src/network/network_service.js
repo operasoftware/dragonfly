@@ -568,7 +568,7 @@ cls.NetworkLoggerEntry.prototype = new function()
     if (!this.responsestart)
       this.responsestart = event.time;
 
-    this._current_response = new cls.NetworkLoggerResponse();
+    this._current_response = new cls.NetworkLoggerResponse(this);
     this.responses.push(this._current_response);
     this._current_response._update_event_response(event);
   };
@@ -579,7 +579,7 @@ cls.NetworkLoggerEntry.prototype = new function()
     // therefor have to init NetworkLoggerResponse here. See CORE-43935.
     if (!this._current_response)
     {
-      this._current_response = new cls.NetworkLoggerResponse();
+      this._current_response = new cls.NetworkLoggerResponse(this);
       this.responses.push(this._current_response);
     }
     this._current_response._update_event_responseheader(event);
@@ -595,7 +595,7 @@ cls.NetworkLoggerEntry.prototype = new function()
   {
     if (!this._current_response)
     {
-      this._current_response = new cls.NetworkLoggerResponse();
+      this._current_response = new cls.NetworkLoggerResponse(this);
       this.responses.push(this._current_response);
     }
     this._current_response._update_event_responsebody(event);
@@ -808,8 +808,13 @@ cls.NetworkLoggerEntry.prototype = new function()
   }
 }
 
-cls.NetworkLoggerResponse = function()
+cls.NetworkLoggerResponse = function(entry)
 {
+  this.logger_entry_type = entry.type;
+  this.logger_entry_id = entry.id;
+  this.logger_entry_mime = entry.mime;
+  this.logger_entry_is_finished = entry.is_finished;
+  
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;

@@ -233,7 +233,7 @@ templates.network_response_body = function(resp)
   }
   else
   {
-    if (!resp.responsebody && !resp.entry.is_finished)
+    if (!resp.responsebody && !resp.logger_entry_is_finished)
     {
       classname = "network_info";
       ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
@@ -246,7 +246,7 @@ templates.network_response_body = function(resp)
           ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
           ["p", ["span",
               ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-              "data-object-id", String(resp.entry.id),
+              "data-object-id", String(resp.logger_entry_id),
               // unselectable attribute works around bug CORE-35118
               "unselectable", "on",
               "handler", "get-response-body",
@@ -258,18 +258,17 @@ templates.network_response_body = function(resp)
     }
     else
     {
-      // todo: find out when resp.entry is null here, add check
-      if (["script", "markup", "css", "text"].contains(resp.entry.type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+      if (["script", "markup", "css", "text"].contains(resp.logger_entry_type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
       {
         ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
       }
-      else if (resp.entry.type == "image")
+      else if (resp.logger_entry_type == "image")
       {
         ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
       }
       else // todo: font display
       {
-        ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.entry.mime), "class", "network-body"]));
+        ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime), "class", "network-body"]));
       }
     }
   }
