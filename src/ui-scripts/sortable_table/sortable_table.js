@@ -387,6 +387,9 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
   return ["tr",
           cols.map(function(c) {
             var coldef = tabledef.columns[c];
+            if (!coldef)
+              return [];
+
             var tdclass = "";
 
             if (!coldef.sorter)
@@ -491,7 +494,8 @@ templates.sortable_table_group = function(tabledef, groupname, render_header, da
 
   for (var n=0, col; col = cols[n]; n++)
   {
-    if (tabledef.columns[col].summer)
+    var coldef = tabledef.columns[col];
+    if (coldef && coldef.summer)
     {
       ret.push(templates.sortable_table_sumrow(tabledef, groupname, data, cols));
       break;
@@ -521,6 +525,8 @@ templates.sortable_table_row = function(tabledef, item, cols)
   return ["tr",
           cols.map(function(col) {
             var coldef = tabledef.columns[col];
+            if (!coldef)
+              return [];
             var content = coldef.renderer(item, coldef.getter);
 
             if (typeof content !== "undefined" && typeof content !== "null")
