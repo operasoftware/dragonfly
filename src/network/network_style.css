@@ -180,7 +180,6 @@
 .network_incomplete_warning .text_handler
 {
   text-decoration: underline;
-  cursor: pointer;
   white-space: nowrap;
 }
 
@@ -212,7 +211,6 @@
   border-radius: 50%;
   padding: 1px;
   background-color: rgba(0, 0, 0, 0.18);
-  cursor: pointer;
 }
 
 .close-request-detail::before,

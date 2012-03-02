@@ -63,10 +63,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       ctx.set_filter(this._type_filters || []);
 
       this._render_tabbed_view(this._container);
-      if (this._selected)
-      {
-        this._render_details_view(this._container, this._selected);
-      }
     }
     else
     {
@@ -88,10 +84,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var ctx = this._service.get_request_context();
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - 100);
-    var rendered = container.render(templates.network_log_details(ctx, selected, left_val));
-    var details = rendered.querySelector(".network-details-container");
-    if (details && this._details_scroll)
-      details.scrollTop = this._details_scroll;
+    return templates.network_log_details(ctx, selected, left_val);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -110,31 +103,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._render_tabbed_view = function(container)
   {
-    /*
-      hand-calculate network-url-list's width, so it only takes one rendering
-      #network-url-list { width: 40%; min-width: 230px; }
-    */
-    var url_list_width = Math.ceil(Math.max(230, parseInt(container.style.width) * 0.4));
-    var detail_width = parseInt(container.style.width) - url_list_width;
-    var selected_viewmode = settings.network_logger.get("selected-viewmode");
-
+    this._selected_viewmode = settings.network_logger.get("selected-viewmode");
     var ctx = this._service.get_request_context();
 
     var item_order;
-    if (selected_viewmode === "data")
+    if (this._selected_viewmode === "data")
     {
-      item_order = this._item_order;
-    }
-    var template = templates.network_log_main(
-                     ctx, this._selected, selected_viewmode, detail_width, item_order
-                   );
-    var content = container.clearAndRender(template);
-    content.scrollTop = this._content_scroll;
-
-    // Render sortable table
-    var table_container = content.querySelector(".network-data-table-container");
-    if (table_container)
-    {
+      
       if (!this._table)
       {
         this._table = new SortableTable(
@@ -146,19 +121,69 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
                         null,
                         "network-inspector"
                       );
-        this._table.add_listener("after-render", this._catch_up_with_cols_and_sort_bound);
+        this._table.add_listener("after-render", this._continue_render_main);
       }
-      var data = ctx.get_entries_filtered().slice(0);
-      this._table.set_data(data);
-      table_container.clearAndRender(this._table.render());
-      if (this._selected)
+
+      this._table.set_data(
+        ctx.get_entries_filtered().slice(0)
+      );
+    }
+
+    this._continue_render_main();
+  };
+
+
+  this._continue_render_main = function(rendered_table)
+  {
+    // if we are in data mode, the table now has data and its sorted
+    var table_template;
+    var item_order;
+    if (this._selected_viewmode === "data")
+    {
+      // when the already rendered table was passed, the table template will be called anyway,
+      // and the view will be rendered again. It shouldn't affect performance much though
+      // since it's synchronous and only occurs when the sort key is changed
+      table_template = this._table.render();
+      var data = this._table.get_data();
+      if (data && data.length)
       {
-        var sel_row = table_container.querySelector("[data-object-id='" + this._selected + "']");
+        item_order = data.map(function(res){return res.id}).join(",");
+      }
+    }
+
+    /*
+      hand-calculate network-url-list's width, so it only takes one rendering
+      #network-url-list { width: 40%; min-width: 230px; }
+    */
+    var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width) * 0.4));
+    var detail_width = parseInt(this._container.style.width) - url_list_width;
+
+    var ctx = this._service.get_request_context();
+    var template = templates.network_log_main(
+                     ctx, this._selected, this._selected_viewmode, detail_width, item_order, table_template
+                   );
+
+    if (this._selected)
+    {
+      template = template.concat(this._render_details_view(this._container, this._selected));
+    }
+    var rendered = this._container.clearAndRender(template); // details_template was added to network-details-container
+    if (this._selected)
+    {
+      var details = rendered.querySelector(".network-details-container");
+      if (details && this._details_scroll)
+        details.scrollTop = this._details_scroll;
+
+      if (this._selected_viewmode === "data")
+      {
+        var sel_row = rendered.querySelector("tr[data-object-id='" + this._selected + "']");
         sel_row && sel_row.addClass("selected");
       }
-      this._catch_up_with_cols_and_sort_bound();
     }
-  };
+    if (this._content_scroll)
+      rendered.scrollTop = this._content_scroll;
+
+  }.bind(this);
 
   this._tabledef = {
     column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
@@ -272,32 +297,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       }
     }
   }
-
-  this._catch_up_with_cols_and_sort_bound = function()
-  {
-    var needs_update = false;
-    if (this._table)
-    {
-      var data = this._table.get_data();
-      if (data && data.length)
-      {
-        var old_item_order = this._item_order;
-        this._item_order = data.map(function(res){return res.id}).join(",");
-        // a changed item_order means we need to re-render. except when just the last item is added.
-        // todo: when updates contain more than one additional item, this will always need a full update.
-        if (this._item_order !== old_item_order
-            && this._item_order !== old_item_order + "," + data.last.id)
-        {
-          needs_update = true;
-        }
-      }
-    }
-    if (needs_update)
-    {
-      this.needs_instant_update = true;
-      this.update();
-    }
-  }.bind(this);
 
   this._on_clicked_close_bound = function(evt, target)
   {
@@ -711,7 +710,6 @@ cls.NetworkLog.create_ui_widgets = function()
     if (msg.id == "network_logger")
     {
       text_search.cleanup();
-      views.network_logger._item_order = null;
     }
   }
 

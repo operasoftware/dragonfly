@@ -93,7 +93,7 @@ templates.network_incomplete_warning = function()
          "class", "network_incomplete_warning"];
 };
 
-templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order)
+templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order, table_template)
 {
   var viewmode_render = templates["network_viewmode_" + selected_viewmode];
   if (!viewmode_render)
@@ -110,7 +110,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
     ],
     [
       "div", [
-        "div", viewmode_render(ctx, selected, detail_width),
+        "div", table_template || viewmode_render(ctx, selected, detail_width, table_template),
         "class", "network-data-container " + selected_viewmode
       ],
       "class", "network-main-container"
@@ -154,9 +154,9 @@ templates.network_viewmode_graphs = function(ctx, selected, width)
   return template;
 }
 
-templates.network_viewmode_data = function(ctx, selected, detail_width)
+templates.network_viewmode_data = function(ctx, selected, detail_width, table_template)
 {
-  return ["div", "class", "network-data-table-container"];
+  return ["div", table_template, "class", "network-data-table-container"];
 }
 
 templates.network_log_url_list = function(ctx, selected, item_order)
@@ -359,15 +359,16 @@ templates.network_graph_section_color = {
   irregular: "#e2d1d1"
 }
 
-templates.network_graph_sections = function(entry, width, duration, do_tooltip)
+templates.network_graph_sections = function(entry, width, duration)
 {
+  if (!duration)
+    return;
+
   var scale = width / duration;
   var px_duration = entry.duration * scale;
 
   return ["span",
            "class", "network-graph-sections",
-           "data-tooltip", do_tooltip && "network-graph-tooltip",
-           "data-object-id", String(entry.id),
            "style", "width: " + px_duration + "px;" +
                     "background-image: " +
                         "-o-linear-gradient(90deg," +

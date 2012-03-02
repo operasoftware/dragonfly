@@ -348,7 +348,9 @@ cls.RequestContext = function()
 
   this.get_starttime = function()
   {
-    return Math.min.apply(null, this.get_entries_filtered().map(function(e) { return e.starttime }));
+    var entries = this.get_entries_filtered();
+    if (entries.length)
+      return Math.min.apply(null, entries.map(function(e) { return e.starttime }));
   };
 
   this._event_changes_req_id = function(event, last_entry)
@@ -475,7 +477,10 @@ cls.NetworkLoggerEntry.prototype = new function()
     if (!this.events.length)
     {
       this.starttime = eventdata.time; // todo: if we tune in in the middle of a request, this will be wrong.
-      this.starttime_relative = this.starttime - this.context_starttime;
+      if (this.context_starttime)
+        this.starttime_relative = this.starttime - this.context_starttime;
+      else
+        this.starttime_relative = 0;
 
       var d = new Date(this.starttime);
       var h = "" + d.getHours();
