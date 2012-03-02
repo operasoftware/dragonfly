@@ -1,0 +1,143 @@
+<viewport xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          spellcheck="false">
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
+<link rel="stylesheet" href="../../src/network/network_style.css"/>
+<link rel="stylesheet" href="../../src/ui-scripts/tooltip/tooltip.css"/>
+
+<!--
+
+  This is to test the event sequences. It uses the actual templates and styles
+  and static data stringified from the service.
+
+  Data can be stored by running node write-resource-eventdata.node.js and
+  then posting to localhost:9001. The code that does that is commented out in
+  network_service, look for cls.NetworkLoggerEntry.prototype
+-->
+
+<style>
+
+viewport
+{
+  height: auto;
+  width: auto;
+  overflow: visible;
+  margin: 5px;
+}
+
+.mono
+{
+  float: left;
+}
+
+</style>
+
+<script src="../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/network/network_service.js"></script>
+<script src="../../src/network/network_templates.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltipcontext.js"></script>
+
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequest.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestfinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestheader.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestretry.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponse.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponsefinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponseheader.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlfinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlredirect.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlunload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.events.onurlload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.events.onurlunload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.responses.getresource.js"></script>
+
+<script>
+
+window.helpers = new window.cls.Helpers();
+window.settings = {network_logger:{ set: function(){}}};
+window.messages = {post: function(){}};
+
+var test = function()
+{
+  if (ctx)
+  {
+    var basetime = ctx._logger_entries[0].starttime;
+    document.querySelector("#count").textContent= ctx._logger_entries.length + " entries";
+    var duration = ctx._logger_entries.last.endtime - basetime;
+    var tpl = templates.network_graph_rows(ctx, null, window.innerWidth - 100, basetime, duration); // ctx, selected, width, basetime, duration
+    document.getElementById("graph").clearAndRender(tpl);
+  }
+};
+
+var _on_graph_tooltip = function(evt, target)
+{
+  var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+  var entry = ctx.get_entry(entry_id);
+  var template = templates.network_graph_entry_tooltip(entry);
+  graph_tooltip.show(template);
+}.bind(this);
+var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
+graph_tooltip.ontooltip = _on_graph_tooltip;
+
+window.addEventListener("load", function()
+{
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    if (!this.responseText)
+      console.log("please enable opera:config#UserPrefs|AllowFileXMLHttpRequest");
+
+    var updates = JSON.parse(xhr.responseText);
+    window.ctx = new cls.RequestContext();
+
+    updates.events.forEach(function(u){
+      var eventname = u.eventname;
+      u.eventname = null;
+      ctx.update(eventname, u);
+    });
+    test();
+  }
+  xhr.open('GET', './data-timing.json');
+  xhr.send();
+}, false);
+
+window.addEventListener("resize", test, false);
+
+</script>
+<p><input type="button" value="test" onclick="test()"/></p>
+<div id="graph"></div>
+<p id="count"></p>
+<h2>Expected</h2>
+<pre class="mono">
+<h3>1</h3>
+  57.75ms  Scheduling request
+  100.18ms Writing request header
+  0.04ms   Writing request body
+  78.04ms  Waiting for response
+  0.07ms   Reading response header
+  30.76ms  Reading response body
+  2.86ms   Processing response
+</pre>
+<pre class="mono">
+<h3>2</h3>
+  0.19ms   Scheduling request
+  0.01ms   Writing request header
+  0.05ms   Writing request body
+  29.73ms  Waiting for response
+  0.02ms   Reading response header
+  0.31ms   Reading response body
+  0.21ms   Processing response
+  30.51ms  Duration
+</pre>
+<pre class="mono">
+<h3>9</h3>
+  20.01ms  Sequence terminated, retry
+  10.00ms  Request aborted
+  30.01ms  Duration
+</pre>
+</viewport>
+

@@ -392,7 +392,8 @@ cls.RequestContext = function()
     logger_entry.requestID = event.requestID;
     logger_entry.update(eventname, event);
 
-    views.network_logger.update();
+    if (window.views && views.network_logger)
+      views.network_logger.update();
   };
 
   this.get_entry = function(id)
@@ -444,6 +445,31 @@ cls.NetworkLoggerEntry.prototype = new function()
 {
   this.update = function(eventname, eventdata)
   {
+    /* // extracting data for test graph-tooltip.xml
+    eventdata.eventname = eventname;
+    eventdata.parent = null;
+
+    if (!window.dbg_store)
+      window.dbg_store = {
+                            id: String(Math.round(Math.random() * 9999)),
+                            items: [],
+                            timeout: null
+                         };
+
+    dbg_store.items.push(eventdata);
+    dbg_store.timeout = dbg_store.timeout || setTimeout(function(){
+      if (dbg_store.items.length)
+      {
+        var client = new XMLHttpRequest();
+        // use node write-resource-eventdata.node.js here
+        client.open("POST", "http://127.0.0.1:9001/" + dbg_store.id);
+        client.send(JSON.stringify(dbg_store.items));
+        dbg_store.items = [];
+        dbg_store.timeout = null;
+      }
+    }, 1000);
+    // end extracting data */
+
     var updatefun = this["_update_event_" + eventname];
 
     if (!this.events.length)
@@ -522,7 +548,7 @@ cls.NetworkLoggerEntry.prototype = new function()
 
   this._update_event_request = function(event)
   {
-    // We assume that there is never more then one network-request,
+    // We assume that there is never more than one network-request,
     // as opposed to responses which are kept in a list.
     this.method = event.method;
     this.touched_network = true;
@@ -608,6 +634,9 @@ cls.NetworkLoggerEntry.prototype = new function()
 
   this._guess_type = function()
   {
+    if (!cls || !cls.ResourceUtil)
+      return;
+
     this.type = cls.ResourceUtil.path_to_type(this.url);
 
     if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")

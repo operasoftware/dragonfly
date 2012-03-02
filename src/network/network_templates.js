@@ -356,7 +356,7 @@ templates.network_graph_section_color = {
   request: "#de5b5b",
   receiving: "#79db86",
   blocked: "#adadad",
-  irregular: "#b9b9b9" // todo: this used to be striped, but it's a bit diffcult now..
+  irregular: "#e2d1d1"
 }
 
 templates.network_graph_sections = function(entry, width, duration, do_tooltip)
