@@ -235,8 +235,9 @@
 }
 .close-request-detail
 {
-  left: 5px;
-  top: 5px;
+  position: fixed;
+  margin-left: -23px;
+  margin-top: -7px;
 }
 
 .close_incomplete_warning
