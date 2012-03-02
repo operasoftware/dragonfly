@@ -436,9 +436,9 @@
 {
   display: inline-block;
   border-radius: 3px;
-  min-width: 2px;
+  min-width: 3px;
   /* fallback, only visible when the sections together are less than min-width */
-  background-color: #ADADAD;
+  background-color: #C9C9C9;
 }
 
 .network-tooltip-graph,

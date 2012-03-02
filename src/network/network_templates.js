@@ -392,7 +392,6 @@ templates.network_graph_sections_style = function(entry, size, duration)
     to += val;
 
     var color = templates.network_graph_section_color[section.classname];
-    // todo: also add the 90deg gradient that makes it shiny
     return color + " " + Math.round(from) + "px," +  color + " " + Math.round(to) + "px";
   }).join(",");
   // End transparent. This will let the fallback background-color show in case min-width applies.
@@ -423,7 +422,6 @@ templates.network_graph_entry_tooltip = function(entry)
                       ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
-    const CHARWIDTH = 7; // todo: we probably have that around somewhere where its dynamic
     const LINEHEIGHT = 19;
 
     var svg_width = 100.5;
@@ -488,7 +486,7 @@ templates.grid_info = function(duration, width, padding)
     var draw_line_every = 150; // px
     var draw_lines = Math.round(width / draw_line_every);
     
-    var value = oldval = Number((duration / draw_lines).toPrecision(1)); // what this returns is the duration of one section
+    var value = (duration / draw_lines).toPrecision(1); // this is the duration of one section
     var val_in_px = width / duration * Number(value);
 
     // if the last line comes too close to the edge, decrease the value until it fits.
