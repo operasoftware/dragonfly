@@ -340,7 +340,7 @@ window.cls.Helpers = function()
       }[notation] || "rgba";
     }
 
-    return notation === "hhex" ? color[notation].toUpperCase() : color[notation];
+    return color[notation];
   };
 }
 

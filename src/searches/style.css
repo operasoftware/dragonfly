@@ -14,7 +14,8 @@
 .search-highlight-last
 {
   background-color: rgba(0, 0, 0, 0.13); 
-  background-color: hsl(0, 0%, 87%); 
+  background-color: hsl(0, 0%, 87%);
+  color: #333333;
 }
 
 .search-highlight-selected,
@@ -35,7 +36,9 @@
 .search-highlight-first,
 .search-highlight-between,
 .search-highlight-selected-first,
-.search-highlight-selected-between
+.search-highlight-selected-between,
+.js-identifier-selected-first,
+.js-identifier-selected-between
 {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -47,7 +50,9 @@
 .search-highlight-last,
 .search-highlight-between,
 .search-highlight-selected-last,
-.search-highlight-selected-between
+.search-highlight-selected-between,
+.js-identifier-selected-last,
+.js-identifier-selected-between
 {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;

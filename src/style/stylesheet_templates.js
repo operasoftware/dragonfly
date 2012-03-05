@@ -5,6 +5,8 @@
  */
 var StylesheetTemplates = function()
 {
+  var DATA_URI_MAX_LENGTH = 30;
+
   var ORIGIN_USER_AGENT = cls.Stylesheets.origins.ORIGIN_USER_AGENT;
   var ORIGIN_LOCAL = cls.Stylesheets.origins.ORIGIN_LOCAL;
 
@@ -13,6 +15,22 @@ var StylesheetTemplates = function()
   var TYPE_FUNCTION_END = CssValueTokenizer.types.FUNCTION_END;
 
   this._css_value_tokenizer = new CssValueTokenizer();
+  this._color_properties = {
+    "background-color": true,
+    "border-color": true,
+    "border-top-color": true,
+    "border-right-color": true,
+    "border-bottom-color": true,
+    "border-left-color": true,
+    "color": true,
+    "fill": true,
+    "flood-color": true,
+    "lighting-color": true,
+    "outline-color": true,
+    "solid-color": true,
+    "stop-color": true,
+    "stroke": true
+  };
 
   this.rule_origin_user_agent = function(decl_list, obj_id, element_name)
   {
@@ -130,7 +148,7 @@ var StylesheetTemplates = function()
         ],
         ": ",
         ["span",
-           this._parse_value(value, false),
+           this._parse_value(prop, value, false),
          "class", "css-property-value"
         ],
         ";",
@@ -204,17 +222,17 @@ var StylesheetTemplates = function()
                   : token.value;
 
         return ["span",
-                  this._parse_value(value, is_editable),
+                  this._parse_value(declaration.property, value, is_editable),
                 "class", token.is_applied === false && "overwritten"
                ];
       }, this);
     }
 
     // Non-shorthands
-    return ["span", this._parse_value(declaration.value, is_editable)];
+    return ["span", this._parse_value(declaration.property, declaration.value, is_editable)];
   };
 
-  this._parse_value = function(orig_value, is_editable)
+  this._parse_value = function(prop, orig_value, is_editable)
   {
     var color_notation = window.settings["dom-side-panel"].get("color-notation");
     var color_value = [];
@@ -239,6 +257,13 @@ var StylesheetTemplates = function()
         value = window.helpers.get_color_in_notation(value, color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
+      else if ((this._color_properties.hasOwnProperty(prop) && value !== "invert")
+            || value === "currentColor"
+            || value === "transparent"
+      )
+      {
+        color_swatch = this.color_swatch(value, is_editable);
+      }
       else if (type === TYPE_FUNCTION_START && value === "url(")
       {
         next_is_url = true;
@@ -258,11 +283,17 @@ var StylesheetTemplates = function()
 
   this.color_swatch = function(value, is_editable)
   {
+    var is_special = value === "currentColor" || value === "inherit";
     return [
       "span",
-      "class", "color-swatch " + (is_editable ? "" : " non-editable"),
-      "handler", is_editable && "show-color-picker",
-      "style", "background-color:" + value
+        ["span",
+         "class", "color-swatch-fg-color",
+         "style", !is_special ? ("background-color:" + value) : ""
+        ],
+      "class", "color-swatch" +
+               (is_editable ? "" : " non-interactive") +
+               (is_special ? " special" : ""),
+      "handler", is_editable && "show-color-picker"
     ];
   };
 
@@ -270,12 +301,27 @@ var StylesheetTemplates = function()
   {
     if (value.startswith("\"") || value.startswith("'"))
       value = value.slice(1, -1);
+
+    var url = value;
+    var rest = [];
+
+    // Shorten data URIs
+    if (value.startswith("data:") && value.length > DATA_URI_MAX_LENGTH + 1)
+    {
+      rest = ["span",
+                value.slice(DATA_URI_MAX_LENGTH),
+              "class", "shortened-url"
+             ];
+      value = value.slice(0, DATA_URI_MAX_LENGTH);
+    }
+
     return ["span",
               "\"",
                 ["span",
                    value,
+                   rest,
                  "handler", "open-resource-tab",
-                 "data-resource-url", value,
+                 "data-resource-url", url,
                  "class", "internal-link"
                 ],
               "\""

@@ -118,15 +118,18 @@
                        ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;
     var tpl_input =
     [
-      'input',
-      'autocomplete', 'off',
-      'type', 'text',
-      'handler', filter.handler,
-      'shortcuts', filter.shortcuts,
-      'title', filter.title,
-      'placeholder', default_text
+      "input",
+      "autocomplete", "off",
+      "type", "text",
+      "handler", filter.handler,
+      "shortcuts", filter.shortcuts,
+      "title", filter.title,
+      "placeholder", default_text
     ];
-    ['handler', 'shortcuts'].forEach(function(attr)
+    ["handler",
+     "shortcuts",
+     "focus-handler", 
+     "blur-handler"].forEach(function(attr)
     {
       if (filter.hasOwnProperty(attr))
         tpl_input.push(attr, filter[attr]);

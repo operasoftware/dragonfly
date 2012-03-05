@@ -29,8 +29,14 @@ window.cls.NewScript.BP_ENABLED = 9;
 window.cls.NewScript.BP_ENABLED_CONDITION = 12;
 window.cls.NewScript.LINE_POINTER_TOP = 1;
 window.cls.NewScript.LINE_POINTER = 2;
+/* line state */
+window.cls.NewScript.DEFAULT_STATE = 0;
+window.cls.NewScript.SINGLE_QUOTE_STATE = 1;
+window.cls.NewScript.DOUBLE_QUOTE_STATE = 2;
+window.cls.NewScript.REG_EXP_STATE = 3;
+window.cls.NewScript.COMMENT_STATE = 4;
 
-window.cls.NewScript.prototype = new function()
+window.cls.NewScriptPrototype = function()
 {
   /**
     * Searches the actual data.
@@ -121,6 +127,14 @@ window.cls.NewScript.prototype = new function()
          : this.line_arr[0];
   }
 
+  this.get_line = function(line_number)
+  {
+    if (line_number > 0 && this.line_arr[line_number])
+      return this.script_data.slice(this.line_arr[line_number - 1],
+                                    this.line_arr[line_number]);
+    return "";
+  };
+
   this.clear_search = function()
   {
     this.search_term = "";
@@ -172,7 +186,11 @@ window.cls.NewScript.prototype = new function()
 
     var string = input;
     // states = default, s_quote, d_qute, slash
-    var DEFAULT = 0, SINGLE_QUOTE = 1, DOUBLE_QUOTE = 2, REG_EXP = 3, COMMENT = 4;
+    var DEFAULT = window.cls.NewScript.DEFAULT_STATE;
+    var SINGLE_QUOTE = window.cls.NewScript.SINGLE_QUOTE_STATE;
+    var DOUBLE_QUOTE = window.cls.NewScript.DOUBLE_QUOTE_STATE;
+    var REG_EXP = window.cls.NewScript.REG_EXP_STATE;
+    var COMMENT = window.cls.NewScript.COMMENT_STATE;
     // lexer_states = default, s_quote, d_qute, slash
     var lex_state = 'DEFAULT'; // SINGLE_QUOTE; DOUBLE_QUOTE; SLASH
     var LEX_S_QUOTE = 1;
@@ -454,4 +472,7 @@ window.cls.NewScript.prototype = new function()
       }
     }
   }
-}
+};
+
+window.cls.NewScriptPrototype.prototype = new URIPrototype("uri");
+window.cls.NewScript.prototype = new window.cls.NewScriptPrototype();

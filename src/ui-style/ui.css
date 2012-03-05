@@ -64,7 +64,8 @@ modebar,
 searchbar,
 toolbar,
 panel-toolbar,
-window-toolbar
+window-toolbar,
+.js-dd-filter-bar
 {
   border: 0 solid #999;
 }
@@ -107,11 +108,12 @@ window-toolbar
 
 toolbar,
 panel-toolbar,
-window-toolbar
+window-toolbar,
+.js-dd-filter-bar
 {
   border-width: 0 1px 1px;
   padding: 3px 2px;
-  height: 21px; /* 21 + 3 + 2 (padding) = 26 */
+  height: 21px; /* 21 + 3 + 3 (padding) = 27 */
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
@@ -137,6 +139,24 @@ toolbar-switches
   display: block;
   float: left;
   height: 100%;
+}
+
+/* Pop-ups */
+cst-select-option-list,
+#contextmenu,
+.tooltip-container,
+.error-description
+{
+  background-color: #ededed;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.25) 0,
+                                       transparent 25px);
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+              0 1px 6px 0 rgba(0, 0, 0, 0.45),
+              0 0 1px 1px rgba(0, 0, 0, 0.3);
+  color: #333;
 }
 
 .ui-button[handler="reload-window"]::before
@@ -610,7 +630,8 @@ toolbar-filters .ui-button.search-move-highlight-down
 }
 
 filter,
-.advanced-search
+.advanced-search,
+.js-dd-filter-container
 {
   margin: 0 2px;
   padding-left: 20px;
@@ -628,7 +649,8 @@ filter
   display: inline-block;
 }
 
-filter.filter
+filter.filter,
+.js-dd-filter-container
 {
   background-image: url("../ui-images/filter.png");
   background-position: 5px 50%;
@@ -1182,6 +1204,12 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
+  z-index: 150;
+  border: 1px solid transparent;
+}
+
+.cmd-line-runtimes
+{
   z-index: 302;
 }
 
@@ -1193,13 +1221,14 @@ cst-select[disabled] cst-drop-down
 cst-select-option-list
 {
   display: block;
-  border: 1px solid #666;
-  background-color: #fff;
+  background-color: #fcfcfc;
   max-height: 200px;
   overflow: auto;
   width: auto;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  padding-left: 0px;
+  padding-right: 0px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.35),
+              0 0 1px 1px rgba(90, 90, 90, 0.35);
 }
 
 cst-option,
@@ -1214,14 +1243,15 @@ cst-title
 
 cst-select-option-list hr
 {
-  margin: 0;
+  margin: 4px 0;
   padding: 0;
   height: 1px;
   border: none;
   background-color: #ccc;
 }
 
-cst-option:hover
+cst-option:hover,
+cst-option.hover
 {
   background-color: #bbcef1;
   color: #000;
@@ -1245,20 +1275,20 @@ cst-option:active code
 cst-select-option-list code
 {
   font-family: monospace;
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.44);
 }
 
 .debugger-menu cst-option,
 .debugger-menu cst-title
 {
-  padding-left: 20px;
+  padding-left: 28px;
 }
 
 .debugger-menu cst-option.selected
 {
   background-image: url('../ui-images/dragonfly-favicon.png');
   background-repeat: no-repeat;
-  background-position: 2px 50%;
+  background-position: 6px 50%;
 }
 
 cst-select.color
@@ -1581,17 +1611,9 @@ cst-title
   font-style: normal;
 }
 
-.script-options cst-title
-{
-  margin-left: 2em;
-}
-
 cst-group
 {
   display: block;
-  margin-left: 2em;
-  background-color: hsl(0, 0%, 90%);
-  border-left: 1px solid hsl(0, 0%, 80%);
 }
 
 /* Temporary fix for flickering */
