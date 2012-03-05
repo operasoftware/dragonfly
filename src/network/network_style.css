@@ -157,14 +157,8 @@
 
 .network_incomplete_warning
 {
-  display: block;
-  background-color: #ebebeb;
-  padding: 10px;
-  margin: 5px auto;
-  width: 70%;
-  text-align: center;
-  position: relative;
-  line-height: 1.6em;
+    margin: 15px 50px 15px 50px;
+    position: relative;
 }
 
 .network_incomplete_warning div
@@ -420,13 +414,12 @@
 
 .network-graph-sections-hitarea
 {
-  vertical-align: top;
   display: inline-block;
   padding: 3px;
   border-radius: 3px;
 }
 
-.network-graph-row.hovered .network-graph-sections-hitarea
+.hovered .network-graph-sections-hitarea
 {
   background-color: rgba(255, 255, 255, 0.3);
 }
@@ -434,10 +427,12 @@
 .network-graph-sections
 {
   display: inline-block;
+  height: 14px;
+  vertical-align: top;
   border-radius: 3px;
   min-width: 3px;
   /* fallback, only visible when the sections together are less than min-width */
-  background-color: #C9C9C9;
+  background-color: #c9c9c9;
 }
 
 .network-tooltip-graph,
@@ -448,18 +443,12 @@
               inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
-.network-graph-sections
-{
-  height: 14px;
-}
-
 .selected .network-graph-sections
 {
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
               inset 0 0 0 1px rgba(255, 255, 255, 0.08),
               inset 0 -1px 0 0 rgba(0, 0, 0, 0.28);
 }
-
 
 .network-tooltip-container
 {
@@ -482,7 +471,6 @@
 .network-tooltip-container .mono {
   color: #333;
 }
-
 
 .network-tooltip-container table {
   border-collapse: collapse;
