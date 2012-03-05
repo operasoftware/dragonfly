@@ -359,7 +359,7 @@ templates.network_graph_section_color = {
   irregular: "#e2d1d1"
 }
 
-templates.network_graph_sections = function(entry, width, duration)
+templates.network_graph_sections = function(entry, width, duration, do_tooltip)
 {
   if (!duration)
     return;
@@ -369,6 +369,7 @@ templates.network_graph_sections = function(entry, width, duration)
 
   return ["span",
            "class", "network-graph-sections",
+           "data-tooltip", do_tooltip ? "network-graph-tooltip" : "",
            "style", "width: " + px_duration + "px;" +
                     "background-image: " +
                         "-o-linear-gradient(90deg," +
