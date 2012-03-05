@@ -12,6 +12,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._selected = null;
   this._rendertime = 0;
   this._rendertimer = null;
+  this._graph_tooltip_id = null;
   this.needs_instant_update = false;
 
   // modes
@@ -427,10 +428,33 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_graph_tooltip_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
-    var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry(entry_id);
+    this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
+    var entry = ctx.get_entry(this._graph_tooltip_id);
     var template = templates.network_graph_entry_tooltip(entry);
     this.graph_tooltip.show(template);
+  }.bind(this);
+
+  this._on_graph_tooltip_enter_bound = function(evt, target)
+  {
+    if (!this._graph_tooltip_id)
+      return;
+
+    var elems = this._container.querySelectorAll("[data-object-id='" + this._graph_tooltip_id + "']");
+    for (var i = 0, elem; elem = elems[i]; i++)
+      elem.addClass("hovered");
+
+  }.bind(this);
+
+  this._on_graph_tooltip_leave_bound = function(evt, target)
+  {
+    if (!this._graph_tooltip_id)
+      return;
+
+    var elems = this._container.querySelectorAll("[data-object-id='" + this._graph_tooltip_id + "']");
+    for (var i = 0, elem; elem = elems[i]; i++)
+      elem.removeClass("hovered");
+
+    this._graph_tooltip_id = null;
   }.bind(this);
 
   this._on_url_tooltip_bound = function(evt, target)
@@ -450,6 +474,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this.graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
   this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
+  this.graph_tooltip.ontooltipenter = this._on_graph_tooltip_enter_bound;
+  this.graph_tooltip.ontooltipleave = this._on_graph_tooltip_leave_bound;
 
   this._on_clear_log_bound = function(evt, target)
   {
