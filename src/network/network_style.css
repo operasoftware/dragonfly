@@ -181,6 +181,7 @@
 .network-data-container .sortable-table > tr.header:hover
 {
   background: transparent;
+  border-bottom-width: 0px;
 }
 
 .network_logger .sortable-table tr td
