@@ -41,7 +41,7 @@
 
 .errors-table > tr.expanded .ui-button
 {
-    -o-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
 }
 
 .errors-table .expand_cell
@@ -55,6 +55,14 @@
 {
   border-left: none;
   padding-left: 3px;
+}
+
+.error-console .max_exceeded_warning
+{
+  text-align: center;
+  font-size: 1.4em;
+  margin: 18px 0;
+  color: #808080;
 }
 
 .errors-table tr,

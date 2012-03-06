@@ -25,7 +25,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   {
     for (var view_id = '', i = 0; view_id = this._views[i]; i++)
     {
-      window.views[view_id].update()
+      window.views[view_id].update();
     }
 
     var used_for_error_count = this._view_used_for_error_count || this._views[0];
@@ -367,6 +367,7 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
 
 ErrorConsoleViewPrototype = function()
 {
+  var MAX_ENTRIES = 1000;
 
   this.createView = function(container)
   {
@@ -396,6 +397,14 @@ ErrorConsoleViewPrototype = function()
       window.error_console_data.set_view_to_use_for_error_count(this.id);
       var entries = window.error_console_data.get_messages(this.query)
                                                .filter(this.source_filter);
+      var exceeds_max = false;
+      var org_length = entries.length;
+      if (org_length > MAX_ENTRIES)
+      {
+        entries = entries.slice(0, MAX_ENTRIES);
+        exceeds_max = true;
+      }
+
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
 
@@ -412,15 +421,27 @@ ErrorConsoleViewPrototype = function()
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
+
         this._table_ele.render(template);
+        if (exceeds_max)
+          this._container.render(window.templates.errors.exceeds_max(MAX_ENTRIES, org_length));
       }
       else
       {
-        var template = templates.errors.log_table(entries, 
-                                                  expand_all,
-                                                  window.error_console_data.get_toggled(),
-                                                  this.id);
-        this._table_ele = this._container.clearAndRender(template);
+        var template = window.templates.errors.log_table(entries, 
+                                                       expand_all,
+                                                       window.error_console_data.get_toggled(),
+                                                       this.id);
+        if (exceeds_max)
+        {
+          template = [
+            template,
+            window.templates.errors.exceeds_max(MAX_ENTRIES, org_length)
+          ];
+        }
+
+        var rendered = this._container.clearAndRender(template);
+        this._table_ele = rendered.parentNode.querySelector(".errors-table");
       }
       this.last_entry_hash = entries.reduce(this._hash_array, "");
       if (this._scrollTop)
@@ -436,6 +457,8 @@ ErrorConsoleViewPrototype = function()
     {
       entries = window.error_console_data.get_messages(this.query)
                                            .filter(this.source_filter);
+      if (entries.length > MAX_ENTRIES)
+        entries = entries.slice(0, MAX_ENTRIES);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
