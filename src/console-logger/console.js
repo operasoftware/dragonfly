@@ -368,12 +368,26 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
 ErrorConsoleViewPrototype = function()
 {
   var MAX_ENTRIES = 1000;
+  this._rendertime = 0;
 
   this.createView = function(container)
   {
-    this._container = container;
-    this._container.setAttribute("data-error-log-id", this.id);
-    this._container.setAttribute("data-menu", "error-console");
+    var min_render_delay = 200;
+    var timedelta = new Date().getTime() - this._rendertime;
+    if (this._rendertimer)
+      this._rendertimer = window.clearTimeout(this._rendertimer);
+    if (timedelta < min_render_delay)
+    {
+      this._rendertimer = window.setTimeout(this.createView.bind(this), min_render_delay);
+      return;
+    }
+
+    if (container)
+    {
+      this._container = container;
+      this._container.setAttribute("data-error-log-id", this.id);
+      this._container.setAttribute("data-menu", "error-console");
+    }
     if (this.query)
     {
       // this triggers _create via on_before_search
@@ -448,6 +462,7 @@ ErrorConsoleViewPrototype = function()
       {
         this._container.scrollTop = this._scrollTop;
       }
+      this._rendertime = new Date().getTime();
     }
   }
 
@@ -467,6 +482,7 @@ ErrorConsoleViewPrototype = function()
   {
     this._table_ele = null;
     this._container = null;
+    this._rendertime = 0;
   };
 
   this._on_before_search = function(message)
