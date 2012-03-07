@@ -163,7 +163,7 @@ ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING = "No grouping";
 ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS = "Reset columns";
 
 /* DESC: Context menu entry to reset the sort order */
-ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting"
+ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT = "Reset sorting";
 
 /* DESC: view that shows all resources */
 ui_strings.M_VIEW_LABEL_ALL_RESOURCES = "All resources";
@@ -460,7 +460,7 @@ ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
 
 /* DESC: For selecting which window to debug. */
-ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you'd like to debug";
+ui_strings.S_BUTTON_LABEL_SELECT_WINDOW = "Select the debugging context you want to debug";
 
 /* DESC: Tooltip text for the Settings button that launches the Settings view. */
 ui_strings.S_BUTTON_LABEL_SETTINGS = "Settings";
@@ -627,7 +627,7 @@ ui_strings.S_ENABLE_DECLARATION = "Enable";
 /* DESC: List of filters that will be hidden in the Error log */
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 
-/* DESC: Context menu item for expanding shorthands */
+/* DESC: Context menu item for expanding CSS shorthands */
 ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 
 /* DESC: Label for the global keyboard shortcuts section */
@@ -751,7 +751,7 @@ ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
 ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
 
 /* DESC: tooltip for table header that shows duration */
-ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this url";
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this URL";
 
 /* DESC: tooltip for the network filter that shows all items */
 ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
@@ -763,7 +763,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES = "Show only images";
 ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP = "Show only markup";
 
 /* DESC: tooltip for the network filter that shows items that are not markup, stylesheet, script or image */
-ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show only requests that are of other types than mentioned before";
+ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER = "Show requests of other types";
 
 /* DESC: tooltip for the network filter that shows script items */
 ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
@@ -772,7 +772,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS = "Show only scripts";
 ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS = "Show only stylesheets";
 
 /* DESC: tooltip for the network filter that shows items requested over XMLHttpRequest */
-ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only requests requested over XMLHttpRequest";
+ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only XMLHttpRequests";
 
 /* DESC: tooltip for table header that shows loading sequence as a graph */
 ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
@@ -952,7 +952,7 @@ ui_strings.S_LABEL_DELETE_ALL_WATCHES = "Delete all watches";
 ui_strings.S_LABEL_DELETE_WATCH = "Delete watch";
 
 /* DESC: Label for a button in a dialog to dismiss in so it won't be shown again */
-ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Don't show again";
+ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
@@ -1083,7 +1083,7 @@ ui_strings.S_MENU_DEBUG_CONTEXT = "Select the debugging context";
 /* DESC: Reload the debug context. */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT = "Reload Debugging Context";
 
-/* DESC: Reload the debug context (short). */
+/* DESC: Reload the debug context (shorter than S_MENU_RELOAD_DEBUG_CONTEXT). */
 ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT = "Reload";
 
 /* DESC: Select the active window as debugger context. */
@@ -1137,7 +1137,7 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
-/* DESC: Title of request body section when the body is multpart encoded */
+/* DESC: Title of request body section when the body is multipart-encoded */
 ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
 /* DESC: String used when there is a request body we can't show the contents of directly. */
@@ -1156,7 +1156,7 @@ ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
 
 /* DESC: Message about not yet available response body */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available while the request is not yet finished.";
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available until the request is finished.";
 
 /* DESC: Help text about how a response could not be show because resource tracking is not on. */
 ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not available. Enable resource tracking and reload the page to view the resource.";
@@ -1219,7 +1219,7 @@ ui_strings.S_REPL_HELP_COMMAND_DESC = "Show a list of all available commands";
 ui_strings.S_REPL_JQUERY_COMMAND_DESC = "Load jQuery in the active tab";
 
 /* DESC: Printed in the command line view when it is shown for the first time. */
-ui_strings.S_REPL_WELCOME_TEXT = "Type %(CLEAR_COMMAND) command to clear the console.\nType %(HELP_COMMAND) for more information.";
+ui_strings.S_REPL_WELCOME_TEXT = "Type %(CLEAR_COMMAND) to clear the console.\nType %(HELP_COMMAND) for more information.";
 
 /* DESC: "Not applicable" abbreviation */
 ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
@@ -1270,10 +1270,10 @@ ui_strings.S_SCOPE_GLOBAL = "Global";
 ui_strings.S_SCOPE_INNER = "Scope %s";
 
 /* DESC: Section header in the script drop-down select for Browser and User JS. */
-ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS"
+ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser JS and User JS";
 
 /* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
-ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, Eval, Timeout and Event handler scripts"
+ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, eval, timeout and event-handler scripts";
 
 /* DESC: Tooltip for filtering text-input boxes */
 ui_strings.S_SEARCH_INPUT_TOOLTIP = "text search";
@@ -1493,4 +1493,3 @@ ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
-
