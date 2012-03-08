@@ -69,6 +69,7 @@ cls.JSSourceTooltip = function(view)
   {
     if (!_last_move_event ||
         _is_over_tooltip ||
+        !_win_selection ||
         (_filter && _is_filter_focus) ||
         CstSelect.is_active)
       return;
