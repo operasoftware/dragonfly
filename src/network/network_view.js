@@ -7,8 +7,9 @@
 cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 {
   this._service = new cls.NetworkLoggerService(this);
-  this._content_scroll = 0;
-  this._details_scroll = 0;
+  this._container_scroll_top = 0;
+  this._details_scroll_top = 0;
+  this._details_scroll_left = 0;
   this._selected = null;
   this._rendertime = 0;
   this._rendertimer = null;
@@ -172,8 +173,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (this._selected)
     {
       var details = rendered.querySelector(".network-details-container");
-      if (details && this._details_scroll)
-        details.scrollTop = this._details_scroll;
+      if (details)
+      {
+        if (this._details_scroll_top)
+          details.scrollTop = this._details_scroll_top;
+
+        if (this._details_scroll_left)
+          details.scrollLeft = this._details_scroll_left;
+      }
 
       if (this._selected_viewmode === "data")
       {
@@ -181,8 +188,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         sel_row && sel_row.addClass("selected");
       }
     }
-    if (this._content_scroll)
-      rendered.scrollTop = this._content_scroll;
+    if (this._container_scroll_top)
+      rendered.scrollTop = this._container_scroll_top;
 
   }.bind(this);
 
@@ -305,6 +312,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.mode = DEFAULT;
     this.needs_instant_update = true;
     this.update();
+    // todo: the arrow keys don't scroll the main container after this was closed. Check to manually focus() it.
     return false;
   }.bind(this);
 
@@ -341,39 +349,40 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._resize_detail_evt = null;
   }.bind(this);
 
-  this._on_select_next_bound = function(evt, target)
+  var _make_selection_func= function(accessor, bind_me)
   {
-    if (this._selected)
+    return (function()
     {
-      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-      if (selected_node && 
-          selected_node.nextElementSibling && 
-          selected_node.nextElementSibling.dataset.objectId)
+      if (this._selected)
       {
-        this._selected = selected_node.nextElementSibling.dataset.objectId;
-        this.needs_instant_update = true;
-        this.update();
-        return false;
+        var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+        if (selected_node && 
+            selected_node[accessor] && 
+            selected_node[accessor].dataset.objectId)
+        {
+          this._selected = selected_node[accessor].dataset.objectId;
+          selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+          if (selected_node)
+          {
+            var selected_ypos = selected_node.offsetTop + selected_node.offsetHeight;
+            if (selected_ypos > (this._container.offsetHeight + this._container_scroll_top))
+            {
+              // scroll down to node
+              this._container_scroll_top = selected_ypos - this._container.offsetHeight;
+            }
+            else if (selected_node.offsetTop < this._container_scroll_top)
+            {
+              // scroll up to node
+              this._container_scroll_top = selected_node.offsetTop;
+            }
+          }
+          this.needs_instant_update = true;
+          this.update();
+          return false;
+        }
       }
-    }
-  }.bind(this);
-
-  this._on_select_previous_bound = function(evt, target)
-  {
-    if (this._selected)
-    {
-      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-      if (selected_node && 
-          selected_node.previousElementSibling && 
-          selected_node.previousElementSibling.dataset.objectId)
-      {
-        this._selected = selected_node.previousElementSibling.dataset.objectId;
-        this.needs_instant_update = true;
-        this.update();
-        return false;
-      }
-    }
-  }.bind(this);
+    }).bind(bind_me || this);
+  };
 
   this._on_clicked_request_bound = function(evt, target)
   {
@@ -412,10 +421,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    this._content_scroll = target.scrollTop;
+    console.log("_on_scroll_bound");
     if (evt.target.hasClass("network-details-container"))
-      this._details_scroll = evt.target.scrollTop;
-
+    {
+      this._details_scroll_top = evt.target.scrollTop;
+      this._details_scroll_left = evt.target.scrollLeft;
+    }
+    else
+    {
+      this._container_scroll_top = target.scrollTop;
+    }
   }.bind(this)
 
   this._on_clicked_get_body = function(evt, target)
@@ -562,8 +577,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
-    "select-next-entry": this._on_select_next_bound,
-    "select-previous-entry": this._on_select_previous_bound,
+    "select-next-entry": _make_selection_func("nextElementSibling", this),
+    "select-previous-entry": _make_selection_func("previousElementSibling", this),
     "close-details": this._on_clicked_close_bound
   };
   this.id = id;
