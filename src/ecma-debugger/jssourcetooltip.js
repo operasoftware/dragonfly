@@ -530,7 +530,10 @@ cls.JSSourceTooltip = function(view)
       }
       else
         break;
-    } 
+    }
+
+    if (tokens[index + 1][TYPE] == PUNCTUATOR && tokens[index + 1][VALUE] == ".")
+      index++;
 
     while (true)
     {
