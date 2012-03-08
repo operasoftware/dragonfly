@@ -151,11 +151,16 @@
     if (_modal_box)
       return;
       
-    var select = (/^cst-/i.test(event.target.nodeName) ||
-                  /^cst-/i.test(event.target.parentNode.nodeName)) && event.target;
+    var select = event.target;
+    var count = 2;
     
-    while (select && !/^cst-select/i.test(select.nodeName))
-        select = select.parentNode;
+    while (count && select)
+    {
+      if (/^cst-select/i.test(select.nodeName))
+        break;
+
+      select = count && select.parentNode;
+    } 
 
     if (select)
     {
