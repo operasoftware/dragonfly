@@ -527,7 +527,10 @@ cls.JSSourceTooltip = function(view)
           tokens = new_tokens.extend(tokens);
         }
         else
+        {
+          start_line++;
           break;
+        }
       }
       else
         break;
