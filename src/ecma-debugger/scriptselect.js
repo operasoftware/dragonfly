@@ -273,6 +273,12 @@ cls.ScriptSelect = function(id, class_name)
     this._option_box = this._container
                      ? this._container.getBoundingClientRect()
                      : null;
+    if (this._option_box && !this._option_box_delta)
+    {
+      var style = getComputedStyle(this._container);
+      this._option_box_delta = parseInt(style.getPropertyValue("border-top-width"));
+    }
+
   };
 
   this._onclearfilter = function(event, target)
@@ -305,8 +311,9 @@ cls.ScriptSelect = function(id, class_name)
         var box = ele.getBoundingClientRect();
         if (box.bottom > this._option_box.bottom)
           ele.scrollIntoView();
-        else if(box.top < this._option_box.top)
-          this._container.scrollTop = 0;
+        else if(box.top < this._option_box.top + this._option_box_delta)
+          this._container.scrollTop -= this._option_box.top - box.top
+                                     + this._option_box.height - box.height;
       }
     } 
   };
@@ -348,6 +355,7 @@ cls.ScriptSelect = function(id, class_name)
     this._setting = null;
     this._match_history = [];
     this._match_cursor = 0;
+    this._option_box_delta = 0;
   }
 
   this._init(id, class_name);
