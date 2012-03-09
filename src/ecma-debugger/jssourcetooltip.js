@@ -67,7 +67,11 @@ cls.JSSourceTooltip = function(view)
 
   var _poll_position = function()
   {
-    if (!_last_move_event || _is_over_tooltip || (_filter && _is_filter_focus))
+    if (!_last_move_event ||
+        _is_over_tooltip ||
+        !_win_selection ||
+        (_filter && _is_filter_focus) ||
+        CstSelect.is_active)
       return;
     
     if (!_win_selection.isCollapsed && !_shift_key)
@@ -228,10 +232,13 @@ cls.JSSourceTooltip = function(view)
                                "class", "js-tooltip-examine-container"],
                        "class", "js-tooltip js-tooltip-examine"];
           var ele = _tooltip.show(tmpl, box);
-          _filter_input = ele.querySelector("input");
-          _tooltip_container = ele.querySelector(".js-tooltip-examine-container");
-          _filter.set_form_input(_filter_input);
-          _filter.set_container(_tooltip_container);
+          if (ele)
+          {
+            _filter_input = ele.querySelector("input");
+            _tooltip_container = ele.querySelector(".js-tooltip-examine-container");
+            _filter.set_form_input(_filter_input);
+            _filter.set_container(_tooltip_container);
+          }
         });
       }
       else
@@ -524,7 +531,10 @@ cls.JSSourceTooltip = function(view)
       }
       else
         break;
-    } 
+    }
+
+    if (tokens[index + 1][TYPE] == PUNCTUATOR && tokens[index + 1][VALUE] == ".")
+      index++;
 
     while (true)
     {

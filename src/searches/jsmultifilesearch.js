@@ -32,6 +32,7 @@ var JSMultifileSearchPrototype = function()
   {
     this._rt_ids = msg.activeTab.slice(0);
     this._search_term = '';
+    this._last_query = '';
   };
 
   this._show_search_results = function()
