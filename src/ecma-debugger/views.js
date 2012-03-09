@@ -133,8 +133,13 @@ cls.CallstackView = function(id, name, container_class)
     {
       __clear_timeout = clearTimeout( __clear_timeout );
     }
+
+
     var _frames = stop_at.getFrames(), frame = null, i = 0;
+    var return_values = stop_at.get_return_values();
     list.innerHTML = _frames.length ? "" : not_stopped_content;
+    if (return_values.length)
+      list.render(templates.return_values(return_values));
     for( ; frame = _frames[i]; i++)
     {
       list.render(templates.frame(frame, i == this._selected_frame));
