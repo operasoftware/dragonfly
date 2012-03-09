@@ -38,9 +38,11 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this._create_view = function(container, data_model)
   {
+    var return_values = stop_at.get_return_values();
+    container.clearAndRender(return_values.length ? templates.return_values(return_values) : []);
     var tmpl = window.templates.inspected_js_object(data_model, false,
                                                     null, this._searchterm);
-    container.clearAndRender(tmpl);
+    container.render(tmpl);
   };
 
   this._onbeforesearch = function(searchterm)
