@@ -1415,7 +1415,8 @@ cst-select-option-list-container.color .ok-cancel input + input
   float: right;
 }
 
-.info-box
+.info-box,
+.network_incomplete_warning
 {
   margin: 30px 50px 0 50px;
   text-align: center;
