@@ -319,6 +319,7 @@
 .network-details-container th
 {
   vertical-align: top;
+  word-wrap: break-word;  
 }
 
 .network-details-container th

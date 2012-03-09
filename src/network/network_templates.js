@@ -164,22 +164,22 @@ templates.network_log_url_list = function(ctx, selected, item_order)
   var ERROR_RESPONSE = "error_response";
   var NOT_REQUESTED = "not_requested";
 
-  var itemfun = function(req)
+  var itemfun = function(entry)
   {
-    var had_error_response = req.had_error_response;
-    var not_requested = !req.touched_network;
+    var had_error_response = entry.had_error_response;
+    var not_requested = !entry.touched_network;
 
     return ["li",
-            templates.network_request_icon(req),
-            ["span",
-              req.filename || req.human_url,
-              "data-tooltip", "network-url-list-tooltip"
-            ],
-            "handler", "select-network-request",
-            "data-object-id", String(req.id),
-            "class", (selected === req.id ? "selected " : " ") + 
-                     (had_error_response ? ERROR_RESPONSE + " " : " ") + 
-                     (not_requested ? NOT_REQUESTED : "")
+             templates.network_request_icon(entry),
+             ["span",
+               entry.filename || entry.human_url,
+               "data-tooltip", "network-url-list-tooltip"
+             ],
+             "handler", "select-network-request",
+             "data-object-id", String(entry.id),
+             "class", (selected === entry.id ? "selected " : " ") + 
+                      (had_error_response ? ERROR_RESPONSE + " " : " ") + 
+                      (not_requested ? NOT_REQUESTED : "")
            ];
   };
 
@@ -288,13 +288,13 @@ templates.network_log_summary = function(ctx)
   return ["div", str];
 };
 
-templates.network_request_icon = function(request)
+templates.network_request_icon = function(entry)
 {
-  var classname = "resource-icon resource-type-" + request.type;
+  var classname = "resource-icon resource-type-" + entry.type;
 /*
   // todo: long lasting discussion to add some XHR indicator to the icon
-  if (request.load_origin) // === "xhr"
-    classname += " request-origin-" + request.load_origin;
+  if (entry.load_origin) // === "xhr"
+    classname += " request-origin-" + entry.load_origin;
 */
   return ["span", "class", classname];
 };

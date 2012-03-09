@@ -645,9 +645,10 @@ cls.NetworkLoggerEntry.prototype = new function()
     this.type = cls.ResourceUtil.path_to_type(this.url);
 
     if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
-    {
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
-    }
+
+    if (this._current_response)
+      this._current_response._update_type(this.type);
   };
 
   this._humanize_url = function()
@@ -846,7 +847,7 @@ cls.NetworkLoggerResponse = function(entry)
 {
   this.logger_entry_type = entry.type;
   this.logger_entry_id = entry.id;
-  this.logger_entry_mime = entry.mime;
+  this.logger_entry_mime = entry.mime; // todo: when this gets set, it's mostly still null. but entry should not be stored, so that the data can still be stringified.
   this.logger_entry_is_finished = entry.is_finished;
   
   this.responsestart = null;
@@ -878,5 +879,10 @@ cls.NetworkLoggerResponse = function(entry)
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
+  };
+
+  this._update_type = function(type)
+  {
+    this.logger_entry_type = type;
   };
 }

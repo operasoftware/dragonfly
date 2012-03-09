@@ -68,7 +68,9 @@ templates.network_response = function(response)
 
 templates.request_details = function(req)
 {
-  var ret = []
+  var ret = [];
+  if (!req)
+    return ret;
 
   if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
     ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
@@ -76,7 +78,7 @@ templates.request_details = function(req)
     ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
 
   var tbody = ["tbody"];
-  if (req.is_finnished && !req.touched_network)
+  if (req.is_finished && !req.touched_network)
   {
     tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
   }
@@ -142,20 +144,21 @@ templates.network_request_body = function(req)
   {
     return [];
   }
-  var ret = [templates.network_detail_row(templates.network_body_seperator())];
+
+  var cont = [];
   // when this is undefined/null the request was one that did not send data
   if (req.requestbody.partList.length)
   {
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
-      ret.push(templates.network_headers_list(part.headerList));
+      cont.push(templates.network_headers_list(part.headerList));
       if (part.content && part.content.stringData)
-        ret.push(templates.network_detail_row(["pre", part.content.stringData]));
+        cont.push(templates.network_detail_row(["pre", part.content.stringData]));
       else
-        ret.push(templates.network_detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
+        cont.push(templates.network_detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
 
       if (n < req.requestbody.partList.length - 1)
-        ret.push(templates.network_detail_row(["hr"]));
+        cont.push(templates.network_detail_row(["hr"]));
     }
   }
   else if (req.requestbody.mimeType === "application/x-www-form-urlencoded")
@@ -176,19 +179,15 @@ templates.network_request_body = function(req)
                       ["td", decodeURIComponent(e[1])]
                   ];
     }));
-    ret.push(tab);
+    cont.push(tab);
   }
-  // else // There is content, but we're not tracking // todo: really?
-  // {
-  //   ret.push(["p", ui_strings.S_NETWORK_ENABLE_CONTENT_TRACKING_FOR_REQUEST]);
-  // }
   else // not multipart or form.
   {
     var tpl = [];
     var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
     if (type == "markup")
     {
-      tpl = window.templates.highlight_markup(req.requestbody.content.stringData);
+      tpl = window.templates.highlight_markup(req.requestbody.content.stringData); // todo: not exactly consitent that we highlight requestbody, but not responsebody
     }
     else if (type == "script")
     {
@@ -208,16 +207,20 @@ templates.network_request_body = function(req)
     {
       if (req.requestbody.mimeType)
       {
-        ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
+        cont.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
       }
       else
       {
-        ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
+        cont.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
       }
     }
-    ret.push(tpl);
+    cont.push(tpl);
   }
-  return ret;
+  
+  return [
+           templates.network_detail_row(templates.network_body_seperator()),
+           ["tbody", ["tr", ["td", cont, "colspan", "2"]]]
+         ];
 };
 
 

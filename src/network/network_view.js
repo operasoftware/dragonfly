@@ -421,7 +421,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    console.log("_on_scroll_bound");
     if (evt.target.hasClass("network-details-container"))
     {
       this._details_scroll_top = evt.target.scrollTop;
