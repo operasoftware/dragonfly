@@ -64,7 +64,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filter(this._type_filters || []);
 
-      this._render_tabbed_view(this._container);
+      this._render_main_view(this._container);
     }
     else
     {
@@ -103,15 +103,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     );
   };
 
-  this._render_tabbed_view = function(container)
+  this._render_main_view = function(container)
   {
     this._selected_viewmode = settings.network_logger.get("selected-viewmode");
     var ctx = this._service.get_request_context();
-
-    var item_order;
     if (this._selected_viewmode === "data")
     {
-      
       if (!this._table)
       {
         this._table = new SortableTable(
@@ -130,7 +127,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         ctx.get_entries_filtered().slice(0)
       );
     }
-
     this._continue_render_main();
   };
 
@@ -161,15 +157,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var detail_width = parseInt(this._container.style.width) - url_list_width;
 
     var ctx = this._service.get_request_context();
-    var template = templates.network_log_main(
+    var template = ["div", templates.network_log_main(
                      ctx, this._selected, this._selected_viewmode, detail_width, item_order, table_template
-                   );
+                   ), "id", "network-outer-container"];
 
     if (this._selected)
     {
-      template = template.concat(this._render_details_view(this._container, this._selected));
+      template = [template, this._render_details_view(this._container, this._selected)];
     }
-    var rendered = this._container.clearAndRender(template); // details_template was added to network-details-container
+    var rendered = this._container.clearAndRender(template);
+
     if (this._selected)
     {
       var details = rendered.querySelector(".network-details-container");
@@ -188,8 +185,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         sel_row && sel_row.addClass("selected");
       }
     }
+
     if (this._container_scroll_top)
-      rendered.scrollTop = this._container_scroll_top;
+    {
+      var outer_container = rendered.getAttribute("id") === "network-outer-container" ?
+                            rendered : rendered.firstChild;
+      outer_container.scrollTop = this._container_scroll_top;
+    }
 
   }.bind(this);
 
@@ -312,7 +314,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.mode = DEFAULT;
     this.needs_instant_update = true;
     this.update();
-    // todo: the arrow keys don't scroll the main container after this was closed. Check to manually focus() it.
+    // todo: the arrow keys don't scroll the main container after this was closed.
     return false;
   }.bind(this);
 
@@ -364,11 +366,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
           if (selected_node)
           {
+            var outer_container = this._container.firstChild;
             var selected_ypos = selected_node.offsetTop + selected_node.offsetHeight;
-            if (selected_ypos > (this._container.offsetHeight + this._container_scroll_top))
+            if (selected_ypos > (outer_container.offsetHeight + this._container_scroll_top))
             {
               // scroll down to node
-              this._container_scroll_top = selected_ypos - this._container.offsetHeight;
+              this._container_scroll_top = selected_ypos - outer_container.offsetHeight;
             }
             else if (selected_node.offsetTop < this._container_scroll_top)
             {
@@ -428,7 +431,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      this._container_scroll_top = target.scrollTop;
+      this._container_scroll_top = target.firstChild.scrollTop; // firstChild is outer-container
     }
   }.bind(this)
 

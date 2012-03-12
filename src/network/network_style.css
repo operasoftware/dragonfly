@@ -1,21 +1,12 @@
-﻿.network_logger {
-  min-width: 410px; /* when smaler, the filter box takes 3 lines and the alignments break */
+﻿.network_logger
+{
+  min-width: 580px;
 }
 
-#main-scroll-container
+#network-outer-container
 {
   height: 100%;
   overflow: auto;
-  overflow-y: scroll;
-}
-
-#main-scroll-content
-{
-  position: relative;
-}
-
-.network_logger {
-  min-width: 580px;
 }
 
 #network-url-list
@@ -31,46 +22,20 @@
   width: 60%;
 }
 
-.network-data-container.graphs { /* todo: slow selector */
-  position: relative;
-  top: 10px;
+.network-main-container .graphs
+{
+  margin-top: 10px;
 }
 
-.network-data-container.data { /* todo: slow selector */
-  position: relative;
-  top: 9px;
+.network-main-container .data
+{
+  margin-top: 9px;
 }
 
 /* Network log / Overview */
 
-.network_logger .type-filter-buttons {
-  text-align: center;
-  margin-top: 4px;
-  padding: 0 10px;
-  min-height: 54px;
-}
-
-.network_logger .type-filter-buttons .ui-button {
-  margin: 5px 1px 0 1px;
-  padding: 1px 8px;
-  height: 17px;
-  line-height: 17px;
-  color: #8b8b8b;
-  background-image: -o-linear-gradient(270deg,
-                        rgba(255, 255, 255, 0.5) 0,
-                        rgba(255, 255, 255, 0.251) 85%,
-                        rgba(255, 255, 255, 0.5059) 100%);
-}
-
-.network_logger .type-filter-buttons .ui-button.on {
-  color: #444;
-  background-image: -o-linear-gradient(270deg,
-                        rgba(255, 255, 255, 0.898) 0,
-                        rgba(255, 255, 255, 0.251) 85%,
-                        rgba(255, 255, 255, 0.5059) 100%);
-}
-
-.network-log-url-list {
+.network-log-url-list
+{
   list-style: none;
   padding: 0;
   margin: 0;
@@ -83,6 +48,11 @@
 {
   height: 22px;
   padding-top: 2px;
+}
+
+.network-timeline-row
+{
+  position: relative;
 }
 
 .network-log-url-list li
