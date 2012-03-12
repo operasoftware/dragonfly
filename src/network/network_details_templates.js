@@ -192,34 +192,30 @@ templates.network_request_body = function(req)
   else // not multipart or form.
   {
     var tpl = [];
-    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType); // todo: thats basically guess_type in the service, but here it's for the request body.
-    if (type == "markup")
+    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
+    if (req.requestbody.content)
     {
-      tpl = window.templates.highlight_markup(req.requestbody.content.stringData); // todo: not exactly consistent that we highlight requestbody, but not responsebody
-    }
-    else if (type == "script")
-    {
-      tpl = window.templates.highlight_js_source(req.requestbody.content.stringData);
-    }
-    else if (type == "css")
-    {
-      tpl = window.templates.highlight_css(req.requestbody.content.stringData);
-    }
-    else if (type == "text")
-    {
-      tpl = ["p", req.requestbody.content ? 
-                  req.requestbody.content.stringData :
-                  ""];
-    }
-    else
-    {
-      if (req.requestbody.mimeType)
+      switch(type)
       {
-        cont.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
-      }
-      else
-      {
-        cont.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
+        case "markup":
+        case "script":
+        case "css":
+        case "text":
+        {
+          tpl = ["pre", req.requestbody.content.stringData];
+          break;
+        }
+        default:
+        {
+          if (req.requestbody.mimeType)
+          {
+            cont.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
+          }
+          else
+          {
+            cont.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
+          }
+        }
       }
     }
     cont.push(tpl);
