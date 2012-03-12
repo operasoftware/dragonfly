@@ -517,20 +517,17 @@ cls.JSSourceTooltip = function(view)
 
       if (i == -1)
       {
-        start_line--;
-        var new_tokens = _get_tokens_of_line(script, start_line);
+        var new_tokens = _get_tokens_of_line(script, start_line - 1);
 
         if (new_tokens.length)
         {
+          start_line--;
           match_index = new_tokens.length;
           index += match_index;
           tokens = new_tokens.extend(tokens);
         }
         else
-        {
-          start_line++;
           break;
-        }
       }
       else
         break;
