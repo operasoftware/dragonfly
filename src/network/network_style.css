@@ -226,19 +226,11 @@
   background-color: #cacaca;
 }
 
-.network-details-url-list
-{
-  height: 100%;
-  padding: 0;
-  overflow: hidden;
-  overflow-y: auto;
-}
-
 .network-details-container
 {
-  position: fixed;
+  position: absolute;
   right: 0;
-  top: 83px;
+  top: 0;
   bottom: 0;
   z-index: 2;
   left: 120px;
@@ -312,6 +304,145 @@
   margin: 15px 0 10px 0;
 }
 
+
+.network_logger .network-data-container table tr .network-graph-column
+{
+  line-height: 0;
+  padding-top: 5px;
+}
+
+.network-graph-sections-hitarea
+{
+  display: inline-block;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.hovered .network-graph-sections-hitarea
+{
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.network-graph-sections
+{
+  display: inline-block;
+  height: 14px;
+  vertical-align: top;
+  border-radius: 3px;
+  min-width: 3px;
+  /* fallback, only visible when the sections together are less than min-width */
+  background-color: #c9c9c9;
+}
+
+.network-tooltip-graph,
+.network-graph-sections
+{
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.selected .network-graph-sections
+{
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.28);
+}
+
+.network-tooltip-container
+{
+  vertical-align: top;
+}
+
+.network-tooltip-container h2
+{
+  margin-bottom: 1em;
+}
+
+.network-tooltip-container .sum
+{
+  border-top: 1px solid #bababa;
+}
+
+.network-tooltip-legend table td
+{
+  color: #666;
+}
+
+.network-tooltip-container .mono
+{
+  color: #333;
+}
+
+.network-tooltip-container table 
+{
+  border-collapse: collapse;
+}
+
+.network-tooltip-container table td
+{
+  padding-right: 2px;
+}
+
+.network_get_params
+{
+  margin: 4px 2px 0 0;
+}
+
+.network_get_params td
+{
+  padding: 0 4px;
+}
+
+.network-tooltip-row
+{
+  display: table-row;
+}
+
+.network-tooltip-col
+{
+  display: table-cell;
+  vertical-align: top;
+}
+
+.network-tooltip-container .gap_title
+{
+  white-space: nowrap;
+}
+
+.network-tooltip-graph
+{
+  width: 28px;
+  border-radius: 3px;
+}
+
+.network-tooltip-legend table td
+{
+  padding: 3px;
+}
+
+.network-tooltip-legend .time_data
+{
+  text-align: right;
+  padding: 2px 8px 0 4px;
+}
+
+.network-tooltip-legend .event_name
+{
+  white-space: nowrap;
+}
+
+.timeline-marker
+{
+  display: inline-block;
+  width: 60px;
+  line-height: 21px;
+  position: absolute;
+  top: 0;
+  text-align: center;
+  color: #808080;
+}
+
 /* Request crafter */
 .request-crafter
 {
@@ -376,139 +507,4 @@
 {
   width: 100%;
   margin: 10px 0;
-}
-
-.network_logger .network-data-container table tr .network-graph-column
-{
-  line-height: 0;
-  padding-top: 5px;
-}
-
-.network-graph-sections-hitarea
-{
-  display: inline-block;
-  padding: 3px;
-  border-radius: 3px;
-}
-
-.hovered .network-graph-sections-hitarea
-{
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.network-graph-sections
-{
-  display: inline-block;
-  height: 14px;
-  vertical-align: top;
-  border-radius: 3px;
-  min-width: 3px;
-  /* fallback, only visible when the sections together are less than min-width */
-  background-color: #c9c9c9;
-}
-
-.network-tooltip-graph,
-.network-graph-sections
-{
-  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
-              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
-              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
-}
-
-.selected .network-graph-sections
-{
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-              inset 0 -1px 0 0 rgba(0, 0, 0, 0.28);
-}
-
-.network-tooltip-container
-{
-  vertical-align: top;
-}
-
-.network-tooltip-container h2 {
-  margin-bottom: 1em;
-}
-
-.network-tooltip-container .sum {
-  border-top: 1px solid #bababa;
-}
-
-.network-tooltip-legend table td {
-  color: #666
-
-}
-
-.network-tooltip-container .mono {
-  color: #333;
-}
-
-.network-tooltip-container table {
-  border-collapse: collapse;
-}
-
-.network-tooltip-container table td {
-  padding-right: 2px;
-}
-
-.network_get_params {
-  margin: 4px 2px 0 0;
-}
-
-.network_get_params td {
-  padding: 0 4px;
-}
-
-.network-tooltip-row {
-  display: table-row;
-}
-
-.network-tooltip-col {
-  display: table-cell;
-  vertical-align: top;
-}
-
-.network-tooltip-container .gap_title {
-  white-space: nowrap;
-}
-
-.network-section
-{
-  display: inline-block;
-  vertical-align: top;
-  height: 14px;
-  margin-bottom: 1px;
-}
-
-.network-tooltip-graph
-{
-  width: 28px;
-  border-radius: 3px;
-}
-
-.network-tooltip-legend table td
-{
-  padding: 3px;
-}
-
-.network-tooltip-legend .time_data
-{
-  text-align: right;
-  padding: 2px 8px 0 4px;
-}
-
-.network-tooltip-legend .event_name
-{
-  white-space: nowrap;
-}
-
-.timeline-marker {
-  display: inline-block;
-  width: 60px;
-  line-height: 21px;
-  position: absolute;
-  top: 0;
-  text-align: center;
-  color: #808080;
 }
