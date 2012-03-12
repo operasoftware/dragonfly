@@ -313,7 +313,7 @@
 
   this.show_dropdown = function(id)
   {
-    if (window['cst-selects'][id])
+    if (window["cst-selects"][id])
     {
       var select = document.querySelector("cst-select[cst-id=\"" + id + "\"]");
       if (select)
