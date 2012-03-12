@@ -24,7 +24,7 @@ templates.network_log_detail = function(ctx, selected)
   if (entry)
   {
     var responsecode = entry.responses.length && entry.responses.last.responsecode;
-    if (responsecode in cls.ResourceUtil.http_status_codes)
+    if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
        responsecode = "" + responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
     return ["div",
@@ -39,11 +39,19 @@ templates.network_log_detail = function(ctx, selected)
       ],
       ["table",
         ["tbody",
-          ["tr", ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]],
-          ["tr", ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"], ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-           "data-spec", "http#" + entry.method
+          ["tr",
+            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]
           ],
-          ["tr", ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"], ["td", entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+          ["tr",
+            ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
+            ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+            "data-spec", "http#" + entry.method
+          ],
+          ["tr",
+            ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
+            ["td",
+              entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+            ],
            "data-spec", "http#" + entry.responsecode
           ]
         ],
@@ -184,10 +192,10 @@ templates.network_request_body = function(req)
   else // not multipart or form.
   {
     var tpl = [];
-    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
+    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType); // todo: thats basically guess_type in the service, but here it's for the request body.
     if (type == "markup")
     {
-      tpl = window.templates.highlight_markup(req.requestbody.content.stringData); // todo: not exactly consitent that we highlight requestbody, but not responsebody
+      tpl = window.templates.highlight_markup(req.requestbody.content.stringData); // todo: not exactly consistent that we highlight requestbody, but not responsebody
     }
     else if (type == "script")
     {

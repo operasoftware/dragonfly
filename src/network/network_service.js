@@ -525,6 +525,7 @@ cls.NetworkLoggerEntry.prototype = new function()
     this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
     this._humanize_url();
     this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
+    // todo: _guess_type means guess response type, but could also be used on request type? because there is simlar code in the template..
   };
 
   this._update_event_urlunload = function(event)
@@ -545,6 +546,9 @@ cls.NetworkLoggerEntry.prototype = new function()
     {
       this.no_request_made = true;
     }
+
+    if (this._current_response)
+      this._current_response._update_event_urlfinished(event);
 
     this.is_finished = true;
     this._guess_type();
@@ -644,6 +648,8 @@ cls.NetworkLoggerEntry.prototype = new function()
 
     this.type = cls.ResourceUtil.path_to_type(this.url);
 
+    // For "application/octet-stream", type would be set undefined,
+    // so the guess from path_to_type is kept even though there is a mime.
     if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
@@ -874,6 +880,11 @@ cls.NetworkLoggerResponse = function(entry)
       this.responsebody = event.data;
     }
   };
+
+  this._update_event_urlfinished = function(event)
+  {
+    this.logger_entry_is_finished = true;
+  }
 
   this._update_event_responsebody = function(event)
   {
