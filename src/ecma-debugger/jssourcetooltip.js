@@ -1032,9 +1032,30 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
+  var _onmousedown = function(event, target)
+  {
+    _is_mouse_down = true;
+    _clear_selection();
+  };
+
   var _onmouseup = function(event)
   {
     _is_mouse_down = false;
+  };
+
+  var _onfocus = function(event, target)
+  {
+    _is_filter_focus = true;
+  };
+
+  var _onblur = function(event, target)
+  {
+    _is_filter_focus = false
+  };
+  
+  var _oninput = function(event, target)
+  {
+    _filter.search_delayed(target.value);
   };
 
   var _init = function(view)
@@ -1051,22 +1072,10 @@ cls.JSSourceTooltip = function(view)
     _esde = window.services["ecmascript-debugger"];
     _filter = new TextSearch();
     _filter_shortcuts_cb = cls.Helpers.shortcut_search_cb.bind(_filter);
-    window.event_handlers.input[FILTER_HANDLER] =
-    window.event_handlers.focus[FILTER_HANDLER] =
-    window.event_handlers.blur[FILTER_HANDLER] = function(event, target)
-    {        
-      if (event.type == "focus")
-        _is_filter_focus = true; 
-      else if (event.type == "blur")
-        _is_filter_focus = false
-      else
-        _filter.search_delayed(target.value);
-    };
-    window.event_handlers.mousedown["scroll-js-source-view"] = function(event, target)
-    {
-      _is_mouse_down = true;
-      _clear_selection();
-    };
+    window.event_handlers.input[FILTER_HANDLER] = _oninput;
+    window.event_handlers.focus[FILTER_HANDLER] = _onfocus;
+    window.event_handlers.blur[FILTER_HANDLER] = _onblur;
+    window.event_handlers.mousedown["scroll-js-source-view"] = _onmousedown;
     _filter.add_listener("onbeforesearch", _onbeforefilter);
     ActionBroker.get_instance().get_global_handler().
     register_shortcut_listener(FILTER_HANDLER, _filter_shortcuts_cb);
