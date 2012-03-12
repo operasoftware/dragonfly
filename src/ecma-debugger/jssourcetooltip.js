@@ -64,12 +64,14 @@ cls.JSSourceTooltip = function(view)
                         "focus-handler": FILTER_HANDLER,
                         "blur-handler": FILTER_HANDLER};
   var _is_filter_focus = false;
+  var _is_mouse_down = false;
 
   var _poll_position = function()
   {
     if (!_last_move_event ||
         _is_over_tooltip ||
         !_win_selection ||
+        _is_mouse_down ||
         (_filter && _is_filter_focus) ||
         CstSelect.is_active)
       return;
@@ -1030,6 +1032,11 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
+  var _onmouseup = function(event)
+  {
+    _is_mouse_down = false;
+  };
+
   var _init = function(view)
   {
     _view = view;
@@ -1055,6 +1062,11 @@ cls.JSSourceTooltip = function(view)
       else
         _filter.search_delayed(target.value);
     };
+    window.event_handlers.mousedown["scroll-js-source-view"] = function(event, target)
+    {
+      _is_mouse_down = true;
+      _clear_selection();
+    };
     _filter.add_listener("onbeforesearch", _onbeforefilter);
     ActionBroker.get_instance().get_global_handler().
     register_shortcut_listener(FILTER_HANDLER, _filter_shortcuts_cb);
@@ -1062,6 +1074,7 @@ cls.JSSourceTooltip = function(view)
     window.addEventListener("resize", _get_container_box, false);
     document.addEventListener("keydown", _onkeydown, false);
     document.addEventListener("keyup", _onkeyup, false);
+    document.addEventListener("mouseup", _onmouseup, false);
   };
 
   this.unregister = function()
