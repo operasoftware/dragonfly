@@ -624,6 +624,11 @@ cls.NetworkLoggerEntry.prototype = new function()
   {
     if (this._current_response)
       this._current_response._update_event_responsefinished(event);
+
+    if (event.data && event.data.mimeType)
+      this.mime = event.data && event.data.mimeType;
+
+    this._guess_type();
   };
 
   this._update_event_responsebody = function(event)
@@ -654,7 +659,7 @@ cls.NetworkLoggerEntry.prototype = new function()
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
     if (this._current_response)
-      this._current_response._update_type(this.type);
+      this._current_response._update_mime_and_type(this.mime, this.type);
   };
 
   this._humanize_url = function()
@@ -846,21 +851,22 @@ cls.NetworkLoggerEntry.prototype = new function()
       this.event_sequence.push(gap);
     }
     this.events.push(evt);
-  }
-}
+  };
+};
 
 cls.NetworkLoggerResponse = function(entry)
-{
-  this.logger_entry_type = entry.type;
-  this.logger_entry_id = entry.id;
-  this.logger_entry_mime = entry.mime; // todo: when this gets set, it's mostly still null. but entry should not be stored, so that the data can still be stringified.
-  this.logger_entry_is_finished = entry.is_finished;
-  
+{  
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
   this.responsebody = null;
+
+  // The following are duplicated from the entry to have them available directly on the response
+  this.logger_entry_type = entry.type;
+  this.logger_entry_id = entry.id;
+  this.logger_entry_mime = entry.mime;
+  this.logger_entry_is_finished = entry.is_finished;
 
   this._update_event_response = function(event)
   {
@@ -892,8 +898,9 @@ cls.NetworkLoggerResponse = function(entry)
     this.responsebody = event;
   };
 
-  this._update_type = function(type)
+  this._update_mime_and_type = function(mime, type)
   {
+    this.logger_entry_mime = mime;
     this.logger_entry_type = type;
   };
-}
+};
