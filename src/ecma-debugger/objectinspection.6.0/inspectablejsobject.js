@@ -303,14 +303,14 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   {
     var NAME = 0;
     var re_n = /^\d+$/;
-    a = a[NAME]; 
-    b = b[NAME]; 
-    if (re_n.test(a) && re_n.test(b)) 
-    { 
-      a = Number(a); 
-      b = Number(b); 
+    a = a[NAME];
+    b = b[NAME];
+    if (re_n.test(a) && re_n.test(b))
+    {
+      a = Number(a);
+      b = Number(b);
     }
-    return a < b ? -1 : (a > b ? 1 : 0); 
+    return a < b ? -1 : (a > b ? 1 : 0);
   };
 
   this._get_all_ids = function get_all_ids(tree, ret)
