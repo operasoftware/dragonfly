@@ -231,7 +231,7 @@ cls.JSSourceTooltip = function(view)
                               "obj-id", String(model.object_id),
                               "class", "js-tooltip-title"],
                        ["div", [window.templates.inspected_js_object(model, false)],
-                               "class", "js-tooltip-examine-container"],
+                               "class", "js-tooltip-examine-container mono"],
                        "class", "js-tooltip js-tooltip-examine"];
           var ele = _tooltip.show(tmpl, box);
           if (ele)
