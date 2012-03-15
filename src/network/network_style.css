@@ -57,7 +57,7 @@
 
 .network-log-url-list li
 {
-  padding-left: 8px;
+  padding-left: 5px;
   line-height: 22px;
 }
 
@@ -152,6 +152,7 @@
 {
   background: transparent;
   border-bottom-width: 0px;
+  color: #808080
 }
 
 .network_logger .sortable-table tr td
@@ -326,8 +327,8 @@
 .network-graph-sections
 {
   display: inline-block;
-  height: 14px;
-  vertical-align: top;
+  height: 12px;
+  vertical-align: middle;
   border-radius: 3px;
   min-width: 3px;
   /* fallback, only visible when the sections together are less than min-width */
