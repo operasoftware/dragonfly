@@ -75,6 +75,7 @@ cls.ScriptSelect = function(id, class_name)
       input.focus();
       this._get_option_ele_list();
       this._update_clear_button_state();
+      this._match_cursor = 0;
     }
   };
 
@@ -96,7 +97,6 @@ cls.ScriptSelect = function(id, class_name)
     var script_id = script_id_str && parseInt(script_id_str);
     if (script_id)
     {
-      // TODO is this needed?
       if (script_id != _selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
@@ -104,6 +104,23 @@ cls.ScriptSelect = function(id, class_name)
         _selected_script_id = script_id;
       }
       _selected_value = target_ele.textContent;
+      var target = this._option_eles && this._option_eles[this._option_ele_cursor];
+      if (target)
+      {
+        if (!this._setting)
+          this._init_match_history();
+
+        if (this._input && this._input.value &&
+            !this._match_history.contains(this._input.value))
+        {
+          this._match_history.push(this._input.value);
+          while (this._match_history.length > 10)
+            this._match_history.shift();
+
+          if (this._setting)
+            this._setting.set("js-dd-match-history", this._match_history);
+        } 
+      }
       return true;
     }
     return false;
@@ -156,23 +173,9 @@ cls.ScriptSelect = function(id, class_name)
       case "highlight-next-match":
       case "highlight-previous-match":
         var target = this._option_eles[this._option_ele_cursor];
-        if (target)
-        {
-          if (!this._setting)
-            this._init_match_history();
-
-          if (this._input && this._input.value &&
-              !this._match_history.contains(this._input.value))
-          {
-            this._match_history.push(this._input.value);
-            while (this._match_history.length > 10)
-              this._match_history.shift();
-
-            if (this._setting)
-              this._setting.set("js-dd-match-history", this._match_history);
-          }          
+        if (target)       
           target.dispatchMouseEvent("mouseup");
-        }
+
         return false;
 
       case "up":
@@ -197,7 +200,7 @@ cls.ScriptSelect = function(id, class_name)
         }
         return false;
       
-      case "shift-up":
+      case "shift-down":
         if (!this._setting)
           this._init_match_history();
 
@@ -208,7 +211,7 @@ cls.ScriptSelect = function(id, class_name)
         this._set_filter_value();
         return false;
 
-      case "shift-down":
+      case "shift-up":
         if (!this._setting)
           this._init_match_history();
 
