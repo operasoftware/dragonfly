@@ -127,8 +127,14 @@
 
 .network_incomplete_warning
 {
-    margin: 15px 50px 15px 50px;
-    position: relative;
+  margin: 15px 50px 15px 50px;
+  position: relative;
+}
+
+.network_incomplete_warning,
+.info-box
+{
+  line-height: 15px;
 }
 
 .network_incomplete_warning div
