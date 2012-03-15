@@ -233,7 +233,8 @@ templates.network_response_body = function(resp)
   var ret = [];
   ret.push(templates.network_detail_row(templates.network_body_seperator()));
   var classname = "";
-  if (resp.body_unavailable)
+  if (resp.body_unavailable || 
+      !resp.responsebody && resp.unloaded)
   {
     classname = "network_info";
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));

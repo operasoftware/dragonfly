@@ -1158,11 +1158,8 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To a
 /* DESC: Message about not yet available response body */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available until the request is finished.";
 
-/* DESC: Help text about how a response could not be show because resource tracking is not on. */
-ui_strings.S_NETWORK_REQUEST_DETAIL_NO_REQUEST_BODY = "Request body not available. Enable resource tracking and reload the page to view the resource.";
-
 /* DESC: Help text about how a request body could not be show because it's no longer available. */
-ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY = "Response body not available. Enable resource tracking and reload the page to view the resource.";
+ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY = "Response body not available. Enable the \"Track content\" option in Settings and reload the page to view the resource.";
 
 /* DESC: Title for request details section */
 ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE = "Request";

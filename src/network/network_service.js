@@ -531,6 +531,8 @@ cls.NetworkLoggerEntry.prototype = new function()
   this._update_event_urlunload = function(event)
   {
     this.unloaded = true;
+    if (this._current_response)
+      this._current_response._update_event_urlunload(event);
   };
 
   this._update_event_urlfinished = function(event)
@@ -890,12 +892,17 @@ cls.NetworkLoggerResponse = function(entry)
   this._update_event_urlfinished = function(event)
   {
     this.logger_entry_is_finished = true;
-  }
+  };
 
   this._update_event_responsebody = function(event)
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
+  };
+
+  this._update_event_urlunload = function(event)
+  {
+    this.unloaded = true;
   };
 
   this._update_mime_and_type = function(mime, type)
