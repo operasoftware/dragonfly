@@ -1032,8 +1032,8 @@ ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS = "Injected";
 /* DESC: Tooltip for the injected scripts search settings label. */
 ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP = "Search in all injected scripts, including Browser JS, Extension JS and User JS";
 
-/* DESC: Radio label for the search type 'CSS' in the DOM search panel. */
-ui_strings.S_LABEL_SEARCH_TYPE_CSS = "CSS";
+/* DESC: Radio label for the search type 'Selector' (as in CSS Selector) in the DOM search panel. */
+ui_strings.S_LABEL_SEARCH_TYPE_CSS = "Selector";
 
 /* DESC: RRadio label for the search type 'RegExp' in the DOM search panel. */
 ui_strings.S_LABEL_SEARCH_TYPE_REGEXP = "RegExp";
@@ -1153,7 +1153,7 @@ ui_strings.S_NETWORK_REQUESTS = "Requests";
 ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
 
 /* DESC: Help text about how to always track resources in request view */
-ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the response body option on the \"network options\" panel. To retrieve only this body, click the button.";
+ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the \"Track content\" option in Settings. To retrieve only this body, click the button.";
 
 /* DESC: Message about not yet available response body */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED = "Response body not available until the request is finished.";
@@ -1342,7 +1342,7 @@ ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE = "Display Element objects in the DOM p
 ui_strings.S_SWITCH_LOCK_SELECTED_ELEMENTS = "Keep elements highlighted";
 
 /* DESC: Switch toggeling if the debugger should automatically reload the page when the user changes the window to debug. */
-ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload documents automatically when selecting a window";
+ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY = "Reload new debugging contexts automatically";
 
 /* DESC: Route debugging traffic trough proxy to enable debugging devices */
 ui_strings.S_SWITCH_REMOTE_DEBUG = "Remote debug";
