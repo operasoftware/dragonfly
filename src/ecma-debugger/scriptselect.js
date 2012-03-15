@@ -161,7 +161,8 @@ cls.ScriptSelect = function(id, class_name)
           if (!this._setting)
             this._init_match_history();
 
-          if (this._input && !this._match_history.contains(this._input.value))
+          if (this._input && this._input.value &&
+              !this._match_history.contains(this._input.value))
           {
             this._match_history.push(this._input.value);
             while (this._match_history.length > 10)
@@ -181,7 +182,7 @@ cls.ScriptSelect = function(id, class_name)
           if (index < 0)
             index = this._option_eles.length - 1;
 
-          this._move_highlight(index);
+          this._move_highlight(index, true);
         }
         return false;
 
@@ -192,7 +193,7 @@ cls.ScriptSelect = function(id, class_name)
           if (index > this._option_eles.length - 1)
             index = 0;
 
-          this._move_highlight(index);
+          this._move_highlight(index, true);
         }
         return false;
       
@@ -296,7 +297,7 @@ cls.ScriptSelect = function(id, class_name)
       this._move_highlight(index);
   };
 
-  this._move_highlight = function(index)
+  this._move_highlight = function(index, is_key_event)
   {
     if (index < this._option_eles.length)
     {
@@ -306,7 +307,7 @@ cls.ScriptSelect = function(id, class_name)
       this._option_ele_cursor = index;
       var ele = this._option_eles[this._option_ele_cursor];
       ele.addClass("hover");
-      if (this._option_box)
+      if (this._option_box && is_key_event)
       {
         var box = ele.getBoundingClientRect();
         if (box.bottom > this._option_box.bottom)
