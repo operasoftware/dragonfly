@@ -6,6 +6,7 @@ cls.ScriptSelect = function(id, class_name)
   var _selected_value = "";
   var _selected_script_id = 0;
   var _stopped_script_id = "";
+  var MAX_MATCH_HISTORY = 10;
 
   this.getSelectedOptionTooltipText = function()
   {
@@ -114,7 +115,7 @@ cls.ScriptSelect = function(id, class_name)
             !this._match_history.contains(this._input.value))
         {
           this._match_history.push(this._input.value);
-          while (this._match_history.length > 10)
+          while (this._match_history.length > MAX_MATCH_HISTORY)
             this._match_history.shift();
 
           if (this._setting)
