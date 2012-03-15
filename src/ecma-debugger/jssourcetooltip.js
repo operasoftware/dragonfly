@@ -900,6 +900,7 @@ cls.JSSourceTooltip = function(view)
     _tooltip.hide();
     _filter.set_search_term("");
     _filter.cleanup();
+    _is_filter_focus = false;
     _tooltip_model = null;
     _tooltip_container = null;
 
