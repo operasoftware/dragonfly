@@ -161,7 +161,8 @@ cls.ScriptSelect = function(id, class_name)
           if (!this._setting)
             this._init_match_history();
 
-          if (this._input && !this._match_history.contains(this._input.value))
+          if (this._input && this._input.value &&
+              !this._match_history.contains(this._input.value))
           {
             this._match_history.push(this._input.value);
             while (this._match_history.length > 10)
