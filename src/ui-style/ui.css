@@ -2,8 +2,13 @@
 viewport,
 .info-box,
 .ui-button {
-  font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
+  font-family: sans-serif;
+  font: menu;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
   font-size: 11px;
+  line-height: normal;
   color: #444;
 }
 
