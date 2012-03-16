@@ -133,7 +133,7 @@ window.load_screen_timeout = window.setTimeout(function()
     left:50%; \
     margin-top:-90px; \
     margin-left:-250px; \
-    text-align:center;'> \
+    text-align:center;'/> \
   <style>/*\u003c\u0021\u005bCDATA\u005b*/ \
     #start-window-close {float: right;} \
     #start-window-reload {float: left;} \
@@ -214,6 +214,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./scripts/potools.js"/>
 <script src="./scripts/selectioncontroller.js"/>
 <script src="./scripts/dblclickmenucontroller.js"/>
+<script src="./scripts/uri.js"/>
+<script src="./scripts/hashmap.js"/>
 
 
 
@@ -264,6 +266,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/ruler/ruler.js"/>
 <script src="./ui-scripts/ruler/templates.js"/>
 <script src="./ui-scripts/tooltip/tooltip.js"/>
+<script src="./ui-scripts/tooltip/tooltipcontext.js"/>
 <script src="./searches/TextSearch.js"/>
 <script src="./searches/searchsinglenodes.js"/>
 <script src="./searches/VirtualTextSearch.js"/>
@@ -357,6 +360,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/views-runtimes.js"/>
 <script src="./ecma-debugger/views.js"/>
 
+<script src="./ecma-debugger/objectinspection.6.0/prettyprinter.js"/>
+<script src="./ecma-debugger/objectinspection.6.0/inspectiontooltip.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/inspectablejsobject.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/objectandframeview.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/baseview.js"/>
@@ -371,6 +376,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./searches/domsearchview.js"/>
 
 <script src="./ecma-debugger/js-source-view.js"/>
+<script src="./ecma-debugger/scriptselect.js"/>
 
 <script src="./ecma-debugger/dominspection/templates.js"/>
 <script src="./ecma-debugger/dominspection/domserializer.js"/>
@@ -401,17 +407,19 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./searches/jssearchview.js"/>
 
+<script src="./style/ecmascriptdebugger.6.7.responses.cssgetstyledeclarations.js"/>
+<script src="./style/stylesheets.js"/>
+<script src="./style/element_style.js"/>
 <script src="./style/element_layout.js"/>
 <script src="./style/editor.js"/>
-<script src="./style/css_initial_values.js"/>
-<script src="./style/css_inheritable_properties.js"/>
+<script src="./style/css_rule.js"/>
 <script src="./style/css_suggest_values.js"/>
-<script src="./style/element_style.js"/>
-<script src="./style/stylesheets.js"/>
+<script src="./style/css_value_tokenizer.js"/>
+<script src="./style/css_shorthand_resolver.js"/>
+<script src="./style/stylesheet_templates.js"/>
 <script src="./style/views_css_inspector.js"/>
 <script src="./style/views_css_inspector_computed_style.js"/>
 <script src="./style/views_css_layout.js"/>
-<script src="./style/views_stylesheets.js"/>
 <script src="./style/view_color_picker.js"/>
 <script src="./style/css_inspector_actions.js"/>
 <script src="./style/view_dom_side_panel.js"/>

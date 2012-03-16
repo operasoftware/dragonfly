@@ -11,7 +11,7 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
   handler_key = handler_key ? handler_key : 'handler';
   if(!window.eventHandlers)
   {
-    window.eventHandlers = {};
+    window.eventHandlers = window.event_handlers = {};
   }
   if(window.eventHandlers[type])
   {

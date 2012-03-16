@@ -18,9 +18,10 @@ overlay.active
 overlay-window
 {
   color: #fff;
-  border-radius: 7px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
-  background: rgba(40, 40, 40, 0.92);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2),
+              0 1px 6px rgba(0, 0, 0, 0.6);
+  background: #2e2e2e;
   width: 650px;
   border: 2px solid #b1b1b1;
   display: block;
@@ -32,11 +33,28 @@ overlay-window
 
 overlay-arrow
 {
-  background: transparent url("../ui-images/overlay_arrow.png");
-  width: 17px;
+  width: 24px;
   height: 13px;
   position: absolute;
   top: -12px;
+  text-align: center;
+  overflow: hidden;
+}
+
+overlay-arrow:before
+{
+  content: "";
+  display: inline-block;
+  position: relative;
+  width: 12px;
+  height: 12px;
+  top: 7px;
+  -o-transform: rotate(225deg);
+  background-color: #2e2e2e;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2),
+              2px 2px 0 0 #b1b1b1,
+              3px 3px 1px 0px rgba(0, 0, 0, 0.1);
+
 }
 
 overlay-window h2
@@ -48,12 +66,12 @@ overlay-tabs,
 overlay-content
 {
   display: block;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 1px solid transparent;
 }
 
 overlay-tabs
 {
-  border-radius: 7px 7px 0 0;
+  border-radius: 5px 5px 0 0;
   border-bottom: none;
   padding: 5px 5px 0;
   overflow: hidden;
@@ -62,7 +80,7 @@ overlay-tabs
 
 overlay-tabs tab
 {
-  border-radius: 3px 3px 0 0;
+  border-radius: 5px 5px 0 0;
   padding: 0 15px;
   height: 25px;
   line-height: 25px;
@@ -101,7 +119,7 @@ overlay-info
 overlay-content
 {
   background: rgba(0, 0, 0, 0.38);
-  border-radius: 0 0 7px 7px;
+  border-radius: 0 0 5px 5px;
   border-top-width: 0;
   left: 0;
 }

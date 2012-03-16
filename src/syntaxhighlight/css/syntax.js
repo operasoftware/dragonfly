@@ -12,7 +12,7 @@
   CSS_DECLARATION_BLOCK_START = cls.CSSTokenizer.types.DECLARATION_BLOCK_START,
   CSS_DECLARATION_BLOCK_END   = cls.CSSTokenizer.types.DECLARATION_BLOCK_END,
   CSS_EOL_DATA                = cls.CSSTokenizer.types.EOL_DATA,
-  CSS_COMMENT                 = cls.CSSTokenizer.types.COMMENT;
+  CSS_COMMENT                 = cls.CSSTokenizer.types.COMMENT,
   CSS_EOF                     = cls.CSSTokenizer.types.EOF;
 
   var css_classes = [];

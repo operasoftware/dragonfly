@@ -8,6 +8,10 @@
     */
   this.getSelectedOptionText = function(){};
   /**
+    * get the text string for the tooltip of the selected option 
+    */
+  this.getSelectedOptionTooltipText = function(){};
+  /**
     * get the text value of the selected option 
     */
   this.getSelectedOptionValue = function(){};
@@ -27,28 +31,44 @@
     * for more complex selects like colors 
     * return 0 submit, 1 cancel, 2 keep modal state
     */
-  this.handleClick = function(target_ele, modal_box, select_obj)
+  this.handleClick = function(target_ele, modal_box, _select_obj)
   {
-    return ( target_ele.hasAttribute('handler') || 
-            select_obj.checkChange(target_ele) ) && 1 ||
-            target_ele.nodeName.toLowerCase() != 'cst-option'  && 2 || 0;
+    if ((!_select_obj.ignore_option_handlers && target_ele.hasAttribute('handler')) ||
+        _select_obj.checkChange(target_ele))
+      return 1;
+    
+    if (target_ele.nodeName.toLowerCase() != 'cst-option')
+      return 2;
+
+    return 0;
   };
 
-  var modal_box = null;
-  var select_obj = null;
+  this.onshowoptionlist = function(container) {};
+  this.onhideoptionlist = function(container) {};
+  this.ignore_option_handlers = false;
+
+  var _modal_box = null;
+  var _select_obj = null;
   var self = this;
 
   var modal_mousedown_handler = function(event)
   {
     var ele = event.target;
 
-    event.stopPropagation();
-    event.preventDefault();
-    while (ele != modal_box && (ele = ele.parentElement));
-    if (!ele)
+    if (window.Tooltips && Tooltips.is_in_target_chain(event))
+      return;
+
+    while (ele != _modal_box && (ele = ele.parentElement));
+
+    if (!ele || !(event.target.nodeName.toLowerCase() == "input" &&
+                  event.target.type == "text"))
     {
-      self.remove_select();
+      event.stopPropagation();
+      event.preventDefault();
     }
+
+    if (!ele)
+      self.remove_select();
   }
 
   var modal_mouseup_handler = function(event)
@@ -58,12 +78,17 @@
     target = event.target,
     select = null;
 
+    if ((window.Tooltips && Tooltips.is_in_target_chain(event)) || 
+        (event.target.nodeName.toLowerCase() == "input" &&
+         event.target.type == "text"))
+      return;
+
     event.stopPropagation();
     event.preventDefault();
-    while (ele != modal_box && (ele = ele.parentElement));
+    while (ele != _modal_box && (ele = ele.parentElement));
     if (ele)
     {
-      switch (select_obj.handleClick(target, modal_box, select_obj))
+      switch (_select_obj.handleClick(target, _modal_box, _select_obj))
       {
         // cancel
         case 0: break;
@@ -80,7 +105,7 @@
           }
           else
           {
-            select = select_obj.updateElement();
+            select = _select_obj.updateElement();
             if (select)
             {
               select.releaseEvent('change');
@@ -93,44 +118,75 @@
       }
 
       self.remove_select();
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
     }
   }
 
   this.remove_select = function()
   {
-    if (modal_box)
+    if (_modal_box)
     {
       document.removeEventListener('mousedown', modal_mousedown_handler, true);
       document.removeEventListener('mouseup', modal_mouseup_handler, true);
-      modal_box.parentElement.removeChild(modal_box);
-      modal_box = null;
-      select_obj = null;
+      _modal_box.parentElement.removeChild(_modal_box);
+      if (_select_obj.onhideoptionlist)
+        _select_obj.onhideoptionlist();
+
+      _modal_box = null;
+      _select_obj = null;
       EventHandler.__modal_mode = false;
       return true;
     }
     return false;
   }
 
+  this.is_modal_box_visible = function()
+  {
+    return Boolean(_modal_box);
+  };
+
   var mouse_handler = function(event)
   {
-    var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName))
+    if (_modal_box)
+      return;
+      
+    var select = event.target;
+    var count = 2;
+    
+    while (count && select)
     {
-      var select = /^cst-select/i.test(ele.nodeName) && ele || ele.parentElement;
+      if (/^cst-select/i.test(select.nodeName))
+        break;
+
+      select = count && select.parentNode;
+    } 
+
+    if (select)
+    {
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
         return;
       }
-      event.stopPropagation();
-      event.preventDefault();
+
+      if (event.stopPropagation)
+      {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+
       while (cursor && !/^container$/i.test(cursor.nodeName) && (cursor = cursor.parentElement));
       document.addEventListener('mousedown', modal_mousedown_handler, true);
       document.addEventListener('mouseup', modal_mouseup_handler, true);
-      select_obj = window['cst-selects'][select.getAttribute("cst-id")];
-      modal_box = (cursor || document.documentElement).render(templates['cst-select-option-list'](select_obj, select));
-
+      _select_obj = window['cst-selects'][select.getAttribute("cst-id")];
+      var tmpl = templates['cst-select-option-list'](_select_obj, select);
+      _modal_box = (cursor || document.documentElement).render(tmpl);
       var box = select.getBoundingClientRect(),
+      has_search_bar = Boolean(_modal_box.querySelector("input[type=\"text\"]")),
       cursor_top = cursor && cursor.offsetTop - cursor.scrollTop || 0,
       cursor_left = cursor && cursor.offsetLeft - cursor.scrollLeft || 0,
       left = box.left - cursor_left,
@@ -140,9 +196,9 @@
       _innerWidth = innerWidth,
       _innerHeight = innerHeight,
       max_width = _innerWidth - left - 30,
-      max_height = _innerHeight - bottom - 30,
-      modal_box_width = modal_box.offsetWidth,
-      modal_box_height = modal_box.offsetHeight,
+      max_height = _innerHeight - bottom - (30 + (has_search_bar ? 25 : 0)),
+      modal_box_width = _modal_box.offsetWidth,
+      modal_box_height = _modal_box.offsetHeight,
       max_width_2 = right - 30,
       max_height_2 = top - 30,
       style = '';
@@ -154,7 +210,7 @@
       else
       {
         style += "top: " + (bottom - 1) + "px;";
-        modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
+        _modal_box.firstElementChild.style.cssText = "max-height: " + max_height + "px;"
       }
       if (modal_box_width > max_width && max_width_2 > max_width)
       {
@@ -166,19 +222,25 @@
         style += "left: " + left + "px; max-width: " + max_width + "px;";
       }
       style += "min-width:" + (select.offsetWidth < max_width ? select.offsetWidth : (max_width > 0 ? max_width : 0)) + "px;";
-      modal_box.style.cssText = style;
-      var selected_option = modal_box.querySelector("cst-option.selected");
+      _modal_box.style.cssText = style;
+      var selected_option = _modal_box.querySelector("cst-option.selected");
       if (selected_option)
       {
         var offset_top = selected_option.offsetTop;
         var offset_height = selected_option.offsetHeight;
-        var box_height = modal_box.offsetHeight;
+        var box_height = _modal_box.offsetHeight;
         if (offset_top + offset_height > box_height)
         {
-          modal_box.firstElementChild.scrollTop = offset_top + (offset_height / 2) - (box_height / 2);
+          _modal_box.firstElementChild.scrollTop = offset_top + (offset_height / 2) - (box_height / 2);
         }
       }
       EventHandler.__modal_mode = true;
+      if (_select_obj.onshowoptionlist)
+      {
+        var option_list = _modal_box.querySelector("cst-select-option-list");
+        if (option_list)
+          _select_obj.onshowoptionlist(option_list);
+      }
     }
   }
 
@@ -202,7 +264,16 @@
     var firstElementChild = select_ele.firstElementChild;
     if(firstElementChild && firstElementChild.nodeName.toLowerCase() == "cst-value" )
     {
-      firstElementChild.textContent = this.getSelectedOptionText();
+      var tooltip_text = this.getSelectedOptionTooltipText();
+      if (tooltip_text)
+      {
+        var tmpl = ["span", this.getSelectedOptionText(),
+                            "data-tooltip", "js-script-select",
+                            "data-tooltip-text", tooltip_text];
+        firstElementChild.clearAndRender(tmpl);
+      }
+      else
+        firstElementChild.textContent = this.getSelectedOptionText();
     }
   }
 
@@ -238,6 +309,16 @@
     this.type = type || '';
     this.handler = handler || '';
     this.template = this.getTemplate();
+  }
+
+  this.show_dropdown = function(id)
+  {
+    if (window["cst-selects"][id])
+    {
+      var select = document.querySelector("cst-select[cst-id=\"" + id + "\"]");
+      if (select)
+        mouse_handler({target: select});
+    }
   }
 
   /* default interface implemetation */
@@ -301,326 +382,21 @@ CstSelectBase.close_opened_select = function()
   return this.remove_select();
 }
 
-
-
 var CstSelect = function(id, class_name, type, handler)
 {
   this.init(id, class_name, type, handler);
 }
 
-var CstSelectColorBase = function(id, rgba_arr, handler, option)
+CstSelect.__defineGetter__("is_active", function()
 {
+  return CstSelectBase.is_modal_box_visible();
+});
 
-  this.getSelectedOptionValue = function()
-  {
-    if( this._selected_value && this._selected_value.length == 4 )
-    {
-      colors.setRGB(this._selected_value);
-      var l = parseFloat(colors.getLuminosity());
-      if( this.has_opacity )
-      {
-        colors.setLuminosity(l + (100 - l) * (1 - this._selected_value[3]/255));
-      }
-      return "#" + colors.getHex();
-    }
-    return "";
-  }
-  // returns a rgba array
-  this.getSelectedValue = function(rgba_arr)
-  {
-    return this._selected_value;
-  }
+CstSelect.__defineSetter__("is_active", function() {});
 
-  this.setSelectedValue = function(rgba_arr)
-  {
-    if(rgba_arr && rgba_arr.length == 4)
-    {
-      this._selected_value = rgba_arr;
-      var hue = colors.setRGB(rgba_arr).getHue();
-      this._selected_option_index = hue / 30 >> 0;
-      if( hue % 30 > 15 ) this._selected_option_index++;
-    }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
-        'not a rgba value in setSelect3dValue in CstSelectColorBase');
-    }
-  }
-
-  this.setNewValues = function(select_ele, checkbox_value)
-  {
-    select_ele.value = 
-      select_ele.firstElementChild.style.backgroundColor = 
-      this.getSelectedOptionValue();
-    if( typeof checkbox_value == "boolean" )
-    {
-      var checkbox = select_ele.previousElementSibling;
-      if( checkbox && checkbox.type == "checkbox" )
-      {
-        checkbox.checked = checkbox_value;
-        if(checkbox_value)
-        {
-          select_ele.removeAttribute('disabled');
-        }
-        else
-        {
-          select_ele.setAttribute('disabled', 'disabled');
-        }
-      }
-    }
-  }
-
-  this._selected_value = [];
-  this._selected_option_index = 0;
-  this._option_list =
-  [
-    [255, 0, 0, 127],   // red
-    [255, 127, 0, 127],
-    [255, 255, 0, 127], // yellow
-    [127, 255, 0, 127],
-    [0, 255, 0, 127],   // green
-    [0, 255, 127, 127],
-    [0, 255, 255, 127], // cyan
-    [0, 127, 255, 127],
-    [0, 0, 255, 127],   // blue
-    [127, 0, 255, 127], 
-    [255, 0, 255, 127], // magenta
-    [255, 0, 127, 127],
-  ]
-
-  this.templateOptionList = function(select_obj)
-  {
-    var 
-    ret = ['div'],
-    opt_list = select_obj._option_list,
-    selected_index = select_obj._selected_option_index,
-    opt = null, 
-    i = 0;
-
-    new_value = select_obj.getSelectedValue();
-    colors.setRGB(new_value);
-    for( ; opt = opt_list[i]; i++)
-    {
-      if(i == selected_index)
-      {
-        opt = new_value;
-      }
-      ret[ret.length] = 
-      [
-        "cst-option",
-        [
-          "cst-color",
-          "unselectable", "on",
-          "style", "background-color:" + rgba_to_hex(opt) + ";" +
-                  ( select_obj.has_opacity && ( "opacity: " + extract_alpha(opt) + ";" ) || "")
-        ],
-        "opt-index", i,
-        "unselectable", "on"
-      ]; 
-      if( i == selected_index )
-      {
-        ret[ret.length] = ["cst-selected-border"];
-      }
-    }
-    ret[ret.length] = 
-    [
-      "div", 
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_HUE, colors.getHue(), "0", "360", "", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_SATURATION, colors.getSaturation(), "0", "100", "", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_LUMINOSITY, colors.getLuminosity(), "0", "100", "", "set-hsla"),
-      this.templateInputRange(ui_strings.S_LABEL_COLOR_OPACITY, extract_alpha(select_obj._selected_value) * 100 >> 0, "0", 
-        "100", "digit-3", "set-hsla", !select_obj.has_opacity),
-      this.templateInputText("# ", colors.getHex(), "text", "set-hex"),
-      'onchange', update_new_value
-    ];
-    ret[ret.length] = 
-    [
-      "div",
-      this.templateInputButton(ui_strings.S_BUTTON_OK, null, "1"),
-      this.templateInputButton(ui_strings.S_BUTTON_CANCEL, null, "0"),
-      "class", "ok-cancel"
-    ];
-    return ['cst-option-list-background', ret];
-  }
-
-  this.handleClick = function(target, modal_box, select_obj)
-  {
-    // return 0 cancel, 1 submit, 2 keep modal state
-    var ret = 2, rgba = null, inputs = null;
-    switch (target.nodeName.toLowerCase())
-    {
-      case 'cst-color':
-      {
-        if(target.parentElement.nextElementSibling)
-        {
-          target.parentElement.parentElement.insertBefore
-          (
-            modal_box.getElementsByTagName('cst-selected-border')[0], 
-            target.parentElement.nextElementSibling
-          );
-        }
-        else
-        {
-          target.parentElement.parentElement.appendChild
-          (
-            modal_box.getElementsByTagName('cst-selected-border')[0]
-          );
-        } 
-        if( rgba = extract_rgba(target) )
-        {
-          new_value = rgba;
-          colors.setRGB(rgba);
-          inputs = modal_box.getElementsByTagName('input');
-          inputs[0].value = colors.getHue();
-          inputs[1].value = colors.getSaturation();
-          inputs[2].value = colors.getLuminosity();
-          inputs[3].value = extract_alpha(rgba) * 100 >> 0;
-          inputs[4].value = colors.getHex();
-        }
-        break;
-      }
-      case 'input':
-      {
-        if(/button/i.test(target.type))
-        { 
-          ret = 0;
-          if(target.getAttribute('ref-value') == '1' && new_value != select_obj._selected_value)
-          {
-            select_obj.setSelectedValue(new_value);
-            ret = 1;
-          }
-        }
-        break;
-      }
-    }
-    return ret;
-  }
-
-  this.templateInputRange = function(label, value, min, max, cn, change_handler_id, display_none)
-  {
-    return (
-    [
-      "label",
-      label,
-      [
-        "input",
-        "type", "number",
-        "min", min,
-        "max", max,
-        "ref-type", change_handler_id,
-        "value", value
-      ],
-      "class", cn,
-    ].concat( display_none ? ['style', 'display:none'] : []) );
-  }
-
-  this.templateInputText = function(label, value, cn, change_handler_id)
-  {
-    return (
-    [
-      "label",
-      label,
-      [
-        "input",
-        "type", "text",
-        "ref-type", change_handler_id,
-        "value", value
-      ],
-      "class", cn,
-    ] );
-  }
-
-  this.templateInputButton = function(value, cn, ref_value )
-  {
-    return (
-    [
-      "input",
-      "type", "button",
-      "ref-value", ref_value,
-      "class", cn || "",
-      "value", value
-    ] );
-  }
-
-  // this is only valid during modal state
-  var new_value = [];
-
-  var colors = new Color();
-
-  var extract_rgba = function(ele)
-  {
-    var color = /#(..)(..)(..)/.exec(ele.style.getPropertyValue('background-color'));
-    return color &&
-    [
-      parseInt(color[1], 16), 
-      parseInt(color[2], 16), 
-      parseInt(color[3], 16),
-      parseFloat(ele.style.getPropertyValue('opacity')) * 255 >> 0
-    ];
-  }
-
-  var int_to_hex = function(int)
-  {
-    var hex = int.toString(16);
-    return hex.length == 1 && "0" + hex || hex;
-  }
-
-  var rgba_to_hex = function(rgba)
-  {
-    return "#" + rgba.slice(0,3).map(int_to_hex).join('');
-  }
-
-  var extract_alpha = function(rgba)
-  {
-    return rgba[3] / 255;
-  }
-
-  // change event handler
-  var update_new_value = function(event)
-  {
-    var 
-    target = event.target,
-    targets_container = target.parentNode.parentNode,
-    inputs = targets_container.getElementsByTagName('input'),
-    selected = targets_container.parentNode.
-      getElementsByTagName('cst-selected-border')[0].previousElementSibling.firstElementChild;
-
-    switch(event.target.getAttribute('ref-type'))
-    {
-      case "set-hsla":
-      {
-        colors.
-          setHue(inputs[0].value).
-          setSaturation(inputs[1].value).
-          setLuminosity(inputs[2].value);
-        selected.style.backgroundColor = "#" + ( inputs[4].value = colors.getHex() );
-        if( inputs[3].parentElement.style.display != "none" )
-        {
-          selected.style.opacity = parseInt(inputs[3].value)/100;
-        }
-        new_value = colors.getRGB().concat([parseInt(inputs[3].value)/100*255]);
-        break;
-      }
-      case "set-hex":
-      {
-        colors.setHex(inputs[4].value);
-        inputs[0].value = colors.getHue();
-        inputs[1].value = colors.getSaturation();
-        inputs[2].value = colors.getLuminosity();
-        selected.style.backgroundColor = "#" + colors.getHex();
-        new_value = colors.getRGB().concat([parseInt(inputs[3].value)/100*255]);
-        break;
-      }
-    }
-  }
-
-  this.__init_base = this.init;
-  this.init = function(id, rgba_arr, handler, option)
-  {
-    this.__init_base(id, 'color', 'color', handler);
-    this.setSelectedValue(rgba_arr || [255, 0, 0 ,255]);
-    this.has_opacity = !(option == "no-opacity");
-  }
+CstSelect.show_dropdown = function(id)
+{
+  CstSelectBase.show_dropdown(id);
 }
 
 var CstSelectWithActionBase = function(id, class_name, type)
@@ -669,16 +445,8 @@ var CstSelectWithActionBase = function(id, class_name, type)
 }
 
 CstSelectWithActionBase.prototype = 
-CstSelectColorBase.prototype = 
 CstSelect.prototype = 
 CstSelectBase;
-
-CstSelectColor = function(id, rgba_arr, handler, option)
-{
-  this.init(id, rgba_arr, handler, option);
-};
-
-CstSelectColor.prototype = new CstSelectColorBase();
 
 CstSelectWithAction = function(id, class_name, type)
 {
@@ -689,27 +457,28 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 
 ( window.templates || ( window.templates = {} ) )['cst-select'] = function(select, disabled)
 {
-  return (
-  [
-    "cst-select",
-      ["cst-value", select.getSelectedOptionText(), "unselectable", "on"].
-        concat( select.type ? ['style', 'background-color:' + select.getSelectedOptionValue() ] : [] ),
-      ["cst-drop-down"],
-    "cst-id", select.getId(),
-    "handler", select.getId(),
-    "unselectable", "on",
-    "class", "ui-control"
-  ].
-  concat( select.type ? ['class', select.type] : [] ).
-  concat( disabled ? ['disabled', 'disabled'] : [] ).
-  concat( select.handler? ['handler', select.handler] : [] ) ); 
+  var tooltip_text = select.getSelectedOptionTooltipText();
+  return ["cst-select",
+           ["cst-value", 
+             ["span", select.getSelectedOptionText(),
+                      "data-tooltip", tooltip_text && "js-script-select", 
+                      "data-tooltip-text", tooltip_text],
+             "unselectable", "on"],
+           ["cst-drop-down"],
+           "cst-id", select.getId(),
+           "handler", select.getId(),
+           "unselectable", "on",
+           "class", "ui-control",
+           "disabled", disabled && "disabled",
+           "handler", select.handler]; 
 }
 
-templates['cst-select-option-list'] = function(select_obj, select_ele)
+templates['cst-select-option-list'] = function(_select_obj, select_ele)
 {
-  return (
-  ['cst-select-option-list-container',
-    ['cst-select-option-list', select_obj.templateOptionList(select_obj)],
-    'style', 'top: -1000px; left: -1000px;'
-  ].concat('class', 'menu ' + (select_obj.class_name ? select_obj.class_name : "")));
+  var cln = "menu" + (_select_obj.class_name ? " " + _select_obj.class_name : "");
+  return ["cst-select-option-list-container",
+           ["cst-select-option-list",
+              _select_obj.templateOptionList(_select_obj)],
+              "style", "top: -1000px; left: -1000px;",
+              "class", cln];
 }

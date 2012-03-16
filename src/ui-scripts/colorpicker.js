@@ -199,13 +199,14 @@ ColorPicker.prototype = new function()
       this._ele_inputs = null;
       this._ele_sample_color = null;
       this._ele_sample_color_solid = null;
-      this._ele_xy_graphic = null;
       this._ele_z_graphic = null;
       this._ele_alpha_graphic = null;
       this._ele_xy_slider = null;
       this._xy_slider = null;
       this._z_slider = null;
       this._alpha_slider = null;
+      this._2d_ctx = null;
+      this._1d_ctx = null;
     }
   }
 
@@ -291,46 +292,31 @@ ColorPicker.prototype = new function()
 
   this._update_sv = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
-    (
-      ['#fff', this._cs.xyz(1, 1, this._cur_z).hhex],
-      ['#000']
-    ));
+    this._2d_ctx.draw_2d_gradient(['#fff', this._cs.xyz(1, 1, this._cur_z).hhex],
+                                  ['#000']);
   }
 
   this._update_hs =
   this._update_hv = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
-    (
-      [
-        this._cs.xyz(0/6, 1, this._cur_z).hhex,
-        this._cs.xyz(1/6, 1, this._cur_z).hhex,
-        this._cs.xyz(2/6, 1, this._cur_z).hhex,
-        this._cs.xyz(3/6, 1, this._cur_z).hhex,
-        this._cs.xyz(4/6, 1, this._cur_z).hhex,
-        this._cs.xyz(5/6, 1, this._cur_z).hhex,
-        this._cs.xyz(6/6, 1, this._cur_z).hhex,
-      ],
-      [this._cs.xyz(0, 0, this._cur_z).hhex]
-    ));
+    this._2d_ctx.draw_2d_gradient([this._cs.xyz(0/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(1/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(2/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(3/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(4/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(5/6, 1, this._cur_z).hhex,
+                                   this._cs.xyz(6/6, 1, this._cur_z).hhex],
+                                  [this._cs.xyz(0, 0, this._cur_z).hhex]);
   }
 
   this._update_rg =
   this._update_br =
   this._update_bg = function()
   {
-    this._ele_xy_graphic.clearAndRender(window.templates.gradient_2d
-    (
-      [
-        this._cs.xyz(0, 1, this._cur_z).hhex,
-        this._cs.xyz(1, 1, this._cur_z).hhex
-      ],
-      [
-        this._cs.xyz(0, 0, this._cur_z).hhex,
-        this._cs.xyz(1, 0, this._cur_z).hhex
-      ]
-    ));
+    this._2d_ctx.draw_2d_gradient([this._cs.xyz(0, 1, this._cur_z).hhex,
+                                   this._cs.xyz(1, 1, this._cur_z).hhex],
+                                  [this._cs.xyz(0, 0, this._cur_z).hhex,
+                                   this._cs.xyz(1, 0, this._cur_z).hhex]);
   }
 
   this._update_r =
@@ -339,23 +325,15 @@ ColorPicker.prototype = new function()
   this._update_s =
   this._update_v = function()
   {
-    this._ele_z_graphic.clearAndRender(window.templates.gradient
-    (
-      [
-        this._cs.xyz(this._cur_x, this._cur_y, 0).hhex,
-        this._cs.xyz(this._cur_x, this._cur_y, 1).hhex
-      ], true
-    ));
+    this._1d_ctx.draw_2d_gradient([this._cs.xyz(this._cur_x, this._cur_y, 1).hhex,
+                                   this._cs.xyz(this._cur_x, this._cur_y, 0).hhex],
+                                  true);
   }
 
   this._update_h = function()
   {
-    this._ele_z_graphic.innerHTML = '';
-    this._ele_z_graphic.render(window.templates.gradient
-    (
-      ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f', '#f00'],
-      true
-    ));
+    this._1d_ctx.draw_2d_gradient(['#f00', '#f0f', '#00f', 
+                                   '#0ff', '#0f0', '#ff0', '#f00'], true);
   }
 
   this._update_alpha_graphic = function()
@@ -435,8 +413,10 @@ ColorPicker.prototype = new function()
         this._ele.getElementsByClassName(CP_NEW_CLASS)[0];
       var ele_xy = this._ele.getElementsByClassName(CP_2D_CLASS)[0];
       var ele_z = this._ele.getElementsByClassName(CP_1D_CLASS)[0];
-      this._ele_xy_graphic = ele_xy.getElementsByTagName('div')[0];
-      this._ele_z_graphic = ele_z.getElementsByTagName('div')[0];
+      var canvas = ele_xy.querySelector("canvas");
+      this._2d_ctx = canvas && canvas.getContext("2d");
+      canvas = ele_z.querySelector("canvas");
+      this._1d_ctx = canvas && canvas.getContext("2d");
       this._xy_slider = new Slider(
       {
         container: ele_xy,
