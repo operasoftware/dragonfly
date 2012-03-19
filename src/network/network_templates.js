@@ -292,11 +292,9 @@ templates.network_log_summary = function(ctx)
 templates.network_request_icon = function(entry)
 {
   var classname = "resource-icon resource-type-" + entry.type;
-/*
-  // todo: long lasting discussion to add some XHR indicator to the icon
-  if (entry.load_origin) // === "xhr"
-    classname += " request-origin-" + entry.load_origin;
-*/
+  if (entry.load_origin_name)
+    classname += " load-origin-" + entry.load_origin_name;
+
   return ["span", "class", classname];
 };
 

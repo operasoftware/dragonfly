@@ -252,7 +252,7 @@ cls.RequestContext = function()
         if (filter && filter.value_list && filter.value_list.length)
         {
           var has_match = filter.value_list.contains(item.type) || 
-                          filter.value_list.contains(item.load_origin) || 
+                          filter.value_list.contains(item.load_origin_name) || 
                           filter.value_list.contains("");
           if (has_match !== filter.is_blacklist)
           {
@@ -521,7 +521,8 @@ cls.NetworkLoggerEntry.prototype = new function()
     this.urltype = event.urlType;
     this.document_id = event.documentID;
     if (event.loadOrigin)
-      this.load_origin = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
+      this.load_origin_name = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
+
     this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
     this._humanize_url();
     this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is

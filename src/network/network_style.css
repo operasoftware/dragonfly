@@ -117,6 +117,27 @@
   border-radius: 3px;
 }
 
+.network-log-url-list .resource-icon
+{
+  margin-left: 5px;
+}
+
+.network-log-url-list .load-origin-xhr
+{
+  position: relative;
+}
+
+.network-log-url-list .load-origin-xhr::after
+{
+  content: "";
+  background-image: url(../ui-images/load_origin_xhr.png);
+  position: absolute;
+  width: 15px;
+  height: 9px;
+  right: -3px;
+  bottom: -2px;
+}
+
 .network_incomplete_warning
 {
   margin: 15px 50px 15px 50px;
@@ -303,7 +324,6 @@
   font-size: 125%;
   margin: 15px 0 10px 0;
 }
-
 
 .network_logger .network-data-container table tr .network-graph-column
 {
