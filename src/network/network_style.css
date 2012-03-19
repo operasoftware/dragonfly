@@ -39,26 +39,21 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  padding-top: 34px;
+  padding-top: 23px;
+  margin-top: 1rem;
 }
 
-.network-log-url-list li,
 .network-timeline-row,
 .network-graph-row
 {
-  height: 22px;
-  padding-top: 2px;
+  height: 1rem;
+  padding-top: 1px;
+  padding-bottom: 12px;
 }
 
 .network-timeline-row
 {
   position: relative;
-}
-
-.network-log-url-list li
-{
-  padding-left: 5px;
-  line-height: 22px;
 }
 
 .tooltip-container .not_requested
@@ -100,14 +95,11 @@
   color: #808080;
 }
 
-.network-log-url-list li .resource-icon
-{
-  display: inline-block;
-}
-
-.network-log-url-list li span + span
+.network-log-url-list li .network-url
 {
   padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 6px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -163,9 +155,10 @@
 
 .network_logger .sortable-table tr td
 {
-  padding-bottom: 5px;
-  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-top: 5px;
 }
+
 .network_logger .sortable-table tr th 
 {
   padding-bottom: 7px;

@@ -173,6 +173,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
              templates.network_request_icon(entry),
              ["span",
                entry.filename || entry.human_url,
+               "class", "network-url",
                "data-tooltip", "network-url-list-tooltip"
              ],
              "handler", "select-network-request",
