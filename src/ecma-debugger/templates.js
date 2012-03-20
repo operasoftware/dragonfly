@@ -209,7 +209,7 @@
       uri_path = "./" + script.abs_dir.slice(runtime.abs_dir.length);
     else if (script.origin == runtime.origin &&
              (!search_term || !(script.origin.contains(search_term))))
-      uri_path = "/" + script.dir_pathname;
+      uri_path = script.dir_pathname;
 
     return uri_path;
   };

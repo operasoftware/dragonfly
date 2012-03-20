@@ -242,7 +242,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       }
                                      
       if (!content && _cur_ctx.last_handler_ele)
-        content = _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT);
+        content = ["span", 
+                     _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT),
+                     "class", "basic-tooltip"];
 
       if (content)
       {
