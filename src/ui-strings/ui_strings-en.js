@@ -867,6 +867,9 @@ ui_strings.S_INPUT_DEFAULT_TEXT_FILTER = "Filter";
 /* DESC: Label for search fields. */
 ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH = "Search";
 
+/* DESC: Heading for the area where the user can configure keyboard shortcuts in settings. */
+ui_strings.S_KEYBOARD_SHORTCUTS_CONFIGURATION = "Configuration";
+
 /* DESC: Context menu entry that brings up "Add watch" UI, Label for "Add watch" button */
 ui_strings.S_LABEL_ADD_WATCH = "Add watch";
 
@@ -1487,6 +1490,9 @@ ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
+
+/* DESC: Heading for the setting that toggles the breadcrumb trail */
+ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
