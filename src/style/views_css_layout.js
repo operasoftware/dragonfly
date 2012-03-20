@@ -1,71 +1,79 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
-  * @constructor 
-  * @extends ViewBase
-  */
-
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.CSSLayoutView = function(id, name, container_class)
 {
-  var self = this;
-
   this.createView = function(container)
   {
-    if (elementLayout.has_selected_element())
+    this._container = container;
+    if (window.element_layout.has_selected_element())
     {
-      if (!container.getElementsByTagName('layout-container')[0])
+      if (!container.querySelector("layout-container"))
       {
-        container.clearAndRender(['div',
-                                  ['layout-container', 
-                                    'handler', 'spotlight-box'],
-                                  ['offsets-container'],
-                                  'class', 'padding']);
+        container.clearAndRender([
+          "div",
+            ["layout-container",
+              "handler", "spotlight-box"
+            ],
+            ["offsets-container"],
+          "class", "padding"
+        ]);
       }
-      this.updateLayout({});
-      window.elementLayout.getOffsetsValues(this.updateOffsets.bind(this, container));
+      window.element_layout.get_layout_values(this._update_layout_bound);
+      window.element_layout.get_offset_values(this._update_offsets_bound);
     }
     else
-      container.innerHTML = "";
-
-  }
-
-  this.updateLayout = function(ev)
-  {
-    var containers = self.getAllContainers(), c = null , i = 0;
-    // TODO not good logic
-    for( ; c = containers[i]; i++)
     {
-      c = c.getElementsByTagName('layout-container')[0];
-      if(elementLayout.getLayoutValues(arguments))
-      {
-        c.clearAndRender(elementLayout.metricsTemplate());
-      }
+      container.innerHTML = "";
     }
-  }
-  
-  this.updateOffsets = function(container, offset_values)
+  };
+
+  this.update_layout = function(comp_style)
   {
-    var offsets = container.getElementsByTagName('offsets-container')[0];
-    if (offsets)
+    var layout_container = this._container.querySelector("layout-container");
+    if (layout_container)
+    {
+      if (comp_style)
+        layout_container.clearAndRender(window.element_layout.get_metrics_template(comp_style));
+      else
+        layout_container.innerHTML = "";
+    }
+  };
+
+  this.update_offsets = function(offset_values)
+  {
+    var offsets_container = this._container.querySelector("offsets-container");
+    if (offsets_container)
     {
       if (offset_values)
-        offsets.clearAndRender(window.templates.offset_values(offset_values));
+        offsets_container.clearAndRender(window.templates.offset_values(offset_values));
       else
-        offsets.innerHTML = '';
+        offsets_container.innerHTML = "";
     }
-  }
-  
-  this.init(id, name, container_class);
+  };
 
-  var onSettingChange = function(msg)
+  this._on_setting_change = function(msg)
   {
-    if( msg.id == "dom" 
-        && ( msg.key == "show-siblings-in-breadcrumb" || msg.key == "show-id_and_classes-in-breadcrumb" ) )
+    if (msg.id == "dom" && msg.key == "show-id_and_classes-in-breadcrumb")
     {
-      self.updateOffsets({});
+      window.element_layout.get_offset_values(this.update_offsets.bind(this));
     }
-  }
+  };
 
-  messages.addListener("setting-changed", onSettingChange);
-}
+  this._init = function()
+  {
+    this.init(id, name, container_class);
+    this._container = null;
+    this._update_layout_bound = this.update_layout.bind(this);
+    this._update_offsets_bound = this.update_offsets.bind(this)
+    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
+  };
+
+  this._init();
+};
+

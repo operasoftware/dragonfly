@@ -40,6 +40,7 @@
   this.register_overlay = function(id, items){};
   
   this.show_view = function(id){};
+  this.show_dropdown = function(id) {};
 
   this.get_layout_box = function(view_id){};
 
@@ -168,6 +169,11 @@
   {
     return window.topCell && window.topCell.tab &&
            window.topCell.tab.activeTab || '';
+  };
+
+  this.show_dropdown = function(id)
+  {
+    CstSelect.show_dropdown(id);
   };
 
 }

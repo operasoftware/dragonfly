@@ -161,6 +161,7 @@ var DOMMarkupEditor = function()
 
   this.set_textarea_dimensions = function()
   {
+    this.textarea.style.height = 0;
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
@@ -213,287 +214,60 @@ var DOMMarkupEditor = function()
   var Host_updater = function(target)
   {
     var 
-    range_target = document.createRange(),
+    range = document.createRange(),
     timeout = 0,
     new_str = '',
     enter_node = null,
-    namespace = target.namespaceURI,
-    scripts = null, 
-    script = null, 
-    script_type_attr = '',
-    i = 0,
+    disable_scripts = function(node)
+    {
+      while (node)
+      {
+        if (node.nodeType == Node.ELEMENT_NODE)
+        {
+          if (node.nodeName.toLowerCase() == "script")
+          {
+            var attr = node.getAttribute('type');
+            node.setAttribute('type', (attr && attr != "edited" ? attr + "/" : "") + "edited");
+          }
+          else
+            disable_scripts(node.firstElementChild);
+        }
+        node = node.nextElementSibling;
+      }
+    },
     update = function(str)
     {
-      if( enter_node )
+      var fragment = range.createContextualFragment(new_str);
+      if (fragment.childNodes.length)
       {
-        range_target.deleteContents();
-      }
-      else
-      {
-        enter_node = range_target.extractContents();
-      };
-      var range_source = document.createRange();
-      var temp = null;
-      if( document.documentElement )
-      {
-        temp = namespace 
-                ? document.createElementNS(namespace, 'df-temp-element') 
-                : document.createElement('df-temp-element');
-        ( document.body || document.documentElement ).appendChild(temp);
-        if(typeof temp.innerHTML == 'string')
-        {
-          temp.innerHTML = new_str;
-        }
+        if (enter_node)
+          range.deleteContents();
         else
-        {
-          innerXML(temp, new_str)
-        }
-      }
-      else
-      {
-        var new_source = lexer.lex(new_str), tag = new_source.length && new_source[0];
+          enter_node = range.extractContents();
         
-        if(tag)
-        {
-          var attrs = tag[2], i = 0, attr = null;
-          for( ; ( attr = attrs[i] ) && attr[0] != 'xmlns'; i++);
-          if( attr )
-          {
-            attrs.splice(i, 1);
-            temp = document.createElementNS(attr[1], tag[1]);
-          }
-          else
-          {
-            temp = document.createElement(tag[1]);
-          }
-          for( i = 0 ; attr = attrs[i]; i++)
-          {
-            temp.setAttribute(attr[0], attr[1]);
-          }
-          document.appendChild(temp);
-          if(typeof temp.innerHTML == 'string')
-          {
-            temp.innerHTML = new_source[1];
-          }
-          else
-          {
-            innerXML(temp, new_source[1].replace(new RegExp('</' + tag[1] + '>$'), ''))
-          }
-          range_target.selectNode(document.documentElement);
-          temp = null;
-        }
-      };
-      for( scripts = (temp || document).getElementsByTagName('script'), i = 0; script = scripts[i]; i++)
-      {
-        script_attr = script.getAttribute('type');
-        script.setAttribute('type', ( script_attr ? script_attr + '/' : '' ) + 'edited');
+        disable_scripts(fragment.childNodes[0]);
+        var first = fragment.childNodes[0];
+        var last = fragment.childNodes[fragment.childNodes.length - 1];
+        range.insertNode(fragment);
+        range.setStartBefore(first);
+        range.setEndAfter(last);
       }
-      var first =  temp && temp.firstChild;
-      var last = temp && temp.lastChild;
-      if(first)
-      {
-        range_source.selectNodeContents(temp);
-        var fragment = range_source.extractContents();
-        range_target.insertNode(fragment);
-        range_target.setStartBefore(first);
-        range_target.setEndAfter(last);
-        
-      };
-      clean_up_temp();
       timeout = 0;
-    },
-    lexer = new function()
-    {
-      /* adjusted to get only the first tag */
-      const TEXT = 'TEXT', TAG = 'TAG';
-      var 
-      source = '',
-      cur = '',
-      pos = 0,
-      text = function()
-      {
-        var ret = [], buffer = '', _tag = null;
-        while( cur )
-        {
-          if( cur == '<' )
-          {
-            cur = source.charAt(pos++);
-            if(buffer)
-            {
-              ret[ret.length] = [TEXT, buffer];
-              buffer = '';
-            }
-            _tag = tag();
-            if( _tag && !/[!?]/.test(_tag[1].charAt(0)) ) 
-            {
-              return [_tag, source.slice(pos-1)];
-            }
-            continue;
-          }
-          buffer += cur;
-          cur = source.charAt(pos++);
-        }
-        return ret;
-      },
-      tag = function()
-      {
-        var buffer = '', attrs = [], has_attrs = false;
-        while( cur )
-        {
-          if( cur == '>' )
-          {
-            cur = source.charAt(pos++);
-            return [TAG, buffer, attrs];
-          }
-          if( cur == ' ' )
-          {
-            cur = source.charAt(pos++);
-            has_attrs = true;
-            continue;
-          }
-          if( has_attrs )
-          {
-            attrs = attr_key();
-            continue;
-          }
-          buffer += cur;
-          cur = source.charAt(pos++);
-        }
-      },
-      attr_key = function()
-      {
-        var attrs = [], attr_key = '', buffer = '';
-        while( cur )
-        {
-          if( cur == ' ' )
-          {
-            if(buffer)
-            {
-              attr_key = buffer;
-              buffer = '';
-            }
-            cur = source.charAt(pos++);
-            continue;
-          }
-          if( cur == '=' )
-          {
-            if(buffer)
-            {
-              attr_key = buffer;
-              buffer = '';
-            }
-            cur = source.charAt(pos++);
-            attrs[attrs.length] = [attr_key, set_attr_delimiter()];
-            attr_key = '';
-            continue;
-          }
-          if( cur == '>' )
-          {
-            if(buffer)
-            {
-              attr_key = buffer;
-              buffer = '';
-            }
-            if(attr_key)
-            {
-              attrs[attrs.length] = [attr_key];
-            }
-            return attrs;
-          }
-          buffer += cur;
-          cur = source.charAt(pos++);
-        }
-      },
-      set_attr_delimiter = function()
-      {
-        var delimiter = '';
-        while( cur )
-        {
-          if( cur == ' ' )
-          {
-            cur = source.charAt(pos++);
-            continue;
-          }
-          if( cur == '\'' || cur == '"' )
-          {
-            delimiter = cur;
-            cur = source.charAt(pos++);
-            return attr_value(delimiter);
-          }
-          return attr_value(' ');
-        }
-      },
-      attr_value = function(delimiter)
-      {
-        var buffer = '';
-        while(cur)
-        {
-          if( cur == delimiter )
-          {
-            cur = source.charAt(pos++);
-            return buffer;
-          }
-          if( cur == '>' && delimiter == ' ' )
-          {
-            return buffer;
-          }
-          buffer += cur;
-          cur = source.charAt(pos++);
-        }
-      };
-
-      this.lex = function(_source)
-      {
-        source = _source;
-        pos = 0;
-        cur = source.charAt(pos++);
-        return text();
-      }
-    }, 
-    innerXML = function(ele, str)
-    {
-      var 
-      parser = new DOMParser(),
-      source = "<temp-root xmlns=\"" + namespace + "\">" + str + "</temp-root>",
-      doc = parser.parseFromString(source, "application/xml");
-
-      if( doc.documentElement.nodeName.toLowerCase() == "temp-root" )
-      {
-        range = doc.createRange();
-        range.selectNodeContents(doc.documentElement);
-        ele.appendChild(range.extractContents());
-      }
-      else
-      {
-        ele.textContent = "<parseerror/>";
-      }
-    },
-    clean_up_temp = function()
-    {
-      var temp = null;
-      while (temp = document.getElementsByTagName('df-temp-element')[0])
-      {
-        temp.parentNode.removeChild(temp);
-      }
     };
-
-    range_target.selectNode(target);
-    this.__defineSetter__
-    (
-      "outerHTML", 
-      function(str)
-      {
-        new_str = str;
-        timeout || ( timeout = setTimeout(update, 100) );
-      }
-    );
+    range.selectNode(target);
+    this.__defineSetter__("outerHTML", function(str)
+    {
+      new_str = str;
+      if (!timeout)
+        timeout = setTimeout(update, 100);
+    });
     this.cancel_edit = function()
     {
       timeout && ( timeout = clearTimeout(timeout) );
       if(enter_node)
       {
-        range_target.deleteContents();
-        range_target.insertNode(enter_node);
+        range.deleteContents();
+        range.insertNode(enter_node);
       }
       this.exit_edit();
     };
@@ -504,8 +278,7 @@ var DOMMarkupEditor = function()
         timeout = clearTimeout(timeout);
         update();
       };
-      clean_up_temp();
-      lexer = range_target = timeout = new_str = enter_node = update = null;
+      range = timeout = new_str = enter_node = update = null;
     };
   };
 

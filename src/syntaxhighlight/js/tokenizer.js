@@ -3,14 +3,14 @@ this.cls || (this.cls = {});
 cls.SimpleJSParser = function() {};
 
 // CONSTS for external code that needs to know about token types
-cls.SimpleJSParser.WHITESPACE = 1,
-cls.SimpleJSParser.LINETERMINATOR = 2,
-cls.SimpleJSParser.IDENTIFIER = 3,
-cls.SimpleJSParser.NUMBER = 4,
-cls.SimpleJSParser.STRING = 5,
-cls.SimpleJSParser.PUNCTUATOR = 6,
-cls.SimpleJSParser.DIV_PUNCTUATOR = 7,
-cls.SimpleJSParser.REG_EXP = 8,
+cls.SimpleJSParser.WHITESPACE = 1;
+cls.SimpleJSParser.LINETERMINATOR = 2;
+cls.SimpleJSParser.IDENTIFIER = 3;
+cls.SimpleJSParser.NUMBER = 4;
+cls.SimpleJSParser.STRING = 5;
+cls.SimpleJSParser.PUNCTUATOR = 6;
+cls.SimpleJSParser.DIV_PUNCTUATOR = 7;
+cls.SimpleJSParser.REG_EXP = 8;
 cls.SimpleJSParser.COMMENT = 9;
 
 cls.SimpleJSParser.prototype = new function()
@@ -59,7 +59,7 @@ cls.SimpleJSParser.prototype = new function()
     * @param {String} escape. Optional. Currently supports only "html" 
     * to escape "<" and "&" to "&lt;" and "&amp;".
     */
-  this.tokenize = function(script_source, ontoken, escape){};
+  this.tokenize = function(script_source, ontoken, escape, start_state){};
 
   /* privat */
 
@@ -867,7 +867,9 @@ cls.SimpleJSParser.prototype = new function()
         {
           if(__parse_error_first_token)
           {
-            __line = "<div class='error-description'>" + __parse_error_description + "</div>" +
+            __line = "<div class='error-description'>" + 
+                        helpers.escapeTextHtml(__parse_error_description) + 
+                        "</div>" +
                         "<span class='not-error'>" +  __line + "</span>" +
                         "<span class='first-error'>" +  __buffer + "</span>";
             __parse_error_first_token = false;
@@ -1081,12 +1083,12 @@ cls.SimpleJSParser.prototype = new function()
     parser(__source.charAt(__pointer));
   }
 
-  this.tokenize = function(script_source, ontoken, espace, start_state)
+  this.tokenize = function(script_source, ontoken, escape, start_state)
   {
     parser = default_parser;
     __previous_type = '';
     __type = IDENTIFIER;
-    __escape = espace == "html" && ESCAPE || {};
+    __escape = escape == "html" && ESCAPE || {};
     __source = script_source;
     __pointer = 0;
     __ontoken = ontoken;

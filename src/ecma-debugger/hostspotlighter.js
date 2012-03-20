@@ -7,6 +7,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   /* interface */
   // type: default, dimension, padding, border, margin, locked 
   this.spotlight = function(node_id, scroll_into_view, type){};
+  this.soft_spotlight = function(node_id) {};
   this.clearSpotlight = function(){};
   this.invertColors = function(){};
   /* templates */
@@ -75,9 +76,43 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       services['ecmascript-debugger'].requestSpotlightObjects(0,
         [ settings.dom.get('lock-selected-elements') && 
             locked_elements.map(get_locked_commands) || [[root_id, 0, [[0,0]]]] ]);
-
     }
-  }
+    else
+    {
+      get_root_id(clear_spotlight);
+    }
+  };
+
+  var get_root_id = function(cb)
+  {
+    var rt_id = window.runtimes.getSelectedRuntimeId();
+    var thread_id = window.stop_at.getThreadId();
+    var frame_index = window.stop_at.getSelectedFrameIndex();
+    if (frame_index == -1)
+    {
+      thread_id = 0;
+      frame_index = 0;
+    }
+    var script = "return document.documentElement";
+    var msg = [rt_id, thread_id, frame_index, script];
+    var tag = window.tag_manager.set_callback(null, handle_get_root_id, [cb]);
+    window.services["ecmascript-debugger"].requestEval(tag, msg);
+  };
+
+  var handle_get_root_id = function(status, message, cb)
+  {
+    var STATUS = 0;
+    var TYPE = 1;
+    var VALUE = 2;
+    var OBJECT_VALUE = 3;
+    var OBJECT_ID = 0;
+
+    if (!status && message[STATUS] == "completed" &&
+        message[OBJECT_VALUE] && message[OBJECT_VALUE][OBJECT_ID])
+    {
+      cb(message[OBJECT_VALUE][OBJECT_ID]);
+    }
+  };
 
   var opacity =
   {

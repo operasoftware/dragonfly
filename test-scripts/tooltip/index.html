@@ -42,8 +42,8 @@ span
   border: 1px solid hsl(0, 0%, 95%);
 }
 
-span:hover,
-.hover
+
+.tooltip-selected
 {
   background-color: hsl(210, 100%, 80%);
 }
@@ -67,6 +67,7 @@ span:hover,
 </style>
 <script src="../../src/scripts/dom.js"></script>
 <script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltipcontext.js"></script>
 
 <script>
 
@@ -198,63 +199,20 @@ window.onload = function()
   (function()
   {
     var tooltip = Tooltips.register("test2", true);
-    var last_target = null;
-    var reset_last_target = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
-    };
-
-    tooltip.ontooltip = function(event, target)
-    {
-      this.show();
-      last_target = target;
-    };
-
-    tooltip.ontooltipenter = function()
-    {
-      if (last_target)
-        last_target.addClass('hover');
-    };
-
-    tooltip.ontooltipleave = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
-    };
 
   })();
 
   (function()
   {
     var tooltip = Tooltips.register("test3", true);
-    var last_target = null;
-    var reset_last_target = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
-    };
 
     tooltip.ontooltip = function(event, target)
     {
       var box = target.getBoundingClientRect();
       this.show(null, {top: box.top, 
                        bottom: box.bottom,
-                       left: box.left + 30,
+                       mouse_x: box.left + 30,
                        right: box.left + 10});
-      last_target = target;
-    };
-
-    tooltip.ontooltipenter = function()
-    {
-      if (last_target)
-        last_target.addClass('hover');
-    };
-
-    tooltip.ontooltipleave = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
     };
 
   })();
@@ -262,12 +220,6 @@ window.onload = function()
   (function()
   {
     var tooltip = Tooltips.register("test-url", true);
-    var last_target = null;
-    var reset_last_target = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
-    };
 
     tooltip.ontooltip = function(event, target)
     {
@@ -280,22 +232,7 @@ window.onload = function()
         return list;
       }, []));
       tmpl.push('class', 'url-table');
-
-      // this.show(tmpl, {top: box.top, bottom: box.bottom, left: box.left + 30});
       this.show(tmpl);
-      last_target = target;
-    };
-
-    tooltip.ontooltipenter = function()
-    {
-      if (last_target)
-        last_target.addClass('hover');
-    };
-
-    tooltip.ontooltipleave = function()
-    {
-      if (last_target)
-        last_target.removeClass('hover');
     };
 
   })();
