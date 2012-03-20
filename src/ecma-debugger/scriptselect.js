@@ -6,6 +6,7 @@ cls.ScriptSelect = function(id, class_name)
   var _selected_value = "";
   var _selected_script_id = 0;
   var _stopped_script_id = "";
+  var MAX_MATCH_HISTORY = 10;
 
   this.getSelectedOptionTooltipText = function()
   {
@@ -75,6 +76,7 @@ cls.ScriptSelect = function(id, class_name)
       input.focus();
       this._get_option_ele_list();
       this._update_clear_button_state();
+      this._match_cursor = 0;
     }
   };
 
@@ -96,7 +98,6 @@ cls.ScriptSelect = function(id, class_name)
     var script_id = script_id_str && parseInt(script_id_str);
     if (script_id)
     {
-      // TODO is this needed?
       if (script_id != _selected_script_id)
       {
         runtimes.setSelectedScript(script_id);
@@ -104,6 +105,23 @@ cls.ScriptSelect = function(id, class_name)
         _selected_script_id = script_id;
       }
       _selected_value = target_ele.textContent;
+      var target = this._option_eles && this._option_eles[this._option_ele_cursor];
+      if (target)
+      {
+        if (!this._setting)
+          this._init_match_history();
+
+        if (this._input && this._input.value &&
+            !this._match_history.contains(this._input.value))
+        {
+          this._match_history.push(this._input.value);
+          while (this._match_history.length > MAX_MATCH_HISTORY)
+            this._match_history.shift();
+
+          if (this._setting)
+            this._setting.set("js-dd-match-history", this._match_history);
+        } 
+      }
       return true;
     }
     return false;
@@ -156,22 +174,9 @@ cls.ScriptSelect = function(id, class_name)
       case "highlight-next-match":
       case "highlight-previous-match":
         var target = this._option_eles[this._option_ele_cursor];
-        if (target)
-        {
-          if (!this._setting)
-            this._init_match_history();
-
-          if (this._input && !this._match_history.contains(this._input.value))
-          {
-            this._match_history.push(this._input.value);
-            while (this._match_history.length > 10)
-              this._match_history.shift();
-
-            if (this._setting)
-              this._setting.set("js-dd-match-history", this._match_history);
-          }          
+        if (target)       
           target.dispatchMouseEvent("mouseup");
-        }
+
         return false;
 
       case "up":
@@ -181,7 +186,7 @@ cls.ScriptSelect = function(id, class_name)
           if (index < 0)
             index = this._option_eles.length - 1;
 
-          this._move_highlight(index);
+          this._move_highlight(index, true);
         }
         return false;
 
@@ -192,11 +197,11 @@ cls.ScriptSelect = function(id, class_name)
           if (index > this._option_eles.length - 1)
             index = 0;
 
-          this._move_highlight(index);
+          this._move_highlight(index, true);
         }
         return false;
       
-      case "shift-up":
+      case "shift-down":
         if (!this._setting)
           this._init_match_history();
 
@@ -207,7 +212,7 @@ cls.ScriptSelect = function(id, class_name)
         this._set_filter_value();
         return false;
 
-      case "shift-down":
+      case "shift-up":
         if (!this._setting)
           this._init_match_history();
 
@@ -296,7 +301,7 @@ cls.ScriptSelect = function(id, class_name)
       this._move_highlight(index);
   };
 
-  this._move_highlight = function(index)
+  this._move_highlight = function(index, is_key_event)
   {
     if (index < this._option_eles.length)
     {
@@ -306,7 +311,7 @@ cls.ScriptSelect = function(id, class_name)
       this._option_ele_cursor = index;
       var ele = this._option_eles[this._option_ele_cursor];
       ele.addClass("hover");
-      if (this._option_box)
+      if (this._option_box && is_key_event)
       {
         var box = ele.getBoundingClientRect();
         if (box.bottom > this._option_box.bottom)
