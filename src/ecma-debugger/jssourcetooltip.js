@@ -64,10 +64,16 @@ cls.JSSourceTooltip = function(view)
                         "focus-handler": FILTER_HANDLER,
                         "blur-handler": FILTER_HANDLER};
   var _is_filter_focus = false;
+  var _is_mouse_down = false;
 
   var _poll_position = function()
   {
-    if (!_last_move_event || _is_over_tooltip || (_filter && _is_filter_focus))
+    if (!_last_move_event ||
+        _is_over_tooltip ||
+        !_win_selection ||
+        _is_mouse_down ||
+        (_filter && _is_filter_focus) ||
+        CstSelect.is_active)
       return;
     
     if (!_win_selection.isCollapsed && !_shift_key)
@@ -225,13 +231,16 @@ cls.JSSourceTooltip = function(view)
                               "obj-id", String(model.object_id),
                               "class", "js-tooltip-title"],
                        ["div", [window.templates.inspected_js_object(model, false)],
-                               "class", "js-tooltip-examine-container"],
+                               "class", "js-tooltip-examine-container mono"],
                        "class", "js-tooltip js-tooltip-examine"];
           var ele = _tooltip.show(tmpl, box);
-          _filter_input = ele.querySelector("input");
-          _tooltip_container = ele.querySelector(".js-tooltip-examine-container");
-          _filter.set_form_input(_filter_input);
-          _filter.set_container(_tooltip_container);
+          if (ele)
+          {
+            _filter_input = ele.querySelector("input");
+            _tooltip_container = ele.querySelector(".js-tooltip-examine-container");
+            _filter.set_form_input(_filter_input);
+            _filter.set_container(_tooltip_container);
+          }
         });
       }
       else
@@ -510,11 +519,11 @@ cls.JSSourceTooltip = function(view)
 
       if (i == -1)
       {
-        start_line--;
-        var new_tokens = _get_tokens_of_line(script, start_line);
+        var new_tokens = _get_tokens_of_line(script, start_line - 1);
 
         if (new_tokens.length)
         {
+          start_line--;
           match_index = new_tokens.length;
           index += match_index;
           tokens = new_tokens.extend(tokens);
@@ -524,7 +533,10 @@ cls.JSSourceTooltip = function(view)
       }
       else
         break;
-    } 
+    }
+
+    if (tokens[index + 1][TYPE] == PUNCTUATOR && tokens[index + 1][VALUE] == ".")
+      index++;
 
     while (true)
     {
@@ -888,6 +900,7 @@ cls.JSSourceTooltip = function(view)
     _tooltip.hide();
     _filter.set_search_term("");
     _filter.cleanup();
+    _is_filter_focus = false;
     _tooltip_model = null;
     _tooltip_container = null;
 
@@ -1020,6 +1033,32 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
+  var _onmousedown = function(event, target)
+  {
+    _is_mouse_down = true;
+    _clear_selection();
+  };
+
+  var _onmouseup = function(event)
+  {
+    _is_mouse_down = false;
+  };
+
+  var _onfocus = function(event, target)
+  {
+    _is_filter_focus = true;
+  };
+
+  var _onblur = function(event, target)
+  {
+    _is_filter_focus = false
+  };
+  
+  var _oninput = function(event, target)
+  {
+    _filter.search_delayed(target.value);
+  };
+
   var _init = function(view)
   {
     _view = view;
@@ -1034,17 +1073,10 @@ cls.JSSourceTooltip = function(view)
     _esde = window.services["ecmascript-debugger"];
     _filter = new TextSearch();
     _filter_shortcuts_cb = cls.Helpers.shortcut_search_cb.bind(_filter);
-    window.event_handlers.input[FILTER_HANDLER] =
-    window.event_handlers.focus[FILTER_HANDLER] =
-    window.event_handlers.blur[FILTER_HANDLER] = function(event, target)
-    {        
-      if (event.type == "focus")
-        _is_filter_focus = true; 
-      else if (event.type == "blur")
-        _is_filter_focus = false
-      else
-        _filter.search_delayed(target.value);
-    };
+    window.event_handlers.input[FILTER_HANDLER] = _oninput;
+    window.event_handlers.focus[FILTER_HANDLER] = _onfocus;
+    window.event_handlers.blur[FILTER_HANDLER] = _onblur;
+    window.event_handlers.mousedown["scroll-js-source-view"] = _onmousedown;
     _filter.add_listener("onbeforesearch", _onbeforefilter);
     ActionBroker.get_instance().get_global_handler().
     register_shortcut_listener(FILTER_HANDLER, _filter_shortcuts_cb);
@@ -1052,6 +1084,7 @@ cls.JSSourceTooltip = function(view)
     window.addEventListener("resize", _get_container_box, false);
     document.addEventListener("keydown", _onkeydown, false);
     document.addEventListener("keyup", _onkeyup, false);
+    document.addEventListener("mouseup", _onmouseup, false);
   };
 
   this.unregister = function()
