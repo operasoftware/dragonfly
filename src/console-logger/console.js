@@ -370,18 +370,17 @@ ErrorConsoleViewPrototype = function()
   var MAX_ENTRIES = 1000;
   var MIN_RENDER_DELAY = 200;
   this._render_timeout = null;
-  this._rendertime = null;
+  this._rendertime = 0;
 
   this.createView = function(container)
   {
-    var timedelta = new Date() - this._rendertime;
-    window.clearTimeout(this._render_timeout);
-
-    if (timedelta < MIN_RENDER_DELAY)
+    var timedelta = Date.now() - this._rendertime;
+    if (!this._render_timeout && timedelta < MIN_RENDER_DELAY)
     {
-      this._render_timeout = window.setTimeout(this.createView.bind(this), MIN_RENDER_DELAY);
+      this._render_timeout = window.setTimeout(this.createView_bound, MIN_RENDER_DELAY);
       return;
     }
+    window.clearTimeout(this._render_timeout);
 
     if (container)
     {
@@ -400,6 +399,8 @@ ErrorConsoleViewPrototype = function()
     }
   };
 
+  this.createView_bound = this.createView.bind(this);
+
   this._hash_array = function(string, item, index, array)
   {
     return string + "," + item.id;
@@ -416,7 +417,7 @@ ErrorConsoleViewPrototype = function()
       var org_length = entries.length;
       if (org_length > MAX_ENTRIES)
       {
-        entries = entries.slice(0, MAX_ENTRIES);
+        entries = entries.slice(org_length - MAX_ENTRIES);
         exceeds_max = true;
       }
 
@@ -457,7 +458,7 @@ ErrorConsoleViewPrototype = function()
       {
         this._container.scrollTop = this._scrollTop;
       }
-      this._rendertime = new Date();
+      this._rendertime = Date.now();
     }
   }
 
@@ -468,7 +469,7 @@ ErrorConsoleViewPrototype = function()
       entries = window.error_console_data.get_messages(this.query)
                                            .filter(this.source_filter);
       if (entries.length > MAX_ENTRIES)
-        entries = entries.slice(0, MAX_ENTRIES);
+        entries = entries.slice(entries.length - MAX_ENTRIES);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
@@ -477,7 +478,7 @@ ErrorConsoleViewPrototype = function()
   {
     this._table_ele = null;
     this._container = null;
-    this._rendertime = null;
+    this._rendertime = 0;
     this._render_timeout = null;
   };
 

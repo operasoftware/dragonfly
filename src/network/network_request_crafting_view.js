@@ -276,7 +276,10 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       response = resource.responseheader.raw;
       if (!resource.urlredirect)
       {
-        if (resource.responsefinished)
+        if (resource.responsefinished &&
+            resource.responsefinished.data &&
+            resource.responsefinished.data.content &&
+            resource.responsefinished.data.content.stringData)
         {
           response += resource.responsefinished.data.content.stringData;
         }
