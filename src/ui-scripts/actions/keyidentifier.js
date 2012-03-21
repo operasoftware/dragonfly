@@ -104,7 +104,7 @@
       else
       {
         var char_code = key.charCodeAt(0);
-        if (this._is_not_aplpha(char_code))
+        if (this._is_not_alpha(char_code))
           key_id = char_code << 4;
         else
           key_id = key.toUpperCase().charCodeAt(0) << 4 | mod_key;
@@ -114,7 +114,7 @@
     }
   };
 
-  this._is_not_aplpha = function(char_code)
+  this._is_not_alpha = function(char_code)
   {
     return char_code &&
            // event.char with ctrl key can produce chars in the range 0 - 0x20.
@@ -213,7 +213,7 @@
     else
     {
       var char_code = event.char && event.char.charCodeAt(0);
-      var key_id = this._is_not_aplpha(char_code)
+      var key_id = this._is_not_alpha(char_code)
                  ? char_code << 4
                  : event.keyCode << 4 | mod_key;
       if (key_id in this._char_shortcuts)
