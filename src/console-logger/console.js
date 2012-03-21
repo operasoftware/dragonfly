@@ -368,17 +368,17 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
 ErrorConsoleViewPrototype = function()
 {
   var MAX_ENTRIES = 1000;
+  var MIN_RENDER_DELAY = 200;
   this._rendertime = 0;
 
   this.createView = function(container)
   {
-    var min_render_delay = 200;
     var timedelta = new Date().getTime() - this._rendertime;
     if (this._rendertimer)
       this._rendertimer = window.clearTimeout(this._rendertimer);
-    if (timedelta < min_render_delay)
+    if (timedelta < MIN_RENDER_DELAY)
     {
-      this._rendertimer = window.setTimeout(this.createView.bind(this), min_render_delay);
+      this._rendertimer = window.setTimeout(this.createView.bind(this), MIN_RENDER_DELAY);
       return;
     }
 
