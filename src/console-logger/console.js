@@ -369,16 +369,17 @@ ErrorConsoleViewPrototype = function()
 {
   var MAX_ENTRIES = 1000;
   var MIN_RENDER_DELAY = 200;
-  this._rendertime = 0;
+  this._render_timeout = null;
+  this._rendertime = null;
 
   this.createView = function(container)
   {
-    var timedelta = new Date().getTime() - this._rendertime;
-    if (this._rendertimer)
-      this._rendertimer = window.clearTimeout(this._rendertimer);
+    var timedelta = new Date() - this._rendertime;
+    window.clearTimeout(this._render_timeout);
+
     if (timedelta < MIN_RENDER_DELAY)
     {
-      this._rendertimer = window.setTimeout(this.createView.bind(this), MIN_RENDER_DELAY);
+      this._render_timeout = window.setTimeout(this.createView.bind(this), MIN_RENDER_DELAY);
       return;
     }
 
@@ -437,8 +438,6 @@ ErrorConsoleViewPrototype = function()
                                                        this.id);
 
         this._table_ele.render(template);
-        if (exceeds_max)
-          this._container.render(window.templates.errors.exceeds_max(MAX_ENTRIES, org_length));
       }
       else
       {
@@ -446,23 +445,19 @@ ErrorConsoleViewPrototype = function()
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
-        if (exceeds_max)
-        {
-          template = [
-            template,
-            window.templates.errors.exceeds_max(MAX_ENTRIES, org_length)
-          ];
-        }
 
         var rendered = this._container.clearAndRender(template);
         this._table_ele = rendered.parentNode.querySelector(".errors-table");
       }
+      if (exceeds_max)
+        this._container.render(window.templates.errors.exceeds_max(MAX_ENTRIES, org_length));
+
       this.last_entry_hash = entries.reduce(this._hash_array, "");
       if (this._scrollTop)
       {
         this._container.scrollTop = this._scrollTop;
       }
-      this._rendertime = new Date().getTime();
+      this._rendertime = new Date();
     }
   }
 
@@ -482,7 +477,8 @@ ErrorConsoleViewPrototype = function()
   {
     this._table_ele = null;
     this._container = null;
-    this._rendertime = 0;
+    this._rendertime = null;
+    this._render_timeout = null;
   };
 
   this._on_before_search = function(message)
