@@ -21,11 +21,15 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
 
-  this._update_views = function()
+  this._update_views = function(set_instant_update)
   {
     for (var view_id = '', i = 0; view_id = this._views[i]; i++)
     {
-      window.views[view_id].update();
+      var view = window.views[view_id];
+      if (set_instant_update)
+        view.needs_instant_update = true;
+      
+      view.update();
     }
 
     var used_for_error_count = this._view_used_for_error_count || this._views[0];
@@ -94,7 +98,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     { 
       return !message_ids.contains(e.id);
     });
-    this._update_views();
+    this._update_views(true);
   };
 
   this.clear_all = function()
@@ -106,7 +110,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       window.views[view_id].is_hidden = true;
       topCell.disableTab(view_id, true);
     };
-    this._update_views();
+    this._update_views(true);
   }
 
   /**
@@ -169,14 +173,14 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       {
         case 'expand-all-entries': {
           this._toggled = [];
-          this._update_views();
+          this._update_views(true);
           break;
         }
         case 'css-filter':
         case 'use-css-filter':
         {
           this._set_css_filter();
-          this._update_views();
+          this._update_views(true);
           break;
         }
       }
@@ -372,23 +376,28 @@ var ErrorConsoleViewPrototype = function()
   var MIN_RENDER_DELAY = 200;
   this._render_timeout = 0;
   this._rendertime = 0;
+  this.needs_instant_update = false;
 
   this.createView = function(container)
   {
-    if (this._render_timeout)
+    if (!this.needs_instant_update)
     {
-      return;
-    }
-    else
-    {
-      var timedelta = Date.now() - this._rendertime;
-      if (timedelta < MIN_RENDER_DELAY)
+      if (this._render_timeout)
       {
-        this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
-                                                 MIN_RENDER_DELAY - timedelta);
         return;
       }
-    }
+      else
+      {
+        var timedelta = Date.now() - this._rendertime;
+        if (timedelta < MIN_RENDER_DELAY)
+        {
+          this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
+                                                   MIN_RENDER_DELAY - timedelta);
+          return;
+        }
+      }
+    }    
+    this.needs_instant_update = false;
 
     if (container)
     {
