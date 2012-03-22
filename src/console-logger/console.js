@@ -375,12 +375,14 @@ ErrorConsoleViewPrototype = function()
   this.createView = function(container)
   {
     var timedelta = Date.now() - this._rendertime;
-    if (!this._render_timeout && timedelta < MIN_RENDER_DELAY)
+    if (timedelta < MIN_RENDER_DELAY)
     {
-      this._render_timeout = window.setTimeout(this.createView_bound, MIN_RENDER_DELAY);
+      if (!this._render_timeout)
+        this._render_timeout = window.setTimeout(this.createView_bound, MIN_RENDER_DELAY);
+
       return;
     }
-    window.clearTimeout(this._render_timeout);
+    this._render_timeout = window.clearTimeout(this._render_timeout);
 
     if (container)
     {
@@ -417,7 +419,7 @@ ErrorConsoleViewPrototype = function()
       var org_length = entries.length;
       if (org_length > MAX_ENTRIES)
       {
-        entries = entries.slice(org_length - MAX_ENTRIES);
+        entries.splice(0, org_length - MAX_ENTRIES);
         exceeds_max = true;
       }
 
@@ -469,7 +471,7 @@ ErrorConsoleViewPrototype = function()
       entries = window.error_console_data.get_messages(this.query)
                                            .filter(this.source_filter);
       if (entries.length > MAX_ENTRIES)
-        entries = entries.slice(entries.length - MAX_ENTRIES);
+        entries.splice(0, entries.length - MAX_ENTRIES);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
