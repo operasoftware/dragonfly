@@ -188,7 +188,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
 
-    // only take console messages over ECMAScriptDebugger, will be setting dependend
+    // only take console messages over ECMAScriptDebugger
     if (!message.context.startswith("console."))
     {
       this.add_entry(message);
@@ -333,6 +333,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
       var error_messages = message[DATA];
       for (var i=0, error_message; error_message = error_messages[i]; i++)
       {
+        // todo: doing this in a loop means updating the view all the time. throttling catches it, but this could probably be optimized
         this._on_console_message(error_message);
       };
     }
@@ -365,25 +366,25 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
   this._init(id, name, container_class, source_list, is_blacklist);
 }
 
-ErrorConsoleViewPrototype = function()
+var ErrorConsoleViewPrototype = function()
 {
   var MAX_ENTRIES = 1000;
   var MIN_RENDER_DELAY = 200;
-  this._render_timeout = null;
+  this._render_timeout = 0;
   this._rendertime = 0;
 
   this.createView = function(container)
   {
     var timedelta = Date.now() - this._rendertime;
-    if (timedelta < MIN_RENDER_DELAY)
+    if (this._render_timeout || timedelta < MIN_RENDER_DELAY)
     {
       if (!this._render_timeout)
-        this._render_timeout = window.setTimeout(this.createView_bound, MIN_RENDER_DELAY);
-
+      {
+        this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
+                                                 MIN_RENDER_DELAY - timedelta);
+      }
       return;
     }
-    this._render_timeout = window.clearTimeout(this._render_timeout);
-
     if (container)
     {
       this._container = container;
@@ -401,7 +402,11 @@ ErrorConsoleViewPrototype = function()
     }
   };
 
-  this.createView_bound = this.createView.bind(this);
+  this._create_delayed = function()
+  {
+    this._render_timeout = 0;
+    this.createView();
+  };
 
   this._hash_array = function(string, item, index, array)
   {
@@ -481,7 +486,7 @@ ErrorConsoleViewPrototype = function()
     this._table_ele = null;
     this._container = null;
     this._rendertime = 0;
-    this._render_timeout = null;
+    this._render_timeout = 0;
   };
 
   this._on_before_search = function(message)
