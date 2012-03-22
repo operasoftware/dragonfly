@@ -376,15 +376,17 @@ var ErrorConsoleViewPrototype = function()
   this.createView = function(container)
   {
     var timedelta = Date.now() - this._rendertime;
-    if (this._render_timeout || timedelta < MIN_RENDER_DELAY)
+    if (this._render_timeout)
     {
-      if (!this._render_timeout)
-      {
-        this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
-                                                 MIN_RENDER_DELAY - timedelta);
-      }
       return;
     }
+    else if (timedelta < MIN_RENDER_DELAY)
+    {
+      this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
+                                               MIN_RENDER_DELAY - timedelta);
+      return;
+    }
+
     if (container)
     {
       this._container = container;
