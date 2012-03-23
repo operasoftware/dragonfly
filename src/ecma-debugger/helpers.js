@@ -331,7 +331,7 @@ window.cls.Helpers = function()
     if (!color)
       return value; // Fall back if we can't parse as color
 
-    if (color.alpha !== null)
+    if (color.alpha !== 1)
     {
       notation = {
         "hhex": "rgba", // Fall back since hex cannot represent alpha

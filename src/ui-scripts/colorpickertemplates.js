@@ -180,19 +180,30 @@
       ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
       ['r-g-b', 'b', 'B:', 'number', null, '0', '255'],
     ].map(set_checked),
-    hex_inputs =
-    [
-      [null, 'hex', '#', 'text'],
+    alpha_input =
+    ["tr",
+       ["td", ""],
+       ["td", "α: "],
+       ["td",
+         ["input",
+          'name', 'alpha',
+          'type', 'number',
+          'min', '0',
+          'max', '1',
+          'step', '0.01',
+          'class', 'color-picker-number'
+         ]
+       ]
     ];
 
     return (
     ['form',
       ['table',
         shv_inputs.map(this.color_picker_inputs_row, this),
-        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
+        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '3']],
         rgb_inputs.map(this.color_picker_inputs_row, this),
-        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '4']],
-        hex_inputs.map(this.color_picker_inputs_row, this),
+        ['tr', ['td', 'class', 'color-picker-spacer', 'colspan', '3']],
+        alpha_input,
         'class', 'color-picker-inputs'
       ]
     ]);
@@ -210,6 +221,8 @@
     MAX = 6,
     CHECKED = 7;
 
+    var id = 'color-picker-input-' + input[METHOD];
+
     return (
     ['tr',
       ['td',
@@ -221,15 +234,22 @@
         ].concat(input[CHECKED] ? ['checked', 'checked'] : []) :
         []
       ],
-      ['td', input[LABEL]],
+      ['td',
+        ['label',
+            input[LABEL],
+         'for', id
+        ]
+      ],
       ['td',
         ['input',
           'name', input[METHOD],
           'type', input[TYPE],
           'class', 'color-picker-' + input[TYPE],
+          'id', id,
         ].concat(input[MIN] ? ['min', input[MIN], 'max', input[MAX]] : []),
-      ].concat(input[UNITS] ? [] : ['colspan', '2']),
-      input[UNITS] ? ['td', input[UNITS]] : []
+        input[UNITS] ? " " + input[UNITS]
+                     : ""
+      ]
     ])
   }
 
@@ -246,63 +266,64 @@
 
   this.color_picker_popup = function(existing_color, cp_class, cp_2d_class,
                                      cp_1d_class, cp_old_class, cp_new_class,
-                                     z_axis, cp_alpha_class, cp_alpha_bg)
+                                     z_axis)
   {
-    var has_alpha = typeof existing_color.alpha == "number";
     return (
-    ['div',
       ['div',
-        ['canvas', 'class', 'cp-canvas'],
-        'data-handler', 'onxy',
-        'class', cp_2d_class
-      ],
-      ['div',
-        ['canvas', 'class', 'cp-canvas'],
-        'data-handler', 'onz',
-        'class', cp_1d_class
-      ],
-      window.templates.color_picker_palette(),
-      window.templates.color_picker_inputs(z_axis),
-      has_alpha ?
-      ['svg:svg',
-        this.svg_rect(null, null, 0, 0, 100, 36, 0, 0, "#000"),
-        ['path',
-          'd', 'M 50 0 l -50 0 l 0 36 l 50 -36 l 50 0 l -50 36 z',
-          'fill', '#fff',
+        ['div',
+          ['canvas', 'class', 'cp-canvas'],
+          'data-handler', 'onxy',
+          'class', cp_2d_class
         ],
-        'viewBox', '0 0 100px 36px',
-        'version', '1.1',
-        'class', 'color-sample-alpha-bg'
-      ] : [],
-      ['div',
-        'class', cp_old_class,
-        'data-color', 'cancel',
-        'style', 'background-color:' + existing_color.rgba
-      ],
-      ['div', 'class', cp_new_class],
-      has_alpha ?
-      ['div',
-        ['div', 'class', 'height-100'],
-        'data-handler', 'onalpha',
-        'class', cp_alpha_class
-      ] : [],
-      has_alpha ?
-      ['div',
-        ['label',
-          'alpha: ',
-          ['input',
-            'name', 'alpha',
-            'type', 'number',
-            'min', '0',
-            'max', '1',
-            'step', '0.01',
-            'class', cp_alpha_bg,
+        ['div',
+          ['canvas', 'class', 'cp-canvas'],
+          'data-handler', 'onz',
+          'class', cp_1d_class
+        ],
+        window.templates.color_picker_inputs(z_axis),
+        ["input", "name", "hhex", "class", "color-picker-text"],
+        ["div",
+          ['div',
+            'class', cp_old_class,
+            'data-color', 'cancel',
+            'style', 'background-color:' + existing_color.rgba
           ],
+          ['div', 'class', cp_new_class],
+         "class", "color-picker-color-alpha-bg"
         ],
-        'class', 'color-picker-input-alpha'
-      ]: [],
-      'class', cp_class + (has_alpha ? ' alpha' : '')
-    ]);
+        window.templates.color_picker_palette_dropdown(),
+        ["div",
+          ["button",
+             "Cancel",
+           "class", "container-button ui-button",
+           "handler", "color-picker-cancel"
+          ],
+          ["button",
+             "OK",
+           "class", "container-button ui-button",
+           "handler", "color-picker-ok"
+          ],
+         "class", "color-picker-controls"
+        ],
+       'class', cp_class
+      ]
+    );
+  };
+
+  this.color_picker_palette_dropdown = function()
+  {
+    if (window.cls && cls.ColorPalette)
+    {
+      var palette = cls.ColorPalette.get_instance().get_color_palette();
+      var item = palette[0];
+      return ([
+        "div",
+        "style", "background-color: #" + item.color,
+        "class", "color-picker-palette-dropdown color-picker-palette-item",
+        "handler", "show-color-picker-palette"
+      ]);
+    }
+    return [];
   };
 
   this.color_picker_palette = function()
@@ -323,7 +344,7 @@
     return (
     ['span',
       'data-color', item.color,
-      'style', 'background-color:' + '#' + item.color,
+      'style', 'background-color: #' + item.color,
       'class', 'color-picker-palette-item']);
   }
 
@@ -519,29 +540,16 @@
     return list;
   }
 
+  // TODO: remove
   this.svg_slider_circle = function()
   {
-    return (
-    ['svg:svg',
-      ['circle',
-        'cx', '10',
-        'cy', '10',
-        'r', '9.5',
-        'fill', 'none',
-        'stroke',
-        'hsl(0, 0%, 20%)',
-        'stroke-width', '1'
-      ],
-      'viewBox', '0 0 20 20',
-      'version', '1.1'
-    ]);
+    return ([]);
   }
 
   this.pointer = function(pointer_class)
   {
     return (
     ['div',
-      this.svg_slider_circle(),
       'class', pointer_class
     ]);
   }

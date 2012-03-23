@@ -32,9 +32,7 @@ ColorPicker.prototype = new function()
   CP_NEW_CLASS = "color-picker-color",
   SLIDER_BASE_CLASS = 'color-picker-slider-base',
   SLIDER_CLASS = 'color-picker-slider',
-  POINTER_CLASS = 'color-picker-pointer',
-  CP_ALPHA_CLASS = "color-picker-alpha",
-  CP_ALPHA_BG = "color-picker-number alpha";
+  POINTER_CLASS = 'color-picker-pointer';
 
   /* private */
   this._verify_inputs =
@@ -45,7 +43,7 @@ ColorPicker.prototype = new function()
     r: {min:0, max: 255, last: 0, base: 10},
     g: {min:0, max: 255, last: 0, base: 10},
     b: {min:0, max: 255, last: 0, base: 10},
-    hex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
+    hhex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
     alpha: {min:0, max: 1, last: 0, base: 10},
   }
 
@@ -93,8 +91,6 @@ ColorPicker.prototype = new function()
         this._update_xy_slider_color();
         this._update_z_graphic();
         this._update_z_slider();
-        this._update_alpha_graphic();
-        this._update_alpha_slider();
         this._update_sample_color();
         this._cb(this._cb_color);
       }
@@ -115,7 +111,7 @@ ColorPicker.prototype = new function()
         this._cs.clone(color);
         this._cb_color.clone(color);
         if (color.type == color.KEYWORD)
-          this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
+          this._cs.type = color.RGBA;
       }
       else
       {
@@ -156,7 +152,6 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_xy_slider_color();
     this._update_z_graphic();
-    this._update_alpha_graphic();
     this._update_sample_color();
     this._cb(this._cb_color);
   }
@@ -170,20 +165,9 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_xy_graphic();
     this._update_xy_slider_color();
-    this._update_alpha_graphic();
     this._update_sample_color();
     this._cb(this._cb_color);
   }
-
-  // callback for the alpha slider
-  this._onalpha = function(alpha)
-  {
-    this._cs.alpha = alpha;
-    this._cb_color.clone(this._cs);
-    this._update_sample_color();
-    this._update_inputs(null, ['alpha']);
-    this._cb(this._cb_color);
-  };
 
   // DOMNodeRemoved event handler
   this._onremove = function(event)
@@ -200,11 +184,9 @@ ColorPicker.prototype = new function()
       this._ele_sample_color = null;
       this._ele_sample_color_solid = null;
       this._ele_z_graphic = null;
-      this._ele_alpha_graphic = null;
       this._ele_xy_slider = null;
       this._xy_slider = null;
       this._z_slider = null;
-      this._alpha_slider = null;
       this._2d_ctx = null;
       this._1d_ctx = null;
     }
@@ -243,6 +225,8 @@ ColorPicker.prototype = new function()
   // update the color of the slider for the x-y axes
   this._update_xy_slider_color = function()
   {
+    // TODO: remove?
+    return;
     var gray_value = this._cs.xyz(this._cur_x,
                                   this._cur_y,
                                   this._cur_z).getGrayValue() / 255;
@@ -256,15 +240,7 @@ ColorPicker.prototype = new function()
   this._update_sample_color = function()
   {
     var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
-    this._ele_sample_color.style.backgroundColor =
-      this._has_alpha ? color.rgba : color.hhex;
-  }
-
-  // update the position of the slider foe the lpha value
-  this._update_alpha_slider = function()
-  {
-    if (this._has_alpha)
-      this._alpha_slider.y = this._cs.alpha;
+    this._ele_sample_color.style.backgroundColor = color.rgba;
   }
 
   // update everything
@@ -277,8 +253,6 @@ ColorPicker.prototype = new function()
     this._update_xy_slider_color();
     this._update_z_graphic();
     this._update_z_slider();
-    this._update_alpha_graphic();
-    this._update_alpha_slider();
     this._update_sample_color();
   }
 
@@ -336,21 +310,6 @@ ColorPicker.prototype = new function()
                                    '#0ff', '#0f0', '#ff0', '#f00'], true);
   }
 
-  this._update_alpha_graphic = function()
-  {
-    if (this._has_alpha)
-    {
-      var rgb = this._cs.xyz(this._cur_x,
-                             this._cur_y,
-                             this._cur_z).getRGB().join(',');
-      this._ele_alpha_graphic.clearAndRender(window.templates.gradient
-      (
-        ['rgba(' + rgb + ', 0)', 'rgba(' + rgb + ', 1)'],
-        true
-      ));
-    }
-  }
-
   this._color_properties =
   {
     'h': [360, 'setHue', 'getHue'],
@@ -381,7 +340,7 @@ ColorPicker.prototype = new function()
 
   this._set_cs_coordinates = function()
   {
-    this._cs.x = this._cur_x
+    this._cs.x = this._cur_x;
     this._cs.y = this._cur_y;
     this._cs.z = this._cur_z;
   }
@@ -406,7 +365,7 @@ ColorPicker.prototype = new function()
       {
         return ['h', 's', 'v',
                 'r', 'g', 'b',
-                'hex',
+                'hhex',
                 'alpha'].indexOf(input.name) != -1;
       });
       this._ele_sample_color =
@@ -439,24 +398,7 @@ ColorPicker.prototype = new function()
         min_y: 1,
         max_y: 0
       });
-      if (this._has_alpha = (typeof this._initial_color.alpha == 'number'))
-      {
-        this._cs.alpha = this._initial_color.alpha;
-        ele_z = this._ele.getElementsByClassName(CP_ALPHA_CLASS)[0];
-        this._ele_alpha_graphic = ele_z.getElementsByTagName('div')[0];
-        this._ele_sample_color_solid =
-          this._ele_sample_color.getElementsByTagName('div')[0];
-        this._alpha_slider = new Slider(
-        {
-          container: ele_z,
-          slider_base_class: SLIDER_BASE_CLASS,
-          slider_class: SLIDER_CLASS,
-          slider_template: window.templates.svg_slider_z(),
-          ony: this._onalpha.bind(this),
-          min_y: 1,
-          max_y: 0
-        });
-      }
+
       this._set_color_space('s-v-h');
       this._ele.addEventListener('input', this._oninput_bound, false);
       this._ele.addEventListener('click', this._onclick_bound, false);
@@ -474,8 +416,7 @@ ColorPicker.prototype = new function()
     return window.templates.color_picker_popup(this._initial_color,
                                                CP_CLASS, CP_2D_CLASS,
                                                CP_1D_CLASS, CP_OLD_CLASS,
-                                               CP_NEW_CLASS, 'h', CP_ALPHA_CLASS,
-                                               CP_ALPHA_BG)
+                                               CP_NEW_CLASS, 'h')
   }
 
   /* instatiation */
@@ -487,7 +428,7 @@ ColorPicker.prototype = new function()
     this._cs.clone(color);
     this._cb_color = new Color();
     if (color.type == color.KEYWORD)
-      this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
+      this._cs.type = color.RGBA;
     this._cur_x = 0;
     this._cur_y = 0;
     this._cur_z = 0;

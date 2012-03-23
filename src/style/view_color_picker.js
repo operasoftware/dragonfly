@@ -1,63 +1,40 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 window.cls.ColorPickerView = function(id, name, container_class)
 {
+  this._es_debugger = window.services["ecmascript-debugger"];
+  this._tag_manager = cls.TagManager.get_instance();
+
   /* interface */
   this.createView = function(container){};
   /**
     * To show the color picker.
     * @param {Object} target. The event target is the color sample to be edited.
-    * @param [Object} edit_context. Optional.
+    * @param {Object} edit_context. Optional.
     */
   this.show_color_picker = function(target, edit_context){};
 
-  /* settings */
-  this.show_in_views_menu = true;
-  this.window_top = 20;
-  this.window_left = 20;
-  this.window_width_with_alpha = 523;
-  this.window_width = 376;
-  this.window_height = 244;
-  this.window_resizable = false;
-  this.window_statusbar = false;
-
-  // TODO: this should be calculated
-  const PALETTE_HEIGHT = 24;
-  const MAX_SWATCHES = 15;
-
   /* private */
-  const CSS_CLASS_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
-
-  this._edit_context = null;
+  var CSS_CLASS_TARGET = window.cls.ColorPickerView.CSS_CLASS_TARGET;
+  var ELE_CLASS = "color-picker";
+  var MARGIN = 5; // Minimum vertical margin between the color picker and the edge of the viewport
 
   this._color_cb = function(color)
   {
-    var color_value = '', context = this._edit_context;
+    var context = this._edit_context;
     if (context.callback)
     {
       context.callback(color);
     }
     else
     {
-      switch (color.type)
-      {
-        case color.HEX:
-          color_value = color.hhex;
-          break;
-        case color.RGB:
-        case color.RGBA:
-        case color.HSL:
-        case color.HSLA:
-          color_value = color[color.type];
-          break;
-        case color.KEYWORD:
-          color_value = color.cssvalue;
-          break;
-      }
-
-      context.ele_value.firstChild.textContent = color_value;
-      context.ele_color_swatch.style.backgroundColor = color_value;
-      var property_value_ele = context.ele_container.get_ancestor(".css-property-value");
+      if (!this._color_notation)
+        this._color_notation = this._get_color_notation();
+      context.ele_value.firstChild.textContent = window.helpers.get_color_in_notation(color.rgba, this._color_notation);
+      context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
+      var property_value_ele = context.ele_value.get_ancestor(".css-property-value");
       if (property_value_ele)
       {
         var new_value = window.helpers.escape_input(property_value_ele.textContent);
@@ -76,14 +53,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
                                      "\"" + new_value + "\")";
         }
         var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
-        var tag = window.tag_manager.set_callback(this, window.element_style.update);
-        services['ecmascript-debugger'].requestEval(tag, msg);
+        var tag = this._tag_manager.IGNORE_RESPONSE;
+        this._es_debugger.requestEval(tag, msg);
       }
     }
-  }
+  };
 
   this._color_cb_bound = this._color_cb.bind(this);
-
 
 
   /* implementation */
@@ -91,8 +67,23 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     var color_picker = new ColorPicker(this._color_cb_bound,
                                        this._edit_context.initial_color);
-    container.clearAndRender(color_picker.render());
-  }
+    container.style.visibility = "hidden";
+    container.render(color_picker.render());
+    this._position_color_picker();
+    container.style.visibility = "visible";
+    window.addEventListener("click", this._hide_on_outside_click, true);
+    this._is_opened = true;
+  };
+
+  this.ondestroy = function()
+  {
+    if (this._ele)
+      this._ele.parentNode.removeChild(this._ele);
+    window.removeEventListener("click", this._hide_on_outside_click, true);
+    this._edit_context = null;
+    this._ele = null;
+    this._is_opened = false;
+  };
 
   this.show_color_picker = function(target, edit_context)
   {
@@ -104,15 +95,10 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var value = value_ele && value_ele.textContent;
     var color_value = parent.textContent;
 
-    if (this._edit_context)
-      this._edit_context.ele_container.removeClass(this._edit_context.edit_class ||
-                                                   CSS_CLASS_TARGET);
-
     this._edit_context = edit_context || {
       initial_color: new Color().parseCSSColor(color_value),
       ele_value: parent,
       ele_color_swatch: target,
-      ele_container: parent.parentNode,
       prop_name: property,
       is_important: Boolean(value_ele.querySelector(".css-priority")),
       rt_id: Number(parent.get_attr("parent-node-chain", "rt-id")),
@@ -134,30 +120,45 @@ window.cls.ColorPickerView = function(id, name, container_class)
       var obj_id = Number(parent.get_attr("parent-node-chain", "obj-id"));
       var script = "window.getComputedStyle(ele, null)." +
                    "getPropertyValue(\"" + prop + "\");";
-      var tag = window.tag_manager.set_callback(this, this._handle_get_color, [color_value]);
+      var tag = this._tag_manager.set_callback(this, this._handle_get_color, [color_value]);
       var msg = [this._edit_context.rt_id, 0, 0, script, [["ele", obj_id]]];
-      window.services["ecmascript-debugger"].requestEval(tag, msg);
+      this._es_debugger.requestEval(tag, msg);
     }
   };
 
   this.cancel_edit_color = function()
   {
-    if (UIWindowBase.is_window_visible(this.id))
+    if (this._is_opened)
     {
       this._color_cb_bound(this._edit_context.initial_color);
-      UIWindowBase.closeWindow(this.id);
+      this.ondestroy();
       return true;
     }
     return false;
   };
 
+  this._hide_on_outside_click = function(event)
+  {
+    if (!event.target.get_ancestor("." + ELE_CLASS))
+    {
+      this.ondestroy();
+      // Clicking directly on a new color swatch should work
+      if (!event.target.get_ancestor(".color-swatch"))
+      {
+        event.stopPropagation();
+        event.preventDefault();
+        window.element_style.update();
+      }
+    }
+  }.bind(this);
+
   this._handle_get_color = function(status, message, color_value)
   {
     var TYPE = 1;
     var VALUE = 2;
-    var context = this._edit_context;
     if (!status && message[TYPE] == 'string')
     {
+      var context = this._edit_context;
       if (context.initial_color = new Color().parseCSSColor(message[VALUE]))
       {
         context.initial_color.cssvalue = color_value;
@@ -170,53 +171,76 @@ window.cls.ColorPickerView = function(id, name, container_class)
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       '_handle_get_color failed in ColorPickerView');
     }
-  }
+  };
 
   this._finalize_show_color_picker = function()
   {
-    this._edit_context.ele_container.addClass(this._edit_context.edit_class ||
-                                              CSS_CLASS_TARGET);
-    var height = this.window_height;
-    var palette = cls.ColorPalette.get_instance().get_color_palette();
-
-    if (palette.length > 0)
-    {
-      height += PALETTE_HEIGHT;
-    }
-
-    if (palette.length > MAX_SWATCHES)
-    {
-      height += defaults["scrollbar-width"];
-    }
-
-    var width = typeof this._edit_context.initial_color.alpha == 'number'
-              ? this.window_width_with_alpha
-              : this.window_width;
-
-    UIWindowBase.showWindow(this.id,
-                            this.window_top,
-                            this.window_left,
-                            width,
-                            height).set_width(width);
+    this._ele = document.createElement("div");
+    this._ele.className = ELE_CLASS;
+    document.documentElement.appendChild(this._ele);
+    this.createView(this._ele);
   };
 
-  this.ondestroy = function()
+  this._on_setting_change = function(setting)
   {
-    this._edit_context.ele_container.removeClass(this._edit_context.edit_class ||
-                                                 CSS_CLASS_TARGET);
+    if (setting.key === "color-notation")
+      this._color_notation = this._get_color_notation();
+  };
+
+  this._get_color_notation = function()
+  {
+    return window.settings["dom-side-panel"].get("color-notation");
+  };
+
+  this._position_color_picker = function(container)
+  {
+    var dim = this._edit_context.ele_value.get_ancestor(".css-declaration").getBoundingClientRect();
+    var height = this._ele.getBoundingClientRect().height;
+    var top = Math.max(MARGIN,
+                       Math.min(dim.top - Math.round((height / 2) - (dim.height / 2)),
+                                window.innerHeight - height - MARGIN)
+                      );
+    this._ele.style.top = top + "px";
+    this._ele.style.right = window.innerWidth - dim.left + "px";
+  };
+
+  this._init = function(id, name, container_class)
+  {
+    this.init(id, name, container_class);
     this._edit_context = null;
-  }
+    this._color_notation = null;
+    this._ele = null;
+    this._is_opened = false;
 
-  /* initialistaion */
-  this.init(id, name, container_class);
+    window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
 
-}
+    window.eventHandlers.click["show-color-picker"] = function(event, target)
+    {
+      this.show_color_picker(event.target.get_ancestor(".color-swatch"));
+    }.bind(this);
+
+    window.eventHandlers.click["color-picker-cancel"] = function(event, target)
+    {
+      this.cancel_edit_color();
+    }.bind(this);
+
+    window.eventHandlers.click["color-picker-ok"] = function(event, target)
+    {
+      this.ondestroy();
+      window.element_style.update();
+    }.bind(this);
+
+    window.eventHandlers.click["show-color-picker-palette"] = function(event, target)
+    {
+      var dim = target.getBoundingClientRect();
+      this._ele.render(window.templates.color_picker_palette());
+    }.bind(this);
+  };
+
+  this._init(id, name, container_class);
+};
 
 window.cls.ColorPickerView.CSS_CLASS_TARGET = 'color-picker-target-element';
 
 window.cls.ColorPickerView.prototype = ViewBase;
 
-window.eventHandlers.click['show-color-picker'] = function(event, target)
-{
-  window.views['color-selector'].show_color_picker(event.target.get_ancestor(".color-swatch"));
-};

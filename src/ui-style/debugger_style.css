@@ -1026,20 +1026,6 @@ d
   margin: auto;
 }
 
-.color-picker
-{
-  display: table-cell;
-  vertical-align: top;
-  padding: 0 5px;
-}
-
-.color-picker pre
-{
-  margin: 0.8em 3em;
-  padding: 0;
-  text-align: left;
-}
-
 .outer-canvas-container
 {
   display: table;
@@ -1050,19 +1036,6 @@ d
 .canvas-container
 {
   position: relative;
-}
-
-.color-picker canvas
-{
-  display: block;
-}
-
-#color-picker-mask
-{
-  position: absolute;
-  top: 0;
-  left: 0;
-  cursor: crosshair;
 }
 
 .color-picker-stored-colors
@@ -1447,8 +1420,9 @@ d
 {
   border: 1px solid rgba(34, 34, 34, 0.4);
   display: block;
-  width: 8px;
-  height: 8px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .color-swatch:not(.non-interactive)

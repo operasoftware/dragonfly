@@ -149,7 +149,7 @@
     for (var prop = null, i = 0; prop = property_list[i]; i++)
     {
       value = prop[PROPERTY_VALUE];
-      esc_name = helpers.escapeTextHtml(prop[NAME]);
+      esc_name = helpers.escapeAttributeHtml(prop[NAME]);
       switch (type = prop[PROPERTY_TYPE])
       {
         case "number":
