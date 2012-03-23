@@ -391,7 +391,7 @@ var ErrorConsoleViewPrototype = function()
         var timedelta = Date.now() - this._rendertime;
         if (timedelta < MIN_RENDER_DELAY)
         {
-          this._render_timeout = window.setTimeout(this._create_delayed.bind(this), 
+          this._render_timeout = window.setTimeout(this._create_delayed_bound,
                                                    MIN_RENDER_DELAY - timedelta);
           return;
         }
@@ -520,6 +520,7 @@ var ErrorConsoleViewPrototype = function()
     this._expand_all_state = null;
     this._table_ele = null;
     this._on_before_search_bound = this._on_before_search.bind(this);
+    this._create_delayed_bound = this._create_delayed.bind(this);
     this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
   }
   
