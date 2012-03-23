@@ -64,7 +64,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'active window id does not exist, trying to select the first window instead');
-      if(this._window_list.length)
+      if(this._window_list && this._window_list.length)
       {
         this._active_window = this._window_list[0].window_id;
       }
