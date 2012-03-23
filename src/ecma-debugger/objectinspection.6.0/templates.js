@@ -153,7 +153,7 @@
     for (var prop = null, i = 0; prop = property_list[i]; i++)
     {
       value = prop[PROPERTY_VALUE];
-      esc_name = helpers.escapeTextHtml(prop[NAME]);
+      esc_name = helpers.escapeAttributeHtml(prop[NAME]);
       switch (type = prop[PROPERTY_TYPE])
       {
         case "number":
@@ -187,7 +187,7 @@
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
                         value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escapeAttributeHtml(value);
           if (short_val)
           {
             if (!searchterm ||
