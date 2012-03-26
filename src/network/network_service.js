@@ -729,7 +729,8 @@ cls.NetworkLoggerEntry.prototype = new function()
       // from the headers. See CORE-39597
       this.requestbody.mimeType = this.request_type;
     }
-    this.requesttime = event.time;
+    if (!this.requesttime)
+      this.requesttime = event.time;
   };
 
   this._update_event_requestretry = function(event)
