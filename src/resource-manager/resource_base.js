@@ -36,10 +36,10 @@ cls.ResourceDetailBase = function()
       }
       else if (child.nodeType == TEXT)
       {
-        var pos;
-        for (pos = 0; pos < child.nodeValue.length; pos++)
+        var value = child.nodeValue;
+        for (var pos = 0, len = value.length; pos < len; pos++)
         {
-          var c = child.nodeValue.charAt(pos);
+          var c = value.charAt(pos);
           // Linefeed recognition will not support Acorn BBC spooled text output 
           if ((c == CR ) || (c == LF))
           {
@@ -78,7 +78,7 @@ cls.ResourceDetailBase = function()
                 return;
               }
             }
-            if ((c == CR) && (child.nodeValue.charAt(pos+1) == LF))
+            if ((c == CR) && (value.charAt(pos+1) == LF))
             {
               pos++;
             }
