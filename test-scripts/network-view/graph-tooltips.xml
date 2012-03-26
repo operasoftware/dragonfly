@@ -85,6 +85,8 @@ graph_tooltip.ontooltip = _on_graph_tooltip;
 
 window.addEventListener("load", function()
 {
+  window.ini = {debug: !!~location.href.indexOf("debug")};
+
   var xhr = new XMLHttpRequest();
   xhr.onload = function()
   {
@@ -132,6 +134,25 @@ window.addEventListener("resize", test, false);
   0.31ms   Reading response body
   0.21ms   Processing response
   30.51ms  Duration
+</pre>
+<pre class="mono">
+<h3>3</h3>
+  0.12ms  Scheduling request
+  0.01ms  Writing request header
+  0.05ms  Writing request body
+  76.04ms Waiting for response
+  0.12ms  Reading response header
+  0.85ms  Processing
+  77.18ms Duration
+</pre>
+<pre class="mono">
+<h3>4</h3>
+  4.72ms   Scheduling request
+  0.03ms   Writing request header
+  0.05ms   Writing request body
+  98.67ms  Closing response phase
+  0.61ms   Processing response
+  104.08ms Duration
 </pre>
 <pre class="mono">
 <h3>9</h3>
