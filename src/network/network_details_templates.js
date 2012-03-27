@@ -192,10 +192,10 @@ templates.network_request_body = function(req)
   else // not multipart or form.
   {
     var tpl = [];
-    var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
     if (req.requestbody.content)
     {
-      switch(type)
+      var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
+      switch (type)
       {
         case "markup":
         case "script":
@@ -246,7 +246,7 @@ templates.network_response_body = function(resp)
       classname = "network_info";
       ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
     }
-    else if (!resp.responsebody) // todo: ideally this would only be on the last response, since that will always be retunred.
+    else if (!resp.responsebody)
     {
       classname = "network_info";
       ret.push(templates.network_detail_row(
@@ -266,17 +266,30 @@ templates.network_response_body = function(resp)
     }
     else
     {
-      if (["script", "markup", "css", "text"].contains(resp.logger_entry_type)) // todo: aren't mimes aren't always avalable here? maybe they are? because there are lists of textual mimes, wonder if they should be used here.
+      if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
       {
-        ret.push(templates.network_detail_row(["pre", resp.responsebody.content.stringData, "class", "network-body mono"]));
+        ret.push(
+          templates.network_detail_row(
+            ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
+          )
+        );
       }
       else if (resp.logger_entry_type == "image")
       {
-        ret.push(templates.network_detail_row(["img", "src", resp.responsebody.content.stringData, "class", "network-body"]));
+        ret.push(
+          templates.network_detail_row(
+            ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
+          )
+        );
       }
-      else // todo: font display
+      else
       {
-        ret.push(templates.network_detail_row(["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime), "class", "network-body"]));
+        ret.push(
+          templates.network_detail_row(
+            ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
+             "class", "network-body"]
+          )
+        );
       }
     }
   }

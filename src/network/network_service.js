@@ -665,8 +665,7 @@ cls.NetworkLoggerEntry.prototype = new function()
 
     this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
     this._humanize_url();
-    this._guess_type(); // may not be correct before mime is set, but will be guessed again when it is
-    // todo: _guess_type means guess response type, but could also be used on request type? because there is simlar code in the template..
+    this._guess_response_type(); // may not be correct before mime is set, but will be guessed again when it is
   };
 
   this._update_event_urlunload = function(event)
@@ -694,7 +693,7 @@ cls.NetworkLoggerEntry.prototype = new function()
       this._current_response._update_event_urlfinished(event);
 
     this.is_finished = true;
-    this._guess_type();
+    this._guess_response_type();
     this._humanize_url();
   };
 
@@ -772,7 +771,7 @@ cls.NetworkLoggerEntry.prototype = new function()
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
 
-    this._guess_type();
+    this._guess_response_type();
   };
 
   this._update_event_responsebody = function(event)
@@ -790,7 +789,7 @@ cls.NetworkLoggerEntry.prototype = new function()
     // this does not add any information, the event is only used to change the requestID
   };
 
-  this._guess_type = function()
+  this._guess_response_type = function()
   {
     if (!cls || !cls.ResourceUtil)
       return;

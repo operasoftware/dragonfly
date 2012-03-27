@@ -412,6 +412,7 @@
 .network_get_params td
 {
   padding: 0 4px;
+  vertical-align: top;
 }
 
 .network-tooltip-row

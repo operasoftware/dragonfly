@@ -314,7 +314,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.mode = DEFAULT;
     this.needs_instant_update = true;
     this.update();
-    // todo: the arrow keys don't scroll the main container after this was closed.
+    // the arrow keys don't scroll the main container after this was closed.
+    // dispatching a click event doesn't help either.
     return false;
   }.bind(this);
 

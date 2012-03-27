@@ -2,7 +2,8 @@
 
 (function(templates) {
 
-const MIN_BAR_WIDTH = 22; // todo: this is 16 + 6 padding from network-graph-sections-hitarea, should be done separately
+const MIN_BAR_WIDTH = 16;
+const SECTIONS_HITAREA_PADDING = 6;
 const TIMELINE_MARKER_WIDTH = 60;
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
@@ -128,13 +129,15 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
 templates.network_viewmode_graphs = function(ctx, selected, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH, width);
+  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING, width);
   var rows = templates.network_graph_rows(ctx, selected, width, basetime, duration);
 
   var template = [];
   if (duration)
   {
-    var stepsize = templates.grid_info(duration, width, (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH);
+    var stepsize = templates.grid_info(
+                     duration, width, (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING
+                   );
     var gridwidth = Math.round((width / duration) * stepsize);
     var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
 
@@ -479,7 +482,6 @@ templates.network_graph_entry_tooltip = function(entry)
   }
 }
 
-
 templates.grid_info = function(duration, width, padding)
 {
   if (duration > 0)
@@ -487,12 +489,11 @@ templates.grid_info = function(duration, width, padding)
     var draw_line_every = 150; // px
     var draw_lines = Math.round(width / draw_line_every);
     
-    var value = (duration / draw_lines).toPrecision(1); // this is the duration of one section
+    var value = (duration / draw_lines).toPrecision(1); // This is the duration of one section
     var val_in_px = width / duration * Number(value);
 
-    // if the last line comes too close to the edge, decrease the value until it fits.
-    // need to modify the actual ms value to keep it nice labels on the result,
-    // at least while it gets shown in ms
+    // If the last line comes too close to the edge, decrease the value until it fits. Need
+    // to modify the actual ms value to keep nice labels on the result as the are shown in ms
     while (width % (val_in_px * draw_lines) < padding)
     {
       value--;

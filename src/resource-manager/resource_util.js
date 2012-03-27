@@ -190,7 +190,7 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   return "text";
 }
 
-cls.ResourceUtil.mime_to_type = function(mime, extension)
+cls.ResourceUtil.mime_to_type = function(mime)
 {
   if (mime)
   {
