@@ -1,10 +1,12 @@
-﻿window.templates || (window.templates = {});
+﻿"use strict";
+
+window.templates || (window.templates = {});
 
 (function(templates) {
 
-const MIN_BAR_WIDTH = 16;
-const SECTIONS_HITAREA_PADDING = 6;
-const TIMELINE_MARKER_WIDTH = 60;
+var MIN_BAR_WIDTH = 16;
+var SECTIONS_HITAREA_PADDING = 6;
+var TIMELINE_MARKER_WIDTH = 60;
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
@@ -408,7 +410,7 @@ templates.network_graph_entry_tooltip = function(entry)
   if (!entry)
     return;
 
-  const height = 155;
+  var height = 155;
   var duration = entry.duration;
   var scale = height / duration;
   if (duration && entry.events)
@@ -426,7 +428,7 @@ templates.network_graph_entry_tooltip = function(entry)
                       ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
-    const LINEHEIGHT = 19;
+    var LINEHEIGHT = 19;
 
     var svg_width = 100.5;
     var x_start = 1.5;

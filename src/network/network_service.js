@@ -1,6 +1,4 @@
-﻿/**
- *
- */
+﻿"use strict";
 
 cls.NetworkLoggerService = function(view)
 {
@@ -147,7 +145,7 @@ cls.NetworkLoggerService = function(view)
 
   this.setup_content_tracking_bound = function()
   {
-    const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
+    var OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
     this._track_bodies = settings.network_logger.get("track-content");
 
     if (this._track_bodies)
