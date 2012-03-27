@@ -152,8 +152,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
 
     /*
-      hand-calculate network-url-list's width, so it only takes one rendering
-      #network-url-list { width: 40%; min-width: 230px; }
+      hand-calculate network-url-list-container's width, so it only takes one rendering
+      #network-url-list-container { width: 40%; min-width: 230px; }
     */
     var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width) * 0.4));
     var detail_width = parseInt(this._container.style.width) - url_list_width;

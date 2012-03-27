@@ -109,7 +109,7 @@ templates.network_log_main = function(ctx, selected, selected_viewmode, detail_w
   return [
     [
       "div", templates.network_log_url_list(ctx, selected, item_order),
-      "id", "network-url-list"
+      "id", "network-url-list-container"
     ],
     [
       "div", [
