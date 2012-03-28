@@ -405,7 +405,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
   return gradient_vals;
 };
 
-templates.network_graph_entry_tooltip = function(entry)
+templates.network_graph_entry_tooltip = function(entry, mono_lineheight)
 {
   if (!entry)
     return;
@@ -428,8 +428,7 @@ templates.network_graph_entry_tooltip = function(entry)
                       ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
-    var LINEHEIGHT = 19;
-
+    var lineheight = mono_lineheight + 4; // horizontal padding network_style.css, .network-tooltip-legend .time_data
     var svg_width = 100.5;
     var x_start = 1.5;
     var y_start = 0.5;
@@ -444,7 +443,7 @@ templates.network_graph_entry_tooltip = function(entry)
         var height = Math.round(row.val * scale);
         y_start = y_ref + (height / 2);
         y_ref += height;
-        y_end = (index * LINEHEIGHT) + (LINEHEIGHT / 2) + 0.5;
+        y_end = (index * lineheight) + (lineheight / 2) + 0.5;
         return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
       }
       return "";

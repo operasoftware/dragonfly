@@ -155,7 +155,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       hand-calculate network-url-list-container's width, so it only takes one rendering
       #network-url-list-container { width: 40%; min-width: 230px; }
     */
-    var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width) * 0.4));
+    var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width, 10) * 0.4));
     var detail_width = parseInt(this._container.style.width) - url_list_width;
 
     var ctx = this._service.get_request_context();
@@ -450,7 +450,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var ctx = this._service.get_request_context();
     this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
     var entry = ctx.get_entry(this._graph_tooltip_id);
-    var template = templates.network_graph_entry_tooltip(entry);
+    if (!this.mono_lineheight)
+      this._update_mono_lineheight();
+
+    var template = templates.network_graph_entry_tooltip(entry, this.mono_lineheight);
     this.graph_tooltip.show(template);
   }.bind(this);
 
@@ -489,6 +492,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
   }.bind(this);
 
+  this._update_mono_lineheight = function()
+  {
+    var ele = document.documentElement.render(["span", " ", "class", "mono"]);
+    this.mono_lineheight = parseInt(window.getComputedStyle(ele, null).lineHeight, 10);
+    document.documentElement.removeChild(ele);
+  }.bind(this);
+
   this.url_tooltip = Tooltips.register("network-url-list-tooltip", true, false);
   this.url_tooltip.ontooltip = this._on_url_tooltip_bound;
 
@@ -521,21 +531,29 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger")
+    switch (message.id)
     {
-      if (message.key === "pause")
+      case "monospacefont":
       {
-        var is_paused = this._service.is_paused();
-        var pause = settings.network_logger.get(message.key);
-        if (is_paused && !pause)
-          this._service.unpause();
-        else if (!is_paused && pause)
-          this._service.pause();
+        this.mono_lineheight = null;
+        break;
       }
-      if (message.key !== "detail-view-left-pos")
+      case "network_logger":
       {
-        this.needs_instant_update = true;
-        this.update();
+        if (message.key === "pause")
+        {
+          var is_paused = this._service.is_paused();
+          var pause = settings.network_logger.get(message.key);
+          if (is_paused && !pause)
+            this._service.unpause();
+          else if (!is_paused && pause)
+            this._service.pause();
+        }
+        if (message.key !== "detail-view-left-pos")
+        {
+          this.needs_instant_update = true;
+          this.update();
+        }
       }
     }
   }.bind(this);

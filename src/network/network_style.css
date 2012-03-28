@@ -448,15 +448,10 @@
   border-radius: 3px;
 }
 
-.network-tooltip-legend table td
-{
-  padding: 3px;
-}
-
 .network-tooltip-legend .time_data
 {
   text-align: right;
-  padding: 2px 8px 0 4px;
+  padding: 3px 8px 1px 4px; /* repeated in network_templates to calculate lineheight */
 }
 
 .network-tooltip-legend .event_name
