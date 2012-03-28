@@ -93,7 +93,7 @@ templates.network_incomplete_warning = function()
              ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN, "class", "text_handler", "handler", "turn-off-incomplete-warning"]
            ],
            ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"],
-         "class", "network_incomplete_warning"];
+         "class", "info-box network_incomplete_warning"];
 };
 
 templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order, table_template)

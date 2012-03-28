@@ -171,8 +171,7 @@
   white-space: nowrap;
 }
 
-.network_incomplete_warning,
-.info-box
+.network_incomplete_warning
 {
   line-height: 15px;
 }
