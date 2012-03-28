@@ -1258,8 +1258,7 @@ cst-select-option-list hr
   background-color: #ccc;
 }
 
-cst-option:hover,
-cst-option.hover
+cst-option:hover
 {
   background-color: #bbcef1;
   color: #000;

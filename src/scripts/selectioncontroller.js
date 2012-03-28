@@ -6,9 +6,9 @@
 
   /* private */
 
-  var selectable = null;
-  var start_node = null;
-  var start_offset = 0;
+  var _selectable = null;
+  var _start_node = null;
+  var _start_offset = 0;
 
   const RE_TEXT_INPUTS = GlobalActionHandler.RE_TEXT_INPUTS;
 
@@ -16,11 +16,12 @@
   {
     var target = event.target;
     if (target.nodeName.toLowerCase() == "textarea" ||
+        target.nodeName.toLowerCase() == "select" ||
         (target.nodeName.toLowerCase() == "input" && 
          RE_TEXT_INPUTS.test(target.type)))
       return;
 
-    if (selectable = is_selectable(event.target))
+    if (_selectable = is_selectable(event.target))
     {
       this.addEventListener('mousemove', mousemove, false);
       this.addEventListener('mouseup', mouseup, false);
@@ -30,7 +31,7 @@
       event.preventDefault();
     }
 
-    start_node = null;
+    _start_node = null;
   };
 
   var mousemove = function()
@@ -38,26 +39,30 @@
     var sel = getSelection();
     if (sel && !sel.isCollapsed)
     {
-      if (!start_node)
+      if (!_start_node)
       {
-        start_node = sel.anchorNode;
-        start_offset = sel.anchorOffset;
+        _start_node = sel.anchorNode;
+        _start_offset = sel.anchorOffset;
       }
 
       var range = sel.getRangeAt(0);
-      if (range && !selectable.contains(range.commonAncestorContainer))
+      if (range && !_selectable.contains(range.commonAncestorContainer))
       {
         if (sel.anchorNode == range.startContainer)
         {
-          var last = selectable.lastChild;
-          range.setEnd(last, last.nodeType == 3 ?
-                             last.nodeValue.length :
-                             last.childNodes.length);
+          var last = _selectable.lastChild;
+          if (last)
+            range.setEnd(last, last.nodeType == 3 ?
+                               last.nodeValue.length :
+                               last.childNodes.length);
         }
         else
         {
-          range.setStart(selectable.firstChild, 0);
-          range.setEnd(start_node, start_offset);
+          if (_selectable.firstChild)
+          {
+            range.setStart(_selectable.firstChild, 0);
+            range.setEnd(_start_node, _start_offset);
+          }
         }
         sel.removeAllRanges();
         sel.addRange(range);

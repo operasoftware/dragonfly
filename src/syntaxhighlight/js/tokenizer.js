@@ -867,7 +867,9 @@ cls.SimpleJSParser.prototype = new function()
         {
           if(__parse_error_first_token)
           {
-            __line = "<div class='error-description'>" + __parse_error_description + "</div>" +
+            __line = "<div class='error-description'>" + 
+                        helpers.escapeTextHtml(__parse_error_description) + 
+                        "</div>" +
                         "<span class='not-error'>" +  __line + "</span>" +
                         "<span class='first-error'>" +  __buffer + "</span>";
             __parse_error_first_token = false;

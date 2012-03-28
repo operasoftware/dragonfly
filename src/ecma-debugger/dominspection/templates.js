@@ -375,6 +375,7 @@
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
+          node_name = helpers.escapeTextHtml(node_name);
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
@@ -644,6 +645,7 @@
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
+          node_name = helpers.escapeTextHtml(node_name);
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();

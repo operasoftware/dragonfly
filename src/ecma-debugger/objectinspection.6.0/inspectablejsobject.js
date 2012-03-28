@@ -258,28 +258,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         class_name = proto[VALUE][CLASS_NAME];
         property_list = proto[PROPERTY_LIST];
         if (property_list)
-        {
-          if (/Array|Collection|List/.test(class_name))
-          {
-            items = [];
-            attributes = [];
-            for (i = 0; cursor = property_list[i]; i++)
-            {
-              if (re_d.test(cursor[NAME]))
-              {
-                cursor[PROPERTY_ITEM] = parseInt(cursor[NAME]);
-                items.push(cursor);
-              }
-              else
-                attributes.push(cursor);
-            }
-            items.sort(this._sort_item);
-            attributes.sort(this._sort_name);
-            proto[PROPERTY_LIST] = items.concat(attributes);
-          }
-          else
-            proto[PROPERTY_LIST].sort(this._sort_name);
-        }
+          proto[PROPERTY_LIST].sort(this._sort_name);
+
         if (i == 0 && obj_id == this._obj_id && this._virtual_props)
         {
           const NAME = 0, ARGS = "arguments";
@@ -321,14 +301,16 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this._sort_name = function(a, b)
   {
-    const NAME = 0;
-    return a[NAME] < b[NAME] ? -1 : a[NAME] > b[NAME] ? 1 : 0;
-  };
-
-  this._sort_item = function(a, b)
-  {
-    const PROPERTY_ITEM = 4;
-    return a[PROPERTY_ITEM] < b[PROPERTY_ITEM] ? -1 : a[PROPERTY_ITEM] > b[PROPERTY_ITEM] ? 1 : 0;
+    var NAME = 0;
+    var re_n = /^\d+$/;
+    a = a[NAME];
+    b = b[NAME];
+    if (re_n.test(a) && re_n.test(b))
+    {
+      a = Number(a);
+      b = Number(b);
+    }
+    return a < b ? -1 : (a > b ? 1 : 0);
   };
 
   this._get_all_ids = function get_all_ids(tree, ret)
