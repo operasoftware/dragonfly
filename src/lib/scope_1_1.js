@@ -70,11 +70,15 @@ cls.Scope["1.1"].Service = function()
       }
       if(all_enabled)
       {
+        // TODO depracte
+        // 'profile-enabled' instead
         window.app.post('services-enabled');
+        // TODO remove?
         if (window.app.on_services_enabled)
         {
           window.app.on_services_enabled();
         }
+        // TODO remove?
         if (this._on_services_enabled_callback)
         {
           this._on_services_enabled_callback();
