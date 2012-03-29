@@ -8,13 +8,15 @@ window.cls = window.cls || {};
  */
 cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 {
+  var MIN_RENDER_DELAY = 200;
+
   this._service = new cls.NetworkLoggerService(this);
   this._container_scroll_top = 0;
   this._details_scroll_top = 0;
   this._details_scroll_left = 0;
   this._selected = null;
   this._rendertime = 0;
-  this._rendertimer = null;
+  this._render_timeout = 0;
   this._graph_tooltip_id = null;
   this.needs_instant_update = false;
 
@@ -24,21 +26,26 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this.createView = function(container)
   {
-    var min_render_delay = 200;
-    var timedelta = new Date().getTime() - this._rendertime;
-    if (this._rendertimer)
-      this._rendertimer = window.clearTimeout(this._rendertimer);
-
-    if (!this.needs_instant_update && timedelta < min_render_delay)
+    if (!this.needs_instant_update)
     {
-      this._rendertimer = window.setTimeout(this._create.bind(this), min_render_delay);
-      return;
+      if (this._render_timeout)
+      {
+        return;
+      }
+      else
+      {
+        var timedelta = Date.now() - this._rendertime;
+        if (timedelta < MIN_RENDER_DELAY)
+        {
+          this._render_timeout = window.setTimeout(this._create_delayed_bound,
+                                                   MIN_RENDER_DELAY - timedelta);
+          return;
+        }
+      }
     }
-    if (this.needs_instant_update)
-      this.needs_instant_update = false;
-    this._rendertime = new Date().getTime();
-
-    this._container = container;
+    this.needs_instant_update = false;
+    if (container)
+      this._container = container;
 
     // the query_selector for the mode needs to be set even when there is currently no query.
     if (this.mode == DETAILS)
@@ -55,7 +62,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       this._create();
     }
-    this._rendertime = new Date().getTime();
+    this._rendertime = Date.now();
   }
 
   this._create = function()
@@ -73,9 +80,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this._render_click_to_fetch_view(this._container);
     }
   };
-  this._update_bound = this.update.bind(this);
 
-  this.onresize = this.createView;
+  this._create_delayed_bound = function()
+  {
+    this._render_timeout = 0;
+    this.update();
+  }.bind(this);
+
+  this.onresize = function()
+  {
+    this.needs_instant_update = true;
+    this.update();
+  }.bind(this);
 
   this._on_before_search_bound = function(message)
   {
@@ -194,7 +210,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
                             rendered : rendered.firstChild;
       outer_container.scrollTop = this._container_scroll_top;
     }
-
   }.bind(this);
 
   this._tabledef = {
@@ -308,7 +323,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }
       }
     }
-  }
+  };
 
   this._on_clicked_close_bound = function(evt, target)
   {
@@ -576,7 +591,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   }.bind(this);
 
   var eh = window.eventHandlers;
-  // fixme: this is in the wrong place!
+
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
   eh.mouseout["select-network-request"] = this._on_mouseout_entry_bound;
