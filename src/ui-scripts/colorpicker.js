@@ -75,6 +75,7 @@ ColorPicker.prototype = new function()
       if (target_value)
       {
         var value = "";
+        // Special handle hex since we're inserting a "#" in _update_inputs()
         if (target.name === "hex" && target.value[0] === "#")
         {
           target_value = target_value.slice(1);
@@ -107,7 +108,6 @@ ColorPicker.prototype = new function()
         this._update_inputs(event.target.name);
         this._update_xy_graphic();
         this._update_xy_slider();
-        this._update_xy_slider_color();
         this._update_z_graphic();
         this._update_z_slider();
         this._update_sample_color();
@@ -169,7 +169,6 @@ ColorPicker.prototype = new function()
     this._set_cs_coordinates();
     this._cb_color.clone(this._cs);
     this._update_inputs();
-    this._update_xy_slider_color();
     this._update_z_graphic();
     this._update_sample_color();
     this._cb(this._cb_color);
@@ -183,7 +182,6 @@ ColorPicker.prototype = new function()
     this._cb_color.clone(this._cs);
     this._update_inputs();
     this._update_xy_graphic();
-    this._update_xy_slider_color();
     this._update_sample_color();
     this._cb(this._cb_color);
   }
@@ -224,7 +222,6 @@ ColorPicker.prototype = new function()
         input.value = this._verify_inputs[input.name].max == 1 ?
                       this._cs[input.name].toFixed(3) :
                       this._cs[input.name];
-
       }
 
       if (input.name === "hex")
@@ -245,20 +242,6 @@ ColorPicker.prototype = new function()
     this._xy_slider.y = this._cur_y;
   }
 
-  // update the color of the slider for the x-y axes
-  this._update_xy_slider_color = function()
-  {
-    // TODO: remove?
-    return;
-    var gray_value = this._cs.xyz(this._cur_x,
-                                  this._cur_y,
-                                  this._cur_z).getGrayValue() / 255;
-    this._ele_xy_slider.setAttribute('stroke',
-                                      gray_value > .3 ?
-                                     'hsl(0, 0%, 20%)' :
-                                     'hsl(0, 0%, 80%)');
-  }
-
   // update the sample color
   this._update_sample_color = function()
   {
@@ -273,7 +256,6 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_xy_graphic();
     this._update_xy_slider();
-    this._update_xy_slider_color();
     this._update_z_graphic();
     this._update_z_slider();
     this._update_sample_color();
@@ -404,7 +386,6 @@ ColorPicker.prototype = new function()
         container: ele_xy,
         slider_base_class: SLIDER_BASE_CLASS,
         slider_class: POINTER_CLASS,
-        slider_template: window.templates.svg_slider_circle(),
         onxy: this._onxy.bind(this),
         min_x: 0,
         max_x: 1,
