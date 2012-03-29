@@ -30,6 +30,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     }
     else
     {
+      context.current_color = color;
       if (!this._color_notation)
         this._color_notation = this._get_color_notation();
       context.ele_value.firstChild.textContent = window.helpers.get_color_in_notation(color.rgba, this._color_notation);
@@ -65,10 +66,10 @@ window.cls.ColorPickerView = function(id, name, container_class)
   /* implementation */
   this.createView = function(container)
   {
-    var color_picker = new ColorPicker(this._color_cb_bound,
-                                       this._edit_context.initial_color);
+    this._color_picker = new ColorPicker(this._color_cb_bound,
+                                         this._edit_context.initial_color);
     container.style.visibility = "hidden";
-    container.render(color_picker.render());
+    container.render(this._color_picker.render());
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
@@ -94,9 +95,11 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var property = property_ele && property_ele.textContent;
     var value = value_ele && value_ele.textContent;
     var color_value = parent.textContent;
+    var initial_color = new Color().parseCSSColor(color_value);
 
     this._edit_context = edit_context || {
-      initial_color: new Color().parseCSSColor(color_value),
+      initial_color: initial_color,
+      current_color: initial_color,
       ele_value: parent,
       ele_color_swatch: target,
       prop_name: property,
@@ -139,7 +142,10 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this._hide_on_outside_click = function(event)
   {
-    if (!event.target.get_ancestor("." + ELE_CLASS))
+    if (ContextMenu.get_instance().is_visible)
+      return;
+
+    if (!(event.target.get_ancestor("." + ELE_CLASS) || event.target.get_ancestor(".color-picker-palette")))
     {
       this.ondestroy();
       // Clicking directly on a new color swatch should work
@@ -207,10 +213,16 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
+    this._color_picker = null;
     this._edit_context = null;
     this._color_notation = null;
     this._ele = null;
     this._is_opened = false;
+    this._tooltip = Tooltips.register("color-palette", true);
+
+    this._tooltip.ontooltip = function(event, target) {
+      this.show(window.templates.color_picker_palette());
+    };
 
     window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
 
@@ -230,17 +242,42 @@ window.cls.ColorPickerView = function(id, name, container_class)
       window.element_style.update();
     }.bind(this);
 
-    window.eventHandlers.click["show-color-picker-palette"] = function(event, target)
+    window.eventHandlers.click["set-color-picker-color"] = function(event, target)
     {
-      var dim = target.getBoundingClientRect();
-      this._ele.render(window.templates.color_picker_palette());
+      this._color_picker.update(target.getAttribute("data-color"));
     }.bind(this);
+
+    window.eventHandlers.click["add-color-picker-color"] = function(event, target)
+    {
+      cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
+      target.get_ancestor(".color-picker-palette").parentNode.clearAndRender(window.templates.color_picker_palette());
+    }.bind(this);
+
+    var menu = [
+      {
+        callback: function(event, target) {
+          if (target.get_ancestor(".color-picker-palette-item"))
+          {
+            return {
+              label: ui_strings.M_CONTEXTMENU_DELETE_COLOR,
+              handler: function(event, target) {
+                var list_item = event.target.has_attr("parent-node-chain", "data-color-id");
+                var color_id = list_item && Number(list_item.getAttribute('data-color-id'));
+                if (color_id && cls.ColorPalette.get_instance().delete_color(color_id))
+                  list_item.parentNode.removeChild(list_item);
+              }
+            }
+          }
+        }
+      }
+    ];
+    ContextMenu.get_instance().register("color-picker-palette", menu);
   };
 
   this._init(id, name, container_class);
 };
 
-window.cls.ColorPickerView.CSS_CLASS_TARGET = 'color-picker-target-element';
+window.cls.ColorPickerView.CSS_CLASS_TARGET = "color-picker-target-element";
 
 window.cls.ColorPickerView.prototype = ViewBase;
 

@@ -43,7 +43,7 @@ ColorPicker.prototype = new function()
     r: {min:0, max: 255, last: 0, base: 10},
     g: {min:0, max: 255, last: 0, base: 10},
     b: {min:0, max: 255, last: 0, base: 10},
-    hhex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
+    hex: {min:0, max: 0xFFFFFF, last: 0, base: 16},
     alpha: {min:0, max: 1, last: 0, base: 10},
   }
 
@@ -71,13 +71,32 @@ ColorPicker.prototype = new function()
     {
       var target = event.target;
       var verifier = this._verify_inputs[target.name];
-      if (target.value)
+      var target_value = target.value;
+      if (target_value)
       {
-        var value = this._verify(target.value, verifier);
+        var value = "";
+        if (target.name === "hex" && target.value[0] === "#")
+        {
+          target_value = target_value.slice(1);
+          if (target_value === "")
+          {
+            target_value = verifier.min;
+            value = "";
+          }
+          else
+          {
+            value = this._verify(target_value, verifier);
+          }
+        }
+        else
+        {
+          value = this._verify(target_value, verifier);
+        }
+
         this._cs[target.name] = value;
         if (verifier.max == 1)
         {
-          if (value.toString().length > 5 || value != target.value)
+          if (value.toString().length > 5 || value != target_value)
             target.value = value.toFixed(3)
         }
         else
@@ -205,7 +224,11 @@ ColorPicker.prototype = new function()
         input.value = this._verify_inputs[input.name].max == 1 ?
                       this._cs[input.name].toFixed(3) :
                       this._cs[input.name];
+
       }
+
+      if (input.name === "hex")
+        input.value = "#" + input.value;
     }
   }
 
@@ -365,7 +388,7 @@ ColorPicker.prototype = new function()
       {
         return ['h', 's', 'v',
                 'r', 'g', 'b',
-                'hhex',
+                'hex',
                 'alpha'].indexOf(input.name) != -1;
       });
       this._ele_sample_color =
@@ -418,6 +441,17 @@ ColorPicker.prototype = new function()
                                                CP_1D_CLASS, CP_OLD_CLASS,
                                                CP_NEW_CLASS, 'h')
   }
+
+  this.update = function(color_value)
+  {
+    if (color_value)
+    {
+      this._cs.setHex(color_value);
+      this._cb_color.clone(this._cs);
+      this._update();
+      this._cb(this._cb_color);
+    }
+  };
 
   /* instatiation */
   this._init = function(cb, color)

@@ -281,7 +281,7 @@
           'class', cp_1d_class
         ],
         window.templates.color_picker_inputs(z_axis),
-        ["input", "name", "hhex", "class", "color-picker-text"],
+        ["input", "name", "hex", "class", "color-picker-text"],
         ["div",
           ['div',
             'class', cp_old_class,
@@ -314,16 +314,32 @@
   {
     if (window.cls && cls.ColorPalette)
     {
-      var palette = cls.ColorPalette.get_instance().get_color_palette();
-      var item = palette[0];
+      var MAX_PALETTE_ITEMS = 16;
+      var palette = cls.ColorPalette.get_instance().get_color_palette().slice(0, MAX_PALETTE_ITEMS);
+      var colors = palette.map(function(item) { return item.color; });
+      // Show 16 small squares with palette colors (possibly repeated)
+      for (var i = 0; colors.length < MAX_PALETTE_ITEMS; i++)
+      {
+        colors.push(colors[i % MAX_PALETTE_ITEMS]);
+      }
+
       return ([
         "div",
-        "style", "background-color: #" + item.color,
+          colors.map(this.color_palette_mosaic_item),
         "class", "color-picker-palette-dropdown color-picker-palette-item",
-        "handler", "show-color-picker-palette"
+        "data-tooltip", "color-palette"
       ]);
     }
     return [];
+  };
+
+  this.color_palette_mosaic_item = function(color)
+  {
+    return [
+      "span",
+      "style", "background-color: #" + color,
+      "class", "color-palette-mosaic-item"
+    ];
   };
 
   this.color_picker_palette = function()
@@ -333,21 +349,35 @@
       var palette = cls.ColorPalette.get_instance().get_color_palette();
       return (
       ['div',
+        this.color_picker_palette_item_add(),
         palette.map(this.color_picker_palette_item, this),
-        'class', 'color-picker-palette']);
+       'class', 'color-picker-palette',
+       'data-menu', 'color-picker-palette'
+      ]);
     }
     return [];
   };
+
+  this.color_picker_palette_item_add = function()
+  {
+    return ([
+      "span",
+        "+",
+      "handler", "add-color-picker-color",
+      "class", "color-picker-palette-item color-picker-palette-item-add"
+    ]);
+  }
 
   this.color_picker_palette_item = function(item)
   {
     return (
     ['span',
       'data-color', item.color,
+      'data-color-id', String(item.id),
+      'handler', 'set-color-picker-color',
       'style', 'background-color: #' + item.color,
       'class', 'color-picker-palette-item']);
   }
-
 
   this.svg_slider_z = function(rotate)
   {
