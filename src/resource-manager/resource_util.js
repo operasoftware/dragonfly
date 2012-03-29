@@ -220,27 +220,26 @@ cls.ResourceUtil.url_host = function(url)
 
 cls.ResourceUtil.header_presets = [
   {name: ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE, headers: ""},
-  {name: "Chrome 12", headers:
+  {name: "Chrome 18", headers:
     [
+      "Connection: keep-alive",
+      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.142 Safari/535.19",
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3",
       "Accept-Encoding: gzip,deflate,sdch",
       "Accept-Language: en-US,en;q=0.8",
-      "Connection: keep-alive",
-      "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.124 Safari/534.30",
+      "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3",
     ].join("\n")
   },
-  {name: "Firefox 5", headers:
+  {name: "Firefox 11", headers:
     [
+      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0",
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7",
+      "Accept-Language: en-us,en;q=0.5",
       "Accept-Encoding: gzip,deflate",
-      "Accept-Language: en-gb,en;q=0.5",
       "Connection: keep-alive",
-      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:5.0.1) Gecko/20100101 Firefox/5.0.1",
     ].join("\n")
   },
-  {name: "IE8 (compatibility mode)", headers:
+  {name: "IE8 (compatibility mode)", headers: // todo: needed?
     [
       "Accept: */*",
       "Accept-Encoding: gzip, deflate",
@@ -249,7 +248,7 @@ cls.ResourceUtil.header_presets = [
       "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/4.0; chromeframe; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; MDDC; .NET CLR 3.5.30729; .NET CLR 1.1.4322; .NET CLR 3.0.30729; .NET4.0C)",
     ].join("\n")
   },
-  {name: "IE8", headers:
+  {name: "IE8", headers: // todo: update needed?
     [
       "Accept: image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/vnd.ms-xpsdocument, application/xaml+xml, application/x-ms-xbap, application/x-shockwave-flash, */*",
       "Accept-Encoding: gzip, deflate",
@@ -260,44 +259,44 @@ cls.ResourceUtil.header_presets = [
   },
   {name: "IE9", headers:
     [
-      "Accept: image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/vnd.ms-xpsdocument, application/xaml+xml, application/x-ms-xbap, application/x-shockwave-flash, */*",
-      "Accept-Encoding: gzip, deflate",
+      "Accept: text/html, application/xhtml+xml, */*",
       "Accept-Language: en-gb",
+      "User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+      "Accept-Encoding: gzip, deflate",
       "Connection: Keep-Alive",
-      "User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
     ].join("\n")
   },
-  {name: "Opera 11.50", headers:
+  {name: "Opera 11.62 on Mac OS 10.7", headers:
     [
+      "User-Agent: Opera/9.80 (Macintosh; Intel Mac OS X 10.7.3; U; en) Presto/2.10.229 Version/11.62",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-      "Accept-Encoding: gzip, deflate",
       "Accept-Language: en-gb,en;q=0.9",
-      "User-Agent: Opera/9.80 (Windows NT 6.0; U; en-GB) Presto/2.9.168 Version/11.50",
-    ].join("\n")
-  },
-  {name: "Safari 5", headers:
-    [
-      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
       "Accept-Encoding: gzip, deflate",
-      "Accept-Language: en-us",
-      "Connection: keep-alive",
-      "User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1",
+      "Connection: Keep-Alive",
     ].join("\n")
   },
-  {name: "Opera Mini 6.0 on iPhone", headers:
+  {name: "Safari 5.1.5", headers:
     [
-      "User-Agent: Opera/9.80 (iPhone; Opera Mini/6.0.0.12542/25.351; U; en) Presto/2.5.25 Version/10.54",
-      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-      "Accept-Language: en-US,en;q=0.9",
-      "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
+      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
+      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language: en-us",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: keep-alive",
+    ].join("\n")
+  },
+  {name: "Opera Mini 7.0.1 on iPhone", headers:
+    [
+      "User-Agent: Opera/9.80 (iPhone; Opera Mini/7.1.32694/27.1366; U; en) Presto/2.8.119 Version/11.10",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en",
       "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
       "Connection: Keep-Alive",
-      "x-operamini-features: advanced, download, touch, viewport",
-      "x-operamini-phone: Apple # iPhone",
-      "x-operamini-phone-ua: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_1 like Mac OS X; en-us)"
+      "X-OperaMini-Features: advanced, download, file_system, touch, viewport, routing",
+      "X-OperaMini-Phone: Apple # iPhone",
+      "x-operamini-phone-ua: Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1 like Mac OS X; en-us)"
     ].join("\n")
   },
-  {name: "Opera Mini 6.0 on Nokia 6300", headers:
+  {name: "Opera Mini 6.0 on Nokia 6300", headers: // todo: update me
     [
       "User-Agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
@@ -310,14 +309,16 @@ cls.ResourceUtil.header_presets = [
       "x-operamini-phone-ua: Nokia6300/2.0 (07.21) Profile/MIDP-2.0 Configuration/CLDC-1.1"
     ].join("\n")
   },
-  {name: "Mobile Safari on iOS 4", headers:
+  {name: "Mobile Safari on iOS 5, iPhone (hi-res)", headers:
     [
-      "User-Agent: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5",
-      "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B176 Safari/7534.48.3",
+      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language: en-us",
       "Accept-Encoding: gzip, deflate",
+      "Connection: keep-alive",
     ].join("\n")
   },
-  {name: "Android 2.3.3", headers:
+  {name: "Android 2.3.3", headers: // todo: possibly update to 2.3.7
     [
       "Connection: keep-alive",
       "Accept-Encoding: gzip",
