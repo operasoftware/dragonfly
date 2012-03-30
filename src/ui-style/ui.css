@@ -631,7 +631,9 @@ toolbar-filters .ui-button.search-move-highlight-down
 
 filter,
 .advanced-search,
-.js-dd-filter-container
+.js-dd-filter-container,
+.color-picker-number,
+.color-picker-text
 {
   margin: 0 2px;
   padding-left: 20px;
@@ -639,10 +641,17 @@ filter,
   line-height: 19px;
   border: 1px solid #8e8e8e;
   border-radius: 3px;
-  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
   box-shadow: 0 1px #fff,
               inset 0 1px 1px #d5d5d5;
 }
+
+filter,
+.advanced-search,
+.js-dd-filter-container
+{
+  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
+}
+
 
 filter
 {
