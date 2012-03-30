@@ -173,15 +173,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     {
       on_services_created(service_descriptions);
     }
-    for (service_name in service_descriptions)
-    {
-      if(service_name in window.services &&
-            window.services[service_name].is_implemented &&
-            service_name != "scope")
-      {
-        window.services['scope'].requestEnable(0,[service_name]);
-      }
-    }
+
+    window.services.scope.enable_profile(window.app.profiles.DEFAULT);
   }
 
   var create_raw_interface = function(service_name)

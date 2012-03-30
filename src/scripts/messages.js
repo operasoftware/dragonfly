@@ -131,6 +131,11 @@
  *     <dt>panel-search-executed</dt>
  *     <dd>A new search in a search panel has been executed and the according result is displayed in the panel.</dd>
  *
+ *     <dt>profile-enabled</dt>
+ *     <dd>A profile has been enabled. Payload: msg.profile, msg.services.</dd>
+ *
+ *     <dt>profile-disabled</dt>
+ *     <dd>A profile has been disabled. Payload: msg.profile, msg.services.</dd>
  * </dl>
  *
  */
