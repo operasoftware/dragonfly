@@ -1413,7 +1413,7 @@ d
                                        #c8c8c8 0);
   background-position: 1px 1px, 5px 5px;
   background-size: 4px;
-  vertical-align: -1px;
+  vertical-align: -1px; /* Should really be middle, but most often this looks better */
 }
 
 .color-swatch-fg-color

@@ -13,26 +13,16 @@
 
 window.cls.Helpers = function()
 {
+  var SELECTED_CLASS = "selected";
 
   this.setSelected = function(ele)
   {
-    var parent = ele.parentNode;
-    var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
-    for( ; sibling = siblings[i]; i++)
-    {
-      if( sibling.parentElement == parent )
-      {
-        if(sibling == ele) 
-        {
-          sibling.addClass('selected'); 
-        }
-        else
-        {
-          sibling.removeClass('selected'); 
-        }
-      }
-    }
-  }
+    var container = ele.get_ancestor("container") || ele.parentNode;
+    var selected = container.querySelector("." + SELECTED_CLASS);
+    if (selected)
+      selected.removeClass(SELECTED_CLASS);
+    ele.addClass(SELECTED_CLASS);
+  };
 
   /**
    * Return the filename of the script with `script_id`.

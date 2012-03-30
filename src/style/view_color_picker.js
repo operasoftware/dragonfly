@@ -73,7 +73,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
-    this._is_opened = true;
+    this.is_opened = true;
   };
 
   this.ondestroy = function()
@@ -83,7 +83,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     window.removeEventListener("click", this._hide_on_outside_click, true);
     this._edit_context = null;
     this._ele = null;
-    this._is_opened = false;
+    this.is_opened = false;
   };
 
   this.show_color_picker = function(target, edit_context)
@@ -96,6 +96,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var value = value_ele && value_ele.textContent;
     var color_value = parent.textContent;
     var initial_color = new Color().parseCSSColor(color_value);
+
+    window.helpers.setSelected(target.get_ancestor(".css-declaration"));
 
     this._edit_context = edit_context || {
       initial_color: initial_color,
@@ -131,7 +133,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this.cancel_edit_color = function()
   {
-    if (this._is_opened)
+    if (this.is_opened)
     {
       this._color_cb_bound(this._edit_context.initial_color);
       this.ondestroy();
@@ -145,7 +147,10 @@ window.cls.ColorPickerView = function(id, name, container_class)
     if (ContextMenu.get_instance().is_visible)
       return;
 
-    if (!(event.target.get_ancestor("." + ELE_CLASS) || event.target.get_ancestor(".color-picker-palette")))
+    if (!(event.target.get_ancestor("." + ELE_CLASS) ||
+          event.target.get_ancestor(".color-picker-palette") ||
+          event.target.get_ancestor(".tooltip-container"))
+    )
     {
       this.ondestroy();
       // Clicking directly on a new color swatch should work
@@ -213,11 +218,11 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
+    this.is_opened = false;
     this._color_picker = null;
     this._edit_context = null;
     this._color_notation = null;
     this._ele = null;
-    this._is_opened = false;
     this._tooltip = Tooltips.register("color-palette", true);
 
     this._tooltip.ontooltip = function(event, target) {
@@ -256,13 +261,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var menu = [
       {
         callback: function(event, target) {
-          if (target.get_ancestor(".color-picker-palette-item"))
+          if (target.get_ancestor("[data-color-id]"))
           {
             return {
               label: ui_strings.M_CONTEXTMENU_DELETE_COLOR,
               handler: function(event, target) {
                 var list_item = event.target.has_attr("parent-node-chain", "data-color-id");
-                var color_id = list_item && Number(list_item.getAttribute('data-color-id'));
+                var color_id = list_item && Number(list_item.getAttribute("data-color-id"));
                 if (color_id && cls.ColorPalette.get_instance().delete_color(color_id))
                   list_item.parentNode.removeChild(list_item);
               }

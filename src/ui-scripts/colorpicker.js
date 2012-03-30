@@ -70,42 +70,48 @@ ColorPicker.prototype = new function()
     if (event.target.name in this._verify_inputs && event.target.value)
     {
       var target = event.target;
-      var verifier = this._verify_inputs[target.name];
       var target_value = target.value;
       if (target_value)
       {
+        var verifier = this._verify_inputs[target.name];
         var value = "";
+
         // Special handle hex since we're inserting a "#" in _update_inputs()
-        if (target.name === "hex" && target.value[0] === "#")
+        // and onblur()
+        var cursor_pos;
+        var do_verification = true;
+        if (target.name === "hex")
         {
-          target_value = target_value.slice(1);
+          cursor_pos = target.selectionStart + 1;
+          target_value = target_value.replace(/[^0-9a-f]/ig, function() {
+            cursor_pos--;
+            return "";
+          }).slice(0, 6).toUpperCase();
+
           if (target_value === "")
           {
             target_value = verifier.min;
             value = "";
-          }
-          else
-          {
-            value = this._verify(target_value, verifier);
+            do_verification = false;
           }
         }
-        else
-        {
+
+        if (do_verification)
           value = this._verify(target_value, verifier);
-        }
 
         this._cs[target.name] = value;
         if (verifier.max == 1)
         {
           if (value.toString().length > 5 || value != target_value)
-            target.value = value.toFixed(3)
+            target.value = value.toFixed(3);
         }
         else
           target.value = value;
         this._set_coordinates();
-        this._set_cs_coordinates();
         this._cb_color.clone(this._cs);
         this._update_inputs(event.target.name);
+        if (target.name === "hex" && cursor_pos !== undefined)
+          target.selectionStart = target.selectionEnd = cursor_pos;
         this._update_xy_graphic();
         this._update_xy_slider();
         this._update_z_graphic();
@@ -146,11 +152,12 @@ ColorPicker.prototype = new function()
   {
     if (event.target.name in this._verify_inputs)
     {
+      var prefix = (target.name === "hex") ? "#" : "";
       var target = event.target;
       var verifier = this._verify_inputs[target.name];
       var value = this._verify(target.value, verifier);
       if (value != target.value || !target.value)
-        target.value = verifier.max == 1 ? value.toFixed(3) : value;
+        target.value = prefix + (verifier.max == 1 ? value.toFixed(3) : value);
     }
   }
 
@@ -201,7 +208,6 @@ ColorPicker.prototype = new function()
       this._ele_sample_color = null;
       this._ele_sample_color_solid = null;
       this._ele_z_graphic = null;
-      this._ele_xy_slider = null;
       this._xy_slider = null;
       this._z_slider = null;
       this._2d_ctx = null;
@@ -365,14 +371,15 @@ ColorPicker.prototype = new function()
     if (this._ele)
     {
       document.removeEventListener('DOMNodeInserted', this._setup_bound, false);
-      this._ele_inputs = Array.prototype.slice.call
-      (this._ele.getElementsByTagName('input')).filter(function(input)
-      {
-        return ['h', 's', 'v',
-                'r', 'g', 'b',
-                'hex',
-                'alpha'].indexOf(input.name) != -1;
-      });
+      this._ele_inputs = Array.prototype.slice.call(
+        this._ele.getElementsByTagName('input')).filter(function(input)
+        {
+          return ['h', 's', 'v',
+                  'r', 'g', 'b',
+                  'hex',
+                  'alpha'].indexOf(input.name) != -1;
+        }
+      );
       this._ele_sample_color =
         this._ele.getElementsByClassName(CP_NEW_CLASS)[0];
       var ele_xy = this._ele.getElementsByClassName(CP_2D_CLASS)[0];
@@ -392,7 +399,6 @@ ColorPicker.prototype = new function()
         min_y: 1,
         max_y: 0
       });
-      this._ele_xy_slider = ele_xy.getElementsByTagName('circle')[0];
       this._z_slider = new Slider(
       {
         container: ele_z,
