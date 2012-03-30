@@ -239,7 +239,16 @@ cls.ResourceUtil.header_presets = [
       "Connection: keep-alive",
     ].join("\n")
   },
-  {name: "IE8 (compatibility mode)", headers: // todo: needed?
+  {name: "Safari 5.1.5", headers:
+    [
+      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
+      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language: en-us",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: keep-alive",
+    ].join("\n")
+  },
+  {name: "IE8 (compatibility mode)", headers:
     [
       "Accept: */*",
       "Accept-Encoding: gzip, deflate",
@@ -248,7 +257,7 @@ cls.ResourceUtil.header_presets = [
       "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/4.0; chromeframe; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; MDDC; .NET CLR 3.5.30729; .NET CLR 1.1.4322; .NET CLR 3.0.30729; .NET4.0C)",
     ].join("\n")
   },
-  {name: "IE8", headers: // todo: update needed?
+  {name: "IE8", headers:
     [
       "Accept: image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/vnd.ms-xpsdocument, application/xaml+xml, application/x-ms-xbap, application/x-shockwave-flash, */*",
       "Accept-Encoding: gzip, deflate",
@@ -266,7 +275,25 @@ cls.ResourceUtil.header_presets = [
       "Connection: Keep-Alive",
     ].join("\n")
   },
-  {name: "Opera 11.62 on Mac OS 10.7", headers:
+  {name: "Opera 11.62 on Windows", headers:
+    [
+      "Opera/9.80 (Windows NT 6.1; WOW64; U; en) Presto/2.10.229 Version/11.62",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en-gb,en;q=0.9",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
+    ].join("\n")
+  },
+  {name: "Opera 11.62 on Linux", headers:
+    [
+      "User-Agent: Opera/9.80 (X11; Linux x86_64; U; en) Presto/2.10.229 Version/11.62",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en-gb,en;q=0.9",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
+    ].join("\n")
+  },
+  {name: "Opera 11.62 on Mac OS", headers:
     [
       "User-Agent: Opera/9.80 (Macintosh; Intel Mac OS X 10.7.3; U; en) Presto/2.10.229 Version/11.62",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
@@ -275,41 +302,7 @@ cls.ResourceUtil.header_presets = [
       "Connection: Keep-Alive",
     ].join("\n")
   },
-  {name: "Safari 5.1.5", headers:
-    [
-      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
-      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "Accept-Language: en-us",
-      "Accept-Encoding: gzip, deflate",
-      "Connection: keep-alive",
-    ].join("\n")
-  },
-  {name: "Opera Mini 7.0.1 on iPhone", headers:
-    [
-      "User-Agent: Opera/9.80 (iPhone; Opera Mini/7.1.32694/27.1366; U; en) Presto/2.8.119 Version/11.10",
-      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-      "Accept-Language: en",
-      "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
-      "Connection: Keep-Alive",
-      "X-OperaMini-Features: advanced, download, file_system, touch, viewport, routing",
-      "X-OperaMini-Phone: Apple # iPhone",
-      "x-operamini-phone-ua: Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1 like Mac OS X; en-us)"
-    ].join("\n")
-  },
-  {name: "Opera Mini 6.0 on Nokia 6300", headers: // todo: update me
-    [
-      "User-Agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.0.24093/24.746; U; en) Presto/2.5.25 Version/10.54",
-      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-      "Accept-Language: en-US,en;q=0.9",
-      "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
-      "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
-      "Connection: Keep-Alive",
-      "x-operamini-features: advanced, file_system, camera, folding, routing",
-      "x-operamini-phone: Nokia # 6300",
-      "x-operamini-phone-ua: Nokia6300/2.0 (07.21) Profile/MIDP-2.0 Configuration/CLDC-1.1"
-    ].join("\n")
-  },
-  {name: "Mobile Safari on iOS 5, iPhone", headers:
+  {name: "Mobile Safari on iOS 5.1, iPhone", headers:
     [
       "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B176 Safari/7534.48.3",
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -318,7 +311,7 @@ cls.ResourceUtil.header_presets = [
       "Connection: keep-alive",
     ].join("\n")
   },
-  {name: "Mobile Safari on iOS 5, iPad", headers:
+  {name: "Mobile Safari on iOS 5.1, iPad", headers:
     [
       "User-Agent: Mozilla/5.0 (iPad; CPU OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B176 Safari/7534.48.3",
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -327,7 +320,7 @@ cls.ResourceUtil.header_presets = [
       "Connection: keep-alive",
     ].join("\n")
   },
-  {name: "Android 2.3.3", headers: // todo: possibly update to 2.3.7
+  {name: "Android 2.3.3 default browser", headers:
     [
       "Connection: keep-alive",
       "Accept-Encoding: gzip",
@@ -336,6 +329,56 @@ cls.ResourceUtil.header_presets = [
       "User-Agent: Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; GT-I9100 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
       "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
       "Accept-Charset: utf-8, iso-8859-1, utf-16, *;q=0.7",
+    ].join("\n")
+  },
+  {name: "Blackberry PlayBook 2.0 default browser", headers:
+    [
+      "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Encoding: gzip,deflate",
+      "Accept-Language: en-GB, en;q=0.8, en-GB, en;q=0.8",
+      "User-Agent: Mozilla/5.0 (PlayBook; U; RIM Tablet OS 2.0.0; en-US) AppleWebKit/535.8+ (KHTML, like Gecko) Version/7.2.0.0 Safari/535.8+",
+    ].join("\n")
+  },
+  {name: "Opera Mini 7.0.1 on iPhone", headers:
+    [
+      "User-Agent: Opera/9.80 (iPhone; Opera Mini/7.1.32694/27.1366; U; en) Presto/2.8.119 Version/11.10",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
+      "X-OperaMini-Features: advanced, download, file_system, touch, viewport, routing",
+      "X-OperaMini-Phone: Apple # iPhone",
+      "X-OperaMini-Phone-UA: Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1 like Mac OS X; en-us)",
+    ].join("\n")
+  },
+  {name: "Opera Mini 6.5 on SonyEricsson K800i", headers:
+    [
+      "User-Agent: Opera/9.80 (J2ME/MIDP; Opera Mini/6.5.26955/27.1382; U; en) Presto/2.8.119 Version/11.10",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
+      "X-OperaMini-Phone: SonyEricsson # K800i",
+      "X-OperaMini-Phone-UA: SonyEricssonK800i/R1KG Browser/NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1",
+      "X-OperaMini-Features: advanced, file_system, camera, folding, routing",
+    ].join("\n")
+  },
+  {name: "Opera Mobile 12 on Samsung Galaxy S II", headers:
+    [
+      "User-Agent: Opera/9.80 (Mac OS X; Opera Mobi/31625; U; en) Presto/2.10.254 Version/12.00",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
+    ].join("\n")
+  },
+  {name: "Opera Mobile 12 on Motorola Xoom", headers:
+    [
+      "User-Agent: Opera/9.80 (Mac OS X; Opera Tablet/32904; U; en) Presto/2.10.254 Version/12.00",
+      "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
+      "Accept-Language: en",
+      "Accept-Encoding: gzip, deflate",
+      "Connection: Keep-Alive",
     ].join("\n")
   },
 ];
