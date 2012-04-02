@@ -53,7 +53,7 @@ cls.ResourceUtil.millis_to_human_readable = function(millis)
 /**
  * Common extensions mapped to generic type strings
  */
-cls.ResourceUtil.extension_type_map = { // todo: maybe only list extensions & mimetypes per type
+cls.ResourceUtil.extension_type_map = {
 
   html: "markup",
   xhtml: "markup",
@@ -85,7 +85,6 @@ cls.ResourceUtil.extension_type_map = { // todo: maybe only list extensions & mi
   es: "script",
 
   rss: "feed"
-  // todo: complete me
 }
 
 /**

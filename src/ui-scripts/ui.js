@@ -183,3 +183,5 @@ UI.get_instance = function()
   return this.instance || new UI();
 };
 
+UI.TYPE_SINGLE_SELECT = "single-select";
+UI.TYPE_INPUT = "input";

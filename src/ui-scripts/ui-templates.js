@@ -191,11 +191,11 @@
 
   this.toolbar_buttons = function(button_templates, group, view_id)
   {
-    var ret = ['toolbar-buttons', button_templates];
+    var ret = ["toolbar-buttons", button_templates];
     if (group.type)  // single-select or switch
     {
       ret.push("handler", "toolbar-" + group.type);
-      if (group.type === "single-select") // todo: possibly make it two templates instead.
+      if (group.type === "single-select")
       {
         ret = ret.concat(["handler", "toolbar-" + group.type,
                     "data-single-select-name", group.name,

@@ -9,6 +9,8 @@ window.cls = window.cls || {};
 cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 {
   var MIN_RENDER_DELAY = 200;
+  var DEFAULT = "default";
+  var DETAILS = "details";
 
   this._service = new cls.NetworkLoggerService(this);
   this._container_scroll_top = 0;
@@ -19,10 +21,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._render_timeout = 0;
   this._graph_tooltip_id = null;
   this.needs_instant_update = false;
-
-  // modes
-  var DEFAULT = "default";
-  var DETAILS = "details";
 
   this.createView = function(container)
   {
@@ -449,7 +447,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      this._container_scroll_top = target.firstChild.scrollTop; // firstChild is outer-container
+      this._container_scroll_top = target.firstChild.scrollTop;
     }
   }.bind(this)
 
@@ -468,7 +466,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
-    var template = templates.network_graph_entry_tooltip(entry, this.mono_lineheight);
+    var template = templates.network_graph_tooltip(entry, this.mono_lineheight);
     this.graph_tooltip.show(template);
   }.bind(this);
 
@@ -569,6 +567,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           this.needs_instant_update = true;
           this.update();
         }
+        break;
       }
     }
   }.bind(this);
@@ -687,7 +686,7 @@ cls.NetworkLog.create_ui_widgets = function()
           ]
         },
         {
-          type: "single-select", // UI CONSTANTS
+          type: UI.TYPE_SINGLE_SELECT,
           name: "selected-viewmode",
           default_value: window.settings.network_logger.get("selected-viewmode"),
           items: [
@@ -704,7 +703,7 @@ cls.NetworkLog.create_ui_widgets = function()
           ]
         },
         {
-          type: "single-select", // UI CONSTANTS
+          type: UI.TYPE_SINGLE_SELECT,
           name: "type-filter",
           allow_multiple_select: true,
           items: [
@@ -749,7 +748,7 @@ cls.NetworkLog.create_ui_widgets = function()
           ]
         },
         {
-          type: "input", // UI CONSTANTS
+          type: UI.TYPE_INPUT,
           items: [
             {
               handler: "network-text-search",

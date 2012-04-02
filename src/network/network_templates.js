@@ -190,9 +190,6 @@ templates.network_log_url_list = function(ctx, selected, item_order)
   };
 
   var items = ctx.get_entries_filtered().slice(0);
-  // Could use copy_object instead, because the template doesn't need the methods of the resources.
-  // But it's probably more overhead to copy the whole thing then it is to just make a new array pointing
-  // to the old objects
   if (item_order)
   {
     item_order = item_order.split(",");
@@ -222,11 +219,12 @@ templates.network_log_url_tooltip = function(entry)
   var UNREFERENCED = "unreferenced";
   var ERROR_RESPONSE = "error_response";
   var NOT_REQUESTED = "not_requested";
+  var URL_TYPE_DEF = cls.ResourceManager["1.2"].UrlLoad.URLType;
+  var HTTP_STATUS_CODES = cls.ResourceUtil.http_status_codes;
 
   var template = [];
-
-  var context_string;
-  var context_type;
+  var context_string = "";
+  var context_type = "";
 
   if (entry.unloaded)
   {
@@ -235,17 +233,17 @@ templates.network_log_url_tooltip = function(entry)
   }
   else if (entry.had_error_response)
   {
-    context_string = entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] + ")";
+    context_string = entry.responsecode + " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
   else if (entry.no_request_made)
   {
-    if (entry.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[3])
+    if (entry.urltypeName === URL_TYPE_DEF[URL_TYPE_DEF.FILE])
     {
       context_string = ui_strings.S_HTTP_SERVED_OVER_FILE;
       context_type = NOT_REQUESTED;
     }
-    else if (entry.urltypeName === cls.ResourceManager["1.2"].UrlLoad.URLType[4])
+    else if (entry.urltypeName === URL_TYPE_DEF[URL_TYPE_DEF.DATA])
     {
       // data uri, the tooltip is explicit enough in these cases
     }
@@ -284,9 +282,9 @@ templates.network_log_summary = function(ctx)
                       }).reduce(function(prev, curr){
                         return prev + curr;
                       }, 0);
-  var str = items.length;
-  str += str === 1 ? " " + ui_strings.S_NETWORK_REQUEST :
-                     " " + ui_strings.S_NETWORK_REQUESTS;
+  var str = items.length + " ";
+  str += str === 1 ? ui_strings.S_NETWORK_REQUEST :
+                     ui_strings.S_NETWORK_REQUESTS;
 
   if (total_size)
     str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
@@ -405,25 +403,26 @@ templates.network_graph_sections_style = function(entry, size, duration)
   return gradient_vals;
 };
 
-templates.network_graph_entry_tooltip = function(entry, mono_lineheight)
+templates.network_graph_tooltip_tr = function(stop, index, arr)
+{
+  return ["tr",
+           ["td", stop.val_string, "class", "time_data mono"],
+           ["td", stop.title, "class", "gap_title"],
+           (window.ini && ini.debug) ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
+         ];
+};
+
+templates.network_graph_tooltip = function(entry, mono_lineheight)
 {
   if (!entry)
     return;
 
-  var height = 155;
+  var HEIGHT = 155;
   var duration = entry.duration;
-  var scale = height / duration;
+  var scale = HEIGHT / duration;
   if (duration && entry.events)
   {
-    var event_rows = entry.event_sequence.map(function(stop, index, arr)
-    {
-      // sequences with only from_event are ommited as they only mark the start of a gap
-      return ["tr",
-               ["td", stop.val_string, "class", "time_data mono"],
-               ["td", stop.title, "class", "gap_title"],
-               (window.ini && ini.debug) ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
-             ];
-    });
+    var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
     event_rows.push(["tr",
                       ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
@@ -438,15 +437,14 @@ templates.network_graph_entry_tooltip = function(entry, mono_lineheight)
 
     var pathes = entry.event_sequence.map(function(row, index, arr)
     {
-      if (row.val)
-      {
-        var height = Math.round(row.val * scale);
-        y_start = y_ref + (height / 2);
-        y_ref += height;
-        y_end = (index * lineheight) + (lineheight / 2) + 0.5;
-        return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
-      }
-      return "";
+      if (!row.val)
+        return "";
+
+      var height = Math.round(row.val * scale);
+      y_start = y_ref + (height / 2);
+      y_ref += height;
+      y_end = (index * lineheight) + (lineheight / 2) + 0.5;
+      return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
     });
 
     var svg_height = Math.max(y_start, y_end, y_ref);
@@ -459,9 +457,9 @@ templates.network_graph_entry_tooltip = function(entry, mono_lineheight)
         ["div",
           ["div",
             ["div",
-              "style", "height: " + height + "px; " +
+              "style", "height: " + HEIGHT + "px; " +
                        "background-image: -o-linear-gradient(270deg," +
-                          templates.network_graph_sections_style(entry, height, duration) +
+                          templates.network_graph_sections_style(entry, HEIGHT, duration) +
                         ");",
               "class", "network-tooltip-graph"
             ],

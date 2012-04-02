@@ -54,7 +54,7 @@
 .network-timeline-row,
 .network-graph-row
 { 
-  border: 0 solid #f0f0f0
+  border: 0 solid #f0f0f0;
 }
 
 .sortable-table > tr:last-child
@@ -155,7 +155,7 @@ th.sort-column
   color: #000;
 }
 
-/* Slected and Active state */
+/* Selected and Active state */
 .sortable-table > tr:active,
 .sortable-table > tr.selected,
 .network-log-url-list li.selected,

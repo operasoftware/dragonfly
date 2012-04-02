@@ -322,7 +322,8 @@
   width: 140px;
 }
 
-.network-details-container hr {
+.network-details-container hr
+{
   border: none;
   border-top: 1px solid #a4a4a4;
 }
@@ -495,13 +496,15 @@
   padding: 5px 20px 25px 20px;
 }
 
-.network-options label {
+.network-options label
+{
   margin: 5px 0 0 0;
   display: block;
   color: #333;
 }
 
-.network-options input[type=checkbox] {
+.network-options input[type=checkbox]
+{
   padding: 0 10px 0 5px;
 }
 

@@ -161,9 +161,8 @@ var ToolbarBase = function()
     this.__view_id = view_id;
 
     if (toolbars[view_id])
-    {
       this.__is_visible = toolbars[view_id].getVisibility();
-    }
+
     var search = this.filters.length && UI.get_instance().get_search(view_id);
     if (this.__is_visible)
     {
@@ -207,8 +206,8 @@ var ToolbarBase = function()
                 button_templates.push(templates.toolbar_button(button));
               }
             }
-            // Handling templates to a template function, a bit ugly, but they need to be built individually 
-            // so they can have their own templates. Todo: Possible handle this all in the template instead.
+            // Handling templates to a template function. They need to be built individually 
+            // so they can have their own templates.
             buttons_template.push(templates.toolbar_buttons(button_templates, group, view_id));
           }
         }

@@ -43,7 +43,7 @@ var SwitchesBase = function()
         value ? button.addClass("is-active") : button.removeClass("is-active");
       }
     }
-    /* todo: this used to be in setting.js after the toolbar buttons were updated
+    /* todo: the following used to be in setting.js after the toolbar buttons were updated. it can probably be removed, seems to work fine.
     // hack to trigger a repaint while
     target.style.backgroundColor = "transparent";
     target.style.removeProperty('background-color');

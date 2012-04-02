@@ -1,4 +1,6 @@
-﻿/**
+﻿"use strict";
+
+/**
  *
  * Sortable table component for dragonfly.
  *
@@ -14,10 +16,10 @@
 function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
 {
   // consts for where the table-options are stored
-  const GROUPER = "table-groupby-" + id,
-        SORTER = "table-sort-col-" + id,
-        SORT_REVERSE = "table-sort-reversed-" + id,
-        COLUMNS = "table-columns-" + id;
+  var GROUPER = "table-groupby-" + id,
+      SORTER = "table-sort-col-" + id,
+      SORT_REVERSE = "table-sort-reversed-" + id,
+      COLUMNS = "table-columns-" + id;
 
   this._init = function()
   {
@@ -72,8 +74,11 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     this.tabledef = tabledef;
     if (data)
       this.set_data(data);
-    this.columns = stored_cols || cols; // the visible columns
-    this.default_columns = cols.slice(0); // the visible columns, as originally passed in. used for restore.
+
+    // visible columns
+    this.columns = stored_cols || cols;
+    // visible columns, as originally passed in. used for restore.
+    this.default_columns = cols.slice(0);
     this.reversed = !!reversed;
     this.groupby = groupby;
     this._elem = null;
@@ -219,7 +224,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   this._make_restore_columns_handler = function(re_render_table)
   {
     return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
+      var obj_id = evt.target.get_attr("parent-node-chain", "data-table-object-id");
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       obj.restore_columns();
       re_render_table(obj, evt.target.get_ancestor("table"));
@@ -230,8 +235,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   {
     var make_sort_function = function(idgetter, data_order)
     {
-      return function(a, b)
-      {
+      return function(a, b) {
         var ind_a = data_order.indexOf(idgetter(a));
         var ind_b = data_order.indexOf(idgetter(b));
         
@@ -245,7 +249,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       }
     }
     return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
+      var obj_id = evt.target.get_attr("parent-node-chain", "data-table-object-id");
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       if (obj._org_data_order)
       {
@@ -511,9 +515,12 @@ templates.sortable_table_sumrow = function(tabledef, groupname, data, cols)
             var coldef = tabledef.columns[e];
             var val = "";
             var summer = coldef.summer;
-            if (summer) { val = summer(data, groupname) }
+            if (summer)
+              val = summer(data, groupname)
+
             if (coldef.use_ellipsis)
               val = templates.sortable_table_wrap_ellipsis(val);
+
             return ["td", val, "class", coldef.align ? "align-" + coldef.align : ""];
           }),
           "class", "sortable-table-summation-row"
@@ -536,9 +543,8 @@ templates.sortable_table_row = function(tabledef, item, cols)
                 title = coldef.title_getter(item, coldef.renderer);
 
               if (coldef.use_ellipsis)
-              {
-                content = templates.sortable_table_wrap_ellipsis(content, title); // falls back to using content as title, if its of type string.
-              }
+                content = templates.sortable_table_wrap_ellipsis(content, title);
+
               var add_title_to_td = !coldef.use_ellipsis && title;
               return ["td", content]
                         .concat(add_title_to_td ? ["data-tooltip", "sortable-table-tooltip",

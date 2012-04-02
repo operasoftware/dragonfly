@@ -77,7 +77,7 @@ var _on_graph_tooltip = function(evt, target)
 {
   var entry_id = target.get_attr("parent-node-chain", "data-object-id");
   var entry = ctx.get_entry(entry_id);
-  var template = templates.network_graph_entry_tooltip(entry);
+  var template = templates.network_graph_tooltip(entry);
   graph_tooltip.show(template);
 }.bind(this);
 var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
