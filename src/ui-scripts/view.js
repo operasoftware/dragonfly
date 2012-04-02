@@ -104,7 +104,7 @@ var ViewBase = new function()
 
   this.create_disabled_view = function(container)
   {
-    container.innerHTML = "<p>required services disabled</p>";
+    container.clearAndRender(window.templates.default_disabled_view());
   };
 
   this.ondestroy = function()
@@ -250,6 +250,14 @@ var ViewBase = new function()
   window.messages.addListener("profile-enabled", function(msg)
   {
     _enabled_services = msg.services.slice();
+    var tabs = UI.get_instance().get_visible_tabs();
+    for (var i = 0, id; id = tabs[i]; i++)
+    {
+      var view = window.views[id];
+      // TODO perhaps optimize with checking last view state?
+      if (view.type == "side-panel" || view.type == "single-view")
+        view.update();
+    }
   });
 
   window.messages.addListener("profile-disabled", function(msg)

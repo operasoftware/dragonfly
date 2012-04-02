@@ -1431,3 +1431,12 @@ ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser and User JS";
 /* DESC: Info text that explains that only a certain number %(MAX)s of Errors is shown, out of a total of %(COUNT)s */
 ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 
+
+
+
+/* DESC: The required services to create this view are disabled. */
+ui_strings.S_INFO_REQUIRED_SERVICES_DISABLED = "Services to create this view are disabled";
+
+
+
+
