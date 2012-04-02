@@ -157,9 +157,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     if (allcols.join(",") !== obj.default_columns.join(","))
     {
       // visible column selection stuff
-      menuitems.push(ContextMenu.separator);
+      if (menuitems.length)
+        menuitems.push(ContextMenu.separator);
 
-      for (var n=0, colname; colname=allcols[n]; n++)
+      for (var n=0, colname; colname = allcols[n]; n++)
       {
         coldef = obj.tabledef.columns[colname];
         menuitems.push({
@@ -178,8 +179,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     }
 
     if (obj.sortby && obj._org_data_order)
-    { 
-      menuitems.push(ContextMenu.separator);
+    {
+      if (menuitems.length)
+        menuitems.push(ContextMenu.separator);
+
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT,
         handler: obj._make_reset_sort_handler(obj._re_render_table)

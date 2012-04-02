@@ -7,8 +7,9 @@ cls.ResourceManager["1.0"] || (cls.ResourceManager["1.0"] = {});
 cls.ResourceManager["1.0"].RequestRetry = function(arr)
 {
   this.resourceID = arr[0];
-  this.fromRequestID = this.requestID = arr[1];
+  this.fromRequestID = arr[1];
   this.toRequestID = arr[2];
   this.time = arr[3];
+  this.requestID = arr[1];
 };
 
