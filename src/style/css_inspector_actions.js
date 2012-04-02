@@ -717,7 +717,8 @@ cls.CSSInspectorActions = function(id)
 
 eventHandlers.dblclick['edit-css'] = function(event, target)
 {
-  this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
+  if (!window.views["color-selector"].is_opened)
+    this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
 }
 
 eventHandlers.click['enable-disable'] = function(event, target)
