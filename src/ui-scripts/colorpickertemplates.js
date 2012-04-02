@@ -106,7 +106,7 @@
           'class', 'color-picker-' + input[TYPE],
           'id', id,
         ].concat(input[MIN] ? ['min', input[MIN], 'max', input[MAX]] : []),
-        input[UNITS] ? " " + input[UNITS]
+        input[UNITS] ? ["span", " " + input[UNITS], "class", "color-picker-input-unit"]
                      : ""
       ]
     ])
@@ -185,7 +185,7 @@
       return ([
         "div",
           colors.map(this.color_palette_mosaic_item),
-        "class", "color-picker-palette-dropdown color-picker-palette-item",
+        "class", "color-picker-palette-dropdown",
         "data-tooltip", "color-palette"
       ]);
     }
@@ -221,9 +221,8 @@
   {
     return ([
       "span",
-        "+",
       "handler", "add-color-picker-color",
-      "class", "color-picker-palette-item color-picker-palette-item-add"
+      "class", "color-picker-palette-item-add ui-control ui-button"
     ]);
   }
 
@@ -248,12 +247,6 @@
       ],
       'class', slider_base_class
     ]);
-  }
-
-  // TODO: remove
-  this.svg_slider_circle = function()
-  {
-    return ([]);
   }
 
   this.pointer = function(pointer_class)

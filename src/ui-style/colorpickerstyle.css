@@ -9,7 +9,7 @@
   position: relative;
   background: #ededed;
   color: #333;
-  width: 373px;
+  width: 364px;
   height: 237px;
   padding: 5px;
   box-sizing: border-box;
@@ -108,18 +108,14 @@
 
 .color-picker-inputs td
 {
-  padding: 0 2px 3px;
+  padding: 0 2px 5px;
   text-align: left;
+  white-space: nowrap;
 }
 
-.color-picker-inputs td:first-child
+.color-picker-inputs input[type="radio"]
 {
-  text-align: right;
-}
-
-.color-picker-inputs td:first-child input
-{
-  border: 0px solid transparent;
+  border: 0 solid;
   background-color: transparent;
   padding: 7px;
   color: #4d4d4d;
@@ -133,7 +129,14 @@
 
 .color-picker-number
 {
-  width: 50px;
+  width: 55px;
+}
+
+.color-picker-input-unit
+{
+  position: relative;
+  left: -65px;
+  color: #aaa;
 }
 
 .color-picker-text
@@ -248,8 +251,8 @@
 .color-picker-palette-item
 {
   display: inline-block;
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
   border: 1px solid rgba(34, 34, 34, .4);
   vertical-align: middle;
   margin: 1px;
@@ -258,45 +261,26 @@
 
 .color-picker-palette-item-add
 {
-  width: 19px;
-  height: 19px;
-  text-align: center;
   padding: 1px;
-  color: transparent; /* to be removed */
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(255, 255, 255, 0.75) 0,
-                                       rgba(255, 255, 255, 0.25) 100%);
-  box-shadow: inset 0 1px 1px #fff;
-  border: 1px solid rgba(0, 0, 0, .325);
+  margin: 1px;
+  vertical-align: middle;
 }
 
 .color-picker-palette-item-add:before
 {
-  content: '';
-  display: inline-block;
-  width: 19px;
-  height: 19px;
-  background-image: url("../ui-images/icons/icon_add_small.png");
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.color-picker-palette-item-add:active
-{
-  padding-top: 2px;
-  padding-bottom: 0px;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.15),
-              inset 0 0 4px rgba(0, 0, 0, 0.05);
-  background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                                  rgba(255, 255, 255, 0.45) 0,
-                                                  rgba(255, 255, 255, 0.25) 100%);
+  background: url("../ui-images/icons/icon_add_small.png") center no-repeat;
 }
 
 .color-picker-palette-dropdown
 {
   position: absolute;
   top: 210px;
-  margin: 0;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(34, 34, 34, .4);
+  vertical-align: middle;
+  border-radius: 2px;
 }
 
 .color-picker-controls
