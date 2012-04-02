@@ -320,7 +320,7 @@ cls.ResourceUtil.header_presets = [
       "Connection: keep-alive",
     ].join("\n")
   },
-  {name: "Android 2.3.3 default browser", headers:
+  {name: "Android 2.3.3 browser", headers:
     [
       "Connection: keep-alive",
       "Accept-Encoding: gzip",
@@ -331,7 +331,7 @@ cls.ResourceUtil.header_presets = [
       "Accept-Charset: utf-8, iso-8859-1, utf-16, *;q=0.7",
     ].join("\n")
   },
-  {name: "Blackberry PlayBook 2.0 default browser", headers:
+  {name: "Blackberry PlayBook 2.0 browser", headers:
     [
       "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Encoding: gzip,deflate",
