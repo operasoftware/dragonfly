@@ -69,7 +69,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._color_picker = new ColorPicker(this._color_cb_bound,
                                          this._edit_context.initial_color);
     container.style.visibility = "hidden";
-    container.render(this._color_picker.render());
+    container.render(this._color_picker.render(this._edit_context.disable_alpha));
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
@@ -88,6 +88,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this.show_color_picker = function(target, edit_context)
   {
+    if (this.is_opened)
+      this.ondestroy();
+
     var parent = target.parentNode;
     var declaration_ele = target.get_ancestor(".css-declaration");
     var property_ele = declaration_ele && declaration_ele.querySelector(".css-property");
@@ -97,7 +100,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var color_value = parent.textContent;
     var initial_color = new Color().parseCSSColor(color_value);
 
-    window.helpers.setSelected(target.get_ancestor(".css-declaration"));
+    //window.helpers.setSelected(target.get_ancestor(".css-declaration"));
 
     this._edit_context = edit_context || {
       initial_color: initial_color,
@@ -105,6 +108,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       ele_value: parent,
       ele_color_swatch: target,
       prop_name: property,
+      position_anchor_selector: ".css-declaration",
       is_important: Boolean(value_ele.querySelector(".css-priority")),
       rt_id: Number(parent.get_attr("parent-node-chain", "rt-id")),
       rule_id: Number(parent.get_attr("parent-node-chain", "rule-id")) ||
@@ -205,7 +209,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this._position_color_picker = function(container)
   {
-    var dim = this._edit_context.ele_value.get_ancestor(".css-declaration").getBoundingClientRect();
+    var dim = this._edit_context.ele_value.get_ancestor(this._edit_context.position_anchor_selector).getBoundingClientRect();
     var height = this._ele.getBoundingClientRect().height;
     var top = Math.max(MARGIN,
                        Math.min(dim.top - Math.round((height / 2) - (dim.height / 2)),

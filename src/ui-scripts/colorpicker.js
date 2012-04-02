@@ -152,7 +152,7 @@ ColorPicker.prototype = new function()
   {
     if (event.target.name in this._verify_inputs)
     {
-      var prefix = (target.name === "hex") ? "#" : "";
+      var prefix = (event.target.name === "hex") ? "#" : "";
       var target = event.target;
       var verifier = this._verify_inputs[target.name];
       var value = this._verify(target.value, verifier);
@@ -420,13 +420,13 @@ ColorPicker.prototype = new function()
 
   /* implementation */
 
-  this.render = function()
+  this.render = function(disable_alpha)
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
     return window.templates.color_picker_popup(this._initial_color,
                                                CP_CLASS, CP_2D_CLASS,
                                                CP_1D_CLASS, CP_OLD_CLASS,
-                                               CP_NEW_CLASS, 'h')
+                                               CP_NEW_CLASS, 'h', disable_alpha)
   }
 
   this.update = function(color_value)

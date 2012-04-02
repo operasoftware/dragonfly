@@ -14,7 +14,7 @@
     };
   })();
 
-  this.color_picker_inputs = function(z_axis)
+  this.color_picker_inputs = function(z_axis, disable_alpha)
   {
 
     const COLORSPACE = 0, Z = 4;
@@ -49,7 +49,8 @@
           'min', '0',
           'max', '1',
           'step', '0.05',
-          'class', 'color-picker-number'
+          'class', 'color-picker-number',
+          'disabled', disable_alpha
          ]
        ]
     ];
@@ -124,7 +125,7 @@
 
   this.color_picker_popup = function(existing_color, cp_class, cp_2d_class,
                                      cp_1d_class, cp_old_class, cp_new_class,
-                                     z_axis)
+                                     z_axis, disable_alpha)
   {
     return (
       ['div',
@@ -138,7 +139,7 @@
           'data-handler', 'onz',
           'class', cp_1d_class
         ],
-        window.templates.color_picker_inputs(z_axis),
+        window.templates.color_picker_inputs(z_axis, disable_alpha),
         ["input", "name", "hex", "class", "color-picker-text"],
         ["div",
           ['div',
