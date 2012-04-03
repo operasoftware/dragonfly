@@ -96,6 +96,7 @@ cls.ColorPaletteView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger", "exec"];
     this.init(id, name, container_class);
     window.eventHandlers.click['color-palette-add-color'] =
       this._handlers['color-palette-add-color'];

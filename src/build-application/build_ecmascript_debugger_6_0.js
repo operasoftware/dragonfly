@@ -154,10 +154,10 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     /* Runtime State */
     new cls.JSSidePanelView('breakpoints-side-panel', 
-                      ui_strings.M_VIEW_LABEL_BREAKPOINTS,
-                      ['breakpoints', 'event-breakpoints'],
-                      // default expanded flags for the view list
-                      [true, false]);
+                            ui_strings.M_VIEW_LABEL_BREAKPOINTS,
+                            ['breakpoints', 'event-breakpoints'],
+                            // default expanded flags for the view list
+                            [true, false]);
 
     /* Event Breakpoints */
     window.event_breakpoints = cls.EventBreakpoints.get_instance();

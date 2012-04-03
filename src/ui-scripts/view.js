@@ -114,8 +114,7 @@ var ViewBase = new function()
 
   this.update = function()
   {
-    // TODO remove length check
-    var is_enabled = this.requierd_services.length && this.requierd_services.every(_is_enabled);  
+    var is_enabled = this.requierd_services.every(_is_enabled);  
     for (var i = 0, id = ""; id = this.container_ids[i]; i++)
     {
       var container = document.getElementById(id);

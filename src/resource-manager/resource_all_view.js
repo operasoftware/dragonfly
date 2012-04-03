@@ -20,6 +20,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._scrollpos = 0;
   this._view = null;
   this._open_resource_views = [];
+  this.requierd_services = ["resource-manager", "document-manager"];
 
   this.ondestroy = function()
   {

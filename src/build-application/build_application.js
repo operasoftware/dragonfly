@@ -75,7 +75,8 @@ window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
 window.app.profiles[window.app.profiles.PROFILER] = ["window-manager",
                                                      "profiler"];
 window.app.profiles[window.app.profiles.HTTP_PROFILER] = ["window-manager",
-                                                          "resource-manager"];
+                                                          "resource-manager",
+                                                          "document-manager"];
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {

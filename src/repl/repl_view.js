@@ -889,7 +889,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this._textarea.focus();
+    if (this._textarea)
+      this._textarea.focus();
   }
 
   /**
@@ -897,6 +898,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.blur = function()
   {
+    if (this._textarea)
       this._textarea.blur();
   }
 
@@ -947,6 +949,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this.requierd_services = ["ecmascript-debugger", "console-logger"];
   this.mode_labels = {
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,

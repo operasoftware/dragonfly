@@ -17,6 +17,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler) 
   this._rendertimer = 0;
   this._everrendered = false;
   this._url_list_width = 250;
+  this.requierd_services = ["resource-manager", "document-manager"];
 
   this.createView = function(container)
   {
