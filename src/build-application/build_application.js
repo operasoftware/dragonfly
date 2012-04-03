@@ -72,13 +72,16 @@ window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
                                                     "cookie-manager",
                                                     "resource-manager",
                                                     "document-manager"];
+window.app.profiles[window.app.profiles.DEFAULT].is_enabled = false;
 window.app.profiles[window.app.profiles.PROFILER] = ["window-manager",
                                                      "profiler",
                                                      "exec"];
+window.app.profiles[window.app.profiles.PROFILER].is_enabled = false;
 window.app.profiles[window.app.profiles.HTTP_PROFILER] = ["window-manager",
                                                           "resource-manager",
                                                           "document-manager",
                                                           "exec"];
+window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled = false;
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {

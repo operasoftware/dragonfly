@@ -303,7 +303,10 @@
 
   this._handlers["test-switching-profiles"] = function(action_id, event, target)
   {
-    window.services.scope.enable_profile(window.app.profiles.HTTP_PROFILER);
+    if (window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled)
+      window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+    else
+      window.services.scope.enable_profile(window.app.profiles.HTTP_PROFILER);
   };
 
   var TestTempView = function(name)

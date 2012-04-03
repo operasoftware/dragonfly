@@ -76,6 +76,7 @@ cls.Scope["1.1"].Service = function()
       }
       if (all_enabled)
       {
+        window.app.profiles[this._profile].is_enabled = true;
         var msg = {profile: this._profile,
                    services: this._profiles[this._profile].slice()};
         window.messages.post("profile-enabled", msg);
@@ -293,6 +294,7 @@ cls.Scope["1.1"].Service = function()
     {
       var msg = {profile: old_profile,
                  services: this._profiles[old_profile].slice()};
+      window.app.profiles[old_profile].is_enabled = false;
       window.messages.post("disable-profile", msg);
       Object.keys(this._enable_requests).forEach(function(service)
       {
