@@ -80,6 +80,10 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     if (this._ele)
       this._ele.parentNode.removeChild(this._ele);
+
+    if (this._edit_context)
+      this._edit_context.ele_value.removeClass("color-picker-active-item");
+
     window.removeEventListener("click", this._hide_on_outside_click, true);
     this._edit_context = null;
     this._ele = null;
@@ -193,6 +197,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._ele = document.createElement("div");
     this._ele.className = ELE_CLASS;
     document.documentElement.appendChild(this._ele);
+    this._edit_context.ele_value.addClass("color-picker-active-item");
     this.createView(this._ele);
   };
 

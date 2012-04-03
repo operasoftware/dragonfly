@@ -184,21 +184,11 @@
 
       return ([
         "div",
-          colors.map(this.color_palette_mosaic_item),
         "class", "color-picker-palette-dropdown",
         "data-tooltip", "color-palette"
       ]);
     }
     return [];
-  };
-
-  this.color_palette_mosaic_item = function(color)
-  {
-    return [
-      "span",
-      "style", "background-color: #" + color,
-      "class", "color-palette-mosaic-item"
-    ];
   };
 
   this.color_picker_palette = function()
@@ -242,7 +232,7 @@
     return (
     ['div',
       ['div',
-        slider_template || [], 
+        slider_template || [],
         'class', slider_class
       ],
       'class', slider_base_class

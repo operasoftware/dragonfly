@@ -1573,3 +1573,12 @@ d
   color: rgba(0, 0, 0, 0.5);
 }
 
+.color-picker-active-item
+{
+  background: #fff;
+  border: 1px solid #808080;
+  border-radius: 3px;
+  padding: 0 2px;
+  margin: -3px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}

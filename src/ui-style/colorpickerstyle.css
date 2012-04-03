@@ -144,7 +144,7 @@
   position: absolute;
   width: 60px;
   top: 210px;
-  left: 32px;
+  left: 39px;
 }
 
 .color-picker-number,
@@ -238,14 +238,6 @@
   max-height: 144px;
   max-width: 192px;
   background: rgba(237, 237, 237, 0.8);
-}
-
-.color-palette-mosaic-item
-{
-  display: inline-block;
-  height: 5px;
-  width: 5px;
-  float: left;
 }
 
 .color-picker-palette-item
