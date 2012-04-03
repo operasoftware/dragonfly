@@ -201,12 +201,16 @@
 .network_logger .close-request-detail,
 .network_logger .close_incomplete_warning
 {
-  position: absolute;
   width: 15px;
   height: 15px;
   border-radius: 50%;
   padding: 1px;
   background-color: rgba(0, 0, 0, 0.18);
+}
+
+.network_logger .close_incomplete_warning
+{
+  position: absolute;
 }
 
 .network_logger .close-request-detail::before,
