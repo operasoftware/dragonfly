@@ -301,6 +301,11 @@
     }
   }.bind(this);
 
+  this._handlers["test-switching-profiles"] = function(action_id, event, target)
+  {
+    window.services.scope.enable_profile(window.app.profiles.HTTP_PROFILER);
+  };
+
   var TestTempView = function(name)
   {
     this.createView = function(container)

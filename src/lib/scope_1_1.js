@@ -65,6 +65,7 @@ cls.Scope["1.1"].Service = function()
     {
       if (window.services && window.services[service])
       {
+        window.services[service].is_enabled = true;
         window.services[service].post("enable-success");
         window.services[service].on_enable_success();
       };
@@ -91,6 +92,7 @@ cls.Scope["1.1"].Service = function()
   {
     var NAME = 0;
     var all_disabled = true;
+    var service = message[NAME];
 
     if (status)
     {
@@ -98,8 +100,9 @@ cls.Scope["1.1"].Service = function()
     }
     else
     {
+      window.services[service].is_enabled = false;
       this._enable_requests[service] = false;
-      for (service_name in this._enable_requests)
+      for (var service_name in this._enable_requests)
       {
         all_disabled = all_disabled && this._enable_requests[service_name] === false;
       }

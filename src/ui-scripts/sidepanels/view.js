@@ -121,7 +121,9 @@
     {
       div.removeClass('unfolded');
       var container = div.getElementsByTagName('panel-container')[0];
-      container.parentNode.removeChild(container);
+      if (container && container.parentNode)
+        container.parentNode.removeChild(container);
+      
       view.removeContainerId('panel-container-' + obj.id);
       if(toolbars[view.id])
       {

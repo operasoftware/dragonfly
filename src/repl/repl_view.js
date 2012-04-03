@@ -907,7 +907,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.onclick = function(event) 
   {
-        if (this._textarea &&
+    if (!this._container)
+      return;
+
+    if (this._textarea &&
         !/^(?:input|textarea|button)$/i.test(event.target.nodeName) &&
         !event.target.hasTextNodeChild())
     {

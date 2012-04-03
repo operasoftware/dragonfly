@@ -64,7 +64,7 @@ window.cls.MessageMixin.apply(window.app); // Give the app object message handli
 window.app.profiles = {};
 window.app.profiles.DEFAULT = 1;
 window.app.profiles.PROFILER = 2;
-window.app.profiles.HTTP_PROFILER = 2;
+window.app.profiles.HTTP_PROFILER = 3;
 window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
                                                     "console-logger",
                                                     "exec",
@@ -73,10 +73,12 @@ window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
                                                     "resource-manager",
                                                     "document-manager"];
 window.app.profiles[window.app.profiles.PROFILER] = ["window-manager",
-                                                     "profiler"];
+                                                     "profiler",
+                                                     "exec"];
 window.app.profiles[window.app.profiles.HTTP_PROFILER] = ["window-manager",
                                                           "resource-manager",
-                                                          "document-manager"];
+                                                          "document-manager",
+                                                          "exec"];
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {

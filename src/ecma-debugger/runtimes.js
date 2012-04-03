@@ -631,6 +631,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var set_new_debug_context = function(status, message, win_id)
   {
+    if (status)
+      return;
+
     if (message[RUNTIME_LIST])
       message[RUNTIME_LIST].forEach(self.handleRuntime, self);
     host_tabs.setActiveTab(win_id);
@@ -1305,7 +1308,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if (rt_id)
       {
-        if(services.exec && services.exec.is_implemented && 
+        if (!(window.services['ecmascript-debugger'] &&
+              window.services['ecmascript-debugger'].is_enabled) ||
+            window.services.exec && window.services.exec.is_implemented && 
           // For background processes we can not use the exec service.
           // Background processes have no UI window to dispatch an exec command.
           // Background processes so far are e.g. unite services or 

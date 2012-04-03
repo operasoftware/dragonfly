@@ -290,6 +290,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     };
     window.messages.addListener("profile-enabled", function()
     {
+      self.clear_debug_context();
       window_manager.requestListWindows();
     });
     window_manager.onWindowLoaded = function(status, message)
