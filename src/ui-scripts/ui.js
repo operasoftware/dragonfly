@@ -173,9 +173,7 @@
 
   this.show_dropdown = function(id)
   {
-    var dropdown = document.querySelector("cst-select[cst-id=\"" + id + "\"]");
-    if (dropdown)
-      dropdown.dispatchMouseEvent('mousedown');
+    CstSelect.show_dropdown(id);
   };
 
 }

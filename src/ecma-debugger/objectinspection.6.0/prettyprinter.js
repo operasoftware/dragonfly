@@ -77,7 +77,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.ELEMENT] =
       else
         tmpl.push("node", is_tree_style ? node_name : "<" + node_name + ">");
       
-      tmpl = ["div", tmpl, "class", "dom"];
+      tmpl = ["div", tmpl, "class", "dom mono"];
     }
     return tmpl;
   }
@@ -95,7 +95,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.DATE] =
   template: function(message, ctx)
   {
     var VALUE = 2;
-    return message[VALUE];
+    return ["span", message[VALUE], "class", "mono"];
   }
 };
 
@@ -111,7 +111,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
   {
     var VALUE = 2;
     var tmpl = templates.highlight_js_source(message[VALUE]);
-    tmpl.push("class", "pretty-printed-code");
+    tmpl.push("class", "pretty-printed-code mono");
     return tmpl;
   }
 };
@@ -127,7 +127,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.ERROR] =
   template: function(message, ctx)
   {
     var VALUE = 2;
-    return message[VALUE];
+    return ["span", message[VALUE], "class", "mono"];
   }
 };
 
@@ -142,7 +142,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.REGEXP] =
   template: function(message, ctx)
   {
     var VALUE = 2;
-    return ["span", message[VALUE], "class", "reg_exp"];
+    return ["span", message[VALUE], "class", "reg_exp mono"];
   }
 };
 

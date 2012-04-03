@@ -14,7 +14,8 @@
 .search-highlight-last
 {
   background-color: rgba(0, 0, 0, 0.13); 
-  background-color: hsl(0, 0%, 87%); 
+  background-color: hsl(0, 0%, 87%);
+  color: #333333;
 }
 
 .search-highlight-selected,

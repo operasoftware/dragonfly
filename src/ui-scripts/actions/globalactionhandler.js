@@ -420,6 +420,7 @@ GlobalActionHandler.RE_TEXT_INPUTS = new RegExp(["text",
                                                  "time",
                                                  "datetime-local", 
                                                  "number",
-                                                 "file"].join("|"), "i");
+                                                 "file",
+                                                 "color"].join("|"), "i");
 
 

@@ -141,19 +141,41 @@
     return false;
   }
 
+  this.is_modal_box_visible = function()
+  {
+    return Boolean(_modal_box);
+  };
+
   var mouse_handler = function(event)
   {
-    var ele = event.target;
-    if (/^cst-/i.test(ele.nodeName) || /^cst-/i.test(ele.parentNode.nodeName))
+    if (_modal_box)
+      return;
+      
+    var select = event.target;
+    var count = 2;
+    
+    while (count && select)
     {
-      var select = ele.get_ancestor("cst-select");
+      if (/^cst-select/i.test(select.nodeName))
+        break;
+
+      select = count && select.parentNode;
+    } 
+
+    if (select)
+    {
       var cursor = event.target;
       if (select.hasAttribute("disabled"))
       {
         return;
       }
-      event.stopPropagation();
-      event.preventDefault();
+
+      if (event.stopPropagation)
+      {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+
       if (window.Tooltips)
         window.Tooltips.hide_tooltip();
 
@@ -289,6 +311,16 @@
     this.template = this.getTemplate();
   }
 
+  this.show_dropdown = function(id)
+  {
+    if (window["cst-selects"][id])
+    {
+      var select = document.querySelector("cst-select[cst-id=\"" + id + "\"]");
+      if (select)
+        mouse_handler({target: select});
+    }
+  }
+
   /* default interface implemetation */
   this.getSelectedOptionText = function()
   {
@@ -353,6 +385,18 @@ CstSelectBase.close_opened_select = function()
 var CstSelect = function(id, class_name, type, handler)
 {
   this.init(id, class_name, type, handler);
+}
+
+CstSelect.__defineGetter__("is_active", function()
+{
+  return CstSelectBase.is_modal_box_visible();
+});
+
+CstSelect.__defineSetter__("is_active", function() {});
+
+CstSelect.show_dropdown = function(id)
+{
+  CstSelectBase.show_dropdown(id);
 }
 
 var CstSelectWithActionBase = function(id, class_name, type)
