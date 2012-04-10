@@ -345,6 +345,33 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "-apple-dashboard-region":
     return "";
 
+  case "-o-animation":
+      return "none 0s 0s cubic-bezier(0.25, 0.1, 0.25, 1) normal none 1";
+
+  case "-o-animation-delay":
+      return "0s";
+
+  case "-o-animation-direction":
+      return "normal";
+
+  case "-o-animation-duration":
+      return "0s";
+
+  case "-o-animation-fill-mode":
+      return "none";
+
+  case "-o-animation-iteration-count":
+      return "1";
+
+  case "-o-animation-name":
+      return "none";
+
+  case "-o-animation-play-state":
+      return "running";
+
+  case "-o-animation-timing-function":
+      return "cubic-bezier(0.25, 0.1, 0.25, 1)";
+
   case "-o-border-image":
     return "";
 
@@ -376,25 +403,34 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "";
 
   case "-o-transform":
+  case "-webkit-transform":
     return "none";
 
   case "-o-transform-origin":
-    return "0px 0px";
+  case "-webkit-transform-origin":
+    var w = parseInt(data[index_map.indexOf("width")]) || 0;
+    var h = parseInt(data[index_map.indexOf("height")]) || 0;
+    return (w / 2) + "px " + (h / 2) + "px";
 
   case "-o-transition":
-    return "";
+  case "-webkit-transition":
+    return "all 0s 0s cubic-bezier(0.25, 0.1, 0.25, 1)";
 
   case "-o-transition-delay":
-    return "0";
+  case "-webkit-transition-delay":
+    return "0s";
 
   case "-o-transition-duration":
-    return "0";
+  case "-webkit-transition-duration":
+    return "0s";
 
   case "-o-transition-property":
+  case "-webkit-transition-property":
     return "all";
 
   case "-o-transition-timing-function":
-    return "ease";
+  case "-webkit-transition-timing-function":
+    return "cubic-bezier(0.25, 0.1, 0.25, 1)";
 
   case "-wap-accesskey":
     return "";
@@ -550,18 +586,22 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "";
 
   case "border-bottom-left-radius":
+  case "-webkit-border-bottom-left-radius":
     return "0px";
 
   case "border-bottom-right-radius":
+  case "-webkit-border-bottom-right-radius":
     return "0px";
 
   case "border-bottom-width":
     return "0px";
 
   case "border-top-left-radius":
+  case "-webkit-border-top-left-radius":
     return "0px";
 
   case "border-top-right-radius":
+  case "-webkit-border-top-right-radius":
     return "0px";
 
   case "bottom":
@@ -574,6 +614,7 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "content-box";
 
   case "box-shadow":
+  case "-webkit-box-shadow":
     return "none";
 
   case "break-after":
