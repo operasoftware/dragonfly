@@ -410,6 +410,13 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "-webkit-transform-origin":
     var w = parseInt(data[index_map.indexOf("width")]) || 0;
     var h = parseInt(data[index_map.indexOf("height")]) || 0;
+    if (data[index_map.indexOf("box-sizing")] === "content-box")
+    {
+        w += parseInt(data[index_map.indexOf("padding-left")]) +
+             parseInt(data[index_map.indexOf("padding-right")]);
+        h += parseInt(data[index_map.indexOf("padding-top")]) +
+             parseInt(data[index_map.indexOf("padding-bottom")]);
+    }
     return (w / 2) + "px " + (h / 2) + "px";
 
   case "-o-transition":
