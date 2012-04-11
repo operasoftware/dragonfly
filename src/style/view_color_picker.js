@@ -66,6 +66,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   /* implementation */
   this.createView = function(container)
   {
+    this._panel_ele = this._edit_context.ele_value.get_ancestor("container");
     this._color_picker = new ColorPicker(this._color_cb_bound,
                                          this._edit_context.initial_color);
     container.style.visibility = "hidden";
@@ -73,6 +74,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
+    this._panel_ele.addEventListener("mousewheel", this._prevent_scroll, true);
     this.is_opened = true;
   };
 
@@ -84,11 +86,19 @@ window.cls.ColorPickerView = function(id, name, container_class)
     if (this._edit_context)
       this._edit_context.ele_value.removeClass("color-picker-active-item");
 
+    if (this._panel_ele)
+      this._panel_ele.removeEventListener("mousewheel", this._prevent_scroll, true);
+
     window.removeEventListener("click", this._hide_on_outside_click, true);
     this._edit_context = null;
     this._ele = null;
     this.is_opened = false;
   };
+
+  this._prevent_scroll = function(event)
+  {
+    event.preventDefault();
+  }.bind(this);
 
   this.show_color_picker = function(target, edit_context)
   {
@@ -112,7 +122,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       ele_value: parent,
       ele_color_swatch: target,
       prop_name: property,
-      position_anchor_selector: ".css-declaration",
+      position_anchor_selector: ".color-swatch",
       is_important: Boolean(value_ele.querySelector(".css-priority")),
       rt_id: Number(parent.get_attr("parent-node-chain", "rt-id")),
       rule_id: Number(parent.get_attr("parent-node-chain", "rule-id")) ||
@@ -212,16 +222,26 @@ window.cls.ColorPickerView = function(id, name, container_class)
     return window.settings["dom-side-panel"].get("color-notation");
   };
 
-  this._position_color_picker = function(container)
+  this._position_color_picker = function()
   {
-    var dim = this._edit_context.ele_value.get_ancestor(this._edit_context.position_anchor_selector).getBoundingClientRect();
+    var context = this._edit_context;
+    var anchor = context.ele_value.get_ancestor(context.position_anchor_selector);
+    var dim = (anchor || context.ele_value).getBoundingClientRect()
     var height = this._ele.getBoundingClientRect().height;
     var top = Math.max(MARGIN,
                        Math.min(dim.top - Math.round((height / 2) - (dim.height / 2)),
                                 window.innerHeight - height - MARGIN)
                       );
+    var arrow = this._ele.querySelector(".color-picker-arrow");
+    var arrow_height = arrow.getBoundingClientRect().height;
+    var arrow_top = Math.max(MARGIN,
+                             Math.min(dim.top + Math.round((dim.height / 2) - (arrow_height / 2)) - top,
+                                      height - arrow_height - MARGIN
+                                     )
+                            );
+    arrow.style.top = arrow_top + "px";
     this._ele.style.top = top + "px";
-    this._ele.style.right = window.innerWidth - dim.left + "px";
+    this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
   };
 
   this._init = function(id, name, container_class)
@@ -232,6 +252,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._edit_context = null;
     this._color_notation = null;
     this._ele = null;
+    this._panel_ele = null;
     this._tooltip = Tooltips.register("color-palette", true);
 
     this._tooltip.ontooltip = function(event, target) {

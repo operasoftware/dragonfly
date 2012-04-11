@@ -1,7 +1,7 @@
 ﻿.color-picker
 {
   position: absolute;
-  margin-right: 5px;
+  margin-right: -2px;
 }
 
 .color-picker-popup
@@ -19,6 +19,30 @@
               0 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
+.color-picker-arrow
+{
+  position: absolute;
+  overflow: hidden;
+  height: 16px;
+  right: -11px;
+}
+
+.color-picker-arrow::before
+{
+  content: "";
+  display: inline-block;
+  position: relative;
+  right: 6px;
+  top: 2px;
+  height: 12px;
+  width: 12px;
+  -o-transform: rotate(315deg);
+  background-color: #ededed;
+  box-shadow: inset 0 0 0 1px #fff,
+              1px 1px 0 0 #9b9b9b,
+              0 1px 3px 0 rgba(0, 0, 0, 0.45);
+}
+
 .color-picker-2-d-graphic
 {
   position: absolute;
@@ -30,11 +54,6 @@
 {
   display: block;
   width: 100%;
-  height: 100%;
-}
-
-.height-100
-{
   height: 100%;
 }
 
@@ -66,10 +85,10 @@
                     -o-linear-gradient(45deg,
                                        transparent 75%,
                                        #c8c8c8 75%);
-  background-position: 0px 0px,
-                       4px 0px,
+  background-position: 0 0,
+                       4px 0,
                        4px -4px,
-                       0px 4px;
+                       0 4px;
   background-size: 8px 8px;
   border: 1px solid #fff;
 }
@@ -172,25 +191,25 @@
   left: 0;
   top: 0;
   background-image: -o-linear-gradient(0deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 4px),
                     -o-linear-gradient(-45deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(45deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(0deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 4px),
                     -o-linear-gradient(-135deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(135deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px);
     background-size: 4px 9px, 5px 5px, 5px 5px, 4px 9px, 5px 5px, 5px 5px;
@@ -210,8 +229,8 @@
   /* to prevent painting artefacts on moving the pointer */
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 1px 2px rgba(34, 34, 34, 0.5),
-              inset 0px 1px 2px rgba(34, 34, 34, 0.5);
+  box-shadow: 0 1px 2px rgba(34, 34, 34, 0.5),
+              inset 0 1px 2px rgba(34, 34, 34, 0.5);
 }
 
 .black-50
@@ -285,11 +304,6 @@
 .color-picker-controls button:not(:last-of-type)
 {
   margin-right: 5px;
-}
-
-.color-picker-target-element
-{
-  background: #D4E3F4;
 }
 
 /* TEMPORARY */
