@@ -9,9 +9,9 @@
   position: relative;
   background: #ededed;
   color: #333;
-  width: 364px;
-  height: 237px;
-  padding: 5px;
+  width: 366px;
+  height: 246px;
+  padding: 10px;
   box-sizing: border-box;
   border-radius: 4px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9),
@@ -22,8 +22,8 @@
 .color-picker-2-d-graphic
 {
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 194px;
+  height: 194px;
 }
 
 .cp-canvas
@@ -41,9 +41,9 @@
 .color-picker-1-d-graphic
 {
   position: absolute;
-  left: 219px;
+  left: 215px;
   width: 20px;
-  height: 200px;
+  height: 194px;
 }
 
 .color-picker-color-alpha-bg
@@ -51,8 +51,8 @@
   position: absolute;
   height: 20px;
   width: 80px;
-  top: 210px;
-  left: 123px;
+  top: 214px;
+  left: 122px;
   background: #fff;
   background-image: -o-linear-gradient(-45deg,
                                        #c8c8c8 25%,
@@ -111,20 +111,12 @@
   padding: 0 2px 5px;
   text-align: left;
   white-space: nowrap;
-}
-
-.color-picker-inputs input[type="radio"]
-{
-  border: 0 solid;
-  background-color: transparent;
-  padding: 7px;
-  color: #4d4d4d;
-  border-radius: 50%;
+  vertical-align: baseline;
 }
 
 .color-picker-spacer
 {
-  height: 8px;
+  height: 5px;
 }
 
 .color-picker-number
@@ -143,8 +135,8 @@
 {
   position: absolute;
   width: 60px;
-  top: 210px;
-  left: 39px;
+  top: 214px;
+  left: 34px;
 }
 
 .color-picker-number,
@@ -236,7 +228,7 @@
 .color-picker-palette
 {
   max-height: 144px;
-  max-width: 192px;
+  max-width: 178px;
   background: rgba(237, 237, 237, 0.8);
 }
 
@@ -266,20 +258,28 @@
 .color-picker-palette-dropdown
 {
   position: absolute;
-  top: 210px;
+  top: 214px;
   display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid rgba(34, 34, 34, .4);
+  width: 22px;
+  height: 22px;
   vertical-align: middle;
-  border-radius: 2px;
+  background: url("../ui-images/palette.png") center no-repeat;
+  border-radius: 3px;
 }
+
+.color-picker-palette-dropdown.tooltip-selected
+{
+  background-image: url("../ui-images/palette_focused.png");
+  margin: 0;
+  padding: 0;
+}
+
 
 .color-picker-controls
 {
   position: absolute;
-  top: 210px;
-  right: 5px;
+  top: 214px;
+  right: 10px;
 }
 
 .color-picker-controls button:not(:last-of-type)
