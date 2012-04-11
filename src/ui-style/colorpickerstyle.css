@@ -1,7 +1,7 @@
 ﻿.color-picker
 {
   position: absolute;
-  margin-right: 5px;
+  margin-right: 12px; /* (slider width + borders) + 5px margin */
 }
 
 .color-picker-popup
@@ -33,11 +33,6 @@
   height: 100%;
 }
 
-.height-100
-{
-  height: 100%;
-}
-
 .color-picker-1-d-graphic
 {
   position: absolute;
@@ -66,10 +61,10 @@
                     -o-linear-gradient(45deg,
                                        transparent 75%,
                                        #c8c8c8 75%);
-  background-position: 0px 0px,
-                       4px 0px,
+  background-position: 0 0,
+                       4px 0,
                        4px -4px,
-                       0px 4px;
+                       0 4px;
   background-size: 8px 8px;
   border: 1px solid #fff;
 }
@@ -101,7 +96,7 @@
 .color-picker-inputs
 {
   position: absolute;
-  left: 248px;
+  left: 251px;
   margin: 0;
   border-collapse: collapse;
 }
@@ -111,15 +106,6 @@
   padding: 0 2px 5px;
   text-align: left;
   white-space: nowrap;
-}
-
-.color-picker-inputs input[type="radio"]
-{
-  border: 0 solid;
-  background-color: transparent;
-  padding: 7px;
-  color: #4d4d4d;
-  border-radius: 50%;
 }
 
 .color-picker-spacer
@@ -180,25 +166,25 @@
   left: 0;
   top: 0;
   background-image: -o-linear-gradient(0deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 4px),
                     -o-linear-gradient(-45deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(45deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(0deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 4px),
                     -o-linear-gradient(-135deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px),
                     -o-linear-gradient(135deg,
-                                       hsl(0, 0%, 30%) 0px,
+                                       hsl(0, 0%, 30%) 0,
                                        hsl(0, 0%, 30%) 3px,
                                        transparent 3px);
     background-size: 4px 9px, 5px 5px, 5px 5px, 4px 9px, 5px 5px, 5px 5px;
@@ -218,8 +204,8 @@
   /* to prevent painting artefacts on moving the pointer */
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 1px 2px rgba(34, 34, 34, 0.5),
-              inset 0px 1px 2px rgba(34, 34, 34, 0.5);
+  box-shadow: 0 1px 2px rgba(34, 34, 34, 0.5),
+              inset 0 1px 2px rgba(34, 34, 34, 0.5);
 }
 
 .black-50

@@ -28,15 +28,15 @@
     },
     shv_inputs =
     [
-      ['s-v-h', 'h', 'H:', 'number', '°', '0', '360'],
-      ['h-v-s', 's', 'S:', 'number', '%', '0', '100'],
-      ['h-s-v', 'v', 'V:', 'number', '%', '0', '100'],
+      ['s-v-h', 'h', 'h:', 'number', '°', '0', '360'],
+      ['h-v-s', 's', 's:', 'number', '%', '0', '100'],
+      ['h-s-v', 'v', 'v:', 'number', '%', '0', '100'],
     ].map(set_checked),
     rgb_inputs =
     [
-      ['b-g-r', 'r', 'R:', 'number', null, '0', '255'],
-      ['b-r-g', 'g', 'G:', 'number', null, '0', '255'],
-      ['r-g-b', 'b', 'B:', 'number', null, '0', '255'],
+      ['b-g-r', 'r', 'r:', 'number', null, '0', '255'],
+      ['b-r-g', 'g', 'g:', 'number', null, '0', '255'],
+      ['r-g-b', 'b', 'b:', 'number', null, '0', '255'],
     ].map(set_checked),
     alpha_input =
     ["tr",

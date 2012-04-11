@@ -212,16 +212,19 @@ window.cls.ColorPickerView = function(id, name, container_class)
     return window.settings["dom-side-panel"].get("color-notation");
   };
 
-  this._position_color_picker = function(container)
+  this._position_color_picker = function()
   {
-    var dim = this._edit_context.ele_value.get_ancestor(this._edit_context.position_anchor_selector).getBoundingClientRect();
+    var context = this._edit_context;
+    var panel = context.ele_value.get_ancestor("container");
+    var anchor = context.ele_value.get_ancestor(context.position_anchor_selector);
+    var dim = (anchor || context.ele_value).getBoundingClientRect()
     var height = this._ele.getBoundingClientRect().height;
     var top = Math.max(MARGIN,
                        Math.min(dim.top - Math.round((height / 2) - (dim.height / 2)),
                                 window.innerHeight - height - MARGIN)
                       );
     this._ele.style.top = top + "px";
-    this._ele.style.right = window.innerWidth - dim.left + "px";
+    this._ele.style.right = panel.getBoundingClientRect().width + "px";
   };
 
   this._init = function(id, name, container_class)

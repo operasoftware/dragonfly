@@ -1591,7 +1591,7 @@ d
   color: rgba(0, 0, 0, 0.5);
 }
 
-.color-picker-active-item
+.css-property-value .color-picker-active-item
 {
   background: #fff;
   border: 1px solid #808080;
@@ -1600,3 +1600,4 @@ d
   margin: -3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+
