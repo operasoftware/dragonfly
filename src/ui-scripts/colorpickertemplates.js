@@ -174,9 +174,11 @@
   {
     if (window.cls && cls.ColorPalette)
     {
-      var MAX_PALETTE_ITEMS = 16;
+      var MAX_PALETTE_ITEMS = 9;
       var palette = cls.ColorPalette.get_instance().get_color_palette().slice(0, MAX_PALETTE_ITEMS);
-      var colors = palette.map(function(item) { return item.color; });
+      var colors = palette.length
+                 ? palette.map(function(item) { return item.color; })
+                 : ["999"]; // Fallback
       // Show 16 small squares with palette colors (possibly repeated)
       for (var i = 0; colors.length < MAX_PALETTE_ITEMS; i++)
       {
@@ -185,11 +187,21 @@
 
       return ([
         "div",
+          colors.map(this._color_picker_palette_square),
         "class", "color-picker-palette-dropdown",
         "data-tooltip", "color-palette"
       ]);
     }
     return [];
+  };
+
+  this._color_picker_palette_square = function(color)
+  {
+    return [
+      "div",
+      "class", "color-picker-palette-square",
+      "style", "background-color: #" + color
+    ];
   };
 
   this.color_picker_palette = function()
