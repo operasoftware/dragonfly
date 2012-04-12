@@ -154,12 +154,12 @@
         window.templates.color_picker_palette_dropdown(),
         ["div",
           ["button",
-             "Cancel",
+             ui_strings.S_BUTTON_CANCEL,
            "class", "container-button ui-button",
            "handler", "color-picker-cancel"
           ],
           ["button",
-             "OK",
+             ui_strings.S_BUTTON_OK,
            "class", "container-button ui-button",
            "handler", "color-picker-ok"
           ],

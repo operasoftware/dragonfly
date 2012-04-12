@@ -424,7 +424,7 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH = "Less";
 ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 
 /* DESC: Missing description! */
-ui_strings.S_BUTTON_OK = "Ok";
+ui_strings.S_BUTTON_OK = "OK";
 
 /* DESC: Remove all event breakpoints */
 ui_strings.S_BUTTON_REMOVE_ALL_BREAKPOINTS = "Remove all event breakpoints";
