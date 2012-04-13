@@ -141,6 +141,18 @@ var ToolbarBase = function()
     }
   }
 
+  this.enable = function()
+  {
+
+
+  };
+
+  this.disable = function()
+  {
+
+
+  };
+
   this.setup = function(view_id)
   {
     var toolbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();

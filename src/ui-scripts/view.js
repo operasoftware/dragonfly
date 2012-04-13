@@ -114,7 +114,7 @@ var ViewBase = new function()
 
   this.update = function()
   {
-    var is_enabled = this.requierd_services.every(_is_enabled);  
+    var is_enabled = this.is_enabled;  
     for (var i = 0, id = ""; id = this.container_ids[i]; i++)
     {
       var container = document.getElementById(id);
@@ -160,6 +160,13 @@ var ViewBase = new function()
     }
     return false;
   }
+
+  this.__defineGetter__("is_enabled", function()
+  {
+    return this.requierd_services.every(_is_enabled); 
+  });
+
+  this.__defineSetter__("is_enabled", function() {});
 
   this.getAllContainers = function() 
   {
