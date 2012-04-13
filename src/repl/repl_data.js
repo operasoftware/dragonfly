@@ -145,13 +145,5 @@ cls.ReplData = function(view)
     }
   };
 
-  this._on_setting_change_bound = function(msg)
-  {
-    if (msg.id == "repl" && msg.key == "max-typed-history-length")
-    {
-      this._max_typed = settings.command_line.get(msg.key);
-    }
-  }.bind(this);
-
   messages.addListener("setting-changed", this._on_setting_change_bound);
 };
