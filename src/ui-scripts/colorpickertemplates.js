@@ -179,7 +179,7 @@
       var colors = palette.length
                  ? palette.map(function(item) { return item.color; })
                  : ["999"]; // Fallback
-      // Show 16 small squares with palette colors (possibly repeated)
+      // Show small squares with palette colors (possibly repeated)
       for (var i = 0; colors.length < MAX_PALETTE_ITEMS; i++)
       {
         colors.push(colors[i % MAX_PALETTE_ITEMS]);

@@ -114,8 +114,6 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var color_value = parent.textContent;
     var initial_color = new Color().parseCSSColor(color_value);
 
-    //window.helpers.setSelected(target.get_ancestor(".css-declaration"));
-
     this._edit_context = edit_context || {
       initial_color: initial_color,
       current_color: initial_color,
