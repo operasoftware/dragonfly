@@ -63,11 +63,11 @@
 .color-palette-sample
 {
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 19px;
+  height: 19px;
   vertical-align: middle;
   margin-right: 5px;
-  border-radius: 3px;
+  border-radius: 2px;
   border: 1px solid rgba(34, 34, 34, 0.4);
 }
 
