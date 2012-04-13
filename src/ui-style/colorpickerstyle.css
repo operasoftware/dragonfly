@@ -23,8 +23,8 @@
 {
   position: absolute;
   overflow: hidden;
-  height: 20px;
-  right: -11px;
+  height: 22px;
+  right: -12px;
 }
 
 .color-picker-arrow::before
@@ -33,13 +33,13 @@
   display: inline-block;
   position: relative;
   right: 6px;
-  top: 4px;
-  height: 12px;
-  width: 12px;
+  top: 5px;
+  height: 11px;
+  width: 11px;
   -o-transform: rotate(315deg);
   background-color: #ededed;
-  box-shadow: inset 0 0 0 1px #fff,
-              1px 1px 0 0 rgba(0, 0, 0, 0.2),
+  border: 1px solid #fdfdfd;
+  box-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.2),
               1px 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -313,3 +313,4 @@
 {
     border-radius: 9px;
 }
+
