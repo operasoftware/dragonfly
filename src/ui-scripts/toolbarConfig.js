@@ -15,18 +15,21 @@ var ToolbarConfigBase = new function()
 
   this.addContainerId = function(id) // a markup id from a toolbar
   {
-    this.container_ids[this.container_ids.length] = id;
+    if (!this.container_ids.contains(id))
+      this.container_ids.push(id);
   }
 
   this.removeContainerId = function(id) // a markup id from a toolbar
   {
-    var id_c = '', i = 0;
-    for( ; ( id_c = this.container_ids[i] ) && id_c != id; i++);
-    if( id_c )
+    for (var id_c = "", i = 0; id_c = this.container_ids[i]; i++)
     {
-      this.container_ids.splice(i, 1);
+      if (id_c == id)
+      {
+        this.container_ids.splice(i, 1);
+        break;
+      }
     }
-  }
+  };
 
   this.updateButtons = function()
   {
@@ -112,6 +115,34 @@ var ToolbarConfigBase = new function()
   {
     return this.__is_visible;
   }
+
+  this.enable = function()
+  {
+    for (var i = 0, id; id = this.container_ids[i]; i++)
+    {
+      var toolbar = document.getElementById(id);
+      if (toolbar)
+      {
+        var overlay = toolbar.querySelector(".disabled-toolbar-overlay");
+        if (overlay)
+          toolbar.removeChild(overlay);
+      }
+    }
+  };
+
+  this.disable = function()
+  {
+    for (var i = 0, id; id = this.container_ids[i]; i++)
+    {
+      var toolbar = document.getElementById(id);
+      if (toolbar)
+      {
+        var overlay = toolbar.querySelector(".disabled-toolbar-overlay");
+        if (!overlay)
+          toolbar.render(["div", "class", "disabled-toolbar-overlay"]);
+      }
+    }
+  };
 
   this.init = function(name, 
                        optional_button_array, 

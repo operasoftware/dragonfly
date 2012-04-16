@@ -260,15 +260,30 @@ var ViewBase = new function()
     for (var i = 0, id; id = tabs[i]; i++)
     {
       var view = window.views[id];
-      // TODO perhaps optimize with checking last view state?
       if (view.type == "side-panel" || view.type == "single-view")
+      {
         view.update();
+        var toolbar = window.toolbars[id];
+        if (toolbar)
+        {
+          if (view.is_enabled)
+            toolbar.enable();
+          else
+            toolbar.disable();
+        }
+      }
     }
   });
 
   window.messages.addListener("profile-disabled", function(msg)
   {
-    _enabled_services = [];
+    msg.disabled_services.forEach(function(service)
+    {
+      if (_enabled_services.contains(service))
+        _enabled_services.splice(_enabled_services.indexOf(service), 1);
+    });
+    // Updating the views will be done in the following "profile-enabled"
+    // message.
   });
 
 }

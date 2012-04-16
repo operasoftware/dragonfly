@@ -41,11 +41,6 @@ cls.Scope["1.1"].Service = function()
   this.requestEnable = function(tag, message)
   {
     var NAME = 0;
-
-    if (!this._enable_requests)
-      this._enable_requests = {};
-
-    this._enable_requests[message[NAME]] = false;
     opera.scopeTransmit("scope", message || [], 5, tag || 0);
   };
 
@@ -69,19 +64,21 @@ cls.Scope["1.1"].Service = function()
         window.services[service].post("enable-success");
         window.services[service].on_enable_success();
       };
-      this._enable_requests[service] = true;
-      for (service_name in this._enable_requests)
-      {
-        all_enabled = all_enabled && this._enable_requests[service_name];
-      }
-      if (all_enabled)
-      {
-        window.app.profiles[this._profile].is_enabled = true;
-        var msg = {profile: this._profile,
-                   services: this._profiles[this._profile].slice()};
-        window.messages.post("profile-enabled", msg);
-      }
+
+      if (this._enable_requests.contains(service))
+        this._enable_requests.splice(this._enable_requests.indexOf(service), 1);
+
+      if (!this._enable_requests.length)
+        this._send_profile_enabled_msg();
     }
+  };
+
+  this._send_profile_enabled_msg = function()
+  {
+    window.app.profiles[this._profile].is_enabled = true;
+    var msg = {profile: this._profile,
+               services: this._profiles[this._profile].slice()};
+    window.messages.post("profile-enabled", msg);
   };
 
   this.requestDisable = function(tag, message)
@@ -92,22 +89,16 @@ cls.Scope["1.1"].Service = function()
   this.handleDisable = function(status, message)
   {
     var NAME = 0;
-    var all_disabled = true;
     var service = message[NAME];
-
     if (status)
-    {
       opera.postError("disable service failed, message: " + service)
-    }
     else
     {
       window.services[service].is_enabled = false;
-      this._enable_requests[service] = false;
-      for (var service_name in this._enable_requests)
-      {
-        all_disabled = all_disabled && this._enable_requests[service_name] === false;
-      }
-      if (all_disabled)
+      if (this._disable_requests.contains(service))
+        this._disable_requests.splice(this._disable_requests.indexOf(service), 1);
+
+      if (!this._disable_requests.length)
         this._finalize_enable_profile();
     }
   }
@@ -288,15 +279,36 @@ cls.Scope["1.1"].Service = function()
 
   this.enable_profile = function(profile)
   {
+    if (this._enable_requests.length || this._disable_requests.length)
+      return;
+
     var old_profile = this._profile;
+    var current_enabled_services = this._profiles[old_profile] || [];
+    var services_to_be_enabled = this._profiles[profile];
     this._profile = profile;
+    current_enabled_services.forEach(function(service)
+    {
+      if (!services_to_be_enabled.contains(service))
+        this._disable_requests.push(service);
+    }, this);
+    services_to_be_enabled.forEach(function(service)
+    {
+      if (!current_enabled_services.contains(service))
+        this._enable_requests.push(service);
+    }, this);
+
+
     if (old_profile)
     {
       var msg = {profile: old_profile,
-                 services: this._profiles[old_profile].slice()};
+                 disabled_services: this._disable_requests.slice()};
       window.app.profiles[old_profile].is_enabled = false;
-      window.messages.post("disable-profile", msg);
-      Object.keys(this._enable_requests).forEach(function(service)
+      window.messages.post("profile-disabled", msg);
+    }
+
+    if (this._disable_requests.length)
+    {
+      this._disable_requests.forEach(function(service)
       {
         this.requestDisable(0, [service]);
       }, this);
@@ -307,14 +319,15 @@ cls.Scope["1.1"].Service = function()
 
   this._finalize_enable_profile = function()
   {
-    if (window.app.profiles[this._profile])
+    if (this._enable_requests.length)
     {
-      this._enable_requests = {};
-      window.app.profiles[this._profile].forEach(function(service)
+      this._enable_requests.forEach(function(service)
       {
         this.requestEnable(0, [service]);
       }, this);
     }
+    else
+      this._send_profile_enabled_msg();
   };
 
   this._init = function()
@@ -323,6 +336,8 @@ cls.Scope["1.1"].Service = function()
     this._service_descriptions = {};
     this._profile = null;
     this._profiles = window.app.profiles;
+    this._enable_requests = [];
+    this._disable_requests = [];
   };
 
   this._init();
