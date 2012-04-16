@@ -200,7 +200,7 @@ var ToolbarBase = function()
         } 
       }
 
-      if (!window.views[view_id].is_enabled)
+      if (!window.views[view_id].is_enabled && toolbars[view_id])
         toolbars[view_id].disable();
     }
   }
