@@ -2,9 +2,9 @@
 
 cls.ReplData = function(view)
 {
+  var MAX_HISTORY = 100;
   this._repllog = [];
   this._typed_history = settings.command_line.get("typed-history") || [];
-  this._max_typed = settings.command_line.get('max-typed-history-length') || 0;
   this._view = view;
 
   this.clear = function()
@@ -137,13 +137,8 @@ cls.ReplData = function(view)
     if (this._typed_history[0] != str && str.trim() !== "")
     {
       this._typed_history.unshift(str);
-      if (this._max_typed && this._typed_history.length > this._max_typed)
-      {
-        this._typed_history = this._typed_history.slice(0, this._max_typed);
-      }
+    this._typed_history = this._typed_history.slice(0, MAX_HISTORY);
       settings.command_line.set("typed-history", this._typed_history);
     }
   };
-
-  messages.addListener("setting-changed", this._on_setting_change_bound);
 };

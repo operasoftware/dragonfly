@@ -978,7 +978,6 @@ cls.ReplView.create_ui_widgets = function()
   new Settings(
     'command_line',
     { // key/value
-      'max-typed-history-length': 100,
       'typed-history': [],
       'unpack-list-alikes': true,
       'do-friendly-print': true,
@@ -987,7 +986,6 @@ cls.ReplView.create_ui_widgets = function()
       'expand-objects-inline': true,
     },
     { // key/label
-      'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
       'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
