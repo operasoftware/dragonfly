@@ -428,7 +428,7 @@ cls.ElementStyle = function()
 
   this._init = function()
   {
-    this._has_pseudo_element_version = window.helpers.has_version(this._es_debugger, 6, 9);
+    this._has_pseudo_element_version = this._es_debugger.satisfies_version(6, 9);
     if (window.messages)
     {
       window.messages.addListener('element-selected', this._on_element_selected.bind(this));

@@ -33,7 +33,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       context.current_color = color;
       if (!this._color_notation)
         this._color_notation = this._get_color_notation();
-      context.ele_value.firstChild.textContent = window.helpers.get_color_in_notation(color.rgba, this._color_notation);
+      context.ele_value.firstChild.textContent = window.helpers.get_color_in_notation(color, this._color_notation);
       context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
       var property_value_ele = context.ele_value.get_ancestor(".css-property-value");
       if (property_value_ele)
@@ -283,7 +283,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     window.eventHandlers.click["add-color-picker-color"] = function(event, target)
     {
       cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
-      target.get_ancestor(".color-picker-palette").parentNode.clearAndRender(window.templates.color_picker_palette());
+      target.get_ancestor(".color-picker-palette").re_render(window.templates.color_picker_palette());
     }.bind(this);
 
     var menu = [

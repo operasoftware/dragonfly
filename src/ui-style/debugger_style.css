@@ -1555,23 +1555,27 @@ d
   margin: 0;
 }
 
-.css-inspector:not(.edit-mode) .closing-brace
+.closing-brace
 {
-  border-top: 1px solid transparent;
-  margin-top: -1px;
   position: relative;
 }
 
 .css-inspector:not(.edit-mode) .closing-brace:hover
 {
-  border-top: 1px dotted rgba(0, 0, 0, 0.4);
+  background-color: #fefefe;
+  background-image: -o-linear-gradient(0deg,
+                                       #fff 0,
+                                       #7e7e7e 1px,
+                                       #fff 1px);
+  background-repeat: repeat-x;
+  background-size: 3px 1px;
 }
 
 .css-inspector:not(.edit-mode) .closing-brace:hover::before
 {
   content: "";
   position: absolute;
-  top: -6px;
+  top: -5px;
   left: 8px;
   height: 9px;
   width: 9px;

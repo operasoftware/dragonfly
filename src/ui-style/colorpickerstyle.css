@@ -108,13 +108,13 @@
 
 .color-picker-color-old
 {
-    border-right-width: 0;
+  border-right-width: 0;
 }
 
 .color-picker-color
 {
-    left: 40px;
-    border-left-width: 0;
+  left: 40px;
+  border-left-width: 0;
 }
 
 .color-picker-inputs
@@ -306,11 +306,5 @@
 .color-picker-controls button:not(:last-of-type)
 {
   margin-right: 5px;
-}
-
-/* TEMPORARY */
-.color-picker-pointer
-{
-    border-radius: 9px;
 }
 

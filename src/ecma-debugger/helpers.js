@@ -314,14 +314,15 @@ window.cls.Helpers = function()
     return Math.floor(value) + .5;
   };
 
-  this.get_color_in_notation = function(value, notation)
+  /**
+   * Return a color in the preferred notation.
+   *
+   * @param {Color} color A color
+   * @param {string} notation One of "hhex", "rgb" or "hsl"
+   */
+  this.get_color_in_notation = function(color, notation)
   {
-    var color = new Color().parseCSSColor(value);
-
-    if (!color)
-      return value; // Fall back if we can't parse as color
-
-    if (color.alpha !== 1)
+    if (color.alpha < 1)
     {
       notation = {
         "hhex": "rgba", // Fall back since hex cannot represent alpha
@@ -331,11 +332,6 @@ window.cls.Helpers = function()
     }
 
     return color[notation];
-  };
-
-  this.has_version = function(service, major_version, minor_version)
-  {
-    return service.major_version > major_version || service.minor_version >= minor_version;
   };
 }
 

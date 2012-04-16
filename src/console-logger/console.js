@@ -682,7 +682,7 @@ cls.ConsoleLogger.ConsoleView = function(id, name, container_class)
 {
   this.is_hidden = true;
   this.createView = function(container){};
-  this.init(id, ui_strings.S_SETTINGS_HEADER_CONSOLE, container_class);
+  this.init(id, name, container_class);
 };
 cls.ConsoleLogger.ConsoleView.prototype = ViewBase;
 

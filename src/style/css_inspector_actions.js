@@ -461,10 +461,14 @@ cls.CSSInspectorActions = function(id)
   };
 
   this.__defineSetter__("mode", function(mode) {
+    if (!this._active_container)
+      return;
+
     if (mode === MODE_EDIT)
       this._active_container.addClass(MODE_EDIT_CLASS);
     else
       this._active_container.removeClass(MODE_EDIT_CLASS);
+
     this._mode = mode;
   });
 
@@ -529,6 +533,7 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['edit-css'] = function(event, target)
   {
+    window.views["color-selector"].ondestroy();
     var ele = event.target.get_ancestor(".css-property") ||
               event.target.get_ancestor(".css-property-value");
     if (ele)
@@ -717,8 +722,7 @@ cls.CSSInspectorActions = function(id)
 
 eventHandlers.dblclick['edit-css'] = function(event, target)
 {
-  if (!window.views["color-selector"].is_opened)
-    this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
+  this.broker.dispatch_action('css-inspector', 'edit-css', event, target);
 }
 
 eventHandlers.click['enable-disable'] = function(event, target)

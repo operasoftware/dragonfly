@@ -255,7 +255,7 @@ var StylesheetTemplates = function()
       if (color_value.length && type === TYPE_FUNCTION_END)
       {
         color_value.push(value);
-        value = window.helpers.get_color_in_notation(color_value.join(""), color_notation);
+        value = window.helpers.get_color_in_notation(new Color().parseCSSColor(color_value.join("")), color_notation);
         color_swatch = this.color_swatch(value, is_editable);
         color_value = [];
       }
@@ -266,7 +266,7 @@ var StylesheetTemplates = function()
       }
       else if (type === TYPE_HEX_COLOR)
       {
-        value = window.helpers.get_color_in_notation(value, color_notation);
+        value = window.helpers.get_color_in_notation(new Color().parseCSSColor(value), color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
       else if ((this._color_properties.hasOwnProperty(prop) && value !== "invert")
