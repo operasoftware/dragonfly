@@ -342,7 +342,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
       this._add_line('<span class="repl-line-marker">' + 
-                       (index ? "... " : "&gt&gt&gt ") +
+                       (index ? "... " : "&gt;&gt;&gt; ") +
                      "</span>" + line);
     }, this);
   };
