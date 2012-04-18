@@ -153,15 +153,17 @@
         ],
         window.templates.color_picker_palette_dropdown(),
         ["div",
-          ["button",
+          ["span",
              ui_strings.S_BUTTON_CANCEL,
-           "class", "container-button ui-button",
-           "handler", "color-picker-cancel"
+           "class", "ui-button",
+           "handler", "color-picker-cancel",
+           "tabindex", "1"
           ],
-          ["button",
+          ["span",
              ui_strings.S_BUTTON_OK,
-           "class", "container-button ui-button",
-           "handler", "color-picker-ok"
+           "class", "ui-button",
+           "handler", "color-picker-ok",
+           "tabindex", "1"
           ],
          "class", "color-picker-controls"
         ],
