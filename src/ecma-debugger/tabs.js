@@ -26,7 +26,15 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
 
   var __get_document_id = {};
 
-
+  var _on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      __activeTab = [];
+      __window_id = 0;
+      cleanUpEventListener();
+    }
+  };
 
   var getNewHandlerId = function()
   {
@@ -296,6 +304,8 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
       self.handleEventHandler(status, message);
     }
   }
+
+  window.messages.addListener('profile-disabled', _on_profile_disabled);
 
   /**
   * @constructor 
