@@ -234,6 +234,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
   };
 
+  this._reload_window = function(event, target)
+  {
+    window.runtimes.reloadWindow();
+    window.services.scope.enable_profile(window.app.profiles.PROFILER);
+  };
+
+  window.eventHandlers.click["profiler-reload-window"] = this._reload_window.bind(this);
   window.eventHandlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
   window.eventHandlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
   window.eventHandlers.mousewheel["profiler-zoom-timeline"] = this._zoom_timeline.bind(this);

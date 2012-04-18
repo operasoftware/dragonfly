@@ -328,8 +328,13 @@ var ProfilerTemplates = function()
   {
     return (
       ["div",
+        ["span",
+         "class", "container-button ui-button reload-window",
+         "handler", "profiler-reload-window",
+         "tabindex", "1"
+        ],
         ["p",
-          ui_strings.S_INFO_REQUIRED_SERVICES_DISABLED
+          "To get accurate data from the profiler, the document has to be reloaded."
         ],
        "class", "info-box"
       ]

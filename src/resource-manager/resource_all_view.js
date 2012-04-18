@@ -83,7 +83,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       container.clearAndRender(
         ['div',
          ['span',
-          'class', 'container-button ui-button',
+          'class', 'container-button ui-button reload-window',
           'handler', 'reload-window',
           'tabindex', '1'],
          ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
