@@ -21,11 +21,15 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
   this._url_self = location.host + location.pathname;
   this._lastid = 0;
 
-  this._update_views = function()
+  this._update_views = function(set_instant_update)
   {
     for (var view_id = '', i = 0; view_id = this._views[i]; i++)
     {
-      window.views[view_id].update()
+      var view = window.views[view_id];
+      if (set_instant_update)
+        view.needs_instant_update = true;
+      
+      view.update();
     }
 
     var used_for_error_count = this._view_used_for_error_count || this._views[0];
@@ -94,7 +98,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     { 
       return !message_ids.contains(e.id);
     });
-    this._update_views();
+    this._update_views(true);
   };
 
   this.clear_all = function()
@@ -106,7 +110,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       window.views[view_id].is_hidden = true;
       topCell.disableTab(view_id, true);
     };
-    this._update_views();
+    this._update_views(true);
   }
 
   /**
@@ -169,14 +173,14 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       {
         case 'expand-all-entries': {
           this._toggled = [];
-          this._update_views();
+          this._update_views(true);
           break;
         }
         case 'css-filter':
         case 'use-css-filter':
         {
           this._set_css_filter();
-          this._update_views();
+          this._update_views(true);
           break;
         }
       }
@@ -188,7 +192,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     var message = new cls.ConsoleLogger["2.0"].ConsoleMessage(data);
     message.id = "" + (++this._lastid);
 
-    // only take console messages over ECMAScriptDebugger, will be setting dependend
+    // only take console messages over ECMAScriptDebugger
     if (!message.context.startswith("console."))
     {
       this.add_entry(message);
@@ -333,6 +337,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
       var error_messages = message[DATA];
       for (var i=0, error_message; error_message = error_messages[i]; i++)
       {
+        // todo: doing this in a loop means updating the view all the time. throttling catches it, but this could probably be optimized
         this._on_console_message(error_message);
       };
     }
@@ -365,14 +370,42 @@ var ErrorConsoleView = function(id, name, container_class, source_list, is_black
   this._init(id, name, container_class, source_list, is_blacklist);
 }
 
-ErrorConsoleViewPrototype = function()
+var ErrorConsoleViewPrototype = function()
 {
+  var MAX_ENTRIES = 1000;
+  var MIN_RENDER_DELAY = 200;
+  this._render_timeout = 0;
+  this._rendertime = 0;
+  this.needs_instant_update = false;
+  this.requierd_services = ["console-logger"];
 
   this.createView = function(container)
   {
-    this._container = container;
-    this._container.setAttribute("data-error-log-id", this.id);
-    this._container.setAttribute("data-menu", "error-console");
+    if (!this.needs_instant_update)
+    {
+      if (this._render_timeout)
+      {
+        return;
+      }
+      else
+      {
+        var timedelta = Date.now() - this._rendertime;
+        if (timedelta < MIN_RENDER_DELAY)
+        {
+          this._render_timeout = window.setTimeout(this._create_delayed_bound,
+                                                   MIN_RENDER_DELAY - timedelta);
+          return;
+        }
+      }
+    }    
+    this.needs_instant_update = false;
+
+    if (container)
+    {
+      this._container = container;
+      this._container.setAttribute("data-error-log-id", this.id);
+      this._container.setAttribute("data-menu", "error-console");
+    }
     if (this.query)
     {
       // this triggers _create via on_before_search
@@ -382,6 +415,12 @@ ErrorConsoleViewPrototype = function()
     {
       this._create();
     }
+  };
+
+  this._create_delayed = function()
+  {
+    this._render_timeout = 0;
+    this.createView();
   };
 
   this._hash_array = function(string, item, index, array)
@@ -396,6 +435,14 @@ ErrorConsoleViewPrototype = function()
       window.error_console_data.set_view_to_use_for_error_count(this.id);
       var entries = window.error_console_data.get_messages(this.query)
                                                .filter(this.source_filter);
+      var exceeds_max = false;
+      var org_length = entries.length;
+      if (org_length > MAX_ENTRIES)
+      {
+        entries.splice(0, org_length - MAX_ENTRIES);
+        exceeds_max = true;
+      }
+
       this.update_error_count(entries);
       var expand_all = settings.console.get('expand-all-entries');
 
@@ -412,21 +459,28 @@ ErrorConsoleViewPrototype = function()
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
+
         this._table_ele.render(template);
       }
       else
       {
-        var template = templates.errors.log_table(entries, 
-                                                  expand_all,
-                                                  window.error_console_data.get_toggled(),
-                                                  this.id);
-        this._table_ele = this._container.clearAndRender(template);
+        var template = window.templates.errors.log_table(entries, 
+                                                       expand_all,
+                                                       window.error_console_data.get_toggled(),
+                                                       this.id);
+
+        var rendered = this._container.clearAndRender(template);
+        this._table_ele = rendered.parentNode.querySelector(".errors-table");
       }
+      if (exceeds_max)
+        this._container.render(window.templates.errors.exceeds_max(MAX_ENTRIES, org_length));
+
       this.last_entry_hash = entries.reduce(this._hash_array, "");
       if (this._scrollTop)
       {
         this._container.scrollTop = this._scrollTop;
       }
+      this._rendertime = Date.now();
     }
   }
 
@@ -436,6 +490,8 @@ ErrorConsoleViewPrototype = function()
     {
       entries = window.error_console_data.get_messages(this.query)
                                            .filter(this.source_filter);
+      if (entries.length > MAX_ENTRIES)
+        entries.splice(0, entries.length - MAX_ENTRIES);
     }
     window.messages.post("error-count-update", {current_error_count: entries.length});
   }
@@ -444,6 +500,8 @@ ErrorConsoleViewPrototype = function()
   {
     this._table_ele = null;
     this._container = null;
+    this._rendertime = 0;
+    this._render_timeout = 0;
   };
 
   this._on_before_search = function(message)
@@ -463,6 +521,7 @@ ErrorConsoleViewPrototype = function()
     this._expand_all_state = null;
     this._table_ele = null;
     this._on_before_search_bound = this._on_before_search.bind(this);
+    this._create_delayed_bound = this._create_delayed.bind(this);
     this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
   }
   

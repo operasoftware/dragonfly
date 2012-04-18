@@ -21,7 +21,7 @@ var onshortcut = function(shortcut, event)
   document.getElementsByTagName('p')[0].textContent = shortcut;
   var pre = document.getElementsByTagName('pre')[0];
   
-  var pos = (', ' + pre.textContent + ',').indexOf(', ' + shortcut + ',');
+  var pos = ('\n' + pre.textContent + '\n').indexOf('\n' + shortcut + '\n');
   var selection = getSelection();
   var range = document.createRange();
   selection.removeAllRanges();
@@ -48,10 +48,10 @@ window.onload = function()
     "ctrl p", "page-down", "page-up"
   ];
   var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : window.opera ?"opera" : "firefox");
-  document.getElementsByTagName('pre')[0].textContent = sc.join(', ');
+  document.getElementsByTagName('pre')[0].textContent = sc.join('\n');
   ki.set_shortcuts(sc);
 }
 
 </script>
 <pre style="width: 200px; margin: auto; white-space: pre-wrap;"></pre>
-<p style="font-family: Garamond, serif; font-size: 5em; text-align: center; color: #666;">
+<p style="font-family: Garamond, serif; font-size: 5em; margin: 10px 0; padding: 0; text-align: center; color: #666;">

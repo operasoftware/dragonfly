@@ -68,6 +68,7 @@ TextSearch.prototype = new function()
     this._search_bound = this.search.bind(this);
     this.ignore_case = 1;
     this.search_type = TextSearch.PLAIN_TEXT;
+    this.no_highlight = false;
   }
 
   this._set_default_style = function(span, index, array)
@@ -94,20 +95,24 @@ TextSearch.prototype = new function()
     {
       if (index == 0)
       {
-        span.className = SELECTED_MATCH_CLASS_FIRST;
+        span.className = this._selected_match_class_first ||
+                         SELECTED_MATCH_CLASS_FIRST;
       }
       else if (index == length - 1)
       {
-        span.className = SELECTED_MATCH_CLASS_LAST;
+        span.className = this._selected_match_class_last ||
+                         SELECTED_MATCH_CLASS_LAST;
       }
       else
       {
-        span.className = SELECTED_MATCH_CLASS_BETWEEN;
+        span.className = this._selected_match_class_between ||
+                         SELECTED_MATCH_CLASS_BETWEEN;
       }
     }
     else
     {
-      span.className = SELECTED_MATCH_CLASS;
+      span.className = this._selected_match_class ||
+                       SELECTED_MATCH_CLASS;
     }
   };
 
@@ -188,7 +193,7 @@ TextSearch.prototype = new function()
             node = span;
             if (this._length_to_consume < 1)
             {
-              this._curent_search_result.forEach(this._set_default_style);
+              this._curent_search_result.forEach(this._set_default_style, this);
             }
           }
           else
@@ -316,7 +321,8 @@ TextSearch.prototype = new function()
               this._hits.length == this._old_hits_length)
           {
             this._match_cursor = old_cursor;
-            this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
+            if (!this.no_highlight)
+              this._hits[this._match_cursor].forEach(this._set_highlight_style, this);
             if (this._onhighlightstyle)
             {
               this._onhighlightstyle(this._hits[this._match_cursor]);
@@ -368,6 +374,9 @@ TextSearch.prototype = new function()
    */
   this.highlight = function(check_position, direction)
   {
+    if (this.no_highlight)
+      return;
+      
     if (this._search_term && 
         this._search_term.length < this._min_term_length &&
         !this._search_forced)
@@ -578,5 +587,19 @@ TextSearch.prototype = new function()
            this._match_style_highlight :
            this._match_style_default;
   }
+
+  this.set_query_selector = function(selector)
+  {
+    this._query_selector = selector;
+  };
+
+  this.get_match_target = function()
+  {
+    return this._hits && 
+           this._hits[this._match_cursor] &&
+           this._hits[this._match_cursor][0] &&
+           this._hits[this._match_cursor][0].parentElement || null;
+  };
+
 
 };

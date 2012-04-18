@@ -8,6 +8,7 @@ var ViewBase = new function()
   var id_count = 1;
 
   var ids = [];
+  var _enabled_services = [];
 
   var getId = function()
   {
@@ -20,6 +21,13 @@ var ViewBase = new function()
     for( ; (filter = filters[i]) && !view[filter]; i++ );
     return filter && true || false; 
   }
+
+  var _is_enabled = function(service)
+  {
+    return _enabled_services.indexOf(service) > -1;
+  };
+
+  this.requierd_services = [];
 
   this.getSingleViews = function(filters)
   {
@@ -94,35 +102,35 @@ var ViewBase = new function()
     container.innerHTML = this.inner;
   }
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.default_disabled_view());
+  };
+
   this.ondestroy = function()
   {
 
   }
 
-  this.update = function(ele) // for testing
+  this.update = function()
   {
-    if( ele )
+    var is_enabled = this.is_enabled;  
+    for (var i = 0, id = ""; id = this.container_ids[i]; i++)
     {
-      this.createView(ele);
-    }
-    else
-    {
-      var id = '', i = 0, container = null;
-      
-      for( ; id = this.container_ids[i]; i++)
+      var container = document.getElementById(id);
+      if (container)
       {
-        container = document.getElementById(id);
-        if (container)
-        {
+        if (is_enabled)
           this.createView(container);
-          messages.post('view-created', {id: this.id, container: container});
-        }
-        // if actions[this.id] actions[this.id].onViewUpdate(cotainer)
+        else
+          this.create_disabled_view(container);
+
+        messages.post('view-created', {id: this.id,
+                                       container: container,
+                                       is_enabled: is_enabled});
       }
-
-
     }
-  }
+  };
 
   this.applyToContainers = function(fn) // for testing
   {
@@ -152,6 +160,13 @@ var ViewBase = new function()
     }
     return false;
   }
+
+  this.__defineGetter__("is_enabled", function()
+  {
+    return this.requierd_services.every(_is_enabled); 
+  });
+
+  this.__defineSetter__("is_enabled", function() {});
 
   this.getAllContainers = function() 
   {
@@ -237,7 +252,39 @@ var ViewBase = new function()
     }
   }
 
-  messages.addListener('hide-view', onHideView);
+  window.messages.addListener("hide-view", onHideView);
+  window.messages.addListener("profile-enabled", function(msg)
+  {
+    _enabled_services = msg.services.slice();
+    var tabs = UI.get_instance().get_visible_tabs();
+    for (var i = 0, id; id = tabs[i]; i++)
+    {
+      var view = window.views[id];
+      if (view.type == "side-panel" || view.type == "single-view")
+      {
+        view.update();
+        var toolbar = window.toolbars[id];
+        if (toolbar)
+        {
+          if (view.is_enabled)
+            toolbar.enable();
+          else
+            toolbar.disable();
+        }
+      }
+    }
+  });
+
+  window.messages.addListener("profile-disabled", function(msg)
+  {
+    msg.disabled_services.forEach(function(service)
+    {
+      if (_enabled_services.contains(service))
+        _enabled_services.splice(_enabled_services.indexOf(service), 1);
+    });
+    // Updating the views will be done in the following "profile-enabled"
+    // message.
+  });
 
 }
 

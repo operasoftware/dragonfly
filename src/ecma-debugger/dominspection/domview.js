@@ -129,6 +129,7 @@ cls.DOMView = function(id, name, container_class)
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger"];
     this._highlighter = new VirtualTextSearch();
     this._highlight_style = this._highlighter.get_match_style('highlight');
     this.init(id, name, container_class, '', 'clear-search-hit');
@@ -190,7 +191,7 @@ cls.DocumentSelect = function(id)
         opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
         return;
       }
-      return templates.runtimes(_runtimes, 'dom');
+      return _runtimes.map(templates.runtime_dom, templates);
     }
     
   }

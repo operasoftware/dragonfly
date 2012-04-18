@@ -64,7 +64,8 @@ modebar,
 searchbar,
 toolbar,
 panel-toolbar,
-window-toolbar
+window-toolbar,
+.js-dd-filter-bar
 {
   border: 0 solid #999;
 }
@@ -107,15 +108,27 @@ window-toolbar
 
 toolbar,
 panel-toolbar,
-window-toolbar
+window-toolbar,
+.js-dd-filter-bar,
+.disabled-toolbar-overlay
 {
   border-width: 0 1px 1px;
   padding: 3px 2px;
-  height: 21px; /* 21 + 3 + 2 (padding) = 26 */
+  height: 21px; /* 21 + 3 + 3 (padding) = 27 */
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
+}
+
+.disabled-toolbar-overlay
+{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .7;
 }
 
 panel-toolbar
@@ -137,6 +150,24 @@ toolbar-switches
   display: block;
   float: left;
   height: 100%;
+}
+
+/* Pop-ups */
+cst-select-option-list,
+#contextmenu,
+.tooltip-container,
+.error-description
+{
+  background-color: #ededed;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.25) 0,
+                                       transparent 25px);
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+              0 1px 6px 0 rgba(0, 0, 0, 0.45),
+              0 0 1px 1px rgba(0, 0, 0, 0.3);
+  color: #333;
 }
 
 .ui-button[handler="reload-window"]::before
@@ -615,7 +646,8 @@ toolbar-filters .ui-button.search-move-highlight-down
 }
 
 filter,
-.advanced-search
+.advanced-search,
+.js-dd-filter-container
 {
   margin: 0 2px;
   padding-left: 20px;
@@ -633,7 +665,8 @@ filter
   display: inline-block;
 }
 
-filter.filter
+filter.filter,
+.js-dd-filter-container
 {
   background-image: url("../ui-images/filter.png");
   background-position: 5px 50%;
@@ -707,7 +740,7 @@ window-controls
   position: absolute;
   top: 0;
   right: 0;
-  padding: 5px 3px 3px 0;
+  padding: 5px 3px 3px 4px;
   height: 22px;
 }
 
@@ -716,16 +749,16 @@ window-controls:not(.no-tabbar)
   background-color: #f3f3f3;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.75) 0,
-                                       rgba(255, 255, 255, 0.25) 100%);
-}
-
-window-controls:not(.no-tabbar)::before
-{
-  content: url("../ui-images/window_controls_border.png");
-  height: 30px;
-  position: relative;
-  left: -2px; /* width of the image */
-  top: -5px; /* adjust for top padding */
+                                       rgba(255, 255, 255, 0.25) 100%),
+                    -o-linear-gradient(-90deg,
+                                       rgba(0, 0, 0, 0.05) 0,
+                                       rgba(0, 0, 0, 0.3) 70%),
+                    -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.1) 0,
+                                       rgba(255, 255, 255, 0.6) 70%);
+  background-size: 100% 100%, 1px 100%, 1px 100%;
+  background-repeat: repeat, repeat-y, repeat-y;
+  background-position: left top, left top, 1px top;
 }
 
 window-controls.no-tabbar
@@ -816,12 +849,12 @@ view-slider
 
 view-slider.vertical
 {
-  cursor: w-resize;
+  cursor: col-resize;
 }
 
 view-slider.horizontal
 {
-  cursor: s-resize;
+  cursor: row-resize;
   border-top: 1px solid #b3b3b3;
 }
 
@@ -943,7 +976,7 @@ windows-container .window-scale-top
   right: 5px;
   top: -5px;
   height: 10px;
-  cursor: s-resize;
+  cursor: n-resize;
 }
 
 windows-container .window-scale-top-right
@@ -952,7 +985,7 @@ windows-container .window-scale-top-right
   width: 10px;
   height: 10px;
   top: -5px;
-  cursor: sw-resize;
+  cursor: ne-resize;
 }
 
 windows-container .window-scale-right
@@ -961,7 +994,7 @@ windows-container .window-scale-right
   width: 10px;
   top: 5px;
   bottom: 5px;
-  cursor: w-resize;
+  cursor: e-resize;
 }
 
 windows-container .window-scale-left
@@ -988,7 +1021,7 @@ windows-container .window-scale-bottom-right
   height: 10px;
   width: 10px;
   right: -5px;
-  cursor: nw-resize;
+  cursor: se-resize;
 }
 
 windows-container .window-scale-bottom-left
@@ -1068,8 +1101,14 @@ window.hud window-container
   padding-bottom: 3px;
 }
 
-.hud cst-select cst-value {
+.hud cst-select cst-value
+{
   text-shadow: none;
+}
+
+.hud .window-scale-top
+{
+  cursor: row-resize;
 }
 
 /* editing */
@@ -1181,6 +1220,12 @@ cst-select-option-list-container
   /* don't add here any border, padding or margin */
   display: block;
   position:absolute;
+  z-index: 150;
+  border: 1px solid transparent;
+}
+
+.cmd-line-runtimes
+{
   z-index: 302;
 }
 
@@ -1192,13 +1237,14 @@ cst-select[disabled] cst-drop-down
 cst-select-option-list
 {
   display: block;
-  border: 1px solid #666;
-  background-color: #fff;
+  background-color: #fcfcfc;
   max-height: 200px;
   overflow: auto;
   width: auto;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  padding-left: 0px;
+  padding-right: 0px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.35),
+              0 0 1px 1px rgba(90, 90, 90, 0.35);
 }
 
 cst-option,
@@ -1213,7 +1259,7 @@ cst-title
 
 cst-select-option-list hr
 {
-  margin: 0;
+  margin: 4px 0;
   padding: 0;
   height: 1px;
   border: none;
@@ -1244,20 +1290,20 @@ cst-option:active code
 cst-select-option-list code
 {
   font-family: monospace;
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.44);
 }
 
 .debugger-menu cst-option,
 .debugger-menu cst-title
 {
-  padding-left: 20px;
+  padding-left: 28px;
 }
 
 .debugger-menu cst-option.selected
 {
   background-image: url('../ui-images/dragonfly-favicon.png');
   background-repeat: no-repeat;
-  background-position: 2px 50%;
+  background-position: 6px 50%;
 }
 
 cst-select.color
@@ -1580,17 +1626,9 @@ cst-title
   font-style: normal;
 }
 
-.script-options cst-title
-{
-  margin-left: 2em;
-}
-
 cst-group
 {
   display: block;
-  margin-left: 2em;
-  background-color: hsl(0, 0%, 90%);
-  border-left: 1px solid hsl(0, 0%, 80%);
 }
 
 /* Temporary fix for flickering */

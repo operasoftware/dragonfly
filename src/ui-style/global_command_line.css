@@ -27,7 +27,12 @@ container.console
   color: #fff;
 }
 
-.console ::selection
+.console value
+{
+  white-space: normal;
+}
+
+.console::selection
 {
   color: #fff;
   background-color: #006ad4;
@@ -100,8 +105,7 @@ container.console
   font-style: italic;
 }
 
-.console .number,
-offsets value
+.console .number
 {
   color: #ff4d40;
 }

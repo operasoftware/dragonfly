@@ -3,7 +3,6 @@
   position: fixed;
   z-index: 300;
   display: none;
-  padding: 0;
   min-width: 100px;
   max-width: 300px;
   display: inline-block;
@@ -12,13 +11,7 @@
   margin: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid #727272;
-  background: #fff;
-  background-size: auto 100%;
-  color: #333;
-  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  padding: 4px 0 ;
 }
 
 #contextmenu::selection
@@ -31,24 +24,16 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  padding: 3px 20px 3px 0;
-}
-
-#contextmenu li:first-of-type
-{
-  border-top-left-radius: 1px;
-  border-top-right-radius: 1px;
-}
-
-#contextmenu li:last-of-type
-{
-  border-bottom-left-radius: 1px;
-  border-bottom-right-radius: 1px;
+  line-height: 1.5em;
+  padding: 2px 14px 2px 4px;
+  margin: 0 4px;
+  border-radius: 3px;
 }
 
 #contextmenu li.separator
 {
-  padding: 0;
+  padding: 3px 0 4px 0;
+  margin: 0;
 }
 
 #contextmenu li.disabled
@@ -58,7 +43,7 @@
 
 #contextmenu li:not(.separator):not(.disabled):hover
 {
-  background-color: #bbcef1;
+  background-color: #aac2f2;
   color: #000;
   text-shadow: none;
 }
@@ -75,7 +60,7 @@
   padding: 0;
   height: 1px;
   border: none;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.12);
   box-shadow: 0 1px #fff;
 }
 
@@ -89,7 +74,7 @@
   text-align: center;
   width: 10px;
   height: 9px;
-  margin: 0 4px;
+  margin: 0 6px 0 0;
   overflow: hidden;
 }
 

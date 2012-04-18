@@ -22,6 +22,7 @@ cls.ResourceDetailBase = function()
   this._line = 0;
   this._root_ele = null;
   this._tops = [];
+  this.requierd_services = ["resource-manager", "document-manager"];
 
   this._traverse_ele = function(ele)
   {
@@ -36,10 +37,10 @@ cls.ResourceDetailBase = function()
       }
       else if (child.nodeType == TEXT)
       {
-        var pos;
-        for (pos = 0; pos < child.nodeValue.length; pos++)
+        var value = child.nodeValue;
+        for (var pos = 0, len = value.length; pos < len; pos++)
         {
-          var c = child.nodeValue.charAt(pos);
+          var c = value.charAt(pos);
           // Linefeed recognition will not support Acorn BBC spooled text output 
           if ((c == CR ) || (c == LF))
           {
@@ -78,7 +79,7 @@ cls.ResourceDetailBase = function()
                 return;
               }
             }
-            if ((c == CR) && (child.nodeValue.charAt(pos+1) == LF))
+            if ((c == CR) && (value.charAt(pos+1) == LF))
             {
               pos++;
             }

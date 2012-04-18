@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Command Processor</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/scripts/colors.js"></script>
+
+
+<script>
+
+var types =
+[
+  Color.HEX,
+  Color.RGB,
+  Color.RGBA,
+  Color.HSL,
+  Color.HSLA
+];
+
+[
+  {
+    input: "red",
+    hex: "#ff0000",
+    rgb: "rgb(255, 0, 0)",
+    rgba: "rgba(255, 0, 0, 1)",
+    hsl: "hsl(0, 100%, 50%)",
+    hsla: "hsla(0, 100%, 50%, 1)"
+  },
+  {
+    input: "blue",
+    hex: "#0000ff",
+    rgb: "rgb(0, 0, 255)",
+    rgba: "rgba(0, 0, 255, 1)",
+    hsl: "hsl(240, 100%, 50%)",
+    hsla: "hsla(240, 100%, 50%, 1)"
+  },
+  {
+    input: "green",
+    hex: "#008000",
+    rgb: "rgb(0, 128, 0)",
+    rgba: "rgba(0, 128, 0, 1)",
+    hsl: "hsl(120, 100%, 25%)",
+    hsla: "hsla(120, 100%, 25%, 1)"
+  },
+  {
+    input: "lime",
+    hex: "#00ff00",
+    rgb: "rgb(0, 255, 0)",
+    rgba: "rgba(0, 255, 0, 1)",
+    hsl: "hsl(120, 100%, 50%)",
+    hsla: "hsla(120, 100%, 50%, 1)"
+  },
+  {
+    input: "yellow",
+    hex: "#ffff00",
+    rgb: "rgb(255, 255, 0)",
+    rgba: "rgba(255, 255, 0, 1)",
+    hsl: "hsl(60, 100%, 50%)",
+    hsla: "hsla(60, 100%, 50%, 1)"
+  },
+  {
+    input: "cyan",
+    hex: "#00ffff",
+    rgb: "rgb(0, 255, 255)",
+    rgba: "rgba(0, 255, 255, 1)",
+    hsl: "hsl(180, 100%, 50%)",
+    hsla: "hsla(180, 100%, 50%, 1)"
+  },
+  {
+    input: "magenta",
+    hex: "#ff00ff",
+    rgb: "rgb(255, 0, 255)",
+    rgba: "rgba(255, 0, 255, 1)",
+    hsl: "hsl(300, 100%, 50%)",
+    hsla: "hsla(300, 100%, 50%, 1)"
+  },
+  {
+    input: "black",
+    hex: "#000000",
+    rgb: "rgb(0, 0, 0)",
+    rgba: "rgba(0, 0, 0, 1)",
+    hsl: "hsl(0, 0%, 0%)",
+    hsla: "hsla(0, 0%, 0%, 1)"
+  },
+  {
+    input: "white",
+    hex: "#ffffff",
+    rgb: "rgb(255, 255, 255)",
+    rgba: "rgba(255, 255, 255, 1)",
+    hsl: "hsl(0, 0%, 100%)",
+    hsla: "hsla(0, 0%, 100%, 1)"
+  },
+  {
+    input: "bisque",
+    hex: "#ffe4c4",
+    rgb: "rgb(255, 228, 196)",
+    rgba: "rgba(255, 228, 196, 1)",
+    hsl: "hsl(33, 100%, 88%)",
+    hsla: "hsla(33, 100%, 88%, 1)"
+  },
+  {
+    input: "coral",
+    hex: "#ff7f50",
+    rgb: "rgb(255, 127, 80)",
+    rgba: "rgba(255, 127, 80, 1)",
+    hsl: "hsl(16, 100%, 66%)",
+    hsla: "hsla(16, 100%, 66%, 1)"
+  },
+  {
+    input: "darkgoldenrod",
+    hex: "#b8860b",
+    rgb: "rgb(184, 134, 11)",
+    rgba: "rgba(184, 134, 11, 1)",
+    hsl: "hsl(43, 89%, 38%)",
+    hsla: "hsla(43, 89%, 38%, 1)"
+  },
+  {
+    input: "darkslategray",
+    hex: "#2f4f4f",
+    rgb: "rgb(47, 79, 79)",
+    rgba: "rgba(47, 79, 79, 1)",
+    hsl: "hsl(180, 25%, 25%)",
+    hsla: "hsla(180, 25%, 25%, 1)"
+  },
+  {
+    input: "dimgray",
+    hex: "#696969",
+    rgb: "rgb(105, 105, 105)",
+    rgba: "rgba(105, 105, 105, 1)",
+    hsl: "hsl(0, 0%, 41%)",
+    hsla: "hsla(0, 0%, 41%, 1)"
+  },
+].forEach(function(t)
+{
+  test(t.input, function()
+  { 
+    var c = new Color().parseCSSColor(t.input);
+
+    types.forEach(function(type, index)
+    { 
+      equals(c.serializeToCSSColor(type), t[type]);
+    });
+  });
+
+  types.forEach(function(type, index)
+  { 
+    // converting hsl values back to rgb or hex is not precise.
+    if ([Color.HSL, Color.HSLA].indexOf(type) == -1)
+    {
+      test(t[type], function()
+      { 
+        var c = new Color().parseCSSColor(t[type]);
+        types.forEach(function(type)
+        { 
+          equals(c.serializeToCSSColor(type), t[type]);
+        });
+      });
+    }
+  });
+});
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Color class</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>

@@ -2,6 +2,45 @@
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
+cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
+{
+  var RUNTIME_ID = 0;
+  var HTML_FRAME_PATH = 1;
+  var WINDOW_ID = 2;
+  var OBJECT_ID = 3;
+  var URI = 4;
+  var DESCRIPTION = 5;
+
+  this.runtime_id = runtime[RUNTIME_ID];
+  this.html_frame_path = runtime[HTML_FRAME_PATH];
+  this.window_id = runtime[WINDOW_ID];
+  this.object_id = runtime[OBJECT_ID];
+  this.uri = runtime[URI];
+  this.description = runtime[DESCRIPTION];
+};
+
+cls.EcmascriptDebugger["6.0"].Runtime.prototype = new URIPrototype("uri");
+
+cls.EcmascriptDebugger["6.0"].DOMRuntime = function(rt)
+{
+  this.type = "document";
+  this.id = rt.runtime_id;
+  this.uri = rt.uri;
+  this.title = rt.title || rt.uri;
+  this.selected = rt.selected;
+  this.extensions = [];
+};
+
+cls.EcmascriptDebugger["6.0"].DOMRuntime.prototype = new URIPrototype("uri");
+
+cls.EcmascriptDebugger["6.0"].ExtensionRuntime = function(rt)
+{
+  this.type = "extension";
+  this.id = rt.runtime_id;
+  this.uri = rt.uri;
+  this.title = "Extension Runtime " + rt.runtime_id;
+};
+
 /**
   * @constructor
   */
@@ -24,6 +63,10 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   THREAD_FINISHED = 2;
 
   var __runtimes = {};
+
+  var __rt_class = cls.EcmascriptDebugger["6.0"].Runtime;
+  var __dom_rt_class = cls.EcmascriptDebugger["6.0"].DOMRuntime;
+  var __ext_rt_class = cls.EcmascriptDebugger["6.0"].ExtensionRuntime;
 
   var __old_runtimes = {};
 
@@ -294,15 +337,11 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       {
         __runtimes_arr[k] = runtimeId;
       }
-      runtime =
-      {
-        runtime_id: r_t[RUNTIME_ID],
-        html_frame_path: r_t[HTML_FRAME_PATH],
-        window_id: r_t[WINDOW_ID] || __selected_window,
-        object_id: r_t[OBJECT_ID],
-        uri: r_t[URI],
-        description: r_t[DESCRIPTION],
-      };
+
+      runtime = new __rt_class(r_t);
+
+      if (!runtime.window_id)
+        runtime.window_id = __selected_window;
 
       checkOldRuntimes(runtime);
       if( runtime.is_top = isTopRuntime(runtime) )
@@ -592,6 +631,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var set_new_debug_context = function(status, message, win_id)
   {
+    if (status)
+      return;
+
     if (message[RUNTIME_LIST])
       message[RUNTIME_LIST].forEach(self.handleRuntime, self);
     host_tabs.setActiveTab(win_id);
@@ -954,41 +996,74 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     }
   }
 
-  // windows means runtime containers here to stay in sync with the xml protocol
-
-  this.getWindows = function()
-  {
-    var ret = [], r = '', is_unfolded = true;
-    for( r in __runtimes )
-    {
-      if( __runtimes[r] && __runtimes[r].html_frame_path && __runtimes[r].html_frame_path.indexOf('[') == -1 )
-      {
-        is_unfolded = true;
-        if( __windowsFolding[__runtimes[r].window_id] === false )
-        {
-          is_unfolded = false;
-        }
-        ret[ret.length] =
-        {
-          id: __runtimes[r].window_id,
-          uri: __runtimes[r].uri,
-          title: __runtimes[r]['title'] || '',
-          is_unfolded: is_unfolded,
-          is_selected: __selected_window == __runtimes[r].window_id ||
-            __selected_window == __runtimes[r].opener_window_id,
-          runtimes: this.getRuntimes( __runtimes[r].window_id )
-        }
-      }
-    }
-    return ret;
-  }
-
   this.getActiveWindowId = function()
   {
     return __selected_window;
   }
 
+  this.get_dom_runtimes = function(get_scripts)
+  {
+    var rts = this.getRuntimes(__selected_window);
+    var rt = null; 
+    for (var i = 0; (rt = rts[i]) && !rt.selected; i++);
+    if (!rt && rts[0])
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected');
+      return;
+    }
 
+    var dom_rts = [];
+    var rt_map = {};
+    
+    for (var i = 0, rt_id = 0; rt = rts[i]; i++)
+    {
+      rt_id = rt.runtime_id;
+      if (rt.description == "extensionjs")
+      {
+        var owner_rt = rt_map[rt.uri];
+        if (owner_rt)
+        {
+          var rt_obj = new __ext_rt_class(rt);
+          if (get_scripts)
+            rt_obj.scripts = this.getScripts(rt_id, true);
+
+          owner_rt.extensions.push(rt_obj);
+        }
+        else
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+                          'extension rt without owner rt in get_dom_runtimes');
+      }
+      else
+      {
+        var rt_obj =  new __dom_rt_class(rt);
+        if (get_scripts)
+        {
+          var scripts = this.getScripts(rt_id, true);
+          var browser_js = null;
+          var user_js_s = [];
+          for (var j = scripts.length - 1, script; script = scripts[j]; j--)
+          {
+            switch (script.script_type)
+            {
+              case "Browser JS":
+                browser_js = scripts.splice(j, 1)[0];
+                break;
+
+              case "User JS":
+                user_js_s.push(scripts.splice(j, 1)[0]); 
+                break;
+            }
+          }
+          rt_obj.scripts = scripts;
+          rt_obj.browser_js = browser_js;
+          rt_obj.user_js_s = user_js_s;
+        }
+        rt_map[rt.uri] = rt_obj;
+        dom_rts.push(rt_obj);
+      }
+    }
+    return dom_rts;
+  };
 
   this.getRuntimes = function(window_id)
   {
@@ -1233,7 +1308,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if (rt_id)
       {
-        if(services.exec && services.exec.is_implemented && 
+        if (!(window.services['ecmascript-debugger'] &&
+              window.services['ecmascript-debugger'].is_enabled) ||
+            window.services.exec && window.services.exec.is_implemented && 
           // For background processes we can not use the exec service.
           // Background processes have no UI window to dispatch an exec command.
           // Background processes so far are e.g. unite services or 
@@ -1369,3 +1446,5 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   }
 
 }
+
+

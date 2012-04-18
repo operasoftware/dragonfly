@@ -148,6 +148,7 @@ var ToolbarBase = function()
     this.create_toolbar_content(view_id, toolbar)
   }
 
+  // belongs in ToolbarConfigBase
   this.create_toolbar_content = function(view_id, toolbar)
   {
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
@@ -197,7 +198,10 @@ var ToolbarBase = function()
         {
           toolbar.render(custom.template(views[view_id]));
         } 
-      } 
+      }
+
+      if (!window.views[view_id].is_enabled && toolbars[view_id])
+        toolbars[view_id].disable();
     }
   }
   

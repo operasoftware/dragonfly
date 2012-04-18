@@ -343,6 +343,9 @@ var ActionBroker = function()
 
   this.dispatch_key_input = function(key_id, event)
   {
+    if (this._action_context.check_mode)
+      this._action_context.check_mode(event);
+
     var shortcuts = this._current_shortcuts[this._action_context.mode] || {};
     var shared_shortcuts = this._current_shared_shortcuts[this._action_context.mode] || {};
     var action = shortcuts[key_id] || shared_shortcuts[key_id] || '';

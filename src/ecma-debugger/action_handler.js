@@ -124,10 +124,10 @@ window.eventHandlers.click['show-scripts'] = function(event)
 window.eventHandlers.click['show-stylesheets'] = function(event, target)
 {
   var rt_id = target.getAttribute('runtime_id');
-  // stylesheets.getStylesheets will call this function again if data is not avaible
+  // stylesheets.get_stylesheets will call this function again if data is not avaible
   // handleGetAllStylesheets in stylesheets will
   // set for this reason __call_count on the event object
-  var sheets = stylesheets.getStylesheets(rt_id, arguments);
+  var sheets = cls.Stylesheets.get_instance().get_stylesheets(rt_id, arguments);
   if (sheets)
   {
     var container = event.target.parentNode.getElementsByTagName('ul')[0];
@@ -150,28 +150,6 @@ window.eventHandlers.click['show-stylesheets'] = function(event, target)
       event.target.style.backgroundPosition = '0 -11px';
       runtimes.setUnfolded(rt_id, 'css', true);
     }
-  }
-};
-
-window.eventHandlers.click['show-runtimes'] = function(event)
-{
-  var window_id = event.target.parentNode.getAttribute('window_id');
-  var rts = runtimes.getRuntimes(window_id);
-  var runtime_container = event.target.parentNode.getElementsByTagName('ul')[0];
-  var rt = null, i = 0;
-  var template_type = event.target.parentNode.parentNode.getAttribute('template-type');
-
-  if (runtime_container)
-  {
-    event.target.parentNode.removeChild(runtime_container);
-    event.target.style.removeProperty('background-position');
-    runtimes.setWindowUnfolded(window_id, false);
-  }
-  else
-  {
-    event.target.parentNode.render(templates.runtimes(rts, template_type));
-    event.target.style.backgroundPosition = '0 -11px';
-    runtimes.setWindowUnfolded(window_id, true);
   }
 };
 

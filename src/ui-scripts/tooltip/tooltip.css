@@ -1,17 +1,22 @@
-#tooltip-container
+﻿.tooltip-container
 {
   position: absolute;
-  z-index: 100;
-  padding: 5px;
+  z-index: 200;
   left: -5000px;
+  overflow: auto;
+  background-color: #f2f2f2;
+  color: #000;
 }
 
-#tooltip-background
+.tooltip-selected
 {
-  background-color: yellow;
-  border-radius: 5px;
-  padding: 1px 5px;
-  border: 1px solid #ccc;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  overflow: auto;
+  color: #000;
+  background-color: #aac2f2;
+  padding: 1px;
+  margin: -1px;
+}
+
+.basic-tooltip
+{
+  word-wrap: break-word;
 }

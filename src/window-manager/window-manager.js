@@ -64,7 +64,7 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
           'active window id does not exist, trying to select the first window instead');
-      if(this._window_list.length)
+      if(this._window_list && this._window_list.length)
       {
         this._active_window = this._window_list[0].window_id;
       }
@@ -288,9 +288,10 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       self._remove_window(message[0]);
     };
-    window.app.addListener('services-enabled', function()
+    window.messages.addListener("profile-enabled", function()
     {
-      window_manager.requestListWindows();
+      if (!this._debug_context)
+        window_manager.requestListWindows();
     });
     window_manager.onWindowLoaded = function(status, message)
     {
@@ -473,7 +474,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   this.checkChange = function(target_ele)
   {
     var win_id = parseInt(target_ele.getAttribute('value'));
-    if( win_id != window_manager_data.get_debug_context() )
+    if (!isNaN(win_id) && win_id != window_manager_data.get_debug_context())
     {
       window_manager_data.set_debug_context(win_id);
       return true;

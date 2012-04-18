@@ -138,6 +138,13 @@
     return false;
   };
 
+  this._handlers["show-script-dropdown"] = function(action_id, event, target)
+  {
+    var ui = UI.get_instance();
+    ui.show_view("js_source");
+    ui.show_dropdown("js-script-select");
+  };
+
   this._close_open_menus = function()
   {
     var contextmenu = ContextMenu.get_instance();
@@ -294,6 +301,14 @@
     }
   }.bind(this);
 
+  this._handlers["test-switching-profiles"] = function(action_id, event, target)
+  {
+    if (window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled)
+      window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+    else
+      window.services.scope.enable_profile(window.app.profiles.HTTP_PROFILER);
+  };
+
   var TestTempView = function(name)
   {
     this.createView = function(container)
@@ -379,6 +394,7 @@
                                ':not(.screenshot-controls),' +
                       'panel-container,' +
                       'window-container,' +
+                      '.tooltip-container,' +
                       '.selectable';
 
   this._selection_controller = new SelectionController(is_selectable, if_check);
@@ -412,6 +428,7 @@ GlobalActionHandler.RE_TEXT_INPUTS = new RegExp(["text",
                                                  "time",
                                                  "datetime-local", 
                                                  "number",
-                                                 "file"].join("|"), "i");
+                                                 "file",
+                                                 "color"].join("|"), "i");
 
 

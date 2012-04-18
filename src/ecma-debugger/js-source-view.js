@@ -472,7 +472,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     this.showLine(script_id, line_no);
     var line = this.get_line_element(line_no);
-    if (line)
+    if (line && typeof line_no == "number")
     {
       line.addClass('selected-js-source-line');
       setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
@@ -483,7 +483,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var source_content = document.getElementById(container_id);
     var lines = source_content && source_content.getElementsByTagName('div');
-    var line = lines && lines[line_no - __top_line];
+    var line = typeof line_no == "number" && lines && lines[line_no - __top_line];
     return line;
   }
 
@@ -719,6 +719,44 @@ cls.JsSourceView = function(id, name, container_class)
     return __current_script && __current_script.script_id;
   }
 
+  this.get_current_script = function()
+  {
+    return runtimes.getScript(this.getCurrentScriptId());
+  };
+
+  this.get_line_number_with_offset = function(offset)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      var cand = __top_line + Math.floor(offset / context["line-height"]);
+      if (cand <= __current_script.line_arr.length)
+        return cand;
+    }
+    return -1;
+  };
+
+  this.higlight_slice = function(line_number, offset_start, length, style)
+  {
+    if (__current_script && __current_script.script_id)
+    {
+      this._slice_highlighter.clear_hit();
+      var line_ele = this.get_line_element(line_number);
+      while (line_ele && typeof length == "number" && !isNaN(length) && length > 0)
+      {
+        this._slice_highlighter.set_hit(line_ele, 
+                                        offset_start,
+                                        length, 
+                                        TextSearch.HIGHLIGHT_STYLE,
+                                        true,
+                                        ".error-description");
+        length -= __current_script.get_line_length(line_number) - offset_start;
+        offset_start = 0;
+        line_number++;
+        line_ele = line_ele.nextElementSibling;
+      }
+    }
+  };
+
   this.show_stop_at_error = function()
   {
     if (__current_script &&
@@ -911,6 +949,28 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
+  this._on_setting_change = function(msg)
+  {
+    if (msg.id == this.id && msg.key == "show-js-tooltip")
+      this.handle_tooltip_setting();
+  }
+
+  this.handle_tooltip_setting = function()
+  {
+    if (window.settings.js_source.get("show-js-tooltip"))
+    {
+      if (!this._tooltip)
+        this._tooltip = new cls.JSSourceTooltip(this);
+    }
+    else
+    {
+      if (this._tooltip)
+        this._tooltip.unregister();
+
+      this._tooltip = null;
+    } 
+  };
+
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
   {
     this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
@@ -925,22 +985,37 @@ cls.JsSourceView = function(id, name, container_class)
                             this._go_to_line.window_height);
     return false;
   }.bind(this);
-
-  this._handlers['scroll-page-up'] = this._scroll_lines.bind(this, -PAGE_SCROLL);
-  this._handlers['scroll-page-down'] = this._scroll_lines.bind(this, PAGE_SCROLL);
-  this._handlers['scroll-arrow-up'] = this._scroll_lines.bind(this, -ARROW_SCROLL);
-  this._handlers['scroll-arrow-down'] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class, null, 'scroll-js-source-view');
+  
+  this.requierd_services = ["ecmascript-debugger"];
+  this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
+  this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
+  this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
+  this.init(id, name, container_class, null, "scroll-js-source-view");
   this._go_to_line = new cls.GoToLine(this);
-  messages.addListener('update-layout', updateLayout);
-  messages.addListener('runtime-destroyed', onRuntimeDestroyed);
-  messages.addListener('breakpoint-updated', this._onbreakpointupdated.bind(this));
-  messages.addListener('monospace-font-changed',
+  messages.addListener("update-layout", updateLayout);
+  messages.addListener("runtime-destroyed", onRuntimeDestroyed);
+  messages.addListener("breakpoint-updated", this._onbreakpointupdated.bind(this));
+  messages.addListener("monospace-font-changed",
                        this._onmonospacefontchange.bind(this));
+  messages.addListener("setting-changed", this._on_setting_change.bind(this));
 
   ActionBroker.get_instance().register_handler(this);
 
-  new cls.JSSourceTooltip(this);
+  var config =
+  {
+    "css_classes":
+    {
+      "selected_match_class": "js-identifier-selected",
+      "selected_match_class_first": "js-identifier-selected-first",
+      "selected_match_class_between": "js-identifier-selected-between",
+      "selected_match_class_last": "js-identifier-selected-last" 
+    }
+  }
+
+  this._slice_highlighter = new VirtualTextSearch(config);
+  this._tooltip = null;
+
 }
 
 cls.JsSourceView.prototype = ViewBase;
@@ -983,123 +1058,6 @@ cls.GoToLine = function(js_source_view)
 };
 
 cls.GoToLine.prototype = ViewBase;
-
-cls.ScriptSelect = function(id, class_name)
-{
-
-  var selected_value = "";
-  var selected_script_id = 0;
-
-  var stopped_script_id = '';
-
-  this.getSelectedOptionText = function()
-  {
-    selected_script_id = runtimes.getSelectedScript();
-    if (selected_script_id)
-    {
-      var script = runtimes.getScript(selected_script_id);
-      if (script)
-      {
-        var display_uri = helpers.shortenURI(script.uri);
-        var script_type = script.script_type.capitalize(true);
-        return display_uri.uri ?
-               display_uri.uri :
-               script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
-               ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
-      }
-      else if(selected_script_id == -1)
-      {
-        return ' ';
-      }
-      else
-      {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          'missing script in getSelectedOptionText in cls.ScriptSelect');
-      }
-    }
-    else if(runtimes.getSelectedRuntimeId() &&
-            runtimes.isReloadedWindow(runtimes.getActiveWindowId()))
-    {
-      return ui_strings.S_INFO_RUNTIME_HAS_NO_SCRIPTS;
-    }
-    return '';
-  }
-
-  this.getSelectedOptionValue = function()
-  {
-
-  }
-
-  this.templateOptionList = function(select_obj)
-  {
-    // TODO this is a relict of protocol 3, needs cleanup
-    var active_window_id = runtimes.getActiveWindowId();
-
-    if( active_window_id )
-    {
-      var
-      _runtimes = runtimes.getRuntimes(active_window_id),
-      rt = null,
-      i = 0;
-
-      for( ; ( rt = _runtimes[i] ) && !rt['selected']; i++);
-      if( !rt && _runtimes[0] )
-      {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'no runtime selected')
-        return;
-      }
-      return templates.script_dropdown(_runtimes,
-                                       stopped_script_id,
-                                       runtimes.getSelectedScript());
-    }
-  }
-
-  this.checkChange = function(target_ele)
-  {
-    var script_id_str = target_ele.get_attr('parent-node-chain', 'script-id');
-    var script_id = script_id_str && parseInt(script_id_str);
-    if (script_id)
-    {
-      // TODO is this needed?
-      if (script_id != selected_script_id)
-      {
-        runtimes.setSelectedScript(script_id);
-        topCell.showView(views.js_source.id);
-        selected_script_id = script_id;
-      }
-      selected_value = target_ele.textContent;
-      return true;
-    }
-    return false;
-  }
-
-  // this.updateElement
-
-  var onThreadStopped = function(msg)
-  {
-    stopped_script_id = msg.stop_at.script_id;
-  }
-
-  var onThreadContinue = function(msg)
-  {
-    stopped_script_id = '';
-  }
-
-  var onApplicationSetup = function()
-  {
-    eventHandlers.change['set-tab-size']({target: {value:  settings.js_source.get('tab-size')}});
-  }
-
-  messages.addListener("thread-stopped-event", onThreadStopped);
-  messages.addListener("thread-continue-event", onThreadContinue);
-  messages.addListener("application-setup", onApplicationSetup);
-
-
-  this.init(id, class_name);
-}
-
-cls.ScriptSelect.prototype = new CstSelect();
-
 
 cls.JsSourceView.create_ui_widgets = function()
 {
@@ -1196,7 +1154,9 @@ cls.JsSourceView.create_ui_widgets = function()
       'js-search-ignore-case': true,
       'js-search-all-files': false,
       'js-search-injected-scripts': true,
-      'max-displayed-search-hits': 1000
+      'max-displayed-search-hits': 1000,
+      'show-js-tooltip': true,
+      'js-dd-match-history': [],
     },
     // key-label map
     {
@@ -1206,6 +1166,7 @@ cls.JsSourceView.create_ui_widgets = function()
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
+      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP
     },
     // settings map
     {
@@ -1214,7 +1175,8 @@ cls.JsSourceView.create_ui_widgets = function()
         'script',
         'exception',
         'error',
-        'abort'
+        'abort',
+        'show-js-tooltip'
       ],
       customSettings:
       [
@@ -1224,7 +1186,8 @@ cls.JsSourceView.create_ui_widgets = function()
       ],
       contextmenu:
       [
-        'error'
+        'error',
+        'show-js-tooltip'
       ]
     },
     // custom templates
@@ -1273,6 +1236,8 @@ cls.JsSourceView.create_ui_widgets = function()
     },
     "script"
   );
+
+  window.views.js_source.handle_tooltip_setting();
 
   new Switches
   (
@@ -1404,8 +1369,12 @@ cls.JsSourceView.create_ui_widgets = function()
               }
             });
           }
-          return items;
         }
+        
+        if (items.length)
+          items.push(ContextMenu.separator);
+
+        return items;
       }
     }
   ], true); // extend the default existing menu

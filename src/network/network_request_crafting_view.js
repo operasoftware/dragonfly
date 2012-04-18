@@ -31,8 +31,8 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this.ondestroy = function()
   {
-    this._prev_url = this._urlfield.get_value();
-    this._prev_request = this._input.get_value();
+    this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
+    this._prev_request = this._input ? this._input.get_value() : "";
   };
 
   this.createView = function(container)
@@ -155,7 +155,15 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     var data = this._input.get_value();
     var requestdata = this._parse_request(data);
-    this._send_request(requestdata);
+    if (requestdata)
+    {
+      this._send_request(requestdata);
+    }
+    else
+    {
+      this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
+      this.update();
+    }
   }.bind(this);
 
   this._on_send_request_bound = function(status, msg)
@@ -268,7 +276,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       response = resource.responseheader.raw;
       if (!resource.urlredirect)
       {
-        response += resource.responsefinished.data.content.stringData;
+        if (resource.responsefinished &&
+            resource.responsefinished.data &&
+            resource.responsefinished.data.content &&
+            resource.responsefinished.data.content.stringData)
+        {
+          response += resource.responsefinished.data.content.stringData;
+        }
       }
     }
 
@@ -290,6 +304,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 
+  this.requierd_services = ["resource-manager", "document-manager"];
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
   this._service.addListener("request", this._on_request_bound);

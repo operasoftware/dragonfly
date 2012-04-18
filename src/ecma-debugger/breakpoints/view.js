@@ -223,6 +223,7 @@ cls.BreakpointsView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger"];
     this.init(id, name, container_class, null, null, 'breakpoints-edit');
     this._editor = new window.cls.ConditionEditor(this);
     this._bps = cls.Breakpoints.get_instance();
