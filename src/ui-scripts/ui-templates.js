@@ -15,7 +15,7 @@
       ret.push(['span', 
                 'tabindex', '1',
                 'handler', 'close-tab', 
-                'class', 'close-tab-button ui-button']);
+                'class', 'close-tab-button']);
     }
     ret.push('handler', 'tab', 'ref-id', obj.ref_id);
     if (class_name)
@@ -190,8 +190,8 @@
           'handler', button.handler,
           'title', button.title,
           'tabindex', '1',
-          'class', button.handler + ' ui-button ui-control' + (button.class_name ? ' ' +
-                          button.class_name : '') + (button.text ? ' text-button' : '')
+          'class', button.handler + ' ui-button' +
+                   (button.class_name ? ' ' + button.class_name : '')
         ].concat(
             button.id ? ['id', button.id] : [],
             button.disabled ? ['disabled', 'disabled'] : [],
@@ -228,7 +228,7 @@
             'title', setting.label,
             'key', _switch,
             'tabindex', '1',
-            'class', _switch + ' ui-control ui-button switch ' + (setting.value ? "is-active" : "")
+            'class', _switch + ' ui-button switch ' + (setting.value ? "is-active" : "")
           ];
       }
       else

@@ -81,7 +81,7 @@ window.templates.storage = {
   add_item_button: function(storage_name) {
     return [
       "span", ui_strings.S_LABEL_STORAGE_ADD_STORAGE_TYPE.replace("%s", storage_name),
-      "class", "add_storage_button container-button ui-button",
+      "class", "add_storage_button ui-button",
       "handler", "storage-add-key",
       "unselectable", "on",
       "tabindex", "1"
