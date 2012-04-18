@@ -58,6 +58,14 @@
   padding-left: 3px;
 }
 
+.error-console .max_exceeded_warning
+{
+  text-align: center;
+  font-size: 1.4em;
+  padding: 18px 3px;
+  color: #808080;
+}
+
 .errors-table tr,
 .errors-table tr pre
 {

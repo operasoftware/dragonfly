@@ -29,11 +29,14 @@ cls.ColorPaletteView = function(id, name, container_class)
       {
         color_id: Number(list_item.getAttribute('data-color-id')),
         initial_color: new Color().parseCSSColor(color_sample.style.backgroundColor),
+        ele_value: list_item,
+        position_anchor_selector: ".color-palette-sample",
         ele_container: list_item,
         ele_color_sample: color_sample,
         ele_color_value: color_sample.nextSibling,
         callback: this._oneditcolor,
-        edit_class: 'edited-color'
+        edit_class: 'edited-color',
+        disable_alpha: true
       };
       window.views['color-selector'].show_color_picker(color_sample, this._edit_context);
     }

@@ -444,6 +444,7 @@ cls.CSSInspectorActions = function(id)
 
   var MODE_DEFAULT = "default";
   var MODE_EDIT = "edit";
+  var MODE_EDIT_CLASS = "edit-mode";
   var MINUS = -1;
   var PLUS = 1;
 
@@ -451,13 +452,29 @@ cls.CSSInspectorActions = function(id)
   this._broker = ActionBroker.get_instance();
   this._broker.register_handler(this);
   this._handlers = {};
-  this.mode = MODE_DEFAULT;
+  this._mode = MODE_DEFAULT;
 
   this.mode_labels =
   {
     "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
     "edit": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_EDIT,
   };
+
+  this.__defineSetter__("mode", function(mode) {
+    if (!this._active_container)
+      return;
+
+    if (mode === MODE_EDIT)
+      this._active_container.addClass(MODE_EDIT_CLASS);
+    else
+      this._active_container.removeClass(MODE_EDIT_CLASS);
+
+    this._mode = mode;
+  });
+
+  this.__defineGetter__("mode", function() {
+    return this._mode;
+  });
 
   this.get_action_list = function()
   {
@@ -516,6 +533,7 @@ cls.CSSInspectorActions = function(id)
 
   this._handlers['edit-css'] = function(event, target)
   {
+    window.views["color-selector"].ondestroy();
     var ele = event.target.get_ancestor(".css-property") ||
               event.target.get_ancestor(".css-property-value");
     if (ele)
@@ -689,7 +707,8 @@ cls.CSSInspectorActions = function(id)
       // (meaning that actions of the contextmenu would e.g. refer
       // to an already replaced view).
       // See e.g. DFL-2307.
-      this.edit_onclick(event);
+      if (this.edit_onclick(event))
+        event.stopPropagation();
       return false;
     }
   };

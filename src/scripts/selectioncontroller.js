@@ -16,6 +16,7 @@
   {
     var target = event.target;
     if (target.nodeName.toLowerCase() == "textarea" ||
+        target.nodeName.toLowerCase() == "select" ||
         (target.nodeName.toLowerCase() == "input" && 
          RE_TEXT_INPUTS.test(target.type)))
       return;

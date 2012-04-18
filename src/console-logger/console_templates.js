@@ -128,6 +128,14 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
   ];
 };
 
+window.templates.errors.exceeds_max = function(limit, org_length)
+{
+  return [
+    "div", ui_strings.S_ERRORS_MAXIMUM_REACHED.replace('%(COUNT)s', org_length).replace('%(MAX)s', limit),
+    "class", "max_exceeded_warning"
+  ];
+};
+
 window.templates.errors.log_settings_css_filter = function(setting)
 {
   return (

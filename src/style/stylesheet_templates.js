@@ -93,8 +93,12 @@ var StylesheetTemplates = function()
          "class", "css-selector"
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "data-menu", "style-inspector-rule",
       "rule-id", rule.ruleID && String(rule.ruleID),
@@ -110,8 +114,12 @@ var StylesheetTemplates = function()
            "element.style"
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "rule-id", "element-style",
       "rt-id", String(rt_id),
@@ -128,8 +136,12 @@ var StylesheetTemplates = function()
          "style", "font-style: italic;" // TODO: use a class
         ],
         " {\n",
-          decl_list,
-        "\n}",
+        decl_list,
+        ["div",
+           "}",
+         "handler", "insert-declaration-edit",
+         "class", "closing-brace"
+        ],
       "class", "css-rule",
       "data-menu", "style-inspector-rule",
       "rule-id", "element-svg",
@@ -243,7 +255,7 @@ var StylesheetTemplates = function()
       if (color_value.length && type === TYPE_FUNCTION_END)
       {
         color_value.push(value);
-        value = window.helpers.get_color_in_notation(color_value.join(""), color_notation);
+        value = window.helpers.get_color_in_notation(new Color().parseCSSColor(color_value.join("")), color_notation);
         color_swatch = this.color_swatch(value, is_editable);
         color_value = [];
       }
@@ -254,7 +266,7 @@ var StylesheetTemplates = function()
       }
       else if (type === TYPE_HEX_COLOR)
       {
-        value = window.helpers.get_color_in_notation(value, color_notation);
+        value = window.helpers.get_color_in_notation(new Color().parseCSSColor(value), color_notation);
         color_swatch = this.color_swatch(value, is_editable);
       }
       else if ((this._color_properties.hasOwnProperty(prop) && value !== "invert")
