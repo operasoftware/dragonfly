@@ -970,8 +970,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   var hostinfo =  window.services['scope'].get_hello_message();
   this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
   var welcome_text = ui_strings.S_REPL_WELCOME_TEXT
-                                             .replace("%(CLEAR_COMMAND)", "\"clear()\"")
-                                             .replace("%(HELP_COMMAND)", "\"// help()\"");
+                                             .replace("%(CLEAR_COMMAND)s", "\"clear()\"")
+                                             .replace("%(HELP_COMMAND)s", "\"// help()\"");
   welcome_text.split("\n").forEach(function(s) {
     this._data.add_message(s);
   }, this);
