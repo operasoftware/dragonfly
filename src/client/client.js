@@ -669,10 +669,10 @@ ui_framework.layouts.main_layout =
       'network_mode',
       'resource_panel',
       'storage',
+      'profiler_mode',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
       'utils',
-      'console_panel',
-      'profiler_mode'
+      'console_panel'
     ];
   }
 };
