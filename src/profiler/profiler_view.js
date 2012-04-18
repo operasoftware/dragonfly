@@ -40,6 +40,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._init = function(id, name, container_class, html, default_handler)
   {
+    this.required_services = ["profiler"];
     this._profiler = new ProfilerService();
     this._templates = new ProfilerTemplates();
     this._current_session_id = null;
@@ -140,6 +141,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._container = container;
     this._update_view();
+  };
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(this._templates.disabled_view());
   };
 
   this.ondestroy = function() {};
