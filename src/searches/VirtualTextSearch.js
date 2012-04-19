@@ -441,9 +441,12 @@ var VirtualTextSearchBase = function()
     */
   this._clear_highlight_span = function(ele)
   {
-    var parent = ele.parentNode;
-    parent.replaceChild(ele.firstChild, ele);
-    parent.normalize();
+    var parent = ele && ele.parentNode; 
+    if (parent)
+    {
+      parent.replaceChild(ele.firstChild, ele);
+      parent.normalize();
+    }
   }
 
 
