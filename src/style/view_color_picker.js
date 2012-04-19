@@ -242,6 +242,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
   };
 
+  this._update_palette_dropdown = function()
+  {
+    var palette_dropdown = this._ele.querySelector(".color-picker-palette-dropdown");
+    if (palette_dropdown)
+      palette_dropdown.re_render(window.templates.color_picker_palette_dropdown());
+  };
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -286,9 +293,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     {
       cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
       target.get_ancestor(".color-picker-palette").re_render(window.templates.color_picker_palette());
-      var palette_dropdown = this._ele.querySelector(".color-picker-palette-dropdown");
-      if (palette_dropdown)
-        palette_dropdown.re_render(window.templates.color_picker_palette_dropdown());
+      this._update_palette_dropdown();
     }.bind(this);
 
     var menu = [
@@ -303,10 +308,11 @@ window.cls.ColorPickerView = function(id, name, container_class)
                 var color_id = list_item && Number(list_item.getAttribute("data-color-id"));
                 if (color_id && cls.ColorPalette.get_instance().delete_color(color_id))
                   list_item.parentNode.removeChild(list_item);
-              }
+                this._update_palette_dropdown();
+              }.bind(this)
             }
           }
-        }
+        }.bind(this)
       }
     ];
     ContextMenu.get_instance().register("color-picker-palette", menu);
