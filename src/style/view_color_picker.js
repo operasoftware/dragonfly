@@ -284,6 +284,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
     {
       cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
       target.get_ancestor(".color-picker-palette").re_render(window.templates.color_picker_palette());
+      var palette_dropdown = this._ele.querySelector(".color-picker-palette-dropdown");
+      if (palette_dropdown)
+        palette_dropdown.re_render(window.templates.color_picker_palette_dropdown());
     }.bind(this);
 
     var menu = [
