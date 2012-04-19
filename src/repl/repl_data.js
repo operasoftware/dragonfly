@@ -153,5 +153,12 @@ cls.ReplData = function(view)
     }
   }.bind(this);
 
+  this._on_profile_disabled_bound = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._repllog = [];
+  }.bind(this);
+
   messages.addListener("setting-changed", this._on_setting_change_bound);
+  messages.addListener("profile-disabled", this._on_profile_disabled_bound);
 };

@@ -214,6 +214,7 @@ overlay hr
 /* Buttons */
 
 .overlay .ui-button,
+.console .ui-button,
 .hud .ui-control, /* TODO class should be changed to .overlay ... */
 .shortcuts-config header
 {
