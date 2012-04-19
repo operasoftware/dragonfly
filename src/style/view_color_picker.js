@@ -254,7 +254,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._tooltip = Tooltips.register("color-palette", true);
 
     this._tooltip.ontooltip = function(event, target) {
-      this.show(window.templates.color_picker_palette());
+      var box = target.getBoundingClientRect();
+      box.mouse_x = box.left;
+      this.show(window.templates.color_picker_palette(), box);
     };
 
     window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
