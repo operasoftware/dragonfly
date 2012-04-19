@@ -262,8 +262,7 @@ var ViewBase = new function()
   {
     _ignore_updates = false;
     _enabled_services = msg.services.slice();
-    var tabs = UI.get_instance().get_visible_tabs();
-    for (var i = 0, id; id = tabs[i]; i++)
+    for (var id in window.views)
     {
       var view = window.views[id];
       if (view.type == "side-panel" || view.type == "single-view")
