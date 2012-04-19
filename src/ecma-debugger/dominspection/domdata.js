@@ -273,6 +273,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     this._data_runtime_id = 0;
     this._current_target = 0;
     this._active_window = [];
+    this.target = 0;
   }
 
   this._on_active_tab = function(msg)

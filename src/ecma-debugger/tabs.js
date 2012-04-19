@@ -32,6 +32,7 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     {
       __activeTab = [];
       __window_id = 0;
+      document_map = {};
       cleanUpEventListener();
     }
   };
@@ -246,8 +247,9 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
         type_map[id] = event_type;
         callback_map[id] = callback;
         runtime_id_map[id] = rt_p;
-        services['ecmascript-debugger'].requestAddEventHandler(0, 
-          [id, document_map[ rt_p ], "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]);
+        var msg = [id, document_map[ rt_p ], "", event_type,
+                   prevent_default && 1 || 0, stop_propagation && 1 || 0];
+        services['ecmascript-debugger'].requestAddEventHandler(0, msg);
       }
       else if(__get_document_id[rt_p])
       {
