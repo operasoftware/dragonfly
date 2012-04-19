@@ -185,6 +185,11 @@ cls.CookieManager.CookieManagerViewBase = function()
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
+
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {

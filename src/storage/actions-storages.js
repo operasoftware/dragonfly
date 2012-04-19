@@ -30,7 +30,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
     if (container)
     {
