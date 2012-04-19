@@ -203,7 +203,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       var tracker = new cls.UserTracker(trackerurl);
       var cb = function(status, url)
       {
-        if (status != 200)
+        if (status != 200 && !cls.ScopeHTTPInterface.is_enabled)
         {
           opera.postError("Usertracker could not send heartbeat to tracker server at " + url + ". Got status " + status);
         }
