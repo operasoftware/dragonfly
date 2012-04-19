@@ -288,12 +288,12 @@
   float: left;
   height: 3px;
   width: 3px;
-  border: 1px solid rgba(34, 34, 34, .4);
+  border: 1px solid rgba(34, 34, 34, 0.4);
 }
 
 .color-picker-palette-dropdown.tooltip-selected .color-picker-palette-square
 {
-  background-color: #666 !important;
+  border-color: rgba(34, 34, 34, 0.6);
 }
 
 .color-picker-controls
