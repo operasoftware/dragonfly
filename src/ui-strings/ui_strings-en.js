@@ -1362,9 +1362,6 @@ ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = "Represent the DOM as a node tree";
 /* DESC: Show ECMAScript errors in the command line. */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show JavaScript errors in the console";
 
-/* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
-ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = "Show JavaScript errors in the console";
-
 /* DESC: Show default null and empty string values when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = "Show default values if they are null or empty strings";
 
