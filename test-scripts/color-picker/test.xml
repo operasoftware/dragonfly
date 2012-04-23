@@ -253,7 +253,7 @@ var test_2_d_slider_2 = function()
       'style', 'position:relative; width:140px; height:140px; background-color:#0f0'
     ],
     ['p',
-      ['label', 'x, 20 - -7: ', 
+      ['label', 'x, 0 - 1: ', 
         ['input', 
           'type', 'number',
           'step', '1',
@@ -262,7 +262,7 @@ var test_2_d_slider_2 = function()
       ]
     ],
     ['p',
-      ['label', 'y, -50 - 12: ', 
+      ['label', 'y, 0 - 1: ', 
         ['input', 
           'type', 'number',
           'step', '1',
@@ -279,12 +279,12 @@ var test_2_d_slider_2 = function()
     slider_base_class: SLIDER_BASE_CLASS,
     slider_class: 'color-picker-pointer',
     slider_template: window.templates.svg_slider_circle(),
-    onx: function(x){container.getElementsByTagName('input')[0].value =  x.toFixed(0);},
-    ony: function(y){container.getElementsByTagName('input')[1].value =  y.toFixed(0);},
-    min_x: 20,
-    max_x: -7,
-    min_y: -50,
-    max_y: 12
+    onx: function(x){container.getElementsByTagName('input')[0].value =  x.toFixed(3);},
+    ony: function(y){container.getElementsByTagName('input')[1].value =  y.toFixed(3);},
+    min_x: 0,
+    max_x: 1,
+    min_y: 0,
+    max_y: 1
   }
   var slider = new Slider(slider_config);
 }

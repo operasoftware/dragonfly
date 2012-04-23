@@ -33,7 +33,6 @@ Slider.prototype = new function()
 {
   const UPDATE_INTERVAL = 80, MAX = Math.max, MIN = Math.min;
   var POW = Math.pow;
-  var WHEEL_UNITE = 0.01;
 
   this._onmousemoveinterval = function(event)
   {
@@ -116,11 +115,10 @@ Slider.prototype = new function()
   this._distance = function(x0, y0, x1, y1)
   {
     return POW(POW(x1- x0, 2) + POW(y1 - y0, 2), .5);
-  }
+  };
 
   this._onmousewheel = function(event)
   {
-    var value = 0;
     var box = this._ref_element.getBoundingClientRect();
     var ev_raw_x = event.clientX - box.left;
     var ev_raw_y = event.clientY - box.top;
@@ -130,29 +128,83 @@ Slider.prototype = new function()
       this._w_count = 0;
       this._w_m_raw_x = ev_raw_x;
       this._w_m_raw_y = ev_raw_y;
-      this._w_m_x = ev_raw_x / this._pixel_range_x * this._range_x + this._min_x;
-      this._w_m_y = ev_raw_y / this._pixel_range_y * this._range_y + this._min_y;
-      this._w_old_x = this._is_invers_x ? this._max_x - this.x + this._min_x : this.x;
-      this._w_old_y = this._is_invers_x ? this._max_y - this.y + this._min_y : this.y;
+      this._w_m_x = this._has_x
+                  ? ev_raw_x / this._pixel_range_x * this._range_x + this._min_x
+                  : 0;
+      this._w_m_y = this._has_y
+                  ? ev_raw_y / this._pixel_range_y * this._range_y + this._min_y
+                  : 0;
+      this._w_old_x = this._has_x
+                    ? this._is_invers_x ? this._max_x - this.x + this._min_x : this.x
+                    : 0;
+      this._w_old_y = this. _has_y
+                    ?  this._is_invers_x ? this._max_y - this.y + this._min_y : this.y
+                    : 0;
       var d = this._distance(this._w_old_x, this._w_old_y, this._w_m_x, this._w_m_y);
-      var unite_count = d / WHEEL_UNITE;
-      this._w_delta_x = (this._w_m_x - this._w_old_x) / unite_count;
-      this._w_delta_y = (this._w_m_y - this._w_old_y) / unite_count;
+      var unite_count = d / this._w_unite;
+      this._w_delta_x = this._has_x
+                      ? (this._w_m_x - this._w_old_x) / unite_count
+                      : 0;
+      this._w_delta_y = this._has_y
+                      ? (this._w_m_y - this._w_old_y) / unite_count
+                      : 0;
+      if (this._has_x && this._has_y)
+      {
+        var b = (this._w_old_y - this._w_m_y) / (this._w_old_x - this._w_m_x);
+        var a = this._w_old_y - b * this._w_old_x;
+        this._w_constraint_y = function(x) { return a + b * x; };
+        this._w_constraint_x = function(y) { return (y - a) / b; };
+      }
     }
 
     this._w_count += event.wheelDelta > 0 ? 1 : -1;
 
     if (this._has_x)
     {
-      value = this._w_old_x + this._w_delta_x * this._w_count;
-      this.x = this._is_invers_x ? this._max_x - value + this._min_x : value;
+      var value_x = this._w_old_x +
+                    this._w_delta_x * this._w_count * (this._is_invers_x ? -1 : 1);
+      value_x = MAX(MIN(value_x, this._max_x), this._min_x);
+      this.x = this._is_invers_x ? this._max_x - value_x + this._min_x : value_x;
     }
+
     if (this._has_y)
     {
-      value = this._w_old_y + this._w_delta_y * this._w_count;
-      //value = MAX(MIN(value, this._max_y), this._min_y);
-      this.y = this._is_invers_y ? this._max_y - value + this._min_y : value;
+      if (this._has_x && (this._min_x == this.x || this._max_x == this.x))
+        var value_y = this._w_constraint_y(value_x);
+      else
+      {
+        var value_y = this._w_old_y +
+                      this._w_delta_y * this._w_count * (this._is_invers_y ? -1 : 1);
+        value_y = MAX(MIN(value_y, this._max_y), this._min_y);
+
+      }
+      this.y = this._is_invers_y ? this._max_y - value_y + this._min_y : value_y;
+      if (this._has_x && (this._min_y == this.y || this._max_y == this.y))
+      {
+        value_x = this._w_constraint_x(value_y);
+        this.x = this._is_invers_x ? this._max_x - value_x + this._min_x : value_x;
+      }
     }
+
+    if ((this._has_x && this._has_y) &&
+        (this._min_x == this.x || this._max_x == this.x ||
+         this._min_y == this.y || this._max_y == this.y))
+    {
+      var count = this._distance(value_x, value_y, this._w_old_x, this._w_old_y);
+      count /= this._w_unite;
+      this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
+    }
+    else if (this._has_x && (this._min_x == this.x || this._max_x == this.x))
+    {
+      var count = (value_x - this._w_old_x) / this._w_unite;
+      this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
+    }
+    else if (this._has_y && (this._min_y == this.y || this._max_y == this.y))
+    {
+      var count = (value_y - this._w_old_y) / this._w_unite;
+      this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
+    }
+
     this._call_callback();
     event.preventDefault();
   };
@@ -192,6 +244,8 @@ Slider.prototype = new function()
     this['_' + axis] = 0;
     this['_submitted_' + axis] = 0;
     this[axis] = this['_is_invers_' + axis] ? max : min;
+    if (!this._w_unite)
+      this._w_unite = (max - min) / pixel_range;
   }
 
   this._init = function(config)
@@ -240,6 +294,8 @@ Slider.prototype = new function()
       this._w_delta_x = 0;
       this._w_delta_y = 0;
       this._w_count = 0;
+      this._w_constraint_x = null;
+      this._w_constraint_y = null;
       this._onmousedown_bound = this._onmousedown.bind(this);
       this._onmousemove_bound = this._onmousemove.bind(this);
       this._onmouseup_bound = this._onmouseup.bind(this);
