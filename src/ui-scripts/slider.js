@@ -32,22 +32,28 @@ var Slider = function(config)
 Slider.prototype = new function()
 {
   const UPDATE_INTERVAL = 80, MAX = Math.max, MIN = Math.min;
+  var POW = Math.pow;
+  var WHEEL_UNITE = 0.01;
+
   this._onmousemoveinterval = function(event)
   {
     if (this._is_active)
-    {
-      if (this._onxy && !(this.x == this._submitted_x && this.y == this._submitted_y))
-        this.onxy(this._submitted_x = this.x, this._submitted_y = this.y);
-      if (this._onx && this.x != this._submitted_x)
-        this.onx(this._submitted_x = this.x);
-      if (this._ony && this.y != this._submitted_y)
-        this.ony(this._submitted_y = this.y);
-    }
+      this._call_callback();
     else
     {
       window.clearInterval(this._interval);
       this._interval = 0;
     }
+  }
+
+  this._call_callback = function()
+  {
+    if (this._onxy && !(this.x == this._submitted_x && this.y == this._submitted_y))
+      this.onxy(this._submitted_x = this.x, this._submitted_y = this.y);
+    if (this._onx && this.x != this._submitted_x)
+      this.onx(this._submitted_x = this.x);
+    if (this._ony && this.y != this._submitted_y)
+      this.ony(this._submitted_y = this.y);
   }
 
   this._onmousemove = function(event)
@@ -107,6 +113,50 @@ Slider.prototype = new function()
     }
   }
 
+  this._distance = function(x0, y0, x1, y1)
+  {
+    return POW(POW(x1- x0, 2) + POW(y1 - y0, 2), .5);
+  }
+
+  this._onmousewheel = function(event)
+  {
+    var value = 0;
+    var box = this._ref_element.getBoundingClientRect();
+    var ev_raw_x = event.clientX - box.left;
+    var ev_raw_y = event.clientY - box.top;
+
+    if (this._distance(ev_raw_x, ev_raw_y, this._w_m_raw_x, this._w_m_raw_y) > 10)
+    {
+      this._w_count = 0;
+      this._w_m_raw_x = ev_raw_x;
+      this._w_m_raw_y = ev_raw_y;
+      this._w_m_x = ev_raw_x / this._pixel_range_x * this._range_x + this._min_x;
+      this._w_m_y = ev_raw_y / this._pixel_range_y * this._range_y + this._min_y;
+      this._w_old_x = this._is_invers_x ? this._max_x - this.x + this._min_x : this.x;
+      this._w_old_y = this._is_invers_x ? this._max_y - this.y + this._min_y : this.y;
+      var d = this._distance(this._w_old_x, this._w_old_y, this._w_m_x, this._w_m_y);
+      var unite_count = d / WHEEL_UNITE;
+      this._w_delta_x = (this._w_m_x - this._w_old_x) / unite_count;
+      this._w_delta_y = (this._w_m_y - this._w_old_y) / unite_count;
+    }
+
+    this._w_count += event.wheelDelta > 0 ? 1 : -1;
+
+    if (this._has_x)
+    {
+      value = this._w_old_x + this._w_delta_x * this._w_count;
+      this.x = this._is_invers_x ? this._max_x - value + this._min_x : value;
+    }
+    if (this._has_y)
+    {
+      value = this._w_old_y + this._w_delta_y * this._w_count;
+      //value = MAX(MIN(value, this._max_y), this._min_y);
+      this.y = this._is_invers_y ? this._max_y - value + this._min_y : value;
+    }
+    this._call_callback();
+    event.preventDefault();
+  };
+
   this._onmouseup = function(event)
   {
     this._is_active = false;
@@ -119,6 +169,7 @@ Slider.prototype = new function()
     if (event.target.nodeType == 1 && event.target.contains(this._ref_element))
     {
       this._ref_element.removeEventListener('mousedown', this._onmousedown_bound, false);
+      this._ref_element.removeEventListener('mousewheel', this._onmousewheel_bound, false);
       document.removeEventListener('DOMNoderemoved', this._onremove_bound, false);
       this._ref_element = null;
       this._element = null;
@@ -180,12 +231,23 @@ Slider.prototype = new function()
           this._set_axis('y', config.min_y, config.max_y, box.height);
         }
       }
+      this._w_m_raw_x = 0;
+      this._w_m_raw_y = 0;
+      this._w_m_x = 0;
+      this._w_m_y = 0;
+      this._w_old_x = 0;
+      this._w_old_y = 0;
+      this._w_delta_x = 0;
+      this._w_delta_y = 0;
+      this._w_count = 0;
       this._onmousedown_bound = this._onmousedown.bind(this);
       this._onmousemove_bound = this._onmousemove.bind(this);
       this._onmouseup_bound = this._onmouseup.bind(this);
+      this._onmousewheel_bound = this._onmousewheel.bind(this);
       this._onremove_bound = this._onremove.bind(this);
       this._onmousemoveinterval_bound = this._onmousemoveinterval.bind(this);
       this._ref_element.addEventListener('mousedown', this._onmousedown_bound, false);
+      this._ref_element.addEventListener('mousewheel', this._onmousewheel_bound, false);
       document.addEventListener('DOMNodeRemoved', this._onremove_bound, false);
     }
   }
