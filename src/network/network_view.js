@@ -710,40 +710,38 @@ cls.NetworkLog.create_ui_widgets = function()
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_ALL,
-              value: ""
+              value: '{}'
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP,
-              value: "markup"
+              value: '{"type_list":["markup"]}'
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS,
-              value: "css"
+              value: '{"type_list":["css"]}'
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS,
-              value: "script"
+              value: '{"type_list":["script"]}'
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES,
-              value: "image"
+              value: '{"type_list":["image"]}'
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
-                      // the value it the comma-sparated list of strings to match type or load_origin,
-                      // "|is_blacklist" can optionally be appended.
-                      // This is parsed in network_service, in the data model in set_filters
-              value: "markup,css,script,image|true"
+              value: '{"type_list":["markup", "css", "script", "image"], "is_blacklist": true}'
+              // This is parsed in network_service, see set_filters.
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_XHR,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_XHR,
-              value: "xhr"
+              value: '{"origin_list":["xhr"]}'
             }
           ]
         },

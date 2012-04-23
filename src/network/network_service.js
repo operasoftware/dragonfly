@@ -254,28 +254,25 @@ cls.RequestContext = function()
 
   this._filter_function_bound = function(item)
   {
-    var success = false;
+    var success = true;
     var filters = this._filters;
-    if (!filters.length)
+    for (var i = 0, filter; filter = filters[i]; i++)
     {
-      success = true;
-    }
-    else
-    {
-      for (var i = 0, filter; filter = filters[i]; i++)
+      filter.is_blacklist = Boolean(filter.is_blacklist);
+      if (filter.type_list)
       {
-        var value_list = filter && filter.value_list;
-        if (value_list)
-        {
-          var has_match = value_list.contains(item.type) || 
-                          value_list.contains(item.load_origin_name) || 
-                          value_list.contains("");
-          if (has_match !== filter.is_blacklist)
-          {
-            success = true;
-            break;
-          }
-        }
+        success = false;
+        var has_match = filter.type_list.contains(item.type);
+        if (has_match != filter.is_blacklist)
+          success = true;
+      }
+      if (filter.origin_list)
+      {
+        success = false;
+        var has_match = filter.origin_list.contains(item.load_origin_name);
+        if (has_match != filter.is_blacklist)
+          success = true;
+
       }
     }
     return success;
@@ -300,18 +297,15 @@ cls.RequestContext = function()
     return this._logger_entries.filter(function(e){return e.resource_id === res_id});
   }
 
-  this.set_filters = function(filters)
+  this.set_filters = function(filter_strings)
   {
     this._filters = [];
-    for (var i = 0; i < filters.length; i++)
+    for (var i = 0; i < filter_strings.length; i++)
     {
-      var filter = filters[i];
-      var blacklist_split = filter.split("|");
-      this._filters.push({
-        value_list: blacklist_split[0].split(","),
-        is_blacklist: (blacklist_split[1] === "true")
-      });
+      var filter = JSON.parse(filter_strings[i]);
+      this._filters.push(filter);
     }
+    console.log("this._filters", this._filters);
   }
 
   this.pause = function()
