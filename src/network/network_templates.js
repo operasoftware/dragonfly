@@ -177,7 +177,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     return ["li",
              templates.network_request_icon(entry),
              ["span",
-               entry.filename || entry.human_url,
+               entry.last_part_of_uri || entry.human_url,
                "class", "network-url",
                "data-tooltip", "network-url-list-tooltip"
              ],
@@ -452,7 +452,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
     return ["div",
       [
         (window.ini && ini.debug) ?
-          ["h2", "Requested " + entry.resource + " at " +  entry.start_time_string] : 
+          ["h2", "Requested " + entry.resource_id + " at " +  entry.start_time_string] : 
           ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
         ["div",
           ["div",

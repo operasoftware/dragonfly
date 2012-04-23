@@ -27,7 +27,7 @@ templates.network_log_detail = function(ctx, selected)
   {
     var responsecode = entry.responses.length && entry.responses.last.responsecode;
     if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
-       responsecode = "" + responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+       responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
     return ["div",
       ["span",
@@ -98,17 +98,20 @@ templates.request_details = function(req)
   }
   else
   {
-    var firstline = req.request_raw.split("\n")[0];
-    var parts = firstline.split(" ");
-    if (parts.length == 3)
+    if (req.firstline)
     {
-      firstline = [
-        ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
-        ["span", parts[1] + " "],
-        ["span", parts[2] + " "]
-      ];
+      var parts = req.firstline.split(" ");
+      var firstline;
+      if (parts.length == 3)
+      {
+        firstline = [
+          ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
+          ["span", parts[1] + " "],
+          ["span", parts[2] + " "]
+        ];
+      }
+      tbody.extend(templates.network_headers_list(req.request_headers, firstline));
     }
-    tbody = tbody.concat(templates.network_headers_list(req.request_headers, firstline));
   }
   ret.push(tbody);
   return ret;
@@ -117,14 +120,14 @@ templates.request_details = function(req)
 templates.response_details = function(resp)
 {
   if (!resp.response_headers) { return []; }
-  var firstline = resp.response_raw.split("\n")[0];
-  var parts = firstline.split(" ", 2);
+  var firstline;
+  var parts = resp.firstline.split(" ", 2);
   if (parts.length == 2)
   {
     firstline = [
       ["span", parts[0] + " "],
       ["span", parts[1], "data-spec", "http#" + parts[1]],
-      ["span", firstline.slice(parts[0].length + parts[1].length + 1)]
+      ["span", resp.firstline.slice(parts[0].length + parts[1].length + 1)]
     ];
   }
   return ["tbody", templates.network_headers_list(resp.response_headers, firstline)];
@@ -133,7 +136,7 @@ templates.response_details = function(resp)
 templates.network_headers_list = function(headers, firstline)
 {
   var lis = headers.map(function(header) {
-      return ["tr", [["th", header.name], ["td", header.value]], "data-spec", "http#" + header.name];
+      return ["tr", ["th", header.name], ["td", header.value], "data-spec", "http#" + header.name];
   });
 
   if (firstline)
@@ -156,7 +159,7 @@ templates.network_request_body = function(req)
   }
 
   var cont = [];
-  // when this is undefined/null the request was one that did not send data
+  // when partList.length is 0, the request was one that did not send data
   if (req.requestbody.partList.length)
   {
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)

@@ -2,12 +2,6 @@
 
 cls.NetworkLoggerService = function(view)
 {
-  if (cls.NetworkLoggerService.instance)
-  {
-    return cls.NetworkLoggerService.instance;
-  }
-  cls.NetworkLoggerService.instance = this;
-
   this._view = view;
   this._current_context = null;
 
@@ -112,9 +106,32 @@ cls.NetworkLoggerService = function(view)
     this._view.update();
   }.bind(this);
 
+  this._setup_request_body_behaviour_bound = function()
+  {
+    var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
+                     "application/xslt+xml", "text/xsl", "application/xml",
+                     "text/css", "text/plain", "application/x-javascript",
+                     "application/json", "application/javascript", "text/javascript",
+                     "application/x-www-form-urlencoded",
+                     "text/xml",
+                     ""]; // <- Yes really.
+                     // It's frelling silly, but there's a bug with core not giving us content types
+                     // for post data, even though core generates that itself. See CORE-39597
+
+    var STRING = 1, DECODE = 1, OFF = 4;
+    var reqarg = [[OFF],
+                 text_types.map(function(e) { return [e, [STRING, DECODE]]})
+                ];
+
+    window.services["resource-manager"].requestSetRequestMode(null, reqarg);
+    this.setup_content_tracking_bound();
+  }.bind(this);
+
   this.init = function()
   {
-    this._res_service = window.services['resource-manager'];
+    this._res_service = window.services["resource-manager"];
+    this._res_service.addListener("enable-success", this._setup_request_body_behaviour_bound);
+
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("request", this._on_request_bound);
     this._res_service.addListener("requestheader", this._on_requestheader_bound);
@@ -173,22 +190,22 @@ cls.NetworkLoggerService = function(view)
     var entry = this._current_context.get_entry(itemid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource]);
-    this._res_service.requestGetResource(tag, [entry.resource, [typecode, 1]]);
+    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource_id]);
+    this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
   this._on_get_resource_bound = function(status, data, callback, resourceid)
   {
-    if (status != 0)
+    if (!this._current_context) { return; }
+    if (status)
     {
-      if (!this._current_context) { return; }
-      this._current_context.update("responsebody", {resourceID: resourceid}); // this is to set body_unavailable, the object passed represents empty event_data
+      // set body_unavailable for the resourceid, the object passed represents empty event_data
+      this._current_context.update("responsebody", {resourceID: resourceid});
       if (callback) { callback() }
     }
     else
     {
       var msg = new cls.ResourceManager["1.2"].ResourceData(data);
-      if (!this._current_context) { return; }
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
     }
@@ -247,11 +264,12 @@ cls.RequestContext = function()
     {
       for (var i = 0, filter; filter = filters[i]; i++)
       {
-        if (filter && filter.value_list && filter.value_list.length)
+        var value_list = filter && filter.value_list;
+        if (value_list)
         {
-          var has_match = filter.value_list.contains(item.type) || 
-                          filter.value_list.contains(item.load_origin_name) || 
-                          filter.value_list.contains("");
+          var has_match = value_list.contains(item.type) || 
+                          value_list.contains(item.load_origin_name) || 
+                          value_list.contains("");
           if (has_match !== filter.is_blacklist)
           {
             success = true;
@@ -279,10 +297,10 @@ cls.RequestContext = function()
 
   this.get_entries_with_res_id = function(res_id)
   {
-    return this._logger_entries.filter(function(e){return e.resource === res_id});
+    return this._logger_entries.filter(function(e){return e.resource_id === res_id});
   }
 
-  this.set_filter = function(filters)
+  this.set_filters = function(filters)
   {
     this._filters = [];
     for (var i = 0; i < filters.length; i++)
@@ -402,10 +420,10 @@ cls.RequestContext = function()
   };
 };
 
-cls.NetworkLoggerEntry = function(id, resource, document_id, context_starttime)
+cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttime)
 {
   this.id = id;
-  this.resource = resource;
+  this.resource_id = resource_id;
   this.document_id = document_id;
   this.context_starttime = context_starttime;
   this.url = null;
@@ -427,6 +445,7 @@ cls.NetworkLoggerEntry = function(id, resource, document_id, context_starttime)
   this.responses = [];
   this.responsecode = null;
   this.request_raw = null;
+  this.firstline = null;
   this.method = null;
   this.status = null;
   this.body_unavailable = false;
@@ -655,7 +674,9 @@ cls.NetworkLoggerEntry.prototype = new function()
   this._update_event_urlload = function(event)
   {
     this.url = event.url;
-    this.filename = helpers.basename(event.url, true);
+    var uri_ob = new URI(event.url);
+    this.last_part_of_uri = uri_ob.last_part;
+
     this.urltype = event.urlType;
     this.document_id = event.documentID;
     if (event.loadOrigin)
@@ -715,6 +736,7 @@ cls.NetworkLoggerEntry.prototype = new function()
         break;
       }
     }
+    this.firstline = event.raw.split("\n")[0];
   };
 
   this._update_event_requestfinished = function(event)
@@ -861,6 +883,7 @@ cls.NetworkLoggerResponse = function(entry)
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
+  this.firstline = null;
   this.responsebody = null;
 
   // The following are duplicated from the entry to have them available directly on the response
@@ -878,6 +901,7 @@ cls.NetworkLoggerResponse = function(entry)
   {
     this.response_headers = event.headerList;
     this.response_raw = event.raw;
+    this.firstline = this.response_raw.split("\n")[0];
   };
 
   this._update_event_responsefinished = function(event)

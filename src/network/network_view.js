@@ -69,7 +69,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (ctx)
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
-      ctx.set_filter(this._type_filters || []);
+      ctx.set_filters(this._type_filters || []);
 
       this._render_main_view(this._container);
     }
@@ -737,7 +737,7 @@ cls.NetworkLog.create_ui_widgets = function()
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
                       // the value it the comma-sparated list of strings to match type or load_origin,
                       // "|is_blacklist" can optionally be appended.
-                      // This is parsed in network_service, in the data model in set_filter
+                      // This is parsed in network_service, in the data model in set_filters
               value: "markup,css,script,image|true"
             },
             {

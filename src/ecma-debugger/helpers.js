@@ -58,7 +58,7 @@ window.cls.Helpers = function()
    *
    * @param {String} path The path to shorten
    */
-  this.basename = function(path, keep_hash_and_query)
+  this.basename = function(path)
   {
     const DATA_URI_MAX_SIZE = 40;
 
@@ -74,19 +74,13 @@ window.cls.Helpers = function()
     }
 
     // Strip away any query string or fragment identifier
-    if (!keep_hash_and_query)
-    {
-      var end = path.indexOf("?");
-      var hash_index = path.indexOf("#");
-      if (hash_index != -1)
-      {
-        end = Math.min(end, hash_index);
-      }
-      if (end != -1)
-      {
-        path = path.slice(0, end);
-      }
-    }
+    var end = path.indexOf("?");
+    var hash_index = path.indexOf("#");
+    if (hash_index != -1)
+      end = Math.min(end, hash_index);
+
+    if (end != -1)
+      path = path.slice(0, end);
 
     // If there is no file name, show the last directory including slash
     var last = path.lastIndexOf("/") + 1;

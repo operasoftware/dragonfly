@@ -165,9 +165,14 @@ cls.CookieManager.CookieManagerViewBase = function()
         no_group_changing: true
       }
     };
-    this._sortable_table = new SortableTable(
-                             this._tabledef, null, null, "domain", "runtime", true, "cookie-inspector"
-                           );
+    this._sortable_table = new SortableTable(this._tabledef, 
+                                             null, 
+                                             null, 
+                                             "domain", 
+                                             "runtime", 
+                                             true, 
+                                             "cookie-inspector");
+
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
   };

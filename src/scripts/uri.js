@@ -91,7 +91,7 @@ var URIPrototype = function(uri_prop_name)
     return this._origin;  
   });
   
-  this.__defineSetter__("params", function() {});
+  this.__defineSetter__("origin", function() {});
 
   this.__defineGetter__("params", function()
   {
@@ -116,8 +116,20 @@ var URIPrototype = function(uri_prop_name)
     }
     return this._params;  
   });
-  
-  this.__defineSetter__("origin", function() {});
+
+  this.__defineSetter__("last_part", function() {});
+
+  this.__defineGetter__("last_part", function()
+  {
+    if (!this._last_part && (this._is_parsed || this[uri_prop_name]))
+    {
+      var parts = this._uri.split("/");
+      // last_part is either after the last /, or if that is "", between the last 2 slashes.
+      var accessor = parts.length - 1;
+      this._last_part = parts[accessor] || parts[accessor - 1];
+    }
+    return this._last_part;
+  });
 
   this._init = function(uri)
   {
@@ -126,6 +138,7 @@ var URIPrototype = function(uri_prop_name)
 
     if (uri)
     {
+      this._uri = uri;
       var val = uri;
 
       var pos = val.indexOf("#");

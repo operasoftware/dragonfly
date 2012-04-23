@@ -68,9 +68,10 @@
 }
 
 .tooltip-container .not_requested::after,
-.tooltip-container .error_response::after
+.tooltip-container .error_response::after,
+.tooltip-container .unreferenced::after
 {
-  content: " - ";
+  content: " – ";
 }
 
 .network_logger #network-url-list-container .network-log-url-list li.not_requested
