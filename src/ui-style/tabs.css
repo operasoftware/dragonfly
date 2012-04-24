@@ -205,3 +205,9 @@ top-tabs .badge:empty
   background-image: url("../ui-images/mode_console.png");
   width: 25px;
 }
+
+.profiler_mode
+{
+  background: url("../ui-images/mode_profiler.png");
+  width: 25px;
+}

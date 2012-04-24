@@ -191,7 +191,7 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
-    this.requierd_services = ["ecmascript-debugger", "exec"];
+    this.required_services = ["ecmascript-debugger", "exec"];
     this.init(id, name, container_class, "", "screenshot-tool");
     this._pixel_magnifier = new PixelMagnifier();
     this._pixel_magnifier.onload = function()
