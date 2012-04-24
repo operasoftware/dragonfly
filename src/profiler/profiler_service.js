@@ -5,22 +5,23 @@
  */
 var ProfilerService = function()
 {
-  this.is_active = false;
-  this._profiler = window.services["profiler"];
-  this._tag_manager = window.tag_manager;
-  this._window_id = 0;
-
   var START_MODE_IMMEDIATE = 1;
   var START_MODE_URL = 2;
+
+  this._init = function()
+  {
+    this.is_active = false;
+    this._profiler = window.services["profiler"];
+    this._tag_manager = window.tag_manager;
+    this._window_id = 0;
+  };
 
   this.start_profiler = function(start_mode, window_id, callback)
   {
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this.is_active = true;
       if (callback)
-      {
         callback(status, msg);
-      }
     });
     this._profiler.requestStartProfiler(tag, [start_mode || START_MODE_IMMEDIATE,
                                               this._window_id]);
@@ -31,9 +32,7 @@ var ProfilerService = function()
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this.is_active = false;
       if (callback)
-      {
         callback(status, msg);
-      }
     });
     this._profiler.requestStopProfiler(tag, [session_id]);
   };
@@ -43,9 +42,7 @@ var ProfilerService = function()
   {
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       if (callback)
-      {
         callback(status, msg);
-      }
     });
     this._profiler.requestGetEvents(tag, [session_id,
                                           timeline_id,
@@ -67,6 +64,8 @@ var ProfilerService = function()
   };
 
   window.messages.addListener("debug-context-selected", this._on_debug_context_selected.bind(this));
+
+  this._init();
 };
 
 ProfilerService.GENERIC = 1;

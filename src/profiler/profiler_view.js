@@ -43,6 +43,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this.required_services = ["profiler"];
     this._profiler = new ProfilerService();
     this._templates = new ProfilerTemplates();
+
+    this._reset();
+
+    View.prototype.init.call(this, id, name, container_class, html, default_handler);
+  };
+
+  this._reset = function()
+  {
+    this._table = null;
     this._current_session_id = null;
     this._old_session_id = null;
     this._current_timeline_id = null;
@@ -52,13 +61,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._aggregated_list = [];
     this._reduced_list = [];
     this._details_time = 0;
+  };
 
-    View.prototype.init.call(this, id, name, container_class, html, default_handler);
+  this._reset_details = function()
+  {
+    this._table = null;
+    this._details_time = 0;
   };
 
   this._start_profiler = function()
   {
-    this._reset_data();
+    this._reset_details();
     this._container.clearAndRender(this._templates.empty("Profiling"));
     this._profiler.start_profiler(null, null, (function(status, msg) {
       this._old_session_id = this._current_session_id;
@@ -74,9 +87,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._handle_stop_profiler = function(status, msg)
   {
-    if (status == 0)
+    if (status === 0)
     {
-      if (this._old_session_id) this._profiler.release_session(this._old_session_id);
+      if (this._old_session_id)
+        this._profiler.release_session(this._old_session_id);
       this._current_timeline_id = msg[TIMELINE_LIST][0][TIMELINE_ID];
       this._profiler.get_events(this._current_session_id,
                                 this._current_timeline_id,
@@ -127,14 +141,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
-    this._container.clearAndRender(
-        this._timeline_list.eventList && this._timeline_list.eventList[0]
+    var template = this._timeline_list.eventList && this._timeline_list.eventList[0]
         ? this._templates.main(this._templates.legend(this._aggregated_list),
-                               this._templates.event_list_all(this._timeline_list, this._event_id, this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
+                               this._templates.event_list_all(this._timeline_list,
+                                                              this._event_id,
+                                                              this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
                                this._templates.details(this._table),
                                this._templates.status(this._templates.format_time(this._details_time)))
-        : this._templates.empty("Press the Record button to start profiling")
-    );
+        : this._templates.empty("Press the Record button to start profiling");
+    this._container.clearAndRender(template);
   };
 
   this.createView = function(container)
@@ -163,14 +178,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._start_stop_profiler = function(event, target)
   {
-    !this._profiler.is_active ? this._start_profiler()
-                              : this._stop_profiler();
-  };
-
-  this._reset_data = function()
-  {
-    this._table = null;
-    this._details_time = 0;
+    if (this._profiler.is_active)
+      this._stop_profiler();
+    else
+      this._start_profiler();
   };
 
   this._show_details_list = function()
@@ -189,7 +200,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      this._reset_data();
+      this._reset_details();
       this._update_view();
     }
   };
@@ -225,8 +236,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_event_details = function(event, target)
   {
-    this._event_id = parseInt(target.getAttribute("data-event-id")) || null;
-    this._event_type = parseInt(target.getAttribute("data-event-type"));
+    this._event_id = Number(target.getAttribute("data-event-id")) || null;
+    this._event_type = Number(target.getAttribute("data-event-type"));
     this._show_details_list();
   };
 
@@ -236,6 +247,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._reload_window = function(event, target)
   {
+    if (this._current_session_id)
+      this._profiler.release_session(this._old_session_id);
+
+    this._reset();
     window.runtimes.reloadWindow();
     window.services.scope.enable_profile(window.app.profiles.PROFILER);
   };
