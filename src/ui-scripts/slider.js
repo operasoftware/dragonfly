@@ -37,7 +37,7 @@ Slider.prototype = new function()
   var MAX = Math.max;
   var MIN = Math.min;
   var POW = Math.pow;
-  var MIN_DISTNACE = 7;
+  var MIN_DISTANCE = 7;
 
   this._onmousemoveinterval = function(event)
   {
@@ -119,7 +119,7 @@ Slider.prototype = new function()
 
   this._distance = function(x0, y0, x1, y1)
   {
-    return POW(POW(x1- x0, 2) + POW(y1 - y0, 2), .5);
+    return POW(POW(x1 - x0, 2) + POW(y1 - y0, 2), .5);
   };
 
   this._onmousewheel = function(event)
@@ -127,31 +127,32 @@ Slider.prototype = new function()
     var box = this._ref_element.getBoundingClientRect();
     var ev_raw_x = event.clientX - box.left;
     var ev_raw_y = event.clientY - box.top;
-    if (this._distance(ev_raw_x, ev_raw_y, this._w_m_raw_x, this._w_m_raw_y) > MIN_DISTNACE)
+    var d = this._distance(ev_raw_x, ev_raw_y, this._w_mouse_raw_x, this._w_mouse_raw_y);
+    if (d > MIN_DISTANCE)
     {
       this._w_count = 0;
-      this._w_m_raw_x = ev_raw_x;
-      this._w_m_raw_y = ev_raw_y;
+      this._w_mouse_raw_x = ev_raw_x;
+      this._w_mouse_raw_y = ev_raw_y;
       var scale_x = 1 / this._pixel_range_x * this._range_x;
       var scale_y = 1 / this._pixel_range_y * this._range_y;
-      this._w_m_x = this._has_x ? ev_raw_x * scale_x + this._min_x : 0;
-      this._w_m_y = this._has_y ? ev_raw_y * scale_y + this._min_y : 0;
+      this._w_mouse_x = this._has_x ? ev_raw_x * scale_x + this._min_x : 0;
+      this._w_mouse_y = this._has_y ? ev_raw_y * scale_y + this._min_y : 0;
 
       if (this._is_invers_x)
-        this._w_m_x = this._max_x - this._w_m_x + this._min_x;
+        this._w_mouse_x = this._max_x - this._w_mouse_x + this._min_x;
 
       if (this._is_invers_y)
-        this._w_m_y = this._max_y - this._w_m_y + this._min_y;
+        this._w_mouse_y = this._max_y - this._w_mouse_y + this._min_y;
         
       this._w_old_x = this._has_x ? this.x : 0;
       this._w_old_y = this. _has_y ? this.y : 0;
-      var d = this._distance(this._w_old_x, this._w_old_y, this._w_m_x, this._w_m_y);
-      var unite_count = d / this._w_unite;
-      this._w_delta_x = this._has_x ? (this._w_m_x - this._w_old_x) / unite_count : 0;
-      this._w_delta_y = this._has_y ? (this._w_m_y - this._w_old_y) / unite_count : 0;
+      var d = this._distance(this._w_old_x, this._w_old_y, this._w_mouse_x, this._w_mouse_y);
+      var unit_count = d / this._w_unite;
+      this._w_delta_x = this._has_x ? (this._w_mouse_x - this._w_old_x) / unit_count : 0;
+      this._w_delta_y = this._has_y ? (this._w_mouse_y - this._w_old_y) / unit_count : 0;
       if (this._has_x && this._has_y)
       {
-        var b = (this._w_old_y - this._w_m_y) / (this._w_old_x - this._w_m_x);
+        var b = (this._w_old_y - this._w_mouse_y) / (this._w_old_x - this._w_mouse_x);
         var a = this._w_old_y - b * this._w_old_x;
         this._w_constraint_y = function(x) { return a + b * x; };
         this._w_constraint_x = function(y) { return (y - a) / b; };
@@ -179,8 +180,9 @@ Slider.prototype = new function()
       this.y = value_y;
       if (this._has_x && (this._min_y == this.y || this._max_y == this.y))
       {
-        value_x = this._w_constraint_x(value_y);
-        this.x = value_x;
+        var prov = this._w_constraint_x(value_y);
+        if (!isNaN(prov))
+          this.x = value_x = prov;
       }
     }
 
@@ -283,10 +285,10 @@ Slider.prototype = new function()
           this._set_axis('y', config.min_y, config.max_y, box.height);
         }
       }
-      this._w_m_raw_x = 0;
-      this._w_m_raw_y = 0;
-      this._w_m_x = 0;
-      this._w_m_y = 0;
+      this._w_mouse_raw_x = 0;
+      this._w_mouse_raw_y = 0;
+      this._w_mouse_x = 0;
+      this._w_mouse_y = 0;
       this._w_old_x = 0;
       this._w_old_y = 0;
       this._w_delta_x = 0;
