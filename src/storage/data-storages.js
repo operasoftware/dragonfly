@@ -347,6 +347,12 @@ cls.StorageDataBase = new function()
     this.post('storage-update', {storage_id: this.id});
   };
 
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._on_reset_state();
+  };
+
   this._make_sorter = function(prop)
   {
     return function(obj_a, obj_b) {
@@ -394,6 +400,7 @@ cls.StorageDataBase = new function()
 
     window.cls.MessageMixin.apply(this);
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+    window.messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
     messages.addListener('reset-state', this._on_reset_state.bind(this));
     this.tabledef = {
       groups: {

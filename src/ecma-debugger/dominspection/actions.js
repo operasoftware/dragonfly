@@ -796,6 +796,11 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
+  this._handlers["enable-ecmascript-debugger"] = function(event, target)
+  {
+    window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+  }.bind(this);
+
   this._remove_from_dom = function(event, target, script)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
@@ -993,4 +998,9 @@ window.eventHandlers.mouseover['inspect-node-link'] = function(event, target)
 window.eventHandlers.click['df-show-live-source'] = function(event, target)
 {
   window.debug_helpers.liveSource.open();
+};
+
+window.eventHandlers.click['enable-ecmascript-debugger'] = function(event, target)
+{
+  this.broker.dispatch_action("dom", "enable-ecmascript-debugger", event, target);
 };

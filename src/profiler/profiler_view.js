@@ -38,17 +38,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._default_types = [/*GENERIC, PROCESS,*/ DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
                          THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
 
-  this._init = function(id, name, container_class, html, default_handler)
-  {
-    this.required_services = ["profiler"];
-    this._profiler = new ProfilerService();
-    this._templates = new ProfilerTemplates();
-
-    this._reset();
-
-    View.prototype.init.call(this, id, name, container_class, html, default_handler);
-  };
-
   this._reset = function()
   {
     this._table = null;
@@ -251,14 +240,32 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       this._profiler.release_session(this._old_session_id);
 
     this._reset();
-    window.runtimes.reloadWindow();
     window.services.scope.enable_profile(window.app.profiles.PROFILER);
   };
 
-  window.eventHandlers.click["profiler-reload-window"] = this._reload_window.bind(this);
-  window.eventHandlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
-  window.eventHandlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
-  window.eventHandlers.mousewheel["profiler-zoom-timeline"] = this._zoom_timeline.bind(this);
+  this._on_profile_enabled = function(msg)
+  {
+    if (msg.profile === window.app.profiles.PROFILER)
+      window.runtimes.reloadWindow();
+  };
+
+  this._init = function(id, name, container_class, html, default_handler)
+  {
+    View.prototype.init.call(this, id, name, container_class, html, default_handler);
+    this.required_services = ["profiler"];
+    this._profiler = new ProfilerService();
+    this._templates = new ProfilerTemplates();
+    this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
+
+    this._reset();
+
+    window.messages.addListener("profile-enabled", this._on_profile_enabled_bound);
+
+    window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
+    window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
+    window.event_handlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
+    window.event_handlers.mousewheel["profiler-zoom-timeline"] = this._zoom_timeline.bind(this);
+  };
 
   this._init(id, name, container_class, html, default_handler);
 };

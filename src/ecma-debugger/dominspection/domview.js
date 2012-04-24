@@ -53,6 +53,11 @@ cls.DOMView = function(id, name, container_class)
     }
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
+
   this._clear_soft_spotlight = function()
   {
     if (window.settings.dom.get('highlight-on-hover'))

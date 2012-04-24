@@ -302,6 +302,13 @@ cls.ElementStyle = function()
     this._selected_element = null;
     this._set_props = [];
     this._search_term = '';
+    this._has_data = false;
+  };
+
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._on_reset_state();
   };
 
   this._search = function(search_term)
@@ -429,6 +436,7 @@ cls.ElementStyle = function()
     {
       window.messages.addListener('element-selected', this._on_element_selected.bind(this));
       window.messages.addListener('reset-state', this._on_reset_state.bind(this));
+      window.messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
     }
 
     if (window.eventHandlers)

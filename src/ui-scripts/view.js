@@ -9,6 +9,7 @@ var ViewBase = new function()
 
   var ids = [];
   var _enabled_services = [];
+  var _ignore_updates = true;
 
   var getId = function()
   {
@@ -114,6 +115,10 @@ var ViewBase = new function()
 
   this.update = function()
   {
+    // ignore any updates before a profile is enabled
+    if (_ignore_updates)
+      return;
+
     var is_enabled = this.is_enabled;  
     for (var i = 0, id = ""; id = this.container_ids[i]; i++)
     {
@@ -255,9 +260,9 @@ var ViewBase = new function()
   window.messages.addListener("hide-view", onHideView);
   window.messages.addListener("profile-enabled", function(msg)
   {
+    _ignore_updates = false;
     _enabled_services = msg.services.slice();
-    var tabs = UI.get_instance().get_visible_tabs();
-    for (var i = 0, id; id = tabs[i]; i++)
+    for (var id in window.views)
     {
       var view = window.views[id];
       if (view.type == "side-panel" || view.type == "single-view")

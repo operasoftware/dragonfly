@@ -167,6 +167,38 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     updateRuntimeViews();
   }
 
+  var _on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      __runtimes = {};
+      __old_runtimes = {};
+      __runtimes_arr = []; // runtime ids
+      __window_ids = {};
+      __windows_reloaded = {};
+      __threads = [];
+      __log_threads = false;
+      __windowsFolding = {};
+      __selected_runtime_id = '';
+      __next_runtime_id_to_select = '';
+      __selected_script = '';
+      updateRuntimeViews();
+    }
+  };
+
+  var _on_profile_enabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      var dbg_ctx = window.window_manager_data.get_debug_context();
+      if (dbg_ctx)
+      {
+        var tag = window.tag_manager.set_callback(null, set_new_debug_context, [dbg_ctx]);
+        ecma_debugger.requestListRuntimes(tag, [[],1]);
+      }
+    }
+  };
+
   var registerRuntime = function(id)
   {
 
@@ -1390,6 +1422,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   messages.addListener('window-updated', _on_window_updated);
   messages.addListener('debug-context-selected', _on_debug_context_selected);
   messages.addListener('console-script-submitted', _on_console_script_submitted);
+  messages.addListener('profile-disabled', _on_profile_disabled);
+  messages.addListener('profile-enabled', _on_profile_enabled);
 
   window.app.addListener('services-created', on_services_created);
 

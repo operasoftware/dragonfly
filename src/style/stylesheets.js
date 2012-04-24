@@ -300,6 +300,15 @@ cls.Stylesheets = function()
     this._css_index_map = null;
   };
 
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      this._sheets = {};
+      this._new_runtimes = null;
+    }
+  };
+
   this._on_active_tab = function(msg)
   {
     if (!msg.runtimes_with_dom.length)
@@ -328,6 +337,7 @@ cls.Stylesheets = function()
     {
       window.messages.addListener('active-tab', this._on_active_tab.bind(this));
       window.messages.addListener('reset-state', this._on_reset_state.bind(this));
+      window.messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
     }
   };
 
