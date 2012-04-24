@@ -94,6 +94,32 @@
     }
   };
 
+  window.eventHandlers.click['get-getter-value'] = function examine_objects(event, target)
+  {
+    var obj_id = parseInt(target.get_attr('parent-node-chain', 'obj-id'));
+    var data_model = window.inspections[target.get_attr('parent-node-chain', 'data-id')];
+    var key = target.parentNode.querySelector("key");
+    var path = data_model && data_model.norm_path(get_path(target.parentNode));
+
+    if (obj_id && data_model && key && path)
+    {
+      var getter = key.textContent;
+      var cb = _expand_getter.bind(null, target, obj_id, data_model, getter, path);
+      var tag = window.tag_manager.set_callback(null, cb, []);
+      var rt_id = window.runtimes.getSelectedRuntimeId();
+      var thread_id = window.stop_at.getThreadId();
+      var frame_index = window.stop_at.getSelectedFrameIndex();
+      if (frame_index == -1)
+      {
+        thread_id = 0;
+        frame_index = 0;
+      }
+      var script = "obj[\"" + getter + "\"]";
+      var msg = [rt_id, thread_id, frame_index, script, [["obj", obj_id]]];
+      window.services["ecmascript-debugger"].requestEval(tag, msg);
+    }
+  };
+
   window.eventHandlers.click['expand-scope-chain'] = function(event, target)
   {
     var
@@ -113,7 +139,19 @@
     }
   };
 
-  var inspect_object = function(rt_id, obj_id, force_show_view)
+  var _expand_getter = function(target, obj_id, data_model, getter, path, status, message)
+  {
+    var PATH_PROTO_INDEX = 2;
+    if (data_model.set_getter_value(obj_id, getter, message) &&
+        target.parentNode && target.parentNode.parentNode)
+    {
+      var index = path.pop()[PATH_PROTO_INDEX];
+      var templ = window.templates.inspected_js_prototype(data_model, path, index);
+      target.parentNode.parentNode.re_render(templ);
+    }
+  };
+
+  var _inspect_object = function(rt_id, obj_id, force_show_view)
   {
     messages.post('active-inspection-type', {inspection_type: 'object'});
     if (force_show_view)
@@ -127,7 +165,7 @@
   {
     var rt_id = parseInt(target.getAttribute('rt-id'));
     var obj_id = parseInt(target.getAttribute('obj-id'));
-    inspect_object(rt_id, obj_id, true);
+    _inspect_object(rt_id, obj_id, true);
   };
 
   window.eventHandlers.click['inspect-object-inline-link'] = function(event, target)
@@ -139,7 +177,7 @@
       var model_id = event.target.get_attr('parent-node-chain', 'data-id');
       var model = model_id && window.inspections[model_id];
       var rt_id = model && model.runtime_id; 
-      inspect_object(rt_id, obj_id);
+      _inspect_object(rt_id, obj_id);
     }
   };
 

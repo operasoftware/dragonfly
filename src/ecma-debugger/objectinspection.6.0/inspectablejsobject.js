@@ -64,6 +64,10 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this.get_object_with_id = function(id) {};
 
+  this.set_getter_value = function(obj_id, getter) {};
+
+  this.norm_path = function(obj_id, getter) {};
+
   /* private */
 
   // The expanded property tree on which we would like to use that function 
@@ -501,6 +505,47 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     }
     return null;
   };
+
+  this.set_getter_value = function(obj_id, getter, eval_message)
+  {
+    var proto_chain = this._obj_map[obj_id] && this._obj_map[obj_id];
+    var PROPERTY_LIST = 1;
+    var NAME = 0;
+    var TYPE = 1;
+    var VALUE = 2;
+    var OBJECT_VALUE = 3;
+
+    if (proto_chain)
+    {
+      for (var i = 0, proto; !prop && (proto = proto_chain[i]); i++)
+      {
+        var property_list = proto[PROPERTY_LIST];
+        if (property_list)
+        {
+          for (var j = 0, prop; prop = property_list[j]; j++)
+          {
+            if (prop[NAME] == getter && prop[TYPE] == "script_getter")
+              break;
+          }
+        }
+      }
+    }
+
+    if (prop)
+    {
+      prop[TYPE] = eval_message[TYPE];
+      if (prop[TYPE] == "object")
+        prop[OBJECT_VALUE] = eval_message[OBJECT_VALUE];
+      else
+        prop[VALUE] = eval_message[VALUE];
+
+      return true;
+    }
+
+    return false;
+  };
+
+  this.norm_path = this._norm_path;
 
   this.__defineGetter__('runtime_id', function()
   {
