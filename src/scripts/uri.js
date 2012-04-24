@@ -18,6 +18,8 @@ var URIPrototype = function(uri_prop_name)
     filename
     dir_pathname // pathname minus filename
     abs_dir // protocol plus hostname plus dir_pathname
+    path_parts // list of "directories" in pathname
+    short_distinguisher // the last part of a url that can be used to distinguish it
   */
 
   [
@@ -25,7 +27,8 @@ var URIPrototype = function(uri_prop_name)
     "host",
     "pathname",
     "protocol",
-    "search"
+    "search",
+    "path_parts"
   ].forEach(function(prop)
   {
     this.__defineGetter__(prop, function()
@@ -117,18 +120,29 @@ var URIPrototype = function(uri_prop_name)
     return this._params;  
   });
 
-  this.__defineSetter__("last_part", function() {});
+  this.__defineSetter__("short_distinguisher", function() {});
 
-  this.__defineGetter__("last_part", function()
+  this.__defineGetter__("short_distinguisher", function()
   {
-    if (!this._last_part && (this._is_parsed || this[uri_prop_name]))
+    if (!this._short_distinguisher && (this._is_parsed || this[uri_prop_name]))
     {
-      var parts = this._uri.split("/");
-      // last_part is either after the last /, or if that is "", between the last 2 slashes.
-      var accessor = parts.length - 1;
-      this._last_part = parts[accessor] || parts[accessor - 1];
+      // When pathname ends with "/", and there is search or hash,
+      // the short_distinguisher is just search + hash
+      var search_and_hash = this.search + this.hash;
+      if (search_and_hash &&
+          this.pathname.lastIndexOf("/") === this.pathname.length - 1)
+      {
+        this._short_distinguisher = search_and_hash;
+      }
+      else if (this.path_parts.length)
+      {
+        var parts = this.path_parts;
+        this._short_distinguisher = parts[parts.length - 1] + search_and_hash;
+      }
+      else
+        this._short_distinguisher = this.host;
     }
-    return this._last_part;
+    return this._short_distinguisher;
   });
 
   this._init = function(uri)
@@ -138,7 +152,6 @@ var URIPrototype = function(uri_prop_name)
 
     if (uri)
     {
-      this._uri = uri;
       var val = uri;
 
       var pos = val.indexOf("#");
@@ -187,6 +200,11 @@ var URIPrototype = function(uri_prop_name)
         this._pathname = val;
       else
         this._pathname = "";
+
+      if (this._pathname)
+        this._path_parts = this._pathname.split("/").filter(Boolean);
+      else
+        this._path_parts = [];
     }
 
     this._is_parsed = true;

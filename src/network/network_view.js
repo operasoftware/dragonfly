@@ -462,7 +462,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry(this._graph_tooltip_id);
+    var entry = ctx.get_entry_from_filtered(this._graph_tooltip_id);
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
@@ -497,7 +497,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry(entry_id);
+    var entry = ctx.get_entry_from_filtered(entry_id);
     if (entry)
     {
       var template = templates.network_log_url_tooltip(entry);

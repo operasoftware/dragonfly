@@ -23,6 +23,8 @@ test("uri", function()
   equal(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
   equal(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
   deepEqual(uri.params, [{key: "csiID", value: "csi1"}]);
+  deepEqual(uri.path_parts, [".element", "ssi", "intl", "breaking_news", "3.0", "banner.html"]);
+  equal(uri.short_distinguisher, "banner.html?csiID=csi1#hello");
 
   var uri = new URI("foo.txt");
 
@@ -35,7 +37,10 @@ test("uri", function()
   equal(uri.dir_pathname, "");
   equal(uri.abs_dir, "");
   deepEqual(uri.params, []);
+  deepEqual(uri.path_parts, ["foo.txt"]);
+  equal(uri.short_distinguisher, "foo.txt");
 
+  // Tests for params
   var uri = new URI("foo?one=two&one=three");
   deepEqual(uri.params, [{key: "one", value: "two"}, {key: "one", value: "three"}]);
 
@@ -56,6 +61,25 @@ test("uri", function()
 
   var uri = new URI("?do=true%20%26amp;%20for_real&true%20%26amp;%20for_real=yes");
   deepEqual(uri.params, [{key: "do", value: "true &amp; for_real"}, {key: "true &amp; for_real", value: "yes"}]);
+
+  // tests for short_distinguisher
+  var uri = new URI("bar/foo?one=two&one=three#hash");
+  equal(uri.short_distinguisher, "foo?one=two&one=three#hash");
+
+  var uri = new URI("bar/foo#hash");
+  equal(uri.short_distinguisher, "foo#hash");
+
+  var uri = new URI("bar/foo?q");
+  equal(uri.short_distinguisher, "foo?q");
+
+  var uri = new URI("bar/?q");
+  equal(uri.short_distinguisher, "?q");
+
+  var uri = new URI("bar/#h1");
+  equal(uri.short_distinguisher, "#h1");
+
+  var uri = new URI("foo/bar/");
+  equal(uri.short_distinguisher, "bar");
   
 });
 

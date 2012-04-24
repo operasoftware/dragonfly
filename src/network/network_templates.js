@@ -177,7 +177,7 @@ templates.network_log_url_list = function(ctx, selected, item_order)
     return ["li",
              templates.network_request_icon(entry),
              ["span",
-               entry.last_part_of_uri || entry.human_url,
+               entry.short_distinguisher || entry.human_url,
                "class", "network-url",
                "data-tooltip", "network-url-list-tooltip"
              ],
@@ -226,7 +226,7 @@ templates.network_log_url_tooltip = function(entry)
   var context_string = "";
   var context_type = "";
 
-  if (entry.unloaded)
+  if (entry.is_unloaded)
   {
     context_string = ui_strings.S_HTTP_UNREFERENCED;
     context_type = UNREFERENCED;
@@ -260,11 +260,11 @@ templates.network_log_url_tooltip = function(entry)
     template.push(["span", context_string, "class", context_type]);
   }
   template.push(["span", " " + entry.human_url]);
-  var uri = new URI(entry.human_url);
-  if (uri.search)
+
+  if (entry.search)
   {
     var table = ["table"];
-    for (var i = 0, param; param = uri.params[i]; i++)
+    for (var i = 0, param; param = entry.params[i]; i++)
     {
       table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
     };

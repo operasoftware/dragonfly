@@ -187,7 +187,7 @@ cls.NetworkLoggerService = function(view)
   this.get_body = function(itemid, callback)
   {
     if (!this._current_context) { return; }
-    var entry = this._current_context.get_entry(itemid);
+    var entry = this._current_context.get_entry_from_filtered(itemid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
     var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource_id]);
@@ -305,7 +305,6 @@ cls.RequestContext = function()
       var filter = JSON.parse(filter_strings[i]);
       this._filters.push(filter);
     }
-    console.log("this._filters", this._filters);
   }
 
   this.pause = function()
@@ -366,9 +365,9 @@ cls.RequestContext = function()
   this._event_changes_req_id = function(event, last_entry)
   {
     /* 
-      Checks if the events requestID is different from the one in the last_entry.
-      That shouldn't happen, because "urlload" doesn't have a requestID, and that
-      will initiate a new entry.
+      Checks if the event's requestID is different from the one in the last_entry.
+      That shouldn't happen, because "urlload" doesn't have a requestID and it
+      initiates a new entry.
     */
     return event.requestID &&
            (last_entry.requestID !== event.requestID);
@@ -408,7 +407,7 @@ cls.RequestContext = function()
       views.network_logger.update();
   };
 
-  this.get_entry = function(id)
+  this.get_entry_from_filtered = function(id)
   {
     return this.get_entries_filtered().filter(function(e) { return e.id == id; })[0];
   };
@@ -443,18 +442,13 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.method = null;
   this.status = null;
   this.body_unavailable = false;
-  this.unloaded = false;
-  this.is_finished = null;
+  this.is_unloaded = false;
+  this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
-
-  this.__defineGetter__("duration", function()
-  {
-    return (this.events.length && this.endtime - this.starttime) || 0;
-  });
 };
 
-cls.NetworkLoggerEntry.prototype = new function()
+cls.NetworkLoggerEntryPrototype = function()
 {
   var unlisted_events = ["responsebody", "urlunload"];
 
@@ -628,7 +622,7 @@ cls.NetworkLoggerEntry.prototype = new function()
 
     if (!this.events.length)
     {
-      this.starttime = eventdata.time; // if we tune in in the middle of a request, this is not the actual starttime, but it's still needed.
+      this.starttime = eventdata.time;
       if (this.context_starttime)
         this.starttime_relative = this.starttime - this.context_starttime;
       else
@@ -649,6 +643,7 @@ cls.NetworkLoggerEntry.prototype = new function()
         ms = "0" + ms;
       this.start_time_string = h + ":" + m + ":" + s + "." + ms;
     }
+    // unlisted_events are not relevant to the loading flow and are not stored
     if (!unlisted_events.contains(eventname))
     {
       this.endtime = eventdata.time;
@@ -667,9 +662,8 @@ cls.NetworkLoggerEntry.prototype = new function()
 
   this._update_event_urlload = function(event)
   {
+    // When this is stored, properties inherited from URI can be accessed.
     this.url = event.url;
-    var uri_ob = new URI(event.url);
-    this.last_part_of_uri = uri_ob.last_part;
 
     this.urltype = event.urlType;
     this.document_id = event.documentID;
@@ -683,7 +677,7 @@ cls.NetworkLoggerEntry.prototype = new function()
 
   this._update_event_urlunload = function(event)
   {
-    this.unloaded = true;
+    this.is_unloaded = true;
     if (this._current_response)
       this._current_response._update_event_urlunload(event);
   };
@@ -869,7 +863,16 @@ cls.NetworkLoggerEntry.prototype = new function()
     }
     this.events.push(evt);
   };
+
+  this.__defineGetter__("duration", function()
+  {
+    return (this.events.length && this.endtime - this.starttime) || 0;
+  });
 };
+
+cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
+
+cls.NetworkLoggerEntry.prototype = new cls.NetworkLoggerEntryPrototype();
 
 cls.NetworkLoggerResponse = function(entry)
 {  
@@ -919,7 +922,7 @@ cls.NetworkLoggerResponse = function(entry)
 
   this._update_event_urlunload = function(event)
   {
-    this.unloaded = true;
+    this.is_unloaded = true;
   };
 
   this._update_mime_and_type = function(mime, type)

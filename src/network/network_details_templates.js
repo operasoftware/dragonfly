@@ -22,7 +22,7 @@ templates.network_log_details = function(ctx, selected, left_val)
 
 templates.network_log_detail = function(ctx, selected)
 {
-  var entry = ctx.get_entry(selected);
+  var entry = ctx.get_entry_from_filtered(selected);
   if (entry)
   {
     var responsecode = entry.responses.length && entry.responses.last.responsecode;
