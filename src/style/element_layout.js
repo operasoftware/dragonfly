@@ -291,9 +291,7 @@ cls.ElementLayout = function()
                             ],
                             ['ul',
                               ['li',
-                                this._convert_to_unitless(width) +
-                                ' × ' +
-                                this._convert_to_unitless(height)
+                                width + ' × ' + height
                               ]
                             ],
                             ['ul',
@@ -398,7 +396,10 @@ cls.ElementLayout = function()
   this._get_dimension = function(direction, comp_style)
   {
     var index_map = this._css_index_map;
-    var dim = parseInt(comp_style[index_map.indexOf(direction)]);
+    var value = comp_style[index_map.indexOf(direction)]
+    if (value === "auto" || value.endswith("%"))
+      return value;
+    var dim = parseInt(value);
     var is_border_box = comp_style[index_map.indexOf("box-sizing")] == "border-box";
     var props = {
       "width": [

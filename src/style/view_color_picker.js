@@ -21,7 +21,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   var ELE_CLASS = "color-picker";
   var MARGIN = 5; // Minimum vertical margin between the color picker and the edge of the viewport
 
-  this._color_cb = function(color)
+  this._color_cb = function(color, skip_swatch_update)
   {
     var context = this._edit_context;
     if (context.callback)
@@ -33,8 +33,20 @@ window.cls.ColorPickerView = function(id, name, container_class)
       context.current_color = color;
       if (!this._color_notation)
         this._color_notation = this._get_color_notation();
-      context.ele_value.firstChild.textContent = window.helpers.get_color_in_notation(color, this._color_notation);
-      context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
+      var color_value = (color.type === "keyword")
+                      ? color.cssvalue
+                      : window.helpers.get_color_in_notation(color, this._color_notation);
+      context.ele_value.firstChild.textContent = color_value;
+
+      // Skip updating this when we're canceling, otherwise we will briefly set the
+      // background color to "inherit" before the view is updated, thus flashing it
+      // in black which looks bad.
+      if (!skip_swatch_update)
+      {
+        context.ele_color_swatch.removeClass("special");
+        context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
+      }
+
       var property_value_ele = context.ele_value.get_ancestor(".css-property-value");
       if (property_value_ele)
       {
@@ -151,8 +163,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     if (this.is_opened)
     {
-      this._color_cb_bound(this._edit_context.initial_color);
+      this._color_cb_bound(this._edit_context.initial_color, true);
       this.ondestroy();
+      window.element_style.update();
       return true;
     }
     return false;
@@ -242,6 +255,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
   };
 
+  this._update_palette_dropdown = function()
+  {
+    var palette_dropdown = this._ele.querySelector(".color-picker-palette-dropdown");
+    if (palette_dropdown)
+      palette_dropdown.re_render(window.templates.color_picker_palette_dropdown());
+  };
+
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
@@ -254,7 +274,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._tooltip = Tooltips.register("color-palette", true);
 
     this._tooltip.ontooltip = function(event, target) {
-      this.show(window.templates.color_picker_palette());
+      var box = target.getBoundingClientRect();
+      box.mouse_x = box.left;
+      this.show(window.templates.color_picker_palette(), box);
     };
 
     window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
@@ -284,6 +306,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     {
       cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
       target.get_ancestor(".color-picker-palette").re_render(window.templates.color_picker_palette());
+      this._update_palette_dropdown();
     }.bind(this);
 
     var menu = [
@@ -298,10 +321,11 @@ window.cls.ColorPickerView = function(id, name, container_class)
                 var color_id = list_item && Number(list_item.getAttribute("data-color-id"));
                 if (color_id && cls.ColorPalette.get_instance().delete_color(color_id))
                   list_item.parentNode.removeChild(list_item);
-              }
+                this._update_palette_dropdown();
+              }.bind(this)
             }
           }
-        }
+        }.bind(this)
       }
     ];
     ContextMenu.get_instance().register("color-picker-palette", menu);
