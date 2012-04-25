@@ -159,6 +159,9 @@ Slider.prototype = new function()
       }
     }
 
+    if (isNaN(this._w_delta_x) || isNaN(this._w_delta_y))
+      return;
+
     this._w_count += event.wheelDelta > 0 ? 1 : -1;
     if (this._has_x)
     {
