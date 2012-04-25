@@ -150,6 +150,13 @@ Slider.prototype = new function()
       var unit_count = d / this._w_unit;
       this._w_delta_x = this._has_x ? (this._w_mouse_x - this._w_old_x) / unit_count : 0;
       this._w_delta_y = this._has_y ? (this._w_mouse_y - this._w_old_y) / unit_count : 0;
+      
+      if (this._is_invers_x)
+      {
+        this._w_delta_x *= -1; 
+        this._w_delta_y *= -1; 
+      }
+
       if (this._has_x && this._has_y)
       {
         var b = (this._w_old_y - this._w_mouse_y) / (this._w_old_x - this._w_mouse_x);
@@ -157,6 +164,10 @@ Slider.prototype = new function()
         this._w_constraint_y = function(x) { return a + b * x; };
         this._w_constraint_x = function(y) { return (y - a) / b; };
       }
+      else if (this._has_x)
+        this._w_delta_x = Math.abs(this._w_delta_x) * (this._is_invers_x ? -1 : 1);
+      else
+        this._w_delta_y = Math.abs(this._w_delta_y) * (this._is_invers_y ? 1 : -1);
     }
 
     if (isNaN(this._w_delta_x) || isNaN(this._w_delta_y))
