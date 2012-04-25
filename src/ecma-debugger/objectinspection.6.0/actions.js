@@ -142,7 +142,9 @@
   var _expand_getter = function(target, obj_id, data_model, getter, path, status, message)
   {
     var PATH_PROTO_INDEX = 2;
-    if (data_model.set_getter_value(obj_id, getter, message) &&
+    var STATUS_OK = 0;
+    if (status === STATUS_OK && 
+        data_model.set_getter_value(obj_id, getter, message) &&
         target.parentNode && target.parentNode.parentNode)
     {
       var index = path.pop()[PATH_PROTO_INDEX];

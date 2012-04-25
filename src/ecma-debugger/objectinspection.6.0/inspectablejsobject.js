@@ -508,7 +508,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this.set_getter_value = function(obj_id, getter, eval_message)
   {
-    var proto_chain = this._obj_map[obj_id] && this._obj_map[obj_id];
+    var proto_chain = this._obj_map[obj_id];
     var PROPERTY_LIST = 1;
     var NAME = 0;
     var TYPE = 1;
@@ -517,12 +517,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
     if (proto_chain)
     {
-      for (var i = 0, proto; !prop && (proto = proto_chain[i]); i++)
+      for (var i = 0, proto, prop; !prop && (proto = proto_chain[i]); i++)
       {
         var property_list = proto[PROPERTY_LIST];
         if (property_list)
         {
-          for (var j = 0, prop; prop = property_list[j]; j++)
+          for (var j = 0; prop = property_list[j]; j++)
           {
             if (prop[NAME] == getter && prop[TYPE] == "script_getter")
               break;
