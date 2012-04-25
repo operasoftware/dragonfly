@@ -115,7 +115,7 @@
         thread_id = 0;
         frame_index = 0;
       }
-      var script = "obj[\"" + getter + "\"]";
+      var script = "obj[\"" + window.helpers.escape_input(getter) + "\"]";
       var msg = [rt_id, thread_id, frame_index, script, [["obj", obj_id]]];
       window.services["ecmascript-debugger"].requestEval(tag, msg);
     }
