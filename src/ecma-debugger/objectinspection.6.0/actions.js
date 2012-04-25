@@ -96,10 +96,11 @@
 
   window.eventHandlers.click['get-getter-value'] = function examine_objects(event, target)
   {
-    var obj_id = parseInt(target.get_attr('parent-node-chain', 'obj-id'));
+    var obj_id = Number(target.get_attr('parent-node-chain', 'obj-id'));
     var data_model = window.inspections[target.get_attr('parent-node-chain', 'data-id')];
-    var key = target.parentNode.querySelector("key");
-    var path = data_model && data_model.norm_path(get_path(target.parentNode));
+    var parent = target.get_ancestor("item");
+    var key = parent && parent.querySelector("key");
+    var path = data_model && data_model.norm_path(get_path(parent));
 
     if (obj_id && data_model && key && path)
     {
