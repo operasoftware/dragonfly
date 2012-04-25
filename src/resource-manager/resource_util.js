@@ -365,16 +365,16 @@ cls.ResourceUtil.header_presets = [
   },
   {name: "Opera Mobile 12 on Samsung Galaxy S II", headers:
     [
-      "User-Agent: Opera/9.80 (Mac OS X; Opera Mobi/31625; U; en) Presto/2.10.254 Version/12.00",
+      "User-Agent: Opera/9.80 (Android 4.0.3; Linux; Opera Mobi/ADR-1203051631; U; en-GB) Presto/2.10.254 Version/12.00",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-      "Accept-Language: en",
+      "Accept-Language: en-GB, en",
       "Accept-Encoding: gzip, deflate",
       "Connection: Keep-Alive",
     ].join("\n")
   },
   {name: "Opera Mobile 12 on Motorola Xoom", headers:
     [
-      "User-Agent: Opera/9.80 (Mac OS X; Opera Tablet/32904; U; en) Presto/2.10.254 Version/12.00",
+      "User-Agent: Opera/9.80 (Android 4.0.5; Linux; Opera Tablet/ADR-1204201824; U; en) Presto/2.10.254 Version/12.00",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
       "Accept-Language: en",
       "Accept-Encoding: gzip, deflate",
