@@ -692,9 +692,7 @@ cls.NetworkLoggerEntryPrototype = function()
     // if we got this far, and there was no
     // response code, no request was performed for this entry
     if (!this.responsecode)
-    {
       this.no_request_made = true;
-    }
 
     if (this._current_response)
       this._current_response._update_event_urlfinished(event);
@@ -747,8 +745,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    // entry.responsecode always gets overwritten on the entry,
-    // but also stored per NetworkLoggerResponse.
+    // On every response, entry.responsecode is overwritten to reflect what 
+    // the "final" responsecode for the request was.
+    // Each individual response is also stored as a NetworkLoggerResponse.
     this.responsecode = event.responseCode;
     this.had_error_response = /5\d{2}|4\d{2}/.test(this.responsecode);
     if (!this.responsestart)
@@ -802,11 +801,10 @@ cls.NetworkLoggerEntryPrototype = function()
     if (!cls || !cls.ResourceUtil)
       return;
 
-    this.type = cls.ResourceUtil.path_to_type(this.url);
-
-    // For "application/octet-stream", type would be set undefined,
-    // so the guess from path_to_type is kept even though there is a mime.
-    if (this.mime && this.mime.toLowerCase() !== "application/octet-stream")
+    // For "application/octet-stream" we check by path even though we have a mime
+    if (!this.mime || this.mime.toLowerCase() === "application/octet-stream")
+      this.type = cls.ResourceUtil.path_to_type(this.url);
+    else
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
     if (this._current_response)
@@ -875,19 +873,22 @@ cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
 cls.NetworkLoggerEntry.prototype = new cls.NetworkLoggerEntryPrototype();
 
 cls.NetworkLoggerResponse = function(entry)
-{  
+{
+  // The following are duplicated from the entry to have them available directly on the response
+  this.logger_entry_type = entry.type;
+  this.logger_entry_id = entry.id;
+  this.logger_entry_mime = entry.mime;
+  this.logger_entry_is_finished = entry.is_finished;
+};
+
+cls.NetworkLoggerResponsePrototype = function()
+{
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
   this.firstline = null;
   this.responsebody = null;
-
-  // The following are duplicated from the entry to have them available directly on the response
-  this.logger_entry_type = entry.type;
-  this.logger_entry_id = entry.id;
-  this.logger_entry_mime = entry.mime;
-  this.logger_entry_is_finished = entry.is_finished;
 
   this._update_event_response = function(event)
   {
@@ -931,3 +932,5 @@ cls.NetworkLoggerResponse = function(entry)
     this.logger_entry_type = type;
   };
 };
+
+cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
