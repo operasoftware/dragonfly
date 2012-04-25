@@ -236,7 +236,7 @@
 .color-picker-palette
 {
   max-height: 144px;
-  max-width: 178px;
+  max-width: 184px;
   background: rgba(237, 237, 237, 0.8);
 }
 
@@ -280,6 +280,7 @@
 {
   margin: 0;
   padding: 3px 2px 1px 2px;
+  background: inherit;
 }
 
 .color-picker-palette-square
@@ -288,12 +289,12 @@
   float: left;
   height: 3px;
   width: 3px;
-  border: 1px solid rgba(34, 34, 34, .4);
+  border: 1px solid rgba(34, 34, 34, 0.4);
 }
 
 .color-picker-palette-dropdown.tooltip-selected .color-picker-palette-square
 {
-  background-color: #666 !important;
+  border-color: rgba(34, 34, 34, 0.6);
 }
 
 .color-picker-controls
