@@ -147,9 +147,16 @@ Slider.prototype = new function()
       this._w_old_x = this._has_x ? this.x : 0;
       this._w_old_y = this. _has_y ? this.y : 0;
       var d = this._distance(this._w_old_x, this._w_old_y, this._w_mouse_x, this._w_mouse_y);
-      var unit_count = d / this._w_unite;
+      var unit_count = d / this._w_unit;
       this._w_delta_x = this._has_x ? (this._w_mouse_x - this._w_old_x) / unit_count : 0;
       this._w_delta_y = this._has_y ? (this._w_mouse_y - this._w_old_y) / unit_count : 0;
+      
+      if (this._is_invers_x)
+      {
+        this._w_delta_x *= -1; 
+        this._w_delta_y *= -1; 
+      }
+
       if (this._has_x && this._has_y)
       {
         var b = (this._w_old_y - this._w_mouse_y) / (this._w_old_x - this._w_mouse_x);
@@ -157,7 +164,14 @@ Slider.prototype = new function()
         this._w_constraint_y = function(x) { return a + b * x; };
         this._w_constraint_x = function(y) { return (y - a) / b; };
       }
+      else if (this._has_x)
+        this._w_delta_x = Math.abs(this._w_delta_x) * (this._is_invers_x ? -1 : 1);
+      else
+        this._w_delta_y = Math.abs(this._w_delta_y) * (this._is_invers_y ? 1 : -1);
     }
+
+    if (isNaN(this._w_delta_x) || isNaN(this._w_delta_y))
+      return;
 
     this._w_count += event.wheelDelta > 0 ? 1 : -1;
     if (this._has_x)
@@ -191,17 +205,17 @@ Slider.prototype = new function()
          this._min_y == this.y || this._max_y == this.y))
     {
       var count = this._distance(value_x, value_y, this._w_old_x, this._w_old_y);
-      count /= this._w_unite;
+      count /= this._w_unit;
       this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
     }
     else if (this._has_x && (this._min_x == this.x || this._max_x == this.x))
     {
-      var count = (value_x - this._w_old_x) / this._w_unite;
+      var count = (value_x - this._w_old_x) / this._w_unit;
       this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
     }
     else if (this._has_y && (this._min_y == this.y || this._max_y == this.y))
     {
-      var count = (value_y - this._w_old_y) / this._w_unite;
+      var count = (value_y - this._w_old_y) / this._w_unit;
       this._w_count = (this._w_count < 0 ? -1 : 1) * Math.abs(count);
     }
 
@@ -244,8 +258,8 @@ Slider.prototype = new function()
     this['_' + axis] = 0;
     this['_submitted_' + axis] = 0;
     this[axis] = this['_is_invers_' + axis] ? max : min;
-    if (!this._w_unite)
-      this._w_unite = (max - min) / pixel_range;
+    if (!this._w_unit)
+      this._w_unit = (max - min) / pixel_range;
   }
 
   this._init = function(config)
