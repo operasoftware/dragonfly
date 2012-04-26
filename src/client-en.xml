@@ -211,6 +211,15 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./scripts/ini.js"/>
 <script src="./lib/elementprototype.js"/>
+<script src="./lib/arrayprototype.js"/>
+<script src="./lib/canvasrenderingcontext2dprototype.js"/>
+<script src="./lib/dateprototype.js"/>
+<script src="./lib/nodelistprototype.js"/>
+<script src="./lib/object.js"/>
+<script src="./lib/opera.js"/>
+<script src="./lib/stringprototype.js"/>
+<script src="./lib/stylesheetlistprototype.js"/>
+<script src="./lib/xmlhttprequestprototype.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
