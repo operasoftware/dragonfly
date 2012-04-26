@@ -70,7 +70,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filters(this._type_filters || []);
-
       this._render_main_view(this._container);
     }
     else
@@ -84,6 +83,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._render_timeout = 0;
     this.update();
   }.bind(this);
+
+  this.update_bound = this.update.bind(this);
 
   this.onresize = function()
   {
@@ -329,7 +330,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     document.addEventListener("mousemove", this._on_drag_detail_bound, false);
     document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-    this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+    if (!this._resize_interval)
+      this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+
     evt.preventDefault();
   }.bind(this);
 
@@ -358,7 +361,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._resize_detail_evt = null;
   }.bind(this);
 
-  var _make_selection_func= function(accessor, bind_me)
+  var _make_selection_func = function(accessor, bind_me)
   {
     return (function()
     {
@@ -446,14 +449,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var item_id = target.getAttribute("data-object-id");
     this.needs_instant_update = true;
-    this._service.get_body(item_id, this.update.bind(this));
+    this._service.get_body(item_id, this.update_bound);
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
     this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry_from_filtered(this._graph_tooltip_id);
+    var entry = ctx.get_entry(this._graph_tooltip_id);
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
@@ -488,7 +491,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var ctx = this._service.get_request_context();
     var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry_from_filtered(entry_id);
+    var entry = ctx.get_entry(entry_id);
     if (entry)
     {
       var template = templates.network_log_url_tooltip(entry);
@@ -498,9 +501,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._update_mono_lineheight = function()
   {
-    var ele = document.documentElement.render(["span", " ", "class", "mono"]);
-    this.mono_lineheight = parseInt(window.getComputedStyle(ele, null).lineHeight, 10);
-    document.documentElement.removeChild(ele);
+    this.mono_lineheight = window.defaults["js-source-line-height"];
   }.bind(this);
 
   this.url_tooltip = Tooltips.register("network-url-list-tooltip", true, false);
@@ -563,6 +564,36 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
   }.bind(this);
 
+  this._map_filter_bound = function(filter_name)
+  {
+    return {
+      none: {
+        type_list: [],
+        "is_blacklist": true
+      },
+      markup: {
+        type_list: ["markup"]
+      },
+      css: {
+        type_list:["css"]
+      },
+      script: {
+        type_list:["script"]
+      },
+      image: {
+        type_list:["image"]
+      },
+      other_types: {
+        type_list:["markup", "css", "script", "image"],
+        "is_blacklist": true
+      },
+      xhr: {
+        origin_list:["xhr"]
+      }
+    }[filter_name];
+
+  }.bind(this);
+
   this._on_single_select_changed_bound = function(message)
   {
     if (message.view_id === "network_logger")
@@ -573,7 +604,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       }
       else if (message.name === "type-filter")
       {
-        this._type_filters = message.values;
+        this._type_filters = message.values.map(this._map_filter_bound);
       }
       this.needs_instant_update = true;
       this.update();
@@ -632,22 +663,16 @@ cls.NetworkLog.create_ui_widgets = function()
     },
     // key-label map
     {
-      "selected-viewmode": "",
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "detail-view-left-pos": "",
       "show-incomplete-warning": ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
     {
-      customSettings: ["selected-viewmode", "pause", "detail-view-left-pos"],
       checkboxes: ["show-incomplete-warning", "track-content"]
     },
     // templates
     {
-      "selected-viewmode": function(){return ""},
-      "pause": function(){return ""},
-      "detail-view-left-pos": function(){return ""}
     },
     // group
     "general"
@@ -701,38 +726,38 @@ cls.NetworkLog.create_ui_widgets = function()
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_ALL,
-              value: '{}'
+              value: "none"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP,
-              value: '{"type_list":["markup"]}'
+              value: "markup"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS,
-              value: '{"type_list":["css"]}'
+              value: "css"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS,
-              value: '{"type_list":["script"]}'
+              value: "script"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES,
-              value: '{"type_list":["image"]}'
+              value: "image"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
-              value: '{"type_list":["markup", "css", "script", "image"], "is_blacklist": true}'
+              value: "other_types"
               // This is parsed in network_service, see set_filters.
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_XHR,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_XHR,
-              value: '{"origin_list":["xhr"]}'
+              value: "xhr"
             }
           ]
         },

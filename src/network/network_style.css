@@ -463,7 +463,7 @@
 .network-tooltip-legend .time_data
 {
   text-align: right;
-  padding: 3px 8px 1px 4px; /* repeated in network_templates to calculate lineheight */
+  padding: 3px 8px 1px 4px; /* this is read in network_templates.js */
 }
 
 .network-tooltip-legend .event_name

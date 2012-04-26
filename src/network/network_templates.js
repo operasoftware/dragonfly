@@ -142,8 +142,12 @@ templates.network_log_main = function(ctx, entries, selected, detail_width, tabl
 templates.network_viewmode_graphs = function(ctx, entries, selected, width)
 {
   var basetime = ctx.get_starttime();
-  var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING, width);
-  var rows = templates.network_graph_rows(ctx, entries, selected, width, basetime, duration);
+  var duration = ctx.get_coarse_duration(
+                   MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING, width
+                 );
+  var rows = templates.network_graph_rows(
+               ctx, entries, selected, width, basetime, duration
+             );
 
   var template = [];
   if (duration)
@@ -184,7 +188,9 @@ templates.network_log_url_list = function(ctx, entries, selected, item_order)
 {
   return [
     ["ol",
-      entries.map(templates.network_log_url_list_entry.bind({selected: selected})),
+      entries.map(
+        templates.network_log_url_list_entry.bind({selected: selected})
+      ),
       "class", "network-log-url-list sortable-table-style-list"]
   ]
 };
@@ -205,7 +211,8 @@ templates.network_log_url_tooltip = function(entry)
   }
   else if (entry.had_error_response)
   {
-    context_string = entry.responsecode + " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
+    context_string = entry.responsecode + 
+                     " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
   else if (entry.no_request_made)
@@ -297,12 +304,9 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
 
 templates.network_graph_rows = function(ctx, entries, selected, width, basetime, duration)
 {
-  var tpls = [];
-  for (var n = 0, entry; entry = entries[n]; n++) // todo: map me
-  {
-    tpls.push(templates.network_graph_row(entry, selected, width, basetime, duration));
-  }
-  return tpls;
+  return entries.map(function(entry) {
+    return templates.network_graph_row(entry, selected, width, basetime, duration);
+  });
 };
 
 templates.network_graph_row = function(entry, selected, width, basetime, duration)
@@ -377,7 +381,9 @@ templates.network_graph_tooltip_tr = function(stop, index, arr)
   return ["tr",
            ["td", stop.val_string, "class", "time_data mono"],
            ["td", stop.title, "class", "gap_title"],
-           (window.ini && ini.debug) ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"] : []
+           (window.ini && ini.debug)
+             ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"]
+             : []
          ];
 };
 
@@ -396,7 +402,15 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
                       ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
-    var lineheight = mono_lineheight + 4; // horizontal padding network_style.css, .network-tooltip-legend .time_data
+    if (!templates.network_tt_vert_padding)
+    {
+      var padd = document.styleSheets.getDeclaration(".network-tooltip-legend .time_data")
+                  .getPropertyValue("padding")
+                  .split(" ").map(function(n){return parseInt(n, 10)});
+      templates.network_tt_vert_padding = padd[0] + padd[2];
+    }
+
+    var lineheight = mono_lineheight + templates.network_tt_vert_padding;
     var svg_width = 100.5;
     var x_start = 1.5;
     var y_start = 0.5;

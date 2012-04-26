@@ -187,7 +187,7 @@ cls.NetworkLoggerService = function(view)
   this.get_body = function(itemid, callback)
   {
     if (!this._current_context) { return; }
-    var entry = this._current_context.get_entry_from_filtered(itemid);
+    var entry = this._current_context.get_entry(itemid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
     var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource_id]);
@@ -254,28 +254,25 @@ cls.RequestContext = function()
 
   this._filter_function_bound = function(item)
   {
-    var success = true;
-    var filters = this._filters;
-    for (var i = 0, filter; filter = filters[i]; i++)
+    var success = false;
+    for (var i = 0; i < this._filters.length; i++)
     {
+      var filter = this._filters[i];
       filter.is_blacklist = Boolean(filter.is_blacklist);
       if (filter.type_list)
       {
-        success = false;
         var has_match = filter.type_list.contains(item.type);
         if (has_match != filter.is_blacklist)
           success = true;
       }
       if (filter.origin_list)
       {
-        success = false;
         var has_match = filter.origin_list.contains(item.load_origin_name);
         if (has_match != filter.is_blacklist)
           success = true;
-
       }
     }
-    return success;
+    return success || !this._filters.length;
   }.bind(this);
 
   this.get_entries_filtered = function()
@@ -297,14 +294,9 @@ cls.RequestContext = function()
     return this._logger_entries.filter(function(e){return e.resource_id === res_id});
   }
 
-  this.set_filters = function(filter_strings)
+  this.set_filters = function(filters)
   {
-    this._filters = [];
-    for (var i = 0; i < filter_strings.length; i++)
-    {
-      var filter = JSON.parse(filter_strings[i]);
-      this._filters.push(filter);
-    }
+    this._filters = filters;
   }
 
   this.pause = function()
@@ -410,6 +402,11 @@ cls.RequestContext = function()
   this.get_entry_from_filtered = function(id)
   {
     return this.get_entries_filtered().filter(function(e) { return e.id == id; })[0];
+  };
+
+  this.get_entry = function(id)
+  {
+    return this.get_entries().filter(function(e) { return e.id == id; })[0];
   };
 };
 
