@@ -68,9 +68,14 @@ cls.EvListenerTooltip = function()
   {
 
     _hide_tooltip();
-    _tooltip.show(["span", "hello"]);
-
-
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var node_id = target.get_ancestor_attr("ref-id");
+    if (model && node_id)
+    {
+      var listeners = model.get_ev_listeners(node_id);
+      var tmpl = window.templates.ev_listeners(listeners);
+      _tooltip.show(tmpl);
+    }
   };
 
   var _init = function(view)
