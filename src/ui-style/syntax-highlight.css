@@ -35,6 +35,12 @@
   border-radius: 2px;
 }
 
+.script_getter
+{
+  color: #999;
+  font-style: italic;
+}
+
 .punctuator
 {
   color: #000;

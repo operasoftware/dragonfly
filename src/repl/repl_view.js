@@ -927,8 +927,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_show_log_entry_source_bound = function(event, target)
   {
-    var line = target.getAttribute("data-scriptline");
-    var script = target.getAttribute("data-scriptid");
+    var line = parseInt(target.getAttribute("data-scriptline"));
+    var script = parseInt(target.getAttribute("data-scriptid"));
     var sourceview = window.views.js_source;
 
     // This will also be set from show_and_flash_line, but setting it before showing

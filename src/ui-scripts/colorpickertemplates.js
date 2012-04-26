@@ -177,14 +177,12 @@
     if (window.cls && cls.ColorPalette)
     {
       var MAX_PALETTE_ITEMS = 9;
+      var FALLBACK_COLOR = "999";
       var palette = cls.ColorPalette.get_instance().get_color_palette().slice(0, MAX_PALETTE_ITEMS);
-      var colors = palette.length
-                 ? palette.map(function(item) { return item.color; })
-                 : ["999"]; // Fallback
-      // Show small squares with palette colors (possibly repeated)
-      for (var i = 0; colors.length < MAX_PALETTE_ITEMS; i++)
+      var colors = palette.map(function(item) { return item.color; });
+      while (colors.length < MAX_PALETTE_ITEMS)
       {
-        colors.push(colors[i % MAX_PALETTE_ITEMS]);
+        colors.push(FALLBACK_COLOR);
       }
 
       return ([
