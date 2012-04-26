@@ -162,7 +162,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
 
       for (var n=0, colname; colname = allcols[n]; n++)
       {
-        coldef = obj.tabledef.columns[colname];
+        var coldef = obj.tabledef.columns[colname];
         menuitems.push({
           label: coldef.label,
           checked: obj.columns.indexOf(colname) != -1,
@@ -279,9 +279,10 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     if (table && table.parentNode)
     {
       obj.post_message("before-render", {table: table});
-      table = table.re_render(obj.render());
+      var template = obj.render();
+      table = table.re_render(template);
       if (table)
-        obj.post_message("after-render", {table: table[0]});
+        obj.post_message("after-render", {table: table[0], template: template});
     }
   }
 

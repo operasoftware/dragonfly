@@ -121,9 +121,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._render_main_view = function(container)
   {
-    this._selected_viewmode = settings.network_logger.get("selected-viewmode");
+    var selected_viewmode = settings.network_logger.get("selected-viewmode");
     var ctx = this._service.get_request_context();
-    if (this._selected_viewmode === "data")
+    var entries = ctx.get_entries_filtered();
+    var table_template;
+    if (selected_viewmode === "data")
     {
       if (!this._table)
       {
@@ -139,31 +141,22 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         this._table.add_listener("after-render", this._continue_render_main);
       }
 
-      this._table.set_data(
-        ctx.get_entries_filtered().slice(0)
-      );
+      this._table.set_data(entries);
+      table_template = this._table.render();
     }
-    this._continue_render_main();
+    this._continue_render_main({template: table_template}, entries);
   };
 
-
-  this._continue_render_main = function(rendered_table)
+  this._continue_render_main = function(after_render_object, entries)
   {
-    // if we are in data mode, the table now has data and its sorted
-    var table_template;
-    var item_order;
-    if (this._selected_viewmode === "data")
-    {
-      // when the already rendered table was passed, the table template will be called anyway,
-      // and the view will be rendered again. It shouldn't affect performance much though
-      // since it's synchronous and only occurs when the sort key is changed
-      table_template = this._table.render();
-      var data = this._table.get_data();
-      if (data && data.length)
-      {
-        item_order = data.map(function(res){return res.id}).join(",");
-      }
-    }
+    var table_template = after_render_object && after_render_object.template;
+    var is_data_mode = Boolean(table_template);
+    var ctx = this._service.get_request_context();
+
+    // In is_data_mode, the entries have to be retrieved from the table 
+    // to be in the correct order.
+    if (is_data_mode)
+      entries = this._table.get_data();
 
     /*
       hand-calculate network-url-list-container's width, so it only takes one rendering
@@ -172,15 +165,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width, 10) * 0.4));
     var detail_width = parseInt(this._container.style.width) - url_list_width;
 
-    var ctx = this._service.get_request_context();
     var template = ["div", templates.network_log_main(
-                     ctx, this._selected, this._selected_viewmode, detail_width, item_order, table_template
+                     ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
     if (this._selected)
-    {
       template = [template, this._render_details_view(this._container, this._selected)];
-    }
+
     var rendered = this._container.clearAndRender(template);
 
     if (this._selected)
@@ -195,7 +186,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           details.scrollLeft = this._details_scroll_left;
       }
 
-      if (this._selected_viewmode === "data")
+      if (is_data_mode)
       {
         var sel_row = rendered.querySelector("tr[data-object-id='" + this._selected + "']");
         sel_row && sel_row.addClass("selected");

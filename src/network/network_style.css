@@ -9,19 +9,21 @@
 {
   height: 100%;
   overflow: auto;
+  position: relative;
 }
 
 #network-url-list-container
 {
-  float: left;
   width: 40%;
   min-width: 230px; /* value duplicated in network_view */
 }
 
 .network-main-container
 {
-  float: left;
   width: 60%;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .network-main-container .graphs
@@ -32,6 +34,13 @@
 .network-main-container .data
 {
   margin-top: 9px;
+}
+
+.network-main-container #graph
+{
+  background-image: -o-linear-gradient(0deg, #e5e5e5 0px, #e5e5e5 1px, transparent 1px);
+  background-position: 0 21px;
+  background-repeat: repeat-x;
 }
 
 .network-log-url-list
@@ -58,7 +67,6 @@
 
 .timeline-marker
 {
-  display: inline-block;
   width: 60px;
   line-height: 21px;
   position: absolute;
@@ -74,7 +82,7 @@
   content: " – ";
 }
 
-.network_logger #network-url-list-container .network-log-url-list li.not_requested
+.network-log-url-list .not_requested
 {
   color: rgba(0, 0, 0, 0.50);
 }
@@ -85,12 +93,12 @@
 }
 
 .tooltip-container .error_response,
-.network_logger #network-url-list-container .network-log-url-list li.error_response
+.network-log-url-list .error_response
 {
   color: #d2001c;
 }
 
-.network_logger #network-url-list-container .network-log-url-list li.error_response.selected
+.network-log-url-list .error_response.selected
 {
   color: #3d0008;
 }
@@ -101,7 +109,7 @@
   border-bottom-width: 1px;
 }
 
-.network-data-table-container .sortable-table > tr.header:first-child
+.network-data-container .sortable-table > tr.header:first-child
 {
   border-width: 0;
   color: #808080;
@@ -134,20 +142,15 @@
   margin-left: 5px;
 }
 
-.network-log-url-list .load-origin-xhr
-{
-  position: relative;
-}
-
-.network-log-url-list .load-origin-xhr::after
+.network-log-url-list .load-origin-xhr::before
 {
   content: "";
   background-image: url(../ui-images/load_origin_xhr.png);
-  position: absolute;
   width: 15px;
   height: 9px;
-  right: -3px;
-  bottom: -2px;
+  display: inline-block;
+  margin-left: 4px;
+  margin-top: 9px;
 }
 
 .network_incomplete_warning
@@ -177,21 +180,21 @@
   line-height: 15px;
 }
 
-.network-data-container .sortable-table > tr.header,
-.network-data-container .sortable-table > tr.header:hover
+.network-main-container .sortable-table > tr.header,
+.network-main-container .sortable-table > tr.header:hover
 {
   background: transparent;
   border-bottom-width: 0;
   color: #808080;
 }
 
-.network_logger .sortable-table tr td
+.network_logger .network-main-container .sortable-table td
 {
   padding-bottom: 6px;
   padding-top: 5px;
 }
 
-.network_logger .sortable-table tr th 
+.network_logger .network-main-container .sortable-table th
 {
   padding-bottom: 7px;
   padding-top: 5px;
@@ -236,9 +239,10 @@
 }
 .close-request-detail
 {
-  position: fixed;
-  margin-left: -23px;
-  margin-top: -7px;
+  display: inline-block;
+  cursor: default;
+  margin-left: 12px;
+  margin-top: 7px;
 }
 
 .network_logger .close_incomplete_warning
@@ -249,12 +253,12 @@
 
 .network_logger .resize-request-detail
 {
-  cursor: col-resize;
-  top: 83px;
+  position: absolute;
   height: 100%;
-  margin-left: -35px;
-  position: fixed;
   width: 12px;
+  margin-left: -6px;
+  display: inline-block;
+  cursor: col-resize;
 }
 
 .network-details-container .close-request-detail:active
@@ -267,13 +271,19 @@
   position: absolute;
   right: 0;
   top: 0;
-  bottom: 0;
+  height: 100%;
   z-index: 2;
   left: 120px;
+}
+
+.network_logger .request-details
+{
   overflow: auto;
-  padding: 15px 20px 25px 28px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 27px 20px 37px 28px;
   background-color: #fff;
-  border-bottom: 0px;
+  border-bottom-width: 0;
   box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
               0 2px 4px rgba(0, 0, 0, 0.45),
               -1px 0 0 rgba(0, 0, 0, 0.05);
@@ -307,10 +317,7 @@
 
 .network-details-container table
 {
-  width: 100%;
   border-collapse: collapse;
-  margin-bottom: 12px;
-  margin-top: 12px;
 }
 
 .network-details-container td,
@@ -341,7 +348,7 @@
   margin: 15px 0 10px 0;
 }
 
-.network_logger .network-data-container table tr .network-graph-column
+.network_logger .network-main-container .sortable-table .network-graph-column
 {
   line-height: 0;
   padding-top: 5px;
@@ -400,7 +407,7 @@
   border-top: 1px solid #bababa;
 }
 
-.network-tooltip-legend table td
+.network-tooltip-legend td
 {
   color: #666;
 }
@@ -410,12 +417,12 @@
   color: #333;
 }
 
-.network-tooltip-container table 
+.network-tooltip-container table
 {
   border-collapse: collapse;
 }
 
-.network-tooltip-container table td
+.network-tooltip-container td
 {
   padding-right: 2px;
 }
@@ -508,7 +515,7 @@
   color: #333;
 }
 
-.network-options input[type=checkbox]
+.network-options .checkbox
 {
   padding: 0 10px 0 5px;
 }

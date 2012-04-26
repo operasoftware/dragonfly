@@ -7,6 +7,11 @@ window.templates || (window.templates = {});
 var MIN_BAR_WIDTH = 16;
 var SECTIONS_HITAREA_PADDING = 6;
 var TIMELINE_MARKER_WIDTH = 60;
+var GRAPH_PADDING = (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING;
+
+var UNREFERENCED = "unreferenced";
+var ERROR_RESPONSE = "error_response";
+var NOT_REQUESTED = "not_requested";
 
 templates.network_options_main = function(nocaching, tracking, headers, overrides)
 {
@@ -15,16 +20,24 @@ templates.network_options_main = function(nocaching, tracking, headers, override
            ["h2", ui_strings.S_NETWORK_CACHING_SETTING_TITLE],
            ["p", ui_strings.S_NETWORK_CACHING_SETTING_DESC],
            ["p", ["label",
-            ["input", "type", "checkbox",
-             "name", "network-options-caching",
-             "handler", "network-options-toggle-caching",
-             "checked", nocaching ? true : false
+            ["input",
+              "type", "checkbox",
+              "class", "checkbox",
+              "name", "network-options-caching",
+              "handler", "network-options-toggle-caching",
+              "checked", nocaching ? true : false
             ],
             ui_strings.S_NETWORK_CACHING_SETTING_DISABLED_LABEL
            ]],
            ["h2", ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE],
            ["p", ui_strings.S_NETWORK_HEADER_OVERRIDES_DESC],
-           ["p", ["label", ["input", "type", "checkbox", "handler", "toggle-header-overrides"].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
+           ["p",
+             ["label",
+              ["input",
+                "type", "checkbox",
+                "class", "checkbox",
+                "handler", "toggle-header-overrides"
+              ].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
             templates.network_options_override_list(headers, overrides)
            ]
           ],
@@ -88,137 +101,96 @@ templates.network_incomplete_warning = function()
   return ["div",
            ["span", ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH],
            ["div",
-             ["span", ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT, "class", "text_handler", "handler", "reload-window"],
+             ["span", ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
+              "class", "text_handler", "handler", "reload-window"],
              " ",
-             ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN, "class", "text_handler", "handler", "turn-off-incomplete-warning"]
+             ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN,
+              "class", "text_handler", "handler", "turn-off-incomplete-warning"]
            ],
            ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"],
          "class", "info-box network_incomplete_warning"];
 };
 
-templates.network_log_main = function(ctx, selected, selected_viewmode, detail_width, item_order, table_template)
+templates.network_log_main = function(ctx, entries, selected, detail_width, table_template)
 {
-  var viewmode_render = templates["network_viewmode_" + selected_viewmode];
-  if (!viewmode_render)
-    viewmode_render = templates["network_viewmode_graphs"];
-
   var show_incomplete_warning = settings.network_logger.get("show-incomplete-warning") &&
                                 !ctx.saw_main_document_abouttoloaddocument &&
                                 !ctx.incomplete_warn_discarded;
 
   return [
     [
-      "div", templates.network_log_url_list(ctx, selected, item_order),
+      "div", templates.network_log_url_list(ctx, entries, selected),
       "id", "network-url-list-container"
     ],
     [
       "div", [
-        "div", table_template || viewmode_render(ctx, selected, detail_width, table_template),
-        "class", "network-data-container " + selected_viewmode
+        "div", table_template || templates.network_viewmode_graphs(
+                                   ctx, entries, selected, detail_width, table_template
+                                 ),
+        "class", "network-data-container " + (table_template ? "data" : "graphs")
       ],
       "class", "network-main-container"
     ],
     [
-      "div", [
-        templates.network_log_summary(ctx)
-      ], "class", "network-summary"
+      "div", templates.network_log_summary(entries), "class", "network-summary"
     ],
     show_incomplete_warning ?
       templates.network_incomplete_warning() : []
   ]
 };
 
-templates.network_viewmode_graphs = function(ctx, selected, width)
+templates.network_viewmode_graphs = function(ctx, entries, selected, width)
 {
   var basetime = ctx.get_starttime();
   var duration = ctx.get_coarse_duration(MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING, width);
-  var rows = templates.network_graph_rows(ctx, selected, width, basetime, duration);
+  var rows = templates.network_graph_rows(ctx, entries, selected, width, basetime, duration);
 
   var template = [];
   if (duration)
   {
-    var stepsize = templates.grid_info(
-                     duration, width, (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING
-                   );
+    var stepsize = templates.grid_info(duration, width);
     var gridwidth = Math.round((width / duration) * stepsize);
     var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
 
     template = ["div", headerrow, rows,
                   "id", "graph",
-                  "style", ["background-image: -o-linear-gradient(",
-                                               "0deg,",
-                                               "#e5e5e5 0px,",
-                                               "#e5e5e5 1px,",
-                                               "transparent 1px",
-                                              ");",
-                           "background-position: 0 21px;",
-                           "background-repeat: repeat-x;",
-                           "background-size: " + gridwidth + "px 100%;"].join("")
+                  "style", "background-size: " + gridwidth + "px 100%;"
                ];
   }
   return template;
 }
 
-templates.network_viewmode_data = function(ctx, selected, detail_width, table_template)
+templates.network_log_url_list_entry = function(entry)
 {
-  return ["div", table_template, "class", "network-data-table-container"];
-}
+  var had_error_response = entry.had_error_response;
+  var not_requested = !entry.touched_network;
 
-templates.network_log_url_list = function(ctx, selected, item_order)
+  return ["li",
+           templates.network_request_icon(entry),
+           ["span",
+             entry.short_distinguisher || entry.human_url,
+             "class", "network-url",
+             "data-tooltip", "network-url-list-tooltip"
+           ],
+           "handler", "select-network-request",
+           "data-object-id", String(entry.id),
+           "class", (this.selected === entry.id ? "selected " : " ") + 
+                    (had_error_response ? ERROR_RESPONSE + " " : " ") + 
+                    (not_requested ? NOT_REQUESTED : "")
+         ];
+};
+
+templates.network_log_url_list = function(ctx, entries, selected, item_order)
 {
-  var ERROR_RESPONSE = "error_response";
-  var NOT_REQUESTED = "not_requested";
-
-  var itemfun = function(entry)
-  {
-    var had_error_response = entry.had_error_response;
-    var not_requested = !entry.touched_network;
-
-    return ["li",
-             templates.network_request_icon(entry),
-             ["span",
-               entry.short_distinguisher || entry.human_url,
-               "class", "network-url",
-               "data-tooltip", "network-url-list-tooltip"
-             ],
-             "handler", "select-network-request",
-             "data-object-id", String(entry.id),
-             "class", (selected === entry.id ? "selected " : " ") + 
-                      (had_error_response ? ERROR_RESPONSE + " " : " ") + 
-                      (not_requested ? NOT_REQUESTED : "")
-           ];
-  };
-
-  var items = ctx.get_entries_filtered().slice(0);
-  if (item_order)
-  {
-    item_order = item_order.split(",");
-    items.sort(function(a, b)
-      {
-        var ind_a = item_order.indexOf(a.id);
-        var ind_b = item_order.indexOf(b.id);
-
-        if (ind_a === ind_b)
-          return 0;
-
-        if (ind_a > ind_b)
-          return 1;
-
-        return -1;
-      }
-    );
-  }
   return [
-    ["ol", items.map(itemfun),
-      "class", "network-log-url-list"]
+    ["ol",
+      entries.map(templates.network_log_url_list_entry.bind({selected: selected})),
+      "class", "network-log-url-list sortable-table-style-list"]
   ]
 };
 
 templates.network_log_url_tooltip = function(entry)
 {
-  var UNREFERENCED = "unreferenced";
-  var ERROR_RESPONSE = "error_response";
-  var NOT_REQUESTED = "not_requested";
   var URL_TYPE_DEF = cls.ResourceManager["1.2"].UrlLoad.URLType;
   var HTTP_STATUS_CODES = cls.ResourceUtil.http_status_codes;
 
@@ -268,21 +240,20 @@ templates.network_log_url_tooltip = function(entry)
     {
       table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
     };
-    table = table.concat(["class", "network_get_params"]);    
+    table.push("class", "network_get_params");
     template.push(table);
   }
   return template;
 };
 
-templates.network_log_summary = function(ctx)
+templates.network_log_summary = function(entries)
 {
-  var items = ctx.get_entries_filtered().slice(0);
-  var total_size = items.map(function(entry){
+  var total_size = entries.map(function(entry){
                         return entry.size || 0
                       }).reduce(function(prev, curr){
                         return prev + curr;
                       }, 0);
-  var str = items.length + " ";
+  var str = entries.length + " ";
   str += str === 1 ? ui_strings.S_NETWORK_REQUEST :
                      ui_strings.S_NETWORK_REQUESTS;
 
@@ -324,12 +295,10 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   return ["div", labels, "class", "network-timeline-row"];
 };
 
-templates.network_graph_rows = function(ctx, selected, width, basetime, duration)
+templates.network_graph_rows = function(ctx, entries, selected, width, basetime, duration)
 {
   var tpls = [];
-  var entries = ctx.get_entries_filtered();
-
-  for (var n = 0, entry; entry = entries[n]; n++)
+  for (var n = 0, entry; entry = entries[n]; n++) // todo: map me
   {
     tpls.push(templates.network_graph_row(entry, selected, width, basetime, duration));
   }
@@ -481,7 +450,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
   }
 }
 
-templates.grid_info = function(duration, width, padding)
+templates.grid_info = function(duration, width)
 {
   if (duration > 0)
   {
@@ -493,7 +462,7 @@ templates.grid_info = function(duration, width, padding)
 
     // If the last line comes too close to the edge, decrease the value until it fits. Need
     // to modify the actual ms value to keep nice labels on the result as the are shown in ms
-    while (width % (val_in_px * draw_lines) < padding)
+    while (width % (val_in_px * draw_lines) < GRAPH_PADDING)
     {
       value--;
       val_in_px = width / duration * value;
