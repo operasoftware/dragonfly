@@ -369,11 +369,24 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _hide_tooltip = function(tooltip)
   {
-    if (_cur_ctx && _cur_ctx.current_tooltip && 
-        tooltip == _cur_ctx.current_tooltip &&
-        _cur_ctx.accept_call)
+    if (!_cur_ctx)
+      return;
+
+    var index = _ctx_stack.length - 1;
+    var ctx = _ctx_stack[index];
+    var accept_call = ctx.accept_call;
+    while (accept_call && ctx && index > -1)
     {
-      _cur_ctx.hide_tooltip(true);
+      if (ctx.current_tooltip && tooltip == ctx.current_tooltip)
+      {
+        while (_ctx_stack.length > index + 1)
+          _ctx_stack.pop().hide_tooltip(true);
+
+        ctx.hide_tooltip(true);
+        _cur_ctx = ctx;
+        break;
+      }
+      ctx = _ctx_stack[--index]
     }
   };
 
