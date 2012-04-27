@@ -108,6 +108,23 @@ cls.JSInspectionTooltip = function()
                              object: obj,
                              callback: _handle_ontooltip});
     }
+    else
+    {
+      var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
+      var obj_id = Number(target.get_ancestor_attr("data-obj-id"));
+      var class_name = target.get_ancestor_attr("data-class-name");
+      if (rt_id && obj_id && class_name)
+      {
+        _cur_object = {rt_id: rt_id, obj_id: obj_id, class_name: class_name}; 
+        _pretty_printer.print({target: target,
+                               rt_id: rt_id,
+                               obj_id: obj_id,
+                               class_name: class_name,
+                               object: _cur_object,
+                               callback: _handle_ontooltip});
+
+      }
+    }
   };
 
   var _init = function(view)

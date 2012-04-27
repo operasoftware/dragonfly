@@ -51,29 +51,19 @@ cls.EvListenerTooltip = function()
   
   var _ontooltipclick = function(event)
   {
-    if (!_cur_ctx)
-      return;
-
-    switch (_cur_ctx.type.type)
-    {
-      case cls.PrettyPrinter.ELEMENT:
-        UI.get_instance().show_view("dom");
-        dom_data.get_dom(_cur_ctx.rt_id, _cur_ctx.obj_id);
-        _hide_tooltip();
-        break;
-    }
+    _tooltip.hide();
   };
 
   var _ontooltip = function(event, target)
   {
-
     _hide_tooltip();
     var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var rt_id = model.getDataRuntimeId();
     var node_id = target.get_ancestor_attr("ref-id");
-    if (model && node_id)
+    if (model && rt_id && node_id)
     {
       var listeners = model.get_ev_listeners(node_id);
-      var tmpl = window.templates.ev_listeners(listeners);
+      var tmpl = window.templates.ev_listeners(listeners, rt_id);
       _tooltip.show(tmpl);
     }
   };
@@ -86,7 +76,7 @@ cls.EvListenerTooltip = function()
     _tooltip.onhide = _hide_tooltip;
     //_tooltip.ontooltipenter = _ontooltipenter;
     //_tooltip.ontooltipleave = _ontooltipleave;
-    //_tooltip.ontooltipclick = _ontooltipclick;
+    _tooltip.ontooltipclick = _ontooltipclick;
   };
 
   _init();
