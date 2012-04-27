@@ -258,7 +258,7 @@
   this.switches = function(switches)
   {
     var
-    ret = ['toolbar-switches'],
+    ret = ["toolbar-buttons"],
     _switch = '',
     i = 0,
     setting = null;
@@ -266,6 +266,7 @@
     for( ; _switch = switches[i]; i++)
       ret[ret.length] = this._switch(_switch);
 
+    ret.push("handler", "toolbar-switch");
     return ret;
   }
 
@@ -275,7 +276,6 @@
     if(setting = Settings.get_setting_with_view_key_token(_switch))
     {
       ret = ['span',
-          'handler', 'toolbar-switch',
           'title', setting.label,
           'key', _switch,
           'tabindex', '1',

@@ -28,11 +28,7 @@ var SwitchesBase = function()
   this._on_setting_changed_bound = function(message)
   {
     var key_attr = message.id + "." + message.key;
-    // look for switches in the old
-    var switches = document.getElementsByTagName("toolbar-switches");
-    // and new containers
-    if (!switches.length)
-      switches = document.querySelectorAll("[handler='toolbar-switch']");
+    var switches = document.querySelectorAll("[handler='toolbar-switch']");
 
     for (var i = 0, _switch; _switch = switches[i]; i++)
     {

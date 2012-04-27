@@ -133,8 +133,7 @@ panel-toolbar
               inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
-toolbar-buttons,
-toolbar-switches
+toolbar-buttons
 {
   display: block;
   float: left;
@@ -501,7 +500,6 @@ cst-icon[class="debugger-menu"]
 
 /* Grouping the toolbar buttons */
 /* All Buttons in a group*/
-toolbar-switches .ui-button.ui-control:not(:only-of-type),
 toolbar-buttons .ui-button.ui-control:not(:only-of-type),
 #toggle-settings-overlay,
 #toggle-remote-debug-overlay,
@@ -513,7 +511,6 @@ toolbar-buttons .ui-button.ui-control:not(:only-of-type),
 }
 
 /* Leftmost Button*/
-toolbar-switches .ui-button.ui-control:first-of-type,
 toolbar-buttons .ui-button.ui-control:first-of-type,
 #toggle-settings-overlay,
 #top-window-toggle-attach.attached
@@ -524,7 +521,6 @@ toolbar-buttons .ui-button.ui-control:first-of-type,
 }
 
 /* Rightmost Button*/
-toolbar-switches .ui-button.ui-control:last-of-type,
 toolbar-buttons .ui-button.ui-control:last-of-type,
 #toggle-remote-debug-overlay,
 #top-window-close
