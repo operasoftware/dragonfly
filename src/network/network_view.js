@@ -47,14 +47,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     // the query_selector for the mode needs to be set even when there is currently no query.
     if (this.mode == DETAILS)
-      this._text_search.set_query_selector("tbody:not(.network_info)");
+      this.text_search.set_query_selector("tbody:not(.network_info)");
     else
-      this._text_search.set_query_selector("[handler='select-network-request']");
+      this.text_search.set_query_selector("[handler='select-network-request']");
 
     if (this.query)
     {
       // this triggers _create via on_before_search
-      this._text_search.update_search();
+      this.text_search.update_search();
     }
     else
     {
@@ -776,7 +776,7 @@ cls.NetworkLog.create_ui_widgets = function()
     }
   );
 
-  var text_search = window.views.network_logger._text_search = new TextSearch();
+  var text_search = window.views.network_logger.text_search = new TextSearch();
   text_search.add_listener("onbeforesearch", window.views.network_logger._on_before_search_bound);
 
   eventHandlers.input["network-text-search"] = function(event, target)

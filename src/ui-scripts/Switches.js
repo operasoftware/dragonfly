@@ -34,7 +34,7 @@ var SwitchesBase = function()
     if (!switches.length)
       switches = document.querySelectorAll("[handler='toolbar-switch']");
 
-    for(var i = 0, _switch; _switch = switches[i]; i++)
+    for (var i = 0, _switch; _switch = switches[i]; i++)
     {
       var buttons = _switch.querySelectorAll("[key='" + key_attr + "']");
       for( j = 0; button = buttons[j]; j++)
@@ -43,11 +43,6 @@ var SwitchesBase = function()
         value ? button.addClass("is-active") : button.removeClass("is-active");
       }
     }
-    /* todo: the following used to be in setting.js after the toolbar buttons were updated. it can probably be removed, seems to work fine.
-    // hack to trigger a repaint while
-    target.style.backgroundColor = "transparent";
-    target.style.removeProperty('background-color');
-    */
   }.bind(this);
 
   messages.addListener("setting-changed", this._on_setting_changed_bound);
