@@ -272,7 +272,7 @@ cls.RequestContext = function()
           success = true;
       }
     }
-    return success || !this._filters.length;
+    return success;
   }.bind(this);
 
   this.get_entries_filtered = function()

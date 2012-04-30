@@ -176,10 +176,13 @@ var ToolbarBase = function()
       }
       if (this.groups.length)
       {
-        var buttons_template = [];
+        var group_templates = [];
         for (var i = 0, group; group = this.groups[i]; i++)
         {
           var button_templates = [];
+          // The templated will be collected in button_templates, to be then passed to 
+          // another template function. That is because a button can have a .template member
+          // which defines a custom template
           if (group.items && group.type !== "input")
           {
             var current_value = null;
@@ -206,12 +209,10 @@ var ToolbarBase = function()
                 button_templates.push(templates.toolbar_button(button));
               }
             }
-            // Handling templates to a template function. They need to be built individually 
-            // so they can have their own templates.
-            buttons_template.push(templates.toolbar_buttons(button_templates, group, view_id));
+            group_templates.push(templates.toolbar_group_wrapper(button_templates, group, view_id));
           }
         }
-        toolbar.render(buttons_template);
+        toolbar.render(group_templates);
       }
       if(this.switches.length) // the following is legacy support
       {

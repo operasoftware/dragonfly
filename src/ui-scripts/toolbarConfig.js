@@ -129,23 +129,23 @@ var ToolbarConfigBase = new function()
       this.buttons = [];
       for (var i = 0, group; group = this.groups[i]; i++)
       {
-        if (group.type !== "input" && group.items)
+        if (group.type !== UI.TYPE_INPUT && group.items)
           this.buttons = this.buttons.concat(group.items);
 
         // inititalize switches here
-        if (group.type === "switch")
+        if (group.type === UI.TYPE_SWITCH)
         {
-          var keys = group.items.map(function(_switch){return _switch.key});
+          var keys = group.items.map(function(my_switch){return my_switch.key});
           new Switches(this.id, keys);
         }
-        else if (group.type === "single-select")
+        else if (group.type === UI.TYPE_SINGLE_SELECT)
         {
           var values = group.items.map(function(button){return button.value});
           new SingleSelect(name, group.name, values, group.default_value || values[0], group.allow_multiple_select);
         }
-        else if (group.type === "input")
+        else if (group.type === UI.TYPE_INPUT)
         {
-          filter_array = filter_array || [];
+          filter_array || (filter_array = []);
           for (var k = 0, search; search = group.items[k]; k++)
             filter_array.push(search);
         }
@@ -191,6 +191,9 @@ var ToolbarConfig = function(name_or_config_object,
                              special_button_array, 
                              custom_button_array)
 {
+  /* config_object */
+  
+
   this.init(name_or_config_object, 
             button_array, 
             filter_array, 

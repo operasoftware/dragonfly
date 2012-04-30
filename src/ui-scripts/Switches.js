@@ -32,12 +32,10 @@ var SwitchesBase = function()
 
     for (var i = 0, _switch; _switch = switches[i]; i++)
     {
-      var buttons = _switch.querySelectorAll("[key='" + key_attr + "']");
-      for( j = 0; button = buttons[j]; j++)
-      {
-        var value = settings[message.id].get(message.key);
+      var value = settings[message.id].get(message.key);
+      var button = _switch.querySelector("[key='" + key_attr + "']");
+      if (button)
         value ? button.addClass("is-active") : button.removeClass("is-active");
-      }
     }
   }.bind(this);
 

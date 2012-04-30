@@ -20,6 +20,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._rendertime = 0;
   this._render_timeout = 0;
   this._graph_tooltip_id = null;
+  this._type_filters = null;
   this.needs_instant_update = false;
 
   this.createView = function(container)
@@ -567,7 +568,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._map_filter_bound = function(filter_name)
   {
     return {
-      none: {
+      all: {
         type_list: [],
         "is_blacklist": true
       },
@@ -591,7 +592,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         origin_list:["xhr"]
       }
     }[filter_name];
-
   }.bind(this);
 
   this._on_single_select_changed_bound = function(message)
@@ -643,6 +643,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
 
+  this._type_filters = ["all"].map(this._map_filter_bound);
   this.init(id, name, container_class, html, default_handler);
 };
 cls.NetworkLogView.prototype = ViewBase;
@@ -678,12 +679,12 @@ cls.NetworkLog.create_ui_widgets = function()
     "general"
   );
 
-  window.views.network_logger.toolbar_config = new ToolbarConfig(
+  new ToolbarConfig(
     {
       view: "network_logger",
       groups: [
         {
-          type: "buttons",
+          type: UI.TYPE_BUTTONS,
           items: [
             {
               handler: "clear-log-network-view",
@@ -693,7 +694,7 @@ cls.NetworkLog.create_ui_widgets = function()
           ]
         },
         {
-          type: "switch",
+          type: UI.TYPE_SWITCH,
           items: [
             {
               key: "network_logger.pause",
@@ -726,7 +727,7 @@ cls.NetworkLog.create_ui_widgets = function()
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_ALL,
-              value: "none"
+              value: "all"
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
@@ -752,7 +753,6 @@ cls.NetworkLog.create_ui_widgets = function()
               text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
               title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
               value: "other_types"
-              // This is parsed in network_service, see set_filters.
             },
             {
               text: ui_strings.S_HTTP_LABEL_FILTER_XHR,

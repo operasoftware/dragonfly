@@ -267,24 +267,29 @@ eventHandlers.click["toolbar-single-select"] = function(event, target)
                         window.single_selects[view_id][name];
     if (single_select)
     {
+      var val_index = single_select.values.indexOf(value);
       var select_multiple = event.ctrlKey && single_select.allow_multiple_select;
-      if (!select_multiple)
-        single_select.values = [];
-
-      var index = single_select.values.indexOf(value);
-      if (index === -1)
+      if (select_multiple)
       {
-        single_select.values.push(value);
+        var is_selected = val_index !== -1;
+        if (!is_selected)
+        {
+          single_select.values.push(value);
+          button.addClass("is-active");
+        }
+        else if (single_select.values.length > 1)
+        {
+          // target is selected and it's not the last button that is. Unselect target.
+          single_select.values.splice(val_index, 1);
+          button.removeClass("is-active");
+        }
+      }
+      else
+      {
+        single_select.values = [value];
         button.addClass("is-active");
-      }
-      else if (select_multiple && single_select.values.length > 1)
-      {
-        single_select.values.splice(index, 1);
-        button.removeClass("is-active");
-      }
 
-      if (!select_multiple)
-      {
+        // Unselect all others
         var buttons_in_group = target.querySelectorAll(".ui-button");
         for (var i = 0, group_button; group_button = buttons_in_group[i]; i++)
           if (group_button != button)

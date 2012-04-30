@@ -103,7 +103,6 @@
   top: 4px;
   width: 15px;
   height: 19px;
-  display: block;
   background: url("../../ui-images/dropup.png");
 }
 
@@ -215,10 +214,4 @@ th.sort-column
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-#contextmenu .ellipsis_cont,
-#contextmenu .ellipsis
-{
-  display: inline; /* hide containers in context menu */
 }

@@ -59,7 +59,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     groupby = localStorage[GROUPER] || groupby;
     sortby = localStorage[SORTER] || sortby;
     if (localStorage[COLUMNS])
-      var stored_cols = localStorage[COLUMNS].split(",");
+      var stored_cols = JSON.parse(localStorage[COLUMNS]);
 
     if (
       localStorage[SORT_REVERSE] !== null &&
@@ -125,7 +125,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     var menuitems = [];
     if (obj.tabledef.groups &&
         !(obj.tabledef.options && obj.tabledef.options.no_group_changing))
-    { 
+    {
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
         selected: !obj.groupby,
@@ -160,7 +160,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       if (menuitems.length)
         menuitems.push(ContextMenu.separator);
 
-      for (var n=0, colname; colname = allcols[n]; n++)
+      for (var n = 0, colname; colname = allcols[n]; n++)
       {
         var coldef = obj.tabledef.columns[colname];
         menuitems.push({
@@ -236,21 +236,6 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
 
   this._make_reset_sort_handler = function(re_render_table)
   {
-    var make_sort_function = function(idgetter, data_order)
-    {
-      return function(a, b) {
-        var ind_a = data_order.indexOf(idgetter(a));
-        var ind_b = data_order.indexOf(idgetter(b));
-        
-        if (ind_a === ind_b)
-          return 0;
-
-        if (ind_a > ind_b)
-          return 1;
-
-        return -1;
-      }
-    }
     return function(evt) {
       var obj_id = evt.target.get_attr("parent-node-chain", "data-table-object-id");
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
@@ -258,8 +243,19 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       {
         obj.reversed = localStorage[SORT_REVERSE] = null;
         obj.sortby = localStorage[SORTER] = null;
-        var sort_func = make_sort_function(obj.tabledef.idgetter, obj._org_data_order);
-        obj.set_data(obj.get_data().sort(sort_func));
+        var old_data = obj.get_data();
+        var new_data = [];
+        for (var i = 0; i < obj._org_data_order.length; i++)
+        {
+          var id = obj._org_data_order[i];
+          var matching_item = old_data.filter(function(item){
+            return obj.tabledef.idgetter(item) === id
+          })[0];
+          if (matching_item)
+            new_data.push(matching_item);
+
+        };
+        obj.set_data(new_data);
         re_render_table(obj, evt.target.get_ancestor("table"));
       }
     }
@@ -300,7 +296,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   this.restore_columns = function()
   {
     this.columns = this.default_columns.slice(0);
-    localStorage[COLUMNS] = this.columns.join(",");
+    localStorage[COLUMNS] = JSON.stringify(this.columns);
   }
 
   this._prop_getter = function(name)
@@ -366,7 +362,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       this.columns.splice(index, 1);
     }
     if (this.id)
-      localStorage[COLUMNS] = this.columns.join(",");
+      localStorage[COLUMNS] = JSON.stringify(this.columns);
   }
 
   this._init();
@@ -550,11 +546,17 @@ templates.sortable_table_row = function(tabledef, item, cols)
                 content = templates.sortable_table_wrap_ellipsis(content, title);
 
               var add_title_to_td = !coldef.use_ellipsis && title;
-              return ["td", content]
-                        .concat(add_title_to_td ? ["data-tooltip", "sortable-table-tooltip",
-                                                   "data-tooltip-text", title] : [])
-                        .concat(coldef.align ? ["class", "align-" + coldef.align] : [])
-                        .concat(coldef.attributes ? coldef.attributes : [])
+              var ret = ["td", content];
+              if (add_title_to_td)
+                ret.push("data-tooltip", "sortable-table-tooltip", "data-tooltip-text", title);
+
+              if (coldef.align)
+                ret.push("class", "align-" + coldef.align)
+
+              if (coldef.attributes)
+                ret = ret.concat(coldef.attributes);
+
+              return ret;
             }
             return [];
           }).concat(tabledef.handler ? ["handler", tabledef.handler] : [])

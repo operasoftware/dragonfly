@@ -183,13 +183,12 @@
   {
     var ret = ['toolbar-buttons'];
     if (buttons)
-      for(var i = 0, button; button = buttons[i]; i++)
-        ret[ret.length] = this.button(button);
+      ret.extend(buttons.map(this.button, this));
 
     return ret;
   }
 
-  this.toolbar_buttons = function(button_templates, group, view_id)
+  this.toolbar_group_wrapper = function(button_templates, group, view_id)
   {
     var ret = ["toolbar-buttons", button_templates];
     if (group.type)  // single-select or switch
@@ -197,9 +196,8 @@
       ret.push("handler", "toolbar-" + group.type);
       if (group.type === "single-select")
       {
-        ret = ret.concat(["handler", "toolbar-" + group.type,
-                    "data-single-select-name", group.name,
-                    "data-view-id", view_id]);
+        ret = ret.concat(["data-single-select-name", group.name,
+                          "data-view-id", view_id]);
       }
     }
     return ret;
@@ -214,10 +212,10 @@
         button.text || "",
         "title", button.title,
         "tabindex", "1",
-        "class", "ui-button ui-control " +
-                 (icon_classname ? icon_classname + " " : " ") +
-                 (button.class_name ? button.class_name + " " : " ") +
-                 (button.text ? "text-button" : " ")
+        "class", "ui-button ui-control" +
+                 (icon_classname ? " " + icon_classname  : "") +
+                 (button.class_name ? " " + button.class_name : "") +
+                 (button.text ? " text-button" : "")
       ].concat(
           button.id ? ["id", button.id] : [],
           button.disabled ? ["disabled", "disabled"] : [],
@@ -263,8 +261,7 @@
     i = 0,
     setting = null;
 
-    for( ; _switch = switches[i]; i++)
-      ret[ret.length] = this._switch(_switch);
+    ret.extend(switches.map(this._switch, this));
 
     ret.push("handler", "toolbar-switch");
     return ret;
@@ -279,7 +276,7 @@
           'title', setting.label,
           'key', _switch,
           'tabindex', '1',
-          'class', _switch + ' ui-control ui-button switch ' + (setting.value ? "is-active" : "")
+          'class', _switch + ' ui-control ui-button switch' + (setting.value ? ' is-active' : '')
         ];
     }
     else
