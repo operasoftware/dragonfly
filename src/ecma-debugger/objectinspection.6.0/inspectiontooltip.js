@@ -23,6 +23,8 @@ cls.JSInspectionTooltip = function()
       _cur_ctx = ctx;
       _cur_ctx.target.addClass(CLASS_TOOLTIP_SELECTED);
       _tooltip.show(ctx.template);
+      if (ctx.type.after_render)
+        ctx.type.after_render();
     }
     else
       _hide_tooltip();
