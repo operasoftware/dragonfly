@@ -1029,14 +1029,14 @@ cls.JsSourceView.__defineGetter__("default_y", function()
   return this._default_y;
 });
 
-cls.JsSourceView.__defineSetter__("default_y", function() {};
+cls.JsSourceView.__defineSetter__("default_y", function() {});
 
 cls.JsSourceView.update_default_y = function()
 {
   var BP_IMAGE_HEIGHT = 12;
   var d_line_h = window.defaults["js-source-line-height"];
   this._default_y = (d_line_h - BP_IMAGE_HEIGHT) / 2 >> 0; 
-});
+};
 
 cls.JsSourceView.prototype = ViewBase;
 
