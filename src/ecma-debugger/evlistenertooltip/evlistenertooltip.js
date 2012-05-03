@@ -7,6 +7,7 @@ cls.EvListenerTooltip = function()
 
 
   var _tooltip = null;
+  var _url_tooltip = null;
 
 
 
@@ -71,6 +72,7 @@ cls.EvListenerTooltip = function()
   var _init = function(view)
   {
     _tooltip = Tooltips.register(cls.EvListenerTooltip.tooltip_name, true);
+    _url_tooltip = Tooltips.register("url-tooltip", true);
 
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
