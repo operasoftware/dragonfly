@@ -1,10 +1,4 @@
-﻿#js-source
-{
-  position: relative;
-  padding: 0;
-}
-
-#js-source-scroll-content,
+﻿#js-source-scroll-content,
 #js-source-scroll-container
 {
   position: absolute;
@@ -25,7 +19,7 @@
   width: 50px;
 }
 
-#js-source-content div
+.js-source-content div
 {
   color: #000;
   white-space: pre;
@@ -33,21 +27,21 @@
   -o-tab-size: 4;
 }
 
-#js-source-content .not-error
+.js-source-content .not-error
 {
   display: inline-block;
   padding-left: 10px;
   margin-left: -10px;
 }
 
-#js-source-content .first-error-line,
-#js-source-content .stop-at-error
+.js-source-content .first-error-line,
+.js-source-content .stop-at-error
 {
   position: relative;
   overflow: visible;
 }
 
-#js-source-content .stop-at-error
+.js-source-content .stop-at-error
 {
   background-color: rgba(255, 0, 0, 0.15);
 }
@@ -69,7 +63,7 @@
 }
 
 /* line number */ 
-#js-source-line-numbers
+.js-source-line-numbers
 {
   position: absolute;
   left: 0;
@@ -85,12 +79,12 @@
   background-color: transparent;
 }
 
-#js-source-line-numbers li
+.js-source-line-numbers li
 {
   position: relative;
 }
 
-#js-source-line-numbers span
+.js-source-line-numbers span
 {
   position: absolute;
   left: 0;
@@ -100,7 +94,7 @@
   background: transparent url('../ui-images/line-types.png') no-repeat 0 0;
 }
 
-#js-source-line-numbers input
+.js-source-line-numbers input
 {
   width: 37px;
   text-align: right;
@@ -109,14 +103,14 @@
   padding: 0;
   padding-right: 3px;
   background-color: transparent;
-  height: 100%; /* should be the same as the line height #js-source-content li */ 
+  height: 100%; /* should be the same as the line height .js-source-content li */ 
   font-size: inherit;
   font-family: inherit;
   vertical-align: middle;
   color: #b3b3b3;
 }
 
-#js-source-line-numbers input:hover
+.js-source-line-numbers input:hover
 {
   background-color: #f0f0f0;
 }

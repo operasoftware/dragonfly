@@ -8,9 +8,11 @@ cls.JsSourceView = function(id, name, container_class)
   // split out one general class to handle partial view ( yield count of lines )
 
   var self = this;
-  var frame_id = 'js-source';
-  var container_id = 'js-source-content';
-  var container_line_nr_id = 'js-source-line-numbers';
+  var frame_id = '';
+  var container_class_name = 'js-source-content';
+  var container_selector = "." + container_class_name;
+  var container_line_nr_class = 'js-source-line-numbers';
+  var container_line_nr_selector = "container > .js-source-line-numbers";
   var scroll_id = 'js-source-scroller';
   var scroll_content_id = 'js-source-scroll-content';
   var scroll_container_id = 'js-source-scroll-container';
@@ -68,7 +70,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       ret[ret.length] = templates.line_nummer();
     }
-    return ret.concat(['id', container_line_nr_id]);
+    return ret.concat(['class', container_line_nr_class]);
   }
 
   templates.line_nummer = function()
@@ -209,11 +211,11 @@ cls.JsSourceView = function(id, name, container_class)
     {
       style.width = defaults['scrollbar-width'] + 'px';
     }
-    if (style = sheets.getDeclaration('#js-source-content div'))
+    if (style = sheets.getDeclaration('.js-source-content div'))
     {
       style.lineHeight = style.height = context['line-height'] + 'px';
     }
-    if (style = sheets.getDeclaration('#js-source-line-numbers li'))
+    if (style = sheets.getDeclaration('.js-source-line-numbers li'))
     {
       style.height = context['line-height'] + 'px';
     }
@@ -237,8 +239,7 @@ cls.JsSourceView = function(id, name, container_class)
     frame_id = container.id;
     container.innerHTML = "" +
       "<div id='js-source-scroll-content'>"+
-        "<div id='js-source-content' " +
-             "class='js-source' " +
+        "<div class='js-source-content' " +
              "data-menu='js-source-content' " +
              "data-tooltip='" + cls.JSSourceTooltip.tooltip_name + "'></div>"+
       "</div>"+
@@ -251,7 +252,7 @@ cls.JsSourceView = function(id, name, container_class)
     }
     context['container-height'] = parseInt(container.style.height);
     var set = null, i = 0;
-    source_content = document.getElementById(container_id);
+    source_content = document.querySelector(container_selector);
     if(source_content)
     {
       if (document.getElementById(scroll_container_id))
@@ -259,13 +260,13 @@ cls.JsSourceView = function(id, name, container_class)
         document.getElementById(scroll_container_id).onscroll = this.scroll;
       }
       __max_lines = context['container-height'] / context['line-height'] >> 0;
-      var lines = document.getElementById(container_line_nr_id);
+      var lines = document.querySelector(container_line_nr_selector);
       if( lines )
       {
         lines.parentElement.removeChild(lines);
       }
       container.render(templates.line_nummer_container(__max_lines || 1));
-      line_numbers = document.getElementById(container_line_nr_id);
+      line_numbers = document.querySelector(container_line_nr_selector);
 
       var selected_script_id = runtimes.getSelectedScript();
       if(selected_script_id && selected_script_id != __current_script.script_id)
@@ -432,14 +433,14 @@ cls.JsSourceView = function(id, name, container_class)
     {
       __max_lines = __current_script.line_arr.length;
     }
-    var lines = document.getElementById(container_line_nr_id);
+    var lines = document.querySelector(container_line_nr_selector);
 
     if (lines)
     {
       lines.parentElement.removeChild(lines);
     }
     document.getElementById(frame_id).render(templates.line_nummer_container(__max_lines));
-    line_numbers = document.getElementById(container_line_nr_id);
+    line_numbers = document.querySelector(container_line_nr_selector);
     source_content.style.height = (context['line-height'] * __max_lines) +'px';
     __current_script.scroll_height = __current_script.line_arr.length * context['line-height'];
     updateScriptContext();
@@ -452,7 +453,7 @@ cls.JsSourceView = function(id, name, container_class)
     __max_lines = 1;
     document.getElementById(scroll_container_id).style.removeProperty('bottom');
     source_content.style.removeProperty('width');
-    var lines = document.getElementById(container_line_nr_id);
+    var lines = document.querySelector(container_line_nr_selector);
     lines.parentElement.removeChild(lines);
     document.getElementById(frame_id).render(templates.line_nummer_container(__max_lines));
     document.getElementById(scroll_id).style.height = 'auto';
@@ -481,7 +482,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.get_line_element = function(line_no)
   {
-    var source_content = document.getElementById(container_id);
+    var source_content = document.querySelector(container_selector);
     var lines = source_content && source_content.getElementsByTagName('div');
     var line = typeof line_no == "number" && lines && lines[line_no - __top_line];
     return line;
@@ -513,7 +514,7 @@ cls.JsSourceView = function(id, name, container_class)
       __timeout_clear_view = clearTimeout(__timeout_clear_view);
     }
 
-    var is_visible = (source_content = document.getElementById(container_id)) ? true : false;
+    var is_visible = (source_content = document.querySelector(container_selector)) ? true : false;
     // if the view is visible it shows the first new script
     // before any parse error, that means in case of a parse error
     // the current script has not set the parse_error property
@@ -781,7 +782,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.clear_stop_at_error = function()
   {
-    var source_content = document.getElementById(container_id);
+    var source_content = document.querySelector(container_selector);
     var tooltip = source_content &&
                   source_content.querySelector("." + ERROR_TOOLTIP_CLASS);
 
@@ -802,7 +803,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __clearView = function()
   {
-    if( ( source_content = document.getElementById(container_id) ) && source_content.parentElement )
+    if( ( source_content = document.querySelector(container_selector) ) && source_content.parentElement )
     {
       var
       divs = source_content.parentElement.parentElement.getElementsByTagName('div'),
@@ -1250,7 +1251,7 @@ cls.JsSourceView.create_ui_widgets = function()
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
-    style = document.styleSheets.getDeclaration("#js-source-content div"),
+    style = document.styleSheets.getDeclaration(".js-source-content div"),
     tab_size = event.target.value;
 
     if(style && /[0-8]/.test(tab_size))
