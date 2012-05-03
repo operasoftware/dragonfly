@@ -78,6 +78,7 @@ top-tabs tab
 top-tabs tab .inline-block
 {
   vertical-align: top;
+  
 }
 
 top-tabs tab .block-content
@@ -90,6 +91,7 @@ top-tabs tab .block-content
 top-tabs .two-rows .inline-block 
 {
   vertical-align: middle;
+  line-height: 2;
 }
 
 top-tabs .two-rows .block-content 
