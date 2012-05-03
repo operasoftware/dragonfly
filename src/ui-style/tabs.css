@@ -73,17 +73,28 @@ top-tabs tab
   background-image: -o-linear-gradient(270deg,
                                        rgba(255, 255, 255, 0.90) 0,
                                        rgba(255, 255, 255, 0.20) 100%);
-  font-size: 0px; /* Makes vertical-aling: middle for child elemenents not depend on the font baseline*/
 }
 
 top-tabs tab .inline-block
 {
-  font-size: 11px;
+  vertical-align: top;
 }
 
 top-tabs tab .block-content
 {
-  line-height: 1em;
+  display: inline;
+  vertical-align: baseline;
+  line-height: 1;
+}
+
+top-tabs .two-rows .inline-block 
+{
+  vertical-align: middle;
+}
+
+top-tabs .two-rows .block-content 
+{
+  display: block;
 }
 
 top-tabs tab:first-child
