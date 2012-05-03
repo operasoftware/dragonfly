@@ -580,10 +580,16 @@ ui_framework.layouts.network_rough_layout =
 
 ui_framework.layouts.resource_rough_layout =
 {
-    dir: 'v',
-    width: 1000,
-    height: 1000,
-    children: [ { height: 1000, tabbar: { id: "resources", tabs: ['resource_all'] } } ]
+  dir:'h', width:1000,height:700,
+  children:
+  [
+    {
+      width: 700, tabbar: { id:'resources_tree', tabs: ['resource_tree_view'] }
+    },
+    {
+      width: 300, tabbar: { id: "resources", tabs: ['resource_all'], _is_hidden: true }
+    }
+  ]
 };
 
 ui_framework.layouts.utils_rough_layout =

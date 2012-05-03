@@ -56,6 +56,14 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this._render_main_view = function(container)
   {
+    container.clearAndRender(
+        ['div',
+         ['p', "let's deprecate this view please..."],
+         'class', 'info-box'
+        ]
+      );
+    return;
+
     var ctx = this._service.get_resource_context();
     if (ctx && ctx.resources.length)
     {
@@ -157,7 +165,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       },
       host: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST,
-        getter: function(res) { return res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_host(res.url) },
+        getter: function(res) { return (
+
+[res.frameID, cls.ResourceManagerService.instance._frames[res.frameID].parentFrameID]
+
+            )+' > '+(res.urltype == 4 ? res.human_url : cls.ResourceUtil.url_host(res.url)) },
       },
       path: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH,
@@ -196,13 +208,13 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   {
     this._loading = true;
     this._table = null;
-    this.update();
+//    this.update();
   }.bind(this);
 
   this._on_documentloaded_bound = function()
   {
     this._loading = false;
-    this.update();
+//    this.update();
   }.bind(this);
 
   var eh = window.eventHandlers;

@@ -2,6 +2,11 @@
 
 window.app.builders.ResourceManager["1.0"] = function(service)
 {
+  // p01 WIP resource views
+  new cls.ResourceTestView('resource_tree_view','Tree View');
+  //new cls.ResourceTestView('resource_search', 'Search');
+
+
   new cls.ResourceManagerAllView('resource_all', ui_strings.M_VIEW_LABEL_ALL_RESOURCES, 'scroll resource-manager', '', '');
   //new cls.ResourceManagerFontView('resource_fonts', "Fonts", 'scroll', '', '');
   //new cls.ResourceManagerImageView('resource_images', "Images", 'scroll', '', '');

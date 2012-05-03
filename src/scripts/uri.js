@@ -21,6 +21,7 @@ var URIPrototype = function(uri_prop_name)
   */
 
   [
+    "url",
     "hash",
     "host",
     "pathname",
@@ -101,6 +102,7 @@ var URIPrototype = function(uri_prop_name)
     if (uri)
     {
       var val = uri;
+      this._url = uri;
 
       var pos = val.indexOf("#");
       if (pos > -1)
