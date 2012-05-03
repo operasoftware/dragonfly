@@ -43,17 +43,21 @@ var ProfilerTemplates = function()
     return [
       ["div",
          legend,
-       "id", "profiler-legend"],
+       "id", "profiler-legend"
+      ],
       ["div",
          timeline,
        "id", "profiler-timeline",
-       "handler", "profiler-zoom-timeline"],
+       "handler", "profiler-zoom-timeline"
+      ],
       ["div",
          details_list,
-       "id", "profiler-details-list"],
+       "id", "profiler-details-list"
+      ],
       ["div",
          status,
-       "id", "profiler-status"]
+       "id", "profiler-status"
+      ]
     ];
   };
 
@@ -61,39 +65,42 @@ var ProfilerTemplates = function()
   {
     if (events && events.eventList && events.eventList[0])
     {
-      // TODO: style recalc includes selector matching, so should use aggregatedTime
       var total_time = events.eventList.reduce(function(prev, curr) {
         return prev + curr.time;
       }, 0);
-
-      return this._order.map(function(row, idx) {
-        // TODO: do this once outside the loop
-        var event = events.eventList.filter(function(event) {
-          return event.type == row;
-        })[0];
-        return (["div",
-                   // TODO: this might end up as less than 100%, fix
-                   ["span",
-                      type_map[row] + " ",
-                    "class", "label"
-                   ],
-                   ["span",
-                      ((Math.round(event.time / total_time * 100)) + " %"),
-                    "class", "amount"
-                   ],
-                 "class", "profiler-timeline-row" + (idx % 2 ? " odd" : ""),
-                 "title", this.get_title_aggregated(event),
-                 "data-event-type", String(event.type),
-                 "handler", "profiler-get-event-details"
-               ]);
+      var template = [];
+      events.eventList.forEach(function(event) {
+        var index = this._order.indexOf(event.type);
+        if (index !== -1)
+        {
+          template[index] =
+            ["div",
+               ["span",
+                  type_map[event.type] + " ",
+                "class", "profiler-legend-label"
+               ],
+               ["span",
+                  // This is an approximation, the total will not necessarily
+                  // end up as 100 %
+                  (Math.round(event.time / total_time * 100)) + " %",
+                "class", "profiler-legend-amount"
+               ],
+             "class", "profiler-timeline-row" + (index % 2 ? " odd" : ""),
+             "title", this.get_title_aggregated(event),
+             "data-event-type", String(event.type),
+             "handler", "profiler-get-event-details"
+            ];
+        }
       }, this);
+      return template;
     }
   };
 
   this.timeline_markers = function(width, interval, ms_unit)
   {
     var MIN_MARKER_GAP = 120;
-    var cell_amount = Math.max(2, Math.round(width / MIN_MARKER_GAP));
+    var MIN_MARKERS = 2;
+    var cell_amount = Math.max(MIN_MARKERS, Math.round(width / MIN_MARKER_GAP));
     var marker_time = interval / cell_amount;
     var ret = [];
     for (var i = 0; i < cell_amount; i++)
@@ -131,9 +138,9 @@ var ProfilerTemplates = function()
     if (events && events.eventList && events.eventList[0])
     {
       // Calculate scaling, to fit all events into the view.
-      // We first calculate a prelimiary scaling, to know the width
+      // We first calculate a preliminary scaling to know the width
       // of the last event. We then calculate the real scaling where
-      // the width of the last event is taken into account
+      // the width of the last event is taken into account.
       var interval_end = events.interval.end;
       var last_event = events.eventList.slice(-1)[0];
       var last_event_interval = last_event.interval.end - last_event.interval.start;
@@ -146,7 +153,7 @@ var ProfilerTemplates = function()
 
       this._order.forEach(function(row, idx) {
         ret.push(["div",
-                   "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
+                  "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
                  ]);
       });
 
@@ -297,7 +304,7 @@ var ProfilerTemplates = function()
   }
 
   this._tabledefs = {};
-  // TODO: implements sorters. E.g. hits should sort by hits and then by time
+  // TODO: implement sorters. E.g. hits should sort by hits and then by time
   this._tabledefs[CSS_SELECTOR_MATCHING] = {
     column_order: ["selector", "time", "hits"],
     // TODO: ui strings

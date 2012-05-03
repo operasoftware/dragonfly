@@ -33,7 +33,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   // Parent-children relationships
   this._children = {};
-  this._children[STYLE_RECALCULATION] = [CSS_SELECTOR_MATCHING];
+  this._children[STYLE_RECALCULATION] = CSS_SELECTOR_MATCHING;
 
   this._default_types = [/*GENERIC, PROCESS,*/ DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
                          THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
@@ -175,17 +175,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._show_details_list = function()
   {
-    var children = this._children[this._event_type];
-    if (children)
+    var child_type = this._children[this._event_type];
+    if (child_type)
     {
       this._profiler.get_events(this._current_session_id,
                                 this._current_timeline_id,
                                 MODE_REDUCE_UNIQUE_EVENTS,
                                 this._event_id,
                                 null,
-                                children,
+                                [child_type],
                                 null,
-                                this._handle_details_list.bind(this));
+                                this._handle_details_list.bind(this, child_type));
     }
     else
     {
@@ -194,13 +194,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
   };
 
-  this._handle_details_list = function(status, msg)
+  this._handle_details_list = function(child_type, status, msg)
   {
     var sortby = this._table ? this._table.sortby : "time";
     var reversed = this._table && this._table.reversed;
-    this._table = new SortableTable(this._templates._tabledefs[CSS_SELECTOR_MATCHING],
+    var table_def = this._templates._tabledefs[child_type];
+    this._table = new SortableTable(table_def,
                                     null,
-                                    this._templates._tabledefs[CSS_SELECTOR_MATCHING].column_order,
+                                    table_def.column_order,
                                     sortby,
                                     null,
                                     reversed);
@@ -213,14 +214,19 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_top_list_data = function(events)
   {
-    var data = events.eventList.map(function(event) {
-      return {
-        selector: event.cssSelectorMatching.selector,
-        time: event.time,
-        hits: event.hits
-      };
-    });
-    return data || [];
+    var type = events.eventList && events.eventList[0].type;
+    switch (type)
+    {
+    case CSS_SELECTOR_MATCHING:
+      return events.eventList.map(function(event) {
+        return {
+          selector: event.cssSelectorMatching.selector,
+          time: event.time,
+          hits: event.hits
+        };
+      });
+    }
+    return null;
   };
 
   this._get_event_details = function(event, target)

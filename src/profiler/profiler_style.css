@@ -76,22 +76,22 @@
   background: #f7f7f7;
 }
 
-.profiler-timeline-row .label
+.profiler-legend-label
 {
   box-sizing: border-box;
   padding-right: 10px;
 }
 
-.profiler-timeline-row .amount
+.profiler-legend-amount
 {
   position: absolute;
   right: 0;
   color: #9c9c9c;
 }
 
-.profiler-timeline-row:hover .label
+.profiler-timeline-row:hover .profiler-legend-label
 {
-  color:  #769fe1;
+  color: #769fe1;
 }
 
 .profiler-timeline-marker
@@ -130,7 +130,7 @@
 .profiler-event-interval
 {
   margin: 3px 0;
-  border: 1px solid rgba(0, 0, 0, .17);
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .profiler-event-interval[data-isexpandable="true"]:hover
@@ -155,7 +155,7 @@
 {
   background-image: -o-linear-gradient(-90deg,
                                        rgba(0, 0, 0, 0) 1%,
-                                       rgba(0, 0, 0, .17) 100%);
+                                       rgba(0, 0, 0, 0.2) 100%);
 }
 
 .event-type-1
