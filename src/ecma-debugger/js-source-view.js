@@ -123,32 +123,12 @@ cls.JsSourceView = function(id, name, container_class)
   var updateBreakpoints = function(force_repaint)
   {
     if (force_repaint && line_numbers)
-    {
       line_numbers.style.visibility = "hidden";
-    }
-    var lines = line_numbers && line_numbers.getElementsByTagName('span');
-    var bp_states = __current_script && __current_script.breakpoint_states;
-    var default_y = context['bp-line-pointer-default'];
-    var line_height = context['line-height'];
-    if (bp_states)
-    {
-      for (var i = 0, line, y; line = lines[i]; i++)
-      {
-        if (bp_states[__top_line + i])
-        {
-          y = default_y - 1 * bp_states[__top_line + i] * BP_IMAGE_LINE_HEIGHT;
-          line.style.backgroundPosition = '0 ' + y + 'px';
-        }
-        else
-        {
-          line.style.backgroundPosition = '0 0';
-        }
-      }
-    }
+
+    cls.JsSourceView.update_breakpoints(__current_script, line_numbers, __top_line);
     if (force_repaint)
-    {
       setTimeout(repaint_line_numbers, 0);
-    }
+
     addLineHighlight();
   };
 
@@ -219,6 +199,7 @@ cls.JsSourceView = function(id, name, container_class)
     {
       style.height = context['line-height'] + 'px';
     }
+    cls.JsSourceView.update_default_y();
   }
 
   this.createView = function(container)
@@ -1016,7 +997,46 @@ cls.JsSourceView = function(id, name, container_class)
   this._slice_highlighter = new VirtualTextSearch(config);
   this._tooltip = null;
 
-}
+};
+
+cls.JsSourceView.update_breakpoints = function(script, line_numbers, top_line)
+{
+  var BP_IMAGE_LINE_HEIGHT = 24;
+  var lines = line_numbers && line_numbers.querySelectorAll("span");
+  var bp_states = script && script.breakpoint_states;
+  if (typeof top_line != "number")
+  {
+    var input = line_numbers.querySelector("input");
+    top_line = input && Number(input.value);
+  }
+  if (lines && bp_states && typeof top_line == "number")
+  {
+    for (var i = 0, line; line = lines[i]; i++)
+    {
+      var y = bp_states[top_line + i]
+            ? this.default_y - 1 * bp_states[top_line + i] * BP_IMAGE_LINE_HEIGHT
+            : 0;
+      line.style.backgroundPosition = "0 " + y + "px";
+    }
+  }
+};
+
+cls.JsSourceView.__defineGetter__("default_y", function()
+{
+  if (!this._default_y)
+    this.update_default_y();
+
+  return this._default_y;
+});
+
+cls.JsSourceView.__defineSetter__("default_y", function() {};
+
+cls.JsSourceView.update_default_y = function()
+{
+  var BP_IMAGE_HEIGHT = 12;
+  var d_line_h = window.defaults["js-source-line-height"];
+  this._default_y = (d_line_h - BP_IMAGE_HEIGHT) / 2 >> 0; 
+});
 
 cls.JsSourceView.prototype = ViewBase;
 
