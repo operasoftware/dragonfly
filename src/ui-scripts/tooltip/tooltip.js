@@ -95,8 +95,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   const DATA_TOOLTIP = "data-tooltip";
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
-  const HIDE_DELAY = 120;
-  const SHOW_DELAY = 110;
+  const HIDE_DELAY = 50;
+  const SHOW_DELAY = 40;
+  const HOVER_DELAY = 70;
   const DISTANCE_X = 5;
   const DISTANCE_Y = 5;
   const MARGIN_Y = 30;
@@ -115,6 +116,8 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   var _window_height = 0;
   var _padding_width = -1;
   var _padding_height = -1;
+  var _hover_delay = 0;
+  var _hover_events = [];
 
   var store_window_dimensions = function()
   {
@@ -129,11 +132,23 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     _ctx_stack.push(_tooltip_ctxs[_ctx_stack.length]);
     _cur_ctx = _ctx_stack.last;
-  }
+  };
 
   var _mouseover = function(event)
   {
-    if (_contextmenu && _contextmenu.is_visible)
+    _hover_events.push(event);
+    if (!_hover_delay)
+      _hover_delay = setTimeout(_handle_mouseover, HOVER_DELAY); 
+  };
+
+  var _handle_mouseover = function()
+  {
+    _hover_delay = 0;
+    var event = _hover_events.last;
+    while (_hover_events.length)
+      _hover_events.pop();
+
+    if (!event || (_contextmenu && _contextmenu.is_visible))
       return; 
 
     var ele = event.target;
