@@ -185,6 +185,7 @@
 .advanced-search .ui-button
 {
   margin-top: -1px;
+  vertical-align: top;
 }
 
 .advanced-search .search-move-highlight-up::before
