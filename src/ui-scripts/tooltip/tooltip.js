@@ -170,6 +170,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         ctx.last_box = null;
         ctx.clear_show_timeout();
         ctx.clear_hide_timeout();
+        ctx.accept_call = true;
         _push_ctx();
       }
       else
@@ -389,10 +390,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     var index = _ctx_stack.length - 1;
     var ctx = _ctx_stack[index];
-    var accept_call = ctx.accept_call;
-    while (accept_call && ctx && index > -1)
+    while (ctx && index > -1)
     {
-      if (ctx.current_tooltip && tooltip == ctx.current_tooltip)
+      if (ctx.current_tooltip && tooltip == ctx.current_tooltip && ctx.accept_call)
       {
         while (_ctx_stack.length > index + 1)
           _ctx_stack.pop().hide_tooltip(true);
