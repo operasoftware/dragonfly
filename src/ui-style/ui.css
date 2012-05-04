@@ -1172,12 +1172,12 @@ cst-value
 {
   display: inline-block;
   overflow: hidden;
-  padding: 0 8px;
-  height: 17px;
-  line-height: 17px;
+  padding: 0 4px;
+  height: 19px;
+  line-height: 19px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  vertical-align: middle;
+  vertical-align: top;
   width: 95%; /* TODO: this is ugly, might push down the dropdown */
   box-sizing: border-box;
 }

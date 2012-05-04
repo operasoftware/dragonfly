@@ -62,6 +62,11 @@ Slider.prototype = new function()
 
   this._onmousemove = function(event)
   {
+    if (!this._ref_element)
+    {
+      this._onmouseup();
+      return;
+    }
     var value = 0, box = this._ref_element.getBoundingClientRect();
     if (this._has_x)
     {
