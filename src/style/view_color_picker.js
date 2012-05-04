@@ -21,6 +21,12 @@ window.cls.ColorPickerView = function(id, name, container_class)
   var ELE_CLASS = "color-picker";
   var MARGIN = 5; // Minimum vertical margin between the color picker and the edge of the viewport
 
+  this.__defineGetter__("is_opened", function() {
+    return this._edit_context;
+  });
+
+  this.__defineSetter__("is_opened", function() {});
+
   this._color_cb = function(color, skip_swatch_update)
   {
     var context = this._edit_context;
@@ -87,11 +93,11 @@ window.cls.ColorPickerView = function(id, name, container_class)
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
     this._panel_ele.addEventListener("mousewheel", this._prevent_scroll, true);
-    this.is_opened = true;
   };
 
   this.ondestroy = function()
   {
+    this._tooltip.hide();
     if (this._ele)
       this._ele.parentNode.removeChild(this._ele);
 
@@ -104,7 +110,6 @@ window.cls.ColorPickerView = function(id, name, container_class)
     window.removeEventListener("click", this._hide_on_outside_click, true);
     this._edit_context = null;
     this._ele = null;
-    this.is_opened = false;
   };
 
   this._prevent_scroll = function(event)
@@ -265,7 +270,6 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this._init = function(id, name, container_class)
   {
     this.init(id, name, container_class);
-    this.is_opened = false;
     this._color_picker = null;
     this._edit_context = null;
     this._color_notation = null;
@@ -299,11 +303,15 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
     window.eventHandlers.click["set-color-picker-color"] = function(event, target)
     {
+      if (!this.is_opened)
+        return;
       this._color_picker.update(target.getAttribute("data-color"));
     }.bind(this);
 
     window.eventHandlers.click["add-color-picker-color"] = function(event, target)
     {
+      if (!this.is_opened)
+        return;
       cls.ColorPalette.get_instance().store_color(this._edit_context.current_color.hex);
       target.get_ancestor(".color-picker-palette").re_render(window.templates.color_picker_palette());
       this._update_palette_dropdown();
