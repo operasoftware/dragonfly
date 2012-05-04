@@ -462,7 +462,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   this.hide_tooltip = function()
   {
     if (_cur_ctx)
+    {
+      while (_ctx_stack.length > 1)
+        _ctx_stack.pop().hide_tooltip();
+
+      _cur_ctx = _ctx_stack.last;
       _cur_ctx.hide_tooltip();
-  }
+    }
+  };
 
 }).apply(Tooltips);
