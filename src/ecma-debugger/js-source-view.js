@@ -75,10 +75,10 @@ cls.JsSourceView = function(id, name, container_class)
 
   templates.line_nummer = function()
   {
-    return ['li',
-      ['input'],
-      ['span', 'handler', 'set-break-point'],
-    ];
+    return (
+    ["li",
+      ["input"],
+      ["span", "handler", "set-break-point", "class", "break-point"]]);
   }
 
   var updateLineNumbers = function(fromLine)
@@ -450,16 +450,27 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
-  this.show_and_flash_line = function(script_id, line_no)
+  this.show_and_flash_line = function(script_id, line_no_start, line_no_end)
   {
-    this.showLine(script_id, line_no);
-    var line = this.get_line_element(line_no);
-    if (line && typeof line_no == "number")
+    if (typeof line_no_start != "number")
+      return;
+
+    line_no_end || (line_no_end = line_no_start);
+    this.showLine(script_id, line_no_start);
+    this._change_highlight_class_lines("addClass", line_no_start, line_no_end);
+    var cb = this._change_highlight_class_lines.bind(this, "removeClass",
+                                                     line_no_start, line_no_end);
+    setTimeout(cb, 1000);
+  };
+
+  this._change_highlight_class_lines = function(method, start, end)
+  {
+    for (var i = start, line; i <= end; i++)
     {
-      line.addClass('selected-js-source-line');
-      setTimeout(function(){line.removeClass('selected-js-source-line')}, 800);
+      if (line = this.get_line_element(i))
+        line[method]("selected-js-source-line");
     }
-  }
+  };
 
   this.get_line_element = function(line_no)
   {
@@ -1002,12 +1013,12 @@ cls.JsSourceView = function(id, name, container_class)
 cls.JsSourceView.update_breakpoints = function(script, line_numbers, top_line)
 {
   var BP_IMAGE_LINE_HEIGHT = 24;
-  var lines = line_numbers && line_numbers.querySelectorAll("span");
+  var lines = line_numbers && line_numbers.querySelectorAll(".break-point");
   var bp_states = script && script.breakpoint_states;
   if (typeof top_line != "number")
   {
-    var input = line_numbers.querySelector("input");
-    top_line = input && Number(input.value);
+    var span = line_numbers.querySelector(".line-number");
+    top_line = span && Number(span.textContent);
   }
   if (lines && bp_states && typeof top_line == "number")
   {
