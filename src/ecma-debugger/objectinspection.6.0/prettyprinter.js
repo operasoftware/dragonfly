@@ -117,6 +117,16 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
       var end_line = ctx.function_definition.end_line;
       var line_numbers = ["ul"];
       var lines = ["div"];
+      var head = [];
+      var sc_link = window.templates.script_link_with_file_number(script, start_line);
+      if (sc_link)
+      {
+        sc_link.push("handler", "show-log-entry-source",
+                     "data-scriptid", String(script.script_id),
+                     "data-scriptline", String(start_line),
+                     "data-script-endline", String(end_line)),
+        head = ["h2", sc_link, "class", "js-tooltip-title"];
+      }
       for (var i = start_line; i <= end_line; i++)
       {
         var data = script.get_line(i);
@@ -125,15 +135,18 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
         window.templates.highlight_js_source(data, null, start_state, line_tmpl);
         lines.push(line_tmpl);
         var num_templ = ["li"];
-        num_templ.push(["input", "value", String(i)]);
-        num_templ.push(["span", "handler", "set-break-point"]);
+        num_templ.push(["span", String(i), "class", "line-number"]);
+        num_templ.push(["span", "handler", "set-break-point", "class", "break-point"]);
         line_numbers.push(num_templ);
       }
       lines.push("class", "js-source-content js-source mono");
       line_numbers.push("class", "js-source-line-numbers");
+
       tmpl = ["div", 
-                lines, 
-                line_numbers, 
+                head,
+                ["div",
+                  ["div", lines, line_numbers, "class", "position-relative"],
+                  "class", "js-tooltip-examine-container mono"],
                 "class", "tooltip-function-source",
                 "data-script-id", String(script.script_id)];
     }

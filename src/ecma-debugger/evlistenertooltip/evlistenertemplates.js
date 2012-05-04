@@ -3,7 +3,7 @@
   this.ev_listeners = function(listener_list, rt_id)
   {
     return ["dl", listener_list.map(this._ev_listener.bind(this, rt_id)),
-                  "class", "ev-listener"]; // , this), "class", "ev-listener"];
+                  "class", "ev-listener mono"];
   };
 
   this._ev_listener = function(rt_id, listener)
@@ -19,6 +19,8 @@
     var LISTENER_OBJECT_ID = 4;
     var LISTENER_SCRIPT_DATA = 5;
     var ret = [];
+    var position = listener[POSITION];
+
     ret.push(["dt", listener[EVENT_TYPE], "class", "ev-type"]);
     ret.push(["dd", listener[USE_CAPTURE] ? "capturing phase" : "bubbling phase",
                     "class", "ev-phase"]);
@@ -31,40 +33,21 @@
                          "data-obj-id", String(listener[LISTENER_OBJECT_ID]),
                          "data-class-name", "Function",
                          "class", "ev-origin"]]);
-    var position = listener[POSITION];
     var script_id = position && position[SCRIPT_ID];
     var script = window.runtimes.getScript(script_id);
     if (script)
     {
-      var script_type = this._script_type_map[script.script_type] ||
-                        script.script_type;
-      var ctx = [];
-      if (script.uri)
-      {
-        var is_linked = script.script_type == "linked";
-        ctx.push("span", "added in " + script.filename + ":" + position[LINE_NUMBER], // TODO ui string
-                         "data-tooltip", is_linked && "url-tooltip", 
-                         "data-tooltip-text", is_linked && script.uri);
-      }
-      else
-      {
-        var rt = window.runtimes.getRuntime(script.runtime_id);
-        if (rt)
-          ctx.push("span", "added in " + rt.filename, // TODO ui string
-                           "data-tooltip", "url-tooltip", 
-                           "data-tooltip-text", rt.uri);
-        else
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
-                          " missing runtime in _ev_listener template.");
-      }
 
-      if (ctx.length)
+      var sc_link = this.script_link_with_file_number(script,
+                                                      position[LINE_NUMBER],
+                                                      "added in %s"); //TODO ui string
+      if (sc_link.length)
       {
-        ctx.push("handler", "show-log-entry-source",
-                 "data-scriptid", String(script_id),
-                 "data-scriptline", String(position[LINE_NUMBER]),
-                 "class", "ev-added");
-        ret.push(["dd", ctx]);
+        sc_link.push("handler", "show-log-entry-source",
+                     "data-scriptid", String(script_id),
+                     "data-scriptline", String(position[LINE_NUMBER]),
+                     "class", "ev-added");
+        ret.push(["dd", sc_link]);
       }
     }
     else
@@ -72,5 +55,32 @@
 
     return ret;
   };
+
+  this.script_link_with_file_number = function(script, line_number, str)
+  {
+    str || (str = "%s");
+    var ret = [];
+    var script_type = this._script_type_map[script.script_type] ||
+                      script.script_type;
+    if (script.uri)
+    {
+      var is_linked = script.script_type == "linked";
+      ret.push("span", str.replace("%s", script.filename + ":" + line_number),
+                       "data-tooltip", is_linked && "url-tooltip", 
+                       "data-tooltip-text", is_linked && script.uri);
+    }
+    else
+    {
+      var rt = window.runtimes.getRuntime(script.runtime_id);
+      if (rt)
+        ret.push("span", str.replace("%s", rt.filename),
+                         "data-tooltip", "url-tooltip", 
+                         "data-tooltip-text", rt.uri);
+      else
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+                        " missing runtime in _ev_listener template.");
+    }
+    return ret;
+  }
 
 }).apply(window.templates || (window.templates = {}));
