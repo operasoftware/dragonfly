@@ -201,7 +201,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     var TYPE = 1;
     var VALUE = 2;
-    if (!status && message[TYPE] == 'string')
+    if (!status && message[TYPE] == 'string' && this._edit_context)
     {
       var context = this._edit_context;
       if (context.initial_color = new Color().parseCSSColor(message[VALUE]))
