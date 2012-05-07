@@ -173,11 +173,8 @@ templates.network_request_body = function(req)
         cont.push(templates.network_detail_row(["hr"]));
     }
   }
-  else if (req.requestbody.mimeType === "application/x-www-form-urlencoded")
+  else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
   {
-    // todo: hard to support for example "application/x-www-form-urlencoded; charset=windows-1252" -
-    // req.requestbody.content.characterEncoding is properly set to iso-8859-1 then, but its hard to get
-    // content.stringData into utf-8
     var parts = req.requestbody.content.stringData.split("&");
     var tab = [
                 ["tr",
