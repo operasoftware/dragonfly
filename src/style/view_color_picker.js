@@ -27,7 +27,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this.__defineSetter__("is_opened", function() {});
 
-  this._color_cb = function(color, skip_swatch_update)
+  this._color_cb = function(color, callback)
   {
     var context = this._edit_context;
     if (context.callback)
@@ -44,14 +44,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
                       : window.helpers.get_color_in_notation(color, this._color_notation);
       context.ele_value.firstChild.textContent = color_value;
 
-      // Skip updating this when we're canceling, otherwise we will briefly set the
-      // background color to "inherit" before the view is updated, thus flashing it
-      // in black which looks bad.
-      if (!skip_swatch_update)
-      {
-        context.ele_color_swatch.removeClass("special");
-        context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
-      }
+      context.ele_color_swatch.removeClass("special");
+      context.ele_color_swatch.querySelector(".color-swatch-fg-color").style.backgroundColor = color.rgba;
 
       var property_value_ele = context.ele_value.get_ancestor(".css-property-value");
       if (property_value_ele)
@@ -72,7 +66,9 @@ window.cls.ColorPickerView = function(id, name, container_class)
                                      "\"" + new_value + "\")";
         }
         var msg = [context.rt_id, 0, 0, script, [["rule", context.rule_id]]];
-        var tag = this._tag_manager.IGNORE_RESPONSE;
+        var tag = callback
+                ? this._tag_manager.set_callback(null, callback)
+                : this._tag_manager.IGNORE_RESPONSE;
         this._es_debugger.requestEval(tag, msg);
       }
     }
@@ -168,9 +164,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
   {
     if (this.is_opened)
     {
-      this._color_cb_bound(this._edit_context.initial_color, true);
+      this._color_cb_bound(this._edit_context.initial_color, window.element_style.update);
       this.ondestroy();
-      window.element_style.update();
       return true;
     }
     return false;
