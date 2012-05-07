@@ -189,7 +189,7 @@
         "div",
           colors.map(this._color_picker_palette_square),
         "class", "color-picker-palette-dropdown" + (palette_disabled ? " disabled" : ""),
-        "data-tooltip", palette_disabled ? "" : "color-palette"
+        "data-tooltip", !palette_disabled && "color-palette"
       ]);
     }
     return [];
