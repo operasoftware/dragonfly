@@ -11,17 +11,14 @@ templates.resource_tree = function(context)
 	tpl.push
 	(
 		'div',
-			templates.resource_tree_frame( context, null, 1 ),
+			templates.resource_tree_frame( context, null ),
 			'style','background:white;overflow:auto;height:100%;'
 	);
 	return tpl;
 };
 
-templates.resource_tree_frame = function(context, parentFrameID, depth)
+templates.resource_tree_frame = function(context, parentFrameID)
 {
-	var indent = cls.ResourceTestView.instance._getIndentStyle(depth);
-	depth++;
-
 	var tpl = [];
 	for (var frameID in context.frames)
 	{
@@ -29,7 +26,7 @@ templates.resource_tree_frame = function(context, parentFrameID, depth)
 		if( frame.parentFrameID != parentFrameID ){ continue; }
 		
 		var r = context.get_resource( frame.resourceID );
-		var closed = frame.closed;
+		var className = 'expand-collapse'+(frame.closed?' close':'');
 //		console.log( JSON.stringify(frame) );
 		var tmp = 
 		{
@@ -38,23 +35,24 @@ templates.resource_tree_frame = function(context, parentFrameID, depth)
 			[
 				'div',
 				[	// heading expand-collapse
-					['input','type','button','handler','resources-expand-collapse','class',(closed?'close':'')],
-					['span','frameID='+frameID+' -- '+(r?r.id+' ':'')+((r?r.url.filename||r.human_url:'')||'resource information not fully available yet'),[],
-					'data-tooltip',r&&'js-script-select',
-					'data-tooltip-text',r&&'frame: '+r.human_url]
-//					'class','resource-frame'// expand-collapse-open',
+					['input','type','button','handler','resources-expand-collapse','class','button-'+className],
+					['span', 'class', 'resource-icon resource-type-storage'],
+					['span',' '+((r?r.url.filename||r.human_url:'')||'resource information not fully available yet'),[],
+					'data-tooltip',(r&&'js-script-select'),
+					'data-tooltip-text',(r&&'frame: '+r.human_url)
+					]
+//					'class','resource-fraem'// expand-collapse-open',
 				],
 				[	// resources groups & frames
 					'ul',
 					[].concat
 					(
-						templates.resource_groups( context, frameID, depth ),
-						templates.resource_tree_frame( context, frameID, depth )
+						templates.resource_groups( context, frameID ),
+						templates.resource_tree_frame( context, frameID )
 					).map(function(v){ return['li',[v]]; })
 				],
 				'data-frame-id',frameID,
-				'class','expand-collapse'+(closed?' close':'')
-//				'style',indent
+				'class',className
 			]
 		};
 		tpl.push( tmp );
@@ -65,64 +63,65 @@ templates.resource_tree_frame = function(context, parentFrameID, depth)
 templates.resource_groups = function(context, frameID, depth)
 {
 //	return [['div','groups of the frame '+frameID]];
-	var indent = cls.ResourceTestView.instance._getIndentStyle(depth);
-	depth++;
-
 	var tpl = [];
-	var groups = context.frames[frameID].groups;
-	for (var group in groups)
+	var frame = context.frames[frameID];
+	var groups = frame.groups;
+	for (var groupName in groups)
 	{
-		var count = Object.keys(groups[group].ids).length;
+		var group = groups[groupName];
+		var count = group.ids.length;
 		if( !count ){ continue; }
-		var closed = groups[group].closed;
+
+		var className = 'expand-collapse'+(group.closed?' close':'');
 		tpl.push
 		([
 			'div',
 			[
-				['input','type','button','handler','resources-expand-collapse','class',(closed?'close':'')],
-				['span',group +' ('+ count +')',[],
+				['input','type','button','handler','resources-expand-collapse','class','button-'+className],
+				templates.resource_icon({type:groupName}),
+				['span',' '+ group.name +' ('+ count +')',[],
 				//'style',indent+'white-space:nowrap;background:rgba(0,255,0,.1);',
 				'class','resource-group']
 			],
 			[	// resources 
 				'ul',
-				templates.resource_group(context, frameID, group, depth)
+				templates.resource_group(context, frameID, groupName),
+				'class','resources'
 			],
 			'data-frame-id',frameID,
-			'data-resource-group',group,
-			'class','expand-collapse'+(closed?' close':'')
-//			'style',indent
+			'data-resource-group',groupName,
+			'class',className
 		]);
 	}
 	return tpl;
 };
 
-templates.resource_group = function(context, frameID, group, depth)
+templates.resource_group = function(context, frameID, groupName)
 {
 //	return ['div','groups of the frame '+frameID];
-	var indent = cls.ResourceTestView.instance._getIndentStyle(depth);
-	depth++;
 
-	return Object.keys(context.frames[frameID].groups[group].ids).map
+	var frame = context.frames[frameID];
+	var group = frame.groups[groupName];
+
+	
+	return group.ids.map
 	(
-		function(v,i)
+		function(v)
 		{
 			var r=context.get_resource(v);
 			var tmp =
 			[
 				'li',
 				[
-					templates.resource_icon(r),
-					[
-						'span',
-						'resourceID='+r.id+' -- '+(r.url.filename||r.human_url||'resource information not fully available yet'),
-						[],
-						'data-tooltip',r&&'js-script-select',
-						'data-tooltip-text',r&&group+': '+r.human_url
-					]
+					'span',
+					(r.url.filename||r.human_url||'resource information not fully available yet'),
+					[],
+					'handler','resource-detail',
+					'data-tooltip',(r&&'js-script-select'),
+					'data-tooltip-text',(r&&groupName+': '+r.human_url)
 				],
-//				'white-space:nowrap;background-color:rgba(0,0,0,'+(i&1?.1:.2)+');',
-				'data-resource-id',r.id
+					'data-resource-id',(''+r.id)
+				
 			];
 
 			return tmp;

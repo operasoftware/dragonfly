@@ -104,6 +104,7 @@ cls.ResourceUtil.mime_type_map = {
   "font/opentype": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/truetype": "font",
   "font/woff": "font", // not official, but seems to be common
 
   "audio/mid": "audio",
@@ -186,6 +187,8 @@ cls.ResourceUtil.path_to_type = function(path)
 cls.ResourceUtil.url_path = function(url)
 {
   if (!url) { return null; }
+return url.dir_pathname;
+
   var firstslash = url.replace("://", "xxx").indexOf("/");
   var querystart = url.indexOf("?");
   if (querystart == -1) { querystart = url.length; }
@@ -195,6 +198,7 @@ cls.ResourceUtil.url_path = function(url)
 
 cls.ResourceUtil.url_filename = function(url)
 {
+  return url.filename;
   var path = cls.ResourceUtil.url_path(url);
   var lastslash = path.lastIndexOf("/");
   if (
@@ -211,6 +215,7 @@ cls.ResourceUtil.url_filename = function(url)
 
 cls.ResourceUtil.url_host = function(url)
 {
+  return url.host;
   if (!url) { return null; }
   var host = url.replace(/\w+?:\/\//, "");
   var firstslash = host.indexOf("/");

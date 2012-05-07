@@ -150,7 +150,16 @@ cls.ResourceContext = function(data)
     {
       var frame = event;
       frame.closed = !!event.parentFrameID;
-      frame.groups = { markup: {closed:true,ids:{}}, css: {closed:true,ids:{}}, script: {closed:true,ids:{}}, image: {closed:true,ids:{}}, other: {closed:true,ids:{}} };
+      frame.groups =
+      {
+        markup: new cls.ResourceGroup('markup'),
+        css: new cls.ResourceGroup('stylesheets'),
+        script: new cls.ResourceGroup('scripts'),
+        image: new cls.ResourceGroup('images'),
+        font: new cls.ResourceGroup('fonts'),
+        other: new cls.ResourceGroup('other')
+      }
+
       this.frames[ event.frameID ] = frame;
       return;
     }
@@ -160,7 +169,6 @@ cls.ResourceContext = function(data)
     {
       res = new cls.Resource(event.resourceID);
       res.frameID = event.frameID;
-//      this.resources.push(res);
       this.resourcesDict[ res.id ] = res;
     }
     else if (!res)
@@ -183,8 +191,7 @@ cls.ResourceContext = function(data)
       var type = res.type;
       if (!frame.groups[type]){ type='other'; }
 
-      //if (frame.groups[type].ids.indexOf( res.id )==-1)
-        frame.groups[type].ids[ res.id ]=1;
+      frame.groups[type].push( res.id );
     }
   }
 
@@ -229,6 +236,27 @@ cls.ResourceContext = function(data)
   }
 */
 }
+
+cls.ResourceGroup = function(name)
+{
+  this.ids = [];
+  this.name = null;
+  this.closed = true;
+
+  this._init = function(name)
+  {
+    this.name = name;
+    this.ids.length = 0;
+  }
+  this.push = function( id )
+  {
+    if( this.ids.indexOf(id)===-1 )
+      this.ids.push(id);
+  }
+
+  this._init(name);
+}
+
 
 cls.Resource = function(id)
 {

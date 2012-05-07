@@ -173,7 +173,7 @@
 /* WIP style */
 .expand-collapse
 {
-  margin:0 0 0 16px;
+/*  margin:0 0 0 16px;*/
 /*  background:rgba(0,0,0,.1);*/
 }
 .expand-collapse > ul
@@ -184,29 +184,40 @@
 .expand-collapse > ul > li
 {
   white-space:nowrap;
+  padding:0;
+  margin:0 0 0 16px;
+  line-height:17px;
 }
 .expand-collapse.close > ul
 {
   display:none;
 }
 
-.expand-collapse input
+.button-expand-collapse
 {
   background: url("../ui-images/expand-collapse.png") 1px -14px no-repeat transparent;
   border: 0px none currentColor;
   color: #666666;
   height: 13px;
-  margin: 0px 2px 0px -15px;
+/*  margin: 0px 2px 0px -15px;*/
+  margin:0px 2px 0px 0px;
   padding: 0px;
   width: 13px;
 }
-.expand-collapse input:focus
+.button-expand-collapse:focus
 {
   outline: 2px solid #598BEC;
   outline-offset: -2px;
 }
-.expand-collapse.close input
+.button-expand-collapse.close
 {
   background-position:1px 1px;
 }
-.resource-tree li:hover
+.resources li:nth-child(2n)
+{
+  background-color:#f8f8f8;
+}
+.resources li:hover
+{
+  background-color:#D4E3F4;
+}
