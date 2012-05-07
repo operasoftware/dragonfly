@@ -181,7 +181,7 @@ cls.NetworkLoggerService = function(view)
     {
       var resparg = [[OFF]];
     }
-    this._res_service.requestSetResponseMode(null, resparg);
+    this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
   this.get_body = function(itemid, callback)
@@ -233,11 +233,14 @@ cls.NetworkLoggerService = function(view)
       this._current_context.unpause();
   };
 
-  this.is_paused = function()
+  this.__defineGetter__("is_paused", function()
   {
     if (this._current_context)
-      return this._current_context._paused;
-  };
+      return this._current_context.is_paused;
+  });
+
+  this.__defineSetter__("is_paused", function(){});
+
   this.init();
 };
 
@@ -247,12 +250,21 @@ cls.RequestContext = function()
   this._logger_entries = [];
   this._filters = [];
 
-  // When this is constructed, the context is not paused. Reset the setting.
-  // Todo: Ideally, when paused, the new context should be created in a different
-  // place, so the old one can be kept while we're on pause.
-  settings.network_logger.set("pause", false);
+  this._init();
+};
 
-  this._filter_function_bound = function(item)
+cls.RequestContextPrototype = function()
+{
+  this._init = function()
+  {
+    // When a new context is initiated, it's not paused by default. Reset the setting.
+    // Todo: Ideally, when paused, the new context should be created in a different
+    // place, so the old one can be kept while we're on pause.
+    settings.network_logger.set("pause", false);
+    this._filter_function_bound = this._filter_function.bind(this);
+  };
+
+  this._filter_function = function(item)
   {
     var success = false;
     for (var i = 0; i < this._filters.length; i++)
@@ -273,7 +285,7 @@ cls.RequestContext = function()
       }
     }
     return success;
-  }.bind(this);
+  };
 
   this.get_entries_filtered = function()
   {
@@ -283,7 +295,7 @@ cls.RequestContext = function()
   this.get_entries = function()
   {
     var entries = this._logger_entries;
-    if (this.is_paused())
+    if (this.is_paused)
       entries = this._paused_entries;
 
     return entries;
@@ -304,19 +316,14 @@ cls.RequestContext = function()
     // this only freezes what entries are shown, but they still get updates themselves
     // this works good as long as we don't have things like streaming.
     this._paused_entries = this._logger_entries.slice(0);
-    this._paused = true;
+    this.is_paused = true;
   }
 
   this.unpause = function()
   {
     this._paused_entries = null;
-    this._paused = false;
+    this.is_paused = false;
   }
-
-  this.is_paused = function()
-  {
-    return this._paused;
-  };
 
   this.get_duration = function()
   {
@@ -409,6 +416,8 @@ cls.RequestContext = function()
     return this.get_entries().filter(function(e) { return e.id == id; })[0];
   };
 };
+
+cls.RequestContext.prototype = new cls.RequestContextPrototype();
 
 cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttime)
 {

@@ -548,7 +548,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       {
         if (message.key === "pause")
         {
-          var is_paused = this._service.is_paused();
+          var is_paused = this._service.is_paused;
           var pause = settings.network_logger.get(message.key);
           if (is_paused && !pause)
             this._service.unpause();
