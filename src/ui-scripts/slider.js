@@ -118,6 +118,7 @@ Slider.prototype = new function()
       document.addEventListener('mouseup', this._onmouseup_bound, false);
       this._interval = window.setInterval(this._onmousemoveinterval_bound, UPDATE_INTERVAL);
       this._is_active = true;
+      this._onmousemoveinterval_bound();
       event.preventDefault();
     }
   }
