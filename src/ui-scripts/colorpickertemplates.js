@@ -14,7 +14,7 @@
     };
   })();
 
-  this.color_picker_inputs = function(z_axis, disable_alpha)
+  this.color_picker_inputs = function(z_axis, alpha_disabled)
   {
 
     const COLORSPACE = 0, Z = 4;
@@ -50,7 +50,7 @@
           'max', '1',
           'step', '0.05',
           'class', 'color-picker-number',
-          'disabled', disable_alpha
+          'disabled', alpha_disabled
          ]
        ]
     ];
@@ -125,7 +125,7 @@
 
   this.color_picker_popup = function(existing_color, cp_class, cp_2d_class,
                                      cp_1d_class, cp_old_class, cp_new_class,
-                                     z_axis, disable_alpha)
+                                     z_axis, alpha_disabled, palette_disabled)
   {
     return (
       ['div',
@@ -140,7 +140,7 @@
           'data-handler', 'onz',
           'class', cp_1d_class
         ],
-        window.templates.color_picker_inputs(z_axis, disable_alpha),
+        window.templates.color_picker_inputs(z_axis, alpha_disabled),
         ["input", "name", "hex", "class", "color-picker-text"],
         ["div",
           ['div',
@@ -151,7 +151,7 @@
           ['div', 'class', cp_new_class],
          "class", "color-picker-color-alpha-bg"
         ],
-        window.templates.color_picker_palette_dropdown(),
+        window.templates.color_picker_palette_dropdown(palette_disabled),
         ["div",
           ["span",
              ui_strings.S_BUTTON_CANCEL,
@@ -172,7 +172,7 @@
     );
   };
 
-  this.color_picker_palette_dropdown = function()
+  this.color_picker_palette_dropdown = function(palette_disabled)
   {
     if (window.cls && cls.ColorPalette)
     {
@@ -188,8 +188,8 @@
       return ([
         "div",
           colors.map(this._color_picker_palette_square),
-        "class", "color-picker-palette-dropdown",
-        "data-tooltip", "color-palette"
+        "class", "color-picker-palette-dropdown" + (palette_disabled ? " disabled" : ""),
+        "data-tooltip", palette_disabled ? "" : "color-palette"
       ]);
     }
     return [];

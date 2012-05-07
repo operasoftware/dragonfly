@@ -420,13 +420,14 @@ ColorPicker.prototype = new function()
 
   /* implementation */
 
-  this.render = function(disable_alpha)
+  this.render = function(alpha_disabled, palette_disabled)
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
     return window.templates.color_picker_popup(this._initial_color,
                                                CP_CLASS, CP_2D_CLASS,
                                                CP_1D_CLASS, CP_OLD_CLASS,
-                                               CP_NEW_CLASS, 'h', disable_alpha)
+                                               CP_NEW_CLASS, 'h',
+                                               alpha_disabled, palette_disabled);
   }
 
   this.update = function(color_value)

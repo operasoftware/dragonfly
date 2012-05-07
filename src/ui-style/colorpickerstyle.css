@@ -292,6 +292,11 @@
   border: 1px solid rgba(34, 34, 34, 0.4);
 }
 
+.color-picker-palette-dropdown.disabled .color-picker-palette-square
+{
+  background: #ccc !important;
+}
+
 .color-picker-palette-dropdown.tooltip-selected .color-picker-palette-square
 {
   border-color: rgba(34, 34, 34, 0.6);

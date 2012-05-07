@@ -36,7 +36,8 @@ cls.ColorPaletteView = function(id, name, container_class)
         ele_color_value: color_sample.nextSibling,
         callback: this._oneditcolor,
         edit_class: 'edited-color',
-        disable_alpha: true
+        alpha_disabled: true,
+        palette_disabled: true
       };
       window.views['color-selector'].show_color_picker(color_sample, this._edit_context);
     }
