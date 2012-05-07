@@ -84,7 +84,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._color_picker = new ColorPicker(this._color_cb_bound,
                                          this._edit_context.initial_color);
     container.style.visibility = "hidden";
-    container.render(this._color_picker.render(this._edit_context.alpha_disabled, this._edit_context.palette_disabled));
+    container.render(this._color_picker.render(this._edit_context.alpha_disabled,
+                                               this._edit_context.palette_disabled));
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
