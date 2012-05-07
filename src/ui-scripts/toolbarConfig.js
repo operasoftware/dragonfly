@@ -127,6 +127,7 @@ var ToolbarConfigBase = new function()
       // Add a plain button array to support deactivating etc.,
       // initialize Switches and SingleSelect objects 
       this.buttons = [];
+      this.filters = [];
       for (var i = 0, group; group = this.groups[i]; i++)
       {
         if (group.type !== UI.TYPE_INPUT && group.items)
@@ -145,9 +146,8 @@ var ToolbarConfigBase = new function()
         }
         else if (group.type === UI.TYPE_INPUT)
         {
-          filter_array || (filter_array = []);
           for (var k = 0, search; search = group.items[k]; k++)
-            filter_array.push(search);
+            this.filters.push(search);
         }
       }
     }
@@ -156,10 +156,10 @@ var ToolbarConfigBase = new function()
       var name = name_or_config_object;
       this.buttons = button_array || [];
       this.groups = [{items: this.buttons}];
+      this.filters = filter_array || [];
+      this.specials = special_button_array || [];
+      this.customs = custom_button_array || [];
     }
-    this.filters = filter_array || [];
-    this.specials = special_button_array || [];
-    this.customs = custom_button_array || [];
     this.container_ids = [];
     this.__is_visible = true;
     if(!window.toolbars)

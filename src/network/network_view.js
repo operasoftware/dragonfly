@@ -362,40 +362,37 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._resize_detail_evt = null;
   }.bind(this);
 
-  var _make_selection_func = function(accessor, bind_me)
+  var _make_selection_func = function(accessor)
   {
-    return (function()
+    if (this._selected)
     {
-      if (this._selected)
+      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+      if (selected_node && 
+          selected_node[accessor] && 
+          selected_node[accessor].dataset.objectId)
       {
-        var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-        if (selected_node && 
-            selected_node[accessor] && 
-            selected_node[accessor].dataset.objectId)
+        this._selected = selected_node[accessor].dataset.objectId;
+        selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+        if (selected_node)
         {
-          this._selected = selected_node[accessor].dataset.objectId;
-          selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-          if (selected_node)
+          var outer_container = this._container.firstChild;
+          var selected_ypos = selected_node.offsetTop + selected_node.offsetHeight;
+          if (selected_ypos > (outer_container.offsetHeight + this._container_scroll_top))
           {
-            var outer_container = this._container.firstChild;
-            var selected_ypos = selected_node.offsetTop + selected_node.offsetHeight;
-            if (selected_ypos > (outer_container.offsetHeight + this._container_scroll_top))
-            {
-              // scroll down to node
-              this._container_scroll_top = selected_ypos - outer_container.offsetHeight;
-            }
-            else if (selected_node.offsetTop < this._container_scroll_top)
-            {
-              // scroll up to node
-              this._container_scroll_top = selected_node.offsetTop;
-            }
+            // scroll down to node
+            this._container_scroll_top = selected_ypos - outer_container.offsetHeight;
           }
-          this.needs_instant_update = true;
-          this.update();
-          return false;
+          else if (selected_node.offsetTop < this._container_scroll_top)
+          {
+            // scroll up to node
+            this._container_scroll_top = selected_node.offsetTop;
+          }
         }
+        this.needs_instant_update = true;
+        this.update();
+        return false;
       }
-    }).bind(bind_me || this);
+    }
   };
 
   this._on_clicked_request_bound = function(evt, target)
@@ -636,8 +633,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
-    "select-next-entry": _make_selection_func("nextElementSibling", this),
-    "select-previous-entry": _make_selection_func("previousElementSibling", this),
+    "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
+    "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
     "close-details": this._on_clicked_close_bound
   };
   this.id = id;

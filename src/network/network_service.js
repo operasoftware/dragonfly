@@ -364,9 +364,10 @@ cls.RequestContextPrototype = function()
   this._event_changes_req_id = function(event, last_entry)
   {
     /* 
-      Checks if the event's requestID is different from the one in the last_entry.
-      That shouldn't happen, because "urlload" doesn't have a requestID and it
-      initiates a new entry.
+      Checks if the event's requestID is different from the one in last_entry. 
+      That should never be the case, since the "urlload" event initiates 
+      a new entry and that doesn't have a requestID. Note that last_entry is 
+      the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
            (last_entry.requestID !== event.requestID);
@@ -383,6 +384,13 @@ cls.RequestContextPrototype = function()
 
     if (logger_entry && logger_entry.requestID)
     {
+      /*
+        The same resource id can be loaded several times, but then the request id changes.
+        It's not loaded multiple times in parallel though, so the following check would
+        emit errors if that would happen. There is at least one NetworkLoggerEntry per
+        request ID, but several entries can refer to the same resource ID.
+        Note: Retry events change the request id, but the Entry stays the same.
+      */
       var changed_request_id = this._event_changes_req_id(event, logger_entry);
       if (changed_request_id)
       {
@@ -395,7 +403,7 @@ cls.RequestContextPrototype = function()
 
     if (eventname == "urlload" || changed_request_id)
     {
-      var id = event.resourceID + ":" + this._logger_entries.length;
+      var id = JSON.stringify({res_id: event.resourceID, num: this._logger_entries.length});
       logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
       this._logger_entries.push(logger_entry);
     }

@@ -164,7 +164,7 @@ templates.network_viewmode_graphs = function(ctx, entries, selected, width)
   return template;
 }
 
-templates.network_log_url_list_entry = function(entry)
+templates.network_log_url_list_entry = function(selected, entry)
 {
   var had_error_response = entry.had_error_response;
   var not_requested = !entry.touched_network;
@@ -178,9 +178,9 @@ templates.network_log_url_list_entry = function(entry)
            ],
            "handler", "select-network-request",
            "data-object-id", String(entry.id),
-           "class", (this.selected === entry.id ? "selected " : " ") + 
-                    (had_error_response ? ERROR_RESPONSE + " " : " ") + 
-                    (not_requested ? NOT_REQUESTED : "")
+           "class", (selected === entry.id ? "selected" : "") + 
+                    (had_error_response ? " " + ERROR_RESPONSE : "") + 
+                    (not_requested ? " " + NOT_REQUESTED : "")
          ];
 };
 
@@ -189,7 +189,7 @@ templates.network_log_url_list = function(ctx, entries, selected, item_order)
   return [
     ["ol",
       entries.map(
-        templates.network_log_url_list_entry.bind({selected: selected})
+        templates.network_log_url_list_entry.bind(null, selected)
       ),
       "class", "network-log-url-list sortable-table-style-list"]
   ]
@@ -291,9 +291,9 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   while (stepsize && --cnt >= 0)
   {
     var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
-    var val_str = (stepsize * cnt) / unit[0];
-    val_str = Math.round(val_str * 100) / 100;
-    labels.push(["span", "" + val_str + unit[1],
+    var val_for_str = (stepsize * cnt) / unit[0];
+    val_for_str = Math.round(val_for_str * 100) / 100;
+    labels.push(["span", val_for_str + unit[1],
                  "style", "left: " + left_val + "px;",
                  "class", "timeline-marker"
                  ]);
