@@ -1555,6 +1555,7 @@ d
   margin: 0;
 }
 
+/*
 .closing-brace
 {
   position: relative;
@@ -1594,6 +1595,7 @@ d
   background-repeat: no-repeat;
   color: rgba(0, 0, 0, 0.5);
 }
+*/
 
 .css-property-value .color-picker-active-item
 {
