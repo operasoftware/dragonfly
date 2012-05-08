@@ -45,7 +45,7 @@ window.cls.ServiceBase = function ()
 
   this.satisfies_version = function(major, minor)
   {
-    return this.major_version > major || (this.major_version === major && this.minor_version > minor);
+    return this.major_version > major || (this.major_version === major && this.minor_version >= minor);
   };
 
   this._expose_method = function(id, name)
