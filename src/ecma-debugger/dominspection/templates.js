@@ -33,6 +33,7 @@
   const PSEUDO_ELEMENT_AFTER = 2;
   const PSEUDO_ELEMENT_FIRST_LETTER = 3;
   const PSEUDO_ELEMENT_FIRST_LINE = 4;
+  const EVENT_LISTENER_LIST = 15;
 
   this._pseudo_element_map = {};
   this._pseudo_element_map[PSEUDO_ELEMENT_BEFORE] = "before";
@@ -328,6 +329,9 @@
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var is_expandable = false;
+    var ev_listener_markup = "<span class=\"node-with-ev-listener\" "+
+                                   "data-tooltip=\"event-listener\" " +
+                                   "></span>"
 
     for ( ; node = data[i]; i += 1)
     {
@@ -376,6 +380,10 @@
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
           node_name = helpers.escapeTextHtml(node_name);
+          var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                          ? ev_listener_markup
+                          : "";
+
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
@@ -455,7 +463,7 @@
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
                           (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>";
+                      ev_listener + "</div>";
               i = child_pointer - 1;
             }
             else
@@ -470,7 +478,7 @@
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>"; 
+                      ev_listener + "</div>"; 
 
               closing_tags.push("<div" + this._margin_style(node, depth_first_ele) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
@@ -492,7 +500,7 @@
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (is_expandable ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>";
+                      ev_listener + "</div>";
           }
           break;
         }
@@ -523,6 +531,14 @@
         }
 
         case DOCUMENT_NODE:
+          var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                          ? ev_listener_markup
+                          : "";
+          if (ev_listener)
+          {
+            tree += "<div style='margin-left:-16px;' class='document-node' " +
+                         "ref-id='" + node[ID] + "'>document" + ev_listener + "</div>";
+          }
           // Don't show this in markup view
           break;
 

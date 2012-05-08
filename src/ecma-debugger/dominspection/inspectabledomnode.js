@@ -29,6 +29,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST = 15;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
@@ -62,7 +63,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE],
   AFTER_ALIKES = [AFTER],
   ERROR_MSG = 0,
-  PSEUDO_NAME = {};
+  PSEUDO_NAME = {},
+  EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
 
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
@@ -437,12 +439,27 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   {
     return Boolean(this._data && this._data.length);
   }
+  
+  this.get_node = function(node_id)
+  {
+    if (this.has_data())
+    {
+      for (var i = 0; this._data[i] && this._data[i][ID] != node_id; i++);
+      return this._data[i];
+    }
+    return null;
+  };
 
   this.has_node = function(node_id)
   {
-    for (var i = 0; this._data[i] && this._data[i][ID] != node_id; i++);
-    return Boolean(this._data[i]);
-  }
+    return Boolean(this.get_node(node_id));
+  };
+
+  this.get_ev_listeners = function(node_id)
+  {
+    var node = this.get_node(node_id);
+    return node && node[EVENT_LISTENER_LIST] || [];
+  };
 
   this.get_data = this.getData = function()
   {

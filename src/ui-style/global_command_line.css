@@ -20,7 +20,6 @@ container.console
 .console .repl-input,
 .console .repl-output,
 .console #examine-objects .object,
-.console .js-source,
 .console examine-objects .object,
 .console .datetime
 {

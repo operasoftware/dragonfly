@@ -165,19 +165,26 @@ window.eventHandlers.click['set-stop-at'] = function(event)
 
 window.eventHandlers.click['set-break-point'] = function(event)
 {
-  var line = parseInt(event.target.parentElement.children[0].value);
-  var script_id = views.js_source.getCurrentScriptId();
   var bps = cls.Breakpoints.get_instance();
-  if (line)
+  var target = event.target;
+  var li = target.get_ancestor("li");
+  var input = li.querySelector("input");
+  var line_number = input && Number(input.value);
+  if (!line_number)
   {
-    if (bps.script_has_breakpoint_on_line(script_id, line))
+    var span = li.querySelector(".line-number");
+    line_number = span && Number(span.textContent);
+  }
+  var script_id = window.views.js_source.getCurrentScriptId() ||
+                  Number(target.get_ancestor_attr("data-script-id"));
+  if (script_id && line_number)
+  {
+    if (bps.script_has_breakpoint_on_line(script_id, line_number))
     {
-      var bp_id = bps.remove_breakpoint(script_id, line);
-      cls.Breakpoints.get_instance().delete_breakpoint(bp_id);
+      var bp_id = bps.remove_breakpoint(script_id, line_number);
+      bps.delete_breakpoint(bp_id);
     }
     else
-    {
-      bps.add_breakpoint(script_id, line);
-    }
+      bps.add_breakpoint(script_id, line_number);
   }
 };

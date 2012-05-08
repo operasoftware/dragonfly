@@ -23,6 +23,8 @@ cls.JSInspectionTooltip = function()
       _cur_ctx = ctx;
       _cur_ctx.target.addClass(CLASS_TOOLTIP_SELECTED);
       _tooltip.show(ctx.template);
+      if (ctx.type.after_render)
+        ctx.type.after_render();
     }
     else
       _hide_tooltip();
@@ -107,6 +109,23 @@ cls.JSInspectionTooltip = function()
                              class_name: obj[OBJECT_VALUE][CLASS_NAME] || "",
                              object: obj,
                              callback: _handle_ontooltip});
+    }
+    else
+    {
+      var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
+      var obj_id = Number(target.get_ancestor_attr("data-obj-id"));
+      var class_name = target.get_ancestor_attr("data-class-name");
+      if (rt_id && obj_id && class_name)
+      {
+        _cur_object = {rt_id: rt_id, obj_id: obj_id, class_name: class_name}; 
+        _pretty_printer.print({target: target,
+                               rt_id: rt_id,
+                               obj_id: obj_id,
+                               class_name: class_name,
+                               object: _cur_object,
+                               callback: _handle_ontooltip});
+
+      }
     }
   };
 

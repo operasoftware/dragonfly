@@ -691,6 +691,24 @@ parent-offset
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
 }
 
+.node-with-ev-listener
+{
+  display: inline-block;
+  height: 12px;
+  line-height: 12px;
+  vertical-align: middle;
+  margin-left: 3px;
+  padding: 0 2px;
+  background-color: hsl(0, 0% , 70%);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.node-with-ev-listener::after
+{
+  content: "ev";
+}
+
 .css-layout > div > h2:first-child
 {
   border-width: 0 0 1px;
@@ -1606,4 +1624,43 @@ d
   margin: -3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+.ev-listener
+{
+  margin: 0;
+}
+
+.ev-type
+{
+  font-weight: bold;
+}
+
+.ev-added,
+.ev-origin
+{
+  border-radius: 2px;
+}
+
+.tooltip-function-source .js-tooltip-examine-container
+{
+  padding: 0;
+}
+
+.tooltip-function-source .js-source-line-numbers
+{
+  background-color: hsla(0, 0%, 0%, .03);
+  border-radius: 0 0 0 3px;
+}
+
+.tooltip-function-source .js-source-content
+{
+  margin-left: 40px;
+}
+
+.position-relative
+{
+  position: relative;
+}
+
+
 

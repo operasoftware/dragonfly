@@ -210,7 +210,16 @@ window.load_screen_timeout = window.setTimeout(function()
 <!-- command concat_js "./script/dragonfly.js" -->
 
 <script src="./scripts/ini.js"/>
-<script src="./scripts/dom.js"/>
+<script src="./lib/elementprototype.js"/>
+<script src="./lib/arrayprototype.js"/>
+<script src="./lib/canvasrenderingcontext2dprototype.js"/>
+<script src="./lib/dateprototype.js"/>
+<script src="./lib/nodelistprototype.js"/>
+<script src="./lib/object.js"/>
+<script src="./lib/opera.js"/>
+<script src="./lib/stringprototype.js"/>
+<script src="./lib/stylesheetlistprototype.js"/>
+<script src="./lib/xmlhttprequestprototype.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
@@ -413,6 +422,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/watches/view.js"/>
 <script src="./ecma-debugger/watches/propertyeditor.js"/>
 <script src="./ecma-debugger/jssourcetooltip.js"/>
+<script src="./ecma-debugger/evlistenertooltip/evlisteners.js"/>
+<script src="./ecma-debugger/evlistenertooltip/viewevlisteners.js"/>
+<script src="./ecma-debugger/evlistenertooltip/evlistenertooltip.js"/>
+<script src="./ecma-debugger/evlistenertooltip/evlistenertemplates.js"/>
 
 <script src="./searches/jssearchview.js"/>
 
