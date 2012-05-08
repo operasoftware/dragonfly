@@ -184,7 +184,7 @@ templates.network_log_url_list_entry = function(selected, entry)
          ];
 };
 
-templates.network_log_url_list = function(ctx, entries, selected, item_order)
+templates.network_log_url_list = function(ctx, entries, selected)
 {
   return [
     ["ol",
