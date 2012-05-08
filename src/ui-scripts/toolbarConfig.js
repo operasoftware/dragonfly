@@ -185,24 +185,27 @@ var ToolbarConfigBase = new function()
   * @extends ToolbarConfigBase
   */
 
+  /* config_object
+    {
+      view: "view_id" // of the view this toolbar belongs to,
+      groups: // list of groups that will be separate visually
+      [
+        {
+          type: one of "buttons", "switch", "single-select" or "input".
+          items: // list of config objects of buttons, switches etc.
+          [
+          ]
+        }
+      ]
+    }
+  */
+
 var ToolbarConfig = function(name_or_config_object, 
                              button_array, 
                              filter_array, 
                              special_button_array, 
                              custom_button_array)
 {
-  /* config_object
-    {
-      view: view_id of the view this toolbar belongs to,
-      groups: list of groups that will be separate visually
-      [
-        type: one of "buttons", "switch", "single-select" or "input".
-        items: list of config objects of buttons, switches etc.
-        [
-        ]
-      ]
-    }
-  */
 
   this.init(name_or_config_object, 
             button_array, 

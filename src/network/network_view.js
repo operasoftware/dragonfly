@@ -52,32 +52,21 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
-    if (this.query)
-    {
-      // this triggers _create via on_before_search
-      this.text_search.update_search();
-    }
-    else
-    {
-      this._create();
-    }
-    this._rendertime = Date.now();
-  }
-
-  this._create = function()
-  {
     var ctx = this._service.get_request_context();
     if (ctx)
     {
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filters(this._type_filters || []);
       this._render_main_view(this._container);
+      this.text_search.text_search.update_search();
     }
     else
     {
       this._render_click_to_fetch_view(this._container);
     }
-  };
+
+    this._rendertime = Date.now();
+  }
 
   this._create_delayed_bound = function()
   {
@@ -91,12 +80,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     this.needs_instant_update = true;
     this.update();
-  }.bind(this);
-
-  this._on_before_search_bound = function(message)
-  {
-    this.query = message.search_term;
-    this._create();
   }.bind(this);
 
   this._render_details_view = function(container, selected)
@@ -774,7 +757,6 @@ cls.NetworkLog.create_ui_widgets = function()
   );
 
   var text_search = window.views.network_logger.text_search = new TextSearch();
-  text_search.add_listener("onbeforesearch", window.views.network_logger._on_before_search_bound);
 
   eventHandlers.input["network-text-search"] = function(event, target)
   {
