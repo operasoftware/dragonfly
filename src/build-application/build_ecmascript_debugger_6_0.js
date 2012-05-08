@@ -180,6 +180,13 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.JSSearchView('js-search', 
                          ui_strings.M_VIEW_LABEL_SEARCH, 
                          'scroll js-search');
+
+    /* Listeners */
+    if (service_interface.satisfies_version(6, 11))
+    {
+      cls.Listeners.prototype = ViewBase;
+      new cls.Listeners("ev-listeners", "Listeners", "ev-listeners");
+    }
                              
     /* adjust the base class */
 

@@ -522,9 +522,13 @@ ui_framework.layouts.dom_rough_layout =
       width: 350,
       tabs: function(services)
       {
-        return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
-               ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'] :
-               ['dom-side-panel', 'dom_attrs', 'css-layout']);
+        if (services['ecmascript-debugger'].satisfies_version(6, 11))
+          return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search', 'ev-listeners'];
+
+        if (services['ecmascript-debugger'].satisfies_version(6, 5))
+          return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];
+
+        return ['dom-side-panel', 'dom_attrs', 'css-layout'];
       }
     }
   ]

@@ -531,6 +531,14 @@
         }
 
         case DOCUMENT_NODE:
+          var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                          ? ev_listener_markup
+                          : "";
+          if (ev_listener)
+          {
+            tree += "<div style='margin-left:-16px;' class='document-node' " +
+                         "ref-id='" + node[ID] + "'>document" + ev_listener + "</div>";
+          }
           // Don't show this in markup view
           break;
 
