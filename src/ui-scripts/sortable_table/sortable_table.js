@@ -88,6 +88,7 @@ var SortableTablePrototype = function()
     this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
+    this._re_render_bound = this._re_render.bind(this);
     this._init_handlers();
   }
 
@@ -134,7 +135,7 @@ var SortableTablePrototype = function()
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_NO_GROUPING,
         selected: !obj.groupby,
-        handler: obj._make_group_handler(null, obj._re_render_table)
+        handler: obj._generic_handler.bind(null, "group", null)
       });
 
       for (var group in obj.tabledef.groups)
@@ -142,7 +143,7 @@ var SortableTablePrototype = function()
         menuitems.push({
           label: ui_strings.M_SORTABLE_TABLE_CONTEXT_GROUP_BY.replace("%s", obj.tabledef.groups[group].label || group),
           selected: obj.groupby == group,
-          handler: obj._make_group_handler(group, obj._re_render_table)
+          handler: obj._generic_handler.bind(null, "group", group)
         });
       }
     }
@@ -171,14 +172,14 @@ var SortableTablePrototype = function()
         menuitems.push({
           label: coldef.label,
           checked: obj.columns.indexOf(colname) != -1,
-          handler: obj._make_colselect_handler(colname, obj._re_render_table)
+          handler: obj._generic_handler.bind(null, "togglecol", colname)
         });
       }
 
       var is_default_cols = obj.columns.join(",") === obj.default_columns.join(",");
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_COLUMNS,
-        handler: !is_default_cols && obj._make_restore_columns_handler(obj._re_render_table),
+        handler: !is_default_cols && obj._generic_handler.bind(null, "togglecol", null),
         disabled: is_default_cols
       });
     }
@@ -190,7 +191,7 @@ var SortableTablePrototype = function()
 
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT,
-        handler: obj._make_reset_sort_handler(obj._re_render_table)
+        handler: obj._generic_handler.bind(null, "reset_sort", colname)
       });
     }
     return menuitems;
@@ -209,83 +210,38 @@ var SortableTablePrototype = function()
     return this.columns.length;
   }
 
-  this._make_group_handler = function(group, re_render_table)
+  this._generic_handler = function(method_name, option, evt)
   {
-    return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
-      var obj = ObjectRegistry.get_instance().get_object(obj_id);
-      obj.group(group);
-      re_render_table(obj, evt.target.get_ancestor("table"));
-    }
-  }
-
-  this._make_colselect_handler = function(col, re_render_table)
-  {
-    return function(evt) {
-      var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
-      var obj = ObjectRegistry.get_instance().get_object(obj_id);
-      obj.togglecol(col);
-      re_render_table(obj, evt.target.get_ancestor("table"));
-    }
-  }
-
-  this._make_restore_columns_handler = function(re_render_table)
-  {
-    return function(evt) {
-      var obj_id = evt.target.get_attr("parent-node-chain", "data-table-object-id");
-      var obj = ObjectRegistry.get_instance().get_object(obj_id);
-      obj.restore_columns();
-      re_render_table(obj, evt.target.get_ancestor("table"));
-    }
-  }
-
-  this._make_reset_sort_handler = function(re_render_table)
-  {
-    return function(evt) {
-      var obj_id = evt.target.get_attr("parent-node-chain", "data-table-object-id");
-      var obj = ObjectRegistry.get_instance().get_object(obj_id);
-      if (obj._org_data_order)
-      {
-        obj.reversed = localStorage[this._sort_reverse_storage_id] = null;
-        obj.sortby = localStorage[this._sorter_storage_id] = null;
-        var old_data = obj.get_data();
-        var new_data = [];
-        for (var i = 0; i < obj._org_data_order.length; i++)
-        {
-          var id = obj._org_data_order[i];
-          var matching_item = old_data.filter(function(item){
-            return obj.tabledef.idgetter(item) === id
-          })[0];
-          if (matching_item)
-            new_data.push(matching_item);
-
-        };
-        obj.set_data(new_data);
-        re_render_table(obj, evt.target.get_ancestor("table"));
-      }
-    }
+    // method_name is the method_name that the chosen option is passed to.
+    // group, togglecol, reset_sort
+    var table = evt.target.get_ancestor("[data-table-object-id]");
+    var obj_id = table.getAttribute("data-table-object-id");
+    var table_instance = ObjectRegistry.get_instance().get_object(obj_id);
+    table_instance[method_name](option);
+    table_instance._re_render_bound(table);
   }
 
   this._sort_handler = function(evt, target)
   {
-    var obj_id = evt.target.get_attr('parent-node-chain', 'data-table-object-id');
-    var obj = ObjectRegistry.get_instance().get_object(obj_id);
-    var col_id = evt.target.get_attr('parent-node-chain', 'data-column-id');
-    obj.sort(col_id);
-    obj._re_render_table(obj, target.parentNode.parentNode);
+    var table = evt.target.get_ancestor("[data-table-object-id]");
+    var obj_id = table.getAttribute("data-table-object-id");
+    var table_instance = ObjectRegistry.get_instance().get_object(obj_id);
+    var col_id = evt.target.get_attr("parent-node-chain", "data-column-id");
+    table_instance.sort(col_id);
+    table_instance._re_render_bound(table);
   }
 
-  this._re_render_table = function(obj, table)
+  this._re_render = function(table)
   {
     if (table && table.parentNode)
     {
-      obj.post_message("before-render", {table: table});
-      var template = obj.render();
+      this.post_message("before-render", {table: table});
+      var template = this.render();
       table = table.re_render(template);
       if (table)
-        obj.post_message("after-render", {table: table[0], template: template});
+        this.post_message("after-render", {table: table[0], template: template});
     }
-  }
+  };
 
   this._default_sorters = {
     "number": function(getter) { return function(a, b) { return b-a; } }
@@ -297,12 +253,6 @@ var SortableTablePrototype = function()
                                     this.columns, this.groupby, this.sortby,
                                     this.reversed);
   };
-
-  this.restore_columns = function()
-  {
-    this.columns = this.default_columns.slice(0);
-    localStorage[this._columns_storage_id] = JSON.stringify(this.columns);
-  }
 
   this._prop_getter = function(name)
   {
@@ -324,7 +274,8 @@ var SortableTablePrototype = function()
 
   this.sort = function(col)
   {
-    if (col == this.sortby) {
+    if (col == this.sortby)
+    {
       this.reversed = !this.reversed;
       if (this.id)
         localStorage[this._sort_reverse_storage_id] = this.reversed;
@@ -338,6 +289,31 @@ var SortableTablePrototype = function()
 
     }
   };
+
+  this._id_map = function(item)
+  {
+    return this.tabledef.idgetter(item);
+  }
+
+  this.reset_sort = function()
+  {
+    if (this._org_data_order)
+    {
+      this.reversed = localStorage[this._sort_reverse_storage_id] = null;
+      this.sortby = localStorage[this._sorter_storage_id] = null;
+      var old_data = this.get_data();
+      var old_data_index = old_data.map(this._id_map, this);
+      var new_data = [];
+      for (var i = 0; i < this._org_data_order.length; i++)
+      {
+        var id = this._org_data_order[i];
+        var index = old_data_index.indexOf(id);
+        new_data.push(old_data[index]);
+      }
+      this.set_data(new_data);
+    }
+  }
+
 
   this.group = function(group)
   {
@@ -356,20 +332,27 @@ var SortableTablePrototype = function()
 
   this.togglecol = function(col)
   {
-    var index = this.columns.indexOf(col);
-    if (index == -1)
+    if (!col)
     {
-      var point = this._find_col_insertion_point(col);
-      this.columns.splice(point, 0, col);
+      // reset columns
+      this.columns = this.default_columns.slice(0);
     }
     else
     {
-      this.columns.splice(index, 1);
+      var index = this.columns.indexOf(col);
+      if (index == -1)
+      {
+        var point = this._find_col_insertion_point(col);
+        this.columns.splice(point, 0, col);
+      }
+      else
+        this.columns.splice(index, 1);
+
     }
     if (this.id)
       localStorage[this._columns_storage_id] = JSON.stringify(this.columns);
-  }
 
+  }
 };
 
 SortableTable.prototype = new SortableTablePrototype();
