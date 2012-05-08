@@ -2,6 +2,7 @@
       xmlns:xlink="http://www.w3.org/1999/xlink" 
       xmlns:svg="http://www.w3.org/2000/svg">
 <link rel="stylesheet" href="../../src/ui-style/colorpickerstyle.css"/>
+<script src="../../src/ui-strings/ui_strings-en.js"/>
 <script src="../../src/scripts/dom.js"/>
 <script src="../../src/scripts/colors.js"/>
 <script src="../../src/scripts/colorspace.js"/>
@@ -21,7 +22,7 @@ var show_picker = function()
     "rgb: " + color.rgb + "\n" +
     "hsv: " + color.hsv + "\n" +
     "hsl: " + color.hsl;
-  }, "#00ff00");
+  }, new Color().parseCSSColor("#00ff00"));
   document.getElementsByTagName('body')[0].render(
   ['div', 
     color_picker.render(),
