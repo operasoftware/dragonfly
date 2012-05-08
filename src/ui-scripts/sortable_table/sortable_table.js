@@ -191,7 +191,7 @@ var SortableTablePrototype = function()
 
       menuitems.push({
         label: ui_strings.M_SORTABLE_TABLE_CONTEXT_RESET_SORT,
-        handler: obj._generic_handler.bind(null, "reset_sort", colname)
+        handler: obj._generic_handler.bind(null, "reset_sort", null)
       });
     }
     return menuitems;
