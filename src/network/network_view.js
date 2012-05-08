@@ -97,7 +97,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     this.query = message.search_term;
     this._create();
-  }.bind(this)
+  }.bind(this);
 
   this._render_details_view = function(container, selected)
   {
@@ -116,7 +116,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           "handler", "reload-window",
           "tabindex", "1"],
         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
-          "class", "info-box"
+        "class", "info-box"
       ]
     );
   };

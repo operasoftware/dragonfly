@@ -13,22 +13,27 @@
  *         columns: {
  *
  */
-function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
+var SortableTable = function(tabledef, data, cols, sortby, groupby, reversed, id)
 {
-  // consts for where the table-options are stored
-  var GROUPER = "table-groupby-" + id,
-      SORTER = "table-sort-col-" + id,
-      SORT_REVERSE = "table-sort-reversed-" + id,
-      COLUMNS = "table-columns-" + id;
+  this._init(tabledef, data, cols, sortby, groupby, reversed, id);
+};
 
-  this._init = function()
+var SortableTablePrototype = function()
+{
+  window.cls.MessageMixin.apply(this);
+  this._init = function(tabledef, data, cols, sortby, groupby, reversed, id)
   {
-    window.cls.MessageMixin.apply(this);
+    this._grouper_storage_id = "table-groupby-" + id,
+    this._sorter_storage_id = "table-sort-col-" + id,
+    this._sort_reverse_storage_id = "table-sort-reversed-" + id,
+    this._columns_storage_id = "table-columns-" + id;
 
     // if cols is not passed or restored from localStorage, all tabledef.columns are shown by default
-    if (!cols || !cols.length) {
+    if (!cols || !cols.length)
+    {
       cols = [];
-      for (var key in tabledef.columns) {
+      for (var key in tabledef.columns)
+      {
         cols.push(key);
       }
     }
@@ -56,17 +61,17 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       }
     }
 
-    groupby = localStorage[GROUPER] || groupby;
-    sortby = localStorage[SORTER] || sortby;
-    if (localStorage[COLUMNS])
-      var stored_cols = JSON.parse(localStorage[COLUMNS]);
+    groupby = localStorage[this._grouper_storage_id] || groupby;
+    sortby = localStorage[this._sorter_storage_id] || sortby;
+    if (localStorage[this._columns_storage_id])
+      var stored_cols = JSON.parse(localStorage[this._columns_storage_id]);
 
     if (
-      localStorage[SORT_REVERSE] !== null &&
-      localStorage[SORT_REVERSE] !== undefined
+      localStorage[this._sort_reverse_storage_id] !== null &&
+      localStorage[this._sort_reverse_storage_id] !== undefined
     )
     {
-      reversed = localStorage[SORT_REVERSE] === "true";
+      reversed = localStorage[this._sort_reverse_storage_id] === "true";
     }
 
     this.id = id;
@@ -241,8 +246,8 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       var obj = ObjectRegistry.get_instance().get_object(obj_id);
       if (obj._org_data_order)
       {
-        obj.reversed = localStorage[SORT_REVERSE] = null;
-        obj.sortby = localStorage[SORTER] = null;
+        obj.reversed = localStorage[this._sort_reverse_storage_id] = null;
+        obj.sortby = localStorage[this._sorter_storage_id] = null;
         var old_data = obj.get_data();
         var new_data = [];
         for (var i = 0; i < obj._org_data_order.length; i++)
@@ -296,7 +301,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
   this.restore_columns = function()
   {
     this.columns = this.default_columns.slice(0);
-    localStorage[COLUMNS] = JSON.stringify(this.columns);
+    localStorage[this._columns_storage_id] = JSON.stringify(this.columns);
   }
 
   this._prop_getter = function(name)
@@ -322,14 +327,14 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
     if (col == this.sortby) {
       this.reversed = !this.reversed;
       if (this.id)
-        localStorage[SORT_REVERSE] = this.reversed;
+        localStorage[this._sort_reverse_storage_id] = this.reversed;
 
     }
     else
     {
       this.sortby = col;
       if (this.id)
-        localStorage[SORTER] = col;
+        localStorage[this._sorter_storage_id] = col;
 
     }
   };
@@ -345,7 +350,7 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       this.groupby = group;
     }
     if (this.id)
-      localStorage[GROUPER] = this.groupby;
+      localStorage[this._grouper_storage_id] = this.groupby;
 
   }
 
@@ -362,11 +367,12 @@ function SortableTable(tabledef, data, cols, sortby, groupby, reversed, id)
       this.columns.splice(index, 1);
     }
     if (this.id)
-      localStorage[COLUMNS] = JSON.stringify(this.columns);
+      localStorage[this._columns_storage_id] = JSON.stringify(this.columns);
   }
 
-  this._init();
 };
+
+SortableTable.prototype = new SortableTablePrototype();
 
 window.templates = window.templates || {};
 
