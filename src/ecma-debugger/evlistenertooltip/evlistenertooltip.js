@@ -59,11 +59,15 @@ cls.EvListenerTooltip = function()
   {
     _hide_tooltip();
     var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
-    var rt_id = model.getDataRuntimeId();
-    var node_id = target.get_ancestor_attr("ref-id");
-    if (model && rt_id && node_id)
+    var rt_id = model && model.getDataRuntimeId();
+    var node_id = target.get_ancestor_attr("ref-id") ||
+                  target.get_ancestor_attr("obj-id");
+    var window_id = target.get_ancestor_attr("data-window-id");
+    if (model && rt_id && (node_id || window_id))
     {
-      var listeners = model.get_ev_listeners(node_id);
+      var listeners = node_id
+                    ? model.get_ev_listeners(node_id)
+                    : model.window_listeners.listeners;
       var tmpl = window.templates.ev_listeners(listeners, rt_id);
       _tooltip.show(tmpl);
     }

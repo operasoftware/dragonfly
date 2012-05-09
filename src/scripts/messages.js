@@ -156,7 +156,9 @@ var messages = new function()
     {
       __listeners[key] = [cb];
     }
-  }
+  };
+
+  this.add_listener = this.addListener;
 
   /**
    * Remove a listener for a specific message.
@@ -177,7 +179,9 @@ var messages = new function()
         }
       }
     }
-  }
+  };
+
+  this.remove_listener = this.removeListener;
 
   /**
    * Post a message to all its listeners, optionally with a payload. The

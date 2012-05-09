@@ -35,6 +35,10 @@
   const PSEUDO_ELEMENT_FIRST_LINE = 4;
   const EVENT_LISTENER_LIST = 15;
 
+  var EV_LISTENER_MARKUP = "<span class=\"node-with-ev-listener\" "+
+                                 "data-tooltip=\"event-listener\" " +
+                                 "></span>"
+
   this._pseudo_element_map = {};
   this._pseudo_element_map[PSEUDO_ELEMENT_BEFORE] = "before";
   this._pseudo_element_map[PSEUDO_ELEMENT_AFTER] = "after";
@@ -186,6 +190,7 @@
     var disregard_force_lower_case_depth = 0;
     var open_tag = is_tree_style ? "" : "&lt;";
     var close_tag =  is_tree_style ? "" : "&gt;";
+    var ev_listener = "";
 
     for (var i = 0, node; node = data[i]; i++)
     {
@@ -210,6 +215,9 @@
       {
         node_name = node_name.toLowerCase();
       }
+      ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                  ? EV_LISTENER_MARKUP
+                  : "";
       switch (node[TYPE])
       {
         case PSEUDO_NODE:
@@ -236,7 +244,7 @@
           {
             tree += "</node>";
           }
-          tree += "</div>";
+          tree += ev_listener + "</div>";
           break;
         }
         case PROCESSING_INSTRUCTION_NODE:
@@ -329,9 +337,7 @@
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var is_expandable = false;
-    var ev_listener_markup = "<span class=\"node-with-ev-listener\" "+
-                                   "data-tooltip=\"event-listener\" " +
-                                   "></span>"
+
 
     for ( ; node = data[i]; i += 1)
     {
@@ -381,7 +387,7 @@
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
           node_name = helpers.escapeTextHtml(node_name);
           var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
-                          ? ev_listener_markup
+                          ? EV_LISTENER_MARKUP
                           : "";
 
           if (force_lower_case)
@@ -532,7 +538,7 @@
 
         case DOCUMENT_NODE:
           var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
-                          ? ev_listener_markup
+                          ? EV_LISTENER_MARKUP
                           : "";
           if (ev_listener)
           {

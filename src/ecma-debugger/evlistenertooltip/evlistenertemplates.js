@@ -1,9 +1,80 @@
 (function()
 {
+  // TODO clean up the order an the names
+  this.main_ev_listener_view = function(data)
+  {
+    return (
+    ["div",
+      ["div",
+        ["span",
+          ["span", "Update"], // TODO ui string
+          "class" , "ui-button",
+          "unselectable", "on",
+          "tabindex", "1",
+          "handler", "update-ev-listeners"]],
+      ["ul", data.map(this._ev_names_list, this)],
+      "class", "main-ev-listener-view padding"]);
+  };
+
+  this._ev_names_list = function(ev_obj, index, ev_obj_list)
+  {
+    return (
+    ["li",
+      ["ul", ev_obj.event_names.map(this._ev_name_item, this),
+             "data-rt-id", String(ev_obj.rt_id),
+             "data-obj-id", String(ev_obj.obj_id)]]);
+  };
+
+  this._ev_name_item = function(ev_name_obj)
+  {
+    return (
+    ["li", 
+      ["h2", 
+        ["input", "type", "button",
+                  "class", "folder-key"],
+        ev_name_obj.name,
+        "handler", "get-ev-listeners",
+        "data-ev-name", ev_name_obj.name,
+        "class", "ev-listener-type"]]);
+  };
+
   this.ev_listeners = function(listener_list, rt_id)
   {
     return ["dl", listener_list.map(this._ev_listener.bind(this, rt_id)),
                   "class", "ev-listener mono"];
+  };
+
+  this.ev_window_listeners = function(ev_name_object)
+  {
+    var EVENT_TYPE = 0;
+    var model = ev_name_object.model;
+    var win_listeners = model && model.window_listeners;
+    var ret = [];
+    if (win_listeners && win_listeners.listeners.some(function(listener)
+        {
+          return listener[EVENT_TYPE] == ev_name_object.name;
+        }))
+    {
+      ret =
+      ["div",
+        "window",
+        ["span", "class", "node-with-ev-listener", 
+                 "data-tooltip", "event-listener"],
+        "data-model-id", String(model.id),
+        "data-window-id", String(win_listeners.win_id)];
+    }
+    return ret;
+  };
+
+  this.ev_all_listeners = function(ev_name_obj)
+  {
+    var tmpl_obj_l = window.templates.ev_window_listeners(ev_name_obj);
+    var tmpl_node_l = window.templates.dom_search(ev_name_obj.model);
+    return (
+    ["div", 
+      tmpl_obj_l, 
+      [tmpl_node_l],
+      "class", "ev-all-listeners"]);
   };
 
   this._ev_listener = function(rt_id, listener)
@@ -37,7 +108,6 @@
     var script = window.runtimes.getScript(script_id);
     if (script)
     {
-
       var sc_link = this.script_link_with_file_number(script,
                                                       position[LINE_NUMBER],
                                                       "added in %s"); //TODO ui string
@@ -81,6 +151,6 @@
                         " missing runtime in _ev_listener template.");
     }
     return ret;
-  }
+  };
 
 }).apply(window.templates || (window.templates = {}));

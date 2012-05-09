@@ -1641,6 +1641,11 @@ d
   border-radius: 2px;
 }
 
+.ev-all-listeners
+{
+  margin-left: 22px;
+}
+
 .tooltip-function-source .js-tooltip-examine-container
 {
   padding: 0;
