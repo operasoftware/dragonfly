@@ -322,6 +322,9 @@ window.cls.Helpers = function()
    */
   this.get_color_in_notation = function(color, notation)
   {
+    if (!color)
+      return;
+
     if (color.alpha < 1)
     {
       notation = {
