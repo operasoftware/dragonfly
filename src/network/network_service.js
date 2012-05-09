@@ -433,7 +433,7 @@ cls.RequestContextPrototype = function()
 
     if (eventname == "urlload" || changed_request_id)
     {
-      var id = JSON.stringify({res_id: event.resourceID, num: this._logger_entries.length});
+      var id = this._get_uid();
       logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
       this._logger_entries.push(logger_entry);
     }
@@ -454,6 +454,15 @@ cls.RequestContextPrototype = function()
   {
     return this.get_entries().filter(function(e) { return e.id == id; })[0];
   };
+
+  this._get_uid = (function()
+  {
+    var count = 1;
+    return function()
+    {
+      return "uid-" + count++;
+    }
+  })();
 };
 
 cls.RequestContext.prototype = new cls.RequestContextPrototype();

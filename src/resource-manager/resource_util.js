@@ -31,26 +31,6 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 }
 
 /**
- * Return a human readable string representation of n millis
- */
-cls.ResourceUtil.millis_to_human_readable = function(millis)
-{
-  if (millis > 10000) // > 10 seconds
-  {
-    return "" + ((millis / 1000).toFixed(1)) + " s";
-  }
-  else if (millis > 1000) // > 1 second
-  {
-    return "" + (millis / 1000).toFixed(2) + " s";
-  }
-  else
-  {
-    return "" + millis + " ms";
-  }
-}
-
-
-/**
  * Common extensions mapped to generic type strings
  */
 cls.ResourceUtil.extension_type_map = {
