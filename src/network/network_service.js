@@ -771,7 +771,7 @@ cls.NetworkLoggerEntryPrototype = function()
     // the "final" responsecode for the request was.
     // Each individual response is also stored as a NetworkLoggerResponse.
     this.responsecode = event.responseCode;
-    this.had_error_response = /^5|^4/.test(this.responsecode);
+    this.had_error_response = /^[45]/.test(this.responsecode);
     if (!this.responsestart)
       this.responsestart = event.time;
 
