@@ -44,7 +44,6 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("filename", function()
   {
-        
     if (!this._filename && (this._is_parsed || this[uri_prop_name]))
     {
       var pos = this.pathname.lastIndexOf("/");
@@ -58,6 +57,20 @@ var URIPrototype = function(uri_prop_name)
   });
 
   this.__defineSetter__("filename", function() {});
+
+  this.__defineGetter__("extension", function()
+  {
+    if (!this._extension && (this._is_parsed || this[uri_prop_name]))
+    {
+      var pos = this.filename.lastIndexOf(".");
+      if (pos > -1)
+        this._extension = this.filename.slice(pos + 1);
+    }
+
+    return this._extension;  
+  });
+
+  this.__defineSetter__("extension", function() {});
 
   this.__defineGetter__("dir_pathname", function()
   {

@@ -84,12 +84,12 @@
 
 .network-log-url-list .not_requested
 {
-  color: rgba(0, 0, 0, 0.50);
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .tooltip-container .not_requested
 {
-  color: rgba(0, 0, 0, 0.60);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .tooltip-container .error_response,
@@ -145,7 +145,7 @@
 .network-log-url-list .load-origin-xhr::before
 {
   content: "";
-  background-image: url(../ui-images/load_origin_xhr.png);
+  background-image: url("../ui-images/load_origin_xhr.png");
   width: 15px;
   height: 9px;
   display: inline-block;
@@ -155,7 +155,7 @@
 
 .network_incomplete_warning
 {
-  margin: 15px 50px 15px 50px;
+  margin: 15px 50px;
   position: relative;
 }
 
@@ -220,7 +220,7 @@
 .network_logger .close-request-detail::before,
 .network_logger .close_incomplete_warning::before
 {
-  content: '';
+  content: "";
   display: inline-block;
   width: 15px;
   height: 15px;
@@ -460,10 +460,14 @@
   border-radius: 3px;
 }
 
+/* the value of the padding property of this selector 
+   is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
   text-align: right;
-  padding: 3px 8px 1px 4px; /* this is read in network_templates.js */
+  padding: 3px 8px 1px 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .network-tooltip-legend .event_name
@@ -500,7 +504,6 @@
   min-height: 250px;
   border: solid thin black;
 }
-
 
 /* Options */
 .network-options

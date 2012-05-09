@@ -10,6 +10,7 @@
 
     if(!window.single_selects)
       window.single_selects = {};
+
     if(!window.single_selects[view_id])
       window.single_selects[view_id] = {};
 

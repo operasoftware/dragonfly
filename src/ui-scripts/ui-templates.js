@@ -257,32 +257,30 @@
   {
     var
     ret = ["toolbar-buttons"],
-    _switch = '',
     i = 0,
     setting = null;
 
     ret.extend(switches.map(this._switch, this));
-
     ret.push("handler", "toolbar-switch");
     return ret;
   }
 
-  this._switch = function(_switch)
+  this._switch = function(switch_)
   {
     var ret = "";
-    if(setting = Settings.get_setting_with_view_key_token(_switch))
+    if (setting = Settings.get_setting_with_view_key_token(switch_))
     {
       ret = ['span',
           'title', setting.label,
-          'key', _switch,
+          'key', switch_,
           'tabindex', '1',
-          'class', _switch + ' ui-control ui-button switch' + (setting.value ? ' is-active' : '')
+          'class', switch_ + ' ui-control ui-button switch' + (setting.value ? ' is-active' : '')
         ];
     }
     else
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "Can't attach switch to a setting that does not exist: " + _switch );
+        "Can't attach switch to a setting that does not exist: " + switch_ );
     }
     return ret;
   }

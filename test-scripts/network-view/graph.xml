@@ -34,6 +34,7 @@ viewport {
 <script src="../../src/ui-strings/ui_strings-en.js"></script>
 <script src="../../src/scripts/dom.js"></script>
 <script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/scripts/uri.js"></script>
 <script src="../../src/network/network_service.js"></script>
 <script src="../../src/network/network_templates.js"></script>
 <script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
@@ -58,7 +59,7 @@ var test = function()
   var t = Date.now();
   var basetime = ctx._logger_entries[0].starttime;
   var duration = ctx._logger_entries.last.endtime - basetime;
-  var tpl = templates.network_graph_rows(ctx, null, 1000, basetime, duration); // ctx, selected, width, basetime, duration
+  var tpl = templates.network_graph_rows(ctx, ctx._logger_entries, null, 1000, basetime, duration); // ctx, entries, selected, width, basetime, duration
   document.getElementById("graph").clearAndRender(tpl);
   var c = document.documentElement.offsetHeight + document.documentElement.offsetWidth;
   document.getElementsByTagName('code')[0].textContent = "time: " + (Date.now() - t) + " millisec";
@@ -68,7 +69,8 @@ var _on_graph_tooltip = function(evt, target)
 {
   var entry_id = target.get_attr("parent-node-chain", "data-object-id");
   var entry = ctx.get_entry(entry_id);
-  var template = templates.network_graph_tooltip(entry);
+  var MONOLINEHEIGHT = 15;
+  var template = templates.network_graph_tooltip(entry, MONOLINEHEIGHT);
   graph_tooltip.show(template);
 }.bind(this);
 var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);

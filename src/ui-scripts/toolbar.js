@@ -190,10 +190,8 @@ var ToolbarBase = function()
             {
               if (group.type === "single-select")
               {
-                var values = window.single_selects &&
-                             window.single_selects[view_id] &&
-                             window.single_selects[view_id][group.name] &&
-                             window.single_selects[view_id][group.name].values;
+                var values = window.single_selects;
+                values = (values = values[view_id]) && (values = values[group.name]) && (values = values.values);
                 button_templates.push(templates.single_select_button(button, values));
               }
               else if (group.type === "switch")

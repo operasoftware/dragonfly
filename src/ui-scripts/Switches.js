@@ -30,16 +30,16 @@ var SwitchesBase = function()
     var key_attr = message.id + "." + message.key;
     var switches = document.querySelectorAll("[handler='toolbar-switch']");
 
-    for (var i = 0, _switch; _switch = switches[i]; i++)
+    for (var i = 0, switch_; switch_ = switches[i]; i++)
     {
       var value = settings[message.id].get(message.key);
-      var button = _switch.querySelector("[key='" + key_attr + "']");
+      var button = switch_.querySelector("[key='" + key_attr + "']");
       if (button)
         value ? button.addClass("is-active") : button.removeClass("is-active");
     }
   }.bind(this);
 
-  messages.addListener("setting-changed", this._on_setting_changed_bound);
+  window.messages.addListener("setting-changed", this._on_setting_changed_bound);
 }
 
 

@@ -7,7 +7,7 @@ window.templates || (window.templates = {});
 templates.network_detail_row = function(wrap)
 {
   return ["tr", ["td", wrap, "colspan", "2"]];
-}
+};
 
 templates.network_log_details = function(ctx, selected, left_val)
 {
@@ -73,7 +73,7 @@ templates.network_response = function(response)
     templates.response_details(response),
     templates.network_response_body(response)
   ]
-}
+};
 
 templates.request_details = function(req)
 {
@@ -118,7 +118,9 @@ templates.request_details = function(req)
 
 templates.response_details = function(resp)
 {
-  if (!resp.response_headers) { return []; }
+  if (!resp.response_headers)
+    return [];
+
   var firstline;
   var parts = resp.firstline.split(" ", 2);
   if (parts.length == 2)
@@ -231,8 +233,7 @@ templates.network_request_body = function(req)
 
 templates.network_response_body = function(resp)
 {
-  var ret = [];
-  ret.push(templates.network_detail_row(templates.network_body_seperator()));
+  var ret = [templates.network_detail_row(templates.network_body_seperator())];
   var classname = "";
   if (resp.body_unavailable || 
       !resp.responsebody && resp.unloaded)

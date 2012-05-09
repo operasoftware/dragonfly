@@ -159,7 +159,7 @@ var SortableTablePrototype = function()
     }
 
     // When all columns are shown by default, there will be no column selection in
-    // the context menu. Could be an explicite option too, but right now, this is a good fit.
+    // the context menu. Could be an explicit option too, but right now, this is a good fit.
     if (allcols.join(",") !== obj.default_columns.join(","))
     {
       // visible column selection stuff

@@ -20,6 +20,7 @@ test("uri", function()
   equal(uri.search, "?csiID=csi1");
   equal(uri.hash, "#hello");
   equal(uri.filename, "banner.html");
+  equal(uri.extension, "html");
   equal(uri.dir_pathname, "/.element/ssi/intl/breaking_news/3.0/");
   equal(uri.abs_dir, "http://edition.cnn.com/.element/ssi/intl/breaking_news/3.0/");
   deepEqual(uri.params, [{key: "csiID", value: "csi1"}]);
@@ -34,6 +35,7 @@ test("uri", function()
   equal(uri.search, "");
   equal(uri.hash, "");
   equal(uri.filename, "foo.txt");
+  equal(uri.extension, "txt");
   equal(uri.dir_pathname, "");
   equal(uri.abs_dir, "");
   deepEqual(uri.params, []);

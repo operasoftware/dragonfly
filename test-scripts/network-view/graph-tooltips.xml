@@ -36,6 +36,7 @@ viewport
 <script src="../../src/ui-strings/ui_strings-en.js"></script>
 <script src="../../src/scripts/dom.js"></script>
 <script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/scripts/uri.js"></script>
 <script src="../../src/network/network_service.js"></script>
 <script src="../../src/network/network_templates.js"></script>
 <script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
@@ -68,7 +69,7 @@ var test = function()
     var basetime = ctx._logger_entries[0].starttime;
     document.querySelector("#count").textContent= ctx._logger_entries.length + " entries";
     var duration = ctx._logger_entries.last.endtime - basetime;
-    var tpl = templates.network_graph_rows(ctx, null, window.innerWidth - 100, basetime, duration); // ctx, selected, width, basetime, duration
+    var tpl = templates.network_graph_rows(ctx, ctx._logger_entries, null, 1000, basetime, duration); // ctx, entries, selected, width, basetime, duration
     document.getElementById("graph").clearAndRender(tpl);
   }
 };
@@ -77,7 +78,8 @@ var _on_graph_tooltip = function(evt, target)
 {
   var entry_id = target.get_attr("parent-node-chain", "data-object-id");
   var entry = ctx.get_entry(entry_id);
-  var template = templates.network_graph_tooltip(entry);
+  var MONOLINEHEIGHT = 15;
+  var template = templates.network_graph_tooltip(entry, MONOLINEHEIGHT);
   graph_tooltip.show(template);
 }.bind(this);
 var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
@@ -108,6 +110,33 @@ window.addEventListener("load", function()
 }, false);
 
 window.addEventListener("resize", test, false);
+
+/* // to extract data for data-timing.json, place the following at the
+   // beginning of in cls.NetworkLoggerEntry.update
+
+eventdata.eventname = eventname;
+eventdata.parent = null;
+
+if (!window.dbg_store)
+  window.dbg_store = {
+                        id: String(Math.round(Math.random() * 9999)),
+                        items: [],
+                        timeout: null
+                     };
+
+dbg_store.items.push(eventdata);
+dbg_store.timeout = dbg_store.timeout || setTimeout(function(){
+  if (dbg_store.items.length)
+  {
+    var client = new XMLHttpRequest();
+    // use node write-resource-eventdata.node.js here
+    client.open("POST", "http://127.0.0.1:9001/" + dbg_store.id);
+    client.send(JSON.stringify(dbg_store.items));
+    dbg_store.items = [];
+    dbg_store.timeout = null;
+  }
+}, 1000);
+// end extracting data */
 
 </script>
 <p><input type="button" value="test" onclick="test()"/></p>

@@ -292,8 +292,10 @@ eventHandlers.click["toolbar-single-select"] = function(event, target)
         // Unselect all others
         var buttons_in_group = target.querySelectorAll(".ui-button");
         for (var i = 0, group_button; group_button = buttons_in_group[i]; i++)
+        {
           if (group_button != button)
             group_button.removeClass("is-active");
+        }
       }
       messages.post("single-select-changed", {
                                                 view_id: view_id,

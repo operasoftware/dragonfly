@@ -99,16 +99,29 @@ templates.network_request_crafter_main = function(url, loading, request, respons
 templates.network_incomplete_warning = function()
 {
   return ["div",
-           ["span", ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH],
-           ["div",
-             ["span", ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
-              "class", "text_handler", "handler", "reload-window"],
-             " ",
-             ["span", ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN,
-              "class", "text_handler", "handler", "turn-off-incomplete-warning"]
+           ["span",
+             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
            ],
-           ["span", " ", "class", "close_incomplete_warning", "handler", "close-incomplete-warning"],
-         "class", "info-box network_incomplete_warning"];
+           ["div",
+             ["span",
+               ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
+               "class", "text_handler",
+               "handler", "reload-window"
+             ],
+             " ",
+             ["span",
+               ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN,
+               "class", "text_handler",
+               "handler", "turn-off-incomplete-warning"
+             ]
+           ],
+           ["span",
+             " ",
+             "class", "close_incomplete_warning",
+             "handler", "close-incomplete-warning"
+           ],
+           "class", "info-box network_incomplete_warning"
+         ];
 };
 
 templates.network_log_main = function(ctx, entries, selected, detail_width, table_template)
@@ -217,12 +230,12 @@ templates.network_log_url_tooltip = function(entry)
   }
   else if (entry.no_request_made)
   {
-    if (entry.urltypeName === URL_TYPE_DEF[URL_TYPE_DEF.FILE])
+    if (entry.urltype_name === URL_TYPE_DEF[URL_TYPE_DEF.FILE])
     {
       context_string = ui_strings.S_HTTP_SERVED_OVER_FILE;
       context_type = NOT_REQUESTED;
     }
-    else if (entry.urltypeName === URL_TYPE_DEF[URL_TYPE_DEF.DATA])
+    else if (entry.urltype_name === URL_TYPE_DEF[URL_TYPE_DEF.DATA])
     {
       // data uri, the tooltip is explicit enough in these cases
     }
@@ -242,13 +255,18 @@ templates.network_log_url_tooltip = function(entry)
 
   if (entry.search)
   {
-    var table = ["table"];
-    for (var i = 0, param; param = entry.params[i]; i++)
-    {
-      table.push(["tr", ["td", param.key], ["td", param.value], "class", "string mono"]);
-    };
-    table.push("class", "network_get_params");
-    template.push(table);
+    template.push(
+      ["table",
+        entry.params.map(function(param){
+          return ["tr",
+                   ["td", param.key],
+                   ["td", param.value],
+                   "class", "string mono"
+                 ];
+        }),
+        "class", "network_get_params"
+      ]
+    );
   }
   return template;
 };
@@ -260,9 +278,9 @@ templates.network_log_summary = function(entries)
                       }).reduce(function(prev, curr){
                         return prev + curr;
                       }, 0);
-  var str = entries.length + " ";
-  str += str === 1 ? ui_strings.S_NETWORK_REQUEST :
-                     ui_strings.S_NETWORK_REQUESTS;
+  var length = entries.length;
+  var str = length + " " + (length === 1 ? ui_strings.S_NETWORK_REQUEST
+                                         : ui_strings.S_NETWORK_REQUESTS);
 
   if (total_size)
     str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
@@ -293,7 +311,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
     var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
     var val_for_str = (stepsize * cnt) / unit[0];
     val_for_str = Math.round(val_for_str * 100) / 100;
-    labels.push(["span", val_for_str + unit[1],
+    labels.push(["span", val_for_str + " " + unit[1],
                  "style", "left: " + left_val + "px;",
                  "class", "timeline-marker"
                  ]);
@@ -313,12 +331,12 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
 {
   var scale = width / duration;
   var start = (entry.starttime - basetime) * scale;
-  var padding_left_hitarea = 3;
+  var PADDING_LEFT_HITAREA = 3;
   var item_container = ["span",
                         templates.network_graph_sections(entry, width, duration),
                         "class", "network-graph-sections-hitarea",
                         "data-tooltip", "network-graph-tooltip",
-                        "style", "margin-left:" + (start - padding_left_hitarea) + "px;"];
+                        "style", "margin-left:" + (start - PADDING_LEFT_HITAREA) + "px;"];
 
   return ["div", item_container,
           "class", "network-graph-row " + (selected === entry.id ? "selected " : ""),
@@ -363,7 +381,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
 
   var scale = size / duration;
   var to = 0;
-  var gradient_vals = entry.event_sequence.map(function(section){
+  var gradient_vals = entry.event_sequence.map(function(section) {
     var from = to;
     var val = section.val * scale;
     to += val;
@@ -399,7 +417,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
   {
     var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
     event_rows.push(["tr",
-                      ["td", duration.toFixed(2) + "ms", "class", "time_data mono"],
+                      ["td", duration.toFixed(2) + " ms", "class", "time_data mono"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
     if (!templates.network_tt_vert_padding)
@@ -427,6 +445,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
       y_start = y_ref + (height / 2);
       y_ref += height;
       y_end = (index * lineheight) + (lineheight / 2) + 0.5;
+
       return(["path", "d", "M" + x_start + " " + y_start + " L" + x_end + " " + y_end, "stroke", "#BABABA"]);
     });
 
@@ -470,12 +489,15 @@ templates.grid_info = function(duration, width)
   {
     var draw_line_every = 150; // px
     var draw_lines = Math.round(width / draw_line_every);
-    
-    var value = (duration / draw_lines).toPrecision(1); // This is the duration of one section
-    var val_in_px = width / duration * Number(value);
 
-    // If the last line comes too close to the edge, decrease the value until it fits. Need
-    // to modify the actual ms value to keep nice labels on the result as the are shown in ms
+    // Find the duration of one section in milliseconds.
+    // Round the value to 10 ^ (pre-decimal-point number of digits - 1)
+    // for example 321.12 > 300, 16 > 20, 0.234 > 0.2
+    var value = Number((duration / draw_lines).toPrecision(1));
+    var val_in_px = width / duration * value;
+
+    // When the last label's position is too close to the edge, it causes
+    // horizontal scrollbars. Decrease the value until it fits.
     while (width % (val_in_px * draw_lines) < GRAPH_PADDING)
     {
       value--;

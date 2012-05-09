@@ -10,7 +10,9 @@ cls.NetworkLoggerService = function(view)
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
     // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect.
     // todo: handle multiple top-runtimes
-    if (data.parentDocumentID) { return; }
+    if (data.parentDocumentID)
+      return;
+
     this._current_context = new cls.RequestContext();
     this._current_context.saw_main_document_abouttoloaddocument = true;
   }.bind(this);
@@ -18,17 +20,17 @@ cls.NetworkLoggerService = function(view)
   this._on_urlload_bound = function(msg)
   {
     if (!this._current_context)
-    {
       this._current_context = new cls.RequestContext();
-    }
-    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
 
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
     this._current_context.update("urlload", data);
   }.bind(this);
 
   this._on_urlredirect_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
 
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
     // a bit of cheating since further down we use .resouceID to determine
@@ -39,63 +41,81 @@ cls.NetworkLoggerService = function(view)
 
   this._on_urlfinished_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
     this._current_context.update("urlfinished", data);
   }.bind(this);
 
   this._on_response_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].Response(msg);
     this._current_context.update("response", data);
   }.bind(this);
 
   this._on_request_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].Request(msg);
     this._current_context.update("request", data);
   }.bind(this);
 
   this._on_requestheader_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
     this._current_context.update("requestheader", data);
   }.bind(this);
 
   this._on_requestfinished_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
     this._current_context.update("requestfinished", data);
   }.bind(this);
 
   this._on_requestretry_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
     this._current_context.update("requestretry", data);
   }.bind(this);
 
   this._on_responseheader_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
     this._current_context.update("responseheader", data);
   }.bind(this);
 
   this._on_responsefinished_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
     this._current_context.update("responsefinished", data);
   }.bind(this);
 
   this._on_urlunload_bound = function(msg)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
     this._current_context.update("urlunload", data);
   }.bind(this);
@@ -162,7 +182,10 @@ cls.NetworkLoggerService = function(view)
 
   this.setup_content_tracking_bound = function()
   {
-    var OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
+    var OFF = 4;
+    var DATA_URI = 3;
+    var STRING = 1;
+    var DECODE = 1;
     this._track_bodies = settings.network_logger.get("track-content");
 
     if (this._track_bodies)
@@ -186,7 +209,9 @@ cls.NetworkLoggerService = function(view)
 
   this.get_body = function(itemid, callback)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     var entry = this._current_context.get_entry(itemid);
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
@@ -196,7 +221,9 @@ cls.NetworkLoggerService = function(view)
 
   this._on_get_resource_bound = function(status, data, callback, resourceid)
   {
-    if (!this._current_context) { return; }
+    if (!this._current_context)
+      return;
+
     if (status)
     {
       // set body_unavailable for the resourceid, the object passed represents empty event_data
@@ -267,9 +294,8 @@ cls.RequestContextPrototype = function()
   this._filter_function = function(item)
   {
     var success = false;
-    for (var i = 0; i < this._filters.length; i++)
+    for (var i = 0, filter; filter = this._filters[i]; i++)
     {
-      var filter = this._filters[i];
       filter.is_blacklist = Boolean(filter.is_blacklist);
       if (filter.type_list)
       {
@@ -290,7 +316,7 @@ cls.RequestContextPrototype = function()
   this.get_entries_filtered = function()
   {
     return this.get_entries().filter(this._filter_function_bound);
-  }
+  };
 
   this.get_entries = function()
   {
@@ -299,17 +325,21 @@ cls.RequestContextPrototype = function()
       entries = this._paused_entries;
 
     return entries;
-  }
+  };
 
   this.get_entries_with_res_id = function(res_id)
   {
-    return this._logger_entries.filter(function(e){return e.resource_id === res_id});
-  }
+    return this._logger_entries.filter(
+      function(e) {
+        return e.resource_id === res_id
+      }
+    );
+  };
 
   this.set_filters = function(filters)
   {
     this._filters = filters;
-  }
+  };
 
   this.pause = function()
   {
@@ -317,13 +347,13 @@ cls.RequestContextPrototype = function()
     // this works good as long as we don't have things like streaming.
     this._paused_entries = this._logger_entries.slice(0);
     this.is_paused = true;
-  }
+  };
 
   this.unpause = function()
   {
     this._paused_entries = null;
     this.is_paused = false;
-  }
+  };
 
   this.get_duration = function()
   {
@@ -371,7 +401,7 @@ cls.RequestContextPrototype = function()
     */
     return event.requestID &&
            (last_entry.requestID !== event.requestID);
-  }
+  };
 
   this.update = function(eventname, event)
   {
@@ -410,8 +440,9 @@ cls.RequestContextPrototype = function()
     logger_entry.requestID = event.requestID;
     logger_entry.update(eventname, event);
 
-    if (window.views && views.network_logger)
-      views.network_logger.update();
+    if (window.views)
+      window.views.network_logger.update();
+
   };
 
   this.get_entry_from_filtered = function(id)
@@ -607,31 +638,6 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.update = function(eventname, eventdata)
   {
-    /* // extracting data for test graph-tooltip.xml
-    eventdata.eventname = eventname;
-    eventdata.parent = null;
-
-    if (!window.dbg_store)
-      window.dbg_store = {
-                            id: String(Math.round(Math.random() * 9999)),
-                            items: [],
-                            timeout: null
-                         };
-
-    dbg_store.items.push(eventdata);
-    dbg_store.timeout = dbg_store.timeout || setTimeout(function(){
-      if (dbg_store.items.length)
-      {
-        var client = new XMLHttpRequest();
-        // use node write-resource-eventdata.node.js here
-        client.open("POST", "http://127.0.0.1:9001/" + dbg_store.id);
-        client.send(JSON.stringify(dbg_store.items));
-        dbg_store.items = [];
-        dbg_store.timeout = null;
-      }
-    }, 1000);
-    // end extracting data */
-
     var updatefun = this["_update_event_" + eventname];
 
     if (!this.events.length)
@@ -643,20 +649,13 @@ cls.NetworkLoggerEntryPrototype = function()
         this.starttime_relative = 0;
 
       var d = new Date(this.starttime);
-      var h = "" + d.getHours();
-      if (h.length < 2)
-        h = "0" + h;
-      var m = "" + d.getMinutes();
-      if (m.length < 2)
-        m = "0" + m;
-      var s = "" + d.getSeconds();
-      if (s.length < 2)
-        s = "0" + s;
-      var ms = "" + d.getMilliseconds();
-      while (ms.length < 3)
-        ms = "0" + ms;
+      var h = String(d.getHours()).zfill(2);
+      var m = String(d.getMinutes()).zfill(2);
+      var s = String(d.getSeconds()).zfill(2);
+      var ms = String(d.getMilliseconds()).zfill(3);
       this.start_time_string = h + ":" + m + ":" + s + "." + ms;
     }
+
     // unlisted_events are not relevant to the loading flow and are not stored
     if (!unlisted_events.contains(eventname))
     {
@@ -684,7 +683,7 @@ cls.NetworkLoggerEntryPrototype = function()
     if (event.loadOrigin)
       this.load_origin_name = cls.ResourceManager["1.2"].LoadOrigin[event.loadOrigin].toLowerCase();
 
-    this.urltypeName = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
+    this.urltype_name = cls.ResourceManager["1.2"].UrlLoad.URLType[event.urlType];
     this._humanize_url();
     this._guess_response_type(); // may not be correct before mime is set, but will be guessed again when it is
   };
@@ -763,7 +762,7 @@ cls.NetworkLoggerEntryPrototype = function()
     // the "final" responsecode for the request was.
     // Each individual response is also stored as a NetworkLoggerResponse.
     this.responsecode = event.responseCode;
-    this.had_error_response = /5\d{2}|4\d{2}/.test(this.responsecode);
+    this.had_error_response = /^5|^4/.test(this.responsecode);
     if (!this.responsestart)
       this.responsestart = event.time;
 
@@ -775,7 +774,7 @@ cls.NetworkLoggerEntryPrototype = function()
   this._update_event_responseheader = function(event)
   {
     // Sometimes we see no "response" event before we see responseheader,
-    // therefor have to init NetworkLoggerResponse here. See CORE-43935.
+    // therefore have to init NetworkLoggerResponse here. See CORE-43935.
     if (!this._current_response)
     {
       this._current_response = new cls.NetworkLoggerResponse(this);
@@ -815,9 +814,9 @@ cls.NetworkLoggerEntryPrototype = function()
     if (!cls || !cls.ResourceUtil)
       return;
 
-    // For "application/octet-stream" we check by path even though we have a mime
+    // For "application/octet-stream" we check by extension even though we have a mime
     if (!this.mime || this.mime.toLowerCase() === "application/octet-stream")
-      this.type = cls.ResourceUtil.path_to_type(this.url);
+      this.type = cls.ResourceUtil.extension_type_map[this.extension];
     else
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
@@ -858,7 +857,11 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._add_event = function(eventname, eventdata)
   {
-    var evt = {name: eventname, time: eventdata.time, request_id: eventdata.requestID};
+    var evt = {
+      name: eventname,
+      time: eventdata.time,
+      request_id: eventdata.requestID
+    };
     if (this.events.length)
     {
       var gap = {
@@ -867,7 +870,7 @@ cls.NetworkLoggerEntryPrototype = function()
         val: evt.time - this.events.last.time
       };
       var gap_def = this.get_gap_def(gap);
-      gap.val_string = gap.val.toFixed(2) + "ms";
+      gap.val_string = gap.val.toFixed(2) + " ms";
       gap.classname = gap_def && gap_def.classname || "";
       gap.title = gap_def && gap_def.title || "";
 

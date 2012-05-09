@@ -58,7 +58,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       // the filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filters(this._type_filters || []);
       this._render_main_view(this._container);
-      this.text_search.text_search.update_search();
+      this.text_search.update_search();
     }
     else
     {
@@ -84,9 +84,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._render_details_view = function(container, selected)
   {
+    var MINIMUM_DETAIL_WIDTH = 100;
     var ctx = this._service.get_request_context();
     var left_val = settings.network_logger.get("detail-view-left-pos");
-    left_val = Math.min(left_val, window.innerWidth - 100);
+    left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
     return templates.network_log_details(ctx, selected, left_val);
   };
 
@@ -147,8 +148,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       hand-calculate network-url-list-container's width, so it only takes one rendering
       #network-url-list-container { width: 40%; min-width: 230px; }
     */
-    var url_list_width = Math.ceil(Math.max(230, parseInt(this._container.style.width, 10) * 0.4));
-    var detail_width = parseInt(this._container.style.width) - url_list_width;
+    if (!this._list_cont_width)
+    {
+      var style_dec = document.styleSheets.getDeclaration("#network-url-list-container");
+      this._list_cont_width = parseInt(style_dec.getPropertyValue("width"), 10); // in %
+      this._list_cont_min_width = parseInt(style_dec.getPropertyValue("min-width"), 10);
+    }
+    var url_list_width = 
+        Math.ceil(Math.max(
+                            this._list_cont_min_width,
+                            parseInt(this._container.style.width, 10) * this._list_cont_width / 100
+                          )
+                 );
+
+    var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
 
     var template = ["div", templates.network_log_main(
                      ctx, entries, this._selected, detail_width, table_template
@@ -174,7 +187,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       if (is_data_mode)
       {
         var sel_row = rendered.querySelector("tr[data-object-id='" + this._selected + "']");
-        sel_row && sel_row.addClass("selected");
+        if (sel_row)
+          sel_row.addClass("selected");
+
       }
     }
 
@@ -207,25 +222,22 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         },
         title_getter: function(entry, renderer) {
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return entry.responsecode + " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
+            return entry.responsecode + 
+                   " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
           return renderer(entry);
         },
-        getter: function(entry) {
-          return entry.responsecode || 0;
-        }
+        getter: function(entry) { return entry.responsecode || 0; }
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_MIME,
-        getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE },
-        renderer: function(entry, getter) {
-          return getter(entry)
-        }
+        getter: function(entry) { return entry.mime || ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE; },
+        renderer: function(entry, getter) { return getter(entry); }
       },
       protocol: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PROTOCOL,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_PROTOCOL,
-        getter: function(entry) { return entry.urltypeName.toLowerCase() }
+        getter: function(entry) { return entry.urltype_name.toLowerCase(); }
       },
       size: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
@@ -233,7 +245,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry) { return entry.size },
         renderer: function(entry) {
-          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
         }
       },
       size_h: {
@@ -245,7 +257,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         renderer: function(entry) {
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
-                        ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE)
+                        ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE);
         }
       },
       waiting: {
@@ -261,7 +273,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         renderer: function(entry, getter)
         {
           var val = getter(entry);
-          return val && val.toFixed(2) + "ms";
+          return val && val.toFixed(2) + " ms";
         }
       },
       started: {
@@ -274,7 +286,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         },
         renderer: function(entry)
         {
-          return entry.starttime_relative.toFixed(2) + "ms";
+          return entry.starttime_relative.toFixed(2) + " ms";
         }
       },
       duration: {
@@ -293,7 +305,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         attributes: ["class", "network-graph-column"],
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
-          return templates.network_graph_sections(entry, 50, entry.duration, true);
+          var FIXED_GRAPH_WIDTH = 50;
+          return templates.network_graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
         }
       }
     }
@@ -410,7 +423,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
     var out = this._container.querySelectorAll("[data-object-id='" + item_id + "']");
-    for (var n=0, e; e = out[n]; n++) { e.removeClass("hovered"); }
+    for (var n = 0, elem; elem = out[n]; n++)
+      elem.removeClass("hovered");
+
   }.bind(this);
 
   this._on_scroll_bound = function(evt, target)
@@ -535,6 +550,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           else if (!is_paused && pause)
             this._service.pause();
         }
+
         if (message.key !== "detail-view-left-pos")
         {
           this.needs_instant_update = true;
@@ -579,13 +595,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (message.view_id === "network_logger")
     {
       if (message.name === "selected-viewmode")
-      {
         settings.network_logger.set(message.name, message.values[0]);
-      }
       else if (message.name === "type-filter")
-      {
         this._type_filters = message.values.map(this._map_filter_bound);
-      }
+
       this.needs_instant_update = true;
       this.update();
     }
@@ -758,7 +771,7 @@ cls.NetworkLog.create_ui_widgets = function()
 
   var text_search = window.views.network_logger.text_search = new TextSearch();
 
-  eventHandlers.input["network-text-search"] = function(event, target)
+  window.eventHandlers.input["network-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
