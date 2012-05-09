@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 /**
- * Resolve expanded properties (e.g. margin-{top,right,bottom,left})
+ * Resolve longhand properties (e.g. margin-{top,right,bottom,left})
  * to a shorthand.
  *
  * @constructor
@@ -17,9 +17,9 @@ var CssShorthandResolver = function()
   CssShorthandResolver._instance = this;
 
   /**
-   * Resolve all shorthands in a rule. All properties have to be fully
-   * expanded for this to work propertly. Most shorthands only have one
-   * level, but 'border-*' have more.
+   * Resolve all shorthands in a rule. All longhand properties have to
+   * be present for this to work propertly. Most shorthands only have one
+   * level of longhands, but 'border-*' have more.
    *
    * @param {Array} declaration CSS declaration as returned by Scope
    *        (currently not really true, it is manually converted to this
@@ -70,7 +70,7 @@ var CssShorthandResolver = function()
         }
       }, this);
 
-      // Remove the expanded properties
+      // Remove the longhand properties
       converted_shorthands.forEach(function(shorthand_prop) {
         var props = props_map[shorthand_prop].properties;
         props.forEach(function(prop) {
@@ -122,7 +122,7 @@ var CssShorthandResolver = function()
             all_have_same_status = false;
           is_applied = declaration.is_applied;
 
-          // Check that all expanded properties either have or don't have an
+          // Check that all longhand properties either have or don't have an
           // !important declaration
           if (last_priority !== null && last_priority != declaration.priority)
             return false;
@@ -255,7 +255,8 @@ CssShorthandResolver.shorthands = (function() {
     };
   };
 
-  var convert_border_radius_values = function(declarations) {
+  var convert_border_radius_values = function(declarations)
+  {
     var values = {};
     for (var decl in declarations)
     {
@@ -292,7 +293,7 @@ CssShorthandResolver.shorthands = (function() {
       format: function(decls) {
         var declarations = split_values(decls);
         var template = [];
-        var len = declarations["-o-animation-delay"].length;
+        var len = declarations["-o-animation-name"].length;
         resolve_multiple_values(declarations, len);
         for (var i = 0; i < len; i++)
         {
@@ -516,7 +517,7 @@ CssShorthandResolver.shorthands = (function() {
         }
 
         // If horizontal and vertical radii match, and all statuses (is_applied)
-        // matches, skip the vertical radius as it's the same as the horizontal
+        // match, skip the vertical radius as it's the same as the horizontal
         if (compare_values(declarations["border-top-left-radius"].horizontal,
                            declarations["border-top-left-radius"].vertical)
          && compare_values(declarations["border-top-right-radius"].horizontal,
