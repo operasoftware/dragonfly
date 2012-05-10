@@ -248,11 +248,15 @@ window.cls.ColorPickerView = function(id, name, container_class)
     var arrow = this._ele.querySelector(".color-picker-arrow");
     var arrow_dim = arrow.getBoundingClientRect();
     var top = Math.max(MARGIN,
-                       Math.min(v_anchor_dim.top - Math.round((color_picker_dim.height / 2) - (v_anchor_dim.height / 2)),
+                       Math.min(v_anchor_dim.top -
+                                Math.round((color_picker_dim.height / 2) -
+                                           (v_anchor_dim.height / 2)),
                                 window.innerHeight - color_picker_dim.height - MARGIN)
                       );
     var arrow_top = Math.max(MARGIN,
-                             Math.min(v_anchor_dim.top + Math.round((v_anchor_dim.height / 2) - (arrow_dim.height / 2)) - top,
+                             Math.min(v_anchor_dim.top +
+                                      Math.round((v_anchor_dim.height / 2) -
+                                                 (arrow_dim.height / 2)) - top,
                                       color_picker_dim.height - arrow_dim.height - MARGIN
                                      )
                             );
