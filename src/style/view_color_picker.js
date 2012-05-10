@@ -30,13 +30,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
   this._color_cb = function(color, callback)
   {
     var context = this._edit_context;
+    context.current_color = color;
     if (context.callback)
     {
       context.callback(color);
     }
     else
     {
-      context.current_color = color;
       if (!this._color_notation)
         this._color_notation = this._get_color_notation();
       var color_value = (color.type === "keyword")
@@ -80,7 +80,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
   /* implementation */
   this.createView = function(container)
   {
-    this._panel_ele = this._edit_context.ele_value.get_ancestor("container");
+    this._panel_ele = this._edit_context.ele_value.get_ancestor("container, overlay-window");
     this._color_picker = new ColorPicker(this._color_cb_bound,
                                          this._edit_context.initial_color);
     container.style.visibility = "hidden";
@@ -245,15 +245,21 @@ window.cls.ColorPickerView = function(id, name, container_class)
                                 window.innerHeight - height - MARGIN)
                       );
     var arrow = this._ele.querySelector(".color-picker-arrow");
-    var arrow_height = arrow.getBoundingClientRect().height;
+    var arrow_dim = arrow.getBoundingClientRect();
     var arrow_top = Math.max(MARGIN,
-                             Math.min(dim.top + Math.round((dim.height / 2) - (arrow_height / 2)) - top,
-                                      height - arrow_height - MARGIN
+                             Math.min(dim.top + Math.round((dim.height / 2) - (arrow_dim.height / 2)) - top,
+                                      height - arrow_dim.height - MARGIN
                                      )
                             );
     arrow.style.top = arrow_top + "px";
     this._ele.style.top = top + "px";
-    this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
+    if (context.right_aligned)
+    {
+      this._ele.addClass("right-aligned");
+      this._ele.style.left = dim.right + arrow_dim.width + "px";
+    }
+    else
+      this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
   };
 
   this._update_palette_dropdown = function()
