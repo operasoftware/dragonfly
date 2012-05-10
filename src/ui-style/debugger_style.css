@@ -1536,7 +1536,7 @@ d
   vertical-align: middle;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 3px;
-  margin: 0 10px 0 2px;
+  margin-left: 2px;
 }
 
 .spotlight-color-select::before

@@ -80,16 +80,17 @@ window.cls.ColorPickerView = function(id, name, container_class)
   /* implementation */
   this.createView = function(container)
   {
-    this._panel_ele = this._edit_context.ele_value.get_ancestor("container, overlay-window");
     this._color_picker = new ColorPicker(this._color_cb_bound,
                                          this._edit_context.initial_color);
     container.style.visibility = "hidden";
     container.render(this._color_picker.render(this._edit_context.alpha_disabled,
                                                this._edit_context.palette_disabled));
+    this._panel_ele = this._edit_context.ele_value.get_ancestor("container");
+    if (this._panel_ele)
+      this._panel_ele.addEventListener("mousewheel", this._prevent_scroll, true);
     this._position_color_picker();
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
-    this._panel_ele.addEventListener("mousewheel", this._prevent_scroll, true);
   };
 
   this.ondestroy = function()
@@ -134,7 +135,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
       ele_value: parent,
       ele_color_swatch: target,
       prop_name: property,
-      position_anchor_selector: ".color-swatch",
+      vertical_anchor_selector: ".color-swatch",
+      horizontal_anchor_selector: "container",
       is_important: Boolean(value_ele.querySelector(".css-priority")),
       rt_id: Number(parent.get_attr("parent-node-chain", "rt-id")),
       rule_id: Number(parent.get_attr("parent-node-chain", "rule-id")) ||
@@ -236,30 +238,37 @@ window.cls.ColorPickerView = function(id, name, container_class)
 
   this._position_color_picker = function()
   {
+    var ADJUSTMENT = 2;
     var context = this._edit_context;
-    var anchor = context.ele_value.get_ancestor(context.position_anchor_selector);
-    var dim = (anchor || context.ele_value).getBoundingClientRect()
-    var height = this._ele.getBoundingClientRect().height;
-    var top = Math.max(MARGIN,
-                       Math.min(dim.top - Math.round((height / 2) - (dim.height / 2)),
-                                window.innerHeight - height - MARGIN)
-                      );
+    var color_picker_dim = this._ele.getBoundingClientRect();
+    var v_anchor = context.ele_value.querySelector(context.vertical_anchor_selector);
+    var h_anchor = context.ele_value.get_ancestor(context.horizontal_anchor_selector);
+    var v_anchor_dim = (v_anchor || context.ele_value).getBoundingClientRect()
+    var h_anchor_dim = (h_anchor || context.ele_value).getBoundingClientRect()
     var arrow = this._ele.querySelector(".color-picker-arrow");
     var arrow_dim = arrow.getBoundingClientRect();
+    var top = Math.max(MARGIN,
+                       Math.min(v_anchor_dim.top - Math.round((color_picker_dim.height / 2) - (v_anchor_dim.height / 2)),
+                                window.innerHeight - color_picker_dim.height - MARGIN)
+                      );
     var arrow_top = Math.max(MARGIN,
-                             Math.min(dim.top + Math.round((dim.height / 2) - (arrow_dim.height / 2)) - top,
-                                      height - arrow_dim.height - MARGIN
+                             Math.min(v_anchor_dim.top + Math.round((v_anchor_dim.height / 2) - (arrow_dim.height / 2)) - top,
+                                      color_picker_dim.height - arrow_dim.height - MARGIN
                                      )
                             );
     arrow.style.top = arrow_top + "px";
     this._ele.style.top = top + "px";
-    if (context.right_aligned)
+    // Simplistic check if the color picker fits to the left, otherwise, flip it.
+    // This assumes that panels are on the right side.
+    if (h_anchor_dim.left > color_picker_dim.width)
     {
-      this._ele.addClass("right-aligned");
-      this._ele.style.left = dim.right + arrow_dim.width + "px";
+      this._ele.style.left = (h_anchor_dim.left - color_picker_dim.width + ADJUSTMENT) + "px";
     }
     else
-      this._ele.style.right = this._panel_ele.getBoundingClientRect().width + "px";
+    {
+      this._ele.addClass("right-aligned");
+      this._ele.style.left = v_anchor_dim.right + arrow_dim.width + ADJUSTMENT + "px";
+    }
   };
 
   this._update_palette_dropdown = function()

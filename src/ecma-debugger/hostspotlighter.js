@@ -482,9 +482,10 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     {
       initial_color: new Color().parseCSSColor(color_sample.style.backgroundColor),
       ele_value: color_sample,
+      vertical_anchor_selector: ".spotlight-color-select",
+      horizontal_anchor_selector: ".spotlight-color-select",
       callback: this._oneditcolor,
       edit_class: 'edited-color',
-      right_aligned: true,
       alpha_disabled: true
     };
     window.views['color-selector'].show_color_picker(color_sample, 
