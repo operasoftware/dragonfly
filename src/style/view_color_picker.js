@@ -271,7 +271,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
     else if (window.innerWidth - h_anchor_dim.right > color_picker_dim.width)
     {
       this._ele.addClass("right-aligned");
-      this._ele.style.left = h_anchor_dim.right + ADJUSTMENT + "px";
+      this._ele.style.left = h_anchor_dim.right - ADJUSTMENT + "px";
     }
     else
     {
