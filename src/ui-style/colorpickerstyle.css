@@ -2,7 +2,6 @@
 {
   position: absolute;
   margin-right: -2px;
-  z-index: 301; /* Has to be higher than overlay */
 }
 
 .color-picker-popup
