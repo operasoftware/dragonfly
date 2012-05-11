@@ -206,6 +206,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       var context = this._edit_context;
       if (context.initial_color = new Color().parseCSSColor(message[VALUE]))
       {
+        context.current_color = context.initial_color;
         context.initial_color.cssvalue = color_value;
         context.initial_color.type = context.initial_color.KEYWORD;
         this._finalize_show_color_picker();
