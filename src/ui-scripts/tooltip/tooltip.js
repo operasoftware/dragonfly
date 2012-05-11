@@ -192,6 +192,22 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
           _cur_ctx.current_tooltip = _tooltips[name];
         }
 
+        // Set the z-index dynamically to make sure the tooltip is
+        // always displayed at the top.
+        var z_index = "auto";
+        var ancestor = ele && ele.offsetParent;
+        while (ancestor)
+        {
+          var value = Number(getComputedStyle(ancestor).zIndex);
+          if (!isNaN(value))
+          {
+            z_index = value + 1;
+            break;
+          }
+          ancestor = ancestor.offsetParent;
+        }
+        _cur_ctx.tooltip_ele.style.zIndex = z_index;
+
         _cur_ctx.accept_call = true;
         _cur_ctx.last_handler_ele = ele;
         _cur_ctx.last_box = ele.getBoundingClientRect();
