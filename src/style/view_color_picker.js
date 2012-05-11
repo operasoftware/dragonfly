@@ -89,6 +89,8 @@ window.cls.ColorPickerView = function(id, name, container_class)
     if (this._panel_ele)
       this._panel_ele.addEventListener("mousewheel", this._prevent_scroll, true);
     this._position_color_picker();
+    if (this._edit_context.z_index)
+      container.style.zIndex = this._edit_context.z_index;
     container.style.visibility = "visible";
     window.addEventListener("click", this._hide_on_outside_click, true);
   };
@@ -204,6 +206,7 @@ window.cls.ColorPickerView = function(id, name, container_class)
       var context = this._edit_context;
       if (context.initial_color = new Color().parseCSSColor(message[VALUE]))
       {
+        context.current_color = context.initial_color;
         context.initial_color.cssvalue = color_value;
         context.initial_color.type = context.initial_color.KEYWORD;
         this._finalize_show_color_picker();
