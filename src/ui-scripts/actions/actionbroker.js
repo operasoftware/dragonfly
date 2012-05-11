@@ -237,7 +237,7 @@ var ActionBroker = function()
           var container = view.get_container();
           if (container)
             container.dispatchMouseEvent('click');
-          
+
           return;
         }
       }
