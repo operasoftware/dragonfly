@@ -129,8 +129,9 @@ window.cls.TestFramework = function()
         }
         else
         {
-          throw Error("PrettyPrintError. Probably invalid message. " +
-                        "payload: " + JSON.stringify(payload));
+          ret.push(this._get_indent(indent) +
+                   "<missing definition>: " +
+                   JSON.stringify(item))
         }
       }
       return ret.join("\n")

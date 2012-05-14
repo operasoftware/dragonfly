@@ -950,6 +950,8 @@ window.CustomElements.AutoScrollHeightFeature = function()
     var adjust_height = this._adjust_height.bind(ele, delta);
     adjust_height();
     ele.addEventListener('input', adjust_height, false);
+    // Custom event to force adjust of height
+    ele.addEventListener('heightadjust', adjust_height, false);
   });
 
 };

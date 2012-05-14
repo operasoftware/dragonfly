@@ -96,7 +96,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     container.clearAndRender(
       ["div",
         ["span",
-          "class", "container-button ui-button",
+          "class", "ui-button",
           "handler", "reload-window",
           "tabindex", "1"],
         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],

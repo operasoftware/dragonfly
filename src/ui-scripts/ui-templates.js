@@ -15,7 +15,7 @@
       ret.push(['span', 
                 'tabindex', '1',
                 'handler', 'close-tab', 
-                'class', 'close-tab-button ui-button']);
+                'class', 'close-tab-button']);
     }
     ret.push('handler', 'tab', 'ref-id', obj.ref_id);
     if (class_name)
@@ -274,7 +274,7 @@
           'title', setting.label,
           'key', switch_,
           'tabindex', '1',
-          'class', switch_ + ' ui-control ui-button switch' + (setting.value ? ' is-active' : '')
+          'class', switch_ + ' ui-button switch' + (setting.value ? ' is-active' : '')
         ];
     }
     else

@@ -59,17 +59,31 @@ var TabBase = new function()
   this.set_legend_info = function(text)
   {
     var tab = this._get_top_tab_element();
-    var legends = tab.getElementsByClassName('block-content');
+    var legends = tab && tab.getElementsByClassName("block-content");
+    if (!legends)
+      return;
+
     var legend = legends[1];
-    if (!legend)
+    if (text)
     {
-      legend = legends[0].parentNode.render(['span', '', 'class', 'block-content']);
+      if (!legend)
+      {
+        tab.addClass("two-rows");
+        legend = legends[0].parentNode.render(["span", "class", "block-content"]);
+      }
+
+      if (legend)
+        legend.textContent = text;
     }
-    if (legend)
+    else
     {
-      legend.textContent = text;
+      if (legend)
+      {
+        legend.parentNode.removeChild(legend);
+        tab.removeClass("two-rows");
+      }
     }
-  }
+  };
 
   this.clear_badge = function()
   {

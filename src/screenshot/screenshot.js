@@ -223,7 +223,7 @@ cls.ScreenShotView = function(id, name, container_class)
     ['div',
       ['span',
         ui_strings.S_BUTTON_TAKE_SCREENSHOT,
-        'class', 'container-button ui-button',
+        'class', 'ui-button',
         'handler', 'take-first-screenshot',
         'tabindex', '1'],
       ['p',

@@ -573,6 +573,9 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 
+/* DESC: Toolbar text telling how many messages are in the error console */
+ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
+
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
 
@@ -623,6 +626,9 @@ ui_strings.S_DRAGONFLY_INFO_MESSAGE = "Opera Dragonfly info message:\n";
 
 /* DESC: Tooltip for enabling a declaration */
 ui_strings.S_ENABLE_DECLARATION = "Enable";
+
+/* DESC: Info text that explains that only a certain number %(MAX)s of Errors is shown, out of a total of %(COUNT)s */
+ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 
 /* DESC: List of filters that will be hidden in the Error log */
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";

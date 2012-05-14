@@ -300,7 +300,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['span',
-                  'class', 'container-button ui-button',
+                  'class', 'ui-button',
                   'handler', 'reload-window',
                   'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
@@ -1040,7 +1040,9 @@ cls.GoToLine = function(js_source_view)
       this._js_source_view.show_and_flash_line(script_id, parseInt(value));
       // workaround to reset the focus to the js source view
       // needs a proper design
-      this._js_source_view.get_container().dispatchMouseEvent('click');
+      var container = this._js_source_view.get_container();
+      if (container)
+        container.dispatchMouseEvent('click');
     }
   }.bind(this);
 

@@ -321,12 +321,12 @@ var Editor = function(actions)
 
   this.insert_declaration_edit = function(event, target)
   {
-    var rule = event.target.has_attr("parent-node-chain", "rule-id");
-    var last_decl = rule.querySelector(".css-declaration:last-of-type");
+    var rule_ele = event.target.has_attr("parent-node-chain", "rule-id");
+    var brace_ele = rule_ele.querySelector(".closing-brace");
     var new_decl = document.createElement("div");
     new_decl.className = "css-declaration";
     new_decl.textContent = "\u00A0"; // Need some content for the height to be set correctly
-    rule.insertBefore(new_decl, last_decl.nextSibling);
+    rule_ele.insertBefore(new_decl, brace_ele);
     this.edit(event, new_decl, true);
     this.textarea.value = "";
   };
@@ -347,7 +347,6 @@ var Editor = function(actions)
                            : this.MODE_CSS;
     this.context_rt_id = parseInt(ele.get_attr('parent-node-chain', 'rt-id'));
     this.context_rule_id = parseInt(ele.get_attr('parent-node-chain', 'rule-id'));
-    var textContent = ele.textContent;
 
     if (this.context_rule_id)
     {
@@ -369,9 +368,7 @@ var Editor = function(actions)
     ele.textContent = '';
     ele.appendChild(this.textarea_container);
 
-    // Fire an 'input' event in case the textarea needs to be resized
-    this._event.initEvent("input", true, true);
-    this.textarea.dispatchEvent(this._event);
+    this._resize_textarea();
 
     // only for click events
     if (event)
@@ -528,9 +525,10 @@ var Editor = function(actions)
         break;
       }
 
-      this.textarea.style.height = this.textarea.scrollHeight + 'px';
       this.commit();
     }
+
+    this._resize_textarea();
 
     return false;
   };
@@ -812,8 +810,9 @@ var Editor = function(actions)
           true,
           is_disabled
         );
-        decl_ele.clearAndRender(this._templates.prop_value(decl, true, true));
         this.textarea.value = "";
+        decl_ele.clearAndRender(this._templates.prop_value(decl, true, true));
+        this._resize_textarea();
         this.context_cur_text_content = "";
         this.context_cur_prop = "";
         this.context_cur_value = "";
@@ -865,9 +864,15 @@ var Editor = function(actions)
     }
   };
 
+  this._resize_textarea = function()
+  {
+    // Force height adjust
+    this._event.initEvent("heightadjust", true, true);
+    this.textarea.dispatchEvent(this._event);
+  };
+
   this._input_handler = function(event)
   {
-    event.target.style.height = event.target.scrollHeight + 'px';
     this.commit();
   }.bind(this);
 };
