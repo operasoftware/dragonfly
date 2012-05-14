@@ -9,8 +9,8 @@ cls.EventName = function(name)
 {
   this.name = name;
   this.model = null;
-  this.rt_listeners = null,
-  this.expanded = null;
+  this.rt_listeners = null;
+  this.is_expanded = false;
   this.rt_id = 0;
   this.obj_id = 0;
 };
@@ -22,6 +22,8 @@ cls.EvenetListeners = function(view)
   this.update = function() {};
   this.get_data = function() {};
   this.expand_listeners = function(rt_id, obj_id, ev_name, cb) {};
+  this.collapse_listeners = function(rt_id, ev_name) {};
+  this.is_expanded = function(rt_id, name) {};
 
   var SUCCESS = 0;
   var SEARCH_TYPE_EVENT = 5;
@@ -38,7 +40,7 @@ cls.EvenetListeners = function(view)
         [
           {
             name: <name>,
-            expanded: <boolean>,
+            is_expanded: <boolean>,
           },
           ...
         ]
@@ -50,7 +52,8 @@ cls.EvenetListeners = function(view)
 
   this._update_rt_list = function(rt_id_list)
   {
-    var ctx = {rt_id_list: rt_id_list, rt_map: {}, win_id_map: {}};
+    var ctx = {rt_id_list: rt_id_list, rt_map: {}, win_id_map: {}, expanded_map: {}};
+    ctx.handle_expand_listener = this._handle_expand_listener_on_update.bind(this, ctx);
     rt_id_list.forEach(this._get_window_ids.bind(this, ctx));
   };
 
@@ -87,45 +90,83 @@ cls.EvenetListeners = function(view)
 
   this._get_event_names = function(ctx, rt_id)
   {
-    var tag = this._tagman.set_callback(this, this._handle_get_event_names, [ctx, rt_id]);
+    var tag = this._tagman.set_callback(this, this._handle_get_event_names, [ctx]);
     var msg = [rt_id];
     this._esdb.requestGetEventNames(tag, msg);
   };
 
-  this._handle_get_event_names = function(status, message, ctx, rt_id)
+  this._handle_get_event_names = function(status, message, ctx)
   {
     if (status === SUCCESS)
     {
       var RUNTIME_ID = 0;
       var OBJECT_ID = 1;
       var EVENT_NAMES = 2;
-      ctx.rt_map[message[RUNTIME_ID]] = null;
+      var rt_id = message[RUNTIME_ID];
+      var obj_id = message[OBJECT_ID];
+      ctx.rt_map[rt_id] = null;
       if (message[EVENT_NAMES] && message[EVENT_NAMES].length)
       {
+        ctx.expanded_map[rt_id] = [];
         ctx.rt_map[message[RUNTIME_ID]] =
         {
-          rt_id: message[RUNTIME_ID],
-          obj_id: message[OBJECT_ID],
+          rt_id: rt_id,
+          obj_id: obj_id,
           window_id: ctx.win_id_map[rt_id],
           event_names: message[EVENT_NAMES].map(function(name)
           {
-            return new cls.EventName(name);
-          }),
+            var ev_n_obj = new cls.EventName(name);
+            if (this.is_expanded(rt_id, name))
+            {
+              ctx.expanded_map[rt_id].push(name);
+              ev_n_obj.rt_id = rt_id;
+              ev_n_obj.obj_id = obj_id;
+              ev_n_obj.model = new cls.InspectableDOMNode(rt_id, obj_id);
+              var search_cb = this._handle_dom_search.bind(this,
+                                                           ev_n_obj,
+                                                           ctx.handle_expand_listener);
+              ev_n_obj.model.search(name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
+            }
+            return ev_n_obj;
+          }, this),
         };
       }
-
-      if (ctx.rt_id_list.every(function(rt_id) {return ctx.rt_map.hasOwnProperty(rt_id); }))
-      {
-        for (var i = 0, id; id = ctx.rt_id_list[i]; i++)
-        {
-          this._rts[this._get_rt_index(id)] = ctx.rt_map[id];
-        }
-        this._view.update();
-      }
+      this._check_update_ctx(ctx);
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "failed to retrieve the event names in cls.EvenetListeners.")
+  };
+
+  this._handle_expand_listener_on_update = function(ctx, ev_name_obj)
+  {
+    var list = ctx.expanded_map[ev_name_obj.rt_id];
+    var index = list.indexOf(ev_name_obj.name);
+    if (index > -1)
+      list.splice(index, 1);
+    else
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      "_handle_expand_listener_on_update failed in cls.EvenetListeners.")
+
+    this._check_update_ctx(ctx);
+  };
+
+  this._check_update_ctx = function(ctx)
+  {
+    var check_rt = function(rt_id)
+    {
+      return ctx.rt_map.hasOwnProperty(rt_id) && 
+             (!ctx.rt_map[rt_id] || (ctx.expanded_map[rt_id] &&
+                                     ctx.expanded_map[rt_id].length === 0));
+    };
+    if (ctx.rt_id_list.every(check_rt))
+    {
+      for (var i = 0, id; id = ctx.rt_id_list[i]; i++)
+      {
+        this._rts[this._get_rt_index(id)] = ctx.rt_map[id];
+      }
+      this._view.update();
+    }
   };
 
   this._handle_dom_search = function(ev_name_obj, cb)
@@ -147,11 +188,18 @@ cls.EvenetListeners = function(view)
                                          ? {win_id: ev_target[OBJECT_ID],
                                             listeners: ev_target[EVENT_LISTENERS]}
                                          : null;
-      ev_name_obj.expanded = true;
+      ev_name_obj.is_expanded = true;
+
+      if (!this._expand_tree[ev_name_obj.rt_id])
+        this._expand_tree[ev_name_obj.rt_id] = {};
+
+      this._expand_tree[ev_name_obj.rt_id][ev_name_obj.name] = true;
+
       if (cb)
         cb(ev_name_obj);
       else
         this._view.update();
+
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
@@ -224,8 +272,8 @@ cls.EvenetListeners = function(view)
       ev_n.rt_id = rt_id;
       ev_n.obj_id = obj_id;
       ev_n.model = new cls.InspectableDOMNode(rt_id, obj_id);
-      var cb = this._handle_dom_search.bind(this, ev_n, cb);
-      ev_n.model.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, cb);
+      var search_cb = this._handle_dom_search.bind(this, ev_n, cb);
+      ev_n.model.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
@@ -233,8 +281,32 @@ cls.EvenetListeners = function(view)
 
   };
 
+  this.collapse_listeners = function(rt_id, ev_name)
+  {
+    var ev_n_obj = this._get_ev_name_obj(rt_id, ev_name);
+    if (ev_n_obj)
+    {
+      ev_n_obj.model = null;
+      ev_n_obj.rt_listeners = null;
+      ev_n_obj.is_expanded = false;
+
+      if (this._expand_tree[rt_id])
+        this._expand_tree[rt_id][ev_name] = false;
+    }
+  };
+
+  this.is_expanded = function(rt_id, name)
+  {
+    return this._expand_tree[rt_id]
+         ? Boolean(this._expand_tree[rt_id][name])
+         : false;
+  };
+
   this._init = function(view)
   {
+    this._rts = [];
+    this._win_id_map = {};
+    this._expand_tree = {};
     this._view = view;
     this._tagman = window.tag_manager;
     this._esdb = window.services["ecmascript-debugger"];

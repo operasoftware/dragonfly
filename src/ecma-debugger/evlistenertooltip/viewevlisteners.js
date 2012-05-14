@@ -17,7 +17,7 @@ cls.EventListenersView = function(id, name, container_class)
     }
   };
 
-  this._get_event_listeners = function(event, target)
+  this._toggle_event_listeners = function(event, target)
   {
     var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
     var obj_id = Number(target.get_ancestor_attr("data-obj-id"));
@@ -25,13 +25,31 @@ cls.EventListenersView = function(id, name, container_class)
     var li_ele = target.get_ancestor("li");
     if (rt_id && obj_id && ev_name && li_ele)
     {
-      var cb = this._show_ev_listeners.bind(this, li_ele);
-      this._data.expand_listeners(rt_id, obj_id, ev_name, cb);
+      if (this._data.is_expanded(rt_id, ev_name))
+      {
+        var ls = li_ele.querySelector(".ev-all-listeners");
+        if (ls)
+          ls.parentNode.removeChild(ls);
+
+        var input = li_ele.querySelector("input");
+        if (input)
+          input.style.removeProperty("background-position");
+
+        this._data.collapse_listeners(rt_id, ev_name);
+      }
+      else
+      {
+        var cb = this._show_ev_listeners.bind(this, li_ele);
+        this._data.expand_listeners(rt_id, obj_id, ev_name, cb);
+      }
     }
   };
 
   this._update_ev_listeners = function(event, target)
   {
+    // TODO testing
+    target.get_ancestor("container").innerHTML = "";
+
     this._data.update();
   };
 
@@ -54,7 +72,7 @@ cls.EventListenersView = function(id, name, container_class)
     this.init(id, name, container_class);
     this._data = new cls.EvenetListeners(this);
     var evh = window.event_handlers;
-    evh.click["get-ev-listeners"] = this._get_event_listeners.bind(this);
+    evh.click["toggle-ev-listeners"] = this._toggle_event_listeners.bind(this);
     evh.click["update-ev-listeners"] = this._update_ev_listeners.bind(this);
   };
 

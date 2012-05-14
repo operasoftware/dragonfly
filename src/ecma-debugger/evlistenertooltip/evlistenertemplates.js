@@ -29,13 +29,15 @@
   {
     return (
     ["li", 
-      ["h2", 
+      ["h3", 
         ["input", "type", "button",
                   "class", "folder-key"],
         ev_name_obj.name,
-        "handler", "get-ev-listeners",
+        "handler", "toggle-ev-listeners",
         "data-ev-name", ev_name_obj.name,
-        "class", "ev-listener-type"]]);
+        "class", "ev-listener-type"],
+      ev_name_obj.is_expanded ? this.ev_all_listeners(ev_name_obj) : []
+    ]);
   };
 
   this.ev_listeners = function(listener_list, rt_id)
