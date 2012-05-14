@@ -992,7 +992,7 @@ cls.ReplView.create_ui_widgets = function()
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
       'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
-      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
+      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE,
       'expand-objects-inline': ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE,
     },
     { // settings map

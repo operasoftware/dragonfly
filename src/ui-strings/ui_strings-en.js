@@ -1,4 +1,4 @@
-window.ui_strings || ( window.ui_strings  = {} );
+﻿window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -96,8 +96,8 @@ ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = "Expand subtree";
 /* DESC: Context menu item for showing the color picker. */
 ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = "Open color picker";
 
-/* DESC: Context menu item for removing a breakpoint. */
-ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT = "Delete breakpoint";
+/* DESC: Context menu item for disabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
 
 /* DESC: Context menu item for removing a property in a rule. */
 ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = "Delete declaration";
@@ -573,9 +573,6 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
 
-/* DESC: Toolbar text telling how many messages are in the error console */
-ui_strings.S_CONSOLE_TOOLBAR_MESSAGES_COUNT = "%s messages";
-
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
 
@@ -811,7 +808,7 @@ ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
 
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
+ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
 
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
@@ -823,7 +820,7 @@ ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the \"%s\" shortcut.";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "Searching…";
+ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
@@ -1364,9 +1361,6 @@ ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW = "Represent the DOM as a node tree";
 
 /* DESC: Show ECMAScript errors in the command line. */
 ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE = "Show JavaScript errors in the console";
-
-/* DESC: When enabled, compilation errors etc are shown in repl as well as error console */
-ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL = "Show JavaScript errors in the console";
 
 /* DESC: Show default null and empty string values when inspecting a js object. */
 ui_strings.S_SWITCH_SHOW_FEFAULT_NULLS_AND_EMPTY_STRINGS = "Show default values if they are null or empty strings";

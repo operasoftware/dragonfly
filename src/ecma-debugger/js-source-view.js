@@ -1338,8 +1338,9 @@ cls.JsSourceView.create_ui_widgets = function()
                 disabled: !bp.condition
               },
               {
-                label: ui_strings.M_CONTEXTMENU_REMOVE_BREAKPOINT,
+                label: ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT,
                 handler: function(event, target) {
+                  // fixme: remove_breakpoint only disables a breakpoint. the name needs to be changed.
                   breakpoints.remove_breakpoint(script_id, line);
                 }
               },

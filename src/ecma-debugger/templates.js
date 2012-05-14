@@ -393,19 +393,9 @@
         name: "Česky"
       },
       {
-        browserLanguge: "da",
-        key: "da",
-        name: "Dansk"
-      },
-      {
         browserLanguge: "de",
         key: "de",
         name: "Deutsch"
-      },
-      {
-        browserLanguge: "el",
-        key: "el",
-        name: "Ελληνικά"
       },
       {
         browserLanguge: "en",
@@ -433,11 +423,6 @@
         name: "Eesti keel"
       },
       {
-        browserLanguge: "fi",
-        key: "fi",
-        name: "Suomen kieli"
-      },
-      {
         browserLanguge: "fr",
         key: "fr",
         name: "Français"
@@ -453,14 +438,9 @@
         name: "Frysk"
       },
       {
-        browserLanguge: "hi",
-        key: "hi",
-        name: "हिन्दी"
-      },
-      {
-        browserLanguge: "hr",
-        key: "hr",
-        name: "Hrvatski"
+        browserLanguge: "gd",
+        key: "gd",
+        name: "Gàidhlig"
       },
       {
         browserLanguge: "hu",
@@ -486,16 +466,6 @@
         browserLanguge: "ka",
         key: "ka",
         name: "ქართული"
-      },
-      {
-        browserLanguge: "ko",
-        key: "ko",
-        name: "한국어"
-      },
-      {
-        browserLanguge: "lt",
-        key: "lt",
-        name: "Lietuvių kalba"
       },
       {
         browserLanguge: "mk",
@@ -556,16 +526,6 @@
         browserLanguge: "sv",
         key: "sv",
         name: "Svenska"
-      },
-      {
-        browserLanguge: "ta",
-        key: "ta",
-        name: "தமிழ்"
-      },
-      {
-        browserLanguge: "te",
-        key: "te",
-        name: "తెలుగు"
       },
       {
         browserLanguge: "tr",
