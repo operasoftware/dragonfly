@@ -1,4 +1,4 @@
-﻿/* Generated from ru.po at Fri 20 Apr 2012 12:27 */
+﻿/* Generated from ru.po at Mon 14 May 2012 15:10 */
 window.ui_strings || (window.ui_strings  = {});
 window.ui_strings.lang_code = "ru";
 ui_strings.S_ANONYMOUS_FUNCTION_NAME="<анонимная функция>";
@@ -475,7 +475,7 @@ ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER="Создать запрос";
 ui_strings.M_VIEW_LABEL_REQUEST_HEADERS="Заголовки запроса";
 ui_strings.M_VIEW_LABEL_REQUEST_LOG="Журнал запросов";
 ui_strings.M_VIEW_LABEL_REQUEST_SUMMARY="Сводка запроса";
-ui_strings.M_VIEW_LABEL_RESOURCES="Источники";
+ui_strings.M_VIEW_LABEL_RESOURCES="Ресурсы";
 ui_strings.M_VIEW_LABEL_RESPONSE_BODY="Ответ";
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS="Заголовки ответа";
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE="Состояние";
