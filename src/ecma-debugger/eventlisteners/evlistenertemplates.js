@@ -13,22 +13,25 @@
           "tabindex", "1",
           "handler", "update-ev-listeners"]],
       ["ul", data.map(this._ev_names_list, this)],
-      "class", "main-ev-listener-view padding"]);
+      "class", "main-ev-listener-view js-search-results-runtime padding"]);
   };
 
   this._ev_names_list = function(ev_obj, index, ev_obj_list)
   {
     var rt = window.runtimes.getRuntime(ev_obj.rt_id);
-    return (
-    ["li",
-      ["h2", 
-        ["span", rt && (rt.title || rt.host),
-                 "data-tooltip", "url-tooltip", 
-                 "data-tooltip-text", rt && rt.uri],
-        "class", "ev-listener-rt-title"],
-      ["ul", ev_obj.event_names.map(this._ev_name_item, this),
-             "data-rt-id", String(ev_obj.rt_id),
-             "data-obj-id", String(ev_obj.obj_id)]]);
+    var ret = ["li"];
+    if (ev_obj_list.length > 1)
+    { 
+      ret.push(["h2", 
+                 ["span", rt && (rt.title || rt.host),
+                          "data-tooltip", "url-tooltip", 
+                          "data-tooltip-text", rt && rt.uri],
+                 "class", "ev-listener-rt-title"]);
+    }
+    ret.push(["ul", ev_obj.event_names.map(this._ev_name_item, this),
+                    "data-rt-id", String(ev_obj.rt_id),
+                    "data-obj-id", String(ev_obj.obj_id)]);
+    return ret;
   };
 
   this._ev_name_item = function(ev_name_obj)
