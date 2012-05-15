@@ -5,13 +5,9 @@ addModule("CSS shorthands");
 
 setServiceRequirements({
   "scope": "1.0-",
-  "ecmascript-debugger": "",
+  "ecmascript-debugger": "6.9-",
   "window-manager": ""
 });
-
-// Override some things not needed for the tests
-cls.TagManager.get_instance = function() {};
-StylesheetTemplates = function() {};
 
 var set_properties = function(props)
 {
@@ -78,6 +74,16 @@ var assert_rule = function(expected)
 };
 
 addTest("Resolving CSS shorthands", function () {
+  // Override some things not needed for the tests
+  cls.TagManager.get_instance = function() {};
+  StylesheetTemplates = function() {};
+  if (!(window.services && window.services["ecmascript-debugger"]))
+  {
+    window.services["ecmascript-debugger"] = {
+      satisfies_version: function() { return true; }
+    };
+  }
+
   window.css_index_map = ecmascript_debugger.CssGetIndexMap();
   window.element_style = new cls.ElementStyle();
 
