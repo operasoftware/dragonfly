@@ -291,7 +291,8 @@ CssShorthandResolver.shorthands = (function() {
         "-o-animation-fill-mode"
       ],
       format: function(decls) {
-        // Workaround for CORE-45497: -o-animation-duration computed style missing comma when having multiple values
+        // Workaround for CORE-45497: -o-animation-duration computed style
+        // missing comma when having multiple values
         // Fixed in ci-322
         var duration = decls["-o-animation-duration"];
         if (duration.value.indexOf(" ") !== -1 && duration.value.indexOf(",") === -1)
@@ -305,30 +306,38 @@ CssShorthandResolver.shorthands = (function() {
         {
           var sub_template = [];
           var is_final_layer = (i == len-1);
-          // The spec says that the first value that can be parsed as time is assigned to the animation-duration.
-          // There are two time values in the shorthand, 'duration' and 'delay'. If delay has a non-default
+          // The spec says that the first value that can be parsed as time is
+          // assigned to the animation-duration. There are two time values in
+          // the shorthand, 'duration' and 'delay'. If delay has a non-default
           // value, we must therefore include duration.
-          var is_default_delay = declarations["-o-animation-delay"][i].value == get_initial_value("-o-animation-delay");
+          var is_default_delay = declarations["-o-animation-delay"][i].value ==
+                                 get_initial_value("-o-animation-delay");
 
-          if (declarations["-o-animation-name"][i].value != get_initial_value("-o-animation-name"))
+          if (declarations["-o-animation-name"][i].value !=
+              get_initial_value("-o-animation-name"))
             sub_template.push(" ", declarations["-o-animation-name"][i]);
 
-          if (!is_default_delay || declarations["-o-animation-duration"][i].value != get_initial_value("-o-animation-duration"))
+          if (!is_default_delay || declarations["-o-animation-duration"][i].value !=
+                                   get_initial_value("-o-animation-duration"))
             sub_template.push(" ", declarations["-o-animation-duration"][i]);
 
-          if (declarations["-o-animation-timing-function"][i].value != get_initial_value("-o-animation-timing-function"))
+          if (declarations["-o-animation-timing-function"][i].value !=
+              get_initial_value("-o-animation-timing-function"))
             sub_template.push(" ", declarations["-o-animation-timing-function"][i]);
 
           if (!is_default_delay)
             sub_template.push(" ", declarations["-o-animation-delay"][i]);
 
-          if (declarations["-o-animation-iteration-count"][i].value != get_initial_value("-o-animation-iteration-count"))
+          if (declarations["-o-animation-iteration-count"][i].value !=
+              get_initial_value("-o-animation-iteration-count"))
             sub_template.push(" ", declarations["-o-animation-iteration-count"][i]);
 
-          if (declarations["-o-animation-direction"][i].value != get_initial_value("-o-animation-direction"))
+          if (declarations["-o-animation-direction"][i].value !=
+              get_initial_value("-o-animation-direction"))
             sub_template.push(" ", declarations["-o-animation-direction"][i]);
 
-          if (declarations["-o-animation-fill-mode"][i].value != get_initial_value("-o-animation-fill-mode"))
+          if (declarations["-o-animation-fill-mode"][i].value !=
+              get_initial_value("-o-animation-fill-mode"))
             sub_template.push(" ", declarations["-o-animation-fill-mode"][i]);
 
           // There's always an extra space at the beginning, remove it here
@@ -341,7 +350,7 @@ CssShorthandResolver.shorthands = (function() {
           if (!is_final_layer)
             sub_template.push(", ");
 
-          template = template.concat(sub_template);
+          template.push.apply(template, sub_template);
         }
 
         return template;
@@ -368,29 +377,36 @@ CssShorthandResolver.shorthands = (function() {
         {
           var template_len = template.length;
           var is_final_layer = (i == len-1);
-          var is_default_bg_size = declarations["background-size"][i].value == get_initial_value("background-size");
+          var is_default_bg_size = declarations["background-size"][i].value ==
+                                   get_initial_value("background-size");
 
-          // Always add background-image, unless we're in the final background layer and
-          // it has the default value.
-          if (!(is_final_layer && declarations["background-image"][i].value == get_initial_value("background-image")))
+          // Always add background-image, unless we're in the final background
+          // layer and it has the default value.
+          if (!(is_final_layer && declarations["background-image"][i].value ==
+                get_initial_value("background-image")))
             template.push(" ", declarations["background-image"][i]);
 
-          if (!is_default_bg_size || declarations["background-position"][i].value != get_initial_value("background-position"))
+          if (!is_default_bg_size || declarations["background-position"][i].value !=
+                                     get_initial_value("background-position"))
             template.push(" ", declarations["background-position"][i]);
 
           if (!is_default_bg_size)
             template.push("/", declarations["background-size"][i]);
 
-          if (declarations["background-repeat"][i].value != get_initial_value("background-repeat"))
+          if (declarations["background-repeat"][i].value !=
+              get_initial_value("background-repeat"))
             template.push(" ", declarations["background-repeat"][i]);
 
-          if (declarations["background-attachment"][i].value != get_initial_value("background-attachment"))
+          if (declarations["background-attachment"][i].value !=
+              get_initial_value("background-attachment"))
             template.push(" ", declarations["background-attachment"][i]);
 
-          if (declarations["background-origin"][i].value != get_initial_value("background-origin"))
+          if (declarations["background-origin"][i].value !=
+              get_initial_value("background-origin"))
             template.push(" ", declarations["background-origin"][i]);
 
-          if (declarations["background-clip"][i].value != get_initial_value("background-clip"))
+          if (declarations["background-clip"][i].value !=
+              get_initial_value("background-clip"))
             template.push(" ", declarations["background-clip"][i]);
 
           if (is_final_layer)
