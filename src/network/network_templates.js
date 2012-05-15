@@ -344,12 +344,13 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
           "data-object-id", String(entry.id)];
 }
 
-templates.network_graph_section_color = {
+templates.network_graph_section_colors = {
   waiting: "#7381FF",
   request: "#de5b5b",
   receiving: "#79db86",
   blocked: "#adadad",
-  irregular: "#ebcc78"
+  irregular: "#ebcc78",
+  undefined: "#ebcc78"
 }
 
 templates.network_graph_sections = function(entry, width, duration, do_tooltip)
@@ -386,7 +387,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
     var val = section.val * scale;
     to += val;
 
-    var color = templates.network_graph_section_color[section.classname];
+    var color = templates.network_graph_section_colors[section.classname];
     return color + " " + Math.round(from) + "px," +  color + " " + Math.round(to) + "px";
   }).join(",");
   // End transparent. This will let the fallback background-color show in case min-width applies.
