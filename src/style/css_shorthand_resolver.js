@@ -334,7 +334,7 @@ CssShorthandResolver.shorthands = (function() {
           // There's always an extra space at the beginning, remove it here
           sub_template.splice(0, 1);
 
-          // If all properties have default values, at least show the name
+          // If all properties have default values, at least append the default name
           if (!sub_template.length)
             template.push("none");
 

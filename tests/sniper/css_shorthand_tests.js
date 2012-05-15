@@ -241,8 +241,8 @@ addTest("Resolving CSS shorthands", function () {
 
   set_properties(
     {
-      "border": "1px solid red",
-      "border-top": "1px solid red",
+      "border": "1px solid rgb(255, 0, 0)",
+      "border-top": "1px solid rgb(255, 0, 0)",
       "border-bottom-width": "1px",
     }
   );
@@ -385,7 +385,7 @@ addTest("Resolving CSS shorthands", function () {
 
   clear_properties();
 
-  set_properties({"font": "12px sans-serif"});
+  set_properties({"font": "16px/1 sans-serif"});
 
   assert_rule(
     {
@@ -393,14 +393,14 @@ addTest("Resolving CSS shorthands", function () {
         "font",
       ],
       values: [
-        "12px sans-serif",
+        "16px/1 sans-serif",
       ]
     }
   );
 
   clear_properties();
 
-  set_properties({"background": "red"});
+  set_properties({"background": "rgb(255, 0, 0)"});
 
   assert_rule(
     {
@@ -415,7 +415,7 @@ addTest("Resolving CSS shorthands", function () {
 
   clear_properties();
 
-  set_properties({"background": "none, red"});
+  set_properties({"background": "none, rgb(255, 0, 0)"});
 
   assert_rule(
     {
@@ -499,7 +499,7 @@ addTest("Resolving CSS shorthands", function () {
 
   clear_properties();
 
-  set_properties({"column-rule": "1px solid red"});
+  set_properties({"column-rule": "1px solid rgb(255, 0, 0)"});
 
   assert_rule(
     {
@@ -637,6 +637,75 @@ addTest("Resolving CSS shorthands", function () {
       ],
     }
   );
-});
 
+  clear_properties();
+
+  set_properties(
+    {
+      "-o-animation": "1s, 2s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "-o-animation",
+      ],
+      values: [
+        "1s, 2s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "-o-animation": "1s, 2s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "-o-animation",
+      ],
+      values: [
+        "1s, 2s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "-o-animation": "0s 1s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "-o-animation",
+      ],
+      values: [
+        "0s 1s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "-o-animation": "none, none",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "-o-animation",
+      ],
+      values: [
+        "none, none",
+      ],
+    }
+  );
+});
 
