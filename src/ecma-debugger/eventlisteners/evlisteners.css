@@ -1,0 +1,46 @@
+.ev-listener-type
+{
+  font: inherit;
+}
+
+.ev-listener
+{
+  margin: 0;
+}
+
+.ev-type
+{
+  font-weight: bold;
+}
+
+.ev-added,
+.ev-origin
+{
+  border-radius: 2px;
+}
+
+.ev-all-listeners
+{
+  margin-left: 22px;
+}
+
+.tooltip-function-source .js-tooltip-examine-container
+{
+  padding: 0;
+}
+
+.tooltip-function-source .js-source-line-numbers
+{
+  background-color: hsla(0, 0%, 0%, .03);
+  border-radius: 0 0 0 3px;
+}
+
+.tooltip-function-source .js-source-content
+{
+  margin-left: 40px;
+}
+
+.position-relative
+{
+  position: relative;
+}
