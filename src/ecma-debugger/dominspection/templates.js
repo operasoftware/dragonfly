@@ -274,6 +274,10 @@
         }
         case DOCUMENT_NODE:
         {
+          if (ev_listener)
+            tree += "<div class='search-match dom-search document' " +
+                         "obj-id='" + node[ID] + "'>" +
+                      "document" + ev_listener + "</div>";
           break;
         }
         case DOCUMENT_TYPE_NODE:

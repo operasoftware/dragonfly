@@ -17,6 +17,12 @@ cls.EventName = function(name)
 
 cls.EvenetListeners = function(view)
 {
+  this._init(view);
+};
+
+cls.EvenetListeners.prototype = new function()
+{
+
   /* interface */
 
   this.update = function() {};
@@ -49,6 +55,33 @@ cls.EvenetListeners = function(view)
     ]
 
   */
+
+  var DELAY = 150;
+
+  this._on_new_rts = function()
+  {
+    if (!this._on_new_rts_timeout)
+      this._on_new_rts_timeout = setTimeout(this._handle_new_rts_bound, DELAY);
+  };
+
+  this._handle_new_rts = function()
+  {
+    var rt_ids = window.runtimes.get_dom_runtime_ids();
+    var cur_rt_ids = this._rts.map(this._get_rt_id);
+    var new_rt_ids = rt_ids.filter(function(id) { return !cur_rt_ids.contains(id); });
+    var live_rts = this._rts.filter(function(rt) { return rt_ids.contains(rt.rt_id); });
+    if (live_rts.length != this._rts.length)
+    {
+      this._rts = live_rts;
+      this._view.update(); 
+    }
+    if (new_rt_ids)
+      this._update_rt_list(new_rt_ids);
+
+    this._on_new_rts_timeout = 0;
+  };
+
+  this._get_rt_id = function(rt) { return rt.rt_id };
 
   this._update_rt_list = function(rt_id_list)
   {
@@ -104,33 +137,34 @@ cls.EvenetListeners = function(view)
       var EVENT_NAMES = 2;
       var rt_id = message[RUNTIME_ID];
       var obj_id = message[OBJECT_ID];
-      ctx.rt_map[rt_id] = null;
-      if (message[EVENT_NAMES] && message[EVENT_NAMES].length)
+      var ev_list = message[EVENT_NAMES];
+      var rt_listeners = {rt_id: rt_id,
+                          obj_id: obj_id,
+                          window_id: ctx.win_id_map[rt_id]};
+      ctx.expanded_map[rt_id] = [];
+      if (ev_list && ev_list.length)
       {
-        ctx.expanded_map[rt_id] = [];
-        ctx.rt_map[message[RUNTIME_ID]] =
+        rt_listeners.event_names = ev_list.map(function(name)
         {
-          rt_id: rt_id,
-          obj_id: obj_id,
-          window_id: ctx.win_id_map[rt_id],
-          event_names: message[EVENT_NAMES].map(function(name)
+          var ev_n_obj = new cls.EventName(name);
+          if (this.is_expanded(rt_id, name))
           {
-            var ev_n_obj = new cls.EventName(name);
-            if (this.is_expanded(rt_id, name))
-            {
-              ctx.expanded_map[rt_id].push(name);
-              ev_n_obj.rt_id = rt_id;
-              ev_n_obj.obj_id = obj_id;
-              ev_n_obj.model = new cls.InspectableDOMNode(rt_id, obj_id);
-              var search_cb = this._handle_dom_search.bind(this,
-                                                           ev_n_obj,
-                                                           ctx.handle_expand_listener);
-              ev_n_obj.model.search(name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
-            }
-            return ev_n_obj;
-          }, this),
-        };
+            ctx.expanded_map[rt_id].push(name);
+            ev_n_obj.rt_id = rt_id;
+            ev_n_obj.obj_id = obj_id;
+            ev_n_obj.model = new cls.InspectableDOMNode(rt_id, obj_id);
+            var search_cb = this._handle_dom_search.bind(this,
+                                                         ev_n_obj,
+                                                         ctx.handle_expand_listener);
+            ev_n_obj.model.search(name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
+          }
+          return ev_n_obj;
+        }, this);
       }
+      else
+        rt_listeners.event_names = [];
+
+      ctx.rt_map[rt_id] = rt_listeners;
       this._check_update_ctx(ctx);
     }
     else
@@ -245,14 +279,9 @@ cls.EvenetListeners = function(view)
   {
     this._rts = [];
     this._win_id_map = {};
-    var rt_id_list = window.runtimes.get_runtime_ids();
+    var rt_id_list = window.runtimes.get_dom_runtime_ids();
     if (rt_id_list.length)
-    {
-      window.messages.remove_listener('new-top-runtime', this._update_bound);
       this._update_rt_list(rt_id_list);
-    }
-    else
-      window.messages.add_listener('new-top-runtime', this._update_bound);
   };
 
   this.get_data = function()
@@ -304,14 +333,16 @@ cls.EvenetListeners = function(view)
 
   this._init = function(view)
   {
+    this._on_new_rts_timeout = 0;
+    this._handle_new_rts_bound = this._handle_new_rts.bind(this);
     this._rts = [];
     this._win_id_map = {};
     this._expand_tree = {};
     this._view = view;
     this._tagman = window.tag_manager;
     this._esdb = window.services["ecmascript-debugger"];
-    this._update_bound = this.update.bind(this);
-  }
+    window.messages.add_listener("active-tab", this._on_new_rts.bind(this));
+  };
 
-  this._init(view);
+  
 };

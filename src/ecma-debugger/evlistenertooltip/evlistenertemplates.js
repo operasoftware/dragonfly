@@ -7,7 +7,7 @@
     ["div",
       ["div",
         ["span",
-          ["span", "Update"], // TODO ui string
+          ["span", "Update all"], // TODO ui string
           "class" , "ui-button",
           "unselectable", "on",
           "tabindex", "1",
@@ -18,8 +18,14 @@
 
   this._ev_names_list = function(ev_obj, index, ev_obj_list)
   {
+    var rt = window.runtimes.getRuntime(ev_obj.rt_id);
     return (
     ["li",
+      ["h2", 
+        ["span", rt && (rt.title || rt.host),
+                 "data-tooltip", "url-tooltip", 
+                 "data-tooltip-text", rt && rt.uri],
+        "class", "ev-listener-rt-title"],
       ["ul", ev_obj.event_names.map(this._ev_name_item, this),
              "data-rt-id", String(ev_obj.rt_id),
              "data-obj-id", String(ev_obj.obj_id)]]);
