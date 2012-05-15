@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 /**
- * Resolve expanded properties (e.g. margin-{top,right,bottom,left})
+ * Resolve longhand properties (e.g. margin-{top,right,bottom,left})
  * to a shorthand.
  *
  * @constructor
@@ -17,9 +17,9 @@ var CssShorthandResolver = function()
   CssShorthandResolver._instance = this;
 
   /**
-   * Resolve all shorthands in a rule. All properties have to be fully
-   * expanded for this to work propertly. Most shorthands only have one
-   * level, but 'border-*' have more.
+   * Resolve all shorthands in a rule. All longhand properties have to
+   * be present for this to work propertly. Most shorthands only have one
+   * level of longhands, but 'border-*' have more.
    *
    * @param {Array} declaration CSS declaration as returned by Scope
    *        (currently not really true, it is manually converted to this
@@ -70,7 +70,7 @@ var CssShorthandResolver = function()
         }
       }, this);
 
-      // Remove the expanded properties
+      // Remove the longhand properties
       converted_shorthands.forEach(function(shorthand_prop) {
         var props = props_map[shorthand_prop].properties;
         props.forEach(function(prop) {
@@ -122,7 +122,7 @@ var CssShorthandResolver = function()
             all_have_same_status = false;
           is_applied = declaration.is_applied;
 
-          // Check that all expanded properties either have or don't have an
+          // Check that all longhand properties either have or don't have an
           // !important declaration
           if (last_priority !== null && last_priority != declaration.priority)
             return false;
@@ -255,7 +255,8 @@ CssShorthandResolver.shorthands = (function() {
     };
   };
 
-  var convert_border_radius_values = function(declarations) {
+  var convert_border_radius_values = function(declarations)
+  {
     var values = {};
     for (var decl in declarations)
     {
@@ -278,6 +279,75 @@ CssShorthandResolver.shorthands = (function() {
   var get_initial_value = cls.Stylesheets.get_initial_value;
 
   return {
+    "-o-animation": {
+      properties: [
+        // Note that -o-animation-play-state is not part of the shorthand
+        "-o-animation-name",
+        "-o-animation-duration",
+        "-o-animation-timing-function",
+        "-o-animation-delay",
+        "-o-animation-iteration-count",
+        "-o-animation-direction",
+        "-o-animation-fill-mode"
+      ],
+      format: function(decls) {
+        // Workaround for CORE-45497: -o-animation-duration computed style missing comma when having multiple values
+        // Fixed in ci-322
+        var duration = decls["-o-animation-duration"];
+        if (duration.value.indexOf(" ") !== -1 && duration.value.indexOf(",") === -1)
+          duration.value = duration.value.replace(/\s+/, ", ");
+
+        var declarations = split_values(decls);
+        var template = [];
+        var len = declarations["-o-animation-name"].length;
+        resolve_multiple_values(declarations, len);
+        for (var i = 0; i < len; i++)
+        {
+          var sub_template = [];
+          var is_final_layer = (i == len-1);
+          // The spec says that the first value that can be parsed as time is assigned to the animation-duration.
+          // There are two time values in the shorthand, 'duration' and 'delay'. If delay has a non-default
+          // value, we must therefore include duration.
+          var is_default_delay = declarations["-o-animation-delay"][i].value == get_initial_value("-o-animation-delay");
+
+          if (declarations["-o-animation-name"][i].value != get_initial_value("-o-animation-name"))
+            sub_template.push(" ", declarations["-o-animation-name"][i]);
+
+          if (!is_default_delay || declarations["-o-animation-duration"][i].value != get_initial_value("-o-animation-duration"))
+            sub_template.push(" ", declarations["-o-animation-duration"][i]);
+
+          if (declarations["-o-animation-timing-function"][i].value != get_initial_value("-o-animation-timing-function"))
+            sub_template.push(" ", declarations["-o-animation-timing-function"][i]);
+
+          if (!is_default_delay)
+            sub_template.push(" ", declarations["-o-animation-delay"][i]);
+
+          if (declarations["-o-animation-iteration-count"][i].value != get_initial_value("-o-animation-iteration-count"))
+            sub_template.push(" ", declarations["-o-animation-iteration-count"][i]);
+
+          if (declarations["-o-animation-direction"][i].value != get_initial_value("-o-animation-direction"))
+            sub_template.push(" ", declarations["-o-animation-direction"][i]);
+
+          if (declarations["-o-animation-fill-mode"][i].value != get_initial_value("-o-animation-fill-mode"))
+            sub_template.push(" ", declarations["-o-animation-fill-mode"][i]);
+
+          // There's always an extra space at the beginning, remove it here
+          sub_template.splice(0, 1);
+
+          // If all properties have default values, at least append the default name
+          if (!sub_template.length)
+            template.push("none");
+
+          if (!is_final_layer)
+            sub_template.push(", ");
+
+          template = template.concat(sub_template);
+        }
+
+        return template;
+      }
+    },
+
     "background": {
       properties: [
         "background-image",
@@ -297,12 +367,12 @@ CssShorthandResolver.shorthands = (function() {
         for (var i = 0; i < len; i++)
         {
           var template_len = template.length;
-          var is_final_bg_layer = (i == len-1);
+          var is_final_layer = (i == len-1);
           var is_default_bg_size = declarations["background-size"][i].value == get_initial_value("background-size");
 
           // Always add background-image, unless we're in the final background layer and
           // it has the default value.
-          if (!(is_final_bg_layer && declarations["background-image"][i].value == get_initial_value("background-image")))
+          if (!(is_final_layer && declarations["background-image"][i].value == get_initial_value("background-image")))
             template.push(" ", declarations["background-image"][i]);
 
           if (!is_default_bg_size || declarations["background-position"][i].value != get_initial_value("background-position"))
@@ -323,7 +393,7 @@ CssShorthandResolver.shorthands = (function() {
           if (declarations["background-clip"][i].value != get_initial_value("background-clip"))
             template.push(" ", declarations["background-clip"][i]);
 
-          if (is_final_bg_layer)
+          if (is_final_layer)
             template.push(" ", get_tokens(decls["background-color"]));
           else
             template.push(", ");
@@ -453,7 +523,7 @@ CssShorthandResolver.shorthands = (function() {
         }
 
         // If horizontal and vertical radii match, and all statuses (is_applied)
-        // matches, skip the vertical radius as it's the same as the horizontal
+        // match, skip the vertical radius as it's the same as the horizontal
         if (compare_values(declarations["border-top-left-radius"].horizontal,
                            declarations["border-top-left-radius"].vertical)
          && compare_values(declarations["border-top-right-radius"].horizontal,
@@ -545,6 +615,7 @@ CssShorthandResolver.shorthands = (function() {
         "font-family"
       ],
       format: function(decls) {
+        // This function will always at least return font-size and font-family
         var template = [];
 
         if (decls["font-style"].value != get_initial_value("font-style"))
@@ -556,14 +627,12 @@ CssShorthandResolver.shorthands = (function() {
         if (decls["font-weight"].value != get_initial_value("font-weight"))
           template.push(" ", decls["font-weight"]);
 
-        if (decls["font-size"].value != get_initial_value("font-size"))
-          template.push(" ", decls["font-size"]);
+        template.push(" ", decls["font-size"]);
 
         if (decls["line-height"].value != get_initial_value("line-height"))
           template.push("/", decls["line-height"]);
 
-        if (decls["font-family"].value != get_initial_value("font-family"))
-          template.push(" ", decls["font-family"]);
+        template.push(" ", decls["font-family"]);
 
         // There's always an extra space at the beginning, remove it here
         template.splice(0, 1);
@@ -714,6 +783,15 @@ CssShorthandResolver.shorthands = (function() {
 })();
 
 CssShorthandResolver.property_to_shorthand = {
+  // Note that -o-animation-play-state is not part of the shorthand
+  "-o-animation-delay": "-o-animation",
+  "-o-animation-direction": "-o-animation",
+  "-o-animation-duration": "-o-animation",
+  "-o-animation-fill-mode": "-o-animation",
+  "-o-animation-iteration-count": "-o-animation",
+  "-o-animation-name": "-o-animation",
+  "-o-animation-timing-function": "-o-animation",
+
   "background-color": "background",
   "background-image": "background",
   "background-repeat": "background",
