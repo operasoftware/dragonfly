@@ -205,8 +205,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                                     sortby,
                                     null,
                                     reversed);
-    this._table.data = this._get_top_list_data(new cls.Profiler["1.0"].EventList(msg));
-    this._details_time = this._table.data.reduce(function(prev, curr) {
+    var data = this._get_top_list_data(new cls.Profiler["1.0"].EventList(msg));
+    this._table.set_data(data);
+    this._details_time = data.reduce(function(prev, curr) {
       return prev + curr.time;
     }, 0);
     this._update_view();

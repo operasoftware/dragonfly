@@ -225,7 +225,7 @@ var ProfilerTemplates = function()
 
   this.details = function(table)
   {
-    return table && table.data.length && table.render() || this.no_events();
+    return table && table.get_data().length && table.render() || this.no_events();
   };
 
   this.status = function(time)
