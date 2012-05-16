@@ -1,3 +1,13 @@
+.ev-all
+{
+  margin-top: 5px;
+}
+
+.ev-rt-list
+{
+  margin: 0 3px;
+}
+
 .ev-listener-type
 {
   font: inherit;
@@ -21,7 +31,7 @@
 
 .ev-all-listeners
 {
-  margin-left: 22px;
+  margin-left: 12px;
 }
 
 .tooltip-function-source .js-tooltip-examine-container

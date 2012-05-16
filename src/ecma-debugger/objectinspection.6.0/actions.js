@@ -166,9 +166,12 @@
 
   window.eventHandlers.click['inspect-object-link'] = function(event, target)
   {
-    var rt_id = parseInt(target.getAttribute('rt-id'));
-    var obj_id = parseInt(target.getAttribute('obj-id'));
-    _inspect_object(rt_id, obj_id, true);
+    var rt_id = Number(target.get_ancestor_attr('rt-id') ||
+                       target.get_ancestor_attr('data-rt-id'));
+    var obj_id = Number(target.get_ancestor_attr('obj-id') ||
+                        target.get_ancestor_attr('data-obj-id'));
+    if (rt_id && obj_id)
+      _inspect_object(rt_id, obj_id, true);
   };
 
   window.eventHandlers.click['inspect-object-inline-link'] = function(event, target)

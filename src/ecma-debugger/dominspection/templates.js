@@ -275,8 +275,10 @@
         case DOCUMENT_NODE:
         {
           if (ev_listener)
-            tree += "<div class='search-match dom-search document' " +
-                         "obj-id='" + node[ID] + "'>" +
+            tree += "<div class='search-match dom-search document' " + 
+                         "rt-id='" + String(model.getDataRuntimeId()) + "' " +
+                         "obj-id='" + String(node[ID]) + "' " +
+                         "handler='inspect-object-link' >" +
                       "document" + ev_listener + "</div>";
           break;
         }

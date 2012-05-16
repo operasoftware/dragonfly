@@ -3,6 +3,7 @@
   // TODO clean up the order an the names
   this.main_ev_listener_view = function(data)
   {
+    var data_with_ls = data.filter(function(rt_l) { return rt_l.event_names.length; });
     return (
     ["div",
       ["div",
@@ -12,7 +13,7 @@
           "unselectable", "on",
           "tabindex", "1",
           "handler", "update-ev-listeners"]],
-      ["ul", data.map(this._ev_names_list, this)],
+      ["ul", data_with_ls.map(this._ev_names_list, this), "class", "ev-all"],
       "class", "main-ev-listener-view js-search-results-runtime padding"]);
   };
 
@@ -30,7 +31,8 @@
     }
     ret.push(["ul", ev_obj.event_names.map(this._ev_name_item, this),
                     "data-rt-id", String(ev_obj.rt_id),
-                    "data-obj-id", String(ev_obj.obj_id)]);
+                    "data-obj-id", String(ev_obj.obj_id),
+                    "class", "ev-rt-list"]);
     return ret;
   };
 
@@ -72,7 +74,11 @@
         ["span", "class", "node-with-ev-listener", 
                  "data-tooltip", "event-listener"],
         "data-model-id", String(model.id),
-        "data-window-id", String(win_listeners.win_id)];
+        "data-window-id", String(win_listeners.win_id),
+        "data-rt-id", String(ev_name_object.rt_id),
+        "data-obj-id", String(win_listeners.win_id), 
+        "class", "search-match",
+        "handler", "inspect-object-link"];
     }
     return ret;
   };

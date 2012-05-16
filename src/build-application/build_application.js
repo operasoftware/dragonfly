@@ -182,7 +182,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
 
   var report_usage = function()
   {
-    if (settings.general.get("track-usage"))
+    if (settings.general.get("track-usage") && !location.port)
     {
       var trackerurl = "/app/user-count"
       var tracker = new cls.UserTracker(trackerurl);
