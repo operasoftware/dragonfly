@@ -41,6 +41,91 @@
 
   this.set_shortcuts = function(shortcuts)
   {
+    var ev = null;
+    try
+    {
+      ev = document.createEvent("KeyboardEvent");
+    }
+    catch(e) {};
+
+    if (ev && ev.hasOwnProperty("key"))
+    {
+      this._set_shortcuts(shortcuts);
+      this._setup(true);
+    }
+    else
+    {
+      this._set_shortcuts_old(shortcuts);
+      this._setup(false);
+    }
+  };
+
+  this._set_shortcuts = function(shortcuts)
+  {
+    this._named_shortcuts = {};
+    this._char_shortcuts = {};
+    for (var i = 0, shortcut; shortcut = shortcuts[i]; i++)
+    {
+      if (!KeyIdentifier.validate_shortcut(shortcut))
+        throw "Invalid shortcut " + shortcut;
+
+      var tokens = shortcut.split(/[ ,\+]+/).map(function(t)
+      {
+        t = t.toLowerCase();
+        // on Mac Opera cmd and ctrl are switched
+        if (t == "cmd")
+          t = "ctrl";
+
+        return t; 
+      });
+
+      var mod_key = ["shift", "ctrl", "alt"/*, "meta"*/].reduce(function(m_key, mod, index)
+      {
+        var pos = tokens.indexOf(mod);
+        if (pos > -1)
+        {
+          m_key |= Math.pow(2, index);
+          tokens.splice(pos, 1);
+        }
+        return m_key;
+      }, 0);
+
+      if (tokens.length !== 1)
+        throw "Invalid shortcut " + shortcut;
+
+      var key = tokens[0];
+      var key_id = 0;
+
+      if (key.length > 1)
+      {
+        key_id = this._name_keycode_map[key] << 4 | mod_key;
+        this._named_shortcuts[key_id] = shortcut;
+      }
+      else
+      {
+        var char_code = key.charCodeAt(0);
+        if (this._is_not_alpha(char_code))
+          key_id = char_code << 4;
+        else
+          key_id = key.toUpperCase().charCodeAt(0) << 4 | mod_key;
+
+        this._char_shortcuts[key_id] = shortcut;
+      }
+    }
+  };
+
+  this._is_not_alpha = function(char_code)
+  {
+    return char_code &&
+           // event.char with ctrl key can produce chars in the range 0 - 0x20.
+           // They are treated as alpha too. 
+           ((0x20 <= char_code && char_code <= 0x40) ||
+            (0x5B <= char_code && char_code <= 0x60) ||
+            (0x7B <= char_code && char_code <= 0x7E));
+  };
+
+  this._set_shortcuts_old = function(shortcuts)
+  {
 
     var
     i = 0,
@@ -112,7 +197,31 @@
   // a Mac ctrl a goes never to the browser.
 
   // opera
-  this._handle_keypress_bound = function(event)
+  this._handle_keydown_bound = function(event)
+  {
+    var mod_key = ["shift", "ctrl", "alt"/*, "meta"*/].reduce(function(m_key, mod, index)
+    {
+      return m_key | (event[mod + "Key"] ? Math.pow(2, index) : 0);
+    }, 0);
+
+    if (event.key.length > 1)
+    {
+      var key_id = this._name_keycode_map[event.key] << 4 | mod_key;
+      if (key_id in this._named_shortcuts)
+        callback(this._named_shortcuts[key_id], event);
+    }
+    else
+    {
+      var char_code = event.char && event.char.charCodeAt(0);
+      var key_id = this._is_not_alpha(char_code)
+                 ? char_code << 4
+                 : event.keyCode << 4 | mod_key;
+      if (key_id in this._char_shortcuts)
+        callback(this._char_shortcuts[key_id], event);
+    }
+  }.bind(this);
+
+  this._handle_keypress_bound_old = function(event)
   {
     var key_code = event.keyCode;
     if ((this._named_keycodes.indexOf(key_code) != -1 && event.which === 0) ||
@@ -194,20 +303,29 @@
       callback(this._char_shortcuts[key_id], event);
   };
 
-  browser || (browser = "opera");
-
-  switch (browser)
+  this._setup = function(has_key_support)
   {
-    case "opera":
-      document.addEventListener('keypress', this._handle_keypress_bound, true);
-      break;
-    case "chrome":
-      document.addEventListener('keydown', this._handle_keypdown_ch_bound, true);
-      document.addEventListener('keypress', this._handle_keypress_ch_bound, true);
-      break;
-    case "firefox":
-      document.addEventListener('keypress', this._handle_keypress_ff_bound, true);
-      break;
+    if (!this._is_setup)
+    {
+      browser || (browser = "opera");
+      this._is_setup = true;
+      switch (browser)
+      {
+        case "opera":
+          if (has_key_support)
+            document.addEventListener('keydown', this._handle_keydown_bound, true);
+          else
+            document.addEventListener('keypress', this._handle_keypress_bound_old, true);
+          break;
+        case "chrome":
+          document.addEventListener('keydown', this._handle_keypdown_ch_bound, true);
+          document.addEventListener('keypress', this._handle_keypress_ch_bound, true);
+          break;
+        case "firefox":
+          document.addEventListener('keypress', this._handle_keypress_ff_bound, true);
+          break;
+      }
+    }
   }
 
 };
@@ -256,10 +374,62 @@ KeyIdentifier.validate_shortcut = function(shortcut)
 
 KeyIdentifier.named_keys =
 {
-  "backspace": 8, "tab": 9, "enter": 13, "escape": 27, "space": 32,
-  "left": 37, "up": 38, "right": 39, "down": 40,
-  "insert": 45, "home": 36, "page-up": 33,
-  "delete": 46, "end": 35, "page-down": 34,
-  "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117,
-  "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123,
+  "backspace": 8,
+  "Backspace": 8,
+  "tab": 9,
+  "Tab": 9,
+  "enter": 13, 
+  "Enter": 13, 
+  "escape": 27, 
+  "Esc": 27, 
+  "esc": 27, 
+  "space": 32,
+  "Spacebar": 32,
+  "spacebar": 32,
+  "left": 37,
+  "Left": 37,
+  "up": 38, 
+  "Up": 38, 
+  "right": 39, 
+  "Right": 39, 
+  "down": 40,
+  "Down": 40,
+  "insert": 45, 
+  "Insert": 45, 
+  "home": 36, 
+  "Home": 36, 
+  "page-up": 33,
+  "PageUp": 33,
+  "pageup": 33,
+  "delete": 46, 
+  "Delete": 46, 
+  "end": 35, 
+  "End": 35, 
+  "page-down": 34,
+  "PageDown": 34,
+  "pagedown": 34,
+  "f1": 112, 
+  "F1": 112, 
+  "f2": 113, 
+  "F2": 113, 
+  "f3": 114, 
+  "F3": 114, 
+  "f4": 115, 
+  "F4": 115, 
+  "f5": 116, 
+  "F5": 116, 
+  "f6": 117,
+  "F6": 117,
+  "f7": 118, 
+  "F7": 118, 
+  "f8": 119, 
+  "F8": 119, 
+  "f9": 120, 
+  "F9": 120, 
+  "f10": 121, 
+  "F10": 121, 
+  "f11": 122, 
+  "F11": 122, 
+  "f12": 123,
+  "F12": 123,
 };

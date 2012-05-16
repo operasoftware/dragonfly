@@ -342,7 +342,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
       this._add_line('<span class="repl-line-marker">' + 
-                       (index ? "... " : "&gt&gt&gt ") +
+                       (index ? "... " : "&gt;&gt;&gt; ") +
                      "</span>" + line);
     }, this);
   };
@@ -676,12 +676,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this.update();
   }.bind(this);
 
-  this._handle_option_change_bound = function(event, target)
-  {
-    settings.command_line.set('max-typed-history-length', target.value);
-    messages.post("setting-changed", {id: "repl", key: "max-typed-history-length"});
-  }.bind(this);
-
   this._update_runtime_selector_bound = function(msg)
   {
     var is_multi = host_tabs.isMultiRuntime();
@@ -933,8 +927,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_show_log_entry_source_bound = function(event, target)
   {
-    var line = target.getAttribute("data-scriptline");
-    var script = target.getAttribute("data-scriptid");
+    var line = parseInt(target.getAttribute("data-scriptline"));
+    var script = parseInt(target.getAttribute("data-scriptid"));
     var sourceview = window.views.js_source;
 
     // This will also be set from show_and_flash_line, but setting it before showing
@@ -958,7 +952,6 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   eh.click["repl-toggle-group"] = this._handle_repl_toggle_group_bound;
   eh.click["select-trace-frame"] = this._handle_repl_frame_select_bound;
   eh.click["show-log-entry-source"] = this._handle_repl_show_log_entry_source_bound;
-  eh.change["set-typed-history-length"] = this._handle_option_change_bound;
   messages.addListener('active-tab', this._update_runtime_selector_bound);
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
@@ -969,7 +962,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   // when adding stuff to data will fail.
   var hostinfo =  window.services['scope'].get_hello_message();
   this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
-  ui_strings.S_REPL_WELCOME_TEXT.split("\n").forEach(function(s) {
+  var welcome_text = ui_strings.S_REPL_WELCOME_TEXT
+                                             .replace("%(CLEAR_COMMAND)s", "\"clear()\"")
+                                             .replace("%(HELP_COMMAND)s", "\"// help()\"");
+  welcome_text.split("\n").forEach(function(s) {
     this._data.add_message(s);
   }, this);
 
@@ -985,7 +981,6 @@ cls.ReplView.create_ui_widgets = function()
   new Settings(
     'command_line',
     { // key/value
-      'max-typed-history-length': 32,
       'typed-history': [],
       'unpack-list-alikes': true,
       'do-friendly-print': true,
@@ -994,11 +989,10 @@ cls.ReplView.create_ui_widgets = function()
       'expand-objects-inline': true,
     },
     { // key/label
-      'max-typed-history-length': ui_strings.S_LABEL_REPL_BACKLOG_LENGTH,
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
       'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
-      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
+      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE,
       'expand-objects-inline': ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE,
     },
     { // settings map
@@ -1009,32 +1003,9 @@ cls.ReplView.create_ui_widgets = function()
         'is-element-type-sensitive',
         'show-js-errors-in-repl',
         'expand-objects-inline',
-      ],
-      customSettings:
-      [
-        'max-typed-history-length'
       ]
     },
-    {  // custom templates
-      'max-typed-history-length':
-      function(setting)
-      {
-        return (
-        [
-          'setting-composite',
-          ['label',
-           setting.label_map['max-typed-history-length'] + ': ',
-           ['input',
-            'type', 'number',
-            'handler', 'set-typed-history-length',
-            'max', '1000',
-            'min', '0',
-            'value', setting.get('max-typed-history-length')
-           ]
-          ]
-        ]);
-      }
-    },
+    null,
     "general"
   );
 

@@ -13,26 +13,16 @@
 
 window.cls.Helpers = function()
 {
+  var SELECTED_CLASS = "selected";
 
   this.setSelected = function(ele)
   {
-    var parent = ele.parentNode;
-    var siblings = parent.getElementsByTagName(ele.nodeName), sibling = null, i=0;
-    for( ; sibling = siblings[i]; i++)
-    {
-      if( sibling.parentElement == parent )
-      {
-        if(sibling == ele) 
-        {
-          sibling.addClass('selected'); 
-        }
-        else
-        {
-          sibling.removeClass('selected'); 
-        }
-      }
-    }
-  }
+    var container = ele.get_ancestor("container") || ele.parentNode;
+    var selected = container.querySelector("." + SELECTED_CLASS);
+    if (selected)
+      selected.removeClass(SELECTED_CLASS);
+    ele.addClass(SELECTED_CLASS);
+  };
 
   /**
    * Return the filename of the script with `script_id`.
@@ -77,13 +67,10 @@ window.cls.Helpers = function()
     var end = path.indexOf("?");
     var hash_index = path.indexOf("#");
     if (hash_index != -1)
-    {
       end = Math.min(end, hash_index);
-    }
+
     if (end != -1)
-    {
       path = path.slice(0, end);
-    }
 
     // If there is no file name, show the last directory including slash
     var last = path.lastIndexOf("/") + 1;
@@ -324,14 +311,18 @@ window.cls.Helpers = function()
     return Math.floor(value) + .5;
   };
 
-  this.get_color_in_notation = function(value, notation)
+  /**
+   * Return a color in the preferred notation.
+   *
+   * @param {Color} color A color
+   * @param {string} notation One of "hhex", "rgb" or "hsl"
+   */
+  this.get_color_in_notation = function(color, notation)
   {
-    var color = new Color().parseCSSColor(value);
-
     if (!color)
-      return value; // Fall back if we can't parse as color
+      return;
 
-    if (color.alpha !== null)
+    if (color.alpha < 1)
     {
       notation = {
         "hhex": "rgba", // Fall back since hex cannot represent alpha

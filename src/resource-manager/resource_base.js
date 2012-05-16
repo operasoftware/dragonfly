@@ -36,10 +36,10 @@ cls.ResourceDetailBase = function()
       }
       else if (child.nodeType == TEXT)
       {
-        var pos;
-        for (pos = 0; pos < child.nodeValue.length; pos++)
+        var value = child.nodeValue;
+        for (var pos = 0, len = value.length; pos < len; pos++)
         {
-          var c = child.nodeValue.charAt(pos);
+          var c = value.charAt(pos);
           // Linefeed recognition will not support Acorn BBC spooled text output 
           if ((c == CR ) || (c == LF))
           {
@@ -78,7 +78,7 @@ cls.ResourceDetailBase = function()
                 return;
               }
             }
-            if ((c == CR) && (child.nodeValue.charAt(pos+1) == LF))
+            if ((c == CR) && (value.charAt(pos+1) == LF))
             {
               pos++;
             }
@@ -269,13 +269,13 @@ cls.ResourceDetailSearchPrototype = function()
       {
         handler: this.id + '-move-highlight-up',
         type: "search_control",
-        class: "search-move-highlight-up container-button",
+        class: "search-move-highlight-up",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_UP
       },
       {
         handler: this.id + '-move-highlight-down',
         type: "search_control",
-        class: "search-move-highlight-down container-button",
+        class: "search-move-highlight-down",
         title: ui_strings.S_LABEL_MOVE_HIGHLIGHT_DOWN
       },
     ];

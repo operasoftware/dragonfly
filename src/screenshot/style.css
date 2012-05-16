@@ -57,24 +57,24 @@
   float: right;
   width: 27ex;
   margin: 0;
-  padding-bottom: 7px;
+  padding-bottom: 5px;
 }
 
 .color-palette-sample
 {
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 19px;
+  height: 19px;
   vertical-align: middle;
-  margin-right: 7px;
-  border-radius: 3px;
+  margin-right: 5px;
+  border-radius: 2px;
   border: 1px solid rgba(34, 34, 34, 0.4);
 }
 
 .color-palette-item
 {
   line-height: 24px;
-  padding: 7px;
+  padding: 5px;
   border-bottom: 1px solid hsl(0, 0%, 70%);
 }
 

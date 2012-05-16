@@ -16,11 +16,12 @@ cls.CSSInspectorView = function(id, name, container_class)
       styles.clearAndRender(window.stylesheets.pretty_print_cascaded_style(data));
       styles.setAttribute('rt-id', data.rt_id);
     }
+    window.views["color-selector"].ondestroy();
   };
 
   this.ondestroy = function()
   {
-    UIWindowBase.closeWindow('color-selector');
+    window.views["color-selector"].ondestroy();
   };
 
   this.init(id, name, container_class);
@@ -28,6 +29,8 @@ cls.CSSInspectorView = function(id, name, container_class)
 
 cls.CSSInspectorView.create_ui_widgets = function()
 {
+  var broker = ActionBroker.get_instance();
+
   new Settings
   (
     // id
@@ -98,5 +101,10 @@ cls.CSSInspectorView.create_ui_widgets = function()
     }
     element_style.update();
   }
+
+  window.eventHandlers.click["insert-declaration-edit"] = function(event, target)
+  {
+    broker.dispatch_action("css-inspector", "insert-declaration-edit", event, target);
+  };
 };
 

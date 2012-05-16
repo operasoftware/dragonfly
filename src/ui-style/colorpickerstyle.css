@@ -1,34 +1,65 @@
-﻿.color-picker-popup svg
+﻿.color-picker
 {
-  display: block;
+  position: absolute;
+  margin-right: -2px;
 }
 
 .color-picker-popup
 {
   position: relative;
-  width: 374px;
-  height: 222px;
+  background: #ededed;
+  color: #333;
+  width: 366px;
+  height: 246px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+              0 1px 6px 0 rgba(0, 0, 0, 0.45),
+              0 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-/* Color picker boxes */
-.color-picker-2-d-graphic,
-.color-picker-1-d-graphic,
-.color-picker-color-old,
-.color-picker-color,
-.color-picker-alpha
+.color-picker-arrow
 {
-  border: 1px solid #333;
-  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.1),
-              0 1px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  overflow: hidden;
+  height: 22px;
+  right: -12px;
+}
+
+.color-picker-arrow::before
+{
+  content: "";
+  display: inline-block;
+  position: relative;
+  right: 6px;
+  top: 5px;
+  height: 11px;
+  width: 11px;
+  -o-transform: rotate(315deg);
+  background-color: #ededed;
+  border: 1px solid #fdfdfd;
+  box-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.25),
+              1px 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.right-aligned .color-picker-arrow
+{
+  right: auto;
+  left: -12px;
+}
+
+.right-aligned .color-picker-arrow::before
+{
+  -o-transform: rotate(135deg);
+  right: -6px;
 }
 
 .color-picker-2-d-graphic
 {
   position: absolute;
-  left: 10px;
-  top: 10px;
-  width: 200px;
-  height: 200px;
+  width: 194px;
+  height: 194px;
 }
 
 .cp-canvas
@@ -38,37 +69,53 @@
   height: 100%;
 }
 
-.height-100
-{
-  height: 100%;
-}
-
 .color-picker-1-d-graphic
 {
   position: absolute;
-  left: 227px;
-  top: 10px;
+  left: 220px;
   width: 20px;
-  height: 200px;
+  height: 194px;
+}
+
+.color-picker-color-alpha-bg
+{
+  position: absolute;
+  height: 20px;
+  width: 80px;
+  top: 214px;
+  left: 122px;
+  background: #fff;
+  background-image: -o-linear-gradient(-45deg,
+                                       #c8c8c8 25%,
+                                       transparent 25%),
+                    -o-linear-gradient(45deg,
+                                       #c8c8c8 25%,
+                                       transparent 25%),
+                    -o-linear-gradient(-45deg,
+                                       transparent 75%,
+                                       #c8c8c8 75%),
+                    -o-linear-gradient(45deg,
+                                       transparent 75%,
+                                       #c8c8c8 75%);
+  background-position: 0 0,
+                       4px 0,
+                       4px -4px,
+                       0 4px;
+  background-size: 8px 8px;
+  border: 1px solid #fff;
 }
 
 .color-picker-color-old,
 .color-picker-color
 {
+  display: inline-block;
+  width: 41px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1px solid rgba(34, 34, 34, .4);
   position: absolute;
-  left: 264px;
-  top: 10px;
-  width: 50px;
-  height: 36px;
-  margin: 0;
-}
-
-.color-picker-color-old div,
-.color-picker-color div
-{
-  border-width: 18px 25px;
-  border-style: solid;
-  border-color: black transparent transparent black;
+  top: -1px;
+  left: -1px;
 }
 
 .color-picker-color-old
@@ -78,46 +125,56 @@
 
 .color-picker-color
 {
-  left: 315px;
+  left: 40px;
   border-left-width: 0;
 }
 
 .color-picker-inputs
 {
   position: absolute;
-  left: 259px;
-  top: 54px;
+  left: 248px;
   margin: 0;
   border-collapse: collapse;
 }
 
 .color-picker-inputs td
 {
-  padding: 0 2px;
+  padding: 0 2px 5px;
   text-align: left;
-}
-
-.color-picker-inputs td:first-child
-{
-  text-align: right;
+  white-space: nowrap;
+  vertical-align: baseline;
 }
 
 .color-picker-spacer
 {
-  height: 6px;
+  height: 5px;
 }
 
 .color-picker-number
 {
-  width: 40px;
-  margin: 0 0 1px 0;
+  width: 55px;
+}
+
+.color-picker-input-unit
+{
+  position: relative;
+  left: -65px;
+  color: #aaa;
 }
 
 .color-picker-text
 {
-  width: 50px;
-  margin: 0;
-  padding: 1px 1px 0 1px;
+  position: absolute;
+  width: 60px;
+  top: 214px;
+  left: 34px;
+}
+
+.color-picker-number,
+.color-picker-text
+{
+  height: 14px;
+  padding: 3px;
 }
 
 .color-picker-slider-base
@@ -125,19 +182,51 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
   top: 0;
   left: 0;
+  border: 1px solid rgba(34, 34, 34, .4);
+}
+
+.color-picker-2-d-graphic .color-picker-slider-base
+{
+    overflow: hidden;
 }
 
 .color-picker-slider
 {
-  width: 40px;
+  width: 38px;
   height: 10px;
   position: absolute;
   margin-left: -10px;
   margin-top: -5px;
   left: 0;
   top: 0;
+  background-image: -o-linear-gradient(0deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 4px),
+                    -o-linear-gradient(-45deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(45deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(0deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 4px),
+                    -o-linear-gradient(-135deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px),
+                    -o-linear-gradient(135deg,
+                                       hsl(0, 0%, 30%) 0,
+                                       hsl(0, 0%, 30%) 3px,
+                                       transparent 3px);
+    background-size: 4px 9px, 5px 5px, 5px 5px, 4px 9px, 5px 5px, 5px 5px;
+    background-position: 0 0, 4px 4px, 4px 0, 34px 0, 29px 4px, 29px 0;
+    background-repeat: no-repeat;
 }
 
 .color-picker-pointer
@@ -145,93 +234,95 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 12px;
-  height: 12px;
-  margin-left: -6px;
-  margin-top: -6px;
+  width: 14px;
+  height: 14px;
+  margin-left: -9px; /* TODO: Why not -7? Check the JS. */
+  margin-top: -9px;
   /* to prevent painting artefacts on moving the pointer */
-  border: 1px solid transparent;
-}
-
-.color-picker-target-element
-{
-  position: relative;
-}
-
-.color-picker-target-element key,
-.color-picker-target-element value
-{
-  position: relative;
-  z-index: 3;
-}
-
-.black-50
-{
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.color-picker-popup.alpha
-{
-  width: 521px;
-}
-
-.color-picker-alpha
-{
-  position: absolute;
-  left: 380px;
-  top: 10px;
-  width: 20px;
-  height: 200px;
-}
-
-.color-picker-input-alpha
-{
-  position: absolute;
-  left: 415px;
-  top: 192px;
-  width: 12em;
-}
-
-.color-picker-number.alpha
-{
-  width: 4.4em;
-}
-
-.color-sample-alpha-bg
-{
-  position: absolute;
-  left: 265px;
-  top: 11px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(34, 34, 34, 0.5),
+              inset 0 1px 2px rgba(34, 34, 34, 0.5);
 }
 
 .color-picker-palette
 {
-  position: absolute;
-  left: 10px;
-  right: 9px;
-  top: 220px;
-  overflow: auto;
-  white-space: nowrap;
-  padding-bottom: 2px;
+  max-height: 144px;
+  max-width: 184px;
+  background: rgba(237, 237, 237, 0.8);
 }
 
 .color-picker-palette-item
 {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
+  border: 1px solid rgba(34, 34, 34, .4);
   vertical-align: middle;
-  border: 1px solid #333;
-  margin-right: 6px;
+  margin: 1px;
+  border-radius: 2px;
 }
 
-.color-picker-palette-item:last-of-type
+.color-picker-palette-item-add
+{
+  padding: 1px;
+  margin: 1px;
+  vertical-align: middle;
+}
+
+.color-picker-palette-item-add:before
+{
+  background: url("../ui-images/icons/icon_add_small.png") center no-repeat;
+}
+
+.color-picker-palette-dropdown
+{
+  position: absolute;
+  top: 214px;
+  display: inline-block;
+  width: 23px;
+  height: 22px;
+  vertical-align: middle;
+  border-radius: 3px;
+  padding: 3px 2px 1px 2px;
+  box-sizing: border-box;
+}
+
+.color-picker-palette-dropdown.tooltip-selected
 {
   margin: 0;
+  padding: 3px 2px 1px 2px;
+  background: inherit;
 }
+
+.color-picker-palette-square
+{
+  margin: 0 0 1px 1px;
+  float: left;
+  height: 3px;
+  width: 3px;
+  border: 1px solid rgba(34, 34, 34, 0.4);
+}
+
+.color-picker-palette-dropdown.disabled .color-picker-palette-square
+{
+  background: #ccc !important;
+}
+
+.color-picker-palette-dropdown.tooltip-selected .color-picker-palette-square
+{
+  border-color: rgba(34, 34, 34, 0.6);
+}
+
+.color-picker-controls
+{
+  position: absolute;
+  top: 214px;
+  right: 10px;
+}
+
+.color-picker-controls button:not(:last-of-type)
+{
+  margin-right: 5px;
+}
+

@@ -302,6 +302,30 @@ cls.DOMView.create_ui_widgets = function()
     }
   );
 
+  new Settings
+  (
+    // id
+    'modebar',
+    // key-value map
+    {
+      "show-modebar-dom": true
+    },
+    // key-label map
+    {
+      "show-modebar-dom": ui_strings.S_TOGGLE_DOM_MODEBAR
+    },
+    // settings map
+    {
+      checkboxes:
+      [
+        "show-modebar-dom"
+      ]
+    },
+    // custom templates
+    null,
+    "document"
+  );
+
   new ToolbarConfig
   (
     'dom',

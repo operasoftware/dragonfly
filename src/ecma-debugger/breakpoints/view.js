@@ -299,11 +299,11 @@ cls.BreakpointsView.create_ui_widgets = function()
     [
       {
         handler: 'disable-all-breakpoints',
-        title: "Disable all breakpoints",
+        title: ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS,
       },
       {
         handler: 'delete-all-breakpoints',
-        title: "Delete all breakpoints",
+        title: ui_strings.M_CONTEXTMENU_DELETE_ALL_BREAKPOINTS,
       },
     ]
   );

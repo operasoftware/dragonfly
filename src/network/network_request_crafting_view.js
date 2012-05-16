@@ -155,7 +155,15 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   {
     var data = this._input.get_value();
     var requestdata = this._parse_request(data);
-    this._send_request(requestdata);
+    if (requestdata)
+    {
+      this._send_request(requestdata);
+    }
+    else
+    {
+      this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
+      this.update();
+    }
   }.bind(this);
 
   this._on_send_request_bound = function(status, msg)
@@ -203,7 +211,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._on_urlload_bound = function(msg)
   {
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
     if (!this._is_listening) { return; }
     if (this._listening_for !== null && this._listening_for != data.resourceID) { return; }
     this._resources[data.resourceID] = {urlload: data};
@@ -268,7 +276,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       response = resource.responseheader.raw;
       if (!resource.urlredirect)
       {
-        response += resource.responsefinished.data.content.stringData;
+        if (resource.responsefinished &&
+            resource.responsefinished.data &&
+            resource.responsefinished.data.content &&
+            resource.responsefinished.data.content.stringData)
+        {
+          response += resource.responsefinished.data.content.stringData;
+        }
       }
     }
 

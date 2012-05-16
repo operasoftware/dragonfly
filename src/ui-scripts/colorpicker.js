@@ -32,9 +32,7 @@ ColorPicker.prototype = new function()
   CP_NEW_CLASS = "color-picker-color",
   SLIDER_BASE_CLASS = 'color-picker-slider-base',
   SLIDER_CLASS = 'color-picker-slider',
-  POINTER_CLASS = 'color-picker-pointer',
-  CP_ALPHA_CLASS = "color-picker-alpha",
-  CP_ALPHA_BG = "color-picker-number alpha";
+  POINTER_CLASS = 'color-picker-pointer';
 
   /* private */
   this._verify_inputs =
@@ -72,29 +70,52 @@ ColorPicker.prototype = new function()
     if (event.target.name in this._verify_inputs && event.target.value)
     {
       var target = event.target;
-      var verifier = this._verify_inputs[target.name];
-      if (target.value)
+      var target_value = target.value;
+      if (target_value)
       {
-        var value = this._verify(target.value, verifier);
+        var verifier = this._verify_inputs[target.name];
+        var value = "";
+
+        // Special handle hex since we're inserting a "#" in _update_inputs()
+        // and onblur()
+        var cursor_pos;
+        var do_verification = true;
+        if (target.name === "hex")
+        {
+          cursor_pos = target.selectionStart + 1;
+          target_value = target_value.replace(/[^0-9a-f]/ig, function() {
+            cursor_pos--;
+            return "";
+          }).slice(0, 6).toUpperCase();
+
+          if (target_value === "")
+          {
+            target_value = verifier.min;
+            value = "";
+            do_verification = false;
+          }
+        }
+
+        if (do_verification)
+          value = this._verify(target_value, verifier);
+
         this._cs[target.name] = value;
         if (verifier.max == 1)
         {
-          if (value.toString().length > 5 || value != target.value)
-            target.value = value.toFixed(3)
+          if (value.toString().length > 5 || value != target_value)
+            target.value = value.toFixed(3);
         }
         else
           target.value = value;
         this._set_coordinates();
-        this._set_cs_coordinates();
         this._cb_color.clone(this._cs);
         this._update_inputs(event.target.name);
+        if (target.name === "hex" && cursor_pos !== undefined)
+          target.selectionStart = target.selectionEnd = cursor_pos;
         this._update_xy_graphic();
         this._update_xy_slider();
-        this._update_xy_slider_color();
         this._update_z_graphic();
         this._update_z_slider();
-        this._update_alpha_graphic();
-        this._update_alpha_slider();
         this._update_sample_color();
         this._cb(this._cb_color);
       }
@@ -115,7 +136,7 @@ ColorPicker.prototype = new function()
         this._cs.clone(color);
         this._cb_color.clone(color);
         if (color.type == color.KEYWORD)
-          this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
+          this._cs.type = color.RGBA;
       }
       else
       {
@@ -131,11 +152,12 @@ ColorPicker.prototype = new function()
   {
     if (event.target.name in this._verify_inputs)
     {
+      var prefix = (event.target.name === "hex") ? "#" : "";
       var target = event.target;
       var verifier = this._verify_inputs[target.name];
       var value = this._verify(target.value, verifier);
       if (value != target.value || !target.value)
-        target.value = verifier.max == 1 ? value.toFixed(3) : value;
+        target.value = prefix + (verifier.max == 1 ? value.toFixed(3) : value);
     }
   }
 
@@ -154,9 +176,7 @@ ColorPicker.prototype = new function()
     this._set_cs_coordinates();
     this._cb_color.clone(this._cs);
     this._update_inputs();
-    this._update_xy_slider_color();
     this._update_z_graphic();
-    this._update_alpha_graphic();
     this._update_sample_color();
     this._cb(this._cb_color);
   }
@@ -169,21 +189,9 @@ ColorPicker.prototype = new function()
     this._cb_color.clone(this._cs);
     this._update_inputs();
     this._update_xy_graphic();
-    this._update_xy_slider_color();
-    this._update_alpha_graphic();
     this._update_sample_color();
     this._cb(this._cb_color);
   }
-
-  // callback for the alpha slider
-  this._onalpha = function(alpha)
-  {
-    this._cs.alpha = alpha;
-    this._cb_color.clone(this._cs);
-    this._update_sample_color();
-    this._update_inputs(null, ['alpha']);
-    this._cb(this._cb_color);
-  };
 
   // DOMNodeRemoved event handler
   this._onremove = function(event)
@@ -200,11 +208,8 @@ ColorPicker.prototype = new function()
       this._ele_sample_color = null;
       this._ele_sample_color_solid = null;
       this._ele_z_graphic = null;
-      this._ele_alpha_graphic = null;
-      this._ele_xy_slider = null;
       this._xy_slider = null;
       this._z_slider = null;
-      this._alpha_slider = null;
       this._2d_ctx = null;
       this._1d_ctx = null;
     }
@@ -224,6 +229,9 @@ ColorPicker.prototype = new function()
                       this._cs[input.name].toFixed(3) :
                       this._cs[input.name];
       }
+
+      if (input.name === "hex")
+        input.value = "#" + input.value;
     }
   }
 
@@ -240,31 +248,11 @@ ColorPicker.prototype = new function()
     this._xy_slider.y = this._cur_y;
   }
 
-  // update the color of the slider for the x-y axes
-  this._update_xy_slider_color = function()
-  {
-    var gray_value = this._cs.xyz(this._cur_x,
-                                  this._cur_y,
-                                  this._cur_z).getGrayValue() / 255;
-    this._ele_xy_slider.setAttribute('stroke',
-                                      gray_value > .3 ?
-                                     'hsl(0, 0%, 20%)' :
-                                     'hsl(0, 0%, 80%)');
-  }
-
   // update the sample color
   this._update_sample_color = function()
   {
     var color = this._cs.xyz(this._cur_x, this._cur_y, this._cur_z);
-    this._ele_sample_color.style.backgroundColor =
-      this._has_alpha ? color.rgba : color.hhex;
-  }
-
-  // update the position of the slider foe the lpha value
-  this._update_alpha_slider = function()
-  {
-    if (this._has_alpha)
-      this._alpha_slider.y = this._cs.alpha;
+    this._ele_sample_color.style.backgroundColor = color.rgba;
   }
 
   // update everything
@@ -274,11 +262,8 @@ ColorPicker.prototype = new function()
     this._update_inputs();
     this._update_xy_graphic();
     this._update_xy_slider();
-    this._update_xy_slider_color();
     this._update_z_graphic();
     this._update_z_slider();
-    this._update_alpha_graphic();
-    this._update_alpha_slider();
     this._update_sample_color();
   }
 
@@ -336,21 +321,6 @@ ColorPicker.prototype = new function()
                                    '#0ff', '#0f0', '#ff0', '#f00'], true);
   }
 
-  this._update_alpha_graphic = function()
-  {
-    if (this._has_alpha)
-    {
-      var rgb = this._cs.xyz(this._cur_x,
-                             this._cur_y,
-                             this._cur_z).getRGB().join(',');
-      this._ele_alpha_graphic.clearAndRender(window.templates.gradient
-      (
-        ['rgba(' + rgb + ', 0)', 'rgba(' + rgb + ', 1)'],
-        true
-      ));
-    }
-  }
-
   this._color_properties =
   {
     'h': [360, 'setHue', 'getHue'],
@@ -381,7 +351,7 @@ ColorPicker.prototype = new function()
 
   this._set_cs_coordinates = function()
   {
-    this._cs.x = this._cur_x
+    this._cs.x = this._cur_x;
     this._cs.y = this._cur_y;
     this._cs.z = this._cur_z;
   }
@@ -401,14 +371,15 @@ ColorPicker.prototype = new function()
     if (this._ele)
     {
       document.removeEventListener('DOMNodeInserted', this._setup_bound, false);
-      this._ele_inputs = Array.prototype.slice.call
-      (this._ele.getElementsByTagName('input')).filter(function(input)
-      {
-        return ['h', 's', 'v',
-                'r', 'g', 'b',
-                'hex',
-                'alpha'].indexOf(input.name) != -1;
-      });
+      this._ele_inputs = Array.prototype.slice.call(
+        this._ele.getElementsByTagName('input')).filter(function(input)
+        {
+          return ['h', 's', 'v',
+                  'r', 'g', 'b',
+                  'hex',
+                  'alpha'].indexOf(input.name) != -1;
+        }
+      );
       this._ele_sample_color =
         this._ele.getElementsByClassName(CP_NEW_CLASS)[0];
       var ele_xy = this._ele.getElementsByClassName(CP_2D_CLASS)[0];
@@ -422,42 +393,22 @@ ColorPicker.prototype = new function()
         container: ele_xy,
         slider_base_class: SLIDER_BASE_CLASS,
         slider_class: POINTER_CLASS,
-        slider_template: window.templates.svg_slider_circle(),
         onxy: this._onxy.bind(this),
         min_x: 0,
         max_x: 1,
         min_y: 1,
         max_y: 0
       });
-      this._ele_xy_slider = ele_xy.getElementsByTagName('circle')[0];
       this._z_slider = new Slider(
       {
         container: ele_z,
         slider_base_class: SLIDER_BASE_CLASS,
         slider_class: SLIDER_CLASS,
-        slider_template: window.templates.svg_slider_z(),
         ony: this._onz.bind(this),
         min_y: 1,
         max_y: 0
       });
-      if (this._has_alpha = (typeof this._initial_color.alpha == 'number'))
-      {
-        this._cs.alpha = this._initial_color.alpha;
-        ele_z = this._ele.getElementsByClassName(CP_ALPHA_CLASS)[0];
-        this._ele_alpha_graphic = ele_z.getElementsByTagName('div')[0];
-        this._ele_sample_color_solid =
-          this._ele_sample_color.getElementsByTagName('div')[0];
-        this._alpha_slider = new Slider(
-        {
-          container: ele_z,
-          slider_base_class: SLIDER_BASE_CLASS,
-          slider_class: SLIDER_CLASS,
-          slider_template: window.templates.svg_slider_z(),
-          ony: this._onalpha.bind(this),
-          min_y: 1,
-          max_y: 0
-        });
-      }
+
       this._set_color_space('s-v-h');
       this._ele.addEventListener('input', this._oninput_bound, false);
       this._ele.addEventListener('click', this._onclick_bound, false);
@@ -469,15 +420,26 @@ ColorPicker.prototype = new function()
 
   /* implementation */
 
-  this.render = function()
+  this.render = function(alpha_disabled, palette_disabled)
   {
     document.addEventListener('DOMNodeInserted', this._setup_bound, false);
     return window.templates.color_picker_popup(this._initial_color,
                                                CP_CLASS, CP_2D_CLASS,
                                                CP_1D_CLASS, CP_OLD_CLASS,
-                                               CP_NEW_CLASS, 'h', CP_ALPHA_CLASS,
-                                               CP_ALPHA_BG)
+                                               CP_NEW_CLASS, 'h',
+                                               alpha_disabled, palette_disabled);
   }
+
+  this.update = function(color_value)
+  {
+    if (color_value)
+    {
+      this._cs.setHex(color_value);
+      this._cb_color.clone(this._cs);
+      this._update();
+      this._cb(this._cb_color);
+    }
+  };
 
   /* instatiation */
   this._init = function(cb, color)
@@ -488,7 +450,7 @@ ColorPicker.prototype = new function()
     this._cs.clone(color);
     this._cb_color = new Color();
     if (color.type == color.KEYWORD)
-      this._cs.type = typeof color.alpha == 'number' ? color.RGBA : color.HEX;
+      this._cs.type = color.RGBA;
     this._cur_x = 0;
     this._cur_y = 0;
     this._cur_z = 0;

@@ -69,6 +69,7 @@ cls.CookieManager.CookieManagerViewBase = function()
       groups: {
         runtime: {
           label: ui_strings.S_LABEL_COOKIE_MANAGER_GROUPER_RUNTIME,
+          use_ellipsis: true,
           grouper: function(obj) {
             return obj._rt_id;
           },
@@ -89,7 +90,7 @@ cls.CookieManager.CookieManagerViewBase = function()
           summer: function(values, groupname, getter) {
             return [
               "span", ui_strings.S_LABEL_COOKIE_MANAGER_ADD_COOKIE,
-              "class", "add_storage_button container-button ui-button",
+              "class", "add_storage_button ui-button",
               "handler", "cookiemanager-add-cookie-row",
               "unselectable", "on",
               "tabindex", "1"
@@ -161,10 +162,17 @@ cls.CookieManager.CookieManagerViewBase = function()
         }
       },
       options: {
-        no_default_menu: true,
+        no_group_changing: true
       }
     };
-    this._sortable_table = new SortableTable(this._tabledef, null, null, "domain", "runtime", true);
+    this._sortable_table = new SortableTable(this._tabledef, 
+                                             null, 
+                                             null, 
+                                             "domain", 
+                                             "runtime", 
+                                             true, 
+                                             "cookie-inspector");
+
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
     this._sortable_table.add_listener("after-render", this._after_table_render.bind(this));
   };
@@ -173,7 +181,7 @@ cls.CookieManager.CookieManagerViewBase = function()
   {
     this._container = container;
     var storage_data = this.data.get_cookies();
-    this._sortable_table.data = storage_data;
+    this._sortable_table.set_data(storage_data);
     if (!this._update_expiry_interval)
     {
       this._update_expiry_interval = setInterval(this._bound_update_expiry, 15000);
@@ -328,10 +336,6 @@ cls.CookieManager.CookieManagerViewBase = function()
   this.insert_add_cookie_row_after_objectref = function(objectref)
   {
     this.mode = MODE_EDIT;
-    if (!document.querySelector(".add_cookie_row")) // fix for adding multiple cookies at once
-    {
-      this._sortable_table.restore_columns(this._table_elem);
-    }
     var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     var row = document.querySelector("[data-object-id='" + objectref_for_attr_sel + "']");
     if (row)
@@ -351,8 +355,6 @@ cls.CookieManager.CookieManagerViewBase = function()
     if (!event.target.get_ancestor('.edit_mode'))
     {
       this.mode = MODE_EDIT;
-      this._sortable_table.restore_columns(this._table_elem);
-      // can't directly work with target because restore_columns has renewed it
       var objectref = target.getAttribute("data-object-id");
       var objectref_for_attr_sel = objectref.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
       var target = document.querySelector(".sortable-table tr[data-object-id='" + objectref_for_attr_sel + "']").addClass("edit_mode");

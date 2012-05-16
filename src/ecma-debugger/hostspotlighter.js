@@ -414,7 +414,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 
   this._oneditcolor = function(color)
   {
-    this._edit_context.ele_container.style.backgroundColor = color.hhex;
+    this._edit_context.ele_value.style.backgroundColor = color.hhex;
     window.settings['host-spotlight'].set('spotlight-color', color.hex);
     set_initial_values();
   }.bind(this);
@@ -478,12 +478,19 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   eventHandlers.click['select-spotlight-color'] = function(event, target)
   {
     var color_sample = target;
+    var initial_color = new Color().parseCSSColor(color_sample.style.backgroundColor);
     this._edit_context =
     {
-      initial_color: new Color().parseCSSColor(color_sample.style.backgroundColor),
-      ele_container: color_sample,
+      initial_color: initial_color,
+      current_color: initial_color,
+      ele_value: color_sample,
+      vertical_anchor_selector: ".spotlight-color-select",
+      horizontal_anchor_selector: ".spotlight-color-select",
       callback: this._oneditcolor,
-      edit_class: 'edited-color'
+      edit_class: 'edited-color',
+      alpha_disabled: true,
+      palette_disabled: true,
+      z_index: 301 // higher than the overlay
     };
     window.views['color-selector'].show_color_picker(color_sample, 
                                                      this._edit_context);

@@ -49,7 +49,7 @@ cls.ColorPalette = function()
       this._id_count++;
     }
     var color_id = this._id_count++;
-    this._data.push({color: hex, id: color_id});
+    this._data.unshift({color: hex, id: color_id});
     this._setting.set('color-palette', this._data);
     return this._data[this._data.length - 1];
   };

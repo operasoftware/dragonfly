@@ -241,25 +241,70 @@ eventHandlers.click['toggle-console'] = function(event, target)
 eventHandlers.click['toolbar-switch'] = function(event)
 {
   var target = event.target;
-  var arr = target.getAttribute('key').split('.');
-  var setting = arr[0], key = arr[1];
-  var is_active = !target.hasClass('is-active');
-  is_active ? target.addClass("is-active") : target.removeClass("is-active");
+  var arr = target.getAttribute('key') && target.getAttribute('key').split('.');
+  if (arr && arr.length)
+  {
+    var view_id = arr[0], key = arr[1];
+    var is_active = !target.hasClass('is-active');
 
-  settings[setting].set(key, is_active);
-  views.settings_view.syncSetting(setting, key, is_active);
-  views[setting].update();
-  /*
-  // if the switch view is different, e.g. 'setting' is not the actual view
-  // getViewWithHandler is a bit expensive
-  var view = UIBase.getViewWithHandler(target);
-  view && view.update();
-  */
-  // hack to trigger a repaint while
-  target.style.backgroundColor = "transparent";
-  target.style.removeProperty('background-color');
+    settings[view_id].set(key, is_active);
+    views.settings_view.syncSetting(view_id, key, is_active);
+    views[view_id].update();
+  }
 }
 
+eventHandlers.click["toolbar-single-select"] = function(event, target)
+{
+  var button = event.target;
+  var view_id = target.getAttribute("data-view-id");
+  var name = target.getAttribute("data-single-select-name");
+  var value = button.getAttribute("data-single-select-value");
+
+  if (view_id && name && value !== null)
+  {
+    var single_select = window.single_selects &&
+                        window.single_selects[view_id] &&
+                        window.single_selects[view_id][name];
+    if (single_select)
+    {
+      var val_index = single_select.values.indexOf(value);
+      var select_multiple = event.ctrlKey && single_select.allow_multiple_select;
+      if (select_multiple)
+      {
+        var is_selected = val_index !== -1;
+        if (!is_selected)
+        {
+          single_select.values.push(value);
+          button.addClass("is-active");
+        }
+        else if (single_select.values.length > 1)
+        {
+          // target is selected and it's not the last button that is. Unselect target.
+          single_select.values.splice(val_index, 1);
+          button.removeClass("is-active");
+        }
+      }
+      else
+      {
+        single_select.values = [value];
+        button.addClass("is-active");
+
+        // Unselect all others
+        var buttons_in_group = target.querySelectorAll(".ui-button");
+        for (var i = 0, group_button; group_button = buttons_in_group[i]; i++)
+        {
+          if (group_button != button)
+            group_button.removeClass("is-active");
+        }
+      }
+      messages.post("single-select-changed", {
+                                                view_id: view_id,
+                                                name: name,
+                                                values: single_select.values
+                                              });
+    }
+  }
+}
 
 
 /***** change handler *****/

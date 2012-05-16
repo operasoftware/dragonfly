@@ -80,7 +80,7 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
        "data-logid", entry.id,
        "data-viewid", viewId,
        "unselectable", "on",
-       "class", "expander ui-button",
+       "class", "expander",
        "tabindex", "1"
   ];
 
@@ -125,6 +125,14 @@ window.templates.errors.log_row = function(entry, allExpanded, toggledList, view
     "handler", expandable ? "error-log-list-expand-collapse" : "",
     "data-logid", entry.id,
     "data-viewid", viewId
+  ];
+};
+
+window.templates.errors.exceeds_max = function(limit, org_length)
+{
+  return [
+    "div", ui_strings.S_ERRORS_MAXIMUM_REACHED.replace('%(COUNT)s', org_length).replace('%(MAX)s', limit),
+    "class", "max_exceeded_warning"
   ];
 };
 

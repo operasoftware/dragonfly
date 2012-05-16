@@ -27,8 +27,9 @@
   overflow: hidden;
 }
 
-.errors-table .ui-button
+.errors-table .expander
 {
+  display: inline-block;
   height: 7px;
   width: 9px;
   background: transparent url('../ui-images/toggle.png') no-repeat;
@@ -39,9 +40,9 @@
   -o-transition: -o-transform 0.2s;
 }
 
-.errors-table > tr.expanded .ui-button
+.errors-table > tr.expanded .expander
 {
-    -o-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
 }
 
 .errors-table .expand_cell
@@ -55,6 +56,14 @@
 {
   border-left: none;
   padding-left: 3px;
+}
+
+.error-console .max_exceeded_warning
+{
+  text-align: center;
+  font-size: 1.4em;
+  padding: 18px 3px;
+  color: #808080;
 }
 
 .errors-table tr,

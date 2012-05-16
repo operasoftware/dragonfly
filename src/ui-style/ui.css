@@ -2,8 +2,13 @@
 viewport,
 .info-box,
 .ui-button {
-  font-family: "Lucida Grande", "Dejavu Sans", "Bitstream Vera Sans", "Segoe UI", Tahoma, sans-serif;
+  font-family: sans-serif;
+  font: menu;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
   font-size: 11px;
+  line-height: normal;
   color: #444;
 }
 
@@ -133,12 +138,12 @@ panel-toolbar
               inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
-toolbar-buttons,
-toolbar-switches
+toolbar-buttons
 {
   display: block;
   float: left;
   height: 100%;
+  padding: 0 4px;
 }
 
 /* Pop-ups */
@@ -333,6 +338,17 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_clear.png");
 }
 
+.network-view-toggle-graphs:before
+{
+  background-image: url("../ui-images/icons/icon_graph.png");
+}
+
+.network-view-toggle-data:before
+{
+  background-image: url("../ui-images/icons/icon_table.png");
+}
+
+
 .request_list\.clear-log-on-runtime-switch::before
 {
   background-image: url("../ui-images/icons/icon_clearonreload.png");
@@ -378,14 +394,9 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.network_logger\.paused-update::before
+.network_logger\.pause::before
 {
   background-image: url("../ui-images/icons/icon_pause.png");
-}
-
-.network_logger\.fit-to-width::before
-{
-  background-image: url("../ui-images/icons/icon_constrain.png");
 }
 
 .pseudo-items cst-icon
@@ -398,132 +409,143 @@ cst-icon[class="debugger-menu"]
   background-image: url("../ui-images/icons/icon_tabs.png");
 }
 
+
+/* Buttons */
+
+.ui-control,
 .ui-button
-{
-  display: inline-block;
-}
-
-.ui-button.ui-control::before,
-.container-button:empty::before
-{
-  content: "";
-  display: block;
-  height: 17px;
-  width: 17px;
-  background-position: 50%;
-  background-repeat: no-repeat;
-}
-
-.container-button:empty
-{
-  height: 18px;
-  padding-top: 2px;
-}
-
-.ui-button.text-button::before
-{
-  display: none;
-}
-
-.ui-button.text-button
-{
-  width: auto;
-  padding-right: 5px;
-  padding-left: 5px;
-}
-
-.ui-button.text-button:active
-{
-  padding-right: 5px !important;
-  padding-left: 5px !important;
-}
-
-.ui-control
 {
   background: #e6e6e6 repeat-x -o-linear-gradient(-90deg,
                                                   rgba(255, 255, 255, 0.75) 0,
                                                   rgba(255, 255, 255, 0.25) 100%);
-  border: 1px solid rgba(0, 0, 0, .325);
   border-radius: 3px;
-  height: 17px;
-  width: 17px;
+  line-height: 19px;
   margin: 0 3px;
-  padding: 1px 5px;
+  padding: 1px 11px;
   box-sizing: content-box;
   display: inline-block;
-  box-shadow: 0 1px rgba(255, 255, 255, 0.6),
-              inset 0 1px 1px #fff;
-  vertical-align: top;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.45),
+              inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+  vertical-align: middle;
   -o-transition: background-color 0.2s;
 }
 
 .ui-control[disabled],
-.container-button[disabled]
+.ui-button[disabled]
 { /* :disabled seems to be buggy */
-  background: #e0e0e0 !important;
-  opacity: 0.4;
+  opacity: 0.45;
 }
 
 .ui-control:not([disabled]):active,
-.ui-control.is-active {
-  padding-top: 2px;
-  padding-bottom: 0;
-  box-shadow: 0 1px #fff,
-              inset 0 1px 1px rgba(0, 0, 0, 0.15),
-              inset 0 0 4px rgba(0, 0, 0, 0.05);
-  background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                                  rgba(255, 255, 255, 0.45) 0,
-                                                  rgba(255, 255, 255, 0.25) 100%);
-}
-
-.ui-control.is-active {
-  padding-top: 2px;
-  padding-bottom: 0;
-  box-shadow: 0 1px #fff,
-              inset 0 1px 1px rgba(0, 0, 0, 0.15),
-              inset 0 0 4px rgba(0, 0, 0, 0.15);
-  background: #c6c6c6 repeat-x -o-linear-gradient(-90deg,
-                                                  rgba(255, 255, 255, 0.45) 0,
-                                                  rgba(255, 255, 255, 0.25) 100%);
-}
-
-.ui-control.is-active:active {
+.ui-button:not([disabled]):active,
+toolbar-buttons .is-active
+{
   background-color: #c6c6c6;
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(255, 255, 255, 0.45) 0,
+                                       rgba(255, 255, 255, 0.25) 100%);
+  padding-top: 2px;
+  padding-bottom: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3),
+              inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
+
+
+/* Buttons with icons */
+
+.ui-button:empty::before
+{
+  content: "";
+  display: block;
+  height: 19px;
+  width: 19px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+}
+
+
+/* Toolbar buttons */
+
+toolbar .ui-button,
+toolbar .ui-control,
+panel-toolbar .ui-button,
+panel-toolbar .ui-control,
+window-controls .ui-button,
+window-controls .ui-control
+{
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+              inset 0 2px 0 0 rgba(255, 255, 255, 0.55),
+              0 1px rgba(255, 255, 255, 0.6);
+}
+
+toolbar .ui-button:not([disabled]):active,
+toolbar .ui-control:not([disabled]):active,
+panel-toolbar .ui-button:not([disabled]):active,
+panel-toolbar .ui-control:not([disabled]):active,
+window-controls .ui-button:not([disabled]):active,
+window-controls .ui-control:not([disabled]):active,
+toolbar-buttons .is-active,
+window-controls .is-active
+{
+  box-shadow: 0 1px rgba(255, 255, 255, 0.6),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+              inset 0 0 2px rgba(0, 0, 0, 0.25),
+              inset 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+toolbar .ui-button:empty,
+panel-toolbar .ui-button:empty,
+.advanced-search .ui-button,
+window-controls .ui-button,
+.ui-control /* cst-select needs to be tweaked before changing this */
+{ 
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 
 /* Grouping the toolbar buttons */
+
 /* All Buttons in a group*/
-toolbar-switches .ui-button.ui-control:not(:only-of-type),
-toolbar-buttons .ui-button.ui-control:not(:only-of-type),
+toolbar-buttons .ui-button,
 #toggle-settings-overlay,
 #toggle-remote-debug-overlay,
 #top-window-toggle-attach.attached,
-#top-window-close {
+#top-window-close,
+.advanced-search .ui-button
+{
   border-radius: 0;
-  border-right-width: 0;
-  margin: 0;
+  margin: 0 -1px 0 0;
 }
 
 /* Leftmost Button*/
-toolbar-switches .ui-button.ui-control:first-of-type,
-toolbar-buttons .ui-button.ui-control:first-of-type,
+toolbar-buttons .ui-button:first-of-type,
 #toggle-settings-overlay,
 #top-window-toggle-attach.attached
 {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
+}
+
+#toggle-settings-overlay,
+#top-window-toggle-attach.attached
+{
   margin-left: 3px;
 }
 
 /* Rightmost Button*/
-toolbar-switches .ui-button.ui-control:last-of-type,
-toolbar-buttons .ui-button.ui-control:last-of-type,
+toolbar-buttons .ui-button:last-of-type,
 #toggle-remote-debug-overlay,
-#top-window-close
+#top-window-close,
+.advanced-search .search-move-highlight-down
 {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
-  border-right-width: 1px;
+}
+
+#toggle-remote-debug-overlay,
+#top-window-close
+{
   margin-right: 3px;
 }
 
@@ -533,15 +555,10 @@ toolbar-buttons .ui-button.ui-control:last-of-type,
 {
   position: relative;
   z-index: 301;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-  border-color: #444;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+              inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-#toggle-settings-overlay.is-active:active,
-#toggle-remote-debug-overlay.is-active:active
-{
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
 
 /* Alert state */
 .ui-control.alert
@@ -600,9 +617,11 @@ cst-select[cst-id="debugger-menu"]
 
 cst-icon
 {
+  vertical-align: middle;
   display: inline-block;
   height: 100%;
   width: 17px;
+  height: 17px;
 }
 
 toolbar-filters,
@@ -612,26 +631,11 @@ toolbar-search
   float: right;
 }
 
-toolbar-filters .ui-button.search-move-highlight-up
-{
-  content: url("../ui-images/icons/icon_back.png");
-  border-radius: 10px 0 0 10px;
-  padding: 1px 2px;
-  margin: 0;
-}
-
-toolbar-filters .ui-button.search-move-highlight-down 
-{
-  content: url("../ui-images/icons/icon_forward.png");
-  border-radius: 0 10px 10px 0;
-  padding: 1px 2px;
-  margin: 0 2px 0 0;
-  border-left: 0;
-}
-
 filter,
 .advanced-search,
-.js-dd-filter-container
+.js-dd-filter-container,
+.color-picker-number,
+.color-picker-text
 {
   margin: 0 2px;
   padding-left: 20px;
@@ -639,10 +643,17 @@ filter,
   line-height: 19px;
   border: 1px solid #8e8e8e;
   border-radius: 3px;
-  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
   box-shadow: 0 1px #fff,
               inset 0 1px 1px #d5d5d5;
 }
+
+filter,
+.advanced-search,
+.js-dd-filter-container
+{
+  background: #fff url("../ui-images/icon_search.png") 2px 50% no-repeat;
+}
+
 
 filter
 {
@@ -1156,18 +1167,19 @@ textarea-container-inline textarea
 
 cst-select-toolbar-setting
 {
-    float: left;
+  float: left;
 }
 
 cst-value
 {
   display: inline-block;
   overflow: hidden;
-  padding: 0 8px;
-  height: 17px;
-  line-height: 17px;
+  padding: 0 4px;
+  height: 19px;
+  line-height: 19px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  vertical-align: top;
   width: 95%; /* TODO: this is ugly, might push down the dropdown */
   box-sizing: border-box;
 }
@@ -1179,9 +1191,7 @@ cst-drop-down
   height: 19px;
   background: transparent url("../ui-images/dropdown.png") 50% 50% no-repeat;
   float: right;
-  padding: 0 2px;
   position: relative;
-  top: -1px;
 }
 
 .hud cst-drop-down
@@ -1631,6 +1641,7 @@ toolbar
 
 .close-tab-button
 {
+  display: inline-block;
   background: transparent url("../ui-images/icons/icon_close_tab_small.png") no-repeat 50% 50%;
   border: none;
   width: 11px;
@@ -1703,42 +1714,6 @@ tab.active .close-tab-button
 {
   background-color: #fff;
   color: #000;
-}
-
-
-/* Button style. Use for buttons inside the <container>. */
-
-.container-button
-{
-    background-color: #ddd;
-    background-image: -o-linear-gradient(-90deg,
-                                         rgba(255, 255, 255, 0.90) 0%,
-                                         rgba(255, 255, 255, 0.25) 100%);
-    border: 1px solid rgba(0, 0, 0, 0.45);
-    border-radius: 4px;
-    line-height: 20px;
-    padding: 0 12px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
-    -o-transition: background-color 0.2s;
-}
-
-.container-button:active:not([disabled])
-{
-    box-shadow: 0 1px rgba(0, 0, 0, 0.0),
-                inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    background-color: #ccc;
-    border-color: rgba(0, 0, 0, 0.4);
-}
-
-.container-button:disabled
-{
-    border-color: #aaa;
-    color: #aaa;
-}
-
-.container-button img
-{
-    vertical-align: middle;
 }
 
 info {

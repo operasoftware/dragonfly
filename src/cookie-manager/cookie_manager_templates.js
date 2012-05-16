@@ -2,7 +2,7 @@
 
 templates.cookie_manager = {
   runtime_group_render: function(protocol, domain, path) {
-    return templates.storage.wrap_ellipsis(protocol + "//" + domain + path);
+    return protocol + "//" + domain + path;
   },
   value_container: function(content) {
     return [
