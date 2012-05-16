@@ -384,11 +384,7 @@
 
   /* instatiation */
 
-  var if_check = function(container)
-  {
-    return container && !container.querySelector(".info-box");
-  };
-
+  var is_not_selectable = '.info-box';
   var is_selectable = 'container:not(.side-panel)' +
                                ':not(.network-options-container)' +
                                ':not(.screenshot-controls),' +
@@ -397,7 +393,7 @@
                       '.tooltip-container,' +
                       '.selectable';
 
-  this._selection_controller = new SelectionController(is_selectable, if_check);
+  this._selection_controller = new SelectionController(is_selectable, is_not_selectable);
 
   /* message handling */
   messages.addListener("before-show-view", function(msg) {

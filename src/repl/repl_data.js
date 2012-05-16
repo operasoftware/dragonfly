@@ -2,6 +2,7 @@
 
 cls.ReplData = function(view)
 {
+  var MAX_HISTORY = 100;
   this._repllog = [];
   this._typed_history = settings.command_line.get("typed-history") || [];
   this._max_typed = settings.command_line.get('max-typed-history-length') || 0;
@@ -137,21 +138,10 @@ cls.ReplData = function(view)
     if (this._typed_history[0] != str && str.trim() !== "")
     {
       this._typed_history.unshift(str);
-      if (this._max_typed && this._typed_history.length > this._max_typed)
-      {
-        this._typed_history = this._typed_history.slice(0, this._max_typed);
-      }
+    this._typed_history = this._typed_history.slice(0, MAX_HISTORY);
       settings.command_line.set("typed-history", this._typed_history);
     }
   };
-
-  this._on_setting_change_bound = function(msg)
-  {
-    if (msg.id == "repl" && msg.key == "max-typed-history-length")
-    {
-      this._max_typed = settings.command_line.get(msg.key);
-    }
-  }.bind(this);
 
   this._on_profile_disabled_bound = function(msg)
   {
@@ -159,6 +149,5 @@ cls.ReplData = function(view)
       this._repllog = [];
   }.bind(this);
 
-  messages.addListener("setting-changed", this._on_setting_change_bound);
   messages.addListener("profile-disabled", this._on_profile_disabled_bound);
 };

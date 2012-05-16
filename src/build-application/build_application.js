@@ -275,14 +275,12 @@ window.app.build_application = function(on_services_created, on_services_enabled
   GlobalView.prototype = ViewBase;
   new GlobalView(ActionBroker.GLOBAL_HANDLER_ID, ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE);
   cls.ShortcutConfigView.prototype = ViewBase;
-  // this is the only sub-section in it's settings tab, therefor it doesn't need a title
-  new cls.ShortcutConfigView('shortcut-config', '', '');
+  new cls.ShortcutConfigView('shortcut-config', ui_strings.S_KEYBOARD_SHORTCUTS_CONFIGURATION, '');
   cls.ShortcutConfigView.create_ui_widgets();
 
   /* Modebar */
   cls.ModebarView.prototype = ViewBase;
-  new cls.ModebarView('modebar', '', '');
-  cls.ModebarView.create_ui_widgets();
+  new cls.ModebarView('modebar', ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER, '');
 
   // create the client
   if(window.services.scope)

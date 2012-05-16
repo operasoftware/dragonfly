@@ -196,8 +196,6 @@ var ActionBroker = function()
     {
       if (this._action_context)
         this._action_context.blur();
-      if (this._container && this._container.hasClass('edit-mode'))
-        this._container.removeClass('edit-mode');
       this._action_context = this._handlers[handler_id] || this._global_handler;
       this._action_context_id = this._action_context.id;
       this._current_shortcuts = this._shortcuts[this._action_context_id] || {};
@@ -236,7 +234,10 @@ var ActionBroker = function()
           // Workaround to reset the focus to the a given view.
           // Needs a proper design.
           // Also used in js source view.
-          view.get_container().dispatchMouseEvent('click');
+          var container = view.get_container();
+          if (container)
+            container.dispatchMouseEvent('click');
+
           return;
         }
       }

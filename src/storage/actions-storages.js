@@ -34,10 +34,6 @@ cls.StorageViewActions = function(id)
     }
     if (container)
     {
-      var table_elem = container.querySelector(".sortable-table");
-      var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
-      table.restore_columns(table_elem);
-      // can't directly work with target because restore_columns has renewed it.
       var ref = target.getAttribute("data-object-id");
       var tr = container.querySelector("tr[data-object-id='"+ref+"']")
       tr.addClass("edit_mode");
@@ -186,19 +182,6 @@ cls.StorageViewActions = function(id)
 
     if (container && runtime_id)
     {
-      if (!container.querySelector(".add_storage_row")) // don't restore when adding multiple items at once
-      {
-        var table_elem = container.querySelector(".sortable-table");
-        if (table_elem)
-        {
-          var table = ObjectRegistry.get_instance().get_object(table_elem.getAttribute("data-table-object-id"));
-          if (table)
-          {
-            table.restore_columns(table_elem);
-          }
-        }
-      }
-
       var insert_before_row;
       if (item_id) // came from context menu of an item
       {

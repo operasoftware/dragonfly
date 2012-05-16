@@ -6,7 +6,7 @@
 var lang_dict = 
 {
   /*
-    supported languages in Opera
+    supported languages in Dragonfly + previously supported languages
   */
   "be": "be",
   "bg": "bg",

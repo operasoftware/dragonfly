@@ -31,7 +31,7 @@ cls.WatchesView = function(id, name, container_class)
         ['span',
           ['span', ui_strings.S_LABEL_ADD_WATCH],
           'handler', 'watches-add',
-          'class', 'container-button ui-button',
+          'class', 'ui-button',
           'unselectable', 'on',
           'tabindex', '1'
         ],

@@ -55,32 +55,6 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._service.requestSetReloadPolicy(null, [this._bypass_cache ? NO_CACHE : DEFAULT]);
   }.bind(this);
 
-  this._handle_toggle_content_tracking_bound = function(evt, target)
-  {
-    const OFF = 4, DATA_URI = 3, STRING = 1, DECODE = 1;
-    this._track_bodies = target.checked;
-
-    if (this._track_bodies)
-    {
-
-      var text_types = ["text/html", "application/xhtml+xml", "application/mathml+xml",
-                        "application/xslt+xml", "text/xsl", "application/xml",
-                        "text/css", "text/plain", "application/x-javascript",
-                        "application/json", "application/javascript", "text/javascript",
-                        "application/x-www-form-urlencoded"];
-
-      var resparg = [[DATA_URI, DECODE],
-                     text_types.map(function(e) { return [e, [STRING, DECODE]]})
-                    ];
-
-    }
-    else
-    {
-      var resparg = reqarg = [[OFF]];
-    }
-    this._service.requestSetResponseMode(null, resparg);
-  }.bind(this);
-
   this._handle_toggle_header_overrides_bound = function(evt, target)
   {
     this._overrides = target.checked;

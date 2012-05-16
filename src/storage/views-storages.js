@@ -5,7 +5,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
   this.createView = function(container)
   {
     var storage = window.storages[id];
-    this._sortable_table = this._sortable_table || new SortableTable(storage.tabledef, null, null, null, "runtime", true);
+    this._sortable_table = this._sortable_table || new SortableTable(storage.tabledef, null, null, null, "runtime", true, storage_name);
     container.setAttribute("data-storage-id", storage_name);
     container.setAttribute("data-menu", "storage-view"); // local_storage / session_storage by default
 
@@ -17,7 +17,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
       if (storage.exists)
       {
         var storage_data = storage.get_storages_plain();
-        this._sortable_table.data = storage_data;
+        this._sortable_table.set_data(storage_data);
         this._before_table_render({table: container.querySelector(".sortable-table")});
         table = container.clearAndRender(this._sortable_table.render());
         this._after_table_render({table: table});

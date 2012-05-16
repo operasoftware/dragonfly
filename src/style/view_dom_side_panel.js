@@ -66,19 +66,19 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     "dom-side-panel",
     // key-value map
     {
-      "show-expanded-properties": false,
+      "show-longhand-properties": false,
       "color-notation": "hhex"
     },
     // key-label map
     {
-      "show-expanded-properties": ui_strings.S_EXPAND_SHORTHANDS,
+      "show-longhand-properties": ui_strings.S_EXPAND_SHORTHANDS,
       "color-notation": ui_strings.S_COLOR_NOTATION
     },
     // settings map
     {
       contextmenu:
       [
-        "show-expanded-properties"
+        "show-longhand-properties"
       ],
       customSettings:
       [
@@ -93,9 +93,9 @@ cls.DOMSidePanelView.create_ui_widgets = function()
     },
     "document",
     {
-      "show-expanded-properties": function(value)
+      "show-longhand-properties": function(value)
       {
-        window.settings["css-inspector"].set("show-expanded-properties", value);
+        window.settings["css-inspector"].set("show-longhand-properties", value);
         element_style.update();
       }
     }

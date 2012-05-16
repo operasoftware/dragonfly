@@ -190,12 +190,14 @@ cls.ElementLayout = function()
       return item.split('|');
     });
     return data;
-  }
+  };
 
   this.get_metrics_template = function(comp_style)
   {
     var index_map = this._css_index_map;
     var is_positioned = comp_style[index_map.indexOf("position")] != "static";
+    var width = this._get_dimension("width", comp_style);
+    var height = this._get_dimension("height", comp_style);
     return (
       ['div',
         ['ul',
@@ -213,7 +215,7 @@ cls.ElementLayout = function()
               ],
               ['li',
                 is_positioned
-                ? this._convert_to_unitless(comp_style[index_map.indexOf("top")])
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("top")], true)
                 : '\u00A0'
               ],
               ['li']
@@ -221,7 +223,7 @@ cls.ElementLayout = function()
             ['ul',
               ['li',
                 is_positioned
-                ? this._convert_to_unitless(comp_style[index_map.indexOf("left")])
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("left")], true)
                 : '\u00A0'
               ],
               ['li',
@@ -289,9 +291,7 @@ cls.ElementLayout = function()
                             ],
                             ['ul',
                               ['li',
-                                this._convert_to_unitless(comp_style[index_map.indexOf("width")], true) +
-                                ' × ' +
-                                this._convert_to_unitless(comp_style[index_map.indexOf("height")], true)
+                                width + ' × ' + height
                               ]
                             ],
                             ['ul',
@@ -342,7 +342,7 @@ cls.ElementLayout = function()
               ],
               ['li',
                 is_positioned
-                ? this._convert_to_unitless(comp_style[index_map.indexOf("right")])
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("right")], true)
                 : '\u00A0'
               ]
             ],
@@ -350,7 +350,7 @@ cls.ElementLayout = function()
               ['li'],
               ['li',
                 is_positioned
-                ? this._convert_to_unitless(comp_style[index_map.indexOf("bottom")])
+                ? this._convert_to_unitless(comp_style[index_map.indexOf("bottom")], true)
                 : '\u00A0'
               ],
               ['li']
@@ -393,16 +393,48 @@ cls.ElementLayout = function()
     );
   };
 
+  this._get_dimension = function(direction, comp_style)
+  {
+    var index_map = this._css_index_map;
+    var value = comp_style[index_map.indexOf(direction)]
+    if (value === "auto" || value.endswith("%"))
+      return value;
+    var dim = parseInt(value);
+    var is_border_box = comp_style[index_map.indexOf("box-sizing")] == "border-box";
+    var props = {
+      "width": [
+        "border-left",
+        "border-right",
+        "padding-left",
+        "padding-right"
+      ],
+      "height": [
+        "border-top",
+        "border-bottom",
+        "padding-top",
+        "padding-bottom"
+      ]
+    };
+
+    if (is_border_box)
+    {
+      dim -= props[direction].reduce(function(prev, curr) {
+        return prev + parseInt(comp_style[index_map.indexOf(curr)]);
+      }, 0);
+    }
+
+    return dim;
+  };
+
   this._convert_to_unitless = function(value, no_replace)
   {
     switch (value)
     {
     case "auto":
-      return value;
-    case "0px":
-      return no_replace ? "0" : "–";
     case "":
       return "–";
+    case "0px":
+      return no_replace ? "0" : "–";
     default:
       return String(parseInt(value))
     }

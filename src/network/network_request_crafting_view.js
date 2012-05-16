@@ -211,7 +211,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._on_urlload_bound = function(msg)
   {
-    var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
     if (!this._is_listening) { return; }
     if (this._listening_for !== null && this._listening_for != data.resourceID) { return; }
     this._resources[data.resourceID] = {urlload: data};

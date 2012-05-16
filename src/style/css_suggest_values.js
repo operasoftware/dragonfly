@@ -1,11 +1,15 @@
-﻿/**
+﻿"use strict";
+
+/**
  * @fileoverview
  * This file contains arrays of valid values for various CSS properties.
  * They are used for autocompletion in the CSS editor
  * @see Editor
  */
 
-const COLORS =
+window.suggest_values = (function() {
+
+var COLORS =
 [
   'transparent',
   'currentColor',
@@ -200,6 +204,62 @@ suggest_values['-o-border-image'] =
 [
 ];
 
+suggest_values['-o-animation'] =
+[
+];
+
+suggest_values['-o-animation-delay'] =
+[
+  // <time>
+  '0'
+];
+
+suggest_values['-o-animation-direction'] =
+[
+  'normal',
+  'alternate'
+];
+
+suggest_values['-o-animation-duration'] =
+[
+  '0'
+];
+
+suggest_values['-o-animation-fill-mode'] =
+[
+  'none',
+  'forwards',
+  'backwards',
+  'both'
+];
+
+suggest_values['-o-animation-iteration-count'] =
+[
+  // <number>
+  'infinite'
+];
+
+suggest_values['-o-animation-name'] =
+[
+  'none'
+];
+
+suggest_values['-o-animation-play-state'] =
+[
+  'running',
+  'paused'
+];
+
+suggest_values['-o-animation-timing-function'] =
+[
+  'ease',
+  'linear',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'cubic-bezier()'
+];
+
 suggest_values['-o-object-fit'] =
 [
   'fill',
@@ -326,6 +386,8 @@ suggest_values['background-image'] =
   'none',
   '-o-linear-gradient()',
   '-o-repeating-linear-gradient()',
+  '-o-radial-gradient()',
+  '-o-repeating-radial-gradient()',
   'inherit'
 ];
 
@@ -378,8 +440,6 @@ suggest_values['border-collapse'] =
   'collapse',
   'separate'
 ];
-
-
 
 suggest_values['border-spacing'] =
 [
@@ -791,6 +851,10 @@ suggest_values['line-height'] =
 suggest_values['list-style-image'] =
 [
   'none',
+  '-o-linear-gradient()',
+  '-o-repeating-linear-gradient()',
+  '-o-radial-gradient()',
+  '-o-repeating-radial-gradient()',
   'inherit'
 ];
 
@@ -1575,4 +1639,8 @@ suggest_values["viewport-fill-opacity"] =
   // <opacity-value>
   'inherit'
 ];
+
+return suggest_values;
+
+})();
 

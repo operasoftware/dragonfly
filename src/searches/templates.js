@@ -182,7 +182,7 @@
     if (result_count > max_count)
     {
       ret.push(['div', 
-                  ['div', ui_strings.S_INFO_TOO_MANY_SEARCG_RESULTS
+                  ['div', ui_strings.S_INFO_TOO_MANY_SEARCH_RESULTS
                        .replace('%(COUNT)s', result_count)
                        .replace('%(MAX)s', max_count),
                        'class', 'info-box'],

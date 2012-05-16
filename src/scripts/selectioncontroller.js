@@ -1,4 +1,4 @@
-﻿var SelectionController = function(css_query_selectable, if_check)
+﻿var SelectionController = function(css_query_selectable, css_query_not_selectable)
 {
   /* interface */
 
@@ -79,8 +79,10 @@
 
   var is_selectable = function(target)
   {
-    var cur = target.get_ancestor(css_query_selectable);
-    return cur && (if_check && if_check(cur)) && cur || null;
+    if (target.get_ancestor(css_query_not_selectable))
+      return null;
+
+    return target.get_ancestor(css_query_selectable);
   };
 
   this.is_selectable = function(target)

@@ -201,45 +201,59 @@ Element.prototype.clearAndRender = function(template)
   return this.render(template);
 };
 
-/**
- * Add the css class "name" to the element's list of classes
- * fixme: Does not work with dashes in the name!
- * Note: Uses get/setAttribute instead of .className so it will
- * work on both html and svg elements
- */
-Element.prototype.addClass = function(name)
+if (document.createElement("div").classList)
 {
-  var c = this.getAttribute("class");
-  if (!(new RegExp('\\b' + name + '\\b')).test(c))
+  Element.prototype.hasClass = function(cl)
   {
-    this.setAttribute("class", (c ? c + ' ' : '') + name);
-  }
-  return this;
-};
+    return cl && this.classList.contains(cl);
+  };
 
-/**
- * Remove the css class "name" from the elements list of classes
- * Note: Uses get/setAttribute instead of .className so it will
- * work on both html and svg elements
- */
-Element.prototype.removeClass = function(name)
-{
-  var c = this.getAttribute("class");
-  var re = new RegExp(name + ' ?| ?' + name);
-  if (re.test(c))
+  Element.prototype.addClass = function(cl)
   {
-    this.setAttribute("class", c.replace(re, ''));
-  }
-  return this;
-};
+    cl && this.classList.add(cl);
+    return this;
+  };
 
-/**
- * Check if the element has the class "name" set
- */
-Element.prototype.hasClass = function(name)
+  Element.prototype.removeClass = function(cl)
+  {
+    cl && this.classList.remove(cl);
+    return this;
+  };
+}
+else
 {
-  return (new RegExp('(?:^| +)' + name + '(?: +|$)')).test(this.className)
-};
+  (function()
+  {
+    var cache = {};
+    var re = null;
+    var cln = "";
+    var has_class = function(cln, cl)
+    {
+      if (!cache.hasOwnProperty(cl))
+        cache[cl] = new RegExp("(?:^|\\s+)" + cl + "(?=\\s+|$)");
+      return (re = cache[cl]).test(cln);
+    };
+
+    this.hasClass = function(cl)
+    {
+      return has_class(this.getAttribute("class"), cl);
+    };
+
+    this.addClass = function(cl)
+    {
+      if (!has_class(cln = this.getAttribute("class"), cl))
+        this.setAttribute("class" , (cln ? cln + " " : "") + cl); 
+      return this;
+    };
+
+    this.removeClass = function(cl)
+    {
+      if (has_class(cln = this.getAttribute("class"), cl))
+        this.setAttribute("class" , cln.replace(re, "").trim()); 
+      return this;
+    };
+  }).apply(Element.prototype);
+}
 
 /**
  * Swap class "from" with class "to"
@@ -936,6 +950,8 @@ window.CustomElements.AutoScrollHeightFeature = function()
     var adjust_height = this._adjust_height.bind(ele, delta);
     adjust_height();
     ele.addEventListener('input', adjust_height, false);
+    // Custom event to force adjust of height
+    ele.addEventListener('heightadjust', adjust_height, false);
   });
 
 };

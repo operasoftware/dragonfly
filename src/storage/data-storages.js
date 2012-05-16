@@ -246,7 +246,7 @@ cls.StorageDataBase = new function()
     else
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "failed register_loacal_storage in LocalStorageData");
+        "failed _register_local_storage in LocalStorageData");
     }
   };
 
@@ -459,7 +459,7 @@ cls.StorageDataBase = new function()
         }
       },
       options: {
-        no_default_menu: true,
+        no_group_changing: true,
       }
     }
   };

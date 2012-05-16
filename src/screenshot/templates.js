@@ -8,7 +8,7 @@
         ['span',
           ui_strings.S_BUTTON_UPDATE_SCREESHOT,
           'handler', 'screenshot-update',
-          'class', 'container-button ui-button',
+          'class', 'ui-button',
           'tabindex', '1']],
       ['table',
         ['tr',
@@ -45,7 +45,7 @@
       ['span',
             'Show ruler',
             'handler', 'screenshot-show-ruler',
-            'class', 'container-button ui-button',
+            'class', 'ui-button',
             'tabindex', '1'],
       ['pre', 'class', 'screenshot-ruler-dimensions'],
       'class', 'screenshot-ruler']);
@@ -64,7 +64,7 @@
             ui_strings.S_BUTTON_STORE_COLOR,
             'handler', 'screenshot-store-color',
             'data-color', color.getHex(),
-            'class', 'container-button ui-button',
+            'class', 'ui-button',
             'tabindex', '1'],
       ['div',
         ['canvas'],
@@ -86,7 +86,7 @@
         ['span',
           ui_strings.M_CONTEXTMENU_ADD_COLOR,
           'handler', 'color-palette-add-color',
-          'class', 'container-button color-palette-add-button ui-button',
+          'class', 'color-palette-add-button ui-button',
           'tabindex', '1']]]);
 
   };

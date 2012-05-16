@@ -281,7 +281,7 @@ Color.prototype = new function()
   {
     var str = in_str.trim(), color = null;
     this.cssvalue = in_str;
-    this.alpha = null;
+    this.alpha = 1;
     this.type = '';
     if (str == "transparent")
     {

@@ -14,7 +14,7 @@ window.app.builders.ConsoleLogger["2.0"] = function(service)
   var view_namespace = cls.ConsoleLogger;
   if(view_namespace)
   {
-    new view_namespace.ConsoleView("console", ui_strings.M_VIEW_LABEL_CONSOLE, "scroll");
+    new view_namespace.ConsoleView("console", ui_strings.S_SETTINGS_HEADER_CONSOLE, "scroll");
     view_namespace.ConsoleView.create_ui_widgets();
     // TODO proper namespace handling for views
     ErrorConsoleView.roughViews.createViews();
@@ -32,7 +32,7 @@ window.app.builders.ConsoleLogger["2.1"] = function(service)
   var view_namespace = cls.ConsoleLogger;
   if(view_namespace)
   {
-    new view_namespace.ConsoleView("console", ui_strings.M_VIEW_LABEL_CONSOLE, "scroll");
+    new view_namespace.ConsoleView("console", ui_strings.S_SETTINGS_HEADER_CONSOLE, "scroll");
     view_namespace.ConsoleView.create_ui_widgets();
     ErrorConsoleView.roughViews.createViews();
     return true;

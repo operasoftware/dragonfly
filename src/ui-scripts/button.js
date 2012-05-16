@@ -61,7 +61,7 @@ window.templates["button"] = function(id, class_name, title, handler, attributes
     "span",
     "",
     "id", id,
-    "class", "ui-button ui-control " + class_name,
+    "class", "ui-button " + class_name,
     "title", title,
     "handler", handler || id,
     "tabindex", "1"

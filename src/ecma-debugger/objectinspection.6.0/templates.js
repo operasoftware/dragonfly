@@ -62,7 +62,8 @@
                                        i,
                                        collapsed_protos,
                                        filter,
-                                       searchterm));
+                                       searchterm,
+                                       obj_id));
       }
       if (ret.length)
       {
@@ -79,7 +80,8 @@
                                      index,
                                      collapsed_protos,
                                      filter, //name, index
-                                     searchterm)
+                                     searchterm,
+                                     parent_obj_id)
   {
     var ret = [];
     var name = proto[VALUE][CLASS_NAME] || "";
@@ -92,7 +94,8 @@
                                                   filter,
                                                   name,
                                                   index,
-                                                  searchterm);
+                                                  searchterm,
+                                                  parent_obj_id);
     var has_match = !searchterm || name.toLowerCase().contains(searchterm);
     if (has_match || expanded_props.length)
     {
@@ -137,7 +140,8 @@
                                           filter,
                                           name,
                                           index,
-                                          searchterm)
+                                          searchterm,
+                                          parent_obj_id)
   {
     var
     ret = [],
@@ -171,6 +175,25 @@
                   esc_name +
                 "</key>\u00A0" +
                 "<value class='" + type + "'>" + value + "</value>" +
+              "</item>"
+            );
+          }
+          break;
+        }
+        case "script_getter":
+        {
+          if (!searchterm ||
+              prop[NAME].toLowerCase().contains(searchterm) ||
+              value.toLowerCase().contains(searchterm))
+          {
+            ret.push(
+              "<item obj-id='" + parent_obj_id + "'>" +
+                "<key class='no-expander' data-spec='dom#" + esc_name + "'" +
+                  editable(prop) + ">" +
+                  esc_name +
+                "</key>\u00A0" +
+                "<value class='" + type + "' handler='get-getter-value'>" +
+                  "getter</value>" +
               "</item>"
             );
           }
@@ -319,6 +342,7 @@
 
   this.inspected_js_prototype = function(model, path, index, name)
   {
+    var OBJ_ID = 1;
     var tree = model.get_expanded_tree(null, path);
     var data = tree && model.get_data(tree.object_id);
     var setting = window.settings.inspection;
@@ -330,7 +354,9 @@
                                       data[index],
                                       index,
                                       collapsed_protos,
-                                      filter).join('') : '';
+                                      filter,
+                                      null,
+                                      path.last[OBJ_ID]).join('') : '';
   }
 
   this.inspected_js_scope_chain = function(model, searchterm)

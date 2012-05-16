@@ -75,6 +75,29 @@ top-tabs tab
                                        rgba(255, 255, 255, 0.20) 100%);
 }
 
+top-tabs tab .inline-block
+{
+  vertical-align: top;
+}
+
+top-tabs tab .block-content
+{
+  display: inline;
+  vertical-align: baseline;
+  line-height: 1;
+}
+
+top-tabs .two-rows .inline-block 
+{
+  vertical-align: middle;
+  line-height: 2;
+}
+
+top-tabs .two-rows .block-content 
+{
+  display: block;
+}
+
 top-tabs tab:first-child
 {
   border-left-width: 0;

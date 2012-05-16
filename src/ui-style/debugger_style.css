@@ -1044,20 +1044,6 @@ d
   margin: auto;
 }
 
-.color-picker
-{
-  display: table-cell;
-  vertical-align: top;
-  padding: 0 5px;
-}
-
-.color-picker pre
-{
-  margin: 0.8em 3em;
-  padding: 0;
-  text-align: left;
-}
-
 .outer-canvas-container
 {
   display: table;
@@ -1068,19 +1054,6 @@ d
 .canvas-container
 {
   position: relative;
-}
-
-.color-picker canvas
-{
-  display: block;
-}
-
-#color-picker-mask
-{
-  position: absolute;
-  top: 0;
-  left: 0;
-  cursor: crosshair;
 }
 
 .color-picker-stored-colors
@@ -1458,15 +1431,16 @@ d
                                        #c8c8c8 0);
   background-position: 1px 1px, 5px 5px;
   background-size: 4px;
-  vertical-align: -1px;
+  vertical-align: -1px; /* Should really be middle, but most often this looks better */
 }
 
 .color-swatch-fg-color
 {
   border: 1px solid rgba(34, 34, 34, 0.4);
   display: block;
-  width: 8px;
-  height: 8px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .color-swatch:not(.non-interactive)
@@ -1562,7 +1536,7 @@ d
   vertical-align: middle;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 3px;
-  margin: 0 10px 0 2px;
+  margin-left: 2px;
 }
 
 .spotlight-color-select::before
@@ -1580,3 +1554,56 @@ d
 {
   margin: 0;
 }
+
+/*
+.closing-brace
+{
+  position: relative;
+}
+
+.css-inspector:not(.edit-mode) .closing-brace:hover
+{
+  background-color: #fefefe;
+  background-image: -o-linear-gradient(0deg,
+                                       #fff 0,
+                                       #7e7e7e 1px,
+                                       #fff 1px);
+  background-repeat: repeat-x;
+  background-size: 3px 1px;
+}
+
+.css-inspector:not(.edit-mode) .closing-brace:hover::before
+{
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 8px;
+  height: 9px;
+  width: 9px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  background-color: #fefefe;
+  background-image: -o-linear-gradient(90deg,
+                                       #7e7e7e 0,
+                                       #7e7e7e 5px),
+                    -o-linear-gradient(0deg,
+                                       #7e7e7e 0,
+                                       #7e7e7e 5px);
+  background-size: 1px 5px,
+                   5px 1px;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: rgba(0, 0, 0, 0.5);
+}
+*/
+
+.css-property-value .color-picker-active-item
+{
+  background: #fff;
+  border: 1px solid #808080;
+  border-radius: 3px;
+  padding: 0 2px;
+  margin: -3px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+

@@ -44,7 +44,7 @@ cls.ElementStyle = function()
   var SELECTION = 10;
 
   this._pseudo_item_list = [NONE];
-  this._pseudo_element_list = [];
+  this._pseudo_element = null;
   this._pseudo_item_map = {
     // Classes
     "link": LINK,
@@ -336,7 +336,7 @@ cls.ElementStyle = function()
 
       if (get_data)
       {
-        this._pseudo_element_list = msg.pseudo_element ? [this._pseudo_item_map[msg.pseudo_element]] : [];
+        this._pseudo_element = msg.pseudo_element || null;
         this._get_data(msg.rt_id, msg.obj_id);
       }
       else
@@ -356,10 +356,13 @@ cls.ElementStyle = function()
   {
     this._rt_id = rt_id;
     this._obj_id = obj_id;
+    var pseudo_element = this._pseudo_element && this._pseudo_item_map[this._pseudo_element];
     if (window.stylesheets.has_stylesheets_runtime(rt_id))
     {
       var tag = this._tag_manager.set_callback(this, this._handle_get_data, [rt_id, obj_id]);
-      var callback_params = [rt_id, obj_id, this._pseudo_item_list.concat(this._pseudo_element_list)];
+      var callback_params = [rt_id, obj_id, this._pseudo_item_list.concat(pseudo_element || [])];
+      if (pseudo_element && this._has_pseudo_element_version)
+        callback_params.push(pseudo_element);
       this._es_debugger.requestCssGetStyleDeclarations(tag, callback_params);
     }
     else
@@ -401,7 +404,7 @@ cls.ElementStyle = function()
       {
         var rule = new CssRule(node_style, this._css_index_map);
 
-        if (!window.settings["css-inspector"].get("show-expanded-properties"))
+        if (!window.settings["css-inspector"].get("show-longhand-properties"))
           this._css_shorthand_resolver.resolve(rule.declarations);
 
         if (rule.origin != ORIGIN_USER_AGENT)
@@ -432,6 +435,7 @@ cls.ElementStyle = function()
 
   this._init = function()
   {
+    this._has_pseudo_element_version = this._es_debugger.satisfies_version(6, 9);
     if (window.messages)
     {
       window.messages.addListener('element-selected', this._on_element_selected.bind(this));
