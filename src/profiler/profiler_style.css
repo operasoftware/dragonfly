@@ -1,0 +1,272 @@
+#profiler-legend
+{
+  position: absolute;
+  left: 0;
+  top: 20px;
+  height: 120px;
+  width: 149px;
+  border-top: 1px solid #e6e6e6;
+}
+
+#profiler-timeline
+{
+  position: absolute;
+  left: 150px;
+  right: 0;
+  top: 20px;
+  height: 144px; /* 18 (offset height of .profiler-row) * 8 (number of rows) */
+  border-top: 1px solid #e6e6e6;
+}
+
+#profiler-details-list
+{
+  position: absolute;
+  top: 165px;
+  bottom: 21px;
+  overflow: auto;
+  border-top: 1px solid #e6e6e6;
+  width: 100%;
+}
+
+#profiler-status
+{
+  position: absolute;
+  bottom: 0;
+  height: 20px;
+  line-height: 20px;
+  width: 100%;
+  border-top: 1px solid #e6e6e6;
+  text-align: center;
+}
+
+.profiler-empty
+{
+  text-align: center;
+  color: #999;
+  text-shadow: 1px 1px 1px #eee;
+  font-size: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+.profiler-details-time,
+.profiler-details-hits
+{
+  width: 100px;
+}
+
+.profiler-timeline-row
+{
+  height: 16px;
+  line-height: 16px;
+  padding: 1px 3px; /* Line up up with toolbar buttons */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.profiler-timeline-row.odd
+{
+  background: #f7f7f7;
+}
+
+.profiler-legend-label
+{
+  box-sizing: border-box;
+  padding-right: 10px;
+}
+
+.profiler-legend-amount
+{
+  position: absolute;
+  right: 0;
+  color: #9c9c9c;
+}
+
+.profiler-timeline-row:hover .profiler-legend-label
+{
+  color: #769fe1;
+}
+
+.profiler-timeline-marker
+{
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background: #e6e6e6;
+  z-index: 2;
+}
+
+.profiler-timeline-marker-time
+{
+  position: absolute;
+  top: -15px;
+  color: #444;
+  white-space: nowrap;
+}
+
+.profiler-event-special
+{
+  height: 100%;
+  width: 2px;
+  z-index: 2;
+}
+
+.profiler-event
+{
+  position: absolute;
+  min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
+  height: 8px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
+  border-radius: 2px;
+  z-index: 2;
+}
+
+.profiler-event-interval
+{
+  margin: 3px 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.profiler-event-interval[data-isexpandable="true"]:hover
+{
+  box-shadow: 0 0 0 4px #ceddf5;
+  z-index: 4;
+}
+
+.profiler-event-interval[data-isexpandable="false"]:hover
+{
+  box-shadow: 0 0 0 4px #ddd;
+  z-index: 4;
+}
+
+.profiler-event-interval.selected
+{
+  box-shadow: 0 0 0 4px #769fe1;
+  z-index: 3;
+}
+
+.profiler-timeline-selftime
+{
+  background-image: -o-linear-gradient(-90deg,
+                                       rgba(0, 0, 0, 0) 1%,
+                                       rgba(0, 0, 0, 0.2) 100%);
+}
+
+.event-type-1
+{
+}
+
+.event-type-1.profiler-timeline-selftime
+{
+}
+
+.event-type-2
+{
+}
+
+.event-type-2.profiler-timeline-selftime
+{
+}
+
+.event-type-3
+{
+  background-color: #c7c7eb;
+  border-color: #a5a5c3;
+}
+
+.event-type-3.profiler-timeline-selftime
+{
+  background-color: #b3b0ff;
+}
+
+.event-type-4
+{
+  background-color: #aac1e3;
+  border-color: #8da0bd;
+}
+
+.event-type-4.profiler-timeline-selftime
+{
+  background-color: #8cb8fa;
+}
+
+.event-type-5
+{
+  background-color: #f5e19f;
+  border-color: #ccb97c;
+}
+
+.event-type-5.profiler-timeline-selftime
+{
+  background-color: #ffe17d;
+}
+
+.event-type-6
+{
+  background-color: #a2deaa;
+  border-color: #7eb985;
+}
+
+.event-type-6.profiler-timeline-selftime
+{
+  background-color: #7ed68a;
+}
+
+.event-type-7
+{
+  background-color: #fcb174;
+  border-color: #d29360;
+}
+
+.event-type-7.profiler-timeline-selftime
+{
+  background-color: #e8822e;
+}
+
+.event-type-8
+{
+  background-color: #fbcfab;
+  border-color: #d2ad8f;
+}
+
+.event-type-8.profiler-timeline-selftime
+{
+  background-color: #ffc08c;
+}
+
+.event-type-9
+{
+}
+
+.event-type-9.profiler-timeline-selftime
+{
+}
+
+.event-type-10
+{
+  background-color: #ebbf9b;
+  border-color: #c39f81;
+}
+
+.event-type-10.profiler-timeline-selftime
+{
+  background-color: #e09455;
+}
+
+.event-type-11
+{
+  background-color: #ff9c9c;
+  border-color: #d47777;
+}
+
+.event-type-11.profiler-timeline-selftime
+{
+  background-color: #f45353;
+}
+

@@ -391,7 +391,7 @@ var ErrorConsoleViewPrototype = function()
   this._render_timeout = 0;
   this._rendertime = 0;
   this.needs_instant_update = false;
-  this.requierd_services = ["console-logger"];
+  this.required_services = ["console-logger"];
 
   this.createView = function(container)
   {

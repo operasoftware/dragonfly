@@ -300,7 +300,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['span',
-                  'class', 'ui-button',
+                  'class', 'ui-button reload-window',
                   'handler', 'reload-window',
                   'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
@@ -991,7 +991,7 @@ cls.JsSourceView = function(id, name, container_class)
     return false;
   }.bind(this);
   
-  this.requierd_services = ["ecmascript-debugger"];
+  this.required_services = ["ecmascript-debugger"];
   this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);

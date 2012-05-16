@@ -22,7 +22,7 @@ cls.ResourceDetailBase = function()
   this._line = 0;
   this._root_ele = null;
   this._tops = [];
-  this.requierd_services = ["resource-manager", "document-manager"];
+  this.required_services = ["resource-manager", "document-manager"];
 
   this._traverse_ele = function(ele)
   {

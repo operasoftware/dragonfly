@@ -15,7 +15,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._init = function(id, name, container_class, data_reference)
   {
-    this.requierd_services = ["cookie-manager", "ecmascript-debugger"];
+    this.required_services = ["cookie-manager", "ecmascript-debugger"];
     this.init(id, name, container_class, null, "cookiemanager-container");
 
     this.shared_shortcuts = "storage";

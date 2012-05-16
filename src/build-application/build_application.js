@@ -232,7 +232,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'ecmascript-debugger',
     'cookie-manager',
     'resource-manager',
-    'document-manager'
+    'document-manager',
+    'profiler'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)

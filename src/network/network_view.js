@@ -22,7 +22,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._graph_tooltip_id = null;
   this._type_filters = null;
   this.needs_instant_update = false;
-  this.requierd_services = ["resource-manager", "document-manager"];
+  this.required_services = ["resource-manager", "document-manager"];
 
   this.createView = function(container)
   {
@@ -97,7 +97,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     container.clearAndRender(
       ["div",
         ["span",
-          "class", "ui-button",
+          "class", "ui-button reload-window",
           "handler", "reload-window",
           "tabindex", "1"],
         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],

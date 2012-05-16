@@ -113,7 +113,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   };
 
-  this.requierd_services = ["ecmascript-debugger"];
+  this.required_services = ["ecmascript-debugger"];
   window.storages[id].addListener("storage-update", this.on_storage_update.bind(this));
   this.init(id, name, container_class, null, "storage-view");
 };
