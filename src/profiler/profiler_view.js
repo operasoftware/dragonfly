@@ -214,7 +214,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_top_list_data = function(events)
   {
-    var type = events.eventList && events.eventList[0].type;
+    var type = events.eventList && events.eventList[0] && events.eventList[0].type;
     switch (type)
     {
     case CSS_SELECTOR_MATCHING:
@@ -226,7 +226,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         };
       });
     }
-    return null;
+    return [];
   };
 
   this._get_event_details = function(event, target)
