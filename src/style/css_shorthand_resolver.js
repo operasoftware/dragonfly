@@ -296,7 +296,7 @@ CssShorthandResolver.shorthands = (function() {
         // Fixed in ci-322
         var duration = decls["-o-animation-duration"];
         if (duration.value.indexOf(" ") !== -1 && duration.value.indexOf(",") === -1)
-          duration.value = duration.value.replace(/\s+/, ", ");
+          duration.value = duration.value.replace(/\s+/g, ", ");
 
         var declarations = split_values(decls);
         var template = [];
