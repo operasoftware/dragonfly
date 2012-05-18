@@ -18,17 +18,17 @@ cls.Watches = function(view)
 
   /* constants */
 
-  const
-  STATUS = 0,
-  PROPERTY_LIST = 1,
-  NAME = 0,
-  TYPE = 1,
-  VALUE = 2,
-  OBJECT_VALUE = 3,
-  OBJECT_ID = 0,
-  IS_EDITABLE = 5,
-  UID = 6,
-  IS_UPDATED = 7;
+  var ERROR_MSG = 0;
+  var STATUS = 0;
+  var PROPERTY_LIST = 1;
+  var NAME = 0;
+  var TYPE = 1;
+  var VALUE = 2;
+  var OBJECT_VALUE = 3;
+  var OBJECT_ID = 0;
+  var IS_EDITABLE = 5;
+  var UID = 6;
+  var IS_UPDATED = 7;
 
   /* private */
 
@@ -70,42 +70,42 @@ cls.Watches = function(view)
       ["unhandled-exception","object",null,[26,0,"object",27,"Error"]]
     */
 
-    if (status)
+    update_list[uid] = true;
+    var prop_list = this._obj_map.watches[0][PROPERTY_LIST];
+    for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
+    if (prop_list[i])
     {
-      opera.postError("Watching " + key + " failed.");
-    }
-    else
-    {
-      update_list[uid] = true;
-      var prop_list = this._obj_map.watches[0][PROPERTY_LIST];
-      for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
-      if (prop_list[i])
+      if (status)
       {
-        if (message[STATUS] == "completed")
-        {
-          prop_list[i][TYPE] = message[TYPE];
-          prop_list[i][VALUE] = message[VALUE];
-          prop_list[i][OBJECT_VALUE] = message[OBJECT_VALUE];
-        }
-        else
-        {
-          prop_list[i][TYPE] = "error";
-          prop_list[i][VALUE] = "Error";
-        }
+        prop_list[i][TYPE] = "error";
+        prop_list[i][VALUE] = message[ERROR_MSG].contains("Syntax")
+                            ? "Syntax error"
+                            : "Error";
+      }
+      else if (message[STATUS] == "completed")
+      {
+        prop_list[i][TYPE] = message[TYPE];
+        prop_list[i][VALUE] = message[VALUE];
+        prop_list[i][OBJECT_VALUE] = message[OBJECT_VALUE];
       }
       else
       {
-        opera.postError("Missing property in watches.");
+        prop_list[i][TYPE] = "error";
+        prop_list[i][VALUE] = "Error";
       }
-      var all_updated = true;
-      for (var check in update_list)
-      {
-        all_updated = all_updated && update_list[check];
-      }
-      if (all_updated)
-      {
-        this._view.update();
-      }
+    }
+    else
+    {
+      opera.postError("Missing property in watches.");
+    }
+    var all_updated = true;
+    for (var check in update_list)
+    {
+      all_updated = all_updated && update_list[check];
+    }
+    if (all_updated)
+    {
+      this._view.update();
     }
   };
 
