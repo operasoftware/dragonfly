@@ -126,6 +126,19 @@ cls.JSInspectionTooltip = function()
                                callback: _handle_ontooltip});
 
       }
+      else
+      {
+        var script_data = target.get_ancestor_attr("data-script-data");
+        if (script_data && class_name)
+        {
+          _cur_object = {script_data: script_data, class_name: class_name}; 
+          _pretty_printer.print({target: target,
+                                 script_data: script_data,
+                                 class_name: class_name,
+                                 object: _cur_object,
+                                 callback: _handle_ontooltip});
+        }
+      }
     }
   };
 

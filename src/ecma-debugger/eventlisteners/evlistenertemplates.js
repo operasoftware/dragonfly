@@ -51,9 +51,9 @@
     ]);
   };
 
-  this.ev_listeners = function(listener_list, rt_id)
+  this.ev_listeners_tooltip = function(listener_list, rt_id)
   {
-    return ["dl", listener_list.map(this._ev_listener.bind(this, rt_id)),
+    return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, rt_id)),
                   "class", "ev-listener mono"];
   };
 
@@ -77,8 +77,8 @@
         "data-window-id", String(win_listeners.win_id),
         "data-rt-id", String(ev_name_object.rt_id),
         "data-obj-id", String(win_listeners.win_id), 
-        "class", "search-match",
-        "handler", "inspect-object-link"];
+        "handler", "inspect-object-link",
+        "class", "search-match"];
     }
     return ret;
   };
@@ -94,7 +94,7 @@
       "class", "ev-all-listeners"]);
   };
 
-  this._ev_listener = function(rt_id, listener)
+  this._ev_listener_tooltip = function(rt_id, listener)
   {
     var EVENT_TYPE = 0;
     var ORIGIN = 1;
@@ -112,15 +112,28 @@
     ret.push(["dt", listener[EVENT_TYPE], "class", "ev-type"]);
     ret.push(["dd", listener[USE_CAPTURE] ? "capturing phase" : "bubbling phase",
                     "class", "ev-phase"]);
-    ret.push(["dd", 
-                ["span", listener[ORIGIN] == ORIGIN_EVENT_TARGET
-                       ? "event target handler"
-                       : "attribute handler",
-                         "data-tooltip", "js-inspection",
-                         "data-rt-id", String(rt_id),
-                         "data-obj-id", String(listener[LISTENER_OBJECT_ID]),
-                         "data-class-name", "Function",
-                         "class", "ev-origin"]]);
+    if (listener[LISTENER_SCRIPT_DATA])
+    {
+      opera.postError("script data")
+      ret.push(["dd", 
+                  ["span", "attribute handler",
+                           "data-tooltip", "js-inspection",
+                           "data-script-data", listener[LISTENER_SCRIPT_DATA],
+                           "data-class-name", "Function",
+                           "class", "ev-origin"]]);
+    }
+    else
+    {
+      ret.push(["dd", 
+                  ["span", listener[ORIGIN] == ORIGIN_EVENT_TARGET
+                         ? "event target handler"
+                         : "attribute handler",
+                           "data-tooltip", "js-inspection",
+                           "data-rt-id", String(rt_id),
+                           "data-obj-id", String(listener[LISTENER_OBJECT_ID]),
+                           "data-class-name", "Function",
+                           "class", "ev-origin"]]);
+    }
     var script_id = position && position[SCRIPT_ID];
     var script = window.runtimes.getScript(script_id);
     if (script)

@@ -1012,22 +1012,26 @@ cls.JsSourceView = function(id, name, container_class)
 
 cls.JsSourceView.update_breakpoints = function(script, line_numbers, top_line)
 {
-  var BP_IMAGE_LINE_HEIGHT = 24;
-  var lines = line_numbers && line_numbers.querySelectorAll(".break-point");
-  var bp_states = script && script.breakpoint_states;
-  if (typeof top_line != "number")
+  if (script && line_numbers)
   {
-    var span = line_numbers.querySelector(".line-number");
-    top_line = span && Number(span.textContent);
-  }
-  if (lines && bp_states && typeof top_line == "number")
-  {
-    for (var i = 0, line; line = lines[i]; i++)
+
+    var BP_IMAGE_LINE_HEIGHT = 24;
+    var lines = line_numbers.querySelectorAll(".break-point");
+    var bp_states = script && script.breakpoint_states;
+    if (typeof top_line != "number")
     {
-      var y = bp_states[top_line + i]
-            ? this.default_y - 1 * bp_states[top_line + i] * BP_IMAGE_LINE_HEIGHT
-            : 0;
-      line.style.backgroundPosition = "0 " + y + "px";
+      var span = line_numbers.querySelector(".line-number");
+      top_line = span && Number(span.textContent);
+    }
+    if (lines && bp_states && typeof top_line == "number")
+    {
+      for (var i = 0, line; line = lines[i]; i++)
+      {
+        var y = bp_states[top_line + i]
+              ? this.default_y - 1 * bp_states[top_line + i] * BP_IMAGE_LINE_HEIGHT
+              : 0;
+        line.style.backgroundPosition = "0 " + y + "px";
+      }
     }
   }
 };

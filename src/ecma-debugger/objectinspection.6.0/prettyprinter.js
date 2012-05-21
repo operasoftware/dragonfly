@@ -110,7 +110,13 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
   template: function(message, ctx)
   {
     var tmpl = [];
-    if (ctx.function_definition)
+    if (ctx.script_data)
+    {
+      tmpl.push("div");
+      window.templates.highlight_js_source(ctx.script_data, null, 0, tmpl);
+      tmpl.push("class", "tooltip-function-source");
+    }
+    else if (ctx.function_definition)
     {
       var script = ctx.script;
       var start_line = ctx.function_definition.start_line;
@@ -299,7 +305,12 @@ cls.PrettyPrinter.prototype = new function()
 
   this._print_function = function(ctx)
   {
-    if (services["ecmascript-debugger"].requestGetFunctionPositions)
+    if (ctx.script_data)
+    {
+      ctx.template = ctx.type.template(null, ctx);
+      ctx.callback(ctx);
+    }
+    else if (services["ecmascript-debugger"].requestGetFunctionPositions)
     {
       var tag = tagManager.set_callback(this, this._handle_function, [ctx]);
       var msg = [ctx.rt_id, [ctx.obj_id]];
