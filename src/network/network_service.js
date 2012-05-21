@@ -880,7 +880,7 @@ cls.NetworkLoggerEntryPrototype = function()
       };
       var gap_def = this.get_gap_def(gap);
       gap.val_string = gap.val.toFixed(2) + " ms";
-      gap.classname = gap_def && gap_def.classname;
+      gap.classname = gap_def && gap_def.classname || "irregular";
       gap.title = gap_def && gap_def.title || "";
 
       this.event_sequence.push(gap);
