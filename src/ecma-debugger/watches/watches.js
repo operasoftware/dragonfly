@@ -78,7 +78,7 @@ cls.Watches = function(view)
     for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
     if (prop_list[i])
     {
-      if (status === SUCCESS && message[STATUS] == "completed")
+      if (status === SUCCESS && message[STATUS] === "completed")
       {
         prop_list[i][TYPE] = message[TYPE];
         prop_list[i][VALUE] = message[VALUE];
