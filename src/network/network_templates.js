@@ -107,12 +107,6 @@ templates.network_incomplete_warning = function()
                ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
                "class", "text_handler",
                "handler", "reload-window"
-             ],
-             " ",
-             ["span",
-               ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN,
-               "class", "text_handler",
-               "handler", "turn-off-incomplete-warning"
              ]
            ],
            ["span",
@@ -126,8 +120,7 @@ templates.network_incomplete_warning = function()
 
 templates.network_log_main = function(ctx, entries, selected, detail_width, table_template)
 {
-  var show_incomplete_warning = settings.network_logger.get("show-incomplete-warning") &&
-                                !ctx.saw_main_document_abouttoloaddocument &&
+  var show_incomplete_warning = !ctx.saw_main_document_abouttoloaddocument &&
                                 !ctx.incomplete_warn_discarded;
 
   return [

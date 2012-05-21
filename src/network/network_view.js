@@ -525,11 +525,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.update();
   }.bind(this);
 
-  this._on_turn_off_incomplete_warning = function(evt, target)
-  {
-    settings.network_logger.set("show-incomplete-warning", false);
-  };
-
   this._on_setting_changed_bound = function(message)
   {
     switch (message.id)
@@ -625,7 +620,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
 
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
-  eh.click["turn-off-incomplete-warning"] = this._on_turn_off_incomplete_warning;
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
@@ -652,18 +646,16 @@ cls.NetworkLog.create_ui_widgets = function()
       "selected-viewmode": "graphs",
       "pause": false,
       "detail-view-left-pos": 120,
-      "show-incomplete-warning": true,
       "track-content": true
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "show-incomplete-warning": ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
     {
-      checkboxes: ["show-incomplete-warning", "track-content"]
+      checkboxes: ["track-content"]
     },
     // templates
     {
