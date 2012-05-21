@@ -20,7 +20,9 @@ var SortableTable = function(tabledef, data, cols, sortby, groupby, reversed, id
 
 var SortableTablePrototype = function()
 {
-  window.cls.MessageMixin.apply(this);
+  if (window.cls && window.cls.MessageMixin)
+    window.cls.MessageMixin.apply(this);
+
   this._init = function(tabledef, data, cols, sortby, groupby, reversed, id)
   {
     this._grouper_storage_id = "table-groupby-" + id,
@@ -115,12 +117,16 @@ var SortableTablePrototype = function()
 
     // should be conditional, but doesn't matter as you don't get
     // dupes in the context menu registry anyhow.
-    var contextmenu = ContextMenu.get_instance();
-    contextmenu.register("sortable-table-menu", [
-      { callback: this._make_context_menu }
-    ]);
+    if (window.ContextMenu)
+    {
+      var contextmenu = ContextMenu.get_instance();
+      contextmenu.register("sortable-table-menu", [
+        { callback: this._make_context_menu }
+      ]);
+    }
     // and not in tooltips either
-    Tooltips.register("sortable-table-tooltip", true, false);
+    if (window.Tooltips)
+      Tooltips.register("sortable-table-tooltip", true, false);
   }
 
   this._make_context_menu = function(evt)
@@ -235,10 +241,12 @@ var SortableTablePrototype = function()
   {
     if (table && table.parentNode)
     {
-      this.post_message("before-render", {table: table});
+      if (this.post_message)
+        this.post_message("before-render", {table: table});
+
       var template = this.render();
       table = table.re_render(template);
-      if (table)
+      if (table && this.post_message)
         this.post_message("after-render", {table: table[0], template: template});
     }
   };
