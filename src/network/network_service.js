@@ -440,7 +440,7 @@ cls.RequestContextPrototype = function()
     logger_entry.requestID = event.requestID;
     logger_entry.update(eventname, event);
 
-    if (window.views)
+    if (window.views && !this.is_paused)
       window.views.network_logger.update();
 
   };
