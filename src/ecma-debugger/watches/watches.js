@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
   * @constructor
@@ -29,6 +31,7 @@ cls.Watches = function(view)
   var IS_EDITABLE = 5;
   var UID = 6;
   var IS_UPDATED = 7;
+  var SUCCESS = 0;
 
   /* private */
 
@@ -75,14 +78,7 @@ cls.Watches = function(view)
     for (var i = 0; i < prop_list.length && prop_list[i][UID] != uid; i++);
     if (prop_list[i])
     {
-      if (status)
-      {
-        prop_list[i][TYPE] = "error";
-        prop_list[i][VALUE] = message[ERROR_MSG].contains("Syntax")
-                            ? "Syntax error"
-                            : "Error";
-      }
-      else if (message[STATUS] == "completed")
+      if (status === SUCCESS && message[STATUS] == "completed")
       {
         prop_list[i][TYPE] = message[TYPE];
         prop_list[i][VALUE] = message[VALUE];
@@ -91,7 +87,9 @@ cls.Watches = function(view)
       else
       {
         prop_list[i][TYPE] = "error";
-        prop_list[i][VALUE] = "Error";
+        prop_list[i][VALUE] = message[ERROR_MSG].startswith("Syntax error")
+                            ? "Syntax error"
+                            : "Error";
       }
     }
     else
