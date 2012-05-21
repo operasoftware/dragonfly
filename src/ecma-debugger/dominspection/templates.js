@@ -543,14 +543,6 @@
         }
 
         case DOCUMENT_NODE:
-          var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
-                          ? EV_LISTENER_MARKUP
-                          : "";
-          if (ev_listener)
-          {
-            tree += "<div style='margin-left:-16px;' class='document-node' " +
-                         "ref-id='" + node[ID] + "'>document" + ev_listener + "</div>";
-          }
           // Don't show this in markup view
           break;
 
@@ -623,6 +615,7 @@
     var parent_ele_stack = [];
     var parent_ele = null;
     var is_expandable = false;
+    var ev_listener = "";
 
     for ( ; node = data[i]; i += 1)
     {
@@ -651,6 +644,10 @@
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
       }
+
+      ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                  ? EV_LISTENER_MARKUP
+                  : "";
 
       switch (node[TYPE])
       {
@@ -724,7 +721,7 @@
                     (is_expandable ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    ev_listener + "</div>";
           }
           else
           {
@@ -736,7 +733,7 @@
                     (is_expandable ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    ev_listener + "</div>";
           }
           parent_ele_stack.push(node);  
           break;
@@ -757,8 +754,10 @@
 
         case DOCUMENT_NODE:
         {
-          tree += "<div" + this._margin_style(node, depth_first_ele) + ">" +
-                    "<span class='document-node'>#document</span></div>";
+          tree += "<div" + this._margin_style(node, depth_first_ele) + 
+                          "ref-id='"+node[ID] + "'>" +
+                    "<span class='document-node'>#document</span>" +
+                    ev_listener + "</div>";
           break;
         }
 
