@@ -155,6 +155,7 @@
 
 .network_incomplete_warning
 {
+  line-height: 15px;
   margin: 15px 50px;
   position: relative;
 }
@@ -173,11 +174,6 @@
 {
   text-decoration: underline;
   white-space: nowrap;
-}
-
-.network_incomplete_warning
-{
-  line-height: 15px;
 }
 
 .network-main-container .sortable-table > tr.header,
