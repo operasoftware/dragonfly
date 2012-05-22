@@ -114,7 +114,6 @@
                     "class", "ev-phase"]);
     if (listener[LISTENER_SCRIPT_DATA])
     {
-      opera.postError("script data")
       ret.push(["dd", 
                   ["span", "attribute handler",
                            "data-tooltip", "js-inspection",
