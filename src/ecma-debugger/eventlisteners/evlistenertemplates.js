@@ -1,14 +1,17 @@
 (function()
 {
-  // TODO clean up the order an the names
+  var HAS_LISTENERS = function(rt_l) { return rt_l.event_names.length; };
+
+  /* Event listener view */
+
   this.main_ev_listener_view = function(data)
   {
-    var data_with_ls = data.filter(function(rt_l) { return rt_l.event_names.length; });
+    var data_with_ls = data.filter(HAS_LISTENERS);
     return (
     ["div",
       ["div",
         ["span",
-          ["span", "Update all"], // TODO ui string
+          ["span", ui_strings.S_LABEL_STORAGE_UPDATE],
           "class" , "ui-button",
           "unselectable", "on",
           "tabindex", "1",
@@ -38,23 +41,26 @@
 
   this._ev_name_item = function(ev_name_obj)
   {
+    var bg_pos = ev_name_obj.is_expanded ? "0 -11px" : "0 0";
+
     return (
     ["li", 
       ["h3", 
         ["input", "type", "button",
-                  "class", "folder-key"],
+                  "class", "folder-key",
+                  "style", "background-position: " + bg_pos],
         ev_name_obj.name,
         "handler", "toggle-ev-listeners",
         "data-ev-name", ev_name_obj.name,
         "class", "ev-listener-type"],
-      ev_name_obj.is_expanded ? this.ev_all_listeners(ev_name_obj) : []
-    ]);
+      ev_name_obj.is_expanded ? this.ev_all_listeners(ev_name_obj) : []]);
   };
 
-  this.ev_listeners_tooltip = function(listener_list, rt_id)
+  this.ev_all_listeners = function(ev_name_obj)
   {
-    return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, rt_id)),
-                  "class", "ev-listener mono"];
+    var tmpl_obj_l = window.templates.ev_window_listeners(ev_name_obj);
+    var tmpl_node_l = window.templates.dom_search(ev_name_obj.model);
+    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-all-listeners"];
   };
 
   this.ev_window_listeners = function(ev_name_object)
@@ -83,15 +89,12 @@
     return ret;
   };
 
-  this.ev_all_listeners = function(ev_name_obj)
+  /* Event listener tooltip */
+
+  this.ev_listeners_tooltip = function(listener_list, rt_id)
   {
-    var tmpl_obj_l = window.templates.ev_window_listeners(ev_name_obj);
-    var tmpl_node_l = window.templates.dom_search(ev_name_obj.model);
-    return (
-    ["div", 
-      tmpl_obj_l, 
-      [tmpl_node_l],
-      "class", "ev-all-listeners"]);
+    return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, rt_id)),
+                  "class", "ev-listener mono"];
   };
 
   this._ev_listener_tooltip = function(rt_id, listener)
@@ -137,9 +140,9 @@
     var script = window.runtimes.getScript(script_id);
     if (script)
     {
-      var sc_link = this.script_link_with_file_number(script,
+      var sc_link = this.script_link_with_line_number(script,
                                                       position[LINE_NUMBER],
-                                                      "added in %s"); //TODO ui string
+                                                      ui_strings.S_EVENT_LISTENER_ADDED_IN); 
       if (sc_link.length)
       {
         sc_link.push("handler", "show-log-entry-source",
@@ -150,12 +153,12 @@
       }
     }
     else
-      ret.push(["dd", "<missing JavaScript source file>"]);  // TODO ui string
+      ret.push(["dd", ui_strings.S_INFO_MISSING_JS_SOURCE_FILE]);
 
     return ret;
   };
 
-  this.script_link_with_file_number = function(script, line_number, str)
+  this.script_link_with_line_number = function(script, line_number, str)
   {
     str || (str = "%s");
     var ret = [];

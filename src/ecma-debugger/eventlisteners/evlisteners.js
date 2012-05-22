@@ -15,6 +15,64 @@ cls.EventName = function(name)
   this.obj_id = 0;
 };
 
+cls.EventName.prototype = new function()
+{
+  var SEARCH_TYPE_EVENT = 5;
+
+  this.search_dom = function(rt_id, obj_id, ev_name, cb)
+  {
+    this.rt_id = rt_id;
+    this.obj_id = obj_id;
+    this.model = new cls.InspectableDOMNode(rt_id, obj_id);
+    this.model.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, cb);
+  };
+};
+
+cls.RTListUpdateCTX = function(rt_id_list, cb)
+{
+  this._init(rt_id_list, cb);
+};
+
+cls.RTListUpdateCTX.prototype = new function()
+{
+  this._handle_expand_listener = function(ev_name_obj)
+  {
+    var list = this.expanded_map[ev_name_obj.rt_id];
+    var index = list.indexOf(ev_name_obj.name);
+    if (index > -1)
+      list.splice(index, 1);
+    else
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      "_handle_expand_listener failed in cls.EvenetListeners.")
+
+    this.check_is_updated();
+  };
+
+  this._check_rt = function(rt_id)
+  {
+    return this.rt_map.hasOwnProperty(rt_id) && 
+           (!this.rt_map[rt_id] || (this.expanded_map[rt_id] &&
+                                   this.expanded_map[rt_id].length === 0));
+  };
+
+  this.check_is_updated = function()
+  {
+    if (this.rt_id_list.every(this._check_rt))
+      this._cb(this);
+  };
+
+  this._init = function(rt_id_list, cb)
+  {
+    this.rt_id_list = rt_id_list;
+    this.rt_map = {};
+    this.win_id_map = {};
+    this.expanded_map = {};
+    this.handle_expand_listener = this._handle_expand_listener.bind(this);
+    this._check_rt = this._check_rt.bind(this);
+    this._cb = cb;
+  };
+};
+
 cls.EvenetListeners = function(view)
 {
   this._init(view);
@@ -33,30 +91,16 @@ cls.EvenetListeners.prototype = new function()
 
   var SUCCESS = 0;
   var SEARCH_TYPE_EVENT = 5;
+  var DELAY = 150;
+  var GET_RT_ID = function(rt) { return rt.rt_id };
 
   /*
-    data structure
+    data structure:
     
-    this._rts =
-    [
-      {
-        rt_id: <rt-id>,
-        obj_id: <obj-id>,
-        event_names: 
-        [
-          {
-            name: <name>,
-            is_expanded: <boolean>,
-          },
-          ...
-        ]
-      },
-      ...
-    ]
-
+    this._rts = [{rt_id: <rt-id>,
+                  obj_id: <obj-id>,
+                  event_names: [<EventName>, ...]}, ...]
   */
-
-  var DELAY = 150;
 
   this._on_new_rts = function()
   {
@@ -67,7 +111,7 @@ cls.EvenetListeners.prototype = new function()
   this._handle_new_rts = function()
   {
     var rt_ids = window.runtimes.get_dom_runtime_ids();
-    var cur_rt_ids = this._rts.map(this._get_rt_id);
+    var cur_rt_ids = this._rts.map(GET_RT_ID);
     var new_rt_ids = rt_ids.filter(function(id) { return !cur_rt_ids.contains(id); });
     var live_rts = this._rts.filter(function(rt) { return rt_ids.contains(rt.rt_id); });
     if (live_rts.length != this._rts.length)
@@ -81,13 +125,19 @@ cls.EvenetListeners.prototype = new function()
     this._on_new_rts_timeout = 0;
   };
 
-  this._get_rt_id = function(rt) { return rt.rt_id };
-
   this._update_rt_list = function(rt_id_list)
   {
-    var ctx = {rt_id_list: rt_id_list, rt_map: {}, win_id_map: {}, expanded_map: {}};
-    ctx.handle_expand_listener = this._handle_expand_listener_on_update.bind(this, ctx);
+    var ctx = new cls.RTListUpdateCTX(rt_id_list, this.on_rt_list_update_bound);
     rt_id_list.forEach(this._get_window_ids.bind(this, ctx));
+  };
+
+  this._on_rt_list_update = function(ctx)
+  {
+    for (var i = 0, id; id = ctx.rt_id_list[i]; i++)
+    {
+      this._rts[this._get_rt_index(id)] = ctx.rt_map[id];
+    }
+    this._view.update();
   };
 
   this._get_window_ids = function(ctx, rt_id)
@@ -110,7 +160,7 @@ cls.EvenetListeners.prototype = new function()
     var STATUS = 0;
     var OBJECT_VALUE = 3;
     var OBJECT_ID = 0;
-    if (status === SUCCESS && message[STATUS] == "completed" && message[OBJECT_VALUE])
+    if (status === SUCCESS && message[STATUS] === "completed" && message[OBJECT_VALUE])
     {
       this._win_id_map[rt_id] = ctx.win_id_map[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
       if (ctx.rt_id_list.every(function(rt_id) { return ctx.win_id_map[rt_id]; }))
@@ -150,13 +200,10 @@ cls.EvenetListeners.prototype = new function()
           if (this.is_expanded(rt_id, name))
           {
             ctx.expanded_map[rt_id].push(name);
-            ev_n_obj.rt_id = rt_id;
-            ev_n_obj.obj_id = obj_id;
-            ev_n_obj.model = new cls.InspectableDOMNode(rt_id, obj_id);
             var search_cb = this._handle_dom_search.bind(this,
                                                          ev_n_obj,
                                                          ctx.handle_expand_listener);
-            ev_n_obj.model.search(name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
+            ev_n_obj.search_dom(rt_id, obj_id, name, search_cb);
           }
           return ev_n_obj;
         }, this);
@@ -165,42 +212,11 @@ cls.EvenetListeners.prototype = new function()
         rt_listeners.event_names = [];
 
       ctx.rt_map[rt_id] = rt_listeners;
-      this._check_update_ctx(ctx);
+      ctx.check_is_updated();
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "failed to retrieve the event names in cls.EvenetListeners.")
-  };
-
-  this._handle_expand_listener_on_update = function(ctx, ev_name_obj)
-  {
-    var list = ctx.expanded_map[ev_name_obj.rt_id];
-    var index = list.indexOf(ev_name_obj.name);
-    if (index > -1)
-      list.splice(index, 1);
-    else
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "_handle_expand_listener_on_update failed in cls.EvenetListeners.")
-
-    this._check_update_ctx(ctx);
-  };
-
-  this._check_update_ctx = function(ctx)
-  {
-    var check_rt = function(rt_id)
-    {
-      return ctx.rt_map.hasOwnProperty(rt_id) && 
-             (!ctx.rt_map[rt_id] || (ctx.expanded_map[rt_id] &&
-                                     ctx.expanded_map[rt_id].length === 0));
-    };
-    if (ctx.rt_id_list.every(check_rt))
-    {
-      for (var i = 0, id; id = ctx.rt_id_list[i]; i++)
-      {
-        this._rts[this._get_rt_index(id)] = ctx.rt_map[id];
-      }
-      this._view.update();
-    }
   };
 
   this._handle_dom_search = function(ev_name_obj, cb)
@@ -295,14 +311,11 @@ cls.EvenetListeners.prototype = new function()
 
   this.expand_listeners = function(rt_id, obj_id, ev_name, cb)
   {
-    var ev_n = this._get_ev_name_obj(rt_id, ev_name);
-    if (ev_n)
+    var ev_n_obj = this._get_ev_name_obj(rt_id, ev_name);
+    if (ev_n_obj)
     {
-      ev_n.rt_id = rt_id;
-      ev_n.obj_id = obj_id;
-      ev_n.model = new cls.InspectableDOMNode(rt_id, obj_id);
-      var search_cb = this._handle_dom_search.bind(this, ev_n, cb);
-      ev_n.model.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, search_cb);
+      var search_cb = this._handle_dom_search.bind(this, ev_n_obj, cb);
+      ev_n_obj.search_dom(rt_id, obj_id, ev_name, search_cb);
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
@@ -335,6 +348,7 @@ cls.EvenetListeners.prototype = new function()
   {
     this._on_new_rts_timeout = 0;
     this._handle_new_rts_bound = this._handle_new_rts.bind(this);
+    this.on_rt_list_update_bound = this._on_rt_list_update.bind(this);
     this._rts = [];
     this._win_id_map = {};
     this._expand_tree = {};
@@ -344,5 +358,4 @@ cls.EvenetListeners.prototype = new function()
     window.messages.add_listener("active-tab", this._on_new_rts.bind(this));
   };
 
-  
 };

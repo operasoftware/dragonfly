@@ -49,7 +49,6 @@ cls.EventListenersView = function(id, name, container_class)
   {
     // TODO testing
     target.get_ancestor("container").innerHTML = "";
-
     this._data.update();
   };
 

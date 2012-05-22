@@ -124,7 +124,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
       var line_numbers = ["ul"];
       var lines = ["div"];
       var head = [];
-      var sc_link = window.templates.script_link_with_file_number(script, start_line);
+      var sc_link = window.templates.script_link_with_line_number(script, start_line);
       if (sc_link)
       {
         sc_link.push("handler", "show-log-entry-source",

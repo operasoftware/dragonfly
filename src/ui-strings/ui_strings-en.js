@@ -1496,3 +1496,9 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: Link in an event listener tooltip to the source position where the listener is added. */
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+
+/* DESC: Info in an event listener tooltip that the according source file is missing. */
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>"
