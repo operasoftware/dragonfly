@@ -206,7 +206,7 @@ var SortableTablePrototype = function()
   this._find_col_insertion_point = function(col)
   {
     var colpoint = this.tabledef.column_order.indexOf(col);
-    for (var n=colpoint+1, current; current=this.tabledef.column_order[n]; n++)
+    for (var n = colpoint + 1, current; current = this.tabledef.column_order[n]; n++)
     {
       var point = this.columns.indexOf(current);
       if (point != -1) {
