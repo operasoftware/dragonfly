@@ -95,7 +95,7 @@
 .tooltip-container .error_response,
 .network-log-url-list .error_response
 {
-  color: #d2001c;
+  color: #d2001c !important;
 }
 
 .network-log-url-list .error_response.selected
