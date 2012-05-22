@@ -255,8 +255,13 @@ var StylesheetTemplates = function()
       if (color_value.length && type === TYPE_FUNCTION_END)
       {
         color_value.push(value);
-        value = window.helpers.get_color_in_notation(new Color().parseCSSColor(color_value.join("")), color_notation);
-        color_swatch = this.color_swatch(value, is_editable);
+        value = color_value.join("");
+        var color = new Color().parseCSSColor(value);
+        if (color)
+        {
+          value = window.helpers.get_color_in_notation(color, color_notation);
+          color_swatch = this.color_swatch(value, is_editable);
+        }
         color_value = [];
       }
       else if ((type === TYPE_FUNCTION_START && this._is_color(value)) || color_value.length)

@@ -67,13 +67,10 @@ window.cls.Helpers = function()
     var end = path.indexOf("?");
     var hash_index = path.indexOf("#");
     if (hash_index != -1)
-    {
       end = Math.min(end, hash_index);
-    }
+
     if (end != -1)
-    {
       path = path.slice(0, end);
-    }
 
     // If there is no file name, show the last directory including slash
     var last = path.lastIndexOf("/") + 1;
@@ -322,6 +319,9 @@ window.cls.Helpers = function()
    */
   this.get_color_in_notation = function(color, notation)
   {
+    if (!color)
+      return;
+
     if (color.alpha < 1)
     {
       notation = {

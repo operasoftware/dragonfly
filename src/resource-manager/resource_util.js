@@ -31,40 +31,40 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
 }
 
 /**
- * Return a human readable string representation of n millis
- */
-cls.ResourceUtil.millis_to_human_readable = function(millis)
-{
-  if (millis > 10000) // > 10 seconds
-  {
-    return "" + ((millis / 1000).toFixed(1)) + " s";
-  }
-  else if (millis > 1000) // > 1 second
-  {
-    return "" + (millis / 1000).toFixed(2) + " s";
-  }
-  else
-  {
-    return "" + millis + " ms";
-  }
-}
-
-
-/**
  * Common extensions mapped to generic type strings
  */
 cls.ResourceUtil.extension_type_map = {
+
+  html: "markup",
+  xhtml: "markup",
+  xml: "markup",
+  xslt: "markup",
+  xsl: "markup",
+  wml: "markup",
+  rss: "markup",
+
   png: "image",
   jpg: "image",
   bmp: "image",
   pcx: "image",
   ico: "image",
   jpeg: "image",
+  gif: "image",
 
   oex: "extension",
 
+  woff: "font",
   otf: "font",
   ttf: "font",
+
+  txt: "text",
+
+  css: "css",
+
+  js: "script",
+  es: "script",
+
+  rss: "feed"
 }
 
 /**
@@ -78,6 +78,7 @@ cls.ResourceUtil.mime_type_map = {
   "text/xsl": "markup",
   "text/xml": "markup",
   "application/xml": "markup",
+  "application/vnd.wap.xhtml+xml": "markup",
 
   "text/css": "css",
 
@@ -168,7 +169,7 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   return "text";
 }
 
-cls.ResourceUtil.mime_to_type = function(mime, extension)
+cls.ResourceUtil.mime_to_type = function(mime)
 {
   if (mime)
   {
@@ -180,7 +181,17 @@ cls.ResourceUtil.mime_to_type = function(mime, extension)
 
 cls.ResourceUtil.path_to_type = function(path)
 {
-  var extension = path.slice(path.lastIndexOf(".") + 1);
+  if (path)
+  {
+    var extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
+    var query = extension.indexOf("?");
+    if (query != -1)
+      extension = extension.slice(0, query);
+    var hash = extension.indexOf("#");
+    if (hash != -1)
+      extension = extension.slice(0, hash);
+    return extension && this.extension_type_map[extension];
+  }
 }
 
 cls.ResourceUtil.url_path = function(url)

@@ -4,6 +4,11 @@
   border-collapse: collapse;
 }
 
+.sortable-table.nowrap
+{
+  white-space: nowrap;
+}
+
 .sortable-table > tr > td,
 .sortable-table > tr > th
 {
@@ -11,7 +16,9 @@
   border-left-width: 1px;
   padding: 4px 5px;
   text-align: left;
+  font-weight: normal;
   overflow: hidden;
+  min-width: 12px;
 }
 
 .sortable-table > tr > td:first-child,
@@ -42,69 +49,169 @@
   word-wrap: normal;
 }
 
-.sortable-table > tr:last-of-type > td
-{
+.sortable-table > tr,
+.network-log-url-list li,
+.network-timeline-row,
+.network-graph-row
+{ 
+  border: 0 solid #f0f0f0;
+}
+
+.sortable-table > tr:last-child
+{ 
   border-bottom-width: 1px;
 }
 
-
-.sortable-table > tr:nth-child(odd)
+.sortable-table > tr:nth-child(even),
+.network-log-url-list li:nth-child(odd),
+.network-graph-row:nth-child(even)
 {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
 .sort-column
 {
-  background: url("../../ui-images/dropdown.png") no-repeat 100% 50%;
+  position: relative;
 }
 
-.sort-column.reversed
+.sort-column:before
 {
-  background-image: url("../../ui-images/dropup.png");
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  display: block;
+  background: transparent url("../../ui-images/dropdown.png");
 }
 
-.sortable-table > tr.header:first-child
+.sort-column:active:before
 {
+  background: transparent url("../../ui-images/dropdown.png");
+}
+
+.sort-column.reversed:before
+{
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 4px;
+  width: 15px;
+  height: 19px;
+  background: url("../../ui-images/dropup.png");
+}
+
+.sort-column.reversed:active:before
+{
+  background: url("../../ui-images/dropup.png"),
+              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+}
+
+th.sort-column
+{
+  padding-right: 12px;
+}
+
+
+/* Table headers */
+.sortable-table > tr.header,
+.sortable-table > tr.header:hover
+{
+  
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.sortable-table > tr.header:first-child th
-{
   font-weight: normal;
 }
 
-.sortable-table > tr.header
+.sortable-table > tr.header,
+.sortable-table > tr.header:hover,
+.sortable-table > tr.header:active,
+.sortable-table > .sortable-table-group-header,
+.sortable-table > .sortable-table-group-header:hover,
+.sortable-table > .sortable-table-group-header:active
 {
+  color: #444;
   background-color: rgba(0, 0, 0, 0.12);
-  font-weight: bold;
 }
 
-.sortable-table > tr.header > .sortable-table-group-header
-{
-  text-align: left;
-  z-index: 3;
-  box-shadow: 0 1px rgba(0, 0, 0, 0.1);
-}
-
-.sortable-table > tr:not(.header):not(.no-interaction):not(.selected):not(.sortable-table-summation-row):hover
+/* Hovered and Focused state */
+.sortable-table > tr:hover,
+.sortable-table > tr.hovered,
+.sortable-table-style-list li.hovered,
+.network-main-container .network-data-container .hovered /* todo: seems to be for network-graph-row */
 {
   background-color: rgba(137, 173, 232, 0.2);
   color: #000;
 }
 
-.sortable-table > tr:not(.header):not(.no-interaction):not(.sortable-table-summation-row):active,
-.sortable-table > tr.selected:not(.header)
+/* Selected and Active state */
+.sortable-table > tr:active,
+.sortable-table > tr.selected,
+.network-log-url-list li.selected,
+.network-log-url-list li:nth-child(even).selected,
+.network-main-container .network-data-container .selected, /* todo: make these network unspecific */
+.network-main-container .network-data-container .network-data-table-container .selected
 {
   background-color: rgba(55, 115, 211, 0.7);
   color: #fff;
-  border-color: rgba(55, 115, 211, 1.0);
+  border-color: #6c94d3;
 }
 
 .sortable-table > tr.header > th:not(.sortable-table-group-header):active
 {
-  background-color: rgba(0, 0, 0, 0.06); 
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.sortable-table .sortable-table-summation-row
+{
+  border-top-width: 1px;
+  background-color: transparent;
+}
+
+.sortable-table tr:last-child.sortable-table-summation-row
+{
+  border-bottom-width: 0;
+}
+
+/* ellipsis */
+
+.sortable-table .ellipsis_cont
+{
+  position: relative;
+}
+
+.sortable-table td .ellipsis_cont
+{
+  /*
+    because .ellipsis is the only things that lives in this container,
+    height needs to be specified to take room
+  */
+  height: 13px;
+}
+
+.sortable-table th .ellipsis_cont
+{
+  /* header row is lower */
+  height: 1em;
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
+.sortable-table .ellipsis_cont .ellipsis
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

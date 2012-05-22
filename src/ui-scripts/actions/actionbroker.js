@@ -234,7 +234,10 @@ var ActionBroker = function()
           // Workaround to reset the focus to the a given view.
           // Needs a proper design.
           // Also used in js source view.
-          view.get_container().dispatchMouseEvent('click');
+          var container = view.get_container();
+          if (container)
+            container.dispatchMouseEvent('click');
+
           return;
         }
       }

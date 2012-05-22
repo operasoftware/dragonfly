@@ -64,7 +64,7 @@ Slider.prototype = new function()
   {
     if (!this._ref_element)
     {
-      this._onmouseup();
+      this._onmouseup(event);
       return;
     }
     var value = 0, box = this._ref_element.getBoundingClientRect();
@@ -234,6 +234,8 @@ Slider.prototype = new function()
     this._is_active = false;
     document.removeEventListener('mousemove', this._onmousemove_bound, false);
     document.removeEventListener('mouseup', this._onmouseup_bound, false);
+    this._w_mouse_raw_x = event.clientX;
+    this._w_mouse_raw_y = event.clientY;
   }
 
   this._onremove = function(event)

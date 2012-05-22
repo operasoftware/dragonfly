@@ -43,6 +43,18 @@
               1px 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
+.right-aligned .color-picker-arrow
+{
+  right: auto;
+  left: -12px;
+}
+
+.right-aligned .color-picker-arrow::before
+{
+  -o-transform: rotate(135deg);
+  right: -6px;
+}
+
 .color-picker-2-d-graphic
 {
   position: absolute;

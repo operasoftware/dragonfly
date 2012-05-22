@@ -204,6 +204,62 @@ suggest_values['-o-border-image'] =
 [
 ];
 
+suggest_values['-o-animation'] =
+[
+];
+
+suggest_values['-o-animation-delay'] =
+[
+  // <time>
+  '0'
+];
+
+suggest_values['-o-animation-direction'] =
+[
+  'normal',
+  'alternate'
+];
+
+suggest_values['-o-animation-duration'] =
+[
+  '0'
+];
+
+suggest_values['-o-animation-fill-mode'] =
+[
+  'none',
+  'forwards',
+  'backwards',
+  'both'
+];
+
+suggest_values['-o-animation-iteration-count'] =
+[
+  // <number>
+  'infinite'
+];
+
+suggest_values['-o-animation-name'] =
+[
+  'none'
+];
+
+suggest_values['-o-animation-play-state'] =
+[
+  'running',
+  'paused'
+];
+
+suggest_values['-o-animation-timing-function'] =
+[
+  'ease',
+  'linear',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'cubic-bezier()'
+];
+
 suggest_values['-o-object-fit'] =
 [
   'fill',

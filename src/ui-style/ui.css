@@ -138,8 +138,7 @@ panel-toolbar
               inset 0 1px 1px 0 rgba(255, 255, 255,0.9);
 }
 
-toolbar-buttons,
-toolbar-switches
+toolbar-buttons
 {
   display: block;
   float: left;
@@ -339,6 +338,17 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_clear.png");
 }
 
+.network-view-toggle-graphs:before
+{
+  background-image: url("../ui-images/icons/icon_graph.png");
+}
+
+.network-view-toggle-data:before
+{
+  background-image: url("../ui-images/icons/icon_table.png");
+}
+
+
 .request_list\.clear-log-on-runtime-switch::before
 {
   background-image: url("../ui-images/icons/icon_clearonreload.png");
@@ -384,14 +394,9 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.network_logger\.paused-update::before
+.network_logger\.pause::before
 {
   background-image: url("../ui-images/icons/icon_pause.png");
-}
-
-.network_logger\.fit-to-width::before
-{
-  background-image: url("../ui-images/icons/icon_constrain.png");
 }
 
 .pseudo-items cst-icon
@@ -433,14 +438,12 @@ cst-icon[class="debugger-menu"]
 
 .ui-control:not([disabled]):active,
 .ui-button:not([disabled]):active,
-toolbar-switches .is-active
+toolbar-buttons .is-active
 {
   background-color: #c6c6c6;
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.45) 0,
                                        rgba(255, 255, 255, 0.25) 100%);
-  padding-top: 2px;
-  padding-bottom: 0;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3),
               inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
@@ -479,7 +482,7 @@ panel-toolbar .ui-button:not([disabled]):active,
 panel-toolbar .ui-control:not([disabled]):active,
 window-controls .ui-button:not([disabled]):active,
 window-controls .ui-control:not([disabled]):active,
-toolbar-switches .is-active,
+toolbar-buttons .is-active,
 window-controls .is-active
 {
   box-shadow: 0 1px rgba(255, 255, 255, 0.6),
@@ -502,7 +505,6 @@ window-controls .ui-button,
 /* Grouping the toolbar buttons */
 
 /* All Buttons in a group*/
-toolbar-switches .ui-button,
 toolbar-buttons .ui-button,
 #toggle-settings-overlay,
 #toggle-remote-debug-overlay,
@@ -515,7 +517,6 @@ toolbar-buttons .ui-button,
 }
 
 /* Leftmost Button*/
-toolbar-switches .ui-button:first-of-type,
 toolbar-buttons .ui-button:first-of-type,
 #toggle-settings-overlay,
 #top-window-toggle-attach.attached
@@ -531,7 +532,6 @@ toolbar-buttons .ui-button:first-of-type,
 }
 
 /* Rightmost Button*/
-toolbar-switches .ui-button:last-of-type,
 toolbar-buttons .ui-button:last-of-type,
 #toggle-remote-debug-overlay,
 #top-window-close,

@@ -965,7 +965,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   // when adding stuff to data will fail.
   var hostinfo =  window.services['scope'].get_hello_message();
   this._data.add_message(hostinfo.userAgent + " (Core " + hostinfo.coreVersion + ")");
-  ui_strings.S_REPL_WELCOME_TEXT.split("\n").forEach(function(s) {
+  var welcome_text = ui_strings.S_REPL_WELCOME_TEXT
+                                             .replace("%(CLEAR_COMMAND)s", "\"clear()\"")
+                                             .replace("%(HELP_COMMAND)s", "\"// help()\"");
+  welcome_text.split("\n").forEach(function(s) {
     this._data.add_message(s);
   }, this);
 
@@ -992,7 +995,7 @@ cls.ReplView.create_ui_widgets = function()
       'unpack-list-alikes': ui_strings.S_SWITCH_UNPACK_LIST_ALIKES,
       'do-friendly-print': ui_strings.S_SWITCH_FRIENDLY_PRINT,
       'is-element-type-sensitive': ui_strings.S_SWITCH_IS_ELEMENT_SENSITIVE,
-      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ERRORS_IN_REPL,
+      'show-js-errors-in-repl': ui_strings.S_SWITCH_SHOW_ECMA_ERRORS_IN_COMMAND_LINE,
       'expand-objects-inline': ui_strings.S_SWITCH_EXPAND_OBJECTS_INLINE,
     },
     { // settings map

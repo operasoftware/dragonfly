@@ -397,7 +397,7 @@ cls.ElementStyle = function()
       {
         var rule = new CssRule(node_style, this._css_index_map);
 
-        if (!window.settings["css-inspector"].get("show-expanded-properties"))
+        if (!window.settings["css-inspector"].get("show-longhand-properties"))
           this._css_shorthand_resolver.resolve(rule.declarations);
 
         if (rule.origin != ORIGIN_USER_AGENT)

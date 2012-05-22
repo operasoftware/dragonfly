@@ -1,0 +1,204 @@
+<viewport xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          spellcheck="false">
+<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
+<link rel="stylesheet" href="../../src/network/network_style.css"/>
+<link rel="stylesheet" href="../../src/ui-scripts/tooltip/tooltip.css"/>
+
+<!--
+
+  This is to test the event sequences. It uses the actual templates and styles
+  and static data stringified from the service.
+
+  Data can be stored by running node write-resource-eventdata.node.js and
+  then posting to localhost:9001. The code that does that is commented out in
+  network_service, look for cls.NetworkLoggerEntry.prototype
+-->
+
+<style>
+
+viewport
+{
+  height: auto;
+  width: auto;
+  overflow: visible;
+  margin: 5px;
+}
+
+.expected .mono
+{
+  float: left;
+  min-height: 200px;
+}
+
+</style>
+
+<script src="../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/ecma-debugger/helpers.js"></script>
+<script src="../../src/scripts/uri.js"></script>
+<script src="../../src/network/network_service.js"></script>
+<script src="../../src/network/network_templates.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltip.js"></script>
+<script src="../../src/ui-scripts/tooltip/tooltipcontext.js"></script>
+
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequest.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestfinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestheader.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onrequestretry.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponse.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponsefinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onresponseheader.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlfinished.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlredirect.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.0.events.onurlunload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.events.onurlload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.events.onurlunload.js"></script>
+<script src="../../src/resource-manager/resourcemanager.1.2.responses.getresource.js"></script>
+
+<script>
+
+window.helpers = new window.cls.Helpers();
+window.settings = {network_logger:{ set: function(){}}};
+window.messages = {post: function(){}};
+
+var test = function()
+{
+  if (ctx)
+  {
+    var basetime = ctx._logger_entries[0].starttime;
+    document.querySelector("#count").textContent= ctx._logger_entries.length + " entries";
+    var duration = ctx._logger_entries.last.endtime - basetime;
+    var tpl = templates.network_graph_rows(ctx, ctx._logger_entries, null, 1000, basetime, duration); // ctx, entries, selected, width, basetime, duration
+    document.getElementById("graph").clearAndRender(tpl);
+  }
+};
+
+var _on_graph_tooltip = function(evt, target)
+{
+  var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+  var entry = ctx.get_entry(entry_id);
+  var MONOLINEHEIGHT = 15;
+  var template = templates.network_graph_tooltip(entry, MONOLINEHEIGHT);
+  graph_tooltip.show(template);
+}.bind(this);
+var graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
+graph_tooltip.ontooltip = _on_graph_tooltip;
+
+window.addEventListener("load", function()
+{
+  window.ini = {debug: !!~location.href.indexOf("debug")};
+
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function()
+  {
+    if (!this.responseText)
+      console.log("please enable opera:config#UserPrefs|AllowFileXMLHttpRequest");
+
+    var updates = JSON.parse(xhr.responseText);
+    window.ctx = new cls.RequestContext();
+
+    updates.events.forEach(function(u){
+      var eventname = u.eventname;
+      u.eventname = null;
+      ctx.update(eventname, u);
+    });
+    test();
+  }
+  xhr.open('GET', './data-timing.json');
+  xhr.send();
+}, false);
+
+window.addEventListener("resize", test, false);
+
+/* // to extract data for data-timing.json, place the following at the
+   // beginning of in cls.NetworkLoggerEntry.update
+
+eventdata.eventname = eventname;
+eventdata.parent = null;
+
+if (!window.dbg_store)
+  window.dbg_store = {
+                        id: String(Math.round(Math.random() * 9999)),
+                        items: [],
+                        timeout: null
+                     };
+
+dbg_store.items.push(eventdata);
+dbg_store.timeout = dbg_store.timeout || setTimeout(function(){
+  if (dbg_store.items.length)
+  {
+    var client = new XMLHttpRequest();
+    // use node write-resource-eventdata.node.js here
+    client.open("POST", "http://127.0.0.1:9001/" + dbg_store.id);
+    client.send(JSON.stringify(dbg_store.items));
+    dbg_store.items = [];
+    dbg_store.timeout = null;
+  }
+}, 1000);
+// end extracting data */
+
+</script>
+<p><input type="button" value="test" onclick="test()"/></p>
+<div id="graph"></div>
+<p id="count"></p>
+<h2>Expected</h2>
+<div class="expected">
+  <pre class="mono">
+  <h3>1</h3>
+     57.75 ms Scheduling request
+    100.18 ms Writing request header
+      0.04 ms Writing request body
+     78.04 ms Waiting for response
+      0.07 ms Reading response header
+     30.76 ms Reading response body
+      2.86 ms Processing response
+  </pre>
+  <pre class="mono">
+  <h3>2</h3>
+     0.19 ms  Scheduling request
+     0.01 ms  Writing request header
+     0.05 ms  Writing request body
+    29.73 ms  Waiting for response
+     0.02 ms  Reading response header
+     0.31 ms  Reading response body
+     0.21 ms  Processing response
+  </pre>
+  <pre class="mono">
+  <h3>3</h3>
+     0.12ms Scheduling request
+     0.01ms Writing request header
+     0.05ms Writing request body
+    76.04ms Waiting for response
+     0.12ms Reading response header
+     0.85ms Processing
+  </pre>
+  <pre class="mono">
+  <h3>4</h3>
+     4.72ms Scheduling request
+     0.03ms Writing request header
+     0.05ms Writing request body
+    98.67ms Closing response phase
+     0.61ms Processing response
+  </pre>
+  <pre class="mono">
+  <h3>5</h3>
+      0.33 ms Scheduling request
+    100.00 ms 
+    100.01 ms 
+      0.04 ms Writing request body
+      6.67 ms Waiting for response
+      0.08 ms Reading response header
+    100.52 ms Reading response body
+      0.29 ms Processing response
+  </pre>
+  <pre class="mono">
+  <h3>9</h3>
+    20.01ms Sequence terminated, retry
+    10.00ms Request aborted
+    30.01ms Duration
+  </pre>
+</div>
+</viewport>
+
