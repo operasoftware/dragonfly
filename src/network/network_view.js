@@ -779,10 +779,14 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      text_search.setContainer(msg.container);
-      text_search.setFormInput(
-        views.network_logger.getToolbarControl(msg.container, "network-text-search")
-      );
+      var scroll_container = msg.container.querySelector("#network-outer-container");
+      if (scroll_container)
+      {
+        text_search.setContainer(scroll_container);
+        text_search.setFormInput(
+          views.network_logger.getToolbarControl(msg.container, "network-text-search")
+        );
+      }
     }
   }
 
