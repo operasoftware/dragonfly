@@ -779,7 +779,10 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector("#network-outer-container");
+      var scroll_container = msg.container.querySelector(".request-details");
+      if (!scroll_container)
+        scroll_container = msg.container.querySelector("#network-outer-container");
+
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
