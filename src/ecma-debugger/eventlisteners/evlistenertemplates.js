@@ -59,15 +59,14 @@
   this.ev_all_listeners = function(ev_name_obj)
   {
     var tmpl_obj_l = window.templates.ev_window_listeners(ev_name_obj);
-    var tmpl_node_l = window.templates.dom_search(ev_name_obj.model);
+    var tmpl_node_l = window.templates.dom_search(ev_name_obj);
     return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-all-listeners"];
   };
 
   this.ev_window_listeners = function(ev_name_object)
   {
     var EVENT_TYPE = 0;
-    var model = ev_name_object.model;
-    var win_listeners = model && model.window_listeners;
+    var win_listeners = ev_name_object && ev_name_object.window_listeners;
     var ret = [];
     if (win_listeners && win_listeners.listeners.some(function(listener)
         {
@@ -79,7 +78,7 @@
         "window",
         ["span", "class", "node-with-ev-listener", 
                  "data-tooltip", "event-listener"],
-        "data-model-id", String(model.id),
+        "data-model-id", String(ev_name_object.id),
         "data-window-id", String(win_listeners.win_id),
         "data-rt-id", String(ev_name_object.rt_id),
         "data-obj-id", String(win_listeners.win_id), 

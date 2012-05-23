@@ -8,25 +8,34 @@ window.cls || (window.cls = {});
 cls.EventName = function(name)
 {
   this.name = name;
-  this.model = null;
   this.rt_listeners = null;
   this.is_expanded = false;
   this.rt_id = 0;
   this.obj_id = 0;
+  this._init();
 };
 
-cls.EventName.prototype = new function()
+cls.EventNamePrototype = function()
 {
   var SEARCH_TYPE_EVENT = 5;
 
   this.search_dom = function(rt_id, obj_id, ev_name, cb)
   {
-    this.rt_id = rt_id;
-    this.obj_id = obj_id;
-    this.model = new cls.InspectableDOMNode(rt_id, obj_id);
-    this.model.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, cb);
+    this.rt_id = this._data_runtime_id = rt_id;
+    this.obj_id = this._root_obj_id = obj_id;
+    this.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, cb);
+  };
+
+  this.collapse = function()
+  {
+    this._data = [];
+    this.rt_listeners = null;
+    this.is_expanded = false;
   };
 };
+
+cls.EventNamePrototype.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
+cls.EventName.prototype = new cls.EventNamePrototype();
 
 cls.RTListUpdateCTX = function(rt_id_list, cb)
 {
@@ -234,10 +243,10 @@ cls.EvenetListeners.prototype = new function()
       var OBJECT_ID = 0;
       var EVENT_LISTENERS = 1;
       var ev_target = message[TARGET_LIST] && message[TARGET_LIST][0];
-      ev_name_obj.model.window_listeners = ev_target
-                                         ? {win_id: ev_target[OBJECT_ID],
-                                            listeners: ev_target[EVENT_LISTENERS]}
-                                         : null;
+      ev_name_obj.window_listeners = ev_target
+                                   ? {win_id: ev_target[OBJECT_ID],
+                                      listeners: ev_target[EVENT_LISTENERS]}
+                                   : null;
       ev_name_obj.is_expanded = true;
 
       if (!this._expand_tree[ev_name_obj.rt_id])
@@ -328,10 +337,7 @@ cls.EvenetListeners.prototype = new function()
     var ev_n_obj = this._get_ev_name_obj(rt_id, ev_name);
     if (ev_n_obj)
     {
-      ev_n_obj.model = null;
-      ev_n_obj.rt_listeners = null;
-      ev_n_obj.is_expanded = false;
-
+      ev_n_obj.collapse();
       if (this._expand_tree[rt_id])
         this._expand_tree[rt_id][ev_name] = false;
     }
