@@ -5,9 +5,9 @@ window.cls || (window.cls = {});
   * @extends ViewBase
   */
 
-cls.EventName = function(name)
+cls.EventType = function(type)
 {
-  this.name = name;
+  this.type = type;
   this.rt_listeners = null;
   this.is_expanded = false;
   this.rt_id = 0;
@@ -15,15 +15,15 @@ cls.EventName = function(name)
   this._init();
 };
 
-cls.EventNamePrototype = function()
+cls.EventTypePrototype = function()
 {
   var SEARCH_TYPE_EVENT = 5;
 
-  this.search_dom = function(rt_id, obj_id, ev_name, cb)
+  this.search_listeners = function(rt_id, obj_id, type, cb)
   {
     this.rt_id = this._data_runtime_id = rt_id;
     this.obj_id = this._root_obj_id = obj_id;
-    this.search(ev_name, SEARCH_TYPE_EVENT, 0, 0, cb);
+    this.search(type, SEARCH_TYPE_EVENT, 0, 0, cb);
   };
 
   this.collapse = function()
@@ -34,8 +34,8 @@ cls.EventNamePrototype = function()
   };
 };
 
-cls.EventNamePrototype.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
-cls.EventName.prototype = new cls.EventNamePrototype();
+cls.EventTypePrototype.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
+cls.EventType.prototype = new cls.EventTypePrototype();
 
 cls.RTListUpdateCTX = function(rt_id_list, cb)
 {
@@ -44,10 +44,10 @@ cls.RTListUpdateCTX = function(rt_id_list, cb)
 
 cls.RTListUpdateCTX.prototype = new function()
 {
-  this._handle_expand_listener = function(ev_name_obj)
+  this._handle_expand_listener = function(ev_type)
   {
-    var list = this.expanded_map[ev_name_obj.rt_id];
-    var index = list.indexOf(ev_name_obj.name);
+    var list = this.expanded_map[ev_type.rt_id];
+    var index = list.indexOf(ev_type.type);
     if (index > -1)
       list.splice(index, 1);
     else
@@ -61,7 +61,7 @@ cls.RTListUpdateCTX.prototype = new function()
   {
     return this.rt_map.hasOwnProperty(rt_id) && 
            (!this.rt_map[rt_id] || (this.expanded_map[rt_id] &&
-                                   this.expanded_map[rt_id].length === 0));
+                                    this.expanded_map[rt_id].length === 0));
   };
 
   this.check_is_updated = function()
@@ -94,9 +94,9 @@ cls.EvenetListeners.prototype = new function()
 
   this.update = function() {};
   this.get_data = function() {};
-  this.expand_listeners = function(rt_id, obj_id, ev_name, cb) {};
-  this.collapse_listeners = function(rt_id, ev_name) {};
-  this.is_expanded = function(rt_id, name) {};
+  this.expand_listeners = function(rt_id, obj_id, type, cb) {};
+  this.collapse_listeners = function(rt_id, type) {};
+  this.is_expanded = function(rt_id, type) {};
 
   var SUCCESS = 0;
   var SEARCH_TYPE_EVENT = 5;
@@ -108,7 +108,7 @@ cls.EvenetListeners.prototype = new function()
     
     this._rts = [{rt_id: <rt-id>,
                   obj_id: <obj-id>,
-                  event_names: [<EventName>, ...]}, ...]
+                  event_types: [<EventType>, ...]}, ...]
   */
 
   this._on_new_rts = function()
@@ -173,21 +173,21 @@ cls.EvenetListeners.prototype = new function()
     {
       this._win_id_map[rt_id] = ctx.win_id_map[rt_id] = message[OBJECT_VALUE][OBJECT_ID];
       if (ctx.rt_id_list.every(function(rt_id) { return ctx.win_id_map[rt_id]; }))
-        ctx.rt_id_list.map(this._get_event_names.bind(this, ctx));
+        ctx.rt_id_list.map(this._get_event_types.bind(this, ctx));
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "failed to get the window object in cls.EvenetListeners.")
   };
 
-  this._get_event_names = function(ctx, rt_id)
+  this._get_event_types = function(ctx, rt_id)
   {
-    var tag = this._tagman.set_callback(this, this._handle_get_event_names, [ctx]);
+    var tag = this._tagman.set_callback(this, this._handle_get_event_types, [ctx]);
     var msg = [rt_id];
     this._esdb.requestGetEventNames(tag, msg);
   };
 
-  this._handle_get_event_names = function(status, message, ctx)
+  this._handle_get_event_types = function(status, message, ctx)
   {
     if (status === SUCCESS)
     {
@@ -203,22 +203,21 @@ cls.EvenetListeners.prototype = new function()
       ctx.expanded_map[rt_id] = [];
       if (ev_list && ev_list.length)
       {
-        rt_listeners.event_names = ev_list.map(function(name)
+        rt_listeners.event_types = ev_list.map(function(type)
         {
-          var ev_n_obj = new cls.EventName(name);
-          if (this.is_expanded(rt_id, name))
+          var ev_type = new cls.EventType(type);
+          if (this.is_expanded(rt_id, type))
           {
-            ctx.expanded_map[rt_id].push(name);
-            var search_cb = this._handle_dom_search.bind(this,
-                                                         ev_n_obj,
-                                                         ctx.handle_expand_listener);
-            ev_n_obj.search_dom(rt_id, obj_id, name, search_cb);
+            ctx.expanded_map[rt_id].push(type);
+            var cb = this._handle_dom_search.bind(this, ev_type,
+                                                  ctx.handle_expand_listener);
+            ev_type.search_listeners(rt_id, obj_id, type, cb);
           }
-          return ev_n_obj;
+          return ev_type;
         }, this);
       }
       else
-        rt_listeners.event_names = [];
+        rt_listeners.event_types = [];
 
       ctx.rt_map[rt_id] = rt_listeners;
       ctx.check_is_updated();
@@ -228,14 +227,14 @@ cls.EvenetListeners.prototype = new function()
                       "failed to retrieve the event names in cls.EvenetListeners.")
   };
 
-  this._handle_dom_search = function(ev_name_obj, cb)
+  this._handle_dom_search = function(ev_type, cb)
   {
-    var tag = this._tagman.set_callback(this, this._handle_obj_search, [ev_name_obj, cb]);
-    var msg = [ev_name_obj.rt_id, [this._win_id_map[ev_name_obj.rt_id]]];
+    var tag = this._tagman.set_callback(this, this._handle_obj_search, [ev_type, cb]);
+    var msg = [ev_type.rt_id, [this._win_id_map[ev_type.rt_id]]];
     this._esdb.requestGetEventListeners(tag, msg);
   };
 
-  this._handle_obj_search = function(status, message, ev_name_obj, cb)
+  this._handle_obj_search = function(status, message, ev_type, cb)
   {
     if (status === SUCCESS)
     {
@@ -243,19 +242,19 @@ cls.EvenetListeners.prototype = new function()
       var OBJECT_ID = 0;
       var EVENT_LISTENERS = 1;
       var ev_target = message[TARGET_LIST] && message[TARGET_LIST][0];
-      ev_name_obj.window_listeners = ev_target
-                                   ? {win_id: ev_target[OBJECT_ID],
-                                      listeners: ev_target[EVENT_LISTENERS]}
-                                   : null;
-      ev_name_obj.is_expanded = true;
+      ev_type.window_listeners = ev_target
+                               ? {win_id: ev_target[OBJECT_ID],
+                                  listeners: ev_target[EVENT_LISTENERS]}
+                               : null;
+      ev_type.is_expanded = true;
 
-      if (!this._expand_tree[ev_name_obj.rt_id])
-        this._expand_tree[ev_name_obj.rt_id] = {};
+      if (!this._expand_tree[ev_type.rt_id])
+        this._expand_tree[ev_type.rt_id] = {};
 
-      this._expand_tree[ev_name_obj.rt_id][ev_name_obj.name] = true;
+      this._expand_tree[ev_type.rt_id][ev_type.type] = true;
 
       if (cb)
-        cb(ev_name_obj);
+        cb(ev_type);
       else
         this._view.update();
 
@@ -265,15 +264,15 @@ cls.EvenetListeners.prototype = new function()
                       "requestGetEventListeners failed in cls.EvenetListeners.")
   };
 
-  this._get_ev_name_obj = function(rt_id, ev_name)
+  this._get_ev_type = function(rt_id, type)
   {
     var rt = this._get_rt(rt_id);
     if (rt)
     {
-      for (var i = 0, ev_n; ev_n = rt.event_names[i]; i++)
+      for (var i = 0, ev_type; ev_type = rt.event_types[i]; i++)
       {
-        if (ev_n.name == ev_name)
-          return ev_n;
+        if (ev_type.type == type)
+          return ev_type;
       }
     }
     return null;
@@ -318,13 +317,13 @@ cls.EvenetListeners.prototype = new function()
     return null;
   };
 
-  this.expand_listeners = function(rt_id, obj_id, ev_name, cb)
+  this.expand_listeners = function(rt_id, obj_id, type, cb)
   {
-    var ev_n_obj = this._get_ev_name_obj(rt_id, ev_name);
-    if (ev_n_obj)
+    var ev_type = this._get_ev_type(rt_id, type);
+    if (ev_type)
     {
-      var search_cb = this._handle_dom_search.bind(this, ev_n_obj, cb);
-      ev_n_obj.search_dom(rt_id, obj_id, ev_name, search_cb);
+      var cb = this._handle_dom_search.bind(this, ev_type, cb);
+      ev_type.search_listeners(rt_id, obj_id, type, cb);
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
@@ -332,21 +331,21 @@ cls.EvenetListeners.prototype = new function()
 
   };
 
-  this.collapse_listeners = function(rt_id, ev_name)
+  this.collapse_listeners = function(rt_id, type)
   {
-    var ev_n_obj = this._get_ev_name_obj(rt_id, ev_name);
-    if (ev_n_obj)
+    var ev_type = this._get_ev_type(rt_id, type);
+    if (ev_type)
     {
-      ev_n_obj.collapse();
+      ev_type.collapse();
       if (this._expand_tree[rt_id])
-        this._expand_tree[rt_id][ev_name] = false;
+        this._expand_tree[rt_id][type] = false;
     }
   };
 
-  this.is_expanded = function(rt_id, name)
+  this.is_expanded = function(rt_id, type)
   {
     return this._expand_tree[rt_id]
-         ? Boolean(this._expand_tree[rt_id][name])
+         ? Boolean(this._expand_tree[rt_id][type])
          : false;
   };
 

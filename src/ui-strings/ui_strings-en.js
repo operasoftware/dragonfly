@@ -1501,4 +1501,10 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
 
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
-ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>"
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing phase";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";

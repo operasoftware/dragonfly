@@ -1,6 +1,6 @@
 (function()
 {
-  var HAS_LISTENERS = function(rt_l) { return rt_l.event_names.length; };
+  var HAS_LISTENERS = function(rt_l) { return rt_l.event_types.length; };
 
   /* Event listener view */
 
@@ -16,15 +16,15 @@
           "unselectable", "on",
           "tabindex", "1",
           "handler", "update-ev-listeners"]],
-      ["ul", data_with_ls.map(this._ev_names_list, this), "class", "ev-all"],
+      ["ul", data_with_ls.map(this._ev_rt_view, this), "class", "ev-all"],
       "class", "main-ev-listener-view js-search-results-runtime padding"]);
   };
 
-  this._ev_names_list = function(ev_obj, index, ev_obj_list)
+  this._ev_rt_view = function(ev_rt, index, ev_rt_list)
   {
-    var rt = window.runtimes.getRuntime(ev_obj.rt_id);
+    var rt = window.runtimes.getRuntime(ev_rt.rt_id);
     var ret = ["li"];
-    if (ev_obj_list.length > 1)
+    if (ev_rt_list.length > 1)
     { 
       ret.push(["h2", 
                  ["span", rt && (rt.title || rt.host),
@@ -32,45 +32,44 @@
                           "data-tooltip-text", rt && rt.uri],
                  "class", "ev-listener-rt-title"]);
     }
-    ret.push(["ul", ev_obj.event_names.map(this._ev_name_item, this),
-                    "data-rt-id", String(ev_obj.rt_id),
-                    "data-obj-id", String(ev_obj.obj_id),
+    ret.push(["ul", ev_rt.event_types.map(this._ev_type, this),
+                    "data-rt-id", String(ev_rt.rt_id),
+                    "data-obj-id", String(ev_rt.obj_id),
                     "class", "ev-rt-list"]);
     return ret;
   };
 
-  this._ev_name_item = function(ev_name_obj)
+  this._ev_type = function(ev_type)
   {
-    var bg_pos = ev_name_obj.is_expanded ? "0 -11px" : "0 0";
-
+    var bg_pos = ev_type.is_expanded ? "0 -11px" : "0 0";
     return (
     ["li", 
       ["h3", 
         ["input", "type", "button",
                   "class", "folder-key",
                   "style", "background-position: " + bg_pos],
-        ev_name_obj.name,
+        ev_type.type,
         "handler", "toggle-ev-listeners",
-        "data-ev-name", ev_name_obj.name,
+        "data-ev-name", ev_type.type,
         "class", "ev-listener-type"],
-      ev_name_obj.is_expanded ? this.ev_all_listeners(ev_name_obj) : []]);
+      ev_type.is_expanded ? this.ev_all_listeners(ev_type) : []]);
   };
 
-  this.ev_all_listeners = function(ev_name_obj)
+  this.ev_all_listeners = function(ev_type)
   {
-    var tmpl_obj_l = window.templates.ev_window_listeners(ev_name_obj);
-    var tmpl_node_l = window.templates.dom_search(ev_name_obj);
+    var tmpl_obj_l = window.templates.ev_window_listeners(ev_type);
+    var tmpl_node_l = window.templates.dom_search(ev_type);
     return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-all-listeners"];
   };
 
-  this.ev_window_listeners = function(ev_name_object)
+  this.ev_window_listeners = function(ev_type)
   {
     var EVENT_TYPE = 0;
-    var win_listeners = ev_name_object && ev_name_object.window_listeners;
+    var win_listeners = ev_type && ev_type.window_listeners;
     var ret = [];
     if (win_listeners && win_listeners.listeners.some(function(listener)
         {
-          return listener[EVENT_TYPE] == ev_name_object.name;
+          return listener[EVENT_TYPE] == ev_type.type;
         }))
     {
       ret =
@@ -78,9 +77,9 @@
         "window",
         ["span", "class", "node-with-ev-listener", 
                  "data-tooltip", "event-listener"],
-        "data-model-id", String(ev_name_object.id),
+        "data-model-id", String(ev_type.id),
         "data-window-id", String(win_listeners.win_id),
-        "data-rt-id", String(ev_name_object.rt_id),
+        "data-rt-id", String(ev_type.rt_id),
         "data-obj-id", String(win_listeners.win_id), 
         "handler", "inspect-object-link",
         "class", "search-match"];
@@ -112,7 +111,9 @@
     var position = listener[POSITION];
 
     ret.push(["dt", listener[EVENT_TYPE], "class", "ev-type"]);
-    ret.push(["dd", listener[USE_CAPTURE] ? "capturing phase" : "bubbling phase",
+    ret.push(["dd", listener[USE_CAPTURE]
+                  ? ui_strings.S_LISTENER_CAPTURING_PHASE
+                  : ui_strings.S_LISTENER_BUBBLING_PHASE,
                     "class", "ev-phase"]);
     if (listener[LISTENER_SCRIPT_DATA])
     {
