@@ -75,7 +75,7 @@
       ret =
       ["div",
         "window",
-        ["span", "class", "ev-listener", 
+        ["span", "class", "node-with-ev-listener", 
                  "data-tooltip", "event-listener"],
         "data-model-id", String(ev_type.id),
         "data-window-id", String(win_listeners.win_id),
