@@ -21,6 +21,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._render_timeout = 0;
   this._graph_tooltip_id = null;
   this._type_filters = null;
+  this._last_render_speed = 0;
   this.needs_instant_update = false;
 
   this.createView = function(container)
@@ -34,15 +35,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       else
       {
         var timedelta = Date.now() - this._rendertime;
-        if (timedelta < MIN_RENDER_DELAY)
+        var min_render_delay = Math.max(MIN_RENDER_DELAY, this._last_render_speed * 2);
+        if (timedelta < min_render_delay)
         {
           this._render_timeout = window.setTimeout(this._create_delayed_bound,
-                                                   MIN_RENDER_DELAY - timedelta);
+                                                   min_render_delay - timedelta);
           return;
         }
       }
     }
     this.needs_instant_update = false;
+    var started_rendering = Date.now();
     if (container)
       this._container = container;
 
@@ -65,7 +68,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this._render_click_to_fetch_view(this._container);
     }
 
-    this._rendertime = Date.now();
+    var now = Date.now();
+    this._last_render_speed = now - started_rendering;
+    this._rendertime = now;
   }
 
   this._create_delayed_bound = function()
