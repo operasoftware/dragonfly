@@ -27,7 +27,7 @@ cls.EventListenersView = function(id, name, container_class)
     {
       if (this._data.is_expanded(rt_id, ev_name))
       {
-        var ls = li_ele.querySelector(".ev-all-listeners");
+        var ls = li_ele.querySelector(".ev-listener-list");
         if (ls)
           ls.parentNode.removeChild(ls);
 
@@ -59,7 +59,7 @@ cls.EventListenersView = function(id, name, container_class)
     if (input)
       input.style.backgroundPosition = "0px -11px";
 
-    var div = li_ele.querySelector(".ev-all-listeners");
+    var div = li_ele.querySelector(".ev-listener-list");
     if (div)
       div.parentNode.removeChild(div);
 

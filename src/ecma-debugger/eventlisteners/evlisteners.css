@@ -1,16 +1,11 @@
-.ev-all
+.ev-rt-list
 {
   margin-top: 5px;
 }
 
-.ev-rt-list
+.ev-type-list
 {
   margin: 0 3px;
-}
-
-.ev-listener-type
-{
-  font: inherit;
 }
 
 .ev-listener
@@ -23,13 +18,18 @@
   font-weight: bold;
 }
 
+.ev-type-list .ev-type
+{
+  font: inherit;
+}
+
 .ev-added,
 .ev-origin
 {
   border-radius: 2px;
 }
 
-.ev-all-listeners
+.ev-listener-list
 {
   margin-left: 12px;
 }

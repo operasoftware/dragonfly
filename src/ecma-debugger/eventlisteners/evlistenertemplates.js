@@ -16,7 +16,7 @@
           "unselectable", "on",
           "tabindex", "1",
           "handler", "update-ev-listeners"]],
-      ["ul", data_with_ls.map(this._ev_rt_view, this), "class", "ev-all"],
+      ["ul", data_with_ls.map(this._ev_rt_view, this), "class", "ev-rt-list"],
       "class", "main-ev-listener-view js-search-results-runtime padding"]);
   };
 
@@ -30,12 +30,12 @@
                  ["span", rt && (rt.title || rt.host),
                           "data-tooltip", "url-tooltip", 
                           "data-tooltip-text", rt && rt.uri],
-                 "class", "ev-listener-rt-title"]);
+                 "class", "ev-rt-title"]);
     }
     ret.push(["ul", ev_rt.event_types.map(this._ev_type, this),
                     "data-rt-id", String(ev_rt.rt_id),
                     "data-obj-id", String(ev_rt.obj_id),
-                    "class", "ev-rt-list"]);
+                    "class", "ev-type-list"]);
     return ret;
   };
 
@@ -51,7 +51,7 @@
         ev_type.type,
         "handler", "toggle-ev-listeners",
         "data-ev-type", ev_type.type,
-        "class", "ev-listener-type"],
+        "class", "ev-type"],
       ev_type.is_expanded ? this.ev_all_listeners(ev_type) : []]);
   };
 
@@ -59,7 +59,7 @@
   {
     var tmpl_obj_l = window.templates.ev_window_listeners(ev_type);
     var tmpl_node_l = window.templates.dom_search(ev_type);
-    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-all-listeners"];
+    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-listener-list"];
   };
 
   this.ev_window_listeners = function(ev_type)
@@ -75,7 +75,7 @@
       ret =
       ["div",
         "window",
-        ["span", "class", "node-with-ev-listener", 
+        ["span", "class", "ev-listener", 
                  "data-tooltip", "event-listener"],
         "data-model-id", String(ev_type.id),
         "data-window-id", String(win_listeners.win_id),
