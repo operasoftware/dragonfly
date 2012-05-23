@@ -50,7 +50,7 @@
                   "style", "background-position: " + bg_pos],
         ev_type.type,
         "handler", "toggle-ev-listeners",
-        "data-ev-name", ev_type.type,
+        "data-ev-type", ev_type.type,
         "class", "ev-listener-type"],
       ev_type.is_expanded ? this.ev_all_listeners(ev_type) : []]);
   };

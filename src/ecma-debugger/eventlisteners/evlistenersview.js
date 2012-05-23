@@ -21,7 +21,7 @@ cls.EventListenersView = function(id, name, container_class)
   {
     var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
     var obj_id = Number(target.get_ancestor_attr("data-obj-id"));
-    var ev_name = target.get_ancestor_attr("data-ev-name");
+    var ev_name = target.get_ancestor_attr("data-ev-type");
     var li_ele = target.get_ancestor("li");
     if (rt_id && obj_id && ev_name && li_ele)
     {
