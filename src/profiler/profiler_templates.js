@@ -63,13 +63,14 @@ var ProfilerTemplates = function()
 
   this.legend = function(events)
   {
-    if (events && events.eventList && events.eventList[0])
+    var event_list = events && events.eventList;
+    if (event_list && event_list.length)
     {
-      var total_time = events.eventList.reduce(function(prev, curr) {
+      var template = [];
+      var total_time = event_list.reduce(function(prev, curr) {
         return prev + curr.time;
       }, 0);
-      var template = [];
-      events.eventList.forEach(function(event) {
+      event_list.forEach(function(event) {
         var index = this._order.indexOf(event.type);
         if (index !== -1)
         {
@@ -96,73 +97,68 @@ var ProfilerTemplates = function()
     }
   };
 
-  this.timeline_markers = function(width, interval, ms_unit)
+  this.timeline_markers = function(width, duration, ms_unit)
   {
     var MIN_MARKER_GAP = 120;
     var MIN_MARKERS = 2;
     var cell_amount = Math.max(MIN_MARKERS, Math.round(width / MIN_MARKER_GAP));
-    var marker_time = interval / cell_amount;
-    var ret = [];
+    var marker_time = duration / cell_amount;
+    var template = [];
     for (var i = 0; i < cell_amount; i++)
     {
       var left = Math.round(marker_time * i * ms_unit);
-      ret.push(["div",
-                "class", "profiler-timeline-marker",
-                "style", "left:" + left + "px"
-               ],
-               ["div",
-                  this.format_time(marker_time * i),
-                "class", "profiler-timeline-marker-time",
-                "style", "left:" + left + "px"
-               ]);
+      template.push(
+        ["div",
+         "class", "profiler-timeline-marker",
+         "style", "left:" + left + "px"
+        ],
+        ["div",
+           this.format_time(marker_time * i),
+         "class", "profiler-timeline-marker-time",
+         "style", "left:" + left + "px"
+        ]
+      );
     }
-
-    //// Add the last one at the exact end of the interval
-    //ret.push(["div",
-    //           "class", "profiler-timeline-marker",
-    //           "style", "left:" + width + "px"
-    //         ],
-    //         ["div",
-    //           this.format_time(interval),
-    //           "class", "profiler-timeline-marker-time",
-    //           "style", "left:" + width + "px"
-    //         ]);
-
-    return ret;
+    return template;
   };
 
-  this.event_list_all = function(events, selected_id, container_width)
+  this.event_list_all = function(events, selected_id, container_width, start, end)
   {
-    var ret = [];
-
-    if (events && events.eventList && events.eventList[0])
+    var template = [];
+    var event_list = events && events.eventList;
+    if (event_list && event_list.length)
     {
       // Calculate scaling, to fit all events into the view.
       // We first calculate a preliminary scaling to know the width
       // of the last event. We then calculate the real scaling where
       // the width of the last event is taken into account.
+      var interval_start = start || 0;
       var interval_end = events.interval.end;
-      var last_event = events.eventList.slice(-1)[0];
+      var duration = interval_end - interval_start;
+      var last_event = event_list[event_list.length-1];
       var last_event_interval = last_event.interval.end - last_event.interval.start;
-      var ms_unit = container_width / interval_end;
+      var ms_unit = container_width / duration;
       var extra_width = Math.max(BAR_MIN_WIDTH, Math.ceil(last_event_interval * ms_unit));
-      ms_unit = (container_width - extra_width) / interval_end;
+      ms_unit = (container_width - extra_width) / duration;
 
       // Add time markers
-      ret.push(this.timeline_markers(container_width, interval_end, ms_unit));
+      template.push(this.timeline_markers(container_width, interval_end, ms_unit));
 
+      // Background bars
       this._order.forEach(function(row, idx) {
-        ret.push(["div",
-                  "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
-                 ]);
+        template.push(
+          ["div",
+           "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
+          ]
+        );
       });
 
-      events.eventList.forEach(function(event) {
+      event_list.forEach(function(event) {
         var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
         var self_time = Math.round(event.time * ms_unit);
         var event_start = Math.round(event.interval.start * ms_unit);
         var column = this._order.indexOf(event.type);
-        ret.push(
+        template.push(
           // Interval
           ["div",
              // Self-time
@@ -180,28 +176,30 @@ var ProfilerTemplates = function()
            "data-event-type", String(event.type),
            "handler", "profiler-get-event-details",
            "data-isexpandable", String(this._expandables.indexOf(event.type) != -1 && event.childCount > 1)
-          ]);
+          ]
+        );
       }, this);
     }
-    return ret;
+    return template;
   };
 
   this.event_list_unique_events = function(events, container_width)
   {
-    var ret = [];
-    if (events && events.eventList.length)
+    var template = [];
+    var event_list = events && events.eventList;
+    if (event_list && event_list.length)
     {
       // Sort by longest time
-      events.eventList.sort(function(a, b) {
+      event_list.sort(function(a, b) {
         return b.time - a.time;
       });
 
-      var interval = events.eventList[0].time;
+      var interval = event_list[0].time;
       var ms_unit = container_width / interval;
 
-      events.eventList.forEach(function(event, idx) {
+      event_list.forEach(function(event, idx) {
         var width = Math.ceil(event.time * ms_unit);
-        ret.push(
+        template.push(
           ["div",
            "style",
              "width: " + width + "px;" +
@@ -211,11 +209,12 @@ var ProfilerTemplates = function()
            "data-event-id", String(event.eventID),
            "data-event-type", String(event.type),
            "handler", "profiler-get-event-details"
-          ]);
+          ]
+        );
       }, this);
     }
 
-    return ret;
+    return template;
   };
 
   this.empty = function(text)
@@ -249,7 +248,7 @@ var ProfilerTemplates = function()
       fractions = 3;
     }
     return time.toFixed(fractions) + " " + unit;
-  }
+  };
 
   this.get_title_all = function(event)
   {
@@ -259,12 +258,12 @@ var ProfilerTemplates = function()
            " (self-time: " + this.format_time(event.time) + ") at " +
            this.format_time(event.interval.start) +
            (details ? " [" + details + "]" : "");
-  }
+  };
 
   this.get_title_aggregated = function(event)
   {
     return this.format_time(event.time);
-  }
+  };
 
   this.get_title_unique_events = function(event)
   {
@@ -274,7 +273,7 @@ var ProfilerTemplates = function()
            " [" + event.hits + " hits" +
              (details ? ", " + details : "") +
            "]";
-  }
+  };
 
   this.get_details_title = function(event)
   {
@@ -301,7 +300,7 @@ var ProfilerTemplates = function()
       return area.w + "×" + area.h + " at (" + area.x + "," + area.y + ")";
     }
     return "";
-  }
+  };
 
   this._tabledefs = {};
   // TODO: implement sorters. E.g. hits should sort by hits and then by time
@@ -336,7 +335,7 @@ var ProfilerTemplates = function()
     return (
       ["div",
         ["span",
-         "class", "container-button ui-button reload-window",
+         "class", "ui-button reload-window",
          "handler", "profiler-reload-window",
          "tabindex", "1"
         ],

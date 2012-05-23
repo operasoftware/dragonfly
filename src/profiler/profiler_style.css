@@ -14,7 +14,6 @@
   left: 150px;
   right: 0;
   top: 20px;
-  height: 144px; /* 18 (offset height of .profiler-row) * 8 (number of rows) */
   border-top: 1px solid #e6e6e6;
 }
 
