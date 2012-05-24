@@ -33,12 +33,14 @@
 
 .ev-type
 {
-  font-weight: bold;
+  font: inherit;
 }
 
-.ev-type-list .ev-type
+.ev-listener-tooltip .ev-type
 {
-  font: inherit;
+  background-color: hsla(0, 0%, 0%, 0.05); 
+  padding: 2px 8px;
+  margin: 0 -8px;
 }
 
 .ev-added,
