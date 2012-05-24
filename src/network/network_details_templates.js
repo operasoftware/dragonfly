@@ -31,39 +31,36 @@ templates.network_log_details = function(ctx, selected, left_val)
 templates.network_log_detail = function(ctx, selected)
 {
   var entry = ctx.get_entry_from_filtered(selected);
-  if (entry)
-  {
-    var responsecode = entry.responses.length && entry.responses.last.responsecode;
-    if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
-       responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+  var responsecode = entry.responses.length && entry.responses.last.responsecode;
+  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
+     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
-    return ["div",
-      ["table",
-        ["tbody",
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]
-          ],
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
-            ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-            "data-spec", "http#" + entry.method
-          ],
-          ["tr",
-            ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
-            ["td",
-              entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
-            ],
-           "data-spec", "http#" + entry.responsecode
-          ]
+  return ["div",
+    ["table",
+      ["tbody",
+        ["tr",
+          ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]
         ],
-        templates.request_details(entry),
-        templates.network_request_body(entry),
-        entry.touched_network ? entry.responses.map(templates.network_response) : []
+        ["tr",
+          ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
+          ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+          "data-spec", "http#" + entry.method
+        ],
+        ["tr",
+          ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
+          ["td",
+            entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+          ],
+         "data-spec", "http#" + entry.responsecode
+        ]
       ],
-      "data-object-id", String(entry.id),
-      "class", "request-details"
-    ];
-  }
+      templates.request_details(entry),
+      templates.network_request_body(entry),
+      entry.touched_network ? entry.responses.map(templates.network_response) : []
+    ],
+    "data-object-id", String(entry.id),
+    "class", "request-details"
+  ];
 };
 
 templates.network_response = function(response)

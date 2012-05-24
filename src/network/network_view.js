@@ -87,10 +87,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.update();
   }.bind(this);
 
-  this._render_details_view = function(container, selected)
+  this._render_details_view = function(ctx, container, selected)
   {
     var MINIMUM_DETAIL_WIDTH = 100;
-    var ctx = this._service.get_request_context();
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
     return templates.network_log_details(ctx, selected, left_val);
@@ -172,8 +171,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
                      ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
-    if (this._selected)
-      template = [template, this._render_details_view(this._container, this._selected)];
+    if (this._selected && ctx.get_entry_from_filtered(this._selected))
+      template = [template, this._render_details_view(ctx, this._container, this._selected)];
 
     var rendered = this._container.clearAndRender(template);
 
