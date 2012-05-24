@@ -571,20 +571,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         type_list: ["markup"]
       },
       css: {
-        type_list:["css"]
+        type_list: ["css"]
       },
       script: {
-        type_list:["script"]
+        type_list: ["script"]
       },
       image: {
-        type_list:["image"]
+        type_list: ["image"]
       },
       other_types: {
-        type_list:["markup", "css", "script", "image"],
+        type_list: ["markup", "css", "script", "image"],
         "is_blacklist": true
       },
       xhr: {
-        origin_list:["xhr"]
+        origin_list: ["xhr"]
       }
     }[filter_name];
   }.bind(this);
