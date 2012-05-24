@@ -185,7 +185,9 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     if (service_interface.satisfies_version(6, 11))
     {
       cls.EventListenersView.prototype = ViewBase;
-      new cls.EventListenersView("ev-listeners", "Listeners", "ev-listeners scroll mono");
+      new cls.EventListenersView("ev-listeners",
+                                 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS,
+                                 "ev-listeners scroll");
     }
                              
     /* adjust the base class */

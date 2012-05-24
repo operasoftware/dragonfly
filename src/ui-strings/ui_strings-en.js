@@ -1508,3 +1508,6 @@ ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing phase";
 
 /* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
 ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";
+
+/* DESC: View with all event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";

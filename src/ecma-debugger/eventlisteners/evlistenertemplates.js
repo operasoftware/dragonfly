@@ -59,7 +59,7 @@
   {
     var tmpl_obj_l = window.templates.ev_window_listeners(ev_type);
     var tmpl_node_l = window.templates.dom_search(ev_type);
-    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-listener-list"];
+    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-listener-list mono"];
   };
 
   this.ev_window_listeners = function(ev_type)
@@ -75,7 +75,7 @@
       ret =
       ["div",
         "window",
-        ["span", "class", "node-with-ev-listener", 
+        ["span", "class", "ev-listener", 
                  "data-tooltip", "event-listener"],
         "data-model-id", String(ev_type.id),
         "data-window-id", String(win_listeners.win_id),
@@ -92,7 +92,7 @@
   this.ev_listeners_tooltip = function(listener_list, rt_id)
   {
     return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, rt_id)),
-                  "class", "ev-listener mono"];
+                  "class", "ev-listener-tooltip"];
   };
 
   this._ev_listener_tooltip = function(rt_id, listener)

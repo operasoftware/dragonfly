@@ -691,24 +691,6 @@ parent-offset
   outline-offset: -2px; /* Hides the normal (dotted) outline when pressing Enter on the expand/collapse button */
 }
 
-.node-with-ev-listener
-{
-  display: inline-block;
-  height: 12px;
-  line-height: 12px;
-  vertical-align: middle;
-  margin-left: 3px;
-  padding: 0 2px;
-  background-color: hsl(0, 0% , 70%);
-  color: #fff;
-  border-radius: 2px;
-}
-
-.node-with-ev-listener::after
-{
-  content: "ev";
-}
-
 .css-layout > div > h2:first-child
 {
   border-width: 0 0 1px;
