@@ -134,6 +134,7 @@
                            "data-rt-id", String(rt_id),
                            "data-obj-id", String(listener[LISTENER_OBJECT_ID]),
                            "data-class-name", "Function",
+                           "handler", "ev-function-source",
                            "class", "ev-origin"]]);
     }
     var script_id = position && position[SCRIPT_ID];
@@ -153,7 +154,9 @@
       }
     }
     else
-      ret.push(["dd", ui_strings.S_INFO_MISSING_JS_SOURCE_FILE]);
+      ret.push(["dd", ui_strings.S_INFO_MISSING_JS_SOURCE_FILE,
+                      "handler", "reload-script-dialog",
+                      "class", "ev-missing-script"]);
 
     return ret;
   };

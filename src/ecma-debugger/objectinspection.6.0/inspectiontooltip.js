@@ -142,6 +142,21 @@ cls.JSInspectionTooltip = function()
     }
   };
 
+  this.handle_function_source = function(event, target)
+  {
+    var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
+    var obj_id = Number(target.get_ancestor_attr("data-obj-id"));
+    if (_cur_object && _cur_ctx &&
+        _cur_object.rt_id == rt_id && _cur_object.obj_id == obj_id &&
+        _cur_ctx.script && _cur_ctx.function_definition &&
+        window.views.js_source)
+    {
+      window.views.js_source.show_script(_cur_ctx.script.script_id,
+                                         _cur_ctx.function_definition.start_line, 
+                                         _cur_ctx.function_definition.end_line); 
+    }
+  };
+
   var _init = function(view)
   {
     _tooltip = Tooltips.register(cls.JSInspectionTooltip.tooltip_name, true, true,
@@ -167,4 +182,9 @@ cls.JSInspectionTooltip.tooltip_name = "js-inspection";
 cls.JSInspectionTooltip.register = function()
 {
   this._tooltip = new cls.JSInspectionTooltip();
+};
+
+cls.JSInspectionTooltip.get_tooltip = function()
+{
+  return this._tooltip;
 };

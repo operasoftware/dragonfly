@@ -73,16 +73,31 @@ cls.EvListenerTooltip = function()
     }
   };
 
+  var _handle_function_source = function(event, target)
+  {
+    var inspection_tooltip = cls.JSInspectionTooltip.get_tooltip();
+    if (inspection_tooltip)
+      inspection_tooltip.handle_function_source(event, target);
+  };
+
+  var _reload_script_dialog = function(event, target)
+  {
+    new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
+                      function(){ window.runtimes.reloadWindow(); }).show();
+  };
+
   var _init = function(view)
   {
     _tooltip = Tooltips.register(cls.EvListenerTooltip.tooltip_name, true);
     _url_tooltip = Tooltips.register("url-tooltip", true);
+    window.event_handlers.click["ev-function-source"] = _handle_function_source;
 
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
     //_tooltip.ontooltipenter = _ontooltipenter;
     //_tooltip.ontooltipleave = _ontooltipleave;
     _tooltip.ontooltipclick = _ontooltipclick;
+    window.event_handlers.click["reload-script-dialog"] = _reload_script_dialog;
   };
 
   _init();

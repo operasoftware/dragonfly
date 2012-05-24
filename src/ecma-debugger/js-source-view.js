@@ -450,6 +450,15 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  this.show_script = function(script_id, line_no_start, line_no_end)
+  {
+    // This will also be set from show_and_flash_line, but setting it before showing
+    // the view prevents the old script from flashing.
+    window.runtimes.setSelectedScript(script_id);
+    UI.get_instance().show_view("js_mode");
+    this.show_and_flash_line(script_id, line_no_start, line_no_end);
+  };
+
   this.show_and_flash_line = function(script_id, line_no_start, line_no_end)
   {
     if (typeof line_no_start != "number")

@@ -13,6 +13,13 @@
   margin: 0;
 }
 
+.ev-missing-script:hover
+{
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #d3dff8;
+  background-color: #d3dff8;
+}
+
 .ev-listener
 {
   display: inline-block;
@@ -38,7 +45,7 @@
 
 .ev-listener-tooltip .ev-type
 {
-  background-color: hsla(0, 0%, 0%, 0.05); 
+  background-color: hsla(0, 0%, 0%, 0.04); 
   padding: 2px 8px;
   margin: 0 -8px;
 }
@@ -61,7 +68,7 @@
 
 .tooltip-function-source .js-source-line-numbers
 {
-  background-color: hsla(0, 0%, 0%, .03);
+  xbackground-color: hsla(0, 0%, 0%, .03);
   border-radius: 0 0 0 3px;
 }
 

@@ -15,6 +15,7 @@
   background-color: #aac2f2;
   box-shadow: 0 0 0 1px #aac2f2;
   border-radius: 2px;
+  text-shadow: none;
 }
 
 .tooltip-container h2
