@@ -4,50 +4,12 @@ window.cls || (window.cls = {});
 
 cls.EvListenerTooltip = function()
 {
-
-
   var _tooltip = null;
   var _url_tooltip = null;
-
-
-
 
   var _hide_tooltip = function()
   {
     _tooltip.hide();
-  };
-
-  var _ontooltipenter = function(event)
-  {
-    if (!_cur_ctx)
-      return;
-    
-    switch (_cur_ctx.type.type)
-    {
-      case cls.PrettyPrinter.ELEMENT:
-        if (settings.dom.get("highlight-on-hover"))
-          hostspotlighter.spotlight(_cur_ctx.obj_id, true);
-        break;
-    }
-  };
-
-  var _ontooltipleave = function(event)
-  {
-    if (!_cur_ctx)
-      return;
-
-    switch (_cur_ctx.type.type)
-    {
-      case cls.PrettyPrinter.ELEMENT:
-        if (settings.dom.get("highlight-on-hover"))
-        {
-          if (views.dom.isvisible() && dom_data.target)
-            hostspotlighter.spotlight(dom_data.target, true);
-          else
-            hostspotlighter.clearSpotlight();
-        }
-        break;
-    }
   };
   
   var _ontooltipclick = function(event)
@@ -90,13 +52,10 @@ cls.EvListenerTooltip = function()
   {
     _tooltip = Tooltips.register(cls.EvListenerTooltip.tooltip_name, true);
     _url_tooltip = Tooltips.register("url-tooltip", true);
-    window.event_handlers.click["ev-function-source"] = _handle_function_source;
-
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
-    //_tooltip.ontooltipenter = _ontooltipenter;
-    //_tooltip.ontooltipleave = _ontooltipleave;
     _tooltip.ontooltipclick = _ontooltipclick;
+    window.event_handlers.click["ev-function-source"] = _handle_function_source;
     window.event_handlers.click["reload-script-dialog"] = _reload_script_dialog;
   };
 
