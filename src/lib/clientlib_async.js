@@ -155,35 +155,43 @@ window.cls.Proxy = function()
     */
     this.POST = function ( msg, data, cb, retry_count ) 
     {
-      retry_count || (retry_count = 0);
       var x = new XMLHttpRequest;
       x.onload=function()
       {
-        if (this.status != 200) 
+        if (this.status != 200)
         {
-          var retry_function = self.POST.bind(self, msg, data, cb, retry_count++);
-          if (retry_count < 5)
-          {
-            setTimeout(retry_function, 50);
-            opera.postError("POST request failed, will retry (" + retry_count + ")");
-            return;
-          }
-          else
-          {
-            throw "Message failed, Status: " + this.status;
-          }
+          self._retry(self.POST, msg, data, cb, retry_count);
+          return;
         }
-        //self.onReceive(x);
         var xml = this.responseXML;
         if (xml.documentElement == null)
         {
           throw "Message failed, POST, empty document: " + this.responseText;
         }
         if(cb) cb(xml);
-      }
+      };
+      x.onerror=function(evt)
+      {
+        self._retry(self.POST, msg, data, cb, retry_count);
+      };
       x.open("POST", "http://" + _host + ":" + _port + msg );
       x.send(data);
     }
+
+    this._retry = function(req_func, msg, data, cb, retry_count)
+    {
+      retry_count || (retry_count = 0);
+      if (retry_count < 5)
+      {
+        var retry_function = req_func.bind(this, msg, data, cb, retry_count++);
+        setTimeout(retry_function, 50);
+        opera.postError("Request failed, retrying (" + retry_count + ")");
+      }
+      else
+      {
+        throw "Request unsuccessful, retry limit reached";
+      }
+    };
 
     /** WRITABLE.
       * Installable handler that will be called every time a GET request 
