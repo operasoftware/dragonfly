@@ -195,7 +195,7 @@ var ToolbarBase = function()
                 values = (values = values[view_id]) && (values = values[group.name]) && (values = values.values);
                 button_templates.push(templates.single_select_button(button, values));
               }
-              else if (group.type === "switch")
+              else if (group.type === "switch" || group.type === UI.TYPE_SWITCH_CUSTOM_HANDLER)
               {
                 button_templates.push(templates._switch(button.key));
               }

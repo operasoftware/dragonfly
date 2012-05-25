@@ -244,7 +244,7 @@
           "f3": "show-search",
           "cmd r": "reload-context",
           "cmd f3": "show-script-dropdown",
-
+          "shift cmd f5": "test-switching-profiles",
         },
         "edit":
         {
