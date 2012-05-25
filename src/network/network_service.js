@@ -440,7 +440,7 @@ cls.RequestContextPrototype = function()
     logger_entry.requestID = event.requestID;
     logger_entry.update(eventname, event);
 
-    if (window.views)
+    if (window.views && !this.is_paused)
       window.views.network_logger.update();
 
   };
@@ -880,7 +880,7 @@ cls.NetworkLoggerEntryPrototype = function()
       };
       var gap_def = this.get_gap_def(gap);
       gap.val_string = gap.val.toFixed(2) + " ms";
-      gap.classname = gap_def && gap_def.classname || "";
+      gap.classname = gap_def && gap_def.classname || "irregular";
       gap.title = gap_def && gap_def.title || "";
 
       this.event_sequence.push(gap);

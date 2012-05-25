@@ -21,6 +21,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._render_timeout = 0;
   this._graph_tooltip_id = null;
   this._type_filters = null;
+  this._last_render_speed = 0;
   this.needs_instant_update = false;
   this.requierd_services = ["resource-manager", "document-manager"];
 
@@ -35,15 +36,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       else
       {
         var timedelta = Date.now() - this._rendertime;
-        if (timedelta < MIN_RENDER_DELAY)
+        var min_render_delay = Math.max(MIN_RENDER_DELAY, this._last_render_speed * 2);
+        if (timedelta < min_render_delay)
         {
           this._render_timeout = window.setTimeout(this._create_delayed_bound,
-                                                   MIN_RENDER_DELAY - timedelta);
+                                                   min_render_delay - timedelta);
           return;
         }
       }
     }
     this.needs_instant_update = false;
+    var started_rendering = Date.now();
     if (container)
       this._container = container;
 
@@ -66,7 +69,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this._render_click_to_fetch_view(this._container);
     }
 
-    this._rendertime = Date.now();
+    var now = Date.now();
+    this._last_render_speed = now - started_rendering;
+    this._rendertime = now;
   }
 
   this._create_delayed_bound = function()
@@ -175,7 +180,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     if (this._selected)
     {
-      var details = rendered.querySelector(".network-details-container");
+      var details = rendered.querySelector(".request-details");
       if (details)
       {
         if (this._details_scroll_top)
@@ -431,7 +436,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("network-details-container"))
+    if (evt.target.hasClass("request-details"))
     {
       this._details_scroll_top = evt.target.scrollTop;
       this._details_scroll_left = evt.target.scrollLeft;
@@ -525,11 +530,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.needs_instant_update = true;
     this.update();
   }.bind(this);
-
-  this._on_turn_off_incomplete_warning = function(evt, target)
-  {
-    settings.network_logger.set("show-incomplete-warning", false);
-  };
 
   this._on_setting_changed_bound = function(message)
   {
@@ -660,7 +660,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
 
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
-  eh.click["turn-off-incomplete-warning"] = this._on_turn_off_incomplete_warning;
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
@@ -688,19 +687,17 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": false,
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
-      "show-incomplete-warning": true,
       "track-content": true
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": "Profiling Mode",
-      "show-incomplete-warning": ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
     {
-      checkboxes: ["show-incomplete-warning", "track-content"]
+      checkboxes: ["track-content"]
     },
     // templates
     {
@@ -829,10 +826,17 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      text_search.setContainer(msg.container);
-      text_search.setFormInput(
-        views.network_logger.getToolbarControl(msg.container, "network-text-search")
-      );
+      var scroll_container = msg.container.querySelector(".request-details");
+      if (!scroll_container)
+        scroll_container = msg.container.querySelector("#network-outer-container");
+
+      if (scroll_container)
+      {
+        text_search.setContainer(scroll_container);
+        text_search.setFormInput(
+          views.network_logger.getToolbarControl(msg.container, "network-text-search")
+        );
+      }
     }
   }
 
