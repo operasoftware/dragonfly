@@ -11,6 +11,7 @@
 .ev-listener-tooltip
 {
   margin: 0;
+  margin-top: -13px;
 }
 
 .ev-missing-script:hover
@@ -47,7 +48,8 @@
 {
   background-color: hsla(0, 0%, 0%, 0.04); 
   padding: 2px 8px;
-  margin: 0 -8px;
+  margin: 5px -8px 1px -8px;
+  border-width: 1px 0;
 }
 
 .ev-added,
