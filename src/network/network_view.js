@@ -692,7 +692,7 @@ cls.NetworkLog.create_ui_widgets = function()
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
-      "network-profiler-mode": "Profiling Mode",
+      "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map

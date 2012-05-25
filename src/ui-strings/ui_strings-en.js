@@ -1506,5 +1506,8 @@ ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. A
 /* DESC: Button label to enable the default debugger features. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features"
 
-/* DESC: Dialog to confirm switching to netowrk-profiler mode. */
+/* DESC: Dialog to confirm switching to network-profiler mode. */
 ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "Switching to Network-Profiler mode means that other Dragonfly features are turned off. You may loose changes you made.";
+
+/* DESC: Button to switch to network-profiler mode. */
+ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Switch to Network-Profiler mode";
