@@ -153,10 +153,10 @@ window.cls.Proxy = function()
     * @return      The responseXML property of the XMLHttpRequest 
     * @exceptions Throws an exception if the return code is not 200
     */
-    this.POST = function ( msg, data, cb, retry_count ) 
+    this.POST = function (msg, data, cb, retry_count) 
     {
       var x = new XMLHttpRequest;
-      x.onload=function()
+      x.onload = function()
       {
         if (this.status != 200)
         {
@@ -170,7 +170,7 @@ window.cls.Proxy = function()
         }
         if(cb) cb(xml);
       };
-      x.onerror=function(evt)
+      x.onerror = function(evt)
       {
         self._retry(self.POST, msg, data, cb, retry_count);
       };
