@@ -95,8 +95,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   const DATA_TOOLTIP = "data-tooltip";
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
-  const HIDE_DELAY = 120;
-  const SHOW_DELAY = 110;
+  const HIDE_DELAY = 50;
+  const SHOW_DELAY = 40;
+  const HOVER_DELAY = 70;
   const DISTANCE_X = 5;
   const DISTANCE_Y = 5;
   const MARGIN_Y = 30;
@@ -115,6 +116,8 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   var _window_height = 0;
   var _padding_width = -1;
   var _padding_height = -1;
+  var _hover_delay = 0;
+  var _hover_events = [];
 
   var store_window_dimensions = function()
   {
@@ -129,11 +132,23 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     _ctx_stack.push(_tooltip_ctxs[_ctx_stack.length]);
     _cur_ctx = _ctx_stack.last;
-  }
+  };
 
   var _mouseover = function(event)
   {
-    if (_contextmenu && _contextmenu.is_visible)
+    _hover_events.push(event);
+    if (!_hover_delay)
+      _hover_delay = setTimeout(_handle_mouseover, HOVER_DELAY); 
+  };
+
+  var _handle_mouseover = function()
+  {
+    _hover_delay = 0;
+    var event = _hover_events.last;
+    while (_hover_events.length)
+      _hover_events.pop();
+
+    if (!event || (_contextmenu && _contextmenu.is_visible))
       return; 
 
     var ele = event.target;
@@ -155,6 +170,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         ctx.last_box = null;
         ctx.clear_show_timeout();
         ctx.clear_hide_timeout();
+        ctx.accept_call = true;
         _push_ctx();
       }
       else
@@ -294,7 +310,6 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       {
         var max_h = 0;
         var max_w = 0;
-
         var max_height_target = tooltip.max_height_target
                              && _cur_ctx.tooltip_ele.querySelector(tooltip.max_height_target)
                              || _cur_ctx.tooltip_ele;
@@ -385,11 +400,23 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   var _hide_tooltip = function(tooltip)
   {
-    if (_cur_ctx && _cur_ctx.current_tooltip && 
-        tooltip == _cur_ctx.current_tooltip &&
-        _cur_ctx.accept_call)
+    if (!_cur_ctx)
+      return;
+
+    var index = _ctx_stack.length - 1;
+    var ctx = _ctx_stack[index];
+    while (ctx && index > -1)
     {
-      _cur_ctx.hide_tooltip(true);
+      if (ctx.current_tooltip && tooltip == ctx.current_tooltip && ctx.accept_call)
+      {
+        while (_ctx_stack.length > index + 1)
+          _ctx_stack.pop().hide_tooltip(true);
+
+        ctx.hide_tooltip(true);
+        _cur_ctx = ctx;
+        break;
+      }
+      ctx = _ctx_stack[--index]
     }
   };
 
@@ -450,7 +477,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   this.hide_tooltip = function()
   {
     if (_cur_ctx)
+    {
+      while (_ctx_stack.length > 1)
+        _ctx_stack.pop().hide_tooltip();
+
+      _cur_ctx = _ctx_stack.last;
       _cur_ctx.hide_tooltip();
-  }
+    }
+  };
 
 }).apply(Tooltips);
