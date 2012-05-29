@@ -142,6 +142,7 @@ window.cls.Client = function()
 
   this.setup = function()
   {
+    window.services.scope.reset();
     var port = _get_port_number();
     var client = {
       id: clients.length + 1,
