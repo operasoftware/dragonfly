@@ -230,8 +230,6 @@
 .network_logger .close-request-detail:active,
 .network_logger .close_incomplete_warning:active
 {
-  padding-top: 2px;
-  padding-bottom: 0;
   background-color: rgba(0, 0, 0, 0.28);
   box-shadow: 0 1px #fff,
               inset 0 1px 1px rgba(0, 0, 0, 0.15),
@@ -239,10 +237,10 @@
 }
 .close-request-detail
 {
-  display: inline-block;
+  position: absolute;
+  left: 12px;
+  top: 7px;
   cursor: default;
-  margin-left: 12px;
-  margin-top: 7px;
 }
 
 .network_logger .close_incomplete_warning
@@ -256,8 +254,7 @@
   position: absolute;
   height: 100%;
   width: 12px;
-  margin-left: -6px;
-  display: inline-block;
+  left: -6px;
   cursor: col-resize;
 }
 
@@ -281,9 +278,11 @@
   overflow: auto;
   height: 100%;
   box-sizing: border-box;
-  padding: 27px 20px 37px 28px;
+  padding: 27px 20px 37px 0;
   background-color: #fff;
-  border-bottom-width: 0;
+  /* using border-left instead of padding-left to keep the 
+     space for the close button when scrolling horizontally */
+  border-left: 28px solid transparent;
   box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
               0 2px 4px rgba(0, 0, 0, 0.45),
               -1px 0 0 rgba(0, 0, 0, 0.05);

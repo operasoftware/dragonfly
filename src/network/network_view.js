@@ -174,7 +174,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     if (this._selected)
     {
-      var details = rendered.querySelector(".network-details-container");
+      var details = rendered.querySelector(".request-details");
       if (details)
       {
         if (this._details_scroll_top)
@@ -430,7 +430,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("network-details-container"))
+    if (evt.target.hasClass("request-details"))
     {
       this._details_scroll_top = evt.target.scrollTop;
       this._details_scroll_left = evt.target.scrollLeft;
