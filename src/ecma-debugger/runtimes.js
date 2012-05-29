@@ -1114,10 +1114,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   this.get_dom_runtime_ids = function()
   {
-    return this.getRuntimeIdsFromWindow(__selected_window).filter(function(rt_id)
-    {
-      return __runtimes[rt_id].description != "extensionjs";
-    });
+    return this.getRuntimeIdsFromWindow(__selected_window).filter(this.runtime_has_dom);
   };
 
   this.getRuntimeIdWithURL = function(url)

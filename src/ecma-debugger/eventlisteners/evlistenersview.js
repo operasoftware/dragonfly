@@ -47,8 +47,11 @@ cls.EventListenersView = function(id, name, container_class)
 
   this._update_ev_listeners = function(event, target)
   {
-    // TODO testing
-    target.get_ancestor("container").innerHTML = "";
+    var container = target.get_ancestor("container");
+    var ev_rt_list = container && container.querySelector(".ev-rt-list");
+    if (ev_rt_list)
+      ev_rt_list.parentNode.removeChild(ev_rt_list);
+
     this._data.update();
   };
 
@@ -77,3 +80,5 @@ cls.EventListenersView = function(id, name, container_class)
 
   this._init(id, name, container_class);
 };
+
+cls.EventListenersView.prototype = ViewBase;

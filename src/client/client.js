@@ -525,9 +525,6 @@ ui_framework.layouts.dom_rough_layout =
         if (services['ecmascript-debugger'].satisfies_version(6, 11))
           return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search', 'ev-listeners'];
 
-        if (services['ecmascript-debugger'].satisfies_version(6, 5))
-          return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];
-
         return ['dom-side-panel', 'dom_attrs', 'css-layout'];
       }
     }

@@ -35,7 +35,7 @@
   const PSEUDO_ELEMENT_FIRST_LINE = 4;
   const EVENT_LISTENER_LIST = 15;
 
-  var EV_LISTENER_MARKUP = "<span class=\"ev-listener\" "+
+  var EV_LISTENER_MARKUP = "<span class=\"ev-listener\" " +
                                  "data-tooltip=\"event-listener\" " +
                                  "></span>"
 
@@ -343,7 +343,6 @@
     var depth_first_ele = model.get_depth_of_first_element();
     var show_pseudo_elements = window.settings.dom.get("show-pseudo-elements");
     var is_expandable = false;
-
 
     for ( ; node = data[i]; i += 1)
     {

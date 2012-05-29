@@ -1,5 +1,15 @@
 (function()
 {
+  var EVENT_TYPE = 0;
+  var ORIGIN = 1;
+  var ORIGIN_EVENT_TARGET = 1;
+  var ORIGIN_ATTRIBUTE = 2;
+  var POSITION = 2;
+  var SCRIPT_ID = 0;
+  var LINE_NUMBER = 1;
+  var USE_CAPTURE = 3;
+  var LISTENER_OBJECT_ID = 4;
+  var LISTENER_SCRIPT_DATA = 5;
   var HAS_LISTENERS = function(rt_l) { return rt_l.event_types.length; };
 
   /* Event listener view */
@@ -64,27 +74,24 @@
 
   this.ev_window_listeners = function(ev_type)
   {
-    var EVENT_TYPE = 0;
     var win_listeners = ev_type && ev_type.window_listeners;
-    var ret = [];
-    if (win_listeners && win_listeners.listeners.some(function(listener)
-        {
-          return listener[EVENT_TYPE] == ev_type.type;
-        }))
+    var has_listener = function(listener)
     {
-      ret =
-      ["div",
-        "window",
-        ["span", "class", "ev-listener", 
-                 "data-tooltip", "event-listener"],
-        "data-model-id", String(ev_type.id),
-        "data-window-id", String(win_listeners.win_id),
-        "data-rt-id", String(ev_type.rt_id),
-        "data-obj-id", String(win_listeners.win_id), 
-        "handler", "inspect-object-link",
-        "class", "search-match"];
-    }
-    return ret;
+      return listener[EVENT_TYPE] == ev_type.type;
+    };
+
+    return win_listeners && win_listeners.listeners.some(has_listener)
+         ? ["div",
+              "window",
+              ["span", "class", "ev-listener", 
+                       "data-tooltip", "event-listener"],
+              "data-model-id", String(ev_type.id),
+              "data-window-id", String(win_listeners.win_id),
+              "data-rt-id", String(ev_type.rt_id),
+              "data-obj-id", String(win_listeners.win_id), 
+              "handler", "inspect-object-link",
+              "class", "search-match"]
+         : [];
   };
 
   /* Event listener tooltip */
@@ -97,16 +104,6 @@
 
   this._ev_listener_tooltip = function(rt_id, listener)
   {
-    var EVENT_TYPE = 0;
-    var ORIGIN = 1;
-    var ORIGIN_EVENT_TARGET = 1;
-    var ORIGIN_ATTRIBUTE = 2;
-    var POSITION = 2;
-    var SCRIPT_ID = 0;
-    var LINE_NUMBER = 1;
-    var USE_CAPTURE = 3;
-    var LISTENER_OBJECT_ID = 4;
-    var LISTENER_SCRIPT_DATA = 5;
     var ret = [];
     var position = listener[POSITION];
 
@@ -118,7 +115,7 @@
     if (listener[LISTENER_SCRIPT_DATA])
     {
       ret.push(["dd", 
-                  ["span", "attribute handler",
+                  ["span", ui_strings.S_ATTRIBUTE_LISTENER,
                            "data-tooltip", "js-inspection",
                            "data-script-data", listener[LISTENER_SCRIPT_DATA],
                            "data-class-name", "Function",
@@ -128,8 +125,8 @@
     {
       ret.push(["dd", 
                   ["span", listener[ORIGIN] == ORIGIN_EVENT_TARGET
-                         ? "event target handler"
-                         : "attribute handler",
+                         ? ui_strings.S_EVENT_TARGET_LISTENER
+                         : ui_strings.S_ATTRIBUTE_LISTENER,
                            "data-tooltip", "js-inspection",
                            "data-rt-id", String(rt_id),
                            "data-obj-id", String(listener[LISTENER_OBJECT_ID]),

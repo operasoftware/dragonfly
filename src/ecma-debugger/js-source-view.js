@@ -8,15 +8,15 @@ cls.JsSourceView = function(id, name, container_class)
   // split out one general class to handle partial view ( yield count of lines )
 
   var self = this;
-  var frame_id = '';
-  var container_class_name = 'js-source-content';
+  var frame_id = "";
+  var container_class_name = "js-source-content";
   var container_selector = "." + container_class_name;
-  var container_line_nr_class = 'js-source-line-numbers';
+  var container_line_nr_class = "js-source-line-numbers";
   var container_line_nr_selector = "container > .js-source-line-numbers";
-  var scroll_id = 'js-source-scroller';
-  var scroll_content_id = 'js-source-scroll-content';
-  var scroll_container_id = 'js-source-scroll-container';
-  var container_breakpoints_id = 'break-point-container';
+  var scroll_id = "js-source-scroller";
+  var scroll_content_id = "js-source-scroll-content";
+  var scroll_container_id = "js-source-scroll-container";
+  var container_breakpoints_id = "break-point-container";
 
   const STOP_AT_ERROR_CLASS = "stop-at-error";
   const ERROR_TOOLTIP_CLASS = "error-description";
@@ -65,12 +65,13 @@ cls.JsSourceView = function(id, name, container_class)
 
   templates.line_nummer_container = function(lines)
   {
-    var ret = ['ul'], i = 0;
+    var ret = ["ul"], i = 0;
     for( ; i<lines; i++)
     {
       ret[ret.length] = templates.line_nummer();
     }
-    return ret.concat(['class', container_line_nr_class]);
+    ret.push("class", container_line_nr_class);
+    return ret;
   }
 
   templates.line_nummer = function()

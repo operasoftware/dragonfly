@@ -1511,3 +1511,9 @@ ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";
 
 /* DESC: View with all event listeners. */
 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: Info in a tooltip that the according listener was set by the event target interface. */
+ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
+
+/* DESC: Info in a tooltip that the according listener was set as attribute. */
+ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
