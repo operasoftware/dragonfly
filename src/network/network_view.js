@@ -87,12 +87,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.update();
   }.bind(this);
 
-  this._render_details_view = function(ctx, container, selected)
+  this._render_details_view = function(entry)
   {
     var MINIMUM_DETAIL_WIDTH = 100;
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    return templates.network_log_details(ctx, selected, left_val);
+    return templates.network_log_details(entry, left_val);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -171,8 +171,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
                      ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
-    if (this._selected && ctx.get_entry_from_filtered(this._selected))
-      template = [template, this._render_details_view(ctx, this._container, this._selected)];
+    if (this._selected)
+    {
+      var entry = ctx.get_entry_from_filtered(this._selected);
+      if (entry)
+        template = [template, this._render_details_view(entry)];
+    }
 
     var rendered = this._container.clearAndRender(template);
 
