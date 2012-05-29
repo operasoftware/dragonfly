@@ -121,6 +121,7 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
 
   this.init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger"];
     var msgs = window.messages;
     msgs.addListener('object-selected', this._on_object_selected.bind(this));
     msgs.addListener('frame-selected', this._on_frame_selected.bind(this));

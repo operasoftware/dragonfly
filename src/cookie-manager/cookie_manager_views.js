@@ -15,6 +15,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
   this._init = function(id, name, container_class, data_reference)
   {
+    this.requierd_services = ["cookie-manager", "ecmascript-debugger"];
     this.init(id, name, container_class, null, "cookiemanager-container");
 
     this.shared_shortcuts = "storage";
@@ -190,6 +191,11 @@ cls.CookieManager.CookieManagerViewBase = function()
     this._table_elem = container.clearAndRender(this._sortable_table.render());
     this._after_table_render({table: this._table_elem});
     window.messages.addListener("debug-context-selected", this._clear_container.bind(this));
+  };
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
   };
 
   this._make_sorter = function(prop)

@@ -38,68 +38,69 @@ cls.Scope["1.1"].Service = function()
     opera.postError("NotBoundWarning: Scope, Disconnect");
   }
 
-  // see http://dragonfly.opera.com/app/scope-interface/Scope.html#enable
   this.requestEnable = function(tag, message)
   {
-    const
-    NAME = 0;
-    ( this._enable_requests || ( this._enable_requests = {} ) )[message[NAME]] = false;
-    opera.scopeTransmit('scope', message || [], 5, tag || 0);
-  }
+    var NAME = 0;
+    opera.scopeTransmit("scope", message || [], 5, tag || 0);
+  };
+
   this.handleEnable = function(status, message)
   {
-    const
-    NAME = 0;
+    var NAME = 0;
     
-    var 
-    all_enabled = true,
-    service = message[NAME],
-    service_name = '';
+    var all_enabled = true;
+    var service = message[NAME];
+    var service_name = "";
 
-    if(status == 0)
-    {
-      if (services && services[service])
-      {
-        services[service].post('enable-success');
-        services[service].on_enable_success();
-      };
-      this._enable_requests[service] = true;
-      for(service_name in this._enable_requests)
-      {
-        all_enabled = all_enabled && this._enable_requests[service_name];
-      }
-      if(all_enabled)
-      {
-        window.app.post('services-enabled');
-        if (window.app.on_services_enabled)
-        {
-          window.app.on_services_enabled();
-        }
-        if (this._on_services_enabled_callback)
-        {
-          this._on_services_enabled_callback();
-        }
-      }
-    }
-    else
+    if (status)
     {
       opera.postError("enable service failed, message: " + service)
     }
-    
-  }
+    else
+    {
+      if (window.services && window.services[service])
+      {
+        window.services[service].is_enabled = true;
+        window.services[service].post("enable-success");
+        window.services[service].on_enable_success();
+      };
 
-  // see http://dragonfly.opera.com/app/scope-interface/Scope.html#disable
+      if (this._enable_requests.contains(service))
+        this._enable_requests.splice(this._enable_requests.indexOf(service), 1);
+
+      if (!this._enable_requests.length)
+        this._send_profile_enabled_msg();
+    }
+  };
+
+  this._send_profile_enabled_msg = function()
+  {
+    window.app.profiles[this._profile].is_enabled = true;
+    var msg = {profile: this._profile,
+               services: this._profiles[this._profile].slice()};
+    window.messages.post("profile-enabled", msg);
+  };
+
   this.requestDisable = function(tag, message)
   {
-    opera.scopeTransmit('scope', message || [], 6, tag || 0);
-  }
+    opera.scopeTransmit("scope", message || [], 6, tag || 0);
+  };
+  
   this.handleDisable = function(status, message)
   {
-    /*
-    const
-    NAME = 0;
-    */
-    opera.postError("NotBoundWarning: Scope, Disable");
+    var NAME = 0;
+    var service = message[NAME];
+    if (status)
+      opera.postError("disable service failed, message: " + service)
+    else
+    {
+      window.services[service].is_enabled = false;
+      if (this._disable_requests.contains(service))
+        this._disable_requests.splice(this._disable_requests.indexOf(service), 1);
+
+      if (!this._disable_requests.length)
+        this._finalize_enable_profile();
+    }
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#info
@@ -154,7 +155,7 @@ cls.Scope["1.1"].Service = function()
     NAME = 0,
     VERSION = 1;
     
-    hello_message = 
+    this._hello_message = 
     {
       stpVersion: message[STP_VERSION],
       coreVersion: message[CORE_VERSION],
@@ -163,19 +164,19 @@ cls.Scope["1.1"].Service = function()
       userAgent: message[USER_AGENT],
       serviceList: message[SERVICE_LIST],
     };
-    service_descriptions = {};
+    this._service_descriptions = {};
     var service = null, _services = message[SERVICE_LIST], i = 0, tag = 0;
     for( ; service = _services[i]; i++)
     {
-      service_descriptions[service[NAME]] = 
+      this._service_descriptions[service[NAME]] = 
       {
         name: service[NAME],
         version: service[VERSION],
         index: i
       }
     }
-    this._onHostInfoCallback(service_descriptions, hello_message);
-    hello_message.services = service_descriptions;    
+    this._onHostInfoCallback(this._service_descriptions, this._hello_message);
+    this._hello_message.services = this._service_descriptions;    
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#messageinfo
@@ -261,14 +262,9 @@ cls.Scope["1.1"].Service = function()
     opera.postError("NotBoundWarning: Scope, OnError");
   }
 
-  var self = this;
-  var services_avaible = [];
-  var hello_message = {};
-  var service_descriptions = {};
-
   this.get_hello_message = function()
   {
-    return hello_message;
+    return this._hello_message;
   }
 
   this.set_host_info_callback = function(on_host_info_callback)
@@ -280,4 +276,70 @@ cls.Scope["1.1"].Service = function()
   {
     this._on_services_enabled_callback = on_services_enabled;
   }
+
+  this.enable_profile = function(profile)
+  {
+    if (this._enable_requests.length || this._disable_requests.length)
+      return;
+
+    var old_profile = this._profile;
+    var current_enabled_services = this._profiles[old_profile] || [];
+    var services_to_be_enabled = this._profiles[profile];
+    this._profile = profile;
+    current_enabled_services.forEach(function(service)
+    {
+      if (!services_to_be_enabled.contains(service))
+        this._disable_requests.push(service);
+    }, this);
+    services_to_be_enabled.forEach(function(service)
+    {
+      if (!current_enabled_services.contains(service))
+        this._enable_requests.push(service);
+    }, this);
+
+
+    if (old_profile)
+    {
+      var msg = {profile: old_profile,
+                 disabled_services: this._disable_requests.slice()};
+      window.app.profiles[old_profile].is_enabled = false;
+      window.messages.post("profile-disabled", msg);
+    }
+
+    if (this._disable_requests.length)
+    {
+      this._disable_requests.forEach(function(service)
+      {
+        this.requestDisable(0, [service]);
+      }, this);
+    }
+    else
+      this._finalize_enable_profile();
+  };
+
+  this._finalize_enable_profile = function()
+  {
+    if (this._enable_requests.length)
+    {
+      this._enable_requests.forEach(function(service)
+      {
+        this.requestEnable(0, [service]);
+      }, this);
+    }
+    else
+      this._send_profile_enabled_msg();
+  };
+
+  this._init = function()
+  {
+    this._hello_message = {};
+    this._service_descriptions = {};
+    this._profile = null;
+    this._profiles = window.app.profiles;
+    this._enable_requests = [];
+    this._disable_requests = [];
+  };
+
+  this._init();
+
 }

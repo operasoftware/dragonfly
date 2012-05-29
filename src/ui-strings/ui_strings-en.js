@@ -1493,3 +1493,15 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: A info message that the required features to create this view are disabled. */
+ui_strings.S_INFO_REQUIRED_SERVICES_DISABLED = "Features to create this view are disabled";
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
+
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled."
+
+/* DESC: Button label to enable the default debugger features. */
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features"
