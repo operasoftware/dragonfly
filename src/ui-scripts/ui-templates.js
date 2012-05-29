@@ -193,7 +193,11 @@
     var ret = ["toolbar-buttons", button_templates];
     if (group.type)  // single-select or switch
     {
-      ret.push("handler", "toolbar-" + group.type);
+      if (group.type === UI.TYPE_SWITCH_CUSTOM_HANDLER)
+        ret.push("handler", group.handler);
+      else
+        ret.push("handler", "toolbar-" + group.type);
+
       if (group.type === "single-select")
       {
         ret = ret.concat(["data-single-select-name", group.name,
@@ -253,7 +257,7 @@
             'cst-id', toolbar_settings.id];
   }
 
-  this.switches = function(switches)
+  this.switches = function(switches, handler)
   {
     var
     ret = ["toolbar-buttons"],
@@ -261,7 +265,7 @@
     setting = null;
 
     ret.extend(switches.map(this._switch, this));
-    ret.push("handler", "toolbar-switch");
+    ret.push("handler", handler || "toolbar-switch");
     return ret;
   }
 

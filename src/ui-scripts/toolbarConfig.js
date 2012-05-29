@@ -180,6 +180,8 @@ var ToolbarConfigBase = new function()
           for (var k = 0, search; search = group.items[k]; k++)
             this.filters.push(search);
         }
+        // Nothing needs to be initialized for UI.TYPE_SWITCH_CUSTOM_HANDLER.
+        // The buttons are added to this.buttons, the group.handler is added in ui-templates.js
       }
     }
     else
