@@ -287,7 +287,9 @@ cls.RequestContextPrototype = function()
     // When a new context is initiated, it's not paused by default. Reset the setting.
     // Todo: Ideally, when paused, the new context should be created in a different
     // place, so the old one can be kept while we're on pause.
-    settings.network_logger.set("pause", false);
+    if (settings.network_logger.get("pause") != false)
+      settings.network_logger.set("pause", false);
+
     this._filter_function_bound = this._filter_function.bind(this);
   };
 

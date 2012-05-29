@@ -131,7 +131,7 @@ templates.network_log_main = function(ctx, entries, selected, detail_width, tabl
     [
       "div", [
         "div", table_template || templates.network_viewmode_graphs(
-                                   ctx, entries, selected, detail_width, table_template
+                                   ctx, entries, selected, detail_width
                                  ),
         "class", "network-data-container " + (table_template ? "data" : "graphs")
       ],

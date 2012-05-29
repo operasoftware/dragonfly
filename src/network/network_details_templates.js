@@ -9,7 +9,7 @@ templates.network_detail_row = function(wrap)
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
-templates.network_log_details = function(ctx, selected, left_val)
+templates.network_log_details = function(entry, left_val)
 {
   return [
       "div", 
@@ -22,22 +22,20 @@ templates.network_log_details = function(ctx, selected, left_val)
           "class", "resize-request-detail",
           "handler", "resize-request-detail"
         ],
-        templates.network_log_detail(ctx, selected),
+        templates.network_log_detail(entry),
       "class", "network-details-container",
       "style", "left:" + left_val + "px"
     ];
 };
 
-templates.network_log_detail = function(ctx, selected)
+templates.network_log_detail = function(entry)
 {
-  var entry = ctx.get_entry_from_filtered(selected);
-  if (entry)
-  {
-    var responsecode = entry.responses.length && entry.responses.last.responsecode;
-    if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
-       responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+  var responsecode = entry.responses.last && entry.responses.last.responsecode;
+  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
+     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
-    return ["div",
+  return (
+    ["div",
       ["table",
         ["tbody",
           ["tr",
@@ -62,8 +60,8 @@ templates.network_log_detail = function(ctx, selected)
       ],
       "data-object-id", String(entry.id),
       "class", "request-details"
-    ];
-  }
+    ]
+  );
 };
 
 templates.network_response = function(response)
