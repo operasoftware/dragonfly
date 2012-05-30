@@ -332,7 +332,8 @@ cls.JSSourceTooltip = function(view)
     else
     {
       var range = _win_selection.getRangeAt(0);
-      if (range.intersectsNode(_last_move_event.target))
+      if (document.documentElement.contains(_last_move_event.target) &&
+          range.intersectsNode(_last_move_event.target))
       {
         var start = _get_line_and_offset(range.startContainer, range.startOffset);
         var end = _get_line_and_offset(range.endContainer, range.endOffset);
