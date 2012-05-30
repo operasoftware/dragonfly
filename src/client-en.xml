@@ -480,6 +480,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
 
 <script src="./resource-manager/resource_test_view.js"/>
+<script src="./resource-manager/resource_detail_view.js"/>
 
 
 <script src="./network/network_service.js"/>

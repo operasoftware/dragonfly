@@ -334,7 +334,6 @@ cls.JSResourceDetail = function(res, service, options)
 
   this.init(res, service);
 }
-
 cls.JSResourceDetail.prototype = cls.ResourceDetailSearch.prototype;
 
 

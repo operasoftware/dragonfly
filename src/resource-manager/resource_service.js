@@ -1,4 +1,6 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
  *
  */
 
@@ -76,8 +78,76 @@ cls.ResourceManagerService = function(view)
     this._view.update();
   }.bind(this);
 
-  this.init = function()
+
+  this._handle_expand_collapse_bound = function(event, target)
   {
+    if (!this._context){ return; }
+
+    var button = target.querySelector('.button-expand-collapse');
+    var target = target.parentNode;
+
+    var frameID = target.getAttribute('data-frame-id');
+    var data = this._context.frames[ frameID ];
+
+    var groupName = target.getAttribute('data-resource-group');
+    if (groupName){ data = data.groups[ groupName ]; }
+
+    data.closed = !data.closed;
+    if (data.closed)
+    {
+      target.addClass('collapsed');
+    }
+    else
+    {
+      target.removeClass('collapsed');
+    }
+  }.bind(this);
+
+  this._handle_resource_detail_bound = function(event, target)
+  {
+    if (!this._context){ return; }
+
+    var parent = target.get_ancestor('[data-resource-id]');
+    if (!parent){ console.log('no parent with data-resource-id for '+target.outerHTML); return; }
+  
+    var rid = Number( parent.getAttribute('data-resource-id') );
+    var r = this.get_resource(rid);
+
+    if (!r){ console.log('resource '+rid+' not found'); return; }
+
+    cls.ResourceDetailView.instance.open_resource(rid);
+  }.bind(this);
+
+  this._handle_resource_group_bound = function(event, target)
+  {
+    var parent = target.get_ancestor('[data-frame-id]');
+    if (!parent){ return; }
+    var frameID = parent.getAttribute('data-frame-id');
+    var groupName = parent.getAttribute('data-resource-group');
+
+    var data = this._context.frames[ frameID ].groups[ groupName ];
+alert(data.name+' '+data.ids)
+
+    debugger;
+  }.bind(this);
+
+
+
+  this._init = function()
+  {
+
+    var eh = window.eventHandlers;
+    eh.click["resources-expand-collapse"] = this._handle_expand_collapse_bound;
+    eh.click["resource-detail"] = this._handle_resource_detail_bound;
+    eh.click["resource-group"] = this._handle_resource_group_bound;
+
+    eh.click['open-resource-tab'] = function(event, target)
+    {
+      var broker = cls.ResourceDisplayBroker.get_instance();
+      broker.show_resource_for_ele(target);
+    }
+
+
     this._res_service = window.services['resource-manager'];
     
     this._res_service.addListener("urlload", this._on_urlload_bound);
@@ -98,50 +168,52 @@ cls.ResourceManagerService = function(view)
    * Returns an array of resource objects. The internal representation is to
    * keep separate lists of seen resources and a map of id/resource.
    */
+/*
   this.get_resource_list = function()
   {
     if (! this._current_context) { return []; }
     return this._current_context.resources;
   };
-
-  this.get_resource_for_id = function(id)
+*/
+  this.get_resource = function(id)
   {
-    if (this._topFrameID)
-    {
-      for (var i in this._frames)
-      {
-        var res = this._current_context.get_resource(id);
-        if (res){ return res; }
-      }
-      //return this._current_context.get_resource(id);
-    }
-    return null;
+    if (!this._context){ return null; }
+
+    return this._context.resourcesDict[id];
   };
 
   this.get_resource_for_url = function(url)
   {
-    if (this._current_context) {
-      var filterfun = function(res) { return res.url == url };
-      return this._current_context.resources.filter(filterfun).pop();
-    }
-    return null;
+    //
+    if (!this._context){ return null; }
+
+    var id = this._context.resourcesUrlDict[url];
+    if (id===undefined){ return null; }
+    
+    return this.get_resource(id);
   };
 
   this.fetch_resource_data = function(callback, rid, type)
   {
+    var resource = this.get_resource(rid);
+    if (resource)
     var typecode = {datauri: 3, string: 1}[type] || 1;
     var tag = window.tagManager.set_callback(null, callback);
     const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
     this._res_service.requestGetResource(tag, [rid, [typecode, 1, MAX_PAYLOAD_SIZE]]);
+
   };
 
-  this.init();
+
+
+
+  this._init();
 };
 
 cls.ResourceContext = function(data)
 {
-//  this.resources = [];
   this.resourcesDict = {};
+  this.resourcesUrlDict = {};
   this.frames = {};
 
   this.update = function(eventname, event)
@@ -192,6 +264,14 @@ cls.ResourceContext = function(data)
       if (!frame.groups[type]){ type='other'; }
 
       frame.groups[type].push( res.id );
+      this.resourcesUrlDict[ res.url.url ] = res.id;
+/*
+      if (!res.data)
+      {
+        var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
+        cls.ResourceManager.instance.fetch_resource_data
+      }
+/**/
     }
   }
 
@@ -300,6 +380,12 @@ var ResourcePrototype = function()
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;
       this.size = eventdata.contentLength || 0;
+
+      if(eventdata.content)
+      {
+        this.data = new cls.ResourceManager["1.0"].ResourceData( eventdata );
+      }
+
       this.finished = true;
       this._guess_type();
       this._humanize_url();
@@ -315,6 +401,12 @@ var ResourcePrototype = function()
     else if (eventname == "urlredirect")
     {
       this.invalid = true;
+    }
+    else if (eventname == "responsefinished")
+    {
+      this.data = new cls.ResourceManager["1.0"].ResourceData( eventdata );
+
+      console.log(eventdata);
     }
     else
     {
@@ -333,13 +425,16 @@ var ResourcePrototype = function()
     {
       this.type = undefined;
     }
-    else if (this.mime.toLowerCase() == "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.path_to_type(this.url.filename);
-    }
     else
     {
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+      if (this.mime.toLowerCase() == "application/octet-stream")
+      {
+        this.type = cls.ResourceUtil.extension_type_map/*path_to_type*/[this.url.filename.slice(this.url.filename.lastIndexOf('.')+1)];
+      }
+      if (!this.type)
+      {
+        this.type = cls.ResourceUtil.mime_to_type(this.mime);
+      }
     }
   }
 

@@ -97,7 +97,7 @@
   background-image: url(../ui-images/type_storage.png);
 }
 
-.resource-detail-container
+.--resource-detail-container
 {
   display: block;
   box-sizing: border-box;
@@ -209,15 +209,108 @@
   outline: 2px solid #598BEC;
   outline-offset: -2px;
 }
-.button-expand-collapse.close
+.collapsed .button-expand-collapse
 {
   background-position:1px 1px;
 }
-.resources li:nth-child(2n)
+/*
+.resources li:nth-child(2n-1)
 {
   background-color:#f8f8f8;
 }
 .resources li:hover
 {
   background-color:#D4E3F4;
+}
+*/
+
+/* resource detail view */
+.resource-detail-overview
+{
+  padding:8px;
+  background:#eee;
+  color:#999;
+}
+.resource-detail-overview-url
+{
+  display:block;
+  font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#000;
+}
+.resource-detail-overview-type
+{
+  display:block;
+}
+.resource-detail-view
+{
+  padding:0;
+  margin:0;
+  overflow:auto;
+  display:inline-block;
+  width:100%;
+/*  height:100%;*/
+  box-sizing:border-box;
+}
+.resource-detail-font
+{
+  width:100%;
+  height:-o-content-size;
+}
+.resource-detail-image
+{
+  -o-object-fit:contain;
+  max-width:300px;
+  max-height:300px;
+  margin:1em;
+  box-sizing:border-box;
+  background:url("../ui-images/grid_checkers_black.png") top left repeat;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  svertical-align:middle;
+}
+
+
+/* ---------- */
+.children-expand-collapse
+{
+  display:block;
+}
+.collapsed .children-expand-collapse
+{
+  display:none;
+}
+.item-expand-collapse
+{
+  line-height:17px;
+}
+.header-expand-collapse:hover
+{
+  background-color:#D4E3F4;
+}
+.children-expand-collapse .header-expand-collapse
+{
+  padding-left:16px;
+  white-space:nowrap;
+}
+.children-expand-collapse .children-expand-collapse .header-expand-collapse
+{
+  padding-left:32px;
+}
+.children-expand-collapse .children-expand-collapse .children-expand-collapse .header-expand-collapse
+{
+  padding-left:48px;
+}
+.children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .header-expand-collapse
+{
+  padding-left:64px;
+}
+.children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .header-expand-collapse
+{
+  padding-left:80px;
+}
+.children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .children-expand-collapse .header-expand-collapse
+{
+  padding-left:96px;
 }

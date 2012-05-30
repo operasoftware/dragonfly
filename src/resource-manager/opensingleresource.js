@@ -1,8 +1,9 @@
 ﻿window.cls || (window.cls = {});
 
-cls.OpenSingleResource = function(resource_manager, url, data)
+cls.OpenSingleResource = function(view,manager, url, data)
 {
-  this._resman = resource_manager;
+  this._view = view;
+  this._manager = manager;
   this._url = url;
   this._data = data;
   
@@ -24,7 +25,8 @@ cls.OpenSingleResource.prototype = new function()
 
   this._show_resource = function()
   {
-    if (!this._resman.show_resource_for_url(this._url, this._data))
+    if (!this._manager.get_resource_for_url(this._url))
+    //if (!this._view.show_resource_for_url(this._url, this._data))
     {
       if (this._service.requestGetResourceID)
       {
@@ -42,13 +44,40 @@ cls.OpenSingleResource.prototype = new function()
   {
     if (status)
     {
+      if (this._service.requestCreateRequest)
+      {
+        var debugContext = window.window_manager_data.get_debug_context();
+        var tag = this._tagman.set_callback(this, this._on_resolve_url_request);
+        this._service.requestCreateRequest(tag, [debugContext, this._url, 'GET']);
+      }
+      else
+      {
+        this._fallback();
+      }
+    }
+    else
+    {
+      const RESOURCE_ID = 0;
+      this._rid = message[RESOURCE_ID];
+//      if (!this._view.show_resource_for_id(this._rid))
+      {
+        var tag = this._tagman.set_callback(this, this._on_mime_type);
+        this._service.requestGetResource(tag, [this._rid, [TRANSPORT_OFF]]);
+      }
+    }
+  };
+
+  this._on_resolve_url_request = function(status, message)
+  {
+    if (status)
+    {
       this._fallback();
     }
     else
     {
       const RESOURCE_ID = 0;
       this._rid = message[RESOURCE_ID];
-      if (!this._resman.show_resource_for_id(this._rid))
+//      if (!this._view.show_resource_for_id(this._rid))
       {
         var tag = this._tagman.set_callback(this, this._on_mime_type);
         this._service.requestGetResource(tag, [this._rid, [TRANSPORT_OFF]]);
@@ -80,6 +109,7 @@ cls.OpenSingleResource.prototype = new function()
       this._service.requestGetResource(tag, msg);
     }
   };
+.001
 
   this._on_resource = function(status, message)
   {
@@ -89,8 +119,10 @@ cls.OpenSingleResource.prototype = new function()
     }
     else
     {
-      this._res.update("urlfinished", new this._ResourceData(message));
-      this._resman.open_resource_tab(this._res, this._data);
+      //this._res.update("urlfinished", new this._ResourceData(message));
+      this._res.update("responsefinished", message );
+      this._view.open_resource_tab(this._res, this._data);
+      window.UI.instance.show_view( this._view.id );
     }
   };
 

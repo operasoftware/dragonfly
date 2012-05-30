@@ -34,7 +34,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
 
   this.show_resource_for_id = function(rid, data)
   {
-    var res = this._service.get_resource_for_id(rid);
+    var res = this._service.get_resource(rid);
     if (res)
     {
       this._view = this._open_resource_tab(res, data);

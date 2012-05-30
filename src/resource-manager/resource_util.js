@@ -63,6 +63,7 @@ cls.ResourceUtil.extension_type_map = {
 
   oex: "extension",
 
+  woff: "font",
   otf: "font",
   ttf: "font",
 }
@@ -156,6 +157,8 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   var type = cls.ResourceUtil.mime_to_type(mime);
   switch (type) {
     case "image":
+    case "video":
+    case "audio":
     case "pdf":
     case "flash":
     case "font":
@@ -165,6 +168,24 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
     case "xml":
     case "script":
       return "text";
+  }
+  return "text";
+}
+
+/**
+ * Returns the most sensible way of getting this resource,
+ * as datauri or string, based on the type.
+ */
+cls.ResourceUtil.type_to_content_mode = function(type)
+{
+  switch (type) {
+    case "image":
+    case "video":
+    case "audio":
+    case "pdf":
+    case "flash":
+    case "font":
+      return "datauri";
   }
   return "text";
 }

@@ -8,33 +8,38 @@ cls.ResourceDisplayBroker = function()
   }
   cls.ResourceDisplayBroker.instance = this;
 
+
+  this._view = null;
+  this._check = function()
+  {
+    this._view = window.views.resource_detail_view;
+  }
+
   this.show_resource_for_id = function(id, line)
   {
+    var data = {};
+    var view = window.views.resource_detail_view; //resource_all;
+    if (window.services["resource-manager"] && view)
+    {
       if (line)
       {
-        var data = {"lines":[line]}
-      }    
-    if (window.services["resource-manager"] && window.views.resource_all)
-    {
-      var view = window.views.resource_all;
+        var data = {"lines":[line]};
+      }
       view.show_resource_for_id(id, data);
     }
   }
 
   this.show_resource_for_url = function(url, line)
   {
-
-    if (window.services["resource-manager"] && window.views.resource_all)
+    var data = {};
+    var view = window.views.resource_detail_view; //resource_all;
+    if (window.services["resource-manager"] && view)
     {
       if (line)
       {
         var data = {"lines":[line]};
       }
-      else
-      {
-        var data = {};
-      }
-      new cls.OpenSingleResource(window.views.resource_all, url, data);
+      new cls.OpenSingleResource(view, cls.ResourceManagerService.instance, url, data);
     }
     else
     {
