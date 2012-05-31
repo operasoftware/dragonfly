@@ -105,7 +105,7 @@ window.cls.Helpers = function()
 
   this.resolveURLS = function(top_url, url)
   {
-    if (url.startswith("data:"))
+    if (url.trim().startswith("data:"))
       return url;
     return (
         /^.{4,5}:\/\//.test(url) && url
