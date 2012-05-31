@@ -304,10 +304,13 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
     var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
     var val_for_str = (stepsize * cnt) / unit[0];
     val_for_str = Math.round(val_for_str * 100) / 100;
-    labels.push(["span", val_for_str + " " + unit[1],
-                 "style", "left: " + left_val + "px;",
-                 "class", "timeline-marker"
-                 ]);
+    if (left_val + TIMELINE_MARKER_WIDTH < width)
+    {
+      labels.push(["span", val_for_str + " " + unit[1],
+                   "style", "left: " + left_val + "px;",
+                   "class", "timeline-marker"
+                   ]);
+    }
   }
 
   return ["div", labels, "class", "network-timeline-row"];
