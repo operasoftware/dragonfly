@@ -230,8 +230,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         },
         title_getter: function(entry, renderer) {
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return entry.responsecode + 
-                   " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
+            return String(cls.ResourceUtil.http_status_codes[entry.responsecode]);
           return renderer(entry);
         },
         getter: function(entry) { return entry.responsecode || 0; }
