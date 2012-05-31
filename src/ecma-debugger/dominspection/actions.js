@@ -623,14 +623,11 @@ cls.DOMInspectorActions = function(id)
 
   this._handlers["dom-resource-link"] = function(event, target)
   {
-    var
-    url = target.textContent,
-    rt_id = target.get_attr('parent-node-chain', 'rt-id');
-
-    // TODO use the exec service to open new link when it's ready
-    var url = helpers.resolveURLS(runtimes.getURI(rt_id),
-                                  url.slice(1, url.length - 1));
-    window.open(url, "_blank");
+    var rt_id = target.get_attr("parent-node-chain", "rt-id");
+    var rt = window.runtimes.getURI(rt_id);
+    var url = target.textContent.slice(1, -1);
+    var abs_url = window.helpers.resolveURLS(rt, url);
+    window.open(abs_url, "_blank");
   }.bind(this);
 
   this._handlers["nav-up"] = function(event, target)
