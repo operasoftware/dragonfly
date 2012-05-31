@@ -336,6 +336,11 @@ var TabsBase = function()
       self.on_view_inizialized(msg);
     };
   }
+  
+  this.onresize = function()
+  {
+    // TODO
+  };
 
   this.init = function(cell, tabbar)
   {

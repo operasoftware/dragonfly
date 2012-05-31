@@ -361,7 +361,8 @@ window.cls.Client = function()
       controls.push(new Button("top-window-close", "", ui_strings.S_BUTTON_LABEL_CLOSE_WINDOW));
     }
 
-    document.documentElement.render(templates.window_controls(controls));
+    var win_ctrls = document.documentElement.render(templates.window_controls(controls));
+    window.messages.post("window-controls-created", {window_controls: win_ctrls});
 
     var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
     if (this.current_client && this.connection_is_remote(this.current_client))
