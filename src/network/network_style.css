@@ -272,8 +272,8 @@
   /* using border-left instead of padding-left to keep the 
      space for the close button when scrolling horizontally */
   border-left: 28px solid transparent;
-  box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
-              0 2px 4px rgba(0, 0, 0, 0.45),
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.39),
+              0 2px 2px 1px rgba(0, 0, 0, 0.28),
               -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
