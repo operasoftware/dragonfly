@@ -336,6 +336,7 @@
   text-align: left;
   padding-right: 30px;
   width: 140px;
+  white-space: nowrap;
 }
 
 .network-details-container hr
