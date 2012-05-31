@@ -176,8 +176,8 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
     if (this._root_ele)
     {
-      this._target_line = parseInt(data.lines[0]);
       this.clear_line_highlight(this._root_ele)
+      this._target_line = parseInt(data.lines[0]);
       this._highlight_line(this._root_ele);
     }
 
