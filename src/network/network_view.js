@@ -490,12 +490,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_url_tooltip_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
-    var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry(entry_id);
-    if (entry)
+    if (ctx)
     {
-      var template = templates.network_log_url_tooltip(entry);
-      this.url_tooltip.show(template);
+      var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+      var entry = ctx.get_entry(entry_id);
+      if (entry)
+      {
+        var template = templates.network_log_url_tooltip(entry);
+        this.url_tooltip.show(template);
+      }
     }
   }.bind(this);
 
