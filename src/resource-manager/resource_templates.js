@@ -173,7 +173,7 @@ templates.resource_detail =
 			'human_url':resource.human_url,
 			'type':resource.type,
 			'mimeType':resource.data.mimeType,
-			'size':resource.size||resource.data.contentLength||resource.data.length,
+			'size':resource.size||resource.data.contentLength||resource.data.content.length,
 			'characterEncoding':resource.encoding||resource.data.characterEncoding
 		};
 
