@@ -224,7 +224,7 @@ templates.network_request_body = function(req)
   
   return [
            templates.network_detail_row(templates.network_body_seperator()),
-           ["tbody", ["tr", ["td", cont, "colspan", "2"]]]
+           ["tbody", cont]
          ];
 };
 
