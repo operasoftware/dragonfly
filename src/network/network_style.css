@@ -434,13 +434,21 @@
 
 .network_get_params
 {
-  margin: 4px 2px 0 0;
+  margin-top: 4px;
+  border-collapse: collapse;
 }
 
+.network_get_params th
+{
+  text-align: left;
+  padding-right: 8px;
+}
+
+.network_get_params th,
 .network_get_params td
 {
-  padding: 0 4px;
   vertical-align: top;
+  padding-left: 0;
 }
 
 .network-tooltip-row

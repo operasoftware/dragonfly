@@ -252,9 +252,8 @@ templates.network_log_url_tooltip = function(entry)
       ["table",
         entry.params.map(function(param){
           return ["tr",
-                   ["td", param.key],
-                   ["td", param.value],
-                   "class", "string mono"
+                   ["th", param.key],
+                   ["td", param.value]
                  ];
         }),
         "class", "network_get_params"
