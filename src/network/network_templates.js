@@ -389,7 +389,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
 templates.network_graph_tooltip_tr = function(stop, index, arr)
 {
   return ["tr",
-           ["td", stop.val_string, "class", "time_data mono"],
+           ["td", stop.val_string, "class", "time_data"],
            ["td", stop.title, "class", "gap_title"],
            (window.ini && ini.debug)
              ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"]
@@ -409,7 +409,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
   {
     var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
     event_rows.push(["tr",
-                      ["td", duration.toFixed(2) + " ms", "class", "time_data mono"],
+                      ["td", duration.toFixed(2) + " ms", "class", "time_data"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
 
     if (!templates.network_tt_vert_padding)

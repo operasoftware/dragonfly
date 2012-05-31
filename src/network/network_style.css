@@ -465,6 +465,7 @@
 .network-tooltip-container .gap_title
 {
   white-space: nowrap;
+  padding: 2px 0;
 }
 
 .network-tooltip-graph
@@ -477,8 +478,10 @@
    is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
+  color: #333;
+  line-height: 15px;
   text-align: right;
-  padding: 3px 8px 1px 4px;
+  padding: 2px 8px 2px 4px;
   width: 100%;
   box-sizing: border-box;
 }
