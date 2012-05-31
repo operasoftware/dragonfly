@@ -99,20 +99,21 @@ templates.network_request_crafter_main = function(url, loading, request, respons
 templates.network_incomplete_warning = function()
 {
   return ["div",
-           ["span",
-             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
-           ],
            ["div",
              ["span",
-               ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
-               "class", "text_handler",
-               "handler", "reload-window"
+              "class", "ui-button",
+              "handler", "reload-window",
+              "tabindex", "1"
              ]
+           ],
+           ["p",
+             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
            ],
            ["span",
              " ",
              "class", "close_incomplete_warning",
-             "handler", "close-incomplete-warning"
+             "handler", "close-incomplete-warning",
+             "tabindex", "1"
            ],
            "class", "info-box network_incomplete_warning"
          ];

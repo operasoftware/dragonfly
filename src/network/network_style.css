@@ -162,25 +162,8 @@
 
 .network_incomplete_warning
 {
-  line-height: 15px;
-  margin: 15px 50px;
+  margin-top: 15px;
   position: relative;
-}
-
-.network_incomplete_warning div
-{
-  display: inline;
-}
-
-.network_incomplete_warning div:before
-{
-  content: " ";
-}
-
-.network_incomplete_warning .text_handler
-{
-  text-decoration: underline;
-  white-space: nowrap;
 }
 
 .network-main-container .sortable-table > tr.header,
