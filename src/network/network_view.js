@@ -329,12 +329,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_start_resize_detail_bound = function(evt, target)
   {
-    document.addEventListener("mousemove", this._on_drag_detail_bound, false);
-    document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-    if (!this._resize_interval)
-      this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+    if (evt.target.hasClass("resize-request-detail"))
+    {
+      document.addEventListener("mousemove", this._on_drag_detail_bound, false);
+      document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
+      if (!this._resize_interval)
+        this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
 
-    evt.preventDefault();
+      evt.preventDefault();
+    }
   }.bind(this);
 
   this._on_drag_detail_bound = function(evt)
