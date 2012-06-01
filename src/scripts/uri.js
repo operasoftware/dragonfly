@@ -9,7 +9,7 @@ var URIPrototype = function(uri_prop_name)
 {
   /*
     interface
-    
+
     hash
     host
     pathname // for data: URIs, this is everything after "data:"
@@ -36,10 +36,9 @@ var URIPrototype = function(uri_prop_name)
       if (!this._is_parsed)
         this._init();
 
-      return this["_" + prop];  
+      return this["_" + prop];
     });
     this.__defineSetter__(prop, function() {});
-    
   }, this);
 
   this.__defineGetter__("filename", function()
@@ -58,7 +57,7 @@ var URIPrototype = function(uri_prop_name)
         this._filename = "";
     }
 
-    return this._filename;  
+    return this._filename;
   });
 
   this.__defineSetter__("filename", function() {});
@@ -79,7 +78,7 @@ var URIPrototype = function(uri_prop_name)
         this._extension = "";
     }
 
-    return this._extension;  
+    return this._extension;
   });
 
   this.__defineSetter__("extension", function() {});
@@ -100,7 +99,7 @@ var URIPrototype = function(uri_prop_name)
         this._dir_pathname = "";
     }
 
-    return this._dir_pathname;  
+    return this._dir_pathname;
   });
 
   this.__defineSetter__("dir_pathname", function() {});
@@ -118,7 +117,7 @@ var URIPrototype = function(uri_prop_name)
         this._abs_dir = "";
     }
 
-    return this._abs_dir;  
+    return this._abs_dir;
   });
 
   this.__defineSetter__("abs_dir", function() {});
@@ -133,9 +132,9 @@ var URIPrototype = function(uri_prop_name)
         this._origin = "";
     }
 
-    return this._origin;  
+    return this._origin;
   });
-  
+
   this.__defineSetter__("origin", function() {});
 
   this.__defineGetter__("params", function()
@@ -159,7 +158,7 @@ var URIPrototype = function(uri_prop_name)
         }, this);
       }
     }
-    return this._params;  
+    return this._params;
   });
 
   this.__defineSetter__("short_distinguisher", function() {});
