@@ -44,16 +44,18 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("filename", function()
   {
-    if (this._is_data_uri)
-      return "";
-
-    if (!this._filename && (this._is_parsed || this[uri_prop_name]))
+    if (this._filename === undefined && (this._is_parsed || this[uri_prop_name]))
     {
-      var pos = this.pathname.lastIndexOf("/");
-      if (pos > -1)
-        this._filename = this.pathname.slice(pos + 1);
+      if (!this._is_data_uri)
+      {
+        var pos = this.pathname.lastIndexOf("/");
+        if (pos > -1)
+          this._filename = this.pathname.slice(pos + 1);
+        else
+          this._filename = this.pathname;
+      }
       else
-        this._filename = this.pathname;
+        this._filename = "";
     }
 
     return this._filename;  
@@ -63,14 +65,16 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("extension", function()
   {
-    if (this._is_data_uri)
-      return "";
-
-    if (!this._extension && (this._is_parsed || this[uri_prop_name]))
+    if (this._extension === undefined && (this._is_parsed || this[uri_prop_name]))
     {
-      var pos = this.filename.lastIndexOf(".");
-      if (pos > -1)
-        this._extension = this.filename.slice(pos + 1);
+      if (!this._is_data_uri)
+      {
+        var pos = this.filename.lastIndexOf(".");
+        if (pos > -1)
+          this._extension = this.filename.slice(pos + 1);
+        else
+          this._extension = "";
+      }
       else
         this._extension = "";
     }
@@ -82,14 +86,16 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("dir_pathname", function()
   {
-    if (this._is_data_uri)
-      return "";
-
-    if (!this._dir_pathname && (this._is_parsed || this[uri_prop_name]))
+    if (this._dir_pathname === undefined && (this._is_parsed || this[uri_prop_name]))
     {
-      var pos = this.pathname.lastIndexOf("/");
-      if (pos > -1)
-        this._dir_pathname = this.pathname.slice(0, pos + 1);
+      if (!this._is_data_uri)
+      {
+        var pos = this.pathname.lastIndexOf("/");
+        if (pos > -1)
+          this._dir_pathname = this.pathname.slice(0, pos + 1);
+        else
+          this._dir_pathname = "";
+      }
       else
         this._dir_pathname = "";
     }
@@ -101,12 +107,16 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("abs_dir", function()
   {
-    if (this._is_data_uri)
-      return "";
-
-    if (!this._abs_dir && (this._is_parsed || this[uri_prop_name]))
-      this._abs_dir = (this.protocol ? this.protocol + "//" : "") +
-                      this.host + this.dir_pathname;
+    if (this._abs_dir === undefined && (this._is_parsed || this[uri_prop_name]))
+    {
+      if (!this._is_data_uri)
+      {
+        this._abs_dir = (this.protocol ? this.protocol + "//" : "") +
+                        this.host + this.dir_pathname;
+      }
+      else
+        this._abs_dir = "";
+    }
 
     return this._abs_dir;  
   });
@@ -115,11 +125,13 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("origin", function()
   {
-    if (this._is_data_uri)
-      return "";
-
-    if (!this._origin && (this._is_parsed || this[uri_prop_name]))
-      this._origin = this.protocol + "//" + this.host;
+    if (this._origin === undefined && (this._is_parsed || this[uri_prop_name]))
+    {
+      if (!this._is_data_uri)
+        this._origin = this.protocol + "//" + this.host;
+      else
+        this._origin = "";
+    }
 
     return this._origin;  
   });
@@ -128,10 +140,10 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("params", function()
   {
-    if (!this._params && (this._is_parsed || this[uri_prop_name]))
+    if (this._params === undefined && (this._is_parsed || this[uri_prop_name]))
     {
       this._params = [];
-      if (this._search[0] === "?")
+      if (!this._is_data_uri && this._search[0] === "?")
       {
         var pairs = this._search.slice(1).split("&");
         pairs.forEach(function(pair) {
@@ -154,10 +166,7 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("short_distinguisher", function()
   {
-    if (this._is_data_uri)
-      return this._protocol + this._pathname;
-
-    if (!this._short_distinguisher && (this._is_parsed || this[uri_prop_name]))
+    if (this._short_distinguisher === undefined && (this._is_parsed || this[uri_prop_name]))
     {
       // When pathname ends with "/", and there is search or hash,
       // the short_distinguisher is just search + hash
@@ -171,6 +180,10 @@ var URIPrototype = function(uri_prop_name)
       {
         var parts = this.path_parts;
         this._short_distinguisher = parts[parts.length - 1] + search_and_hash;
+      }
+      else if (this._is_data_uri)
+      {
+        this._short_distinguisher = this._protocol + this._pathname;
       }
       else
         this._short_distinguisher = this.host;
@@ -242,8 +255,6 @@ var URIPrototype = function(uri_prop_name)
       else
         this._path_parts = [];
     }
-
-    if (this._is_data_uri) debugger
 
     this._is_parsed = true;
   };
