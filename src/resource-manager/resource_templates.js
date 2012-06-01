@@ -40,7 +40,7 @@ templates.resource_tree =
 						' ',
 						[
 							'span',
-							((r?r.url.filename||r.human_url:'')||'resource information not fully available yet'),
+							((r?r.filename||r.human_url:'')||'resource information not fully available yet'),
 							[],
 							'data-tooltip',(r&&'js-script-select'),
 							'data-tooltip-text',(r&&'frame: '+r.human_url)
@@ -133,7 +133,7 @@ templates.resource_tree =
 				['li',
 					[
 						'span',
-						(r.url.filename||r.human_url||'resource information not fully available yet'),
+						(r.filename||r.human_url||'resource information not fully available yet'),
 						[],
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
