@@ -65,6 +65,11 @@ var TopTabsBase = function()
     var width = 0;
     for (var i = 0, tab_ele; tab_ele = tab_eles[i]; i++)
     {
+      if (!this._tab_right_padding)
+      {
+        var value = window.getComputedStyle(tab_ele).paddingRight;
+        TopTabs.prototype._tab_right_padding = parseInt(value);
+      }
       var legend = tab_ele.querySelector(".inline-block");
       if (legend)
       {
@@ -75,28 +80,52 @@ var TopTabsBase = function()
           legend.setAttribute("data-orig-width", String(legend.offsetWidth));
 
         width += Number(tab_ele.getAttribute("data-orig-width"));
-        tabs.push({legend: legend,
+        tabs.push({tab_ele: tab_ele,
+                   legend: legend,
                    legend_orig_width: Number(legend.getAttribute("data-orig-width"))});
       }
     }
     var has_space = width <= this.width;
     var scale = 1;
+    var delta_padding = 0;
+    var target_padding = this._tab_right_padding;
+    var count = tabs.length;
     if (!has_space)
     {
       var delta = width - this.width;
-      var orig_sum_labels = tabs.reduce(function(sum, tab)
+      // reduce each legend by 1 pixel
+      delta -= count;
+      if (delta > 0)
       {
-        return sum + tab.legend_orig_width;
-      }, 0);
-      scale = (orig_sum_labels - delta) / orig_sum_labels;
+        delta_padding = Math.ceil(delta / count);
+        if (delta_padding > this._tab_right_padding)
+          delta_padding = this._tab_right_padding;
+
+        target_padding = this._tab_right_padding - delta_padding;
+        delta -= count * delta_padding;
+      }
+      if (delta > 0)
+      {
+        var orig_sum_labels = tabs.reduce(function(sum, tab)
+        {
+          return sum + (tab.legend_orig_width - 1);
+        }, 0);
+        scale = (orig_sum_labels - delta) / orig_sum_labels;
+      }
     }
     tabs.forEach(function(tab)
     {
       if (has_space)
+      {
+        tab.tab_ele.removeAttribute("style");
         tab.legend.removeAttribute("style");
+      }
       else
-        tab.legend.style.width = Math.floor(tab.legend_orig_width * scale) + "px";
-    });  
+      {
+        tab.tab_ele.style.paddingRight = target_padding + "px";
+        tab.legend.style.width = Math.floor((tab.legend_orig_width - 1) * scale) + "px";
+      } 
+    }, this);  
   };
 
   this._onwindowcontrolscreated = function(msg)

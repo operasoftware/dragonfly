@@ -1757,7 +1757,6 @@ info {
   vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .block-content
@@ -1767,5 +1766,4 @@ info {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 } 
