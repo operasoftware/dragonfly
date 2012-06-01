@@ -83,6 +83,19 @@ test("uri", function()
   var uri = new URI("foo/bar/");
   equal(uri.short_distinguisher, "bar");
   
+  var uri = new URI("data:text/html,<p>?a=b#a");
+  equal(uri.protocol, "data:");
+  equal(uri.host, "");
+  equal(uri.pathname, "text/html,<p>?a=b");
+  equal(uri.search, "");
+  equal(uri.hash, "#a");
+  equal(uri.filename, "");
+  equal(uri.extension, "");
+  equal(uri.dir_pathname, "");
+  equal(uri.abs_dir, "");
+  deepEqual(uri.params, []);
+  deepEqual(uri.path_parts, []);
+  equal(uri.short_distinguisher, "data:text/html,<p>?a=b");
 });
 
 
