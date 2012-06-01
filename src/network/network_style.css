@@ -444,6 +444,7 @@
 {
   display: table-cell;
   vertical-align: top;
+  white-space: nowrap;
 }
 
 .network-tooltip-container .gap_title
