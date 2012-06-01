@@ -12,7 +12,7 @@ var URIPrototype = function(uri_prop_name)
     
     hash
     host
-    pathname
+    pathname // for data: URIs, this is everything after "data:"
     protocol
     search
     filename
@@ -44,6 +44,9 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("filename", function()
   {
+    if (this._is_data_uri)
+      return "";
+
     if (!this._filename && (this._is_parsed || this[uri_prop_name]))
     {
       var pos = this.pathname.lastIndexOf("/");
@@ -60,11 +63,16 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("extension", function()
   {
+    if (this._is_data_uri)
+      return "";
+
     if (!this._extension && (this._is_parsed || this[uri_prop_name]))
     {
       var pos = this.filename.lastIndexOf(".");
       if (pos > -1)
         this._extension = this.filename.slice(pos + 1);
+      else
+        this._extension = "";
     }
 
     return this._extension;  
@@ -74,6 +82,9 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("dir_pathname", function()
   {
+    if (this._is_data_uri)
+      return "";
+
     if (!this._dir_pathname && (this._is_parsed || this[uri_prop_name]))
     {
       var pos = this.pathname.lastIndexOf("/");
@@ -90,6 +101,9 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("abs_dir", function()
   {
+    if (this._is_data_uri)
+      return "";
+
     if (!this._abs_dir && (this._is_parsed || this[uri_prop_name]))
       this._abs_dir = (this.protocol ? this.protocol + "//" : "") +
                       this.host + this.dir_pathname;
@@ -101,6 +115,9 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("origin", function()
   {
+    if (this._is_data_uri)
+      return "";
+
     if (!this._origin && (this._is_parsed || this[uri_prop_name]))
       this._origin = this.protocol + "//" + this.host;
 
@@ -137,6 +154,9 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("short_distinguisher", function()
   {
+    if (this._is_data_uri)
+      return this._protocol + this._pathname;
+
     if (!this._short_distinguisher && (this._is_parsed || this[uri_prop_name]))
     {
       // When pathname ends with "/", and there is search or hash,
@@ -165,6 +185,7 @@ var URIPrototype = function(uri_prop_name)
 
     if (uri)
     {
+      this._is_data_uri = uri.indexOf("data:") === 0;
       var val = uri;
 
       var pos = val.indexOf("#");
@@ -177,7 +198,7 @@ var URIPrototype = function(uri_prop_name)
         this._hash = "";
 
       pos = val.indexOf("?");
-      if (pos > -1)
+      if (pos > -1 && !this._is_data_uri)
       {
         this._search = val.slice(pos);
         val = val.slice(0, pos);
@@ -197,28 +218,32 @@ var URIPrototype = function(uri_prop_name)
         this._protocol = "";
 
       pos = val.indexOf("/");
-      if (pos > -1)
+      if (pos > -1 && !this._is_data_uri)
       {
         this._host = val.slice(0, pos);
         val = val.slice(pos);
       }
-      else if (this._protocol)
+      else if (this._protocol && !this._is_data_uri)
       {
-        this._host = val
+        this._host = val;
       }
       else
         this._host = "";
 
+      // pathname for a data: URI is everything after "data:" for consistency with
+      // some browsers
       if (val)
         this._pathname = val;
       else
         this._pathname = "";
 
-      if (this._pathname)
+      if (this._pathname && !this._is_data_uri)
         this._path_parts = this._pathname.split("/").filter(Boolean);
       else
         this._path_parts = [];
     }
+
+    if (this._is_data_uri) debugger
 
     this._is_parsed = true;
   };
