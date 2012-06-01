@@ -179,7 +179,7 @@ templates.network_log_url_list_entry = function(selected, entry)
   return ["li",
            templates.network_request_icon(entry),
            ["span",
-             entry.short_distinguisher || entry.human_url,
+             (entry.short_distinguisher || entry.human_url).slice(0, 200),
              "class", "network-url",
              "data-tooltip", "network-url-list-tooltip"
            ],
