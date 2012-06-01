@@ -182,7 +182,7 @@ var URIPrototype = function(uri_prop_name)
       }
       else if (this._is_data_uri)
       {
-        this._short_distinguisher = this._protocol + this._pathname;
+        this._short_distinguisher = this._protocol + this._pathname + this._hash;
       }
       else
         this._short_distinguisher = this.host;
