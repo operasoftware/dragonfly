@@ -179,7 +179,7 @@ templates.network_log_url_list_entry = function(selected, entry)
   return ["li",
            templates.network_request_icon(entry),
            ["span",
-             entry.short_distinguisher || entry.human_url,
+             (entry.short_distinguisher || entry.human_url).slice(0, 200),
              "class", "network-url",
              "data-tooltip", "network-url-list-tooltip"
            ],
@@ -414,7 +414,8 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
     var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
     event_rows.push(["tr",
                       ["td", duration.toFixed(2) + " ms", "class", "time_data"],
-                      ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
+                      ["td", ui_strings.S_HTTP_LABEL_DURATION, "class", "gap_title"],
+                     "class", "sum"]);
 
     if (!templates.network_tt_vert_padding)
     {
