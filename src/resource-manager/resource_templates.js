@@ -184,7 +184,7 @@ templates.resource_detail =
 				'class','resource-detail-overview-url'
 			],
 			['span',
-				info.mimeType+' treated as '+info.type,
+				info.mimeType+' treated as '+info.type +' '+[resource.data.meta],
 				'class','resource-detail-overview-type'
 			],
 			['span',

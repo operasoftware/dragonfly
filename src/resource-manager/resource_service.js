@@ -264,7 +264,7 @@ cls.ResourceContext = function(data)
       if (!frame.groups[type]){ type='other'; }
 
       frame.groups[type].push( res.id );
-      this.resourcesUrlDict[ res.url.url ] = res.id;
+      this.resourcesUrlDict[ res.url ] = res.id;
 /*
       if (!res.data)
       {
@@ -343,13 +343,18 @@ cls.Resource = function(id)
   this._init(id);
 }
 
-var ResourcePrototype = function()
+cls.ResourcePrototype = function()
 {
+  this._super_init = this._init;
   this._init = function(id)
   {
+    this._super_init();
+
     this.id = id;
     this.finished = false;
-    this.url = null;
+//    debugger;
+//    this.url = 'http://localhost:8002/dragonfly-stp-1-work/src/client-en.xml';
+    //this.url = null;
     this.location = "No URL";
     this.result = null;
     this.mime = null;
@@ -358,13 +363,14 @@ var ResourcePrototype = function()
     this.type = null;
     this.urltype = null;
     this.invalid = false;
+
   }
 
   this.update = function(eventname, eventdata)
   {
     if (eventname == "urlload")
     {
-      this.url = new URI( eventdata.url );
+      this.url = eventdata.url; // new URI( eventdata.url );
       this.urltype = eventdata.urlType;
       // fixme: complete list
       this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
@@ -374,7 +380,7 @@ var ResourcePrototype = function()
     {
       if (!this.url)
       {
-        this.url = new URI( eventdata.url );
+        this.url = eventdata.url;
       }
       this.result = eventdata.result;
       this.mime = eventdata.mimeType;
@@ -414,10 +420,6 @@ var ResourcePrototype = function()
     }
   }
 
-  this.get_source = function()
-  {
-    // cache, file, http, https ..
-  }
 
   this._guess_type = function()
   {
@@ -453,8 +455,14 @@ var ResourcePrototype = function()
     }
     else
     {
-      this.human_url = this.url.url;
+      this.human_url = this.url; //.url;
     }
   }
 }
+
+window.cls.ResourcePrototype.prototype = new URIPrototype("url");
+window.cls.Resource.prototype = new window.cls.ResourcePrototype();
+/*
+ResourcePrototype.prototype = new URIPrototype("url");
 cls.Resource.prototype = new ResourcePrototype();
+*/

@@ -21,7 +21,6 @@ var URIPrototype = function(uri_prop_name)
   */
 
   [
-    "url",
     "hash",
     "host",
     "pathname",
@@ -32,7 +31,7 @@ var URIPrototype = function(uri_prop_name)
     this.__defineGetter__(prop, function()
     {
       if (!this._is_parsed)
-        this._init();
+        this._parse();
 
       return this["_" + prop];  
     });
@@ -94,7 +93,7 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineSetter__("origin", function() {});
 
-  this._init = function(uri)
+  this._parse = function(uri)
   {
     if (!uri && this[uri_prop_name])
       uri = this[uri_prop_name];
@@ -102,7 +101,6 @@ var URIPrototype = function(uri_prop_name)
     if (uri)
     {
       var val = uri;
-      this._url = uri;
 
       var pos = val.indexOf("#");
       if (pos > -1)
@@ -150,11 +148,16 @@ var URIPrototype = function(uri_prop_name)
         this._pathname = val;
       else
         this._pathname = "";
+
+      this._is_parsed = true;
     }
 
-    this._is_parsed = true;
   };
 
+  this._init = function(uri)
+  {
+    this._parse(uri);
+  }
 };
 
 URI.prototype = new URIPrototype();

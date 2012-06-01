@@ -57,6 +57,12 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 			};
 */
 			resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
+			if(resource.type=='image')
+			{
+				var i=new Image();
+				i.src=resource.data.content.stringData;
+				resource.data.meta = i.naturalWidth+'x'+i.naturalHeight;
+			}
 			if (this.resourceId==id){ this.resource = resource; }
 		}
 		this.update();
