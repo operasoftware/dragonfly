@@ -370,7 +370,7 @@ cls.ResourcePrototype = function()
   {
     if (eventname == "urlload")
     {
-      this.url = eventdata.url; // new URI( eventdata.url );
+      this.url = eventdata.url;
       this.urltype = eventdata.urlType;
       // fixme: complete list
       this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
@@ -455,14 +455,10 @@ cls.ResourcePrototype = function()
     }
     else
     {
-      this.human_url = this.url; //.url;
+      this.human_url = this.url;
     }
   }
 }
 
 window.cls.ResourcePrototype.prototype = new URIPrototype("url");
 window.cls.Resource.prototype = new window.cls.ResourcePrototype();
-/*
-ResourcePrototype.prototype = new URIPrototype("url");
-cls.Resource.prototype = new ResourcePrototype();
-*/
