@@ -82,9 +82,17 @@ var TopTabsBase = function()
         width += Number(tab_ele.getAttribute("data-orig-width"));
         tabs.push({tab_ele: tab_ele,
                    legend: legend,
-                   legend_orig_width: Number(legend.getAttribute("data-orig-width"))});
+                   legend_orig_width: Number(legend.getAttribute("data-orig-width")) - 1});
       }
     }
+    tabs.sort(function(a, b)
+    {
+      return a.legend_orig_width > b.legend_orig_width 
+           ? 1
+           : a.legend_orig_width < b.legend_orig_width
+           ? -1
+           : 0;
+    });
     var has_space = width <= this.width;
     var scale = 1;
     var delta_padding = 0;
@@ -104,11 +112,20 @@ var TopTabsBase = function()
         target_padding = this._tab_right_padding - delta_padding;
         delta -= count * delta_padding;
       }
+      else
+      {
+        var index = 0;
+        while (delta < 0)
+        {
+          tabs[index++].legend_orig_width += 1;
+          delta++;
+        }
+      }
       if (delta > 0)
       {
         var orig_sum_labels = tabs.reduce(function(sum, tab)
         {
-          return sum + (tab.legend_orig_width - 1);
+          return sum + tab.legend_orig_width;
         }, 0);
         scale = (orig_sum_labels - delta) / orig_sum_labels;
       }
@@ -123,7 +140,7 @@ var TopTabsBase = function()
       else
       {
         tab.tab_ele.style.paddingRight = target_padding + "px";
-        tab.legend.style.width = Math.floor((tab.legend_orig_width - 1) * scale) + "px";
+        tab.legend.style.width = Math.floor(tab.legend_orig_width * scale) + "px";
       } 
     }, this);  
   };

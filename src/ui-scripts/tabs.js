@@ -313,8 +313,96 @@ var TabsBase = function()
     }
 
     this.update(force_redraw);
+    this.onresize();
 
   }
+
+  this.onresize = function()
+  {
+    var tabbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if (!tabbar || this.is_hidden)
+      return;
+
+    var tab_eles = tabbar.querySelectorAll("tab");
+    var tabs = [];
+    var width = 0;
+    for (var i = 0, tab_ele; tab_ele = tab_eles[i]; i++)
+    {
+      if (!this._tab_right_padding)
+        this._store_css_tab_values(tab_ele);
+
+      if (!tab_ele.hasAttribute("data-orig-width"))
+        tab_ele.setAttribute("data-orig-width", String(tab_ele.offsetWidth));
+
+      var tab_width = Number(tab_ele.getAttribute("data-orig-width"));
+      width += tab_width + this._tab_margin;
+      tabs.push({tab_ele: tab_ele,
+                 orig_width: tab_width - this._tab_border_padding});
+    }
+    var has_space = width <= this.width;
+    var scale = 1;
+    var delta_padding = 0;
+    var target_padding = this._tab_right_padding;
+    var count = tabs.length;
+    if (!has_space)
+    {
+      var delta = width - this.width;
+      delta -= count;
+      if (delta > 0)
+      {
+        delta_padding = Math.ceil(delta / count);
+        if (delta_padding > this._tab_right_padding)
+          delta_padding = this._tab_right_padding;
+
+        target_padding = this._tab_right_padding - delta_padding;
+        delta -= count * delta_padding;
+      }
+      if (delta > 0)
+      {
+        var orig_sum_labels = tabs.reduce(function(sum, tab)
+        {
+          return sum + (tab.orig_width - 1);
+        }, 0);
+        scale = (orig_sum_labels - delta) / orig_sum_labels;
+      }
+    }
+    tabs.forEach(function(tab)
+    {
+      if (has_space)
+        tab.tab_ele.removeAttribute("style");
+      else
+      {
+        tab.tab_ele.style.paddingRight = target_padding + "px";
+        tab.tab_ele.style.width = Math.floor((tab.orig_width - 1) * scale) + "px";
+      } 
+    }, this);  
+  };
+
+  this._store_css_tab_values = function(tab_ele)
+  {
+    var value = window.getComputedStyle(tab_ele).paddingRight;
+    Tabs.prototype._tab_right_padding = parseInt(value);
+    value = 
+    [
+      "marginLeft",
+      "marginRight",
+    ].reduce(function(sum, prop)
+    {
+      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
+    }, 0);
+    Tabs.prototype._tab_margin = value;
+    value = 
+    [
+      "paddingLeft",
+      "paddingRight",
+      "borderLeftWidth",
+      "borderRightWidth",
+    ].reduce(function(sum, prop)
+    {
+      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
+    }, 0);
+    Tabs.prototype._tab_border_padding = value;
+  };
 
   this.on_view_inizialized = function(msg)
   {
@@ -337,11 +425,6 @@ var TabsBase = function()
     };
   }
   
-  this.onresize = function()
-  {
-    // TODO
-  };
-
   this.init = function(cell, tabbar)
   {
     this.tabs = [];
