@@ -6,37 +6,49 @@
  */
 var ProfilerView = function(id, name, container_class, html, default_handler)
 {
-  // Event types
-  var GENERIC = ProfilerService.GENERIC;
-  var PROCESS = ProfilerService.PROCESS;
-  var DOCUMENT_PARSING = ProfilerService.DOCUMENT_PARSING;
-  var CSS_PARSING = ProfilerService.CSS_PARSING;
-  var SCRIPT_COMPILATION = ProfilerService.SCRIPT_COMPILATION;
-  var THREAD_EVALUATION = ProfilerService.THREAD_EVALUATION;
-  var REFLOW = ProfilerService.REFLOW;
-  var STYLE_RECALCULATION = ProfilerService.STYLE_RECALCULATION;
-  var CSS_SELECTOR_MATCHING = ProfilerService.CSS_SELECTOR_MATCHING;
-  var LAYOUT = ProfilerService.LAYOUT;
-  var PAINT = ProfilerService.PAINT;
+  var SUCCESS = 0;
 
-  // Modes
-  var MODE_ALL = 1;
-  var MODE_REDUCE_UNIQUE_TYPES = 2;
-  var MODE_REDUCE_UNIQUE_EVENTS = 3;
-  var MODE_REDUCE_ALL = 4;
+  var event_types = ProfilerService.EventTypes;
+  var TYPE_GENERIC = event_types.GENERIC;
+  var TYPE_PROCESS = event_types.PROCESS;
+  var TYPE_DOCUMENT_PARSING = event_types.DOCUMENT_PARSING;
+  var TYPE_CSS_PARSING = event_types.CSS_PARSING;
+  var TYPE_SCRIPT_COMPILATION = event_types.SCRIPT_COMPILATION;
+  var TYPE_THREAD_EVALUATION = event_types.THREAD_EVALUATION;
+  var TYPE_REFLOW = event_types.REFLOW;
+  var TYPE_STYLE_RECALCULATION = event_types.STYLE_RECALCULATION;
+  var TYPE_CSS_SELECTOR_MATCHING = event_types.CSS_SELECTOR_MATCHING;
+  var TYPE_LAYOUT = event_types.LAYOUT;
+  var TYPE_PAINT = event_types.PAINT;
+
+  var modes = ProfilerService.Modes;
+  var MODE_ALL = modes.ALL;
+  var MODE_REDUCE_UNIQUE_TYPES = modes.REDUCE_UNIQUE_TYPES;
+  var MODE_REDUCE_UNIQUE_EVENTS = modes.REDUCE_UNIQUE_EVENTS;
+  var MODE_REDUCE_ALL = modes.REDUCE_ALL;
 
   var SESSION_ID = 0;
   var TIMELINE_LIST = 2;
   var TIMELINE_ID = 0;
 
-  var AGGREGATED_EVENTS_WIDTH = parseInt(document.styleSheets.getDeclaration("#profiler-timeline").left) || 0;
+  var AGGREGATED_EVENTS_WIDTH = parseInt(document.styleSheets.getDeclaration(".profiler-timeline").left) || 0;
 
   // Parent-children relationships
   this._children = {};
-  this._children[STYLE_RECALCULATION] = CSS_SELECTOR_MATCHING;
+  this._children[TYPE_STYLE_RECALCULATION] = TYPE_CSS_SELECTOR_MATCHING;
 
-  this._default_types = [/*GENERIC, PROCESS,*/ DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION,
-                         THREAD_EVALUATION, REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
+  this._default_types = [
+    //TYPE_GENERIC,
+    //TYPE_PROCESS,
+    TYPE_DOCUMENT_PARSING,
+    TYPE_CSS_PARSING,
+    TYPE_SCRIPT_COMPILATION,
+    TYPE_THREAD_EVALUATION,
+    TYPE_REFLOW,
+    TYPE_STYLE_RECALCULATION,
+    TYPE_LAYOUT,
+    TYPE_PAINT
+  ];
 
   this._reset = function()
   {
@@ -70,13 +82,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._stop_profiler = function()
   {
-    this._container.clearAndRender(this._templates.empty("Stopped profiling. Calculating..."));
+    this._container.clearAndRender(this._templates.empty("Calculating…"));
     this._profiler.stop_profiler(this._current_session_id, this._handle_stop_profiler.bind(this));
   };
 
   this._handle_stop_profiler = function(status, msg)
   {
-    if (status === 0)
+    if (status === SUCCESS)
     {
       if (this._old_session_id)
         this._profiler.release_session(this._old_session_id);
@@ -130,13 +142,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
+    var has_details_events = this._table && this._table.get_data().length > 0;
     var template = this._timeline_list.eventList && this._timeline_list.eventList[0]
-        ? this._templates.main(this._templates.legend(this._aggregated_list),
+        ? this._templates.main(has_details_events,
+                               this._templates.legend(this._aggregated_list),
                                this._templates.event_list_all(this._timeline_list,
                                                               this._event_id,
                                                               this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
                                this._templates.details(this._table),
-                               this._templates.status(this._templates.format_time(this._details_time)))
+                               this._templates.status(this._details_time))
         : this._templates.empty("Press the Record button to start profiling");
     this._container.clearAndRender(template);
   };
@@ -165,7 +179,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._update_view();
   };
 
-  this._start_stop_profiler = function(event, target)
+  /**
+   * Starts the profiler if it's active, or stops it otherwise.
+   */
+  this._start_stop_profiler = function()
   {
     if (this._profiler.is_active)
       this._stop_profiler();
@@ -218,7 +235,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var type = events.eventList && events.eventList[0] && events.eventList[0].type;
     switch (type)
     {
-    case CSS_SELECTOR_MATCHING:
+    case TYPE_CSS_SELECTOR_MATCHING:
       return events.eventList.map(function(event) {
         return {
           selector: event.cssSelectorMatching.selector,
@@ -237,6 +254,29 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._show_details_list();
   };
 
+  // TODO: this should not be in the view
+  /**
+   * Get an event based on its ID. If no event has the ID, returns null.
+   *
+   * @param {Number} id The id of the event to return
+   * @return {Event|null} An event in case one was found with ID `id`,
+   *         otherwise `null`.
+   */
+  this._get_event_by_id = function(id)
+  {
+    var timeline_list = this._timeline_list;
+    var events = timeline_list && timeline_list.eventList;
+    if (events)
+    {
+      for (var i = 0, event; event = events[i]; i++)
+      {
+        if (event.eventID === id)
+          return event;
+      }
+    }
+    return null;
+  };
+
   this._zoom_timeline = function(event, target)
   {
   };
@@ -245,7 +285,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (this._current_session_id)
       this._profiler.release_session(this._old_session_id);
-
     this._reset();
     window.services.scope.enable_profile(window.app.profiles.PROFILER);
   };
@@ -263,6 +302,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._profiler = new ProfilerService();
     this._templates = new ProfilerTemplates();
     this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
+    this._tooltip = Tooltips.register("profiler-event", true, false);
+
+    this._tooltip.ontooltip = function(event, target) {
+      var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+      var event = this._get_event_by_id(id);
+      if (event)
+        this._tooltip.show(this._templates.get_title_all(event));
+    }.bind(this);
 
     this._reset();
 

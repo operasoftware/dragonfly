@@ -75,15 +75,24 @@ var ProfilerService = function()
   this._init();
 };
 
-ProfilerService.GENERIC = 1;
-ProfilerService.PROCESS = 2;
-ProfilerService.DOCUMENT_PARSING = 3;
-ProfilerService.CSS_PARSING = 4;
-ProfilerService.SCRIPT_COMPILATION = 5;
-ProfilerService.THREAD_EVALUATION = 6;
-ProfilerService.REFLOW = 7;
-ProfilerService.STYLE_RECALCULATION = 8;
-ProfilerService.CSS_SELECTOR_MATCHING = 9;
-ProfilerService.LAYOUT = 10;
-ProfilerService.PAINT = 11;
+ProfilerService.EventTypes = {
+  GENERIC: 1,
+  PROCESS: 2,
+  DOCUMENT_PARSING: 3,
+  CSS_PARSING: 4,
+  SCRIPT_COMPILATION: 5,
+  THREAD_EVALUATION: 6,
+  REFLOW: 7,
+  STYLE_RECALCULATION: 8,
+  CSS_SELECTOR_MATCHING: 9,
+  LAYOUT: 10,
+  PAINT: 11
+};
+
+ProfilerService.Modes = {
+  ALL: 1,
+  REDUCE_UNIQUE_TYPES: 2,
+  REDUCE_UNIQUE_EVENTS: 3,
+  REDUCE_ALL: 4
+};
 

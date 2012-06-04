@@ -1,14 +1,14 @@
-#profiler-legend
+.profiler-legend
 {
   position: absolute;
   left: 0;
   top: 20px;
   height: 120px;
-  width: 149px;
+  width: 150px;
   border-top: 1px solid #e6e6e6;
 }
 
-#profiler-timeline
+.profiler-timeline
 {
   position: absolute;
   left: 150px;
@@ -17,7 +17,7 @@
   border-top: 1px solid #e6e6e6;
 }
 
-#profiler-details-list
+.profiler-details-list
 {
   position: absolute;
   top: 165px;
@@ -27,7 +27,12 @@
   width: 100%;
 }
 
-#profiler-status
+.profiler-details-list.profiler-no-status
+{
+  bottom: 0;
+}
+
+.profiler-status
 {
   position: absolute;
   bottom: 0;
@@ -72,7 +77,13 @@
 
 .profiler-timeline-row.odd
 {
-  background: #f7f7f7;
+  background-color: #f7f7f7;
+}
+
+.profiler-legend-row
+{
+  background-position: 0 15px;
+  background-repeat: no-repeat;
 }
 
 .profiler-legend-label
@@ -84,8 +95,9 @@
 .profiler-legend-amount
 {
   position: absolute;
-  right: 0;
-  color: #9c9c9c;
+  right: 2px;
+  color: #666;
+  text-shadow: 1px 1px #fff;
 }
 
 .profiler-timeline-row:hover .profiler-legend-label
@@ -120,7 +132,7 @@
 .profiler-event
 {
   position: absolute;
-  min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
+  min-width: 1px;
   height: 8px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
   border-radius: 2px;
   z-index: 2;
@@ -128,25 +140,26 @@
 
 .profiler-event-interval
 {
+  min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
   margin: 3px 0;
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .profiler-event-interval[data-isexpandable="true"]:hover
 {
-  box-shadow: 0 0 0 4px #ceddf5;
+  box-shadow: 0 0 0 3px #ceddf5;
   z-index: 4;
 }
 
 .profiler-event-interval[data-isexpandable="false"]:hover
 {
-  box-shadow: 0 0 0 4px #ddd;
+  box-shadow: 0 0 0 3px #ddd;
   z-index: 4;
 }
 
 .profiler-event-interval.selected
 {
-  box-shadow: 0 0 0 4px #769fe1;
+  box-shadow: 0 0 0 3px #769fe1;
   z-index: 3;
 }
 
@@ -267,5 +280,15 @@
 .event-type-11.profiler-timeline-selftime
 {
   background-color: #f45353;
+}
+
+.profiler-event-tooltip
+{
+  width: 200px;
+}
+
+.profiler-event-tooltip-info
+{
+  padding-top: 30px;
 }
 

@@ -5,59 +5,71 @@
  */
 var ProfilerTemplates = function()
 {
-  var GENERIC = ProfilerService.GENERIC;
-  var PROCESS = ProfilerService.PROCESS;
-  var DOCUMENT_PARSING = ProfilerService.DOCUMENT_PARSING;
-  var CSS_PARSING = ProfilerService.CSS_PARSING;
-  var SCRIPT_COMPILATION = ProfilerService.SCRIPT_COMPILATION;
-  var THREAD_EVALUATION = ProfilerService.THREAD_EVALUATION;
-  var REFLOW = ProfilerService.REFLOW;
-  var STYLE_RECALCULATION = ProfilerService.STYLE_RECALCULATION;
-  var CSS_SELECTOR_MATCHING = ProfilerService.CSS_SELECTOR_MATCHING;
-  var LAYOUT = ProfilerService.LAYOUT;
-  var PAINT = ProfilerService.PAINT;
+  var event_types = ProfilerService.EventTypes;
+  var TYPE_GENERIC = event_types.GENERIC;
+  var TYPE_PROCESS = event_types.PROCESS;
+  var TYPE_DOCUMENT_PARSING = event_types.DOCUMENT_PARSING;
+  var TYPE_CSS_PARSING = event_types.CSS_PARSING;
+  var TYPE_SCRIPT_COMPILATION = event_types.SCRIPT_COMPILATION;
+  var TYPE_THREAD_EVALUATION = event_types.THREAD_EVALUATION;
+  var TYPE_REFLOW = event_types.REFLOW;
+  var TYPE_STYLE_RECALCULATION = event_types.STYLE_RECALCULATION;
+  var TYPE_CSS_SELECTOR_MATCHING = event_types.CSS_SELECTOR_MATCHING;
+  var TYPE_LAYOUT = event_types.LAYOUT;
+  var TYPE_PAINT = event_types.PAINT;
 
   // TODO: use ui strings
   var type_map = {};
-  type_map[GENERIC] = "Generic";
-  type_map[PROCESS] = "Process";
-  type_map[DOCUMENT_PARSING] = "Document parsing";
-  type_map[CSS_PARSING] = "CSS parsing";
-  type_map[SCRIPT_COMPILATION] = "Script compilation";
-  type_map[THREAD_EVALUATION] = "Thread evaluation";
-  type_map[REFLOW] = "Reflow";
-  type_map[STYLE_RECALCULATION] = "Style recalculation";
-  type_map[CSS_SELECTOR_MATCHING] = "CSS selector matching";
-  type_map[LAYOUT] = "Layout";
-  type_map[PAINT] = "Paint";
+  type_map[TYPE_GENERIC] = "Generic";
+  type_map[TYPE_PROCESS] = "Process";
+  type_map[TYPE_DOCUMENT_PARSING] = "Document parsing";
+  type_map[TYPE_CSS_PARSING] = "CSS parsing";
+  type_map[TYPE_SCRIPT_COMPILATION] = "Script compilation";
+  type_map[TYPE_THREAD_EVALUATION] = "Thread evaluation";
+  type_map[TYPE_REFLOW] = "Reflow";
+  type_map[TYPE_STYLE_RECALCULATION] = "Style recalculation";
+  type_map[TYPE_CSS_SELECTOR_MATCHING] = "CSS selector matching";
+  type_map[TYPE_LAYOUT] = "Layout";
+  type_map[TYPE_PAINT] = "Paint";
 
   var BAR_MIN_WIDTH = 5; // min-width for .profiler-event
   var BAR_HEIGHT = 18; // offset height of .profiler-timeline-row
 
-  this._order = [DOCUMENT_PARSING, CSS_PARSING, SCRIPT_COMPILATION, THREAD_EVALUATION,
-                 REFLOW, STYLE_RECALCULATION, LAYOUT, PAINT];
-  this._expandables = [STYLE_RECALCULATION];
+  this._order = [
+    TYPE_DOCUMENT_PARSING,
+    TYPE_CSS_PARSING,
+    TYPE_SCRIPT_COMPILATION,
+    TYPE_THREAD_EVALUATION,
+    TYPE_REFLOW,
+    TYPE_STYLE_RECALCULATION,
+    TYPE_LAYOUT,
+    TYPE_PAINT
+  ];
+  this._expandables = [TYPE_STYLE_RECALCULATION];
 
-  this.main = function(legend, timeline, details_list, status)
+  this.main = function(has_details_events, legend, timeline, details_list, status)
   {
     return [
       ["div",
          legend,
-       "id", "profiler-legend"
+       "class", "profiler-legend"
       ],
       ["div",
          timeline,
-       "id", "profiler-timeline",
+       "class", "profiler-timeline",
        "handler", "profiler-zoom-timeline"
       ],
       ["div",
          details_list,
-       "id", "profiler-details-list"
+       "class", "profiler-details-list" + (has_details_events ? "" : " profiler-no-status")
       ],
-      ["div",
-         status,
-       "id", "profiler-status"
-      ]
+      (has_details_events
+       ? ["div",
+            status,
+          "class", "profiler-status"
+         ]
+       : []
+      )
     ];
   };
 
@@ -74,6 +86,7 @@ var ProfilerTemplates = function()
         var index = this._order.indexOf(event.type);
         if (index !== -1)
         {
+          var percentage = 100 - Math.round(event.time / total_time * 100);
           template[index] =
             ["div",
                ["span",
@@ -81,15 +94,15 @@ var ProfilerTemplates = function()
                 "class", "profiler-legend-label"
                ],
                ["span",
-                  // This is an approximation, the total will not necessarily
-                  // end up as 100 %
-                  (Math.round(event.time / total_time * 100)) + " %",
+                  this.format_time(event.time),
                 "class", "profiler-legend-amount"
                ],
-             "class", "profiler-timeline-row" + (index % 2 ? " odd" : ""),
-             "title", this.get_title_aggregated(event),
+             "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
              "data-event-type", String(event.type),
-             "handler", "profiler-get-event-details"
+             "handler", "profiler-get-event-details",
+             "style", "background-image: -o-linear-gradient(0deg," +
+                                                           "transparent " + percentage + "%," +
+                                                           "rgba(118, 159, 225, 0.90) 100%);"
             ];
         }
       }, this);
@@ -113,7 +126,7 @@ var ProfilerTemplates = function()
          "style", "left:" + left + "px"
         ],
         ["div",
-           this.format_time(marker_time * i),
+           Math.round(marker_time * i) + " ms",
          "class", "profiler-timeline-marker-time",
          "style", "left:" + left + "px"
         ]
@@ -158,6 +171,7 @@ var ProfilerTemplates = function()
         var self_time = Math.round(event.time * ms_unit);
         var event_start = Math.round(event.interval.start * ms_unit);
         var column = this._order.indexOf(event.type);
+        var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
         template.push(
           // Interval
           ["div",
@@ -170,12 +184,13 @@ var ProfilerTemplates = function()
              "width: " + interval + "px;" +
              "left: " + event_start + "px;" +
              "top:" + ((column * BAR_HEIGHT) + 1) + "px;",
-           "title", this.get_title_all(event),
-           "class", "profiler-event profiler-event-interval event-type-" + event.type + (event.eventID == selected_id ? " selected" : ""),
+           "class", "profiler-event profiler-event-interval event-type-" + event.type +
+                    (event.eventID == selected_id ? " selected" : ""),
            "data-event-id", String(event.eventID),
            "data-event-type", String(event.type),
            "handler", "profiler-get-event-details",
-           "data-isexpandable", String(this._expandables.indexOf(event.type) != -1 && event.childCount > 1)
+           "data-isexpandable", String(is_expandable),
+           "data-tooltip", "profiler-event"
           ]
         );
       }, this);
@@ -229,7 +244,7 @@ var ProfilerTemplates = function()
 
   this.status = function(time)
   {
-    return ["div", "Total time: " + time];
+    return ["div", "Total self time: " + this.format_time(time)];
   };
 
   this.no_events = function()
@@ -253,11 +268,33 @@ var ProfilerTemplates = function()
   this.get_title_all = function(event)
   {
     var details = this.get_details_title(event);
-    return type_map[event.type] + ", " +
-           this.format_time(event.interval.end - event.interval.start) +
-           " (self-time: " + this.format_time(event.time) + ") at " +
-           this.format_time(event.interval.start) +
-           (details ? " [" + details + "]" : "");
+    return (
+      ["div",
+        ["h2",
+           type_map[event.type]
+        ],
+        ["div",
+          this.get_title_interval_bar(event),
+          ["ul",
+             ["li",
+                "Start: " + this.format_time(event.interval.start)
+             ],
+             ["li",
+                "Duration: " + this.format_time(event.interval.end - event.interval.start)
+             ],
+             ["li",
+                "Self time: " + this.format_time(event.time)
+             ],
+             (details
+              ? details
+              : []
+             )
+          ],
+         "class", "profiler-event-tooltip-info"
+        ],
+       "class", "profiler-event-tooltip"
+      ]
+    );
   };
 
   this.get_title_aggregated = function(event)
@@ -269,9 +306,9 @@ var ProfilerTemplates = function()
   {
     var details = this.get_details_title(event);
     return type_map[event.type] + "," +
-           " self-time: " + this.format_time(event.time) +
+           " self time: " + this.format_time(event.time) +
            " [" + event.hits + " hits" +
-             (details ? ", " + details : "") +
+             (details ? details : []) +
            "]";
   };
 
@@ -279,32 +316,84 @@ var ProfilerTemplates = function()
   {
     switch (event.type)
     {
-    case CSS_SELECTOR_MATCHING:
-      return event.cssSelectorMatching.selector;
+    case TYPE_CSS_SELECTOR_MATCHING:
+      return (
+        ["li",
+           "Selector: " + event.cssSelectorMatching.selector
+        ]
+      );
 
-    case THREAD_EVALUATION:
-      return event.threadEvaluation.eventName;
+    case TYPE_THREAD_EVALUATION:
+      var event = event.threadEvaluation.eventName;
+      return event
+           ? ["li",
+                "Event: " + event
+             ]
+           : [];
 
-    case DOCUMENT_PARSING:
-      return event.documentParsing.url;
+    case TYPE_DOCUMENT_PARSING:
+      var url = event.documentParsing.url;
+      return url
+           ? ["li",
+                "URL: " + url
+             ]
+           : [];
 
-    case CSS_PARSING:
-      return event.cssParsing.url;
+    case TYPE_CSS_PARSING:
+      var url = event.cssParsing.url;
+      return url
+           ? ["li",
+                "URL: " + url
+             ]
+           : [];
 
-    case SCRIPT_COMPILATION:
-      // TODO: type
-      return event.scriptCompilation.url;
+    case TYPE_SCRIPT_COMPILATION:
+      var url = event.scriptCompilation.url;
+      return url
+           ? ["li",
+                "URL: " + url
+             ]
+           : [];
 
-    case PAINT:
+    case TYPE_PAINT:
       var area = event.paint.area;
-      return area.w + "×" + area.h + " at (" + area.x + "," + area.y + ")";
+      return (
+        [
+          ["li",
+             "Location: " + area.x + ", " + area.y
+          ],
+          ["li",
+             "Area: " + area.w + "×" + area.h
+          ]
+        ]
+      );
     }
-    return "";
+    return [];
+  };
+
+  this.get_title_interval_bar = function(event)
+  {
+    var WIDTH = 200;
+    var interval = event.interval.end - event.interval.start;
+    var self_time = event.time;
+    var ms_unit = WIDTH / interval;
+    return (
+      // Interval
+      ["div",
+         // Self-time
+         ["div",
+          "style", "width: " + Math.round(self_time * ms_unit) + "px;",
+          "class", "profiler-event profiler-timeline-selftime event-type-" + event.type
+         ],
+       "style", "width: " + Math.round(interval * ms_unit) + "px;",
+       "class", "profiler-event profiler-event-interval event-type-" + event.type
+      ]
+    );
   };
 
   this._tabledefs = {};
   // TODO: implement sorters. E.g. hits should sort by hits and then by time
-  this._tabledefs[CSS_SELECTOR_MATCHING] = {
+  this._tabledefs[TYPE_CSS_SELECTOR_MATCHING] = {
     column_order: ["selector", "time", "hits"],
     // TODO: ui strings
     columns: {
