@@ -156,14 +156,10 @@ cls.JSSourceTooltip = function(view)
       if (script_text != _last_script_text)
       {
         _last_script_text = script_text;
-        var rt_id = window.runtimes.getSelectedRuntimeId();
-        var thread_id = window.stop_at.getThreadId();
-        var frame_index = window.stop_at.getSelectedFrameIndex();
-        if (frame_index == -1)
-        {
-          thread_id = 0;
-          frame_index = 0;
-        }
+        var ex_ctx = window.runtimes.get_execution_context();
+        var rt_id = ex_ctx.rt_id;
+        var thread_id = ex_ctx.thread_id;
+        var frame_index = ex_ctx.frame_index;
         var args = [script, line_number, char_offset, box, sel, rt_id, script_text];
         var tag = _tagman.set_callback(null, _handle_script, args);
         var msg = [rt_id, thread_id, frame_index, script_text];
