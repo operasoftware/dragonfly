@@ -73,7 +73,7 @@
  *     <dd>An element was selected. Payload: msg.model, msg.obj_id, msg.rt_id, msg.pseudo_element</dd>
  *
  *     <dt>setting-changed</dt>
- *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>
+ *     <dd>A setting has changed. Payload: msg.id, msg.key, msg.value</dd>
  *
  *     <dt>list-search-context</dt>
  *     <dd>Payload: msg.data_id, msg.obj_id, msg.depth</dd>

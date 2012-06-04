@@ -22,7 +22,7 @@ var SettingsBase = function()
     {
       this.callback_map[key].call(this, value);
     }
-    messages.post("setting-changed", {id: this.view_id, key: key});
+    messages.post("setting-changed", {id: this.view_id, key: key, value: value});
   }
 
   /**
