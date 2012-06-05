@@ -110,7 +110,7 @@ var ProfilerTemplates = function()
     }
   };
 
-  this.timeline_markers = function(width, duration, ms_unit)
+  this.timeline_markers = function(width, start, duration, ms_unit)
   {
     var MIN_MARKER_GAP = 120;
     var MIN_MARKERS = 2;
@@ -120,13 +120,15 @@ var ProfilerTemplates = function()
     for (var i = 0; i < cell_amount; i++)
     {
       var left = Math.round(marker_time * i * ms_unit);
+      var time = (marker_time * i) + start;
+      var fractions = (time < 100 && time !== 0) ? 1 : 0;
       template.push(
         ["div",
          "class", "profiler-timeline-marker",
          "style", "left:" + left + "px"
         ],
         ["div",
-           Math.round(marker_time * i) + " ms",
+           time.toFixed(fractions) + " ms",
          "class", "profiler-timeline-marker-time",
          "style", "left:" + left + "px"
         ]
@@ -141,21 +143,13 @@ var ProfilerTemplates = function()
     var event_list = events && events.eventList;
     if (event_list && event_list.length)
     {
-      // Calculate scaling, to fit all events into the view.
-      // We first calculate a preliminary scaling to know the width
-      // of the last event. We then calculate the real scaling where
-      // the width of the last event is taken into account.
       var interval_start = start || 0;
       var interval_end = events.interval.end;
       var duration = interval_end - interval_start;
-      var last_event = event_list[event_list.length-1];
-      var last_event_interval = last_event.interval.end - last_event.interval.start;
-      var ms_unit = container_width / duration;
-      var extra_width = Math.max(BAR_MIN_WIDTH, Math.ceil(last_event_interval * ms_unit));
-      ms_unit = (container_width - extra_width) / duration;
+      var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
       // Add time markers
-      template.push(this.timeline_markers(container_width, interval_end, ms_unit));
+      template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
 
       // Background bars
       this._order.forEach(function(row, idx) {
@@ -169,7 +163,7 @@ var ProfilerTemplates = function()
       event_list.forEach(function(event) {
         var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
         var self_time = Math.round(event.time * ms_unit);
-        var event_start = Math.round(event.interval.start * ms_unit);
+        var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
         var column = this._order.indexOf(event.type);
         var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
         template.push(

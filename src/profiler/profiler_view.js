@@ -142,13 +142,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
+    var zero_point = this._zero_point || 0;
     var has_details_events = this._table && this._table.get_data().length > 0;
     var template = this._timeline_list.eventList && this._timeline_list.eventList[0]
         ? this._templates.main(has_details_events,
                                this._templates.legend(this._aggregated_list),
                                this._templates.event_list_all(this._timeline_list,
                                                               this._event_id,
-                                                              this._container.clientWidth - AGGREGATED_EVENTS_WIDTH),
+                                                              this._container.clientWidth - AGGREGATED_EVENTS_WIDTH,
+                                                              zero_point),
                                this._templates.details(this._table),
                                this._templates.status(this._details_time))
         : this._templates.empty("Press the Record button to start profiling");
@@ -277,10 +279,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     return null;
   };
 
-  this._zoom_timeline = function(event, target)
-  {
-  };
-
   this._reload_window = function(event, target)
   {
     if (this._current_session_id)
@@ -295,15 +293,34 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       window.runtimes.reloadWindow();
   };
 
+  this._on_settings_changed = function(msg)
+  {
+    if (msg.id === this.id && msg.key === "zero-at-first-event")
+    {
+      this._zero_point = msg.value
+                       ? (this._timeline_list &&
+                          this._timeline_list.eventList &&
+                          this._timeline_list.eventList[0] &&
+                          this._timeline_list.eventList[0].interval.start)
+                       : 0;
+    }
+  };
+
+  this._on_settings_initialized = function(msg)
+  {
+    this._zero_point = msg.settings["zero-at-first-event"];
+  };
+
   this._init = function(id, name, container_class, html, default_handler)
   {
     View.prototype.init.call(this, id, name, container_class, html, default_handler);
     this.required_services = ["profiler"];
     this._profiler = new ProfilerService();
     this._templates = new ProfilerTemplates();
-    this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
-    this._tooltip = Tooltips.register("profiler-event", true, false);
+    this._zero_point = 0;
+    this._reset();
 
+    this._tooltip = Tooltips.register("profiler-event", true, false);
     this._tooltip.ontooltip = function(event, target) {
       var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
       var event = this._get_event_by_id(id);
@@ -311,14 +328,16 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         this._tooltip.show(this._templates.get_title_all(event));
     }.bind(this);
 
-    this._reset();
-
+    this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
+    this._on_settings_changed_bound = this._on_settings_changed.bind(this);
+    this._on_settings_initialized_bound = this._on_settings_initialized.bind(this);
     window.messages.addListener("profile-enabled", this._on_profile_enabled_bound);
+    window.messages.addListener("setting-changed", this._on_settings_changed_bound);
+    window.messages.addListener("settings-initialized", this._on_settings_initialized_bound);
 
-    window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
+    window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
     window.event_handlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
-    window.event_handlers.mousewheel["profiler-zoom-timeline"] = this._zoom_timeline.bind(this);
   };
 
   this._init(id, name, container_class, html, default_handler);
@@ -328,19 +347,31 @@ ProfilerView.prototype = ViewBase;
 
 ProfilerView.create_ui_widgets = function()
 {
-  new ToolbarConfig
-  (
+  new ToolbarConfig(
     "profiler_all",
     [
       {
         handler: "profiler-start-stop",
         title: "Start profiling" // FIXME: ui string
       }
-    ],
-    null,
-    null,
-    null,
-    true
+    ]
+  );
+
+  new Settings(
+    "profiler_all",
+    {
+      "zero-at-first-event": false
+    },
+    {
+      "zero-at-first-event": "Change start time to first event"
+    }
+  );
+
+  new Switches(
+    "profiler_all",
+    [
+      "zero-at-first-event"
+    ]
   );
 };
 

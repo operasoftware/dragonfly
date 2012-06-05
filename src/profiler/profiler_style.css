@@ -131,11 +131,15 @@
 
 .profiler-event
 {
-  position: absolute;
   min-width: 1px;
   height: 8px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
   border-radius: 2px;
   z-index: 2;
+}
+
+.profiler-timeline .profiler-event
+{
+  position: absolute;
 }
 
 .profiler-event-interval
