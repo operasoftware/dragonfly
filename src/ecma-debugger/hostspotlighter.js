@@ -85,14 +85,10 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 
   var get_root_id = function(cb)
   {
-    var rt_id = window.runtimes.getSelectedRuntimeId();
-    var thread_id = window.stop_at.getThreadId();
-    var frame_index = window.stop_at.getSelectedFrameIndex();
-    if (frame_index == -1)
-    {
-      thread_id = 0;
-      frame_index = 0;
-    }
+    var ex_ctx = window.runtimes.get_execution_context();
+    var rt_id = ex_ctx.rt_id;
+    var thread_id = ex_ctx.thread_id;
+    var frame_index = ex_ctx.frame_index;
     var script = "return document.documentElement";
     var msg = [rt_id, thread_id, frame_index, script];
     var tag = window.tag_manager.set_callback(null, handle_get_root_id, [cb]);
