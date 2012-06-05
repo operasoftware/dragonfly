@@ -72,6 +72,9 @@
  *     <dt>element-selected</dt>
  *     <dd>An element was selected. Payload: msg.model, msg.obj_id, msg.rt_id, msg.pseudo_element</dd>
  *
+ *     <dt>settings-initialized</dt>
+ *     <dd>Setting has been initialized for a view. Payload: msg.view_id, msg.settings</dd>
+ *
  *     <dt>setting-changed</dt>
  *     <dd>A setting has changed. Payload: msg.id, msg.key, msg.value</dd>
  *

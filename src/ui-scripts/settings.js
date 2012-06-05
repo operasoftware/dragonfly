@@ -75,6 +75,8 @@ var SettingsBase = function()
     }
     window.settings[arguments[0]] = this;
 
+    window.messages.post("settings-initialized", {view_id: view_id, settings: this.map});
+
     // Add a context menu
     var contextmenu = ContextMenu.get_instance();
     var menu = setting_map && setting_map.contextmenu;
