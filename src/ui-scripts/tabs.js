@@ -334,11 +334,17 @@ var TabsBase = function()
       if (!tab_ele.hasAttribute("data-orig-width"))
         tab_ele.setAttribute("data-orig-width", String(tab_ele.offsetWidth));
 
-      var tab_width = Number(tab_ele.getAttribute("data-orig-width"));
-      width += tab_width + this._tab_margin;
-      tabs.push({tab_ele: tab_ele,
+      var tab_width = Number(tab_ele.getAttribute("data-orig-width")) - 1;
+      width += tab_width + this._tab_margin + 1;
+      tabs.push({padding_target: tab_ele,
+                 width_target: tab_ele,
                  orig_width: tab_width - this._tab_border_padding});
     }
+    this._adjust_tab_size(width, tabs);
+  };
+
+  this._adjust_tab_size = function(width, tabs)
+  {
     var has_space = width <= this.width;
     var scale = 1;
     var delta_padding = 0;
@@ -347,6 +353,7 @@ var TabsBase = function()
     if (!has_space)
     {
       var delta = width - this.width;
+      // reduce each legend by 1 pixel
       delta -= count;
       if (delta > 0)
       {
@@ -357,23 +364,35 @@ var TabsBase = function()
         target_padding = this._tab_right_padding - delta_padding;
         delta -= count * delta_padding;
       }
+      else
+      {
+        var index = 0;
+        while (delta < 0)
+        {
+          tabs[index++].legend_orig_width += 1;
+          delta++;
+        }
+      }
       if (delta > 0)
       {
-        var orig_sum_labels = tabs.reduce(function(sum, tab)
+        var orig_width_sum = tabs.reduce(function(sum, tab)
         {
-          return sum + (tab.orig_width - 1);
+          return sum + tab.orig_width;
         }, 0);
-        scale = (orig_sum_labels - delta) / orig_sum_labels;
+        scale = (orig_width_sum - delta) / orig_width_sum;
       }
     }
     tabs.forEach(function(tab)
     {
       if (has_space)
-        tab.tab_ele.removeAttribute("style");
+      {
+        tab.padding_target.removeAttribute("style");
+        tab.width_target.removeAttribute("style");
+      }
       else
       {
-        tab.tab_ele.style.paddingRight = target_padding + "px";
-        tab.tab_ele.style.width = Math.floor((tab.orig_width - 1) * scale) + "px";
+        tab.padding_target.style.paddingRight = target_padding + "px";
+        tab.width_target.style.width = Math.floor(tab.orig_width * scale) + "px";
       } 
     }, this);  
   };

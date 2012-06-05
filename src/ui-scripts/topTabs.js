@@ -80,69 +80,21 @@ var TopTabsBase = function()
           legend.setAttribute("data-orig-width", String(legend.offsetWidth));
 
         width += Number(tab_ele.getAttribute("data-orig-width"));
-        tabs.push({tab_ele: tab_ele,
-                   legend: legend,
-                   legend_orig_width: Number(legend.getAttribute("data-orig-width")) - 1});
+        tabs.push({padding_target: tab_ele,
+                   width_target: legend,
+                   orig_width: Number(legend.getAttribute("data-orig-width")) - 1});
       }
     }
     tabs.sort(function(a, b)
     {
-      return a.legend_orig_width > b.legend_orig_width 
+      return a.orig_width > b.orig_width 
            ? 1
-           : a.legend_orig_width < b.legend_orig_width
+           : a.orig_width < b.orig_width
            ? -1
            : 0;
     });
-    var has_space = width <= this.width;
-    var scale = 1;
-    var delta_padding = 0;
-    var target_padding = this._tab_right_padding;
-    var count = tabs.length;
-    if (!has_space)
-    {
-      var delta = width - this.width;
-      // reduce each legend by 1 pixel
-      delta -= count;
-      if (delta > 0)
-      {
-        delta_padding = Math.ceil(delta / count);
-        if (delta_padding > this._tab_right_padding)
-          delta_padding = this._tab_right_padding;
 
-        target_padding = this._tab_right_padding - delta_padding;
-        delta -= count * delta_padding;
-      }
-      else
-      {
-        var index = 0;
-        while (delta < 0)
-        {
-          tabs[index++].legend_orig_width += 1;
-          delta++;
-        }
-      }
-      if (delta > 0)
-      {
-        var orig_sum_labels = tabs.reduce(function(sum, tab)
-        {
-          return sum + tab.legend_orig_width;
-        }, 0);
-        scale = (orig_sum_labels - delta) / orig_sum_labels;
-      }
-    }
-    tabs.forEach(function(tab)
-    {
-      if (has_space)
-      {
-        tab.tab_ele.removeAttribute("style");
-        tab.legend.removeAttribute("style");
-      }
-      else
-      {
-        tab.tab_ele.style.paddingRight = target_padding + "px";
-        tab.legend.style.width = Math.floor(tab.legend_orig_width * scale) + "px";
-      } 
-    }, this);  
+    this._adjust_tab_size(width, tabs);
   };
 
   this._onwindowcontrolscreated = function(msg)
