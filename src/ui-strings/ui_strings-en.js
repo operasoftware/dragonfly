@@ -754,7 +754,7 @@ ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
 ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
 
 /* DESC: tooltip for table header that shows duration */
-ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this URL";
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this request";
 
 /* DESC: tooltip for the network filter that shows all items */
 ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
