@@ -470,6 +470,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/dfcommands.js"/>
 <script src="./repl/runtimeselect.js"/>
 
+<script src="./overlay/overlay_service.js"/>
+
 <script src="./profiler/profiler_service.js"/>
 <script src="./profiler/profiler_view.js"/>
 <script src="./profiler/profiler_templates.js"/>

@@ -142,7 +142,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
-    var zero_point = this._zero_point || 0;
+    var zero_point = this._get_zero_point();
     var has_details_events = this._table && this._table.get_data().length > 0;
     var template = this._timeline_list.eventList && this._timeline_list.eventList[0]
         ? this._templates.main(has_details_events,
@@ -293,22 +293,46 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       window.runtimes.reloadWindow();
   };
 
+  this._get_zero_point = function()
+  {
+    return this._has_zero_at_first_event
+         ? (this._timeline_list &&
+            this._timeline_list.eventList &&
+            this._timeline_list.eventList[0] &&
+            this._timeline_list.eventList[0].interval.start)
+         : 0;
+  };
+
   this._on_settings_changed = function(msg)
   {
     if (msg.id === this.id && msg.key === "zero-at-first-event")
-    {
-      this._zero_point = msg.value
-                       ? (this._timeline_list &&
-                          this._timeline_list.eventList &&
-                          this._timeline_list.eventList[0] &&
-                          this._timeline_list.eventList[0].interval.start)
-                       : 0;
-    }
+      this._has_zero_at_first_event = msg.value;
   };
 
   this._on_settings_initialized = function(msg)
   {
-    this._zero_point = msg.settings["zero-at-first-event"];
+    if (msg.view_id === this.id)
+      this._has_zero_at_first_event = msg.settings["zero-at-first-event"];
+  };
+
+  this._ontooltip = function(event, target)
+  {
+    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var timeline_event = this._get_event_by_id(id);
+    if (timeline_event)
+    {
+      this._tooltip.show(this._templates.get_title_all(timeline_event));
+      if (timeline_event.type === TYPE_PAINT)
+      {
+        var area = timeline_event.paint.area;
+        this._overlay.create_overlay(null, {x: area.x, y: area.y, w: area.w, h:area.h});
+      }
+    }
+  };
+
+  this._ontooltiphide = function()
+  {
+    this._overlay.remove_overlay();
   };
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -316,17 +340,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     View.prototype.init.call(this, id, name, container_class, html, default_handler);
     this.required_services = ["profiler"];
     this._profiler = new ProfilerService();
+    this._overlay = new OverlayService();
     this._templates = new ProfilerTemplates();
-    this._zero_point = 0;
+    this._has_zero_at_first_event = false;
     this._reset();
 
     this._tooltip = Tooltips.register("profiler-event", true, false);
-    this._tooltip.ontooltip = function(event, target) {
-      var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
-      var event = this._get_event_by_id(id);
-      if (event)
-        this._tooltip.show(this._templates.get_title_all(event));
-    }.bind(this);
+    this._tooltip.ontooltip = this._ontooltip.bind(this);
+    this._tooltip.onhide = this._ontooltiphide.bind(this);
 
     this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
     this._on_settings_changed_bound = this._on_settings_changed.bind(this);

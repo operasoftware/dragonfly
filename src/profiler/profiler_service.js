@@ -61,14 +61,19 @@ var ProfilerService = function()
     this._window_id = msg.window_id;
   };
 
+  this.get_window_id = function()
+  {
+    return this._window_id;
+  };
+
   this._init = function()
   {
     this._profiler = window.services["profiler"];
     this._tag_manager = window.tag_manager;
     this._is_active = false;
     this._window_id = 0;
-    this._on_debug_context_selected_bound = this._on_debug_context_selected.bind(this);
 
+    this._on_debug_context_selected_bound = this._on_debug_context_selected.bind(this);
     window.messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
   };
 
