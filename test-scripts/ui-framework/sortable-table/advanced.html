@@ -1,0 +1,267 @@
+<!doctype html>
+
+<link rel="stylesheet" href="../../../src/ui-style/ui.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/sortable_table/sortable_table.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/tooltip/tooltip.css">
+
+<script>var ActionBroker = null;</script>
+<script src="../../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../../src/scripts/dom.js"></script>
+<script src="../../../src/ui-scripts/ui-actions.js"></script>
+<script src="../../../src/scripts/objectregistry.js"></script>
+<script src="../../../src/ui-scripts/sortable_table/sortable_table.js"></script>
+
+<style>
+  body {font-family: sans-serif; font-size: 13px; color: #292929}
+  button {margin-right: 5px;}
+</style>
+<body></body>
+<script>
+
+window.app = {
+  addListener: function(name, func){}
+};
+
+var users = [
+  {
+    firstname: "Miles",
+    lastname: "Naismith Vorkosigan",
+    gender: "M",
+    birthdate: 218307507057,
+  },
+  {
+    firstname: "Ekaterin",
+    lastname: "Nile Vorvayne Vorsoisson Vorkosigan",
+    gender: "F",
+    birthdate: 375987507057,
+  },
+  {
+    firstname: "Gregor",
+    lastname: "Vorbarra",
+    gender: "M",
+    birthdate: 123699507057,
+  },
+  {
+    firstname: "Elena",
+    lastname: "Bothari",
+    gender: "F",
+    birthdate: 435665507057,
+  },
+  {
+    firstname: "Elli",
+    lastname: "Quinn",
+    gender: "F",
+    birthdate: 255235507057,
+  },
+  {
+    firstname: "Ivan",
+    lastname: "Vorpatril",
+    gender: "M",
+    birthdate: 239235507057,
+  },
+  {
+    firstname: "Bel",
+    lastname: "Thorne",
+    gender: "H",
+    birthdate: 49235507057,
+  },
+];
+
+tabledef = {
+  groups: {
+    gender: {
+      label: "Gender",
+      grouper: function(obj) {
+        return {M: "Men", F: "Women", H: "Other"}[obj.gender];
+      },
+    },
+    birthdecade: {
+      label: "Decade of birth",
+      grouper: function(obj) {
+        return ("" + new Date(obj.birthdate).getFullYear()).slice(-2, -1) + "0"
+      },
+    }
+  },
+  columns: {
+    firstname: {
+      label: "First name"
+    },
+    lastname: {
+      label: "Last name"
+    },
+    name: {
+      label: "Name (first last)",
+      getter: function(obj) { return obj.firstname + " " + obj.lastname },
+    },
+    name2: {
+      label: "Name (last first)",
+      getter: function(obj) { return obj.lastname + ", " + obj.firstname },
+    },
+    gender: {
+      label: "Gender",
+      renderer: function(obj) {
+        return {M: "Man", F: "Woman", H: "Herm"}[obj.gender]
+      }
+    },
+    birthdate: {
+      label: "Birth Date",
+      renderer: function(obj) { return new Date(obj.birthdate).toDateString() },
+    },
+    age: {
+      label: "Age",
+      getter: function(obj) { return obj.birthdate },
+      renderer: function(obj) { return String(Math.floor((new Date().getTime() - obj.birthdate) / 31536000000))  }, // ms pr year
+    },
+    gendericon: {
+      label: "",
+      getter: function(obj) { return obj.gender },
+      renderer: function(obj) {
+        var colors = {M: "blue", H: "green", F: "red"};
+        return ["strong", obj.gender, "style", "color: " + colors[obj.gender]];
+      }
+    }
+  },
+  column_order: ["firstname", "lastname", "name", "name2", "gender", "birthdate", "age", "gendericon"],
+  idgetter: function(res) { return res.stringified || (res.stringified = JSON.stringify(res)) }
+}
+
+eventHandlers.click["change-group"] = groupHandler;
+eventHandlers.click["change-cols"] = colHandler;
+eventHandlers.click["reset-sort"] = resetSortHandler;
+eventHandlers.click["reset-cols"] = resetColsHandler;
+eventHandlers.click["reset-storage"] = resetStorageHandler;
+
+
+var my_table = new SortableTable(
+                tabledef, // table-def
+                users, // data
+                ["name2", "gender", "birthdate", "age", "gendericon"], // cols shown by default
+                "birthdate", // sortby
+                "gender", // groupby,
+                true, // reversed
+                "sample_table" // id
+              );
+
+document.body.render(["h1", "Table example, advanced"]);
+document.body.render(["p", "All changes the user makes are stored in localStorage. Reloading the page restores."]);
+document.body.render(groupSelector(tabledef));
+document.body.render(["br"]);
+document.body.render(colSelector(tabledef, my_table));
+document.body.render(["br"]);
+document.body.render(resetColumnsButton());
+document.body.render(resetSortButton());
+document.body.render(resetStorageButton());
+document.body.render(["br"]);
+document.body.render(["br"]);
+
+document.body.render(my_table.render());
+
+
+function groupHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.group(target.getAttribute("data-group-id"));
+  table.re_render(obj.render());
+}
+
+function groupSelector(tabledef) {
+  var groups = [{label: "No grouping", id: "" }];
+  for (var key in tabledef.groups) { groups.push({label: tabledef.groups[key].label, id: key})}
+
+  var radiofun = function(e, sel) { return ["label", e.label,
+                                            ["input",
+                                             "data-group-id", e.id,
+                                             "type", "radio",
+                                             "name", "group",
+                                             "handler", "change-group"
+                                            ].concat(e.id == my_table.groupby ? ["checked", "checked"] : []),
+                                            " | "
+                                           ]
+                                  }
+
+  var tpl = ["fieldset",
+             [
+               ["legend", "Select grouping"],
+               groups.map(radiofun)
+             ]
+            ]
+  return tpl;
+}
+
+function colHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.togglecol(target.getAttribute("data-col-id"));
+  table.re_render(obj.render());
+}
+
+function colSelector(tabledef, my_table) {
+
+  var checkfun = function(e, sel) { return ["label", e.label,
+                                            ["input",
+                                             "data-col-id", e.col_id,
+                                             "type", "checkbox",
+                                             "handler", "change-cols"
+                                            ]
+                                            .concat( ~ my_table.columns.indexOf(e.col_id) ? ["checked", "checked"] : []),
+                                            " | "
+                                           ]
+                                  }
+
+  var col_list = [];
+  for (var id in tabledef.columns)
+  {
+    tabledef.columns[id].col_id = id;
+    col_list.push(tabledef.columns[id])
+  }
+
+  var tpl = ["fieldset",
+             [
+               ["legend", "Select columns"],
+               col_list.map(checkfun)
+             ],
+            "id", "select-cols"]
+  return tpl;
+}
+
+function resetColsHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.togglecol();
+  table.re_render(obj.render());
+
+  var sel_cols = document.getElementById("select-cols");
+  sel_cols.parentNode.replaceChild(document.documentElement.render(colSelector(tabledef, my_table)), sel_cols);
+}
+
+function resetColumnsButton() {
+  return ["button", "Reset columns", "handler", "reset-cols"];
+}
+
+function resetSortHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.reset_sort();
+  table.re_render(obj.render());
+}
+
+function resetSortButton() {
+  return ["button", "Reset sort", "handler", "reset-sort"];
+}
+
+function resetStorageHandler(evt, target) {
+  for (var key in localStorage)
+  {
+    if (localStorage.hasOwnProperty(key) &&
+        key.indexOf("table-") === 0)
+    {
+      delete localStorage[key];
+    }
+  }
+}
+
+function resetStorageButton() {
+  return ["button", "Reset localStorage[table-*]", "handler", "reset-storage"];
+}
+
+</script>
