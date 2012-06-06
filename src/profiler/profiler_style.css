@@ -152,19 +152,16 @@
 .profiler-event-interval[data-isexpandable="true"]:hover
 {
   box-shadow: 0 0 0 3px #ceddf5;
-  z-index: 4;
 }
 
 .profiler-event-interval[data-isexpandable="false"]:hover
 {
   box-shadow: 0 0 0 3px #ddd;
-  z-index: 4;
 }
 
 .profiler-event-interval.selected
 {
   box-shadow: 0 0 0 3px #769fe1;
-  z-index: 3;
 }
 
 .profiler-timeline-selftime

@@ -8,7 +8,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 {
   var SUCCESS = 0;
 
-  var event_types = ProfilerService.EventTypes;
+  var event_types = ProfilerService.EventType;
   var TYPE_GENERIC = event_types.GENERIC;
   var TYPE_PROCESS = event_types.PROCESS;
   var TYPE_DOCUMENT_PARSING = event_types.DOCUMENT_PARSING;
@@ -21,7 +21,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   var TYPE_LAYOUT = event_types.LAYOUT;
   var TYPE_PAINT = event_types.PAINT;
 
-  var modes = ProfilerService.Modes;
+  var modes = ProfilerService.Mode;
   var MODE_ALL = modes.ALL;
   var MODE_REDUCE_UNIQUE_TYPES = modes.REDUCE_UNIQUE_TYPES;
   var MODE_REDUCE_UNIQUE_EVENTS = modes.REDUCE_UNIQUE_EVENTS;
@@ -254,6 +254,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._event_id = Number(target.getAttribute("data-event-id")) || null;
     this._event_type = Number(target.getAttribute("data-event-type"));
+    var details_list = this._container.querySelector(".profiler-details-list");
+    if (details_list)
+      details_list.clearAndRender(this._templates.empty("Calculating…"));
     this._show_details_list();
   };
 

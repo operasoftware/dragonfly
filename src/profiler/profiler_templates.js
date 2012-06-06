@@ -5,7 +5,7 @@
  */
 var ProfilerTemplates = function()
 {
-  var event_types = ProfilerService.EventTypes;
+  var event_types = ProfilerService.EventType;
   var TYPE_GENERIC = event_types.GENERIC;
   var TYPE_PROCESS = event_types.PROCESS;
   var TYPE_DOCUMENT_PARSING = event_types.DOCUMENT_PARSING;
@@ -18,19 +18,69 @@ var ProfilerTemplates = function()
   var TYPE_LAYOUT = event_types.LAYOUT;
   var TYPE_PAINT = event_types.PAINT;
 
+  var thread_types = ProfilerService.ScriptThreadType;
+  var THREAD_TYPE_UNKNOWN = thread_types.UNKNOWN;
+  var THREAD_TYPE_COMMON = thread_types.COMMON;
+  var THREAD_TYPE_TIMEOUT = thread_types.TIMEOUT;
+  var THREAD_TYPE_EVENT = thread_types.EVENT;
+  var THREAD_TYPE_INLINE_SCRIPT = thread_types.INLINE_SCRIPT;
+  var THREAD_TYPE_JAVASCRIPT_URL = thread_types.JAVASCRIPT_URL;
+  var THREAD_TYPE_HISTORY_NAVIGATION = thread_types.HISTORY_NAVIGATION;
+  var THREAD_TYPE_JAVA_EVAL = thread_types.JAVA_EVAL;
+  var THREAD_TYPE_DEBUGGER_EVAL = thread_types.DEBUGGER_EVAL;
+
+  var script_types = ProfilerService.ScriptType;
+  var SCRIPT_TYPE_UNKNOWN = script_types.UNKNOWNM
+  var SCRIPT_TYPE_LINKED = script_types.LINKED;
+  var SCRIPT_TYPE_INLINE = script_types.INLINE;
+  var SCRIPT_TYPE_GENERATED = script_types.GENERATED;
+  var SCRIPT_TYPE_EVAL = script_types.EVAL;
+  var SCRIPT_TYPE_TIMEOUT = script_types.TIMEOUT;
+  var SCRIPT_TYPE_URI = script_types.URI;
+  var SCRIPT_TYPE_EVENT_HANDLER = script_types.EVENT_HANDLER;
+  var SCRIPT_TYPE_USERJS = script_types.USERJS;
+  var SCRIPT_TYPE_BROWSERJS = script_types.BROWSERJS;
+  var SCRIPT_TYPE_EXTENSIONJS = script_types.EXTENSIONJS;
+  var SCRIPT_TYPE_DEBUGGER = script_types.DEBUGGER;
+
   // TODO: use ui strings
-  var type_map = {};
-  type_map[TYPE_GENERIC] = "Generic";
-  type_map[TYPE_PROCESS] = "Process";
-  type_map[TYPE_DOCUMENT_PARSING] = "Document parsing";
-  type_map[TYPE_CSS_PARSING] = "CSS parsing";
-  type_map[TYPE_SCRIPT_COMPILATION] = "Script compilation";
-  type_map[TYPE_THREAD_EVALUATION] = "Thread evaluation";
-  type_map[TYPE_REFLOW] = "Reflow";
-  type_map[TYPE_STYLE_RECALCULATION] = "Style recalculation";
-  type_map[TYPE_CSS_SELECTOR_MATCHING] = "CSS selector matching";
-  type_map[TYPE_LAYOUT] = "Layout";
-  type_map[TYPE_PAINT] = "Paint";
+  var type_string_map = {};
+  type_string_map[TYPE_GENERIC] = "Generic";
+  type_string_map[TYPE_PROCESS] = "Process";
+  type_string_map[TYPE_DOCUMENT_PARSING] = "Document parsing";
+  type_string_map[TYPE_CSS_PARSING] = "CSS parsing";
+  type_string_map[TYPE_SCRIPT_COMPILATION] = "Script compilation";
+  type_string_map[TYPE_THREAD_EVALUATION] = "Thread evaluation";
+  type_string_map[TYPE_REFLOW] = "Reflow";
+  type_string_map[TYPE_STYLE_RECALCULATION] = "Style recalculation";
+  type_string_map[TYPE_CSS_SELECTOR_MATCHING] = "CSS selector matching";
+  type_string_map[TYPE_LAYOUT] = "Layout";
+  type_string_map[TYPE_PAINT] = "Paint";
+
+  var thread_type_string_map = {};
+  thread_type_string_map[THREAD_TYPE_UNKNOWN] = "Unknown";
+  thread_type_string_map[THREAD_TYPE_COMMON] = "Common";
+  thread_type_string_map[THREAD_TYPE_TIMEOUT] = "Timeout or interval";
+  thread_type_string_map[THREAD_TYPE_EVENT] = "Event";
+  thread_type_string_map[THREAD_TYPE_INLINE_SCRIPT] = "Inline script";
+  thread_type_string_map[THREAD_TYPE_JAVASCRIPT_URL] = "javascript: URL";
+  thread_type_string_map[THREAD_TYPE_HISTORY_NAVIGATION] = "History navigation";
+  thread_type_string_map[THREAD_TYPE_JAVA_EVAL] = "Java (LiveConnect)";
+  thread_type_string_map[THREAD_TYPE_DEBUGGER_EVAL] = "Debugger";
+
+  var script_type_string_map = {};
+  script_type_string_map[SCRIPT_TYPE_UNKNOWN] = "Unknown";
+  script_type_string_map[SCRIPT_TYPE_LINKED] = "External";
+  script_type_string_map[SCRIPT_TYPE_INLINE] = "Inline";
+  script_type_string_map[SCRIPT_TYPE_GENERATED] = "document.write()";
+  script_type_string_map[SCRIPT_TYPE_EVAL] = "Eval";
+  script_type_string_map[SCRIPT_TYPE_TIMEOUT] = "Timeout or interval";
+  script_type_string_map[SCRIPT_TYPE_URI] = "javascript: URL";
+  script_type_string_map[SCRIPT_TYPE_EVENT_HANDLER] = "Event";
+  script_type_string_map[SCRIPT_TYPE_USERJS] = "UserJS";
+  script_type_string_map[SCRIPT_TYPE_BROWSERJS] = "BrowserJS";
+  script_type_string_map[SCRIPT_TYPE_EXTENSIONJS] = "Extension";
+  script_type_string_map[SCRIPT_TYPE_DEBUGGER] = "Debugger";
 
   var BAR_MIN_WIDTH = 5; // min-width for .profiler-event
   var BAR_HEIGHT = 18; // offset height of .profiler-timeline-row
@@ -90,7 +140,7 @@ var ProfilerTemplates = function()
           template[index] =
             ["div",
                ["span",
-                  type_map[event.type] + " ",
+                  type_string_map[event.type] + " ",
                 "class", "profiler-legend-label"
                ],
                ["span",
@@ -265,7 +315,7 @@ var ProfilerTemplates = function()
     return (
       ["div",
         ["h2",
-           type_map[event.type]
+           type_string_map[event.type]
         ],
         ["div",
           this.get_title_interval_bar(event),
@@ -299,7 +349,7 @@ var ProfilerTemplates = function()
   this.get_title_unique_events = function(event)
   {
     var details = this.get_details_title(event);
-    return type_map[event.type] + "," +
+    return type_string_map[event.type] + "," +
            " self time: " + this.format_time(event.time) +
            " [" + event.hits + " hits" +
              (details ? details : []) +
@@ -318,12 +368,25 @@ var ProfilerTemplates = function()
       );
 
     case TYPE_THREAD_EVALUATION:
-      var event = event.threadEvaluation.eventName;
-      return event
-           ? ["li",
-                "Event: " + event
-             ]
-           : [];
+      var title = [];
+      var thread_type = event.threadEvaluation.threadType;
+      var event_name = event.threadEvaluation.eventName;
+
+      if (thread_type)
+      {
+        title.push(["li",
+                      "Thread type: " + thread_type_string_map[thread_type]
+                   ]);
+      }
+
+      if (event_name)
+      {
+        title.push(["li",
+                      "Event: " + event_name
+                   ]);
+      }
+
+      return title;
 
     case TYPE_DOCUMENT_PARSING:
       var url = event.documentParsing.url;
@@ -342,12 +405,25 @@ var ProfilerTemplates = function()
            : [];
 
     case TYPE_SCRIPT_COMPILATION:
+      var title = [];
       var url = event.scriptCompilation.url;
-      return url
-           ? ["li",
-                "URL: " + url
-             ]
-           : [];
+      var script_type = event.scriptCompilation.scriptType;
+
+      if (url)
+      {
+        title.push(["li",
+                      "URL: " + url
+                   ]);
+      }
+
+      if (script_type)
+      {
+        title.push(["li",
+                      "Script type: " + script_type_string_map[script_type]
+                   ]);
+      }
+
+      return title;
 
     case TYPE_PAINT:
       var area = event.paint.area;

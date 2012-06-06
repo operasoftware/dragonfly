@@ -5,9 +5,6 @@
  */
 var ProfilerService = function()
 {
-  var START_MODE_IMMEDIATE = 1;
-  var START_MODE_URL = 2;
-
   this.__defineGetter__("is_active", function() {
     return this._is_active;
   });
@@ -17,7 +14,7 @@ var ProfilerService = function()
   this.start_profiler = function(callback, config)
   {
     var config = config || {};
-    var start_mode = config.start_mode || START_MODE_IMMEDIATE;
+    var start_mode = config.start_mode || ProfilerService.StartMode.IMMEDIATE;
     var window_id = config.window_id || this._window_id;
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this._is_active = true;
@@ -94,7 +91,12 @@ var ProfilerService = function()
   this._init();
 };
 
-ProfilerService.EventTypes = {
+ProfilerService.StartMode = {
+  IMMEDIATE: 1,
+  URL: 2
+};
+
+ProfilerService.EventType = {
   GENERIC: 1,
   PROCESS: 2,
   DOCUMENT_PARSING: 3,
@@ -108,10 +110,37 @@ ProfilerService.EventTypes = {
   PAINT: 11
 };
 
-ProfilerService.Modes = {
+ProfilerService.Mode = {
   ALL: 1,
   REDUCE_UNIQUE_TYPES: 2,
   REDUCE_UNIQUE_EVENTS: 3,
   REDUCE_ALL: 4
+};
+
+ProfilerService.ScriptThreadType = {
+  UNKNOWN: 0,
+  COMMON: 1,
+  TIMEOUT: 2,
+  EVENT: 3,
+  INLINE_SCRIPT: 4,
+  JAVASCRIPT_URL: 5,
+  HISTORY_NAVIGATION: 6,
+  JAVA_EVAL: 7,
+  DEBUGGER_EVAL: 8
+};
+
+ProfilerService.ScriptType = {
+  UNKNOWN: 0,
+  LINKED: 1,
+  INLINE: 2,
+  GENERATED: 3,
+  EVAL: 4,
+  TIMEOUT: 5,
+  URI: 6,
+  EVENT_HANDLER: 7,
+  USERJS: 8,
+  BROWSERJS: 9,
+  EXTENSIONJS: 10,
+  DEBUGGER: 11
 };
 
