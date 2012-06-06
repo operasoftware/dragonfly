@@ -166,12 +166,14 @@ var ProfilerTemplates = function()
     var MIN_MARKERS = 2;
     var cell_amount = Math.max(MIN_MARKERS, Math.round(width / MIN_MARKER_GAP));
     var marker_time = duration / cell_amount;
+    var fractions = marker_time < 10 ? 1 : 0;
     var template = [];
     for (var i = 0; i < cell_amount; i++)
     {
       var left = Math.round(marker_time * i * ms_unit);
       var time = (marker_time * i) + start;
-      var fractions = (time < 100 && time !== 0) ? 1 : 0;
+      if (time === 0)
+        fractions = 0;
       template.push(
         ["div",
          "class", "profiler-timeline-marker",
@@ -179,11 +181,20 @@ var ProfilerTemplates = function()
         ],
         ["div",
            time.toFixed(fractions) + " ms",
-         "class", "profiler-timeline-marker-time",
+         "class", "profiler-timeline-marker-time" + (i === 0 ? " first" : ""),
          "style", "left:" + left + "px"
         ]
       );
     }
+
+    template.push(
+      ["div",
+         (start + duration).toFixed(fractions) + " ms",
+       "class", "profiler-timeline-marker-time last",
+       "style", "right:2px"
+      ]
+    );
+
     return template;
   };
 
@@ -382,7 +393,7 @@ var ProfilerTemplates = function()
       if (event_name)
       {
         title.push(["li",
-                      "Event: " + event_name
+                      "Event type: " + event_name
                    ]);
       }
 

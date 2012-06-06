@@ -122,6 +122,13 @@
   white-space: nowrap;
 }
 
+.profiler-timeline-marker-time:not(.first):not(.last)
+{
+  min-width: 60px;
+  margin-left: -30px;
+  text-align: center;
+}
+
 .profiler-event-special
 {
   height: 100%;
@@ -291,5 +298,10 @@
 .profiler-event-tooltip-info
 {
   padding-top: 30px;
+}
+
+.profiler-event-tooltip-info li
+{
+  white-space: nowrap;
 }
 
