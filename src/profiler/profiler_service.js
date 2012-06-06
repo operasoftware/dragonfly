@@ -14,46 +14,60 @@ var ProfilerService = function()
 
   this.__defineSetter__("is_active", function() {});
 
-  this.start_profiler = function(start_mode, window_id, callback)
+  this.start_profiler = function(callback, config)
   {
+    var config = config || {};
+    var start_mode = config.start_mode || START_MODE_IMMEDIATE;
+    var window_id = config.window_id || this._window_id;
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this._is_active = true;
       if (callback)
         callback(status, msg);
     });
-    this._profiler.requestStartProfiler(tag, [start_mode || START_MODE_IMMEDIATE,
-                                              this._window_id]);
+    var msg = [start_mode, window_id];
+    this._profiler.requestStartProfiler(tag, msg);
   };
 
-  this.stop_profiler = function(session_id, callback)
+  this.stop_profiler = function(callback, config)
   {
+    var config = config || {};
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       this._is_active = false;
       if (callback)
         callback(status, msg);
     });
-    this._profiler.requestStopProfiler(tag, [session_id]);
+    var msg = [config.session_id];
+    this._profiler.requestStopProfiler(tag, msg);
   };
 
-  this.get_events = function(session_id, timeline_id, mode, event_id,
-                             max_depth, event_type_list, interval, callback)
+  this.get_events = function(callback, config)
   {
+    var config = config || {};
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       if (callback)
         callback(status, msg);
     });
-    this._profiler.requestGetEvents(tag, [session_id,
-                                          timeline_id,
-                                          mode,
-                                          event_id,
-                                          max_depth,
-                                          event_type_list,
-                                          interval]);
+    var msg = [
+      config.session_id,
+      config.timeline_id,
+      config.mode,
+      config.event_id,
+      config.max_depth,
+      config.event_type_list,
+      config.interval
+    ];
+    this._profiler.requestGetEvents(tag, msg);
   };
 
-  this.release_session = function(session_id)
+  this.release_session = function(callback, config)
   {
-    this._profiler.requestReleaseSession(null, [session_id]);
+    var config = config || {};
+    var tag = this._tag_manager.set_callback(this, function(status, msg) {
+      if (callback)
+        callback(status, msg);
+    });
+    var msg = [config.session_id];
+    this._profiler.requestReleaseSession(tag, msg);
   };
 
   this._on_debug_context_selected = function(msg)

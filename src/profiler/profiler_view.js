@@ -73,17 +73,21 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._start_profiler = function()
   {
     this._reset_details();
-    this._container.clearAndRender(this._templates.empty("Profiling"));
-    this._profiler.start_profiler(null, null, (function(status, msg) {
-      this._old_session_id = this._current_session_id;
-      this._current_session_id = msg[SESSION_ID];
-    }).bind(this));
+    this._container.clearAndRender(this._templates.empty("Profiling…"));
+    this._profiler.start_profiler(this._handle_start_profiler.bind(this));
+  };
+
+  this._handle_start_profiler = function(status, msg)
+  {
+    this._old_session_id = this._current_session_id;
+    this._current_session_id = msg[SESSION_ID];
   };
 
   this._stop_profiler = function()
   {
     this._container.clearAndRender(this._templates.empty("Calculating…"));
-    this._profiler.stop_profiler(this._current_session_id, this._handle_stop_profiler.bind(this));
+    var config = {session_id: this._current_session_id};
+    this._profiler.stop_profiler(this._handle_stop_profiler.bind(this), config);
   };
 
   this._handle_stop_profiler = function(status, msg)
@@ -91,16 +95,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (status === SUCCESS)
     {
       if (this._old_session_id)
-        this._profiler.release_session(this._old_session_id);
+        this._profiler.release_session(null, {session_id: this._old_session_id});
       this._current_timeline_id = msg[TIMELINE_LIST][0][TIMELINE_ID];
-      this._profiler.get_events(this._current_session_id,
-                                this._current_timeline_id,
-                                MODE_ALL,
-                                null,
-                                null,
-                                this._default_types,
-                                null,
-                                this._handle_timeline_list.bind(this));
+      var config = {
+        session_id: this._current_session_id,
+        timeline_id: this._current_timeline_id,
+        mode: MODE_ALL,
+        event_type_list: this._default_types,
+      };
+      this._profiler.get_events(this._handle_timeline_list.bind(this), config);
     }
     else
     {
@@ -111,27 +114,25 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._handle_timeline_list = function(status, msg)
   {
     this._timeline_list = new cls.Profiler["1.0"].EventList(msg);
-    this._profiler.get_events(this._current_session_id,
-                              this._current_timeline_id,
-                              MODE_REDUCE_UNIQUE_TYPES,
-                              null,
-                              null,
-                              this._default_types,
-                              null,
-                              this._handle_aggregated_list.bind(this));
+    var config = {
+      session_id: this._current_session_id,
+      timeline_id: this._current_timeline_id,
+      mode: MODE_REDUCE_UNIQUE_TYPES,
+      event_type_list: this._default_types,
+    };
+    this._profiler.get_events(this._handle_aggregated_list.bind(this), config);
   };
 
   this._handle_aggregated_list = function(status, msg)
   {
     this._aggregated_list = new cls.Profiler["1.0"].EventList(msg);
-    this._profiler.get_events(this._current_session_id,
-                              this._current_timeline_id,
-                              MODE_REDUCE_ALL,
-                              null,
-                              null,
-                              this._default_types,
-                              null,
-                              this._handle_reduced_list.bind(this));
+    var config = {
+      session_id: this._current_session_id,
+      timeline_id: this._current_timeline_id,
+      mode: MODE_REDUCE_ALL,
+      event_type_list: this._default_types,
+    };
+    this._profiler.get_events(this._handle_reduced_list.bind(this), config);
   };
 
   this._handle_reduced_list = function(status, msg)
@@ -197,14 +198,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var child_type = this._children[this._event_type];
     if (child_type)
     {
-      this._profiler.get_events(this._current_session_id,
-                                this._current_timeline_id,
-                                MODE_REDUCE_UNIQUE_EVENTS,
-                                this._event_id,
-                                null,
-                                [child_type],
-                                null,
-                                this._handle_details_list.bind(this, child_type));
+      var config = {
+        session_id: this._current_session_id,
+        timeline_id: this._current_timeline_id,
+        mode: MODE_REDUCE_UNIQUE_EVENTS,
+        event_id: this._event_id,
+        event_type_list: [child_type]
+      };
+      this._profiler.get_events(this._handle_details_list.bind(this, child_type), config);
     }
     else
     {
@@ -282,7 +283,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._reload_window = function(event, target)
   {
     if (this._current_session_id)
-      this._profiler.release_session(this._old_session_id);
+      this._profiler.release_session(null, {session_id: this._old_session_id});
     this._reset();
     window.services.scope.enable_profile(window.app.profiles.PROFILER);
   };
@@ -325,7 +326,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       if (timeline_event.type === TYPE_PAINT)
       {
         var area = timeline_event.paint.area;
-        this._overlay.create_overlay(null, {x: area.x, y: area.y, w: area.w, h:area.h});
+        var config = {x: area.x, y: area.y, w: area.w, h:area.h};
+        this._overlay.create_overlay(null, config);
       }
     }
   };

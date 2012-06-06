@@ -26,8 +26,7 @@ var OverlayServicePrototype = function()
 
   this.create_overlay = function(callback, config)
   {
-    if (config == null)
-      config = {};
+    var config = config || {};
 
     if (config.x == null || config.y == null || config.w == null || config.h == null)
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
@@ -55,9 +54,7 @@ var OverlayServicePrototype = function()
 
   this.remove_overlay = function(callback, config)
   {
-    if (config == null)
-      config = {};
-
+    var config = config || {};
     var window_id = config.window_id || this._window_id;
     var overlay_id = config.overlay_id || null;
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
