@@ -5,13 +5,14 @@
  */
 var OverlayService = function(default_color)
 {
+  var DEFAULT_COLOR = [255, 0, 0, 128];
+
   this._init = function(default_color)
   {
     this._overlay = window.services["overlay"];
     this._tag_manager = window.tag_manager;
     this._window_id = 0;
-
-    this.set_default_color(default_color);
+    this._default_color = default_color || DEFAULT_COLOR;
 
     this._on_debug_context_selected_bound = this._on_debug_context_selected.bind(this);
     window.messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
@@ -22,8 +23,6 @@ var OverlayService = function(default_color)
 
 var OverlayServicePrototype = function()
 {
-  var DEFAULT_COLOR = [255, 0, 0, 128];
-
   this.create_overlay = function(callback, config)
   {
     var config = config || {};
@@ -63,11 +62,6 @@ var OverlayServicePrototype = function()
     });
     var msg = [window_id, overlay_id];
     this._overlay.requestRemoveOverlay(null, msg);
-  };
-
-  this.set_default_color = function(color)
-  {
-    this._default_color = color || DEFAULT_COLOR;
   };
 
   this._on_debug_context_selected = function(msg)
