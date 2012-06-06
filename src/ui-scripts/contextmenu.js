@@ -122,15 +122,17 @@ function ContextMenu() {
       if (collected_menus.indexOf(menu_id) == -1) {
         collected_menus.push(menu_id);
 
-        var items = this._registered_menus[menu_id];
-        if (items && items.length)
+        var menus = this._registered_menus[menu_id];
+        if (menus && menus.length)
         {
-          if (all_items.length)
+          var items = this._expand_all_items(menus, event, menu_id);
+          if (items.length)
           {
-            all_items.push(ContextMenu.separator);
-          }
+            if (all_items.length)
+              all_items.push(ContextMenu.separator);
 
-          all_items = all_items.concat(this._expand_all_items(items, event, menu_id));
+            all_items = all_items.concat(items);
+          }
         }
       }
       ele = ele.parentNode;

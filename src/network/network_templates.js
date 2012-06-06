@@ -107,12 +107,6 @@ templates.network_incomplete_warning = function()
                ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
                "class", "text_handler",
                "handler", "reload-window"
-             ],
-             " ",
-             ["span",
-               ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN,
-               "class", "text_handler",
-               "handler", "turn-off-incomplete-warning"
              ]
            ],
            ["span",
@@ -126,8 +120,7 @@ templates.network_incomplete_warning = function()
 
 templates.network_log_main = function(ctx, entries, selected, detail_width, table_template)
 {
-  var show_incomplete_warning = settings.network_logger.get("show-incomplete-warning") &&
-                                !ctx.saw_main_document_abouttoloaddocument &&
+  var show_incomplete_warning = !ctx.saw_main_document_abouttoloaddocument &&
                                 !ctx.incomplete_warn_discarded;
 
   return [
@@ -138,7 +131,7 @@ templates.network_log_main = function(ctx, entries, selected, detail_width, tabl
     [
       "div", [
         "div", table_template || templates.network_viewmode_graphs(
-                                   ctx, entries, selected, detail_width, table_template
+                                   ctx, entries, selected, detail_width
                                  ),
         "class", "network-data-container " + (table_template ? "data" : "graphs")
       ],
@@ -344,7 +337,7 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
           "data-object-id", String(entry.id)];
 }
 
-templates.network_graph_section_color = {
+templates.network_graph_section_colors = {
   waiting: "#7381FF",
   request: "#de5b5b",
   receiving: "#79db86",
@@ -386,7 +379,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
     var val = section.val * scale;
     to += val;
 
-    var color = templates.network_graph_section_color[section.classname];
+    var color = templates.network_graph_section_colors[section.classname];
     return color + " " + Math.round(from) + "px," +  color + " " + Math.round(to) + "px";
   }).join(",");
   // End transparent. This will let the fallback background-color show in case min-width applies.

@@ -49,19 +49,20 @@
   padding: 0;
   margin: 0;
   padding-top: 23px;
-  margin-top: 1rem;
+  margin-top: 11px;
 }
 
-.network-timeline-row,
 .network-graph-row
 {
-  height: 1rem;
+  line-height: 14px;
+  padding-bottom: 3px;
   padding-top: 1px;
-  padding-bottom: 12px;
 }
 
 .network-timeline-row
 {
+  height: 22px;
+  padding-top: 2px;
   position: relative;
 }
 
@@ -95,7 +96,7 @@
 .tooltip-container .error_response,
 .network-log-url-list .error_response
 {
-  color: #d2001c;
+  color: #d2001c !important;
 }
 
 .network-log-url-list .error_response.selected
@@ -115,6 +116,11 @@
   color: #808080;
 }
 
+.network-log-url-list li
+{
+  line-height: 13px;
+}
+
 .network-log-url-list li .network-url
 {
   padding-left: 5px;
@@ -126,6 +132,7 @@
   vertical-align: middle;
   display: inline-block;
   max-width: 88%;
+  line-height: 13px;
 }
 
 .network-log-url-list .log-url-list-status
@@ -155,6 +162,7 @@
 
 .network_incomplete_warning
 {
+  line-height: 15px;
   margin: 15px 50px;
   position: relative;
 }
@@ -175,11 +183,6 @@
   white-space: nowrap;
 }
 
-.network_incomplete_warning
-{
-  line-height: 15px;
-}
-
 .network-main-container .sortable-table > tr.header,
 .network-main-container .sortable-table > tr.header:hover
 {
@@ -192,12 +195,14 @@
 {
   padding-bottom: 6px;
   padding-top: 5px;
+  line-height: 13px;
 }
 
 .network_logger .network-main-container .sortable-table th
 {
   padding-bottom: 7px;
   padding-top: 5px;
+  line-height: 13px;
   border-left-color: rgba(0, 0, 0, 0.09);
 }
 
@@ -230,8 +235,6 @@
 .network_logger .close-request-detail:active,
 .network_logger .close_incomplete_warning:active
 {
-  padding-top: 2px;
-  padding-bottom: 0;
   background-color: rgba(0, 0, 0, 0.28);
   box-shadow: 0 1px #fff,
               inset 0 1px 1px rgba(0, 0, 0, 0.15),
@@ -239,10 +242,10 @@
 }
 .close-request-detail
 {
-  display: inline-block;
+  position: absolute;
+  left: 12px;
+  top: 7px;
   cursor: default;
-  margin-left: 12px;
-  margin-top: 7px;
 }
 
 .network_logger .close_incomplete_warning
@@ -256,8 +259,7 @@
   position: absolute;
   height: 100%;
   width: 12px;
-  margin-left: -6px;
-  display: inline-block;
+  left: -6px;
   cursor: col-resize;
 }
 
@@ -281,9 +283,11 @@
   overflow: auto;
   height: 100%;
   box-sizing: border-box;
-  padding: 27px 20px 37px 28px;
+  padding: 27px 20px 37px 0;
   background-color: #fff;
-  border-bottom-width: 0;
+  /* using border-left instead of padding-left to keep the 
+     space for the close button when scrolling horizontally */
+  border-left: 28px solid transparent;
   box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
               0 2px 4px rgba(0, 0, 0, 0.45),
               -1px 0 0 rgba(0, 0, 0, 0.05);

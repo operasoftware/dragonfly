@@ -340,6 +340,8 @@ cls.Scope["1.1"].Service = function()
     this._disable_requests = [];
   };
 
+  this.reset = this._init;
+
   this._init();
 
 }
