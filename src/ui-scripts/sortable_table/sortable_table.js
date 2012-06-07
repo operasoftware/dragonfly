@@ -101,12 +101,29 @@ var SortableTablePrototype = function()
       this._org_data_order = data.map(this.tabledef.idgetter);
     }
     this._data = data;
+    this.reorder();
   };
 
   this.get_data = function()
   {
     return this._data;
   };
+
+  this.reorder = function()
+  {
+    var sorter = this.sortby && this.tabledef.columns[this.sortby].sorter;
+    if (sorter)
+    {
+      this._data.sort(sorter);
+      if (this.reversed)
+        this.reverse_();
+    }
+  };
+
+  this.reverse_ = function()
+  {
+    this._data.reverse();
+  }
 
   this._init_handlers = function()
   {
@@ -233,7 +250,7 @@ var SortableTablePrototype = function()
     var obj_id = table.getAttribute("data-table-object-id");
     var table_instance = ObjectRegistry.get_instance().get_object(obj_id);
     var col_id = evt.target.get_attr("parent-node-chain", "data-column-id");
-    table_instance.sort(col_id);
+    table_instance.change_sort(col_id);
     table_instance._re_render_bound(table);
   }
 
@@ -280,11 +297,15 @@ var SortableTablePrototype = function()
     }
   }
 
-  this.sort = function(col)
+  this.change_sort = function(col)
   {
+    var unreversed = false;
     if (col == this.sortby)
     {
       this.reversed = !this.reversed;
+      if (!this.reversed)
+        unreversed = true;
+
       if (this.id)
         localStorage[this._sort_reverse_storage_id] = this.reversed;
 
@@ -294,8 +315,16 @@ var SortableTablePrototype = function()
       this.sortby = col;
       if (this.id)
         localStorage[this._sorter_storage_id] = col;
-
     }
+
+    // Treat unreverse as a special case that doesn't trigger sort instead of reversing. This 
+    // is not perfect. When reversed, changing the sort col can lead to a different order, even 
+    // with the same sorter function. Both orders will be correct though, this will only show 
+    // when two or more sorters return the same value.
+    if (unreversed)
+      this.reverse_();
+    else
+      this.reorder();
   };
 
   this._id_map = function(item)
@@ -307,8 +336,8 @@ var SortableTablePrototype = function()
   {
     if (this._org_data_order)
     {
-      this.reversed = localStorage[this._sort_reverse_storage_id] = null;
-      this.sortby = localStorage[this._sorter_storage_id] = null;
+      this.reversed = localStorage[this._sort_reverse_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
+      this.sortby = localStorage[this._sorter_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
       var old_data = this.get_data();
       var old_data_index = old_data.map(this._id_map, this);
       var new_data = [];
@@ -466,10 +495,6 @@ templates.sortable_table_body = function(tabledef, data, cols, groupby, sortby, 
 
 templates.sortable_table_group = function(tabledef, groupname, render_header, data, cols, groupby, sortby, reversed)
 {
-  var sorter = sortby && tabledef.columns[sortby].sorter;
-  if (sorter) { data.sort(sorter); }
-  if (reversed) { data.reverse() }
-
   var tpl = [];
   if (render_header) {
     var groupdef = tabledef.groups[groupby];
