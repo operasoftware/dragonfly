@@ -2,20 +2,25 @@
 
 /**
  * @constructor
+ *
+ * The overlay service can overlay painted areas over a Window.
  */
 var OverlayService = function(default_color)
 {
   var DEFAULT_COLOR = [255, 0, 0, 128];
 
-  this._init = function(default_color)
+  /**
+   * @param {Object} default_config Default colors used when not explicitly passing
+   * to create_overlay(). Takes three arrays, 'color', 'border_color' and 'grid_color',
+   * all specified as an array with four values: 'r', 'g', 'b' and 'alpha'. All off
+   * these are in the range 0 to 255.
+   */
+  this._init = function(default_config)
   {
     this._overlay = window.services["overlay"];
     this._tag_manager = window.tag_manager;
     this._window_id = 0;
-    this._default_color = default_color || DEFAULT_COLOR;
-
-    this._on_debug_context_selected_bound = this._on_debug_context_selected.bind(this);
-    window.messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
+    this._default_config = default_config || {color: DEFAULT_COLOR};
   };
 
   this._init(default_color);
@@ -23,6 +28,12 @@ var OverlayService = function(default_color)
 
 var OverlayServicePrototype = function()
 {
+  /**
+   * Create an overlay.
+   *
+   * @param {Object} config Configures the overlay. At least 'x', 'y', 'w' and 'h'
+   * has to be specified.
+   */
   this.create_overlay = function(callback, config)
   {
     var config = config || {};
@@ -39,9 +50,9 @@ var OverlayServicePrototype = function()
     ];
     var area_overlay = [
       [config.x, config.y, config.w, config.h],
-      config.color || this._default_color,
-      config.border_color || null,
-      config.grid_color || null
+      config.color || this._default_config.color,
+      config.border_color || this._default_config.border_color,
+      config.grid_color || this._default_config.grid_color
     ];
     var tag = this._tag_manager.set_callback(this, function(status, msg) {
       if (callback)
@@ -51,6 +62,12 @@ var OverlayServicePrototype = function()
     this._overlay.requestCreateOverlay(tag, msg);
   };
 
+  /**
+   * Remove an overlay. If no overlay ID is specified in the config object,
+   * all overlays are removed.
+   *
+   * @param {Object} config An overlay ID can be specified with 'overlay_id'.
+   */
   this.remove_overlay = function(callback, config)
   {
     var config = config || {};
@@ -64,9 +81,14 @@ var OverlayServicePrototype = function()
     this._overlay.requestRemoveOverlay(null, msg);
   };
 
-  this._on_debug_context_selected = function(msg)
+  /**
+   * Set the Window ID.
+   *
+   * @param {Number} window_id The ID of the Window.
+   */
+  this.set_window_id = function(window_id)
   {
-    this._window_id = msg.window_id;
+    this._window_id = window_id;
   };
 };
 
