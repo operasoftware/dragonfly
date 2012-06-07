@@ -137,7 +137,7 @@ templates.response_details = function(resp)
 templates.network_headers_list = function(headers, firstline)
 {
   var lis = headers.map(function(header) {
-      return ["tr", ["th", header.name], ["td", header.value], "data-spec", "http#" + header.name];
+      return ["tr", ["th", header.name + ":"], ["td", header.value], "data-spec", "http#" + header.name];
   });
 
   if (firstline)
