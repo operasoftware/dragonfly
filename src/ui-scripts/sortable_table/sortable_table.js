@@ -114,6 +114,9 @@ var SortableTablePrototype = function()
     var sorter = this.sortby && this.tabledef.columns[this.sortby].sorter;
     if (sorter)
     {
+      if (this._org_data_order)
+        this._reset_data_order();
+
       this._data.sort(sorter);
       if (this.reversed)
         this.reverse_();
@@ -299,13 +302,9 @@ var SortableTablePrototype = function()
 
   this.change_sort = function(col)
   {
-    var unreversed = false;
     if (col == this.sortby)
     {
       this.reversed = !this.reversed;
-      if (!this.reversed)
-        unreversed = true;
-
       if (this.id)
         localStorage[this._sort_reverse_storage_id] = this.reversed;
 
@@ -315,16 +314,9 @@ var SortableTablePrototype = function()
       this.sortby = col;
       if (this.id)
         localStorage[this._sorter_storage_id] = col;
-    }
 
-    // Treat unreverse as a special case that doesn't trigger sort instead of reversing. This 
-    // is not perfect. When reversed, changing the sort col can lead to a different order, even 
-    // with the same sorter function. Both orders will be correct though, this will only show 
-    // when two or more sorters return the same value.
-    if (unreversed)
-      this.reverse_();
-    else
-      this.reorder();
+    }
+    this.reorder();
   };
 
   this._id_map = function(item)
@@ -338,19 +330,22 @@ var SortableTablePrototype = function()
     {
       this.reversed = localStorage[this._sort_reverse_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
       this.sortby = localStorage[this._sorter_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
-      var old_data = this.get_data();
-      var old_data_index = old_data.map(this._id_map, this);
-      var new_data = [];
-      for (var i = 0; i < this._org_data_order.length; i++)
-      {
-        var id = this._org_data_order[i];
-        var index = old_data_index.indexOf(id);
-        new_data.push(old_data[index]);
-      }
-      this.set_data(new_data);
+      this._reset_data_order();
     }
-  }
+  };
 
+  this._reset_data_order = function()
+  {
+    var old_data_index = this._data.map(this._id_map, this);
+    var new_data = [];
+    for (var i = 0; i < this._org_data_order.length; i++)
+    {
+      var id = this._org_data_order[i];
+      var index = old_data_index.indexOf(id);
+      new_data.push(this._data[index]);
+    }
+    this._data = new_data;
+  };
 
   this.group = function(group)
   {
@@ -428,7 +423,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
             }
             else
             {
-              if (sortby==c)
+              if (sortby == c)
               {
                 tdclass = "sort-column";
               }
