@@ -78,7 +78,7 @@ templates.network_response = function(response)
 templates.request_details = function(req)
 {
   var ret = [];
-  if (!req)
+  if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
     return ret;
 
   if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
