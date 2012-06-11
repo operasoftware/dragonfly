@@ -136,32 +136,40 @@ eventHandlers.click["change-cols"] = colHandler;
 eventHandlers.click["reset-sort"] = resetSortHandler;
 eventHandlers.click["reset-cols"] = resetColsHandler;
 eventHandlers.click["reset-storage"] = resetStorageHandler;
+eventHandlers.click["do-table"] = doTableHandler;
 
+var my_table;
 
-var my_table = new SortableTable(
-                tabledef, // table-def
-                users, // data
-                ["name2", "gender", "birthdate", "age", "gendericon"], // cols shown by default
-                "birthdate", // sortby
-                "gender", // groupby,
-                true, // reversed
-                "sample_table" // id
-              );
+function do_table(use_init_vals)
+{
+  my_table = new SortableTable(
+               tabledef, // table-def
+               users, // data
+               use_init_vals ?  ["name2", "gender", "birthdate", "age", "gendericon"] : null, // cols shown by default
+               use_init_vals ? "birthdate" : null, // sortby
+               use_init_vals ? "gender" : null, // groupby,
+               use_init_vals ? true : null, // reversed
+               "sample_table"
+             );
 
-document.body.render(["h1", "Table example, advanced"]);
-document.body.render(["p", "All changes the user makes are stored in localStorage. Reloading the page restores."]);
-document.body.render(groupSelector(tabledef));
-document.body.render(["br"]);
-document.body.render(colSelector(tabledef, my_table));
-document.body.render(["br"]);
-document.body.render(resetColumnsButton());
-document.body.render(resetSortButton());
-document.body.render(resetStorageButton());
-document.body.render(["br"]);
-document.body.render(["br"]);
-
-document.body.render(my_table.render());
-
+  document.body.clearAndRender(["h1", "Table example, advanced"]);
+  document.body.render(["p", "All changes the user makes are stored in localStorage. Reloading the page restores."]);
+  document.body.render(["div", "id", "table_container"]);
+  document.body.render(groupSelector(tabledef));
+  document.body.render(["br"]);
+  document.body.render(colSelector(tabledef, my_table));
+  document.body.render(["br"]);
+  document.body.render(resetColumnsButton());
+  document.body.render(resetSortButton());
+  document.body.render(resetStorageButton());
+  document.body.render(["br"]);
+  document.body.render(["br"]);
+  document.body.render(doTableButtons());  
+  document.body.render(["br"]);
+  document.body.render(["br"]);
+  document.body.render(my_table.render());
+}
+do_table(true);
 
 function groupHandler(evt, target) {
   var table = document.querySelector("table");
@@ -171,7 +179,7 @@ function groupHandler(evt, target) {
 }
 
 function groupSelector(tabledef) {
-  var groups = [{label: "No grouping", id: "" }];
+  var groups = [{label: "No grouping", id: "null" }];
   for (var key in tabledef.groups) { groups.push({label: tabledef.groups[key].label, id: key})}
 
   var radiofun = function(e, sel) { return ["label", e.label,
@@ -180,7 +188,7 @@ function groupSelector(tabledef) {
                                              "type", "radio",
                                              "name", "group",
                                              "handler", "change-group"
-                                            ].concat(e.id == my_table.groupby ? ["checked", "checked"] : []),
+                                            ].concat(e.id == String(my_table.groupby) ? ["checked", "checked"] : []),
                                             " | "
                                            ]
                                   }
@@ -247,8 +255,13 @@ function resetColumnsButton() {
 function resetSortHandler(evt, target) {
   var table = document.querySelector("table");
   var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
-  obj.reset_sort();
+  obj.change_sort(null);
   table.re_render(obj.render());
+}
+
+function doTableHandler(evt, target) {
+  var use_init_vals = Boolean(target.getAttribute("data-use-init-vals"));
+  do_table(use_init_vals);
 }
 
 function resetSortButton() {
@@ -268,6 +281,13 @@ function resetStorageHandler(evt, target) {
 
 function resetStorageButton() {
   return ["button", "Reset localStorage[table-*]", "handler", "reset-storage"];
+}
+
+function doTableButtons() {
+  return [
+           ["button", "Draw table with init vals", "handler", "do-table", "data-use-init-vals", "true"],
+           ["button", "Draw table without init vals", "handler", "do-table", "data-use-init-vals", ""],
+         ];
 }
 
 </script>
