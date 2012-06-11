@@ -328,8 +328,9 @@ var SortableTablePrototype = function()
   {
     if (this._org_data_order)
     {
-      this.reversed = localStorage[this._sort_reverse_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
-      this.sortby = localStorage[this._sorter_storage_id] = null; // todo: setting this null is not useful, since the default of the table will apply.
+      // todo: setting these to null is not useful, the default of the table will apply.
+      this.reversed = localStorage[this._sort_reverse_storage_id] = null;
+      this.sortby = localStorage[this._sorter_storage_id] = null;
       this._reset_data_order();
     }
   };
