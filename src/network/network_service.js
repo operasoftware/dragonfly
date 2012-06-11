@@ -711,11 +711,6 @@ cls.NetworkLoggerEntryPrototype = function()
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
 
-    // if we got this far, and there was no
-    // response code, no request was performed for this entry
-    if (!this.responsecode)
-      this.no_request_made = true;
-
     if (this._current_response)
       this._current_response._update_event_urlfinished(event);
 
