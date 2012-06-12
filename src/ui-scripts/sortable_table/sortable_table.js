@@ -91,7 +91,8 @@ var SortableTablePrototype = function()
     this.columns = stored_cols || cols;
     // visible columns, as originally passed in. used for restore.
     this.default_columns = cols.slice(0);
-    this.reversed = !!reversed;
+    this.reversed = Boolean(reversed);
+    this._bound_sorters = {};
     this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
@@ -106,7 +107,7 @@ var SortableTablePrototype = function()
   {
     if (this.tabledef.idgetter)
     {
-      this._org_data_order = data.map(this.tabledef.idgetter);
+      this._org_data_order = this._last_item_order = data.map(this.tabledef.idgetter);
     }
     this._data = data;
     this.reorder();
@@ -122,18 +123,36 @@ var SortableTablePrototype = function()
     var sorter = this.sortby && this.tabledef.columns[this.sortby].sorter;
     if (sorter)
     {
-      if (this._org_data_order)
-        this._reset_data_order();
+      var bound_sorter = this._bound_sorters[this.sortby];
+      if (!bound_sorter)
+      {
+        bound_sorter = this._bound_sorters[this.sortby]
+                     = this.sort_wrapper.bind(this, sorter);
+      }
 
-      this._data.sort(sorter);
-      if (this.reversed)
-        this.reverse_();
+      this._data.sort(bound_sorter);
+      if (this.tabledef.idgetter)
+        this._last_item_order = this._data.map(this.tabledef.idgetter);
+    }
+    else if (this.tabledef.idgetter)
+    {
+      this._reset_data_order();
     }
   };
 
-  this.reverse_ = function()
+  this.sort_wrapper = function(sorter, a, b)
   {
-    this._data.reverse();
+    var val = sorter(a, b);
+    if (this.reversed)
+      val *= -1;
+
+    if (val === 0 && this._last_item_order)
+    {
+      var id = this.tabledef.idgetter;
+      var order = this._last_item_order;
+      val = order.indexOf(id(a)) < order.indexOf(id(b)) ? -1 : 1;
+    }
+    return val;
   }
 
   this._init_handlers = function()
@@ -279,10 +298,6 @@ var SortableTablePrototype = function()
     }
   };
 
-  this._default_sorters = {
-    "number": function(getter) { return function(a, b) { return b-a; } }
-  }
-
   this.render = function()
   {
     return templates.sortable_table(this.tabledef, this._data, this.objectid,
@@ -301,7 +316,7 @@ var SortableTablePrototype = function()
     {
       a = getter(a);
       b = getter(b);
-      if (typeof a === "number" && typeof b === "number") { return b - a }
+      if (typeof a === "number" && typeof b === "number") { return a - b }
       if (a > b) { return 1 }
       else if (a < b) { return -1 }
       else { return 0 }
@@ -319,18 +334,20 @@ var SortableTablePrototype = function()
     }
     else
     {
-      this.sortby = col || null;
-      if (this.id)
-        localStorage[this._sorter_storage_id] = col || NULL_STORAGE;
-
+      this.sortby = col;
       if (!this.sortby)
       {
         // reset sorting
+        this.sortby = null;
         this.reversed = false;
         if (this.id)
           localStorage[this._sort_reverse_storage_id] = NULL_STORAGE;
 
       }
+
+      if (this.id)
+        localStorage[this._sorter_storage_id] = col || NULL_STORAGE;
+
     }
     this.reorder();
   };
@@ -344,6 +361,7 @@ var SortableTablePrototype = function()
   {
     var old_data_index = this._data.map(this._id_map, this);
     var new_data = [];
+    this._last_item_order = this._org_data_order;
     for (var i = 0; i < this._org_data_order.length; i++)
     {
       var id = this._org_data_order[i];
