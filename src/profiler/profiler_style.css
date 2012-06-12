@@ -138,8 +138,8 @@
 
 .profiler-event
 {
-  min-width: 1px;
-  height: 8px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
+  min-width: 3px;
+  height: 10px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
   border-radius: 2px;
   z-index: 2;
 }
@@ -151,19 +151,26 @@
 
 .profiler-event-interval
 {
-  min-width: 3px; /* 3px + 2*1px (border) = 5px min-width */
   margin: 3px 0;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 .profiler-event-interval[data-isexpandable="true"]:hover
 {
-  box-shadow: 0 0 0 3px #ceddf5;
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+              0 0 0 3px #ceddf5;
 }
 
 .profiler-event-interval[data-isexpandable="false"]:hover
 {
-  box-shadow: 0 0 0 3px #ddd;
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+              0 0 0 3px #ddd;
 }
 
 .profiler-event-interval.selected
