@@ -28,8 +28,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CONTENT_DOCUMENT = 11;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
-cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST = 15;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {

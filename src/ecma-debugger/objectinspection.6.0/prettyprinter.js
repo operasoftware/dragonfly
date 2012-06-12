@@ -133,6 +133,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.FUNCTION] =
                      "data-script-endline", String(end_line)),
         head = ["h2", sc_link, "class", "js-tooltip-title"];
       }
+
       for (var i = start_line; i <= end_line; i++)
       {
         var data = script.get_line(i);
@@ -236,12 +237,13 @@ cls.PrettyPrinter.prototype = new function()
 
     list.forEach(function(type)
     {
+      var type_obj = cls.PrettyPrinter.types[type];
       if (cls.PrettyPrinter.types.hasOwnProperty(type) &&
-          !this._types.contains(cls.PrettyPrinter.types[type]))
+          !this._types.contains(type_obj))
       {
-        this._types.push(cls.PrettyPrinter.types[type]);
-        if (cls.PrettyPrinter.types[type].init)
-          cls.PrettyPrinter.types[type].init();
+        this._types.push(type_obj);
+        if (type_obj.init)
+          type_obj.init();
       }
     }, this);  
   };

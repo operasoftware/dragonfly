@@ -68,7 +68,7 @@
   {
     var tmpl_obj_l = window.templates.ev_window_listeners(ev_type);
     var tmpl_node_l = window.templates.dom_search(ev_type);
-    return["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-listener-list mono"];
+    return ["div", tmpl_obj_l, [tmpl_node_l], "class", "ev-listener-list mono"];
   };
 
   this.ev_window_listeners = function(ev_type)

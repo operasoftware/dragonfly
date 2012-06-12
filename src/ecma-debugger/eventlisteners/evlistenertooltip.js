@@ -2,7 +2,7 @@
 
 window.cls || (window.cls = {});
 
-cls.EvListenerTooltip = function()
+cls.EventListenerTooltip = function()
 {
   var _tooltip = null;
   var _url_tooltip = null;
@@ -50,7 +50,7 @@ cls.EvListenerTooltip = function()
 
   var _init = function(view)
   {
-    _tooltip = Tooltips.register(cls.EvListenerTooltip.tooltip_name, true);
+    _tooltip = Tooltips.register(cls.EventListenerTooltip.tooltip_name, true);
     _url_tooltip = Tooltips.register("url-tooltip", true);
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
@@ -62,9 +62,9 @@ cls.EvListenerTooltip = function()
   _init();
 };
 
-cls.EvListenerTooltip.tooltip_name = "event-listener";
+cls.EventListenerTooltip.tooltip_name = "event-listener";
 
-cls.EvListenerTooltip.register = function()
+cls.EventListenerTooltip.register = function()
 {
-  this._tooltip = new cls.EvListenerTooltip();
+  this._tooltip = new cls.EventListenerTooltip();
 };

@@ -466,8 +466,10 @@ cls.JsSourceView = function(id, name, container_class)
 
     line_no_end || (line_no_end = line_no_start);
     this.showLine(script_id, line_no_start);
-    this._change_highlight_class_lines("addClass", line_no_start, line_no_end);
-    var cb = this._change_highlight_class_lines.bind(this, "removeClass",
+    this._change_highlight_class_lines(Element.prototype.addClass,
+                                       line_no_start, line_no_end);
+    var cb = this._change_highlight_class_lines.bind(this,
+                                                     Element.prototype.removeClass,
                                                      line_no_start, line_no_end);
     setTimeout(cb, 1000);
   };
@@ -477,7 +479,7 @@ cls.JsSourceView = function(id, name, container_class)
     for (var i = start, line; i <= end; i++)
     {
       if (line = this.get_line_element(i))
-        line[method]("selected-js-source-line");
+        method.call(line, "selected-js-source-line");
     }
   };
 
@@ -511,11 +513,10 @@ cls.JsSourceView = function(id, name, container_class)
   this.showLine = function(script_id, line_no, is_parse_error, is_scroll)
   {
     if (__timeout_clear_view)
-    {
       __timeout_clear_view = clearTimeout(__timeout_clear_view);
-    }
 
-    var is_visible = (source_content = document.querySelector(CONTAINER_SELECTOR)) ? true : false;
+    source_content = document.querySelector(CONTAINER_SELECTOR);
+    var is_visible = Boolean(source_content);
     // if the view is visible it shows the first new script
     // before any parse error, that means in case of a parse error
     // the current script has not set the parse_error property
@@ -804,7 +805,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   var __clearView = function()
   {
-    if( ( source_content = document.querySelector(CONTAINER_SELECTOR) ) && source_content.parentElement )
+    source_content = document.querySelector(CONTAINER_SELECTOR);
+    if (source_content && source_content.parentElement)
     {
       var
       divs = source_content.parentElement.parentElement.getElementsByTagName('div'),
@@ -1031,6 +1033,7 @@ cls.JsSourceView.update_breakpoints = function(script, line_numbers, top_line)
       var span = line_numbers.querySelector(".line-number");
       top_line = span && Number(span.textContent);
     }
+    
     if (lines && bp_states && typeof top_line == "number")
     {
       for (var i = 0, line; line = lines[i]; i++)

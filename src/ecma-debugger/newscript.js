@@ -238,6 +238,7 @@ window.cls.NewScriptPrototype = function()
           }
         }
       }
+      
       if (end_line == -1)
       {
         index = 0;
