@@ -295,7 +295,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._on_profile_enabled = function(msg)
   {
     if (msg.profile === window.app.profiles.PROFILER)
+    {
+      this._has_overlay_service = window.services["overlay"] && window.services["overlay"].is_enabled;
       window.runtimes.reloadWindow();
+    }
   };
 
   this._get_zero_point = function()
@@ -327,6 +330,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (timeline_event)
     {
       this._tooltip.show(this._templates.get_title_all(timeline_event));
+    }
+  };
+
+  this._show_event_details = function(event, target)
+  {
+    if (!this._has_overlay_service)
+      return;
+    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var timeline_event = this._get_event_by_id(id);
+    if (timeline_event)
+    {
       if (timeline_event.type === TYPE_PAINT)
       {
         var area = timeline_event.paint.area;
@@ -336,8 +350,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
   };
 
-  this._ontooltiphide = function()
+  this._hide_event_details = function(event, target)
   {
+    if (!this._has_overlay_service)
+      return;
     this._overlay.remove_overlay();
   };
 
@@ -348,12 +364,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._profiler = new ProfilerService();
     this._overlay = new OverlayService();
     this._templates = new ProfilerTemplates();
+    this._has_overlay_service = false;
     this._has_zero_at_first_event = false;
     this._reset();
 
     this._tooltip = Tooltips.register("profiler-event", true, false);
     this._tooltip.ontooltip = this._ontooltip.bind(this);
-    this._tooltip.onhide = this._ontooltiphide.bind(this);
 
     this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
     this._on_settings_changed_bound = this._on_settings_changed.bind(this);
@@ -364,7 +380,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
-    window.event_handlers.click["profiler-get-event-details"] = this._get_event_details.bind(this);
+    window.event_handlers.click["profiler-event"] = this._get_event_details.bind(this);
+    window.event_handlers.mouseover["profiler-event"] = this._show_event_details.bind(this);
+    window.event_handlers.mouseout["profiler-event"] = this._hide_event_details.bind(this);
   };
 
   this._init(id, name, container_class, html, default_handler);

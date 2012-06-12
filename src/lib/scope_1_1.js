@@ -293,7 +293,8 @@ cls.Scope["1.1"].Service = function()
     }, this);
     services_to_be_enabled.forEach(function(service)
     {
-      if (!current_enabled_services.contains(service))
+      var has_service = this._service_descriptions.hasOwnProperty(service);
+      if (!current_enabled_services.contains(service) && has_service)
         this._enable_requests.push(service);
     }, this);
 

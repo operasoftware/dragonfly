@@ -67,14 +67,14 @@ var ProfilerService = function()
     this._profiler.requestReleaseSession(tag, msg);
   };
 
-  this._on_debug_context_selected = function(msg)
-  {
-    this._window_id = msg.window_id;
-  };
-
   this.get_window_id = function()
   {
     return this._window_id;
+  };
+
+  this._on_debug_context_selected = function(msg)
+  {
+    this._window_id = msg.window_id;
   };
 
   this._init = function()
