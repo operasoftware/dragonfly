@@ -1494,6 +1494,8 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
+/* new event listener feature */
+
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
 ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
 
@@ -1514,3 +1516,5 @@ ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
+/* end new event listener feature */

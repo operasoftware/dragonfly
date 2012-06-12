@@ -754,7 +754,7 @@
         case DOCUMENT_NODE:
         {
           tree += "<div" + this._margin_style(node, depth_first_ele) + 
-                          "ref-id='"+node[ID] + "'>" +
+                          "ref-id='" + node[ID] + "'>" +
                     "<span class='document-node'>#document</span>" +
                     ev_listener + "</div>";
           break;

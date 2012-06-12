@@ -345,8 +345,7 @@ cls.PrettyPrinter.prototype = new function()
           return;
         }
       }
-    }
-    
+    }    
     this._print_object(ctx);
   };
 

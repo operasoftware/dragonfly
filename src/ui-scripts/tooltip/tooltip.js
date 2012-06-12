@@ -95,8 +95,6 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   const DATA_TOOLTIP = "data-tooltip";
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
-  const HIDE_DELAY = 50;
-  const SHOW_DELAY = 40;
   const HOVER_DELAY = 70;
   const DISTANCE_X = 5;
   const DISTANCE_Y = 5;

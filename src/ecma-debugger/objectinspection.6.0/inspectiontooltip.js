@@ -124,7 +124,6 @@ cls.JSInspectionTooltip = function()
                                class_name: class_name,
                                object: _cur_object,
                                callback: _handle_ontooltip});
-
       }
       else
       {

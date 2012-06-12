@@ -1,10 +1,5 @@
 window.cls || (window.cls = {});
 
-/**
-  * @constructor
-  * @extends ViewBase
-  */
-
 cls.EventType = function(type)
 {
   this.type = type;
@@ -52,7 +47,7 @@ cls.RTListUpdateCTX.prototype = new function()
       list.splice(index, 1);
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "_handle_expand_listener failed in cls.EvenetListeners.")
+                      "_handle_expand_listener failed in cls.EventListeners.")
 
     this.check_is_updated();
   };
@@ -66,7 +61,7 @@ cls.RTListUpdateCTX.prototype = new function()
 
   this.check_is_updated = function()
   {
-    if (this.rt_id_list.every(this._check_rt))
+    if (this.rt_id_list.every(this._check_rt, this))
       this._cb(this);
   };
 
@@ -76,18 +71,17 @@ cls.RTListUpdateCTX.prototype = new function()
     this.rt_map = {};
     this.win_id_map = {};
     this.expanded_map = {};
-    this.handle_expand_listener = this._handle_expand_listener.bind(this);
-    this._check_rt = this._check_rt.bind(this);
+    this.handle_expand_listener_bound = this._handle_expand_listener.bind(this);
     this._cb = cb;
   };
 };
 
-cls.EvenetListeners = function(view)
+cls.EventListeners = function(view)
 {
   this._init(view);
 };
 
-cls.EvenetListeners.prototype = new function()
+cls.EventListeners.prototype = new function()
 {
 
   /* interface */
@@ -177,7 +171,7 @@ cls.EvenetListeners.prototype = new function()
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "failed to get the window object in cls.EvenetListeners.")
+                      "failed to get the window object in cls.EventListeners.")
   };
 
   this._get_event_types = function(ctx, rt_id)
@@ -210,7 +204,7 @@ cls.EvenetListeners.prototype = new function()
           {
             ctx.expanded_map[rt_id].push(type);
             var cb = this._handle_dom_search.bind(this, ev_type,
-                                                  ctx.handle_expand_listener);
+                                                  ctx.handle_expand_listener_bound);
             ev_type.search_listeners(rt_id, obj_id, type, cb);
           }
           return ev_type;
@@ -224,7 +218,7 @@ cls.EvenetListeners.prototype = new function()
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "failed to retrieve the event names in cls.EvenetListeners.")
+                      "failed to retrieve the event names in cls.EventListeners.")
   };
 
   this._handle_dom_search = function(ev_type, cb)
@@ -261,7 +255,7 @@ cls.EvenetListeners.prototype = new function()
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "requestGetEventListeners failed in cls.EvenetListeners.")
+                      "requestGetEventListeners failed in cls.EventListeners.")
   };
 
   this._get_ev_type = function(rt_id, type)
@@ -322,12 +316,12 @@ cls.EvenetListeners.prototype = new function()
     var ev_type = this._get_ev_type(rt_id, type);
     if (ev_type)
     {
-      var cb = this._handle_dom_search.bind(this, ev_type, cb);
-      ev_type.search_listeners(rt_id, obj_id, type, cb);
+      var inner_cb = this._handle_dom_search.bind(this, ev_type, cb);
+      ev_type.search_listeners(rt_id, obj_id, type, inner_cb);
     }
     else
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "failed to find event names object in cls.EvenetListeners.")
+                      "failed to find event names object in cls.EventListeners.")
 
   };
 

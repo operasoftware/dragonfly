@@ -160,7 +160,7 @@ window.cls.NewScriptPrototype = function()
 
   this.__defineGetter__("is_minified", function()
   {
-    if (!this._is_mified)
+    if (this._is_minified === undefined)
     {
       var MAX_SLICE = 5000;
       var LIMIT = 11;
@@ -171,9 +171,9 @@ window.cls.NewScriptPrototype = function()
       while (m = re.exec(src))
         ws += m[0].length;
 
-      this._is_mified = (100 * ws / src.length) < LIMIT;
+      this._is_minified = (100 * ws / src.length) < LIMIT;
     }
-    return this._is_mified;
+    return this._is_minified;
   });
 
   this.__defineSetter__("is_minified", function() {});

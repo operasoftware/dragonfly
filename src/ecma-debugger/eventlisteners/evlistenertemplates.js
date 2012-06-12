@@ -22,7 +22,7 @@
       ["div",
         ["span",
           ["span", ui_strings.S_LABEL_STORAGE_UPDATE],
-          "class" , "ui-button",
+          "class", "ui-button",
           "unselectable", "on",
           "tabindex", "1",
           "handler", "update-ev-listeners"]],
@@ -51,17 +51,16 @@
 
   this._ev_type = function(ev_type)
   {
-    var bg_pos = ev_type.is_expanded ? "0 -11px" : "0 0";
+    //var bg_pos = ev_type.is_expanded ? "0 -11px" : "0 0";
     return (
     ["li", 
       ["h3", 
         ["input", "type", "button",
-                  "class", "folder-key",
-                  "style", "background-position: " + bg_pos],
+                  "class", "folder-key"],
         ev_type.type,
         "handler", "toggle-ev-listeners",
         "data-ev-type", ev_type.type,
-        "class", "ev-type"],
+        "class", "ev-type" + (ev_type.is_expanded ? " unfolded" : "")],
       ev_type.is_expanded ? this.ev_all_listeners(ev_type) : []]);
   };
 

@@ -25,7 +25,7 @@ cls.EvListenerTooltip = function()
     var node_id = target.get_ancestor_attr("ref-id") ||
                   target.get_ancestor_attr("obj-id");
     var window_id = target.get_ancestor_attr("data-window-id");
-    if (model && rt_id && (node_id || window_id))
+    if (rt_id && (node_id || window_id))
     {
       var listeners = node_id
                     ? model.get_ev_listeners(node_id)

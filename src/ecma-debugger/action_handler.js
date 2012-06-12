@@ -168,23 +168,26 @@ window.eventHandlers.click['set-break-point'] = function(event)
   var bps = cls.Breakpoints.get_instance();
   var target = event.target;
   var li = target.get_ancestor("li");
-  var input = li.querySelector("input");
-  var line_number = input && Number(input.value);
-  if (!line_number)
-  {
-    var span = li.querySelector(".line-number");
-    line_number = span && Number(span.textContent);
-  }
-  var script_id = window.views.js_source.getCurrentScriptId() ||
-                  Number(target.get_ancestor_attr("data-script-id"));
-  if (script_id && line_number)
-  {
-    if (bps.script_has_breakpoint_on_line(script_id, line_number))
+  if (li)
+  {  
+    var input = li.querySelector("input");
+    var line_number = input && Number(input.value);
+    if (!line_number)
     {
-      var bp_id = bps.remove_breakpoint(script_id, line_number);
-      bps.delete_breakpoint(bp_id);
+      var span = li.querySelector(".line-number");
+      line_number = span && Number(span.textContent);
     }
-    else
-      bps.add_breakpoint(script_id, line_number);
+    var script_id = window.views.js_source.getCurrentScriptId() ||
+                    Number(target.get_ancestor_attr("data-script-id"));
+    if (script_id && line_number)
+    {
+      if (bps.script_has_breakpoint_on_line(script_id, line_number))
+      {
+        var bp_id = bps.remove_breakpoint(script_id, line_number);
+        bps.delete_breakpoint(bp_id);
+      }
+      else
+        bps.add_breakpoint(script_id, line_number);
+    }
   }
 };
