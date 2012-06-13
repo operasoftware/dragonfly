@@ -101,17 +101,18 @@
     var parent = target.get_ancestor("item");
     var key = parent && parent.querySelector("key");
     var path = data_model && data_model.norm_path(get_path(parent));
-
     if (obj_id && data_model && key && path)
     {
       var getter = key.textContent;
       var cb = _expand_getter.bind(null, target, obj_id, data_model, getter, path);
       var tag = window.tag_manager.set_callback(null, cb, []);
-      var rt_id = window.runtimes.getSelectedRuntimeId();
-      var thread_id = window.stop_at.getThreadId();
-      var frame_index = window.stop_at.getSelectedFrameIndex();
-      if (frame_index == -1)
+      var ex_ctx = window.runtimes.get_execution_context();
+      var rt_id = ex_ctx.rt_id;
+      var thread_id = ex_ctx.thread_id;
+      var frame_index = ex_ctx.frame_index;
+      if (data_model.runtime_id != rt_id)
       {
+        rt_id = data_model.runtime_id;
         thread_id = 0;
         frame_index = 0;
       }

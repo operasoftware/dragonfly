@@ -754,7 +754,7 @@ ui_strings.S_HTTP_REQUESTED_HEADLINE = "Requested at %s";
 ui_strings.S_HTTP_SERVED_OVER_FILE = "Local";
 
 /* DESC: tooltip for table header that shows duration */
-ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this URL";
+ui_strings.S_HTTP_TOOLTIP_DURATION = "Time spent between starting and finishing this request";
 
 /* DESC: tooltip for the network filter that shows all items */
 ui_strings.S_HTTP_TOOLTIP_FILTER_ALL = "Show all requests";
@@ -1154,9 +1154,6 @@ ui_strings.S_NETWORK_REQUEST = "Request";
 
 /* DESC: Name of entry in Network Log, plural, used in summary at the end */
 ui_strings.S_NETWORK_REQUESTS = "Requests";
-
-/* DESC: Name of content tracking setting for tracking content */
-ui_strings.S_NETWORK_REQUESTS_INCOMPLETE_SETTING_LABEL = "Show notification when not all Network requests are shown";
 
 /* DESC: Help text about how to always track resources in request view */
 ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC = "Response body not tracked. To always fetch response bodies, toggle the \"Track content\" option in Settings. To retrieve only this body, click the button.";

@@ -393,29 +393,22 @@ cls.ReplService = function(view, data)
   this._handle_hostcommand = function(cooked)
   {
     // ignore all whitespace commands
-    if (cooked.trim() == "") {
+    if (cooked.trim() == "")
       return;
-    }
 
-    var rt_id = runtimes.getSelectedRuntimeId();
-    var thread = window.stop_at.getThreadId();
-    var frame = window.stop_at.getSelectedFrameIndex();
-    if (frame == -1)
-    {
-      thread = 0;
-      frame = 0;
-    }
-
+    var ex_ctx = window.runtimes.get_execution_context();
+    var rt_id = ex_ctx.rt_id;
+    var thread_id = ex_ctx.thread_id;
+    var frame_index = ex_ctx.frame_index;
     var magicvars = [];
-    if (this._cur_selected) {
+    if (this._cur_selected)
       magicvars.push(["$0", this._cur_selected]);
-    }
-    if (this._prev_selected) {
-      magicvars.push(["$1", this._prev_selected]);
-    }
 
-    var msg = [rt_id, thread, frame, cooked, magicvars];
-    this._eval(msg, this._on_eval_done_bound, [rt_id, thread, frame]);
+    if (this._prev_selected)
+      magicvars.push(["$1", this._prev_selected]);
+
+    var msg = [rt_id, thread_id, frame_index, cooked, magicvars];
+    this._eval(msg, this._on_eval_done_bound, [rt_id, thread_id, frame_index]);
   };
 
   this._eval = function(msg, callback, cbargs)
