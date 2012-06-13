@@ -168,7 +168,7 @@ function ContextMenu() {
         all_items = all_items.concat(items);
       }
     }
-
+/*
     var res_id_or_url = event.target.get_attr("parent-node-chain", "data-resource-id") ||
                         event.target.get_attr("parent-node-chain", "data-resource-url");
     var line_number = event.target.get_attr('parent-node-chain', 'data-resource-line-number');
@@ -211,7 +211,7 @@ function ContextMenu() {
         }
       )
     }
-
+*/
     this._current_items = all_items;
 
     if (all_items.length)
