@@ -5,8 +5,7 @@
 
 var TabsBase = function()
 {
-  const
-  HISTORY_MAX_LENGTH = 10;
+  const HISTORY_MAX_LENGTH = 10;
 
   this.type = 'tabs';
   this.height = 25;
@@ -353,7 +352,7 @@ var TabsBase = function()
     if (!has_space)
     {
       var delta = width - this.width;
-      // reduce each legend by 1 pixel
+      // reduce each target width by 1 pixel
       delta -= count;
       if (delta > 0)
       {
@@ -399,28 +398,32 @@ var TabsBase = function()
 
   this._store_css_tab_values = function(tab_ele)
   {
-    var value = window.getComputedStyle(tab_ele).paddingRight;
-    Tabs.prototype._tab_right_padding = parseInt(value);
-    value = 
+    var style = window.getComputedStyle(tab_ele);
     [
-      "marginLeft",
-      "marginRight",
-    ].reduce(function(sum, prop)
+      {
+        prop: "_tab_right_padding",
+        prop_list: ["paddingRight"]
+      },
+      {
+        prop: "_tab_margin",
+        prop_list: ["marginLeft", "marginRight"]
+      },
+      {
+        prop: "_tab_border_padding",
+        prop_list: ["paddingLeft", "paddingRight", "borderLeftWidth", "borderRightWidth"]
+      },
+    ].forEach(function(item)
     {
-      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
-    }, 0);
-    Tabs.prototype._tab_margin = value;
-    value = 
-    [
-      "paddingLeft",
-      "paddingRight",
-      "borderLeftWidth",
-      "borderRightWidth",
-    ].reduce(function(sum, prop)
+      Tabs.prototype[item.prop] = this._sum_css_props(style, item.prop_list);
+    }, this);
+  };
+
+  this._sum_css_props = function(style, prop_list)
+  {
+    return prop_list.reduce(function(sum, prop)
     {
-      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
+      return sum + parseInt(style[prop]);
     }, 0);
-    Tabs.prototype._tab_border_padding = value;
   };
 
   this.on_view_inizialized = function(msg)
@@ -443,7 +446,7 @@ var TabsBase = function()
       self.on_view_inizialized(msg);
     };
   }
-  
+
   this.init = function(cell, tabbar)
   {
     this.tabs = [];
