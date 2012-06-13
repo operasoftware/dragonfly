@@ -7,6 +7,8 @@ window.app.builders.ResourceManager["1.0"] = function(service)
   new cls.ResourceDetailView('resource_detail_view', 'Detail');
 
 
+cls.ResourceDetailView.create_ui_widgets();
+
 //  new cls.ResourceManagerAllView('resource_all', ui_strings.M_VIEW_LABEL_ALL_RESOURCES, 'scroll resource-manager', '', '');
 
   //new cls.ResourceManagerFontView('resource_fonts', "Fonts", 'scroll', '', '');

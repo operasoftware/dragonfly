@@ -15,75 +15,21 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this._service = new cls.ResourceManagerService(this);
 
 
+//  this.create_ui_widgets
+
+
+
 	this.createView = function(container)
 	{
-		if (this.resource )
-		{
-			if (this.resource.data)
-			{
-				container.innerHTML = 'Data available for the resource '+this.resource.id+' '+Date.now();	// to get a visual that something is happening in case the resource is heavy to render
-				var toto=Date.now();
-				container.clearAndRender( templates.resource_detail.update(this.resource, this.resource.data) );
-				container.title = (Date.now()-toto)+'ms';
-				this.go_to_line(container,this.data);
-			}
-			else
-			{
-				container.innerHTML = 'No data available for the resource '+this.resource.id+' '+Date.now()+'<p>'+JSON.stringify(this.resource)+'</p>';
-			}
-		}
-		else
-		{
-			container.innerHTML = 'No resource selected'+Date.now();
-		}
+		if (this.resource && this.resource.data)
+      container.clearAndRender( templates.resource_detail.formatting_data(this.resource) );
+
+    container.clearAndRender( templates.resource_detail.update(this.resource) );
+    if(this.data)
+      this.go_to_line(container,this.data);
+
 		this.data = null;
 	}
-
-	this.on_resource_data_bound = function(type, data)
-	{
-		//if(this.resource && this.resource.id==data[0])
-		var id = data[0];
-		var resource = this._service.get_resource(id);
-		if(resource)
-		{
-/*			
-			resource.data =
-			{
-				mimeType:data[2],
-				characterEncoding:data[3],
-				contentLength:data[4],
-				length:data[5][0],
-				content:data[5][2]||data[5][3]
-			};
-*/
-			resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
-			if(resource.type=='image')
-			{
-				var i=new Image();
-				i.src=resource.data.content.stringData;
-				resource.data.meta = i.naturalWidth+'x'+i.naturalHeight;
-			}
-			if (this.resourceId==id){ this.resource = resource; }
-		}
-		this.update();
-	}.bind(this);
-/*
-	this.__open_resource = function(resource)
-	{
-		var id = resource.id;
-		this.resourceId = id;
-		if (!resource.data)
-		{
-			var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
-			this._service.fetch_resource_data( this.on_resource_data_bound, id, responseType );
-		}
-		else
-		{
-			this.update();
-		}
-	}
-	*/
-
 
   const HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
   const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container';
@@ -186,32 +132,68 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this._target_line = parseInt(data.lines[0]);
       this._highlight_line(this._root_ele);
     }
+  }
+/*
+  this.on_resource_data_open_resource_bound = function(type,data)
+  {
+  	var resource = this.on_resource_data_bound(type,data);
+		if (this.resourceId==resource.id){ this.resource = resource; }
+		this.update();
+  }.bind(this);
+*/
+	this.on_resource_data_bound = function(type, data)
+	{
+		var id = data[0];
+		var resource = this._service.get_resource(id);
+		if(resource)
+		{
+			resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
+		}
+		return resource;
+	}.bind(this);
 
+  this._show_resource_by_instance = function(resource)
+  {
+      this.resource = resource;
+      if (resource && !resource.data)
+        resource.fetch_data(cls.ResourceDetailView.instance.update);
   }
 
-	this.open_resource_tab = function(resource, data)
+  this._show_resource_by_id = function(id)
+  {
+    var resource = this._service.get_resource(resource);
+    this._show_resource_by_instance(resource);
+  }
+
+  this._show_resource_url = function(url)
+  {
+    var resource = this._service.get_resource_for_url(url);
+    if (resource)
+      this._show_resource_by_instance(resource);
+    else
+      new cls.ResourceRequest(url, this.show_resource.bind(this), this.data);
+  }
+
+  this.show_resource = function(resource, data)
+  {
+    this.data = data;
+
+    if(resource instanceof cls.Resource)
+      this._show_resource_by_instance(resource);
+    else if (resource==Number(resource))
+      this._show_resource_by_id(resource);
+    else if (resource==String(resource))
+      this._show_resource_url(resource);
+
+    this.update();
+    window.UI.instance.show_view( window.views.resource_detail_view.id );
+  }
+
+	this.show_resource_group = function(resourceGroup)
 	{
-		this.resource = resource;
-		this.data = data;
-		this.update();
-	}
+    alert(resourceGroup.name+'\n'+resourceGroup.ids+'\n\n');
+    return;
 
-
-
-	this.open_resource = function(id)
-	{
-		this.resourceId = id;
-		var resource = this.resource = this._service.get_resource(id);
-		this.update();
-		if (resource && !resource.data)
-		{
-			var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
-			this._service.fetch_resource_data( this.on_resource_data_bound, id, responseType );
-		}
-	}
-
-	this.open_resource_group = function(group)
-	{
 		this.resources = [];
 		for( var i=0; i<group.ids.length; i++)
 		{
@@ -234,3 +216,119 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 };
 
 cls.ResourceDetailView.prototype = ViewBase;
+
+cls.ResourceDetailView.create_ui_widgets = function()
+{
+    new ToolbarConfig(
+  {
+    view:'resource_detail_view',
+
+groups: [
+/*        {
+          type: UI.TYPE_BUTTONS,
+          items: [
+            {
+              handler: "clear-log-network-view",
+              icon: "clear-log-network-view",
+              title: ui_strings.S_CLEAR_NETWORK_LOG
+            }
+          ]
+        },
+        {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.pause",
+              icon: "pause-network-view"
+            }
+          ]
+        },
+        {
+          type: UI.TYPE_SINGLE_SELECT,
+          name: "selected-viewmode",
+          default_value: window.settings.network_logger.get("selected-viewmode"),
+          items: [
+            {
+              value: "graphs",
+              title: ui_strings.S_HTTP_LABEL_GRAPH_VIEW,
+              icon: "network-view-toggle-graphs"
+            },
+            {
+              value: "data",
+              title: ui_strings.S_HTTP_LABEL_DATA_VIEW,
+              icon: "network-view-toggle-data"
+            }
+          ]
+        },
+        {
+          type: UI.TYPE_SINGLE_SELECT,
+          name: "type-filter",
+          allow_multiple_select: true,
+          items: [
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_ALL,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_ALL,
+              value: "all"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_MARKUP,
+              value: "markup"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_STYLESHEETS,
+              value: "css"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_SCRIPTS,
+              value: "script"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_IMAGES,
+              value: "image"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_OTHER,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_OTHER,
+              value: "other_types"
+            },
+            {
+              text: ui_strings.S_HTTP_LABEL_FILTER_XHR,
+              title: ui_strings.S_HTTP_TOOLTIP_FILTER_XHR,
+              value: "xhr"
+            }
+          ]
+        },
+ */
+        {
+          type: UI.TYPE_INPUT,
+          items: [
+            {
+              handler: "network-text-search",
+              shortcuts: "network-text-search",
+              title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+              label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+            }
+          ]
+        }
+      ]
+            /*
+      {
+        type: UI.TYPE_INPUT,
+        items:
+        [
+          {
+            handler: "resource-text-search",
+            shortcuts: "resource-text-search",
+            title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+            label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+          }
+        ]
+      }
+      */
+//    ]
+  });
+}

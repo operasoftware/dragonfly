@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+<head>
+	<title>resource tree view</title>
+	<style type="text/css">
+
+ul
+{
+	outline:1px solid orange;
+	margin:0;
+	padding:0;
+}
+li
+{
+	list-style:none;
+	font:normal normal 12px/19px monospace;
+	padding-left:20px;
+}
+
+/*
+	div.tree
+	{
+		display: block;
+		margin:1em;
+		font:normal normal 12px/16px monospace;
+		color:#000;
+		background:#eee;
+	}
+	div.tree > div
+	{
+		display: block;
+		margin:0;
+	}
+	
+	.resource
+	{
+		font:normal normal 12px/19px monospace;
+	}
+	.resource-group
+	{
+		font-weight:bold;
+	}
+	.resource-list
+	{
+		margin:0;
+		padding:0;
+	}
+	.resource
+	{
+		list-style:none inside none;
+		font-weight:normal;
+		padding-left:20px;
+		background:url(../../src/ui-images/type_other.png) center left no-repeat;
+	}
+	.resource:nth-child(2n)
+	{
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+	.resource:hover
+	{
+		background-color:#eee;
+	}
+	.resource-type-scripts
+	{
+		background-image:url(../../src/ui-images/type_script.png);
+	}
+	.resource-type-stylesheets
+	{
+		background-image:url(../../src/ui-images/type_style.png);
+	}
+	.resource-type-images
+	{
+		background-image:url(../../src/ui-images/type_picture.png);
+	}
+	.resource-type-markup
+	{
+		background-image:url(../../src/ui-images/type_markup.png);
+	}
+*/
+	</style>
+	<script src="elementprototype.js"></script>
+	<script src="../../src/scripts/uri.js"></script>
+	<script src="data.js"></script>
+	<script type="text/javascript">
+
+/*
+*/
+window.eventHandlers || (window.eventHandlers={});
+window.templates || (window.templates = {});
+
+templates.resourceTreeFrames = function( resources, parentFrameID )
+{
+	var template=[];
+	for (var frameID in resources._frames)
+	{
+		var frame = resources._frames[frameID];
+		if (frame.parentFrameID == parentFrameID)
+		{
+			var frameResource = resources._current_context.get_resource( frame.resourceID );
+			var uri = new URI();
+			uri._init(frameResource.url);
+
+			//var children = templates.resourceTreeFrames( resources, frame.frameID ); //||[];
+			template.push
+			(
+				[
+					'li',
+					{
+						'class':'resource-tree-frame closed',
+						'handler':'resource-tree-frame-expand-collapse',
+						'data-frame-id':frame.frameID,
+						'title':frameResource.human_url
+					},
+					frame.frameID +' |> '+ (uri.filename||frameResource.human_url),
+					templates.resourceTreeFrames( resources, frame.frameID )||[],
+					templates.resourceGroups( resources, frame.frameID )||[]
+				]
+			);
+		}
+	}
+
+	if(template.length)
+	{
+		return ['ul',{'class':'resource-tree-frames'},template];
+	}
+	return template;
+}
+
+templates.resourceGroups = function( resources, frameID )
+{
+	// filter resources of the desired frame
+	var frameResources = resources._current_context.resources.filter(function(v){ return v.frameID==frameID; });
+
+	// group the resources by type
+	var resourceTypes =
+	{
+		markup:[],
+		scripts:[],
+		stylesheets:[],
+		images:[],
+		other:[]
+	}
+	var typeMapping = {'markup':'markup','script':'scripts','css':'stylesheets','image':'images'}
+	for( var i=0,d; d=frameResources[i]; i++ )
+	{
+		resourceTypes[ typeMapping[d.type]||'other' ].push(d);
+	}
+
+	// loop through the types
+	var template =[];
+	for (var type in resourceTypes)
+	{
+		if (resourceTypes[type].length==0)	continue;
+
+		// loop through the resources 
+		var items=[];
+		for (var i=0,d; d=resourceTypes[type][i]; i++)
+		{
+			var uri = new URI( d.url );
+//			uri._init(d.url);
+			items.push
+			(
+				[
+					'li',
+					{
+						'handler':'resource-detail',
+						'data-resource-id':d.id,
+						'title':d.human_url,
+						'class':'resource resource-type-'+type
+					},
+					uri.filename||d.human_url
+				]
+			);
+		}
+
+		template.push
+		(
+			[
+				'li',
+				{
+					'class':'resource-type'
+				},
+				[
+					'span',
+					{
+						'handler':'expand-collapse',
+						'class':'resource-type expand-collapse closed'
+					},
+					type +'('+items.length+')'
+				],
+				[
+					'ul',
+					{
+						'class':'resource-list'
+					},
+					items
+				]
+			]
+		);
+	}
+
+	
+	if(template.length)
+	{
+		return ['ul',{'class':'resource-tree-frames'},template];
+	}
+	return template;
+}
+
+
+var foo = function(data)
+{
+	this.frames = cls.ResourceManagerService.instance._frames;
+	this.resources = window.cls.ResourceManagerService.instance._current_context.resources;
+
+	this.toggleNode=function(e)
+	{
+		return e;
+	}
+
+	var resourceTypes =
+	{
+		markup:[],
+		scripts:[],
+		stylesheets:[],
+		images:[],
+		other:[]
+	}
+
+	var typeMapping = {'markup':'markup','script':'scripts','css':'stylesheets','image':'images'}
+	
+	// group the resources by type
+	for( var i=0,d; d=this.resources[i]; i++ )
+	{
+		resourceTypes[ typeMapping[d.type]||'other' ].push(d);
+	}
+
+
+
+	/*
+	* 
+	*/
+  this.render = function()
+  {
+		document.body.append_tmpl( templates.resourceTreeFrames( cls.ResourceManagerService.instance ) );
+		//document.body.append_tmpl( template );
+		//alert(document.body.innerHTML);
+  }
+
+
+	this.render();
+
+	var eh = window.eventHandlers;
+//	eh.click['tree-toggle-node']=this.toggleNode.bind(this);
+	eh.click['hello']=function(e)
+	{
+		alert('Hello! '+e.outerHTML);
+	};
+}
+
+
+onload = function()
+{
+
+	var genericEventHandler = function(e)
+	{
+		var ceh = window.eventHandlers[e.type];
+		if(!ceh)
+			return;
+		var node = e.target;
+		while( node )
+		{
+			if( node.nodeType==1)
+			{
+				var handler = node.getAttribute('handler');
+				if( ceh[handler] )
+				{
+					if( !ceh[handler](node) )
+						return false;
+				}
+				else
+				{
+					 //alert('unable to find the handler "'+handler +'"');
+					 return false;
+				}
+			}
+			node=node.parentNode;
+		}
+	}
+
+	eh = window.eventHandlers;
+	eh.click = {};
+	document.addEventListener('click',genericEventHandler,false);
+	foo();
+ }
+
+
+
+	</script>
+</head>
+<body>
+
+	<toolbar-filters>
+		<filter class="filter">
+			<input autocomplete="off" type="text" handler="css-inspector-text-search" title="text search" placeholder="Filter"/>
+		</filter>
+	</toolbar-filters>
+
+</body>
+</html>

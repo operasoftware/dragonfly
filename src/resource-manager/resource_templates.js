@@ -26,6 +26,9 @@ templates.resource_tree =
 			if( frame.parentFrameID != parentFrameID ){ continue; }
 			
 			var r = context.get_resource( frame.resourceID );
+			if(!r)
+				continue;
+			
 			var className = '-expand-collapse';
 			var tmp = 
 			{
@@ -40,7 +43,7 @@ templates.resource_tree =
 						' ',
 						[
 							'span',
-							((r?r.filename||r.human_url:'')||'resource information not fully available yet'),
+							(r.filename||r.human_url),
 							[],
 							'data-tooltip',(r&&'js-script-select'),
 							'data-tooltip-text',(r&&'frame: '+r.human_url)
@@ -133,7 +136,7 @@ templates.resource_tree =
 				['li',
 					[
 						'span',
-						(r.filename||r.human_url||'resource information not fully available yet'),
+						(r.filename||r.human_url),
 						[],
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
@@ -149,13 +152,19 @@ templates.resource_tree =
 
 templates.resource_detail =
 {
-	update:function(resource, resourceData)
+	update:function(resource)
 	{
+		if (!resource)
+			return this.no_resource_selected();
+
+		if (!resource.data)
+			return this.no_data_available(resource);
+
 		var specificTemplate = this[resource.type]?resource.type:'text';
 
 		return(
 		['div',
-			this.overview(resource, resourceData),	// overview
+			this.overview(resource),	// overview
 			['div',	// specific template
 				this[specificTemplate](resource, resource.data),		
 				'title',specificTemplate,
@@ -166,7 +175,40 @@ templates.resource_detail =
 		]);
 	},
 
-	overview:function(resource, resourceData)
+	no_resource_selected:function()
+	{
+		return(
+		['div',
+      'No resource selected',
+      'class','resource-detail-container-empty'
+    ]);
+	},
+
+	no_data_available:function(resource)
+	{
+		return(
+		['div',
+      'No data available for the resource '+ resource.url,
+      'class','resource-detail-container-empty'
+    ]);
+	},
+
+	formatting_data:function(resource)
+	{
+		if(!resource)
+			return this.no_resource_selected();
+
+		if (!resource.data)
+			return this.no_data_available(resource);
+
+		return(
+		['div',
+      'Formatting the resource '+ resource.url +'&hellip;',
+      'class','resource-detail-container-empty'
+    ]);
+	},
+
+	overview:function(resource)
 	{
 		var info =
 		{
@@ -180,7 +222,13 @@ templates.resource_detail =
 		return (
 		['div',
 			['span',
-				info.human_url,
+				[
+					'a',
+					info.human_url,
+					'href',resource.url,
+					'target','_blank',
+					'class','external'
+				],
 				'class','resource-detail-overview-url'
 			],
 			['span',
@@ -188,25 +236,26 @@ templates.resource_detail =
 				'class','resource-detail-overview-type'
 			],
 			['span',
-				info.size+' bytes'+(info.characterEncoding&&(' in '+info.characterEncoding)),
+				cls.ResourceUtil.bytes_to_human_readable(info.size)+(info.characterEncoding&&(' in '+info.characterEncoding)),
+				'data-tooltip','js-script-select',
+				'data-tooltip-text',info.size+' bytes',
 				'class','resource-detail-overview-size'
 			],
 			'class','resource-detail-overview'
 		]);
 	},
 
-	text:function(resource, resourceData)
+	text:function(resource)
 	{
 		this.name = 'text';
 		return (
 		[
 			['pre',resource.data.content.stringData],
-			['p',new Option(JSON.stringify(resource)).innerHTML],
-			['p',new Option(JSON.stringify(resource.data)).innerHTML]
+			['ptr',new Option(JSON.stringify(resource)).innerHTML]
 		]);
 	},
 
-	markup:function(resource, resourceData)
+	markup:function(resource)
 	{
 		var line_count = 0;
 		var lines = [++line_count];
@@ -221,7 +270,7 @@ templates.resource_detail =
 
 	},
 
-	script:function(resource, resourceData)
+	script:function(resource)
 	{
 		var line_count = 0;
 		var lines = [++line_count];
@@ -235,7 +284,7 @@ templates.resource_detail =
 		]);
 	},
 
-	css:function(resource, resourceData)
+	css:function(resource)
 	{
 		var line_count = 0;
 		var lines = [++line_count];
@@ -249,7 +298,7 @@ templates.resource_detail =
 		]);
 	},
 
-	font:function(resource, resourceData)
+	font:function(resource)
 	{
 		this.name = 'font';
 
@@ -267,7 +316,7 @@ templates.resource_detail =
 		]);
 	},
 
-	image:function(resource, resourceData)
+	image:function(resource)
 	{
 		this.name = 'image';
 		return (

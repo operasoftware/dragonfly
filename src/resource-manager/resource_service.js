@@ -1,4 +1,4 @@
-﻿window.cls || (window.cls = {});
+window.cls || (window.cls = {});
 
 /**
  *
@@ -7,9 +7,8 @@
 cls.ResourceManagerService = function(view)
 {
   if (cls.ResourceManagerService.instance)
-  {
     return cls.ResourceManagerService.instance;
-  }
+
   cls.ResourceManagerService.instance = this;
 
   this._view = view;
@@ -23,19 +22,19 @@ cls.ResourceManagerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
+
     if (!data.parentFrameID)
-    {
       this._context = new cls.ResourceContext(data);
-    }
+
     if (this._context)
-    {
       this._context.update("abouttoloaddocument", data);
-    }
+
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var data = new cls.ResourceManager["1.0"].UrlLoad(msg);
       //bail if we get dupes. Why do we get dupes? fixme
@@ -43,11 +42,13 @@ cls.ResourceManagerService = function(view)
 
     this._context.update("urlload", data);
     this._view.update();
+
   }.bind(this);
 
   this._on_urlredirect_bound = function(msg)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
     // a bit of cheating since further down we use .resouceID to determine
@@ -58,15 +59,23 @@ cls.ResourceManagerService = function(view)
 
   this._on_urlfinished_bound = function(msg)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    this._context.update("urlfinished", data);
+    var r = this._context.update("urlfinished", data);
+
+    if (r && !r.data)
+    {
+        r.fetch_data();
+    }
+
   }.bind(this);
 
   this._on_response_bound = function(msg)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var data = new cls.ResourceManager["1.0"].Response(msg);
     this._context.update("response", data);
@@ -81,7 +90,8 @@ cls.ResourceManagerService = function(view)
 
   this._handle_expand_collapse_bound = function(event, target)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var button = target.querySelector('.button-expand-collapse');
     var target = target.parentNode;
@@ -103,6 +113,7 @@ cls.ResourceManagerService = function(view)
     }
   }.bind(this);
 
+
   this._handle_resource_detail_bound = function(event, target)
   {
     if (!this._context){ return; }
@@ -110,14 +121,16 @@ cls.ResourceManagerService = function(view)
     var parent = target.get_ancestor('[data-resource-id]');
     if (!parent){ console.log('no parent with data-resource-id for '+target.outerHTML); return; }
   
-    var rid = Number( parent.getAttribute('data-resource-id') );
-    var r = this.get_resource(rid);
+    var id = Number( parent.getAttribute('data-resource-id') );
+    var resource = this.get_resource(id);
 
-    if (!r){ console.log('resource '+rid+' not found'); return; }
+    if (!resource){ console.log('resource '+id+' not found'); return; }
 
-    cls.ResourceDetailView.instance.open_resource(rid);
+    cls.ResourceDetailView.instance.show_resource(resource);
+
   }.bind(this);
 
+  /*  WIP */
   this._handle_resource_group_bound = function(event, target)
   {
     var parent = target.get_ancestor('[data-frame-id]');
@@ -125,17 +138,15 @@ cls.ResourceManagerService = function(view)
     var frameID = parent.getAttribute('data-frame-id');
     var groupName = parent.getAttribute('data-resource-group');
 
-    var data = this._context.frames[ frameID ].groups[ groupName ];
-alert(data.name+' '+data.ids)
+    var group = this._context.frames[ frameID ].groups[ groupName ];
 
-    debugger;
+    cls.ResourceDetailView.instance.show_resource_group(group);
   }.bind(this);
 
 
 
   this._init = function()
   {
-
     var eh = window.eventHandlers;
     eh.click["resources-expand-collapse"] = this._handle_expand_collapse_bound;
     eh.click["resource-detail"] = this._handle_resource_detail_bound;
@@ -146,7 +157,6 @@ alert(data.name+' '+data.ids)
       var broker = cls.ResourceDisplayBroker.get_instance();
       broker.show_resource_for_ele(target);
     }
-
 
     this._res_service = window.services['resource-manager'];
     
@@ -159,22 +169,13 @@ alert(data.name+' '+data.ids)
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
   };
 
+
   this.get_resource_context = function()
   {
     return this._context;
   };
 
-  /**
-   * Returns an array of resource objects. The internal representation is to
-   * keep separate lists of seen resources and a map of id/resource.
-   */
-/*
-  this.get_resource_list = function()
-  {
-    if (! this._current_context) { return []; }
-    return this._current_context.resources;
-  };
-*/
+
   this.get_resource = function(id)
   {
     if (!this._context){ return null; }
@@ -182,9 +183,9 @@ alert(data.name+' '+data.ids)
     return this._context.resourcesDict[id];
   };
 
+
   this.get_resource_for_url = function(url)
   {
-    //
     if (!this._context){ return null; }
 
     var id = this._context.resourcesUrlDict[url];
@@ -193,22 +194,144 @@ alert(data.name+' '+data.ids)
     return this.get_resource(id);
   };
 
-  this.fetch_resource_data = function(callback, rid, type)
+  this._fetch_resource_data = function(callback, id, type)
   {
-    var resource = this.get_resource(rid);
-    if (resource)
+    var resource = this.get_resource(id);
+
     var typecode = {datauri: 3, string: 1}[type] || 1;
     var tag = window.tagManager.set_callback(null, callback);
     const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1, MAX_PAYLOAD_SIZE]]);
-
+    this._res_service.requestGetResource(tag, [id, [typecode, 1, MAX_PAYLOAD_SIZE]]);
   };
+//*
+  this._on_resource_data_bound = function(type, data)
+  {
+    var id = data[0];
+    var resource = this.get_resource(id);
+    if(resource)
+    {
+      resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
+      if(resource.type=='image')
+      {
+        var i=new Image();
+        i.src=resource.data.content.stringData;
+        resource.data.meta = i.naturalWidth+'x'+i.naturalHeight;
+      }
+    }
+    this._view.update();
+  }.bind(this);
 
 
+
+  this.request_resource_for_url = function(url,callback)
+  {
+    cls.ResourceRequest(url, callback, data);
+  }
 
 
   this._init();
 };
+
+cls.ResourceRequest = function(url, callback,data)
+{
+  const
+  TRANSPORT_STRING = 1,
+  TRANSPORT_DATA_URI = 3,
+  TRANSPORT_OFF = 4,
+  DECODE_TRUE = 1,
+  SIZE_LIMIT = 1e7;
+
+  this._init = function(url, callback, data)
+  {
+    this._url = url;
+    this._callback = callback;
+    this._data = data;
+    this._initialized = false;
+
+    if (!this._resource_manager)
+    {
+      this._resource_manager = window.services['resource-manager'];
+      this._tag_manager =  window.tagManager;
+      this._ResourceData = cls.ResourceManager["1.0"].ResourceData;
+      this._initialized = true;
+    }
+  }
+
+  this._fallback = function()
+  {
+    window.open(this._url);
+  }
+
+  this._request_resource = function(url,callback)
+  {
+    if (this._resource_manager.requestGetResourceID)
+    {
+      var tag = window.tagManager.set_callback(this, this._on_request_resource_id_bound);
+      this._resource_manager.requestGetResourceID(tag, [this._url]);
+    }
+    else
+      this._fallback();
+  }
+
+  this._on_request_resource_id_bound = function(status, message)
+  {
+    if (status && this._resource_manager.requestCreateRequest)
+    {
+      alert( 'request failed, time to craft a GET request' );
+//      debugger;
+      var debugContext = window.window_manager_data.get_debug_context();
+      var tag = this._tag_manager.set_callback(this, this._on_request_create_request_bound);
+      this._resource_manager.requestCreateRequest(tag, [debugContext, this._url, 'GET']);
+    }
+    else if(!status && this._resource_manager.requestGetResource)
+    {
+      const RESOURCE_ID = 0;
+      this._resource_id = message[RESOURCE_ID];
+      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource_bound);
+      this._resource_manager.requestGetResource(tag, [this._resource_id, [TRANSPORT_OFF]]);
+    }
+    else
+      this._fallback();
+
+  }.bind(this);
+
+  this._on_request_create_request_bound = function(status, message)
+  {
+      debugger;
+  }
+
+  this._on_request_get_resource_bound = function(status, message)
+  {
+    if (!status)
+    {
+      this._resource = new cls.Resource(this._resource_id);
+      this._resource.update("urlfinished", new this._ResourceData(message));
+      this._resource.fetch_data(this._on_fetch_data_bound);
+/*
+      var resptype = this._utils.mime_to_content_mode(this._res.mime);
+      var tag = this._tag_manager.set_callback(this, this._on_resource);
+      var transportType = {datauri:TRANSPORT_DATA_URI}[resptype]||TRANSPORT_STRING;
+
+      this._resource_manager.requestGetResource(tag, [this._resource_id, [transportType, DECODE_TRUE, SIZE_LIMIT]]);
+*/
+    }
+    else
+      debugger;
+
+
+  }.bind(this);
+
+  this._on_fetch_data_bound = function()
+  {
+    this._callback(this._resource,this._data);
+  }.bind(this);
+
+
+  this._init(url, callback, data);
+  if (this._initialized)
+    this._request_resource();
+}
+
 
 cls.ResourceContext = function(data)
 {
@@ -224,12 +347,12 @@ cls.ResourceContext = function(data)
       frame.closed = !!event.parentFrameID;
       frame.groups =
       {
-        markup: new cls.ResourceGroup('markup'),
-        css: new cls.ResourceGroup('stylesheets'),
-        script: new cls.ResourceGroup('scripts'),
-        image: new cls.ResourceGroup('images'),
-        font: new cls.ResourceGroup('fonts'),
-        other: new cls.ResourceGroup('other')
+        markup: new cls.ResourceGroup('markup','markup'),
+        css: new cls.ResourceGroup('stylesheets','css'),
+        script: new cls.ResourceGroup('scripts','script'),
+        image: new cls.ResourceGroup('images','image'),
+        font: new cls.ResourceGroup('fonts','font'),
+        other: new cls.ResourceGroup('other','other')
       }
 
       this.frames[ event.frameID ] = frame;
@@ -254,7 +377,6 @@ cls.ResourceContext = function(data)
     if (res.invalid)
     {
       delete this.resourcesDict[ res.id ];
-//      this.resources.splice(this.resources.indexOf(res), 1);
     }
     else if (eventname == "urlfinished")
     {
@@ -265,67 +387,28 @@ cls.ResourceContext = function(data)
 
       frame.groups[type].push( res.id );
       this.resourcesUrlDict[ res.url ] = res.id;
-/*
-      if (!res.data)
-      {
-        var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
-        cls.ResourceManager.instance.fetch_resource_data
-      }
-/**/
+
+      return res;
     }
   }
 
   this.get_resource = function(id)
   {
     return this.resourcesDict[ id ];
-//    return this.resources.filter(function(e) { return e.id == id; })[0];
   };
-/*
-  this.get_resources_for_types = function()
-  {
-    var types = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resources_for_mimes = function()
-  {
-    var mimes = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.resources.filter(filterfun);
-  };
-/*
-  this.get_resource_groups = function()
-  {
-    return this._groups;
-    var imgs = this.get_resources_for_types("image");
-    var stylesheets = this.get_resources_for_mimes("text/css");
-    var markup = this.get_resources_for_mimes("text/html",
-                                             "application/xhtml+xml");
-    var scripts = this.get_resources_for_mimes("application/javascript",
-                                              "text/javascript");
-
-    var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.resources.filter(function(e) {
-      return known.indexOf(e) == -1;
-    });
-    return {
-      markup: markup, images: imgs, stylesheets: stylesheets, 
-      scripts: scripts, other: other
-    }
-  }
-*/
 }
 
-cls.ResourceGroup = function(name)
+cls.ResourceGroup = function(name,type)
 {
   this.ids = [];
   this.name = null;
+  this.type = null;
   this.closed = true;
 
-  this._init = function(name)
+  this._init = function(name,type)
   {
     this.name = name;
+    this.type = type;
     this.ids.length = 0;
   }
   this.push = function( id )
@@ -345,16 +428,10 @@ cls.Resource = function(id)
 
 cls.ResourcePrototype = function()
 {
-  this._super_init = this._init;
   this._init = function(id)
   {
-    this._super_init();
-
     this.id = id;
     this.finished = false;
-//    debugger;
-//    this.url = 'http://localhost:8002/dragonfly-stp-1-work/src/client-en.xml';
-    //this.url = null;
     this.location = "No URL";
     this.result = null;
     this.mime = null;
@@ -363,7 +440,6 @@ cls.ResourcePrototype = function()
     this.type = null;
     this.urltype = null;
     this.invalid = false;
-
   }
 
   this.update = function(eventname, eventdata)
@@ -386,15 +462,14 @@ cls.ResourcePrototype = function()
       this.mime = eventdata.mimeType;
       this.encoding = eventdata.characterEncoding;
       this.size = eventdata.contentLength || 0;
-
-      if(eventdata.content)
-      {
-        this.data = new cls.ResourceManager["1.0"].ResourceData( eventdata );
-      }
-
       this.finished = true;
       this._guess_type();
       this._humanize_url();
+
+      if (eventdata.content)
+      {
+        this.update("responsefinished", eventdata);
+      }
     }
     else if (eventname == "response")
     {
@@ -406,13 +481,13 @@ cls.ResourcePrototype = function()
     }
     else if (eventname == "urlredirect")
     {
+      debugger;
       this.invalid = true;
     }
     else if (eventname == "responsefinished")
     {
       this.data = new cls.ResourceManager["1.0"].ResourceData( eventdata );
-
-      console.log(eventdata);
+      this._get_meta_data();
     }
     else
     {
@@ -420,6 +495,22 @@ cls.ResourcePrototype = function()
     }
   }
 
+  this._get_meta_data = function()
+  {
+    if (this.type == 'image')
+    {
+      var i=new Image();
+      i.src=this.data.content.stringData;
+      if(i.naturalWidth)
+      {
+        this.data.meta = i.naturalWidth+'x'+i.naturalHeight;
+      }
+      else
+      {
+        this.data.meta = 'vectorial image';
+      }
+    }
+  }
 
   this._guess_type = function()
   {
@@ -431,7 +522,7 @@ cls.ResourcePrototype = function()
     {
       if (this.mime.toLowerCase() == "application/octet-stream")
       {
-        this.type = cls.ResourceUtil.extension_type_map/*path_to_type*/[this.url.filename.slice(this.url.filename.lastIndexOf('.')+1)];
+        this.type = cls.ResourceUtil.extension_type_map[this.url.extension];
       }
       if (!this.type)
       {
@@ -458,6 +549,40 @@ cls.ResourcePrototype = function()
       this.human_url = this.url;
     }
   }
+
+  this._on_fetch_data_bound = function(callback)
+  {
+    return function(status,message)
+    {
+      if(!status){ this.update("responsefinished", message); }
+      if(callback){ callback(this); }
+    }.bind(this);
+  }
+
+  this.fetch_data = function(callback)
+  {
+    const
+    TRANSPORT_STRING = 1,
+    TRANSPORT_DATA_URI = 3,
+    TRANSPORT_OFF = 4,
+    DECODE_TRUE = 1,
+    SIZE_LIMIT = 1e7;
+
+    if (!this.data)
+    {
+      var tag = window.tagManager.set_callback(null, this._on_fetch_data_bound(callback));
+      var responseType = cls.ResourceUtil.type_to_content_mode(this.type);
+      var transportType = {datauri: TRANSPORT_DATA_URI}[responseType]||TRANSPORT_STRING;
+
+      window.services['resource-manager'].requestGetResource(tag, [this.id, [transportType, DECODE_TRUE, SIZE_LIMIT]]);
+    }
+    else if(callback)
+    {
+      callback(this);
+    }
+  };
+
+
 }
 
 window.cls.ResourcePrototype.prototype = new URIPrototype("url");
