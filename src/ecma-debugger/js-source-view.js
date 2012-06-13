@@ -16,7 +16,7 @@ cls.JsSourceView = function(id, name, container_class)
   var SCROLL_CONTAINER_ID = "js-source-scroll-container";
   var STOP_AT_ERROR_CLASS = "stop-at-error";
   var ERROR_TOOLTIP_CLASS = "error-description";
-  var DIV_SELECTOR = ".js-source-content div";
+  var DIV_SELECTOR = "." + CONTAINER_CLASS_NAME + " div";
 
   var self = this;
   var frame_id = "";
