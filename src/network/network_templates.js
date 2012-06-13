@@ -222,7 +222,7 @@ templates.network_log_url_tooltip = function(entry)
                      " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
-  else if (entry.no_request_made)
+  else if (!entry.touched_network)
   {
     if (entry.urltype_name === URL_TYPE_DEF[URL_TYPE_DEF.FILE])
     {

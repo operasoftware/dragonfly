@@ -208,14 +208,15 @@ cls.PrettyPrinter.prototype = new function()
 
   this._print_object = function(ctx)
   {
-    var rt_id = runtimes.getSelectedRuntimeId();
-    var thread_id = stop_at.getThreadId();
-    var frame_index = stop_at.getSelectedFrameIndex();
-    if (frame_index == -1)
+    var ex_ctx = window.runtimes.get_execution_context();
+    var rt_id = ex_ctx.rt_id;
+    var thread_id = ex_ctx.thread_id;
+    var frame_index = ex_ctx.frame_index;
+    if (ctx.rt_id != rt_id)
     {
+      rt_id = ctx.rt_id;
       thread_id = 0;
       frame_index = 0;
-      rt_id = ctx.rt_id;
     }
     var tag = tagManager.set_callback(this, this._handle_object, [ctx]);
     var msg = [rt_id, thread_id, frame_index, ctx.type.script, [["object", ctx.obj_id]]];

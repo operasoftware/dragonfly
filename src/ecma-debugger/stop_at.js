@@ -389,10 +389,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
               // the event for stop at new script and the stop at breakpoint are the same
              || this._bps.script_has_breakpoint_on_line(stopAt.script_id, line))
         {
-          if( runtimes.getSelectedRuntimeId() != runtime_id )
-          {
-            runtimes.setSelectedRuntimeId(runtime_id);
-          }
           this._stop_in_script(stopAt);
         }
         else

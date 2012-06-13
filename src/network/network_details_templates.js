@@ -76,7 +76,7 @@ templates.network_response = function(response)
 templates.request_details = function(req)
 {
   var ret = [];
-  if (!req)
+  if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
     return ret;
 
   if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
@@ -135,7 +135,7 @@ templates.response_details = function(resp)
 templates.network_headers_list = function(headers, firstline)
 {
   var lis = headers.map(function(header) {
-      return ["tr", ["th", header.name], ["td", header.value], "data-spec", "http#" + header.name];
+      return ["tr", ["th", header.name + ":"], ["td", header.value], "data-spec", "http#" + header.name];
   });
 
   if (firstline)
