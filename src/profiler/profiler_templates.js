@@ -310,7 +310,7 @@ var ProfilerTemplates = function()
   this.format_time = function(time, ms_fractions)
   {
     var unit = "ms";
-    var fractions = ms_fractions || 0;
+    var fractions = ms_fractions || time < 1 ? 1 : 0;
     if (time >= 1000) // if at least on second
     {
       time /= 1000;

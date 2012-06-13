@@ -72,7 +72,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._start_profiler = function()
   {
-    this._reset_details();
+    this._reset();
     this._container.clearAndRender(this._templates.empty("Profiling…"));
     this._profiler.start_profiler(this._handle_start_profiler.bind(this));
     this._overlay.set_window_id(this._profiler.get_window_id());
