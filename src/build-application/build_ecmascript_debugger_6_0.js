@@ -20,6 +20,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
 
     cls.InspectableJSObject = namespace.InspectableJSObject;
     cls.JSInspectionTooltip.register();
+    cls.EventListenerTooltip.register();
     // disabled for now. see CORE-32113
     // cls.InspectableJSObject.register_enabled_listener();
     // for now we are filtering on the client side
@@ -179,6 +180,14 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     new cls.JSSearchView('js-search', 
                          ui_strings.M_VIEW_LABEL_SEARCH, 
                          'scroll js-search');
+
+    /* Listeners */
+    if (service_interface.satisfies_version(6, 11))
+    {
+      new cls.EventListenersView("ev-listeners",
+                                 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS,
+                                 "ev-listeners scroll");
+    }
                              
     /* adjust the base class */
 

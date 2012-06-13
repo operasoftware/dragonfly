@@ -1493,3 +1493,28 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* new event listener feature */
+
+/* DESC: Link in an event listener tooltip to the source position where the listener is added. */
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+
+/* DESC: Info in an event listener tooltip that the according source file is missing. */
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing phase";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";
+
+/* DESC: View with all event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: Info in a tooltip that the according listener was set by the event target interface. */
+ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
+
+/* DESC: Info in a tooltip that the according listener was set as attribute. */
+ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
+/* end new event listener feature */
