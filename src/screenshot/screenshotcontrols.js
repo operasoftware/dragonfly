@@ -86,6 +86,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger", "exec"];
     this.init(id, name, container_class);
     this._screenshot = null;
     this._sample_color = new Color();

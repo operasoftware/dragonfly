@@ -34,6 +34,11 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
+
   this._before_table_render = function(message)
   {
     var table = message.table;
@@ -108,6 +113,7 @@ cls.StorageView = function(id, name, container_class, storage_name)
     }
   };
 
+  this.requierd_services = ["ecmascript-debugger"];
   window.storages[id].addListener("storage-update", this.on_storage_update.bind(this));
   this.init(id, name, container_class, null, "storage-view");
 };

@@ -142,6 +142,7 @@ window.cls.Client = function()
 
   this.setup = function()
   {
+    window.services.scope.reset();
     var port = _get_port_number();
     var client = {
       id: clients.length + 1,
@@ -157,6 +158,7 @@ window.cls.Client = function()
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
+      cls.ScopeHTTPInterface.is_enabled = true;
     }
 
     if (!opera.stpVersion)
@@ -450,8 +452,8 @@ window.cls.Client = function()
     if (last_selected_view)
     {
       var esdi = window.services['ecmascript-debugger'];
-      var cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
-      esdi.add_listener('enable-success', cb);
+      this._esd_enabled_cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
+      esdi.add_listener('enable-success', this._esd_enabled_cb);
     }
   };
 
@@ -474,7 +476,9 @@ window.cls.Client = function()
         UI.get_instance().show_view(last_selected_view);
       }
     });
-    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+    var esdi = window.services['ecmascript-debugger'];
+    esdi.requestGetSelectedObject(tag);
+    esdi.remove_listener('enable-success', this._esd_enabled_cb);
   };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));

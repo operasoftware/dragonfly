@@ -322,6 +322,11 @@ cls.JsSourceView = function(id, name, container_class)
     }
   }
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
+
   this.onresize = function(container)
   {
     // optimization - having no line wrapping allows to optimize out width-only changes
@@ -986,7 +991,8 @@ cls.JsSourceView = function(id, name, container_class)
                             this._go_to_line.window_height);
     return false;
   }.bind(this);
-
+  
+  this.requierd_services = ["ecmascript-debugger"];
   this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);

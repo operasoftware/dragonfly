@@ -111,7 +111,13 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       topCell.disableTab(view_id, true);
     };
     this._update_views(true);
-  }
+  };
+
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this.clear_all();
+  };
 
   /**
    * Toggle an entry.
@@ -309,6 +315,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
 
     window.messages.addListener("setting-changed", this._on_setting_change.bind(this));
     window.messages.addListener("debug-context-selected", this.clear_all.bind(this));
+    window.messages.addListener("profile-disabled", this._on_profile_disabled.bind(this));
 
     var logger = window.services["console-logger"];
     logger.add_listener("consolemessage", this._on_console_message.bind(this));
@@ -327,6 +334,12 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
   {
     var tag = tagManager.set_callback(this, this._on_list_messages, []);
     services['console-logger'].requestListMessages(tag);
+  };
+
+  this._on_profile_enabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._on_window_filter_change();
   };
 
   this._on_list_messages = function(status, message)
@@ -352,6 +365,7 @@ cls.ConsoleLogger["2.1"].ErrorConsoleData = function()
   this._init = function()
   {
     services["ecmascript-debugger"].addListener("window-filter-change", this._on_window_filter_change.bind(this));
+    window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
     this.init();
   }
   this._init();
@@ -377,6 +391,7 @@ var ErrorConsoleViewPrototype = function()
   this._render_timeout = 0;
   this._rendertime = 0;
   this.needs_instant_update = false;
+  this.requierd_services = ["console-logger"];
 
   this.createView = function(container)
   {
@@ -414,6 +429,11 @@ var ErrorConsoleViewPrototype = function()
     {
       this._create();
     }
+  };
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
   };
 
   this._create_delayed = function()

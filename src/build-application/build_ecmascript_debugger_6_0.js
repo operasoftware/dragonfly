@@ -84,11 +84,11 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                         'scroll mono');
     
     /* Runtime State */
-    new SidePanelView('scripts-side-panel', 
-                      ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                      ['watches', 'callstack', 'inspection'],
-                      // default expanded flags for the view list
-                      [false, true, true]);
+    new cls.JSSidePanelView('scripts-side-panel', 
+                            ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
+                            ['watches', 'callstack', 'inspection'],
+                            // default expanded flags for the view list
+                            [false, true, true]);
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
@@ -153,11 +153,11 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                           'scroll css-layout');
 
     /* Runtime State */
-    new SidePanelView('breakpoints-side-panel', 
-                      ui_strings.M_VIEW_LABEL_BREAKPOINTS,
-                      ['breakpoints', 'event-breakpoints'],
-                      // default expanded flags for the view list
-                      [true, false]);
+    new cls.JSSidePanelView('breakpoints-side-panel', 
+                            ui_strings.M_VIEW_LABEL_BREAKPOINTS,
+                            ['breakpoints', 'event-breakpoints'],
+                            // default expanded flags for the view list
+                            [true, false]);
 
     /* Event Breakpoints */
     window.event_breakpoints = cls.EventBreakpoints.get_instance();

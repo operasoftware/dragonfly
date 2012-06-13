@@ -15,6 +15,7 @@ cls.EventBreakpointsView = function(id, name, container_class)
   this.window_height = 300;
   this.window_statusbar = false;
   this._container = null;
+  this.requierd_services = ["ecmascript-debugger"];
 
   this.createView = function(container)
   {

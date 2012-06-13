@@ -3,6 +3,7 @@
 cls.DOMSidePanelView = function(id, name, view_list, default_unfolded_list)
 {
   this._super_createView = this.createView;
+  this.requierd_services = ["ecmascript-debugger"];
   this.createView = function(container)
   {
     this._super_createView(container);
