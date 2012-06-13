@@ -1,0 +1,179 @@
+<!doctype html>
+
+<link rel="stylesheet" href="../../../src/ui-style/ui.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/sortable_table/sortable_table.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/tooltip/tooltip.css">
+
+<script>var ActionBroker = null;</script>
+<script src="../../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../../src/scripts/dom.js"></script>
+<script src="../../../src/ui-scripts/ui-actions.js"></script>
+<script src="../../../src/scripts/objectregistry.js"></script>
+<script src="../../../src/ui-scripts/sortable_table/sortable_table.js"></script>
+
+<style>
+  body {font-family: sans-serif; font-size: 13px; color: #292929}
+  button {margin-right: 5px;}
+  [data-column-id='sort_test'] {min-width: 50px !important;}
+</style>
+<body></body>
+<script>
+
+window.app = {
+  addListener: function(name, func){}
+};
+
+var users = [
+  {
+    firstname: "Miles",
+    lastname: "Naismith Vorkosigan",
+    gender: "M",
+    birthdate: 218307507057,
+    expected_sort_pos: "3a"
+  },
+  {
+    firstname: "Ekaterin",
+    lastname: "Nile Vorvayne Vorsoisson Vorkosigan",
+    gender: "F",
+    birthdate: 375987507057,
+    expected_sort_pos: "1a"
+  },
+  {
+    firstname: "Gregor",
+    lastname: "Vorbarra",
+    gender: "M",
+    birthdate: 123699507057,
+    expected_sort_pos: "3b"
+  },
+  {
+    firstname: "Elena",
+    lastname: "Bothari",
+    gender: "F",
+    birthdate: 435665507057,
+    expected_sort_pos: "1b"
+  },
+  {
+    firstname: "Elli",
+    lastname: "Quinn",
+    gender: "F",
+    birthdate: 255235507057,
+    expected_sort_pos: "1c"
+  },
+  {
+    firstname: "Ivan",
+    lastname: "Vorpatril",
+    gender: "M",
+    birthdate: 239235507057,
+    expected_sort_pos: "3c"
+  },
+  {
+    firstname: "Bel",
+    lastname: "Thorne",
+    gender: "H",
+    birthdate: 49235507057,
+    expected_sort_pos: "2"
+  },
+];
+
+tabledef = {
+  groups: {
+    gender: {
+      label: "Gender",
+      grouper: function(obj) {
+        return {M: "Men", F: "Women", H: "Other"}[obj.gender];
+      },
+    },
+    birthdecade: {
+      label: "Decade of birth",
+      grouper: function(obj) {
+        return ("" + new Date(obj.birthdate).getFullYear()).slice(-2, -1) + "0"
+      },
+    }
+  },
+  columns: {
+    firstname: {
+      label: "First name"
+    },
+    lastname: {
+      label: "Last name"
+    },
+    name: {
+      label: "Name (first last)",
+      getter: function(obj) { return obj.firstname + " " + obj.lastname },
+    },
+    name2: {
+      label: "Name (last first)",
+      getter: function(obj) { return obj.lastname + ", " + obj.firstname },
+    },
+    gender: {
+      label: "Gender",
+      renderer: function(obj) {
+        return {M: "Man", F: "Woman", H: "Herm"}[obj.gender]
+      }
+    },
+    birthdate: {
+      label: "Birth Date",
+      renderer: function(obj) { return new Date(obj.birthdate).toDateString() },
+    },
+    age: {
+      label: "Age",
+      getter: function(obj) { return obj.birthdate },
+      renderer: function(obj) { return String(Math.floor((new Date().getTime() - obj.birthdate) / 31536000000))  }, // ms pr year
+    },
+    sort_test: {
+      label: "Sort test",
+      getter: function(obj) { return obj.gender; },
+      renderer: function(obj) { return String(obj.expected_sort_pos); }
+    },
+    gendericon: {
+      label: "",
+      getter: function(obj) { return obj.gender },
+      renderer: function(obj) {
+        var colors = {M: "blue", H: "green", F: "red"};
+        return ["strong", obj.gender, "style", "color: " + colors[obj.gender]];
+      }
+    }
+  }
+}
+
+eventHandlers.click["change-group"] = groupHandler;
+
+document.body.render(["h1", "Table example, basic"]);
+document.body.render(["p", "This requires only a basic tabledef and data. Features are sorting and grouping."]);
+document.body.render(groupSelector(tabledef));
+document.body.render(["br"]);
+document.body.render(new SortableTable(tabledef, users).render());
+
+
+function groupHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.group(target.getAttribute("data-group-id"));
+  table.re_render(obj.render());
+}
+
+function groupSelector(tabledef) {
+  var groups = [{label: "No grouping", id: "" }];
+  for (var key in tabledef.groups) { groups.push({label: tabledef.groups[key].label, id: key})}
+
+  var radiofun = function(e, sel) { return ["label", e.label,
+                                            ["input",
+                                             "data-group-id", e.id,
+                                             "type", "radio",
+                                             "name", "group",
+                                             "handler", "change-group"
+                                            ].concat(e.id == "" ? ["checked", "checked"] : []),
+                                            " | "
+                                           ]
+                                  }
+
+  var tpl = ["fieldset",
+             [
+               ["legend", "Select grouping"],
+               groups.map(radiofun)
+             ]
+            ]
+  return tpl;
+}
+
+</script>
