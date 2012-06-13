@@ -491,7 +491,7 @@ var ProfilerTemplates = function()
 
   this._get_color_for_type = function(type)
   {
-    return document.styleSheets.getDeclaration(".event-type-" + type + ".profiler-timeline-selftime").backgroundColor;
+    return document.styleSheets.getDeclaration(".event-type-" + type + "-selftime").backgroundColor;
   };
 
   this._tabledefs = {};

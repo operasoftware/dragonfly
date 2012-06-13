@@ -178,19 +178,11 @@
   box-shadow: 0 0 0 3px #769fe1;
 }
 
-.profiler-timeline-selftime
-{
-  background-image: -o-linear-gradient(-90deg,
-                                       rgba(0, 0, 0, 0) 1%,
-                                       rgba(0, 0, 0, 0.2) 100%);
-  border-radius: 1px;
-}
-
 .event-type-1
 {
 }
 
-.event-type-1.profiler-timeline-selftime
+.event-type-1-selftime
 {
 }
 
@@ -198,104 +190,96 @@
 {
 }
 
-.event-type-2.profiler-timeline-selftime
+.event-type-2-selftime
 {
 }
 
 .event-type-3
 {
-  background-color: #c7c7eb;
-  border-color: #a5a5c3;
+  background-color: rgba(199, 199, 235, .6);
 }
 
-.event-type-3.profiler-timeline-selftime
+.event-type-3-selftime
 {
-  background-color: #b3b0ff;
+  background-color: rgb(179, 176, 255);
 }
 
 .event-type-4
 {
-  background-color: #aac1e3;
-  border-color: #8da0bd;
+  background-color: rgba(170, 193, 227, .6);
 }
 
-.event-type-4.profiler-timeline-selftime
+.event-type-4-selftime
 {
-  background-color: #8cb8fa;
+  background-color: rgb(140, 184, 250);
 }
 
 .event-type-5
 {
-  background-color: #f5e19f;
-  border-color: #ccb97c;
+  background-color: rgba(245, 225, 159, .6);
 }
 
-.event-type-5.profiler-timeline-selftime
+.event-type-5-selftime
 {
-  background-color: #ffe17d;
+  background-color: rgb(255, 225, 125);
 }
 
 .event-type-6
 {
-  background-color: #a2deaa;
-  border-color: #7eb985;
+  background-color: rgba(162, 222, 170, .6);
 }
 
-.event-type-6.profiler-timeline-selftime
+.event-type-6-selftime
 {
-  background-color: #7ed68a;
+  background-color: rgb(126, 214, 138);
 }
 
 .event-type-7
 {
-  background-color: #fcb174;
-  border-color: #d29360;
+  background-color: rgba(252, 177, 116, .6);
 }
 
-.event-type-7.profiler-timeline-selftime
+.event-type-7-selftime
 {
-  background-color: #e8822e;
+  background-color: rgb(232, 130, 46);
 }
 
 .event-type-8
 {
-  background-color: #fbcfab;
-  border-color: #d2ad8f;
+  background-color: rgba(251, 207, 171, .6);
 }
 
-.event-type-8.profiler-timeline-selftime
+.event-type-8-selftime
 {
-  background-color: #ffc08c;
+  background-color: rgb(255, 192, 140);
 }
 
 .event-type-9
 {
 }
 
-.event-type-9.profiler-timeline-selftime
+.event-type-9-selftime
 {
 }
 
 .event-type-10
 {
-  background-color: #ebbf9b;
-  border-color: #c39f81;
+  background-color: rgba(235, 191, 155, .6);
 }
 
-.event-type-10.profiler-timeline-selftime
+.event-type-10-selftime
 {
-  background-color: #e09455;
+  background-color: rgb(224, 148, 85);
 }
 
 .event-type-11
 {
-  background-color: #ff9c9c;
-  border-color: #d47777;
+  background-color: rgba(255, 156, 156, .6);
 }
 
-.event-type-11.profiler-timeline-selftime
+.event-type-11-selftime
 {
-  background-color: #f45353;
+  background-color: rgb(244, 83, 83);
 }
 
 .profiler-event-tooltip
