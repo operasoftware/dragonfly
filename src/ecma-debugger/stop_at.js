@@ -57,7 +57,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   [
     "var MAX_SLICE = 5000;",
     "var LIMIT = 11;",
-    "var re = /\s+/g;",
+    "var re = /\\s+/g;",
     "var ws = 0;",
     "var m = null;",
     "var src = scriptData.slice(0, MAX_SLICE);",
@@ -319,7 +319,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
         if (typeof value == "boolean")
           stop_at_settings[prop] = value;
       }
-      alert(get_config_msg())
       ecma_debugger.requestSetConfiguration(0, get_config_msg());
       _is_initial_settings_set = true;
     }
