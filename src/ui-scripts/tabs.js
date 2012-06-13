@@ -369,7 +369,7 @@ var TabsBase = function()
         var index = 0;
         while (delta < 0)
         {
-          tabs[index++].legend_orig_width += 1;
+          tabs[index++].orig_width += 1;
           delta++;
         }
       }
