@@ -8,24 +8,24 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 {
   var SUCCESS = 0;
 
-  var event_types = ProfilerService.EventType;
-  var TYPE_GENERIC = event_types.GENERIC;
-  var TYPE_PROCESS = event_types.PROCESS;
-  var TYPE_DOCUMENT_PARSING = event_types.DOCUMENT_PARSING;
-  var TYPE_CSS_PARSING = event_types.CSS_PARSING;
-  var TYPE_SCRIPT_COMPILATION = event_types.SCRIPT_COMPILATION;
-  var TYPE_THREAD_EVALUATION = event_types.THREAD_EVALUATION;
-  var TYPE_REFLOW = event_types.REFLOW;
-  var TYPE_STYLE_RECALCULATION = event_types.STYLE_RECALCULATION;
-  var TYPE_CSS_SELECTOR_MATCHING = event_types.CSS_SELECTOR_MATCHING;
-  var TYPE_LAYOUT = event_types.LAYOUT;
-  var TYPE_PAINT = event_types.PAINT;
+  var event_type = ProfilerService.EventType;
+  var TYPE_GENERIC = event_type.GENERIC;
+  var TYPE_PROCESS = event_type.PROCESS;
+  var TYPE_DOCUMENT_PARSING = event_type.DOCUMENT_PARSING;
+  var TYPE_CSS_PARSING = event_type.CSS_PARSING;
+  var TYPE_SCRIPT_COMPILATION = event_type.SCRIPT_COMPILATION;
+  var TYPE_THREAD_EVALUATION = event_type.THREAD_EVALUATION;
+  var TYPE_REFLOW = event_type.REFLOW;
+  var TYPE_STYLE_RECALCULATION = event_type.STYLE_RECALCULATION;
+  var TYPE_CSS_SELECTOR_MATCHING = event_type.CSS_SELECTOR_MATCHING;
+  var TYPE_LAYOUT = event_type.LAYOUT;
+  var TYPE_PAINT = event_type.PAINT;
 
-  var modes = ProfilerService.Mode;
-  var MODE_ALL = modes.ALL;
-  var MODE_REDUCE_UNIQUE_TYPES = modes.REDUCE_UNIQUE_TYPES;
-  var MODE_REDUCE_UNIQUE_EVENTS = modes.REDUCE_UNIQUE_EVENTS;
-  var MODE_REDUCE_ALL = modes.REDUCE_ALL;
+  var mode = ProfilerService.Mode;
+  var MODE_ALL = mode.ALL;
+  var MODE_REDUCE_UNIQUE_TYPES = mode.REDUCE_UNIQUE_TYPES;
+  var MODE_REDUCE_UNIQUE_EVENTS = mode.REDUCE_UNIQUE_EVENTS;
+  var MODE_REDUCE_ALL = mode.REDUCE_ALL;
 
   var SESSION_ID = 0;
   var TIMELINE_LIST = 2;
@@ -46,6 +46,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     TYPE_THREAD_EVALUATION,
     TYPE_REFLOW,
     TYPE_STYLE_RECALCULATION,
+    //TYPE_STYLE_SELECTOR_MATCHING,
     TYPE_LAYOUT,
     TYPE_PAINT
   ];
@@ -54,13 +55,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._table = null;
     this._current_session_id = null;
-    this._old_session_id = null;
     this._current_timeline_id = null;
     this._event_id = null;
     this._event_type = null;
-    this._timeline_list = [];
-    this._aggregated_list = [];
-    this._reduced_list = [];
+    this._timeline_list = null;
+    this._aggregated_list = null;
+    this._reduced_list = null;
     this._details_time = 0;
   };
 
@@ -82,6 +82,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._old_session_id = this._current_session_id;
     this._current_session_id = msg[SESSION_ID];
+    this._update_record_button_title();
   };
 
   this._stop_profiler = function()
@@ -104,12 +105,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         mode: MODE_ALL,
         event_type_list: this._default_types,
       };
+      // TODO: get all events with different event modes in parallell?
       this._profiler.get_events(this._handle_timeline_list.bind(this), config);
     }
     else
     {
       this._container.clearAndRender(this._templates.empty("Profiling failed"));
     }
+    this._update_record_button_title();
   };
 
   this._handle_timeline_list = function(status, msg)
@@ -146,16 +149,25 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     var zero_point = this._get_zero_point();
     var has_details_events = this._table && this._table.get_data().length > 0;
-    var template = this._timeline_list.eventList && this._timeline_list.eventList[0]
-        ? this._templates.main(has_details_events,
-                               this._templates.legend(this._aggregated_list),
-                               this._templates.event_list_all(this._timeline_list,
-                                                              this._event_id,
-                                                              this._container.clientWidth - AGGREGATED_EVENTS_WIDTH,
-                                                              zero_point),
-                               this._templates.details(this._table),
-                               this._templates.status(this._details_time))
-        : this._templates.empty("Press the Record button to start profiling");
+    var template = null;
+    if (this._timeline_list && this._timeline_list.eventList)
+    {
+      var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
+      template = this._timeline_list.eventList[0]
+               ? this._templates.main(has_details_events,
+                                      this._templates.legend(this._aggregated_list),
+                                      this._templates.event_list_all(this._timeline_list,
+                                                                     this._event_id,
+                                                                     width,
+                                                                     zero_point),
+                                      this._templates.details(this._table),
+                                      this._templates.status(this._details_time))
+               : this._templates.empty("No data");
+    }
+    else
+    {
+      template = this._templates.empty("Press the Record button to start profiling");
+    }
     this._container.clearAndRender(template);
   };
 
@@ -292,13 +304,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     window.services.scope.enable_profile(window.app.profiles.PROFILER);
   };
 
-  this._on_profile_enabled = function(msg)
+  this._update_record_button_title = function()
   {
-    if (msg.profile === window.app.profiles.PROFILER)
-    {
-      this._has_overlay_service = window.services["overlay"] && window.services["overlay"].is_enabled;
-      window.runtimes.reloadWindow();
-    }
+    window.toolbars[this.id].set_button_title("profiler-start-stop", this._profiler.is_active ?
+                                                                     "Stop profiling" :
+                                                                     "Start profiling");
   };
 
   this._get_zero_point = function()
@@ -309,6 +319,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
             this._timeline_list.eventList[0] &&
             this._timeline_list.eventList[0].interval.start)
          : 0;
+  };
+
+  this._on_profile_enabled = function(msg)
+  {
+    if (msg.profile === window.app.profiles.PROFILER)
+    {
+      this._has_overlay_service = window.services["overlay"] && window.services["overlay"].is_enabled;
+      window.runtimes.reloadWindow();
+    }
   };
 
   this._on_settings_changed = function(msg)
@@ -366,6 +385,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._templates = new ProfilerTemplates();
     this._has_overlay_service = false;
     this._has_zero_at_first_event = false;
+    this._old_session_id = null;
     this._reset();
 
     this._tooltip = Tooltips.register("profiler-event", true, false);
