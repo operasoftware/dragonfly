@@ -487,7 +487,7 @@ cls.JsSourceView = function(id, name, container_class)
   {
     var source_content = document.querySelector(CONTAINER_SELECTOR);
     var lines = source_content &&
-                source_content.querySelectorAll("div:not(.error-description)");
+                source_content.querySelectorAll("div:not(." + ERROR_TOOLTIP_CLASS + ")");
     var line = typeof line_no == "number" && lines && lines[line_no - __top_line];
     return line;
   }
