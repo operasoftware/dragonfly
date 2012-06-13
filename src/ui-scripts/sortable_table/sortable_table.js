@@ -92,7 +92,7 @@ var SortableTablePrototype = function()
     // visible columns, as originally passed in. used for restore.
     this.default_columns = cols.slice(0);
     this.reversed = Boolean(reversed);
-    this._bound_sorters = {};
+    this._wrapped_sorters = {};
     this.groupby = groupby;
     this._elem = null;
     this.objectid = ObjectRegistry.get_instance().set_object(this);
@@ -123,14 +123,14 @@ var SortableTablePrototype = function()
     var sorter = this.sortby && this.tabledef.columns[this.sortby].sorter;
     if (sorter)
     {
-      var bound_sorter = this._bound_sorters[this.sortby];
-      if (!bound_sorter)
+      var wrapped_sorter = this._wrapped_sorters[this.sortby];
+      if (!wrapped_sorter)
       {
-        bound_sorter = this._bound_sorters[this.sortby]
-                     = this.sort_wrapper.bind(this, sorter);
+        wrapped_sorter = this._wrapped_sorters[this.sortby]
+                       = this._sort_wrapper.bind(this, sorter);
       }
 
-      this._data.sort(bound_sorter);
+      this._data.sort(wrapped_sorter);
       if (this.tabledef.idgetter)
         this._last_item_order = this._data.map(this.tabledef.idgetter);
     }
@@ -140,7 +140,7 @@ var SortableTablePrototype = function()
     }
   };
 
-  this.sort_wrapper = function(sorter, a, b)
+  this._sort_wrapper = function(sorter, a, b)
   {
     var val = sorter(a, b);
     if (this.reversed)
@@ -316,7 +316,6 @@ var SortableTablePrototype = function()
     {
       a = getter(a);
       b = getter(b);
-      if (typeof a === "number" && typeof b === "number") { return a - b }
       if (a > b) { return 1 }
       else if (a < b) { return -1 }
       else { return 0 }
