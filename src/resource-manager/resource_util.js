@@ -22,7 +22,7 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
   else if (bytes >= 1024)
   {
-    return "" + numformatter(Math.ceil((bytes / 1024))) + " kB";
+    return "" + numformatter(((bytes / 1024)).toFixed(1)) + " kB";
   }
   else
   {
@@ -91,6 +91,7 @@ cls.ResourceUtil.mime_type_map = {
 
   "image/png": "image",
   "image/gif": "image",
+  "image/jpg": "image",
   "image/jpeg": "image",
   "image/x-icon": "image",
   "image/vnd.microsoft.icon": "image",
