@@ -1755,6 +1755,8 @@ info {
 {
   display: inline-block;
   vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .block-content
@@ -1762,4 +1764,6 @@ info {
   display: block;
   line-height: 1.1;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 } 

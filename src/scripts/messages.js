@@ -131,6 +131,9 @@
  *     <dt>panel-search-executed</dt>
  *     <dd>A new search in a search panel has been executed and the according result is displayed in the panel.</dd>
  *
+ *     <dt>window-controls-created</dt>
+ *     <dd>The window controls have been created. Payload: msg.window_controls.</dd>
+ *
  * </dl>
  *
  */
@@ -156,7 +159,9 @@ var messages = new function()
     {
       __listeners[key] = [cb];
     }
-  }
+  };
+
+  this.add_listener = this.addListener;
 
   /**
    * Remove a listener for a specific message.

@@ -313,8 +313,115 @@ var TabsBase = function()
     }
 
     this.update(force_redraw);
+    this.onresize();
 
   }
+
+  this.onresize = function()
+  {
+    var tabbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if (!tabbar || this.is_hidden)
+      return;
+
+    var tab_eles = tabbar.querySelectorAll("tab");
+    var tabs = [];
+    var width = 0;
+    for (var i = 0, tab_ele; tab_ele = tab_eles[i]; i++)
+    {
+      if (!this._tab_right_padding)
+        this._store_css_tab_values(tab_ele);
+
+      if (!tab_ele.hasAttribute("data-orig-width"))
+        tab_ele.setAttribute("data-orig-width", String(tab_ele.offsetWidth));
+
+      var tab_width = Number(tab_ele.getAttribute("data-orig-width")) - 1;
+      width += tab_width + this._tab_margin + 1;
+      tabs.push({padding_target: tab_ele,
+                 width_target: tab_ele,
+                 orig_width: tab_width - this._tab_border_padding});
+    }
+    this._adjust_tab_size(width, tabs);
+  };
+
+  this._adjust_tab_size = function(width, tabs)
+  {
+    var has_space = width <= this.width;
+    var scale = 1;
+    var delta_padding = 0;
+    var target_padding = this._tab_right_padding;
+    var count = tabs.length;
+    if (!has_space)
+    {
+      var delta = width - this.width;
+      // reduce each legend by 1 pixel
+      delta -= count;
+      if (delta > 0)
+      {
+        delta_padding = Math.ceil(delta / count);
+        if (delta_padding > this._tab_right_padding)
+          delta_padding = this._tab_right_padding;
+
+        target_padding = this._tab_right_padding - delta_padding;
+        delta -= count * delta_padding;
+      }
+      else
+      {
+        var index = 0;
+        while (delta < 0)
+        {
+          tabs[index++].orig_width += 1;
+          delta++;
+        }
+      }
+      if (delta > 0)
+      {
+        var orig_width_sum = tabs.reduce(function(sum, tab)
+        {
+          return sum + tab.orig_width;
+        }, 0);
+        scale = (orig_width_sum - delta) / orig_width_sum;
+      }
+    }
+    tabs.forEach(function(tab)
+    {
+      if (has_space)
+      {
+        tab.padding_target.removeAttribute("style");
+        tab.width_target.removeAttribute("style");
+      }
+      else
+      {
+        tab.padding_target.style.paddingRight = target_padding + "px";
+        tab.width_target.style.width = Math.floor(tab.orig_width * scale) + "px";
+      } 
+    }, this);  
+  };
+
+  this._store_css_tab_values = function(tab_ele)
+  {
+    var value = window.getComputedStyle(tab_ele).paddingRight;
+    Tabs.prototype._tab_right_padding = parseInt(value);
+    value = 
+    [
+      "marginLeft",
+      "marginRight",
+    ].reduce(function(sum, prop)
+    {
+      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
+    }, 0);
+    Tabs.prototype._tab_margin = value;
+    value = 
+    [
+      "paddingLeft",
+      "paddingRight",
+      "borderLeftWidth",
+      "borderRightWidth",
+    ].reduce(function(sum, prop)
+    {
+      return sum + parseInt(window.getComputedStyle(tab_ele)[prop]);
+    }, 0);
+    Tabs.prototype._tab_border_padding = value;
+  };
 
   this.on_view_inizialized = function(msg)
   {
@@ -336,7 +443,7 @@ var TabsBase = function()
       self.on_view_inizialized(msg);
     };
   }
-
+  
   this.init = function(cell, tabbar)
   {
     this.tabs = [];
