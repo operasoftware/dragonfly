@@ -10,13 +10,13 @@
   var USE_CAPTURE = 3;
   var LISTENER_OBJECT_ID = 4;
   var LISTENER_SCRIPT_DATA = 5;
-  var HAS_LISTENERS = function(rt_l) { return rt_l.event_types.length; };
+  var has_listeners = function(rt_l) { return rt_l.event_types.length; };
 
   /* Event listener view */
 
   this.main_ev_listener_view = function(data)
   {
-    var data_with_ls = data.filter(HAS_LISTENERS);
+    var data_with_ls = data.filter(has_listeners);
     return (
     ["div",
       ["div",

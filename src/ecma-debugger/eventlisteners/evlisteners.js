@@ -95,7 +95,7 @@ cls.EventListeners.prototype = new function()
   var SUCCESS = 0;
   var SEARCH_TYPE_EVENT = 5;
   var DELAY = 150;
-  var GET_RT_ID = function(rt) { return rt.rt_id };
+  var get_rt_id = function(rt) { return rt.rt_id };
 
   /*
     data structure:
@@ -114,7 +114,7 @@ cls.EventListeners.prototype = new function()
   this._handle_new_rts = function()
   {
     var rt_ids = window.runtimes.get_dom_runtime_ids();
-    var cur_rt_ids = this._rts.map(GET_RT_ID);
+    var cur_rt_ids = this._rts.map(get_rt_id);
     var new_rt_ids = rt_ids.filter(function(id) { return !cur_rt_ids.contains(id); });
     var live_rts = this._rts.filter(function(rt) { return rt_ids.contains(rt.rt_id); });
     if (live_rts.length != this._rts.length)
