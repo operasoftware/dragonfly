@@ -252,6 +252,7 @@ var ui_framework = new function()
       "Ormaxx",
       "Prestige Elite",
       "ProFont",
+      "PT Mono",
       "Sydnie",
       "Terminal",
       "Terminus",

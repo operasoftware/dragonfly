@@ -39,7 +39,7 @@ templates.network_log_detail = function(entry)
       ["table",
         ["tbody",
           ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.human_url]
+            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.url]
           ],
           ["tr",
             ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
@@ -224,7 +224,7 @@ templates.network_request_body = function(req)
   
   return [
            templates.network_detail_row(templates.network_body_seperator()),
-           ["tbody", ["tr", ["td", cont, "colspan", "2"]]]
+           ["tbody", cont]
          ];
 };
 

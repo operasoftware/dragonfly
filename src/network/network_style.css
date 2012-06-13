@@ -162,25 +162,8 @@
 
 .network_incomplete_warning
 {
-  line-height: 15px;
-  margin: 15px 50px;
+  margin-top: 15px;
   position: relative;
-}
-
-.network_incomplete_warning div
-{
-  display: inline;
-}
-
-.network_incomplete_warning div:before
-{
-  content: " ";
-}
-
-.network_incomplete_warning .text_handler
-{
-  text-decoration: underline;
-  white-space: nowrap;
 }
 
 .network-main-container .sortable-table > tr.header,
@@ -202,6 +185,7 @@
 {
   padding-bottom: 7px;
   padding-top: 5px;
+  padding-right: 13px;
   line-height: 13px;
   border-left-color: rgba(0, 0, 0, 0.09);
 }
@@ -288,8 +272,8 @@
   /* using border-left instead of padding-left to keep the 
      space for the close button when scrolling horizontally */
   border-left: 28px solid transparent;
-  box-shadow: 0 5px 9px rgba(0, 0, 0, 0.55),
-              0 2px 4px rgba(0, 0, 0, 0.45),
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.39),
+              0 2px 2px 1px rgba(0, 0, 0, 0.28),
               -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -336,6 +320,7 @@
   text-align: left;
   padding-right: 30px;
   width: 140px;
+  white-space: nowrap;
 }
 
 .network-details-container hr
@@ -433,13 +418,21 @@
 
 .network_get_params
 {
-  margin: 4px 2px 0 0;
+  margin-top: 4px;
+  border-collapse: collapse;
 }
 
+.network_get_params th
+{
+  text-align: left;
+  padding-right: 8px;
+}
+
+.network_get_params th,
 .network_get_params td
 {
-  padding: 0 4px;
   vertical-align: top;
+  padding-left: 0;
 }
 
 .network-tooltip-row
@@ -451,11 +444,13 @@
 {
   display: table-cell;
   vertical-align: top;
+  white-space: nowrap;
 }
 
 .network-tooltip-container .gap_title
 {
   white-space: nowrap;
+  padding: 2px 0;
 }
 
 .network-tooltip-graph
@@ -468,8 +463,10 @@
    is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
+  color: #333;
+  line-height: 15px;
   text-align: right;
-  padding: 3px 8px 1px 4px;
+  padding: 2px 8px 2px 4px;
   width: 100%;
   box-sizing: border-box;
 }
