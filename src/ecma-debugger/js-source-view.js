@@ -1165,6 +1165,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'max-displayed-search-hits': 1000,
       'show-js-tooltip': true,
       'js-dd-match-history': [],
+      'reformat_javascript': true,
+      'use_reformat_condition': true
     },
     // key-label map
     {
@@ -1174,7 +1176,9 @@ cls.JsSourceView.create_ui_widgets = function()
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
-      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP
+      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP,
+      'reformat_javascript': 'Reformat javascript', // TODO ui string 
+      'use_reformat_condition': 'Smart pretty printing', //TODO ui string
     },
     // settings map
     {
@@ -1184,7 +1188,8 @@ cls.JsSourceView.create_ui_widgets = function()
         'exception',
         'error',
         'abort',
-        'show-js-tooltip'
+        'show-js-tooltip',
+        'use_reformat_condition',
       ],
       customSettings:
       [
@@ -1252,7 +1257,8 @@ cls.JsSourceView.create_ui_widgets = function()
     'js_source',
     [
       'script',
-      'error'
+      'error',
+      'reformat_javascript',
     ]
   );
 

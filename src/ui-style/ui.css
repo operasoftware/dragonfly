@@ -309,6 +309,11 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_haltonerror.png");
 }
 
+.js_source\.reformat_javascript::before
+{
+  background-image: url("../ui-images/icons/icon_reformat.png");
+}
+
 .threads\.log-threads::before
 {
   background-image: url("../ui-images/icons/icon_threads.png");

@@ -21,9 +21,12 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     error: 0,
     abort: 0,
     gc: 0,
-    debugger_statement: 1
+    debugger_statement: 1,
+    reformat_javascript: 1,
+    use_reformat_condition: 1,
   }
 
+  /*
   // replace with settings['js-source'].get(key)
   var stop_at_user_settings =
   {
@@ -32,8 +35,11 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     error: 0,
     abort: 0,
     gc: 0,
-    debugger_statement: 1
+    debugger_statement: 1,
+    reformat_javascript: 1,
+    use_reformat_condition: 1,
   }
+  */
 
   var stop_at_id_map =
   {
@@ -42,8 +48,24 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     error: 2,
     abort: 3,
     gc: 4,
-    debugger_statement: 5
+    debugger_statement: 5,
+    reformat_javascript: 6,
+    use_reformat_condition: 7,
   }
+
+  var reformat_condition = 
+  [
+    "var MAX_SLICE = 5000;",
+    "var LIMIT = 11;",
+    "var re = /\s+/g;",
+    "var ws = 0;",
+    "var m = null;",
+    "var src = scriptData.slice(0, MAX_SLICE);",
+    "while (m = re.exec(src))",
+    "  ws += m[0].length;",
+    "",
+    "return (100 * ws / src.length) < LIMIT;",
+  ].join("");
 
   var self = this;
 
@@ -83,23 +105,44 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   {
     if(msg.id == 'js_source' )
     {
-      var key = msg.key, value = settings['js_source'].get(key);
-      if( key == 'script' )
+      var key = msg.key;
+      var value = settings['js_source'].get(key);
+      if (key == 'script')
       {
 
       }
       else
       {
         stop_at_settings[key] = value;
-        var config_arr = [], prop = '';
-        for ( prop in stop_at_settings )
-        {
-          config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] && 1 || 0;
-        }
-        ecma_debugger.requestSetConfiguration(0, config_arr);
+        ecma_debugger.requestSetConfiguration(0, get_config_msg());
+      }
+
+      if (msg.key == 'reformat_javascript')
+      {
+        // TODO confirm dialog
+        runtimes.reloadWindow();
       }
     }
-  }
+  };
+
+  var get_config_msg = function()
+  {
+    var config_arr = [];
+    for (var prop in stop_at_settings)
+    {
+      if (prop == "script")
+        config_arr[stop_at_id_map[prop]] = 1;
+      else if (prop == "use_reformat_condition")
+      { 
+        config_arr[stop_at_id_map[prop]] = stop_at_settings[prop]
+                                         ? reformat_condition
+                                         : "";
+      }
+      else
+        config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] ? 1 : 0;
+    }
+    return config_arr;
+  };
 
   this.setUserStopAt = function(key, value)
   {
@@ -268,19 +311,19 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
   this.setInitialSettings = function()
   {
-    if(!_is_initial_settings_set )
+    if (!_is_initial_settings_set)
     {
-      var config_arr = [], prop = '';
-      for ( prop in stop_at_settings )
+      for (var prop in stop_at_settings )
       {
-        config_arr[stop_at_id_map[prop]] =
-          ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) )
-            || stop_at_settings[prop] ) && 1 || 0;
+        var value = settings['js_source'].get(prop);
+        if (typeof value == "boolean")
+          stop_at_settings[prop] = value;
       }
-      ecma_debugger.requestSetConfiguration(0, config_arr);
+      alert(get_config_msg())
+      ecma_debugger.requestSetConfiguration(0, get_config_msg());
       _is_initial_settings_set = true;
     }
-  }
+  };
 
   this.__continue = function (mode, clear_disabled_state) //
   {
