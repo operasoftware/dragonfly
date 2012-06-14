@@ -413,7 +413,12 @@ cst-select-option-list,
 
 .profiler-start-stop::before
 {
-    background-image: url("../ui-images/icons/icon_record.png");
+  background-image: url("../ui-images/icons/icon_record.png");
+}
+
+.profiler_all\.zero-at-first-event::before
+{
+  background-image: url("../ui-images/icons/icon_zero_at_first_event.png");
 }
 
 .pseudo-items cst-icon
