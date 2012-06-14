@@ -3,7 +3,6 @@
   position: absolute;
   left: 0;
   top: 20px;
-  height: 120px;
   width: 150px;
   border-top: 1px solid #e6e6e6;
 }
@@ -41,6 +40,11 @@
   width: 100%;
   border-top: 1px solid #e6e6e6;
   text-align: center;
+}
+
+.profiler-status.profiler-no-status
+{
+  display: none;
 }
 
 .profiler-empty
@@ -129,6 +133,11 @@
   text-align: center;
 }
 
+.profiler-timeline-marker-time.last
+{
+  right: 2px;
+}
+
 .profiler-event-special
 {
   height: 100%;
@@ -157,7 +166,7 @@
               inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
-.profiler-event-interval[data-isexpandable="true"]:hover
+.profiler-event-interval.expandable:hover
 {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
               inset 0 0 0 1px rgba(0, 0, 0, 0.07),
@@ -165,7 +174,7 @@
               0 0 0 3px #ceddf5;
 }
 
-.profiler-event-interval[data-isexpandable="false"]:hover
+.profiler-event-interval.non-expandable:hover
 {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
               inset 0 0 0 1px rgba(0, 0, 0, 0.07),

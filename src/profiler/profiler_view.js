@@ -105,7 +105,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         mode: MODE_ALL,
         event_type_list: this._default_types,
       };
-      // TODO: get all events with different event modes in parallell?
+      // TODO: make all GetEvents calls in parallell?
       this._profiler.get_events(this._handle_timeline_list.bind(this), config);
     }
     else
@@ -169,6 +169,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       template = this._templates.empty("Press the Record button to start profiling");
     }
     this._container.clearAndRender(template);
+    this._details_list = this._container.querySelector(".profiler-details-list");
+    this._status = this._container.querySelector(".profiler-status");
   };
 
   this.createView = function(container)
@@ -206,11 +208,19 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       this._start_profiler();
   };
 
+  this._get_event_details = function(event, target)
+  {
+    this._event_id = Number(target.getAttribute("data-event-id")) || null;
+    this._event_type = Number(target.getAttribute("data-event-type"));
+    this._show_details_list();
+  };
+
   this._show_details_list = function()
   {
     var child_type = this._children[this._event_type];
     if (child_type)
     {
+      this._details_list.clearAndRender(this._templates.empty("Calculating…"));
       var config = {
         session_id: this._current_session_id,
         timeline_id: this._current_timeline_id,
@@ -223,7 +233,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     else
     {
       this._reset_details();
-      this._update_view();
+      this._details_list.clearAndRender(this._templates.no_events());
+      this._details_list.addClass("profiler-no-status");
+      this._status.addClass("profiler-no-status");
     }
   };
 
@@ -243,7 +255,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._details_time = data.reduce(function(prev, curr) {
       return prev + curr.time;
     }, 0);
-    this._update_view();
+    this._details_list.clearAndRender(this._templates.details(this._table));
+    this._status.clearAndRender(this._templates.status(this._details_time));
+    this._details_list.removeClass("profiler-no-status");
+    this._status.removeClass("profiler-no-status");
   };
 
   this._get_top_list_data = function(events)
@@ -261,16 +276,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       });
     }
     return [];
-  };
-
-  this._get_event_details = function(event, target)
-  {
-    this._event_id = Number(target.getAttribute("data-event-id")) || null;
-    this._event_type = Number(target.getAttribute("data-event-type"));
-    var details_list = this._container.querySelector(".profiler-details-list");
-    if (details_list)
-      details_list.clearAndRender(this._templates.empty("Calculating…"));
-    this._show_details_list();
   };
 
   // TODO: this should not be in the view
@@ -400,7 +405,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
-    window.event_handlers.click["profiler-event"] = this._get_event_details.bind(this);
+    window.event_handlers.mousedown["profiler-event"] = this._get_event_details.bind(this);
     window.event_handlers.mouseover["profiler-event"] = this._show_event_details.bind(this);
     window.event_handlers.mouseout["profiler-event"] = this._hide_event_details.bind(this);
   };

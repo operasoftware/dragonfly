@@ -114,13 +114,10 @@ var ProfilerTemplates = function()
          details_list,
        "class", "profiler-details-list" + (has_details_events ? "" : " profiler-no-status")
       ],
-      (has_details_events
-       ? ["div",
-            status,
-          "class", "profiler-status"
-         ]
-       : []
-      )
+      ["div",
+         status,
+       "class", "profiler-status " + (has_details_events ? "" : " profiler-no-status")
+      ]
     ];
   };
 
@@ -191,8 +188,7 @@ var ProfilerTemplates = function()
     template.push(
       ["div",
          (start + duration).toFixed(fractions) + " ms",
-       "class", "profiler-timeline-marker-time last",
-       "style", "right:2px"
+       "class", "profiler-timeline-marker-time last"
       ]
     );
 
@@ -240,11 +236,11 @@ var ProfilerTemplates = function()
                                                   color + " " + self_time + "px," +
                                                   "transparent " + self_time + "px);",
            "class", "profiler-event profiler-event-interval event-type-" + event.type +
-                    (event.eventID == selected_id ? " selected" : ""),
+                    (event.eventID == selected_id ? " selected" : "") +
+                    (is_expandable ? " expandable" : " non-expandable"),
            "data-event-id", String(event.eventID),
            "data-event-type", String(event.type),
            "handler", "profiler-event",
-           "data-isexpandable", String(is_expandable),
            "data-tooltip", "profiler-event"
           ]
         );
@@ -304,7 +300,7 @@ var ProfilerTemplates = function()
 
   this.no_events = function()
   {
-    return ["div", "No event details", "class", "profiler-empty"];
+    return ["div", "No details", "class", "profiler-empty"];
   };
 
   this.format_time = function(time, ms_fractions)
