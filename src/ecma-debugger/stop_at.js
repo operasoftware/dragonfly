@@ -119,8 +119,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
       if (msg.key == 'reformat_javascript')
       {
-        // TODO confirm dialog
-        runtimes.reloadWindow();
+        new ConfirmDialog(ui_strings.D_REFORMAT_SCRIPTS,
+                          function() { window.runtimes.reloadWindow(); }).show();
       }
     }
   };

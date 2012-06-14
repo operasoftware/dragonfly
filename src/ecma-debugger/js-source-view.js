@@ -1141,11 +1141,26 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
   var service = window.services['ecmascript-debugger'];
-  // core integartion is at least 168, that means major version is at least 6
-  var stop_on_error = (service.major_version > 6 ||
-                       service.minor_version > 7)
-                    ? 1
-                    : 0;
+  var stop_on_error = service.satisfies_version(6, 8) ? 1 : 0;
+  var checkboxes =
+  [
+    'script',
+    'exception',
+    'error',
+    'abort',
+    'show-js-tooltip',
+  ];
+  var switches =
+  [
+    'script',
+    'error',
+  ];
+
+  if (service.satisfies_version(6, 13))
+  { 
+    checkboxes.push('use_reformat_condition');
+    switches.push('reformat_javascript');
+  }
   
   new Settings
   (
@@ -1177,20 +1192,12 @@ cls.JsSourceView.create_ui_widgets = function()
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
       'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP,
-      'reformat_javascript': 'Reformat javascript', // TODO ui string 
-      'use_reformat_condition': 'Smart pretty printing', //TODO ui string
+      'reformat_javascript': ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT, 
+      'use_reformat_condition': ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT,
     },
     // settings map
     {
-      checkboxes:
-      [
-        'script',
-        'exception',
-        'error',
-        'abort',
-        'show-js-tooltip',
-        'use_reformat_condition',
-      ],
+      checkboxes: checkboxes,
       customSettings:
       [
         'hr',
@@ -1252,15 +1259,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   window.views.js_source.handle_tooltip_setting();
 
-  new Switches
-  (
-    'js_source',
-    [
-      'script',
-      'error',
-      'reformat_javascript',
-    ]
-  );
+  new Switches ('js_source', switches);
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {
