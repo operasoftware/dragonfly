@@ -105,7 +105,7 @@ var ViewBase = new function()
 
   this.create_disabled_view = function(container)
   {
-    container.clearAndRender(window.templates.default_disabled_view());
+    container.innerHTML = "";
   };
 
   this.ondestroy = function()
