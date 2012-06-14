@@ -79,6 +79,7 @@ cls.Scope["1.1"].Service = function()
     var msg = {profile: this._profile,
                services: this._profiles[this._profile].slice()};
     window.messages.post("profile-enabled", msg);
+    window.settings.general.set("profile-mode", this._profile);
   };
 
   this.requestDisable = function(tag, message)

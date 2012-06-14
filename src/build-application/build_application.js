@@ -180,7 +180,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
       on_services_created(service_descriptions);
     }
 
-    window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+    window.services.scope.enable_profile(window.settings.general.get("profile-mode") ||
+                                         window.app.profiles.DEFAULT);
   }
 
   var create_raw_interface = function(service_name)
