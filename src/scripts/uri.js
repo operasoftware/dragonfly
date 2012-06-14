@@ -38,7 +38,7 @@ var URIPrototype = function(uri_prop_name)
 
       return this["_" + prop];
     });
-    this.__defineSetter__(prhg op, function() {});
+    this.__defineSetter__(prop, function() {});
   }, this);
 
   this.__defineGetter__("filename", function()
@@ -256,6 +256,7 @@ var URIPrototype = function(uri_prop_name)
         this._path_parts = this._pathname.split("/").filter(Boolean);
       else
         this._path_parts = [];
+
       this._is_parsed = true;
     }
 
