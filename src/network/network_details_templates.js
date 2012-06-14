@@ -56,7 +56,9 @@ templates.network_log_detail = function(entry)
         ],
         templates.request_details(entry),
         templates.network_request_body(entry),
-        entry.touched_network ? entry.responses.map(templates.network_response) : []
+        entry.responses.length ? entry.responses.map(templates.network_response)
+                               : templates.network_response_body({logger_entry_id: entry.id,
+                                                                  logger_entry_is_finished: true})
       ],
       "data-object-id", String(entry.id),
       "class", "request-details"
