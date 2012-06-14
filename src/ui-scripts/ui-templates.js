@@ -569,5 +569,4 @@
       'class', 'window-move'
     ]
   }
-  
 }).apply(window.templates);
