@@ -34,7 +34,7 @@ var URIPrototype = function(uri_prop_name)
     this.__defineGetter__(prop, function()
     {
       if (!this._is_parsed)
-        this._init();
+        this._parse();
 
       return this["_" + prop];
     });
@@ -47,6 +47,7 @@ var URIPrototype = function(uri_prop_name)
     {
       if (!this._is_data_uri)
       {
+        this.pathname;
         var pos = this.pathname.lastIndexOf("/");
         if (pos > -1)
           this._filename = this.pathname.slice(pos + 1);
@@ -161,7 +162,7 @@ var URIPrototype = function(uri_prop_name)
     return this._params;
   });
 
-  this.__defineSetter__("short_distinguisher", function() {});
+  this.__defineSetter__("params", function() {});
 
   this.__defineGetter__("short_distinguisher", function()
   {
@@ -190,7 +191,9 @@ var URIPrototype = function(uri_prop_name)
     return this._short_distinguisher;
   });
 
-  this._init = function(uri)
+  this.__defineSetter__("short_distinguisher", function() {});
+
+  this._parse = function(uri)
   {
     if (!uri && this[uri_prop_name])
       uri = this[uri_prop_name];
@@ -253,11 +256,15 @@ var URIPrototype = function(uri_prop_name)
         this._path_parts = this._pathname.split("/").filter(Boolean);
       else
         this._path_parts = [];
+      this._is_parsed = true;
     }
 
-    this._is_parsed = true;
   };
 
+  this._init = function(uri)
+  {
+    this._parse(uri);
+  };
 };
 
 URI.prototype = new URIPrototype();

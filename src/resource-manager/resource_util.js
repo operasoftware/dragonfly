@@ -22,7 +22,7 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
   else if (bytes >= 1024)
   {
-    return "" + numformatter(Math.ceil((bytes / 1024))) + " kB";
+    return "" + numformatter(((bytes / 1024)).toFixed(1)) + " kB";
   }
   else
   {
@@ -91,6 +91,7 @@ cls.ResourceUtil.mime_type_map = {
 
   "image/png": "image",
   "image/gif": "image",
+  "image/jpg": "image",
   "image/jpeg": "image",
   "image/x-icon": "image",
   "image/vnd.microsoft.icon": "image",
@@ -105,6 +106,7 @@ cls.ResourceUtil.mime_type_map = {
   "font/opentype": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/truetype": "font",
   "font/woff": "font", // not official, but seems to be common
 
   "audio/mid": "audio",
@@ -156,6 +158,8 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   var type = cls.ResourceUtil.mime_to_type(mime);
   switch (type) {
     case "image":
+    case "video":
+    case "audio":
     case "pdf":
     case "flash":
     case "font":
@@ -169,7 +173,25 @@ cls.ResourceUtil.mime_to_content_mode = function(mime)
   return "text";
 }
 
-cls.ResourceUtil.mime_to_type = function(mime)
+/**
+ * Returns the most sensible way of getting this resource,
+ * as datauri or string, based on the type.
+ */
+cls.ResourceUtil.type_to_content_mode = function(type)
+{
+  switch (type) {
+    case "image":
+    case "video":
+    case "audio":
+    case "pdf":
+    case "flash":
+    case "font":
+      return "datauri";
+  }
+  return "text";
+}
+
+cls.ResourceUtil.mime_to_type = function(mime, extension)
 {
   if (mime)
   {

@@ -395,7 +395,8 @@
                                 : attr[ATTR_KEY])).replace(/</g, '&lt;') +
               "</key>=<value" +
                 (/^href|src$/i.test(attr[ATTR_KEY])
-                  ? " handler='dom-resource-link' class='dom-resource-link' " +
+                  ? " handler='open-resource-tab' class='dom-resource-link' " +
+//                  ? " handler='dom-resource-link' class='dom-resource-link' " +
                      "data-resource-url='" + attr_value + "' "
                   : "") + ">\"" +
                 attr_value +
@@ -664,7 +665,8 @@
               (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ).replace(/</g, '&lt;') +
               "</key>=<value" +
                   (/^href|src$/i.test(attr[ATTR_KEY])
-                    ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
+                    ? " handler='open-resource-tab' class='dom-resource-link' data-resource-url='" + attr_value + "' "
+//                    ? " handler='dom-resource-link' class='dom-resource-link' data-resource-url='" + attr_value + "' "
                     : "" ) + ">\"" +
                   attr_value +
               "\"</value>";
