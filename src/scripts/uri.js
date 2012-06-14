@@ -38,7 +38,7 @@ var URIPrototype = function(uri_prop_name)
 
       return this["_" + prop];
     });
-    this.__defineSetter__(prop, function() {});
+    this.__defineSetter__(prhg op, function() {});
   }, this);
 
   this.__defineGetter__("filename", function()
