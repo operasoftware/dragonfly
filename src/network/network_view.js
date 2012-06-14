@@ -175,7 +175,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
+      {
+        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+          this._service.get_body(entry.id, this.update_bound);
+
         template = [template, this._render_details_view(entry)];
+      }
     }
 
     var rendered = this._container.clearAndRender(template);
@@ -445,13 +450,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       this._container_scroll_top = target.firstChild.scrollTop;
     }
-  }.bind(this)
-
-  this._on_clicked_get_body = function(evt, target)
-  {
-    var item_id = target.getAttribute("data-object-id");
-    this.needs_instant_update = true;
-    this._service.get_body(item_id, this.update_bound);
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
@@ -617,7 +615,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.mousedown["resize-request-detail"] = this._on_start_resize_detail_bound;
-  eh.click["get-response-body"] = this._on_clicked_get_body;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;

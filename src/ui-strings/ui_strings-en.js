@@ -144,9 +144,6 @@ ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
 /* DESC: Label for request duration */
 ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION = "Duration";
 
-/* DESC: Label for get response body int network request view */
-ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL = "Get response body";
-
 /* DESC: Label request status */
 ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS = "Status";
 
