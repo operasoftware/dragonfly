@@ -175,6 +175,18 @@ cls.Scope["1.1"].Service = function()
         index: i
       }
     }
+
+    [
+      window.app.profiles.DEFAULT,
+      window.app.profiles.PROFILER,
+      window.app.profiles.HTTP_PROFILER,
+    ].forEach(function(profile)
+    {
+      this._profiles[profile] = window.app.profiles[profile].filter(function(service)
+      {
+        return this._service_descriptions.hasOwnProperty(service);
+      }, this);
+    }, this);
     this._onHostInfoCallback(this._service_descriptions, this._hello_message);
     this._hello_message.services = this._service_descriptions;    
   }
