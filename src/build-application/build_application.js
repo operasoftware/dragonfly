@@ -61,6 +61,29 @@ window.app.MIN_SUPPORTED_CORE_VERSION = 167;
 
 window.cls.MessageMixin.apply(window.app); // Give the app object message handling powers
 
+window.app.profiles = {};
+window.app.profiles.DEFAULT = 1;
+window.app.profiles.PROFILER = 2;
+window.app.profiles.HTTP_PROFILER = 3;
+window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
+                                                    "console-logger",
+                                                    "exec",
+                                                    "ecmascript-debugger",
+                                                    "cookie-manager",
+                                                    "resource-manager",
+                                                    "document-manager"];
+window.app.profiles[window.app.profiles.DEFAULT].is_enabled = false;
+window.app.profiles[window.app.profiles.PROFILER] = ["window-manager",
+                                                     "exec",
+                                                     "profiler",
+                                                     "overlay"];
+window.app.profiles[window.app.profiles.PROFILER].is_enabled = false;
+window.app.profiles[window.app.profiles.HTTP_PROFILER] = ["window-manager",
+                                                          "resource-manager",
+                                                          "document-manager",
+                                                          "exec"];
+window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled = false;
+
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
 
@@ -157,15 +180,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     {
       on_services_created(service_descriptions);
     }
-    for (service_name in service_descriptions)
-    {
-      if(service_name in window.services &&
-            window.services[service_name].is_implemented &&
-            service_name != "scope")
-      {
-        window.services['scope'].requestEnable(0,[service_name]);
-      }
-    }
+
+    window.services.scope.enable_profile(window.app.profiles.DEFAULT);
   }
 
   var create_raw_interface = function(service_name)
@@ -188,7 +204,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       var tracker = new cls.UserTracker(trackerurl);
       var cb = function(status, url)
       {
-        if (status != 200)
+        if (status != 200 && !cls.ScopeHTTPInterface.is_enabled)
         {
           opera.postError("Usertracker could not send heartbeat to tracker server at " + url + ". Got status " + status);
         }
@@ -217,7 +233,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'ecmascript-debugger',
     'cookie-manager',
     'resource-manager',
-    'document-manager'
+    'document-manager',
+    'profiler',
+    'overlay'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)

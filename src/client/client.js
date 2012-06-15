@@ -142,6 +142,7 @@ window.cls.Client = function()
 
   this.setup = function()
   {
+    window.services.scope.reset();
     var port = _get_port_number();
     var client = {
       id: clients.length + 1,
@@ -157,6 +158,7 @@ window.cls.Client = function()
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
+      cls.ScopeHTTPInterface.is_enabled = true;
     }
 
     if (!opera.stpVersion)
@@ -333,8 +335,12 @@ window.cls.Client = function()
     new CompositeView('console_panel',
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
-
-  };
+    new CompositeView('profiler_mode',
+                      'Profiler',
+                      layouts.profiler_rough_layout,
+                      null,
+                      services);
+  }
 
   this.create_window_controls = function()
   {
@@ -450,8 +456,8 @@ window.cls.Client = function()
     if (last_selected_view)
     {
       var esdi = window.services['ecmascript-debugger'];
-      var cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
-      esdi.add_listener('enable-success', cb);
+      this._esd_enabled_cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
+      esdi.add_listener('enable-success', this._esd_enabled_cb);
     }
   };
 
@@ -474,7 +480,9 @@ window.cls.Client = function()
         UI.get_instance().show_view(last_selected_view);
       }
     });
-    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+    var esdi = window.services['ecmascript-debugger'];
+    esdi.requestGetSelectedObject(tag);
+    esdi.remove_listener('enable-success', this._esd_enabled_cb);
   };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
@@ -498,7 +506,15 @@ ui_framework.layouts.error_console_rough_layout =
       ]
     }
   ]
-};
+}
+
+ui_framework.layouts.profiler_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["profiler_all"], is_hidden: true } }]
+}
 
 ui_framework.layouts.environment_rough_layout =
 {
@@ -657,6 +673,7 @@ ui_framework.layouts.main_layout =
       'network_mode',
       'resource_panel',
       'storage',
+      'profiler_mode',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
       'utils',
       'console_panel'

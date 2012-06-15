@@ -104,6 +104,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._service.requestAddHeaderOverrides(null, args);
   };
 
+  this.required_services = ["resource-manager", "document-manager"];
   var eh = window.eventHandlers;
   eh.change["network-options-toggle-caching"] = this._handle_toggle_caching_bound;
   eh.change["network-options-toggle-body-tracking"] = this._handle_toggle_content_tracking_bound;

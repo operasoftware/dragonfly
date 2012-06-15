@@ -300,7 +300,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['span',
-                  'class', 'ui-button',
+                  'class', 'ui-button reload-window',
                   'handler', 'reload-window',
                   'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
@@ -321,6 +321,11 @@ cls.JsSourceView = function(id, name, container_class)
 
     }
   }
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
 
   this.onresize = function(container)
   {
@@ -986,7 +991,8 @@ cls.JsSourceView = function(id, name, container_class)
                             this._go_to_line.window_height);
     return false;
   }.bind(this);
-
+  
+  this.required_services = ["ecmascript-debugger"];
   this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);

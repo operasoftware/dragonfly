@@ -159,7 +159,7 @@ var TabsBase = function()
         {
           messages.post("hide-view", {id: this.activeTab});
           views[this.activeTab].removeContainerId(container_id);
-          if(toolbars[this.activeTab])
+          if (toolbars[this.activeTab])
           {
             toolbars[this.activeTab].removeContainerId(toolbar_id);
           }

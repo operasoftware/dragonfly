@@ -183,3 +183,9 @@ li > .repl-lines
   padding-left: 10px;
 }
 
+.console .info-box
+{
+  background: transparent;
+  color: #fff;
+} 
+

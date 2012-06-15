@@ -22,7 +22,7 @@ var SettingsBase = function()
     {
       this.callback_map[key].call(this, value);
     }
-    messages.post("setting-changed", {id: this.view_id, key: key});
+    messages.post("setting-changed", {id: this.view_id, key: key, value: value});
   }
 
   /**
@@ -74,6 +74,8 @@ var SettingsBase = function()
       window.settings = {};
     }
     window.settings[arguments[0]] = this;
+
+    window.messages.post("settings-initialized", {view_id: view_id, settings: this.map});
 
     // Add a context menu
     var contextmenu = ContextMenu.get_instance();

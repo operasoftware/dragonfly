@@ -134,6 +134,7 @@ cls.JSSearchView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.required_services = ["ecmascript-debugger"];
     this.init(id, name, container_class);
     this.shared_shortcuts = "search";
     this._setting = window.settings.js_source;

@@ -111,6 +111,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_dom_view());
+  };
+
   this.clear = function()
   {
     this._cancel_completion();
@@ -706,6 +711,12 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._cancel_completion();
   }.bind(this);
 
+  this._on_profile_disabled_bound = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this.ondestroy();
+  }.bind(this);
+
   this["_handle_action_clear"] = function(evt, target)
   {
     this.clear();
@@ -883,7 +894,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this._textarea.focus();
+    if (this._textarea)
+      this._textarea.focus();
   }
 
   /**
@@ -891,6 +903,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.blur = function()
   {
+    if (this._textarea)
       this._textarea.blur();
   }
 
@@ -899,7 +912,10 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.onclick = function(event) 
   {
-        if (this._textarea &&
+    if (!this._container)
+      return;
+
+    if (this._textarea &&
         !/^(?:input|textarea|button)$/i.test(event.target.nodeName) &&
         !event.target.hasTextNodeChild())
     {
@@ -941,6 +957,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this.required_services = ["ecmascript-debugger", "console-logger"];
   this.mode_labels = {
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,
@@ -956,6 +973,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
   messages.addListener('frame-selected', this._new_repl_context_bound);
+  messages.addListener("profile-disabled", this._on_profile_disabled_bound);
 
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in

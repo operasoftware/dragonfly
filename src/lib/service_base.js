@@ -21,8 +21,9 @@ window.cls.ServiceBase = function ()
 
   this.on_enable_success = function(){};
   this.on_window_filter_change = function(filter){};
-  this.on_quit = function(){};
+  this.on_quit = function() {};
   this.is_implemented = false;
+  this.is_enabled = false;
 
   this.create_and_expose_interface = function(version, map)
   {
