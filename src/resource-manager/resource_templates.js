@@ -74,15 +74,16 @@ templates.resource_tree =
 
 		var triggers =
 		{
-			'image':
-			[
-				'span',
-				'**gallery**',
-				[],
-				'title','Gallery',
-				'handler','resource-group',
-				'class','resource-group-trigger resource-group-images-trigger'
-			]
+			//	WIP: soon there will be some triggers to display a whole group of resource, e.g. gallery of images, videos, fonts, audios, ...
+//			'image':
+//			[
+//				'span',
+//				'gallery',
+//				[],
+//				'title','Gallery',
+//				'handler','resource-group',
+//				'class','resource-group-trigger resource-group-images-trigger'
+//			]
 		}
 
 		for (var groupName in groups)
@@ -161,6 +162,7 @@ templates.resource_detail =
 			return this.no_data_available(resource);
 
 		var specificTemplate = this[resource.type]?resource.type:'text';
+		if(!this[resource.type])debugger;
 
 		return(
 		['div',
@@ -203,8 +205,8 @@ templates.resource_detail =
 
 		return(
 		['div',
-      'Formatting the resource '+ resource.url +'&hellip;',
-      'class','resource-detail-container-empty'
+			'Formatting the resource '+ resource.url +'...',
+			'class','resource-detail-container-empty'
     ]);
 	},
 
@@ -247,7 +249,6 @@ templates.resource_detail =
 
 	text:function(resource)
 	{
-		this.name = 'text';
 		return (
 		[
 			['pre',resource.data.content.stringData],
@@ -300,8 +301,6 @@ templates.resource_detail =
 
 	font:function(resource)
 	{
-		this.name = 'font';
-
 		var styleRule = '@font-face{font-family:"resource-'+resource.id+'";src:url("'+resource.data.content.stringData+'");}';
 
 		return(
@@ -316,9 +315,21 @@ templates.resource_detail =
 		]);
 	},
 
+	flash:function(resource)
+	{
+		return(
+		['object',
+			['div',
+				'Type not supported'
+			],
+			'type','resource.mimeType',
+			'data',resource.data.content.stringData,
+			'class','resource-detail-flash'
+		]);
+	},
+
 	image:function(resource)
 	{
-		this.name = 'image';
 		return (
 		['img',
 			'src',resource.data.content.stringData,
