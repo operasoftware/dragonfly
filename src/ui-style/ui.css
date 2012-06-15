@@ -410,6 +410,11 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_pause.png");
 }
 
+.network_logger\.network-profiler-mode::before
+{
+  background-image: url("../ui-images/icons/icon_network_profiler.png");
+}
+
 .pseudo-items cst-icon
 {
   background-image: url("../ui-images/icons/icon_hidedefaults.png");
