@@ -24,7 +24,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
 //    if (this.resource && this.resource.type in {'markup':1,})
     {
-      this.text_search.set_query_selector("tbody:not(.network_info)");
+      //this.text_search.set_query_selector(".resource-detail-container");
       this.text_search.update_search();
     }
 
@@ -149,7 +149,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   {
       this.resource = resource;
       if (resource && !resource.data)
-        resource.fetch_data(cls.ResourceDetailView.instance.update);
+        resource.fetch_data(cls.ResourceDetailView.instance.update.bind(cls.ResourceDetailView.instance));
   }
 
   this._show_resource_by_id = function(id)
@@ -186,7 +186,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   //  WIP
   this.show_resource_group = function(resourceGroup)
 	{
-    alert(resourceGroup.name+'\n'+resourceGroup.ids+'\n\n');
     return;
 
 		this.resources = [];
@@ -242,7 +241,7 @@ cls.ResourceDetailView.create_ui_widgets = function()
   ActionBroker.
     get_instance().
     get_global_handler().
-      register_shortcut_listener("network-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
+      register_shortcut_listener("resource-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
 
   var on_view_created = function(msg)
   {
@@ -250,13 +249,13 @@ cls.ResourceDetailView.create_ui_widgets = function()
     {
       var scroll_container = msg.container.querySelector(".request-details");
       if (!scroll_container)
-        scroll_container = msg.container.querySelector("#network-outer-container");
+        scroll_container = msg.container.querySelector(".resource-detail-container");
 
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
         text_search.setFormInput(
-          views.network_logger.getToolbarControl(msg.container, "resource-text-search")
+          views.resource_detail_view.getToolbarControl(msg.container, "resource-text-search")
         );
       }
     }
