@@ -149,6 +149,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
+    if (!this._container)
+      return;
     var zero_point = this._get_zero_point();
     var has_details_events = this._table && this._table.get_data().length > 0;
     var template = null;
