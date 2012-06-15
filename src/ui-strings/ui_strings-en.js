@@ -778,7 +778,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only XMLHttpRequests";
 ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip on mime type table header */
-ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
+ui_strings.S_HTTP_TOOLTIP_MIME = "MIME type";
 
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
@@ -1222,7 +1222,7 @@ ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
 
 /* DESC: Name of mime column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "MIME";
 
 /* DESC: Name of path column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
