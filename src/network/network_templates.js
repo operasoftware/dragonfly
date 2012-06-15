@@ -99,20 +99,21 @@ templates.network_request_crafter_main = function(url, loading, request, respons
 templates.network_incomplete_warning = function()
 {
   return ["div",
-           ["span",
-             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
-           ],
            ["div",
              ["span",
-               ui_strings.S_MENU_RELOAD_DEBUG_CONTEXT_SHORT,
-               "class", "text_handler",
-               "handler", "reload-window"
+               "class", "ui-button",
+               "handler", "reload-window",
+               "tabindex", "1"
              ]
+           ],
+           ["p",
+             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
            ],
            ["span",
              " ",
              "class", "close_incomplete_warning",
-             "handler", "close-incomplete-warning"
+             "handler", "close-incomplete-warning",
+             "tabindex", "1"
            ],
            "class", "info-box network_incomplete_warning"
          ];
@@ -178,7 +179,7 @@ templates.network_log_url_list_entry = function(selected, entry)
   return ["li",
            templates.network_request_icon(entry),
            ["span",
-             entry.short_distinguisher || entry.human_url,
+             (entry.short_distinguisher || entry.human_url).slice(0, 200),
              "class", "network-url",
              "data-tooltip", "network-url-list-tooltip"
            ],
@@ -221,7 +222,7 @@ templates.network_log_url_tooltip = function(entry)
                      " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
-  else if (entry.no_request_made)
+  else if (!entry.touched_network)
   {
     if (entry.urltype_name === URL_TYPE_DEF[URL_TYPE_DEF.FILE])
     {
@@ -252,9 +253,8 @@ templates.network_log_url_tooltip = function(entry)
       ["table",
         entry.params.map(function(param){
           return ["tr",
-                   ["td", param.key],
-                   ["td", param.value],
-                   "class", "string mono"
+                   ["th", param.key],
+                   ["td", param.value]
                  ];
         }),
         "class", "network_get_params"
@@ -304,10 +304,13 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
     var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
     var val_for_str = (stepsize * cnt) / unit[0];
     val_for_str = Math.round(val_for_str * 100) / 100;
-    labels.push(["span", val_for_str + " " + unit[1],
-                 "style", "left: " + left_val + "px;",
-                 "class", "timeline-marker"
-                 ]);
+    if (left_val + TIMELINE_MARKER_WIDTH < width)
+    {
+      labels.push(["span", val_for_str + " " + unit[1],
+                   "style", "left: " + left_val + "px;",
+                   "class", "timeline-marker"
+                   ]);
+    }
   }
 
   return ["div", labels, "class", "network-timeline-row"];
@@ -390,7 +393,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
 templates.network_graph_tooltip_tr = function(stop, index, arr)
 {
   return ["tr",
-           ["td", stop.val_string, "class", "time_data mono"],
+           ["td", stop.val_string, "class", "time_data"],
            ["td", stop.title, "class", "gap_title"],
            (window.ini && ini.debug)
              ? ["td", "(" + stop.from_event.name + " to " + stop.to_event.name + ")", "class", "gap_title"]
@@ -410,8 +413,9 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
   {
     var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
     event_rows.push(["tr",
-                      ["td", duration.toFixed(2) + " ms", "class", "time_data mono"],
-                      ["td", ui_strings.S_HTTP_LABEL_DURATION], "class", "sum"]);
+                      ["td", duration.toFixed(2) + " ms", "class", "time_data"],
+                      ["td", ui_strings.S_HTTP_LABEL_DURATION, "class", "gap_title"],
+                     "class", "sum"]);
 
     if (!templates.network_tt_vert_padding)
     {

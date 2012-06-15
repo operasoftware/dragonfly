@@ -573,13 +573,4 @@
       'class', 'window-move'
     ]
   }
-
-  this.default_disabled_view = function()
-  {
-    return (
-    ["div",
-      ["p", ui_strings.S_INFO_REQUIRED_SERVICES_DISABLED],
-      "class", "info-box"]);
-  };
-  
 }).apply(window.templates);

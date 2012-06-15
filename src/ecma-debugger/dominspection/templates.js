@@ -193,6 +193,7 @@
         continue;
       }
       node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
+      node_name = helpers.escapeTextHtml(node_name);
       if (force_lower_case && disregard_force_lower_case(node))
       {
         disregard_force_lower_case_depth = node[DEPTH];

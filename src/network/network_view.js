@@ -217,11 +217,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     idgetter: function(res) { return String(res.id) },
     columns: {
       method: {
-        label: ui_strings.S_HTTP_LABEL_METHOD,
-        headerlabel: "",
-        renderer: function(entry) {
-          return entry.method;
-        }
+        label: ui_strings.S_HTTP_LABEL_METHOD
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
@@ -231,8 +227,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         },
         title_getter: function(entry, renderer) {
           if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return entry.responsecode + 
-                   " (" + cls.ResourceUtil.http_status_codes[entry.responsecode] +")";
+            return String(cls.ResourceUtil.http_status_codes[entry.responsecode]);
           return renderer(entry);
         },
         getter: function(entry) { return entry.responsecode || 0; }
@@ -334,12 +329,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_start_resize_detail_bound = function(evt, target)
   {
-    document.addEventListener("mousemove", this._on_drag_detail_bound, false);
-    document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-    if (!this._resize_interval)
-      this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+    if (evt.target.hasClass("resize-request-detail"))
+    {
+      document.addEventListener("mousemove", this._on_drag_detail_bound, false);
+      document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
+      if (!this._resize_interval)
+        this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
 
-    evt.preventDefault();
+      evt.preventDefault();
+    }
   }.bind(this);
 
   this._on_drag_detail_bound = function(evt)
@@ -495,12 +493,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_url_tooltip_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
-    var entry_id = target.get_attr("parent-node-chain", "data-object-id");
-    var entry = ctx.get_entry(entry_id);
-    if (entry)
+    if (ctx)
     {
-      var template = templates.network_log_url_tooltip(entry);
-      this.url_tooltip.show(template);
+      var entry_id = target.get_attr("parent-node-chain", "data-object-id");
+      var entry = ctx.get_entry(entry_id);
+      if (entry)
+      {
+        var template = templates.network_log_url_tooltip(entry);
+        this.url_tooltip.show(template);
+      }
     }
   }.bind(this);
 

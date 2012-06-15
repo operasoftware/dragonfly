@@ -365,7 +365,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
         markup += win_list.map(this._option).join('');
         if (gadget_list.length)
           markup += "<optgroup " +
-                      "label='Opera Extensions and Opera Unite' " +
+                      "label='Opera Extensions' " +
                       "class='window-select-gadgets' " +
                       "></optgroup>" +
                     gadget_list.map(this._option).join('');
@@ -451,7 +451,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
     ret.push.apply(ret, win_list.map(this._option_template));
     if (gadget_list.length)
     {
-      ret.push(['cst-title', 'Opera Extensions and Opera Unite', ]);
+      ret.push(['cst-title', 'Opera Extensions', ]);
       ret.push.apply(ret, gadget_list.map(this._option_template));
     }
     return ret;

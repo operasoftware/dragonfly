@@ -1,0 +1,120 @@
+<!doctype html>
+
+<link rel="stylesheet" href="../../../src/ui-style/ui.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/sortable_table/sortable_table.css">
+<link rel="stylesheet" href="../../../src/ui-scripts/tooltip/tooltip.css">
+
+<script>var ActionBroker = null;</script>
+<script src="../../../src/ui-strings/ui_strings-en.js"></script>
+<script src="../../../src/scripts/dom.js"></script>
+<script src="../../../src/ui-scripts/ui-actions.js"></script>
+<script src="../../../src/scripts/objectregistry.js"></script>
+<script src="../../../src/ui-scripts/sortable_table/sortable_table.js"></script>
+
+<style>
+  body {font-family: sans-serif; font-size: 13px; color: #292929}
+  button {margin-right: 5px;}
+  [data-column-id='sort_test'] {min-width: 50px !important;}
+</style>
+<body></body>
+<script>
+
+window.app = {
+  addListener: function(name, func){}
+};
+
+var cars = [
+  {
+    color: "Black",
+    car_brand: "BMW",
+    model: "5 Series Touring",
+    initial_pos: 1
+  },
+  {
+    color: "Azure",
+    car_brand: "Porsche",
+    model: "911",
+    initial_pos: 2
+  },
+  {
+    color: "Black",
+    car_brand: "Porsche",
+    model: "Boxter",
+    initial_pos: 3
+  },
+  {
+    color: "Azure",
+    car_brand: "BMW",
+    model: "3 Series Touring",
+    initial_pos: 4
+  },
+  {
+    color: "Black",
+    car_brand: "Porsche",
+    model: "Cayman",
+    initial_pos: 5
+  },
+  {
+    color: "Azure",
+    car_brand: "BMW",
+    model: "1 Series M-Coupe",
+    initial_pos: 6
+  },
+  {
+    color: "Black",
+    car_brand: "Porsche",
+    model: "Boxter",
+    initial_pos: 7
+  },
+];
+
+tabledef = {
+  columns: {
+    initial_pos: {
+      label: "Initial Pos",
+      getter: function(obj) { return obj.initial_pos },
+      renderer: function(obj) { return String(obj.initial_pos) }
+    },
+    car_brand: {
+      label: "Brand"
+    },
+    color: {
+      label: "Color"
+    },
+    model: {
+      label: "Model"
+    }
+  },
+  idgetter: function(obj) { return obj.initial_pos }
+}
+
+eventHandlers.click["reset-sort"] = resetSortHandler;
+
+var my_table;
+
+function do_table(use_init_vals)
+{
+  my_table = new SortableTable(tabledef, cars);
+
+  document.body.clearAndRender(["h1", "Table sorting test"]);
+  document.body.render(["div", "id", "table_container"]);
+  document.body.render(resetSortButton());
+  document.body.render(["br"]);
+  document.body.render(["br"]);
+  document.body.render(my_table.render());
+}
+do_table(true);
+
+function resetSortHandler(evt, target) {
+  var table = document.querySelector("table");
+  var obj = ObjectRegistry.get_instance().get_object(table.getAttribute("data-table-object-id"));
+  obj.change_sort(null);
+  table.re_render(obj.render());
+}
+
+function resetSortButton() {
+  return ["button", "Reset sort", "handler", "reset-sort"];
+}
+
+
+</script>

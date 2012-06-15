@@ -19,7 +19,7 @@ cls.ResourceDetailBase = function()
   this._span.textContent = ' ';
   this._line_count = 0;
   this._line_found = false;
-  this._line = 0;
+  this._target_line = 0;
   this._root_ele = null;
   this._tops = [];
   this.requierd_services = ["resource-manager", "document-manager"];
@@ -45,15 +45,16 @@ cls.ResourceDetailBase = function()
           if ((c == CR ) || (c == LF))
           {
             this._line_count++;
-            if (this._line_count == this._line)
+            if (this._line_count == this._target_line)
             {
               var target_pos = child.splitText(pos);
               child.parentNode.insertBefore(this._span, target_pos);
               this._tops.push(this._span.getBoundingClientRect().top);
               child.parentNode.removeChild(this._span);
+              child.parentNode.normalize();
               if (this._tops.length < 2)
               {
-                this._line+=2;
+                this._target_line += 1;
               }
               else
               {
@@ -73,8 +74,6 @@ cls.ResourceDetailBase = function()
                   scroll_position-=64;
                 }
                 this._root_ele.scrollTop = scroll_position;
-
-                child.parentNode.normalize();
                 this._line_found = true;
                 return;
               }
@@ -95,7 +94,7 @@ cls.ResourceDetailBase = function()
     // reset all properties
     this._line_count = 0;
     this._line_found = false;
-    this._line = 0;
+    this._target_line = 0;
     this._tops = [];
     var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
     if (_ele)
@@ -112,7 +111,7 @@ cls.ResourceDetailBase = function()
     if (this._root_ele)
     {
       this.clear_line_numbers(this._root_ele)
-      this._line = parseInt(data.lines[0]);
+      this._target_line = parseInt(data.lines[0]);
       this._traverse_ele(this._root_ele);
     }
 

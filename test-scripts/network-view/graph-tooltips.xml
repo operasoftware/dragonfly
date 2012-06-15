@@ -60,7 +60,7 @@ viewport
 <script>
 
 window.helpers = new window.cls.Helpers();
-window.settings = {network_logger:{ set: function(){}}};
+window.settings = {network_logger: {set: function(){}, get: function(){}}};
 window.messages = {post: function(){}};
 
 var test = function()

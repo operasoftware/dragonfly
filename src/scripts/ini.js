@@ -29,7 +29,6 @@
           "ctrl f": "show-search",
           "ctrl r": "reload-context",
           "ctrl f3": "show-script-dropdown",
-          "shift ctrl f5": "test-switching-profiles"
         },
         "edit":
         {
