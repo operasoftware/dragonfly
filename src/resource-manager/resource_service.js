@@ -130,7 +130,7 @@ cls.ResourceManagerService = function(view)
 
   }.bind(this);
 
-  /*  WIP */
+  //  WIP: soon there will be some triggers to display a whole group of resource, e.g. gallery of images, videos, fonts, audios, ...
   this._handle_resource_group_bound = function(event, target)
   {
     var parent = target.get_ancestor('[data-frame-id]');
@@ -203,7 +203,7 @@ cls.ResourceManagerService = function(view)
     const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
     this._res_service.requestGetResource(tag, [id, [typecode, 1, MAX_PAYLOAD_SIZE]]);
   };
-//*
+
   this._on_resource_data_bound = function(type, data)
   {
     var id = data[0];
@@ -277,8 +277,6 @@ cls.ResourceRequest = function(url, callback,data)
   {
     if (status && this._resource_manager.requestCreateRequest)
     {
-//      alert( 'request failed, time to craft a GET request' );
-//      debugger;
       var debugContext = window.window_manager_data.get_debug_context();
       var tag = this._tag_manager.set_callback(this, this._on_request_create_request_bound);
       this._resource_manager.requestCreateRequest(tag, [debugContext, this._url, 'GET']);
@@ -297,7 +295,6 @@ cls.ResourceRequest = function(url, callback,data)
 
   this._on_request_create_request_bound = function(status, message)
   {
-      debugger;
   }
 
   this._on_request_get_resource_bound = function(status, message)
@@ -307,16 +304,7 @@ cls.ResourceRequest = function(url, callback,data)
       this._resource = new cls.Resource(this._resource_id);
       this._resource.update("urlfinished", new this._ResourceData(message));
       this._resource.fetch_data(this._on_fetch_data_bound);
-/*
-      var resptype = this._utils.mime_to_content_mode(this._res.mime);
-      var tag = this._tag_manager.set_callback(this, this._on_resource);
-      var transportType = {datauri:TRANSPORT_DATA_URI}[resptype]||TRANSPORT_STRING;
-
-      this._resource_manager.requestGetResource(tag, [this._resource_id, [transportType, DECODE_TRUE, SIZE_LIMIT]]);
-*/
     }
-    else
-      debugger;
 
 
   }.bind(this);
@@ -481,7 +469,6 @@ cls.ResourcePrototype = function()
     }
     else if (eventname == "urlredirect")
     {
-      debugger;
       this.invalid = true;
     }
     else if (eventname == "responsefinished")

@@ -162,7 +162,6 @@ templates.resource_detail =
 			return this.no_data_available(resource);
 
 		var specificTemplate = this[resource.type]?resource.type:'text';
-		if(!this[resource.type])debugger;
 
 		return(
 		['div',
