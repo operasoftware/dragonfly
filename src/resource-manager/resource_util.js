@@ -22,7 +22,7 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
   else if (bytes >= 1024)
   {
-    return "" + numformatter(Math.ceil((bytes / 1024))) + " kB";
+    return "" + numformatter((bytes / 1024).toFixed(2)) + " kB";
   }
   else
   {

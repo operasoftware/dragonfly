@@ -786,9 +786,6 @@ ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
 /* DESC: tooltip on table header that shows http response code */
 ui_strings.S_HTTP_TOOLTIP_RESPONSECODE = "HTTP status code";
 
-/* DESC: tooltip on size table header */
-ui_strings.S_HTTP_TOOLTIP_SIZE = "Content-length of the response in bytes";
-
 /* DESC: tooltip on prettyprinted size table header */
 ui_strings.S_HTTP_TOOLTIP_SIZE_PRETTYPRINTED = "Content-length of the response";
 
@@ -1490,3 +1487,6 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: Unit string for bytes */
+ui_strings.S_BYTES_UNIT = "bytes";

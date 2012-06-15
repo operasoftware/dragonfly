@@ -282,6 +282,9 @@ window.cls.Helpers = function()
 
   this.pretty_print_number = function(num)
   {
+    if (typeof num !== "number")
+      num = Number(num);
+
     var numstring = String(num);
     var parts = numstring.split(".");
     var integral = parts[0].split("");
@@ -290,7 +293,7 @@ window.cls.Helpers = function()
 
     while (integral.length > 3)
     {
-      ret = "," + integral.splice(integral.length-3, 3).join("") + ret;
+      ret = "," + integral.splice(integral.length - 3, 3).join("") + ret;
     }
 
     if (integral.length)

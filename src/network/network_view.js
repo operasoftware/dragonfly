@@ -215,7 +215,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   }.bind(this);
 
   this._tabledef = {
-    column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
+    column_order: ["method", "responsecode", "mime", "protocol", "size_h", "waiting", "duration", "started", "graph"],
     handler: "select-network-request",
     nowrap: true,
     idgetter: function(res) { return String(res.id) },
@@ -247,15 +247,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         headertooltip: ui_strings.S_HTTP_TOOLTIP_PROTOCOL,
         getter: function(entry) { return entry.urltype_name.toLowerCase(); }
       },
-      size: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
-        headertooltip: ui_strings.S_HTTP_TOOLTIP_SIZE,
-        align: "right",
-        getter: function(entry) { return entry.size },
-        renderer: function(entry) {
-          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
-        }
-      },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
@@ -266,6 +257,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE);
+        },
+        title_getter: function(entry) {
+          return entry.size ? String(entry.size) + " " + ui_strings.S_BYTES_UNIT
+                            : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
         }
       },
       waiting: {
