@@ -196,7 +196,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this.onresize = function()
   {
-    this._update_view();
+    if (this._container)
+      this._update_view();
   };
 
   /**
