@@ -453,7 +453,7 @@ window.cls.Client = function()
     {
       var esdi = window.services['ecmascript-debugger'];
       this._on_profile_enabled_cb = this._profile_enabled.bind(this, last_selected_view);
-      window.messages.addListener("profile-enabled", this._esd_enabled_cb);
+      window.messages.addListener("profile-enabled", this._on_profile_enabled_cb);
     }
   };
 
