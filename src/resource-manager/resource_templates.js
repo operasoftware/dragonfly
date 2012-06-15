@@ -168,7 +168,6 @@ templates.resource_detail =
 			this.overview(resource),	// overview
 			['div',	// specific template
 				this[specificTemplate](resource, resource.data),		
-				'title',specificTemplate,
 				'class','resource-detail-'+ specificTemplate +'-container'
 			],
 			'class','resource-detail-container',
