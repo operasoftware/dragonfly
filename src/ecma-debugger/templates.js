@@ -322,6 +322,153 @@
     ].concat( is_top ? ["class", "selected"] : [] );
   }
 
+  this.return_values = function(values)
+  {
+    return ["div", values.map(this.return_value), "class", "return-values"];
+  };
+
+  this.return_value = function(retval)
+  {
+    // TODO: move constants
+    var UNDEFINED = 0;
+    var NULL = 1;
+    var TRUE = 2;
+    var FALSE = 3;
+    var NAN = 4;
+    var PLUS_INFINITY = 5;
+    var MINUS_INFINITY = 6;
+    var NUMBER = 7;
+    var STRING = 8;
+    var OBJECT = 9;
+    var types = {};
+    types[UNDEFINED] = "undefined";
+    types[NULL] = "null";
+    types[TRUE] = "boolean";
+    types[FALSE] = "boolean";
+    types[NAN] = "number";
+    types[PLUS_INFINITY] = "number";
+    types[MINUS_INFINITY] = "number";
+    types[NUMBER] = "number";
+    types[STRING] = "string";
+    var names = {};
+    names[TRUE] = "true";
+    names[FALSE] = "false";
+    names[NAN] = "NaN";
+    names[PLUS_INFINITY] = "Infinity";
+    names[MINUS_INFINITY] = "-Infinity";
+
+    var value = "";
+    var type = types[retval.value[0]];
+    switch (retval.value[0])
+    {
+    case UNDEFINED:
+    case NULL:
+      value =
+        "<item>" +
+          "<value class='" + type + "'>" + type + "</value>" +
+        "</item>";
+      break;
+
+    case TRUE:
+    case FALSE:
+    case NAN:
+    case PLUS_INFINITY:
+    case MINUS_INFINITY:
+      value =
+        "<item>" +
+          "<value class='" + type + "'>" + names[retval.value[0]] + "</value>" +
+        "</item>"
+      break;
+
+    case NUMBER:
+      value =
+        "<item>" +
+          "<value class='" + type + "'>" + String(retval.value[1]) + "</value>" +
+        "</item>"
+      break;
+
+    case STRING:
+      var MAX_VALUE_LENGTH = 30;
+      var val = retval.value[2];
+      short_val = val.length > MAX_VALUE_LENGTH ?
+                    val.slice(0, MAX_VALUE_LENGTH) + '…' : '';
+      val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
+      if (short_val)
+      {
+        value =
+          "<item>" +
+            "<input type='button' handler='expand-value' class='folder-key'/>" +
+            "<value class='" + type + "' data-value='\"" + val + "\"'>" +
+              "\"" + helpers.escapeTextHtml(short_val) + "\"" +
+            "</value>" +
+          "</item>"
+      }
+      else
+      {
+        value =
+          "<item>" +
+            "<value class='" + type + "'>\"" + val + "\"</value>" +
+          "</item>"
+      }
+      break;
+
+    case OBJECT:
+      var object = retval.value[3/*OBJECT*/];
+      var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
+               ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
+               : object[5];
+      var model = new cls.InspectableJSObject(retval.rt_id,
+                                               object[0/*OBJECT_ID*/],
+                                               name,
+                                               object[4/*CLASS_NAME*/]);
+      var value = window.templates.inspected_js_object(model);
+      break;
+    }
+
+    var from_script_id = retval.position_from[0];
+    var from_uri = from_script_id && runtimes.getScript(from_script_id)
+                 ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+                 : "<unknown script>";
+    var to_script_id = retval.position_to[0];
+    var to_uri = to_script_id && runtimes.getScript(to_script_id)
+               ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+               : "<unknown script>";
+
+    var object = retval.function_from;
+    var model = new cls.InspectableJSObject(retval.rt_id,
+                                             object[0/*OBJECT_ID*/],
+                                             retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                                             object[4/*CLASS_NAME*/]);
+    var func_name = window.templates.inspected_js_object(model);
+
+    return [
+      ["div",
+        ["span",
+          "↱",
+         "class", "return-value-arrow return-value-arrow-from",
+         "handler", "goto-script-line",
+         "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.position_from[1],
+         "data-script-id", String(retval.position_from[0]),
+         "data-script-line", String(retval.position_from[1])
+        ],
+        [func_name],
+       "class", "return-function-from"
+      ],
+      ["div",
+        ["span",
+          "↳",
+         "class", "return-value-arrow return-value-arrow-to",
+         "handler", "goto-script-line",
+         "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.position_to[1],
+         "data-script-id", String(retval.position_to[0]),
+         "data-script-line", String(retval.position_to[1])
+        ],
+        [value],
+       "class", "return-value"
+      ]
+    ];
+  };
+
   this.configStopAt = function(config)
   {
     var ret =["ul"];
