@@ -115,7 +115,7 @@
   height: 100%;
   width: 1px;
   background: #e6e6e6;
-  z-index: 2;
+  top: 0;
 }
 
 .profiler-timeline-marker-time
@@ -138,19 +138,11 @@
   right: 2px;
 }
 
-.profiler-event-special
-{
-  height: 100%;
-  width: 2px;
-  z-index: 2;
-}
-
 .profiler-event
 {
   min-width: 3px;
-  height: 10px; /* 8px + 2*1px (border) + 2*4px (margin) = offset height of .profiler-timeline-row */
+  height: 10px;
   border-radius: 2px;
-  z-index: 2;
 }
 
 .profiler-timeline .profiler-event
@@ -187,6 +179,7 @@
   box-shadow: 0 0 0 3px #769fe1;
 }
 
+/*
 .event-type-1
 {
 }
@@ -202,6 +195,7 @@
 .event-type-2-selftime
 {
 }
+*/
 
 .event-type-3
 {
@@ -262,7 +256,7 @@
 {
   background-color: rgb(255, 192, 140);
 }
-
+/*
 .event-type-9
 {
 }
@@ -270,6 +264,7 @@
 .event-type-9-selftime
 {
 }
+*/
 
 .event-type-10
 {
@@ -305,6 +300,5 @@
 {
   overflow-x: auto;
   white-space: nowrap;
-  padding-bottom: 4px;
 }
 

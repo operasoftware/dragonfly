@@ -206,9 +206,6 @@ var ProfilerTemplates = function()
       var duration = interval_end - interval_start;
       var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
-      // Add time markers
-      template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
-
       // Background bars
       this._order.forEach(function(row, idx) {
         template.push(
@@ -217,6 +214,9 @@ var ProfilerTemplates = function()
           ]
         );
       });
+
+      // Add time markers
+      template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
 
       event_list.forEach(function(event) {
         var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
