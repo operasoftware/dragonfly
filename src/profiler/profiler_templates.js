@@ -6,17 +6,17 @@
 var ProfilerTemplates = function()
 {
   var event_type = ProfilerService.EventType;
-  var TYPE_GENERIC = event_type.GENERIC;
-  var TYPE_PROCESS = event_type.PROCESS;
-  var TYPE_DOCUMENT_PARSING = event_type.DOCUMENT_PARSING;
-  var TYPE_CSS_PARSING = event_type.CSS_PARSING;
-  var TYPE_SCRIPT_COMPILATION = event_type.SCRIPT_COMPILATION;
-  var TYPE_THREAD_EVALUATION = event_type.THREAD_EVALUATION;
-  var TYPE_REFLOW = event_type.REFLOW;
-  var TYPE_STYLE_RECALCULATION = event_type.STYLE_RECALCULATION;
-  var TYPE_CSS_SELECTOR_MATCHING = event_type.CSS_SELECTOR_MATCHING;
-  var TYPE_LAYOUT = event_type.LAYOUT;
-  var TYPE_PAINT = event_type.PAINT;
+  var EVENT_TYPE_GENERIC = event_type.GENERIC;
+  var EVENT_TYPE_PROCESS = event_type.PROCESS;
+  var EVENT_TYPE_DOCUMENT_PARSING = event_type.DOCUMENT_PARSING;
+  var EVENT_TYPE_CSS_PARSING = event_type.CSS_PARSING;
+  var EVENT_TYPE_SCRIPT_COMPILATION = event_type.SCRIPT_COMPILATION;
+  var EVENT_TYPE_THREAD_EVALUATION = event_type.THREAD_EVALUATION;
+  var EVENT_TYPE_REFLOW = event_type.REFLOW;
+  var EVENT_TYPE_STYLE_RECALCULATION = event_type.STYLE_RECALCULATION;
+  var EVENT_TYPE_CSS_SELECTOR_MATCHING = event_type.CSS_SELECTOR_MATCHING;
+  var EVENT_TYPE_LAYOUT = event_type.LAYOUT;
+  var EVENT_TYPE_PAINT = event_type.PAINT;
 
   var thread_type = ProfilerService.ScriptThreadType;
   var THREAD_TYPE_UNKNOWN = thread_type.UNKNOWN;
@@ -43,59 +43,58 @@ var ProfilerTemplates = function()
   var SCRIPT_TYPE_EXTENSIONJS = script_type.EXTENSIONJS;
   var SCRIPT_TYPE_DEBUGGER = script_type.DEBUGGER;
 
-  // TODO: use ui strings
-  var type_string_map = {};
-  type_string_map[TYPE_GENERIC] = "Generic";
-  type_string_map[TYPE_PROCESS] = "Process";
-  type_string_map[TYPE_DOCUMENT_PARSING] = "Document parsing";
-  type_string_map[TYPE_CSS_PARSING] = "CSS parsing";
-  type_string_map[TYPE_SCRIPT_COMPILATION] = "Script compilation";
-  type_string_map[TYPE_THREAD_EVALUATION] = "Thread evaluation";
-  type_string_map[TYPE_REFLOW] = "Reflow";
-  type_string_map[TYPE_STYLE_RECALCULATION] = "Style recalculation";
-  type_string_map[TYPE_CSS_SELECTOR_MATCHING] = "CSS selector matching";
-  type_string_map[TYPE_LAYOUT] = "Layout";
-  type_string_map[TYPE_PAINT] = "Paint";
+  var event_type_string_map = {};
+  event_type_string_map[EVENT_TYPE_GENERIC] = ui_strings.S_EVENT_TYPE_GENERIC;
+  event_type_string_map[EVENT_TYPE_PROCESS] = ui_strings.S_EVENT_TYPE_PROCESS;
+  event_type_string_map[EVENT_TYPE_DOCUMENT_PARSING] = ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING;
+  event_type_string_map[EVENT_TYPE_CSS_PARSING] = ui_strings.S_EVENT_TYPE_CSS_PARSING;
+  event_type_string_map[EVENT_TYPE_SCRIPT_COMPILATION] = ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION;
+  event_type_string_map[EVENT_TYPE_THREAD_EVALUATION] = ui_strings.S_EVENT_TYPE_THREAD_EVALUATION;
+  event_type_string_map[EVENT_TYPE_REFLOW] = ui_strings.S_EVENT_TYPE_REFLOW;
+  event_type_string_map[EVENT_TYPE_STYLE_RECALCULATION] = ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION;
+  event_type_string_map[EVENT_TYPE_CSS_SELECTOR_MATCHING] = ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING;
+  event_type_string_map[EVENT_TYPE_LAYOUT] = ui_strings.S_EVENT_TYPE_LAYOUT;
+  event_type_string_map[EVENT_TYPE_PAINT] = ui_strings.S_EVENT_TYPE_PAINT;
 
   var thread_type_string_map = {};
-  thread_type_string_map[THREAD_TYPE_UNKNOWN] = "Unknown";
-  thread_type_string_map[THREAD_TYPE_COMMON] = "Common";
-  thread_type_string_map[THREAD_TYPE_TIMEOUT] = "Timeout or interval";
-  thread_type_string_map[THREAD_TYPE_EVENT] = "Event";
-  thread_type_string_map[THREAD_TYPE_INLINE_SCRIPT] = "Inline script";
-  thread_type_string_map[THREAD_TYPE_JAVASCRIPT_URL] = "javascript: URL";
-  thread_type_string_map[THREAD_TYPE_HISTORY_NAVIGATION] = "History navigation";
-  thread_type_string_map[THREAD_TYPE_JAVA_EVAL] = "Java (LiveConnect)";
-  thread_type_string_map[THREAD_TYPE_DEBUGGER_EVAL] = "Debugger";
+  thread_type_string_map[THREAD_TYPE_UNKNOWN] = ui_strings.S_THREAD_TYPE_UNKNOWN;
+  thread_type_string_map[THREAD_TYPE_COMMON] = ui_strings.S_THREAD_TYPE_COMMON;
+  thread_type_string_map[THREAD_TYPE_TIMEOUT] = ui_strings.S_THREAD_TYPE_TIMEOUT;
+  thread_type_string_map[THREAD_TYPE_EVENT] = ui_strings.S_THREAD_TYPE_EVENT;
+  thread_type_string_map[THREAD_TYPE_INLINE_SCRIPT] = ui_strings.S_THREAD_TYPE_INLINE_SCRIPT;
+  thread_type_string_map[THREAD_TYPE_JAVASCRIPT_URL] = ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL;
+  thread_type_string_map[THREAD_TYPE_HISTORY_NAVIGATION] = ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION;
+  thread_type_string_map[THREAD_TYPE_JAVA_EVAL] = ui_strings.S_THREAD_TYPE_JAVA_EVAL;
+  thread_type_string_map[THREAD_TYPE_DEBUGGER_EVAL] = ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL;
 
   var script_type_string_map = {};
-  script_type_string_map[SCRIPT_TYPE_UNKNOWN] = "Unknown";
-  script_type_string_map[SCRIPT_TYPE_LINKED] = "External";
-  script_type_string_map[SCRIPT_TYPE_INLINE] = "Inline";
-  script_type_string_map[SCRIPT_TYPE_GENERATED] = "document.write()";
-  script_type_string_map[SCRIPT_TYPE_EVAL] = "Eval";
-  script_type_string_map[SCRIPT_TYPE_TIMEOUT] = "Timeout or interval";
-  script_type_string_map[SCRIPT_TYPE_URI] = "javascript: URL";
-  script_type_string_map[SCRIPT_TYPE_EVENT_HANDLER] = "Event";
-  script_type_string_map[SCRIPT_TYPE_USERJS] = "UserJS";
-  script_type_string_map[SCRIPT_TYPE_BROWSERJS] = "BrowserJS";
-  script_type_string_map[SCRIPT_TYPE_EXTENSIONJS] = "Extension";
-  script_type_string_map[SCRIPT_TYPE_DEBUGGER] = "Debugger";
+  script_type_string_map[SCRIPT_TYPE_UNKNOWN] = ui_strings.S_SCRIPT_TYPE_UNKNOWNM
+  script_type_string_map[SCRIPT_TYPE_LINKED] = ui_strings.S_SCRIPT_TYPE_LINKED;
+  script_type_string_map[SCRIPT_TYPE_INLINE] = ui_strings.S_SCRIPT_TYPE_INLINE;
+  script_type_string_map[SCRIPT_TYPE_GENERATED] = ui_strings.S_SCRIPT_TYPE_GENERATED;
+  script_type_string_map[SCRIPT_TYPE_EVAL] = ui_strings.S_SCRIPT_TYPE_EVAL;
+  script_type_string_map[SCRIPT_TYPE_TIMEOUT] = ui_strings.S_SCRIPT_TYPE_TIMEOUT;
+  script_type_string_map[SCRIPT_TYPE_URI] = ui_strings.S_SCRIPT_TYPE_URI;
+  script_type_string_map[SCRIPT_TYPE_EVENT_HANDLER] = ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER;
+  script_type_string_map[SCRIPT_TYPE_USERJS] = ui_strings.S_SCRIPT_TYPE_USERJS;
+  script_type_string_map[SCRIPT_TYPE_BROWSERJS] = ui_strings.S_SCRIPT_TYPE_BROWSERJS;
+  script_type_string_map[SCRIPT_TYPE_EXTENSIONJS] = ui_strings.S_SCRIPT_TYPE_EXTENSIONJS;
+  script_type_string_map[SCRIPT_TYPE_DEBUGGER] = ui_strings.S_SCRIPT_TYPE_DEBUGGER;
 
   var BAR_MIN_WIDTH = 3; // min-width for .profiler-event
   var BAR_HEIGHT = 18; // offset height of .profiler-timeline-row
 
   this._order = [
-    TYPE_DOCUMENT_PARSING,
-    TYPE_CSS_PARSING,
-    TYPE_SCRIPT_COMPILATION,
-    TYPE_THREAD_EVALUATION,
-    TYPE_REFLOW,
-    TYPE_STYLE_RECALCULATION,
-    TYPE_LAYOUT,
-    TYPE_PAINT
+    EVENT_TYPE_DOCUMENT_PARSING,
+    EVENT_TYPE_CSS_PARSING,
+    EVENT_TYPE_SCRIPT_COMPILATION,
+    EVENT_TYPE_THREAD_EVALUATION,
+    EVENT_TYPE_REFLOW,
+    EVENT_TYPE_STYLE_RECALCULATION,
+    EVENT_TYPE_LAYOUT,
+    EVENT_TYPE_PAINT
   ];
-  this._expandables = [TYPE_STYLE_RECALCULATION];
+  this._expandables = [EVENT_TYPE_STYLE_RECALCULATION];
   this._event_colors = {}; // Will be populated lazily
 
   this.main = function(has_details_events, legend, timeline, details_list, status)
@@ -138,7 +137,7 @@ var ProfilerTemplates = function()
           template[index] =
             ["div",
                ["span",
-                  type_string_map[event.type] + " ",
+                  event_type_string_map[event.type] + " ",
                 "class", "profiler-legend-label"
                ],
                ["span",
@@ -295,12 +294,12 @@ var ProfilerTemplates = function()
 
   this.status = function(time)
   {
-    return ["div", "Total self time: " + this.format_time(time)];
+    return ["div", ui_strings.S_PROFILER_TOTAL_SELF_TIME + ": " + this.format_time(time)];
   };
 
   this.no_events = function()
   {
-    return ["div", "No details", "class", "profiler-empty"];
+    return ["div", ui_strings.S_PROFILER_NO_DETAILS, "class", "profiler-empty"];
   };
 
   this.format_time = function(time, ms_fractions)
@@ -322,19 +321,19 @@ var ProfilerTemplates = function()
     return (
       ["div",
         ["h2",
-           type_string_map[event.type]
+           event_type_string_map[event.type]
         ],
         ["div",
           this.get_title_interval_bar(event),
           ["ul",
              ["li",
-                "Start: " + this.format_time(event.interval.start)
+                ui_strings.S_PROFILER_START_TIME + ": " + this.format_time(event.interval.start)
              ],
              ["li",
-                "Duration: " + this.format_time(event.interval.end - event.interval.start)
+                ui_strings.S_PROFILER_DURATION + ": " + this.format_time(event.interval.end - event.interval.start)
              ],
              ["li",
-                "Self time: " + this.format_time(event.time)
+                ui_strings.S_PROFILER_SELF_TIME + ": " + this.format_time(event.time)
              ],
              (details
               ? details
@@ -356,7 +355,7 @@ var ProfilerTemplates = function()
   this.get_title_unique_events = function(event)
   {
     var details = this.get_details_title(event);
-    return type_string_map[event.type] + "," +
+    return event_type_string_map[event.type] + "," +
            " self time: " + this.format_time(event.time) +
            " [" + event.hits + " hits" +
              (details ? details : []) +
@@ -367,14 +366,14 @@ var ProfilerTemplates = function()
   {
     switch (event.type)
     {
-    case TYPE_CSS_SELECTOR_MATCHING:
+    case EVENT_TYPE_CSS_SELECTOR_MATCHING:
       return (
         ["li",
-           "Selector: " + event.cssSelectorMatching.selector
+           ui_strings.S_PROFILER_TYPE_SELECTOR + ": " + event.cssSelectorMatching.selector
         ]
       );
 
-    case TYPE_THREAD_EVALUATION:
+    case EVENT_TYPE_THREAD_EVALUATION:
       var title = [];
       var thread_type = event.threadEvaluation.threadType;
       var event_name = event.threadEvaluation.eventName;
@@ -382,20 +381,20 @@ var ProfilerTemplates = function()
       if (thread_type)
       {
         title.push(["li",
-                      "Thread type: " + thread_type_string_map[thread_type]
+                      ui_strings.S_PROFILER_TYPE_THREAD + ": " + thread_type_string_map[thread_type]
                    ]);
       }
 
       if (event_name)
       {
         title.push(["li",
-                      "Event type: " + event_name
+                      ui_strings.S_PROFILER_TYPE_EVENT + ": " + event_name
                    ]);
       }
 
       return title;
 
-    case TYPE_DOCUMENT_PARSING:
+    case EVENT_TYPE_DOCUMENT_PARSING:
       var url = event.documentParsing.url;
       return url
            ? ["li",
@@ -403,7 +402,7 @@ var ProfilerTemplates = function()
              ]
            : [];
 
-    case TYPE_CSS_PARSING:
+    case EVENT_TYPE_CSS_PARSING:
       var url = event.cssParsing.url;
       return url
            ? ["li",
@@ -411,7 +410,7 @@ var ProfilerTemplates = function()
              ]
            : [];
 
-    case TYPE_SCRIPT_COMPILATION:
+    case EVENT_TYPE_SCRIPT_COMPILATION:
       var title = [];
       var url = event.scriptCompilation.url;
       var script_type = event.scriptCompilation.scriptType;
@@ -426,21 +425,21 @@ var ProfilerTemplates = function()
       if (script_type)
       {
         title.push(["li",
-                      "Script type: " + script_type_string_map[script_type]
+                      ui_strings.S_PROFILER_TYPE_SCRIPT + ": " + script_type_string_map[script_type]
                    ]);
       }
 
       return title;
 
-    case TYPE_PAINT:
+    case EVENT_TYPE_PAINT:
       var area = event.paint.area;
       return (
         [
           ["li",
-             "Location: " + area.x + ", " + area.y
+             ui_strings.S_PROFILER_AREA_LOCATION + ": " + area.x + ", " + area.y
           ],
           ["li",
-             "Area: " + area.w + "×" + area.h
+             ui_strings.S_PROFILER_AREA_DIMENSION + ": " + area.w + "×" + area.h
           ]
         ]
       );
@@ -478,7 +477,7 @@ var ProfilerTemplates = function()
          "tabindex", "1"
         ],
         ["p",
-          "To get accurate data from the profiler, the document has to be reloaded."
+          ui_strings.S_PROFILER_RELOAD,
         ],
        "class", "info-box"
       ]
@@ -492,15 +491,15 @@ var ProfilerTemplates = function()
 
   this._tabledefs = {};
   // TODO: implement sorters. E.g. hits should sort by hits and then by time
-  this._tabledefs[TYPE_CSS_SELECTOR_MATCHING] = {
+  this._tabledefs[EVENT_TYPE_CSS_SELECTOR_MATCHING] = {
     column_order: ["selector", "time", "hits"],
     // TODO: ui strings
     columns: {
       "selector": {
-        label: "Selector"
+        label: ui_strings.S_PROFILER_TYPE_SELECTOR,
       },
       "time": {
-        label: "Time",
+        label: ui_strings.S_TABLE_HEADER_TIME,
         align: "right",
         renderer: (function(event) {
           return this.format_time(event.time, 1);
@@ -508,7 +507,7 @@ var ProfilerTemplates = function()
         classname: "profiler-details-time"
       },
       "hits": {
-        label: "Hits",
+        label: ui_strings.S_TABLE_HEADER_HITS,
         align: "right",
         renderer: function(event) {
           return String(event.hits);

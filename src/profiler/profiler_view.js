@@ -79,7 +79,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._start_profiler = function()
   {
     this._reset();
-    this._container.clearAndRender(this._templates.empty("Profiling…"));
+    this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
     this._profiler.start_profiler(this._handle_start_profiler.bind(this));
     this._overlay.set_window_id(this._profiler.get_window_id());
   };
@@ -100,7 +100,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._stop_profiler = function()
   {
-    this._container.clearAndRender(this._templates.empty("Calculating…"));
+    this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
     var config = {session_id: this._current_session_id};
     this._profiler.stop_profiler(this._handle_stop_profiler.bind(this), config);
   };
@@ -143,7 +143,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._show_error_message = function(msg)
   {
-    this._container.clearAndRender(this._templates.empty("Profiling failed"));
+    this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_PROFILING_FAILED));
     opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + ": \n" + msg)
   };
 
@@ -164,11 +164,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                                                                      zero_point),
                                       this._templates.details(this._table),
                                       this._templates.status(this._details_time))
-               : this._templates.empty("No data");
+               : this._templates.empty(ui_strings.S_PROFILER_NO_DATA);
     }
     else
     {
-      template = this._templates.empty("Press the Record button to start profiling");
+      template = this._templates.empty(ui_strings.S_PROFILER_START_MESSAGE);
     }
     this._container.clearAndRender(template);
     this._details_list = this._container.querySelector(".profiler-details-list");
@@ -222,7 +222,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var child_type = this._children[this._event_type];
     if (child_type)
     {
-      this._details_list.clearAndRender(this._templates.empty("Calculating…"));
+      this._details_list.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
       var config = {
         session_id: this._current_session_id,
         timeline_id: this._current_timeline_id,
@@ -314,8 +314,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._update_record_button_title = function()
   {
     window.toolbars[this.id].set_button_title("profiler-start-stop", this._profiler.is_active ?
-                                                                     "Stop profiling" :
-                                                                     "Start profiling");
+                                                                     ui_strings.S_BUTTON_STOP_PROFILER :
+                                                                     ui_strings.S_BUTTON_START_PROFILER);
   };
 
   this._get_zero_point = function()
@@ -424,7 +424,7 @@ ProfilerView.create_ui_widgets = function()
     [
       {
         handler: "profiler-start-stop",
-        title: "Start profiling" // FIXME: ui string
+        title: ui_strings.S_BUTTON_START_PROFILER
       }
     ]
   );
@@ -435,7 +435,7 @@ ProfilerView.create_ui_widgets = function()
       "zero-at-first-event": true
     },
     {
-      "zero-at-first-event": "Change start time to first event"
+      "zero-at-first-event": ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT
     }
   );
 
