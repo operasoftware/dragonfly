@@ -248,40 +248,6 @@ var ProfilerTemplates = function()
     return template;
   };
 
-  this.event_list_unique_events = function(events, container_width)
-  {
-    var template = [];
-    var event_list = events && events.eventList;
-    if (event_list && event_list.length)
-    {
-      // Sort by longest time
-      event_list.sort(function(a, b) {
-        return b.time - a.time;
-      });
-
-      var interval = event_list[0].time;
-      var ms_unit = container_width / interval;
-
-      event_list.forEach(function(event, idx) {
-        var width = Math.ceil(event.time * ms_unit);
-        template.push(
-          ["div",
-           "style",
-             "width: " + width + "px;" +
-             "top:" + (idx * BAR_HEIGHT) + "px;",
-           "title", this.get_title_unique_events(event),
-           "class", "profiler-event event-type-" + event.type,
-           "data-event-id", String(event.eventID),
-           "data-event-type", String(event.type),
-           "handler", "profiler-event"
-          ]
-        );
-      }, this);
-    }
-
-    return template;
-  };
-
   this.empty = function(text)
   {
     return ["div", text, "class", "profiler-empty"];
@@ -350,16 +316,6 @@ var ProfilerTemplates = function()
   this.get_title_aggregated = function(event)
   {
     return this.format_time(event.time);
-  };
-
-  this.get_title_unique_events = function(event)
-  {
-    var details = this.get_details_title(event);
-    return event_type_string_map[event.type] + "," +
-           " self time: " + this.format_time(event.time) +
-           " [" + event.hits + " hits" +
-             (details ? details : []) +
-           "]";
   };
 
   this.get_details_title = function(event)
