@@ -51,6 +51,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     TYPE_PAINT
   ];
 
+  this._timeline_modes = [
+    {id: "_timeline_list", mode: MODE_ALL},
+    {id: "_aggregated_list", mode: MODE_REDUCE_UNIQUE_TYPES},
+    {id: "_reduced_list", mode: MODE_REDUCE_ALL}
+  ];
+
   this._reset = function()
   {
     this._table = null;
@@ -80,8 +86,15 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._handle_start_profiler = function(status, msg)
   {
-    this._old_session_id = this._current_session_id;
-    this._current_session_id = msg[SESSION_ID];
+    if (status === SUCCESS)
+    {
+      this._old_session_id = this._current_session_id;
+      this._current_session_id = msg[SESSION_ID];
+    }
+    else
+    {
+      this._show_error_message(msg);
+    }
     this._update_record_button_title();
   };
 
@@ -96,53 +109,42 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (status === SUCCESS)
     {
-      if (this._old_session_id)
-        this._profiler.release_session(null, {session_id: this._old_session_id});
       this._current_timeline_id = msg[TIMELINE_LIST][0][TIMELINE_ID];
-      var config = {
-        session_id: this._current_session_id,
-        timeline_id: this._current_timeline_id,
-        mode: MODE_ALL,
-        event_type_list: this._default_types,
-      };
-      // TODO: make all GetEvents calls in parallell?
-      this._profiler.get_events(this._handle_timeline_list.bind(this), config);
+      this._timeline_modes.forEach(function(timeline_mode) {
+        var config = {
+          session_id: this._current_session_id,
+          timeline_id: this._current_timeline_id,
+          mode: timeline_mode.mode,
+          event_type_list: this._default_types,
+        };
+        this._profiler.get_events(this._handle_timeline_list.bind(this, timeline_mode.id), config);
+      }, this);
     }
     else
     {
-      this._container.clearAndRender(this._templates.empty("Profiling failed"));
+      this._show_error_message(msg);
     }
     this._update_record_button_title();
   };
 
-  this._handle_timeline_list = function(status, msg)
+  this._handle_timeline_list = function(id, status, msg)
   {
-    this._timeline_list = new cls.Profiler["1.0"].EventList(msg);
-    var config = {
-      session_id: this._current_session_id,
-      timeline_id: this._current_timeline_id,
-      mode: MODE_REDUCE_UNIQUE_TYPES,
-      event_type_list: this._default_types,
-    };
-    this._profiler.get_events(this._handle_aggregated_list.bind(this), config);
+    if (status === SUCCESS)
+    {
+      this[id] = new cls.Profiler["1.0"].EventList(msg);
+      if (this._timeline_list && this._aggregated_list && this._reduced_list)
+        this._update_view();
+    }
+    else
+    {
+      this._show_error_message(msg);
+    }
   };
 
-  this._handle_aggregated_list = function(status, msg)
+  this._show_error_message = function(msg)
   {
-    this._aggregated_list = new cls.Profiler["1.0"].EventList(msg);
-    var config = {
-      session_id: this._current_session_id,
-      timeline_id: this._current_timeline_id,
-      mode: MODE_REDUCE_ALL,
-      event_type_list: this._default_types,
-    };
-    this._profiler.get_events(this._handle_reduced_list.bind(this), config);
-  };
-
-  this._handle_reduced_list = function(status, msg)
-  {
-    this._reduced_list = new cls.Profiler["1.0"].EventList(msg);
-    this._update_view();
+    this._container.clearAndRender(this._templates.empty("Profiling failed"));
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + ": \n" + msg)
   };
 
   this._update_view = function()
@@ -430,7 +432,7 @@ ProfilerView.create_ui_widgets = function()
   new Settings(
     "profiler_all",
     {
-      "zero-at-first-event": false
+      "zero-at-first-event": true
     },
     {
       "zero-at-first-event": "Change start time to first event"
