@@ -11,6 +11,7 @@ cls.Scope["1.1"].name = 'scope';
 
 cls.Scope["1.1"].Service = function()
 {
+  var SUCCESS = 0;
   /**
     * The name of the service used in scope in ScopeTransferProtocol
     */
@@ -52,11 +53,7 @@ cls.Scope["1.1"].Service = function()
     var service = message[NAME];
     var service_name = "";
 
-    if (status)
-    {
-      opera.postError("enable service failed, message: " + service)
-    }
-    else
+    if (status === SUCCESS)
     {
       if (window.services && window.services[service])
       {
@@ -71,6 +68,8 @@ cls.Scope["1.1"].Service = function()
       if (!this._enable_requests.length)
         this._send_profile_enabled_msg();
     }
+    else
+      opera.postError("enable service failed, message: " + service);
   };
 
   this._send_profile_enabled_msg = function()
@@ -79,6 +78,7 @@ cls.Scope["1.1"].Service = function()
     var msg = {profile: this._profile,
                services: this._profiles[this._profile].slice()};
     window.messages.post("profile-enabled", msg);
+    window.settings.general.set("profile-mode", this._profile);
   };
 
   this.requestDisable = function(tag, message)
@@ -90,9 +90,7 @@ cls.Scope["1.1"].Service = function()
   {
     var NAME = 0;
     var service = message[NAME];
-    if (status)
-      opera.postError("disable service failed, message: " + service)
-    else
+    if (status === SUCCESS)
     {
       window.services[service].is_enabled = false;
       if (this._disable_requests.contains(service))
@@ -101,6 +99,8 @@ cls.Scope["1.1"].Service = function()
       if (!this._disable_requests.length)
         this._finalize_enable_profile();
     }
+    else
+      opera.postError("disable service failed, message: " + service)
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#info
