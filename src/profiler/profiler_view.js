@@ -253,14 +253,21 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                                     null,
                                     reversed);
     var data = this._get_top_list_data(new cls.Profiler["1.0"].EventList(msg));
-    this._table.set_data(data);
-    this._details_time = data.reduce(function(prev, curr) {
-      return prev + curr.time;
-    }, 0);
-    this._details_list.clearAndRender(this._templates.details(this._table));
-    this._status.clearAndRender(this._templates.status(this._details_time));
-    this._details_list.removeClass("profiler-no-status");
-    this._status.removeClass("profiler-no-status");
+    if (data.length)
+    {
+      this._table.set_data(data);
+      this._details_time = data.reduce(function(prev, curr) {
+        return prev + curr.time;
+      }, 0);
+      this._details_list.clearAndRender(this._templates.details(this._table));
+      this._status.clearAndRender(this._templates.status(this._details_time));
+      this._details_list.removeClass("profiler-no-status");
+      this._status.removeClass("profiler-no-status");
+    }
+    else
+    {
+      this._details_list.clearAndRender(this._templates.no_events());
+    }
   };
 
   this._get_top_list_data = function(events)
