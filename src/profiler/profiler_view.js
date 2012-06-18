@@ -247,7 +247,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._handle_details_list = function(child_type, status, msg)
   {
     var sortby = this._table ? this._table.sortby : "time";
-    var reversed = this._table && this._table.reversed;
+    var reversed = this._table ? this._table.reversed : true;
     var table_def = this._templates._tabledefs[child_type];
     this._table = new SortableTable(table_def,
                                     null,
