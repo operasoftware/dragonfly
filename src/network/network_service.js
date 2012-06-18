@@ -931,6 +931,7 @@ cls.NetworkLoggerResponse = function(entry)
   this.logger_entry_id = entry.id;
   this.logger_entry_mime = entry.mime;
   this.logger_entry_is_finished = entry.is_finished;
+  this.logger_entry_touched_network = entry.touched_network;
 };
 
 cls.NetworkLoggerResponsePrototype = function()

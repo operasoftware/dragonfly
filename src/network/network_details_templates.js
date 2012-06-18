@@ -67,7 +67,8 @@ templates.network_log_detail = function(entry)
 templates.network_response = function(response)
 {
   return [
-    templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]),
+    response.logger_entry_touched_network ?
+      templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
     templates.response_details(response),
     templates.network_response_body(response)
   ]
@@ -79,10 +80,13 @@ templates.request_details = function(req)
   if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
     return ret;
 
-  if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
-  else
-    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+  if (req.touched_network)
+  {
+    if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
+      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
+    else
+      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+  }
 
   var tbody = ["tbody"];
   if (req.is_finished && !req.touched_network)
