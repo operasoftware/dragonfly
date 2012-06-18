@@ -309,7 +309,6 @@ cls.Scope["1.1"].Service = function()
         this._enable_requests.push(service);
     }, this);
 
-
     if (old_profile)
     {
       var msg = {profile: old_profile,
@@ -353,7 +352,5 @@ cls.Scope["1.1"].Service = function()
   };
 
   this.reset = this._init;
-
   this._init();
-
 }

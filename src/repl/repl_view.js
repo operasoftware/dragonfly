@@ -113,7 +113,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this.create_disabled_view = function(container)
   {
-    container.clearAndRender(window.templates.disabled_dom_view());
+    container.clearAndRender(window.templates.disabled_view());
   };
 
   this.clear = function()

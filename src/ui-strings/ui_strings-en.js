@@ -970,7 +970,8 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
 /* DESC: Button label to enable the default debugger features. */
-ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features"
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
+
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font face";
 
