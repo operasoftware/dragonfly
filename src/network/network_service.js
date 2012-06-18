@@ -903,8 +903,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("has_responsebody", function()
   {
-    var filter = window.helpers.prop("responsebody");
-    return Boolean(this.responses.filter(filter).length);
+    return Boolean(this.responses.filter(helpers.prop("responsebody")).length);
   });
 
   this.__defineGetter__("duration", function()

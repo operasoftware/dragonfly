@@ -18,11 +18,11 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
   if (bytes >= 1048576) // megabytes
   {
-    return "" + numformatter((bytes / 1048576).toFixed(2)) + " MB";
+    return "" + numformatter(Number(bytes / 1048576).toFixed(2)) + " MB";
   }
   else if (bytes >= 1024)
   {
-    return "" + numformatter((bytes / 1024).toFixed(2)) + " kB";
+    return "" + numformatter(Number(bytes / 1024).toFixed(2)) + " kB";
   }
   else
   {

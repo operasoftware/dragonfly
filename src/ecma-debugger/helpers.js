@@ -282,9 +282,6 @@ window.cls.Helpers = function()
 
   this.pretty_print_number = function(num)
   {
-    if (typeof num !== "number")
-      num = Number(num);
-
     var numstring = String(num);
     var parts = numstring.split(".");
     var integral = parts[0].split("");
