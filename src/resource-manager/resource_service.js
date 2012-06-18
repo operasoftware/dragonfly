@@ -354,30 +354,38 @@ cls.ResourceContext = function(data)
       res.frameID = event.frameID;
       this.resourcesDict[ res.id ] = res;
     }
-    else if (!res)
-    {
-      // ignoring. Never saw an urlload, or it's allready invalidated
-      return;
-    }
 
-    res.update(eventname, event);
-
-    if (res.invalid)
+    if (res)
     {
-      delete this.resourcesDict[ res.id ];
-    }
-    else if (eventname == "urlfinished")
-    {
-      // push the resourceID into the proper group
-      var frame = this.frames[res.frameID];
-      var type = res.type;
-      if (!frame.groups[type]){ type='other'; }
+      res.update(eventname, event);
 
-      frame.groups[type].push( res.id );
-      this.resourcesUrlDict[ res.url ] = res.id;
+      if (eventname == "urlfinished")
+      {
+        // push the resourceID into the proper group
+        var frame = this.frames[res.frameID];
+        if (frame)
+        {
+          var type = res.type;
+          if (!frame.groups[type]){ type='other'; }
+
+          frame.groups[type].push( res.id );
+          this.resourcesUrlDict[ res.url ] = res.id;
+        }
+        else
+        {
+          res.invalid = true;
+        }
+      }
+
+      if (res.invalid)
+      {
+        delete this.resourcesDict[ res.id ];
+        return;
+      }
 
       return res;
     }
+
   }
 
   this.get_resource = function(id)
