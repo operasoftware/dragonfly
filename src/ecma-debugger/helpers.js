@@ -339,13 +339,17 @@ window.cls.Helpers = function()
     return color[notation];
   };
 
-  this.get_prop = function(prop)
+  this.prop = (function()
   {
-    return function(obj)
-    {
-      return obj[prop];
-    };
-  };
+   var cache = {};
+   return function(prop)
+   {
+     return cache[prop] || (cache[prop] = function(obj)
+     {
+       return obj[prop];
+     });
+   };
+  })();
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)

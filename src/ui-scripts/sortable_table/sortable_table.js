@@ -46,7 +46,7 @@ var SortableTablePrototype = function()
       var col = tabledef.columns[key];
       if (!col.getter)
       {
-        col.getter = this._prop_getter(key);
+        col.getter = window.helpers.prop(key);
       }
 
       if (!col.renderer)

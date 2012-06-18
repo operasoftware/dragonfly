@@ -216,11 +216,11 @@ cls.NetworkLoggerService = function(view)
     entry.is_fetching_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [callback, entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._on_get_resource_bound = function(status, data, callback, entry)
+  this._handle_get_resource = function(status, data, callback, entry)
   {
     if (!this._current_context)
       return;
@@ -238,7 +238,7 @@ cls.NetworkLoggerService = function(view)
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
     }
-  }.bind(this);
+  };
 
   this.get_request_context = function()
   {
@@ -421,7 +421,9 @@ cls.RequestContextPrototype = function()
     if (eventname === "responsebody")
     {
       for (var i = 0, logger_entry; logger_entry = logger_entries[i]; i++)
+      {
         logger_entry.update(eventname, event);
+      }
     }
     else
     {
@@ -901,10 +903,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("has_responsebody", function()
   {
-    if (!this._responsebody_filter)
-      this._responsebody_filter = window.helpers.get_prop("responsebody");
-
-    return Boolean(this.responses.filter(this._responsebody_filter).length);
+    var filter = window.helpers.prop("responsebody");
+    return Boolean(this.responses.filter(filter).length);
   });
 
   this.__defineGetter__("duration", function()
