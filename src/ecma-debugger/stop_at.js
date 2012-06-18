@@ -87,12 +87,9 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     {
       var key = msg.key;
       var value = settings['js_source'].get(key);
-      if (key == 'script')
-      {
-        stop_at_settings[key] = value;
-        ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE,
-                                              get_config_msg());
-      }
+      stop_at_settings[key] = value;
+      var msg = get_config_msg();
+      ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE, msg);
 
       if (msg.key == 'reformat_javascript')
       {
