@@ -89,12 +89,9 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       var value = settings['js_source'].get(key);
       if (key == 'script')
       {
-
-      }
-      else
-      {
         stop_at_settings[key] = value;
-        ecma_debugger.requestSetConfiguration(0, get_config_msg());
+        ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE,
+                                              get_config_msg());
       }
 
       if (msg.key == 'reformat_javascript')
@@ -285,9 +282,9 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   {
     if (!_is_initial_settings_set)
     {
-      for (var prop in stop_at_settings )
+      for (var prop in stop_at_settings)
       {
-        var value = settings['js_source'].get(prop);
+        var value = window.settings['js_source'].get(prop);
         if (typeof value == "boolean")
           stop_at_settings[prop] = value;
       }
