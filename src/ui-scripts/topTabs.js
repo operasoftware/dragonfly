@@ -97,7 +97,7 @@ var TopTabsBase = function()
     this._adjust_tab_size(width, tabs);
   };
 
-  this._onwindowcontrolscreated = function(msg)
+  this._on_window_controls_created = function(msg)
   {
     var win_ctrs = msg.window_controls;
     var style = document.styleSheets.getDeclaration("top-tabs");
@@ -126,7 +126,7 @@ var TopTabs = function(cell)
   this.activeTab = '';
   this.cell = cell;
   window.messages.add_listener("window-controls-created",
-                               this._onwindowcontrolscreated.bind(this))
+                               this._on_window_controls_created.bind(this));
 }
 
 TopTabsBase.prototype = new TabsBase();
