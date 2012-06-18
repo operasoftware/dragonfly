@@ -290,21 +290,6 @@
       concat( display_uri != runtime.uri ? ["title", runtime.uri] : [] ) )
   }
 
-  this.checkbox = function(settingName, settingValue)
-  {
-    return ["li",
-      ["label",
-        ["input",
-        "type", "checkbox",
-        "value", settingName,
-        "checked", settingValue ?  true : false,
-        "handler", "set-stop-at"
-        ],
-        settingName
-      ]
-    ]
-  }
-
   this.frame = function(frame, is_top)
   {
     // Fall back to document URI if it's inline

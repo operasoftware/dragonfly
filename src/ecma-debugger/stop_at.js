@@ -26,21 +26,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     use_reformat_condition: 1,
   }
 
-  /*
-  // replace with settings['js-source'].get(key)
-  var stop_at_user_settings =
-  {
-    script: 0,
-    exception: 0,
-    error: 0,
-    abort: 0,
-    gc: 0,
-    debugger_statement: 1,
-    reformat_javascript: 1,
-    use_reformat_condition: 1,
-  }
-  */
-
   var stop_at_id_map =
   {
     script: 0,
@@ -96,11 +81,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
   var _is_initial_settings_set = false;
 
-  this.getStopAts = function()
-  {
-    return stop_at_user_settings; // should be  copied
-  }
-
   var onSettingChange = function(msg)
   {
     if(msg.id == 'js_source' )
@@ -143,14 +123,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     }
     return config_arr;
   };
-
-  this.setUserStopAt = function(key, value)
-  {
-    //stop_at_user_settings[key] = value; // true or false;
-    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-      'clean up. this should no longer be called. stop_at.setUserStopAt');
-
-  }
 
   this.getRuntimeId = function()
   {
