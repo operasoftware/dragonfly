@@ -12,7 +12,7 @@ var OverlayService = function(default_color)
   /**
    * @param {Object} default_config Default colors used when not explicitly passing
    * to create_overlay(). Takes three arrays, 'color', 'border_color' and 'grid_color',
-   * all specified as an array with four values: 'r', 'g', 'b' and 'alpha'. All off
+   * all specified as an array with four values: 'r', 'g', 'b' and 'alpha'. All of
    * these are in the range 0 to 255.
    */
   this._init = function(default_config)
@@ -32,7 +32,7 @@ var OverlayServicePrototype = function()
    * Create an overlay.
    *
    * @param {Object} config Configures the overlay. At least 'x', 'y', 'w' and 'h'
-   * has to be specified.
+   * have to be specified.
    */
   this.create_overlay = function(callback, config)
   {
