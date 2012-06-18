@@ -1502,3 +1502,176 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
+/* DESC: A info message that the required features to create this view are disabled. */
+ui_strings.S_INFO_REQUIRED_SERVICES_DISABLED = "Features to create this view are disabled";
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
+
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
+
+/* DESC: Button label to enable the default debugger features. */
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
+
+/* DESC: Button title for starting the profiler */
+ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_BUTTON_STOP_PROFILER = "Stop profiling";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
+
+/* DESC: Message in the profiler when the profiler is active */
+ui_strings.S_PROFILER_PROFILING = "Profiling…";
+
+/* DESC: Message in the profiler when the profiler failed */
+ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
+
+/* DESC: Message in the profiler when the profiler is calculating */
+ui_strings.S_PROFILER_CALCULATING = "Calculating…";
+
+/* DESC: Message in the profiler when no data was "captured" by the profiler */
+ui_strings.S_PROFILER_NO_DATA = "No data";
+
+/* DESC: Message when an event in the profiler has no details */
+ui_strings.S_PROFILER_NO_DETAILS = "No details";
+
+/* DESC: Message before starting the profiler */
+ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profiling";
+
+/* DESC: Message before activating the profiler profile */
+ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, the document has to be reloaded.";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_AREA_LOCATION = "Location";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_START_TIME = "Start";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_DURATION = "Duration";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_SELF_TIME = "Self time";
+
+/* DESC: Label */
+ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
+
+/* DESC: Table header */
+ui_strings.S_TABLE_HEADER_TIME = "Time";
+
+/* DESC: Table header */
+ui_strings.S_TABLE_HEADER_HITS = "Hits";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_PROCESS = "Process";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
+
+/* DESC: Event type */
+ui_strings.S_EVENT_TYPE_PAINT = "Paint";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_UNKNOWN = "Unknown";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_COMMON = "Common";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_EVENT = "Event";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_INLINE_SCRIPT = "Inline script";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
+
+/* DESC: Thread type */
+ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL = "Debugger";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_UNKNOWN = "Unknown";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_LINKED = "External";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_INLINE = "Inline";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_GENERATED = "document.write()";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_URI = "javascript: URL";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER = "Event";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_USERJS = "UserJS";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_BROWSERJS = "BrowserJS";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
+
+/* DESC: script type */
+ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";

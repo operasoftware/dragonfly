@@ -134,6 +134,7 @@ window-toolbar,
   width: 100%;
   height: 100%;
   opacity: .7;
+  padding: 0;
 }
 
 panel-toolbar
@@ -175,7 +176,7 @@ cst-select-option-list,
   color: #333;
 }
 
-.ui-button[handler="reload-window"]::before
+.reload-window::before
 {
   background-image: url("../ui-images/icons/icon_reload.png");
 }
@@ -408,6 +409,16 @@ cst-select-option-list,
 .network_logger\.pause::before
 {
   background-image: url("../ui-images/icons/icon_pause.png");
+}
+
+.profiler-start-stop::before
+{
+  background-image: url("../ui-images/icons/icon_record.png");
+}
+
+.profiler_all\.zero-at-first-event::before
+{
+  background-image: url("../ui-images/icons/icon_zero_at_first_event.png");
 }
 
 .pseudo-items cst-icon

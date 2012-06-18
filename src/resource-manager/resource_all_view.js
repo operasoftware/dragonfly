@@ -20,7 +20,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
   this._scrollpos = 0;
   this._view = null;
   this._open_resource_views = [];
-  this.requierd_services = ["resource-manager", "document-manager"];
+  this.required_services = ["resource-manager", "document-manager"];
 
   this.ondestroy = function()
   {
@@ -83,7 +83,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
       container.clearAndRender(
         ['div',
          ['span',
-          'class', 'ui-button',
+          'class', 'ui-button reload-window',
           'handler', 'reload-window',
           'tabindex', '1'],
          ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],

@@ -304,7 +304,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 
-  this.requierd_services = ["resource-manager", "document-manager"];
+  this.required_services = ["resource-manager", "document-manager"];
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
   this._service.addListener("request", this._on_request_bound);

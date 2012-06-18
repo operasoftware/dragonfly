@@ -10,7 +10,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 {
   this._data = null;
-  this.requierd_services = ["ecmascript-debugger"];
+  this.required_services = ["ecmascript-debugger"];
 
   this._on_element_selected = function(msg)
   {

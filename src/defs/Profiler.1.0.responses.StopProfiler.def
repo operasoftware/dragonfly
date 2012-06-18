@@ -1,0 +1,41 @@
+message <span class="message">Profile</span>
+{
+  message <span class="message">Timeline</span>
+  {
+    <span class="comment">/** 
+     * Nonnzero ID for the Timeline. This must be used when accessing Events
+     * from the Timeline.
+     */</span>
+    required <span class="number">uint32</span> timelineID = 1; 
+    <span class="comment">/** 
+     * If the Timeline is associated with a frame, the ID of the frame will be
+     * stored here. If the frame was removed during profiling, it will not be
+     * possible to access additional information about the frame from
+     * 'DocumentManager'.
+     * 
+     * Also, this field may not be present if the timeline is not associated
+     * with a frame. (Currently not applicable, but field is made optional for
+     * future compatibility).
+     */</span>
+    optional <span class="number">uint32</span> frameID    = 2; 
+  }
+  <span class="comment">/** 
+   * Nonzero ID for the Profile. This must be used when accessing Events from
+   * a Timeline withing the profile, and when
+   */</span>
+  required <span class="number">uint32  </span> profileID    = 1; 
+  <span class="comment">/** 
+   * The ID of the window associated with a Profile.
+   * 
+   * This field may not be present if the Profile is not associated with a
+   * window. (Currently not applicable, but field is made optional for
+   * future compatibility).
+   */</span>
+  optional <span class="number">uint32  </span> windowID     = 2; 
+  <span class="comment">/** 
+   * Timelines contained within the Profile. This will typically contain one
+   * Timeline for each frame that existed in the window at some point during
+   * profiling.
+   */</span>
+  repeated <span class="message">Timeline</span> timelineList = 3; 
+}

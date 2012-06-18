@@ -52,7 +52,7 @@ cls.CallstackView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
-    this.requierd_services = ["ecmascript-debugger"];
+    this.required_services = ["ecmascript-debugger"];
     this._container_id = "backtrace";
     this._clear_timeout = 0;
     this._not_stopped_content = "<li class='not-stopped'>" + 
