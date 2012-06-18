@@ -461,7 +461,7 @@ window.cls.Client = function()
   {
     if (msg.profile == window.app.profiles.DEFAULT)
     {
-      var tag = tagManager.set_callback(this, function(status, message)
+      var tag = window.tag_manager.set_callback(this, function(status, message)
       {
         const OBJECT_ID = 0;
         if (!message[OBJECT_ID])

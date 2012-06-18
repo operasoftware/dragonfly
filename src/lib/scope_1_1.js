@@ -321,7 +321,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._disable_requests.forEach(function(service)
       {
-        this.requestDisable(0, [service]);
+        this.requestDisable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else
@@ -334,7 +334,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._enable_requests.forEach(function(service)
       {
-        this.requestEnable(0, [service]);
+        this.requestEnable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else

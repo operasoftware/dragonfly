@@ -92,5 +92,6 @@ window.cls.TagManager.get_instance = function() {
   return new window.cls.TagManager();
 };
 
+cls.TagManager.DEFAULT_HANDLER = 0;
 cls.TagManager.IGNORE_RESPONSE = 1;
 

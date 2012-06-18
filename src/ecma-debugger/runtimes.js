@@ -10,6 +10,7 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   var OBJECT_ID = 3;
   var URI = 4;
   var DESCRIPTION = 5;
+  var SUCCESS = 0;
 
   this.runtime_id = runtime[RUNTIME_ID];
   this.html_frame_path = runtime[HTML_FRAME_PATH];
@@ -663,7 +664,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var set_new_debug_context = function(status, message, win_id)
   {
-    if (status)
+    if (status !== SUCCESS)
       return;
 
     if (message[RUNTIME_LIST])
@@ -1354,7 +1355,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         var msg = [[["reload",
                      null,
                      window.window_manager_data.get_debug_context()]]];
-        window.services.exec.requestExec(window.tag_manager.IGNORE_RESPONSE, msg);
+        window.services.exec.requestExec(cls.TagManager.IGNORE_RESPONSE, msg);
       }
     }
   };
