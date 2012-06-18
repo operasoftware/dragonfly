@@ -85,6 +85,7 @@ var TopTabsBase = function()
                    orig_width: Number(legend.getAttribute("data-orig-width")) - 1});
       }
     }
+
     tabs.sort(function(a, b)
     {
       return a.orig_width > b.orig_width 

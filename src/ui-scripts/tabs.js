@@ -5,7 +5,7 @@
 
 var TabsBase = function()
 {
-  const HISTORY_MAX_LENGTH = 10;
+  var HISTORY_MAX_LENGTH = 10;
 
   this.type = 'tabs';
   this.height = 25;
@@ -381,6 +381,7 @@ var TabsBase = function()
         scale = (orig_width_sum - delta) / orig_width_sum;
       }
     }
+    
     tabs.forEach(function(tab)
     {
       if (has_space)
