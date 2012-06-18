@@ -305,11 +305,6 @@ var SortableTablePrototype = function()
                                     this.reversed);
   };
 
-  this._prop_getter = function(name)
-  {
-    return function(obj) { return obj[name]; }
-  }
-
   this._prop_sorter = function(getter)
   {
     return function(a, b)
