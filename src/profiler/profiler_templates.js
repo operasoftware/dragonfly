@@ -141,7 +141,7 @@ var ProfilerTemplates = function()
                 "class", "profiler-legend-label"
                ],
                ["span",
-                  this.format_time(event.time),
+                  this.format_time(event.time, 0),
                 "class", "profiler-legend-amount"
                ],
              "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
@@ -177,7 +177,7 @@ var ProfilerTemplates = function()
          "style", "left:" + left + "px"
         ],
         ["div",
-           time.toFixed(fractions) + " ms",
+           this.format_time(time),
          "class", "profiler-timeline-marker-time" + (i === 0 ? " first" : ""),
          "style", "left:" + left + "px"
         ]
@@ -186,7 +186,7 @@ var ProfilerTemplates = function()
 
     template.push(
       ["div",
-         (start + duration).toFixed(fractions) + " ms",
+         this.format_time(start + duration),
        "class", "profiler-timeline-marker-time last"
       ]
     );
@@ -268,17 +268,11 @@ var ProfilerTemplates = function()
     return ["div", ui_strings.S_PROFILER_NO_DETAILS, "class", "profiler-empty"];
   };
 
-  this.format_time = function(time, ms_fractions)
+  this.format_time = function(time, fractions)
   {
-    var unit = "ms";
-    var fractions = ms_fractions || time < 1 ? 1 : 0;
-    if (time >= 1000) // if at least on second
-    {
-      time /= 1000;
-      unit = "s";
-      fractions = 3;
-    }
-    return time.toFixed(fractions) + " " + unit;
+    fractions = (fractions != null) ? fractions
+                                    : (time < 1 ? 1 : 0);
+    return time.toFixed(fractions) + " ms";
   };
 
   this.get_title_all = function(event)
@@ -492,7 +486,6 @@ var ProfilerTemplates = function()
   // TODO: implement sorters. E.g. hits should sort by hits and then by time
   this._tabledefs[EVENT_TYPE_CSS_SELECTOR_MATCHING] = {
     column_order: ["selector", "time", "hits"],
-    // TODO: ui strings
     columns: {
       "selector": {
         label: ui_strings.S_PROFILER_TYPE_SELECTOR,
@@ -501,7 +494,7 @@ var ProfilerTemplates = function()
         label: ui_strings.S_TABLE_HEADER_TIME,
         align: "right",
         renderer: (function(event) {
-          return this.format_time(event.time, 1);
+          return this.format_time(event.time);
         }).bind(this),
         classname: "profiler-details-time"
       },
