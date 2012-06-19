@@ -88,11 +88,13 @@ var TopTabsBase = function()
 
     tabs.sort(function(a, b)
     {
-      return a.orig_width > b.orig_width 
-           ? 1
-           : a.orig_width < b.orig_width
-           ? -1
-           : 0;
+      if (a.orig_width > b.orig_width) 
+        return 1;
+
+      if (a.orig_width < b.orig_width)
+        return -1;
+      
+      return 0;
     });
 
     this._adjust_tab_size(width, tabs);
