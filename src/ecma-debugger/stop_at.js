@@ -285,7 +285,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
         if (typeof value == "boolean")
           stop_at_settings[prop] = value;
       }
-      ecma_debugger.requestSetConfiguration(0, get_config_msg());
+      var msg = get_config_msg();
+      ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE, msg);
       _is_initial_settings_set = true;
     }
   };
