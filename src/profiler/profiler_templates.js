@@ -293,13 +293,25 @@ var ProfilerTemplates = function()
           this.get_title_interval_bar(event),
           ["ul",
              ["li",
-                ui_strings.S_PROFILER_START_TIME + ": " + this.format_time(event.interval.start)
+                ["span",
+                   ui_strings.S_PROFILER_START_TIME + ": ",
+                 "class", "profiler-event-tooltip-label"
+                ],
+                this.format_time(event.interval.start)
              ],
              ["li",
-                ui_strings.S_PROFILER_DURATION + ": " + this.format_time(event.interval.end - event.interval.start)
+                ["span",
+                   ui_strings.S_PROFILER_DURATION + ": ",
+                 "class", "profiler-event-tooltip-label"
+                ],
+                this.format_time(event.interval.end - event.interval.start)
              ],
              ["li",
-                ui_strings.S_PROFILER_SELF_TIME + ": " + this.format_time(event.time)
+                ["span",
+                   ui_strings.S_PROFILER_SELF_TIME + ": ",
+                 "class", "profiler-event-tooltip-label"
+                ],
+                this.format_time(event.time)
              ],
              (details
               ? details
@@ -313,11 +325,6 @@ var ProfilerTemplates = function()
     );
   };
 
-  this.get_title_aggregated = function(event)
-  {
-    return this.format_time(event.time);
-  };
-
   this.get_details_title = function(event)
   {
     switch (event.type)
@@ -325,7 +332,11 @@ var ProfilerTemplates = function()
     case EVENT_TYPE_CSS_SELECTOR_MATCHING:
       return (
         ["li",
-           ui_strings.S_PROFILER_TYPE_SELECTOR + ": " + event.cssSelectorMatching.selector
+           ["span",
+              ui_strings.S_PROFILER_TYPE_SELECTOR + ": ",
+            "class", "profiler-event-tooltip-label"
+           ],
+           event.cssSelectorMatching.selector
         ]
       );
 
@@ -337,14 +348,22 @@ var ProfilerTemplates = function()
       if (thread_type)
       {
         title.push(["li",
-                      ui_strings.S_PROFILER_TYPE_THREAD + ": " + thread_type_string_map[thread_type]
+                      ["span",
+                         ui_strings.S_PROFILER_TYPE_THREAD + ": ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      thread_type_string_map[thread_type]
                    ]);
       }
 
       if (event_name)
       {
         title.push(["li",
-                      ui_strings.S_PROFILER_TYPE_EVENT + ": " + event_name
+                      ["span",
+                         ui_strings.S_PROFILER_TYPE_EVENT + ": ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      event_name
                    ]);
       }
 
@@ -354,7 +373,11 @@ var ProfilerTemplates = function()
       var url = event.documentParsing.url;
       return url
            ? ["li",
-                "URL: " + url
+                ["span",
+                   "URL: ",
+                 "class", "profiler-event-tooltip-label"
+                ],
+                url
              ]
            : [];
 
@@ -362,7 +385,11 @@ var ProfilerTemplates = function()
       var url = event.cssParsing.url;
       return url
            ? ["li",
-                "URL: " + url
+                ["span",
+                   "URL: ",
+                 "class", "profiler-event-tooltip-label"
+                ],
+                url
              ]
            : [];
 
@@ -374,14 +401,22 @@ var ProfilerTemplates = function()
       if (url)
       {
         title.push(["li",
-                      "URL: " + url
+                      ["span",
+                         "URL: ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      url
                    ]);
       }
 
       if (script_type)
       {
         title.push(["li",
-                      ui_strings.S_PROFILER_TYPE_SCRIPT + ": " + script_type_string_map[script_type]
+                      ["span",
+                         ui_strings.S_PROFILER_TYPE_SCRIPT + ": ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      script_type_string_map[script_type]
                    ]);
       }
 
@@ -392,10 +427,18 @@ var ProfilerTemplates = function()
       return (
         [
           ["li",
-             ui_strings.S_PROFILER_AREA_LOCATION + ": " + area.x + ", " + area.y
+             ["span",
+                ui_strings.S_PROFILER_AREA_LOCATION + ": ",
+              "class", "profiler-event-tooltip-label"
+             ],
+             area.x + ", " + area.y
           ],
           ["li",
-             ui_strings.S_PROFILER_AREA_DIMENSION + ": " + area.w + "×" + area.h
+             ["span",
+                ui_strings.S_PROFILER_AREA_DIMENSION + ": ",
+              "class", "profiler-event-tooltip-label"
+             ],
+             area.w + "×" + area.h
           ]
         ]
       );

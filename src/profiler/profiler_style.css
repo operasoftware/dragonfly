@@ -303,3 +303,9 @@
   white-space: nowrap;
 }
 
+.profiler-event-tooltip-label
+{
+  font-weight: bold;
+  color: #333;
+}
+
