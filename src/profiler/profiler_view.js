@@ -59,7 +59,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._reset = function()
   {
-    this._table = null;
     this._current_session_id = null;
     this._current_timeline_id = null;
     this._event_id = null;
@@ -67,6 +66,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._timeline_list = null;
     this._aggregated_list = null;
     this._reduced_list = null;
+    this._table = null;
     this._details_time = 0;
   };
 
@@ -344,6 +344,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     {
       this._has_overlay_service = window.services["overlay"] && window.services["overlay"].is_enabled;
       window.runtimes.reloadWindow();
+    }
+    else
+    {
+      if (this._current_session_id)
+        this._profiler.release_session(null, {session_id: this._old_session_id});
+      this._reset();
     }
   };
 
