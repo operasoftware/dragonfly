@@ -1504,10 +1504,10 @@ ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. A
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features"
 
 /* DESC: Enable reformatting of JavaScript. */
-ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Reformat JavaScript";
+ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
 
 /* DESC: Enable smart reformatting of JavaScript. */
-ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript reformatting";
+ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
 
 /* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
 ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
