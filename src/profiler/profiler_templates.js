@@ -177,7 +177,7 @@ var ProfilerTemplates = function()
          "style", "left:" + left + "px"
         ],
         ["div",
-           this.format_time(time),
+           this.format_time(time, fractions),
          "class", "profiler-timeline-marker-time" + (i === 0 ? " first" : ""),
          "style", "left:" + left + "px"
         ]
