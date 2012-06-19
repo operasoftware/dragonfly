@@ -104,16 +104,13 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     var config_arr = [];
     for (var prop in stop_at_settings)
     {
+      var index = stop_at_id_map[prop];
       if (prop == "script")
-        config_arr[stop_at_id_map[prop]] = 1;
+        config_arr[index] = 1;
       else if (prop == "use_reformat_condition")
-      { 
-        config_arr[stop_at_id_map[prop]] = stop_at_settings[prop]
-                                         ? reformat_condition
-                                         : "";
-      }
+        config_arr[index] = stop_at_settings[prop] ? reformat_condition : "";
       else
-        config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] ? 1 : 0;
+        config_arr[index] = stop_at_settings[prop] ? 1 : 0;
     }
     return config_arr;
   };
