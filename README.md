@@ -2,19 +2,20 @@
 
 ## Directories
 
-src
+`src`
 : source code for dragonfly client
 
-docs
+`docs`
 : documentation that is not auto-generated
 
-tools
+`tools`
 : tools needed for building/distributing/testing
 
 ## Developing Dragonfly
 
 When working on the code base you should use the `dragonkeeper`
-tool. See [dragonkeeper's README](https://bitbucket.org/scope/dragonkeeper/src/tip/README) for more information.
+tool. See [dragonkeeper's README](https://bitbucket.org/scope/dragonkeeper/src/tip/README)
+for more information.
 
 ## Building Dragonfly
 
