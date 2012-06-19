@@ -297,10 +297,12 @@
   padding-top: 30px;
 }
 
-.profiler-event-tooltip ul
+.profiler-event-tooltip li
 {
-  overflow-x: auto;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .profiler-event-tooltip-label

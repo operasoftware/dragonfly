@@ -371,7 +371,9 @@ var ProfilerTemplates = function()
                    "URL: ",
                  "class", "profiler-event-tooltip-label"
                 ],
-                url
+                url,
+              "data-tooltip", "profiler-tooltip-url",
+              "data-tooltip-text", url
              ]
            : [];
 
@@ -383,7 +385,9 @@ var ProfilerTemplates = function()
                    "URL: ",
                  "class", "profiler-event-tooltip-label"
                 ],
-                url
+                url,
+              "data-tooltip", "profiler-tooltip-url",
+              "data-tooltip-text", url
              ]
            : [];
 
@@ -399,7 +403,9 @@ var ProfilerTemplates = function()
                          "URL: ",
                        "class", "profiler-event-tooltip-label"
                       ],
-                      url
+                      url,
+                    "data-tooltip", "profiler-tooltip-url",
+                    "data-tooltip-text", url
                    ]);
       }
 

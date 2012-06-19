@@ -405,6 +405,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._old_session_id = null;
     this._reset();
 
+    Tooltips.register("profiler-tooltip-url", true, false);
     this._tooltip = Tooltips.register("profiler-event", true, false);
     this._tooltip.ontooltip = this._ontooltip.bind(this);
 
