@@ -75,7 +75,7 @@ var SettingsBase = function()
     }
     window.settings[arguments[0]] = this;
 
-    window.messages.post("settings-initialized", {view_id: view_id, settings: this});
+    window.messages.post("settings-initialized", {view_id: view_id, setting: this});
 
     // Add a context menu
     var contextmenu = ContextMenu.get_instance();

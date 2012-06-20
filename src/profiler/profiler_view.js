@@ -351,7 +351,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._on_settings_initialized = function(msg)
   {
     if (msg.view_id === this.id)
-      this._has_zero_at_first_event = msg.settings.get("zero-at-first-event");
+      this._has_zero_at_first_event = msg.setting.get("zero-at-first-event");
   };
 
   this._ontooltip = function(event, target)
