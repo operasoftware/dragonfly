@@ -1544,134 +1544,134 @@ ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profilin
 /* DESC: Message before activating the profiler profile */
 ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, the document has to be reloaded.";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_AREA_LOCATION = "Location";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_START_TIME = "Start";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_DURATION = "Duration";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_SELF_TIME = "Self time";
 
-/* DESC: Label */
+/* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
 
-/* DESC: Table header */
+/* DESC: Table header in the profiler */
 ui_strings.S_TABLE_HEADER_TIME = "Time";
 
-/* DESC: Table header */
+/* DESC: Table header in the profiler */
 ui_strings.S_TABLE_HEADER_HITS = "Hits";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_PROCESS = "Process";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
 
-/* DESC: Event type */
+/* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_PAINT = "Paint";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_UNKNOWN = "Unknown";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_COMMON = "Common";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_TIMEOUT = "Timeout or interval";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_EVENT = "Event";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_INLINE_SCRIPT = "Inline script";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
 
-/* DESC: Thread type */
+/* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL = "Debugger";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_UNKNOWN = "Unknown";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_LINKED = "External";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_INLINE = "Inline";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_GENERATED = "document.write()";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_TIMEOUT = "Timeout or interval";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_URI = "javascript: URL";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER = "Event";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_USERJS = "UserJS";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_BROWSERJS = "BrowserJS";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
-/* DESC: script type */
+/* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";

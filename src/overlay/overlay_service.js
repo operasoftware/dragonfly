@@ -5,7 +5,7 @@
  *
  * The overlay service can overlay painted areas over a Window.
  */
-var OverlayService = function(default_color)
+var OverlayService = function(default_config)
 {
   var DEFAULT_COLOR = [255, 0, 0, 128];
 
@@ -23,7 +23,7 @@ var OverlayService = function(default_color)
     this._default_config = default_config || {color: DEFAULT_COLOR};
   };
 
-  this._init(default_color);
+  this._init(default_config);
 };
 
 var OverlayServicePrototype = function()
@@ -78,7 +78,7 @@ var OverlayServicePrototype = function()
         callback(status, msg);
     });
     var msg = [window_id, overlay_id];
-    this._overlay.requestRemoveOverlay(null, msg);
+    this._overlay.requestRemoveOverlay(tag, msg);
   };
 
   /**

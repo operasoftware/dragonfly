@@ -115,7 +115,7 @@ var ProfilerTemplates = function()
       ],
       ["div",
          status,
-       "class", "profiler-status " + (has_details_events ? "" : " profiler-no-status")
+       "class", "profiler-status" + (has_details_events ? "" : " profiler-no-status")
       ]
     ];
   };
@@ -307,10 +307,7 @@ var ProfilerTemplates = function()
                 ],
                 this.format_time(event.time)
              ],
-             (details
-              ? details
-              : []
-             )
+             (details ? details : [])
           ],
          "class", "profiler-event-tooltip-info"
         ],
@@ -489,7 +486,6 @@ var ProfilerTemplates = function()
   };
 
   this._tabledefs = {};
-  // TODO: implement sorters. E.g. hits should sort by hits and then by time
   this._tabledefs[EVENT_TYPE_CSS_SELECTOR_MATCHING] = {
     column_order: ["selector", "time", "hits"],
     columns: {

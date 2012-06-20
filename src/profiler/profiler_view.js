@@ -80,7 +80,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._reset();
     this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
-    this._profiler.start_profiler(this._handle_start_profiler.bind(this));
+    this._profiler.start_profiler(this._handle_start_profiler_bound);
     this._overlay.set_window_id(this._profiler.get_window_id());
   };
 
@@ -102,7 +102,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
     var config = {session_id: this._current_session_id};
-    this._profiler.stop_profiler(this._handle_stop_profiler.bind(this), config);
+    this._profiler.stop_profiler(this._handle_stop_profiler_bound, config);
   };
 
   this._handle_stop_profiler = function(status, msg)
@@ -117,7 +117,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
           mode: timeline_mode.mode,
           event_type_list: this._default_types,
         };
-        this._profiler.get_events(this._handle_timeline_list.bind(this, timeline_mode.id), config);
+
+        this._profiler.get_events(this._handle_timeline_list_bound.bind(null, timeline_mode.id), config);
       }, this);
     }
     else
@@ -152,7 +153,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (!this._container)
       return;
     var zero_point = this._get_zero_point();
-    var has_details_events = this._table && this._table.get_data().length > 0;
+    var has_details_events = this._table && this._table.get_data().length;
     var template = null;
     if (this._timeline_list && this._timeline_list.eventList)
     {
@@ -233,7 +234,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         event_id: this._event_id,
         event_type_list: [child_type]
       };
-      this._profiler.get_events(this._handle_details_list.bind(this, child_type), config);
+      this._profiler.get_events(this._handle_details_list_bound.bind(null, child_type), config);
     }
     else
     {
@@ -415,12 +416,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._tooltip = Tooltips.register("profiler-event", true, false);
     this._tooltip.ontooltip = this._ontooltip.bind(this);
 
-    this._on_profile_enabled_bound = this._on_profile_enabled.bind(this);
-    this._on_settings_changed_bound = this._on_settings_changed.bind(this);
-    this._on_settings_initialized_bound = this._on_settings_initialized.bind(this);
-    window.messages.addListener("profile-enabled", this._on_profile_enabled_bound);
-    window.messages.addListener("setting-changed", this._on_settings_changed_bound);
-    window.messages.addListener("settings-initialized", this._on_settings_initialized_bound);
+    this._handle_start_profiler_bound = this._handle_start_profiler.bind(this);
+    this._handle_stop_profiler_bound = this._handle_stop_profiler.bind(this);
+    this._handle_timeline_list_bound = this._handle_timeline_list.bind(this);
+    this._handle_details_list_bound = this._handle_details_list.bind(this);
+
+    window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
+    window.messages.addListener("setting-changed", this._on_settings_changed.bind(this));
+    window.messages.addListener("settings-initialized", this._on_settings_initialized.bind(this));
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
@@ -436,15 +439,28 @@ ProfilerView.prototype = ViewBase;
 
 ProfilerView.create_ui_widgets = function()
 {
-  new ToolbarConfig(
-    "profiler_all",
-    [
+  new ToolbarConfig({
+    view: "profiler_all",
+    groups: [
       {
-        handler: "profiler-start-stop",
-        title: ui_strings.S_BUTTON_START_PROFILER
+        type: UI.TYPE_BUTTONS,
+        items: [
+          {
+            handler: "profiler-start-stop",
+            title: ui_strings.S_BUTTON_START_PROFILER
+          }
+        ]
+      },
+      {
+        type: UI.TYPE_SWITCH,
+        items: [
+          {
+            key: "profiler_all.zero-at-first-event"
+          }
+        ]
       }
     ]
-  );
+  });
 
   new Settings(
     "profiler_all",
@@ -454,13 +470,6 @@ ProfilerView.create_ui_widgets = function()
     {
       "zero-at-first-event": ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT
     }
-  );
-
-  new Switches(
-    "profiler_all",
-    [
-      "zero-at-first-event"
-    ]
   );
 };
 
