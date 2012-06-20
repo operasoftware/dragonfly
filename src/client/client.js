@@ -142,6 +142,7 @@ window.cls.Client = function()
 
   this.setup = function()
   {
+    window.services.scope.reset();
     var port = _get_port_number();
     var client = {
       id: clients.length + 1,
@@ -157,6 +158,7 @@ window.cls.Client = function()
     {
       // implement the scope DOM API
       cls.ScopeHTTPInterface.call(opera /*, force_stp_0 */);
+      cls.ScopeHTTPInterface.is_enabled = true;
     }
 
     if (!opera.stpVersion)
@@ -333,8 +335,12 @@ window.cls.Client = function()
     new CompositeView('console_panel',
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
-
-  };
+    new CompositeView('profiler_mode',
+                      ui_strings.M_VIEW_LABEL_PROFILER,
+                      layouts.profiler_rough_layout,
+                      null,
+                      services);
+  }
 
   this.create_window_controls = function()
   {
@@ -450,31 +456,41 @@ window.cls.Client = function()
     if (last_selected_view)
     {
       var esdi = window.services['ecmascript-debugger'];
-      var cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
-      esdi.add_listener('enable-success', cb);
+      this._on_profile_enabled_cb = this._profile_enabled.bind(this, last_selected_view);
+      window.messages.addListener("profile-enabled", this._on_profile_enabled_cb);
     }
   };
 
-  this._on_ecmascript_enabled = function(last_selected_view)
+  this._profile_enabled = function(last_selected_view, msg)
   {
-    var tag = tagManager.set_callback(null, function(status, message)
+    if (msg.profile == window.app.profiles.DEFAULT)
     {
-      const OBJECT_ID = 0;
-      if (!message[OBJECT_ID])
+      var tag = window.tag_manager.set_callback(this, function(status, message)
       {
-        // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
-        if (
-          views[last_selected_view] &&
-          views[last_selected_view].is_hidden &&
-          views[last_selected_view].fallback_view_id
-        )
-        {
-          last_selected_view = views[last_selected_view].fallback_view_id;
-        }
-        UI.get_instance().show_view(last_selected_view);
-      }
-    });
-    window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
+        const OBJECT_ID = 0;
+        if (!message[OBJECT_ID])
+          this._show_last_selected_view(last_selected_view);
+      });
+      var esdi = window.services["ecmascript-debugger"];
+      esdi.requestGetSelectedObject(tag);
+    }
+    else
+      this._show_last_selected_view(last_selected_view);
+    
+    window.messages.removeListener("profile-enabled", this._on_profile_enabled_cb);
+
+  };
+
+  this._show_last_selected_view = function(last_selected_view)
+  {
+    // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
+    if (window.views[last_selected_view] &&
+        window.views[last_selected_view].is_hidden &&
+        window.views[last_selected_view].fallback_view_id)
+    {
+      last_selected_view = window.views[last_selected_view].fallback_view_id;
+    }
+    UI.get_instance().show_view(last_selected_view);
   };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));
@@ -498,7 +514,15 @@ ui_framework.layouts.error_console_rough_layout =
       ]
     }
   ]
-};
+}
+
+ui_framework.layouts.profiler_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["profiler_all"], is_hidden: true } }]
+}
 
 ui_framework.layouts.environment_rough_layout =
 {
@@ -657,6 +681,7 @@ ui_framework.layouts.main_layout =
       'network_mode',
       'resource_panel',
       'storage',
+      'profiler_mode',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
       'utils',
       'console_panel'

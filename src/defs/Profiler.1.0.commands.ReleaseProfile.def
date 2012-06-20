@@ -1,0 +1,8 @@
+message <span class="message">ReleaseProfileArg</span>
+{
+  <span class="comment">/** 
+   * Which profile to release. If omitted, *all* profiles are released,
+   * except the in-progress profile, if any.
+   */</span>
+  optional <span class="number">uint32</span> profileID = 1; 
+}

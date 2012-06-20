@@ -288,9 +288,10 @@ cls.WindowManager["2.0"].WindowManagerData = function()
     {
       self._remove_window(message[0]);
     };
-    window.app.addListener('services-enabled', function()
+    window.messages.addListener("profile-enabled", function()
     {
-      window_manager.requestListWindows();
+      if (!this._debug_context)
+        window_manager.requestListWindows();
     });
     window_manager.onWindowLoaded = function(status, message)
     {

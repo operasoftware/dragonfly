@@ -260,6 +260,12 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     }
   }
 
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._on_reset_state();
+  };
+
   this._on_reset_state = function()
   {
     this._data = [];
@@ -267,6 +273,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     this._data_runtime_id = 0;
     this._current_target = 0;
     this._active_window = [];
+    this.target = 0;
   }
 
   this._on_active_tab = function(msg)
@@ -489,6 +496,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   /* initialisation */
 
   this._on_reset_state_bound = this._on_reset_state.bind(this);
+  this._on_profile_disabled_bound = this._on_profile_disabled.bind(this);
   this._on_active_tab_bound = this._on_active_tab.bind(this);
   this._click_handler_host_bound = this._click_handler_host.bind(this);
   this._on_setting_change_bound = this._on_setting_change.bind(this);
@@ -513,6 +521,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   messages.addListener('reset-state', this._on_reset_state_bound);
   messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
   messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
+  messages.addListener('profile-disabled', this._on_profile_disabled_bound);
 };
 
 cls.EcmascriptDebugger["6.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;
