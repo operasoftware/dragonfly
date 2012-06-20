@@ -99,6 +99,9 @@ ui_strings.M_CONTEXTMENU_EXPAND_SUBTREE = "Expand subtree";
 /* DESC: Context menu item for showing the color picker. */
 ui_strings.M_CONTEXTMENU_OPEN_COLOR_PICKER = "Open color picker";
 
+/* DESC: Context menu item for disabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
+
 /* DESC: Context menu item for removing a property in a rule. */
 ui_strings.M_CONTEXTMENU_REMOVE_DECLARATION = "Delete declaration";
 
@@ -781,7 +784,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only XMLHttpRequests";
 ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip on mime type table header */
-ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
+ui_strings.S_HTTP_TOOLTIP_MIME = "MIME type";
 
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
@@ -1237,7 +1240,7 @@ ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
 
 /* DESC: Name of mime column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "MIME";
 
 /* DESC: Name of path column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
@@ -1503,3 +1506,5 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
+/* DESC: Unit string for bytes */
+ui_strings.S_BYTES_UNIT = "bytes";

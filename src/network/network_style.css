@@ -542,3 +542,10 @@
   width: 100%;
   margin: 10px 0;
 }
+
+pre.network-body
+{
+  /* work-around CORE-46966: Big pre element breaks layout in a table */
+  float: left;
+  margin-right: -10000000px;
+}
