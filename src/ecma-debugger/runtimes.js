@@ -10,7 +10,6 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   var OBJECT_ID = 3;
   var URI = 4;
   var DESCRIPTION = 5;
-  var SUCCESS = 0;
 
   this.runtime_id = runtime[RUNTIME_ID];
   this.html_frame_path = runtime[HTML_FRAME_PATH];
@@ -62,6 +61,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   THREAD_STARTED = 0,
   THREAD_STOPPED_AT = 1,
   THREAD_FINISHED = 2;
+
+  var SUCCESS = 0;
 
   var __runtimes = {};
 
