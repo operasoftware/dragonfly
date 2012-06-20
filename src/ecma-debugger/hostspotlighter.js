@@ -540,6 +540,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
         last_spotlight_command.push.apply(last_spotlight_command, locked_s);
       }
       services['ecmascript-debugger'].requestSpotlightObjects(0, [cmd]);
+
     }
   };
 
