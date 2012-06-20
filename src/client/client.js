@@ -335,8 +335,12 @@ window.cls.Client = function()
     new CompositeView('console_panel',
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
-
-  };
+    new CompositeView('profiler_mode',
+                      ui_strings.M_VIEW_LABEL_PROFILER,
+                      layouts.profiler_rough_layout,
+                      null,
+                      services);
+  }
 
   this.create_window_controls = function()
   {
@@ -510,7 +514,15 @@ ui_framework.layouts.error_console_rough_layout =
       ]
     }
   ]
-};
+}
+
+ui_framework.layouts.profiler_rough_layout =
+{
+    dir: 'v',
+    width: 1000,
+    height: 1000,
+    children: [{ height: 1000, tabbar: { tabs: ["profiler_all"], is_hidden: true } }]
+}
 
 ui_framework.layouts.environment_rough_layout =
 {
@@ -669,6 +681,7 @@ ui_framework.layouts.main_layout =
       'network_mode',
       'resource_panel',
       'storage',
+      'profiler_mode',
       {view: 'console_mode', tab_class: ErrorConsoleTab},
       'utils',
       'console_panel'

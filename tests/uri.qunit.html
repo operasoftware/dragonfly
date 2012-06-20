@@ -65,23 +65,35 @@ test("uri", function()
   deepEqual(uri.params, [{key: "do", value: "true &amp; for_real"}, {key: "true &amp; for_real", value: "yes"}]);
 
   // tests for short_distinguisher
+  var uri = new URI("http://edition.cnn.com/?baba");
+  equal(uri.short_distinguisher, "edition.cnn.com/?baba");
+
+  var uri = new URI("http://edition.cnn.com/fooo/?baba");
+  equal(uri.short_distinguisher, "fooo/?baba");
+
+  var uri = new URI("https://ssl.opera.com:8000/?badoom");
+  equal(uri.short_distinguisher, "ssl.opera.com:8000/?badoom");
+
   var uri = new URI("bar/foo?one=two&one=three#hash");
   equal(uri.short_distinguisher, "foo?one=two&one=three#hash");
 
-  var uri = new URI("bar/foo#hash");
-  equal(uri.short_distinguisher, "foo#hash");
+  var uri = new URI("bar/foo.xyz#hash");
+  equal(uri.short_distinguisher, "foo.xyz#hash");
 
   var uri = new URI("bar/foo?q");
   equal(uri.short_distinguisher, "foo?q");
 
   var uri = new URI("bar/?q");
-  equal(uri.short_distinguisher, "?q");
+  equal(uri.short_distinguisher, "bar/?q");
 
   var uri = new URI("bar/#h1");
-  equal(uri.short_distinguisher, "#h1");
+  equal(uri.short_distinguisher, "bar/#h1");
 
   var uri = new URI("foo/bar/");
   equal(uri.short_distinguisher, "bar");
+
+  var uri = new URI("http://edition.cnn.com/");
+  equal(uri.short_distinguisher, "edition.cnn.com");
   
   var uri = new URI("data:text/html,<p>?a=b#a");
   equal(uri.protocol, "data:");

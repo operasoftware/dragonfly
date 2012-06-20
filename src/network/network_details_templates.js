@@ -56,7 +56,7 @@ templates.network_log_detail = function(entry)
         ],
         templates.request_details(entry),
         templates.network_request_body(entry),
-        entry.touched_network ? entry.responses.map(templates.network_response) : []
+        entry.responses.map(templates.network_response)
       ],
       "data-object-id", String(entry.id),
       "class", "request-details"
@@ -67,7 +67,8 @@ templates.network_log_detail = function(entry)
 templates.network_response = function(response)
 {
   return [
-    templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]),
+    response.logger_entry_touched_network ?
+      templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
     templates.response_details(response),
     templates.network_response_body(response)
   ]
@@ -79,10 +80,13 @@ templates.request_details = function(req)
   if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
     return ret;
 
-  if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
-  else
-    ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+  if (req.touched_network)
+  {
+    if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
+      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
+    else
+      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+  }
 
   var tbody = ["tbody"];
   if (req.is_finished && !req.touched_network)
@@ -234,35 +238,21 @@ templates.network_response_body = function(resp)
   var ret = [templates.network_detail_row(templates.network_body_seperator())];
   var classname = "";
   if (resp.body_unavailable || 
-      !resp.responsebody && resp.unloaded)
+      !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";
     ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
   }
   else
   {
-    if (!resp.responsebody && !resp.logger_entry_is_finished)
+    if (!resp.responsebody)
     {
-      classname = "network_info";
-      ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
-    }
-    else if (!resp.responsebody)
-    {
-      classname = "network_info";
-      ret.push(templates.network_detail_row(
-        ["p",
-          ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_DESC,
-          ["p", ["span",
-              ui_strings.M_NETWORK_REQUEST_DETAIL_GET_RESPONSE_BODY_LABEL,
-              "data-object-id", String(resp.logger_entry_id),
-              // unselectable attribute works around bug CORE-35118
-              "unselectable", "on",
-              "handler", "get-response-body",
-              "class", "container-button ui-button",
-              "tabindex", "1"
-          ]],
-          "class", "response-view-body-container info-box"
-        ]));
+      if (!resp.logger_entry_is_finished)
+      {
+        classname = "network_info";
+        ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
+      }
+      // else we're in the middle of getting it via GetResource, leave the response part empty until it updates.
     }
     else
     {

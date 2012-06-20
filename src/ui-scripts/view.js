@@ -28,7 +28,7 @@ var ViewBase = new function()
     return _enabled_services.indexOf(service) > -1;
   };
 
-  this.requierd_services = [];
+  this.required_services = [];
 
   this.getSingleViews = function(filters)
   {
@@ -105,7 +105,7 @@ var ViewBase = new function()
 
   this.create_disabled_view = function(container)
   {
-    container.innerHTML = "";
+    container.clearAndRender(window.templates.default_disabled_view());
   };
 
   this.ondestroy = function()
@@ -168,7 +168,7 @@ var ViewBase = new function()
 
   this.__defineGetter__("is_enabled", function()
   {
-    return this.requierd_services.every(_is_enabled); 
+    return this.required_services.every(_is_enabled);
   });
 
   this.__defineSetter__("is_enabled", function() {});
