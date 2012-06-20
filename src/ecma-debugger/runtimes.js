@@ -62,6 +62,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   THREAD_STOPPED_AT = 1,
   THREAD_FINISHED = 2;
 
+  var SUCCESS = 0;
+
   var __runtimes = {};
 
   var __rt_class = cls.EcmascriptDebugger["6.0"].Runtime;
@@ -166,6 +168,38 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     __selected_script = '';
     updateRuntimeViews();
   }
+
+  var _on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      __runtimes = {};
+      __old_runtimes = {};
+      __runtimes_arr = []; // runtime ids
+      __window_ids = {};
+      __windows_reloaded = {};
+      __threads = [];
+      __log_threads = false;
+      __windowsFolding = {};
+      __selected_runtime_id = '';
+      __next_runtime_id_to_select = '';
+      __selected_script = '';
+      updateRuntimeViews();
+    }
+  };
+
+  var _on_profile_enabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      var dbg_ctx = window.window_manager_data.get_debug_context();
+      if (dbg_ctx)
+      {
+        var tag = window.tag_manager.set_callback(null, set_new_debug_context, [dbg_ctx]);
+        ecma_debugger.requestListRuntimes(tag, [[],1]);
+      }
+    }
+  };
 
   var registerRuntime = function(id)
   {
@@ -631,6 +665,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var set_new_debug_context = function(status, message, win_id)
   {
+    if (status !== SUCCESS)
+      return;
+
     if (message[RUNTIME_LIST])
       message[RUNTIME_LIST].forEach(self.handleRuntime, self);
     host_tabs.setActiveTab(win_id);
@@ -1295,35 +1332,34 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   this.reloadWindow = function()
   {
-
-    if( __selected_window )
+    if (__selected_window)
     {
-      if( !__windows_reloaded[__selected_window] )
-      {
+      if (!__windows_reloaded[__selected_window])
         __windows_reloaded[__selected_window] = 1;
-      }
+
       var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
-      if (rt_id)
-      {
-        if(services.exec && services.exec.is_implemented && 
+      if (window.services['ecmascript-debugger'] &&
+          window.services['ecmascript-debugger'].is_enabled &&
           // For background processes we can not use the exec service.
           // Background processes have no UI window to dispatch an exec command.
           // Background processes so far are e.g. unite services or 
           // extension background processes.
           // They all use the widget protocol.
-           __runtimes[rt_id].uri.indexOf("widget://") != 0)
-        {
-          // tag 1 is a resreved tag for callbacks to be ignored
-          services.exec.requestExec(1,
-              [[["reload", null, window.window_manager_data.get_debug_context()]]]);
-        }
-        else
-        {
-          services['ecmascript-debugger'].requestEval(0, [rt_id, 0, 0, 'location.reload()']);
-        }
+          ((rt_id && __runtimes[rt_id].uri.indexOf("widget://") != -1) ||
+           !(window.services.exec && window.services.exec.is_implemented)))
+      {
+        var msg = [rt_id, 0, 0, 'location.reload()'];
+        window.services['ecmascript-debugger'].requestEval(0, msg);
+      }
+      else if (window.services.exec && window.services.exec.is_implemented)
+      {
+        var msg = [[["reload",
+                     null,
+                     window.window_manager_data.get_debug_context()]]];
+        window.services.exec.requestExec(cls.TagManager.IGNORE_RESPONSE, msg);
       }
     }
-  }
+  };
 
   this.isReloadedWindow = function(window_id)
   {
@@ -1397,6 +1433,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   messages.addListener('window-updated', _on_window_updated);
   messages.addListener('debug-context-selected', _on_debug_context_selected);
   messages.addListener('console-script-submitted', _on_console_script_submitted);
+  messages.addListener('profile-disabled', _on_profile_disabled);
+  messages.addListener('profile-enabled', _on_profile_enabled);
 
   window.app.addListener('services-created', on_services_created);
 

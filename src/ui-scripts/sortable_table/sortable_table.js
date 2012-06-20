@@ -46,7 +46,7 @@ var SortableTablePrototype = function()
       var col = tabledef.columns[key];
       if (!col.getter)
       {
-        col.getter = this._prop_getter(key);
+        col.getter = window.helpers.prop(key);
       }
 
       if (!col.renderer)
@@ -304,11 +304,6 @@ var SortableTablePrototype = function()
                                     this.columns, this.groupby, this.sortby,
                                     this.reversed);
   };
-
-  this._prop_getter = function(name)
-  {
-    return function(obj) { return obj[name]; }
-  }
 
   this._prop_sorter = function(getter)
   {

@@ -137,6 +137,12 @@ cls.ScreenShotView = function(id, name, container_class)
     }
   };
 
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._screenshot = "";
+  };
+
   /* action handler interface */
 
   ActionHandlerInterface.apply(this);
@@ -185,6 +191,7 @@ cls.ScreenShotView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger", "exec"];
     this.init(id, name, container_class, "", "screenshot-tool");
     this._pixel_magnifier = new PixelMagnifier();
     this._pixel_magnifier.onload = function()
@@ -206,6 +213,7 @@ cls.ScreenShotView = function(id, name, container_class)
     evh.click["take-first-screenshot"] = this._handlers['take-first-screenshot'];
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     window.messages.addListener('setting-changed', this._on_setting_change.bind(this));
+    messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
   };
 
   this._on_setting_change = function(msg)
@@ -264,6 +272,11 @@ cls.ScreenShotView = function(id, name, container_class)
     {
       container.clearAndRender(this._first_start_tmpl());
     }
+  };
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
   };
 
   this.onresize = function(container)

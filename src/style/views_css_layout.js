@@ -67,6 +67,7 @@ cls.CSSLayoutView = function(id, name, container_class)
 
   this._init = function()
   {
+    this.requierd_services = ["ecmascript-debugger"];
     this.init(id, name, container_class);
     this._container = null;
     this._update_layout_bound = this.update_layout.bind(this);

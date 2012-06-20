@@ -53,6 +53,11 @@ cls.DOMView = function(id, name, container_class)
     }
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
+
   this._clear_soft_spotlight = function()
   {
     if (window.settings.dom.get('highlight-on-hover'))
@@ -129,6 +134,7 @@ cls.DOMView = function(id, name, container_class)
   messages.addListener('setting-changed', this._on_setting_change.bind(this));
   this._init = function(id, name, container_class)
   {
+    this.requierd_services = ["ecmascript-debugger"];
     this._highlighter = new VirtualTextSearch();
     this._highlight_style = this._highlighter.get_match_style('highlight');
     this.init(id, name, container_class, '', 'clear-search-hit');

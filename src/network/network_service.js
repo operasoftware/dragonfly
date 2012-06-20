@@ -213,21 +213,23 @@ cls.NetworkLoggerService = function(view)
       return;
 
     var entry = this._current_context.get_entry(itemid);
+    entry.is_fetching_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(null, this._on_get_resource_bound, [callback, entry.resource_id]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [callback, entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._on_get_resource_bound = function(status, data, callback, resourceid)
+  this._handle_get_resource = function(status, data, callback, entry)
   {
     if (!this._current_context)
       return;
 
+    entry.is_fetching_body = false;
     if (status)
     {
       // set body_unavailable for the resourceid, the object passed represents empty event_data
-      this._current_context.update("responsebody", {resourceID: resourceid});
+      this._current_context.update("responsebody", {resourceID: entry.resource_id});
       if (callback) { callback() }
     }
     else
@@ -236,7 +238,7 @@ cls.NetworkLoggerService = function(view)
       this._current_context.update("responsebody", msg);
       if (callback) { callback() }
     }
-  }.bind(this);
+  };
 
   this.get_request_context = function()
   {
@@ -407,40 +409,53 @@ cls.RequestContextPrototype = function()
 
   this.update = function(eventname, event)
   {
-    var logger_entry = this.get_entries_with_res_id(event.resourceID).last;
-    if (!logger_entry && eventname !== "urlload")
+    var logger_entries = this.get_entries_with_res_id(event.resourceID);
+    if (!logger_entries.length && eventname !== "urlload")
     {
       // ignoring. Never saw an urlload, or it's already invalidated
       return;
     }
 
-    if (logger_entry && logger_entry.requestID)
+    // For responsebody, all entries with that resourceID need to be updated. 
+    // Others are callbacks that belongs to the current (and last) entry of that resourceID.
+    if (eventname === "responsebody")
     {
-      /*
-        The same resource id can be loaded several times, but then the request id changes.
-        It's not loaded multiple times in parallel though, so the following check would
-        emit errors if that would happen. There is at least one NetworkLoggerEntry per
-        request ID, but several entries can refer to the same resource ID.
-        Note: Retry events change the request id, but the Entry stays the same.
-      */
-      var changed_request_id = this._event_changes_req_id(event, logger_entry);
-      if (changed_request_id)
+      for (var i = 0, logger_entry; logger_entry = logger_entries[i]; i++)
       {
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                        " Unexpected change in requestID on " + eventname +
-                        ": Change from " + logger_entry.requestID + " to " + 
-                        event.requestID + ", URL: " + logger_entry.human_url);
+        logger_entry.update(eventname, event);
       }
     }
-
-    if (eventname == "urlload" || changed_request_id)
+    else
     {
-      var id = this._get_uid();
-      logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
-      this._logger_entries.push(logger_entry);
+      var logger_entry = logger_entries.last;
+      if (logger_entry && logger_entry.requestID)
+      {
+        /*
+          The same resource id can be loaded several times, but then the request id changes.
+          It's not loaded multiple times in parallel though, so the following check would
+          emit errors if that would happen. There is at least one NetworkLoggerEntry per
+          resource ID, but several entries can refer to the same.
+          Note: Retry events change the request id, but the Entry stays the same.
+        */
+        var changed_request_id = this._event_changes_req_id(event, logger_entry);
+        if (changed_request_id)
+        {
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                          " Unexpected change in requestID on " + eventname +
+                          ": Change from " + logger_entry.requestID + " to " + 
+                          event.requestID + ", URL: " + logger_entry.human_url);
+        }
+      }
+
+      if (eventname == "urlload" || changed_request_id)
+      {
+        var id = this._get_uid();
+        logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
+        this._logger_entries.push(logger_entry);
+      }
+      logger_entry.requestID = event.requestID;
+      logger_entry.update(eventname, event);
     }
-    logger_entry.requestID = event.requestID;
-    logger_entry.update(eventname, event);
 
     if (window.views && !this.is_paused)
       window.views.network_logger.update();
@@ -502,6 +517,7 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
+  this.is_fetching_body = false;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -877,13 +893,18 @@ cls.NetworkLoggerEntryPrototype = function()
       };
       var gap_def = this.get_gap_def(gap);
       gap.val_string = gap.val.toFixed(2) + " ms";
-      gap.classname = gap_def && gap_def.classname || "irregular";
+      gap.classname = gap_def && gap_def.classname || CLASSNAME_IRREGULAR;
       gap.title = gap_def && gap_def.title || "";
 
       this.event_sequence.push(gap);
     }
     this.events.push(evt);
   };
+
+  this.__defineGetter__("has_responsebody", function()
+  {
+    return Boolean(this.responses.filter(helpers.prop("responsebody")).length);
+  });
 
   this.__defineGetter__("duration", function()
   {
@@ -897,15 +918,6 @@ cls.NetworkLoggerEntry.prototype = new cls.NetworkLoggerEntryPrototype();
 
 cls.NetworkLoggerResponse = function(entry)
 {
-  // The following are duplicated from the entry to have them available directly on the response
-  this.logger_entry_type = entry.type;
-  this.logger_entry_id = entry.id;
-  this.logger_entry_mime = entry.mime;
-  this.logger_entry_is_finished = entry.is_finished;
-};
-
-cls.NetworkLoggerResponsePrototype = function()
-{
   this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;
@@ -913,6 +925,16 @@ cls.NetworkLoggerResponsePrototype = function()
   this.firstline = null;
   this.responsebody = null;
 
+  // The following are duplicated from the entry to have them available directly on the response
+  this.logger_entry_type = entry.type;
+  this.logger_entry_id = entry.id;
+  this.logger_entry_mime = entry.mime;
+  this.logger_entry_is_finished = entry.is_finished;
+  this.logger_entry_touched_network = entry.touched_network;
+};
+
+cls.NetworkLoggerResponsePrototype = function()
+{
   this._update_event_response = function(event)
   {
     this.responsecode = event.responseCode;

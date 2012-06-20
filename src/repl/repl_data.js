@@ -5,6 +5,7 @@ cls.ReplData = function(view)
   var MAX_HISTORY = 100;
   this._repllog = [];
   this._typed_history = settings.command_line.get("typed-history") || [];
+  this._max_typed = settings.command_line.get('max-typed-history-length') || 0;
   this._view = view;
 
   this.clear = function()
@@ -141,4 +142,12 @@ cls.ReplData = function(view)
       settings.command_line.set("typed-history", this._typed_history);
     }
   };
+
+  this._on_profile_disabled_bound = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+      this._repllog = [];
+  }.bind(this);
+
+  messages.addListener("profile-disabled", this._on_profile_disabled_bound);
 };
