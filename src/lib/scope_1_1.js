@@ -11,6 +11,7 @@ cls.Scope["1.1"].name = 'scope';
 
 cls.Scope["1.1"].Service = function()
 {
+  var SUCCESS = 0;
   /**
     * The name of the service used in scope in ScopeTransferProtocol
     */
@@ -52,11 +53,7 @@ cls.Scope["1.1"].Service = function()
     var service = message[NAME];
     var service_name = "";
 
-    if (status)
-    {
-      opera.postError("enable service failed, message: " + service)
-    }
-    else
+    if (status === SUCCESS)
     {
       if (window.services && window.services[service])
       {
@@ -71,6 +68,8 @@ cls.Scope["1.1"].Service = function()
       if (!this._enable_requests.length)
         this._send_profile_enabled_msg();
     }
+    else
+      opera.postError("enable service failed, message: " + service);
   };
 
   this._send_profile_enabled_msg = function()
@@ -91,9 +90,7 @@ cls.Scope["1.1"].Service = function()
   {
     var NAME = 0;
     var service = message[NAME];
-    if (status)
-      opera.postError("disable service failed, message: " + service)
-    else
+    if (status === SUCCESS)
     {
       window.services[service].is_enabled = false;
       if (this._disable_requests.contains(service))
@@ -102,6 +99,8 @@ cls.Scope["1.1"].Service = function()
       if (!this._disable_requests.length)
         this._finalize_enable_profile();
     }
+    else
+      opera.postError("disable service failed, message: " + service)
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#info
@@ -176,6 +175,18 @@ cls.Scope["1.1"].Service = function()
         index: i
       }
     }
+
+    [
+      window.app.profiles.DEFAULT,
+      window.app.profiles.PROFILER,
+      window.app.profiles.HTTP_PROFILER,
+    ].forEach(function(profile)
+    {
+      this._profiles[profile] = window.app.profiles[profile].filter(function(service)
+      {
+        return this._service_descriptions.hasOwnProperty(service);
+      }, this);
+    }, this);
     this._onHostInfoCallback(this._service_descriptions, this._hello_message);
     this._hello_message.services = this._service_descriptions;    
   }
@@ -298,7 +309,6 @@ cls.Scope["1.1"].Service = function()
         this._enable_requests.push(service);
     }, this);
 
-
     if (old_profile)
     {
       var msg = {profile: old_profile,
@@ -311,7 +321,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._disable_requests.forEach(function(service)
       {
-        this.requestDisable(0, [service]);
+        this.requestDisable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else
@@ -324,7 +334,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._enable_requests.forEach(function(service)
       {
-        this.requestEnable(0, [service]);
+        this.requestEnable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else
@@ -342,7 +352,5 @@ cls.Scope["1.1"].Service = function()
   };
 
   this.reset = this._init;
-
   this._init();
-
 }

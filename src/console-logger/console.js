@@ -433,7 +433,7 @@ var ErrorConsoleViewPrototype = function()
 
   this.create_disabled_view = function(container)
   {
-    container.clearAndRender(window.templates.disabled_dom_view());
+    container.clearAndRender(window.templates.disabled_view());
   };
 
   this._create_delayed = function()

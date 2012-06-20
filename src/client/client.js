@@ -452,33 +452,41 @@ window.cls.Client = function()
     if (last_selected_view)
     {
       var esdi = window.services['ecmascript-debugger'];
-      this._esd_enabled_cb = this._on_ecmascript_enabled.bind(this, last_selected_view);
-      esdi.add_listener('enable-success', this._esd_enabled_cb);
+      this._on_profile_enabled_cb = this._profile_enabled.bind(this, last_selected_view);
+      window.messages.addListener("profile-enabled", this._on_profile_enabled_cb);
     }
   };
 
-  this._on_ecmascript_enabled = function(last_selected_view)
+  this._profile_enabled = function(last_selected_view, msg)
   {
-    var tag = tagManager.set_callback(null, function(status, message)
+    if (msg.profile == window.app.profiles.DEFAULT)
     {
-      const OBJECT_ID = 0;
-      if (!message[OBJECT_ID])
+      var tag = window.tag_manager.set_callback(this, function(status, message)
       {
-        // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
-        if (
-          views[last_selected_view] &&
-          views[last_selected_view].is_hidden &&
-          views[last_selected_view].fallback_view_id
-        )
-        {
-          last_selected_view = views[last_selected_view].fallback_view_id;
-        }
-        UI.get_instance().show_view(last_selected_view);
-      }
-    });
-    var esdi = window.services['ecmascript-debugger'];
-    esdi.requestGetSelectedObject(tag);
-    esdi.remove_listener('enable-success', this._esd_enabled_cb);
+        const OBJECT_ID = 0;
+        if (!message[OBJECT_ID])
+          this._show_last_selected_view(last_selected_view);
+      });
+      var esdi = window.services["ecmascript-debugger"];
+      esdi.requestGetSelectedObject(tag);
+    }
+    else
+      this._show_last_selected_view(last_selected_view);
+    
+    window.messages.removeListener("profile-enabled", this._on_profile_enabled_cb);
+
+  };
+
+  this._show_last_selected_view = function(last_selected_view)
+  {
+    // if last_selected_view is hidden and the tab has a fallback_view_id, use that.
+    if (window.views[last_selected_view] &&
+        window.views[last_selected_view].is_hidden &&
+        window.views[last_selected_view].fallback_view_id)
+    {
+      last_selected_view = window.views[last_selected_view].fallback_view_id;
+    }
+    UI.get_instance().show_view(last_selected_view);
   };
 
   window.app.addListener('services-created', this.on_services_created.bind(this));

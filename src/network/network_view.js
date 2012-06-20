@@ -176,7 +176,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
+      {
+        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+          this._service.get_body(entry.id, this.update_bound);
+
         template = [template, this._render_details_view(entry)];
+      }
     }
 
     var rendered = this._container.clearAndRender(template);
@@ -211,13 +216,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   }.bind(this);
 
   this._tabledef = {
-    column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
+    column_order: ["method", "responsecode", "mime", "protocol", "size_h", "waiting", "duration", "started", "graph"],
     handler: "select-network-request",
     nowrap: true,
     idgetter: function(res) { return String(res.id) },
     columns: {
       method: {
-        label: ui_strings.S_HTTP_LABEL_METHOD
+        label: ui_strings.S_HTTP_LABEL_METHOD,
+        getter: function(entry) { return entry.method || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
@@ -243,15 +249,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         headertooltip: ui_strings.S_HTTP_TOOLTIP_PROTOCOL,
         getter: function(entry) { return entry.urltype_name.toLowerCase(); }
       },
-      size: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
-        headertooltip: ui_strings.S_HTTP_TOOLTIP_SIZE,
-        align: "right",
-        getter: function(entry) { return entry.size },
-        renderer: function(entry) {
-          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
-        }
-      },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
@@ -262,6 +259,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE);
+        },
+        title_getter: function(entry) {
+          return entry.size ? String(entry.size) + " " + ui_strings.S_BYTES_UNIT
+                            : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
         }
       },
       waiting: {
@@ -446,13 +447,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       this._container_scroll_top = target.firstChild.scrollTop;
     }
-  }.bind(this)
-
-  this._on_clicked_get_body = function(evt, target)
-  {
-    var item_id = target.getAttribute("data-object-id");
-    this.needs_instant_update = true;
-    this._service.get_body(item_id, this.update_bound);
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
@@ -618,7 +612,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.mousedown["resize-request-detail"] = this._on_start_resize_detail_bound;
-  eh.click["get-response-body"] = this._on_clicked_get_body;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;

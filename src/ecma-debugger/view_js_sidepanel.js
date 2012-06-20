@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 cls.JSSidePanelView = function(id, name, view_list, default_unfolded_list)
 {
