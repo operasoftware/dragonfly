@@ -81,8 +81,15 @@ var ProfilerTemplates = function()
   script_type_string_map[SCRIPT_TYPE_EXTENSIONJS] = ui_strings.S_SCRIPT_TYPE_EXTENSIONJS;
   script_type_string_map[SCRIPT_TYPE_DEBUGGER] = ui_strings.S_SCRIPT_TYPE_DEBUGGER;
 
-  var BAR_MIN_WIDTH = 3; // min-width for .profiler-event
-  var BAR_HEIGHT = 18; // offset height of .profiler-timeline-row
+  var style_sheets = document.styleSheets;
+  var profiler_event_decl = style_sheets.getDeclaration(".profiler-event");
+  var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
+  var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
+  var BAR_HEIGHT = profiler_timeline_row_decl
+                 ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
+                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
+                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
+                 : 0;
 
   this._order = [
     EVENT_TYPE_DOCUMENT_PARSING,
@@ -97,24 +104,28 @@ var ProfilerTemplates = function()
   this._expandables = [EVENT_TYPE_STYLE_RECALCULATION];
   this._event_colors = {}; // Will be populated lazily
 
-  this.main = function(has_details_events, legend, timeline, details_list, status)
+  this.main = function(timeline_list, aggregated_list, table, details_time, event_id, width, zero_point)
   {
+    var has_details_events = table && table.get_data().length;
     return [
       ["div",
-         legend,
+         this.legend(aggregated_list),
        "class", "profiler-legend"
       ],
       ["div",
-         timeline,
+         this.event_list_all(timeline_list,
+                             event_id,
+                             width,
+                             zero_point),
        "class", "profiler-timeline",
        "handler", "profiler-zoom-timeline"
       ],
       ["div",
-         details_list,
+         this.details(table),
        "class", "profiler-details-list" + (has_details_events ? "" : " profiler-no-status")
       ],
       ["div",
-         status,
+         this.status(details_time),
        "class", "profiler-status" + (has_details_events ? "" : " profiler-no-status")
       ]
     ];
@@ -194,6 +205,13 @@ var ProfilerTemplates = function()
     return template;
   };
 
+  this._background_bar = function(order, index)
+  {
+    return ["div",
+            "class", "profiler-timeline-row" + (index % 2 ? " odd" : "")
+           ];
+  };
+
   this.event_list_all = function(events, selected_id, container_width, start, end)
   {
     var template = [];
@@ -205,47 +223,45 @@ var ProfilerTemplates = function()
       var duration = interval_end - interval_start;
       var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
-      // Background bars
-      this._order.forEach(function(row, idx) {
-        template.push(
-          ["div",
-           "class", "profiler-timeline-row" + (idx % 2 ? " odd" : "")
-          ]
-        );
-      });
+      // Add background bars
+      template.extend(this._order.map(this._background_bar));
 
       // Add time markers
       template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
 
-      event_list.forEach(function(event) {
-        var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
-        var self_time = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
-        var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
-        var column = this._order.indexOf(event.type);
-        var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
-        var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
-        template.push(
-          ["div",
-           "style",
-             "width: " + interval + "px;" +
-             "left: " + event_start + "px;" +
-             "top:" + ((column * BAR_HEIGHT) + 1) + "px;" +
-             "background-image: -o-linear-gradient(90deg,transparent 0, rgba(255,255,255,.25) 100%), " +
-                               "-o-linear-gradient(0," + color + " 0," +
-                                                  color + " " + self_time + "px," +
-                                                  "transparent " + self_time + "px);",
-           "class", "profiler-event profiler-event-interval event-type-" + event.type +
-                    (event.eventID == selected_id ? " selected" : "") +
-                    (is_expandable ? " expandable" : " non-expandable"),
-           "data-event-id", String(event.eventID),
-           "data-event-type", String(event.type),
-           "handler", "profiler-event",
-           "data-tooltip", "profiler-event"
-          ]
-        );
-      }, this);
+      // Add actual events
+      template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit, selected_id)));
     }
     return template;
+  };
+
+  this._timeline_event = function(interval_start, ms_unit, selected_id, event)
+  {
+    var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
+    var self_time = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
+    var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
+    var column = this._order.indexOf(event.type);
+    var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
+    var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
+    return (
+      ["div",
+       "style",
+         "width: " + interval + "px;" +
+         "left: " + event_start + "px;" +
+         "top:" + ((column * BAR_HEIGHT) + 1) + "px;" +
+         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255,255,255,.25) 100%), " +
+                           "-o-linear-gradient(0, " + color + " 0, " +
+                                              color + " " + self_time + "px, " +
+                                              "transparent " + self_time + "px);",
+       "class", "profiler-event profiler-event-interval event-type-" + event.type +
+                (event.eventID == selected_id ? " selected" : "") +
+                (is_expandable ? " expandable" : " non-expandable"),
+       "data-event-id", String(event.eventID),
+       "data-event-type", String(event.type),
+       "handler", "profiler-event",
+       "data-tooltip", "profiler-event"
+      ]
+    );
   };
 
   this.empty = function(text)
@@ -454,9 +470,9 @@ var ProfilerTemplates = function()
       ["div",
        "style",
          "width: " + WIDTH + "px; " +
-         "background-image: -o-linear-gradient(90deg,transparent 0, rgba(255,255,255,.25) 100%), " +
-                           "-o-linear-gradient(0," + color + " 0," +
-                                              color + " " + self_time + "px," +
+         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255,255,255,.25) 100%), " +
+                           "-o-linear-gradient(0, " + color + " 0, " +
+                                              color + " " + self_time + "px, " +
                                               "transparent " + self_time + "px);",
        "class", "profiler-event profiler-event-interval event-type-" + event.type
       ]
@@ -482,33 +498,8 @@ var ProfilerTemplates = function()
 
   this._get_color_for_type = function(type)
   {
-    return document.styleSheets.getDeclaration(".event-type-" + type + "-selftime").backgroundColor;
-  };
-
-  this._tabledefs = {};
-  this._tabledefs[EVENT_TYPE_CSS_SELECTOR_MATCHING] = {
-    column_order: ["selector", "time", "hits"],
-    columns: {
-      "selector": {
-        label: ui_strings.S_PROFILER_TYPE_SELECTOR,
-      },
-      "time": {
-        label: ui_strings.S_TABLE_HEADER_TIME,
-        align: "right",
-        renderer: (function(event) {
-          return this.format_time(event.time);
-        }).bind(this),
-        classname: "profiler-details-time"
-      },
-      "hits": {
-        label: ui_strings.S_TABLE_HEADER_HITS,
-        align: "right",
-        renderer: function(event) {
-          return String(event.hits);
-        },
-        classname: "profiler-details-hits"
-      }
-    }
+    var decl = document.styleSheets.getDeclaration(".event-type-" + type + "-selftime");
+    return decl ? decl.backgroundColor : "#000";
   };
 };
 

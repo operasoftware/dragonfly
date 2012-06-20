@@ -336,7 +336,7 @@ window.cls.Client = function()
                       ui_strings.M_VIEW_LABEL_COMMAND_LINE,
                       layouts.console_rough_layout);
     new CompositeView('profiler_mode',
-                      'Profiler',
+                      ui_strings.M_VIEW_LABEL_PROFILER,
                       layouts.profiler_rough_layout,
                       null,
                       services);

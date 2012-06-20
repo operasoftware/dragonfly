@@ -1514,6 +1514,9 @@ ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. A
 /* DESC: Button label to enable the default debugger features. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
+/* DESC: View for DOM debugging. */
+ui_strings.M_VIEW_LABEL_PROFILER = "Profiler";
+
 /* DESC: Button title for starting the profiler */
 ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
 
@@ -1542,7 +1545,7 @@ ui_strings.S_PROFILER_NO_DETAILS = "No details";
 ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profiling";
 
 /* DESC: Message before activating the profiler profile */
-ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, the document has to be reloaded.";
+ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
 
 /* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";

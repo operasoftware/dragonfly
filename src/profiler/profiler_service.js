@@ -16,11 +16,7 @@ var ProfilerService = function()
     var config = config || {};
     var start_mode = config.start_mode || ProfilerService.StartMode.IMMEDIATE;
     var window_id = config.window_id || this._window_id;
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      this._is_active = true;
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, true]);
     var msg = [start_mode, window_id];
     this._profiler.requestStartProfiler(tag, msg);
   };
@@ -28,11 +24,7 @@ var ProfilerService = function()
   this.stop_profiler = function(callback, config)
   {
     var config = config || {};
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      this._is_active = false;
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, false]);
     var msg = [config.session_id];
     this._profiler.requestStopProfiler(tag, msg);
   };
@@ -40,10 +32,7 @@ var ProfilerService = function()
   this.get_events = function(callback, config)
   {
     var config = config || {};
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
       config.session_id,
       config.timeline_id,
@@ -59,10 +48,7 @@ var ProfilerService = function()
   this.release_session = function(callback, config)
   {
     var config = config || {};
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [config.session_id];
     this._profiler.requestReleaseSession(tag, msg);
   };
@@ -77,15 +63,22 @@ var ProfilerService = function()
     this._window_id = msg.window_id;
   };
 
+  this._callback_handler = function(status, msg, callback, is_active)
+  {
+    if (is_active != null)
+      this._is_active = is_active;
+
+    if (callback)
+      callback(status, msg);
+  };
+
   this._init = function()
   {
     this._profiler = window.services["profiler"];
     this._tag_manager = window.tag_manager;
     this._is_active = false;
     this._window_id = 0;
-
-    this._on_debug_context_selected_bound = this._on_debug_context_selected.bind(this);
-    window.messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
+    window.messages.addListener("debug-context-selected", this._on_debug_context_selected.bind(this));
   };
 
   this._init();

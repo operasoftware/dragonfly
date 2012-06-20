@@ -7,7 +7,7 @@ window.app.builders.Profiler["1.0"] = function(service)
   var namespace = cls.Profiler && cls.Profiler["1.0"];
 
   new ProfilerView('profiler_all',
-                   'Profiler',
+                   ui_strings.M_VIEW_LABEL_PROFILER,
                    'scroll',
                    '',
                    '');

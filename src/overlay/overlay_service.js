@@ -54,10 +54,7 @@ var OverlayServicePrototype = function()
       config.border_color || this._default_config.border_color,
       config.grid_color || this._default_config.grid_color
     ];
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [window_id, overlay_type, insertion, area_overlay];
     this._overlay.requestCreateOverlay(tag, msg);
   };
@@ -73,10 +70,7 @@ var OverlayServicePrototype = function()
     var config = config || {};
     var window_id = config.window_id || this._window_id;
     var overlay_id = config.overlay_id || null;
-    var tag = this._tag_manager.set_callback(this, function(status, msg) {
-      if (callback)
-        callback(status, msg);
-    });
+    var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [window_id, overlay_id];
     this._overlay.requestRemoveOverlay(tag, msg);
   };
@@ -89,6 +83,12 @@ var OverlayServicePrototype = function()
   this.set_window_id = function(window_id)
   {
     this._window_id = window_id;
+  };
+
+  this._callback_handler = function(callback)
+  {
+    if (callback)
+      callback(status, msg);
   };
 };
 

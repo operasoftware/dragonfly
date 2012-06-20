@@ -72,7 +72,7 @@
 {
   height: 16px;
   line-height: 16px;
-  padding: 1px 3px; /* Line up up with toolbar buttons */
+  padding: 1px 5px; /* Line up up with the table below */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
