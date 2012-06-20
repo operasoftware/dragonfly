@@ -1626,7 +1626,7 @@ ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
 /* DESC: Thread type for events in the profiler */
 ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
 
-/* DESC: Thread type for events in the profiler */
+/* DESC: Thread type for events in the profiler. This should not be translated. */
 ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
 
 /* DESC: Thread type for events in the profiler */

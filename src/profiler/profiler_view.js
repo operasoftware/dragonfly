@@ -160,7 +160,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     {
       // `timeline_id` is one of the IDs in `_timeline_modes`
       this[timeline_id] = new cls.Profiler["1.0"].EventList(msg);
-      if (this._timeline_list && this._aggregated_list && this._reduced_list)
+      var got_all_responses = this._timeline_modes.every(function(timeline_mode) {
+        return this[timeline_mode.id];
+      }, this);
+      if (got_all_responses)
         this._update_view();
     }
     else
