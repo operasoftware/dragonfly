@@ -41,11 +41,11 @@ var ProfilerService = function()
     var msg = [
       config.session_id,
       config.timeline_id,
-      config.mode != null ? config.mode : null,
-      config.event_id != null ? config.event_id : null,
-      config.max_depth != null ? congif.max_depth : null,
-      config.event_type_list != null ? config.event_type_list : null,
-      config.interval != null ? config.interval : null
+      typeof config.mode == "number" ? config.mode : null,
+      typeof config.event_id == "number" ? config.event_id : null,
+      typeof config.max_depth == "number" ? congif.max_depth : null,
+      config.event_type_list || null,
+      config.interval || null
     ];
     this._profiler.requestGetEvents(tag, msg);
   };
@@ -55,7 +55,7 @@ var ProfilerService = function()
     var config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
-      config.session_id != null ? config.session_id : null
+      typeof config.session_id == "number" ? config.session_id : null
     ];
     this._profiler.requestReleaseSession(tag, msg);
   };

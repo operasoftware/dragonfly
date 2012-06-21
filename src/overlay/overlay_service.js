@@ -78,7 +78,7 @@ var OverlayServicePrototype = function()
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
       window_id,
-      overlay_id != null ? overlay_id : null
+      typeof overlay_id == "number" ? overlay_id : null
     ];
     this._overlay.requestRemoveOverlay(tag, msg);
   };
