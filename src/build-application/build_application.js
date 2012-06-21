@@ -74,8 +74,9 @@ window.app.profiles[window.app.profiles.DEFAULT] = ["window-manager",
                                                     "document-manager"];
 window.app.profiles[window.app.profiles.DEFAULT].is_enabled = false;
 window.app.profiles[window.app.profiles.PROFILER] = ["window-manager",
+                                                     "exec",
                                                      "profiler",
-                                                     "exec"];
+                                                     "overlay"];
 window.app.profiles[window.app.profiles.PROFILER].is_enabled = false;
 window.app.profiles[window.app.profiles.HTTP_PROFILER] = ["window-manager",
                                                           "resource-manager",
@@ -233,7 +234,9 @@ window.app.build_application = function(on_services_created, on_services_enabled
     'ecmascript-debugger',
     'cookie-manager',
     'resource-manager',
-    'document-manager'
+    'document-manager',
+    'profiler',
+    'overlay'
   ].forEach(create_raw_interface);
   var params = this.helpers.parse_url_arguments();
   if(params.debug)
