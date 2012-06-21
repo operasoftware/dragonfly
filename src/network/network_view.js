@@ -556,7 +556,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           var current_profile = settings.general.get("profile-mode");
           if (current_profile !== set_profile)
             window.services.scope.enable_profile(set_profile);
-
         }
 
         if (message.key !== "detail-view-left-pos")
@@ -641,7 +640,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (set_active)
     {
       new ConfirmDialog(ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER,
-                          this._toggle_profile_mode.bind(this, event.target)).show();
+                        this._toggle_profile_mode.bind(this, event.target)).show();
     }
     else
     {

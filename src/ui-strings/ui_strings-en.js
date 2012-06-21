@@ -1504,10 +1504,10 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
 /* DESC: Dialog to confirm switching to network-profiler mode. */
-ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "Switching to Network-Profiler mode means that other Dragonfly features are turned off. You may loose changes you made.";
+ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "Switching to Network profiler mode means that other Dragonfly features are turned off. You may loose changes you made.";
 
 /* DESC: Button to switch to network-profiler mode. */
-ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Switch to Network-Profiler mode";
+ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Switch to Network profiler mode";
 
 /* DESC: Unit string for bytes */
 ui_strings.S_BYTES_UNIT = "bytes";
