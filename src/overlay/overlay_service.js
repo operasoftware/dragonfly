@@ -50,12 +50,17 @@ var OverlayServicePrototype = function()
     ];
     var area_overlay = [
       [config.x, config.y, config.w, config.h],
-      config.color || this._default_config.color,
-      config.border_color || this._default_config.border_color,
-      config.grid_color || this._default_config.grid_color
+      config.color || this._default_config.color || null,
+      config.border_color || this._default_config.border_color || null,
+      config.grid_color || this._default_config.grid_color || null
     ];
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
-    var msg = [window_id, overlay_type, insertion, area_overlay];
+    var msg = [
+      window_id,
+      overlay_type,
+      insertion,
+      area_overlay || null
+    ];
     this._overlay.requestCreateOverlay(tag, msg);
   };
 
@@ -71,7 +76,10 @@ var OverlayServicePrototype = function()
     var window_id = config.window_id || this._window_id;
     var overlay_id = config.overlay_id || null;
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
-    var msg = [window_id, overlay_id];
+    var msg = [
+      window_id,
+      overlay_id != null ? overlay_id : null
+    ];
     this._overlay.requestRemoveOverlay(tag, msg);
   };
 
@@ -85,7 +93,7 @@ var OverlayServicePrototype = function()
     this._window_id = window_id;
   };
 
-  this._callback_handler = function(callback)
+  this._callback_handler = function(status, msg, callback)
   {
     if (callback)
       callback(status, msg);

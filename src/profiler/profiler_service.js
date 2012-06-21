@@ -17,7 +17,10 @@ var ProfilerService = function()
     var start_mode = config.start_mode || ProfilerService.StartMode.IMMEDIATE;
     var window_id = config.window_id || this._window_id;
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, true]);
-    var msg = [start_mode, window_id];
+    var msg = [
+      start_mode,
+      window_id
+    ];
     this._profiler.requestStartProfiler(tag, msg);
   };
 
@@ -25,7 +28,9 @@ var ProfilerService = function()
   {
     var config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, false]);
-    var msg = [config.session_id];
+    var msg = [
+      config.session_id
+    ];
     this._profiler.requestStopProfiler(tag, msg);
   };
 
@@ -36,11 +41,11 @@ var ProfilerService = function()
     var msg = [
       config.session_id,
       config.timeline_id,
-      config.mode,
-      config.event_id,
-      config.max_depth,
-      config.event_type_list,
-      config.interval
+      config.mode != null ? config.mode : null,
+      config.event_id != null ? config.event_id : null,
+      config.max_depth != null ? congif.max_depth : null,
+      config.event_type_list != null ? config.event_type_list : null,
+      config.interval != null ? config.interval : null
     ];
     this._profiler.requestGetEvents(tag, msg);
   };
@@ -49,7 +54,9 @@ var ProfilerService = function()
   {
     var config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
-    var msg = [config.session_id];
+    var msg = [
+      config.session_id != null ? config.session_id : null
+    ];
     this._profiler.requestReleaseSession(tag, msg);
   };
 
