@@ -72,8 +72,11 @@
  *     <dt>element-selected</dt>
  *     <dd>An element was selected. Payload: msg.model, msg.obj_id, msg.rt_id, msg.pseudo_element</dd>
  *
+ *     <dt>settings-initialized</dt>
+ *     <dd>Setting has been initialized for a view. Payload: msg.view_id, msg.settings</dd>
+ *
  *     <dt>setting-changed</dt>
- *     <dd>A setting has changed. Payload: msg.id, msg.key</dd>
+ *     <dd>A setting has changed. Payload: msg.id, msg.key, msg.value</dd>
  *
  *     <dt>list-search-context</dt>
  *     <dd>Payload: msg.data_id, msg.obj_id, msg.depth</dd>
@@ -131,6 +134,9 @@
  *     <dt>panel-search-executed</dt>
  *     <dd>A new search in a search panel has been executed and the according result is displayed in the panel.</dd>
  *
+ *     <dt>window-controls-created</dt>
+ *     <dd>The window controls have been created. Payload: msg.window_controls.</dd>
+ *
  *     <dt>profile-enabled</dt>
  *     <dd>A profile has been enabled. Payload: msg.profile, msg.services.</dd>
  *
@@ -161,7 +167,9 @@ var messages = new function()
     {
       __listeners[key] = [cb];
     }
-  }
+  };
+
+  this.add_listener = this.addListener;
 
   /**
    * Remove a listener for a specific message.

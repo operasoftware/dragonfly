@@ -123,14 +123,14 @@
       var container = div.getElementsByTagName('panel-container')[0];
       if (container && container.parentNode)
         container.parentNode.removeChild(container);
-      
+
       view.removeContainerId('panel-container-' + obj.id);
       if (toolbars[view.id])
       {
         var toolbar = div.getElementsByTagName('panel-toolbar')[0];
         if (toolbar)
           toolbar.parentNode.removeChild(toolbar);
-        
+
         toolbars[view.id].removeContainerId('panel-toolbar-' + obj.id);
       }
       messages.post("hide-view", {id: view.id});

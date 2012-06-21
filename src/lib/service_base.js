@@ -19,8 +19,8 @@ window.cls.ServiceBase = function ()
 
   window.cls.MessageMixin.apply(this); // mix in message handler behaviour.
 
-  this.on_enable_success = function(){};
-  this.on_window_filter_change = function(filter){};
+  this.on_enable_success = function() {};
+  this.on_window_filter_change = function(filter) {};
   this.on_quit = function() {};
   this.is_implemented = false;
   this.is_enabled = false;

@@ -167,25 +167,24 @@ var URIPrototype = function(uri_prop_name)
   {
     if (this._short_distinguisher === undefined && (this._is_parsed || this[uri_prop_name]))
     {
-      // When pathname ends with "/", and there is search or hash,
-      // the short_distinguisher is just search + hash
       var search_and_hash = this.search + this.hash;
-      if (search_and_hash &&
-          this.pathname.lastIndexOf("/") === this.pathname.length - 1)
-      {
-        this._short_distinguisher = search_and_hash;
-      }
-      else if (this.path_parts.length)
+      var slash = search_and_hash &&
+                  this.pathname.lastIndexOf("/") === this.pathname.length - 1
+                ? "/"
+                : "";
+      if (this.path_parts.length)
       {
         var parts = this.path_parts;
-        this._short_distinguisher = parts[parts.length - 1] + search_and_hash;
+        this._short_distinguisher = parts[parts.length - 1] + slash + search_and_hash;
       }
       else if (this._is_data_uri)
       {
         this._short_distinguisher = this._protocol + this._pathname + this._hash;
       }
       else
-        this._short_distinguisher = this.host;
+      {
+        this._short_distinguisher = this.host + slash + search_and_hash;
+      }
     }
     return this._short_distinguisher;
   });

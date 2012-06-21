@@ -101,7 +101,7 @@ templates.network_incomplete_warning = function()
   return ["div",
            ["div",
              ["span",
-               "class", "ui-button",
+               "class", "ui-button reload-window",
                "handler", "reload-window",
                "tabindex", "1"
              ]

@@ -175,6 +175,18 @@ cls.Scope["1.1"].Service = function()
         index: i
       }
     }
+
+    [
+      window.app.profiles.DEFAULT,
+      window.app.profiles.PROFILER,
+      window.app.profiles.HTTP_PROFILER,
+    ].forEach(function(profile)
+    {
+      this._profiles[profile] = window.app.profiles[profile].filter(function(service)
+      {
+        return this._service_descriptions.hasOwnProperty(service);
+      }, this);
+    }, this);
     this._onHostInfoCallback(this._service_descriptions, this._hello_message);
     this._hello_message.services = this._service_descriptions;    
   }
@@ -297,7 +309,6 @@ cls.Scope["1.1"].Service = function()
         this._enable_requests.push(service);
     }, this);
 
-
     if (old_profile)
     {
       var msg = {profile: old_profile,
@@ -310,7 +321,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._disable_requests.forEach(function(service)
       {
-        this.requestDisable(0, [service]);
+        this.requestDisable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else
@@ -323,7 +334,7 @@ cls.Scope["1.1"].Service = function()
     {
       this._enable_requests.forEach(function(service)
       {
-        this.requestEnable(0, [service]);
+        this.requestEnable(cls.TagManager.DEFAULT_HANDLER, [service]);
       }, this);
     }
     else
@@ -341,7 +352,5 @@ cls.Scope["1.1"].Service = function()
   };
 
   this.reset = this._init;
-
   this._init();
-
 }

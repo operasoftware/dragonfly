@@ -781,7 +781,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only XMLHttpRequests";
 ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip on mime type table header */
-ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
+ui_strings.S_HTTP_TOOLTIP_MIME = "MIME type";
 
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
@@ -970,7 +970,8 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
 /* DESC: Button label to enable the default debugger features. */
-ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features"
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
+
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font face";
 
@@ -1236,7 +1237,7 @@ ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
 
 /* DESC: Name of mime column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "MIME";
 
 /* DESC: Name of path column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
@@ -1507,3 +1508,189 @@ ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "Switching to Network-Profiler
 
 /* DESC: Button to switch to network-profiler mode. */
 ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Switch to Network-Profiler mode";
+
+/* DESC: Unit string for bytes */
+ui_strings.S_BYTES_UNIT = "bytes";
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
+
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
+
+/* DESC: Button label to enable the default debugger features. */
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
+
+/* DESC: Enable reformatting of JavaScript. */
+ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
+
+/* DESC: Enable smart reformatting of JavaScript. */
+ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
+
+/* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
+ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
+
+/* DESC: View for DOM debugging. */
+ui_strings.M_VIEW_LABEL_PROFILER = "Profiler";
+
+/* DESC: Button title for starting the profiler */
+ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_BUTTON_STOP_PROFILER = "Stop profiling";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
+
+/* DESC: Message in the profiler when the profiler is active */
+ui_strings.S_PROFILER_PROFILING = "Profiling…";
+
+/* DESC: Message in the profiler when the profiler failed */
+ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
+
+/* DESC: Message in the profiler when the profiler is calculating */
+ui_strings.S_PROFILER_CALCULATING = "Calculating…";
+
+/* DESC: Message in the profiler when no data was "captured" by the profiler */
+ui_strings.S_PROFILER_NO_DATA = "No data";
+
+/* DESC: Message when an event in the profiler has no details */
+ui_strings.S_PROFILER_NO_DETAILS = "No details";
+
+/* DESC: Message before starting the profiler */
+ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profiling";
+
+/* DESC: Message before activating the profiler profile */
+ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_AREA_LOCATION = "Location";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_START_TIME = "Start";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_DURATION = "Duration";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_SELF_TIME = "Self time";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
+
+/* DESC: Table header in the profiler */
+ui_strings.S_TABLE_HEADER_TIME = "Time";
+
+/* DESC: Table header in the profiler */
+ui_strings.S_TABLE_HEADER_HITS = "Hits";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_PROCESS = "Process";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_PAINT = "Paint";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_UNKNOWN = "Unknown";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_COMMON = "Common";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_EVENT = "Event";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_INLINE_SCRIPT = "Inline script";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
+
+/* DESC: Thread type for events in the profiler. This should not be translated. */
+ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL = "Debugger";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_UNKNOWN = "Unknown";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_LINKED = "External";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_INLINE = "Inline";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_GENERATED = "document.write()";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_URI = "javascript: URL";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER = "Event";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_USERJS = "UserJS";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_BROWSERJS = "BrowserJS";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";

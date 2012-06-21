@@ -391,7 +391,7 @@ var ErrorConsoleViewPrototype = function()
   this._render_timeout = 0;
   this._rendertime = 0;
   this.needs_instant_update = false;
-  this.requierd_services = ["console-logger"];
+  this.required_services = ["console-logger"];
 
   this.createView = function(container)
   {
@@ -433,7 +433,7 @@ var ErrorConsoleViewPrototype = function()
 
   this.create_disabled_view = function(container)
   {
-    container.clearAndRender(window.templates.disabled_dom_view());
+    container.clearAndRender(window.templates.disabled_view());
   };
 
   this._create_delayed = function()

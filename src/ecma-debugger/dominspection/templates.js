@@ -858,7 +858,7 @@
     return ret;
   }
 
-  this.disabled_dom_view = function()
+  this.disabled_view = function()
   {
     return (
     ["div",
