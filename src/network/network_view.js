@@ -551,10 +551,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         }
         else if (message.key === "network-profiler-mode")
         {
-          if (settings.network_logger.get(message.key))
-            window.services.scope.enable_profile(window.app.profiles.HTTP_PROFILER);
-          else
-            window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+          var set_profile = settings.network_logger.get(message.key) ?
+                            window.app.profiles.HTTP_PROFILER : window.app.profiles.DEFAULT;
+          var current_profile = settings.general.get("profile-mode");
+          if (current_profile !== set_profile)
+            window.services.scope.enable_profile(set_profile);
+
         }
 
         if (message.key !== "detail-view-left-pos")
@@ -563,6 +565,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           this.update();
         }
         break;
+      }
+      case "general":
+      {
+        if (message.key === "profile-mode")
+        {
+          var set_network_profiler = settings.general.get(message.key) === window.app.profiles.HTTP_PROFILER;
+          var is_profiler_mode = settings.network_logger.get("network-profiler-mode");
+          if (is_profiler_mode !== set_network_profiler)
+            settings.network_logger.set("network-profiler-mode", set_network_profiler);
+
+        }
       }
     }
   }.bind(this);
