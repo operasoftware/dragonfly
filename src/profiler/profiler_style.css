@@ -95,6 +95,7 @@
   box-sizing: border-box;
   padding-right: 10px;
   font-weight: bold;
+  color: #333;
 }
 
 .profiler-legend-amount
