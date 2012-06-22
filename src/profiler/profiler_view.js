@@ -388,7 +388,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (!this._has_overlay_service)
       return;
-    this._overlay.remove_overlay();
+    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var timeline_event = this._timeline_list.get_event_by_id(id);
+    if (timeline_event)
+    {
+      if (timeline_event.type === TYPE_PAINT)
+        this._overlay.remove_overlay();
+    }
   };
 
   this._init = function(id, name, container_class, html, default_handler)

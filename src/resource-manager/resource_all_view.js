@@ -33,6 +33,11 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     this._render_main_view(container);
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
+
   this.show_resource_for_id = function(rid, data)
   {
     var res = this._service.get_resource_for_id(rid);

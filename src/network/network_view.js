@@ -72,7 +72,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var now = Date.now();
     this._last_render_speed = now - started_rendering;
     this._rendertime = now;
-  }
+  };
+  
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
 
   this._create_delayed_bound = function()
   {
