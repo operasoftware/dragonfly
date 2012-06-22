@@ -266,38 +266,44 @@ cls.ResourceRequest = function(url, callback,data)
   {
     if (this._resource_manager.requestGetResourceID)
     {
-      var tag = window.tagManager.set_callback(this, this._on_request_resource_id_bound);
+      var tag = window.tagManager.set_callback(this, this._on_request_resource_id);
       this._resource_manager.requestGetResourceID(tag, [this._url]);
     }
     else
       this._fallback();
   }
 
-  this._on_request_resource_id_bound = function(status, message)
+  this._on_request_resource_id = function(status, message)
   {
     if (status && this._resource_manager.requestCreateRequest)
     {
       var debugContext = window.window_manager_data.get_debug_context();
-      var tag = this._tag_manager.set_callback(this, this._on_request_create_request_bound);
+      var tag = this._tag_manager.set_callback(this, this._on_request_create_request);
       this._resource_manager.requestCreateRequest(tag, [debugContext, this._url, 'GET']);
     }
     else if(!status && this._resource_manager.requestGetResource)
     {
       const RESOURCE_ID = 0;
       this._resource_id = message[RESOURCE_ID];
-      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource_bound);
+      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
       this._resource_manager.requestGetResource(tag, [this._resource_id, [TRANSPORT_OFF]]);
     }
     else
       this._fallback();
-
-  }.bind(this);
-
-  this._on_request_create_request_bound = function(status, message)
-  {
   }
 
-  this._on_request_get_resource_bound = function(status, message)
+  this._on_request_create_request = function(status, message)
+  {
+    if(!status && this._resource_manager.requestGetResource)
+    {
+      const RESOURCE_ID = 0;
+      this._resource_id = message[RESOURCE_ID];
+      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
+      this._resource_manager.requestGetResource(tag, [this._resource_id, [TRANSPORT_OFF]]);
+    }
+  }
+
+  this._on_request_get_resource = function(status, message)
   {
     if (!status)
     {
@@ -305,9 +311,7 @@ cls.ResourceRequest = function(url, callback,data)
       this._resource.update("urlfinished", new this._ResourceData(message));
       this._resource.fetch_data(this._on_fetch_data_bound);
     }
-
-
-  }.bind(this);
+  }
 
   this._on_fetch_data_bound = function()
   {
@@ -373,6 +377,9 @@ cls.ResourceContext = function(data)
         }
         else
         {
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+            "Unknown frameID for the resource "+ res.id);
+          console.log([event,res].map(JSON.stringify).join('\n\n'));
           res.invalid = true;
         }
       }
@@ -380,10 +387,11 @@ cls.ResourceContext = function(data)
       if (res.invalid)
       {
         delete this.resourcesDict[ res.id ];
-        return;
       }
-
-      return res;
+      else
+      {
+        return res;
+      }
     }
 
   }
