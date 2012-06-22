@@ -184,7 +184,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (!this._container)
       return;
     var template = [];
-    if (this._timeline_list && this._timeline_list.eventList)
+    if (this._profiler.is_active)
+    {
+      template.extend(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
+    }
+    else if (this._timeline_list && this._timeline_list.eventList)
     {
       template.extend(this._timeline_list.eventList[0]
         ? this._templates.main(this._timeline_list,
