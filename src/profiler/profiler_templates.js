@@ -410,6 +410,17 @@ var ProfilerTemplates = function()
       var url = event.scriptCompilation.url;
       var script_type = event.scriptCompilation.scriptType;
 
+      if (script_type)
+      {
+        title.push(["li",
+                      ["span",
+                         ui_strings.S_PROFILER_TYPE_SCRIPT + ": ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      script_type_string_map[script_type]
+                   ]);
+      }
+
       if (url)
       {
         title.push(["li",
@@ -420,17 +431,6 @@ var ProfilerTemplates = function()
                       url,
                     "data-tooltip", "profiler-tooltip-url",
                     "data-tooltip-text", url
-                   ]);
-      }
-
-      if (script_type)
-      {
-        title.push(["li",
-                      ["span",
-                         ui_strings.S_PROFILER_TYPE_SCRIPT + ": ",
-                       "class", "profiler-event-tooltip-label"
-                      ],
-                      script_type_string_map[script_type]
                    ]);
       }
 
