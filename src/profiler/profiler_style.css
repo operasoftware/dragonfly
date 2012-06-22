@@ -3,14 +3,14 @@
   position: absolute;
   left: 0;
   top: 20px;
-  width: 150px;
+  width: 160px;
   border-top: 1px solid #e6e6e6;
 }
 
 .profiler-timeline
 {
   position: absolute;
-  left: 150px;
+  left: 160px;
   right: 0;
   top: 20px;
   border-top: 1px solid #e6e6e6;
