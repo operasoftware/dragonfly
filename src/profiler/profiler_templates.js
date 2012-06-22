@@ -144,23 +144,24 @@ var ProfilerTemplates = function()
         var index = this._order.indexOf(event.type);
         if (index !== -1)
         {
-          var percentage = 100 - Math.round(event.time / total_time * 100);
+          var percentage = event.time / total_time * 100;
           template[index] =
             ["div",
                ["span",
-                  event_type_string_map[event.type] + " ",
+                  event_type_string_map[event.type],
                 "class", "profiler-legend-label"
                ],
                ["span",
                   this.format_time(event.time, 0),
                 "class", "profiler-legend-amount"
                ],
+               ["div",
+                "class", "profiler-legend-amount-bar",
+                "style", "width:" + percentage + "%"
+               ],
              "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
              "data-event-type", String(event.type),
-             "handler", "profiler-event",
-             "style", "background-image: -o-linear-gradient(0deg," +
-                                                           "transparent " + percentage + "%," +
-                                                           "rgba(118, 159, 225, 0.90) 100%);"
+             "handler", "profiler-event"
             ];
         }
       }, this);

@@ -94,6 +94,7 @@
 {
   box-sizing: border-box;
   padding-right: 10px;
+  font-weight: bold;
 }
 
 .profiler-legend-amount
@@ -102,6 +103,15 @@
   right: 2px;
   color: #666;
   text-shadow: 1px 1px #fff;
+}
+
+.profiler-legend-amount-bar
+{
+  background: #769FE1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 1px;
 }
 
 .profiler-timeline-row:hover .profiler-legend-label
