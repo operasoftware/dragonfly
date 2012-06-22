@@ -282,9 +282,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._table = new SortableTable(table_def,
                                     null,
                                     table_def.column_order,
+                                    "time",
                                     null,
-                                    null,
-                                    null,
+                                    true,
                                     "profiler");
     var parsed_msg = new cls.Profiler["1.0"].EventList(msg);
     var data = parsed_msg && parsed_msg.eventList;
