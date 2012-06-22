@@ -308,7 +308,7 @@ templates.resource_detail =
 				['style',styleRule],
 				'style','font-family:resource-'+resource.id
 			],
-			'data','data:text/html;base64,'+btoa('<!doctype html><style>'+ styleRule +'</style><div contenteditable="true" style="font-size:3em;margin:0;font-family:resource-'+resource.id+';">The quick brown fox jumps over the lazy dog 0123456789'),
+			'data','data:text/html;base64,'+btoa('<!doctype html><style>'+ styleRule +'</style><div contenteditable="true" style="font-size:64px;margin:0;font-family:resource-'+resource.id+';">The quick brown fox jumps over the lazy dog 0123456789'),
 			'class','resource-detail-font'
 		]);
 	},
