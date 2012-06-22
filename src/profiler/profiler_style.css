@@ -84,24 +84,28 @@
   background-color: #f7f7f7;
 }
 
-.profiler-legend-row
-{
-  background-position: 0 15px;
-  background-repeat: no-repeat;
-}
-
 .profiler-legend-label
 {
   box-sizing: border-box;
   padding-right: 10px;
+  font-weight: bold;
+  color: #333;
 }
 
 .profiler-legend-amount
 {
   position: absolute;
   right: 2px;
-  color: #666;
   text-shadow: 1px 1px #fff;
+}
+
+.profiler-legend-amount-bar
+{
+  background: #769FE1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 1px;
 }
 
 .profiler-timeline-row:hover .profiler-legend-label

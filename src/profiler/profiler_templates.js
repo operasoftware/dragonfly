@@ -144,23 +144,24 @@ var ProfilerTemplates = function()
         var index = this._order.indexOf(event.type);
         if (index !== -1)
         {
-          var percentage = 100 - Math.round(event.time / total_time * 100);
+          var percentage = event.time / total_time * 100;
           template[index] =
             ["div",
                ["span",
-                  event_type_string_map[event.type] + " ",
+                  event_type_string_map[event.type],
                 "class", "profiler-legend-label"
                ],
                ["span",
                   this.format_time(event.time, 0),
                 "class", "profiler-legend-amount"
                ],
+               ["div",
+                "class", "profiler-legend-amount-bar",
+                "style", "width:" + percentage + "%"
+               ],
              "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
              "data-event-type", String(event.type),
-             "handler", "profiler-event",
-             "style", "background-image: -o-linear-gradient(0deg," +
-                                                           "transparent " + percentage + "%," +
-                                                           "rgba(118, 159, 225, 0.90) 100%);"
+             "handler", "profiler-event"
             ];
         }
       }, this);
@@ -409,6 +410,17 @@ var ProfilerTemplates = function()
       var url = event.scriptCompilation.url;
       var script_type = event.scriptCompilation.scriptType;
 
+      if (script_type)
+      {
+        title.push(["li",
+                      ["span",
+                         ui_strings.S_PROFILER_TYPE_SCRIPT + ": ",
+                       "class", "profiler-event-tooltip-label"
+                      ],
+                      script_type_string_map[script_type]
+                   ]);
+      }
+
       if (url)
       {
         title.push(["li",
@@ -419,17 +431,6 @@ var ProfilerTemplates = function()
                       url,
                     "data-tooltip", "profiler-tooltip-url",
                     "data-tooltip-text", url
-                   ]);
-      }
-
-      if (script_type)
-      {
-        title.push(["li",
-                      ["span",
-                         ui_strings.S_PROFILER_TYPE_SCRIPT + ": ",
-                       "class", "profiler-event-tooltip-label"
-                      ],
-                      script_type_string_map[script_type]
                    ]);
       }
 

@@ -40,6 +40,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._tabledefs = {};
   this._tabledefs[TYPE_CSS_SELECTOR_MATCHING] = {
+    idgetter: function(item) { return item.cssSelectorMatching.selector; },
     column_order: ["selector", "time", "hits"],
     columns: {
       "selector": {
@@ -183,7 +184,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (!this._container)
       return;
     var template = [];
-    if (this._timeline_list && this._timeline_list.eventList)
+    if (this._profiler.is_active)
+    {
+      template.extend(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
+    }
+    else if (this._timeline_list && this._timeline_list.eventList)
     {
       template.extend(this._timeline_list.eventList[0]
         ? this._templates.main(this._timeline_list,
@@ -277,15 +282,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._handle_details_list = function(child_type, status, msg)
   {
-    var sortby = this._table ? this._table.sortby : "time";
-    var reversed = this._table ? this._table.reversed : true;
     var table_def = this._tabledefs[child_type];
     this._table = new SortableTable(table_def,
                                     null,
                                     table_def.column_order,
-                                    sortby,
+                                    "time",
                                     null,
-                                    reversed);
+                                    true,
+                                    "profiler");
     var parsed_msg = new cls.Profiler["1.0"].EventList(msg);
     var data = parsed_msg && parsed_msg.eventList;
     if (data.length)
