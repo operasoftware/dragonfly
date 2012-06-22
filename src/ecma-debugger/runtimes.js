@@ -192,6 +192,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     if (msg.profile == window.app.profiles.DEFAULT)
     {
+      __windows_reloaded = {};
       var dbg_ctx = window.window_manager_data.get_debug_context();
       if (dbg_ctx)
       {
