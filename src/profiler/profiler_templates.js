@@ -106,7 +106,8 @@ var ProfilerTemplates = function()
 
   this.main = function(timeline_list, aggregated_list, table, details_time, event_id, width, zero_point)
   {
-    var has_details_events = table && table.get_data().length;
+    var data = table && table.get_data();
+    var has_details_events = data && data.length;
     return [
       ["div",
          this.legend(aggregated_list),
