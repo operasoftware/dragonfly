@@ -29,7 +29,12 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     }
 
 		this.data = null;
-	}
+	};
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
 
   const HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
   const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container';
