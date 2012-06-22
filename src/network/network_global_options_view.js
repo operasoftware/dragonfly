@@ -21,6 +21,11 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._render_main_view(container);
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
+
   this._render_main_view = function(container)
   {
     container.clearAndRender(templates.network_options_main(this._bypass_cache,

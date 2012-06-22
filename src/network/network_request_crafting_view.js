@@ -40,6 +40,11 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._render_main_view(container);
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
+
   this._render_main_view = function(container)
   {
     container.clearAndRender(templates.network_request_crafter_main(this._prev_url,
