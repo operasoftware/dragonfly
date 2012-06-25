@@ -208,8 +208,9 @@ window.cls.Client = function()
     }
     else if (is_remote_connection)
     {
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .removeClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.removeClass("alert");
 
       Overlay.get_instance().set_info_content(
         window.templates.remote_debug_waiting_help(port)
