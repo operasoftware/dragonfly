@@ -521,6 +521,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
+    if (!(this._linelist && this._textarea))
+      return;
+
     if (props)
     {
       var localpart = props.identifier;
