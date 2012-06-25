@@ -53,6 +53,7 @@ var ToolbarConfigBase = new function()
           this.buttons[j].disabled ?
             button.setAttribute("disabled", "") :
             button.removeAttribute("disabled");
+          button.title = this.buttons[j].title;
         }
       }
     }
@@ -102,6 +103,16 @@ var ToolbarConfigBase = new function()
       {
         button.disabled = true;
       }
+    }
+    this.updateButtons();
+  }
+
+  this.set_button_title = function(handler, title)
+  {
+    var buttons = this.getButtonsByHandler(handler);
+    for (var i = 0; button = buttons[i]; i++)
+    {
+      button.title = title;
     }
     this.updateButtons();
   }
@@ -180,6 +191,8 @@ var ToolbarConfigBase = new function()
           for (var k = 0, search; search = group.items[k]; k++)
             this.filters.push(search);
         }
+        // Nothing needs to be initialized for UI.TYPE_SWITCH_CUSTOM_HANDLER.
+        // The buttons are added to this.buttons, the group.handler is added in ui-templates.js
       }
     }
     else
