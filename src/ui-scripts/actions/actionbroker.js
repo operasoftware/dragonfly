@@ -287,6 +287,7 @@ var ActionBroker = function()
           stored_shortcuts = null;
           window.settings.general.set("shortcuts", null);
           window.settings.general.set("shortcuts-hash", "");
+          (new AlertDialog(ui_strings.D_SHORTCUTS_UPDATE_FAILED)).show();
         }
       }
     }
