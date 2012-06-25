@@ -277,8 +277,17 @@ var ActionBroker = function()
       var shortcuts_hash = window.settings.general.get("shortcuts-hash");
       if (this._hash_shortcuts(default_shortcuts) != shortcuts_hash)
       {
-        stored_shortcuts = this._sync_shortcuts(default_shortcuts, stored_shortcuts);
-        this._store_shortcuts(stored_shortcuts);
+        try
+        {
+          stored_shortcuts = this._sync_shortcuts(default_shortcuts, stored_shortcuts);
+          this._store_shortcuts(stored_shortcuts);
+        }
+        catch(e)
+        {
+          stored_shortcuts = null;
+          window.settings.general.set("shortcuts", null);
+          window.settings.general.set("shortcuts-hash", "");
+        }
       }
     }
     return stored_shortcuts || default_shortcuts;

@@ -1694,3 +1694,6 @@ ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
+ui_strings.D_SHORTCUTS_UPDATE_FAILED = "We could not update your custom keyboard shortcuts with the new ones.";
