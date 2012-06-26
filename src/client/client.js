@@ -86,9 +86,9 @@ window.cls.Client = function()
         var tmpl = window.templates.remote_debug_settings(port + 1);
         remote_debug_setting.clearAndRender(tmpl);
       }
-
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .addClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.addClass("alert");
 
       Overlay.get_instance().set_info_content(
         ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
@@ -372,13 +372,12 @@ window.cls.Client = function()
     window.messages.post("window-controls-created", {window_controls: win_ctrls});
 
     var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
-    if (this.current_client && this.connection_is_remote(this.current_client))
+    if (button)
     {
-      button.addClass("remote-active");
-    }
-    else
-    {
-      button.removeClass("remote-active");
+      if (this.current_client && this.connection_is_remote(this.current_client))
+        button.addClass("remote-active");
+      else
+        button.removeClass("remote-active");
     }
   };
 
