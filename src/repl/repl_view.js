@@ -717,7 +717,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._on_profile_disabled_bound = function(msg)
   {
     if (msg.profile == window.app.profiles.DEFAULT)
+    {
       this.ondestroy();
+      this._toolbar_visibility = false;
+      topCell.setTooolbarVisibility('command_line', false); 
+    }
   }.bind(this);
 
   this["_handle_action_clear"] = function(evt, target)
