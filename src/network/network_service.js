@@ -506,6 +506,7 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.requests_responses = [];
   this.responsecode = null;
   this.status = null;
+  this.method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
@@ -727,6 +728,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_request = function(event)
   {
+    this.method = event.method;
     this._current_request = new cls.NetworkLoggerRequest(this);
     this.requests_responses.push(this._current_request);
     this._current_request._update_event_request(event);

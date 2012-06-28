@@ -30,7 +30,7 @@ templates.network_log_details = function(entry, left_val)
 
 templates.network_log_detail = function(entry)
 {
-  var responsecode = entry.responseCode;
+  var responsecode = entry.responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
