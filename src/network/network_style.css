@@ -318,9 +318,13 @@
 .network-details-container th
 {
   text-align: left;
-  padding-right: 30px;
-  width: 140px;
   white-space: nowrap;
+}
+
+.network-details-container th:first-child
+{
+  width: 20%;
+  padding-right: 30px;
 }
 
 .network-details-container hr
