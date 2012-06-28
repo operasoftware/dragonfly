@@ -207,7 +207,7 @@ cls.NetworkLoggerService = function(view)
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_body = function(itemid, callback)
+  this.get_body = function(itemid, update_callback)
   {
     if (!this._current_context)
       return;
@@ -216,11 +216,11 @@ cls.NetworkLoggerService = function(view)
     entry.is_fetching_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [callback, entry]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [update_callback, entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._handle_get_resource = function(status, data, callback, entry)
+  this._handle_get_resource = function(status, data, update_callback, entry)
   {
     if (!this._current_context)
       return;
@@ -228,16 +228,18 @@ cls.NetworkLoggerService = function(view)
     entry.is_fetching_body = false;
     if (status)
     {
-      // set body_unavailable for the resourceid, the object passed represents empty event_data
+      // the object passed to _current_context represents empty event_data. will set body_unavailable.
       this._current_context.update("responsebody", {resourceID: entry.resource_id});
-      if (callback) { callback() }
     }
     else
     {
       var msg = new cls.ResourceManager["1.2"].ResourceData(data);
       this._current_context.update("responsebody", msg);
-      if (callback) { callback() }
     }
+    // Update the view. This is only needed when the generic updating per event is paused.
+    if (this.is_paused && update_callback)
+      update_callback();
+
   };
 
   this.get_request_context = function()
@@ -500,19 +502,10 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.urltype = null;
   this.starttime = null;
   this.starttime_relative = null;
-  this.requesttime = null;
   this.endtime = null;
-  this.touched_network = false;
-  this.request_headers = null;
-  this.request_type = null;
-  this.requestbody = null;
-  this.responses = [];
+  this.requests_responses = [];
   this.responsecode = null;
-  this.request_raw = null;
-  this.firstline = null;
-  this.method = null;
   this.status = null;
-  this.body_unavailable = false;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
@@ -568,13 +561,8 @@ cls.NetworkLoggerEntryPrototype = function()
         "urlfinished": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_PROCESSING_RESPONSE,
           classname: CLASSNAME_BLOCKED
-        },
-        // responsefinished can occur twice, see CORE-43284.
-        // This is fixed and stops showing up when integrated.
-        "responsefinished": {
-          title: "",
-          classname: CLASSNAME_BLOCKED
         }
+        // responsefinished can occur twice, see CORE-43284. CI 277 has the fix.
     },
     "urlredirect": {
         "urlfinished": {
@@ -728,49 +716,42 @@ cls.NetworkLoggerEntryPrototype = function()
     this.mime = event.mimeType;
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
-
+    this.is_finished = true;
+    // Responses keep duplicates of the finished state. It's only relevant on the last one though.
     if (this._current_response)
       this._current_response._update_event_urlfinished(event);
 
-    this.is_finished = true;
     this._guess_response_type();
     this._humanize_url();
   };
 
   this._update_event_request = function(event)
   {
-    // We assume that there is never more than one network-request,
-    // as opposed to responses which are kept in a list.
-    this.method = event.method;
-    this.touched_network = true;
+    this._current_request = new cls.NetworkLoggerRequest(this);
+    this.requests_responses.push(this._current_request);
+    this._current_request._update_event_request(event);
   };
 
   this._update_event_requestheader = function(event)
   {
-    this.request_headers = event.headerList;
-    this.request_raw = event.raw;
-    for (var n=0, header; header = this.request_headers[n]; n++)
+    if (!this._current_request)
     {
-      if (header.name.toLowerCase() == "content-type")
-      {
-        this.request_type = header.value;
-        break;
-      }
+      // This means we didn't see a request before that, CORE-47076
+      this._current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this._current_request);
     }
-    this.firstline = event.raw.split("\n")[0];
+    this._current_request._update_event_requestheader(event);
   };
 
   this._update_event_requestfinished = function(event)
   {
-    if (event.data)
+    if (!this._current_request)
     {
-      this.requestbody = event.data;
-      // in time we can use the mime-type member here rather than grabbing it
-      // from the headers. See CORE-39597
-      this.requestbody.mimeType = this.request_type;
+      // There should always be a request by now, but keep the data anyway.
+      this._current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this._current_request);
     }
-    if (!this.requesttime)
-      this.requesttime = event.time;
+    this._current_request._update_event_requestfinished(event);
   };
 
   this._update_event_requestretry = function(event)
@@ -785,11 +766,8 @@ cls.NetworkLoggerEntryPrototype = function()
     // Each individual response is also stored as a NetworkLoggerResponse.
     this.responsecode = event.responseCode;
     this.had_error_response = /^[45]/.test(this.responsecode);
-    if (!this.responsestart)
-      this.responsestart = event.time;
-
     this._current_response = new cls.NetworkLoggerResponse(this);
-    this.responses.push(this._current_response);
+    this.requests_responses.push(this._current_response);
     this._current_response._update_event_response(event);
   };
 
@@ -800,7 +778,7 @@ cls.NetworkLoggerEntryPrototype = function()
     if (!this._current_response)
     {
       this._current_response = new cls.NetworkLoggerResponse(this);
-      this.responses.push(this._current_response);
+      this.requests_responses.push(this._current_response);
     }
     this._current_response._update_event_responseheader(event);
   };
@@ -820,15 +798,16 @@ cls.NetworkLoggerEntryPrototype = function()
   {
     if (!this._current_response)
     {
+      // This should mean there wasn't a request, but it was fetched over GetResource.
       this._current_response = new cls.NetworkLoggerResponse(this);
-      this.responses.push(this._current_response);
+      this.requests_responses.push(this._current_response);
     }
     this._current_response._update_event_responsebody(event);
   };
 
   this._update_event_urlredirect = function(event)
   {
-    // this does not add any information, the event is only used to change the requestID
+    // This does not add any information, the event is only used to change the requestID
   };
 
   this._guess_response_type = function()
@@ -901,15 +880,28 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.__defineGetter__("has_responsebody", function()
+  this.__defineGetter__("last_response_has_responsebody", function()
   {
-    return Boolean(this.responses.filter(helpers.prop("responsebody")).length);
+    return Boolean(this._current_response && this._current_response.responsebody);
   });
 
   this.__defineGetter__("duration", function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
   });
+
+  this.__defineGetter__("waiting_time", function()
+  {
+    var waiting_time = this.event_sequence.filter(helpers.eq("classname", CLASSNAME_WAITING))
+                                          .sum(helpers.prop("val"));
+    return waiting_time || 0;
+  });
+
+  this.__defineGetter__("touched_network", function()
+  {
+     return Boolean(this._current_request);
+  });
+
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -918,7 +910,6 @@ cls.NetworkLoggerEntry.prototype = new cls.NetworkLoggerEntryPrototype();
 
 cls.NetworkLoggerResponse = function(entry)
 {
-  this.responsestart = null;
   this.responsecode = null;
   this.response_headers = null;
   this.response_raw = null;
@@ -957,6 +948,7 @@ cls.NetworkLoggerResponsePrototype = function()
 
   this._update_event_urlfinished = function(event)
   {
+    // Somewhat irreglar, what's finished now is the entry. The response needs to know though.
     this.logger_entry_is_finished = true;
   };
 
@@ -979,3 +971,50 @@ cls.NetworkLoggerResponsePrototype = function()
 };
 
 cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
+
+
+cls.NetworkLoggerRequest = function(entry)
+{
+  this.method = null;
+  this.request_headers = null;
+  this.request_raw = null;
+  this.request_type = null;
+  this.firstline = null;
+  this.requestbody = null;
+};
+
+cls.NetworkLoggerRequestPrototype = function()
+{
+  this._update_event_request = function(event)
+  {
+    this.method = event.method;
+  };
+
+  this._update_event_requestheader = function(event)
+  {
+    this.request_headers = event.headerList;
+    this.request_raw = event.raw;
+    for (var n=0, header; header = this.request_headers[n]; n++)
+    {
+      if (header.name.toLowerCase() == "content-type")
+      {
+        this.request_type = header.value;
+        break;
+      }
+    }
+    this.firstline = event.raw.split("\n")[0];
+  };
+
+  this._update_event_requestfinished = function(event)
+  {
+    if (event.data)
+    {
+      this.requestbody = event.data;
+      // in time we can use the mime-type member here rather than grabbing it
+      // from the headers. See CORE-39597
+      this.requestbody.mimeType = this.request_type;
+    }
+  };
+};
+
+cls.NetworkLoggerRequest.prototype = new cls.NetworkLoggerRequestPrototype();

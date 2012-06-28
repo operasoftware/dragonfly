@@ -12,7 +12,7 @@ templates.network_detail_row = function(wrap)
 templates.network_log_details = function(entry, left_val)
 {
   return [
-      "div", 
+      "div",
         ["span",
           ["span",
             "class", "close-request-detail",
@@ -30,7 +30,7 @@ templates.network_log_details = function(entry, left_val)
 
 templates.network_log_detail = function(entry)
 {
-  var responsecode = entry.responses.last && entry.responses.last.responsecode;
+  var responsecode = entry.responseCode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
@@ -54,9 +54,8 @@ templates.network_log_detail = function(entry)
            "data-spec", "http#" + entry.responsecode
           ]
         ],
-        templates.request_details(entry),
-        templates.network_request_body(entry),
-        entry.responses.map(templates.network_response)
+        entry.touched_network ? [] : templates.did_not_touch_network(entry),
+        entry.requests_responses.map(templates.requests_responses)                              
       ],
       "data-object-id", String(entry.id),
       "class", "request-details"
@@ -64,36 +63,44 @@ templates.network_log_detail = function(entry)
   );
 };
 
-templates.network_response = function(response)
+templates.did_not_touch_network = function(entry)
+{
+  var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
+  return ["tbody", 
+    templates.network_detail_row( // it would be kind of conistent to put this into a headline, as these otherwise say "Request", and it's clear they are not content. // ["h2",
+      entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
+                             : ui_strings.S_NETWORK_SERVED_FROM_CACHE)
+  ];
+};
+
+templates.requests_responses = function(request_response, index, requests_responses)
+{
+  var is_last = index == requests_responses.length - 1;
+  return request_response instanceof cls.NetworkLoggerRequest ?
+         ([templates.request_details(request_response), templates.network_request_body(request_response)]) : templates.network_response(request_response, is_last)
+  // todo: clean it up and make request one template like response.
+};
+
+templates.network_response = function(response, is_last)
 {
   return [
     response.logger_entry_touched_network ?
       templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
     templates.response_details(response),
-    templates.network_response_body(response)
+    templates.network_response_body(response, is_last)
   ]
 };
 
 templates.request_details = function(req)
 {
-  var ret = [];
-  if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
-    return ret;
-
-  if (req.touched_network)
-  {
-    if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
-    else
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
-  }
-
   var tbody = ["tbody"];
-  if (req.is_finished && !req.touched_network)
-  {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
-  }
-  else if (!req.request_headers)
+
+  if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
+    tbody.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
+  else
+    tbody.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+
+  if (!req.request_headers)
   {
     tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
   }
@@ -114,8 +121,7 @@ templates.request_details = function(req)
       tbody.extend(templates.network_headers_list(req.request_headers, firstline));
     }
   }
-  ret.push(tbody);
-  return ret;
+  return tbody;
 };
 
 templates.response_details = function(resp)
@@ -233,11 +239,11 @@ templates.network_request_body = function(req)
 };
 
 
-templates.network_response_body = function(resp)
+templates.network_response_body = function(resp, is_last)
 {
   var ret = [templates.network_detail_row(templates.network_body_seperator())];
   var classname = "";
-  if (resp.body_unavailable || 
+  if (resp.body_unavailable ||
       !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";
@@ -247,12 +253,12 @@ templates.network_response_body = function(resp)
   {
     if (!resp.responsebody)
     {
-      if (!resp.logger_entry_is_finished)
+      if (is_last && !resp.logger_entry_is_finished)
       {
         classname = "network_info";
         ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
       }
-      // else we're in the middle of getting it via GetResource, leave the response part empty until it updates.
+      // else we're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else
     {

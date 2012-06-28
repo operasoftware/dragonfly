@@ -176,7 +176,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+        // todo: it would be good if we knew if the whole context is finished. Better only to get_body then, less potential to disturb.
+        if (entry.is_finished && !entry.last_response_has_responsebody && !entry.is_fetching_body)
           this._service.get_body(entry.id, this.update_bound);
 
         template = [template, this._render_details_view(entry)];
@@ -270,9 +271,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          if (entry.responsestart && entry.requesttime)
-            return entry.responsestart - entry.requesttime;
-          return "";
+          return entry.waiting_time || "";
         },
         renderer: function(entry, getter)
         {
