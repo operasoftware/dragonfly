@@ -229,20 +229,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
-        getter: function(entry) { return entry.method || ""; }
+        getter: function(entry) { return entry.last_method || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_RESPONSECODE,
         renderer: function(entry) {
-          return (entry.responsecode && String(entry.responsecode)) || "";
+          return (entry.last_responsecode && String(entry.last_responsecode)) || "";
         },
         title_getter: function(entry, renderer) {
-          if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return String(cls.ResourceUtil.http_status_codes[entry.responsecode]);
+          if (cls.ResourceUtil.http_status_codes[entry.last_responsecode])
+            return String(cls.ResourceUtil.http_status_codes[entry.last_responsecode]);
           return renderer(entry);
         },
-        getter: function(entry) { return entry.responsecode || 0; }
+        getter: function(entry) { return entry.last_responsecode || 0; }
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,

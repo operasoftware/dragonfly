@@ -30,7 +30,7 @@ templates.network_log_details = function(entry, left_val)
 
 templates.network_log_detail = function(entry)
 {
-  var responsecode = entry.responsecode;
+  var responsecode = entry.last_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
@@ -43,15 +43,15 @@ templates.network_log_detail = function(entry)
           ],
           ["tr",
             ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
-            ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-            "data-spec", "http#" + entry.method
+            ["td", entry.touched_network ? entry.last_method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+            "data-spec", "http#" + entry.last_method
           ],
           ["tr",
             ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
             ["td",
               entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
             ],
-           "data-spec", "http#" + entry.responsecode
+           "data-spec", "http#" + entry.last_responsecode
           ]
         ],
         entry.touched_network ? [] : templates.did_not_touch_network(entry),

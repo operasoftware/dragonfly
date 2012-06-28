@@ -504,9 +504,8 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.starttime_relative = null;
   this.endtime = null;
   this.requests_responses = [];
-  this.responsecode = null;
-  this.status = null;
-  this.method = null;
+  this.last_responsecode = null;
+  this.last_method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
@@ -728,7 +727,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_request = function(event)
   {
-    this.method = event.method;
+    this.last_method = event.method;
     this._current_request = new cls.NetworkLoggerRequest(this);
     this.requests_responses.push(this._current_request);
     this._current_request._update_event_request(event);
@@ -763,11 +762,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    // On every response, entry.responsecode is overwritten to reflect what 
-    // the "final" responsecode for the request was.
-    // Each individual response is also stored as a NetworkLoggerResponse.
-    this.responsecode = event.responseCode;
-    this.had_error_response = /^[45]/.test(this.responsecode);
+    this.last_responsecode = event.responseCode;
+    this.error_in_last_response = /^[45]/.test(this.responsecode);
     this._current_response = new cls.NetworkLoggerResponse(this);
     this.requests_responses.push(this._current_response);
     this._current_response._update_event_response(event);

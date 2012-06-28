@@ -173,7 +173,7 @@ templates.network_viewmode_graphs = function(ctx, entries, selected, width)
 
 templates.network_log_url_list_entry = function(selected, entry)
 {
-  var had_error_response = entry.had_error_response;
+  var error_in_last_response = entry.error_in_last_response;
   var not_requested = !entry.touched_network;
 
   return ["li",
@@ -186,7 +186,7 @@ templates.network_log_url_list_entry = function(selected, entry)
            "handler", "select-network-request",
            "data-object-id", String(entry.id),
            "class", (selected === entry.id ? "selected" : "") + 
-                    (had_error_response ? " " + ERROR_RESPONSE : "") + 
+                    (error_in_last_response ? " " + ERROR_RESPONSE : "") + 
                     (not_requested ? " " + NOT_REQUESTED : "")
          ];
 };
@@ -216,10 +216,10 @@ templates.network_log_url_tooltip = function(entry)
     context_string = ui_strings.S_HTTP_UNREFERENCED;
     context_type = UNREFERENCED;
   }
-  else if (entry.had_error_response)
+  else if (entry.error_in_last_response)
   {
-    context_string = entry.responsecode + 
-                     " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
+    context_string = entry.last_responsecode + 
+                     " (" + HTTP_STATUS_CODES[entry.last_responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
   else if (!entry.touched_network)
