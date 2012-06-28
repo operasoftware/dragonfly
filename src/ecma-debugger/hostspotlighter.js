@@ -46,13 +46,23 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   var last_spotlight_commands = "";
   var spotlight_clear_timeouts = new Timeouts();
   var locked_elements = [];
-  var top_runtime = '';
+  var top_runtime = 0;
   var settings_id = 'dom';
   var mouse_handler_target = null;
   var mouse_handler_timeouts = new Timeouts();
   var class_names = ['margin', 'border', 'padding', 'dimension'];
   var last_spotlight_command = null;
   var rts = {};
+
+  var _on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      last_spotlight_commands = "";
+      last_spotlight_command = null;
+      locked_elements = [];
+    }
+  };
    
   /* helpers */
 
@@ -530,13 +540,14 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
         last_spotlight_command.push.apply(last_spotlight_command, locked_s);
       }
       services['ecmascript-debugger'].requestSpotlightObjects(0, [cmd]);
+
     }
   };
 
   this.soft_spotlight = function(node_id)
   {
-    services['ecmascript-debugger'].requestSpotlightObjects(0,
-      [(last_spotlight_command || []).concat([get_command(node_id, 0, "hover")])]);
+    var msg = [(last_spotlight_command || []).concat([get_command(node_id, 0, "hover")])];
+    services['ecmascript-debugger'].requestSpotlightObjects(0, msg);
     last_spotlight_commands = '';
   }
 
@@ -587,6 +598,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   messages.addListener("element-selected", onElementSelected); 
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('setting-changed', onSettingChange);
+  messages.addListener('profile-disabled', _on_profile_disabled);
   window.app.addListener('services-created', function()
   {
     set_initial_values();

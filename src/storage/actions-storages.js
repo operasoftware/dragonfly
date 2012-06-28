@@ -30,7 +30,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
     if (container)
     {
@@ -54,7 +54,7 @@ cls.StorageViewActions = function(id)
     var container = target || document.querySelector(".storage_view");
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
 
     if (container)
@@ -95,7 +95,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
     if (container)
     {
@@ -124,7 +124,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
     if (container)
     {
@@ -147,7 +147,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
     if (container)
     {
@@ -177,7 +177,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
 
     if (container && runtime_id)
@@ -232,7 +232,7 @@ cls.StorageViewActions = function(id)
     var container = target;
     while (container && !container.getAttribute("data-storage-id"))
     {
-      container = container.parentNode;
+      container = container.parentElement;
     }
 
     var selection = container.querySelectorAll(".sortable-table .selected");
@@ -326,7 +326,7 @@ cls.StorageViewActions = function(id)
       var container = target;
       while (container && !container.getAttribute("data-storage-id"))
       {
-        container = container.parentNode;
+        container = container.parentElement;
       }
       var selection = container.querySelectorAll("tr.selected");
       var remove_label = ui_strings.M_CONTEXTMENU_STORAGE_DELETE;
