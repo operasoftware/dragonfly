@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
-
+/*  */
 cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
 {
   var RUNTIME_ID = 0;
