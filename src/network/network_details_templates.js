@@ -1,34 +1,35 @@
 ﻿"use strict";
 
 window.templates || (window.templates = {});
+window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
-templates.network_detail_row = function(wrap)
+templates._detail_row = function(wrap)
 {
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
-templates.network_log_details = function(entry, left_val)
+templates.details = function(entry, left_val)
 {
-  return [
-      "div",
+  return (
+    ["div",
+      ["span",
         ["span",
-          ["span",
-            "class", "close-request-detail",
-            "handler", "close-request-detail",
-            "tabindex", "1"
-          ],
-          "class", "resize-request-detail",
-          "handler", "resize-request-detail"
+          "class", "close-request-detail",
+          "handler", "close-request-detail",
+          "tabindex", "1"
         ],
-        templates.network_log_detail(entry),
-      "class", "network-details-container",
-      "style", "left:" + left_val + "px"
-    ];
+        "class", "resize-request-detail",
+        "handler", "resize-request-detail"
+      ],
+      templates._detail(entry),
+    "class", "network-details-container",
+    "style", "left:" + left_val + "px"
+  ]);
 };
 
-templates.network_log_detail = function(entry)
+templates._detail = function(entry)
 {
   var responsecode = entry.last_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
@@ -67,7 +68,7 @@ templates.did_not_touch_network = function(entry)
 {
   var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
   return ["tbody", 
-    templates.network_detail_row( // it would be kind of conistent to put this into a headline, as these otherwise say "Request", and it's clear they are not content. // ["h2",
+    templates._detail_row( // it would be kind of conistent to put this into a headline, as these otherwise say "Request", and it's clear they are not content. // ["h2",
       entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
                              : ui_strings.S_NETWORK_SERVED_FROM_CACHE)
   ];
@@ -76,33 +77,41 @@ templates.did_not_touch_network = function(entry)
 templates.requests_responses = function(request_response, index, requests_responses)
 {
   var is_last = index == requests_responses.length - 1;
-  return request_response instanceof cls.NetworkLoggerRequest ?
-         ([templates.request_details(request_response), templates.network_request_body(request_response)]) : templates.network_response(request_response, is_last)
-  // todo: clean it up and make request one template like response.
+  var template_func = templates._response;
+  if (request_response instanceof cls.NetworkLoggerRequest)
+    template_func = templates._request;
+
+  return template_func(request_response, is_last);
 };
 
-templates.network_response = function(response, is_last)
+templates._request = function(request, is_last)
 {
   return [
-    response.logger_entry_touched_network ?
-      templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
-    templates.response_details(response),
-    templates.network_response_body(response, is_last)
+    templates._request_headers(request),
+    templates._request_body(request)
   ]
 };
 
-templates.request_details = function(req)
+templates._response = function(response, is_last)
+{
+  return [
+    templates._response_headers(response),
+    templates._response_body(response, is_last)
+  ]
+};
+
+templates._request_headers = function(req)
 {
   var tbody = ["tbody"];
 
   if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-    tbody.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
+    tbody.push(templates._detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
   else
-    tbody.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
+    tbody.push(templates._detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
 
   if (!req.request_headers)
   {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
+    tbody.push(templates._detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
   }
   else
   {
@@ -118,16 +127,18 @@ templates.request_details = function(req)
           ["span", parts[2] + " "]
         ];
       }
-      tbody.extend(templates.network_headers_list(req.request_headers, firstline));
+      tbody.extend(templates.headers_list(req.request_headers, firstline));
     }
   }
   return tbody;
 };
 
-templates.response_details = function(resp)
+templates._response_headers = function(resp)
 {
-  if (!resp.response_headers)
+  if (!resp.response_headers) // todo: we explicitely mention missing request headers but not missing response headers // ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     return [];
+
+  var tbody = ["tbody"];
 
   var firstline;
   var parts = resp.firstline.split(" ", 2);
@@ -139,10 +150,15 @@ templates.response_details = function(resp)
       ["span", resp.firstline.slice(parts[0].length + parts[1].length + 1)]
     ];
   }
-  return ["tbody", templates.network_headers_list(resp.response_headers, firstline)];
+  
+  if (resp.logger_entry_touched_network)
+    tbody.push(templates._detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]));
+    
+  tbody.push(templates.headers_list(resp.response_headers, firstline));
+  return tbody;
 };
 
-templates.network_headers_list = function(headers, firstline)
+templates.headers_list = function(headers, firstline)
 {
   var lis = headers.map(function(header) {
       return ["tr", ["th", header.name + ":"], ["td", header.value], "data-spec", "http#" + header.name];
@@ -155,12 +171,12 @@ templates.network_headers_list = function(headers, firstline)
   return lis;
 };
 
-templates.network_body_seperator = function()
+templates.body_seperator = function()
 {
   return ["pre", " ", "class", "mono"];
 };
 
-templates.network_request_body = function(req)
+templates._request_body = function(req)
 {
   if (!req.requestbody)
   {
@@ -173,14 +189,14 @@ templates.network_request_body = function(req)
   {
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
-      cont.push(templates.network_headers_list(part.headerList));
+      cont.push(templates.headers_list(part.headerList));
       if (part.content && part.content.stringData)
-        cont.push(templates.network_detail_row(["pre", part.content.stringData]));
+        cont.push(templates._detail_row(["pre", part.content.stringData]));
       else
-        cont.push(templates.network_detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
+        cont.push(templates._detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
 
       if (n < req.requestbody.partList.length - 1)
-        cont.push(templates.network_detail_row(["hr"]));
+        cont.push(templates._detail_row(["hr"]));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
@@ -233,21 +249,21 @@ templates.network_request_body = function(req)
   }
   
   return [
-           templates.network_detail_row(templates.network_body_seperator()),
+           templates._detail_row(templates.body_seperator()),
            ["tbody", cont]
          ];
 };
 
 
-templates.network_response_body = function(resp, is_last)
+templates._response_body = function(resp, is_last)
 {
-  var ret = [templates.network_detail_row(templates.network_body_seperator())];
+  var ret = [templates._detail_row(templates.body_seperator())];
   var classname = "";
   if (resp.body_unavailable ||
       !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
+    ret.push(templates._detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
   }
   else
   {
@@ -256,7 +272,7 @@ templates.network_response_body = function(resp, is_last)
       if (is_last && !resp.logger_entry_is_finished)
       {
         classname = "network_info";
-        ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
+        ret.push(templates._detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
       }
       // else we're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
@@ -265,7 +281,7 @@ templates.network_response_body = function(resp, is_last)
       if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
       {
         ret.push(
-          templates.network_detail_row(
+          templates._detail_row(
             ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
           )
         );
@@ -273,7 +289,7 @@ templates.network_response_body = function(resp, is_last)
       else if (resp.logger_entry_type == "image")
       {
         ret.push(
-          templates.network_detail_row(
+          templates._detail_row(
             ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
           )
         );
@@ -281,7 +297,7 @@ templates.network_response_body = function(resp, is_last)
       else
       {
         ret.push(
-          templates.network_detail_row(
+          templates._detail_row(
             ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
              "class", "network-body"]
           )
@@ -292,4 +308,4 @@ templates.network_response_body = function(resp, is_last)
   return ["tbody", ret, "class", classname];
 };
 
-})(window.templates);
+})(window.templates.network);

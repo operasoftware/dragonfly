@@ -98,7 +98,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var MINIMUM_DETAIL_WIDTH = 100;
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    return templates.network_log_details(entry, left_val);
+    return templates.network.details(entry, left_val);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -173,7 +173,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
 
-    var template = ["div", templates.network_log_main(
+    var template = ["div", templates.network.main(
                      ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
@@ -315,7 +315,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
           var FIXED_GRAPH_WIDTH = 50;
-          return templates.network_graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
+          return templates.network.graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
         }
       }
     }
@@ -461,7 +461,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
-    var template = templates.network_graph_tooltip(entry, this.mono_lineheight);
+    var template = templates.network.graph_tooltip(entry, this.mono_lineheight);
     this.graph_tooltip.show(template);
   }.bind(this);
 
@@ -497,7 +497,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry(entry_id);
       if (entry)
       {
-        var template = templates.network_log_url_tooltip(entry);
+        var template = templates.network.url_tooltip(entry);
         this.url_tooltip.show(template);
       }
     }
