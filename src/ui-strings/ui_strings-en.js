@@ -1697,3 +1697,6 @@ ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
+ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";

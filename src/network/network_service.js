@@ -779,6 +779,7 @@ cls.NetworkLoggerEntryPrototype = function()
       this.requests_responses.push(this._current_response);
     }
     this._current_response._update_event_responseheader(event);
+    // todo: should _guess_response_type here? if there was a Content-Type response-header, pick it from there.
   };
 
   this._update_event_responsefinished = function(event)
@@ -810,6 +811,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._guess_response_type = function()
   {
+    // The first guess is made based on file extension. No response is needed for that.
+    // The current response is updated though, at the time it will be the correct one.
+    // Multiple responses can get different types in this way.
     if (!cls || !cls.ResourceUtil)
       return;
 
@@ -903,14 +907,65 @@ cls.NetworkLoggerEntryPrototype = function()
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
-
 cls.NetworkLoggerEntry.prototype = new cls.NetworkLoggerEntryPrototype();
+
+
+cls.NetworkLoggerRequest = function(entry)
+{
+  this.method = null;
+  this.request_headers = null;
+  this.request_headers_raw = null;
+  this.request_type = null;
+  this.firstline = null;
+  this.requestbody = null;
+};
+
+cls.NetworkLoggerRequestPrototype = function()
+{
+  this._update_event_request = function(event)
+  {
+    this.method = event.method;
+  };
+
+  this._update_event_requestheader = function(event)
+  {
+    this.request_headers = event.headerList;
+
+    for (var n=0, header; header = this.request_headers[n]; n++)
+    {
+      if (header.name.toLowerCase() == "content-type")
+      {
+        this.request_type = header.value;
+        break;
+      }
+    }
+    this.firstline = event.raw.split("\n")[0]; // todo: event.raw.split("\r\n")[0];
+    // The body can be contained in event.raw.
+    // At the time of the this event, it's possible that more than the header
+    // has been written to the socket already.
+    this.request_headers_raw = event.raw.split("\r\n\r\n")[0];
+  };
+
+  this._update_event_requestfinished = function(event)
+  {
+    if (event.data)
+    {
+      this.requestbody = event.data;
+      // in time we can use the mime-type member here rather than grabbing it
+      // from the headers. See CORE-39597
+      this.requestbody.mimeType = this.request_type;
+    }
+  };
+};
+
+cls.NetworkLoggerRequest.prototype = new cls.NetworkLoggerRequestPrototype();
+
 
 cls.NetworkLoggerResponse = function(entry)
 {
   this.responsecode = null;
   this.response_headers = null;
-  this.response_raw = null;
+  this.response_headers_raw = null;
   this.firstline = null;
   this.responsebody = null;
 
@@ -932,8 +987,11 @@ cls.NetworkLoggerResponsePrototype = function()
   this._update_event_responseheader = function(event)
   {
     this.response_headers = event.headerList;
-    this.response_raw = event.raw;
-    this.firstline = this.response_raw.split("\n")[0];
+    // The body can be contained in event.raw.
+    // At the time of the this event, it's possible that more than the header
+    // has been read from the socket already.
+    this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
+    this.firstline = this.response_headers_raw.split("\n")[0]; // todo: this.response_headers_raw.split("\r\n")[0];
   };
 
   this._update_event_responsefinished = function(event)
@@ -942,12 +1000,6 @@ cls.NetworkLoggerResponsePrototype = function()
     {
       this.responsebody = event.data;
     }
-  };
-
-  this._update_event_urlfinished = function(event)
-  {
-    // Somewhat irreglar, what's finished now is the entry. The response needs to know though.
-    this.logger_entry_is_finished = true;
   };
 
   this._update_event_responsebody = function(event)
@@ -961,58 +1013,18 @@ cls.NetworkLoggerResponsePrototype = function()
     this.is_unloaded = true;
   };
 
+  // The following sync changes on Entry.
+  this._update_event_urlfinished = function(event)
+  {
+    this.logger_entry_is_finished = true;
+  };
+
   this._update_mime_and_type = function(mime, type)
   {
+    // This could actually be per response too. But as only the last response has body, it can be on the entry.
     this.logger_entry_mime = mime;
     this.logger_entry_type = type;
   };
 };
 
 cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
-
-
-cls.NetworkLoggerRequest = function(entry)
-{
-  this.method = null;
-  this.request_headers = null;
-  this.request_raw = null;
-  this.request_type = null;
-  this.firstline = null;
-  this.requestbody = null;
-};
-
-cls.NetworkLoggerRequestPrototype = function()
-{
-  this._update_event_request = function(event)
-  {
-    this.method = event.method;
-  };
-
-  this._update_event_requestheader = function(event)
-  {
-    this.request_headers = event.headerList;
-    this.request_raw = event.raw;
-    for (var n=0, header; header = this.request_headers[n]; n++)
-    {
-      if (header.name.toLowerCase() == "content-type")
-      {
-        this.request_type = header.value;
-        break;
-      }
-    }
-    this.firstline = event.raw.split("\n")[0];
-  };
-
-  this._update_event_requestfinished = function(event)
-  {
-    if (event.data)
-    {
-      this.requestbody = event.data;
-      // in time we can use the mime-type member here rather than grabbing it
-      // from the headers. See CORE-39597
-      this.requestbody.mimeType = this.request_type;
-    }
-  };
-};
-
-cls.NetworkLoggerRequest.prototype = new cls.NetworkLoggerRequestPrototype();

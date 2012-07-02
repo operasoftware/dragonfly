@@ -98,7 +98,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var MINIMUM_DETAIL_WIDTH = 100;
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    return templates.network.details(entry, left_val);
+    var do_raw = settings.network_logger.get("view-raw");
+    return templates.network.details(entry, left_val, do_raw);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -194,7 +195,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     if (this._selected)
     {
-      var details = rendered.querySelector(".request-details");
+      var details = rendered.querySelector(".entry-details");
       if (details)
       {
         if (this._details_scroll_top)
@@ -442,7 +443,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("request-details"))
+    if (evt.target.hasClass("entry-details"))
     {
       this._details_scroll_top = evt.target.scrollTop;
       this._details_scroll_left = evt.target.scrollLeft;
@@ -700,17 +701,19 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": false,
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
-      "track-content": true
+      "track-content": true,
+      "view-raw": false
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
+      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL
     },
     // settings map
     {
-      checkboxes: ["track-content"]
+      checkboxes: ["track-content", "view-raw"]
     },
     // templates
     {
@@ -812,6 +815,15 @@ cls.NetworkLog.create_ui_widgets = function()
           handler: "profiler-mode-switch"
         },
         {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.view-raw",
+              icon: "view-raw-requests-responses"
+            }
+          ]
+        },
+        {
           type: UI.TYPE_INPUT,
           items: [
             {
@@ -839,7 +851,7 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector(".request-details");
+      var scroll_container = msg.container.querySelector(".entry-details");
       if (!scroll_container)
         scroll_container = msg.container.querySelector("#network-outer-container");
 
