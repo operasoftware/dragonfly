@@ -139,14 +139,23 @@ window.cls.Helpers = function()
    */
   this.escape_input = (function()
   {
-    var re_escape_char = /\\/g;
-    var re_quot_mark = /"/g;
+    var regexps = [
+      [/\\/g, "\\\\"],
+      [/"/g, "\\\""],
+      [/'/g, "\\'"],
+      [/\n/g, "\\n"],
+      [/\r/g, "\\r"],
+      [/\u2028/g, "\\u2028"],
+      [/\u2029/g, "\\u2029"]
+    ];
 
     return function escape_input(str)
     {
-      // Need to double escape since this is a string inside a string
-      return str.replace(re_escape_char, "\\\\")
-                .replace(re_quot_mark, "\\\"");
+      for (var i = 0, re; re = regexps[i]; i++)
+      {
+        str = str.replace(re[0], re[1]);
+      }
+      return str;
     }
   })();
 

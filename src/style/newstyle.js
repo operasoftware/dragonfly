@@ -45,7 +45,7 @@ cls.NewStyle = function(id, name, container_class)
     {
       rt_style.css_text = this._textarea.value;
       var script = "try{style.textContent = \"" +
-                     window.helpers.escape_input(rt_style.css_text).replace(/\r?\n/g, "") +
+                     window.helpers.escape_input(rt_style.css_text.replace(/\r\n/g, "\n")) +
                    "\";}catch(e){};";
       var tag = this._tag_manager.set_callback(this, window.element_style.update);
       this._es_debugger.requestEval(tag,

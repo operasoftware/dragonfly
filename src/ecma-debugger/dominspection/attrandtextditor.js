@@ -7,7 +7,7 @@ var DOMAttrAndTextEditor = function(nav_filters)
 {
   var crlf_encode = function(str)
   {
-    return helpers.escape_input(str).replace(/\r\n/g, "\\n");
+    return helpers.escape_input(str.replace(/\r\n/g, "\n"));
   }
 
   this._onmonospacefontchange = function(msg)
