@@ -282,7 +282,7 @@ cls.JsSourceView = function(id, name, container_class)
               ] :
               ['div',
                 ['span',
-                  'class', 'ui-button',
+                  'class', 'ui-button reload-window',
                   'handler', 'reload-window',
                   'tabindex', '1'],
                 ['p', ui_strings.S_INFO_RELOAD_FOR_SCRIPT],
@@ -303,6 +303,11 @@ cls.JsSourceView = function(id, name, container_class)
 
     }
   }
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
 
   this.onresize = function(container)
   {
@@ -990,7 +995,8 @@ cls.JsSourceView = function(id, name, container_class)
                             this._go_to_line.window_height);
     return false;
   }.bind(this);
-
+  
+  this.required_services = ["ecmascript-debugger"];
   this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
@@ -1182,11 +1188,26 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
   var service = window.services['ecmascript-debugger'];
-  // core integartion is at least 168, that means major version is at least 6
-  var stop_on_error = (service.major_version > 6 ||
-                       service.minor_version > 7)
-                    ? 1
-                    : 0;
+  var stop_on_error = service.satisfies_version(6, 8) ? 1 : 0;
+  var checkboxes =
+  [
+    'script',
+    'exception',
+    'error',
+    'abort',
+    'show-js-tooltip',
+  ];
+  var switches =
+  [
+    'script',
+    'error',
+  ];
+
+  if (service.satisfies_version(6, 13))
+  { 
+    checkboxes.push('use_reformat_condition');
+    switches.push('reformat_javascript');
+  }
   
   new Settings
   (
@@ -1206,6 +1227,8 @@ cls.JsSourceView.create_ui_widgets = function()
       'max-displayed-search-hits': 1000,
       'show-js-tooltip': true,
       'js-dd-match-history': [],
+      'reformat_javascript': true,
+      'use_reformat_condition': true
     },
     // key-label map
     {
@@ -1215,18 +1238,13 @@ cls.JsSourceView.create_ui_widgets = function()
       abort: ui_strings.S_BUTTON_LABEL_AT_ABORT,
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
-      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP
+      'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP,
+      'reformat_javascript': ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT, 
+      'use_reformat_condition': ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT,
     },
     // settings map
     {
-      checkboxes:
-      [
-        'script',
-        'exception',
-        'error',
-        'abort',
-        'show-js-tooltip'
-      ],
+      checkboxes: checkboxes,
       customSettings:
       [
         'hr',
@@ -1288,14 +1306,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   window.views.js_source.handle_tooltip_setting();
 
-  new Switches
-  (
-    'js_source',
-    [
-      'script',
-      'error'
-    ]
-  );
+  new Switches ('js_source', switches);
 
   eventHandlers.change['set-tab-size'] = function(event, target)
   {

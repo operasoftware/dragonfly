@@ -105,6 +105,7 @@ cls.NewStyle = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.required_services = ["ecmascript-debugger"];
     this._rt_id = 0;
     this._rt_style_map = {};
     this._textarea = null;

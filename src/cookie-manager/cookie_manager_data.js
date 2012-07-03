@@ -156,6 +156,15 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      this.cookie_list = [];
+      this._rts = {};
+    }
+  };
+
   this._request_location_object_id = function(rt_id, active_tab_counter)
   {
     var script = "location";
@@ -342,6 +351,7 @@ cls.CookieManager.CookieDataBase = function()
     this._rts = {};
     this._active_tab_count = 0;
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
+    window.messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
   };
 };
 

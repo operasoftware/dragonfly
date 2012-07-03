@@ -793,6 +793,11 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
+  this._handlers["enable-ecmascript-debugger"] = function(event, target)
+  {
+    window.services.scope.enable_profile(window.app.profiles.DEFAULT);
+  }.bind(this);
+
   this._remove_from_dom = function(event, target, script)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
@@ -923,7 +928,7 @@ cls.DOMInspectorActions = function(id)
 
 };
 
-window.eventHandlers.click['get-children'] = function(event, target)
+window.event_handlers.click['get-children'] = function(event, target)
 {
   if (event.shiftKey)
     this.broker.dispatch_action("dom", "expand-collapse-whole-node", event, target);
@@ -931,17 +936,17 @@ window.eventHandlers.click['get-children'] = function(event, target)
     this.broker.dispatch_action("dom", "expand-collapse-node", event, target);
 }
 
-window.eventHandlers.click['spotlight-node'] = function(event, target)
+window.event_handlers.click['spotlight-node'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "select-node", event, target);
 }
 
-window.eventHandlers.click['breadcrumb-link'] = function(event, target)
+window.event_handlers.click['breadcrumb-link'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "select-node-in-breadcrumb", event, target);
 }
 
-window.eventHandlers.mouseup['breadcrumb-link'] = function(event, target)
+window.event_handlers.mouseup['breadcrumb-link'] = function(event, target)
 {
   var selection = window.getSelection();
   if (!selection.isCollapsed)
@@ -950,44 +955,49 @@ window.eventHandlers.mouseup['breadcrumb-link'] = function(event, target)
   }
 }
 
-window.eventHandlers.mouseover['breadcrumb-link'] =
-window.eventHandlers.mouseover['spotlight-node'] = function(event, target)
+window.event_handlers.mouseover['breadcrumb-link'] =
+window.event_handlers.mouseover['spotlight-node'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
 
-window.eventHandlers.click['dom-inspection-export'] = function(event, target)
+window.event_handlers.click['dom-inspection-export'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "export-markup", event, target);
 };
 
-window.eventHandlers.click['dom-inspection-snapshot'] = function(event, target)
+window.event_handlers.click['dom-inspection-snapshot'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "expand-whole-dom", event, target);
 };
 
-window.eventHandlers.click['dom-resource-link'] = function(event, target)
+window.event_handlers.click['dom-resource-link'] = function(event, target)
 {
   this.broker.delay_action("click", "dom", "dom-resource-link", event, target);
 };
 
-window.eventHandlers.dblclick['edit-dom'] = function(event, target)
+window.event_handlers.dblclick['edit-dom'] = function(event, target)
 {
   this.broker.clear_delayed_actions("click");
   this.broker.dispatch_action("dom", "edit-dom", event, event.target);
 }
 
-window.eventHandlers.click['inspect-node-link'] = function(event, target)
+window.event_handlers.click['inspect-node-link'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "inspect-node-link", event, target);
 }
 
-window.eventHandlers.mouseover['inspect-node-link'] = function(event, target)
+window.event_handlers.mouseover['inspect-node-link'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
 
-window.eventHandlers.click['df-show-live-source'] = function(event, target)
+window.event_handlers.click['df-show-live-source'] = function(event, target)
 {
   window.debug_helpers.liveSource.open();
+};
+
+window.event_handlers.click['enable-ecmascript-debugger'] = function(event, target)
+{
+  this.broker.dispatch_action("dom", "enable-ecmascript-debugger", event, target);
 };

@@ -186,4 +186,5 @@ UI.get_instance = function()
 UI.TYPE_SINGLE_SELECT = "single-select";
 UI.TYPE_INPUT = "input";
 UI.TYPE_SWITCH = "switch";
+UI.TYPE_SWITCH_CUSTOM_HANDLER = "switch-custom-handler";
 UI.TYPE_BUTTONS = "buttons";

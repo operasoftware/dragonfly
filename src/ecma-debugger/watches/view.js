@@ -230,6 +230,7 @@ cls.WatchesView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.required_services = ["ecmascript-debugger"];
     this.init(id, name, container_class, null, null, 'watches-edit-prop');
     this._last_selected_frame_index = 0;
     this._watch_container = null;

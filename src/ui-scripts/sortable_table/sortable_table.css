@@ -85,12 +85,7 @@
   width: 15px;
   height: 19px;
   display: block;
-  background: transparent url("../../ui-images/dropdown.png");
-}
-
-.sort-column:active:before
-{
-  background: transparent url("../../ui-images/dropdown.png");
+  background-image: url("../../ui-images/dropup.png");
 }
 
 .sort-column.reversed:before
@@ -103,13 +98,7 @@
   top: 4px;
   width: 15px;
   height: 19px;
-  background: url("../../ui-images/dropup.png");
-}
-
-.sort-column.reversed:active:before
-{
-  background: url("../../ui-images/dropup.png"),
-              #f0f0f0; /* matches rgba(0, 0, 0, 0.06); */
+  background-image: url("../../ui-images/dropdown.png");
 }
 
 th.sort-column

@@ -63,6 +63,9 @@ ui_strings.M_CONTEXTMENU_DISABLE_ALL = "Disable all";
 /* DESC: Context menu item for disabling all breakpoints */
 ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
 
+/* DESC: Context menu item for disabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
+
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -781,7 +784,7 @@ ui_strings.S_HTTP_TOOLTIP_FILTER_XHR = "Show only XMLHttpRequests";
 ui_strings.S_HTTP_TOOLTIP_GRAPH = "Graph of the loading sequence";
 
 /* DESC: tooltip on mime type table header */
-ui_strings.S_HTTP_TOOLTIP_MIME = "Mime type";
+ui_strings.S_HTTP_TOOLTIP_MIME = "MIME type";
 
 /* DESC: tooltip on protocol table header */
 ui_strings.S_HTTP_TOOLTIP_PROTOCOL = "Protocol";
@@ -813,6 +816,9 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled."
+
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 
@@ -833,6 +839,9 @@ ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment
 
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
@@ -962,6 +971,9 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
+
+/* DESC: Button label to enable the default debugger features. */
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font face";
@@ -1228,7 +1240,7 @@ ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE = "n/a";
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_HOST = "Host";
 
 /* DESC: Name of mime column */
-ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "Mime";
+ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME = "MIME";
 
 /* DESC: Name of path column */
 ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PATH = "Path";
