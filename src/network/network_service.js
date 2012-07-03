@@ -918,6 +918,7 @@ cls.NetworkLoggerRequest = function(entry)
   this.request_type = null;
   this.firstline = null;
   this.requestbody = null;
+  this.boundary = "";
 };
 
 cls.NetworkLoggerRequestPrototype = function()
@@ -936,6 +937,7 @@ cls.NetworkLoggerRequestPrototype = function()
       if (header.name.toLowerCase() == "content-type")
       {
         this.request_type = header.value;
+        this.boundary = header.value.split("; boundary=")[1] || "";
         break;
       }
     }
@@ -943,6 +945,7 @@ cls.NetworkLoggerRequestPrototype = function()
     // The body can be contained in event.raw.
     // At the time of the this event, it's possible that more than the header
     // has been written to the socket already.
+    this.raw = event.raw; // todo: debugging only. remove me.
     this.request_headers_raw = event.raw.split("\r\n\r\n")[0];
   };
 

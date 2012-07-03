@@ -15,6 +15,11 @@ templates._detail_row = function(wrap)
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
+templates.wrap_pre = function(str)
+{
+  return ["pre", str, "class", "mono"];
+};
+
 templates.details = function(entry, left_val, do_raw)
 {
   return (
@@ -191,11 +196,25 @@ templates._response_headers = function(resp, do_raw)
   return ["tbody", ret.map(templates._detail_row)];
 };
 
-templates.headers_list = function(headers, firstline)
+templates.headers_list = function(headers, firstline, do_raw)
 {
-  var lis = headers.map(function(header) {
+  var map;
+  if (do_raw) // todo: when raw, this is currently just for headers of parts in mutipart. should be used for others too, to gain the speclinks.
+  {
+    map = function(header)
+    {
+      return templates.wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
+    };
+  }
+  else
+  {
+    map = function(header)
+    {
       return [["th", header.name + ":", "data-spec", "http#" + header.name], ["td", header.value]];
-  });
+    };
+  }
+
+  var lis = headers.map(map);
 
   if (firstline)
   {
@@ -204,36 +223,41 @@ templates.headers_list = function(headers, firstline)
   return lis;
 };
 
-templates.body_separator = function()
-{
-  return ["pre", " ", "class", "mono"];
-};
-
 templates._request_body = function(req, do_raw)
 {
   if (req.requestbody == null)
     return [];
 
-  var ret = [templates.body_separator()];
+  var ret = [templates.wrap_pre("\n")];
   if (req.requestbody.partList.length) // multipart
   {
+    var use_raw_boundary = false;
+    if (do_raw && req.boundary)
+      use_raw_boundary = true;
+
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
-      ret.concat(templates.headers_list(part.headerList));
+      if (use_raw_boundary && n === 0)
+        ret.push(this.wrap_pre(req.boundary));
+
+      ret.extend(templates.headers_list(part.headerList, null, do_raw));
+      ret.push(this.wrap_pre("\n"));
       if (part.content && part.content.stringData)
-        ret.push(["pre", part.content.stringData, "class", "mono"]);
+        ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
       if (n < req.requestbody.partList.length - 1)
-        ret.push(["hr"]); // todo: when raw, use the boundary here
+        ret.push(use_raw_boundary ? this.wrap_pre(req.boundary) : ["hr"]);
+      else if (use_raw_boundary)
+        ret.push(this.wrap_pre(req.boundary + "--\n"));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
   {
     if (do_raw)
     {
-      ret.push(["pre", req.requestbody.content.stringData]);
+      ret.push(["pre", req.requestbody.content.stringData, "class", "mono network-body"]);
     }
     else
     {
@@ -284,7 +308,7 @@ templates._request_body = function(req, do_raw)
 
 templates._response_body = function(resp, do_raw, is_last)
 {
-  var ret = [templates.body_separator()]; // todo: no, then it's (really) empty there shouldn't be a separator either.
+  var ret = [templates.wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
 
   var classname = "";
   if (resp.body_unavailable ||
