@@ -1,4 +1,4 @@
-(function()
+﻿(function()
 {
   var EVENT_TYPE = 0;
   var ORIGIN = 1;

@@ -1,4 +1,4 @@
-if (!"".trim)
+﻿if (!"".trim)
 {
   String.prototype.trim = function()
   {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Returns the index of item in the nodelist
  * (The same behaviour as js1.6 array.indexOf)
  * @argument item {Element}

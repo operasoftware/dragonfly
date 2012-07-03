@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Return the sum of all the values in the array. If selectorfun is given,
  * it will be called to retrieve the relevant value for each item in the
  * array.

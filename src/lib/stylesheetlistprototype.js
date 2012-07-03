@@ -1,4 +1,4 @@
-StyleSheetList.prototype.getDeclaration = function(selector)
+﻿StyleSheetList.prototype.getDeclaration = function(selector)
 {
   var sheet = null, i = 0, j = 0, rules = null, rule = null;
   for ( ; sheet = this[i]; i++)

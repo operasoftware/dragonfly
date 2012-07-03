@@ -1,4 +1,4 @@
-if (!Object.getOwnPropertyNames)
+﻿if (!Object.getOwnPropertyNames)
 {
   Object.getOwnPropertyNames = function(obj)
   {

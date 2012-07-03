@@ -1,4 +1,4 @@
-CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
+﻿CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
                                                                bottom_color_list,
                                                                flip)
 {

@@ -1,4 +1,4 @@
-if (!window.opera)
+﻿if (!window.opera)
 {
   window.opera =
   {
