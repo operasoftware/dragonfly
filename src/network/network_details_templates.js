@@ -5,9 +5,10 @@ window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
-templates._detail_row = function(wrap)
+templates._wrap_col_or_row = function(wrap)
 {
-  // Todo: this may be too hacky..
+  // Wraps either ["elem", "text"] in a column
+  // or [["elem", "text"], ["elem", "text"]] in a row.
   if (Array.isArray(wrap[0]) && wrap[1])
   {
     return ["tr", wrap[0], wrap[1]];
@@ -15,7 +16,7 @@ templates._detail_row = function(wrap)
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
-templates.wrap_pre = function(str)
+templates._wrap_pre = function(str)
 {
   return ["pre", str, "class", "mono"];
 };
@@ -90,7 +91,7 @@ templates.did_not_touch_network = function(entry)
   var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
   return (
     ["tbody", 
-      templates._detail_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
+      templates._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
         ["p", entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
                                    : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
     ]);
@@ -160,7 +161,7 @@ templates._request_headers = function(req, do_raw)
       ret.extend(templates.headers_list(req.request_headers, firstline));
     }
   }
-  return ["tbody", ret.map(templates._detail_row)];
+  return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
 templates._response_headers = function(resp, do_raw)
@@ -193,29 +194,28 @@ templates._response_headers = function(resp, do_raw)
     ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]);
 
   ret.extend(templates.headers_list(resp.response_headers, firstline));
-  return ["tbody", ret.map(templates._detail_row)];
+  return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
 templates.headers_list = function(headers, firstline, do_raw)
 {
-  var map;
-  if (do_raw) // todo: when raw, this is currently just for headers of parts in mutipart. should be used for others too, to gain the speclinks.
+  var map_func;
+  if (do_raw) // this is currently just for headers of parts in multipart. todo: in regular request/response headers we'll have a tokenized list to gain speclinks.
   {
-    map = function(header)
+    map_func = function(header)
     {
-      return templates.wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
+      return templates._wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
     };
   }
   else
   {
-    map = function(header)
+    map_func = function(header)
     {
       return [["th", header.name + ":", "data-spec", "http#" + header.name], ["td", header.value]];
     };
   }
 
-  var lis = headers.map(map);
-
+  var lis = headers.map(map_func);
   if (firstline)
   {
     lis.unshift(["pre", firstline, "class", "mono"]);
@@ -228,7 +228,7 @@ templates._request_body = function(req, do_raw)
   if (req.requestbody == null)
     return [];
 
-  var ret = [templates.wrap_pre("\n")];
+  var ret = [templates._wrap_pre("\n")];
   if (req.requestbody.partList.length) // multipart
   {
     var use_raw_boundary = false;
@@ -238,19 +238,19 @@ templates._request_body = function(req, do_raw)
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
       if (use_raw_boundary && n === 0)
-        ret.push(this.wrap_pre(req.boundary));
+        ret.push(this._wrap_pre(req.boundary));
 
       ret.extend(templates.headers_list(part.headerList, null, do_raw));
-      ret.push(this.wrap_pre("\n"));
+      ret.push(this._wrap_pre("\n"));
       if (part.content && part.content.stringData)
         ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
       if (n < req.requestbody.partList.length - 1)
-        ret.push(use_raw_boundary ? this.wrap_pre(req.boundary) : ["hr"]);
+        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary) : ["hr"]);
       else if (use_raw_boundary)
-        ret.push(this.wrap_pre(req.boundary + "--\n"));
+        ret.push(this._wrap_pre(req.boundary + "--\n"));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
@@ -302,13 +302,13 @@ templates._request_body = function(req, do_raw)
   if (do_raw)
     return ret;
   else
-    return ["tbody", ret.map(templates._detail_row)];
+    return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
 
 templates._response_body = function(resp, do_raw, is_last)
 {
-  var ret = [templates.wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
+  var ret = [templates._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
 
   var classname = "";
   if (resp.body_unavailable ||
@@ -354,7 +354,7 @@ templates._response_body = function(resp, do_raw, is_last)
   if (do_raw)
     return ret;
   else
-    return ["tbody", ret.map(templates._detail_row), "class", classname];
+    return ["tbody", ret.map(templates._wrap_col_or_row), "class", classname];
 };
 
 })(window.templates.network);
