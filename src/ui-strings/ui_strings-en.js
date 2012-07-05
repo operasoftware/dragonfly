@@ -1696,4 +1696,4 @@ ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
 
 /* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
-ui_strings.D_SHORTCUTS_UPDATE_FAILED = "We could not update your custom keyboard shortcuts with the new ones.";
+ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
