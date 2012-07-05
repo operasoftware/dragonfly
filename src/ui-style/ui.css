@@ -1115,7 +1115,8 @@ window.hud window-container
   border: 0;
 }
 
-.hud window-toolbar
+.hud window-toolbar,
+.hud .disabled-toolbar-overlay
 {
   background-color: #000;
   background-image: -o-linear-gradient(-90deg,
@@ -1124,6 +1125,17 @@ window.hud window-container
   border: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.65);
   padding-bottom: 3px;
+}
+
+.hud window-toolbar
+{
+  position: relative;
+}
+
+.hud .disabled-toolbar-overlay
+{
+  padding: 3px 2px;
+  margin: -3px -2px;
 }
 
 .hud cst-select cst-value
