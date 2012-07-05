@@ -22,6 +22,7 @@ cls.ResourceDetailBase = function()
   this._target_line = 0;
   this._root_ele = null;
   this._tops = [];
+  this.required_services = ["resource-manager", "document-manager"];
 
   this._traverse_ele = function(ele)
   {
@@ -150,6 +151,11 @@ cls.ResourceDetailBase = function()
     }
 
   }
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
 
   this.render_type_details = function(container, resource, resourcedata)
   {

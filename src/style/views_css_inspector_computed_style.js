@@ -6,6 +6,7 @@
  */
 cls.CSSInspectorCompStyleView = function(id, name, container_class)
 {
+  this.required_services = ["ecmascript-debugger"];
   this.createView = function(container)
   {
     var element_style = window.element_style;

@@ -148,6 +148,7 @@ var ToolbarBase = function()
     this.create_toolbar_content(view_id, toolbar)
   }
 
+  // belongs in ToolbarConfigBase
   this.create_toolbar_content = function(view_id, toolbar)
   {        
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
@@ -183,18 +184,18 @@ var ToolbarBase = function()
           // The templated will be collected in button_templates, to be then passed to 
           // another template function. That is because a button can have a .template member
           // which defines a custom template
-          if (group.items && group.type !== "input")
+          if (group.items && group.type !== UI.TYPE_INPUT)
           {
             var current_value = null;
             for (var j = 0, button; button = group.items[j]; j++)
             {
-              if (group.type === "single-select")
+              if (group.type === UI.TYPE_SINGLE_SELECT)
               {
                 var values = window.single_selects;
                 values = (values = values[view_id]) && (values = values[group.name]) && (values = values.values);
                 button_templates.push(templates.single_select_button(button, values));
               }
-              else if (group.type === "switch")
+              else if (group.type === UI.TYPE_SWITCH || group.type === UI.TYPE_SWITCH_CUSTOM_HANDLER)
               {
                 button_templates.push(templates._switch(button.key));
               }
@@ -231,7 +232,10 @@ var ToolbarBase = function()
         {
           toolbar.render(custom.template(views[view_id]));
         } 
-      } 
+      }
+
+      if (!window.views[view_id].is_enabled && toolbars[view_id])
+        toolbars[view_id].disable();
     }
   }
   
