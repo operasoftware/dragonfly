@@ -31,7 +31,7 @@ html
 </style>
 
 <script src="../../src/scripts/dom.js"></script>
-<script src="../../src/syntaxhighlight/http/tokenizer.js"></script>
+<script src="../../src/syntaxhighlight/http-header/tokenizer.js"></script>
 
 <script>
 
@@ -92,11 +92,13 @@ Connection:Keep-Alive";
 
 window.onload = function()
 {
-  document.body.firstElementChild.render(get_tokens(raw_headers).map(token_template));
-  document.body.firstElementChild.render([["br"], ["br"]]);
-  document.body.firstElementChild.render(get_tokens(raw_headers2).map(token_template));
-  document.body.firstElementChild.render([["br"], ["br"]]);
-  document.body.firstElementChild.render(get_tokens(raw_headers3).map(token_template));
+  var headers = [raw_headers, raw_headers2, raw_headers3];
+  headers.forEach(function(header_string){
+    var pre = document.body.firstElementChild.render(["pre"])
+    pre.render(get_tokens(header_string).map(token_template));
+    if (pre.textContent !== header_string)
+      throw(new Error("Tokenized headers produced different result."));
+  });
 }
 
 </script>
