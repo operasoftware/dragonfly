@@ -1143,9 +1143,17 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       }
     }
     return ret;
-  }
+  };
 
+  this.get_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window);
+  };
 
+  this.get_dom_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window).filter(this.runtime_has_dom);
+  };
 
   this.getRuntimeIdWithURL = function(url)
   {

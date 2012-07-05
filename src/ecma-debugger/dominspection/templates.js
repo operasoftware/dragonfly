@@ -33,6 +33,11 @@
   const PSEUDO_ELEMENT_AFTER = 2;
   const PSEUDO_ELEMENT_FIRST_LETTER = 3;
   const PSEUDO_ELEMENT_FIRST_LINE = 4;
+  const EVENT_LISTENER_LIST = 15;
+
+  var EV_LISTENER_MARKUP = "<span class=\"ev-listener\" " +
+                                 "data-tooltip=\"event-listener\" " +
+                                 "></span>"
 
   this._pseudo_element_map = {};
   this._pseudo_element_map[PSEUDO_ELEMENT_BEFORE] = "before";
@@ -185,6 +190,7 @@
     var disregard_force_lower_case_depth = 0;
     var open_tag = is_tree_style ? "" : "&lt;";
     var close_tag =  is_tree_style ? "" : "&gt;";
+    var ev_listener = "";
 
     for (var i = 0, node; node = data[i]; i++)
     {
@@ -210,6 +216,9 @@
       {
         node_name = node_name.toLowerCase();
       }
+      ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                  ? EV_LISTENER_MARKUP
+                  : "";
       switch (node[TYPE])
       {
         case PSEUDO_NODE:
@@ -236,7 +245,7 @@
           {
             tree += "</node>";
           }
-          tree += "</div>";
+          tree += ev_listener + "</div>";
           break;
         }
         case PROCESSING_INSTRUCTION_NODE:
@@ -266,6 +275,14 @@
         }
         case DOCUMENT_NODE:
         {
+          if (ev_listener)
+          { 
+            tree += "<div class='search-match dom-search document' " + 
+                         "rt-id='" + String(model.getDataRuntimeId()) + "' " +
+                         "obj-id='" + String(node[ID]) + "' " +
+                         "handler='inspect-object-link' >" +
+                      "document" + ev_listener + "</div>";
+          }
           break;
         }
         case DOCUMENT_TYPE_NODE:
@@ -377,6 +394,10 @@
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
           node_name = helpers.escapeTextHtml(node_name);
+          var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                          ? EV_LISTENER_MARKUP
+                          : "";
+
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
@@ -456,7 +477,7 @@
                               one_child_text_content +
                           "<node>&lt;/" + node_name + "&gt;</node>" +
                           (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>";
+                      ev_listener + "</div>";
               i = child_pointer - 1;
             }
             else
@@ -471,7 +492,7 @@
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>"; 
+                      ev_listener + "</div>"; 
 
               closing_tags.push("<div" + this._margin_style(node, depth_first_ele) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
@@ -493,7 +514,7 @@
                           "<input handler='get-children' type='button' class='close' />" : '') +
                           "<node>&lt;" + node_name + attrs + (is_expandable ? '' : '/') + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      "</div>";
+                      ev_listener + "</div>";
           }
           break;
         }
@@ -596,6 +617,7 @@
     var parent_ele_stack = [];
     var parent_ele = null;
     var is_expandable = false;
+    var ev_listener = "";
 
     for ( ; node = data[i]; i += 1)
     {
@@ -624,6 +646,10 @@
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
       }
+
+      ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
+                  ? EV_LISTENER_MARKUP
+                  : "";
 
       switch (node[TYPE])
       {
@@ -697,7 +723,7 @@
                     (is_expandable ?
                       "<input handler='get-children' type='button' class='open' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    ev_listener + "</div>";
           }
           else
           {
@@ -709,7 +735,7 @@
                     (is_expandable ?
                       "<input handler='get-children' type='button' class='close' />" : '') +
                     "<node>" + node_name + attrs + "</node>" +
-                    "</div>";
+                    ev_listener + "</div>";
           }
           parent_ele_stack.push(node);  
           break;
@@ -730,8 +756,10 @@
 
         case DOCUMENT_NODE:
         {
-          tree += "<div" + this._margin_style(node, depth_first_ele) + ">" +
-                    "<span class='document-node'>#document</span></div>";
+          tree += "<div" + this._margin_style(node, depth_first_ele) + 
+                          "ref-id='" + node[ID] + "'>" +
+                    "<span class='document-node'>#document</span>" +
+                    ev_listener + "</div>";
           break;
         }
 

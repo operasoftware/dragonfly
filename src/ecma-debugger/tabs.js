@@ -143,8 +143,8 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
 
   this.getActiveTab = function(top_frame_runtime_id)
   {
-    return __activeTab;
-  }
+    return __activeTab.slice();
+  };
 
   this.is_runtime_of_active_tab = function(rt)
   {
