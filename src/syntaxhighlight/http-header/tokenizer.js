@@ -4,17 +4,20 @@ window.cls = window.cls || {};
 
 cls.HTTPHeaderTokenizer = function()
 {
-  var LF = "\n";
-  var PUNCTUATOR = ":";
-  var WHITESPACE_CHARS = {
-    "\u0009": 1, //  Tab <TAB>
-    "\u0020": 1, //  Space <SP>
-  };
-
   this._buffer = "";
   this._current_pos = 0;
   this._token_buffer = "";
   this._state_handler = {};
+};
+
+cls.HTTPHeaderTokenizerPrototype = function()
+{
+  var LF = "\n";
+  var PUNCTUATOR = ":";
+  var WHITESPACE_CHARS = {
+    "\u0009": 1, //  Tab <TAB>
+    "\u0020": 1  //  Space <SP>
+  };
 
   this.tokenize = function(input_buffer, ontoken)
   {
@@ -98,7 +101,9 @@ cls.HTTPHeaderTokenizer = function()
     }
     return false;
   };
-}
+};
+
+cls.HTTPHeaderTokenizer.prototype = new cls.HTTPHeaderTokenizerPrototype();
 
 cls.HTTPHeaderTokenizer.types = {
     FIRST_LINE_PART  : 1,
