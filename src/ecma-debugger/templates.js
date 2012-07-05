@@ -66,10 +66,13 @@
                                           selected_script_id, search_term)
   {
     var script_list = ["div"];
-    for (var i = 0, rt; rt = runtimes[i]; i++)
+    if (runtimes && runtimes.length)
     {
-      script_list.push(this.runtime_script(rt, stopped_script_id, 
-                                           selected_script_id, search_term));
+      for (var i = 0, rt; rt = runtimes[i]; i++)
+      {
+        script_list.push(this.runtime_script(rt, stopped_script_id, 
+                                             selected_script_id, search_term));
+      }
     }
     script_list.push("class", "js-dd-script-list",
                      "handler", "js-dd-move-highlight");
@@ -288,21 +291,6 @@
       "runtime-id", runtime.runtime_id.toString()
     ].concat( dom_data.getDataRuntimeId() == runtime.runtime_id ? ["class", "selected"] : [] ).
       concat( display_uri != runtime.uri ? ["title", runtime.uri] : [] ) )
-  }
-
-  this.checkbox = function(settingName, settingValue)
-  {
-    return ["li",
-      ["label",
-        ["input",
-        "type", "checkbox",
-        "value", settingName,
-        "checked", settingValue ?  true : false,
-        "handler", "set-stop-at"
-        ],
-        settingName
-      ]
-    ]
   }
 
   this.frame = function(frame, is_top)

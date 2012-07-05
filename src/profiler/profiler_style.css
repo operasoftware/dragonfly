@@ -1,0 +1,289 @@
+﻿.profiler-legend
+{
+  position: absolute;
+  left: 0;
+  top: 20px;
+  width: 160px;
+  border-top: 1px solid #e6e6e6;
+}
+
+.profiler-timeline
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 20px;
+  border-top: 1px solid #e6e6e6;
+}
+
+.profiler-details-list
+{
+  position: absolute;
+  top: 165px;
+  bottom: 21px;
+  overflow: auto;
+  border-top: 1px solid #e6e6e6;
+  width: 100%;
+}
+
+.profiler-details-list.profiler-no-status
+{
+  bottom: 0;
+}
+
+.profiler-status
+{
+  position: absolute;
+  bottom: 0;
+  height: 20px;
+  line-height: 20px;
+  width: 100%;
+  border-top: 1px solid #e6e6e6;
+  text-align: center;
+}
+
+.profiler-status.profiler-no-status
+{
+  display: none;
+}
+
+.profiler-empty
+{
+  text-align: center;
+  color: #999;
+  text-shadow: 1px 1px 1px #eee;
+  font-size: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+.profiler-details-time,
+.profiler-details-hits
+{
+  width: 100px;
+}
+
+.profiler-timeline-row
+{
+  height: 16px;
+  line-height: 16px;
+  padding: 1px 5px; /* Line up up with the table below */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.profiler-timeline-row.odd
+{
+  background-color: #f7f7f7;
+}
+
+.profiler-legend-label
+{
+  box-sizing: border-box;
+  padding-right: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.profiler-legend-amount
+{
+  position: absolute;
+  right: 2px;
+  text-shadow: 1px 1px #fff;
+}
+
+.profiler-legend-amount-bar
+{
+  background: #769FE1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 1px;
+}
+
+.profiler-timeline-row:hover .profiler-legend-label
+{
+  color: #769fe1;
+}
+
+.profiler-timeline-marker
+{
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background: #e6e6e6;
+  top: 0;
+}
+
+.profiler-timeline-marker-time
+{
+  position: absolute;
+  top: -15px;
+  color: #444;
+  white-space: nowrap;
+}
+
+.profiler-timeline-marker-time:not(.first):not(.last)
+{
+  min-width: 60px;
+  margin-left: -30px;
+  text-align: center;
+}
+
+.profiler-timeline-marker-time.last
+{
+  right: 2px;
+}
+
+.profiler-event
+{
+  min-width: 3px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.profiler-timeline .profiler-event
+{
+  position: absolute;
+}
+
+.profiler-event-interval
+{
+  margin: 3px 0;
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.profiler-event-interval.expandable:hover
+{
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+              0 0 0 3px #ceddf5;
+}
+
+.profiler-event-interval.non-expandable:hover
+{
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+              0 0 0 3px #ddd;
+}
+
+.profiler-event-interval.selected
+{
+  box-shadow: 0 0 0 3px #769fe1;
+}
+
+.event-type-3
+{
+  background-color: rgba(199, 199, 235, .6);
+}
+
+.event-type-3-selftime
+{
+  background-color: rgb(179, 176, 255);
+}
+
+.event-type-4
+{
+  background-color: rgba(170, 193, 227, .6);
+}
+
+.event-type-4-selftime
+{
+  background-color: rgb(140, 184, 250);
+}
+
+.event-type-5
+{
+  background-color: rgba(245, 225, 159, .6);
+}
+
+.event-type-5-selftime
+{
+  background-color: rgb(255, 225, 125);
+}
+
+.event-type-6
+{
+  background-color: rgba(162, 222, 170, .6);
+}
+
+.event-type-6-selftime
+{
+  background-color: rgb(126, 214, 138);
+}
+
+.event-type-7
+{
+  background-color: rgba(252, 177, 116, .6);
+}
+
+.event-type-7-selftime
+{
+  background-color: rgb(232, 130, 46);
+}
+
+.event-type-8
+{
+  background-color: rgba(251, 207, 171, .6);
+}
+
+.event-type-8-selftime
+{
+  background-color: rgb(255, 192, 140);
+}
+
+.event-type-10
+{
+  background-color: rgba(235, 191, 155, .6);
+}
+
+.event-type-10-selftime
+{
+  background-color: rgb(224, 148, 85);
+}
+
+.event-type-11
+{
+  background-color: rgba(255, 156, 156, .6);
+}
+
+.event-type-11-selftime
+{
+  background-color: rgb(244, 83, 83);
+}
+
+.profiler-event-tooltip
+{
+  width: 200px;
+}
+
+.profiler-event-tooltip-info
+{
+  padding-top: 30px;
+}
+
+.profiler-event-tooltip li
+{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.profiler-event-tooltip-label
+{
+  font-weight: bold;
+  color: #333;
+}
+

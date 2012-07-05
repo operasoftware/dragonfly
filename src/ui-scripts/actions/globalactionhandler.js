@@ -266,8 +266,9 @@
 
     if (overlay_id == "remote-debug-overlay" && (!client || !client.connected))
     {
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .removeClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.removeClass("alert");
       eventHandlers.click['cancel-remote-debug'](); // TODO: make a proper action
     }
 
