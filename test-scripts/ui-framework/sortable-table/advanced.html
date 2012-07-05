@@ -93,6 +93,11 @@ tabledef = {
     }
   },
   columns: {
+    sort_test: {
+      label: "Sort test",
+      getter: function(obj) { return obj.gender; },
+      renderer: function(obj) { return String(obj.expected_sort_pos); }
+    },
     firstname: {
       label: "First name"
     },
@@ -122,11 +127,6 @@ tabledef = {
       getter: function(obj) { return obj.birthdate },
       renderer: function(obj) { return String(Math.floor((new Date().getTime() - obj.birthdate) / 31536000000))  }, // ms pr year
     },
-    sort_test: {
-      label: "Sort test",
-      getter: function(obj) { return obj.gender; },
-      renderer: function(obj) { return String(obj.expected_sort_pos); }
-    },
     gendericon: {
       label: "",
       getter: function(obj) { return obj.gender },
@@ -136,7 +136,7 @@ tabledef = {
       }
     }
   },
-  column_order: ["firstname", "lastname", "name", "name2", "gender", "birthdate", "age", "sort_test", "gendericon"],
+  column_order: ["sort_test", "firstname", "lastname", "name", "name2", "gender", "birthdate", "age", "gendericon"],
   idgetter: function(res) { return res.stringified || (res.stringified = JSON.stringify(res)) }
 }
 

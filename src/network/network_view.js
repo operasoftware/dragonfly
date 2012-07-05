@@ -98,7 +98,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var MINIMUM_DETAIL_WIDTH = 100;
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    return templates.network_log_details(entry, left_val);
+    var do_raw = settings.network_logger.get("view-raw");
+    return templates.network.details(entry, left_val, do_raw);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -173,7 +174,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
 
-    var template = ["div", templates.network_log_main(
+    var template = ["div", templates.network.main(
                      ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
@@ -182,7 +183,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+        // todo: it would be good if we knew if the whole context is finished. Better only to get_body then, less potential to disturb.
+        if (entry.is_finished && !entry.last_response_has_responsebody && !entry.is_fetching_body)
           this._service.get_body(entry.id, this.update_bound);
 
         template = [template, this._render_details_view(entry)];
@@ -193,7 +195,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     if (this._selected)
     {
-      var details = rendered.querySelector(".request-details");
+      var details = rendered.querySelector(".entry-details");
       if (details)
       {
         if (this._details_scroll_top)
@@ -228,20 +230,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
-        getter: function(entry) { return entry.method || ""; }
+        getter: function(entry) { return entry.last_method || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_RESPONSECODE,
         renderer: function(entry) {
-          return (entry.responsecode && String(entry.responsecode)) || "";
+          return (entry.last_responsecode && String(entry.last_responsecode)) || "";
         },
         title_getter: function(entry, renderer) {
-          if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return String(cls.ResourceUtil.http_status_codes[entry.responsecode]);
+          if (cls.ResourceUtil.http_status_codes[entry.last_responsecode])
+            return String(cls.ResourceUtil.http_status_codes[entry.last_responsecode]);
           return renderer(entry);
         },
-        getter: function(entry) { return entry.responsecode || 0; }
+        getter: function(entry) { return entry.last_responsecode || 0; }
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
@@ -276,9 +278,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          if (entry.responsestart && entry.requesttime)
-            return entry.responsestart - entry.requesttime;
-          return "";
+          return entry.waiting_time || "";
         },
         renderer: function(entry, getter)
         {
@@ -316,7 +316,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
           var FIXED_GRAPH_WIDTH = 50;
-          return templates.network_graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
+          return templates.network.graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
         }
       }
     }
@@ -443,7 +443,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("request-details"))
+    if (evt.target.hasClass("entry-details"))
     {
       this._details_scroll_top = evt.target.scrollTop;
       this._details_scroll_left = evt.target.scrollLeft;
@@ -462,7 +462,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
-    var template = templates.network_graph_tooltip(entry, this.mono_lineheight);
+    var template = templates.network.graph_tooltip(entry, this.mono_lineheight);
     this.graph_tooltip.show(template);
   }.bind(this);
 
@@ -498,7 +498,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry(entry_id);
       if (entry)
       {
-        var template = templates.network_log_url_tooltip(entry);
+        var template = templates.network.url_tooltip(entry);
         this.url_tooltip.show(template);
       }
     }
@@ -701,17 +701,19 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": false,
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
-      "track-content": true
+      "track-content": true,
+      "view-raw": false
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
+      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL
     },
     // settings map
     {
-      checkboxes: ["track-content"]
+      checkboxes: ["track-content", "view-raw"]
     },
     // templates
     {
@@ -813,6 +815,15 @@ cls.NetworkLog.create_ui_widgets = function()
           handler: "profiler-mode-switch"
         },
         {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.view-raw",
+              icon: "view-raw-requests-responses"
+            }
+          ]
+        },
+        {
           type: UI.TYPE_INPUT,
           items: [
             {
@@ -840,7 +851,7 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector(".request-details");
+      var scroll_container = msg.container.querySelector(".entry-details");
       if (!scroll_container)
         scroll_container = msg.container.querySelector("#network-outer-container");
 

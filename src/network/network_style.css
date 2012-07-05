@@ -262,7 +262,7 @@
   left: 120px;
 }
 
-.network_logger .request-details
+.network_logger .entry-details
 {
   overflow: auto;
   height: 100%;
@@ -318,9 +318,13 @@
 .network-details-container th
 {
   text-align: left;
-  padding-right: 30px;
-  width: 140px;
   white-space: nowrap;
+}
+
+.network-details-container th:first-child
+{
+  width: 20%;
+  padding-right: 30px;
 }
 
 .network-details-container hr
@@ -543,7 +547,7 @@
   margin: 10px 0;
 }
 
-pre.network-body
+table pre.network-body
 {
   /* work-around CORE-46966: Big pre element breaks layout in a table */
   float: left;

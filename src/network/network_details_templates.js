@@ -1,101 +1,148 @@
 ﻿"use strict";
 
 window.templates || (window.templates = {});
+window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
-templates.network_detail_row = function(wrap)
+templates._wrap_col_or_row = function(wrap)
 {
+  // Wraps either ["elem", "text"] in a column
+  // or [["elem", "text"], ["elem", "text"]] in a row.
+  if (Array.isArray(wrap[0]) && wrap[1])
+  {
+    return ["tr", wrap[0], wrap[1]];
+  }
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
-templates.network_log_details = function(entry, left_val)
+templates._wrap_pre = function(str)
 {
-  return [
-      "div", 
-        ["span",
-          ["span",
-            "class", "close-request-detail",
-            "handler", "close-request-detail",
-            "tabindex", "1"
-          ],
-          "class", "resize-request-detail",
-          "handler", "resize-request-detail"
-        ],
-        templates.network_log_detail(entry),
-      "class", "network-details-container",
-      "style", "left:" + left_val + "px"
-    ];
+  return ["pre", str, "class", "mono"];
 };
 
-templates.network_log_detail = function(entry)
+templates.details = function(entry, left_val, do_raw)
 {
-  var responsecode = entry.responses.last && entry.responses.last.responsecode;
+  return (
+    ["div",
+      ["span",
+        ["span",
+          "class", "close-request-detail",
+          "handler", "close-request-detail",
+          "tabindex", "1"
+        ],
+        "class", "resize-request-detail",
+        "handler", "resize-request-detail"
+      ],
+      ["div",
+        templates._details_content(entry, do_raw),
+        "data-object-id", String(entry.id),
+        "class", "entry-details"
+      ],
+    "class", "network-details-container",
+    "style", "left:" + left_val + "px"]
+  );
+};
+
+templates._details_content = function(entry, do_raw)
+{  
+  var responsecode = entry.last_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
+  // todo: not really pretty
+  if (!this["_requests_responses_" + do_raw])
+    this["_requests_responses_" + do_raw] = templates.requests_responses.bind(this, do_raw);
+
+  var requests_responses = entry.requests_responses.map(this["_requests_responses_" + do_raw])
+
+  if (do_raw)
+  {
+    return requests_responses;
+  }
+
   return (
-    ["div",
-      ["table",
-        ["tbody",
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.url]
-          ],
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
-            ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-            "data-spec", "http#" + entry.method
-          ],
-          ["tr",
-            ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
-            ["td",
-              entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
-            ],
-           "data-spec", "http#" + entry.responsecode
-          ]
+    ["table",
+      ["tbody",
+        ["tr",
+          ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.url]
         ],
-        templates.request_details(entry),
-        templates.network_request_body(entry),
-        entry.responses.map(templates.network_response)
+        ["tr",
+          ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
+          ["td", entry.touched_network ? entry.last_method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
+          "data-spec", "http#" + entry.last_method
+        ],
+        ["tr",
+          ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
+          ["td",
+            entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
+          ],
+         "data-spec", "http#" + entry.last_responsecode
+        ]
       ],
-      "data-object-id", String(entry.id),
-      "class", "request-details"
+      entry.touched_network ? [] : templates.did_not_touch_network(entry),
+      requests_responses
     ]
   );
 };
 
-templates.network_response = function(response)
+templates.did_not_touch_network = function(entry)
+{
+  var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
+  return (
+    ["tbody", 
+      templates._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
+        ["p", entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
+                                   : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
+    ]);
+};
+
+templates.requests_responses = function(do_raw, request_response, index, requests_responses)
+{
+  var is_last = index == requests_responses.length - 1;
+  var template_func = templates._response;
+  if (request_response instanceof cls.NetworkLoggerRequest)
+    template_func = templates._request;
+
+  return template_func(request_response, is_last, do_raw);
+};
+
+templates._request = function(request, is_last, do_raw)
 {
   return [
-    response.logger_entry_touched_network ?
-      templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
-    templates.response_details(response),
-    templates.network_response_body(response)
+    templates._request_headers(request, do_raw),
+    templates._request_body(request, do_raw)
   ]
 };
 
-templates.request_details = function(req)
+templates._response = function(response, is_last, do_raw)
 {
+  return [
+    templates._response_headers(response, do_raw),
+    templates._response_body(response, do_raw, is_last)
+  ]
+};
+
+templates._request_headers = function(req, do_raw)
+{
+  if (do_raw)
+  {
+    return [
+      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
+      ["pre", req.request_headers_raw, "class", "mono"]
+    ];
+  }
+
   var ret = [];
-  if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
-    return ret;
 
-  if (req.touched_network)
-  {
-    if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
-    else
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
-  }
+  if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
+    ret.push(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]);
+  else
+    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]);
 
-  var tbody = ["tbody"];
-  if (req.is_finished && !req.touched_network)
+  if (!req.request_headers)
   {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
-  }
-  else if (!req.request_headers)
-  {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
+    ret.push(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL);
   }
   else
   {
@@ -111,17 +158,26 @@ templates.request_details = function(req)
           ["span", parts[2] + " "]
         ];
       }
-      tbody.extend(templates.network_headers_list(req.request_headers, firstline));
+      ret.extend(templates.headers_list(req.request_headers, firstline));
     }
   }
-  ret.push(tbody);
-  return ret;
+  return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
-templates.response_details = function(resp)
+templates._response_headers = function(resp, do_raw)
 {
-  if (!resp.response_headers)
+  if (do_raw)
+  {
+    return [
+      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+      ["pre", resp.response_headers_raw, "class", "mono"]
+    ];
+  }
+
+  if (!resp.response_headers) // todo: we explicitely mention missing request headers but not missing response headers // ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     return [];
+
+  var ret = [];
 
   var firstline;
   var parts = resp.firstline.split(" ", 2);
@@ -133,157 +189,172 @@ templates.response_details = function(resp)
       ["span", resp.firstline.slice(parts[0].length + parts[1].length + 1)]
     ];
   }
-  return ["tbody", templates.network_headers_list(resp.response_headers, firstline)];
+
+  if (resp.logger_entry_touched_network)
+    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]);
+
+  ret.extend(templates.headers_list(resp.response_headers, firstline));
+  return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
-templates.network_headers_list = function(headers, firstline)
+templates.headers_list = function(headers, firstline, do_raw)
 {
-  var lis = headers.map(function(header) {
-      return ["tr", ["th", header.name + ":"], ["td", header.value], "data-spec", "http#" + header.name];
-  });
+  var map_func;
+  if (do_raw) // this is currently just for headers of parts in multipart. todo: in regular request/response headers we'll have a tokenized list to gain speclinks.
+  {
+    map_func = function(header)
+    {
+      return templates._wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
+    };
+  }
+  else
+  {
+    map_func = function(header)
+    {
+      return [["th", header.name + ":", "data-spec", "http#" + header.name], ["td", header.value]];
+    };
+  }
 
+  var lis = headers.map(map_func);
   if (firstline)
   {
-    lis.unshift(["tr", ["td", firstline, "colspan", "2"], "class", "network-details-header-list mono"]);
+    lis.unshift(["pre", firstline, "class", "mono"]);
   }
   return lis;
 };
 
-templates.network_body_seperator = function()
+templates._request_body = function(req, do_raw)
 {
-  return ["pre", " ", "class", "mono"];
-};
-
-templates.network_request_body = function(req)
-{
-  if (!req.requestbody)
-  {
+  if (req.requestbody == null)
     return [];
-  }
 
-  var cont = [];
-  // when partList.length is 0, the request was one that did not send data
-  if (req.requestbody.partList.length)
+  var ret = [templates._wrap_pre("\n")];
+  if (req.requestbody.partList.length) // multipart
   {
+    var use_raw_boundary = false;
+    if (do_raw && req.boundary)
+      use_raw_boundary = true;
+
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
-      cont.push(templates.network_headers_list(part.headerList));
+      if (use_raw_boundary && n === 0)
+        ret.push(this._wrap_pre(req.boundary));
+
+      ret.extend(templates.headers_list(part.headerList, null, do_raw));
+      ret.push(this._wrap_pre("\n"));
       if (part.content && part.content.stringData)
-        cont.push(templates.network_detail_row(["pre", part.content.stringData]));
+        ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
       else
-        cont.push(templates.network_detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
+        ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
       if (n < req.requestbody.partList.length - 1)
-        cont.push(templates.network_detail_row(["hr"]));
+        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary) : ["hr"]);
+      else if (use_raw_boundary)
+        ret.push(this._wrap_pre(req.boundary + "--\n"));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
   {
-    var parts = req.requestbody.content.stringData.split("&");
-    var tab = [
-                ["tr",
+    if (do_raw)
+    {
+      ret.push(["pre", req.requestbody.content.stringData, "class", "mono network-body"]);
+    }
+    else
+    {
+      var parts = req.requestbody.content.stringData.split("&");
+      ret.push([
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
-                ]
-              ].concat(parts.map(function(e) {
-                  e = e.replace(/\+/g, "%20").split("=");
-                  return ["tr",
-                      ["td", decodeURIComponent(e[0])],
-                      ["td", decodeURIComponent(e[1])]
-                  ];
-    }));
-    cont.push(tab);
+                ]); // it's necesary to just push the outer array, because each entry will be wrapped in a row.
+      
+      ret.extend(parts.map(function(e) {
+                    e = e.replace(/\+/g, "%20").split("=");
+                    return [
+                        ["td", decodeURIComponent(e[0])],
+                        ["td", decodeURIComponent(e[1])]
+                    ];
+                  }));
+    }
   }
   else // not multipart or form.
   {
-    var tpl = [];
     if (req.requestbody.content)
     {
       var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
-      switch (type)
+      if (["markup", "script", "css", "text"].contains(type))
       {
-        case "markup":
-        case "script":
-        case "css":
-        case "text":
+        ret.push(["pre", req.requestbody.content.stringData]);
+      }
+      else
+      {
+        if (req.requestbody.mimeType)
         {
-          tpl = ["pre", req.requestbody.content.stringData];
-          break;
+          ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
         }
-        default:
+        else
         {
-          if (req.requestbody.mimeType)
-          {
-            cont.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
-          }
-          else
-          {
-            cont.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
-          }
+          ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
         }
       }
     }
-    cont.push(tpl);
   }
-  
-  return [
-           templates.network_detail_row(templates.network_body_seperator()),
-           ["tbody", cont]
-         ];
+
+  if (do_raw)
+    return ret;
+  else
+    return ["tbody", ret.map(templates._wrap_col_or_row)];
 };
 
 
-templates.network_response_body = function(resp)
+templates._response_body = function(resp, do_raw, is_last)
 {
-  var ret = [templates.network_detail_row(templates.network_body_seperator())];
+  var ret = [templates._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
+
   var classname = "";
-  if (resp.body_unavailable || 
+  if (resp.body_unavailable ||
       !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
+    ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY);
   }
   else
   {
     if (!resp.responsebody)
     {
-      if (!resp.logger_entry_is_finished)
+      if (is_last && !resp.logger_entry_is_finished)
       {
         classname = "network_info";
-        ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
+        ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
       }
-      // else we're in the middle of getting it via GetResource, leave the response part empty until it updates.
+      // else we're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else
     {
       if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
       {
         ret.push(
-          templates.network_detail_row(
-            ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
-          )
+          ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
         );
       }
       else if (resp.logger_entry_type == "image")
       {
         ret.push(
-          templates.network_detail_row(
-            ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
-          )
+          ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
         );
       }
       else
       {
         ret.push(
-          templates.network_detail_row(
-            ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
-             "class", "network-body"]
-          )
+          ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
+           "class", "network-body"]
         );
       }
     }
   }
-  return ["tbody", ret, "class", classname];
+  if (do_raw)
+    return ret;
+  else
+    return ["tbody", ret.map(templates._wrap_col_or_row), "class", classname];
 };
 
-})(window.templates);
+})(window.templates.network);

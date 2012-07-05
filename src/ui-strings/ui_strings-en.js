@@ -1185,8 +1185,11 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
-/* DESC: Explanation about why a network requests lacks headers. */
+/* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
+
+/* DESC: Explanation about why a network entry doesn't have request data: General */
+ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
@@ -1694,3 +1697,6 @@ ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
+ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
