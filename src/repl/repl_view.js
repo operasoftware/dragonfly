@@ -111,6 +111,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   };
 
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
+
   this.clear = function()
   {
     this._cancel_completion();
@@ -341,7 +346,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_input = function(str)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + 
+      this._add_line('<span class="repl-line-marker">' +
                        (index ? "... " : "&gt;&gt;&gt; ") +
                      "</span>" + line);
     }, this);
@@ -450,7 +455,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._construct_line = function(pre, prop, post, is_partial_completion)
   {
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if (!is_partial_completion && 
+    if (!is_partial_completion &&
         !JSSyntax.is_valid_identifier(prop) &&
         this._autocompletion_scope)
     {
@@ -516,6 +521,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
+    if (!(this._linelist && this._textarea))
+      return;
+
     if (props)
     {
       var localpart = props.identifier;
@@ -706,6 +714,16 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     this._cancel_completion();
   }.bind(this);
 
+  this._on_profile_disabled_bound = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      this.ondestroy();
+      this._toolbar_visibility = false;
+      topCell.setTooolbarVisibility("command_line", false);
+    }
+  }.bind(this);
+
   this["_handle_action_clear"] = function(evt, target)
   {
     this.clear();
@@ -883,7 +901,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.focus = function()
   {
-    this._textarea.focus();
+    if (this._textarea)
+      this._textarea.focus();
   }
 
   /**
@@ -891,15 +910,19 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
    */
   this.blur = function()
   {
+    if (this._textarea)
       this._textarea.blur();
   }
 
   /**
    * action click
    */
-  this.onclick = function(event) 
+  this.onclick = function(event)
   {
-        if (this._textarea &&
+    if (!this._container)
+      return;
+
+    if (this._textarea &&
         !/^(?:input|textarea|button)$/i.test(event.target.nodeName) &&
         !event.target.hasTextNodeChild())
     {
@@ -941,6 +964,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
     }
   }.bind(this);
 
+  this.required_services = ["ecmascript-debugger", "console-logger"];
   this.mode_labels = {
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_DEFAULT,
     "single-line-edit": ui_strings.S_LABEL_REPL_MODE_SINGLELINE,
@@ -956,6 +980,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   messages.addListener('new-top-runtime', this._new_repl_context_bound);
   messages.addListener('debug-context-selected', this._new_repl_context_bound);
   messages.addListener('frame-selected', this._new_repl_context_bound);
+  messages.addListener("profile-disabled", this._on_profile_disabled_bound);
 
   this.init(id, name, container_class, html, default_handler);
   // Happens after base class init or else the call to .update that happens in
@@ -1028,14 +1053,14 @@ cls.ReplView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
-  var default_menu = 
+  var default_menu =
   [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
         broker.dispatch_action("command_line", "clear");
       }
-    }, 
+    },
   ];
   var with_close_option = default_menu.slice(0);
   with_close_option.push(
@@ -1046,7 +1071,7 @@ cls.ReplView.create_ui_widgets = function()
     }
   });
 
-  contextmenu.register("command_line", 
+  contextmenu.register("command_line",
   [
     {
       callback: function(event, target)

@@ -31,13 +31,18 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this.ondestroy = function()
   {
-    this._prev_url = this._urlfield.get_value();
-    this._prev_request = this._input.get_value();
+    this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
+    this._prev_request = this._input ? this._input.get_value() : "";
   };
 
   this.createView = function(container)
   {
     this._render_main_view(container);
+  };
+
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
   };
 
   this._render_main_view = function(container)
@@ -304,6 +309,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 
+  this.required_services = ["resource-manager", "document-manager"];
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
   this._service.addListener("request", this._on_request_bound);

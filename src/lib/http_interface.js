@@ -200,5 +200,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
   window.ini || (window.ini = {debug: false});
   _get_maps();
     
-}
+};
+
+cls.ScopeHTTPInterface.is_enabled = false;
 

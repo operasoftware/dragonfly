@@ -774,7 +774,7 @@ cls.SimpleJSParser.prototype = new function()
       // Opera 12 will no longer have that limit, so this is just temporary. 
       if (__char_count > __max_line_chars)
       {
-        __buffer = __buffer.slice(0, __buffer.length - (__char_count - __max_line_chars));
+        __buffer = "";
         __has_hit_max_line_chars = true;
       }
       switch (__type)
