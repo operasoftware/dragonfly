@@ -10,6 +10,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 {
   this._data = null;
+  this.required_services = ["ecmascript-debugger"];
 
   this._on_element_selected = function(msg)
   {
@@ -33,7 +34,6 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
     this._super_init(id, name, container_class);
   };
 
-  this.init(id, name, container_class);
   this.init(id, name, container_class);
 
 }

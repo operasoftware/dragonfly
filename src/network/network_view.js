@@ -23,6 +23,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._type_filters = null;
   this._last_render_speed = 0;
   this.needs_instant_update = false;
+  this.required_services = ["resource-manager", "document-manager"];
 
   this.createView = function(container)
   {
@@ -71,7 +72,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var now = Date.now();
     this._last_render_speed = now - started_rendering;
     this._rendertime = now;
-  }
+  };
+  
+  this.create_disabled_view = function(container)
+  {
+    container.clearAndRender(window.templates.disabled_view());
+  };
 
   this._create_delayed_bound = function()
   {
@@ -100,7 +106,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     container.clearAndRender(
       ["div",
         ["span",
-          "class", "ui-button",
+          "class", "ui-button reload-window",
           "handler", "reload-window",
           "tabindex", "1"],
         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
@@ -175,7 +181,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
+      {
+        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+          this._service.get_body(entry.id, this.update_bound);
+
         template = [template, this._render_details_view(entry)];
+      }
     }
 
     var rendered = this._container.clearAndRender(template);
@@ -210,13 +221,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   }.bind(this);
 
   this._tabledef = {
-    column_order: ["method", "responsecode", "mime", "protocol", "size", "size_h", "waiting", "duration", "started", "graph"],
+    column_order: ["method", "responsecode", "mime", "protocol", "size_h", "waiting", "duration", "started", "graph"],
     handler: "select-network-request",
     nowrap: true,
     idgetter: function(res) { return String(res.id) },
     columns: {
       method: {
-        label: ui_strings.S_HTTP_LABEL_METHOD
+        label: ui_strings.S_HTTP_LABEL_METHOD,
+        getter: function(entry) { return entry.method || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
@@ -242,15 +254,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         headertooltip: ui_strings.S_HTTP_TOOLTIP_PROTOCOL,
         getter: function(entry) { return entry.urltype_name.toLowerCase(); }
       },
-      size: {
-        label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
-        headertooltip: ui_strings.S_HTTP_TOOLTIP_SIZE,
-        align: "right",
-        getter: function(entry) { return entry.size },
-        renderer: function(entry) {
-          return entry.size ? String(entry.size) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
-        }
-      },
       size_h: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_PPSIZE,
         headerlabel: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_SIZE,
@@ -261,6 +264,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return String(entry.size ?
                         cls.ResourceUtil.bytes_to_human_readable(entry.size) :
                         ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE);
+        },
+        title_getter: function(entry) {
+          return entry.size ? String(entry.size) + " " + ui_strings.S_BYTES_UNIT
+                            : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE;
         }
       },
       waiting: {
@@ -445,13 +452,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     {
       this._container_scroll_top = target.firstChild.scrollTop;
     }
-  }.bind(this)
-
-  this._on_clicked_get_body = function(evt, target)
-  {
-    var item_id = target.getAttribute("data-object-id");
-    this.needs_instant_update = true;
-    this._service.get_body(item_id, this.update_bound);
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
@@ -554,6 +554,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           else if (!is_paused && pause)
             this._service.pause();
         }
+        else if (message.key === "network-profiler-mode")
+        {
+          var set_profile = settings.network_logger.get(message.key) ?
+                            window.app.profiles.HTTP_PROFILER : window.app.profiles.DEFAULT;
+          var current_profile = settings.general.get("profile-mode");
+          if (current_profile !== set_profile)
+            window.services.scope.enable_profile(set_profile);
+        }
 
         if (message.key !== "detail-view-left-pos")
         {
@@ -561,6 +569,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           this.update();
         }
         break;
+      }
+      case "general":
+      {
+        if (message.key === "profile-mode")
+        {
+          var set_network_profiler = settings.general.get(message.key) === window.app.profiles.HTTP_PROFILER;
+          var is_profiler_mode = settings.network_logger.get("network-profiler-mode");
+          if (is_profiler_mode !== set_network_profiler)
+            settings.network_logger.set("network-profiler-mode", set_network_profiler);
+
+        }
       }
     }
   }.bind(this);
@@ -608,6 +627,32 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     }
   }.bind(this);
 
+  this._toggle_profile_mode = function(button)
+  {
+    var KEY = "network-profiler-mode";
+    var set_active = !settings.network_logger.get(KEY);
+    settings.network_logger.set(KEY, set_active);
+    views.settings_view.syncSetting("network_logger", KEY, set_active);
+    if (set_active)
+      button.addClass("is-active");
+    else
+      button.removeClass("is-active");
+  };
+
+  this._on_toggle_network_profiler_bound = function(event)
+  {
+    var set_active = !event.target.hasClass("is-active");
+    if (set_active)
+    {
+      new ConfirmDialog(ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER,
+                        this._toggle_profile_mode.bind(this, event.target)).show();
+    }
+    else
+    {
+      this._toggle_profile_mode(event.target);
+    }
+  }.bind(this);
+
   var eh = window.eventHandlers;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
@@ -617,7 +662,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   eh.click["close-request-detail"] = this._on_clicked_close_bound;
   eh.mousedown["resize-request-detail"] = this._on_start_resize_detail_bound;
-  eh.click["get-response-body"] = this._on_clicked_get_body;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
@@ -627,6 +671,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   messages.addListener("setting-changed", this._on_setting_changed_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
+  eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
 
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
 
@@ -654,12 +699,14 @@ cls.NetworkLog.create_ui_widgets = function()
     {
       "selected-viewmode": "graphs",
       "pause": false,
+      "network-profiler-mode": false,
       "detail-view-left-pos": 120,
       "track-content": true
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
+      "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
@@ -754,6 +801,16 @@ cls.NetworkLog.create_ui_widgets = function()
               value: "xhr"
             }
           ]
+        },
+        {
+          type: UI.TYPE_SWITCH_CUSTOM_HANDLER,
+          items: [
+            {
+              key: "network_logger.network-profiler-mode",
+              icon: ""
+            }
+          ],
+          handler: "profiler-mode-switch"
         },
         {
           type: UI.TYPE_INPUT,

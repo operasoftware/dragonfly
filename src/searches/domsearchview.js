@@ -112,6 +112,7 @@ cls.DOMSearchView = function(id, name, container_class)
 
   this._init = function(id, name, container_class)
   {
+    this.required_services = ["ecmascript-debugger"];
     this.init(id, name, container_class);
     this.shared_shortcuts = "search";
     this.shared_shortcuts_label = ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH;

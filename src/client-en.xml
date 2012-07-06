@@ -196,6 +196,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./ecma-debugger/breakpoints/style.css"/>
 <link rel="stylesheet" href="./storage/storage_style.css"/>
 <link rel="stylesheet" href="./screenshot/style.css"/>
+<link rel="stylesheet" href="./profiler/profiler_style.css"/>
 <link rel="stylesheet" href="./ui-scripts/tooltip/tooltip.css"/>
 
 
@@ -247,7 +248,6 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./lib/message_maps.js"/>
 <script src="./lib/test_framework.js"/>
-
 
 
 <script src="./ui-scripts/ui.js"/>
@@ -327,6 +327,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_ecmascript_debugger_6_0.js"></script>
 <script src="./build-application/build_cookie_manager_1_0.js"></script>
 <script src="./build-application/build_resource_manager_1_0.js"></script>
+<script src="./build-application/build_profiler_1_0.js"></script>
 <script src="./build-application/build_document_manager_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
@@ -367,7 +368,10 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/stop_at.js"/>
 <script src="./ecma-debugger/runtime_onload_handler.js"/>
 <script src="./ecma-debugger/views-runtimes.js"/>
+<script src="./ecma-debugger/view_return_values.js"/>
+<script src="./ecma-debugger/view_callstack.js"/>
 <script src="./ecma-debugger/views.js"/>
+<script src="./ecma-debugger/view_js_sidepanel.js"/>
 
 <script src="./ecma-debugger/objectinspection.6.0/prettyprinter.js"/>
 <script src="./ecma-debugger/objectinspection.6.0/inspectiontooltip.js"/>
@@ -465,6 +469,14 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./repl/listunpacker.js"/>
 <script src="./repl/dfcommands.js"/>
 <script src="./repl/runtimeselect.js"/>
+
+<script src="./overlay/overlay_service.js"/>
+
+<script src="./profiler/profiler.1.0.responses.getevents.js"/>
+<script src="./profiler/profiler.1.0.responses.stopprofiler.js"/>
+<script src="./profiler/profiler_service.js"/>
+<script src="./profiler/profiler_view.js"/>
+<script src="./profiler/profiler_templates.js"/>
 
 
 <script src="./resource-manager/resource_service.js"/>

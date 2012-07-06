@@ -51,7 +51,68 @@ var TopTabsBase = function()
     }
 
     this.update(force_redraw);
+    this.onresize();
   }
+
+  this.onresize = function()
+  {
+    var tabbar = document.getElementById(this.type + '-to-' + this.cell.id);
+    if (!tabbar || this.is_hidden)
+      return;
+
+    var tab_eles = tabbar.querySelectorAll("tab");
+    var tabs = [];
+    var width = 0;
+    for (var i = 0, tab_ele; tab_ele = tab_eles[i]; i++)
+    {
+      if (!this._tab_right_padding)
+      {
+        var value = window.getComputedStyle(tab_ele).paddingRight;
+        TopTabs.prototype._tab_right_padding = parseInt(value);
+      }
+      var legend = tab_ele.querySelector(".inline-block");
+      if (legend)
+      {
+        if (!tab_ele.hasAttribute("data-orig-width"))
+          tab_ele.setAttribute("data-orig-width", String(tab_ele.offsetWidth));
+
+        if (!legend.hasAttribute("data-orig-width"))
+          legend.setAttribute("data-orig-width", String(legend.offsetWidth));
+
+        width += Number(tab_ele.getAttribute("data-orig-width"));
+        tabs.push({padding_target: tab_ele,
+                   width_target: legend,
+                   orig_width: Number(legend.getAttribute("data-orig-width")) - 1});
+      }
+    }
+
+    tabs.sort(function(a, b)
+    {
+      if (a.orig_width > b.orig_width) 
+        return 1;
+
+      if (a.orig_width < b.orig_width)
+        return -1;
+      
+      return 0;
+    });
+
+    this._adjust_tab_size(width, tabs);
+  };
+
+  this._on_window_controls_created = function(msg)
+  {
+    var win_ctrs = msg.window_controls;
+    var style = document.styleSheets.getDeclaration("top-tabs");
+    if (style)
+    { 
+      var padding_right = win_ctrs.offsetWidth;
+      style.paddingRight = padding_right + "px";
+      TopTabs.prototype.style["padding-right"] = padding_right;
+      this.setCSSProperties();
+      this.setDimensions(true);
+    }
+  };
 
 }
 
@@ -67,6 +128,8 @@ var TopTabs = function(cell)
   this.tabs = [];
   this.activeTab = '';
   this.cell = cell;
+  window.messages.add_listener("window-controls-created",
+                               this._on_window_controls_created.bind(this));
 }
 
 TopTabsBase.prototype = new TabsBase();

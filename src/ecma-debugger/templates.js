@@ -290,21 +290,6 @@
       concat( display_uri != runtime.uri ? ["title", runtime.uri] : [] ) )
   }
 
-  this.checkbox = function(settingName, settingValue)
-  {
-    return ["li",
-      ["label",
-        ["input",
-        "type", "checkbox",
-        "value", settingName,
-        "checked", settingValue ?  true : false,
-        "handler", "set-stop-at"
-        ],
-        settingName
-      ]
-    ]
-  }
-
   this.frame = function(frame, is_top)
   {
     // Fall back to document URI if it's inline
@@ -322,12 +307,12 @@
     ].concat( is_top ? ["class", "selected"] : [] );
   }
 
-  this.return_values = function(values)
+  this.return_values = function(values, search_term)
   {
-    return ["div", values.map(this.return_value), "class", "return-values"];
+    return ["ol", values.map(function(retval) {return this.return_value(retval, search_term)}, this), "class", "return-values"];
   };
 
-  this.return_value = function(retval)
+  this.return_value = function(retval, search_term)
   {
     // TODO: move constants
     var UNDEFINED = 0;
@@ -357,16 +342,20 @@
     names[PLUS_INFINITY] = "Infinity";
     names[MINUS_INFINITY] = "-Infinity";
 
+    var value_string = "";
     var value = "";
     var type = types[retval.value[0]];
     switch (retval.value[0])
     {
     case UNDEFINED:
     case NULL:
-      value =
-        "<item>" +
-          "<value class='" + type + "'>" + type + "</value>" +
-        "</item>";
+      if (type.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + type + "</value>" +
+          "</item>";
+      }
       break;
 
     case TRUE:
@@ -374,41 +363,53 @@
     case NAN:
     case PLUS_INFINITY:
     case MINUS_INFINITY:
-      value =
-        "<item>" +
-          "<value class='" + type + "'>" + names[retval.value[0]] + "</value>" +
-        "</item>"
+      value = names[retval.value[0]];
+      if (value.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + value + "</value>" +
+          "</item>"
+      }
       break;
 
     case NUMBER:
-      value =
-        "<item>" +
-          "<value class='" + type + "'>" + String(retval.value[1]) + "</value>" +
-        "</item>"
+      value = String(retval.value[1]);
+      if (value.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + value + "</value>" +
+          "</item>"
+      }
       break;
 
     case STRING:
       var MAX_VALUE_LENGTH = 30;
-      var val = retval.value[2];
-      short_val = val.length > MAX_VALUE_LENGTH ?
-                    val.slice(0, MAX_VALUE_LENGTH) + '…' : '';
-      val = helpers.escapeTextHtml(val).replace(/'/g, '&#39;');
-      if (short_val)
+      var value = retval.value[2];
+      if (value.contains(search_term))
       {
-        value =
-          "<item>" +
-            "<input type='button' handler='expand-value' class='folder-key'/>" +
-            "<value class='" + type + "' data-value='\"" + val + "\"'>" +
-              "\"" + helpers.escapeTextHtml(short_val) + "\"" +
-            "</value>" +
-          "</item>"
-      }
-      else
-      {
-        value =
-          "<item>" +
-            "<value class='" + type + "'>\"" + val + "\"</value>" +
-          "</item>"
+        var short_value = value.length > MAX_VALUE_LENGTH
+                        ? value.slice(0, MAX_VALUE_LENGTH) + "…"
+                        : "";
+        value = helpers.escapeTextHtml(value).replace(/"/g, "&#39;");
+        if (short_value)
+        {
+          value_string =
+            "<item>" +
+              "<input type='button' handler='expand-value' class='folder-key'/>" +
+              "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                "\"" + helpers.escapeTextHtml(short_value) + "\"" +
+              "</value>" +
+            "</item>"
+        }
+        else
+        {
+          value_string =
+            "<item>" +
+              "<value class='" + type + "'>\"" + value + "\"</value>" +
+            "</item>"
+        }
       }
       break;
 
@@ -417,11 +418,7 @@
       var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
                ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
                : object[5];
-      var model = new cls.InspectableJSObject(retval.rt_id,
-                                               object[0/*OBJECT_ID*/],
-                                               name,
-                                               object[4/*CLASS_NAME*/]);
-      var value = window.templates.inspected_js_object(model);
+      value_string = window.templates.inspected_js_object(retval.model, true, null, search_term);
       break;
     }
 
@@ -436,35 +433,44 @@
 
     var object = retval.function_from;
     var model = new cls.InspectableJSObject(retval.rt_id,
-                                             object[0/*OBJECT_ID*/],
-                                             retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
-                                             object[4/*CLASS_NAME*/]);
-    var func_name = window.templates.inspected_js_object(model);
+                                            object[0/*OBJECT_ID*/],
+                                            retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                                            object[4/*CLASS_NAME*/]);
+    var func_search_term = (value_string !== "") ? null : search_term;
+    var func = window.templates.inspected_js_object(model, true, null, func_search_term);
+
+    // If there is no function or value, don't show anything
+    if (func === "" && value_string === "")
+      return [];
 
     return [
-      ["div",
-        ["span",
-          "↱",
-         "class", "return-value-arrow return-value-arrow-from",
-         "handler", "goto-script-line",
-         "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.position_from[1],
-         "data-script-id", String(retval.position_from[0]),
-         "data-script-line", String(retval.position_from[1])
+      ["li",
+        ["div",
+          ["span",
+            "↱",
+           "class", "return-value-arrow return-value-arrow-from",
+           "handler", "goto-script-line",
+           "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.position_from[1],
+           "data-script-id", String(retval.position_from[0]),
+           "data-script-line", String(retval.position_from[1])
+          ],
+          [func],
+         "class", "return-function-from"
         ],
-        [func_name],
-       "class", "return-function-from"
-      ],
-      ["div",
-        ["span",
-          "↳",
-         "class", "return-value-arrow return-value-arrow-to",
-         "handler", "goto-script-line",
-         "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.position_to[1],
-         "data-script-id", String(retval.position_to[0]),
-         "data-script-line", String(retval.position_to[1])
-        ],
-        [value],
-       "class", "return-value"
+        (value_string
+        ? ["div",
+            ["span",
+              "↳",
+             "class", "return-value-arrow return-value-arrow-to",
+             "handler", "goto-script-line",
+             "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.position_to[1],
+             "data-script-id", String(retval.position_to[0]),
+             "data-script-line", String(retval.position_to[1])
+            ],
+            [value_string],
+           "class", "return-value"
+          ]
+        : [])
       ]
     ];
   };

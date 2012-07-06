@@ -21,6 +21,8 @@ tabs tab
 {
   border-radius: 3px 3px 0 0;
   margin-right: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 tabs tab.active
@@ -226,5 +228,11 @@ top-tabs .badge:empty
 
 .console_panel {
   background-image: url("../ui-images/mode_console.png");
+  width: 25px;
+}
+
+.profiler_mode
+{
+  background: url("../ui-images/mode_profiler.png");
   width: 25px;
 }

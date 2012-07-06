@@ -96,67 +96,6 @@ cls.AboutView.create_ui_widgets = function()
   );
 }
 
-
-/**
-  * @constructor
-  * @extends ViewBase
-  */
-
-cls.CallstackView = function(id, name, container_class)
-{
-  var container_id = 'backtrace';
-  var __clear_timeout = 0;
-  var not_stopped_content = "<li class='not-stopped'>" + ui_strings.M_VIEW_LABEL_NOT_STOPPED + "</li>";
-
-  this._selected_frame = 0;
-
-  var __clearView = function()
-  {
-    var container = document.getElementById(container_id);
-    if( container )
-    {
-      container.innerHTML = not_stopped_content;
-      __clear_timeout = 0;
-    }
-  }
-
-  this.createView = function(container)
-  {
-    var list = container.getElementsByTagName('ul')[0];
-    if(!list)
-    {
-      container.innerHTML = "<div id='backtrace-container'><ul id='backtrace'></ul></div>"; // TODO clean up
-      list = container.getElementsByTagName('ul')[0];
-    }
-
-    if( __clear_timeout )
-    {
-      __clear_timeout = clearTimeout( __clear_timeout );
-    }
-
-
-    var _frames = stop_at.getFrames(), frame = null, i = 0;
-    list.innerHTML = _frames.length ? "" : not_stopped_content;
-    for( ; frame = _frames[i]; i++)
-    {
-      list.render(templates.frame(frame, i == this._selected_frame));
-    }
-  };
-
-  this.clearView = function()
-  {
-    __clear_timeout = setTimeout( __clearView, 150 );
-  };
-
-  this._onframeselected = function(msg)
-  {
-    this._selected_frame = msg.frame_index;
-  };
-
-  window.messages.addListener('frame-selected', this._onframeselected.bind(this));
-  this.init(id, name, container_class);
-}
-
 /**
   * @constructor
   * @extends ViewBase

@@ -21,18 +21,9 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     error: 0,
     abort: 0,
     gc: 0,
-    debugger_statement: 1
-  }
-
-  // replace with settings['js-source'].get(key)
-  var stop_at_user_settings =
-  {
-    script: 0,
-    exception: 0,
-    error: 0,
-    abort: 0,
-    gc: 0,
-    debugger_statement: 1
+    debugger_statement: 1,
+    reformat_javascript: 1,
+    use_reformat_condition: 1,
   }
 
   var stop_at_id_map =
@@ -42,8 +33,24 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     error: 2,
     abort: 3,
     gc: 4,
-    debugger_statement: 5
+    debugger_statement: 5,
+    reformat_javascript: 6,
+    use_reformat_condition: 7,
   }
+
+  var reformat_condition = 
+  [
+    "var MAX_SLICE = 5000;",
+    "var LIMIT = 11;",
+    "var re = /\\s+/g;",
+    "var ws = 0;",
+    "var m = null;",
+    "var src = scriptData.slice(0, MAX_SLICE);",
+    "while (m = re.exec(src))",
+    "  ws += m[0].length;",
+    "",
+    "return (100 * ws / src.length) < LIMIT;",
+  ].join("");
 
   var self = this;
 
@@ -75,40 +82,39 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
   var _is_initial_settings_set = false;
 
-  this.getStopAts = function()
-  {
-    return stop_at_user_settings; // should be  copied
-  }
-
   var onSettingChange = function(msg)
   {
     if(msg.id == 'js_source' )
     {
-      var key = msg.key, value = settings['js_source'].get(key);
-      if( key == 'script' )
-      {
+      var key = msg.key;
+      var value = settings['js_source'].get(key);
+      stop_at_settings[key] = value;
+      var message = get_config_msg();
+      ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE, message);
 
-      }
-      else
+      if (msg.key == 'reformat_javascript')
       {
-        stop_at_settings[key] = value;
-        var config_arr = [], prop = '';
-        for ( prop in stop_at_settings )
-        {
-          config_arr[stop_at_id_map[prop]] = stop_at_settings[prop] && 1 || 0;
-        }
-        ecma_debugger.requestSetConfiguration(0, config_arr);
+        new ConfirmDialog(ui_strings.D_REFORMAT_SCRIPTS,
+                          function() { window.runtimes.reloadWindow(); }).show();
       }
     }
-  }
+  };
 
-  this.setUserStopAt = function(key, value)
+  var get_config_msg = function()
   {
-    //stop_at_user_settings[key] = value; // true or false;
-    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-      'clean up. this should no longer be called. stop_at.setUserStopAt');
-
-  }
+    var config_arr = [];
+    for (var prop in stop_at_settings)
+    {
+      var index = stop_at_id_map[prop];
+      if (prop == "script")
+        config_arr[index] = 1;
+      else if (prop == "use_reformat_condition")
+        config_arr[index] = stop_at_settings[prop] ? reformat_condition : "";
+      else
+        config_arr[index] = stop_at_settings[prop] ? 1 : 0;
+    }
+    return config_arr;
+  };
 
   this.getRuntimeId = function()
   {
@@ -260,7 +266,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
             function_from: retval[1],
             position_from: retval[2],
             position_to: retval[3],
-            rt_id: stop_at.runtime_id
+            rt_id: stop_at.runtime_id,
+            model: null
           };
         });
       }
@@ -270,7 +277,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
         messages.post('active-inspection-type', {inspection_type: 'frame'});
       }
       messages.post('frame-selected', {frame_index: 0});
-      views.callstack.update();
+      views["callstack"].update();
+      views["return-values"].update();
       if (!views.js_source.isvisible())
       {
         topCell.showView(views.js_source.id);
@@ -290,19 +298,19 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
   this.setInitialSettings = function()
   {
-    if(!_is_initial_settings_set )
+    if (!_is_initial_settings_set)
     {
-      var config_arr = [], prop = '';
-      for ( prop in stop_at_settings )
+      for (var prop in stop_at_settings)
       {
-        config_arr[stop_at_id_map[prop]] =
-          ( ( stop_at_user_settings[prop] = settings['js_source'].get(prop) )
-            || stop_at_settings[prop] ) && 1 || 0;
+        var value = window.settings['js_source'].get(prop);
+        if (typeof value == "boolean")
+          stop_at_settings[prop] = value;
       }
-      ecma_debugger.requestSetConfiguration(0, config_arr);
+      var msg = get_config_msg();
+      ecma_debugger.requestSetConfiguration(cls.TagManager.IGNORE_RESPONSE, msg);
       _is_initial_settings_set = true;
     }
-  }
+  };
 
   this.__continue = function (mode, clear_disabled_state) //
   {
@@ -337,6 +345,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       toolbars.js_source.disableButtons('continue');
     }
     messages.post('host-state', {state: 'ready'});
+    window.views["return-values"].update();
   }
 
   this.on_thread_cancelled = function(message)
