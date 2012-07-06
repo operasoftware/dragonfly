@@ -307,6 +307,174 @@
     ].concat( is_top ? ["class", "selected"] : [] );
   }
 
+  this.return_values = function(values, search_term)
+  {
+    return ["ol", values.map(function(retval) {return this.return_value(retval, search_term)}, this), "class", "return-values"];
+  };
+
+  this.return_value = function(retval, search_term)
+  {
+    // TODO: move constants
+    var UNDEFINED = 0;
+    var NULL = 1;
+    var TRUE = 2;
+    var FALSE = 3;
+    var NAN = 4;
+    var PLUS_INFINITY = 5;
+    var MINUS_INFINITY = 6;
+    var NUMBER = 7;
+    var STRING = 8;
+    var OBJECT = 9;
+    var types = {};
+    types[UNDEFINED] = "undefined";
+    types[NULL] = "null";
+    types[TRUE] = "boolean";
+    types[FALSE] = "boolean";
+    types[NAN] = "number";
+    types[PLUS_INFINITY] = "number";
+    types[MINUS_INFINITY] = "number";
+    types[NUMBER] = "number";
+    types[STRING] = "string";
+    var names = {};
+    names[TRUE] = "true";
+    names[FALSE] = "false";
+    names[NAN] = "NaN";
+    names[PLUS_INFINITY] = "Infinity";
+    names[MINUS_INFINITY] = "-Infinity";
+
+    var value_string = "";
+    var value = "";
+    var type = types[retval.value[0]];
+    switch (retval.value[0])
+    {
+    case UNDEFINED:
+    case NULL:
+      if (type.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + type + "</value>" +
+          "</item>";
+      }
+      break;
+
+    case TRUE:
+    case FALSE:
+    case NAN:
+    case PLUS_INFINITY:
+    case MINUS_INFINITY:
+      value = names[retval.value[0]];
+      if (value.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + value + "</value>" +
+          "</item>"
+      }
+      break;
+
+    case NUMBER:
+      value = String(retval.value[1]);
+      if (value.contains(search_term))
+      {
+        value_string =
+          "<item>" +
+            "<value class='" + type + "'>" + value + "</value>" +
+          "</item>"
+      }
+      break;
+
+    case STRING:
+      var MAX_VALUE_LENGTH = 30;
+      var value = retval.value[2];
+      if (value.contains(search_term))
+      {
+        var short_value = value.length > MAX_VALUE_LENGTH
+                        ? value.slice(0, MAX_VALUE_LENGTH) + "…"
+                        : "";
+        value = helpers.escapeTextHtml(value).replace(/"/g, "&#39;");
+        if (short_value)
+        {
+          value_string =
+            "<item>" +
+              "<input type='button' handler='expand-value' class='folder-key'/>" +
+              "<value class='" + type + "' data-value='\"" + value + "\"'>" +
+                "\"" + helpers.escapeTextHtml(short_value) + "\"" +
+              "</value>" +
+            "</item>"
+        }
+        else
+        {
+          value_string =
+            "<item>" +
+              "<value class='" + type + "'>\"" + value + "\"</value>" +
+            "</item>"
+        }
+      }
+      break;
+
+    case OBJECT:
+      var object = retval.value[3/*OBJECT*/];
+      var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
+               ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
+               : object[5];
+      value_string = window.templates.inspected_js_object(retval.model, true, null, search_term);
+      break;
+    }
+
+    var from_script_id = retval.position_from[0];
+    var from_uri = from_script_id && runtimes.getScript(from_script_id)
+                 ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+                 : "<unknown script>";
+    var to_script_id = retval.position_to[0];
+    var to_uri = to_script_id && runtimes.getScript(to_script_id)
+               ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+               : "<unknown script>";
+
+    var object = retval.function_from;
+    var model = new cls.InspectableJSObject(retval.rt_id,
+                                            object[0/*OBJECT_ID*/],
+                                            retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                                            object[4/*CLASS_NAME*/]);
+    var func_search_term = (value_string !== "") ? null : search_term;
+    var func = window.templates.inspected_js_object(model, true, null, func_search_term);
+
+    // If there is no function or value, don't show anything
+    if (func === "" && value_string === "")
+      return [];
+
+    return [
+      ["li",
+        ["div",
+          ["span",
+            "↱",
+           "class", "return-value-arrow return-value-arrow-from",
+           "handler", "goto-script-line",
+           "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.position_from[1],
+           "data-script-id", String(retval.position_from[0]),
+           "data-script-line", String(retval.position_from[1])
+          ],
+          [func],
+         "class", "return-function-from"
+        ],
+        (value_string
+        ? ["div",
+            ["span",
+              "↳",
+             "class", "return-value-arrow return-value-arrow-to",
+             "handler", "goto-script-line",
+             "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.position_to[1],
+             "data-script-id", String(retval.position_to[0]),
+             "data-script-line", String(retval.position_to[1])
+            ],
+            [value_string],
+           "class", "return-value"
+          ]
+        : [])
+      ]
+    ];
+  };
+
   this.configStopAt = function(config)
   {
     var ret =["ul"];

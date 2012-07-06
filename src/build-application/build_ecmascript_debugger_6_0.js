@@ -86,9 +86,16 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Runtime State */
     new cls.JSSidePanelView('scripts-side-panel', 
                             ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                            ['watches', 'callstack', 'inspection'],
+                            ['watches', 'return-values', 'callstack', 'inspection'],
                             // default expanded flags for the view list
                             [false, true, true]);
+
+    /* Return Values */
+    cls.ReturnValuesView.prototype = ViewBase;
+    new cls.ReturnValuesView('return-values',
+                          "Return Values",
+                          'scroll mono');
+    cls.ReturnValuesView.create_ui_widgets();
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
