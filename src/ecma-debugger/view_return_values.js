@@ -10,20 +10,21 @@ cls.ReturnValuesView = function(id, name, container_class)
   {
     this._container = container;
     var return_values = stop_at.get_return_values();
-    if (return_values.length)
+    var return_value_list = return_values && return_values.return_value_list;
+    if (return_value_list && return_value_list.length)
     {
-      return_values.forEach(function(retval)
+      return_value_list.forEach(function(retval)
       {
-        var object = retval.value[3/*OBJECT*/];
+        var object = retval.value.object;
         if (object)
         {
-          var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
+          var name = object.className === "Function" && !object.functionName
                    ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
-                   : object[5];
-          retval.model = new cls.InspectableJSObject(retval.rt_id,
-                                                     object[0/*OBJECT_ID*/],
-                                                     name,
-                                                     object[4/*CLASS_NAME*/]);
+                   : object.functionName;
+          retval.value.model = new cls.InspectableJSObject(return_values.rt_id,
+                                                           object.objectID,
+                                                           name,
+                                                           object.className);
         }
       });
       this._create_view_bound = this._create_view.bind(this, container, return_values);

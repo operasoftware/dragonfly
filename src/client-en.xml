@@ -361,6 +361,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./ecma-debugger/helpers.js"/>
 <script src="./ecma-debugger/tabs.js"/>
+<script src="./ecma-debugger/ecmascriptdebugger.6.14.responses.getbacktrace.js"/>
 
 <script src="./ecma-debugger/templates.js"/>
 <script src="./ecma-debugger/newscript.js"/>

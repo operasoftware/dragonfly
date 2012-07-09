@@ -61,7 +61,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   var runtime_id = '';
 
   var callstack = [];
-  var return_values = [];
+  var return_values = {};
 
   var __script_ids_in_callstack = [];
 
@@ -257,19 +257,14 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
         __script_ids_in_callstack[i] = frame[SCRIPT_ID];
       }
 
-      var return_value_list = message[RETURN_VALUE_LIST];
+      var backtrace_frame_list = new cls.EcmascriptDebugger["6.14"].BacktraceFrameList(message);
+      var return_value_list = backtrace_frame_list && backtrace_frame_list.returnValueList;
       if (return_value_list)
       {
-        return_values = return_value_list.map(function(retval) {
-          return {
-            value: retval[0],
-            function_from: retval[1],
-            position_from: retval[2],
-            position_to: retval[3],
-            rt_id: stop_at.runtime_id,
-            model: null
-          };
-        });
+        return_values = {
+          rt_id: stop_at.runtime_id,
+          return_value_list: return_value_list
+        };
       }
 
       if( cur_inspection_type != 'frame' )
@@ -333,7 +328,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   {
     this._clear_stop_at_error();
     callstack = [];
-    return_values = [];
+    return_values = {};
     __script_ids_in_callstack = [];
     runtimes.setObserve(stopAt.runtime_id, mode != 'run');
     messages.post('frame-selected', {frame_index: -1});
@@ -355,7 +350,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     {
       this._clear_stop_at_error();
       callstack = [];
-      return_values = [];
+      return_values = {};
       __script_ids_in_callstack = [];
       messages.post('frame-selected', {frame_index: -1});
       __controls_enabled = false;

@@ -307,12 +307,21 @@
     ].concat( is_top ? ["class", "selected"] : [] );
   }
 
-  this.return_values = function(values, search_term)
+  this.return_values = function(return_values, search_term)
   {
-    return ["ol", values.map(function(retval) {return this.return_value(retval, search_term)}, this), "class", "return-values"];
+    return (
+      ["ol",
+        return_values.return_value_list.map(function(retval) {
+          return this.return_value(retval,
+                                   return_values.rt_id,
+                                   search_term);
+        }, this),
+       "class", "return-values"
+      ]
+    );
   };
 
-  this.return_value = function(retval, search_term)
+  this.return_value = function(retval, rt_id, search_term)
   {
     var STRING_MAX_VALUE_LENGTH = 30;
     // TODO: move constants
@@ -346,8 +355,8 @@
     var search_re = new RegExp(search_term, "ig")
     var value_template = [];
     var value = "";
-    var type = types[retval.value[0]];
-    switch (retval.value[0])
+    var type = types[retval.value.type];
+    switch (retval.value.type)
     {
     case UNDEFINED:
     case NULL:
@@ -369,7 +378,7 @@
     case NAN:
     case PLUS_INFINITY:
     case MINUS_INFINITY:
-      value = names[retval.value[0]];
+      value = names[retval.value.type];
       if (search_re.test(value))
       {
         value_template.push(
@@ -384,7 +393,7 @@
       break;
 
     case NUMBER:
-      value = String(retval.value[1]);
+      value = String(retval.value.number);
       if (search_re.test(value))
       {
         value_template.push(
@@ -399,7 +408,7 @@
       break;
 
     case STRING:
-      value = retval.value[2];
+      value = retval.value.str;
       if (search_re.test(value))
       {
         var short_value = value.length > STRING_MAX_VALUE_LENGTH
@@ -438,32 +447,32 @@
       break;
 
     case OBJECT:
-      var object = retval.value[3/*OBJECT*/];
-      var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
+      var object = retval.value.object;
+      var name = object.className === "Function" && !object.functionName
                ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
-               : object[5];
-      value = window.templates.inspected_js_object(retval.model, true, null, search_term);
+               : object.functionName;
+      value = window.templates.inspected_js_object(retval.value.model, true, null, search_term);
       if (value !== "")
         value_template = [value];
       break;
     }
 
-    var from_script_id = retval.position_from[0];
+    var from_script_id = retval.positionFrom.scriptID;
     var from_uri = from_script_id && runtimes.getScript(from_script_id)
-                 ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+                 ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(rt_id).uri)
                  : "<unknown script>";
-    var to_script_id = retval.position_to[0];
+    var to_script_id = retval.positionTo.scriptID;
     var to_uri = to_script_id && runtimes.getScript(to_script_id)
-               ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(retval.rt_id).uri)
+               ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(rt_id).uri)
                : "<unknown script>";
 
-    var object = retval.function_from;
-    var model = new cls.InspectableJSObject(retval.rt_id,
-                                            object[0/*OBJECT_ID*/],
-                                            retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
-                                            object[4/*CLASS_NAME*/]);
+    var object = retval.functionFrom;
+    var func_model = new cls.InspectableJSObject(rt_id,
+                                                 object.objectID,
+                                                 object.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                                                 object.className);
     var func_search_term = (value_template.length !== 0) ? null : search_term;
-    var func = window.templates.inspected_js_object(model, true, null, func_search_term);
+    var func = window.templates.inspected_js_object(func_model, true, null, func_search_term);
 
     // If there is no function or value, don't show anything
     if (func === "" && value_template.length === 0)
@@ -476,9 +485,9 @@
             "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
-           "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.position_from[1],
-           "data-script-id", String(retval.position_from[0]),
-           "data-script-line", String(retval.position_from[1])
+           "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.positionFrom.lineNumber,
+           "data-script-id", String(retval.positionFrom.scriptID),
+           "data-script-line", String(retval.positionFrom.lineNumber)
           ],
           [func],
          "class", "return-function-from"
@@ -489,9 +498,9 @@
               "↳",
              "class", "return-value-arrow return-value-arrow-to",
              "handler", "goto-script-line",
-             "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.position_to[1],
-             "data-script-id", String(retval.position_to[0]),
-             "data-script-line", String(retval.position_to[1])
+             "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.positionTo.lineNumber,
+             "data-script-id", String(retval.positionTo.scriptID),
+             "data-script-line", String(retval.positionTo.lineNumber)
             ],
             value_template,
            "class", "return-value"
