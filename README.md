@@ -11,7 +11,7 @@
 ## Developing Dragonfly
 
 When working on the code base you should use the `dragonkeeper`
-tool. See [dragonkeeper's README](https://github.com/operasoftware/dragonkeeper/blob/master/README)
+tool. See [dragonkeeper's README](https://github.com/operasoftware/dragonkeeper/blob/master/README.md)
 for more information.
 
 ## Building Dragonfly
