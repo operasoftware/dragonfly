@@ -314,6 +314,7 @@
 
   this.return_value = function(retval, search_term)
   {
+    var STRING_MAX_VALUE_LENGTH = 30;
     // TODO: move constants
     var UNDEFINED = 0;
     var NULL = 1;
@@ -342,19 +343,24 @@
     names[PLUS_INFINITY] = "Infinity";
     names[MINUS_INFINITY] = "-Infinity";
 
-    var value_string = "";
+    var search_re = new RegExp(search_term, "ig")
+    var value_template = [];
     var value = "";
     var type = types[retval.value[0]];
     switch (retval.value[0])
     {
     case UNDEFINED:
     case NULL:
-      if (type.contains(search_term))
+      if (search_re.test(type))
       {
-        value_string =
-          "<item>" +
-            "<value class='" + type + "'>" + type + "</value>" +
-          "</item>";
+        value_template.push(
+          ["item",
+            ["value",
+              type,
+             "class", type
+            ]
+          ]
+        );
       }
       break;
 
@@ -364,51 +370,69 @@
     case PLUS_INFINITY:
     case MINUS_INFINITY:
       value = names[retval.value[0]];
-      if (value.contains(search_term))
+      if (search_re.test(value))
       {
-        value_string =
-          "<item>" +
-            "<value class='" + type + "'>" + value + "</value>" +
-          "</item>"
+        value_template.push(
+          ["item",
+            ["value",
+              value
+            ],
+           "class", type
+          ]
+        );
       }
       break;
 
     case NUMBER:
       value = String(retval.value[1]);
-      if (value.contains(search_term))
+      if (search_re.test(value))
       {
-        value_string =
-          "<item>" +
-            "<value class='" + type + "'>" + value + "</value>" +
-          "</item>"
+        value_template.push(
+          ["item",
+            ["value",
+              value,
+             "class", type
+            ]
+          ]
+        );
       }
       break;
 
     case STRING:
-      var MAX_VALUE_LENGTH = 30;
-      var value = retval.value[2];
-      if (value.contains(search_term))
+      value = retval.value[2];
+      if (search_re.test(value))
       {
-        var short_value = value.length > MAX_VALUE_LENGTH
-                        ? value.slice(0, MAX_VALUE_LENGTH) + "…"
+        var short_value = value.length > STRING_MAX_VALUE_LENGTH
+                        ? value.slice(0, STRING_MAX_VALUE_LENGTH) + "…"
                         : "";
         value = helpers.escapeTextHtml(value).replace(/"/g, "&#39;");
         if (short_value)
         {
-          value_string =
-            "<item>" +
-              "<input type='button' handler='expand-value' class='folder-key'/>" +
-              "<value class='" + type + "' data-value='\"" + value + "\"'>" +
-                "\"" + helpers.escapeTextHtml(short_value) + "\"" +
-              "</value>" +
-            "</item>"
+          value_template.push(
+            ["item",
+              ["input",
+               "type", "button",
+               "handler", "expand-value",
+               "class", "folder-key"
+              ],
+              ["value",
+                "\"" + helpers.escapeTextHtml(short_value) + "\"",
+               "class", type,
+               "data-value", "\"" + value + "\"",
+              ]
+            ]
+          );
         }
         else
         {
-          value_string =
-            "<item>" +
-              "<value class='" + type + "'>\"" + value + "\"</value>" +
-            "</item>"
+          value_template.push(
+            ["item",
+              ["value",
+                "\"" + value + "\"",
+               "class", type
+              ]
+            ]
+          );
         }
       }
       break;
@@ -418,7 +442,9 @@
       var name = object[4/*CLASS_NAME*/] === "Function" && !object[5]
                ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
                : object[5];
-      value_string = window.templates.inspected_js_object(retval.model, true, null, search_term);
+      value = window.templates.inspected_js_object(retval.model, true, null, search_term);
+      if (value !== "")
+        value_template = [value];
       break;
     }
 
@@ -436,11 +462,11 @@
                                             object[0/*OBJECT_ID*/],
                                             retval.function_from[5] || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
                                             object[4/*CLASS_NAME*/]);
-    var func_search_term = (value_string !== "") ? null : search_term;
+    var func_search_term = (value_template.length !== 0) ? null : search_term;
     var func = window.templates.inspected_js_object(model, true, null, func_search_term);
 
     // If there is no function or value, don't show anything
-    if (func === "" && value_string === "")
+    if (func === "" && value_template.length === 0)
       return [];
 
     return [
@@ -457,7 +483,7 @@
           [func],
          "class", "return-function-from"
         ],
-        (value_string
+        (value_template.length
         ? ["div",
             ["span",
               "↳",
@@ -467,7 +493,7 @@
              "data-script-id", String(retval.position_to[0]),
              "data-script-line", String(retval.position_to[1])
             ],
-            [value_string],
+            value_template,
            "class", "return-value"
           ]
         : [])
