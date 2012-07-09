@@ -1,10 +1,9 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor
-  * @extends ViewBase
-  */
-
+ * @constructor
+ * @extends ViewBase
+ */
 cls.ReturnValuesView = function(id, name, container_class)
 {
   this.createView = function(container)
@@ -91,11 +90,12 @@ cls.ReturnValuesView.create_ui_widgets = function()
       }
     ]
   );
+
   var text_search = new TextSearch(1);
   text_search.add_listener("onbeforesearch",
                            window.views["return-values"].onbeforesearch);
 
-  var onViewCreated = function(msg)
+  var on_view_created = function(msg)
   {
     if (msg.id == "return-values")
     {
@@ -104,7 +104,7 @@ cls.ReturnValuesView.create_ui_widgets = function()
     }
   };
 
-  var onViewDestroyed = function(msg)
+  var on_view_destroyed = function(msg)
   {
     if (msg.id == "return-values")
     {
@@ -112,18 +112,16 @@ cls.ReturnValuesView.create_ui_widgets = function()
     }
   };
 
-  messages.addListener("view-created", onViewCreated);
-  messages.addListener("view-destroyed", onViewDestroyed);
+  messages.addListener("view-created", on_view_created);
+  messages.addListener("view-destroyed", on_view_destroyed);
 
   eventHandlers.input["return-values-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
 
-  ActionBroker.get_instance().get_global_handler().
-  register_shortcut_listener("return-values-text-search",
-                             cls.Helpers.shortcut_search_cb.bind(text_search));
-
-  var broker = ActionBroker.get_instance();
+  ActionBroker.get_instance().get_global_handler()
+    .register_shortcut_listener("return-values-text-search",
+                                 cls.Helpers.shortcut_search_cb.bind(text_search));
 };
 
