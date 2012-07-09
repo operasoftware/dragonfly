@@ -277,6 +277,16 @@
               -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
+.network_logger .header-token-type-first_line_part
+{
+  font-weight: bold;
+}
+
+.network_logger .header-token-type-name
+{
+  color: #006C0E;
+}
+
 .network_logger .network-summary
 {
   clear: both;

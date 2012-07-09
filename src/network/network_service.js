@@ -919,6 +919,7 @@ cls.NetworkLoggerRequest = function(entry)
   this.firstline = null;
   this.requestbody = null;
   this.boundary = "";
+  this.header_tokens = null; // This is set from template code, when it's first needed.
 };
 
 cls.NetworkLoggerRequestPrototype = function()
@@ -971,6 +972,7 @@ cls.NetworkLoggerResponse = function(entry)
   this.response_headers_raw = null;
   this.firstline = null;
   this.responsebody = null;
+  this.header_tokens = null; // This is set from template code, when it's first needed.
 
   // The following are duplicated from the entry to have them available directly on the response
   this.logger_entry_type = entry.type;

@@ -12,11 +12,14 @@ cls.HTTPHeaderTokenizer = function()
 
 cls.HTTPHeaderTokenizerPrototype = function()
 {
-  var LF = "\n";
   var PUNCTUATOR = ":";
   var WHITESPACE_CHARS = {
     "\u0009": 1, //  Tab <TAB>
     "\u0020": 1  //  Space <SP>
+  };
+  var LINEBREAK_CHARS = {
+    "\r": 1, // CR
+    "\n": 1  // LF
   };
 
   this.tokenize = function(input_buffer, ontoken)
@@ -45,7 +48,7 @@ cls.HTTPHeaderTokenizerPrototype = function()
         this._token_buffer = "";
       }
       else
-      if (c === LF)
+      if (c in LINEBREAK_CHARS)
       {
         this._emitToken(this._token_type ,this._token_buffer);
         this._token_buffer = "";
@@ -77,8 +80,8 @@ cls.HTTPHeaderTokenizerPrototype = function()
 
       var c = this._buffer.charAt(this._current_pos++);
       this._token_type = cls.HTTPHeaderTokenizer.types.VALUE;
-      // LF only means switching to header when the following char is not whitespace.
-      if (c === LF && !(this._buffer.charAt(this._current_pos) in WHITESPACE_CHARS))
+      // LINEBREAK_CHARS only mean switching to header when the following char is not whitespace.
+      if (c in LINEBREAK_CHARS && !(this._buffer.charAt(this._current_pos) in WHITESPACE_CHARS))
       {
         this._emitToken(this._token_type ,this._token_buffer);
         this._token_buffer = "";
@@ -106,8 +109,15 @@ cls.HTTPHeaderTokenizerPrototype = function()
 cls.HTTPHeaderTokenizer.prototype = new cls.HTTPHeaderTokenizerPrototype();
 
 cls.HTTPHeaderTokenizer.types = {
-    FIRST_LINE_PART  : 1,
-    NAME             : 2,
-    VALUE            : 3,
-    PUNCTUATOR       : 4
+  FIRST_LINE_PART : 1,
+  NAME            : 2,
+  VALUE           : 3,
+  PUNCTUATOR      : 4
+};
+
+cls.HTTPHeaderTokenizer.classnames = {
+  1 : "first_line_part",
+  2 : "name"           ,
+  3 : "value"          ,
+  4 : "punctuator"
 };

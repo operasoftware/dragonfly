@@ -123,14 +123,70 @@ templates._response = function(response, is_last, do_raw)
   ]
 };
 
+templates._make_header_template_func = function(is_request_headers)
+{
+  // add data-spec attributes on certain firstline tokens, depending on if it's request_headers.
+  // todo: while this has firstline_tokens, it can't be reused.
+  var firstline_tokens = 0;
+  var add_data_spec;
+  if (is_request_headers)
+  {
+    add_data_spec = {
+      0: true
+    };
+  }
+  else
+  {
+    add_data_spec = {
+      1: true
+    };
+  }
+
+  return function(token)
+  {
+    var TYPE = 0;
+    var STR = 1;
+    var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+    if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
+    {
+      if (firstline_tokens in add_data_spec)
+      {
+        attrs.extend(["data-spec", "http#" + token[STR]])
+      }
+      firstline_tokens++;
+    }
+    return ["span", token[STR]].concat(attrs);
+  }
+}
+
+templates._token_receiver = function(tokens, token_type, token)
+{
+  tokens.push([token_type, token]);
+};
+
 templates._request_headers = function(req, do_raw)
 {
   if (do_raw)
   {
-    return [
-      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
-      ["pre", req.request_headers_raw, "class", "mono"]
-    ];
+    if (req.request_headers_raw) // todo: we explicitely mention missing request headers in parsed. this check here is a bit ugly.
+    {
+      if (!req.header_tokens)
+      {
+        var tokens = [];
+        var tokenizer = new cls.HTTPHeaderTokenizer();
+        tokenizer.tokenize(req.request_headers_raw, templates._token_receiver.bind(this, tokens));
+        req.header_tokens = tokens;
+      }
+      if (req.header_tokens.length)
+      {
+        var map_func = templates._make_header_template_func(true);
+        return [
+          ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
+          ["pre", req.header_tokens.map(map_func), "class", "mono"]
+        ];
+      }
+    }
+    return [];
   }
 
   var ret = [];
@@ -166,16 +222,28 @@ templates._request_headers = function(req, do_raw)
 
 templates._response_headers = function(resp, do_raw)
 {
-  if (do_raw)
-  {
-    return [
-      ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-      ["pre", resp.response_headers_raw, "class", "mono"]
-    ];
-  }
-
   if (!resp.response_headers) // todo: we explicitely mention missing request headers but not missing response headers // ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     return [];
+
+  if (do_raw)
+  {
+    if (!resp.header_tokens)
+    {
+      var tokens = [];
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(resp.response_headers_raw, templates._token_receiver.bind(this, tokens));
+      resp.header_tokens = tokens;
+    }
+    if (resp.header_tokens.length)
+    {
+      var map_func = templates._make_header_template_func(false);
+      return [
+        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+        ["pre", resp.header_tokens.map(map_func), "class", "mono"]
+      ];
+    }
+    return [];
+  }
 
   var ret = [];
 
