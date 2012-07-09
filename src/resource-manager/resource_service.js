@@ -525,7 +525,7 @@ cls.ResourcePrototype = function()
     {
       if (this.mime.toLowerCase() == "application/octet-stream")
       {
-        this.type = cls.ResourceUtil.extension_type_map[this.url.extension];
+        this.type = cls.ResourceUtil.extension_type_map[this.extension];
       }
       if (!this.type)
       {
