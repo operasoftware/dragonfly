@@ -132,7 +132,7 @@ cls.NetworkLoggerService = function(view)
                      "application/xslt+xml", "text/xsl", "application/xml",
                      "text/css", "text/plain", "application/x-javascript",
                      "application/json", "application/javascript", "text/javascript",
-                     "application/x-www-form-urlencoded",
+                     "application/x-www-form-urlencoded", "text/json",
                      "text/xml",
                      ""]; // <- Yes really.
                      // It's frelling silly, but there's a bug with core not giving us content types
@@ -194,7 +194,7 @@ cls.NetworkLoggerService = function(view)
                         "application/xslt+xml", "text/xsl", "application/xml",
                         "text/css", "text/plain", "application/x-javascript",
                         "application/json", "application/javascript", "text/javascript",
-                        "application/x-www-form-urlencoded"];
+                        "application/x-www-form-urlencoded", "text/json"];
 
       var resparg = [[DATA_URI, DECODE],
                      text_types.map(function(e) { return [e, [STRING, DECODE]]})
