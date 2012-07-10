@@ -351,7 +351,7 @@ templates._request_body = function(req, do_raw)
       var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
       if (["markup", "script", "css", "text"].contains(type))
       {
-        ret.push(["pre", req.requestbody.content.stringData]);
+        ret.push(["pre", req.requestbody.content.stringData, "class", "mono network-body"]);
       }
       else
       {
