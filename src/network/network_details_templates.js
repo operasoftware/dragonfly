@@ -5,6 +5,8 @@ window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
+var HTTP_BOUNDARY_CLASS = "http-token-type-boundary";
+
 templates._wrap_col_or_row = function(wrap)
 {
   // Wraps either ["elem", "text"] in a column
@@ -16,9 +18,13 @@ templates._wrap_col_or_row = function(wrap)
   return ["tr", ["td", wrap, "colspan", "2"]];
 };
 
-templates._wrap_pre = function(str)
+templates._wrap_pre = function(str, additional_classname)
 {
-  return ["pre", str, "class", "mono"];
+  var classname = "mono";
+  if (additional_classname)
+    classname += " " + additional_classname;
+
+  return ["pre", str, "class", classname];
 };
 
 templates.details = function(entry, left_val, do_raw)
@@ -70,14 +76,14 @@ templates._details_content = function(entry, do_raw)
         ["tr",
           ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
           ["td", entry.touched_network ? entry.last_method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-          "data-spec", "http#" + entry.last_method
+          "data-spec", "http#" + (entry.last_method).trim()
         ],
         ["tr",
           ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
           ["td",
             entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
           ],
-         "data-spec", "http#" + entry.current_responsecode
+         "data-spec", "http#" + (entry.current_responsecode).trim()
         ]
       ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
@@ -149,14 +155,14 @@ templates._make_header_template_func = function(is_request_headers)
     var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
-      attrs.extend(["data-spec", "http#" + token[STR]]);
+      attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
     }
     else
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
       if (firstline_tokens in add_data_spec)
       {
-        attrs.extend(["data-spec", "http#" + token[STR]])
+        attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
       }
       firstline_tokens++;
     }
@@ -187,7 +193,7 @@ templates._request_headers = function(req, do_raw)
         var map_func = this._make_header_template_func(true);
         return [
           ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
-          ["pre", req.header_tokens.map(map_func), "class", "mono"]
+          this._wrap_pre(req.header_tokens.map(map_func))
         ];
       }
     }
@@ -231,7 +237,7 @@ templates._response_headers = function(resp, do_raw)
       var map_func = this._make_header_template_func(false);
       return [
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-        ["pre", resp.header_tokens.map(map_func), "class", "mono"]
+        this._wrap_pre(resp.header_tokens.map(map_func))
       ];
     }
     return [];
@@ -252,14 +258,14 @@ templates.headers_list = function(headers, do_raw)
   {
     map_func = function(header)
     {
-      return this._wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
-    };
+      return this._wrap_pre([["span", header.name + ":", "data-spec", "http#" + (header.name).trim()], ["span", " " + header.value]]);
+    }.bind(this);
   }
   else
   {
     map_func = function(header)
     {
-      return [["th", header.name + ":", "data-spec", "http#" + header.name], ["td", header.value]];
+      return [["th", header.name + ":", "data-spec", "http#" + (header.name).trim()], ["td", header.value]];
     };
   }
   return headers.map(map_func);
@@ -280,26 +286,26 @@ templates._request_body = function(req, do_raw)
     for (var n = 0, part; part = req.requestbody.partList[n]; n++)
     {
       if (use_raw_boundary && n === 0)
-        ret.push(this._wrap_pre(req.boundary));
+        ret.push(this._wrap_pre(req.boundary, HTTP_BOUNDARY_CLASS));
 
       ret.extend(this.headers_list(part.headerList, do_raw));
       ret.push(this._wrap_pre("\n"));
       if (part.content && part.content.stringData)
-        ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
+        ret.push(this._wrap_pre(part.content.stringData, "mono network-body"));
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
       if (n < req.requestbody.partList.length - 1)
-        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary) : ["hr"]);
+        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary, HTTP_BOUNDARY_CLASS) : ["hr"]);
       else if (use_raw_boundary)
-        ret.push(this._wrap_pre(req.boundary + "--\n"));
+        ret.push(this._wrap_pre(req.boundary + "--\n", HTTP_BOUNDARY_CLASS));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
   {
     if (do_raw)
     {
-      ret.push(["pre", req.requestbody.content.stringData, "class", "mono network-body"]);
+      ret.push(this._wrap_pre(req.requestbody.content.stringData, "network-body"));
     }
     else
     {
@@ -325,7 +331,7 @@ templates._request_body = function(req, do_raw)
       var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
       if (["markup", "script", "css", "text"].contains(type))
       {
-        ret.push(["pre", req.requestbody.content.stringData, "class", "mono network-body"]);
+        ret.push(this._wrap_pre(req.requestbody.content.stringData, "network-body"));
       }
       else
       {
@@ -350,7 +356,7 @@ templates._request_body = function(req, do_raw)
 
 templates._response_body = function(resp, do_raw, is_last)
 {
-  var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
+  var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
 
   var classname = "";
   if (resp.body_unavailable ||
@@ -375,7 +381,7 @@ templates._response_body = function(resp, do_raw, is_last)
       if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
       {
         ret.push(
-          ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
+          this._wrap_pre(resp.responsebody.content.stringData, "network-body")
         );
       }
       else if (resp.logger_entry_type == "image")

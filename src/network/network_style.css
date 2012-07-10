@@ -282,7 +282,8 @@
   font-weight: bold;
 }
 
-.network_logger .header-token-type-name
+.network_logger .header-token-type-name,
+.network_logger .http-token-type-boundary
 {
   color: #006C0E;
 }
