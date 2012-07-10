@@ -147,6 +147,11 @@ templates._make_header_template_func = function(is_request_headers)
     var TYPE = 0;
     var STR = 1;
     var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+    if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
+    {
+      attrs.extend(["data-spec", "http#" + token[STR]]);
+    }
+    else
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
       if (firstline_tokens in add_data_spec)
@@ -202,20 +207,7 @@ templates._request_headers = function(req, do_raw)
   }
   else
   {
-    if (req.firstline)
-    {
-      var parts = req.firstline.split(" ");
-      var firstline;
-      if (parts.length == 3)
-      {
-        firstline = [
-          ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
-          ["span", parts[1] + " "],
-          ["span", parts[2] + " "]
-        ];
-      }
-      ret.extend(this.headers_list(req.request_headers, firstline));
-    }
+    ret.extend(this.headers_list(req.request_headers));
   }
   return ["tbody", ret.map(this._wrap_col_or_row)];
 };
@@ -246,29 +238,17 @@ templates._response_headers = function(resp, do_raw)
   }
 
   var ret = [];
-
-  var firstline;
-  var parts = resp.firstline.split(" ", 2);
-  if (parts.length == 2)
-  {
-    firstline = [
-      ["span", parts[0] + " "],
-      ["span", parts[1], "data-spec", "http#" + parts[1]],
-      ["span", resp.firstline.slice(parts[0].length + parts[1].length + 1)]
-    ];
-  }
-
   if (resp.logger_entry_touched_network)
     ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]);
 
-  ret.extend(this.headers_list(resp.response_headers, firstline));
+  ret.extend(this.headers_list(resp.response_headers));
   return ["tbody", ret.map(this._wrap_col_or_row)];
 };
 
-templates.headers_list = function(headers, firstline, do_raw)
+templates.headers_list = function(headers, do_raw)
 {
   var map_func;
-  if (do_raw) // this is currently just for headers of parts in multipart. todo: in regular request/response headers we'll have a tokenized list to gain speclinks.
+  if (do_raw) // This is just for headers of multipart-parts.
   {
     map_func = function(header)
     {
@@ -282,13 +262,7 @@ templates.headers_list = function(headers, firstline, do_raw)
       return [["th", header.name + ":", "data-spec", "http#" + header.name], ["td", header.value]];
     };
   }
-
-  var lis = headers.map(map_func);
-  if (firstline)
-  {
-    lis.unshift(["pre", firstline, "class", "mono"]);
-  }
-  return lis;
+  return headers.map(map_func);
 };
 
 templates._request_body = function(req, do_raw)
@@ -297,7 +271,7 @@ templates._request_body = function(req, do_raw)
     return [];
 
   var ret = [this._wrap_pre("\n")];
-  if (req.requestbody.partList.length) // multipart
+  if (req.requestbody.partList.length) // Multipart
   {
     var use_raw_boundary = false;
     if (do_raw && req.boundary)
@@ -308,7 +282,7 @@ templates._request_body = function(req, do_raw)
       if (use_raw_boundary && n === 0)
         ret.push(this._wrap_pre(req.boundary));
 
-      ret.extend(this.headers_list(part.headerList, null, do_raw));
+      ret.extend(this.headers_list(part.headerList, do_raw));
       ret.push(this._wrap_pre("\n"));
       if (part.content && part.content.stringData)
         ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
@@ -333,7 +307,7 @@ templates._request_body = function(req, do_raw)
       ret.push([
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
-                ]); // it's necesary to just push the outer array, because each entry will be wrapped in a row.
+                ]); // It's necesary to just push the outer array, because each entry will be wrapped in a row.
       
       ret.extend(parts.map(function(e) {
                     e = e.replace(/\+/g, "%20").split("=");
