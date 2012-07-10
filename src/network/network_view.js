@@ -306,7 +306,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.duration },
         renderer: function(entry) {
           var dur = entry.duration;
-          return (dur && dur.toFixed(2) + "ms") || "";
+          return (dur && dur.toFixed(2) + " ms") || "";
         }
       },
       graph: {
