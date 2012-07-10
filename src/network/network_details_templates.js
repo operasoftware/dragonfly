@@ -35,7 +35,7 @@ templates.details = function(entry, left_val, do_raw)
         "handler", "resize-request-detail"
       ],
       ["div",
-        templates._details_content(entry, do_raw),
+        this._details_content(entry, do_raw),
         "data-object-id", String(entry.id),
         "class", "entry-details"
       ],
@@ -46,13 +46,13 @@ templates.details = function(entry, left_val, do_raw)
 
 templates._details_content = function(entry, do_raw)
 {  
-  var responsecode = entry.last_responsecode;
+  var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
   // todo: not really pretty
   if (!this["_requests_responses_" + do_raw])
-    this["_requests_responses_" + do_raw] = templates.requests_responses.bind(this, do_raw);
+    this["_requests_responses_" + do_raw] = this.requests_responses.bind(this, do_raw);
 
   var requests_responses = entry.requests_responses.map(this["_requests_responses_" + do_raw])
 
@@ -77,10 +77,10 @@ templates._details_content = function(entry, do_raw)
           ["td",
             entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
           ],
-         "data-spec", "http#" + entry.last_responsecode
+         "data-spec", "http#" + entry.current_responsecode
         ]
       ],
-      entry.touched_network ? [] : templates.did_not_touch_network(entry),
+      entry.touched_network ? [] : this.did_not_touch_network(entry),
       requests_responses
     ]
   );
@@ -91,7 +91,7 @@ templates.did_not_touch_network = function(entry)
   var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
   return (
     ["tbody", 
-      templates._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
+      this._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
         ["p", entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
                                    : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
     ]);
@@ -100,11 +100,11 @@ templates.did_not_touch_network = function(entry)
 templates.requests_responses = function(do_raw, request_response, index, requests_responses)
 {
   var is_last = index == requests_responses.length - 1;
-  var template_func = templates._response;
+  var template_func = this._response;
   if (request_response instanceof cls.NetworkLoggerRequest)
-    template_func = templates._request;
+    template_func = this._request;
 
-  return template_func(request_response, is_last, do_raw);
+  return template_func.call(this, request_response, is_last, do_raw);
 };
 
 templates._request = function(request, is_last, do_raw)
@@ -118,8 +118,8 @@ templates._request = function(request, is_last, do_raw)
 templates._response = function(response, is_last, do_raw)
 {
   return [
-    templates._response_headers(response, do_raw),
-    templates._response_body(response, do_raw, is_last)
+    this._response_headers(response, do_raw),
+    this._response_body(response, do_raw, is_last)
   ]
 };
 
@@ -174,12 +174,12 @@ templates._request_headers = function(req, do_raw)
       {
         var tokens = [];
         var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(req.request_headers_raw, templates._token_receiver.bind(this, tokens));
+        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, tokens));
         req.header_tokens = tokens;
       }
       if (req.header_tokens.length)
       {
-        var map_func = templates._make_header_template_func(true);
+        var map_func = this._make_header_template_func(true);
         return [
           ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
           ["pre", req.header_tokens.map(map_func), "class", "mono"]
@@ -214,10 +214,10 @@ templates._request_headers = function(req, do_raw)
           ["span", parts[2] + " "]
         ];
       }
-      ret.extend(templates.headers_list(req.request_headers, firstline));
+      ret.extend(this.headers_list(req.request_headers, firstline));
     }
   }
-  return ["tbody", ret.map(templates._wrap_col_or_row)];
+  return ["tbody", ret.map(this._wrap_col_or_row)];
 };
 
 templates._response_headers = function(resp, do_raw)
@@ -231,12 +231,12 @@ templates._response_headers = function(resp, do_raw)
     {
       var tokens = [];
       var tokenizer = new cls.HTTPHeaderTokenizer();
-      tokenizer.tokenize(resp.response_headers_raw, templates._token_receiver.bind(this, tokens));
+      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, tokens));
       resp.header_tokens = tokens;
     }
     if (resp.header_tokens.length)
     {
-      var map_func = templates._make_header_template_func(false);
+      var map_func = this._make_header_template_func(false);
       return [
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         ["pre", resp.header_tokens.map(map_func), "class", "mono"]
@@ -261,8 +261,8 @@ templates._response_headers = function(resp, do_raw)
   if (resp.logger_entry_touched_network)
     ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]);
 
-  ret.extend(templates.headers_list(resp.response_headers, firstline));
-  return ["tbody", ret.map(templates._wrap_col_or_row)];
+  ret.extend(this.headers_list(resp.response_headers, firstline));
+  return ["tbody", ret.map(this._wrap_col_or_row)];
 };
 
 templates.headers_list = function(headers, firstline, do_raw)
@@ -272,7 +272,7 @@ templates.headers_list = function(headers, firstline, do_raw)
   {
     map_func = function(header)
     {
-      return templates._wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
+      return this._wrap_pre([["span", header.name + ":", "data-spec", "http#" + header.name], ["span", " " + header.value]]);
     };
   }
   else
@@ -296,7 +296,7 @@ templates._request_body = function(req, do_raw)
   if (req.requestbody == null)
     return [];
 
-  var ret = [templates._wrap_pre("\n")];
+  var ret = [this._wrap_pre("\n")];
   if (req.requestbody.partList.length) // multipart
   {
     var use_raw_boundary = false;
@@ -308,7 +308,7 @@ templates._request_body = function(req, do_raw)
       if (use_raw_boundary && n === 0)
         ret.push(this._wrap_pre(req.boundary));
 
-      ret.extend(templates.headers_list(part.headerList, null, do_raw));
+      ret.extend(this.headers_list(part.headerList, null, do_raw));
       ret.push(this._wrap_pre("\n"));
       if (part.content && part.content.stringData)
         ret.push(["pre", part.content.stringData, "class", "mono network-body"]);
@@ -370,13 +370,13 @@ templates._request_body = function(req, do_raw)
   if (do_raw)
     return ret;
   else
-    return ["tbody", ret.map(templates._wrap_col_or_row)];
+    return ["tbody", ret.map(this._wrap_col_or_row)];
 };
 
 
 templates._response_body = function(resp, do_raw, is_last)
 {
-  var ret = [templates._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
+  var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either.
 
   var classname = "";
   if (resp.body_unavailable ||
@@ -422,7 +422,7 @@ templates._response_body = function(resp, do_raw, is_last)
   if (do_raw)
     return ret;
   else
-    return ["tbody", ret.map(templates._wrap_col_or_row), "class", classname];
+    return ["tbody", ret.map(this._wrap_col_or_row), "class", classname];
 };
 
 })(window.templates.network);

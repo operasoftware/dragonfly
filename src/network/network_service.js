@@ -213,7 +213,7 @@ cls.NetworkLoggerService = function(view)
       return;
 
     var entry = this._current_context.get_entry(itemid);
-    entry.is_fetching_body = true;
+    entry.called_get_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
     var tag = window.tagManager.set_callback(this, this._handle_get_resource, [update_callback, entry]);
@@ -225,7 +225,6 @@ cls.NetworkLoggerService = function(view)
     if (!this._current_context)
       return;
 
-    entry.is_fetching_body = false;
     if (status)
     {
       // the object passed to _current_context represents empty event_data. will set body_unavailable.
@@ -504,13 +503,13 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.starttime_relative = null;
   this.endtime = null;
   this.requests_responses = [];
-  this.last_responsecode = null;
+  this.current_responsecode = null;
   this.last_method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
-  this.is_fetching_body = false;
+  this.called_get_body = false;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -762,8 +761,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    this.last_responsecode = event.responseCode;
-    this.error_in_last_response = /^[45]/.test(this.last_responsecode);
+    this.current_responsecode = event.responseCode;
+    this.error_in_current_response = /^[45]/.test(this.current_responsecode);
     this._current_response = new cls.NetworkLoggerResponse(this);
     this.requests_responses.push(this._current_response);
     this._current_response._update_event_response(event);
@@ -882,7 +881,7 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.__defineGetter__("last_response_has_responsebody", function()
+  this.__defineGetter__("current_response_has_responsebody", function()
   {
     return Boolean(this._current_response && this._current_response.responsebody);
   });

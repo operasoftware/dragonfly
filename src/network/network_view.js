@@ -184,7 +184,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       if (entry)
       {
         // todo: it would be good if we knew if the whole context is finished. Better only to get_body then, less potential to disturb.
-        if (entry.is_finished && !entry.last_response_has_responsebody && !entry.is_fetching_body)
+        if (entry.is_finished && !entry.current_response_has_responsebody && !entry.called_get_body)
           this._service.get_body(entry.id, this.update_bound);
 
         template = [template, this._render_details_view(entry)];
@@ -236,14 +236,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_RESPONSECODE,
         renderer: function(entry) {
-          return (entry.last_responsecode && String(entry.last_responsecode)) || "";
+          return (entry.current_responsecode && String(entry.current_responsecode)) || "";
         },
         title_getter: function(entry, renderer) {
-          if (cls.ResourceUtil.http_status_codes[entry.last_responsecode])
-            return String(cls.ResourceUtil.http_status_codes[entry.last_responsecode]);
+          if (cls.ResourceUtil.http_status_codes[entry.current_responsecode])
+            return String(cls.ResourceUtil.http_status_codes[entry.current_responsecode]);
           return renderer(entry);
         },
-        getter: function(entry) { return entry.last_responsecode || 0; }
+        getter: function(entry) { return entry.current_responsecode || 0; }
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
