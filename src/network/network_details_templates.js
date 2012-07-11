@@ -76,14 +76,14 @@ templates._details_content = function(entry, do_raw)
         ["tr",
           ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
           ["td", entry.touched_network ? entry.last_method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-          "data-spec", "http#" + (entry.last_method).trim()
+          "data-spec", "http#" + entry.last_method
         ],
         ["tr",
           ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
           ["td",
             entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
           ],
-         "data-spec", "http#" + (entry.current_responsecode).trim()
+         "data-spec", "http#" + entry.current_responsecode
         ]
       ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
