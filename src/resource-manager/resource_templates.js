@@ -139,6 +139,7 @@ templates.resource_tree =
 						'span',
 						(r.filename||r.human_url),
 						[],
+						'style',(r.sameOrigin?'':'color:red'),
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
 					],

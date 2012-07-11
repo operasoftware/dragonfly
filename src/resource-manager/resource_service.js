@@ -381,6 +381,17 @@ cls.ResourceContext = function(data)
 
           frame.groups[type].push( res.id );
           this.resourcesUrlDict[ res.url ] = res.id;
+
+          // WIP: sameOrigin check
+          res.sameOrigin = false;
+          var frameResource = this.resourcesDict[ frame.resourceID ];
+          if (frameResource.protocol==res.protocol &&
+            (frameResource.host==res.host )) //|| frameResource.host.substr(res.host)))
+          {
+            res.sameOrigin = true;
+          }
+
+
         }
         else
         {
