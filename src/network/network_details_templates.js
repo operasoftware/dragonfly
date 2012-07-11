@@ -52,7 +52,7 @@ templates.details = function(entry, left_val, do_raw)
 
 templates._details_content = function(entry, do_raw)
 {  
-  var responsecode = entry.current_responsecode;
+  var responsecode = entry.last_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
@@ -83,7 +83,7 @@ templates._details_content = function(entry, do_raw)
           ["td",
             entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
           ],
-         "data-spec", "http#" + entry.current_responsecode
+         "data-spec", "http#" + entry.last_responsecode
         ]
       ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
@@ -105,23 +105,48 @@ templates.did_not_touch_network = function(entry)
 
 templates.requests_responses = function(do_raw, request_response, index, requests_responses)
 {
-  var is_last = index == requests_responses.length - 1;
-  var template_func = this._response;
-  if (request_response instanceof cls.NetworkLoggerRequest)
-    template_func = this._request;
+  var is_last_of_type = true;
+  var template_func;
 
-  return template_func.call(this, request_response, is_last, do_raw);
+  // todo: ugly.
+  if (request_response instanceof cls.NetworkLoggerRequest)
+  {
+    for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
+      if (req_res instanceof cls.NetworkLoggerRequest)
+        is_last_of_type = false;
+
+    template_func = this._request;
+  }
+  else
+  {
+    for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
+      if (req_res instanceof cls.NetworkLoggerResponse)
+        is_last_of_type = false;
+
+    template_func = this._response;
+  }
+
+  return template_func.call(this, request_response, is_last_of_type, do_raw);
 };
 
-templates._request = function(request, is_last, do_raw)
+templates._request = function(request, is_last_request, do_raw)
 {
+  // A request that's followed by another one, without a response in between,
+  // is not shown in network-details. It will mostly mean it was retried internally
+  // and didn't go on the network.
+  // That can't be determined only by looking at RequestRetry events, because a
+  // request with for example a 401 Authorization Required response should still 
+  // be shown.
+  if (!is_last_request && !request.was_responded)
+    return [];
+
   return [
     templates._request_headers(request, do_raw),
     templates._request_body(request, do_raw)
   ]
 };
 
-templates._response = function(response, is_last, do_raw)
+templates._response = function(response, is_last, do_raw) // todo: is_last_response?
 {
   return [
     this._response_headers(response, do_raw),
