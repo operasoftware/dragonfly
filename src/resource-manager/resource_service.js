@@ -116,15 +116,18 @@ cls.ResourceManagerService = function(view)
 
   this._handle_resource_detail_bound = function(event, target)
   {
-    if (!this._context){ return; }
+    if (!this._context)
+      return;
 
     var parent = target.get_ancestor('[data-resource-id]');
-    if (!parent){ console.log('no parent with data-resource-id for '+target.outerHTML); return; }
+    if (!parent)
+      return;
   
     var id = Number( parent.getAttribute('data-resource-id') );
     var resource = this.get_resource(id);
 
-    if (!resource){ console.log('resource '+id+' not found'); return; }
+    if (!resource)
+      return;
 
     cls.ResourceDetailView.instance.show_resource(resource);
 
@@ -134,7 +137,9 @@ cls.ResourceManagerService = function(view)
   this._handle_resource_group_bound = function(event, target)
   {
     var parent = target.get_ancestor('[data-frame-id]');
-    if (!parent){ return; }
+    if (!parent)
+      return;
+
     var frameID = parent.getAttribute('data-frame-id');
     var groupName = parent.getAttribute('data-resource-group');
 
@@ -178,7 +183,8 @@ cls.ResourceManagerService = function(view)
 
   this.get_resource = function(id)
   {
-    if (!this._context){ return null; }
+    if (!this._context)
+      return null;
 
     return this._context.resourcesDict[id];
   };
@@ -186,7 +192,8 @@ cls.ResourceManagerService = function(view)
 
   this.get_resource_for_url = function(url)
   {
-    if (!this._context){ return null; }
+    if (!this._context)
+      return null;
 
     var id = this._context.resourcesUrlDict[url];
     if (id===undefined){ return null; }
@@ -379,7 +386,6 @@ cls.ResourceContext = function(data)
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             "Unknown frameID for the resource "+ res.id);
-          console.log([event,res].map(JSON.stringify).join('\n\n'));
           res.invalid = true;
         }
       }
