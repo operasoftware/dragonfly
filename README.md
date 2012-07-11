@@ -2,31 +2,28 @@
 
 ## Directories
 
-`src`
-: source code for dragonfly client
+`src`: source code for dragonfly client
 
-`docs`
-: documentation that is not auto-generated
+`docs`: documentation that is not auto-generated
 
-`tools`
-: tools needed for building/distributing/testing
+`tools`: tools needed for building/distributing/testing
 
 ## Developing Dragonfly
 
 When working on the code base you should use the `dragonkeeper`
-tool. See [dragonkeeper's README](https://bitbucket.org/scope/dragonkeeper/src/tip/README)
+tool. See [dragonkeeper's README](https://github.com/operasoftware/dragonkeeper/blob/master/README)
 for more information.
 
 ## Building Dragonfly
 
 **Note:** It is not necessary to build Dragonfly during development. See above.
 
-Building is done using the df2 tool. For more information, see
-[https://bitbucket.org/scope/dragonfly-tools/](https://bitbucket.org/scope/dragonfly-tools/).
+Building is done using the `df2` tool. For more information, see
+[https://github.com/operasoftware/dragonfly-build-tools](https://github.com/operasoftware/dragonfly-build-tools).
 
 ## Running test builds of dragonfly
 
-Open opera:config#DeveloperTools|DeveloperToolsURL and set the url to the
+Open [opera:config#DeveloperTools|DeveloperToolsURL](opera:config#DeveloperTools|DeveloperToolsURL) and set the url to the
 path to the dragonfly build to use.
 
 ## Updating translations
