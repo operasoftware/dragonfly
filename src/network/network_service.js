@@ -925,7 +925,6 @@ cls.NetworkLoggerRequest = function(entry)
   this.request_headers = null;
   this.request_headers_raw = null;
   this.request_type = null;
-  this.firstline = null;
   this.requestbody = null;
   this.boundary = "";
   this.was_responded = false;
@@ -955,11 +954,9 @@ cls.NetworkLoggerRequestPrototype = function()
         break;
       }
     }
-    this.firstline = event.raw.split("\n")[0]; // todo: event.raw.split("\r\n")[0];
     // The body can be contained in event.raw.
     // At the time of the this event, it's possible that more than the header
     // has been written to the socket already.
-    this.raw = event.raw; // todo: debugging only. remove me.
     this.request_headers_raw = event.raw.split("\r\n\r\n")[0];
   };
 
@@ -983,9 +980,9 @@ cls.NetworkLoggerResponse = function(entry)
   this.responsecode = null;
   this.response_headers = null;
   this.response_headers_raw = null;
-  this.firstline = null;
   this.responsebody = null;
-  this.header_tokens = null; // This is set from template code, when it's first needed.
+  this.header_tokens = null; // This is set from template code, when it's first needed
+  this.is_response = true; // Simpler for recognizing than dealing with comparing the constructor
 
   // The following are duplicated from the entry to have them available directly on the response
   this.logger_entry_type = entry.type;
@@ -1009,7 +1006,6 @@ cls.NetworkLoggerResponsePrototype = function()
     // At the time of the this event, it's possible that more than the header
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
-    this.firstline = this.response_headers_raw.split("\n")[0]; // todo: this.response_headers_raw.split("\r\n")[0];
   };
 
   this._update_event_responsefinished = function(event)

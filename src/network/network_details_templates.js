@@ -56,11 +56,12 @@ templates._details_content = function(entry, do_raw)
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
-  // todo: not really pretty
-  if (!this["_requests_responses_" + do_raw])
-    this["_requests_responses_" + do_raw] = this.requests_responses.bind(this, do_raw);
+  // Bind a template function for raw / not-raw, on demand.
+  var template_func_name = "_requests_responses_" + do_raw ? "raw" : "not_raw" + "_bound";
+  if (!this[template_func_name])
+    this[template_func_name] = this.requests_responses.bind(null, do_raw);
 
-  var requests_responses = entry.requests_responses.map(this["_requests_responses_" + do_raw])
+  var requests_responses = entry.requests_responses.map(this[template_func_name]);
 
   if (do_raw)
   {
@@ -105,27 +106,19 @@ templates.did_not_touch_network = function(entry)
 
 templates.requests_responses = function(do_raw, request_response, index, requests_responses)
 {
-  var is_last_of_type = true;
-  var template_func;
-
-  // todo: ugly.
-  if (request_response instanceof cls.NetworkLoggerRequest)
-  {
-    for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
-      if (req_res instanceof cls.NetworkLoggerRequest)
-        is_last_of_type = false;
-
-    template_func = this._request;
-  }
-  else
-  {
-    for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
-      if (req_res instanceof cls.NetworkLoggerResponse)
-        is_last_of_type = false;
-
+  var template_func = this._request;
+  if (request_response.is_response)
     template_func = this._response;
-  }
 
+  var is_last_of_type = true;
+  for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
+  {
+    if (request_response.is_response == req_res.is_response)
+    {
+      is_last_of_type = false;
+      break;
+    }
+  }
   return template_func.call(this, request_response, is_last_of_type, do_raw);
 };
 
@@ -146,11 +139,11 @@ templates._request = function(request, is_last_request, do_raw)
   ]
 };
 
-templates._response = function(response, is_last, do_raw) // todo: is_last_response?
+templates._response = function(response, is_last_response, do_raw)
 {
   return [
     this._response_headers(response, do_raw),
-    this._response_body(response, do_raw, is_last)
+    this._response_body(response, do_raw, is_last_response)
   ]
 };
 
@@ -379,7 +372,7 @@ templates._request_body = function(req, do_raw)
 };
 
 
-templates._response_body = function(resp, do_raw, is_last)
+templates._response_body = function(resp, do_raw, is_last_response)
 {
   var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
 
@@ -394,7 +387,7 @@ templates._response_body = function(resp, do_raw, is_last)
   {
     if (!resp.responsebody)
     {
-      if (is_last && !resp.logger_entry_is_finished)
+      if (is_last_response && !resp.logger_entry_is_finished)
       {
         classname = "network_info";
         ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
