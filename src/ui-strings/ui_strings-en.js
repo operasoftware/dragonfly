@@ -1541,6 +1541,11 @@ ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
 /* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
 ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
 
+/* DESC: Refetch the event listeners. */
+ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
+
+
+
 
 
 

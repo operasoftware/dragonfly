@@ -21,7 +21,7 @@ cls.SelectedNodeListenersView = function(id, name, container_class)
       {
         tmpl = window.templates.ev_listeners_tooltip(sel_ele.model,
                                                      sel_ele.rt_id,
-                                                     sel_ele.node_id,
+                                                     sel_ele.obj_id,
                                                      listeners,
                                                      "list-selected-node");
       }

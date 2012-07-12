@@ -14,23 +14,17 @@
 
   /* Event listener view */
 
-  this.main_ev_listener_view = function(data)
+  this.main_ev_listener_view = function(data, search_term)
   {
     var data_with_ls = data.filter(has_listeners);
     return (
     ["div",
-      ["div",
-        ["span",
-          ["span", ui_strings.S_LABEL_STORAGE_UPDATE],
-          "class", "ui-button",
-          "unselectable", "on",
-          "tabindex", "1",
-          "handler", "update-ev-listeners"]],
-      ["ul", data_with_ls.map(this._ev_rt_view, this), "class", "ev-rt-list"],
+      ["ul", data_with_ls.map(this._ev_rt_view.bind(this, search_term)),
+             "class", "ev-rt-list"],
       "class", "main-ev-listener-view js-search-results-runtime padding"]);
   };
 
-  this._ev_rt_view = function(ev_rt, index, ev_rt_list)
+  this._ev_rt_view = function(search_term, ev_rt, index, ev_rt_list)
   {
     var rt = window.runtimes.getRuntime(ev_rt.rt_id);
     var ret = ["li"];
@@ -42,7 +36,13 @@
                           "data-tooltip-text", rt && rt.uri],
                  "class", "ev-rt-title"]);
     }
-    ret.push(["ul", ev_rt.event_types.map(this._ev_type, this),
+    var event_types = search_term
+                    ? ev_rt.event_types.filter(function(ev_type)
+                    {
+                      return ev_type.type.contains(search_term);
+                    })
+                    : ev_rt.event_types;
+    ret.push(["ul", event_types.map(this._ev_type, this),
                     "data-rt-id", String(ev_rt.rt_id),
                     "data-obj-id", String(ev_rt.obj_id),
                     "class", "ev-type-list"]);
