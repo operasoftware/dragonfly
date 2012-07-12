@@ -354,11 +354,6 @@ cls.ResourceFramePrototype = function()
       other: new cls.ResourceGroup('other','other')
     }
   }
-
-  this.update = function(eventname, event)
-  {
-
-  }
 }
 
 window.cls.ResourceFrame.prototype = new window.cls.ResourceFramePrototype();
