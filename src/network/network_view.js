@@ -527,8 +527,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_close_incomplete_warning_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
-    if (ctx)
-      ctx.incomplete_warn_discarded = true;
+    var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
+    if (ctx && window_id)
+      ctx.discard_incomplete_warning(window_id);
 
     this.needs_instant_update = true;
     this.update();

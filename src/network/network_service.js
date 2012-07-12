@@ -8,13 +8,24 @@ cls.NetworkLoggerService = function(view)
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, don't reset the context. This usually means it's an iframe or a redirect.
-    // todo: handle multiple top-runtimes
-    if (data.parentDocumentID)
-      return;
 
-    this._current_context = new cls.RequestContext();
-    this._current_context.saw_main_document_abouttoloaddocument = true;
+    if (!this._current_context)
+      this._current_context = new cls.RequestContext();
+
+    if (!data.parentDocumentID)
+    {
+      // This basically means "unload" for that windowID, potentially
+      // existing data for that windowID needs to be cleared now.
+      this._current_context.remove_window_context(data.windowID);
+    }
+
+    var window_context = this._current_context.get_window_context(data.windowID);
+    if (!window_context)
+    {
+      var window_context = new cls.NetworkLoggerService.WindowContext(data.windowID);
+      this._current_context.window_contexts.push(window_context);
+    }
+    window_context.saw_main_document_abouttoloaddocument = true;
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -274,11 +285,18 @@ cls.NetworkLoggerService = function(view)
   this.init();
 };
 
+cls.NetworkLoggerService.WindowContext = function(window_id)
+{
+  this.id = window_id;
+  this.saw_main_document_abouttoloaddocument = false;
+}
 
 cls.RequestContext = function()
 {
   this._logger_entries = [];
   this._filters = [];
+  this.window_contexts = [];
+  this._entry_to_window_id_map = {}; // todo: this should just be an array on a WindowContext ob
 
   this._init();
 };
@@ -410,6 +428,15 @@ cls.RequestContextPrototype = function()
 
   this.update = function(eventname, event)
   {
+    if (event.windowID)
+    {
+      var matching_window_context = this.get_window_context(event.windowID);
+      if (!matching_window_context)
+      {
+        this.window_contexts.push(new cls.NetworkLoggerService.WindowContext(event.windowID));
+      }
+    }
+
     var logger_entries = this.get_entries_with_res_id(event.resourceID);
     if (!logger_entries.length && eventname !== "urlload")
     {
@@ -453,6 +480,12 @@ cls.RequestContextPrototype = function()
         var id = this._get_uid();
         logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
         this._logger_entries.push(logger_entry);
+        // Store the id in the list of entries per window_id
+        var map = this._entry_to_window_id_map;
+        if (!map[event.windowID])
+          map[event.windowID] = [];
+
+        map[event.windowID].push(id);
       }
       logger_entry.last_requestID = event.requestID;
       logger_entry.update(eventname, event);
@@ -461,6 +494,25 @@ cls.RequestContextPrototype = function()
     if (window.views && !this.is_paused)
       window.views.network_logger.update();
 
+  };
+
+  this.remove_window_context = function(window_id)
+  {
+    var ids_to_remove = this._entry_to_window_id_map[window_id];
+    if (ids_to_remove && ids_to_remove.length)
+    {
+      this._logger_entries = this._logger_entries.filter(function(entry){
+        return !ids_to_remove.contains(entry.id);
+      });
+    }
+    this._entry_to_window_id_map[event.windowID] = [];
+    // Remove the window_context itself
+    this.window_contexts = this.window_contexts.filter(
+      function(win_context)
+      {
+        return win_context.id != window_id;
+      }
+    );
   };
 
   this.get_entry_from_filtered = function(id)
@@ -481,6 +533,20 @@ cls.RequestContextPrototype = function()
       return "uid-" + count++;
     }
   })();
+
+  this.discard_incomplete_warning = function(window_id)
+  {
+    for (var i = 0, window_context; window_context = this.window_contexts[i]; i++)
+      if (window_context.id === window_id)
+        window_context.incomplete_warn_discarded = true;
+
+  };
+
+  this.get_window_context = function(window_id)
+  {
+    return this.window_contexts.filter(helpers.eq("id", window_id))[0];
+  };
+
 };
 
 cls.RequestContext.prototype = new cls.RequestContextPrototype();
@@ -1020,6 +1086,7 @@ cls.NetworkLoggerResponsePrototype = function()
   {
     if (!event.mimeType) { this.body_unavailable = true; }
     this.responsebody = event;
+    // todo: check how to distinguish body_unavailable and empty body.
   };
 
   this._update_event_urlunload = function(event)

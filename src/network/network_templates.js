@@ -97,8 +97,22 @@ templates.request_crafter_main = function(url, loading, request, response)
          ];
 };
 
-templates.incomplete_warning = function()
+templates.incomplete_warning = function(context, index, all_contexts)
 {
+  if (context.incomplete_warn_discarded ||
+      context.saw_main_document_abouttoloaddocument)
+  {
+    return [];
+  }
+  
+  // Only add the title if there's more than one context in total
+  var title = "";
+  if (all_contexts.length > 1)
+  {
+    var win = window.window_manager_data.get_window(context.id);
+    title = win && (" - " + win.title);
+  }
+
   return ["div",
            ["div",
              ["span",
@@ -108,7 +122,7 @@ templates.incomplete_warning = function()
              ]
            ],
            ["p",
-             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
+             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH + title
            ],
            ["span",
              " ",
@@ -116,15 +130,13 @@ templates.incomplete_warning = function()
              "handler", "close-incomplete-warning",
              "tabindex", "1"
            ],
-           "class", "info-box network_incomplete_warning"
+           "class", "info-box network_incomplete_warning",
+           "data-reload-window-id", String(context.id)
          ];
 };
 
 templates.main = function(ctx, entries, selected, detail_width, table_template)
 {
-  var show_incomplete_warning = !ctx.saw_main_document_abouttoloaddocument &&
-                                !ctx.incomplete_warn_discarded;
-
   return [
     [
       "div", templates.url_list(ctx, entries, selected),
@@ -142,8 +154,7 @@ templates.main = function(ctx, entries, selected, detail_width, table_template)
     [
       "div", templates.summary(entries), "class", "network-summary"
     ],
-    show_incomplete_warning ?
-      templates.incomplete_warning() : []
+    ctx.window_contexts.map(templates.incomplete_warning)
   ];
 };
 
