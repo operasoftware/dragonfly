@@ -59,7 +59,7 @@ templates._details_content = function(entry, do_raw)
   // Bind a template function for raw / not-raw, on demand.
   var template_func_name = "_requests_responses_" + do_raw ? "raw" : "not_raw" + "_bound";
   if (!this[template_func_name])
-    this[template_func_name] = this.requests_responses.bind(null, do_raw);
+    this[template_func_name] = this.requests_responses.bind(this, do_raw);
 
   var requests_responses = entry.requests_responses.map(this[template_func_name]);
 
