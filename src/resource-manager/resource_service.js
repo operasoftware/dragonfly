@@ -331,6 +331,38 @@ cls.ResourceRequest = function(url, callback,data)
     this._request_resource();
 }
 
+cls.ResourceFrame = function( data )
+{
+  this._init( data );
+}
+cls.ResourceFramePrototype = function()
+{
+  this._init = function(data)
+  {
+    this.id = data.frameID;
+    this.resourceID = data.resourceID;
+    this.parentFrameID = data.parentFrameID;
+    this.windowID = data.windowID;
+    this.closed = !!data.parentFrameID;
+    this.groups =
+    {
+      markup: new cls.ResourceGroup('markup','markup'),
+      css: new cls.ResourceGroup('stylesheets','css'),
+      script: new cls.ResourceGroup('scripts','script'),
+      image: new cls.ResourceGroup('images','image'),
+      font: new cls.ResourceGroup('fonts','font'),
+      other: new cls.ResourceGroup('other','other')
+    }
+  }
+
+  this.update = function(eventname, event)
+  {
+
+  }
+}
+
+window.cls.ResourceFrame.prototype = new window.cls.ResourceFramePrototype();
+
 
 cls.ResourceContext = function(data)
 {
@@ -342,24 +374,13 @@ cls.ResourceContext = function(data)
   {
     if (eventname == "abouttoloaddocument")
     {
-      var frame = event;
-      frame.closed = !!event.parentFrameID;
-      frame.groups =
-      {
-        markup: new cls.ResourceGroup('markup','markup'),
-        css: new cls.ResourceGroup('stylesheets','css'),
-        script: new cls.ResourceGroup('scripts','script'),
-        image: new cls.ResourceGroup('images','image'),
-        font: new cls.ResourceGroup('fonts','font'),
-        other: new cls.ResourceGroup('other','other')
-      }
-
-      this.frames[ event.frameID ] = frame;
+      var frame = new cls.ResourceFrame(event);
+      this.frames[ frame.id ] = frame;
       return;
     }
 
     var res = this.get_resource(event.resourceID);
-    if (eventname == "urlload" && !res)
+    if (eventname == "urlload" && !res && this.frames[event.frameID])
     {
       res = new cls.Resource(event.resourceID);
       res.frameID = event.frameID;
@@ -370,11 +391,17 @@ cls.ResourceContext = function(data)
     {
       res.update(eventname, event);
 
+      var frame = this.frames[res.frameID];
+      if (eventname == "urlload")
+      {
+        if (res.id == frame.resourceID)
+          frame.resource = res;
+      }
+
       if (eventname == "urlfinished")
       {
         // push the resourceID into the proper group
-        var frame = this.frames[res.frameID];
-        if (frame)
+        if (frame && frame.resource)
         {
           var type = res.type;
           if (!frame.groups[type]){ type='other'; }
@@ -382,15 +409,16 @@ cls.ResourceContext = function(data)
           frame.groups[type].push( res.id );
           this.resourcesUrlDict[ res.url ] = res.id;
 
-          // WIP: sameOrigin check
+          // sameOrigin check
+          // TODO: sameOrigin check for iframes
           res.sameOrigin = false;
-          var frameResource = this.resourcesDict[ frame.resourceID ];
-          if (frameResource.protocol==res.protocol &&
-            (frameResource.host==res.host )) //|| frameResource.host.substr(res.host)))
-          {
+          if (frame.resource != null && frame.resource.protocol == res.protocol &&
+            (
+              frame.resource.host == res.host
+              || frame.resource.host.match(new RegExp('\\.' + res.host + '$')) != null
+            )
+          )
             res.sameOrigin = true;
-          }
-
 
         }
         else
@@ -601,7 +629,6 @@ cls.ResourcePrototype = function()
       callback(this);
     }
   };
-
 
 }
 
