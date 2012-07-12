@@ -431,6 +431,17 @@ cls.ResourceContext = function(data)
 
       if (res.invalid)
       {
+        // delete the frame and all its resources if the top resource of a frame is invalid
+        if (frame && frame.resource.id==res.id)
+        {
+          delete this.frames[frame.id];
+          for(var rid in this.resourcesDict)
+          {
+            var r = this.resourcesDict[ rid ];
+            if(r.frameID == frame.id)
+              delete this.resourcesDict[ rid ];
+          }
+        }
         delete this.resourcesDict[ res.id ];
       }
       else
