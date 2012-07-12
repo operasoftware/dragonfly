@@ -1511,14 +1511,17 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
 ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
 
+/* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
 ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
 
 /* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
-ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing phase";
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
 
 /* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
-ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
 
 /* DESC: View with all event listeners. */
 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
@@ -1528,5 +1531,7 @@ ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
+
 
 /* end new event listener feature */

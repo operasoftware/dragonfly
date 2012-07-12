@@ -46,10 +46,22 @@
 
 .ev-listener-tooltip .ev-type
 {
-  background-color: hsla(0, 0%, 0%, 0.04); 
+  background-color: hsla(0, 0%, 0%, 0.04);
   padding: 2px 8px;
   margin: 5px -8px 1px;
   border-width: 1px 0;
+}
+
+.ev-phase
+{
+  float: right;
+  font-style: italic;
+  color: hsl(0, 0%, 50%);
+}
+
+.capturing-phase
+{
+  color: hsl(0, 70%, 30%);
 }
 
 .ev-added,

@@ -11,7 +11,7 @@ cls.EventListenerTooltip = function()
   {
     _tooltip.hide();
   };
-  
+
   var _ontooltipclick = function(event)
   {
     _tooltip.hide();
@@ -30,7 +30,7 @@ cls.EventListenerTooltip = function()
       var listeners = node_id
                     ? model.get_ev_listeners(node_id)
                     : model.window_listeners.listeners;
-      var tmpl = window.templates.ev_listeners_tooltip(listeners, rt_id);
+      var tmpl = window.templates.ev_listeners_tooltip(model, rt_id, node_id, listeners);
       _tooltip.show(tmpl);
     }
   };

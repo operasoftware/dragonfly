@@ -35,10 +35,10 @@
     var rt = window.runtimes.getRuntime(ev_rt.rt_id);
     var ret = ["li"];
     if (ev_rt_list.length > 1)
-    { 
-      ret.push(["h2", 
+    {
+      ret.push(["h2",
                  ["span", rt && (rt.title || rt.host),
-                          "data-tooltip", "url-tooltip", 
+                          "data-tooltip", "url-tooltip",
                           "data-tooltip-text", rt && rt.uri],
                  "class", "ev-rt-title"]);
     }
@@ -53,8 +53,8 @@
   {
     //var bg_pos = ev_type.is_expanded ? "0 -11px" : "0 0";
     return (
-    ["li", 
-      ["h3", 
+    ["li",
+      ["h3",
         ["input", "type", "button",
                   "class", "folder-key"],
         ev_type.type,
@@ -79,15 +79,16 @@
       return listener[EVENT_TYPE] == ev_type.type;
     };
 
-    return win_listeners && win_listeners.listeners.some(has_listener)
+    return win_listeners && win_listeners.listeners &&
+           win_listeners.listeners.some(has_listener)
          ? ["div",
               "window",
-              ["span", "class", "ev-listener", 
+              ["span", "class", "ev-listener",
                        "data-tooltip", "event-listener"],
               "data-model-id", String(ev_type.id),
               "data-window-id", String(win_listeners.win_id),
               "data-rt-id", String(ev_type.rt_id),
-              "data-obj-id", String(win_listeners.win_id), 
+              "data-obj-id", String(win_listeners.win_id),
               "handler", "inspect-object-link",
               "class", "search-match"]
          : [];
@@ -95,25 +96,28 @@
 
   /* Event listener tooltip */
 
-  this.ev_listeners_tooltip = function(listener_list, rt_id)
+  this.ev_listeners_tooltip = function(model, rt_id, node_id, listener_list)
   {
-    return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, rt_id)),
+    return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, model, rt_id, node_id)),
                   "class", "ev-listener-tooltip"];
   };
 
-  this._ev_listener_tooltip = function(rt_id, listener)
+  this._ev_listener_tooltip = function(model, rt_id, node_id, listener)
   {
     var ret = [];
     var position = listener[POSITION];
 
-    ret.push(["dt", listener[EVENT_TYPE], "class", "ev-type"]);
-    ret.push(["dd", listener[USE_CAPTURE]
-                  ? ui_strings.S_LISTENER_CAPTURING_PHASE
-                  : ui_strings.S_LISTENER_BUBBLING_PHASE,
-                    "class", "ev-phase"]);
+    ret.push(["dt", listener[EVENT_TYPE],
+               ["span", listener[USE_CAPTURE]
+                      ? ui_strings.S_LISTENER_CAPTURING_PHASE
+                      : ui_strings.S_LISTENER_BUBBLING_PHASE,
+                        "class", "ev-phase " + (listener[USE_CAPTURE]
+                                                ? "capturing-phase"
+                                                : "bubbling-phase")],
+              "class", "ev-type"]);
     if (listener[LISTENER_SCRIPT_DATA])
     {
-      ret.push(["dd", 
+      ret.push(["dd",
                   ["span", ui_strings.S_ATTRIBUTE_LISTENER,
                            "data-tooltip", "js-inspection",
                            "data-script-data", listener[LISTENER_SCRIPT_DATA],
@@ -122,7 +126,7 @@
     }
     else
     {
-      ret.push(["dd", 
+      ret.push(["dd",
                   ["span", listener[ORIGIN] == ORIGIN_EVENT_TARGET
                          ? ui_strings.S_EVENT_TARGET_LISTENER
                          : ui_strings.S_ATTRIBUTE_LISTENER,
@@ -139,7 +143,7 @@
     {
       var sc_link = this.script_link_with_line_number(script,
                                                       position[LINE_NUMBER],
-                                                      ui_strings.S_EVENT_LISTENER_ADDED_IN); 
+                                                      ui_strings.S_EVENT_LISTENER_ADDED_IN);
       if (sc_link.length)
       {
         sc_link.push("handler", "show-log-entry-source",
@@ -149,11 +153,18 @@
         ret.push(["dd", sc_link]);
       }
     }
+    else if (window.runtimes.is_runtime_of_reloaded_window(rt_id) &&
+             model.node_has_attr(node_id, "on" + listener[EVENT_TYPE]))
+    {
+      ret.push(["dd", ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR,
+                      "class", "ev-markup-attribute"]);
+    }
     else
+    {
       ret.push(["dd", ui_strings.S_INFO_MISSING_JS_SOURCE_FILE,
-                      "handler", "reload-script-dialog",
-                      "class", "ev-missing-script"]);
-
+                "handler", "reload-script-dialog",
+                "class", "ev-missing-script"]);
+    }
     return ret;
   };
 
@@ -167,7 +178,7 @@
     {
       var is_linked = script.script_type == "linked";
       ret.push("span", str.replace("%s", script.filename + ":" + line_number),
-                       "data-tooltip", is_linked && "url-tooltip", 
+                       "data-tooltip", is_linked && "url-tooltip",
                        "data-tooltip-text", is_linked && script.uri);
     }
     else
@@ -175,10 +186,10 @@
       var rt = window.runtimes.getRuntime(script.runtime_id);
       if (rt)
         ret.push("span", str.replace("%s", rt.filename),
-                         "data-tooltip", "url-tooltip", 
+                         "data-tooltip", "url-tooltip",
                          "data-tooltip-text", rt.uri);
       else
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                         " missing runtime in _ev_listener template.");
     }
     return ret;
