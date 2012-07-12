@@ -26,7 +26,6 @@ cls.SelectedNodeListenersView = function(id, name, container_class)
                                                      "list-selected-node");
       }
     }
-
     container.clearAndRender(tmpl);
   };
 

@@ -1544,10 +1544,4 @@ ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
 /* DESC: Refetch the event listeners. */
 ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
 
-
-
-
-
-
-
 /* end new event listener feature */

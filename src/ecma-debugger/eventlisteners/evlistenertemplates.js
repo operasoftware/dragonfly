@@ -162,8 +162,8 @@
     else
     {
       ret.push(["dd", ui_strings.S_INFO_MISSING_JS_SOURCE_FILE,
-                "handler", "reload-script-dialog",
-                "class", "ev-missing-script"]);
+                      "handler", "reload-script-dialog",
+                      "class", "ev-missing-script"]);
     }
     return ret;
   };
