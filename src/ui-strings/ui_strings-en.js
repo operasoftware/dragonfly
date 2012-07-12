@@ -1523,14 +1523,25 @@ ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
 /* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
 ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
 
-/* DESC: View with all event listeners. */
+/* DESC: Side panel view with event listeners. */
 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: View with the event listeners of the selected node. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
+
+/* DESC: View with all event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
 ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
+/* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
+ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
+
+
 
 
 

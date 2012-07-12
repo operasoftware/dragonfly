@@ -30,7 +30,11 @@ cls.EventListenerTooltip = function()
       var listeners = node_id
                     ? model.get_ev_listeners(node_id)
                     : model.window_listeners.listeners;
-      var tmpl = window.templates.ev_listeners_tooltip(model, rt_id, node_id, listeners);
+      var tmpl = window.templates.ev_listeners_tooltip(model,
+                                                       rt_id,
+                                                       node_id,
+                                                       listeners,
+                                                       "ev-listener-tooltip");
       _tooltip.show(tmpl);
     }
   };

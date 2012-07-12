@@ -96,10 +96,10 @@
 
   /* Event listener tooltip */
 
-  this.ev_listeners_tooltip = function(model, rt_id, node_id, listener_list)
+  this.ev_listeners_tooltip = function(model, rt_id, node_id, listener_list, cl_name)
   {
     return ["dl", listener_list.map(this._ev_listener_tooltip.bind(this, model, rt_id, node_id)),
-                  "class", "ev-listener-tooltip"];
+                  "class", cl_name];
   };
 
   this._ev_listener_tooltip = function(model, rt_id, node_id, listener)
