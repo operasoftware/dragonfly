@@ -289,6 +289,7 @@ cls.NetworkLoggerService.WindowContext = function(window_id)
 {
   this.id = window_id;
   this.saw_main_document_abouttoloaddocument = false;
+  this.entry_ids = [];
 }
 
 cls.RequestContext = function()
@@ -296,8 +297,6 @@ cls.RequestContext = function()
   this._logger_entries = [];
   this._filters = [];
   this.window_contexts = [];
-  this._entry_to_window_id_map = {}; // todo: this should just be an array on a WindowContext ob
-
   this._init();
 };
 
@@ -480,12 +479,9 @@ cls.RequestContextPrototype = function()
         var id = this._get_uid();
         logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
         this._logger_entries.push(logger_entry);
-        // Store the id in the list of entries per window_id
-        var map = this._entry_to_window_id_map;
-        if (!map[event.windowID])
-          map[event.windowID] = [];
-
-        map[event.windowID].push(id);
+        // Store the id in the list of entries in the window_context
+        var window_context = this.get_window_context(event.windowID);
+        window_context.entry_ids.push(id);
       }
       logger_entry.last_requestID = event.requestID;
       logger_entry.update(eventname, event);
@@ -498,19 +494,22 @@ cls.RequestContextPrototype = function()
 
   this.remove_window_context = function(window_id)
   {
-    var ids_to_remove = this._entry_to_window_id_map[window_id];
+    var window_context = this.get_window_context(window_id);
+    var ids_to_remove = window_context && window_context.entry_ids;
+    // Remove entries
     if (ids_to_remove && ids_to_remove.length)
     {
-      this._logger_entries = this._logger_entries.filter(function(entry){
-        return !ids_to_remove.contains(entry.id);
-      });
+      this._logger_entries = this._logger_entries.filter(
+        function(entry){
+          return !ids_to_remove.contains(entry.id);
+        }
+      );
     }
-    this._entry_to_window_id_map[event.windowID] = [];
     // Remove the window_context itself
     this.window_contexts = this.window_contexts.filter(
-      function(win_context)
+      function(context)
       {
-        return win_context.id != window_id;
+        return window_id != context.id;
       }
     );
   };
