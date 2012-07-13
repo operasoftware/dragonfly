@@ -45,7 +45,7 @@ templates.resource_tree =
 							'span',
 							(r.filename||r.human_url),
 							[],
-							'style',''+  (frame.sameOrigin!==false?'':'color:red;'),
+							'class',(frame.sameOrigin!==false?'':'resource-different-origin'),
 							'data-tooltip',(r&&'js-script-select'),
 							'data-tooltip-text',(r&&'frame: '+r.human_url)
 						],
@@ -140,7 +140,7 @@ templates.resource_tree =
 						'span',
 						(r.filename||r.human_url),
 						[],
-						'style',(r.sameOrigin!==false?'':'color:red'),
+						'class',(r.sameOrigin!==false?'':'resource-different-origin'),
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
 					],
