@@ -99,8 +99,14 @@ cls.ResourceManagerService = function(view)
     var frameID = target.getAttribute('data-frame-id');
     var data = this._context.frames[ frameID ];
 
+    if (!data)
+      return;
+
     var groupName = target.getAttribute('data-resource-group');
     if (groupName){ data = data.groups[ groupName ]; }
+
+    if (!data)
+      return;
 
     data.closed = !data.closed;
     if (data.closed)
