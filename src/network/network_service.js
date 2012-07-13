@@ -24,8 +24,11 @@ cls.NetworkLoggerService = function(view)
     {
       var window_context = new cls.NetworkLoggerService.WindowContext(data.windowID);
       this._current_context.window_contexts.push(window_context);
+      if (!data.parentDocumentID)
+      {
+        window_context.saw_main_document_abouttoloaddocument = true;
+      }
     }
-    window_context.saw_main_document_abouttoloaddocument = true;
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
