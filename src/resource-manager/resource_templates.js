@@ -25,10 +25,10 @@ templates.resource_tree =
 			var frame = context.frames[frameID];
 			if( frame.parentFrameID != parentFrameID ){ continue; }
 			
-			var r = context.get_resource( frame.resourceID );
+			r=frame.resource;
 			if(!r)
 				continue;
-			
+
 			var className = '-expand-collapse';
 			var tmp = 
 			{
@@ -45,6 +45,7 @@ templates.resource_tree =
 							'span',
 							(r.filename||r.human_url),
 							[],
+							'style',''+  (frame.sameOrigin!==false?'':'color:red;'),
 							'data-tooltip',(r&&'js-script-select'),
 							'data-tooltip-text',(r&&'frame: '+r.human_url)
 						],
@@ -139,7 +140,7 @@ templates.resource_tree =
 						'span',
 						(r.filename||r.human_url),
 						[],
-						'style',(r.sameOrigin?'':'color:red'),
+						'style',(r.sameOrigin!==false?'':'color:red'),
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
 					],

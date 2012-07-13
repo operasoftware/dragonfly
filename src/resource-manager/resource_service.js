@@ -396,7 +396,11 @@ cls.ResourceContext = function(data)
       if (eventname == "urlload")
       {
         if (res.id == frame.resourceID)
+        {
           frame.resource = res;
+          if (frame.parentFrameID)
+            frame.sameOrigin = cls.ResourceUtil.sameOrigin(this.frames[frame.parentFrameID].resource, frame.resource);
+        }
       }
 
       if (eventname == "urlfinished")
@@ -411,7 +415,6 @@ cls.ResourceContext = function(data)
           this.resourcesUrlDict[ res.url ] = res.id;
 
           // sameOrigin check
-          // TODO: sameOrigin check for iframes
           res.sameOrigin = cls.ResourceUtil.sameOrigin(frame.resource, res);
         }
         else
