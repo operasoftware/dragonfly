@@ -434,3 +434,16 @@ cls.ResourceUtil.http_status_codes = {
   501: 'Not Implemented', 502: 'Bad Gateway', 503: 'Service Unavailable',
   504: 'Gateway Timeout', 505: 'HTTP Version Not Supported'
 }
+
+cls.ResourceUtil.sameOrigin = function(reference, url)
+{
+  if (reference.protocol == url.protocol)
+  {
+    if (reference.host == url.host)
+      return true;
+    if (reference.host.match(new RegExp('\\.' + url.host + '$')) != null)
+      return true;
+  }
+
+  return false;
+}

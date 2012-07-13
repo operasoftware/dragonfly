@@ -406,15 +406,7 @@ cls.ResourceContext = function(data)
 
           // sameOrigin check
           // TODO: sameOrigin check for iframes
-          res.sameOrigin = false;
-          if (frame.resource != null && frame.resource.protocol == res.protocol &&
-            (
-              frame.resource.host == res.host
-              || frame.resource.host.match(new RegExp('\\.' + res.host + '$')) != null
-            )
-          )
-            res.sameOrigin = true;
-
+          res.sameOrigin = cls.ResourceUtil.sameOrigin(frame.resource, res);
         }
         else
         {
