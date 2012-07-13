@@ -57,7 +57,7 @@ templates._details_content = function(entry, do_raw)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
   // Bind a template function for raw / not-raw, on demand.
-  var template_func_name = "_requests_responses_" + do_raw ? "raw" : "not_raw" + "_bound";
+  var template_func_name = "_requests_responses_" + (do_raw ? "raw" : "not_raw" + "_bound");
   if (!this[template_func_name])
     this[template_func_name] = this.requests_responses.bind(this, do_raw);
 
@@ -377,7 +377,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
   var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
 
   var classname = "";
-  if (resp.body_unavailable ||
+  if ((resp.saw_responsefinished && resp.body_unavailable) ||
       !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";

@@ -184,7 +184,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       if (entry)
       {
         // todo: it would be good if we knew if the whole context is finished. Better only to get_body then, less potential to disturb.
-        if (entry.is_finished && !entry.current_response_has_responsebody && !entry.called_get_body)
+        if (!entry.current_response_has_responsebody &&
+            !entry.called_get_body && 
+            entry.is_finished &&
+            entry.current_response_saw_responsefinished)
           this._service.get_body(entry.id, this.update_bound);
 
         template = [template, this._render_details_view(entry)];

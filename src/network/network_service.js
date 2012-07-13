@@ -964,6 +964,11 @@ cls.NetworkLoggerEntryPrototype = function()
     return Boolean(this._current_response && this._current_response.responsebody);
   });
 
+  this.__defineGetter__("current_response_saw_responsefinished", function()
+  {
+    return Boolean(this._current_response && this._current_response.saw_responsefinished);
+  });
+
   this.__defineGetter__("duration", function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
@@ -980,6 +985,8 @@ cls.NetworkLoggerEntryPrototype = function()
   {
      return Boolean(this._current_request);
   });
+
+  // todo: add empty setters.
 
 };
 
@@ -1051,6 +1058,7 @@ cls.NetworkLoggerResponse = function(entry)
   this.responsebody = null;
   this.header_tokens = null; // This is set from template code, when it's first needed
   this.is_response = true; // Simpler for recognizing than dealing with comparing the constructor
+  this.saw_responsefinished = false;
 
   // The following are duplicated from the entry to have them available directly on the response
   this.logger_entry_type = entry.type;
@@ -1078,15 +1086,22 @@ cls.NetworkLoggerResponsePrototype = function()
 
   this._update_event_responsefinished = function(event)
   {
+    this.saw_responsefinished = true;
     if (event.data && event.data.content)
     {
+      // event.data is of type ResourceData here.
+      // todo: this does not set body_unavailable = true when there is no mimeType. does that make sense?
       this.responsebody = event.data;
     }
   };
 
   this._update_event_responsebody = function(event)
   {
+    // "The used mime type. This may be different from the mime type advertised in the HTTP headers."
+    // Todo: So this can mean that there was no response, this is better represented through "!saw_responsefinished" though,
+    // or that it was somehow invalid? Not so sure.
     if (!event.mimeType) { this.body_unavailable = true; }
+    // event is of type ResourceData here.
     this.responsebody = event;
     // todo: check how to distinguish body_unavailable and empty body.
   };
@@ -1096,7 +1111,7 @@ cls.NetworkLoggerResponsePrototype = function()
     this.is_unloaded = true;
   };
 
-  // The following sync changes on Entry.
+  // The following are to reflect changes that happened on Entry.
   this._update_event_urlfinished = function(event)
   {
     this.logger_entry_is_finished = true;
