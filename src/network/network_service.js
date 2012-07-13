@@ -26,7 +26,7 @@ cls.NetworkLoggerService = function(view)
       this._current_context.window_contexts.push(window_context);
       if (!data.parentDocumentID)
       {
-        window_context.saw_main_document_abouttoloaddocument = true;
+        window_context.saw_main_document = true;
       }
     }
   }.bind(this);
@@ -291,7 +291,7 @@ cls.NetworkLoggerService = function(view)
 cls.NetworkLoggerService.WindowContext = function(window_id)
 {
   this.id = window_id;
-  this.saw_main_document_abouttoloaddocument = false;
+  this.saw_main_document = false;
   this.entry_ids = [];
 }
 
