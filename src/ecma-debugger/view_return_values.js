@@ -9,6 +9,11 @@ cls.ReturnValuesView = function(id, name, container_class)
   this.createView = function(container)
   {
     this._container = container;
+    if (this._create_view_bound)
+    {
+      this._create_view_bound();
+      return;
+    }
     var return_values = stop_at.get_return_values();
     var return_value_list = return_values && return_values.return_value_list;
     if (return_value_list && return_value_list.length)
@@ -27,7 +32,7 @@ cls.ReturnValuesView = function(id, name, container_class)
                                                            object.className);
         }
       });
-      this._create_view_bound = this._create_view.bind(this, container, return_values);
+      this._create_view_bound = this._create_view.bind(this, return_values);
       this._create_view_bound();
     }
     else
@@ -37,9 +42,9 @@ cls.ReturnValuesView = function(id, name, container_class)
     }
   };
 
-  this._create_view = function(container, return_values)
+  this._create_view = function(return_values)
   {
-    container.clearAndRender(templates.return_values(return_values, this._search_term));
+    this._container.clearAndRender(templates.return_values(return_values, this._search_term));
   };
 
   this._return_values_no_content = function()
@@ -60,8 +65,6 @@ cls.ReturnValuesView = function(id, name, container_class)
       this._create_view_bound();
     }
   }.bind(this);
-
-  // TODO: CLEAN UP!!!
 
   this._init = function(id, name, container_class)
   {
