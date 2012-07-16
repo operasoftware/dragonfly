@@ -1511,22 +1511,37 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
 ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
 
+/* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
 ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
 
 /* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
-ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing phase";
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
 
 /* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
-ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling phase";
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
+
+/* DESC: Side panel view with event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: View with the event listeners of the selected node. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
 
 /* DESC: View with all event listeners. */
-ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
 ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
+/* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
+ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
+
+/* DESC: Refetch the event listeners. */
+ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
 
 /* end new event listener feature */

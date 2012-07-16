@@ -144,9 +144,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     return (
     [
-      "Greasemonkey JS", 
-      "Browser JS", 
-      "User JS", 
+      "Greasemonkey JS",
+      "Browser JS",
+      "User JS",
       "Extension JS"
     ].indexOf(script_type) != -1);
   }
@@ -266,9 +266,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     }
   }
 
-  // If the script _is_ a console script it is also 
+  // If the script _is_ a console script it is also
   // removed from the list of console scripts.
-  // This is to prevent a false positive, e.g. if the document itself 
+  // This is to prevent a false positive, e.g. if the document itself
   // would by coincidence create a script as submitted in the console.
   var is_console_script = function(script)
   {
@@ -290,7 +290,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var isTopRuntime = function(rt)
   {
-    return (rt.html_frame_path.indexOf('_top') == 0 && 
+    return (rt.html_frame_path.indexOf('_top') == 0 &&
             rt.html_frame_path.indexOf('[') == -1);
   }
 
@@ -337,7 +337,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   this.handleRuntime = function(r_t)
   {
- 
+
     /*
     const
     RUNTIME_LIST = 0,
@@ -492,7 +492,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     for (sc in __scripts)
     {
-      old_rt = __runtimes[__scripts[sc].runtime_id] || 
+      old_rt = __runtimes[__scripts[sc].runtime_id] ||
                __old_runtimes[__scripts[sc].runtime_id] || {};
       // TODO check for script-type as well?
       if ((
@@ -527,10 +527,10 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     var callstack_scripts = window.stop_at.get_script_ids_in_callstack();
 
-    if ((!__selected_script && 
-         (!script.is_console_script || 
+    if ((!__selected_script &&
+         (!script.is_console_script ||
           callstack_scripts.contains(new_script_id))) ||
-        (is_injected_script(__selected_script_type) && 
+        (is_injected_script(__selected_script_type) &&
          !is_injected_script(script.script_type)))
     {
       __selected_script = new_script_id;
@@ -736,7 +736,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         description: message[DESCRIPTION]
       };
       if (settings['js_source'].get('error') ||
-          (views.js_source.isvisible() && 
+          (views.js_source.isvisible() &&
            views.js_source.getCurrentScriptId() == message[SCRIPT_ID]))
       {
         if (!views.js_source.isvisible())
@@ -804,7 +804,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     var rt = __runtimes[rt_id];
     return rt && (rt.window_id == __selected_window ||
-                  (rt = __window_top_rt_map[rt.window_id]) && 
+                  (rt = __window_top_rt_map[rt.window_id]) &&
                   rt.opener_window_id == __selected_window);
   }
 
@@ -887,7 +887,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       var current_thread = current_threads[rt_id] || (current_threads[rt_id] = []);
       thread_queue[thread_queue.length] = id;
       if (!current_thread.length ||
-          (parent_thread_id !== 0 && 
+          (parent_thread_id !== 0 &&
            parent_thread_id == current_thread[current_thread.length - 1]))
       {
         current_thread[current_thread.length] = id;
@@ -927,7 +927,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
       // the current thread id must be set in 'thread-started' event
       // TODO thread logic
-      if (!stop_at.is_stopped && 
+      if (!stop_at.is_stopped &&
           (!current_thread /* in case the window was switched */ ||
            thread_id == current_thread[current_thread.length - 1]))
       {
@@ -948,8 +948,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'thread stopped not in debug context ')
-      services['ecmascript-debugger'].requestContinueThread(0, [rt_id, 
-                                                                thread_id, 
+      services['ecmascript-debugger'].requestContinueThread(0, [rt_id,
+                                                                thread_id,
                                                                 'run']);
     }
 
@@ -982,7 +982,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       {
         stop_at.on_thread_cancelled(message);
       }
-      
+
       if (!stop_at.is_stopped && runtime_stopped_queue.length)
       {
         stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());
@@ -1039,7 +1039,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   this.get_dom_runtimes = function(get_scripts)
   {
     var rts = this.getRuntimes(__selected_window);
-    var rt = null; 
+    var rt = null;
     for (var i = 0; (rt = rts[i]) && !rt.selected; i++);
     if (!rt && rts[0])
     {
@@ -1049,7 +1049,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     var dom_rts = [];
     var rt_map = {};
-    
+
     for (var i = 0, rt_id = 0; rt = rts[i]; i++)
     {
       rt_id = rt.runtime_id;
@@ -1065,7 +1065,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
           owner_rt.extensions.push(rt_obj);
         }
         else
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           'extension rt without owner rt in get_dom_runtimes');
       }
       else
@@ -1085,7 +1085,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
                 break;
 
               case "User JS":
-                user_js_s.push(scripts.splice(j, 1)[0]); 
+                user_js_s.push(scripts.splice(j, 1)[0]);
                 break;
             }
           }
@@ -1206,7 +1206,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   }
 
   /**
-    * If the without_console_scripts flag is set it will 
+    * If the without_console_scripts flag is set it will
     * still return console_scripts if they are in the current call stack
     */
   this.getScripts = function(runtime_id, without_console_scripts)
@@ -1218,7 +1218,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     for (var cur in __scripts)
     {
       script = __scripts[cur];
-      if (script.runtime_id == runtime_id && 
+      if (script.runtime_id == runtime_id &&
           (!without_console_scripts ||
            !script.is_console_script ||
            callstack_scripts.contains(script.script_id)))
@@ -1351,7 +1351,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
           window.services['ecmascript-debugger'].is_enabled &&
           // For background processes we can not use the exec service.
           // Background processes have no UI window to dispatch an exec command.
-          // Background processes so far are e.g. unite services or 
+          // Background processes so far are e.g. unite services or
           // extension background processes.
           // They all use the widget protocol.
           ((rt_id && __runtimes[rt_id].uri.indexOf("widget://") != -1) ||
@@ -1375,10 +1375,17 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return __windows_reloaded[window_id] == 2;
   }
 
+  this.is_runtime_of_reloaded_window = function(rt_id)
+  {
+    var rt = this.getRuntime(rt_id);
+    var win_id = rt && rt.window_id;
+    return win_id ? this.isReloadedWindow(win_id) : false;
+  };
+
   this.get_execution_context = function()
   {
     var selected_frame = window.stop_at.getSelectedFrame();
-    return selected_frame 
+    return selected_frame
          ? {rt_id: selected_frame.runtime_id,
             thread_id: selected_frame.thread_id,
             frame_index: selected_frame.index}
