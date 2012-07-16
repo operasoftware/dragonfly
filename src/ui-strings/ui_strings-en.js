@@ -1694,3 +1694,12 @@ ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: String shown instead of filename when file name is missing  */
+ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
+
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
+
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";

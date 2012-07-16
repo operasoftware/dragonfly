@@ -1,6 +1,38 @@
 ﻿;(function()
 {
   var self = this;
+
+  var STRING_MAX_VALUE_LENGTH = 30;
+
+  var TYPE_UNDEFINED = 0;
+  var TYPE_NULL = 1;
+  var TYPE_TRUE = 2;
+  var TYPE_FALSE = 3;
+  var TYPE_NAN = 4;
+  var TYPE_PLUS_INFINITY = 5;
+  var TYPE_MINUS_INFINITY = 6;
+  var TYPE_NUMBER = 7;
+  var TYPE_STRING = 8;
+  var TYPE_OBJECT = 9;
+
+  var types = {};
+  types[TYPE_UNDEFINED] = "undefined";
+  types[TYPE_NULL] = "null";
+  types[TYPE_TRUE] = "boolean";
+  types[TYPE_FALSE] = "boolean";
+  types[TYPE_NAN] = "number";
+  types[TYPE_PLUS_INFINITY] = "number";
+  types[TYPE_MINUS_INFINITY] = "number";
+  types[TYPE_NUMBER] = "number";
+  types[TYPE_STRING] = "string";
+
+  var names = {};
+  names[TYPE_TRUE] = "true";
+  names[TYPE_FALSE] = "false";
+  names[TYPE_NAN] = "NaN";
+  names[TYPE_PLUS_INFINITY] = "Infinity";
+  names[TYPE_MINUS_INFINITY] = "-Infinity";
+
   this.hello = function(enviroment)
   {
     var ret = ["ul"];
@@ -323,43 +355,14 @@
 
   this.return_value = function(retval, rt_id, search_term)
   {
-    var STRING_MAX_VALUE_LENGTH = 30;
-    // TODO: move constants
-    var UNDEFINED = 0;
-    var NULL = 1;
-    var TRUE = 2;
-    var FALSE = 3;
-    var NAN = 4;
-    var PLUS_INFINITY = 5;
-    var MINUS_INFINITY = 6;
-    var NUMBER = 7;
-    var STRING = 8;
-    var OBJECT = 9;
-    var types = {};
-    types[UNDEFINED] = "undefined";
-    types[NULL] = "null";
-    types[TRUE] = "boolean";
-    types[FALSE] = "boolean";
-    types[NAN] = "number";
-    types[PLUS_INFINITY] = "number";
-    types[MINUS_INFINITY] = "number";
-    types[NUMBER] = "number";
-    types[STRING] = "string";
-    var names = {};
-    names[TRUE] = "true";
-    names[FALSE] = "false";
-    names[NAN] = "NaN";
-    names[PLUS_INFINITY] = "Infinity";
-    names[MINUS_INFINITY] = "-Infinity";
-
     var search_re = new RegExp(search_term, "ig")
     var value_template = [];
     var value = "";
     var type = types[retval.value.type];
     switch (retval.value.type)
     {
-    case UNDEFINED:
-    case NULL:
+    case TYPE_UNDEFINED:
+    case TYPE_NULL:
       if (search_re.test(type))
       {
         value_template.push(
@@ -373,11 +376,11 @@
       }
       break;
 
-    case TRUE:
-    case FALSE:
-    case NAN:
-    case PLUS_INFINITY:
-    case MINUS_INFINITY:
+    case TYPE_TRUE:
+    case TYPE_FALSE:
+    case TYPE_NAN:
+    case TYPE_PLUS_INFINITY:
+    case TYPE_MINUS_INFINITY:
       value = names[retval.value.type];
       if (search_re.test(value))
       {
@@ -392,7 +395,7 @@
       }
       break;
 
-    case NUMBER:
+    case TYPE_NUMBER:
       value = String(retval.value.number);
       if (search_re.test(value))
       {
@@ -407,7 +410,7 @@
       }
       break;
 
-    case STRING:
+    case TYPE_STRING:
       value = retval.value.str;
       if (search_re.test(value))
       {
@@ -446,7 +449,7 @@
       }
       break;
 
-    case OBJECT:
+    case TYPE_OBJECT:
       var object = retval.value.object;
       var name = object.className === "Function" && !object.functionName
                ? ui_strings.S_ANONYMOUS_FUNCTION_NAME
@@ -460,22 +463,22 @@
     var from_script_id = retval.positionFrom.scriptID;
     var from_uri = from_script_id && runtimes.getScript(from_script_id)
                  ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(rt_id).uri)
-                 : "<unknown script>";
+                 : ui_strings.S_UNKNOWN_SCRIPT;
     var to_script_id = retval.positionTo.scriptID;
     var to_uri = to_script_id && runtimes.getScript(to_script_id)
                ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(rt_id).uri)
-               : "<unknown script>";
+               : ui_strings.S_UNKNOWN_SCRIPT;
 
     var object = retval.functionFrom;
     var func_model = new cls.InspectableJSObject(rt_id,
                                                  object.objectID,
                                                  object.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
                                                  object.className);
-    var func_search_term = (value_template.length !== 0) ? null : search_term;
+    var func_search_term = value_template.length ? null : search_term;
     var func = window.templates.inspected_js_object(func_model, true, null, func_search_term);
 
     // If there is no function or value, don't show anything
-    if (func === "" && value_template.length === 0)
+    if (func === "" && !value_template.length)
       return [];
 
     return [
@@ -485,7 +488,8 @@
             "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
-           "title", "Returned from " + window.helpers.basename(from_uri) + ":" + retval.positionFrom.lineNumber,
+           "title", ui_strings.S_RETURN_VALUES_FUNCTION_FROM.replace("%s", window.helpers.basename(from_uri))
+                                                            .replace("%s", retval.positionFrom.lineNumber),
            "data-script-id", String(retval.positionFrom.scriptID),
            "data-script-line", String(retval.positionFrom.lineNumber)
           ],
@@ -498,7 +502,8 @@
               "↳",
              "class", "return-value-arrow return-value-arrow-to",
              "handler", "goto-script-line",
-             "title", "Returned to " + window.helpers.basename(to_uri) + ":" + retval.positionTo.lineNumber,
+             "title", ui_strings.S_RETURN_VALUES_FUNCTION_TO.replace("%s", window.helpers.basename(to_uri))
+                                                            .replace("%s", retval.positionTo.lineNumber),
              "data-script-id", String(retval.positionTo.scriptID),
              "data-script-line", String(retval.positionTo.lineNumber)
             ],
