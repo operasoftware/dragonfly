@@ -54,7 +54,7 @@ cls.RTListUpdateCTX.prototype = new function()
 
   this._check_rt = function(rt_id)
   {
-    return this.rt_map.hasOwnProperty(rt_id) && 
+    return this.rt_map.hasOwnProperty(rt_id) &&
            (!this.rt_map[rt_id] || (this.expanded_map[rt_id] &&
                                     this.expanded_map[rt_id].length === 0));
   };
@@ -99,7 +99,7 @@ cls.EventListeners.prototype = new function()
 
   /*
     data structure:
-    
+
     this._rts = [{rt_id: <rt-id>,
                   obj_id: <obj-id>,
                   event_types: [<EventType>, ...]}, ...]
@@ -120,7 +120,7 @@ cls.EventListeners.prototype = new function()
     if (live_rts.length != this._rts.length)
     {
       this._rts = live_rts;
-      this._view.update(); 
+      this._view.update();
     }
     if (new_rt_ids)
       this._update_rt_list(new_rt_ids);
@@ -292,7 +292,7 @@ cls.EventListeners.prototype = new function()
   };
 
   /* implementation */
-  
+
   this.update = function()
   {
     this._rts = [];

@@ -89,7 +89,7 @@ cls.DOMSearchView = function(id, name, container_class)
 
   this._show_search_hit = function(event, target)
   {
-    if (target.get_ancestor("panel-search-container"))
+    if (target.get_ancestor(".panel-search-container"))
     {
       this._search.update_match_highlight(event, target);
       this._search_hit = this._search.get_search_hit();

@@ -3,7 +3,7 @@ cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode = function(rt_id,
@@ -33,38 +33,37 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
-  
-  const 
-  NODE_LIST = 0,
-  ID = 0, 
-  TYPE = 1, 
-  NAME = 2, 
-  DEPTH = 3,
 
-  ATTRS = 5,
-  ATTR_PREFIX = 0,
-  ATTR_KEY = 1, 
-  ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6, 
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5,
-  MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
-  TRAVERSE_SEARCH = "search",
-  TRAVERSAL = 1,
-  SEARCH_PARENT = 2,
-  SEARCH_HIT = 3,
-  PSEUDO_TYPE = 0,
-  PSEUDO_ELEMENT = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT,
-  PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE,
-  BEFORE = 1,
-  AFTER = 2,
-  FIRST_LETTER = 3,
-  FIRST_LINE = 4,
-  BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE],
-  AFTER_ALIKES = [AFTER],
-  ERROR_MSG = 0,
-  PSEUDO_NAME = {},
-  EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
+  var NODE_LIST = 0;
+  var ID = 0;
+  var TYPE = 1;
+  var NAME = 2;
+  var DEPTH = 3;
+
+  var ATTRS = 5;
+  var ATTR_PREFIX = 0;
+  var ATTR_KEY = 1;
+  var ATTR_VALUE = 2;
+  var CHILDREN_LENGTH = 6;
+  var PUBLIC_ID = 4;
+  var SYSTEM_ID = 5;
+  var MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON;
+  var TRAVERSE_SEARCH = "search";
+  var TRAVERSAL = 1;
+  var SEARCH_PARENT = 2;
+  var SEARCH_HIT = 3;
+  var PSEUDO_TYPE = 0;
+  var PSEUDO_ELEMENT = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT;
+  var PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE;
+  var BEFORE = 1;
+  var AFTER = 2;
+  var FIRST_LETTER = 3;
+  var FIRST_LINE = 4;
+  var BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE];
+  var AFTER_ALIKES = [AFTER];
+  var ERROR_MSG = 0;
+  var PSEUDO_NAME = {};
+  var EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
 
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
@@ -104,14 +103,14 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   this.search = function(query, type, ignore_case, object_id, cb)
   {
     this._isprocessing = true;
-    var tag = window.tag_manager.set_callback(this, 
-                                              this.__handle_dom, 
+    var tag = window.tag_manager.set_callback(this,
+                                              this.__handle_dom,
                                               [object_id, TRAVERSE_SEARCH, cb]);
     this.search_type = type;
-    var msg = [this._data_runtime_id, 
-               query, 
-               type, 
-               object_id || null, 
+    var msg = [this._data_runtime_id,
+               query,
+               type,
+               object_id || null,
                ignore_case || 0];
     services['ecmascript-debugger'].requestSearchDom(tag, msg);
   };
@@ -139,6 +138,16 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     };
   };
 
+  this.node_has_attr = function(node_id, attr_name)
+  {
+    var node = this.get_node(node_id);
+    var attrs = node && node[ATTRS];
+    return attrs && attrs.some(function(attr)
+    {
+      return attr[ATTR_KEY] == attr_name;
+    });
+  }
+
   this._get_dom = function(object_id, traverse_type, cb)
   {
     this._isprocessing = true;
@@ -149,11 +158,11 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   this.__handle_dom = function(status, message, object_id, traverse_type, cb)
   {
     var
-    _data = message[NODE_LIST] || [],  
+    _data = message[NODE_LIST] || [],
     error_ms = ui_strings.S_DRAGONFLY_INFO_MESSAGE + 'this.__handle_dom failed in DOMBaseData',
     splice_args = null,
     i = 0;
-    
+
     if (!status)
     {
       switch (traverse_type)
@@ -163,7 +172,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         case "parent-node-chain-with-children":
         {
           if (traverse_type != "search" || !object_id)
-          {            
+          {
             this._data = _data;
             this._unfold_pseudos();
             break;
@@ -176,12 +185,12 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           for (; this._data[i] && this._data[i][ID] != object_id; i++);
           if (this._data[i])
           {
-            // A search with an object_id searches only in the subtree 
-            // of that node, but returns a tree with the ancestor up 
+            // A search with an object_id searches only in the subtree
+            // of that node, but returns a tree with the ancestor up
             // to the document.
-            // For the use case in Dragonfly we cut away the chain from 
+            // For the use case in Dragonfly we cut away the chain from
             // the object up to the document.
-            if (traverse_type == "search") 
+            if (traverse_type == "search")
             {
               this.clear_search();
               for (var j = 0; _data[j] && _data[j][ID] != object_id; j++);
@@ -190,11 +199,11 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
                 _data = _data.slice(j);
               }
             }
-            // if object_id matches the one of the first node 
+            // if object_id matches the one of the first node
             // of the return data the traversal was subtree
-            // a search can return no data 
+            // a search can return no data
             if (_data[0])
-            { 
+            {
               if (object_id == _data[0][ID])
               {
                 this.collapse(object_id);
@@ -204,7 +213,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
               {
                 this._data.insert(i + 1, _data);
               }
-              
+
             }
             this._unfold_pseudos(i, _data.length, traverse_type == "subtree");
           }
@@ -258,7 +267,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         if (cur[DEPTH] > current_depth)
         {
           parent_stack.push(this._data[i + delta - 1]);
-          delta += this._insert_pseudos(parent_stack.last, 
+          delta += this._insert_pseudos(parent_stack.last,
                                         i + delta,
                                         BEFORE_ALIKES);
           current_depth++;
@@ -267,7 +276,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         {
           while (cur[DEPTH] < current_depth)
           {
-            delta += this._insert_pseudos(parent_stack.last, 
+            delta += this._insert_pseudos(parent_stack.last,
                                           i + delta,
                                           AFTER_ALIKES);
             parent_stack.pop();
@@ -275,7 +284,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           }
         }
 
-        if (!cur[CHILDREN_LENGTH] && 
+        if (!cur[CHILDREN_LENGTH] &&
             (force_unfold || current_depth == this._data[index][DEPTH]))
         {
           delta += this._insert_pseudos(cur, i + delta + 1, BEFORE_ALIKES);
@@ -333,7 +342,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       level = this._data[i][DEPTH];
       i += 1;
       j = i;
-      while (this._data[j] && this._data[j][DEPTH] > level) 
+      while (this._data[j] && this._data[j][DEPTH] > level)
         j++;
       if (j - i)
       {
@@ -342,7 +351,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       'missing refrence in collapse_node in DOMBaseData');
     }
   };
@@ -356,7 +365,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     {
       for (var attr, i = 0; attr = attrs[i]; i++)
       {
-        if (attr[ATTR_KEY] == 'id') 
+        if (attr[ATTR_KEY] == 'id')
           id = "#" + attr[ATTR_VALUE];
         if (attr[ATTR_KEY] == 'class' && attr[ATTR_VALUE].trim())
           class_name = "." + attr[ATTR_VALUE].trim().replace(/\s+/g, ".");
@@ -374,7 +383,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       if (cur)
         ret = cur[1] == '1';
       else
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                         "failed in this._parse_parent_offset in InspectableDOMNode");
     }
     return ret;
@@ -439,7 +448,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   {
     return Boolean(this._data && this._data.length);
   }
-  
+
   this.get_node = function(node_id)
   {
     if (this.has_data())

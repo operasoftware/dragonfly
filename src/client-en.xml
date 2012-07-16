@@ -428,6 +428,8 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/eventlisteners/evlistenersview.js"/>
 <script src="./ecma-debugger/eventlisteners/evlistenertooltip.js"/>
 <script src="./ecma-debugger/eventlisteners/evlistenertemplates.js"/>
+<script src="./ecma-debugger/eventlisteners/selectednodelistenerview.js"/>
+<script src="./ecma-debugger/eventlisteners/evlistenersidepanel.js"/>
 
 <script src="./searches/jssearchview.js"/>
 
