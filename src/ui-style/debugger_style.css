@@ -1669,7 +1669,13 @@ d
   background: transparent url("../ui-images/arrow_tail.png") 14px 2px no-repeat;
 }
 
-.return-values li:hover .return-value-arrow
+.return-function-from:hover .return-value-arrow-from
 {
+  background-image: url("../ui-images/arrow_roundl_focused.png");
+}
+
+.return-value:hover .return-value-arrow-to
+{
+  background-image: url("../ui-images/arrow_tail_focused.png");
 }
 
