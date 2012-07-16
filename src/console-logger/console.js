@@ -28,7 +28,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
       var view = window.views[view_id];
       if (set_instant_update)
         view.needs_instant_update = true;
-      
+
       view.update();
     }
 
@@ -95,7 +95,7 @@ cls.ConsoleLogger.ErrorConsoleDataBase = function()
     var message_ids = shown_messages.map(function(e){ return e.id; });
     // leave only ids in _msgs array that are not in message_ids
     this._msgs = this._msgs.filter(function(e)
-    { 
+    {
       return !message_ids.contains(e.id);
     });
     this._update_views(true);
@@ -411,7 +411,7 @@ var ErrorConsoleViewPrototype = function()
           return;
         }
       }
-    }    
+    }
     this.needs_instant_update = false;
 
     if (container)
@@ -474,7 +474,7 @@ var ErrorConsoleViewPrototype = function()
            new_entry_hash === this.last_entry_hash
          )
       {
-        var template = window.templates.errors.log_row(entries.last, 
+        var template = window.templates.errors.log_row(entries.last,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
@@ -483,7 +483,7 @@ var ErrorConsoleViewPrototype = function()
       }
       else
       {
-        var template = window.templates.errors.log_table(entries, 
+        var template = window.templates.errors.log_table(entries,
                                                        expand_all,
                                                        window.error_console_data.get_toggled(),
                                                        this.id);
@@ -543,7 +543,7 @@ var ErrorConsoleViewPrototype = function()
     this._create_delayed_bound = this._create_delayed.bind(this);
     this.source_filter = window.error_console_data.make_source_filter(source_list, is_blacklist);
   }
-  
+
 };
 
 ErrorConsoleViewPrototype.prototype = ViewBase;
@@ -641,7 +641,7 @@ ErrorConsoleView.roughViews.createViews = function()
     (function() {
       var view_id = r_v.id;
 
-      var text_search = 
+      var text_search =
       window.views[view_id]._text_search = new TextSearch(); // or pass (1) to make it search on 1 char
       var onShowView = function(msg)
       {
@@ -717,13 +717,13 @@ cls.ConsoleLogger.ConsoleView.create_ui_widgets = function(service_version)
     {
       'expand-all-entries': false,
       'use-css-filter': false,
-      'css-filter': 
+      'css-filter':
       [
         '-webkit-, -khtml-, -moz-, -ms-, -o-',
         '_height, _width, _position, _display, _zoom',
         '_word-wrap, _z-index, _background, _padding',
         '_line-height, _vertical-align',
-        '*width, *border, *margin, *font, *display', 
+        '*width, *border, *margin, *font, *display',
         '*top, *z-index, *line-height, *left',
         'zoom:, filter:, behavior:, DXImageTransform.Microsoft',
       ].join(',\n')
@@ -742,7 +742,7 @@ cls.ConsoleLogger.ConsoleView.create_ui_widgets = function(service_version)
     {
       css_error_filters: window.templates.errors.log_settings_css_filter,
     },
-    "console"  
+    "console"
   );
 
   if (window.services["console-logger"].major_minor_version >= 2.1)

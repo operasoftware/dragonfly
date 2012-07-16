@@ -3,17 +3,17 @@
  * @extends Color
  * Makes it possible to bind a property with a scale factor to an existing
  * Color method, e.g. to represent a given color space like r-g-b.
- * 
+ *
  * example:
  * var color_space = new ColorSpace();
- * color_space.property('r', 'setRed', 'getRed', 255); 
+ * color_space.property('r', 'setRed', 'getRed', 255);
  */
 
 var ColorSpace = function()
 {
   this.__rgb = [0, 0, 0];
   this.__hsl = [0, 50, 50];
-  this.__hsv = [0, 50, 50]; 
+  this.__hsv = [0, 50, 50];
 };
 
 ColorSpacePrototype = function()

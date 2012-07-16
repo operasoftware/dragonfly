@@ -17,7 +17,7 @@
 
   this._side_panel_header = function(obj, index)
   {
-    return ( 
+    return (
     ['header',
       ['input',
         'type', 'button',

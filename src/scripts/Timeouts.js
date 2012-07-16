@@ -7,7 +7,7 @@
   * @constructor
   * Convenience class for managing one, or many, timeouts. It keeps track
   * of all timeout IDs so they can all be cleared at once when needed.
-  * 
+  *
   */
 var Timeouts = function()
 {

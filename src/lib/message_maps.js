@@ -1,4 +1,4 @@
-﻿// created with hob 
+﻿// created with hob
 
 status_map = {
     0: "OK",
@@ -20,9 +20,9 @@ format_type_map = {
     }
 
 message_type_map = {
-    1: "command", 
-    2: "response", 
-    3: "event", 
+    1: "command",
+    2: "response",
+    3: "event",
     4: "error"
     }
 

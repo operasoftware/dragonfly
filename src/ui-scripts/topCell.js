@@ -83,7 +83,7 @@ var TopCell = function(layout, setDimensions, onresize, TopToolbar, services)
       this.tab.setActiveTab(view_id);
     }
     // a temporary view perhaps doesn't exist anymore
-    else if (views[view_id])  
+    else if (views[view_id])
     {
       var view = views[view_id];
       if(view.requires_view && !this.tab.hasTab(view.requires_view))

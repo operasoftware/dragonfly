@@ -317,7 +317,7 @@ ColorPicker.prototype = new function()
 
   this._update_h = function()
   {
-    this._1d_ctx.draw_2d_gradient(['#f00', '#f0f', '#00f', 
+    this._1d_ctx.draw_2d_gradient(['#f00', '#f0f', '#00f',
                                    '#0ff', '#0f0', '#ff0', '#f00'], true);
   }
 

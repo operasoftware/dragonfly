@@ -8,7 +8,7 @@
 window.cls || ( window.cls = {} );
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 window.cls.TestFramework = function()
@@ -33,7 +33,7 @@ window.cls.TestFramework = function()
     *
     *   <div id="message-container"></div>
     *
-    *  the two methods `get_bound_click_handler` 
+    *  the two methods `get_bound_click_handler`
     *  and `get_bound_change_handler` must be set to
     *  an appropriated event listeners
     *
@@ -52,7 +52,7 @@ window.cls.TestFramework = function()
   this.rebuild_last_state = function(){};
 
   /* privat */
-  
+
   this._selected_service = "";
   this._status_map = cls.ServiceBase.get_status_map();
   this._event_map = cls.ServiceBase.get_event_map();
@@ -76,19 +76,19 @@ window.cls.TestFramework = function()
     return (
       this._get_indent(indent) +
       name + ': ' + (
-        item === null && "null" || 
-        "message" in definition && "\n" + 
+        item === null && "null" ||
+        "message" in definition && "\n" +
             this._pretty_print_payload(item, definition["message"], indent + 1) ||
         "enum" in definition && item in definition["enum"]["numbers"] && (definition["enum"]["numbers"][item] + " (" + item + ")") ||
         "type" in definition && definition["type"] == 11 /*bool*/ && (item ? "true" : "false") ||
-        typeof item == "string" && "\"" + item + "\"" || 
+        typeof item == "string" && "\"" + item + "\"" ||
         item));
   }
 
   this._pretty_print_payload = function(payload, definitions, indent)
   {
-    var 
-    ret = [], 
+    var
+    ret = [],
     item = null,
     i = 0,
     definition = null,
@@ -142,22 +142,22 @@ window.cls.TestFramework = function()
   // handle a command response
   this._handle_response = function(status, message, service, command)
   {
-    this._last_message = Array.prototype.slice.call(arguments, 0); 
+    this._last_message = Array.prototype.slice.call(arguments, 0);
     var response = document.getElementById('message-response');
     if(response)
     {
       response.parentNode.removeChild(response);
     }
-    response = 
+    response =
       document.getElementById('message-container').
       appendChild(document.createElement('pre'));
     response.id = 'message-response';
     service = this._dashed_name(service);
     var command_id = this._event_map[service].indexOf('handle' + command);
-    var definitions = 
-      window.message_maps[service] && 
-      window.message_maps[service][command_id] && 
-      window.message_maps[service][command_id][RESPONSE] || 
+    var definitions =
+      window.message_maps[service] &&
+      window.message_maps[service][command_id] &&
+      window.message_maps[service][command_id][RESPONSE] ||
       null;
     if (status != 0) // Use the error structure if we received an error response
         definitions = window.package_map["com.opera.stp"]["Error"];
@@ -172,10 +172,10 @@ window.cls.TestFramework = function()
     {
       payload = JSON.stringify(message);
     }
-    response.textContent = 
-      "response:\n  status: " + 
+    response.textContent =
+      "response:\n  status: " +
       this._status_map[status] + "\n" +
-      "  payload: \n" + 
+      "  payload: \n" +
       payload;
   }
 
@@ -197,12 +197,12 @@ window.cls.TestFramework = function()
   this._update_list = function(name, list, target)
   {
     var list_ele = document.getElementById(name.toLowerCase() + '-list-container');
-    list_ele.innerHTML = 
-        "<h2>" + name + " List</h2><ul id='" + name.toLowerCase() + "-list'>" + 
-          list.map(this._list_item).join("") + 
+    list_ele.innerHTML =
+        "<h2>" + name + " List</h2><ul id='" + name.toLowerCase() + "-list'>" +
+          list.map(this._list_item).join("") +
         "</ul>";
   }
-  
+
   // callback to display a message definition
   this._show_def = function(xhr, context)
   {
@@ -212,12 +212,12 @@ window.cls.TestFramework = function()
   // to re-select entries of the Service or Command List
   this._reselect_element = function(/* list of names */)
   {
-    var 
-    name = '', 
+    var
+    name = '',
     i = 0,
     j = 0,
     last_selected = '',
-    lis = null, 
+    lis = null,
     li = null;
 
     for( ; name = arguments[i]; i++)
@@ -259,12 +259,12 @@ window.cls.TestFramework = function()
 
   this._make_service_descriptions = function()
   {
-    var 
+    var
     map = window.message_maps,
-    service_name = '', 
-    command_id = '', 
-    servive = null, 
-    commands = null, 
+    service_name = '',
+    command_id = '',
+    servive = null,
+    commands = null,
     events = null;
 
     this._service_descriptions = {commands:{}, events: {}};
@@ -275,7 +275,7 @@ window.cls.TestFramework = function()
       commands = this._service_descriptions.commands[service_name] = [];
       events = this._service_descriptions.events[service_name] = [];
       for (command_id in service)
-        (1 in service[command_id] && commands || events).push(service[command_id].name); 
+        (1 in service[command_id] && commands || events).push(service[command_id].name);
       commands.sort();
       events.sort();
     }
@@ -291,8 +291,8 @@ window.cls.TestFramework = function()
     }
     if(!this._doc_base_uri)
     {
-      this._doc_base_uri = 
-      document.getElementsByTagName('base')[0] ? 
+      this._doc_base_uri =
+      document.getElementsByTagName('base')[0] ?
       document.baseURI :
       './';
     }
@@ -322,12 +322,12 @@ window.cls.TestFramework = function()
           this._update_selected(target, event.target);
           this._update_selected(document.getElementById('event-list'));
           var message_container = document.getElementById('message-container');
-          message_container.innerHTML = 
+          message_container.innerHTML =
             "<h2>Command " + event.target.textContent + "</h2>" +
             "<h3>command</h3><pre class='definition'></pre>" +
             "<textarea rows='10' id='proto-message'>[]</textarea>" +
             "<p class='right-aligned'><input type='button' value='send' data-service='" + this._selected_service + "'" +
-            " data-command='" + event.target.textContent + 
+            " data-command='" + event.target.textContent +
             "' id = 'test-send-command' /></p>" +
             "<h3>response</h3><pre class='definition'></pre>" +
               "<p class='right-aligned'><label>pretty print message " +
@@ -359,7 +359,7 @@ window.cls.TestFramework = function()
           this._update_selected(target, event.target);
           this._update_selected(document.getElementById('command-list'));
           var message_container = document.getElementById('message-container');
-          message_container.innerHTML = 
+          message_container.innerHTML =
             "<h2>Event " + event.target.textContent + "</h2>" +
             "<pre class='definition'></pre>";
           var pres = message_container.getElementsByTagName('pre');

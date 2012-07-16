@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -20,7 +20,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
   this._broker = ActionBroker.get_instance();
   this._broker.register_handler(this);
   this._handlers = {};
-  
+
   this.get_action_list = function()
   {
     var actions = [], key = '';
@@ -79,7 +79,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
     is_search = table && table.hasClass('is-search'),
     shortcuts_match = is_search ? {} : null,
     shortcuts_match_mode = null;
-        
+
     if (trs)
     {
       for (; tr = trs[i]; i++)
@@ -109,9 +109,9 @@ cls.ShortcutConfigView = function(id, name, container_class)
         }
       }
     }
-    
-    table.re_render(window.templates.scc_shortcuts_table (handler_id, 
-                                                          shortcuts, 
+
+    table.re_render(window.templates.scc_shortcuts_table (handler_id,
+                                                          shortcuts,
                                                           shortcuts_match,
                                                           invalid_shortcuts));
 
@@ -128,19 +128,19 @@ cls.ShortcutConfigView = function(id, name, container_class)
 
   this._handlers['reset-all-to-defaults'] = function(event, target)
   {
-    var shortcuts = window.ini.default_shortcuts; 
+    var shortcuts = window.ini.default_shortcuts;
     this._broker.set_shortcuts(shortcuts, null, true);
   }.bind(this);
 
   this._handlers['add-shortcut'] = function(event, target)
   {
-    var 
+    var
     table = event.target.has_attr('parent-node-chain', 'handler-id'),
     handler_id = table && table.getAttribute('handler-id'),
     tr = event.target,
     actions = this._broker.get_actions_with_handler_id(handler_id),
-    tpl = 
-    ['tr', 
+    tpl =
+    ['tr',
       ['td', ['input', 'class', 'scc-input']],
       ['td', window.templates.scc_action_select(actions)]
     ];
@@ -153,7 +153,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
 
   this._handlers['reset-to-defaults'] = function(event, target)
   {
-    var 
+    var
     shortcuts = window.helpers.copy_object(window.ini.default_shortcuts),
     table = event.target.has_attr('parent-node-chain', 'handler-id'),
     handler_id = table && table.getAttribute('handler-id');
@@ -184,7 +184,7 @@ cls.ShortcutConfigView = function(id, name, container_class)
       {
         if (!shortcuts_match[section])
           shortcuts_match[section] = {};
-        shortcuts_match[section][mode] = 
+        shortcuts_match[section][mode] =
           this._search_mode(shortcuts[section][mode], search);
         if (shortcuts_match[section][mode].has_match)
           shortcuts_match[section].has_match = true;
@@ -198,12 +198,12 @@ cls.ShortcutConfigView = function(id, name, container_class)
       if (ul = container.getElementsByTagName('ul')[0])
         container.replaceChild(document.render(tpl), ul);
     }
-    
+
   }.bind(this);
 
   this._search_mode = function(mode_source, search)
   {
-    var mode_target = {}; 
+    var mode_target = {};
     var has_match = false;
     for (var key in mode_source)
     {
@@ -224,11 +224,11 @@ cls.ShortcutConfigView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'shortcut-config', 
+    'shortcut-config',
     // key-value map
     {
       'shortcut_config': true
-    }, 
+    },
     // key-label map
     {
     },
@@ -249,12 +249,12 @@ cls.ShortcutConfigView.create_ui_widgets = function()
     },
     "keyboard-shortcuts"
   );
-  
+
   window.eventHandlers.click['scc-expand-section'] = function(event, target)
   {
     this.broker.dispatch_action('shortcut-config', 'expand-section', event, target);
   };
-  
+
   window.eventHandlers.click['scc-save-shortcuts'] = function(event, target)
   {
     this.broker.dispatch_action('shortcut-config', 'save-shortcuts', event, target);
@@ -274,10 +274,10 @@ cls.ShortcutConfigView.create_ui_widgets = function()
   {
     this.broker.dispatch_action('shortcut-config', 'reset-to-defaults', event, target);
   };
-  
+
   window.eventHandlers.input['scc-quick-find'] = function(event, target)
   {
     this.broker.dispatch_action('shortcut-config', 'quick-find', event, target);
   };
- 
+
 };

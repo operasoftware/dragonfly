@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends ContainerBase
   */
 
@@ -22,7 +22,7 @@ var WindowContainerBase = function()
     if(!this.default_height)
     {
       this.setCSSProperties();
-      this.vertical_delta = 
+      this.vertical_delta =
         (this.cell.header && defaults.window_header_offsetHeight || 0) +
         (this.cell.toolbar && this.cell.toolbar.height && this.cell.toolbar.offsetHeight || 0 ) +
         (this.cell.statusbar && defaults.window_statusbar_offsetHeight || 0) +
@@ -77,7 +77,7 @@ var WindowContainerBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends WindowContainerBase
   */
 
