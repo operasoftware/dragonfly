@@ -75,7 +75,7 @@ cls.JSSourceTooltip = function(view)
         (_filter && _is_filter_focus) ||
         CstSelect.is_active)
       return;
-    
+
     if (!_win_selection.isCollapsed && !_shift_key)
     {
       _clear_selection();
@@ -96,7 +96,7 @@ cls.JSSourceTooltip = function(view)
           _identifier_out_count += 1;
       }
     }
-    
+
     while (_mouse_positions.length > MAX_MOUSE_POS_COUNT)
       _mouse_positions.shift();
 
@@ -115,7 +115,7 @@ cls.JSSourceTooltip = function(view)
         var char_offset = _get_char_offset(line, offset_x);
         if (char_offset > -1 &&
             !(_last_poll.script == script &&
-              _last_poll.line_number == line_number && 
+              _last_poll.line_number == line_number &&
               _last_poll.char_offset == char_offset &&
               _last_poll.shift_key == _shift_key))
         {
@@ -124,15 +124,15 @@ cls.JSSourceTooltip = function(view)
           _last_poll.char_offset = char_offset;
           _last_poll.center = center;
           _last_poll.shift_key = _shift_key;
-          var line_count = Math.floor(offset_y / _line_height); 
-          var box = 
+          var line_count = Math.floor(offset_y / _line_height);
+          var box =
           {
             top: _container_box.top + line_count * _line_height,
             bottom: _container_box.top + (line_count + 1) * _line_height,
             mouse_x: Math.floor(center.x),
             mouse_y: Math.floor(center.y)
           };
-          _handle_poll_position(script, line_number, char_offset, 
+          _handle_poll_position(script, line_number, char_offset,
                                 box, _shift_key);
         }
       }
@@ -168,8 +168,8 @@ cls.JSSourceTooltip = function(view)
     }
   };
 
-  var _handle_script = function(status, 
-                                message, 
+  var _handle_script = function(status,
+                                message,
                                 script,
                                 line_number,
                                 char_offset,
@@ -196,7 +196,7 @@ cls.JSSourceTooltip = function(view)
         var line_count = selection.start_line - _view.getTopLine();
         if (line_count < 0)
           line_count = 0;
-        
+
         box.top = _container_box.top + line_count * _line_height;
         var end_line = selection.end_line;
         if (end_line > _view.getBottomLine())
@@ -212,7 +212,7 @@ cls.JSSourceTooltip = function(view)
       if (message[TYPE] == "object")
       {
         var object = message[OBJECT];
-        var model  = new cls.InspectableJSObject(rt_id, 
+        var model  = new cls.InspectableJSObject(rt_id,
                                                  object[OBJECT_ID],
                                                  "",
                                                  object[CLASS_NAME]);
@@ -249,8 +249,8 @@ cls.JSSourceTooltip = function(view)
         else
           value = message[VALUE];
 
-        var tmpl = ["div", 
-                     ["value", value, "class", message[TYPE]], 
+        var tmpl = ["div",
+                     ["value", value, "class", message[TYPE]],
                      "class", "js-tooltip"];
         _tooltip.show(tmpl, box);
       }
@@ -340,7 +340,7 @@ cls.JSSourceTooltip = function(view)
                   end_offset: end.offset - 1};
       }
     }
-    
+
     return null;
   };
 
@@ -561,7 +561,7 @@ cls.JSSourceTooltip = function(view)
     var index = match_index;
 
     if (previous_token[VALUE] == "[")
-      bracket_stack.push(previous_token[VALUE]); 
+      bracket_stack.push(previous_token[VALUE]);
 
     if (shift_key && previous_token[VALUE] == "(")
       parens_stack.push(previous_token[VALUE]);
@@ -743,7 +743,7 @@ cls.JSSourceTooltip = function(view)
       }
       else
         break;
-    } 
+    }
 
     while (true)
     {
@@ -776,7 +776,7 @@ cls.JSSourceTooltip = function(view)
     {
       if (node.nodeType == Node.ELEMENT_NODE)
         _walk_dom(ctx, node.firstChild);
-      
+
       if (node.nodeType == Node.TEXT_NODE)
       {
         if (node == ctx.target_node)
@@ -786,7 +786,7 @@ cls.JSSourceTooltip = function(view)
       }
       node = node.nextSibling;
     }
-    return ctx; 
+    return ctx;
   };
 
   var _get_max_right = function()
@@ -847,7 +847,7 @@ cls.JSSourceTooltip = function(view)
     // translates the current selected identifier to dimension boxes
     // position and dimensions are absolute to the source text
     var line_number = _identifier.start_line;
-    
+
     var start_offset = _identifier.start_offset;
     var end_offset = 0;
     _identifier_boxes = [];
@@ -972,7 +972,7 @@ cls.JSSourceTooltip = function(view)
         _win_selection = window.getSelection();
         _poll_interval = setInterval(_poll_position, POLL_INTERVAL);
       }
-    }    
+    }
   };
 
   var _onhide = function()
@@ -1050,7 +1050,7 @@ cls.JSSourceTooltip = function(view)
   {
     _is_filter_focus = false
   };
-  
+
   var _oninput = function(event, target)
   {
     _filter.search_delayed(target.value);
