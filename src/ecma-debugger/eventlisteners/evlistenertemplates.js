@@ -38,9 +38,9 @@
     }
     var event_types = search_term
                     ? ev_rt.event_types.filter(function(ev_type)
-                    {
-                      return ev_type.type.contains(search_term);
-                    })
+                      {
+                        return ev_type.type.contains(search_term);
+                      })
                     : ev_rt.event_types;
     ret.push(["ul", event_types.map(this._ev_type, this),
                     "data-rt-id", String(ev_rt.rt_id),

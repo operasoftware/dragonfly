@@ -122,9 +122,9 @@ cls.EventListenersView = function(id, name, container_class)
     this._text_search.set_query_selector(".ev-type");
     this._text_search.add_listener("onbeforesearch", this._onbeforesearch.bind(this));
     evh.input[cls.EventListenersView.TOKEN_FILTER] = this._oninput.bind(this);
-    var glob_handl = ActionBroker.get_instance().get_global_handler();
+    var global_handler = ActionBroker.get_instance().get_global_handler();
     var cb = cls.Helpers.shortcut_search_cb.bind(this._text_search);
-    glob_handl.register_shortcut_listener(cls.EventListenersView.TOKEN_FILTER, cb);
+    global_handler.register_shortcut_listener(cls.EventListenersView.TOKEN_FILTER, cb);
     var contextmenu =
     [
       {

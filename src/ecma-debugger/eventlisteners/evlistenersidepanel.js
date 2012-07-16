@@ -16,7 +16,7 @@ cls.EventListenerSidePanelView.create_ui_widgets = function()
     groups:
     [
       {
-        type: "buttons",
+        type: UI.TYPE_BUTTONS,
         items:
         [
           {
@@ -26,7 +26,7 @@ cls.EventListenerSidePanelView.create_ui_widgets = function()
         ]
       },
       {
-        type: "input",
+        type: UI.TYPE_INPUT,
         items:
         [
           {

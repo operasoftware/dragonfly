@@ -552,8 +552,8 @@ ui_framework.layouts.dom_rough_layout =
           return ['dom-side-panel',
                   'dom_attrs',
                   'css-layout',
-                  'dom-search',
-                  'ev-listeners-side-panel'];
+                  'ev-listeners-side-panel',
+                  'dom-search'];
         }
 
         return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];

@@ -29,7 +29,7 @@ cls.SelectedNodeListenersView = function(id, name, container_class)
     container.clearAndRender(tmpl);
   };
 
-  this._on_elemnet_selected = function(msg)
+  this._on_element_selected = function(msg)
   {
     this._selected_ele = msg;
     this.update();
@@ -39,7 +39,7 @@ cls.SelectedNodeListenersView = function(id, name, container_class)
   {
     this.init(id, name, container_class);
     this._selected_ele = null;
-    window.messages.add_listener("element-selected", this._on_elemnet_selected.bind(this));
+    window.messages.add_listener("element-selected", this._on_element_selected.bind(this));
   };
 
   this._init(id, name, container_class);
