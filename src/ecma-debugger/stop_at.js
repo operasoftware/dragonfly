@@ -197,7 +197,6 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   {
     const
     FRAME_LIST = 0,
-    RETURN_VALUE_LIST = 1,
     // sub message BacktraceFrame
     FUNCTION_ID = 0,
     ARGUMENT_OBJECT = 1,

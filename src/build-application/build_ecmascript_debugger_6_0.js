@@ -93,7 +93,7 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
     /* Return Values */
     cls.ReturnValuesView.prototype = ViewBase;
     new cls.ReturnValuesView('return-values',
-                          "Return Values",
+                          ui_strings.M_VIEW_LABEL_RETURN_VALUES, 
                           'scroll mono');
     cls.ReturnValuesView.create_ui_widgets();
 

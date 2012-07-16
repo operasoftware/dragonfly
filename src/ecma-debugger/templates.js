@@ -416,8 +416,7 @@
       {
         var short_value = value.length > STRING_MAX_VALUE_LENGTH
                         ? value.slice(0, STRING_MAX_VALUE_LENGTH) + "…"
-                        : "";
-        value = helpers.escapeTextHtml(value).replace(/"/g, "&#39;");
+                        : null;
         if (short_value)
         {
           value_template.push(
@@ -428,7 +427,7 @@
                "class", "folder-key"
               ],
               ["value",
-                "\"" + helpers.escapeTextHtml(short_value) + "\"",
+                "\"" + short_value + "\"",
                "class", type,
                "data-value", "\"" + value + "\"",
               ]
