@@ -394,7 +394,7 @@ ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -637,7 +637,7 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+ui_strings.S_GLOBAL_SCOPE_NAME = "(global)";
 
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
@@ -1261,7 +1261,7 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 
 /* DESC: Fallback text for no filename, used as tab label */
-ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "(no name)";
 
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
