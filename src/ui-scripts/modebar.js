@@ -47,7 +47,7 @@ var ModebarBase = function()
 
     this.update(force_redraw)
   };
-  
+
   this.__defineGetter__("offsetHeight", function()
   {
     if (!this.default_height)
@@ -56,7 +56,7 @@ var ModebarBase = function()
     }
     return this.__is_visible ? this._offset_height : 0;
   });
-  
+
   this.__defineSetter__("offsetHeight", function(offset_height)
   {
     this._offset_height = offset_height;

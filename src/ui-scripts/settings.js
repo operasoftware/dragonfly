@@ -8,14 +8,14 @@
  */
 
 /**
- * @constructor 
+ * @constructor
  */
 var SettingsBase = function()
 {
   /**
    * Set the value of key.
    */
-  this.set = function(key, value, sync_switches) 
+  this.set = function(key, value, sync_switches)
   {
     window.localStorage.setItem(key, JSON.stringify(this.map[key] = value));
     if (this.callback_map.hasOwnProperty(key))
@@ -30,15 +30,15 @@ var SettingsBase = function()
    * returns undefined
    * @argument {string} key whos value to get
    */
-  this.get = function(key) 
-  { 
+  this.get = function(key)
+  {
     var val = "";
     return (
     typeof this.map[key] !== 'undefined' ?
     this.map[key] :
     (this.map[key] = ((val = window.localStorage.getItem(key)) ? JSON.parse(val) : null)));
   }
-  
+
   /**
    * Check if a particular key exist in the settings object
    */
@@ -66,7 +66,7 @@ var SettingsBase = function()
     for( key in stored_map)
     {
       val = window.localStorage.getItem(key);
-      this.map[key] = (val === undefined || val === null) ? key_map[key] : 
+      this.map[key] = (val === undefined || val === null) ? key_map[key] :
                       val === 'undefined' ? undefined : JSON.parse(val);
     }
     if(!window.settings)
@@ -97,7 +97,7 @@ var SettingsBase = function()
 
   if(!window.localStorage)
   {
-    window.localStorage = 
+    window.localStorage =
     {
       setItem: function(name, value)
       {
@@ -120,7 +120,7 @@ var SettingsBase = function()
 }
 
 /**
- * @constructor 
+ * @constructor
  * @extends SettingsBase
  */
 var Settings = function(view_id, key_map, label_map, setting_map, template, group, callback_map)
@@ -132,10 +132,10 @@ Settings.get_setting_with_view_key_token = function(token)
 {
   var arr = token.split('.'), setting = window.settings[arr[0]], key = arr[1];
   return setting && setting.exists(key) && {
-      setting: setting, 
-      view: arr[0], 
-      key: key, 
-      value: setting.get(key), 
+      setting: setting,
+      view: arr[0],
+      key: key,
+      value: setting.get(key),
       label: setting.label_map[key]
     } || null;
 }

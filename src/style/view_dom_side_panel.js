@@ -40,7 +40,7 @@ cls.DOMSidePanelView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'css-comp-style', 
+    'css-comp-style',
     // key-value map
     {
       'show-initial-values': false

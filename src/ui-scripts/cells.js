@@ -390,12 +390,12 @@
           this.tab.trySetAnActiveTab();
         }
         else if (!document.getElementById('toolbar-to-' + this.id)) // check if frame for view is created
-        {  
-           // This will trigger this.setup(), 
-           // which will call update again, but now with a toolbar, 
+        {
+           // This will trigger this.setup(),
+           // which will call update again, but now with a toolbar,
            // meaning executing the next block.
            // The view_id will be the current active view_id
-           // this will also cause a show-view message for that view 
+           // this will also cause a show-view message for that view
            // in setActiveTab.
            this.tab.setActiveTab('', true);
         }

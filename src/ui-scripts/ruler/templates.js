@@ -24,7 +24,7 @@
     }, 50);
     var pixel_width = label_width * ruler.scale;
     var scales = this._get_scales(label_width, ruler.scale);
-    
+
     return (
     ['div',
       ['div', 'class', 'ruler-top-bg'],
@@ -60,7 +60,7 @@
 
   this._ruler_bottom_scale = function(scales)
   {
-    var style = 
+    var style =
     "background-size: " + scales[2] + "px 3px, " +
                           scales[1] + "px 6px, " +
                           scales[0] + "px 10px;";
@@ -89,8 +89,8 @@
     while (true)
     {
       labels.push(
-      ['span', 
-        i * pixel_width <= max_width ? String(i * label_width) : '\u00A0', 
+      ['span',
+        i * pixel_width <= max_width ? String(i * label_width) : '\u00A0',
         'style', 'width: ' + pixel_width + 'px;' +
                  (!i ? "margin-left: -" + (pixel_width / 2 >> 0) + "px;" : ""),
         'class', 'ruler-label-top']);
@@ -110,8 +110,8 @@
     while (true)
     {
       labels.push(
-      ['span', 
-        i * pixel_width <= max_width ? String(i * label_width) : '\u00A0', 
+      ['span',
+        i * pixel_width <= max_width ? String(i * label_width) : '\u00A0',
         'style', 'height: ' + pixel_width + 'px;' +
                  'line-height: ' + pixel_width + 'px;' +
                  (!i ? "margin-top: -" + (pixel_width / 2 >> 0) + "px;" : ""),

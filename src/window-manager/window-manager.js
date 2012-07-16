@@ -377,9 +377,9 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
   this._option = function(win)
   {
     return (
-    '<option value="' + win.window_id + '"' + 
-      ( win.window_id == window_manager_data.get_debug_context() ? ' selected="selected"' : '' ) + '>' + 
-      helpers.escapeTextHtml(win.title || "") + 
+    '<option value="' + win.window_id + '"' +
+      ( win.window_id == window_manager_data.get_debug_context() ? ' selected="selected"' : '' ) + '>' +
+      helpers.escapeTextHtml(win.title || "") +
     '</option>');
   }
 
@@ -464,8 +464,8 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
         win.title || "\u00A0",
         "opt-index", index,
         "value", win.window_id.toString(),
-        "class", win.window_id == window_manager_data.get_debug_context() ? 
-                 "selected" : 
+        "class", win.window_id == window_manager_data.get_debug_context() ?
+                 "selected" :
                  "",
         "unselectable", "on"
     ]);

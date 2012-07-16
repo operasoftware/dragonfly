@@ -236,7 +236,7 @@ window.cls.Client = function()
         "<div class='info-box'>" + msg +
             (port ? "<p><span class='ui-button' handler='cancel-remote-debug' tabindex='1'>" +
                       ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
-                    "</span></p>" 
+                    "</span></p>"
                   : "") +
         "</div>" +
       "</div>";
@@ -275,9 +275,9 @@ window.cls.Client = function()
       {
         if (confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION))
         {
-          location = protocol + 
-                     hostname + port + 
-                     fallback_urls[type][version] + 
+          location = protocol +
+                     hostname + port +
+                     fallback_urls[type][version] +
                      file_name + search;
         }
       }
@@ -292,7 +292,7 @@ window.cls.Client = function()
 
   this.handle_fallback = function(version)
   {
-    handle_fallback.call(new XMLHttpRequest(), version); 
+    handle_fallback.call(new XMLHttpRequest(), version);
   };
 
   this.create_top_level_views = function(services)
@@ -477,7 +477,7 @@ window.cls.Client = function()
     }
     else
       this._show_last_selected_view(last_selected_view);
-    
+
     window.messages.removeListener("profile-enabled", this._on_profile_enabled_cb);
 
   };

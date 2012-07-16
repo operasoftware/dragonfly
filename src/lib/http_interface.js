@@ -5,14 +5,14 @@
  * Implements the scope DOM API as a HTTP interface to dragonkeeper.
  * Mainly used for developing.
  * Instantiated as cls.ScopeHTTPInterface.call(opera).
- * @param {Boolean} force_stp_0 implement the DOM API STP/0 compatible 
+ * @param {Boolean} force_stp_0 implement the DOM API STP/0 compatible
  *                  to test the wrapping of STP/! in STP/0
  * http interface:
  *      /services
  *          to get the service list
  *      /enable/<service name>
  *         to enable a service with STP/0
- *      /post-command/<service name>/<command id>/<tag>, 
+ *      /post-command/<service name>/<command id>/<tag>,
  *         message in the request body
  *         to dispatch a command
  *      /get-message
@@ -63,24 +63,24 @@ cls.ScopeHTTPInterface = function(force_stp_0)
     }
     _xhr = _proxy.GET( "/get-message?time=" + new Date().getTime(), _receive_dragonkeeper);
   }
-  
+
   var _receive_dragonkeeper_STP_1_websocket = function(message)
   {
     // message format: "[" SERVICE "," COMMAND_ID "," STATUS "," TAG "," PAYLOAD "]"
     const SERVICE = 0, COMMAND_ID = 1, STATUS = 2, TAG = 3, PAYLOAD = 4;
     message = JSON.parse(message.data);
-    _receive_callback(message[SERVICE], 
-                      message[PAYLOAD], 
-                      message[COMMAND_ID], 
-                      message[STATUS], 
+    _receive_callback(message[SERVICE],
+                      message[PAYLOAD],
+                      message[COMMAND_ID],
+                      message[STATUS],
                       message[TAG]);
   }
 
   var _scopeTransmit_STP_0 = function(service, message, command_id, tag)
   {
-    /** 
-      * path format /post-command/<service-name>/<command-id>/<tag>, 
-      * message in the request body 
+    /**
+      * path format /post-command/<service-name>/<command-id>/<tag>,
+      * message in the request body
       * format is JSON, encoding UTF-8
       */
     _proxy.POST("/post-command/" + service + "/" + command_id + "/" + tag,  message);
@@ -88,18 +88,18 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   var _scopeTransmit_STP_1 = function(service, message, command_id, tag)
   {
-    /** 
+    /**
       * path format /http-interface-command-name/service-name/command-id/tag, msg
       * format 1 is JSON structures (UMS) , encoding UTF-8
       */
-    
-    _proxy.POST("/post-command/" + service + "/" + command_id + "/" + tag, 
+
+    _proxy.POST("/post-command/" + service + "/" + command_id + "/" + tag,
                     JSON.stringify(message));
   }
-    
+
   var _scopeTransmit_STP_1_websocket = function(service, message, command_id, tag)
   {
-    /** 
+    /**
       * message format: "[" SERVICE "," COMMAND_ID "," STATUS "," TAG "," PAYLOAD "]"
       * format 1 is JSON structures (UMS) , encoding UTF-8
       */
@@ -134,7 +134,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       }
     }
   }
-  
+
   var _setup_stp_1_xhr_post_get = function()
   {
     _receive_dragonkeeper = _receive_dragonkeeper_STP_1;
@@ -156,7 +156,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
       _setup_stp_1_xhr_post_get();
     }
   }
-  
+
   var _finalize_on_stp_version = function(has_web_socket)
   {
     _connect_callback(_proxy.services.join(','));
@@ -199,7 +199,7 @@ cls.ScopeHTTPInterface = function(force_stp_0)
 
   window.ini || (window.ini = {debug: false});
   _get_maps();
-    
+
 };
 
 cls.ScopeHTTPInterface.is_enabled = false;

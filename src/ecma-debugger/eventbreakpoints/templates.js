@@ -33,7 +33,7 @@
   this.ev_brp_event_list = function(section)
   {
     return (
-    ['ul', 
+    ['ul',
       section.events.map(this.ev_brp_event, this),
       section.editable ? this.ev_brp_edit() : [],
       'class', 'event-list'
@@ -59,8 +59,8 @@
   this.ev_brp_edit = function()
   {
     return (
-    ['li', 
-      ['span', 
+    ['li',
+      ['span',
         ui_strings.S_BUTTON_EDIT_CUSTOM_EVENT,
         'handler', 'ev-brp-edit-custom-events',
         'class', 'ui-button',
@@ -75,21 +75,21 @@
     var event_list = section.events.map(function(event){return event[NAME];}, this);
     return (
     ['ul',
-      ['li', 
-        ['_auto_height_textarea', 
-          event_list.join('\r\n'), 
+      ['li',
+        ['_auto_height_textarea',
+          event_list.join('\r\n'),
           'data-placeholder', '<list of custom events>',
           'title', 'Comma, space or new line separated list of custom events'
         ]
       ],
-      ['li', 
-        ['span', 
+      ['li',
+        ['span',
           ui_strings.S_BUTTON_TEXT_APPLY,
           'handler', 'ev-brp-edit-custom-events-save',
           'class', 'ui-button',
           'tabindex', '1'
         ],
-        ['span', 
+        ['span',
           ui_strings.S_BUTTON_CANCEL,
           'handler', 'ev-brp-edit-custom-events-cancel',
           'class', 'ui-button',

@@ -19,7 +19,7 @@
         down_event = event;
     };
 
-    var re_add_range = function() 
+    var re_add_range = function()
     {
         if (selection && range)
         {

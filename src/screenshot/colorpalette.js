@@ -15,7 +15,7 @@ cls.ColorPalette = function()
   cls.ColorPalette.instance = this;
 
   /* interface */
- 
+
   this.store_color = function(hex){};
   this.delete_color = function(id){};
   this.update_color = function(id, hex){};

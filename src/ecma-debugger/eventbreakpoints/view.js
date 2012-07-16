@@ -166,12 +166,12 @@ cls.EventBreakpointsView.create_ui_widgets = function()
 
   window.eventHandlers.click['ev-brp-edit-custom-events'] = function(event, target)
   {
-    update_section(event, target, 'ev_brp_edit_section'); 
+    update_section(event, target, 'ev_brp_edit_section');
   }
 
   window.eventHandlers.click['ev-brp-edit-custom-events-cancel'] = function(event, target)
   {
-    update_section(event, target, 'ev_brp_event_list'); 
+    update_section(event, target, 'ev_brp_event_list');
   }
 
   window.eventHandlers.click['ev-brp-edit-custom-events-save'] = function(event, target)
@@ -182,7 +182,7 @@ cls.EventBreakpointsView.create_ui_widgets = function()
       var index = parseInt(li.getAttribute('index'));
       var event_list = li.getElementsByTagName('textarea')[0].value.split(/,?\s+/);
       window.event_breakpoints.update_section(index, event_list);
-      update_section(event, target, 'ev_brp_event_list'); 
+      update_section(event, target, 'ev_brp_event_list');
     }
   }
 

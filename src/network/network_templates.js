@@ -185,8 +185,8 @@ templates.network_log_url_list_entry = function(selected, entry)
            ],
            "handler", "select-network-request",
            "data-object-id", String(entry.id),
-           "class", (selected === entry.id ? "selected" : "") + 
-                    (had_error_response ? " " + ERROR_RESPONSE : "") + 
+           "class", (selected === entry.id ? "selected" : "") +
+                    (had_error_response ? " " + ERROR_RESPONSE : "") +
                     (not_requested ? " " + NOT_REQUESTED : "")
          ];
 };
@@ -218,7 +218,7 @@ templates.network_log_url_tooltip = function(entry)
   }
   else if (entry.had_error_response)
   {
-    context_string = entry.responsecode + 
+    context_string = entry.responsecode +
                      " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
@@ -298,7 +298,7 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   var unit = [1, "ms"];
   if (max_val > 1000)
     unit = [1000, "s"];
-  
+
   while (stepsize && --cnt >= 0)
   {
     var left_val = gridwidth * cnt - TIMELINE_MARKER_WIDTH / 2;
@@ -451,7 +451,7 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
     return ["div",
       [
         (window.ini && ini.debug) ?
-          ["h2", "Requested " + entry.resource_id + " at " +  entry.start_time_string] : 
+          ["h2", "Requested " + entry.resource_id + " at " +  entry.start_time_string] :
           ["h2", ui_strings.S_HTTP_REQUESTED_HEADLINE.replace("%s", entry.start_time_string)],
         ["div",
           ["div",

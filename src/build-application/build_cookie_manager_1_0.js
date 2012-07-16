@@ -11,7 +11,7 @@ window.app.builders.CookieManager["1.1"] = function(service)
   var service_interface = window.services['cookie-manager'];
   if (service_interface)
   {
-    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager", 
+    new cls.CookieManager["1.1"].CookieManagerView("cookie_manager",
                                                    ui_strings.M_VIEW_LABEL_COOKIES,
                                                    "scroll storage_view cookie_manager",
                                                    cls.CookieManager["1.1"].CookieManagerData);

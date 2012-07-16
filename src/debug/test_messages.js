@@ -35,7 +35,7 @@ cls.debug.TestScopeMessages = function(id, name, container_class)
     ['li',
       rt ?
       ['pre',
-        'runtimeID: ' + rt.runtime_id + '\n' + 
+        'runtimeID: ' + rt.runtime_id + '\n' +
         'htmlFramePath: ' + rt.html_frame_path + '\n' +
         'windowID: ' + rt.window_id + '\n' +
         'objectID: ' + rt.object_id + '\n' +
@@ -65,7 +65,7 @@ cls.debug.TestScopeMessages = function(id, name, container_class)
       ['div',
         ['div',
           ['h2', 'Debug Context'],
-          ['ul', 
+          ['ul',
             ( win ? this._template_debug_context(win) : []),
             'id', 'test-messages-debug-context'
           ],

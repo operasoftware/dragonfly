@@ -14,9 +14,9 @@ cls.PrettyPrinter.types = {};
 
 /**
   * Add more types here.
-  * A type must have an is_type function which takes a class name to check 
+  * A type must have an is_type function which takes a class name to check
   * if a given object is of this type.
-  * The type must either have a script or a traversal property. The script is 
+  * The type must either have a script or a traversal property. The script is
   * used with an Eval command to pretty print an object. The traversal is used
   * with an InspectDOM command to retrieve a node.
   * The type must have a template function to return a template. The template
@@ -76,7 +76,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.ELEMENT] =
       }
       else
         tmpl.push("node", is_tree_style ? node_name : "<" + node_name + ">");
-      
+
       tmpl = ["div", tmpl, "class", "dom mono"];
     }
     return tmpl;
@@ -153,11 +153,11 @@ cls.PrettyPrinter.prototype = new function()
   /**
     * param {Object} ctx The context to pretty print an object. The context
     * must have a rt_id, an obj_id, a class_name and a callback property.
-    * The type and the template will be set on the context if there is an 
+    * The type and the template will be set on the context if there is an
     * according type registered for the given object.
     */
   this.print = function(ctx) {};
-  
+
   this.register_types = function(list)
   {
     if (!this._types)
@@ -170,7 +170,7 @@ cls.PrettyPrinter.prototype = new function()
       {
         this._types.push(cls.PrettyPrinter.types[type]);
       }
-    }, this);  
+    }, this);
   };
 
   this.unregister_types = function(list)
@@ -188,7 +188,7 @@ cls.PrettyPrinter.prototype = new function()
     for (var i = 0, type; type = this._types[i]; i++)
     {
       if (type.is_type(class_name))
-        return type;  
+        return type;
     }
     return null;
   };
@@ -231,7 +231,7 @@ cls.PrettyPrinter.prototype = new function()
     ctx.callback(ctx);
   };
 
-  this.print = function(ctx) 
+  this.print = function(ctx)
   {
     if (ctx.type = this._get_type(ctx.class_name))
     {

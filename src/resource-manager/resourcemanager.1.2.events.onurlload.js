@@ -9,32 +9,32 @@ cls.ResourceManager["1.2"].UrlLoad = function(arr)
   this.frameID = arr[1];
   this.documentID = arr[2];
   this.resourceID = arr[3];
-  /** 
-    * 
+  /**
+    *
     *  The URL which which is about to be loaded.
     */
   this.url = arr[4];
-  /** 
-    * 
+  /**
+    *
     *  The type of URL that was started, this can referer to a specific protocol
     *  or a special URL type.
-    * 
+    *
     *  @note More types may be added in the future, make sure the client supports that.
     */
   // cls.ResourceManager["1.2"].UrlLoad.URLType
   this.urlType = arr[5];
-  /** 
-    * 
+  /**
+    *
     *  Milliseconds since Unix epoch.
     */
   this.time = arr[6];
-  /** 
-    * 
+  /**
+    *
     *  This field may be set to provide additional information about the
     *  origin of a URL load.
-    * 
+    *
     *  If the field is not set, the origin is unknown.
-    * 
+    *
     *  @since 1.2
     */
   // cls.ResourceManager["1.2"].LoadOrigin
@@ -42,28 +42,28 @@ cls.ResourceManager["1.2"].UrlLoad = function(arr)
 };
 cls.ResourceManager["1.2"].UrlLoad.URLType =
 {
-  /** 
-    * 
+  /**
+    *
     *  Type not known, should not occur.
     */
   0: "UNKNOWN",
-  /** 
-    * 
+  /**
+    *
     *  HTTP protocol.
     */
   1: "HTTP",
-  /** 
-    * 
+  /**
+    *
     *  HTTP protocol with SSL.
     */
   2: "HTTPS",
-  /** 
-    * 
+  /**
+    *
     *  Local file access.
     */
   3: "FILE",
-  /** 
-    * 
+  /**
+    *
     *  Data URIs, e.g data:text/plain,mydata
     */
   4: "DATA",
@@ -105,28 +105,28 @@ cls.ResourceManager["1.2"].UrlLoad.URLType =
   44: "UNITE",
   100: "INTERNAL",
 };
-/** 
-  * 
+/**
+  *
   *  Type not known, should not occur.
   */
 cls.ResourceManager["1.2"].UrlLoad.URLType.UNKNOWN = 0;
-/** 
-  * 
+/**
+  *
   *  HTTP protocol.
   */
 cls.ResourceManager["1.2"].UrlLoad.URLType.HTTP = 1;
-/** 
-  * 
+/**
+  *
   *  HTTP protocol with SSL.
   */
 cls.ResourceManager["1.2"].UrlLoad.URLType.HTTPS = 2;
-/** 
-  * 
+/**
+  *
   *  Local file access.
   */
 cls.ResourceManager["1.2"].UrlLoad.URLType.FILE = 3;
-/** 
-  * 
+/**
+  *
   *  Data URIs, e.g data:text/plain,mydata
   */
 cls.ResourceManager["1.2"].UrlLoad.URLType.DATA = 4;
@@ -168,22 +168,22 @@ cls.ResourceManager["1.2"].UrlLoad.URLType.OBMLSERVER = 43;
 cls.ResourceManager["1.2"].UrlLoad.URLType.UNITE = 44;
 cls.ResourceManager["1.2"].UrlLoad.URLType.INTERNAL = 100;
 
-/** 
-  * 
+/**
+  *
   *  Indicates in which context a resource was needed.
-  * 
+  *
   *  @since 1.2
   */
 cls.ResourceManager["1.2"].LoadOrigin =
 {
-  /** 
-    * 
+  /**
+    *
     *  The resource was requested by XMLHttpRequest.
     */
   1: "XHR",
 };
-/** 
-  * 
+/**
+  *
   *  The resource was requested by XMLHttpRequest.
   */
 cls.ResourceManager["1.2"].LoadOrigin.XHR = 1;
