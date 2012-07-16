@@ -1703,3 +1703,7 @@ ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
 
 /* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
 ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
+
+/* DESC: Section in the script side panel for return values. */
+ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
+

@@ -70,7 +70,7 @@ cls.ReturnValuesView = function(id, name, container_class)
     this._container = null;
     this._models = [];
     this._search_term = "";
-  }
+  };
 
   this._init(id, name, container_class);
 };
