@@ -17,7 +17,7 @@
   var height = this._src_canvas.height = this.canvas.height;
   var set_stop = function(color, index, list)
   {
-    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);  
+    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);
   };
   var lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, 0, height)
@@ -34,14 +34,14 @@
     lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, width, 0)
          : this._src_ctx.createLinearGradient(0, 0, 0, height);
-    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");  
+    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");
     lg.addColorStop(1, "hsla(0, 0%, 0%, 1)");
     this._src_ctx.fillStyle = lg;
     this._src_ctx.fillRect(0, 0, width, height);
     this._src_ctx.globalCompositeOperation = "source-in";
     lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, 0, height)
-         : this._src_ctx.createLinearGradient(0, 0, width, 0);  
+         : this._src_ctx.createLinearGradient(0, 0, width, 0);
     bottom_color_list.forEach(set_stop, lg);
     this._src_ctx.fillStyle = lg;
     this._src_ctx.fillRect(0, 0, width, height);

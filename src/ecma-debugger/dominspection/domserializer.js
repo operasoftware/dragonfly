@@ -5,18 +5,18 @@ window.cls.DOMSerializer = function(){};
 window.cls.DOMSerializer.prototype = new function()
 {
 
-  const 
-  ID = 0, 
-  TYPE = 1, 
-  NAME = 2, 
+  const
+  ID = 0,
+  TYPE = 1,
+  NAME = 2,
   DEPTH = 3,
-  NAMESPACE = 4, 
-  VALUE = 7, 
+  NAMESPACE = 4,
+  VALUE = 7,
   ATTRS = 5,
   ATTR_PREFIX = 0,
-  ATTR_KEY = 1, 
+  ATTR_KEY = 1,
   ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6, 
+  CHILDREN_LENGTH = 6,
   PUBLIC_ID = 8,
   SYSTEM_ID = 9,
   INDENT = "  ",
@@ -63,15 +63,15 @@ window.cls.DOMSerializer.prototype = new function()
   {
     const LINEBREAK = '\r\n';
 
-    var 
+    var
     data = model.getData(),
-    tree = '', 
-    i = 0, 
-    node = null, 
+    tree = '',
+    i = 0,
+    node = null,
     length = data.length,
-    attrs = '', 
-    attr = null, 
-    k = 0, 
+    attrs = '',
+    attr = null,
+    k = 0,
     key = '',
     is_open = 0,
     has_only_one_child = 0,
@@ -86,7 +86,7 @@ window.cls.DOMSerializer.prototype = new function()
     node_name = '',
     tag_head = '',
     start_depth = data[0][DEPTH] - 1,
-    disregard_force_lower_case_whitelist = 
+    disregard_force_lower_case_whitelist =
       cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST,
     disregard_force_lower_case_depth = 0;
 
@@ -128,16 +128,16 @@ window.cls.DOMSerializer.prototype = new function()
           attrs = '';
           for( k = 0; attr = node[ATTRS][k]; k++ )
           {
-            attrs += " " + 
+            attrs += " " +
               (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-              ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) + 
-              "=\"" + 
-              attr[ATTR_VALUE].replace(/"/g, "&quot;") + 
+              ( force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY] ) +
+              "=\"" +
+              attr[ATTR_VALUE].replace(/"/g, "&quot;") +
               "\"";
           }
           child_pointer = i + 1;
           is_open = ( data[child_pointer] && ( node[DEPTH] < data[child_pointer][DEPTH] ) );
-          if( is_open ) 
+          if( is_open )
           {
             has_only_one_child = 1;
             one_child_value = '';
@@ -165,12 +165,12 @@ window.cls.DOMSerializer.prototype = new function()
             }
             else
             {
-              tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + 
+              tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
                       "<" + node_name + attrs + ">";
               if( !(node_name in VOID_ELEMENTS) ) // TODO: why?
               {
                 closing_tags.push
-                ( 
+                (
                   LINEBREAK  + getIndent(node[DEPTH] - start_depth) + "</" + node_name + ">"
                 );
               }
@@ -185,13 +185,13 @@ window.cls.DOMSerializer.prototype = new function()
         }
         case 7:  // processing instruction
         {
-          tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+          tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
             "<?" + node[NAME] + ( node[VALUE] ? ' ' + node[VALUE] : '' ) + "?>";
           break;
         }
         case 8:  // comments
         {
-          tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +      
+          tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
                   "<!--" + ( node[ VALUE ] || ' ' ) + "-->";
           break;
         }

@@ -12,7 +12,7 @@ templates.network_detail_row = function(wrap)
 templates.network_log_details = function(entry, left_val)
 {
   return [
-      "div", 
+      "div",
         ["span",
           ["span",
             "class", "close-request-detail",
@@ -225,7 +225,7 @@ templates.network_request_body = function(req)
     }
     cont.push(tpl);
   }
-  
+
   return [
            templates.network_detail_row(templates.network_body_seperator()),
            ["tbody", cont]
@@ -237,7 +237,7 @@ templates.network_response_body = function(resp)
 {
   var ret = [templates.network_detail_row(templates.network_body_seperator())];
   var classname = "";
-  if (resp.body_unavailable || 
+  if (resp.body_unavailable ||
       !resp.responsebody && resp.is_unloaded)
   {
     classname = "network_info";

@@ -17,28 +17,28 @@
   this._overlays = {};
 
    /* interface */
- 
+
    /**
      * To get a tabbar by it's id.
      * @param {String} tabbar_id.
      * @returns an instance of Tabbar.
      */
   this.get_tabbar = function(id){};
-  
+
   this.get_modebar = function(id){};
 
   this.get_search = function(id){};
-  
+
   this.get_overlay = function(id){};
 
   this.register_tabbar = function(id, tabs){};
-  
+
   this.register_modebar = function(id, modebar){};
 
   this.register_search = function(id, search){};
 
   this.register_overlay = function(id, items){};
-  
+
   this.show_view = function(id){};
   this.show_dropdown = function(id) {};
 
@@ -63,7 +63,7 @@
   {
     return this._tabbars[id] || null;
   };
-  
+
   this.get_modebar = function(id)
   {
     return this._modebars[id] || null;
@@ -86,7 +86,7 @@
 
   this.get_container = function(view_id)
   {
-    return window.views[view_id] && window.views[view_id].get_container() || null; 
+    return window.views[view_id] && window.views[view_id].get_container() || null;
   };
 
   this.register_tabbar = function(id, tabs)
@@ -97,7 +97,7 @@
     }
     return this._tabbars[id];
   };
-  
+
   this.register_modebar = function(id, _class)
   {
     if (!this._modebars[id])
@@ -123,7 +123,7 @@
       this._overlays[id] = items;
     }
     return this._overlays[id];
-  };    
+  };
 
   this.show_view = function(id)
   {

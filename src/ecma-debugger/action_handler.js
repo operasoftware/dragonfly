@@ -169,7 +169,7 @@ window.eventHandlers.click['set-break-point'] = function(event)
   var target = event.target;
   var li = target.get_ancestor("li");
   if (li)
-  {  
+  {
     var input = li.querySelector("input");
     var line_number = input && Number(input.value);
     if (!line_number)

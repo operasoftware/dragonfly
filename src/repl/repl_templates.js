@@ -36,7 +36,7 @@ templates.repl_output_native_or_pobj = function(thing, severity)
 
 templates.repl_output_pobj = function(entry)
 {
-  var is_element_type = settings.command_line.get("is-element-type-sensitive") && 
+  var is_element_type = settings.command_line.get("is-element-type-sensitive") &&
                         /(?:Element)$/.test(entry.name)
   if (entry.model)
   {
@@ -50,7 +50,7 @@ templates.repl_output_pobj = function(entry)
       tmpl = window.templates[entry.model_template](entry.model, entry.model.show_root);
     }
     // The returned template is an innerHTML string.
-    // The render call can handle that if the innerHTML is passed 
+    // The render call can handle that if the innerHTML is passed
     // as a single field in an array.
     var ret = ['span', [tmpl], 'class', 'repl-inline-expandable'];
     if (entry.model instanceof cls.InspectableJSObject)
@@ -85,7 +85,7 @@ templates.repl_output_traceentry = function(frame_list)
         typeof frame.lineNumber == "number"  && !isNaN(frame.lineNumber))
     {
       entry.push(
-      ['span', 
+      ['span',
           (helpers.basename(uri) || '–') + ":" + (frame.lineNumber || '–'),
           'data-ref-id', "" + i,
           'data-script-id', String(frame.scriptID),

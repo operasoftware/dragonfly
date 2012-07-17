@@ -13,7 +13,7 @@ cls.ResourceDisplayBroker = function()
       if (line)
       {
         var data = {"lines":[line]}
-      }    
+      }
     if (window.services["resource-manager"] && window.views.resource_all)
     {
       var view = window.views.resource_all;

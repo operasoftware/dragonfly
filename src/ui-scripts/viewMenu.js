@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var ViewsMenu = function(menu_id)
@@ -25,7 +25,7 @@ var ViewsMenu = function(menu_id)
 
   var sortViewsWithIds = function(a, b)
   {
-    var 
+    var
       name_a = views[a].name
       name_b = views[b].name;
     return name_a > name_b && 1 || name_a < name_b && -1 || 0;
@@ -51,7 +51,7 @@ var ViewsMenu = function(menu_id)
 
   var menuTemplate = function(view_id_arr)
   {
-    var 
+    var
       ret = ['ul'],
       id = '',
       i = 0;
@@ -99,7 +99,7 @@ var ViewsMenu = function(menu_id)
     {
       topCell.tab.changeStyleProperty("padding-right", 188);
     }
-    
+
   }
 
   this.remove = function()

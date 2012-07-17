@@ -44,7 +44,7 @@ cls.JSInspectionTooltip = function()
   {
     if (!_cur_ctx)
       return;
-    
+
     switch (_cur_ctx.type.type)
     {
       case cls.PrettyPrinter.ELEMENT:
@@ -72,7 +72,7 @@ cls.JSInspectionTooltip = function()
         break;
     }
   };
-  
+
   var _ontooltipclick = function(event)
   {
     if (!_cur_ctx)
@@ -99,10 +99,10 @@ cls.JSInspectionTooltip = function()
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var model = inspections[model_id];
     var obj = model && model.get_object_with_id(obj_id);
-    
+
     if (obj && obj[OBJECT_VALUE])
     {
-      _cur_object = obj; 
+      _cur_object = obj;
       _pretty_printer.print({target: target,
                              rt_id: model.runtime_id,
                              obj_id: obj_id,
@@ -117,7 +117,7 @@ cls.JSInspectionTooltip = function()
       var class_name = target.get_ancestor_attr("data-class-name");
       if (rt_id && obj_id && class_name)
       {
-        _cur_object = {rt_id: rt_id, obj_id: obj_id, class_name: class_name}; 
+        _cur_object = {rt_id: rt_id, obj_id: obj_id, class_name: class_name};
         _pretty_printer.print({target: target,
                                rt_id: rt_id,
                                obj_id: obj_id,
@@ -130,7 +130,7 @@ cls.JSInspectionTooltip = function()
         var script_data = target.get_ancestor_attr("data-script-data");
         if (script_data && class_name)
         {
-          _cur_object = {script_data: script_data, class_name: class_name}; 
+          _cur_object = {script_data: script_data, class_name: class_name};
           _pretty_printer.print({target: target,
                                  script_data: script_data,
                                  class_name: class_name,
@@ -151,8 +151,8 @@ cls.JSInspectionTooltip = function()
         window.views.js_source)
     {
       window.views.js_source.show_script(_cur_ctx.script.script_id,
-                                         _cur_ctx.function_definition.start_line, 
-                                         _cur_ctx.function_definition.end_line); 
+                                         _cur_ctx.function_definition.start_line,
+                                         _cur_ctx.function_definition.end_line);
     }
   };
 

@@ -126,3 +126,27 @@ function ConfirmDialogPrototype()
 ConfirmDialogPrototype.prototype = new BaseDialog();
 ConfirmDialog.prototype = new ConfirmDialogPrototype();
 
+/**
+ * @constructor
+ */
+function AlertDialog(template, ok_callback) {
+  this._init(template, ok_callback || function() {});
+};
+
+function AlertDialogPrototype()
+{
+  this._init = function(template, ok_callback)
+  {
+    var buttons = [
+      {
+        label: ui_strings.S_BUTTON_OK,
+        handler: ok_callback,
+      }
+    ];
+    BaseDialog.prototype._init.call(this, template, buttons);
+  };
+};
+
+AlertDialogPrototype.prototype = new BaseDialog();
+AlertDialog.prototype = new AlertDialogPrototype();
+

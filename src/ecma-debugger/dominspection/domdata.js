@@ -113,7 +113,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
           {
             this._get_initial_view(this._data_runtime_id);
           }
-          else if (this._element_selected_state != CHECKED && 
+          else if (this._element_selected_state != CHECKED &&
                    this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
           {
             this._get_selected_element(this._data_runtime_id);
@@ -278,7 +278,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 
   this._on_active_tab = function(msg)
   {
-    if (!this._data_runtime_id || 
+    if (!this._data_runtime_id ||
         msg.activeTab.indexOf(this._data_runtime_id) == -1)
     {
       if (this._element_selected_state == CHECK_AGAIN_NO_RUNTIME)
@@ -299,7 +299,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
       }
     }
   }
-  
+
   this._on_top_runtime_update = function()
   {
     window['cst-selects']['document-select'].updateElement();
@@ -317,10 +317,10 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     var do_highlight = event.highlight === false ? false : true;
     this._get_dom_sub(rt_id, obj_id, do_highlight);
   }
-  
+
   this._get_dom_sub = function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
-    var cb = this._handle_get_dom.bind(this, rt_id, obj_id, 
+    var cb = this._handle_get_dom.bind(this, rt_id, obj_id,
                                        do_highlight, scroll_into_view);
     this._current_target = obj_id;
     this._data = [];
@@ -459,7 +459,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 
   /* implementation */
 
-  
+
   this.get_dom = (function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
     if (obj_id)

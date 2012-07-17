@@ -22,28 +22,28 @@ cls.InlineExpander = function(callback)
   this.expand = function(ctx)
   {
     ctx.is_inline_expanded = true;
-    
+
     var value_list = ctx.value_list;
     var obj_list = [];
     var cb = this._onexpand_object.bind(this, obj_list, ctx);
     ctx.inline_expand_callback = cb;
- 
+
     // split JS and DOM objects
     for (var i = 0, value, object; value = value_list[i]; i++)
     {
       if ((object = value[OBJECT_VALUE]) &&
           (!object[FRIENDLY_PRINTED] || object[FRIENDLY_PRINTED][IS_EXPANDABLE]))
       {
-        if (!ctx.is_dir && (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]) || 
+        if (!ctx.is_dir && (RE_DOM_OBJECT.test(value[OBJECT_VALUE][CLASS_NAME]) ||
                             ctx.traversal))
         {
-          object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id, 
+          object[INLINE_MODEL] = new cls.InspectableDOMNode(ctx.rt_id,
                                                             object[OBJECT_ID],
                                                             true);
           object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_DOM;
           obj_list.push(object[INLINE_MODEL]);
           object[INLINE_MODEL].expand(cb,
-                                      object[OBJECT_ID], 
+                                      object[OBJECT_ID],
                                       ctx.traversal || "node");
         }
         else
@@ -66,7 +66,7 @@ cls.InlineExpander = function(callback)
     {
       prop_name = this._friendly_printer.friendly_string(object[FRIENDLY_PRINTED]);
     }
-    object[INLINE_MODEL] = new cls.InspectableJSObject(ctx.rt_id, 
+    object[INLINE_MODEL] = new cls.InspectableJSObject(ctx.rt_id,
                                                        object[OBJECT_ID],
                                                        prop_name);
     object[INLINE_MODEL_TMPL] = INLINE_MODEL_TMPL_JS;
@@ -100,7 +100,7 @@ cls.InlineExpander = function(callback)
   };
 
   this._model_has_data = function(model)
-  { 
+  {
     return model.has_data();
   };
 
