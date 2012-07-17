@@ -10,14 +10,14 @@ cls.JSSearchView = function(id, name, container_class)
 
   /* constants */
 
-  const 
+  const
   JS_SOURCE_ID = 'js_source',
   ALL_FILES = 1,
   SINGLE_FILE = 0,
   SEARCHFIELD = 0,
   MOVE_HIGHLIGHT_UP = 1,
   MOVE_HIGHLIGHT_DOWN = 2,
-  HANDLER = 'show-script'; 
+  HANDLER = 'show-script';
 
   this.createView = function(container)
   {
@@ -43,7 +43,7 @@ cls.JSSearchView = function(id, name, container_class)
   };
 
   ActionHandlerInterface.apply(this);
-  
+
   this.focus = function(event, container)
   {
     setTimeout(this._focus_input, 50);
@@ -54,7 +54,7 @@ cls.JSSearchView = function(id, name, container_class)
     if (this._input)
     {
       this._input.selectionStart = 0;
-      this._input.selectionEnd = this._input.value.length; 
+      this._input.selectionEnd = this._input.value.length;
       this._input.focus();
     }
   }.bind(this);
@@ -76,7 +76,7 @@ cls.JSSearchView = function(id, name, container_class)
     this._search.show_script_of_search_match(event, target);
     return false;
   }.bind(this);
-  
+
   this._onsearchtypechange = function(event)
   {
     switch (event.target.name)
@@ -180,18 +180,18 @@ cls.JSSearchView = function(id, name, container_class)
       });
       this.__defineSetter__(prop, function(){});
     }, this);
-    
+
     this._onscriptselected_bound = this._onscriptselected.bind(this);
-    window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+    window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] =
       this._handlers['highlight-next-match'];
-    window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+    window.eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] =
       this._handlers['highlight-previous-match'];
-    window.eventHandlers.change['js-search-type-changed'] = 
+    window.eventHandlers.change['js-search-type-changed'] =
       this._onsearchtypechange;
     var action_broker = ActionBroker.get_instance();
     action_broker.register_handler(this);
     action_broker.get_global_handler()
-    .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
+    .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts,
                                 this.handle.bind(this));
     action_broker.get_global_handler().register_search_panel(this.id);
     messages.addListener('script-selected', this._onscriptselected.bind(this));

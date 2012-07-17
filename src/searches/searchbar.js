@@ -59,7 +59,7 @@ var SearchbarBase = function()
     }
     this.update(force_redraw);
   };
-  
+
   // TODO common with toolbar  toolbar
 
   this.__defineGetter__("offsetHeight", function()
@@ -70,14 +70,14 @@ var SearchbarBase = function()
     }
     return this.__is_visible ? this._offset_height : 0;
   });
-  
+
   this.__defineSetter__("offsetHeight", function(offset_height)
   {
     this._offset_height = offset_height;
   });
-  
 
-  
+
+
   this.setVisibility = function(is_visible)
   {
     this.__is_visible = is_visible;
@@ -99,7 +99,7 @@ var SearchbarBase = function()
 
   // end common with toolbar  toolbar
 
- 
+
   this.init = function()
   {
     this.initBase();

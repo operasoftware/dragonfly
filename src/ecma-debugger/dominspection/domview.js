@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends DOM_markup_style
   */
 
@@ -18,9 +18,9 @@ cls.DOMView = function(id, name, container_class)
     if (dom_data.has_data())
     {
       var model = window.dominspections.active;
-      var scrollTop = container.scrollTop;      
-      container.clearAndRender(window.templates.inspected_dom_node(window.dom_data, 
-                                                                   model && model.target, 
+      var scrollTop = container.scrollTop;
+      container.clearAndRender(window.templates.inspected_dom_node(window.dom_data,
+                                                                   model && model.target,
                                                                    true));
       container.firstElementChild.addEventListener('mouseleave',
                                                    this._clear_soft_spotlight,
@@ -37,7 +37,7 @@ cls.DOMView = function(id, name, container_class)
         }
         if (this._modebar)
         {
-          this._modebar.set_content(model.id, 
+          this._modebar.set_content(model.id,
                                     window.templates.breadcrumb(model, model.target),
                                     true);
         }
@@ -72,7 +72,7 @@ cls.DOMView = function(id, name, container_class)
   {
     if(!dom_data.getDataRuntimeId())
     {
-      container.innerHTML = 
+      container.innerHTML =
         "<div class='padding'><div class='info-box'>" +
           ui_strings.S_INFO_WINDOW_HAS_NO_RUNTIME +
         "</div></div>";
@@ -98,10 +98,10 @@ cls.DOMView = function(id, name, container_class)
       var node = container.querySelector('[ref-id="' + hit.object_id + '"]');
       if (node)
       {
-        this._search_hit = this._highlighter.set_hit(node, 
-                                                     hit.offset, 
-                                                     hit.length, 
-                                                     TextSearch.HIGHLIGHT_STYLE, 
+        this._search_hit = this._highlighter.set_hit(node,
+                                                     hit.offset,
+                                                     hit.length,
+                                                     TextSearch.HIGHLIGHT_STYLE,
                                                      true);
       }
     }
@@ -173,18 +173,18 @@ cls.DocumentSelect = function(id)
 
   this.templateOptionList = function(select_obj)
   {
-    
+
     // TODO this is a relict of protocol 3, needs cleanup
     var active_window_id = runtimes.getActiveWindowId();
 
     if( active_window_id )
     {
-      var 
+      var
       _runtimes = runtimes.getRuntimes(active_window_id),
-      rt = null, 
+      rt = null,
       i = 0;
 
-      // remove the extension runtimes from the document 
+      // remove the extension runtimes from the document
       // selector dropdown in the DOM view
       _runtimes = _runtimes.filter(function(runtime)
       {
@@ -198,7 +198,7 @@ cls.DocumentSelect = function(id)
       }
       return _runtimes.map(templates.runtime_dom, templates);
     }
-    
+
   }
 
   this.checkChange = function(target_ele)
@@ -246,15 +246,15 @@ cls.DOMView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'dom', 
+    'dom',
     // kel-value map
     {
 
       'find-with-click': true,
       'highlight-on-hover': true,
       'update-on-dom-node-inserted': false,
-      'force-lowercase': true, 
-      'show-comments': true, 
+      'force-lowercase': true,
+      'show-comments': true,
       'show-whitespace-nodes': true,
       'dom-tree-style': false,
       'show-siblings-in-breadcrumb': false,
@@ -266,15 +266,15 @@ cls.DOMView.create_ui_widgets = function()
       'dom-search-ignore-case': 1,
       'dom-search-only-selected-node': 0,
       'show-pseudo-elements': true
-    }, 
+    },
     // key-label map
     {
       'find-with-click': ui_strings.S_SWITCH_FIND_ELEMENT_BY_CLICKING,
       // TODO change to highlight
       'highlight-on-hover': ui_strings.S_SWITCH_HIGHLIGHT_SELECTED_OR_HOVERED_ELEMENT,
       'update-on-dom-node-inserted': ui_strings.S_SWITCH_UPDATE_DOM_ON_NODE_REMOVE,
-      'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES, 
-      'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES, 
+      'force-lowercase': ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES,
+      'show-comments': ui_strings.S_SWITCH_SHOW_COMMENT_NODES,
       'show-whitespace-nodes': ui_strings.S_SWITCH_SHOW_WHITE_SPACE_NODES,
       'dom-tree-style': ui_strings.S_SWITCH_SHOW_DOM_INTREE_VIEW,
       'show-siblings-in-breadcrumb': ui_strings.S_SWITCH_SHOW_SIBLINGS_IN_BREAD_CRUMB,
@@ -344,8 +344,8 @@ cls.DOMView.create_ui_widgets = function()
         handler: 'dom-inspection-export',
         title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
       }
-    ], 
-    null, 
+    ],
+    null,
     null,
     [
       {

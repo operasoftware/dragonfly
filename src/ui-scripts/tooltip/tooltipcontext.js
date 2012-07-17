@@ -16,7 +16,7 @@ TooltipContext.prototype = new function()
   const DISTANCE_Y = -3;
   const MARGIN_Y = 15;
   const MARGIN_X = 30;
-   
+
   this.set_hide_timeout = function()
   {
     this.clear_hide_timeout();
@@ -76,7 +76,7 @@ TooltipContext.prototype = new function()
       this._push_last_handler_ele();
       this.last_handler_ele.addClass(Tooltips.CSS_TOOLTIP_SELECTED);
     }
-  }; 
+  };
 
   this.handle_mouse_enter = function(event)
   {
@@ -131,7 +131,7 @@ TooltipContext.prototype = new function()
     this.hide_tooltip = this.hide_tooltip.bind(this);
     var tmpl = ["div", "class", "tooltip-container"];
     this.tooltip_ele = (document.body || document.documentElement).render(tmpl);
-    this.tooltip_ele.addEventListener("click", 
+    this.tooltip_ele.addEventListener("click",
                                       this._ontooltipclick.bind(this),
                                       false);
   }

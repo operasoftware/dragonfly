@@ -10,7 +10,7 @@ var JSMultifileSearchPrototype = function()
   this._highlight_next = TextSearch.prototype.highlight_next;
   this._highlight_previous = TextSearch.prototype.highlight_previous;
 
-  const 
+  const
   JS_SOURCE_ID = 'js_source',
   ALL_FILES = 1,
   SINGLE_FILE = 0,
@@ -137,7 +137,7 @@ var JSMultifileSearchPrototype = function()
   };
 
   this._is_live_rt = function(rt_id)
-  { 
+  {
     return this._rt_ids && this._rt_ids.contains(rt_id);
   };
 
@@ -149,8 +149,8 @@ var JSMultifileSearchPrototype = function()
         this.search_injected_scripts != this._last_search_injected_scripts ||
         this.search_all_files != this._last_search_all_files ||
         !this._search_rt_ids.every(this._is_live_rt, this) ||
-        (this.search_all_files == this._last_search_all_files && this.search_all_files 
-         ? false 
+        (this.search_all_files == this._last_search_all_files && this.search_all_files
+         ? false
          : this._last_selected_script != this._last_script))
     {
       this._last_query = this._input.value;
@@ -164,8 +164,8 @@ var JSMultifileSearchPrototype = function()
       this.searchresults = {};
       this._search_rt_ids = [];
       this.reset_match_cursor();
-      
-      var tmpl = ['div', ui_strings.S_INFO_IS_SEARCHING, 
+
+      var tmpl = ['div', ui_strings.S_INFO_IS_SEARCHING,
                          'class', 'info-is-searching'];
       this._container.firstElementChild.clearAndRender(tmpl);
       if (this._last_query)
@@ -193,7 +193,7 @@ var JSMultifileSearchPrototype = function()
                       !this._is_injected_script(script))
                   {
                     script.search_source(this._last_query,
-                                         this.ignore_case, 
+                                         this.ignore_case,
                                          this.search_type == TextSearch.REGEXP);
                     return script.line_matches.length;
                   }
@@ -207,13 +207,13 @@ var JSMultifileSearchPrototype = function()
               }, this);
             }
           }
-          else 
+          else
           {
             if (this._last_selected_script)
             {
               this._script = this._last_selected_script;
               this._script.search_source(this._last_query,
-                                         this.ignore_case, 
+                                         this.ignore_case,
                                          this.search_type == TextSearch.REGEXP);
               this._search_rt_ids.push(this._script.runtime_id);
             }
@@ -243,7 +243,7 @@ var JSMultifileSearchPrototype = function()
         });
       }, this);
     }
-    else 
+    else
     {
       if (this._script)
       {
@@ -322,7 +322,7 @@ var JSMultifileSearchPrototype = function()
   };
 
   this.update_search = function()
-  {    
+  {
     this._validate_current_search();
   };
 
@@ -401,9 +401,9 @@ var JSMultifileSearchPrototype = function()
 
         while (line_ele && typeof match_length == 'number' && match_length > 0)
         {
-          this._source_file_hits.push(this.set_hit(line_ele, 
+          this._source_file_hits.push(this.set_hit(line_ele,
                                                    offset,
-                                                   match_length, 
+                                                   match_length,
                                                    TextSearch.HIGHLIGHT_STYLE,
                                                    false,
                                                    ".error-description"));
@@ -422,7 +422,7 @@ var JSMultifileSearchPrototype = function()
           scroll_container.scrollLeft = 0;
           if (target.offsetLeft + target.offsetWidth > scroll_container.offsetWidth)
           {
-            scroll_container.scrollLeft = target.offsetLeft - 
+            scroll_container.scrollLeft = target.offsetLeft -
                                           scroll_container.offsetWidth +
                                           target.offsetWidth + 100;
           }
@@ -434,14 +434,14 @@ var JSMultifileSearchPrototype = function()
       }
     }
   };
-  
+
   this.reset_match_cursor = function()
   {
     this._match_cursor = -1;
     this._hits = [];
     this._hit = null;
   };
-  
+
 
 
   this.get_match_cursor = function()

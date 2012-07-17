@@ -20,7 +20,7 @@ Array.prototype.sum = function(selectorfun)
 Array.prototype.unique = function()
 {
   return this.reduce(function(list, e)
-  { 
+  {
     if (list.indexOf(e) == -1)
       list.push(e);
 

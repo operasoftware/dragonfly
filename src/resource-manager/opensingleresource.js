@@ -5,7 +5,7 @@ cls.OpenSingleResource = function(resource_manager, url, data)
   this._resman = resource_manager;
   this._url = url;
   this._data = data;
-  
+
   if (!this._tagman)
   {
     this._init_prototype();
@@ -68,9 +68,9 @@ cls.OpenSingleResource.prototype = new function()
       this._res.update("urlfinished", new this._ResourceData(message));
       var resptype = this._utils.mime_to_content_mode(this._res.mime);
       var tag = this._tagman.set_callback(this, this._on_resource);
-      var msg = 
+      var msg =
       [
-        this._rid, 
+        this._rid,
         [
           resptype == "datauri" ? TRANSPORT_DATA_URI : TRANSPORT_STRING,
           DECODE_TRUE,
@@ -107,4 +107,4 @@ cls.OpenSingleResource.prototype = new function()
     this._utils = cls.ResourceUtil;
   }.bind(this);
 
-}; 
+};

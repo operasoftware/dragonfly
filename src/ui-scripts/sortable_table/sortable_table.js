@@ -417,7 +417,7 @@ templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sor
                 "class", "sortable-table" + (tabledef.nowrap ? " nowrap" : ""),
                 "data-table-object-id", objectid,
                ]
-               
+
   if (!tabledef.options || !tabledef.options.no_default_menu)
   {
     table.push("data-menu", "sortable-table-menu");
@@ -455,7 +455,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
             {
               tdclass += " "+coldef.classname;
             }
-            var headerlabel = tabledef.columns[c].headerlabel !== undefined ? 
+            var headerlabel = tabledef.columns[c].headerlabel !== undefined ?
                               tabledef.columns[c].headerlabel : tabledef.columns[c].label;
             headerlabel = templates.sortable_table_wrap_ellipsis(headerlabel, coldef.headertooltip);
             return ["th", headerlabel,

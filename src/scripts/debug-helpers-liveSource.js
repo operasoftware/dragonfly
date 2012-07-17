@@ -3,7 +3,7 @@ window.debug_helpers || ( window.debug_helpers = {} );
 
 debug_helpers.liveSource = new function()
 {
-  var ___settingsLiveSource =  
+  var ___settingsLiveSource =
   {
     lines: 1,
     lineNumbers: 1,
@@ -42,7 +42,7 @@ debug_helpers.liveSource = new function()
   var getDoctype=function()
   {
 		var doctype=document.doctype, code='';
-		if(doctype) 
+		if(doctype)
     {
       code=lineHead()+openTagNameHead('!DOCTYPE')+" <span class='attrDoc'>"+doctype.nodeName+
 			(doctype.publicId?' PUBLIC "'+doctype.publicId+'"':'')+
@@ -57,7 +57,7 @@ debug_helpers.liveSource = new function()
     for( ; attr=attrs[i]; i++)
     {
       realAttr=ele.getAttribute(attr.name);
-      if(realAttr && 
+      if(realAttr &&
         !(ele.nodeName.toLowerCase()=='a' && attr.name=='SHAPE' && realAttr=='rect'))
       {
         realAttr=realAttr.replace(/</g,'&lt;').replace(/</g,'&lt;').replace(/\t/g, tab);
@@ -132,12 +132,12 @@ debug_helpers.liveSource = new function()
         {
           ret+=lineHead()+indent+closeTagName(ele.nodeName, xmlemptyTag)+'</span></li>';
         }
-        return ret; 
+        return ret;
       }
 
       case 3:
-      {        
-        if((text=getTextNodeData(ele)) && singleText) 
+      {
+        if((text=getTextNodeData(ele)) && singleText)
         {
           return lineHead()+indent+text+'</span></li>';
         }

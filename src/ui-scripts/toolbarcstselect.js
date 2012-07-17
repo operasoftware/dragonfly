@@ -8,7 +8,7 @@
   this.id = view_id;
   this.class_name = class_name;
   this._settings_arr = (settings_arr || []).map(this._add_view_to_key);
-  
+
   // base init params: id, class_name, type, handler
   this.base_init = this.init;
   this.init = function()

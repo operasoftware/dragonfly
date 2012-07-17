@@ -58,7 +58,7 @@ window.cls.ListUnpacker = function(callback)
       return 0;
     }).join(',');
   };
-  
+
   this._xpathresult2array = function(result)
   {
     for (var i = 0, ret = []; i < result.snapshotLength; i++)
@@ -91,8 +91,8 @@ window.cls.ListUnpacker = function(callback)
             xpathresults[i] = false;
             tag = this._tagman.set_callback(this, this._handle_xpathresult,
                                             [ctx, obj_ids, log, i, xpathresults]);
-            msg = [ctx.rt_id, 0, 0, 
-                   this._xpathresult2array_to_string, 
+            msg = [ctx.rt_id, 0, 0,
+                   this._xpathresult2array_to_string,
                    [["xpathresult", obj_ids[i]]]];
             this._edservice.requestEval(tag, msg);
           }
@@ -108,7 +108,7 @@ window.cls.ListUnpacker = function(callback)
       }
     }
   }
-  
+
   this._handle_xpathresult = function(status, msg,
                                       ctx, obj_ids, log, index, xpathresults)
   {
@@ -132,7 +132,7 @@ window.cls.ListUnpacker = function(callback)
       }
     }
   }
-  
+
   this._examine_list_alikes = function(ctx, obj_ids, log)
   {
     var unpack = log.reduce(function(list, entry, index)
@@ -143,11 +143,11 @@ window.cls.ListUnpacker = function(callback)
       }
       return list;
     }, []);
-    var tag = this._tagman.set_callback(this, 
+    var tag = this._tagman.set_callback(this,
                                         this._handle_unpacked_list,
                                         [ctx, log]);
     this._edservice.requestExamineObjects(tag, [ctx.rt_id, unpack]);
-  
+
   }
 
   this._handle_unpacked_list = function(status, msg, ctx, log)
@@ -236,7 +236,7 @@ window.cls.ListUnpacker = function(callback)
     this._edservice = window.services["ecmascript-debugger"];
     this._is_list_alike_to_string =
       "(" + this._is_list_alike.toString() + ")([%s])";
-    this._xpathresult2array_to_string = 
+    this._xpathresult2array_to_string =
       "(" + this._xpathresult2array.toString() + ")(xpathresult)";
   };
 

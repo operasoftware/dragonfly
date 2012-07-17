@@ -204,14 +204,14 @@ else
     this.addClass = function(cl)
     {
       if (!has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , (cln ? cln + " " : "") + cl); 
+        this.setAttribute("class" , (cln ? cln + " " : "") + cl);
       return this;
     };
 
     this.removeClass = function(cl)
     {
       if (has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , cln.replace(re, "").trim()); 
+        this.setAttribute("class" , cln.replace(re, "").trim());
       return this;
     };
   }).apply(Element.prototype);

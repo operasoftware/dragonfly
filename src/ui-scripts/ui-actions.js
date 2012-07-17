@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
@@ -18,8 +18,8 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
     return;
   }
 
-  window.eventHandlers[type] = {broker: window.ActionBroker && 
-                                        window.ActionBroker.get_instance() || 
+  window.eventHandlers[type] = {broker: window.ActionBroker &&
+                                        window.ActionBroker.get_instance() ||
                                         null};
 
   var handler = function(event)
@@ -50,7 +50,7 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
       {
         if (type == 'click' && /toolbar-buttons/i.test(ele.parentNode.nodeName))
         {
-          container = 
+          container =
             document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
         }
         eventHandlers[type][handler](event, ele, container);
@@ -98,7 +98,7 @@ eventHandlers.mousedown['tab'] = function(event, target)
   }
   else
   {
-    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+    opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
       "tabs is missing in eventHandlers.click['tab'] in ui-actions");
   }
 }
@@ -166,7 +166,7 @@ eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   horizontal_nav.drag_breadcrumb(event, target);
-  
+
 };
 
 eventHandlers.click['settings-tabs'] = function(event, target)

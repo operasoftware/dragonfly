@@ -41,7 +41,7 @@ cls.ResourceDetailBase = function()
         for (var pos = 0, len = value.length; pos < len; pos++)
         {
           var c = value.charAt(pos);
-          // Linefeed recognition will not support Acorn BBC spooled text output 
+          // Linefeed recognition will not support Acorn BBC spooled text output
           if ((c == CR ) || (c == LF))
           {
             this._line_count++;
@@ -63,11 +63,11 @@ cls.ResourceDetailBase = function()
                 var delta = this._tops[1] - this._tops[0];
                 var scroll_top = scroll_container.scrollTop;
                 ele.addClass(HIGHLIGHTED_LINE_CLASSNAME);
-                ele.style.cssText = 
+                ele.style.cssText =
                   "background-size: 100% " + delta + "px;" +
-                  "background-position: 0 " + 
+                  "background-position: 0 " +
                     (this._tops[0] - container_top + scroll_top) + "px;";
-                
+
                 var scroll_position = scroll_top + this._tops[0] - container_top;
                 if (scroll_position <= this._root_ele.parentNode.clientHeight)
                 {
@@ -301,9 +301,9 @@ cls.ResourceDetailSearchPrototype = function()
       return false;
     }.bind(this);
     broker.register_handler(this);
-    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] =
       this._handlers['highlight-next-match'];
-    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] =
       this._handlers['highlight-previous-match'];
     eventHandlers.input[this.controls[SEARCHFIELD].handler] =
       this._oninput.bind(this);
