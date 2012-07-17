@@ -362,7 +362,7 @@
     {
     case TYPE_UNDEFINED:
     case TYPE_NULL:
-      if (type.contains(search_term))
+      if (type.toLowerCase().contains(search_term))
       {
         value_template.push(
           ["item",
@@ -381,7 +381,7 @@
     case TYPE_PLUS_INFINITY:
     case TYPE_MINUS_INFINITY:
       value = names[retval.value.type];
-      if (value.contains(search_term))
+      if (value.toLowerCase().contains(search_term))
       {
         value_template.push(
           ["item",
@@ -396,7 +396,7 @@
 
     case TYPE_NUMBER:
       value = String(retval.value.number);
-      if (value.contains(search_term))
+      if (value.toLowerCase().contains(search_term))
       {
         value_template.push(
           ["item",
@@ -411,7 +411,7 @@
 
     case TYPE_STRING:
       value = retval.value.str;
-      if (value.contains(search_term))
+      if (value.toLowerCase().contains(search_term))
       {
         var short_value = value.length > STRING_MAX_VALUE_LENGTH
                         ? value.slice(0, STRING_MAX_VALUE_LENGTH) + "…"
