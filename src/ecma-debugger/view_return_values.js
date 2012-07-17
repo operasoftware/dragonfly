@@ -9,6 +9,9 @@ cls.ReturnValuesView = function(id, name, container_class)
   this.createView = function(container)
   {
     this._container = container;
+    this._text_search.setContainer(this._container);
+    this._text_search.setFormInput(window.views[this.id].getToolbarControl(this._container,
+                                                                           "return-values-text-search"));
     if (this._create_view_bound)
     {
       this._create_view_bound();
@@ -44,9 +47,6 @@ cls.ReturnValuesView = function(id, name, container_class)
 
   this._create_view = function(return_values)
   {
-    this._text_search.setContainer(this._container);
-    this._text_search.setFormInput(window.views[this.id].getToolbarControl(this._container,
-                                                                           "return-values-text-search"));
     this._container.clearAndRender(templates.return_values(return_values, this._search_term));
   };
 
