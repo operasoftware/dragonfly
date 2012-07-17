@@ -129,7 +129,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       // padding box; fill, frame, grid
       [104, 0, 0],
       // border box; fill, frame, grid
-      [255, 0, 128],
+      [208, 0, 128],
       // margin box; fill, frame, grid
       [156, 0, 0],
     ],
@@ -140,7 +140,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       // padding box; fill, frame, grid
       [52, 0, 0],
       // border box; fill, frame, grid
-      [128, 0, 64],
+      [104, 0, 64],
       // margin box; fill, frame, grid
       [76, 0, 0],
     ],

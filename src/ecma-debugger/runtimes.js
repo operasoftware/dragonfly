@@ -184,6 +184,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       __selected_runtime_id = '';
       __next_runtime_id_to_select = '';
       __selected_script = '';
+      current_threads = {};
       updateRuntimeViews();
     }
   };

@@ -38,6 +38,12 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     use_reformat_condition: 7,
   }
 
+  var requires_version_map =
+  {
+    "6": [6, 13],
+    "7": [6, 13],
+  };
+
   var reformat_condition =
   [
     "var MAX_SLICE = 5000;",
@@ -105,6 +111,10 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     for (var prop in stop_at_settings)
     {
       var index = stop_at_id_map[prop];
+      var depending = requires_version_map[index];
+      if (depending && !ecma_debugger.satisfies_version.apply(ecma_debugger, depending))
+        continue;
+
       if (prop == "script")
         config_arr[index] = 1;
       else if (prop == "use_reformat_condition")
@@ -544,9 +554,29 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       self.__continue('run');
     }
 
-  }
+  };
+
+  this._on_profile_disabled = function(msg)
+  {
+    if (msg.profile == window.app.profiles.DEFAULT)
+    {
+      this._clear_stop_at_error();
+      callstack = [];
+      __script_ids_in_callstack = [];
+      window.views.js_source.clearLinePointer();
+      window.views.callstack.clearView();
+      window.views.inspection.clearView();
+      window.messages.post('frame-selected', {frame_index: -1});
+      window.messages.post('thread-continue-event', {stop_at: stopAt});
+      __controls_enabled = false;
+      __is_stopped = false;
+      window.toolbars.js_source.disableButtons('continue');
+      window.messages.post('host-state', {state: 'ready'});
+    }
+  };
 
   messages.addListener('runtime-destroyed', onRuntimeDestroyed);
+  messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
 
   var onActiveInspectionType = function(msg)
   {

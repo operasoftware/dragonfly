@@ -207,7 +207,7 @@ var DOMMarkupEditor = function()
 
   var encode = function(str)
   {
-    return helpers.escape_input(str).replace(/\r\n/g, "\\n");
+    return helpers.escape_input(str.replace(/\r\n/g, "\n"));
   };
 
   // class on the host side to update the given DOM range
