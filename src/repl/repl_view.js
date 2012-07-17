@@ -346,7 +346,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_input = function(str)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + 
+      this._add_line('<span class="repl-line-marker">' +
                        (index ? "... " : "&gt;&gt;&gt; ") +
                      "</span>" + line);
     }, this);
@@ -455,7 +455,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._construct_line = function(pre, prop, post, is_partial_completion)
   {
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if (!is_partial_completion && 
+    if (!is_partial_completion &&
         !JSSyntax.is_valid_identifier(prop) &&
         this._autocompletion_scope)
     {
@@ -521,6 +521,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
+    if (!(this._linelist && this._textarea))
+      return;
+
     if (props)
     {
       var localpart = props.identifier;
@@ -714,7 +717,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._on_profile_disabled_bound = function(msg)
   {
     if (msg.profile == window.app.profiles.DEFAULT)
+    {
       this.ondestroy();
+      this._toolbar_visibility = false;
+      topCell.setTooolbarVisibility("command_line", false);
+    }
   }.bind(this);
 
   this["_handle_action_clear"] = function(evt, target)
@@ -910,7 +917,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   /**
    * action click
    */
-  this.onclick = function(event) 
+  this.onclick = function(event)
   {
     if (!this._container)
       return;
@@ -1046,14 +1053,14 @@ cls.ReplView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
-  var default_menu = 
+  var default_menu =
   [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
         broker.dispatch_action("command_line", "clear");
       }
-    }, 
+    },
   ];
   var with_close_option = default_menu.slice(0);
   with_close_option.push(
@@ -1064,7 +1071,7 @@ cls.ReplView.create_ui_widgets = function()
     }
   });
 
-  contextmenu.register("command_line", 
+  contextmenu.register("command_line",
   [
     {
       callback: function(event, target)

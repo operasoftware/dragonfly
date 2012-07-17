@@ -69,7 +69,8 @@ var Overlay = function()
 
   this.set_info_content = function(template)
   {
-    this.info_element.clearAndRender(template);
+    if (this.info_element)
+      this.info_element.clearAndRender(template);
   };
 };
 
