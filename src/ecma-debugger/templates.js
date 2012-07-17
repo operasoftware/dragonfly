@@ -459,10 +459,14 @@
     }
 
     var object = retval.functionFrom;
-    var func_model = new cls.InspectableJSObject(rt_id,
-                                                 object.objectID,
-                                                 object.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
-                                                 object.className);
+    var func_model = window.inspections.get_object(rt_id, object.objectID);
+    if (!func_model)
+    {
+      func_model = new cls.InspectableJSObject(rt_id,
+                                               object.objectID,
+                                               object.functionName || ui_strings.S_ANONYMOUS_FUNCTION_NAME,
+                                               object.className);
+    }
     var func_search_term = value_template.length ? null : search_term;
     var func = window.templates.inspected_js_object(func_model, true, null, func_search_term);
 

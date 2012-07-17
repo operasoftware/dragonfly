@@ -91,7 +91,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this.id = this._get_id();
     if (!window.inspections)
     {
-      new cls.Namespace("inspections");
+      window.inspections = new cls.Inspections();
     }
     window.inspections.add(this);
     this._obj_map =
@@ -931,3 +931,45 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   };
 
 }).apply(cls.EcmascriptDebugger["6.0"].InspectableJSObject);
+
+cls.Inspections = function()
+{
+  this.init();
+};
+
+cls.InspectionsPrototype = function()
+{
+  this.add = function(obj)
+  {
+    this.objects.push(obj);
+    var name = obj.id || obj.name;
+    if (name)
+      this[name] = obj;
+    else
+      throw "The object must have and id or a name";
+  };
+
+  /**
+   * While this is guaranteed to return the correct object, there's no
+   * guarantee that the correct model is returned. In other words, don't
+   * rely in this for things that are dependent on the state, e.g. the
+   * expanded state.
+   */
+  this.get_object = function(rt_id, obj_id)
+  {
+    for (var i = 0, object; object = this.objects[i]; i++)
+    {
+      if (object.runtime_id === rt_id && object.object_id === obj_id)
+        return object;
+    }
+    return null;
+  };
+
+  this.init = function()
+  {
+    this.objects = [];
+  };
+};
+
+cls.Inspections.prototype = new cls.InspectionsPrototype();
+
