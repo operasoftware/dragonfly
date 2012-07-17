@@ -37,7 +37,7 @@ cls.ReturnValuesView = function(id, name, container_class)
     }
     else
     {
-      this._create_view_bound = null;
+      this._remove_bound_view();
       container.clearAndRender(this._return_values_no_content());
     }
   };
@@ -45,6 +45,11 @@ cls.ReturnValuesView = function(id, name, container_class)
   this._create_view = function(return_values)
   {
     this._container.clearAndRender(templates.return_values(return_values, this._search_term));
+  };
+
+  this._remove_bound_view = function()
+  {
+    this._create_view_bound = null;
   };
 
   this._return_values_no_content = function()
@@ -94,6 +99,7 @@ cls.ReturnValuesView = function(id, name, container_class)
 
     window.messages.addListener("view-created", this._on_view_created.bind(this));
     window.messages.addListener("view-destroyed", this._on_view_destroyed.bind(this));
+    window.messages.addListener("thread-continue-event", this._remove_bound_view.bind(this));
 
     window.event_handlers.input["return-values-text-search"] = function(event, target)
     {
