@@ -941,7 +941,7 @@ cls.InspectionsPrototype = function()
 {
   this.add = function(obj)
   {
-    this.objects.push(obj);
+    this._objects.push(obj);
     var name = obj.id || obj.name;
     if (name)
       this[name] = obj;
@@ -957,7 +957,7 @@ cls.InspectionsPrototype = function()
    */
   this.get_object = function(obj_id)
   {
-    for (var i = 0, object; object = this.objects[i]; i++)
+    for (var i = 0, object; object = this._objects[i]; i++)
     {
       if (object.object_id === obj_id)
         return object;
@@ -967,7 +967,7 @@ cls.InspectionsPrototype = function()
 
   this.init = function()
   {
-    this.objects = [];
+    this._objects = [];
   };
 };
 
