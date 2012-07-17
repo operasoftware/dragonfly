@@ -955,11 +955,11 @@ cls.InspectionsPrototype = function()
    * rely in this for things that are dependent on the state, e.g. the
    * expanded state.
    */
-  this.get_object = function(rt_id, obj_id)
+  this.get_object = function(obj_id)
   {
     for (var i = 0, object; object = this.objects[i]; i++)
     {
-      if (object.runtime_id === rt_id && object.object_id === obj_id)
+      if (object.object_id === obj_id)
         return object;
     }
     return null;

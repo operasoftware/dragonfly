@@ -459,7 +459,7 @@
     }
 
     var object = retval.functionFrom;
-    var func_model = window.inspections.get_object(rt_id, object.objectID);
+    var func_model = window.inspections.get_object(object.objectID);
     if (!func_model)
     {
       func_model = new cls.InspectableJSObject(rt_id,
