@@ -44,7 +44,15 @@ cls.ReturnValuesView = function(id, name, container_class)
 
   this._create_view = function(return_values)
   {
+    this._text_search.setContainer(this._container);
+    this._text_search.setFormInput(window.views[this.id].getToolbarControl(this._container,
+                                                                           "return-values-text-search"));
     this._container.clearAndRender(templates.return_values(return_values, this._search_term));
+  };
+
+  this.ondestroy = function()
+  {
+    this._text_search.cleanup();
   };
 
   this._remove_bound_view = function()
@@ -71,22 +79,6 @@ cls.ReturnValuesView = function(id, name, container_class)
     }
   };
 
-  this._on_view_created = function(msg)
-  {
-    if (msg.id == "return-values")
-    {
-      this._text_search.setContainer(msg.container);
-      this._text_search.setFormInput(window.views[this.id].getToolbarControl(msg.container,
-                                                                             "return-values-text-search"));
-    }
-  };
-
-  this._on_view_destroyed = function(msg)
-  {
-    if (msg.id == "return-values")
-      this._text_search.cleanup();
-  };
-
   this._init = function(id, name, container_class)
   {
     View.prototype.init.call(this, id, name, container_class);
@@ -97,8 +89,6 @@ cls.ReturnValuesView = function(id, name, container_class)
     this._text_search = new TextSearch(1);
     this._text_search.add_listener("onbeforesearch", this._onbeforesearch.bind(this));
 
-    window.messages.addListener("view-created", this._on_view_created.bind(this));
-    window.messages.addListener("view-destroyed", this._on_view_destroyed.bind(this));
     window.messages.addListener("thread-continue-event", this._remove_bound_view.bind(this));
 
     window.event_handlers.input["return-values-text-search"] = function(event, target)

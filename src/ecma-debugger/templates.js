@@ -380,7 +380,10 @@
     case TYPE_NAN:
     case TYPE_PLUS_INFINITY:
     case TYPE_MINUS_INFINITY:
-      value = names[retval.value.type];
+    case TYPE_NUMBER:
+      value = (retval.value.type == TYPE_NUMBER)
+            ? String(retval.value.number)
+            : names[retval.value.type];
       if (value.toLowerCase().contains(search_term))
       {
         value_template.push(
@@ -389,21 +392,6 @@
               value
             ],
            "class", type
-          ]
-        );
-      }
-      break;
-
-    case TYPE_NUMBER:
-      value = String(retval.value.number);
-      if (value.toLowerCase().contains(search_term))
-      {
-        value_template.push(
-          ["item",
-            ["value",
-              value,
-             "class", type
-            ]
           ]
         );
       }
@@ -475,9 +463,9 @@
       return [];
 
     var from_uri = window.helpers.get_script_name(retval.positionFrom.scriptID);
-    from_uri = from_uri ? window.helpers.basename(from_uri) : ui_strings.S_UNKNOWN_SCRIPT;
+    from_uri = from_uri ? new URI(from_uri).basename : ui_strings.S_UNKNOWN_SCRIPT;
     var to_uri = window.helpers.get_script_name(retval.positionTo.scriptID);
-    to_uri = to_uri ? window.helpers.basename(to_uri) : ui_strings.S_UNKNOWN_SCRIPT;
+    to_uri = to_uri ? new URI(to_uri).basename : ui_strings.S_UNKNOWN_SCRIPT;
 
     return [
       ["li",
