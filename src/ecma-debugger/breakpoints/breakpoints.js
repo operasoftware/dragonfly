@@ -94,9 +94,9 @@ cls.Breakpoints = function()
     }
     else
     {
-      this._bps.push(new this._bp_class(bp_id, 
-                                        script_id, 
-                                        line_nr, 
+      this._bps.push(new this._bp_class(bp_id,
+                                        script_id,
+                                        line_nr,
                                         event_type,
                                         this._active_rt_ids));
     }
@@ -110,7 +110,7 @@ cls.Breakpoints = function()
     if (bp)
     {
       bp.is_enabled = false;
-      window.messages.post("breakpoint-updated", 
+      window.messages.post("breakpoint-updated",
                            {id: bp.id, script_id: bp.script_id});
     }
   };
@@ -145,7 +145,7 @@ cls.Breakpoints = function()
       }
     }
     window.messages.post('breakpoint-updated',
-                         {id: bp.id, 
+                         {id: bp.id,
                           script_id: bp.script_id,
                           event_type: bp.event_type});
   };

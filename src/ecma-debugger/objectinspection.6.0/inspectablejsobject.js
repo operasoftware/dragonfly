@@ -70,7 +70,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   /* private */
 
-  // The expanded property tree on which we would like to use that function 
+  // The expanded property tree on which we would like to use that function
   // can have a property with the same name (if the user expendes e.g.
   // the Object.prototype). See also bug DFL-2376.
   var has_own_property = Object.prototype.hasOwnProperty;
@@ -141,7 +141,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (!tree.protos[index])
         tree.protos[index] = {};
       /* the last element of a prototype path has no object id */
-      if ((!has_own_property.call(tree.protos[index], key) && !isNaN(obj_id)) || 
+      if ((!has_own_property.call(tree.protos[index], key) && !isNaN(obj_id)) ||
           tree.protos[index][key] === null)
         tree.protos[index][key] = {object_id: obj_id, protos: {}};
       tree = tree.protos[index][key];
@@ -267,9 +267,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         if (i == 0 && obj_id == this._obj_id && this._virtual_props)
         {
           const NAME = 0, ARGS = "arguments";
-          // Not really a clean solution, but at some point 
+          // Not really a clean solution, but at some point
           // the "arguments" object was exposed as property of the scope too.
-          // So we remove here the arguments object from the "virtual" 
+          // So we remove here the arguments object from the "virtual"
           // properties if the property list contains an "arguments" object.
           if (this._property_list_has_property(proto[PROPERTY_LIST], ARGS))
           {
@@ -296,7 +296,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._property_list_has_property = function(prop_list, prop_name)
   {
     const NAME = 0;
-    for (var i = 0; 
+    for (var i = 0;
          prop_list && i < prop_list.length && prop_list[i][NAME] != prop_name;
          i++)
       ;
@@ -393,9 +393,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
         // TODO add a setting to use the property filter
         // filter feature is currently blocked by CORE-32113 bug
-        var msg = [this._rt_id, 
-                   [obj_id], 
-                   examine_prototypes, 
+        var msg = [this._rt_id,
+                   [obj_id],
+                   examine_prototypes,
                    skip_nonenumerables /*, use filter flag */];
         window.services['ecmascript-debugger'].requestExamineObjects(tag, msg);
       }
@@ -699,7 +699,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     PROPERTY_LIST = 1,
     OBJECT_VALUE = 3,
     OBJECT_ID = 0;
-    
+
     if (status)
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "static method InspectableJSObject.handle_create_filter failed, " +
@@ -836,10 +836,10 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       }
     }
     // pretty print
-    const 
-    INDENT = "  ", 
-      NL = '\n', 
-      Q = "\"", 
+    const
+    INDENT = "  ",
+      NL = '\n',
+      Q = "\"",
       NS = "cls.EcmascriptDebugger[\"6.0\"]",
       NSF = "cls.EcmascriptDebugger[\"6.0\"].inspection_filters" ;
 
@@ -860,7 +860,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (prop[TYPE] == NULL)
         return indent(this) + "this." + prop[NAME] + " = {type: \"null\"};";
       if (prop[TYPE] == STRING)
-        return indent(this) + "this." + prop[NAME] + 
+        return indent(this) + "this." + prop[NAME] +
                " = {type: \"string\", value: \"" + prop[STRING_VAL] + "\"};";
     };
 
@@ -888,7 +888,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       print.push(NSF, "._Element = new function()", NL, "{", NL);
       print.push(Element.map(props_to_js_string, 1).join(NL), NL, "};", NL, NL);
       for (i = 0; filter = filters[i]; i++)
-        print.push(NSF, ".", filter[NAME], " = function()", NL, 
+        print.push(NSF, ".", filter[NAME], " = function()", NL,
                    "{", NL,
                    filter[FILTERED_PROPS].map(props_to_js_string, 1).join(NL), NL,
                    "};", NL, NL,

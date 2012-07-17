@@ -5,7 +5,7 @@
 window.cls || ( window.cls = {} );
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 window.cls.ServiceBase = function ()
@@ -67,7 +67,7 @@ window.cls.ServiceBase = function ()
 
   var _services = null;
   var _event_map = {};
-  
+
   _event_map['scope'] = [];
   _event_map['scope'][3] = 'handleConnect';
   _event_map['scope'][4] = 'handleDisconnect';
@@ -97,9 +97,9 @@ window.cls.ServiceBase = function ()
   _status_map[9] = "Service Already Enabled";
 
   var _type_map = [];
-  _type_map[1] = "command"; 
-  _type_map[2] = "response"; 
-  _type_map[3] = "event"; 
+  _type_map[1] = "command";
+  _type_map[2] = "response";
+  _type_map[3] = "event";
   _type_map[4] = "error";
 
   var _handle_scope_message = function(service, message, command, status, tag)

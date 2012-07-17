@@ -6,7 +6,7 @@
  */
 
 /**
-  * @constructor 
+  * @constructor
   * @deprecated
   * use EventHandler and BaseActions
   */
@@ -228,16 +228,16 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.setCookie = function(key, value, time) 
+  this.setCookie = function(key, value, time)
   {
     document.cookie = (
       key + "=" + encodeURIComponent(value) +
-      "; expires=" + 
-      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; expires=" +
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() +
       "; path=/");
   }
 
-  this.getCookie = function(key) 
+  this.getCookie = function(key)
   {
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
@@ -282,7 +282,7 @@ window.cls.Helpers = function()
     if (target && container)
     {
       container.scrollTop -= (
-        container.getBoundingClientRect().top - 
+        container.getBoundingClientRect().top -
         target.getBoundingClientRect().top +
         Math.min(container.offsetHeight * .5, 100)
       );

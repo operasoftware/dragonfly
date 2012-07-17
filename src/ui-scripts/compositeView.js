@@ -1,14 +1,14 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 var CompositeViewBase = function()
 {
   this.type = 'composite-view';
   this.has_modebar = false;
-  
+
   this.update = function(cell, is_resize) // for testing
-  {   
+  {
     // copie from the container cell to the view cell
     var isvisible = false;
     var modebar_height = this.modebar ? this.modebar.offsetHeight : 0;
@@ -20,7 +20,7 @@ var CompositeViewBase = function()
       this.cell.top = cell.top + cell.top_border_padding;
       this.cell.width = cell.width;
       this.cell.height = cell.height - modebar_height;
-      if(this.cell.width + this.cell.height > 0) 
+      if(this.cell.width + this.cell.height > 0)
       {
         this.cell.setDefaultDimensions();
         this.cell.update(this.cell.left, this.cell.top, true, is_resize);
@@ -33,7 +33,7 @@ var CompositeViewBase = function()
       this.modebar.setup();
     }
   }
-  
+
   this._on_setting_change = function(msg)
   {
     if (msg.id == "modebar" && msg.key == "show-modebar-" + this._modebar_id)
@@ -74,7 +74,7 @@ var CompositeViewBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends CompositeViewBase
   */
 

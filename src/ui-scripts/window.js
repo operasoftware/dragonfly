@@ -33,7 +33,7 @@ var UIWindowBase = new function()
   this.init = function(view_id, top, left, width, height)
   {
     var view = window.views[view_id];
-    var has_statusbar = 
+    var has_statusbar =
       typeof view.window_statusbar == 'boolean' ? view.window_statusbar : true;
     ids[ids.length] = this.id = getId();
     this.view_id = view_id;
@@ -45,7 +45,7 @@ var UIWindowBase = new function()
     this.min_visible_height = 80;
     this.min_visible_width = 150;
     this.container = new WindowContainer(this);
-    this.is_resizable = 
+    this.is_resizable =
       typeof view.window_resizable == 'boolean' ? view.window_resizable : true;
     if (has_statusbar)
       this.statusbar = new WindowStatusbar(this);
@@ -183,11 +183,11 @@ var UIWindowBase = new function()
         if (typeof height == 'number')
           win.height = height;
       }
-        
+
       if(document.getElementById(win.id))
       {
         self.setZIndex();
-        document.getElementById(win.id).style.zIndex = 
+        document.getElementById(win.id).style.zIndex =
           Overlay.get_instance().is_visible ? 400 : 200;
         window.views[view_id].update();
       }
@@ -345,7 +345,7 @@ var UIWindowBase = new function()
     update_handler();
     __event = null;
   },
-  
+
   verify_left = function(win, inner_width, left)
   {
     if (left > inner_width - win.min_visible_width)
@@ -354,7 +354,7 @@ var UIWindowBase = new function()
       left = win.min_visible_width - win.width;
     return left;
   },
-  
+
   verify_top = function(win, inner_height, top)
   {
     if (top > inner_height - win.min_visible_height)
@@ -372,19 +372,19 @@ var UIWindowBase = new function()
 
   update['window-move'] = function()
   {
-  
+
     if(__event)
     {
       var inner_height = window.innerHeight, inner_width = window.innerWidth;
       if( __event.pageX < inner_width && __event.pageX > 0 )
       {
-        current_target.left = verify_left(current_target, inner_width, 
+        current_target.left = verify_left(current_target, inner_width,
                                           __event.pageX - left_delta);
         current_style.left = current_target.left + 'px';
       }
       if( __event.pageY < inner_height && __event.pageY > 0 )
       {
-        current_target.top = verify_top(current_target, inner_height, 
+        current_target.top = verify_top(current_target, inner_height,
                                         __event.pageY - top_delta)
         current_style.top = current_target.top + 'px';
       }
@@ -412,7 +412,7 @@ var UIWindowBase = new function()
       current_style.height = (current_target.height = height) + 'px';
       current_style.top = (current_target.top = top) + 'px';
       current_target.update();
-      
+
     }
   }
 
@@ -530,24 +530,24 @@ var UIWindowBase = new function()
     }
   }
 
-  
+
   var resize = function()
   {
     if (window.ui_windows)
     {
-      var 
+      var
       id = '',
-      inner_height = window.innerHeight, 
+      inner_height = window.innerHeight,
       inner_width = window.innerWidth,
       current_target = null,
       current_style = null,
       top = 0,
       left = 0;
-      
+
       for (id in window.ui_windows)
       {
         current_target = window.ui_windows[id];
-        if (current_style = (document.getElementById(id) && 
+        if (current_style = (document.getElementById(id) &&
                              document.getElementById(id).style))
         {
           if (current_target.window_type == UIWindow.HUD)

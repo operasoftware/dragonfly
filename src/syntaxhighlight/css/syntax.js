@@ -20,10 +20,10 @@
   css_classes[CSS_AT_RULE] = "css-at-rule";
   css_classes[CSS_SELECTOR] = "css-selector";
   css_classes[CSS_PROPERTY] = "css-property";
-  css_classes[CSS_PROPERTY_SEPARATOR] = "css-property-separator"; 
-  css_classes[CSS_PROPERTY_VALUE] = "css-property-value"; 
-  css_classes[CSS_DECLARATION_BLOCK_START] = "css-declaration"; 
-  css_classes[CSS_DECLARATION_BLOCK_END] = "css-declaration"; 
+  css_classes[CSS_PROPERTY_SEPARATOR] = "css-property-separator";
+  css_classes[CSS_PROPERTY_VALUE] = "css-property-value";
+  css_classes[CSS_DECLARATION_BLOCK_START] = "css-declaration";
+  css_classes[CSS_DECLARATION_BLOCK_END] = "css-declaration";
   css_classes[CSS_DECLARATION_TERMINATOR] = "declaration-terminator";
   css_classes[CSS_COMMENT] = "comment";
 
@@ -34,11 +34,11 @@
     // check dom.js and helpers.js for trim.
     // There are some inherent limitations in fromCharCode wrt
     // multibyte sequences, but this should work for all CSS keywords.
-    return token.replace(_escapes_re, function(s,p1,p2){ 
+    return token.replace(_escapes_re, function(s,p1,p2){
       return String.fromCharCode(parseInt(p1,16))
     });
   }
-  
+
   // root handler, declaration handler
 
   var highlight_token = function(context, token_type, token)
@@ -66,7 +66,7 @@
     }
     return;
   }
-  
+
   this.highlight_css = function(stylesheet, onnewline)
   {
     var css_tokenizer = new cls.CSSTokenizer();
@@ -78,20 +78,20 @@
       tag_template: null,
       self: this
     };
-    
+
     // the js implementation of bind causes a noticable overhead here
     // when we get a native implementation we can adjust the code
     css_tokenizer.tokenize(stylesheet, function(token_type, token)
     {
         highlight_token(context, token_type, token);
     });
-    
-    
+
+
     if (context.text)
     {
       context.template.push(context.text);
     }
-    
+
     return context.template;
   };
 

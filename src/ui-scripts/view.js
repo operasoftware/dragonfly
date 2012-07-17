@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var ViewBase = new function()
@@ -15,12 +15,12 @@ var ViewBase = new function()
   {
     return 'view-' + (id_count++).toString();
   }
-  
+
   var filter = function(view, filters)
   {
     var filter = '', i = 0;
     for( ; (filter = filters[i]) && !view[filter]; i++ );
-    return filter && true || false; 
+    return filter && true || false;
   }
 
   var _is_enabled = function(service)
@@ -32,8 +32,8 @@ var ViewBase = new function()
 
   this.getSingleViews = function(filters)
   {
-    var 
-      id = '', 
+    var
+      id = '',
       i = 0,
       ret = [];
     for( ; id = ids[i]; i++)
@@ -48,8 +48,8 @@ var ViewBase = new function()
 
   this._delete = function(id)
   {
-    var 
-    _id = '', 
+    var
+    _id = '',
     i = 0;
     for( ; ( _id = ids[i] ) && _id != id; i++);
     if(_id)
@@ -119,7 +119,7 @@ var ViewBase = new function()
     if (_ignore_updates)
       return;
 
-    var is_enabled = this.is_enabled;  
+    var is_enabled = this.is_enabled;
     for (var i = 0, id = ""; id = this.container_ids[i]; i++)
     {
       var container = document.getElementById(id);
@@ -141,7 +141,7 @@ var ViewBase = new function()
   {
 
     var id = '', i = 0, container = null;
-    
+
     for( ; id = this.container_ids[i]; i++)
     {
       container = document.getElementById(id);
@@ -150,10 +150,10 @@ var ViewBase = new function()
         fn(container);
       }
     }
-    
+
   }
 
-  this.isvisible = function() 
+  this.isvisible = function()
   {
     var id = '', i = 0;
     for( ; id = this.container_ids[i]; i++)
@@ -173,7 +173,7 @@ var ViewBase = new function()
 
   this.__defineSetter__("is_enabled", function() {});
 
-  this.getAllContainers = function() 
+  this.getAllContainers = function()
   {
     var id = '', i = 0, c = null, ret = [];
     for( ; id = this.container_ids[i]; i++)
@@ -186,13 +186,13 @@ var ViewBase = new function()
     return ret;
   }
   /* returns the first container, if there is any, otherwise null */
-  this.get_container = function() 
+  this.get_container = function()
   {
-    return (this.container_ids[0] && 
+    return (this.container_ids[0] &&
             document.getElementById(this.container_ids[0] ) || null);
   }
 
-  this.getToolbarControl = function( container, handler, handler_name) 
+  this.getToolbarControl = function( container, handler, handler_name)
   {
     handler_name = handler_name || 'handler';
     var toolbar = document.getElementById(container.id.replace(/container/,'toolbar'));
@@ -210,8 +210,8 @@ var ViewBase = new function()
     return null;
   }
 
- 
-  this.clearAllContainers = function() 
+
+  this.clearAllContainers = function()
   {
     var id = '', i = 0, c = null, ret = [];
     for( ; id = this.container_ids[i]; i++)
@@ -222,8 +222,8 @@ var ViewBase = new function()
       }
     }
   }
-  
-  this.reset_containers = function() 
+
+  this.reset_containers = function()
   {
     this.container_ids = [];
   };
@@ -233,7 +233,7 @@ var ViewBase = new function()
     return this.container_ids.indexOf(id) > -1;
   }
 
-  this.reset_containers = function() 
+  this.reset_containers = function()
   {
     if (this.container_ids.length)
     {
@@ -294,7 +294,7 @@ var ViewBase = new function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 

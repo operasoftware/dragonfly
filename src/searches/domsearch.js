@@ -13,7 +13,7 @@
   this.highlight_next = function() {};
 
   this.highlight_previous = function() {};
-  
+
   this.set_form_input = function() {};
 
   this.search_delayed = function(event) {};
@@ -24,7 +24,7 @@
 
   this.clear_style_highlight_node = function() {};
 
-  // returns an object with object_id, node_type, offset, and length. 
+  // returns an object with object_id, node_type, offset, and length.
   this.get_search_hit = function() {};
 
   this.get_current_hit_element = function() {};
@@ -34,7 +34,7 @@
   PanelSearch.apply(this);
 
   /* constants */
-  const 
+  const
   TOKEN_HIGHLIGHT = [DOMSearch.PLAIN_TEXT, DOMSearch.REGEXP],
   MATCH_NODE_HIGHLIGHT_CLASS = PanelSearch.MATCH_NODE_HIGHLIGHT_CLASS,
   NO_MATCH = TextSearch.NO_MATCH,
@@ -114,7 +114,7 @@
   };
 
   /* methods for search type css and xpath */
-   
+
   this._initial_highlight_node = function()
   {
     this._match_count = this._model.get_match_count();
@@ -234,11 +234,11 @@
     this._tagman = window.tag_manager;
     this._esdi = window.services['ecmascript-debugger'];
     this._broker = ActionBroker.get_instance();
-    window.eventHandlers.change['dom-search-type-changed'] = 
+    window.eventHandlers.change['dom-search-type-changed'] =
       this._onsearchtypechange;
     this._query_selector = "." + PanelSearch.MATCH_NODE_CLASS;
     this._set_highlight_handlers();
-    window.messages.addListener('element-selected', 
+    window.messages.addListener('element-selected',
                                 this._onelementselected.bind(this));
   };
 
@@ -283,7 +283,7 @@
           this._queued_input = false;
           this._model.search(this._last_query,
                              this.search_type,
-                             this.ignore_case, 
+                             this.ignore_case,
                              0,
                              this._handle_search);
         }

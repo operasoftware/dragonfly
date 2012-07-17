@@ -242,14 +242,14 @@ else
     this.addClass = function(cl)
     {
       if (!has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , (cln ? cln + " " : "") + cl); 
+        this.setAttribute("class" , (cln ? cln + " " : "") + cl);
       return this;
     };
 
     this.removeClass = function(cl)
     {
       if (has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , cln.replace(re, "").trim()); 
+        this.setAttribute("class" , cln.replace(re, "").trim());
       return this;
     };
   }).apply(Element.prototype);
@@ -996,7 +996,7 @@ CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
   var height = this._src_canvas.height = this.canvas.height;
   var set_stop = function(color, index, list)
   {
-    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);  
+    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);
   };
   var lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, 0, height)
@@ -1013,14 +1013,14 @@ CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
     lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, width, 0)
          : this._src_ctx.createLinearGradient(0, 0, 0, height);
-    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");  
+    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");
     lg.addColorStop(1, "hsla(0, 0%, 0%, 1)");
     this._src_ctx.fillStyle = lg;
     this._src_ctx.fillRect(0, 0, width, height);
     this._src_ctx.globalCompositeOperation = "source-in";
     lg = flip
          ? this._src_ctx.createLinearGradient(0, 0, 0, height)
-         : this._src_ctx.createLinearGradient(0, 0, width, 0);  
+         : this._src_ctx.createLinearGradient(0, 0, width, 0);
     bottom_color_list.forEach(set_stop, lg);
     this._src_ctx.fillStyle = lg;
     this._src_ctx.fillRect(0, 0, width, height);

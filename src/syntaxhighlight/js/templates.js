@@ -13,7 +13,7 @@
 
   var tokenizer = new cls.SimpleJSParser();
   var classes = {};
-  
+
   classes[STRING] = "string";
   classes[NUMBER] = 'number';
   classes[COMMENT] = 'comment';
@@ -75,7 +75,7 @@
           context.template.push(context.text);
           context.text = "";
         }
-        context.template.push(['span', token, 
+        context.template.push(['span', token,
                                'class', class_name || classes[token_type]]);
         return;
       }
@@ -156,7 +156,7 @@
     {
       context.max_char_count = context.test_char_count;
     }
-    if (!ignore_max_width && window.defaults['js-source-char-width'] && 
+    if (!ignore_max_width && window.defaults['js-source-char-width'] &&
         context.max_char_count * window.defaults['js-source-char-width'] > 32000)
     {
       context.template.push('style', 'white-space:pre-wrap; width: 32000px');

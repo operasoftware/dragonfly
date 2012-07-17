@@ -14,7 +14,7 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 
   this._on_element_selected = function(msg)
   {
-    this._data = msg.rt_id &&  msg.obj_id && 
+    this._data = msg.rt_id &&  msg.obj_id &&
                  new cls.InspectableJSObject(msg.rt_id, msg.obj_id) || null;
     this.update();
   };
@@ -24,7 +24,7 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView = function(id, name, container_class)
 
   this.init = function(id, name, container_class)
   {
-    var msgs = window.messages; 
+    var msgs = window.messages;
     msgs.addListener('element-selected', this._on_element_selected.bind(this));
     msgs.addListener('setting-changed', this._on_setting_change.bind(this));
     this.onbeforesearch = function(msg)
@@ -67,8 +67,8 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
 
 
   var text_search = new TextSearch(1);
-  
-  text_search.add_listener("onbeforesearch", 
+
+  text_search.add_listener("onbeforesearch",
                            window.views.dom_attrs.onbeforesearch);
 
   var onViewCreated = function(msg)
@@ -97,7 +97,7 @@ cls.EcmascriptDebugger["6.0"].DOMAttrsView.create_ui_widgets = function()
   }
 
   ActionBroker.get_instance().get_global_handler().
-  register_shortcut_listener('dom-attrs-text-search', 
+  register_shortcut_listener('dom-attrs-text-search',
                              cls.Helpers.shortcut_search_cb.bind(text_search));
-  
+
 };
