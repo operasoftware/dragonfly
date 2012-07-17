@@ -47,11 +47,13 @@ cls.ReturnValuesView = function(id, name, container_class)
 
   this._create_view = function(return_values)
   {
-    this._container.clearAndRender(templates.return_values(return_values, this._search_term));
+    if (this._container)
+      this._container.clearAndRender(templates.return_values(return_values, this._search_term));
   };
 
   this.ondestroy = function()
   {
+    this._container = null;
     this._text_search.cleanup();
   };
 
