@@ -144,6 +144,7 @@ templates.resource_tree =
 						'data-tooltip',(r&&'js-script-select'),
 						'data-tooltip-text',(r&&groupName+': '+r.human_url)
 					],
+					'id',(r.selected==true?'target-element':''),
 					'class','header'+className,
 					'handler','resource-detail',
 					'data-resource-id',(''+r.id)

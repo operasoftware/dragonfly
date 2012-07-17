@@ -122,19 +122,31 @@ cls.ResourceManagerService = function(view)
 
   this._handle_resource_detail_bound = function(event, target)
   {
+    var resource;
     if (!this._context)
       return;
 
     var parent = target.get_ancestor('[data-resource-id]');
     if (!parent)
       return;
-  
+
+
+    if (this._selectedResourceId)
+    {
+      resource = this.get_resource(this._selectedResourceId);
+      if(resource)
+        resource.selected = false;
+    }
+
     var id = Number( parent.getAttribute('data-resource-id') );
-    var resource = this.get_resource(id);
+    resource = this.get_resource(id);
 
     if (!resource)
       return;
 
+    this._selectedResourceId = id;
+    resource.selected = true;
+    this._view.update();
     cls.ResourceDetailView.instance.show_resource(resource);
 
   }.bind(this);
