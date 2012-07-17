@@ -187,7 +187,6 @@ cls.ResourceManagerService = function(view)
     }
 
     this._res_service = window.services['resource-manager'];
-    
     this._res_service.addListener("urlload", this._on_urlload_bound);
     this._res_service.addListener("response", this._on_response_bound);
     this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
@@ -219,8 +218,9 @@ cls.ResourceManagerService = function(view)
       return null;
 
     var id = this._context.resourcesUrlDict[url];
-    if (id===undefined){ return null; }
-    
+    if (id===undefined)
+      return null;
+
     return this.get_resource(id);
   };
 
