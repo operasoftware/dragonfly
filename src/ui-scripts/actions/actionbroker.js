@@ -89,15 +89,15 @@ var ActionBroker = function()
     */
   this.get_global_handler = function(){};
 
-  /** 
-    * To subscribe to the click handler. 
+  /**
+    * To subscribe to the click handler.
     * @param {Object} setter. So far the setter must be an instance of ContextMenu
     * @param {Function} handler. The callback for the click event.
     */
   this.set_setter_click_handler = function(setter, handler){};
 
-  /** 
-    * To unsubscribe to the click handler. 
+  /**
+    * To unsubscribe to the click handler.
     * @param {Object} setter. Only the setter of the click handler can unsubscribe.
     */
   this.clear_setter_click_handler = function(setter){};
@@ -158,7 +158,7 @@ var ActionBroker = function()
     {
       var container = event.target;
       while (container && container.nodeType == 1 &&
-             container.parentNode && 
+             container.parentNode &&
              container.parentNode.nodeType == 1 &&
              !/^(?:top-|panel-|window-)?(?:container|toolbar|tabs)$/i.test(container.nodeName))
         container = container.parentNode;
@@ -184,7 +184,7 @@ var ActionBroker = function()
       }
       return true;
     }
-    // pass the event alsways to the global handler 
+    // pass the event alsways to the global handler
     // so that the global mode is correct
     this._global_handler.onclick(event);
     return false;
@@ -203,7 +203,7 @@ var ActionBroker = function()
       this._container = container || document.documentElement;
       this._action_context.focus(event, container);
       this._context_queue.push(handler_id);
-      while (this._context_queue.length && 
+      while (this._context_queue.length &&
              this._context_queue.length > MAX_CONTEXT_QUEUE_LENGTH)
       {
         this._context_queue.shift();
@@ -255,7 +255,7 @@ var ActionBroker = function()
     {
       this._context_queue = [];
       this._shortcuts = this._retrieve_shortcuts();
-      this._global_shortcuts = this._shortcuts.global; 
+      this._global_shortcuts = this._shortcuts.global;
       this._key_identifier.set_shortcuts(this._get_shortcut_keys());
       this._set_current_handler(this._global_handler.id);
       document.addEventListener("contextmenu", this._oncontextmenubound, false);
@@ -331,7 +331,7 @@ var ActionBroker = function()
       this._inherited_handlers[action_handler.shared_shortcuts] = action_handler;
       if (action_handler.shared_shortcuts_label)
       {
-        this._shared_shortcuts_labels[action_handler.shared_shortcuts] = 
+        this._shared_shortcuts_labels[action_handler.shared_shortcuts] =
           action_handler.shared_shortcuts_label;
       }
     }
@@ -415,7 +415,7 @@ var ActionBroker = function()
 
   this.get_actions_with_handler_id = function(handler_id)
   {
-    
+
     return (
       (this._handlers[handler_id] && this._handlers[handler_id].get_action_list().sort()) ||
       (this._inherited_handlers[handler_id] && this._inherited_handlers[handler_id].get_action_list().sort())
@@ -471,7 +471,7 @@ var ActionBroker = function()
 
   this.get_shortcut_with_handler_and_action = function(handler_id, action)
   {
-    var 
+    var
     shortcuts = this._shortcuts && this._shortcuts[handler_id],
     shortcuts_mode = null,
     mode = '',
@@ -487,7 +487,7 @@ var ActionBroker = function()
       }
     return '';
   };
-  
+
   this.get_action_container = function()
   {
     return this._container;
@@ -500,7 +500,7 @@ var ActionBroker = function()
 
   this.focus_handler = function(handler_id, event)
   {
-    var view = window.views[handler_id]; 
+    var view = window.views[handler_id];
     if (view && view.isvisible() && this._handlers[handler_id])
     {
       this._last_event_target = event.target;
@@ -510,7 +510,7 @@ var ActionBroker = function()
 
   this.get_shared_shortcuts_label = function(shared_shortcuts)
   {
-    return this._shared_shortcuts_labels[shared_shortcuts] || ""; 
+    return this._shared_shortcuts_labels[shared_shortcuts] || "";
   };
 
   if (document.readyState == "complete")

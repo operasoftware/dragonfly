@@ -49,7 +49,7 @@
   this._node_name_map[TEXT_NODE] = "<span class='text-node'>#text</span> ";
   this._node_name_map[CDATA_SECTION_NODE] = "<span class='cdata-node'>#cdata-section</span>";
 
-  var disregard_force_lower_case_whitelist = 
+  var disregard_force_lower_case_whitelist =
       cls.EcmascriptDebugger["6.0"].DOMData.DISREGARD_FORCE_LOWER_CASE_WHITELIST;
 
   var disregard_force_lower_case = function(node)
@@ -133,9 +133,9 @@
   {
     return (
     ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-    /* regarding escaping "<". 
+    /* regarding escaping "<".
        it happens that there are very starnge keys in broken html.
-       perhaps we will have to extend the escaping to other data 
+       perhaps we will have to extend the escaping to other data
        tokens as well */
     (force_lower_case ? attr[ATTR_KEY].toLowerCase() : attr[ATTR_KEY]))
     .replace(/</g, '&lt;'));
@@ -182,8 +182,8 @@
                " data-model-id='" + model.id + "'" +
                ">";
     var length = data.length;
-    var attrs = null; 
-    var force_lower_case = model.isTextHtml() && 
+    var attrs = null;
+    var force_lower_case = model.isTextHtml() &&
                            window.settings.dom.get('force-lowercase');
     var show_comments = window.settings.dom.get('show-comments');
     var node_name = '';
@@ -205,11 +205,11 @@
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
       }
-      else if (disregard_force_lower_case_depth && 
+      else if (disregard_force_lower_case_depth &&
                disregard_force_lower_case_depth == node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
-        force_lower_case = model.isTextHtml() && 
+        force_lower_case = model.isTextHtml() &&
                            window.settings.dom.get('force-lowercase');
       }
       if (force_lower_case)
@@ -251,11 +251,11 @@
         case PROCESSING_INSTRUCTION_NODE:
         {
           // TODO <match-token>
-          tree += 
+          tree +=
             "<div class='search-match dom-search processing-instruction' " +
               "obj-id='" + node[ID] + "' handler='show-search-match' >" +
               "&lt;?" + node[NAME] + ' ' +
-              formatProcessingInstructionValue(node[VALUE], force_lower_case) + 
+              formatProcessingInstructionValue(node[VALUE], force_lower_case) +
             "?&gt;</div>";
           break;
         }
@@ -263,10 +263,10 @@
         {
           if (show_comments && !/^\s*$/.test(node[VALUE]))
           {
-            tree += 
+            tree +=
               "<div class='search-match dom-search comment pre-wrap' " +
                 "obj-id='" + node[ID] + "' handler='show-search-match' >" +
-                (open_tag ? open_tag + "!--" : "#comment") + 
+                (open_tag ? open_tag + "!--" : "#comment") +
                 "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
                 (close_tag ? "--" + close_tag : "") +
               "</div>";
@@ -276,8 +276,8 @@
         case DOCUMENT_NODE:
         {
           if (ev_listener)
-          { 
-            tree += "<div class='search-match dom-search document' " + 
+          {
+            tree += "<div class='search-match dom-search document' " +
                          "rt-id='" + String(model.getDataRuntimeId()) + "' " +
                          "obj-id='" + String(node[ID]) + "' " +
                          "handler='inspect-object-link' >" +
@@ -287,9 +287,9 @@
         }
         case DOCUMENT_TYPE_NODE:
         {
-          // TODO <match-token> 
+          // TODO <match-token>
           // currently we don't earch in doctype nodes on the host side
-          tree += 
+          tree +=
             "<div class='search-match dom-search doctype' " +
               "obj-id='" + node[ID] + "' handler='show-search-match' >" +
               "&lt;!DOCTYPE " + node[NAME] +
@@ -301,10 +301,10 @@
         {
           if (!/^\s*$/.test(node[VALUE]))
           {
-            tree += 
+            tree +=
               "<div class='search-match dom-search' " +
                 "obj-id='" + node[ID] + "' handler='show-search-match' >" +
-                "<span class='dom-search-text-node'>#text</span>" + 
+                "<span class='dom-search-text-node'>#text</span>" +
                 "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
               "</div>";
           }
@@ -319,7 +319,7 @@
   {
     var data = model.getData();
     var tree = "<div class='padding dom-tree'" +
-               (editable ? " edit-handler='edit-dom'" : "") + 
+               (editable ? " edit-handler='edit-dom'" : "") +
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
                ">";
@@ -401,7 +401,7 @@
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
-          }          
+          }
           is_script_node = node[NAME].toLowerCase() == 'script';
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
@@ -409,8 +409,8 @@
             attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
             attrs += " <key>" +
               ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
-              /* Regarding escaping "<". It happens that there are very 
-                 strange keys in broken html. Perhaps we will have to extend 
+              /* Regarding escaping "<". It happens that there are very
+                 strange keys in broken html. Perhaps we will have to extend
                  the escaping to other data tokens as well */
               (force_lower_case ? attr[ATTR_KEY].toLowerCase()
                                 : attr[ATTR_KEY])).replace(/</g, '&lt;') +
@@ -492,7 +492,7 @@
                           "<input handler='get-children' type='button' class='open' />" : '') +
                           "<node>&lt;" + node_name + attrs + "&gt;</node>" +
                       (is_debug && (" <d>[" + node[ID] + "]</d>" ) || "") +
-                      ev_listener + "</div>"; 
+                      ev_listener + "</div>";
 
               closing_tags.push("<div" + this._margin_style(node, depth_first_ele) +
                                   "ref-id='" + node[ID] + "' handler='spotlight-node' " +
@@ -534,10 +534,10 @@
             if (!/^\s*$/.test(node[VALUE]))
             {
               tree += "<div" + this._margin_style(node, depth_first_ele) +
-                               "ref-id='" + node[ID] + "' " + 
+                               "ref-id='" + node[ID] + "' " +
                                "class='comment pre-wrap'>" +
-                               "&lt;!--" + 
-                                   helpers.escapeTextHtml(node[VALUE]) + 
+                               "&lt;!--" +
+                                   helpers.escapeTextHtml(node[VALUE]) +
                                "--&gt;</div>";
             }
           }
@@ -561,14 +561,14 @@
         {
           if (!/^\s*$/.test(node[ VALUE ]))
           {
-            // style and script elements are handled in 
-            // the 'has_only_text_content' check, 
+            // style and script elements are handled in
+            // the 'has_only_text_content' check,
             // so we don't need to check here again for 'pre-wrap' content
 
-            tree += "<div" + this._margin_style(node, depth_first_ele) + 
-                             (no_contextmenu ? "" : "data-menu='dom-element' ") + 
+            tree += "<div" + this._margin_style(node, depth_first_ele) +
+                             (no_contextmenu ? "" : "data-menu='dom-element' ") +
                              ">" +
-                    "<text ref-id='"+ node[ID] + "' " + 
+                    "<text ref-id='"+ node[ID] + "' " +
                     ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
                     "</div>";
           }
@@ -592,7 +592,7 @@
     var show_comments = window.settings.dom.get('show-comments');
     var show_white_space_nodes = window.settings.dom.get('show-whitespace-nodes');
     var tree = "<div class='padding dom-tree'" +
-               (editable ? " edit-handler='edit-dom'" : "") + 
+               (editable ? " edit-handler='edit-dom'" : "") +
                " rt-id='" + model.getDataRuntimeId() + "'" +
                " data-model-id='" + model.id + "'" +
                "><div class='tree-style'>";
@@ -737,7 +737,7 @@
                     "<node>" + node_name + attrs + "</node>" +
                     ev_listener + "</div>";
           }
-          parent_ele_stack.push(node);  
+          parent_ele_stack.push(node);
           break;
         }
 
@@ -756,7 +756,7 @@
 
         case DOCUMENT_NODE:
         {
-          tree += "<div" + this._margin_style(node, depth_first_ele) + 
+          tree += "<div" + this._margin_style(node, depth_first_ele) +
                           "ref-id='" + node[ID] + "'>" +
                     "<span class='document-node'>#document</span>" +
                     ev_listener + "</div>";
@@ -781,13 +781,13 @@
             current_formatting = parent_ele[NAME].toLowerCase() == 'script'
                                ? " class='pre-wrap non-editable' "
                                : " class='pre-wrap' ";
-          } 
+          }
           if (!(show_white_space_nodes) && (node[TYPE] == TEXT_NODE))
           {
             if (!/^\s*$/.test(node[VALUE]))
             {
                tree += "<div" + this._margin_style(node, depth_first_ele) +
-                                current_formatting + 
+                                current_formatting +
                                 (no_contextmenu ? "" : "data-menu='dom-element' ") +
                                 ">" +
                        (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
@@ -800,8 +800,8 @@
           {
             var only_whitespace = /^\s*$/.test(node[VALUE]);
             tree += "<div" + this._margin_style(node, depth_first_ele) +
-                             current_formatting + 
-                             (no_contextmenu ? "" : "data-menu='dom-element' ") + 
+                             current_formatting +
+                             (no_contextmenu ? "" : "data-menu='dom-element' ") +
                              ">" +
                     (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                       "<text ref-id='" + node[ID]+  "' " +
@@ -828,8 +828,8 @@
   this._margin_style = function(node, start_depth)
   {
     const INDENT_AMOUNT = 16;
-    return " style='margin-left:" + 
-           INDENT_AMOUNT * (node[DEPTH] - (start_depth || 0)) + 
+    return " style='margin-left:" +
+           INDENT_AMOUNT * (node[DEPTH] - (start_depth || 0)) +
            "px;' ";
   };
 
@@ -847,7 +847,7 @@
      "data-spec", "dom#" + this._OFFSETS[index]
     ] : []);
   }
-  
+
   this.offset_values = function(offsets_values)
   {
     var model = window.dominspections.active, ret = [];
@@ -858,7 +858,7 @@
         model.breadcrumbhead = null;
         model.breadcrumb_offsets = null;
       }
-      var target_is_head = !model.breadcrumbhead || 
+      var target_is_head = !model.breadcrumbhead ||
                            model.breadcrumbhead == model.target;
       if (target_is_head)
       {
@@ -867,12 +867,12 @@
       ret =
       [
         ['h2', ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS],
-        ['parent-node-chain', 
+        ['parent-node-chain',
           target_is_head ?
           this.breadcrumb(model, model.target, offsets_values[0], null, true) :
-          this.breadcrumb(model, model.breadcrumbhead, 
+          this.breadcrumb(model, model.breadcrumbhead,
                           model.breadcrumb_offsets, model.target, true),
-          'onmouseover', helpers.breadcrumbSpotlight, 
+          'onmouseover', helpers.breadcrumbSpotlight,
           'onmouseout', helpers.breadcrumbClearSpotlight,
           'class', 'mono'
         ],
@@ -893,7 +893,7 @@
       ["p", window.app.profiles[window.app.profiles.PROFILER].is_enabled ?
             ui_strings.S_INFO_PROFILER_MODE :
             ui_strings.S_INFO_HTTP_PROFILER_MODE],
-      ["p", 
+      ["p",
         ["span", ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES,
                  "class", "container-button ui-button",
                  "handler", "enable-ecmascript-debugger",

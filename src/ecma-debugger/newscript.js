@@ -54,7 +54,7 @@ window.cls.NewScriptPrototype = function()
   /**
     * Searches the actual data.
     * Updates the script object with the following properties for all matches:
-    *   - line_matches, a list of all matches in the source, 
+    *   - line_matches, a list of all matches in the source,
     *     the values are the lines numbers of a given match
     *   - line_offsets, a list of all matches in the source,
     *     the values are the character offset in the line of the match
@@ -120,7 +120,7 @@ window.cls.NewScriptPrototype = function()
           {
             ++line_cur;
           }
-          
+
           this.line_matches[index] = line_cur;
           this.line_offsets[index] = pos - this.line_arr[line_cur - 1];
           if (is_reg_exp)
@@ -238,7 +238,7 @@ window.cls.NewScriptPrototype = function()
           }
         }
       }
-      
+
       if (end_line == -1)
       {
         index = 0;
@@ -267,7 +267,7 @@ window.cls.NewScriptPrototype = function()
     }
     return tokens;
   };
-  
+
   this.set_line_states = function()
   {
     this.line_arr = [];
@@ -281,7 +281,7 @@ window.cls.NewScriptPrototype = function()
     var slash_cur = -2;
     var nl_cur = 0;
     var cr_cur = 0;
-    
+
 
     var min_cur = 0;
 
@@ -324,8 +324,8 @@ window.cls.NewScriptPrototype = function()
 
     var handle_strings = function(ref_pos, ref_val)
     {
-      // ensure that a string never exceeds the current 
-      // line if the newline is not escaped 
+      // ensure that a string never exceeds the current
+      // line if the newline is not escaped
       var temp_count = 0;
       var is_cr = 0;
       var nl_cur = string.indexOf(eol, ref_pos + 1);
@@ -350,17 +350,17 @@ window.cls.NewScriptPrototype = function()
 
     while( min_cur != -1 )
     {
-      
+
       state = '';
-      if( ( s_quote_cur != -1 ) && ( s_quote_cur <= cur_cur ) ) 
+      if( ( s_quote_cur != -1 ) && ( s_quote_cur <= cur_cur ) )
       {
         s_quote_cur = string.indexOf(s_quote_val, cur_cur + 1);
       }
-      if( ( d_quote_cur != -1 ) && ( d_quote_cur <= cur_cur ) ) 
+      if( ( d_quote_cur != -1 ) && ( d_quote_cur <= cur_cur ) )
       {
         d_quote_cur = string.indexOf(d_quote_val, cur_cur + 1);
       }
-      if( ( slash_cur != -1 ) && ( slash_cur <= cur_cur ) ) 
+      if( ( slash_cur != -1 ) && ( slash_cur <= cur_cur ) )
       {
         slash_cur = string.indexOf(slash_val, cur_cur + 1);
       }
@@ -383,7 +383,7 @@ window.cls.NewScriptPrototype = function()
       }
       if( state )
       {
-        
+
         while( line_cur <= min_cur )
         {
           line_arr[line_count++] = line_cur;
@@ -394,7 +394,7 @@ window.cls.NewScriptPrototype = function()
               line_arr[line_count] = string.length;
             }
             return;
-          } 
+          }
         }
         switch( state )
         {
@@ -440,7 +440,7 @@ window.cls.NewScriptPrototype = function()
                 }
               }
             }
-            
+
             continue;
           }
           case 'SLASH':
@@ -468,7 +468,7 @@ window.cls.NewScriptPrototype = function()
               {
                 // skip the first '*'
                 slash_cur++;
-                
+
                 do
                 {
                   slash_cur = string.indexOf('*', slash_cur + 1);
@@ -482,7 +482,7 @@ window.cls.NewScriptPrototype = function()
                   {
                     line_arr[line_count] = line_cur;
                     state_arr[line_count++] = COMMENT;
-                    
+
                     if ((line_cur = string.indexOf(eol, line_cur) + 1) == 0)
                     {
                       if (line_arr[ line_arr.length - 1 ] < string.length)
@@ -506,17 +506,17 @@ window.cls.NewScriptPrototype = function()
                 while ( temp_char == ' ' && ( slash_cur - temp_count > 0 ) );
                 switch(temp_char)
                 {
-                  case '=': 
-                  case '(': 
-                  case '[': 
-                  case ':': 
-                  case ',': 
+                  case '=':
+                  case '(':
+                  case '[':
+                  case ':':
+                  case ',':
                   case '!':
                   {
                     temp_type = 'REG_EXP';
                     break;
                   }
-                  case '&': 
+                  case '&':
                   case '|':
                   {
                     if(string.charAt(slash_cur-temp_count) == temp_char)
@@ -590,7 +590,7 @@ window.cls.NewScriptPrototype = function()
         {
           line_arr[line_count] = string.length;
         }
-        
+
         return;
       }
     }

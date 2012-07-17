@@ -1,7 +1,7 @@
 ﻿window.cls || ( window.cls = {} );
 
 /**
-  * @constructor 
+  * @constructor
   * A simple class to create a namespace on the window object.
   * It has one methode to add new created objects to it.
   */

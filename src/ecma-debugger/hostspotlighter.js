@@ -5,7 +5,7 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 {
   /* interface */
-  // type: default, dimension, padding, border, margin, locked 
+  // type: default, dimension, padding, border, margin, locked
   this.spotlight = function(node_id, scroll_into_view, type){};
   this.soft_spotlight = function(node_id) {};
   this.clearSpotlight = function(){};
@@ -17,7 +17,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   this.metricsMouseoutHandler = function(event){};
   this.metricsMouseoverHandler = function(event){};
 
-  
+
   const
   FILL = 0,
   FRAME = 1,
@@ -25,7 +25,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   CSS_TEXT = ["background-color: ", "border-color: ", "border-color: "],
   CSS_CONVERT_TABLE =
   {
-    'background-color': 'backgroundColor', 
+    'background-color': 'backgroundColor',
     'border-color': 'borderColor',
     'color':  'color'
   },
@@ -63,7 +63,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       locked_elements = [];
     }
   };
-   
+
   /* helpers */
 
   var get_command = function(node_id, scroll_into_view, name)
@@ -84,7 +84,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     if(root_id)
     {
       services['ecmascript-debugger'].requestSpotlightObjects(0,
-        [ settings.dom.get('lock-selected-elements') && 
+        [ settings.dom.get('lock-selected-elements') &&
             locked_elements.map(get_locked_commands) || [[root_id, 0, [[0,0]]]] ]);
     }
     else
@@ -273,16 +273,16 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     extract_css_properties(matrixes[BORDER][2], (client_colors.border = {}));
     extract_css_properties(matrixes[MARGIN][3], (client_colors.margin = {}));
   };
-  
+
   // TODO fix name
   var stringify_command = function(matrix)
   {
-    var 
-    ret = [], 
-    box = null, 
-    spot_box = null, 
-    i = 0, 
-    j = 0, 
+    var
+    ret = [],
+    box = null,
+    spot_box = null,
+    i = 0,
+    j = 0,
     color = 0,
     has_color = 0;
 
@@ -311,9 +311,9 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   var extract_css_properties = function(box, target)
   {
     // fill, frame, grid
-    var 
+    var
     properties = ['background-color'],
-    color = null, 
+    color = null,
     i = 0;
 
     for (i = 0; i < properties.length; i++)
@@ -365,8 +365,8 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     {
       rts[msg.rt_id] = {root_id: dom_data.getRootElement()};
     }
-    if (msg.rt_id && msg.obj_id && 
-        settings.dom.get('lock-selected-elements') && 
+    if (msg.rt_id && msg.obj_id &&
+        settings.dom.get('lock-selected-elements') &&
         // events can be asynchronous
         window.host_tabs.is_runtime_of_active_tab(msg.rt_id))
     {
@@ -399,7 +399,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   /* convert a rgba array to a integer */
   var convert_rgba_to_int = function(arr)
   {
-    return arr && arr.length == 4 && 
+    return arr && arr.length == 4 &&
         ((arr[0] << 23) * 2 + (arr[1] << 16) +(arr[2] << 8) + (arr[3] << 0)) || 0;
   }
 
@@ -429,8 +429,8 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 
   this._set_style_metrics_target = function(target, class_name)
   {
-    var 
-    index = class_names.indexOf(class_name) + 1, 
+    var
+    index = class_names.indexOf(class_name) + 1,
     style = target.style,
     style_source = client_colors[class_name];
 
@@ -471,16 +471,16 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
 
   eventHandlers.click["reset-default-spotlight-colors"] = function(event, target)
   {
-    window.settings['host-spotlight'].set('spotlight-color', 
+    window.settings['host-spotlight'].set('spotlight-color',
                                           window.ini.spotlight_color);
     if (event.target.previousElementSibling)
     {
-      event.target.previousElementSibling.style.backgroundColor = 
+      event.target.previousElementSibling.style.backgroundColor =
         "#" + window.ini.spotlight_color;
     }
     set_initial_values();
   };
-    
+
   eventHandlers.click['select-spotlight-color'] = function(event, target)
   {
     var color_sample = target;
@@ -498,7 +498,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       palette_disabled: true,
       z_index: 301 // higher than the overlay
     };
-    window.views['color-selector'].show_color_picker(color_sample, 
+    window.views['color-selector'].show_color_picker(color_sample,
                                                      this._edit_context);
   }.bind(this);
 
@@ -519,9 +519,9 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
       this.spotlight(active_model.target, 0, class_name || "default");
     }
   }.bind(this);
-  
+
   /* interface */
-  
+
   this.spotlight = function(node_id, scroll_into_view, type)
   {
     type || (type = "default");
@@ -530,7 +530,7 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
     if (join.call(arguments) != last_spotlight_commands)
     {
       last_spotlight_commands = join.call(arguments);
-      var locked_s = settings.dom.get('lock-selected-elements') && 
+      var locked_s = settings.dom.get('lock-selected-elements') &&
                      locked_elements.map(get_locked_commands) || null;
       var cmd = [get_command(node_id, scroll_into_view, type)];
       last_spotlight_command = [get_command(node_id, false, type)];
@@ -552,12 +552,12 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   }
 
   // commands["locked"]
-  
+
   this.clearSpotlight = function()
   {
     spotlight_clear_timeouts.set(clear_spotlight, 50);
   }
-  
+
   this.invertColors = function()
   {
     invert_colors();
@@ -574,28 +574,28 @@ cls.EcmascriptDebugger["6.0"].Hostspotlighter = function()
   this.colorSelectsTemplate = function()
   {
     var shortcut = ActionBroker.get_instance()
-                  .get_shortcut_with_handler_and_action('global', 
+                  .get_shortcut_with_handler_and_action('global',
                                                         'invert-spotlight-colors');
     var color = window.settings['host-spotlight'].get('spotlight-color');
     return (
     ['setting-composite',
       ['div',
-        ['span', 
+        ['span',
           'style', 'background-color: #' + color,
           'class', 'spotlight-color-select',
           'handler', 'select-spotlight-color'],
-        ['span', 
-          ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS, 
+        ['span',
+          ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS,
           'handler', 'reset-default-spotlight-colors',
           'class', 'reset-defaults ui-button',
           'tabindex', '1'],
         ['p', ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT.replace ("%s", shortcut)],
-      'class', 'host-spotlight']])  
+      'class', 'host-spotlight']])
   };
-     
+
   /* constructor calls */
 
-  messages.addListener("element-selected", onElementSelected); 
+  messages.addListener("element-selected", onElementSelected);
   messages.addListener('active-tab', onActiveTab);
   messages.addListener('setting-changed', onSettingChange);
   messages.addListener('profile-disabled', _on_profile_disabled);

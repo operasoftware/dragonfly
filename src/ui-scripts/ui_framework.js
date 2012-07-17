@@ -2,7 +2,7 @@
 
 var ui_framework = new function()
 {
-  
+
   this.beforeSetup = function(){};
   this.afterSetup = function(){};
   // namespace to register layouts
@@ -11,21 +11,21 @@ var ui_framework = new function()
 
   var self = this;
 
-  var resolve_map_properties = 
+  var resolve_map_properties =
   [
-    {s_name: 'border-top-width'}, 
-    {s_name: 'border-right-width'}, 
-    {s_name: 'border-bottom-width'}, 
-    {s_name: 'border-left-width'}, 
-    {s_name: 'padding-top'}, 
-    {s_name: 'padding-right'}, 
-    {s_name: 'padding-bottom'}, 
+    {s_name: 'border-top-width'},
+    {s_name: 'border-right-width'},
+    {s_name: 'border-bottom-width'},
+    {s_name: 'border-left-width'},
+    {s_name: 'padding-top'},
+    {s_name: 'padding-right'},
+    {s_name: 'padding-bottom'},
     {s_name: 'padding-left'},
     {s_name: 'width'},
     {s_name: 'height'}
   ]
 
-  var resolve_map = 
+  var resolve_map =
   [
     {
       source: 'toolbar',
@@ -81,10 +81,10 @@ var ui_framework = new function()
     {
       source: 'window-header',
       target: defaults,
-      properties: 
+      properties:
       [
         {
-          t_name: 'window_header_offsetHeight', 
+          t_name: 'window_header_offsetHeight',
           setProp: function(source, decalaration)
           {
             return source.offsetHeight;
@@ -105,10 +105,10 @@ var ui_framework = new function()
     {
       source: 'window-statusbar',
       target: defaults,
-      properties: 
+      properties:
       [
         {
-          t_name: 'window_statusbar_offsetHeight', 
+          t_name: 'window_statusbar_offsetHeight',
           setProp: function(source, decalaration)
           {
             return source.offsetHeight;
@@ -148,7 +148,7 @@ var ui_framework = new function()
         var container = document.getElementById('js-source-scroll-content');
         var text = document.getElementById(this.id);
         return container && text
-             ? text.getBoundingClientRect().left - 
+             ? text.getBoundingClientRect().left -
                container.getBoundingClientRect().left
              : 0;
       }
@@ -163,10 +163,10 @@ var ui_framework = new function()
       target: 'cst-select-margin-border-padding',
       getValue: function()
       {
-        var 
-        props = ['margin-left', 'border-left-width', 'padding-left', 
+        var
+        props = ['margin-left', 'border-left-width', 'padding-left',
          'margin-right', 'border-right-width', 'padding-right'],
-        prop = '', 
+        prop = '',
         i = 0,
         val = 0,
         style = getComputedStyle(document.getElementById(this.id), null);
@@ -189,7 +189,7 @@ var ui_framework = new function()
           var font = getComputedStyle(span, null).getPropertyValue('font-family');
           if (font.toLowerCase().indexOf(span.title.toLowerCase()) != -1)
           {
-            return span.title; 
+            return span.title;
           }
           return null;
         }).filter(Boolean);
@@ -218,7 +218,7 @@ var ui_framework = new function()
     "</toolbar> " +
     "<div id='test-font-faces'>" +
     [
-      "Menlo", 
+      "Menlo",
       "Andale Mono",
       "Arial Monospaced",
       "Bitstream Vera Sans Mono",

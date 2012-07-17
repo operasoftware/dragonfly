@@ -25,7 +25,7 @@
     return content;
   };
 
-  this._search_input = function(name, type, value, label, 
+  this._search_input = function(name, type, value, label,
                                 is_selected, is_disabled, title)
   {
     var input = ['input', 'type', type, 'value', value, 'name', name];
@@ -43,7 +43,7 @@
     }
 
     var ret = ['label', input, label];
-    
+
     if (title)
     {
       ret.push('title', title);
@@ -58,8 +58,8 @@
         ['table',
           ['tr',
             ['td', this.default_filter(search.controls[0])],
-            ['td', 
-              ['span', '\u00A0', 'class', 'search-info-badge'], 
+            ['td',
+              ['span', '\u00A0', 'class', 'search-info-badge'],
               'width', '1px'],
             ['td', this.search_control(search.controls[1]), 'width', '1px'],
             ['td', this.search_control(search.controls[2]), 'width', '1px']],
@@ -72,31 +72,31 @@
     return (
     [
       this.advanced_search_field(search),
-      ['div', 
+      ['div',
         ['form',
-          this._search_input('dom-search-type', 
-                             'radio', 
-                             DOMSearch.PLAIN_TEXT, 
+          this._search_input('dom-search-type',
+                             'radio',
+                             DOMSearch.PLAIN_TEXT,
                              ui_strings.S_LABEL_SEARCH_TYPE_TEXT,
                              DOMSearch.PLAIN_TEXT == search.search_type),
-          this._search_input('dom-search-type', 
-                             'radio', 
-                             DOMSearch.REGEXP, 
+          this._search_input('dom-search-type',
+                             'radio',
+                             DOMSearch.REGEXP,
                              ui_strings.S_LABEL_SEARCH_TYPE_REGEXP,
                              DOMSearch.REGEXP == search.search_type),
-          this._search_input('dom-search-type', 
-                             'radio', 
-                             DOMSearch.CSS, 
+          this._search_input('dom-search-type',
+                             'radio',
+                             DOMSearch.CSS,
                              ui_strings.S_LABEL_SEARCH_TYPE_CSS,
                              DOMSearch.CSS == search.search_type),
-          this._search_input('dom-search-type', 
-                             'radio', 
-                             DOMSearch.XPATH, 
+          this._search_input('dom-search-type',
+                             'radio',
+                             DOMSearch.XPATH,
                              ui_strings.S_LABEL_SEARCH_TYPE_XPATH,
                              DOMSearch.XPATH == search.search_type),
-          this._search_input('dom-search-ignore-case', 
-                             'checkbox', 
-                             'ignore-case', 
+          this._search_input('dom-search-ignore-case',
+                             'checkbox',
+                             'ignore-case',
                              ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
                              search.ignore_case,
                              !search.is_token_search),
@@ -113,31 +113,31 @@
     return (
     [
       this.advanced_search_field(search),
-      ['div', 
+      ['div',
         ['form',
-          this._search_input('js-search-type', 
-                             'checkbox', 
-                             'reg-exp', 
+          this._search_input('js-search-type',
+                             'checkbox',
+                             'reg-exp',
                              ui_strings.S_LABEL_SEARCH_TYPE_REGEXP,
                              TextSearch.REGEXP == search.search_type),
-          this._search_input('js-search-ignore-case', 
-                             'checkbox', 
-                             'ignore-case', 
+          this._search_input('js-search-ignore-case',
+                             'checkbox',
+                             'ignore-case',
                              ui_strings.S_LABEL_SEARCH_FLAG_IGNORE_CASE,
                              search.ignore_case),
-          this._search_input('js-search-all-files', 
-                             'checkbox', 
-                             'search-all-files', 
+          this._search_input('js-search-all-files',
+                             'checkbox',
+                             'search-all-files',
                              ui_strings.S_LABEL_SEARCH_ALL_FILES,
                              search.search_all_files),
-          this._search_input('js-search-injected-scripts', 
-                             'checkbox', 
-                             'search-injected-scripts', 
+          this._search_input('js-search-injected-scripts',
+                             'checkbox',
+                             'search-injected-scripts',
                              ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS,
                              search.search_injected_scripts,
                              !search.search_all_files,
                              ui_strings.S_LABEL_SEARCH_INJECTED_SCRIPTS_TOOLTIP),
-                             
+
           'handler', 'js-search-type-changed',
         ],
       ],
@@ -181,7 +181,7 @@
     this._js_search_ctx = {count: 0, max_count: max_count};
     if (result_count > max_count)
     {
-      ret.push(['div', 
+      ret.push(['div',
                   ['div', ui_strings.S_INFO_TOO_MANY_SEARCH_RESULTS
                        .replace('%(COUNT)s', result_count)
                        .replace('%(MAX)s', max_count),
@@ -255,23 +255,23 @@
           if (cur_line != line)
           {
             line = cur_line;
-            script_data = script.script_data.slice(script.line_arr[line - 1], 
+            script_data = script.script_data.slice(script.line_arr[line - 1],
                                                    script.line_arr[line]);
-            script_tmpl = this.highlight_js_source(script_data, 
-                                                   null, 
-                                                   script.state_arr[line - 1], 
+            script_tmpl = this.highlight_js_source(script_data,
+                                                   null,
+                                                   script.state_arr[line - 1],
                                                    ['code'],
                                                    true);
             if (script_tmpl.length == 2 && RE_WS.test(script_tmpl[1]))
             {
               script_tmpl[1] += "\u00a0";
-            }                                
-            if (script.line_offsets_length[i] && 
+            }
+            if (script.line_offsets_length[i] &&
                 script.line_offsets[i] + script.line_offsets_length[i] > script.get_line_length(line))
             {
               script_tmpl.push(['span', '…', 'class', 'match-following-line'])
             }
-            ret.push(['div', 
+            ret.push(['div',
                        ['span', String(line), 'class', 'line-no'],
                        script_tmpl,
                        'data-line-no', String(line),

@@ -35,8 +35,8 @@ if( window.app )
 }
 window.app = {};
 
-/** 
-  * If the connected host has a core intergation point prior to 168 the 
+/**
+  * If the connected host has a core intergation point prior to 168 the
   * application will reload an according older application version.
   * Core integartion 168 supports the following service versions:
   *
@@ -53,8 +53,8 @@ window.app = {};
   *   ecmascript:          1.0
   *   ecmascript-debugger: 6.6
   *
-  * "http-logger" is not present in this build. 
-  * It is replaced by the "resource-manager". 
+  * "http-logger" is not present in this build.
+  * It is replaced by the "resource-manager".
   *
   */
 window.app.MIN_SUPPORTED_CORE_VERSION = 167;
@@ -200,8 +200,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
   var report_usage = function()
   {
     if (settings.general.get("track-usage") &&
-        // Don't phone home when developing 
-        // (port is typically only used in that situation). 
+        // Don't phone home when developing
+        // (port is typically only used in that situation).
         !location.port)
     {
       var trackerurl = "/app/user-count"

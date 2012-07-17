@@ -69,10 +69,10 @@ window.cls.PropertyFinder = function(rt_id) {
     var last_bracket = this._get_last_punctuator(tokens, '[');
     var last_brace = this._get_last_punctuator(tokens, '(');
 
-    last_brace = this._get_last_punctuator(tokens, ')') <= last_brace 
+    last_brace = this._get_last_punctuator(tokens, ')') <= last_brace
                ? last_brace
                : -1;
-    last_bracket = this._get_last_punctuator(tokens, ']') <= last_bracket 
+    last_bracket = this._get_last_punctuator(tokens, ']') <= last_bracket
                  ? last_bracket
                  : -1;
     input = input.slice(Math.max(last_brace,

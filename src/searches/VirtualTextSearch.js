@@ -2,12 +2,12 @@
 /**
  * Generic search/highlight component that uses a backing store for its data
  * instead of the actual DOM. Used in the various code views where the DOM
- * content is generated on demand based on the view, e.g. where only the 
+ * content is generated on demand based on the view, e.g. where only the
  * visible lines of a given script are created in the DOM.
  * Use case is basically where the DOM view is only a slice of the actual data.
  * @see TextSearch
  * @see ListTextSearch
- * @constructor 
+ * @constructor
  */
 var VirtualTextSearch = function(config)
 {
@@ -25,14 +25,14 @@ var JSSearchWindowHighlightPrototype = function()
   this._get_search_cursor = TextSearch.prototype._get_search_cursor;
   this.highlight_next = TextSearch.prototype.highlight_next;
   this.highlight_previous = TextSearch.prototype.highlight_previous;
-  
+
   this.reset_match_cursor = function()
   {
     this._match_cursor = -1;
     this._hits = [];
     this._hit = null;
   };
-  
+
   this.set_match_cursor = function(target)
   {
     var hit = null;
@@ -47,7 +47,7 @@ var JSSearchWindowHighlightPrototype = function()
       }
     }
   };
-  
+
   this.get_match_cursor = function()
   {
     return this._match_cursor;
@@ -63,7 +63,7 @@ var VirtualTextSearchBase = function()
   /**
     * Initiate the search of a new search term.
     *
-    * @param {String} new_search_term 
+    * @param {String} new_search_term
     */
   this.search_delayed = function(new_search_term){};
   /**
@@ -90,8 +90,8 @@ var VirtualTextSearchBase = function()
 
   /**
     * Register the DOM input to enter a search.
-    * This is not used to trigger the search, 
-    * but to update a view and it's search box 
+    * This is not used to trigger the search,
+    * but to update a view and it's search box
     * if a given view is re-created, e.g. on switching tabs.
     *
     * @param {HTMLInputElement}
@@ -114,17 +114,17 @@ var VirtualTextSearchBase = function()
   this.set_hit = function(node, offset, length, style, do_store, skip_query){};
 
   this.get_hit_count = function(){};
-  
+
   this.update_search = function(){};
 
   // deprecated
   this.update = function(){};
-  
+
   this.scroll_selected_hit_in_to_view = function(){};
 
   /* constants */
 
-  const 
+  const
   DEFAULT_SCROLL_MARGIN = 50,
   SEARCH_DELAY = 50, // in ms
   MIN_TERM_LENGTH = 1,
@@ -148,7 +148,7 @@ var VirtualTextSearchBase = function()
     this._script = null;
     this._offset = -1;
     this._length = 0;
-    this._highlight_style = ''; 
+    this._highlight_style = '';
     this._search_hits_valid = false;
     this._top_line = 0;
     this._bottom_line = 0;
@@ -177,14 +177,14 @@ var VirtualTextSearchBase = function()
     * Starts a new search.
     */
   this._search = function(new_search_term)
-  {    
+  {
     var pos = -1, source = '', line_arr = null, line_arr_length = 0, line_cur = 0;
     new_search_term = new_search_term.toLowerCase();
     if (new_search_term != this._search_term)
     {
       this._search_term = new_search_term;
-      this.post_message("onbeforesearch", 
-                        {search_term: this._search_term.length >= MIN_TERM_LENGTH ? 
+      this.post_message("onbeforesearch",
+                        {search_term: this._search_term.length >= MIN_TERM_LENGTH ?
                                       this._search_term : ""});
       if (new_search_term.length >= MIN_TERM_LENGTH)
       {
@@ -234,8 +234,8 @@ var VirtualTextSearchBase = function()
   /**
     * Initiate the search in the actual DOM.
     * Scroll the view to the correct slice if needed.
-    * 
-    * @param {Boolean} set_match_cursor 
+    *
+    * @param {Boolean} set_match_cursor
     *     If true the match cursor is set starting from the current top line
     *     (so that the view doesn't scroll if there is a match in the visible slice).
     */
@@ -245,7 +245,7 @@ var VirtualTextSearchBase = function()
           this._script && this._script.line_matches && this._script.line_matches.length)
     {
       var line = this._script.line_matches[this._script.match_cursor];
-      
+
       this._top_line = views.js_source.getTopLine();
       this._bottom_line = views.js_source.getBottomLine();
       if (set_match_cursor)
@@ -259,8 +259,8 @@ var VirtualTextSearchBase = function()
       }
       if (line < this._top_line || line >= this._bottom_line)
       {
-        var plus_lines = views.js_source.getMaxLines() <= 7 
-          ? views.js_source.getMaxLines() / 2 >> 0 
+        var plus_lines = views.js_source.getMaxLines() <= 7
+          ? views.js_source.getMaxLines() / 2 >> 0
           : 7;
         views.js_source.showLine(this._script.script_id, line - plus_lines, true);
         this._top_line = views.js_source.getTopLine();
@@ -272,7 +272,7 @@ var VirtualTextSearchBase = function()
         this._set_source_container();
       }
       // views.js_source.showLine can invalidate the current script source
-      // _search_source only performs the search if the current search term 
+      // _search_source only performs the search if the current search term
       // is not the search term of the script
       this._search_source();
       if (this._search_hits_valid)
@@ -297,18 +297,18 @@ var VirtualTextSearchBase = function()
   };
 
   /**
-    * Create the highlight spans in a DOM element 
+    * Create the highlight spans in a DOM element
     * which represents a line of the source file.
     * this._offset and this._length are variables of the scope of the class.
-    * The function is called recursively on all nodes in there flow 
+    * The function is called recursively on all nodes in there flow
     * of the containing line node till the two values are consumed.
     *
     * @param {Element} node The DOM element which represents a line of the source file.
     */
-  this._search_node = function(node, skip_query) 
+  this._search_node = function(node, skip_query)
   {
     var cur_node = node && node.firstChild, pos = 0, hit = null, span = null, length = 0;
-    while (cur_node && this._offset > -1) 
+    while (cur_node && this._offset > -1)
     {
       switch (cur_node.nodeType)
       {
@@ -385,7 +385,7 @@ var VirtualTextSearchBase = function()
     this._source_container.parentNode.scrollLeft = 0;
     this._hit = this._hits[this._script.match_cursor];
     if (this._hit && this._hit.length
-       && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft + 
+       && this._hit[0].offsetLeft > this._source_container_parent.scrollLeft +
                                     this._source_container_parent.offsetWidth)
     {
       this._source_container.parentNode.scrollLeft = this._hit[0].offsetLeft - 50;
@@ -423,8 +423,8 @@ var VirtualTextSearchBase = function()
     */
   this._update_hit = function(hit_arr, index)
   {
-    hit_arr.forEach(index == this._script.match_cursor && 
-                    this._set_highlight_style || 
+    hit_arr.forEach(index == this._script.match_cursor &&
+                    this._set_highlight_style ||
                     this._set_default_style, this);
   }
 
@@ -441,7 +441,7 @@ var VirtualTextSearchBase = function()
     */
   this._clear_highlight_span = function(ele)
   {
-    var parent = ele && ele.parentNode; 
+    var parent = ele && ele.parentNode;
     if (parent)
     {
       parent.replaceChild(ele.firstChild, ele);
@@ -490,7 +490,7 @@ var VirtualTextSearchBase = function()
 
   this.update_hits = function(top_line, bottom_line)
   {
-    if (this._script && this._script.search_term && 
+    if (this._script && this._script.search_term &&
         this._script.line_matches && this._script.line_matches.length)
     {
       this._clear_hits();
@@ -526,7 +526,7 @@ var VirtualTextSearchBase = function()
       }
     }
   }
-  
+
   this.set_script = function(script)
   {
     if (script != this._script)
@@ -571,11 +571,11 @@ var VirtualTextSearchBase = function()
 
   this.highlight_matches = function(script)
   {
-  
+
   };
-  
+
   this.update_search = function()
-  {    
+  {
     if (!this._search_term && this._script)
     {
       this._search_source();

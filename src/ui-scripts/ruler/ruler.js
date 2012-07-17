@@ -359,22 +359,22 @@ window.addEventListener('load', function()
       {
         is_dirty = true;
         this._rx0 = rx0;
-      } 
+      }
       if (typeof rx1 == 'number' && this._rx1 != rx1)
       {
         is_dirty = true;
         this._rx1 = rx1;
-      } 
+      }
       if (typeof ry0 == 'number' && this._ry0 != ry0)
       {
         is_dirty = true;
         this._ry0 = ry0;
-      } 
+      }
       if (typeof ry1 == 'number' && this._ry1 != ry1)
       {
         is_dirty = true;
         this._ry1 = ry1;
-      } 
+      }
 
       if (is_dirty || force_redraw)
       {
@@ -422,17 +422,17 @@ window.addEventListener('load', function()
     this.__defineSetter__('height', function(x) {});
     this.__defineGetter__('height', function() {return this._ry1 - this._ry0;});
     this.__defineSetter__('target_width', function(x) {});
-    this.__defineGetter__('target_width', function() 
+    this.__defineGetter__('target_width', function()
     {
       return this._rx1 - this._rx0 - BORDER_LEFT - BORDER_RIGHT;
     });
 
     this.__defineSetter__('target_height', function(x) {});
-    this.__defineGetter__('target_height', function() 
+    this.__defineGetter__('target_height', function()
     {
       return this._ry1 - this._ry0 - BORDER_TOP - BORDER_BOTTOM;
     });
-    
+
     this.__defineSetter__('w', function(x) {});
     this.__defineGetter__('w', function() {return this.target_width / this._scale;});
     this.__defineSetter__('h', function(x) {});

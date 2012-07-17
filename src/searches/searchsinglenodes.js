@@ -1,5 +1,5 @@
 ﻿/**
- * Subclasses TextSearch. The difference is that this class will only 
+ * Subclasses TextSearch. The difference is that this class will only
  * search in single tokens, not span a match over several tokes.
  * Subclassed e.g. by DOMSearch.
  * @see TextSearch
@@ -14,7 +14,7 @@ var SearchSingleNodesPrototype = function(min_length)
 {
   /**
     * Subclasses TextSearch.
-    * Overwrites 
+    * Overwrites
     *   _search_node
     *  _consume_node
     * to only match the context of single nodes.
@@ -34,7 +34,7 @@ var SearchSingleNodesPrototype = function(min_length)
       node = node.splitText(this._current_match_index);
       node.splitText(this._search_term_length);
       var span = document.createElement('em');
-      this._hits.push([span]); 
+      this._hits.push([span]);
       node.parentNode.replaceChild(span, node);
       span.appendChild(node);
       span.className = DEFAULT_MATCH_CLASS;

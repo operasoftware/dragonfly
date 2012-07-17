@@ -14,7 +14,7 @@
   *   max_y: <number> // optional
   * }
   */
-    
+
 var CubicBezierControl = function(config)
 {
   /* interface */
@@ -31,11 +31,11 @@ var CubicBezierControl = function(config)
 
 CubicBezierControl.prototype = new function()
 {
-  const 
-  UPDATE_INTERVAL = 80, 
-  MAX = Math.max, 
+  const
+  UPDATE_INTERVAL = 80,
+  MAX = Math.max,
   MIN = Math.min,
-  BORDER = 10, 
+  BORDER = 10,
   DELTA = 100,
   SHIFT = BORDER + DELTA,
   CLASS_P1 = 'cubic-bezier-p-1',
@@ -45,7 +45,7 @@ CubicBezierControl.prototype = new function()
   {
     if (this._is_active)
     {
-      this._callback(this._x0 / 100, this._y0 / 100, 
+      this._callback(this._x0 / 100, this._y0 / 100,
                      this._x1 / 100, this._y1 / 100);
     }
     else
@@ -58,9 +58,9 @@ CubicBezierControl.prototype = new function()
   this._onmousemove = function(event)
   {
     var box = this._svg.getBoundingClientRect();
-    var value_x = 
+    var value_x =
       ((event.clientX - this._delta_x - box.left) * this._scale) - SHIFT;
-    var value_y = 
+    var value_y =
       ((event.clientY - this._delta_y - box.top) * this._scale) - SHIFT;
     if (this._target_class == CLASS_P1)
     {
@@ -79,14 +79,14 @@ CubicBezierControl.prototype = new function()
   {
     if (!this._interval && !this._is_active)
     {
-      var 
+      var
       target = event.target,
       class_name = target.getAttribute('class'),
       box = null;
 
       if (class_name == CLASS_P1 || class_name == CLASS_P2)
       {
-        
+
         box = this._svg.getBoundingClientRect();
         this._width = box.width;
         this._height = box.height;
@@ -94,16 +94,16 @@ CubicBezierControl.prototype = new function()
         this._target_class = class_name;
         if (this._target_class == CLASS_P1)
         {
-          this._delta_x = 
+          this._delta_x =
             event.clientX - (box.left + (SHIFT + this._x0) / this._scale);
-          this._delta_y = 
+          this._delta_y =
             event.clientY - (box.top + (SHIFT + 100 - this._y0) / this._scale);
         }
         else
         {
-          this._delta_x = 
+          this._delta_x =
             event.clientX - (box.left + (SHIFT + this._x1) / this._scale);
-          this._delta_y = 
+          this._delta_y =
             event.clientY - (box.top + (SHIFT + 100 - this._y1) / this._scale);
         }
         document.addEventListener('mousemove', this._onmousemove_bound, false);
@@ -137,15 +137,15 @@ CubicBezierControl.prototype = new function()
       this._onmousemoveinterval_bound = null;
     }
   }
-    
+
   this._update = function()
   {
     var gs = this._svg.getElementsByTagName('g');
     while (gs[0])
       gs[0].parentNode.removeChild(gs[0]);
-    this._svg.render(['svg:g', window.templates.svg_cubic_bezier(this._x0, 
-                                                                 this._y0, 
-                                                                 this._x1, 
+    this._svg.render(['svg:g', window.templates.svg_cubic_bezier(this._x0,
+                                                                 this._y0,
+                                                                 this._x1,
                                                                  this._y1,
                                                                  CLASS_P1,
                                                                  CLASS_P2)]);
@@ -170,7 +170,7 @@ CubicBezierControl.prototype = new function()
       this._update();
 
       this._callback = config.onxy;
-      
+
       this._onmousedown_bound = this._onmousedown.bind(this);
       this._onmousemove_bound = this._onmousemove.bind(this);
       this._onmouseup_bound = this._onmouseup.bind(this);
@@ -180,5 +180,5 @@ CubicBezierControl.prototype = new function()
       document.addEventListener('DOMNodeRemoved', this._onremove_bound, false);
     }
   }
-  
+
 };

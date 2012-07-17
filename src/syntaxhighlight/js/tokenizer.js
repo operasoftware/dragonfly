@@ -56,7 +56,7 @@ cls.SimpleJSParser.prototype = new function()
     * Tokenize a give script string.
     * @param {String} script_source The script string.
     * @param {Function} ontoken. Signature of the callback is (token_type, token).
-    * @param {String} escape. Optional. Currently supports only "html" 
+    * @param {String} escape. Optional. Currently supports only "html"
     * to escape "<" and "&" to "&lt;" and "&amp;".
     */
   this.tokenize = function(script_source, ontoken, escape, start_state){};
@@ -770,8 +770,8 @@ cls.SimpleJSParser.prototype = new function()
     if (__buffer && !__has_hit_max_line_chars)
     {
       __char_count += __buffer.length;
-      // To handle the width limit (instaed of overflow hidden). 
-      // Opera 12 will no longer have that limit, so this is just temporary. 
+      // To handle the width limit (instaed of overflow hidden).
+      // Opera 12 will no longer have that limit, so this is just temporary.
       if (__char_count > __max_line_chars)
       {
         __buffer = __buffer.slice(0, __buffer.length - (__char_count - __max_line_chars));
@@ -788,7 +788,7 @@ cls.SimpleJSParser.prototype = new function()
         {
           if(__js_types.hasOwnProperty(__buffer))
           {
-            __line += "<span class='" + __js_types[__buffer] + "'>" + 
+            __line += "<span class='" + __js_types[__buffer] + "'>" +
                       __buffer + "</span>";
           }
           else if(__buffer in js_keywords)
@@ -843,8 +843,8 @@ cls.SimpleJSParser.prototype = new function()
     if (__buffer && !__has_hit_max_line_chars)
     {
       __char_count += __buffer.length;
-      // To handle the width limit (instaed of overflow hidden). 
-      // Opera 12 will no longer have that limit, so this is just temporary. 
+      // To handle the width limit (instaed of overflow hidden).
+      // Opera 12 will no longer have that limit, so this is just temporary.
       if (__char_count > __max_line_chars)
       {
         __buffer = __buffer.slice(0, __buffer.length - (__char_count - __max_line_chars));
@@ -867,8 +867,8 @@ cls.SimpleJSParser.prototype = new function()
         {
           if(__parse_error_first_token)
           {
-            __line = "<div class='error-description'>" + 
-                        helpers.escapeTextHtml(__parse_error_description) + 
+            __line = "<div class='error-description'>" +
+                        helpers.escapeTextHtml(__parse_error_description) +
                         "</div>" +
                         "<span class='not-error'>" +  __line + "</span>" +
                         "<span class='first-error'>" +  __buffer + "</span>";

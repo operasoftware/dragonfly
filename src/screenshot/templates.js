@@ -31,7 +31,7 @@
               'handler', 'screenshot-sample-size'],
             'class', 'selectable'],
           ['td', '9 x 9']]],
-      ['div', 
+      ['div',
         this.sample_color(color),
         'class', 'screenshot-sample-container'],
         this._ruler_controls(),

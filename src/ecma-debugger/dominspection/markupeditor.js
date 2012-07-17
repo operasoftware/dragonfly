@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends BaseEditor
   */
 
@@ -8,7 +8,7 @@ var DOMMarkupEditor = function()
   this.base_init(this);
   this.type = "dom-markup-editor";
   this.domnodeserializer = new cls.DOMSerializer();
-  // specific context 
+  // specific context
   this.context_enter =
   {
     rt_id: '',
@@ -35,7 +35,7 @@ var DOMMarkupEditor = function()
 
   this.edit = function(event, ref_ele)
   {
-    var 
+    var
     ele = ref_ele || event.target,
     rt_id = parseInt(ele.get_attr('parent-node-chain', 'rt-id')),
     obj_id = parseInt(ele.parentElement.getAttribute('ref-id')),
@@ -48,8 +48,8 @@ var DOMMarkupEditor = function()
     dom = null,
     cb = null;
 
-    while( container 
-            && !/container/i.test(container.nodeName) 
+    while( container
+            && !/container/i.test(container.nodeName)
             && ( container = container.parentElement ) );
     if(container && model_id)
     {
@@ -103,13 +103,13 @@ var DOMMarkupEditor = function()
     var
     state = this.context_cur,
     nav_target = this.textarea_container.parentElement;
-    
+
     if(nav_target)
     {
       var tag = tagManager.set_callback(this, this.on_exit_edit, [state, nav_target]);
       var script = "host_target.exit_edit()";
       services['ecmascript-debugger'].requestEval
-      ( 
+      (
         tag, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
       );
     }
@@ -118,13 +118,13 @@ var DOMMarkupEditor = function()
 
   this.cancel = function()
   {
-    // return a valid navigation target or null. 
+    // return a valid navigation target or null.
     // this is aproblem. the view will be updated anyway.
-    var 
+    var
     script = "",
     state = this.context_enter,
     nav_target = this.textarea_container.parentElement;
-    
+
     if( nav_target )
     {
       if(state.outerHTML != this.context_cur.outerHTML)
@@ -132,7 +132,7 @@ var DOMMarkupEditor = function()
         var tag = tagManager.set_callback(this, this.on_exit_edit, [state, nav_target]);
         var script = "host_target.cancel_edit()";
         services['ecmascript-debugger'].requestEval
-        ( 
+        (
           tag, [state.rt_id, 0, 0, script, [['host_target', state.host_target]]]
         );
       }
@@ -148,8 +148,8 @@ var DOMMarkupEditor = function()
 
   this.nav_next = function()
   {
-    var 
-    val = this.textarea.value, 
+    var
+    val = this.textarea.value,
     start = this.textarea.selectionStart,
     end = this.textarea.selectionEnd,
     indent = '  ';
@@ -200,7 +200,7 @@ var DOMMarkupEditor = function()
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         'exit markup edit failed in DOMMarkupEditor');
     }
   };
@@ -213,7 +213,7 @@ var DOMMarkupEditor = function()
   // class on the host side to update the given DOM range
   var Host_updater = function(target)
   {
-    var 
+    var
     range = document.createRange(),
     timeout = 0,
     new_str = '',
@@ -244,7 +244,7 @@ var DOMMarkupEditor = function()
           range.deleteContents();
         else
           enter_node = range.extractContents();
-        
+
         disable_scripts(fragment.childNodes[0]);
         var first = fragment.childNodes[0];
         var last = fragment.childNodes[fragment.childNodes.length - 1];
@@ -282,12 +282,12 @@ var DOMMarkupEditor = function()
     };
   };
 
-  this["return new Host_updater(target)"] = 
+  this["return new Host_updater(target)"] =
     "return new (" + Host_updater.toString() + ")(target)";
 
   this.register_host_updater = function(status, message, rt_id)
   {
-    var 
+    var
     status = message[STATUS],
     obj_id = message[OBJECT_VALUE][OBJECT_ID];
 
@@ -297,7 +297,7 @@ var DOMMarkupEditor = function()
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "failed register_host_updater in DOMMarkupEditor");
     }
   }
@@ -305,7 +305,7 @@ var DOMMarkupEditor = function()
   // complete the edit call
   this.handle_get_outer_html = function(dom, rt_id, obj_id, ele, event)
   {
-    var 
+    var
     outerHTML = this.domnodeserializer.serialize(dom),
     parent = ele.parentNode,
     parent_parent = parent.parentElement,
@@ -319,7 +319,7 @@ var DOMMarkupEditor = function()
     // this should never be needed
     if( this.textarea_container.parentElement )
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
         "this.textarea_container.parentElement is not null in submit");
     }
     this.textarea.value = outerHTML;
