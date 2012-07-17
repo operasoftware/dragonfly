@@ -355,7 +355,6 @@
 
   this.return_value = function(retval, rt_id, search_term)
   {
-    var search_re = new RegExp(search_term, "ig")
     var value_template = [];
     var value = "";
     var type = types[retval.value.type];
@@ -363,7 +362,7 @@
     {
     case TYPE_UNDEFINED:
     case TYPE_NULL:
-      if (search_re.test(type))
+      if (type.contains(search_term))
       {
         value_template.push(
           ["item",
@@ -382,7 +381,7 @@
     case TYPE_PLUS_INFINITY:
     case TYPE_MINUS_INFINITY:
       value = names[retval.value.type];
-      if (search_re.test(value))
+      if (value.contains(search_term))
       {
         value_template.push(
           ["item",
@@ -397,7 +396,7 @@
 
     case TYPE_NUMBER:
       value = String(retval.value.number);
-      if (search_re.test(value))
+      if (value.contains(search_term))
       {
         value_template.push(
           ["item",
@@ -412,7 +411,7 @@
 
     case TYPE_STRING:
       value = retval.value.str;
-      if (search_re.test(value))
+      if (value.contains(search_term))
       {
         var short_value = value.length > STRING_MAX_VALUE_LENGTH
                         ? value.slice(0, STRING_MAX_VALUE_LENGTH) + "…"
@@ -455,18 +454,9 @@
                : object.functionName;
       value = window.templates.inspected_js_object(retval.value.model, true, null, search_term);
       if (value !== "")
-        value_template = [value];
+        value_template.push(value);
       break;
     }
-
-    var from_script_id = retval.positionFrom.scriptID;
-    var from_uri = from_script_id && runtimes.getScript(from_script_id)
-                 ? (runtimes.getScript(from_script_id).uri || runtimes.getRuntime(rt_id).uri)
-                 : ui_strings.S_UNKNOWN_SCRIPT;
-    var to_script_id = retval.positionTo.scriptID;
-    var to_uri = to_script_id && runtimes.getScript(to_script_id)
-               ? (runtimes.getScript(to_script_id).uri || runtimes.getRuntime(rt_id).uri)
-               : ui_strings.S_UNKNOWN_SCRIPT;
 
     var object = retval.functionFrom;
     var func_model = new cls.InspectableJSObject(rt_id,
@@ -480,6 +470,11 @@
     if (func === "" && !value_template.length)
       return [];
 
+    var from_uri = window.helpers.get_script_name(retval.positionFrom.scriptID);
+    from_uri = from_uri ? window.helpers.basename(from_uri) : ui_strings.S_UNKNOWN_SCRIPT;
+    var to_uri = window.helpers.get_script_name(retval.positionTo.scriptID);
+    to_uri = to_uri ? window.helpers.basename(to_uri) : ui_strings.S_UNKNOWN_SCRIPT;
+
     return [
       ["li",
         ["div",
@@ -487,7 +482,7 @@
             "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
-           "title", ui_strings.S_RETURN_VALUES_FUNCTION_FROM.replace("%s", window.helpers.basename(from_uri))
+           "title", ui_strings.S_RETURN_VALUES_FUNCTION_FROM.replace("%s", from_uri)
                                                             .replace("%s", retval.positionFrom.lineNumber),
            "data-script-id", String(retval.positionFrom.scriptID),
            "data-script-line", String(retval.positionFrom.lineNumber)
@@ -501,7 +496,7 @@
               "↳",
              "class", "return-value-arrow return-value-arrow-to",
              "handler", "goto-script-line",
-             "title", ui_strings.S_RETURN_VALUES_FUNCTION_TO.replace("%s", window.helpers.basename(to_uri))
+             "title", ui_strings.S_RETURN_VALUES_FUNCTION_TO.replace("%s", to_uri)
                                                             .replace("%s", retval.positionTo.lineNumber),
              "data-script-id", String(retval.positionTo.scriptID),
              "data-script-line", String(retval.positionTo.lineNumber)

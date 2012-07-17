@@ -1707,3 +1707,6 @@ ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
 /* DESC: Section in the script side panel for return values. */
 ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
 
+/* DESC: The content of the return value section when there are not return values. */
+ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return Values";
+
