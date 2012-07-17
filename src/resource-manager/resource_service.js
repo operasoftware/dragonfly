@@ -24,7 +24,11 @@ cls.ResourceManagerService = function(view)
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
 
     if (!data.parentFrameID)
+    {
+      if(this._context)
+        delete this._context;
       this._context = new cls.ResourceContext(data);
+    }
 
     if (this._context)
       this._context.update("abouttoloaddocument", data);
@@ -83,7 +87,8 @@ cls.ResourceManagerService = function(view)
 
   this._on_debug_context_selected_bound = function()
   {
-    this._context = null;
+    if (this._context)
+      delete this._context;
     this._view.update();
   }.bind(this);
 
