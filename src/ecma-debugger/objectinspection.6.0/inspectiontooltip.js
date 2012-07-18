@@ -42,7 +42,7 @@ cls.JSInspectionTooltip = function()
   {
     if (!_cur_ctx)
       return;
-    
+
     switch (_cur_ctx.type.type)
     {
       case cls.PrettyPrinter.ELEMENT:
@@ -70,7 +70,7 @@ cls.JSInspectionTooltip = function()
         break;
     }
   };
-  
+
   var _ontooltipclick = function(event)
   {
     if (!_cur_ctx)
@@ -79,9 +79,9 @@ cls.JSInspectionTooltip = function()
     switch (_cur_ctx.type.type)
     {
       case cls.PrettyPrinter.ELEMENT:
-        UI.get_instance().show_view("dom");
         dom_data.get_dom(_cur_ctx.rt_id, _cur_ctx.obj_id);
         _hide_tooltip();
+        UI.get_instance().show_view("dom");
         break;
     }
   };
@@ -97,10 +97,10 @@ cls.JSInspectionTooltip = function()
     var obj_id = parseInt(target.get_attr("parent-node-chain", "obj-id"));
     var model = inspections[model_id];
     var obj = model && model.get_object_with_id(obj_id);
-    
+
     if (obj && obj[OBJECT_VALUE])
     {
-      _cur_object = obj; 
+      _cur_object = obj;
       _pretty_printer.print({target: target,
                              rt_id: model.runtime_id,
                              obj_id: obj_id,
