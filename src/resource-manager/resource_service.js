@@ -390,15 +390,17 @@ cls.ResourceContext = function(data)
 
   this.update = function(eventname, event)
   {
+    var frame;
     if (eventname == "abouttoloaddocument")
     {
-      var frame = new cls.ResourceFrame(event);
+      frame = new cls.ResourceFrame(event);
       this.frames[ frame.id ] = frame;
       return;
     }
 
+
     var res = this.get_resource(event.resourceID);
-    if (eventname == "urlload" && !res && this.frames[event.frameID])
+    if (eventname == "urlload" && !res)
     {
       res = new cls.Resource(event.resourceID);
       res.frameID = event.frameID;
@@ -409,14 +411,20 @@ cls.ResourceContext = function(data)
     {
       res.update(eventname, event);
 
-      var frame = this.frames[res.frameID];
+      frame = this.frames[res.frameID];
       if (eventname == "urlload")
       {
         if (res.id == frame.resourceID)
         {
           frame.resource = res;
-          if (frame.parentFrameID)
-            frame.sameOrigin = cls.ResourceUtil.sameOrigin(this.frames[frame.parentFrameID].resource, frame.resource);
+          if (frame.parentFrameID )
+          {
+            var parentFrame = this.frames[frame.parentFrameID];
+            if (parentFrame && parentFrame.resource)
+              frame.sameOrigin = cls.ResourceUtil.sameOrigin(parentFrame.resource, frame.resource);
+            else
+              frame.sameOrigin = false;
+          }
         }
       }
 
@@ -437,15 +445,25 @@ cls.ResourceContext = function(data)
         else
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-            "Unknown frameID for the resource "+ res.id);
+            'Invalidating the resource '+ res.id +': '+ (frame?'Unkown top level resource '+frame.resourceId +' for the frame '+frame.id:'Unknown frameID '+  res.frameID));
           res.invalid = true;
+        }
+      }
+
+      if (eventname == "urlredirect")
+      {
+        // Adjust the frame if its top resource is redirected
+        if (frame && frame.resourceID == res.id)
+        {
+          frame.resourceID = event.toResourceID;
+          delete frame.resource;
         }
       }
 
       if (res.invalid)
       {
         // delete the frame and all its resources if the top resource of a frame is invalid
-        if (frame && frame.resource.id==res.id)
+        if (frame && frame.resource && frame.resource.id==res.id)
         {
           delete this.frames[frame.id];
           for(var rid in this.resourcesDict)
@@ -549,7 +567,7 @@ cls.ResourcePrototype = function()
       // If it's one of these, it's not a real resource.
       if ([200, 206, 304].indexOf(eventdata.responseCode) == -1)
       {
-        this.invalid = true;
+//        this.invalid = true;
       }
     }
     else if (eventname == "urlredirect")
