@@ -26,6 +26,7 @@ cls.JSSourceTooltip = function(view)
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
   var MAX_MOUSE_POS_COUNT = 2;
   var FILTER_HANDLER = "js-tooltip-filter";
+  var CONTROL_KEYWORD = ["while", "for", "if", "switch"];
 
   var _tooltip = null;
   var _view = null;
@@ -476,7 +477,7 @@ cls.JSSourceTooltip = function(view)
                 }
               }
             }
-            else // must be "]"
+            else // must be "]" or "("
             {
               switch (token[TYPE])
               {
@@ -486,9 +487,13 @@ cls.JSSourceTooltip = function(view)
                 {
                   continue;
                 }
+                case IDENTIFIER:
+                {
+                  if (previous_token[VALUE] == "(" && CONTROL_KEYWORD.contains(token[VALUE]))
+                    break;
+                }
                 case STRING:
                 case NUMBER:
-                case IDENTIFIER:
                 {
                   previous_token = token;
                   index = i - 1;
