@@ -55,7 +55,7 @@ cls.PoTestView = function(id, name, container_class)
       }
       else
       {
-        unhandled.push(entry);  
+        unhandled.push(entry);
       }
     }
     client.setup();

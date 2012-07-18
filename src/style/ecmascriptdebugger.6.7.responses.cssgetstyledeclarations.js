@@ -22,23 +22,23 @@ cls.EcmascriptDebugger["6.7"].NodeStyle = function(arr)
   });
 };
 
-/** 
-  * 
+/**
+  *
   *  Common to all origins:
   *  - indexList
   *  - valueList
   *  - priorityList
   *  - statusList
-  * 
+  *
   *  Common to AUTHOR and LOCAL
   *  - selector
   *  - specificity
-  * 
+  *
   *  For AUTHOR
   *  - stylesheetID
   *  - ruleID
   *  - ruleType
-  * 
+  *
   *  For SVG
   *  - specificity
   */
@@ -55,15 +55,15 @@ cls.EcmascriptDebugger["6.7"].StyleDeclaration = function(arr)
   this.stylesheetID = arr[7];
   this.ruleID = arr[8];
   this.ruleType = arr[9];
-  /** 
-    * 
+  /**
+    *
     *  The original, stylesheet relative line number of this rule. The
     *  line number refers to the start of the declaration block.
-    * 
+    *
     *  This field *may* be set for STYLE rules, but as the information
     *  depends on an optional feature in Opera, some builds intended for
     *  low-memory devices may not support this.
-    * 
+    *
     *  @since 6.6
     */
   this.lineNumber = arr[10];

@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends TabsBase
   */
 
@@ -88,12 +88,12 @@ var TopTabsBase = function()
 
     tabs.sort(function(a, b)
     {
-      if (a.orig_width > b.orig_width) 
+      if (a.orig_width > b.orig_width)
         return 1;
 
       if (a.orig_width < b.orig_width)
         return -1;
-      
+
       return 0;
     });
 
@@ -105,7 +105,7 @@ var TopTabsBase = function()
     var win_ctrs = msg.window_controls;
     var style = document.styleSheets.getDeclaration("top-tabs");
     if (style)
-    { 
+    {
       var padding_right = win_ctrs.offsetWidth;
       style.paddingRight = padding_right + "px";
       TopTabs.prototype.style["padding-right"] = padding_right;
@@ -117,7 +117,7 @@ var TopTabsBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends TopTabsBase
   */
 

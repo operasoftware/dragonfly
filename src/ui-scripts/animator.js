@@ -13,7 +13,7 @@
  *
  * <div class="sidenote">Note: the classname "Animator" is a bit of a misnomer. It's more of a
  * three-state-button-o-matic. Might be renamed at a later date (runeh)</div>
- * 
+ *
  * Handle a two or three state button with support for animaton. The button
  * has an initial state, an active state (possibly animated), and optionally
  * a final state. An example is a "connect" button. It starts out passive.
@@ -117,7 +117,7 @@ var Animator = function(target)
   this.getState = function()
   {
     var ele = document.getElementById(id);
-    return ( interval && 'active' 
+    return ( interval && 'active'
       || ele && ele.style.backgroundPosition.indexOf(' ' + finalState + 'px') != -1 && 'final'
       || 'initial' );
   }

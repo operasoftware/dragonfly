@@ -113,7 +113,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.XMLDocument = function()
@@ -315,7 +315,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHtmlElement = function()
   this.version = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHtmlElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHtmlElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement = function()
@@ -324,7 +324,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement = function()
   this.profile = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement = function()
@@ -340,7 +340,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLinkElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement = function()
@@ -349,7 +349,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement = function()
   this.text = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTitleElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement = function()
@@ -361,7 +361,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement = function()
   this.scheme = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMetaElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement = function()
@@ -371,7 +371,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement = function()
   this.target = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement = function()
@@ -381,7 +381,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLStyleElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement = function()
@@ -395,7 +395,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement = function()
   this.vLink = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBodyElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement = function()
@@ -403,7 +403,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUnknownElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement = function()
@@ -443,7 +443,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement = function()
   this.onformchange = {type: "null"};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLInputElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement = function()
@@ -454,7 +454,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement = function()
   this.validationMessage = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIsIndexElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement = function()
@@ -469,7 +469,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement = function()
   this.target = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFormElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement = function()
@@ -489,7 +489,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement = function()
   this.onformchange = {type: "null"};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLSelectElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement = function()
@@ -498,7 +498,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement = function(
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptGroupElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement = function()
@@ -511,7 +511,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement = function()
   this.value = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOptionElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement = function()
@@ -535,7 +535,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement = function(
   this.onformchange = {type: "null"};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTextAreaElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement = function()
@@ -558,7 +558,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement = function()
   this.onformchange = {type: "null"};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLButtonElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement = function()
@@ -570,7 +570,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement = function()
   this.validationMessage = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLabelElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement = function()
@@ -580,7 +580,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement = function(
   this.validationMessage = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFieldSetElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement = function()
@@ -591,7 +591,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement = function()
   this.validationMessage = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLegendElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement = function()
@@ -600,7 +600,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLUListElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement = function()
@@ -609,7 +609,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLOListElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement = function()
@@ -617,7 +617,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDListElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement = function()
@@ -625,7 +625,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement = function
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDirectoryElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement = function()
@@ -633,7 +633,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMenuElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement = function()
@@ -642,7 +642,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLLIElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement = function()
@@ -651,7 +651,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLDivElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement = function()
@@ -660,7 +660,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement = function
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParagraphElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement = function()
@@ -669,7 +669,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLHeadingElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
@@ -678,7 +678,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
@@ -687,7 +687,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLQuoteElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement = function()
@@ -695,7 +695,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLPreElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement = function()
@@ -703,7 +703,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement = function()
   this.clear = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBRElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement = function()
@@ -714,7 +714,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement = function(
   this.size = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLBaseFontElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement = function()
@@ -725,7 +725,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement = function()
   this.size = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFontElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement = function()
@@ -735,7 +735,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLModElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement = function()
@@ -754,7 +754,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAnchorElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement = function()
@@ -770,7 +770,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement = function()
   this.useMap = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLImageElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLObjectElement = function()
@@ -829,7 +829,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement = function()
   this.valueType = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLParamElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAppletElement = function()
@@ -876,7 +876,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement = function()
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLMapElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement = function()
@@ -889,7 +889,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement = function()
   this.target = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLAreaElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement = function()
@@ -901,7 +901,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement = function()
   this.type = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLScriptElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement = function()
@@ -921,7 +921,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement = function()
   this.width = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement = function()
@@ -930,7 +930,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement = funct
   this.outerText = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCaptionElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement = function()
@@ -943,7 +943,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement = function(
   this.width = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableColElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = function()
@@ -955,7 +955,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = funct
   this.vAlign = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = function()
@@ -967,7 +967,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement = funct
   this.vAlign = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableSectionElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement = function()
@@ -982,7 +982,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement = function(
   this.width = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableRowElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement = function()
@@ -1001,7 +1001,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement = function
   this.width = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLTableCellElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement = function()
@@ -1011,7 +1011,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement = function(
   this.rows = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameSetElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement = function()
@@ -1028,7 +1028,7 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement = function()
   this.src = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLFrameElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;
 
 cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement = function()
@@ -1048,5 +1048,5 @@ cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement = function()
   this.width = {type: "string", value: ""};
 };
 
-cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement.prototype = 
+cls.EcmascriptDebugger["6.0"].inspection_filters.HTMLIFrameElement.prototype =
     cls.EcmascriptDebugger["6.0"].inspection_filters._Element;

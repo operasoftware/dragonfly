@@ -115,10 +115,10 @@ cls.STP_0_Wrapper = function()
       var header = JSON.parse(message.slice(space_pos, space_pos + header_count));
       message = JSON.parse(message.slice(space_pos + header_count));
       _receive_callback(
-          header[SERVICE_NAME], 
-          message, 
-          header[COMMAND_ID], 
-          header[STATUS] || 0, 
+          header[SERVICE_NAME],
+          message,
+          header[COMMAND_ID],
+          header[STATUS] || 0,
           header[TAG]
           );
     }
@@ -170,9 +170,9 @@ cls.STP_0_Wrapper = function()
     _receive_callback = receive_callback;
     _quit_callback = quit_callback;
     _scopeAddClient.call(self,
-        _wrapper_connect_callback, 
-        _wrapper_receive_callback, 
-        _wrapper_quit_callback, 
+        _wrapper_connect_callback,
+        _wrapper_receive_callback,
+        _wrapper_quit_callback,
         port
       );
   }

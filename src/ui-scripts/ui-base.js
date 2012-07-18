@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var UIBase = new function()
@@ -23,12 +23,12 @@ var UIBase = new function()
   this.getViewWithHandler = function(target)
   {
     var container = null, ui_obj = null;
-    while( target 
-            && !/^(toolbar|container|tabs)$/.test(target.nodeName) 
+    while( target
+            && !/^(toolbar|container|tabs)$/.test(target.nodeName)
             && ( target = target.parentElement ) );
     if( target )
     {
-      if( container = /container/.test(target.id) && target  
+      if( container = /container/.test(target.id) && target
           || document.getElementById(target.id.replace(/^(toolbar|tabs)/, "container") ) )
       {
         ui_obj = this.getUIById(container.getAttribute('ui-id'));
@@ -103,7 +103,7 @@ var UIBase = new function()
         }
         else
         {
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
+          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
             'missing parent_container in update in UIBase');
         }
 
@@ -113,7 +113,7 @@ var UIBase = new function()
         viewport.appendChild(ele);
       }
     }
-    
+
     if( this.is_dirty )
     {
       this.is_dirty = false;
@@ -127,8 +127,8 @@ var UIBase = new function()
 
   this.getPropertiesSum = function(prop_arr)
   {
-    var 
-    prop = '', 
+    var
+    prop = '',
     i = 0,
     ret = 0;
     for( ; prop = prop_arr[i]; i++)
@@ -138,14 +138,14 @@ var UIBase = new function()
     return ret;
   }
 
-  this.horizontal_border_padding_properties = 
+  this.horizontal_border_padding_properties =
     ['border-right-width', 'border-left-width', 'padding-right', 'padding-left'];
-  this.vertical_border_padding_properties = 
+  this.vertical_border_padding_properties =
     ['border-top-width', 'border-bottom-width', 'padding-top', 'padding-bottom'];
 
-  this.left_border_padding_properties = 
+  this.left_border_padding_properties =
     ['border-left-width', 'padding-left'];
-  this.top_border_padding_properties = 
+  this.top_border_padding_properties =
     ['border-top-width', 'padding-top'];
 
   this.setCSSProperties = function()
@@ -157,19 +157,19 @@ var UIBase = new function()
     this.default_height = this.height = this.style.height;
     this.offsetHeight = this.height + this.vertical_border_padding;
     this.offsetWidth = this.width + this.horizontal_border_padding;
-    
+
   }
 
   this.copyCSS = function(resolve_map)
   {
-    var 
-      item = null, 
-      declaration = null, 
-      properties = null, 
-      property = '', 
-      source = null, 
-      target = null, 
-      i=0, 
+    var
+      item = null,
+      declaration = null,
+      properties = null,
+      property = '',
+      source = null,
+      target = null,
+      i=0,
       j=0,
       container = viewport.appendChild(document.createElement('div'));
 
@@ -198,11 +198,11 @@ var UIBase = new function()
           }
           else
           {
-            target[property.t_name ? property.t_name : property.s_name] = 
+            target[property.t_name ? property.t_name : property.s_name] =
               parseInt(declaration.getPropertyValue(property.s_name));
           }
         }
-        
+
 
       }
     }
@@ -221,10 +221,10 @@ var UIBase = new function()
       viewport.render
       (
         ['div',
-          ['input', 'id', defaults.focus_catcher_id], 
+          ['input', 'id', defaults.focus_catcher_id],
           'style', 'position:absolute;left:-300px;top:0;width:100px;'
         ]
-      ); 
+      );
     }
     return document.getElementById(defaults.focus_catcher_id)
   }

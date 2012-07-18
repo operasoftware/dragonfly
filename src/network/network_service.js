@@ -173,7 +173,7 @@ cls.NetworkLoggerService = function(view)
 
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger" && 
+    if (message.id === "network_logger" &&
         message.key === "track-content")
     {
       this.setup_content_tracking_bound();
@@ -397,10 +397,10 @@ cls.RequestContextPrototype = function()
 
   this._event_changes_req_id = function(event, last_entry)
   {
-    /* 
-      Checks if the event's requestID is different from the one in last_entry. 
-      That should never be the case, since the "urlload" event initiates 
-      a new entry and that doesn't have a requestID. Note that last_entry is 
+    /*
+      Checks if the event's requestID is different from the one in last_entry.
+      That should never be the case, since the "urlload" event initiates
+      a new entry and that doesn't have a requestID. Note that last_entry is
       the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
@@ -416,7 +416,7 @@ cls.RequestContextPrototype = function()
       return;
     }
 
-    // For responsebody, all entries with that resourceID need to be updated. 
+    // For responsebody, all entries with that resourceID need to be updated.
     // Others are callbacks that belongs to the current (and last) entry of that resourceID.
     if (eventname === "responsebody")
     {
@@ -442,7 +442,7 @@ cls.RequestContextPrototype = function()
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           " Unexpected change in requestID on " + eventname +
-                          ": Change from " + logger_entry.requestID + " to " + 
+                          ": Change from " + logger_entry.requestID + " to " +
                           event.requestID + ", URL: " + logger_entry.human_url);
         }
       }
@@ -530,7 +530,7 @@ cls.NetworkLoggerEntryPrototype = function()
   var CLASSNAME_RECEIVING = "receiving";
   var CLASSNAME_IRREGULAR = "irregular";
 
-  /*  // gap_def format: 
+  /*  // gap_def format:
   {
      classname: type of sequence,
      sequences: {
@@ -540,7 +540,7 @@ cls.NetworkLoggerEntryPrototype = function()
        ]
      }
    } */
-  
+
   var gap_defs = {
     "urlload": {
         "request": {
@@ -551,7 +551,7 @@ cls.NetworkLoggerEntryPrototype = function()
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
           classname: CLASSNAME_BLOCKED
         },
-        // The response-phase can be closed without ever seeing a response event, for 
+        // The response-phase can be closed without ever seeing a response event, for
         // example because the request was aborted. See CORE-43284.
         "responsefinished": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
@@ -638,10 +638,10 @@ cls.NetworkLoggerEntryPrototype = function()
       }
   };
 
-  // What is not defined as it's own case by the above, but it terminated by 
+  // What is not defined as it's own case by the above, but it terminated by
   // urlredirect, requestretry or urlfinished, will be defined regardless of the preceding event
 
-  /* // gap_def_to_phase format: 
+  /* // gap_def_to_phase format:
   {
      classname: type of sequence,
      sequences: {
@@ -780,7 +780,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    // On every response, entry.responsecode is overwritten to reflect what 
+    // On every response, entry.responsecode is overwritten to reflect what
     // the "final" responsecode for the request was.
     // Each individual response is also stored as a NetworkLoggerResponse.
     this.responsecode = event.responseCode;

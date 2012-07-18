@@ -18,7 +18,7 @@ window.cls.ConditionEditor = function(breakpoints)
 
   this.set_enter_context = function(ele)
   {
-    return {uid: parseInt(ele.get_attr('parent-node-chain', 
+    return {uid: parseInt(ele.get_attr('parent-node-chain',
                                        'data-breakpoint-id')),
 		        value: ele.textContent};
   };

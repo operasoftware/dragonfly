@@ -31,7 +31,7 @@ cls.MarkupTokenizer = function()
     while (this._tokenizer_state_handler !== this._tokenizer_state_handlers.EOF)
     {
       this._tokenizer_state_handler.apply(this);
-    } 
+    }
 
     this._tokenizer_state_handlers.EOF.apply(this);
   };
@@ -88,7 +88,7 @@ cls.MarkupTokenizer = function()
     return false;
   };
 
-  this._tokenizer_state_handlers = 
+  this._tokenizer_state_handlers =
   {
 
     EOL: function()
@@ -195,7 +195,7 @@ cls.MarkupTokenizer = function()
 
       this._last_tag_is_close_tag = false;
       var s = c.toLowerCase().charCodeAt(0);
-      // The first name of a tag has to be a character that would be permitted in XML 1.0 tag names.  
+      // The first name of a tag has to be a character that would be permitted in XML 1.0 tag names.
       if ((s > 96 && s < 123) || c === ":") // TAG_NAME_STATE
       {
         this._emitToken(this._token_type,this._token_buffer);
@@ -264,7 +264,7 @@ cls.MarkupTokenizer = function()
         this._token_buffer ="";
         this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
         return false;
-      }            
+      }
       return false;
     },
 
@@ -354,7 +354,7 @@ cls.MarkupTokenizer = function()
       }
       this._token_buffer += c;
       return false;
-    },        
+    },
 
     TAG_NAME: function()
     {
@@ -447,7 +447,7 @@ cls.MarkupTokenizer = function()
         if (this._next_data_is_script_or_style())
         {
           return false;
-        }    
+        }
         this._token_type = cls.MarkupTokenizer.types.DATA;
         this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
         return false;
@@ -486,7 +486,7 @@ cls.MarkupTokenizer = function()
       {
         this._token_buffer += c;
         this._emitToken(this._token_type, this._token_buffer);
-        this._token_buffer = "";        
+        this._token_buffer = "";
         this._token_type = cls.MarkupTokenizer.types.DATA;
         this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
         return false;
@@ -506,7 +506,7 @@ cls.MarkupTokenizer = function()
       if (this._is_EOL())
       {
         return false;
-      }            
+      }
       var c = this._buffer.charAt(this._current_pos++);
 
       if (c === "=")
@@ -582,7 +582,7 @@ cls.MarkupTokenizer = function()
 
         this._token_type = cls.MarkupTokenizer.types.DATA;
         this._tokenizer_state_handler = this._tokenizer_state_handlers.DATA;
-        return false;                
+        return false;
       }
 
       this._token_type = cls.MarkupTokenizer.types.ATTRIBUTE_VALUE;
@@ -612,7 +612,7 @@ cls.MarkupTokenizer = function()
       if (this._is_EOL())
       {
         return false;
-      }            
+      }
       var c = this._buffer.charAt(this._current_pos++);
 
       if ((c === "'") && (this._token_buffer.charAt(this._token_buffer.length-1) === "\\"))
@@ -643,7 +643,7 @@ cls.MarkupTokenizer = function()
       if (this._is_EOL())
       {
         return false;
-      }            
+      }
       var c = this._buffer.charAt(this._current_pos++);
 
       if ((c === "\"") && (this._token_buffer.charAt(this._token_buffer.length-1) === "\\"))
@@ -695,7 +695,7 @@ cls.MarkupTokenizer = function()
         this._emitToken(this._token_type, this._token_buffer);
         this._token_buffer = "";
         if (this._next_data_is_script_or_style())
-        { 
+        {
           return false;
         }
         this._token_type = cls.MarkupTokenizer.types.DATA;
@@ -733,7 +733,7 @@ cls.MarkupTokenizer.types = {
   SCRIPT_DATA           : 204,
   STYLE_DATA            : 205,
   RAWTEXT               : 206, // Reserved for future use, used for <plaintext> tags
-  BOGUS_COMMENT         : 207, 
+  BOGUS_COMMENT         : 207,
   BOGUS_DATA            : 208,
 
   DOCTYPE               : 301,
