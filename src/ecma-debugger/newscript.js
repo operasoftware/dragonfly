@@ -142,6 +142,9 @@ window.cls.NewScriptPrototype = function()
 
   this.get_line = function(line_number)
   {
+    if (!this.line_arr)
+      this.set_line_states();
+
     if (line_number > 0 && this.line_arr[line_number])
       return this.script_data.slice(this.line_arr[line_number - 1],
                                     this.line_arr[line_number]);
