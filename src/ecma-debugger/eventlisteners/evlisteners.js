@@ -169,9 +169,8 @@ cls.EventListeners.prototype = new function()
       if (ctx.rt_id_list.every(function(rt_id) { return ctx.win_id_map[rt_id]; }))
         ctx.rt_id_list.map(this._get_event_types.bind(this, ctx));
     }
-    else
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      "failed to get the window object in cls.EventListeners.")
+    // Ignore failure. It's quite common that new runtimes get replace quickly
+    // by some document.write.
   };
 
   this._get_event_types = function(ctx, rt_id)
