@@ -15,124 +15,129 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
   // take into account if the document has finished loading
   // like e.g the api to get the stylesheets
 
-  const
-  COMPLETE = 'complete',
-  RUNTIME_ID = 0,
-  STATE = 1,
-  DOM_CONTENT_LOADED = 1,
-  LOAD = 2;
+  var COMPLETE = "complete";
+  var RUNTIME_ID = 0;
+  var STATE = 1;
+  var DOM_CONTENT_LOADED = 1;
+  var LOAD = 2;
+  var POLL_INTERVAL = 50;
 
-  var
-  __rts = {},
-  __onload_handlers = {},
-  __rts_checked = {},
-  poll_interval = 50;
-
-  var reset_state_handler = function()
+  this._reset_state_handler = function()
   {
-    __rts = {};
-    __onload_handlers = {};
-    __rts_checked = {};
-  }
+    this._rts = {};
+    this._onload_handlers = {};
+    this._rts_checked = {};
+  };
 
-  var poll = function(rt_id)
+  this._poll = function(rt_id)
   {
-    if( blocked_rts[rt_id] )
-    {
-      setTimeout(poll, poll_interval, rt_id);
-    }
+    this._rts_is_checking[rt_id] = true;
+    if (this._blocked_rts[rt_id])
+      setTimeout(this._poll.bind(this, rt_id), POLL_INTERVAL);
     else
     {
-      var tag = tagManager.set_callback(null, handleReadyState, [rt_id]);
+      var tag = this._tagman.set_callback(this, this._handle_ready_state, [rt_id]);
       var script = "return document.readyState";
-      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
+      this._esde.requestEval(tag, [rt_id, 0, 0, script]);
     }
-  }
+  };
 
-  var call_callbacks = function(rt_id)
+  this._call_callbacks = function(callbacks)
   {
-    var onload_handlers = __onload_handlers[rt_id];
-    if (onload_handlers)
+    while (callbacks && callbacks.length)
     {
-      for (var i = 0, cb; cb = onload_handlers[i]; i++)
-      {
-        cb();
-      }
+      callbacks.shift()()
     }
-    __onload_handlers[rt_id] = null;
-  }
+  };
 
-  var handleReadyState = function(status, message, rt_id)
+  this._handle_ready_state = function(status, message, rt_id)
   {
-    const STATUS = 0, VALUE = 2;
-    if (message[STATUS] == 'completed')
+    var SUCCESS = 0;
+    var STATUS = 0;
+    var VALUE = 2;
+    this._rts_is_checking[rt_id] = false;
+    if (status == SUCCESS && message[STATUS] == "completed")
     {
-      __rts_checked[rt_id] = true;
+      this._rts_checked[rt_id] = true;
       if (message[VALUE] == COMPLETE)
       {
-        __rts[rt_id] = COMPLETE;
-        call_callbacks(rt_id);
+        this._rts[rt_id] = COMPLETE;
+        this._call_callbacks(this._onload_handlers[rt_id]);
       }
     }
     else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        'getting readyState has failed in runtime_onload_handler handleReadyState');
-    }
-  }
+      this._call_callbacks(this._error_handlers[rt_id]);
+  };
 
-  var register = function(rt_id, callback)
+  this._register = function(rt_id, callback, error_callback)
   {
-    if (!__onload_handlers[rt_id])
+    if (!this._onload_handlers[rt_id])
     {
-      __onload_handlers[rt_id] = [];
-      if (!__rts_checked[rt_id])
-        poll(rt_id);
+      this._onload_handlers[rt_id] = [];
+      this._error_handlers[rt_id] = [];
+      if (!this._rts_checked[rt_id] && !this._rts_is_checking[rt_id])
+        this._poll(rt_id);
     }
-    var onload_handlers = __onload_handlers[rt_id];
+    var callbacks = this._onload_handlers[rt_id];
     // if the callback already exists, it will be replaced
-    var i = 0;
-    for (var cb; (cb = onload_handlers[i]) && cb != callback; i++) {};
-    onload_handlers[i] = callback;
-  }
+    for (var i = 0, cb; (cb = callbacks[i]) && cb != callback; i++);
+    callbacks[i] = callback;
+    if (error_callback)
+    {
+      callbacks = this._error_handlers[rt_id];
+      for (var i = 0, cb; (cb = callbacks[i]) && cb != callback; i++);
+      callbacks[i] = error_callback;
+    }
+  };
 
   this.is_loaded = function(rt_id)
   {
-    return __rts[rt_id] == COMPLETE;
+    return this._rts[rt_id] == COMPLETE;
   };
 
-  this.register_onload_handler = function(rt_id, callback)
+  this.register_onload_handler = function(rt_id, callback, error_callback)
   {
-    register(rt_id, callback);
-  }
+    this._register(rt_id, callback, error_callback);
+  };
 
-  var blocked_rts = {};
-
-  var onThreadStopped = function(msg)
+  this._on_thread_stopped = function(msg)
   {
-    blocked_rts[msg.stop_at.runtime_id] = true;
-  }
+    this._blocked_rts[msg.stop_at.runtime_id] = true;
+  };
 
-  var onThreadContinue = function(msg)
+  this._on_thread_continue = function(msg)
   {
-    blocked_rts[msg.stop_at.runtime_id] = false;
-  }
+    this._blocked_rts[msg.stop_at.runtime_id] = false;
+  };
 
   this._onloadhandler = function(message)
   {
     var rt_id = message[RUNTIME_ID];
-    __rts_checked[rt_id] = true;
+    this._rts_checked[rt_id] = true;
     if (message[STATE] == LOAD)
     {
-      __rts[rt_id] = COMPLETE;
-      if (__onload_handlers[rt_id])
-        call_callbacks(rt_id);
+      this._rts[rt_id] = COMPLETE;
+      if (this._onload_handlers[rt_id])
+        this._call_callbacks(rt_id);
     }
-  }
+  };
 
-  messages.addListener("thread-stopped-event", onThreadStopped);
-  messages.addListener("thread-continue-event", onThreadContinue);
-  messages.addListener('reset-state', reset_state_handler);
-  window.services['ecmascript-debugger'].addListener('readystatechanged', this._onloadhandler.bind(this));
+  this._init = function()
+  {
+    this._rts = {};
+    this._onload_handlers = {};
+    this._error_handlers = {};
+    this._rts_checked = {};
+    this._rts_is_checking = {};
+    this._blocked_rts = {};
+    this._esde = window.services['ecmascript-debugger'];
+    this._tagman = window.tag_manager;
+    var msgs = window.messages;
+    msgs.addListener("thread-stopped-event", this._on_thread_stopped.bind(this));
+    msgs.addListener("thread-continue-event", this._on_thread_continue.bind(this));
+    msgs.addListener('reset-state', this._reset_state_handler.bind(this));
+    this._esde.addListener('readystatechanged', this._onloadhandler.bind(this));
+  };
 
-}
+  this._init();
+};

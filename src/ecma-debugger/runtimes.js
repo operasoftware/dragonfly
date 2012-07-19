@@ -80,7 +80,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var __threads = [];
 
-  var __log_threads = false;
+  var _log_threads = false;
 
   var __windowsFolding = {};
 
@@ -160,7 +160,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     __windows_reloaded = {};
     __selected_window = '';
     __threads = [];
-    __log_threads = false;
+    _log_threads = false;
     __windowsFolding = {};
     __old_selected_window = '';
     __selected_runtime_id = '';
@@ -179,12 +179,12 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       __window_ids = {};
       __windows_reloaded = {};
       __threads = [];
-      __log_threads = false;
+      _log_threads = false;
       __windowsFolding = {};
       __selected_runtime_id = '';
       __next_runtime_id_to_select = '';
       __selected_script = '';
-      current_threads = {};
+      _thread_queues = {};
       updateRuntimeViews();
     }
   };
@@ -565,9 +565,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     var log = [EVENT_TYPES[type], ':', NL];
 
-    if (runtime_stopped_queue.length)
+    if (_runtime_stopped_queue.length)
     {
-      log.push(INDENT, runtime_stopped_queue.join(' '));
+      log.push(INDENT, _runtime_stopped_queue.join(' '));
     }
     log.push(INDENT, 'runtime id: ', rt_id, NL);
     log.push(INDENT, 'thread id: ', thread_id, NL);
@@ -575,9 +575,9 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     thread.threads = [];
     for( i = 0; key = __runtimes_arr[i]; i++ )
     {
-      if (cur in current_threads && current_threads[cur].length )
+      if (cur in _thread_queues && _thread_queues[cur].length )
       {
-        thread.threads[thread.threads.length] = [cur].concat(current_threads[cur]);
+        thread.threads[thread.threads.length] = [cur].concat(_thread_queues[cur]);
       }
     }
     */
@@ -615,7 +615,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       {
         case 'log-threads':
         {
-          __log_threads = settings[id].get(msg.key);
+          _log_threads = settings[id].get(msg.key);
           break;
         }
       }
@@ -629,7 +629,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var on_services_created = function(msg)
   {
-    //__log_threads = window.settings['threads'].get('log-threads');
+    //_log_threads = window.settings['threads'].get('log-threads');
   }
 
   this.setActiveWindowId = function(window_id)
@@ -758,20 +758,19 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   // TODO client side therads handling needs a revision
 
-  var thread_queues = {};
-  var current_threads = {};
+  var __thread_queues_obsolete = {};
+  var _thread_queues = {};
 
-  var runtime_stopped_queue = [];
-  var stopped_threads = {};
+  var _runtime_stopped_queue = [];
+  var _stopped_threads = {};
 
   // for debug purpose
   var print_threads = function(label, msg)
   {
     var log = label + ': ' + JSON.stringify(msg) + '\n' +
-      'thread_queues: ' + JSON.stringify(thread_queues) + '\n' +
-      'current_threads: ' + JSON.stringify(current_threads) + '\n' +
-      'runtime_stopped_queue: ' + JSON.stringify(runtime_stopped_queue) + '\n' +
-      'stopped_threads: ' + JSON.stringify(stopped_threads) + '\n';
+      '_thread_queues: ' + JSON.stringify(_thread_queues) + '\n' +
+      '_runtime_stopped_queue: ' + JSON.stringify(_runtime_stopped_queue) + '\n' +
+      '_stopped_threads: ' + JSON.stringify(_stopped_threads) + '\n';
     opera.postError(log);
   };
 
@@ -779,20 +778,20 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     const THREAD_ID = 1;
     // release all stopped events
-    while (runtime_stopped_queue.length)
+    while (_runtime_stopped_queue.length)
     {
-      var rt_id = runtime_stopped_queue.shift();
-      var thread = stopped_threads[rt_id].shift();
+      var rt_id = _runtime_stopped_queue.shift();
+      var thread = _stopped_threads[rt_id].shift();
       if (thread)
       {
         var msg = [rt_id, thread[THREAD_ID], 'run'];
         services['ecmascript-debugger'].requestContinueThread(0, msg);
       }
     }
-    thread_queues = {};
-    current_threads = {};
-    stopped_threads = {};
-    runtime_stopped_queue = [];
+    __thread_queues_obsolete = {};
+    _thread_queues = {};
+    _stopped_threads = {};
+    _runtime_stopped_queue = [];
   }
 
   var is_runtime_of_debug_context = function(rt_id)
@@ -811,15 +810,13 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   var clear_thread_id = function(rt_id, thread_id)
   {
-    var cur = '', i = 0;
-    var thread_queue = thread_queues[rt_id];
-    var current_thread = current_threads[rt_id];
+    var current_thread = _thread_queues[rt_id];
     // it seems that the order of the thread-finished events can get reversed
     // TODO this is a temporary fix for situations where a threads
     // finishes in a runtime whre it has never started
     if (current_thread)
     {
-      for (i = 0 ; cur = current_thread[i]; i++)
+      for (var i = 0 ; cur = current_thread[i]; i++)
       {
         if (cur == thread_id)
         {
@@ -827,199 +824,119 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
           break;
         }
       }
-      for (i = 0 ; cur = thread_queue[i]; i++)
-      {
-        if (cur == thread_id)
-        {
-          thread_queue.splice(i, 1);
-          return true;
-        }
-      }
     }
     else
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        'got a thread finished event \n' +
-        'in a runtime where the thread \n'+
-        'has never started: '+ rt_id+' '+thread_id);
+                      "got a thread finished event \n" +
+                      "in a runtime where the thread \n"+
+                      "has never started: "+ rt_id + " " + thread_id);
     }
-    return false;
-  }
-
-/*
-
-  <thread-started>
-    <runtime-id>3</runtime-id>
-    <thread-id>3</thread-id>
-    <parent-thread-id>0</parent-thread-id>
-    <thread-type>inline</thread-type>
-  </thread-started>
-
-  <thread-finished>
-    <runtime-id>3</runtime-id>
-    <thread-id>3</thread-id>
-    <status>completed</status>
-    <value type="null"/>
-  </thread-finished>
-
-  */
-
-
-
+  };
 
   this.onThreadStarted = function(status, message)
   {
-
-    const
-    RUNTIME_ID = 0,
-    THREAD_ID = 1,
-    PARENT_THREAD_ID = 2,
-    THREAD_TYPE = 3,
-    EVENT_NAMESPACE = 4,
-    EVENT_TYPE = 5;
-
+    var RUNTIME_ID = 0;
+    var THREAD_ID = 1;
+    var PARENT_THREAD_ID = 2;
     var rt_id = message[RUNTIME_ID];
-    // workaround for missing filtering
-    if( is_runtime_of_debug_context(rt_id) )
+    var id = message[THREAD_ID];
+    var parent_thread_id = message[PARENT_THREAD_ID];
+    if (!_thread_queues[rt_id])
+      _thread_queues[rt_id] = [];
+    _thread_queues[rt_id].push(id);
+    if (_log_threads)
     {
-      var id = message[THREAD_ID];
-      var parent_thread_id = message[PARENT_THREAD_ID];
-      var thread_queue = thread_queues[rt_id] || (thread_queues[rt_id] = []);
-      var current_thread = current_threads[rt_id] || (current_threads[rt_id] = []);
-      thread_queue[thread_queue.length] = id;
-      if (!current_thread.length ||
-          (parent_thread_id !== 0 &&
-           parent_thread_id == current_thread[current_thread.length - 1]))
-      {
-        current_thread[current_thread.length] = id;
-      }
-
-      if (__log_threads)
-      {
-        log_thread(THREAD_STARTED, message, rt_id, id);
-        views.threads.update();
-      }
+      log_thread(THREAD_STARTED, message, rt_id, id);
+      views.threads.update();
     }
-    else
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      'thread started not debug context')
-    }
-  }
+  };
 
   this.onThreadStoppedAt = function(status, message)
   {
-    const
-    RUNTIME_ID = 0,
-    THREAD_ID = 1,
-    SCRIPT_ID = 2,
-    LINE_NUMBER = 3,
-    STOPPED_REASON = 4,
-    BREAKPOINT_ID = 5;
-
+    var RUNTIME_ID = 0;
+    var THREAD_ID = 1;
     var rt_id = message[RUNTIME_ID];
     var thread_id = message[THREAD_ID];
-
-    // TODO clean up workaround for missing filtering
-    if (is_runtime_of_debug_context(rt_id))
+    var current_thread = _thread_queues[rt_id];
+    if (!stop_at.is_stopped &&
+        (!current_thread /* in case the window was switched */ ||
+         thread_id == current_thread.last))
     {
-
-      var current_thread = current_threads[rt_id];
-
-      // the current thread id must be set in 'thread-started' event
-      // TODO thread logic
-      if (!stop_at.is_stopped &&
-          (!current_thread /* in case the window was switched */ ||
-           thread_id == current_thread[current_thread.length - 1]))
-      {
-        stop_at.handle(message);
-      }
-      else
-      {
-        // it is sure to assume that per runtime there can be only one <stopped-at> event
-        if (!stopped_threads[rt_id])
-        {
-          stopped_threads[rt_id] = [];
-        }
-        stopped_threads[rt_id].push(message);
-        runtime_stopped_queue.push(rt_id);
-      }
+      stop_at.handle(message);
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      'thread stopped not in debug context ')
-      services['ecmascript-debugger'].requestContinueThread(0, [rt_id,
-                                                                thread_id,
-                                                                'run']);
+      if (!_stopped_threads[rt_id])
+        _stopped_threads[rt_id] = [];
+      _stopped_threads[rt_id].push(message);
+      _runtime_stopped_queue.push(rt_id);
     }
 
-    if (__log_threads)
+    if (_log_threads)
     {
       log_thread(THREAD_STOPPED_AT, message, rt_id, thread_id);
       views.threads.update();
     }
-  }
+  };
 
   this.onThreadFinished = function(status, message)
   {
     /* TODO
     status "completed" | "unhandled-exception" | "aborted" | "cancelled-by-scheduler"
     */
-
-    const
-    RUNTIME_ID = 0,
-    THREAD_ID = 1,
-    STATUS = 2;
-
+    var RUNTIME_ID = 0;
+    var THREAD_ID = 1;
+    var STATUS = 2;
     var rt_id = message[RUNTIME_ID];
-    // workaround for missing filtering
-    if (is_runtime_of_debug_context(rt_id))
+    var thread_id = message[THREAD_ID];
+    clear_thread_id(rt_id, thread_id);
+    if (message[STATUS] == "cancelled-by-scheduler" && stop_at.is_stopped)
+      stop_at.on_thread_cancelled(message);
+
+    if (!stop_at.is_stopped && _runtime_stopped_queue.length)
+      stop_at.handle(_stopped_threads[_runtime_stopped_queue.shift()].shift());
+
+    if( _log_threads )
     {
-      var thread_id = message[THREAD_ID];
-      clear_thread_id(rt_id, thread_id);
+      log_thread(THREAD_FINISHED, message, rt_id, thread_id);
+      views.threads.update();
+    }
+  };
 
-      if (message[STATUS] == "cancelled-by-scheduler" && stop_at.is_stopped)
-      {
-        stop_at.on_thread_cancelled(message);
-      }
-
-      if (!stop_at.is_stopped && runtime_stopped_queue.length)
-      {
-        stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());
-      }
-
-      if( __log_threads )
-      {
-        log_thread(THREAD_FINISHED, message, rt_id, thread_id);
-        views.threads.update();
-      }
+  this.onThreadMigrated = function(status, message)
+  {
+    var THREAD_ID = 0;
+    var FROM_RUNTIME_ID = 1;
+    var TO_RUNTIME_ID = 2;
+    var from_rt_id = message[FROM_RUNTIME_ID];
+    var to_rt_id = message[TO_RUNTIME_ID];
+    var thread_id = message[THREAD_ID];
+    var from_thread_queue = _thread_queues[from_rt_id];
+    if (from_thread_queue && from_thread_queue.contains(thread_id))
+    {
+      clear_thread_id(from_rt_id, thread_id);
+      if (!_thread_queues[to_rt_id])
+        _thread_queues[to_rt_id] = [];
+      _thread_queues[to_rt_id].push(thread_id);
     }
     else
-    {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      'thread finished not in debug context')
+                      "not possible to migrate thread");
+  };
+
+  // messages.post('host-state', {state: 'ready'});
+  // fires when stop_at releases the control to the host
+  // if there is already a <thread-stopped> event in the queue
+  // it has to be handled here
+  var onHostStateChange = function(msg)
+  {
+    if (!stop_at.is_stopped && _runtime_stopped_queue.length)
+    {
+      stop_at.handle(_stopped_threads[_runtime_stopped_queue.shift()].shift());
     }
   }
 
-    // messages.post('host-state', {state: 'ready'});
-    // fires when stop_at releases the control to the host
-    // if there is already a <thread-stopped> event in the queue
-    // it has to be handled here
-    var onHostStateChange = function(msg)
-    {
-      if (!stop_at.is_stopped && runtime_stopped_queue.length)
-      {
-        stop_at.handle(stopped_threads[runtime_stopped_queue.shift()].shift());
-      }
-    }
-
-  /*
-  <runtime-stopped>
-  <runtime-id>1</runtime-id>
-</runtime-stopped>
-
-*/
   this.onRuntimeStopped = function(status, message)
   {
     var rt_id = message[0];
@@ -1494,6 +1411,11 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     ecma_debugger.onThreadFinished = function(status, message)
     {
       self.onThreadFinished(status, message);
+    }
+
+    ecma_debugger.onThreadMigrated = function(status, message)
+    {
+      self.onThreadMigrated(status, message);
     }
 
     ecma_debugger.onParseError = function(status, message)

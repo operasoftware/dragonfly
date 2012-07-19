@@ -116,11 +116,11 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     if(this._has_changed(rt_ids, __activeTab))
     {
       __activeTab = rt_ids;
+      cleanUpEventListener();
       for (var ev = null, i = 0; ev = activeEvents[i]; i++)
       {
         __addEvenetListener(ev.type, ev.cb, ev.prevent_default, ev.stop_propagation);
       }
-      cleanUpEventListener();
       this.post_messages();
     }
   }
@@ -206,7 +206,6 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
       document_map[runtime_id] = node_id;
       for( ; ev_listener = __get_document_id[runtime_id][i]; i++)
       {
-        // __get_document_id[rt_p].push([rt_p, event_type, callback, prevent_default, stop_propagation])
         event_type = ev_listener[1];
         callback = ev_listener[2];
         prevent_default = ev_listener[3];
@@ -225,8 +224,12 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        'Error in host_tabs handleAddEventWithDocument');
+      cleanUpEventListener();
+      if (__activeTab.contains(runtime_id))
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        "Error in host_tabs handleAddEventWithDocument");
+      }
     }
 
   }
