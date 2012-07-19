@@ -290,7 +290,7 @@ a.external:hover
 {
   background-color:#D4E3F4;
 }
-.children-expand-collapse .header-expand-collapse
+.children-expand-collapse, .header-expand-collapse
 {
   white-space:nowrap;
 }
