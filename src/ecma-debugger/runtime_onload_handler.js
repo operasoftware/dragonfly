@@ -26,6 +26,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
   {
     this._rts = {};
     this._onload_handlers = {};
+    this._error_handlers = {};
     this._rts_checked = {};
   };
 
@@ -69,7 +70,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
       this._call_callbacks(this._error_handlers[rt_id]);
   };
 
-  this._register = function(rt_id, callback, error_callback)
+  this.register = function(rt_id, callback, error_callback, timeout)
   {
     if (!this._onload_handlers[rt_id])
     {
@@ -88,16 +89,29 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
       for (var i = 0, cb; (cb = callbacks[i]) && cb != callback; i++);
       callbacks[i] = error_callback;
     }
+    if (timeout)
+    {
+      var handler = this._timeout_handler.bind(this, rt_id, callback);
+      setTimeout(handler, timeout);
+    }
+  };
+
+  this.register_onload_handler = this.register;
+
+  this._timeout_handler = function(rt_id, callback, error_callback)
+  {
+    var cbs = this._onload_handlers[rt_id];
+    if (cbs)
+    {
+      var pos = cbs.indexOf(callback);
+      if (pos > -1)
+        cbs.splice(pos, 1)[0]();
+    }
   };
 
   this.is_loaded = function(rt_id)
   {
     return this._rts[rt_id] == COMPLETE;
-  };
-
-  this.register_onload_handler = function(rt_id, callback, error_callback)
-  {
-    this._register(rt_id, callback, error_callback);
   };
 
   this._on_thread_stopped = function(msg)
@@ -118,7 +132,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
     {
       this._rts[rt_id] = COMPLETE;
       if (this._onload_handlers[rt_id])
-        this._call_callbacks(rt_id);
+        this._call_callbacks(this._onload_handlers[rt_id]);
     }
   };
 
@@ -130,6 +144,7 @@ window.cls.EcmascriptDebugger["6.0"].RuntimeOnloadHandler = function()
     this._rts_checked = {};
     this._rts_is_checking = {};
     this._blocked_rts = {};
+    this._timeouts = {};
     this._esde = window.services['ecmascript-debugger'];
     this._tagman = window.tag_manager;
     var msgs = window.messages;
