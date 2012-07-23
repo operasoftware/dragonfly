@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+﻿<<<<<<< HEAD
 ﻿window.cls || (window.cls = {});
 cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
