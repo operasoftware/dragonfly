@@ -397,6 +397,7 @@ cls.JSSourceTooltip = function(view)
               bracket_stack.push(token[VALUE])
               previous_token = token;
             }
+
             if (token[VALUE] == "[")
             {
               bracket_stack.pop();
