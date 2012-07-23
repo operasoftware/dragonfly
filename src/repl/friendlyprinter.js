@@ -45,12 +45,12 @@ window.cls.FriendlyPrinter.prototype = new function()
     // CORE-35198
     while (obj_ids.length > MAX_ARGS * queue_length)
     {
-      queue.push(obj_ids.slice(queue_length++ * MAX_ARGS, 
+      queue.push(obj_ids.slice(queue_length++ * MAX_ARGS,
                                queue_length * MAX_ARGS));
     }
 
-    var fp_ctx = 
-    { 
+    var fp_ctx =
+    {
       obj_list: obj_list,
       queue: [],
       queue_length: queue_length,
@@ -64,15 +64,15 @@ window.cls.FriendlyPrinter.prototype = new function()
                                           this._handle_chunk_list,
                                           [ctx, fp_ctx, index]);
       var script = this._friendly_print_host_str.replace("%s", call_list);
-      var msg = 
+      var msg =
       [
-        ctx.rt_id, 
+        ctx.rt_id,
         ctx.thread_id || 0,
         ctx.frame_id || 0,
         script,
         arg_list
       ];
-      
+
       this._service.requestEval(tag, msg);
     }, this);
   };
@@ -92,7 +92,7 @@ window.cls.FriendlyPrinter.prototype = new function()
     }
     else
     {
-      var tag = this._tagman.set_callback(this, 
+      var tag = this._tagman.set_callback(this,
                                           this._handle_examined_chunk_list,
                                           [ctx, fp_ctx, index]);
       var msg = [ctx.rt_id, [message[OBJECT_VALUE][OBJECT_ID]]];
@@ -434,8 +434,8 @@ window.cls.FriendlyPrinter.prototype = new function()
   {
     return list && list.some(function(item)
     {
-      return item[OBJECT_VALUE] && 
-             (!this._is_inline_expand || 
+      return item[OBJECT_VALUE] &&
+             (!this._is_inline_expand ||
               !RE_DOM_OBJECT.test(item[OBJECT_VALUE][CLASS_NAME]))
     }, this);
   }
@@ -445,8 +445,8 @@ window.cls.FriendlyPrinter.prototype = new function()
     const OBJECT_VALUE = 1;
     // if 'expand-objects-inline' is enabled,
     // then it doesn't make sense to pretty print DOM objects
-    if (item[OBJECT_VALUE] && 
-        (!this._is_inline_expand || 
+    if (item[OBJECT_VALUE] &&
+        (!this._is_inline_expand ||
          !RE_DOM_OBJECT.test(item[OBJECT_VALUE][CLASS_NAME])))
     {
       list.push(item[OBJECT_VALUE]);

@@ -16,16 +16,16 @@ cls.ResourceManager["1.0"].ResourceData = function(arr)
 {
   this.resourceID = arr[0];
   this.url = arr[1];
-  /** 
+  /**
     * The used mime type. This may be different from the mime type
     * advertised in the HTTP headers.
     */
   this.mimeType = arr[2];
-  /** 
+  /**
     * Original character encoding (if applicable).
     */
   this.characterEncoding = arr[3];
-  /** 
+  /**
     * Content-Length, as advertised by HTTP headers.
     */
   this.contentLength = arr[4];
@@ -34,31 +34,31 @@ cls.ResourceManager["1.0"].ResourceData = function(arr)
 
 cls.ResourceManager["1.0"].Content = function(arr)
 {
-  /** 
+  /**
     * If BYTES or DATA_URI was chosen as the transport mode, this field
     * contains the size of the data. (If, in addition, decoding was enabled,
     * the field contains the size of the decoded data).
-    * 
+    *
     * If STRING was chosen as the transport mode, this field contains the
     * string length (regardless of encoding), i.e. the number of characters,
     * not including zero terminator.
     */
   this.length = arr[0];
-  /** 
+  /**
     * The (original) character encoding of the data (if applicable).
     */
   this.characterEncoding = arr[1];
-  /** 
+  /**
     * This field contains the data if BYTES was chosen as the transport
     * mode. If other modes were chosen, this field is not set.
-    * 
+    *
     * @see ContentMode::Transport
     */
   this.byteData = arr[2];
-  /** 
+  /**
     * This field contains the data if either STRING or DATA_URI were chosen
     * as transport mode. If some other mode was chosen, this field is not set.
-    * 
+    *
     * @ee ContentMode::Transport
     */
   this.stringData = arr[3];

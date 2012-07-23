@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends UIBase
   */
 
@@ -26,8 +26,8 @@ var TopContainerBase = function()
       this.setCSSProperties();
     }
 
-    var toolbar_and_tabs_height = 
-      (this.cell.toolbar && this.cell.toolbar.height ? 
+    var toolbar_and_tabs_height =
+      (this.cell.toolbar && this.cell.toolbar.height ?
        this.cell.toolbar.offsetHeight : 0) + this.cell.tab.offsetHeight;
     dim = this.cell.top + toolbar_and_tabs_height;
     if( dim != this.top)
@@ -66,7 +66,7 @@ var TopContainerBase = function()
   this.setup = function(view_id)
   {
 
-    if(window[defaults.viewport]) 
+    if(window[defaults.viewport])
     {
       var children = viewport.childNodes, child = null, i = children.length - 1;
       var id = this.cell.id;
@@ -114,7 +114,7 @@ var TopContainerBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends TopContainerBase
   */
 

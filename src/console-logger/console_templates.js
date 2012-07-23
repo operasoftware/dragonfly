@@ -140,13 +140,13 @@ window.templates.errors.log_settings_css_filter = function(setting)
 {
   return (
   [
-    ['setting-composite', 
-      window.templates.settingCheckbox('console', 
-                                       'use-css-filter', 
-                                       setting.get('use-css-filter'), 
+    ['setting-composite',
+      window.templates.settingCheckbox('console',
+                                       'use-css-filter',
+                                       setting.get('use-css-filter'),
                                        ui_strings.S_ERROR_LOG_CSS_FILTER),
       ['label',
-        ['_auto_height_textarea', 
+        ['_auto_height_textarea',
           setting.get('css-filter'),
           'handler', 'error-console-css-filter',
           'id', 'error-console-css-filter',

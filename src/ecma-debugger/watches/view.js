@@ -47,11 +47,11 @@ cls.WatchesView = function(id, name, container_class)
 
   this._check_no_content = function()
   {
-    var proto = this._watch_container && 
+    var proto = this._watch_container &&
                 this._watch_container.getElementsByClassName('prototype')[0];
     if (proto && !proto.textContent)
     {
-      proto.clearAndRender(['div', ui_strings.M_VIEW_LABEL_NO_WATCHES, 
+      proto.clearAndRender(['div', ui_strings.M_VIEW_LABEL_NO_WATCHES,
                             'class', 'not-content']);
     }
   }
@@ -173,7 +173,7 @@ cls.WatchesView = function(id, name, container_class)
     }
     this._last_selected_frame_index = msg.frame_index;
   };
-  
+
   this._get_editable_item = function(event, target)
   {
     var ele = event.target;

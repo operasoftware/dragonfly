@@ -307,7 +307,7 @@
                      "data-spec='dom#" + value + "' " +
                      "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
-            
+
             if (_has_own_prop.call(tree, prop[NAME]))
               ret.extend(expanded_prop);
 

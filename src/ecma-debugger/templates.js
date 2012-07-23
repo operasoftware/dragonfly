@@ -81,9 +81,9 @@
                                                    runtimes,
                                                    stopped_script_id,
                                                    selected_script_id);
-    return [["div", 
+    return [["div",
               ["div",
-                ["input", "type", "text", 
+                ["input", "type", "text",
                           "handler", select_id + "-filter",
                           "shortcuts", select_id + "-filter",
                           "class", "js-dd-filter"],
@@ -102,7 +102,7 @@
     {
       for (var i = 0, rt; rt = runtimes[i]; i++)
       {
-        script_list.push(this.runtime_script(rt, stopped_script_id, 
+        script_list.push(this.runtime_script(rt, stopped_script_id,
                                              selected_script_id, search_term));
       }
     }
@@ -111,7 +111,7 @@
     return script_list;
   };
 
-  this.runtime_script = function(runtime, stopped_script_id, 
+  this.runtime_script = function(runtime, stopped_script_id,
                                  selected_script_id, search_term)
   {
     // search_term only applies to .js-dd-s-scope
@@ -130,8 +130,8 @@
 
     runtime.scripts.forEach(function(script)
     {
-      var ret_script = this.script_option(script, 
-                                          stopped_script_id, 
+      var ret_script = this.script_option(script,
+                                          stopped_script_id,
                                           selected_script_id,
                                           search_term);
       if (ret_script)
@@ -205,10 +205,10 @@
               scripts.push(sc_op);
           }
         }
-        
+
         if (scripts.length)
         {
-          ret.push(["div", 
+          ret.push(["div",
                      ["cst-title",
                         ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS,
                         "class", "js-dd-dir-path"],
@@ -221,7 +221,7 @@
       {
         for (var i = 0, rt; rt = runtime.extensions[i]; i++)
         {
-          var ext_scripts = this.runtime_script(rt, stopped_script_id, 
+          var ext_scripts = this.runtime_script(rt, stopped_script_id,
                                                 selected_script_id, search_term)
           if (ext_scripts.length)
             ret.push(ext_scripts);
@@ -275,10 +275,10 @@
     if (script.uri)
     {
       var is_linked = script.script_type == "linked";
-      ret = ["cst-option", 
-              ["span", 
+      ret = ["cst-option",
+              ["span",
                  script.filename,
-                 "data-tooltip", is_linked && "js-script-select", 
+                 "data-tooltip", is_linked && "js-script-select",
                  "data-tooltip-text", is_linked && script.uri]];
 
       if (script.search)
@@ -286,7 +286,7 @@
 
       if (script.hash)
         ret.push(["span", script.query, "class", "js-dd-scr-hash"]);
-            
+
       ret.push("script-id", script.script_id.toString());
     }
     else
@@ -306,7 +306,7 @@
 
     if (stopped_script_id == script.script_id)
       class_name += (class_name ? " " : "") + "stopped";
-    
+
     if (class_name)
       ret.push("class", class_name);
 
@@ -541,7 +541,7 @@
           "ref-id", css_path[i].id.toString(),
           "handler", "breadcrumb-link",
           "data-menu", "breadcrumb",
-          "class", (css_path[i].is_parent_offset ? "parent-offset" : "") + 
+          "class", (css_path[i].is_parent_offset ? "parent-offset" : "") +
                    (css_path[i].id == target_id ? " active" : ""),
         ];
         if (show_combinator)

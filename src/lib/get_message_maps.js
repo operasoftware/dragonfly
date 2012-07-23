@@ -9,9 +9,9 @@ window.cls.ScopeInterfaceGenerator = function ()
 
   /* interface */
   this.get_interface = function(service_descriptions, onsuccess, onerror, should_get_messages){};
-  
+
   /* constants */
-  const 
+  const
   INDENT = '  ',
   NAME = 1,
   FIELD_LIST = 2,
@@ -21,7 +21,7 @@ window.cls.ScopeInterfaceGenerator = function ()
   FIELD_Q = 3,
   FIELD_ID = 4,
   ENUM_ID = 5,
-  Q_MAP = 
+  Q_MAP =
   {
     0: "required",
     1: "optional",
@@ -40,14 +40,14 @@ window.cls.ScopeInterfaceGenerator = function ()
   // Command MessageInfo
   MSG_LIST = 0,
   MSG_ID = 0;
-  
+
   /* private */
   this._service_infos = null;
   this._map = null;
   // ===========================
   // get the messages from scope
   // ===========================
-  
+
   this._request_enums = function()
   {
     var service = '', tag = 0;
@@ -57,7 +57,7 @@ window.cls.ScopeInterfaceGenerator = function ()
       services["scope"].requestEnumInfo(tag, [service, [], 1]);
     }
   };
-  
+
   this._handle_enums = function(status, msg, service)
   {
     if (!status)
@@ -162,7 +162,7 @@ window.cls.ScopeInterfaceGenerator = function ()
       {
         field = msg[FIELD_LIST][i];
         name = field[FIELD_NAME];
-        field_obj = 
+        field_obj =
         {
           name: name,
           q: 'required',
@@ -199,15 +199,15 @@ window.cls.ScopeInterfaceGenerator = function ()
 
   this._parse_raw_lists = function(service)
   {
-    var 
+    var
     map = this._map[service] = {},
     command_list = this._service_infos[service].raw_infos[COMMAND_LIST],
     msgs = this._service_infos[service].raw_messages &&
         this._service_infos[service].raw_messages[MSG_LIST] || [],
-    enums = this._service_infos[service].raw_enums && 
+    enums = this._service_infos[service].raw_enums &&
         this._service_infos[service].raw_enums[MSG_LIST] || [],
     command = '',
-    command_obj = null, 
+    command_obj = null,
     event_list = this._service_infos[service].raw_infos[EVENT_LIST],
     event = null,
     event_obj = null,
@@ -251,13 +251,13 @@ window.cls.ScopeInterfaceGenerator = function ()
   };
 
   /* implementation */
-  
+
   this.get_interface = function(service_descriptions, onsuccess, onerror, should_get_messages)
   {
     /**
-      * service_descriptions must be a dictonary of services. 
-      * Each service must have a name and a version.  
-      * service_descriptions is typically created with the 
+      * service_descriptions must be a dictonary of services.
+      * Each service must have a name and a version.
+      * service_descriptions is typically created with the
       * respond message of the HostInfo command of the scope service.
       */
     if (!service_descriptions || !onsuccess || !onerror)
@@ -283,12 +283,12 @@ window.cls.ScopeInterfaceGenerator = function ()
     if (service_descriptions.scope)
     {
       var version = service_descriptions.scope.version.split('.').map(Number);
-      if (version[1] >= 1) 
+      if (version[1] >= 1)
         this._request_enums();
-      else 
+      else
         this._request_info();
     }
-    else 
+    else
       this._onerror({message: "failed to get maps, no scope in  service descriptions"});
   }
 };
@@ -296,14 +296,14 @@ window.cls.ScopeInterfaceGenerator = function ()
 // =========================
 // pretty print message maps
 // =========================
-  
+
 window.cls.ScopeInterfaceGenerator.pretty_print_interface = function(map)
 {
   var pp_map = this._pretty_print_object('', map, 0, ['message map =']);
   window.open("data:text/plain," + encodeURIComponent(pp_map.join('\n')));
 };
 
-window.cls.ScopeInterfaceGenerator._pretty_print_object = 
+window.cls.ScopeInterfaceGenerator._pretty_print_object =
 function(name, obj, level, print_list, circular_check_list)
 {
   circular_check_list = circular_check_list && circular_check_list.slice(0) || [];
@@ -340,10 +340,10 @@ function(name, obj, level, print_list, circular_check_list)
     if (typeof obj[key] == 'string' || typeof obj[key] == 'number')
     {
       if (key == 'type' && /^\d+$/.test(obj[key]))
-        print_list.push(this._get_indent_string(level) + 
+        print_list.push(this._get_indent_string(level) +
             this._quote(key) + ': "' + TYPE[obj[key]] + '", // ' + obj[key]);
       else
-        print_list.push(this._get_indent_string(level) + 
+        print_list.push(this._get_indent_string(level) +
             this._quote(key) + ': ' + this._quote(obj[key]) +',');
     }
   }
@@ -393,4 +393,4 @@ window.cls.ScopeInterfaceGenerator._quote = function(value, token)
 {
   return value ? (/^\d+$/.test(value) ?  value : '"' + value + '"') + (token || '') : '';
 }
- 
+

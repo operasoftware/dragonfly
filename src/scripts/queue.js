@@ -4,7 +4,7 @@
   *
   * @class
   * A queue to handle message is order, if the handling of messages itself
-  * is asynchron, e.g. due to new calls on the scope interface to be 
+  * is asynchron, e.g. due to new calls on the scope interface to be
   * able to handle the message.
   */
 var Queue = function(handler_object)
@@ -13,7 +13,7 @@ var Queue = function(handler_object)
 
   /**
     * To process calls in order.
-    * The method takes a handler and returns a new handler. 
+    * The method takes a handler and returns a new handler.
     * A call to that new handler will be executed in order.
     * That means, if the queue is empty, it will be executed instantly,
     * otherwise it will be stored on top of the queue.
@@ -28,7 +28,7 @@ var Queue = function(handler_object)
     * To stop processing the queue.
     */
   this.stop_processing = function(){};
-  
+
   /**
     * To continue processing the queue.
     */
@@ -42,12 +42,12 @@ var Queue = function(handler_object)
   this._queue_msg_with_handler = function(handler)
   {
     var args = Array.prototype.slice.call(arguments, 1);
-    if (this._is_processing) 
-    { 
+    if (this._is_processing)
+    {
       this._msg_queue.push([handler, args]);
     }
-    else 
-    { 
+    else
+    {
       handler.apply(this._handler_object, args);
     }
   };
@@ -62,7 +62,7 @@ var Queue = function(handler_object)
       item[METHOD].apply(this._handler_object, item[ARGS]);
     }
   }
-  
+
   /* implementation */
 
   this.queue = function(handler)

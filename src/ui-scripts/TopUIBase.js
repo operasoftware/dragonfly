@@ -1,16 +1,16 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var TopUIBase = function()
-{ 
+{
   this.changeStyleProperty = function(property, delta)
   {
-    var 
-    sheets = document.styleSheets, 
-    sheet = null, 
-    i = 0, 
-    rules = null, 
+    var
+    sheets = document.styleSheets,
+    sheet = null,
+    i = 0,
+    rules = null,
     rule = null,
     cur_val = 0,
     is_set = false;
@@ -26,7 +26,7 @@ var TopUIBase = function()
         if( rule.type == 1 && rule.selectorText == this.type )
         {
           cur_val = parseInt(rule.style.getPropertyValue('padding-right'));
-          
+
           if( cur_val || cur_val == 0 )
           {
             cur_val += delta;
