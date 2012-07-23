@@ -68,7 +68,7 @@ cls.MessageMixin = function()
   this.post_message = function( name, msg )
   {
     if (! this._mm_listeners) { return false; }
-    if (msg === undefined || msg === null) 
+    if (msg === undefined || msg === null)
     {
       msg = {};
     }

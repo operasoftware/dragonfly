@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 

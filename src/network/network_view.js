@@ -73,7 +73,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._last_render_speed = now - started_rendering;
     this._rendertime = now;
   };
-  
+
   this.create_disabled_view = function(container)
   {
     container.clearAndRender(window.templates.disabled_view());
@@ -150,7 +150,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var is_data_mode = Boolean(table_template);
     var ctx = this._service.get_request_context();
 
-    // In is_data_mode, the entries have to be retrieved from the table 
+    // In is_data_mode, the entries have to be retrieved from the table
     // to be in the correct order.
     if (is_data_mode)
       entries = this._table.get_data();
@@ -165,7 +165,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this._list_cont_width = parseInt(style_dec.getPropertyValue("width"), 10); // in %
       this._list_cont_min_width = parseInt(style_dec.getPropertyValue("min-width"), 10);
     }
-    var url_list_width = 
+    var url_list_width =
         Math.ceil(Math.max(
                             this._list_cont_min_width,
                             parseInt(this._container.style.width, 10) * this._list_cont_width / 100
@@ -295,7 +295,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          return entry.starttime_relative;  
+          return entry.starttime_relative;
         },
         renderer: function(entry)
         {
@@ -379,8 +379,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (this._selected)
     {
       var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-      if (selected_node && 
-          selected_node[accessor] && 
+      if (selected_node &&
+          selected_node[accessor] &&
           selected_node[accessor].dataset.objectId)
       {
         this._selected = selected_node[accessor].dataset.objectId;
@@ -670,7 +670,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
-  
+
   messages.addListener("single-select-changed", this._on_single_select_changed_bound);
   messages.addListener("setting-changed", this._on_setting_changed_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;

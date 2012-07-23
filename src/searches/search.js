@@ -11,13 +11,13 @@ Search.prototype = new function()
   /* interface */
 
   this.is_active;
-  
+
   this.hashas_searchbar;
-  
+
   this.show = function(){};
-  
+
   this.hide = function(){};
-  
+
   this.get_searchbar = function(){};
 
   this.update_search = function(){};
@@ -26,12 +26,12 @@ Search.prototype = new function()
   this.ignore_case;
 
   /* constants */
-  
-  const 
-  MODE_SEARCHBAR = 1, 
+
+  const
+  MODE_SEARCHBAR = 1,
   MODE_SEARCHWINDOW = 2,
   MOVE_HIGHLIGHT_UP = 0,
-  MOVE_HIGHLIGHT_DOWN = 1,  
+  MOVE_HIGHLIGHT_DOWN = 1,
   SEARCHFIELD = 2,
   SEARCH_MORE = 3;
 
@@ -47,14 +47,14 @@ Search.prototype = new function()
         {
           this._container = layout_box.container.getElement();
           layout_box.add_searchbar(this._searchbar);
-          
+
         }
         else
         {
           this._container = null;
           layout_box.remove_searchbar(this._searchbar);
           this._onsearchbar_remove();
-          
+
         }
         this._update_toolbarbutton(layout_box);
       }
@@ -90,7 +90,7 @@ Search.prototype = new function()
       setTimeout(function(){cur.focus();}, 0);
     }
   };
-  
+
   this._onsearchbar_remove = function(){};
 
   this._onshowview = function(msg)
@@ -253,7 +253,7 @@ Search.prototype = new function()
       this._searchbar = typeof searchbarclass == 'function' ?
                         new searchbarclass() :
                         searchbarclass;
-      this._searchbar.add_listener("searchbar-created", 
+      this._searchbar.add_listener("searchbar-created",
                                    this._onsearchbar_created.bind(this));
       this._simple_text_search = typeof simplesearchclass == 'function' ?
                                  new simplesearchclass() :
@@ -279,15 +279,15 @@ Search.prototype = new function()
                          });
       messages.addListener('view-destroyed', this._onviewdestroyed.bind(this));
       messages.addListener('show-view', this._onshowview.bind(this));
-      eventHandlers.input[this.controls[SEARCHFIELD].handler] = 
+      eventHandlers.input[this.controls[SEARCHFIELD].handler] =
         this._onsearchfieldinput.bind(this)
-      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] =
         this._onshortcut.bind(this, 'highlight-next-match');
-      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+      eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] =
         this._onshortcut.bind(this, 'highlight-previous-match');
       ActionBroker.get_instance().get_global_handler().
-      register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
-                                 this._onshortcut.bind(this), 
+      register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts,
+                                 this._onshortcut.bind(this),
                                  ['highlight-next-match',
                                   'highlight-previous-match',
                                   'hide-search']);
@@ -315,26 +315,26 @@ Search.prototype = new function()
         label: ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH
       };
       this._window_view_id = view_id + "-search-window";
-      this._searchwindow = new searchwindowclass(this._window_view_id, 
-                                                 "Search", 
+      this._searchwindow = new searchwindowclass(this._window_view_id,
+                                                 "Search",
                                                  view_id + "-search-window scroll mono",
                                                  this.controls[SEARCHFIELD].handler);
       this._searchwindow.add_listener('onbeforesearch', this._beforesearch_bound);
-      new ToolbarConfig(this._window_view_id, 
-                        null, 
-                        this.advanced_controls, 
+      new ToolbarConfig(this._window_view_id,
+                        null,
+                        this.advanced_controls,
                         null,
                         [{template: function(){return ['info']}}]);
-      eventHandlers.click[this.controls[SEARCH_MORE].handler] = 
+      eventHandlers.click[this.controls[SEARCH_MORE].handler] =
         this._toggle_mode.bind(this);
       messages.addListener('view-destroyed', this._onsearchwindowclosed.bind(this));
     }
     this._ui = UI.get_instance();
     this._ui.register_search(view_id, this);
   };
-  
+
   /* implementation */
-  
+
   this.show = function()
   {
     if (this.is_active)
@@ -381,9 +381,9 @@ Search.prototype = new function()
 
   this.get_searchbar = function()
   {
-    return this._is_active && 
-           this._searchbar && 
-           this._mode == MODE_SEARCHBAR && 
+    return this._is_active &&
+           this._searchbar &&
+           this._mode == MODE_SEARCHBAR &&
            this._searchbar || null;
   };
 
@@ -401,7 +401,7 @@ Search.prototype = new function()
       }
     }
   };
-  
+
   this.__defineSetter__('is_active', function(){});
   this.__defineGetter__('is_active', function(){return this._is_active;});
   this.__defineSetter__('has_searchbar', function(){});
@@ -452,9 +452,9 @@ var JSSourceSearchBase = function()
       this._simple_text_search.update_hits(msg.top_line, msg.bottom_line);
     }
   };
-  
+
   this._super_onsearchbar_created = this._onsearchbar_created;
-  
+
   this._onsearchbar_created = function()
   {
     this._super_onsearchbar_created();
@@ -470,7 +470,7 @@ var JSSourceSearchBase = function()
       }
     }
   };
-  
+
   this._onsearchbar_remove = function()
   {
     messages.removeListener('script-selected', this._onscriptselected_bound);
@@ -483,7 +483,7 @@ var JSSourceSearchBase = function()
     this._onscriptselected_bound = this._onscriptselected.bind(this);
     this._onviewscrolled_bound = this._onviewscrolled.bind(this);
   };
-  
+
 };
 
 JSSourceSearchBase.prototype = Search.prototype;

@@ -55,7 +55,7 @@ cls.CallstackView = function(id, name, container_class)
     this.required_services = ["ecmascript-debugger"];
     this._container_id = "backtrace";
     this._clear_timeout = 0;
-    this._not_stopped_content = "<li class='not-stopped'>" + 
+    this._not_stopped_content = "<li class='not-stopped'>" +
                                    ui_strings.M_VIEW_LABEL_NOT_STOPPED +
                                 "</li>";
     this._selected_frame = 0;

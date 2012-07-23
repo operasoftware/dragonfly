@@ -43,7 +43,7 @@
   /**
     * To check and set the mode independent of the focused action handler.
     * Special method for the global action handler.
-    */ 
+    */
   this.check_mode = function(event){};
 
   /**
@@ -58,7 +58,7 @@
   this.register_shortcut_listener = function(listener_id, callback, action_list){};
 
   /**
-    * To register a serach panel. 
+    * To register a serach panel.
     * This is used to focus the panel with an according shortcut.
     */
   this.register_search_panel = function(view_id){};
@@ -99,7 +99,7 @@
     }
     return actions.concat(this._listener_handlers);
   };
-  
+
   this._continue_with_mode = function(mode, action_id, event, target)
   {
     window.views.js_source.clearLinePointer();
@@ -110,7 +110,7 @@
   };
 
   [
-    'run', 
+    'run',
     'step-next-line',
     'step-into-call',
     'step-out-of-call',
@@ -118,7 +118,7 @@
   {
     this._handlers['continue-' + mode] = this._continue_with_mode.bind(this, mode);
   }, this);
-    
+
   this._handlers["select-all"] = function(action_id, event, target)
   {
     if (this._selection_controller.is_selectable(target))
@@ -266,8 +266,9 @@
 
     if (overlay_id == "remote-debug-overlay" && (!client || !client.connected))
     {
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .removeClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.removeClass("alert");
       eventHandlers.click['cancel-remote-debug'](); // TODO: make a proper action
     }
 
@@ -286,7 +287,7 @@
     window.topCell.tab.navigate_to_next_or_previous_tab(true);
     return false;
   };
-  
+
   this._handlers["show-search"] = function(action_id, event, target)
   {
     var ui = UI.get_instance();
@@ -409,12 +410,12 @@ GlobalActionHandler.RE_TEXT_INPUTS = new RegExp(["text",
                                                  "url",
                                                  "email",
                                                  "password",
-                                                 "datetime", 
+                                                 "datetime",
                                                  "date",
                                                  "month",
-                                                 "week", 
+                                                 "week",
                                                  "time",
-                                                 "datetime-local", 
+                                                 "datetime-local",
                                                  "number",
                                                  "file",
                                                  "color"].join("|"), "i");

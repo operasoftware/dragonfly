@@ -6,7 +6,7 @@
  */
 
 /**
-  * @constructor 
+  * @constructor
   * @deprecated
   * use EventHandler and BaseActions
   */
@@ -139,14 +139,44 @@ window.cls.Helpers = function()
    */
   this.escape_input = (function()
   {
-    var re_escape_char = /\\/g;
-    var re_quot_mark = /"/g;
+    var replacement_map = [
+      {
+        regexp: /\\/g,
+        replacement: "\\\\"
+      },
+      {
+        regexp: /"/g,
+        replacement: "\\\""
+      },
+      {
+        regexp: /'/g,
+        replacement: "\\'"
+      },
+      {
+        regexp: /\n/g,
+        replacement: "\\n"
+      },
+      {
+        regexp: /\r/g,
+        replacement: "\\r"
+      },
+      {
+        regexp: /\u2028/g,
+        replacement: "\\u2028"
+      },
+      {
+        regexp: /\u2029/g,
+        replacement: "\\u2029"
+      }
+    ];
 
     return function escape_input(str)
     {
-      // Need to double escape since this is a string inside a string
-      return str.replace(re_escape_char, "\\\\")
-                .replace(re_quot_mark, "\\\"");
+      for (var i = 0, re; re = replacement_map[i]; i++)
+      {
+        str = str.replace(re.regexp, re.replacement);
+      }
+      return str;
     }
   })();
 
@@ -198,16 +228,16 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.setCookie = function(key, value, time) 
+  this.setCookie = function(key, value, time)
   {
     document.cookie = (
       key + "=" + encodeURIComponent(value) +
-      "; expires=" + 
-      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() + 
+      "; expires=" +
+      ( new Date( new Date().getTime() + ( time || 360*24*60*60*1000 ) ) ).toGMTString() +
       "; path=/");
   }
 
-  this.getCookie = function(key) 
+  this.getCookie = function(key)
   {
     var value = new RegExp(key + "=([^;]*)").exec(document.cookie);
     return value && decodeURIComponent(value[1]);
@@ -252,7 +282,7 @@ window.cls.Helpers = function()
     if (target && container)
     {
       container.scrollTop -= (
-        container.getBoundingClientRect().top - 
+        container.getBoundingClientRect().top -
         target.getBoundingClientRect().top +
         Math.min(container.offsetHeight * .5, 100)
       );

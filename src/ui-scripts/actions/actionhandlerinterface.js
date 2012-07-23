@@ -51,7 +51,7 @@
       actions.push(key);
     return actions;
   };
-  
+
   this.mode = "default";
 
   this._handlers = {};

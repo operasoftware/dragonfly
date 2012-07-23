@@ -1,7 +1,7 @@
 ﻿window.cls || (window.cls = {});
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ViewBase
   */
 
@@ -53,11 +53,11 @@ cls.ThreadsView.create_ui_widgets = function()
   new Settings
   (
     // id
-    'threads', 
+    'threads',
     // key-value map
     {
       'log-threads': false
-    }, 
+    },
     // key-label map
     {
       'log-threads': ui_strings.S_BUTTON_LABEL_LOG_THREADS
@@ -97,7 +97,7 @@ cls.ThreadsView.create_ui_widgets = function()
     {
       container.firstChild.innerHTML = '';
     }
-    
+
   }
 
   eventHandlers.click['threads-export-log'] = function(event, target, container)

@@ -1,4 +1,4 @@
-﻿window.ui_strings || ( window.ui_strings  = {} );
+window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -1700,3 +1700,6 @@ ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
 
 /* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
 ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
+
+/* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
+ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
