@@ -381,7 +381,7 @@ var TabsBase = function()
         scale = (orig_width_sum - delta) / orig_width_sum;
       }
     }
-    
+
     tabs.forEach(function(tab)
     {
       if (has_space)
@@ -393,8 +393,8 @@ var TabsBase = function()
       {
         tab.padding_target.style.paddingRight = target_padding + "px";
         tab.width_target.style.width = Math.floor(tab.orig_width * scale) + "px";
-      } 
-    }, this);  
+      }
+    }, this);
   };
 
   this._store_css_tab_values = function(tab_ele)

@@ -49,7 +49,7 @@ cls.StorageViewActions = function(id)
   this._handlers["submit"] = function(event, target)
   {
     this.mode = MODE_DEFAULT;
-    // When target is passed, it is a node in the storage view. When called by this.onclick 
+    // When target is passed, it is a node in the storage view. When called by this.onclick
     // no target is passed, all .edit_mode elems in .storage_view are used for submitting
     var container = target || document.querySelector(".storage_view");
     while (container && !container.getAttribute("data-storage-id"))

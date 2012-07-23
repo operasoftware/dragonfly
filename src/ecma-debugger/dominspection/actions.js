@@ -57,14 +57,14 @@ cls.DOMInspectorActions = function(id)
     var ref_id = parseInt(container.getAttribute('ref-id'));
     if (container = container.has_attr("parent-node-chain", "data-model-id"))
     {
-      var no_contextmenu = 
+      var no_contextmenu =
         event.target.get_attr('parent-node-chain', 'data-menu') != 'dom-element';
       var model = window.dominspections[container.getAttribute('data-model-id')];
       var target = document.getElementById('target-element');
       var is_editable = container.hasAttribute('edit-handler');
       var cb = null;
       var target_id = 0;
-      
+
       if (!model.isprocessing)
       {
         if (container.contains(target))
@@ -73,7 +73,7 @@ cls.DOMInspectorActions = function(id)
                               event.target.parentNode.querySelector("text")))
         {
           model.collapse(ref_id);
-          this._get_children_callback(container, model, target_id, 
+          this._get_children_callback(container, model, target_id,
                                       is_editable, no_contextmenu);
         }
         else
@@ -83,7 +83,7 @@ cls.DOMInspectorActions = function(id)
             model.collapse(ref_id);
           }
           cb = this._get_children_callback.bind(this, container, model,
-                                                target_id, is_editable, 
+                                                target_id, is_editable,
                                                 no_contextmenu);
           model.expand(cb, ref_id, traversal);
         }
@@ -91,7 +91,7 @@ cls.DOMInspectorActions = function(id)
     }
   }
 
-  this._get_children_callback = function(container, model, target_id, 
+  this._get_children_callback = function(container, model, target_id,
                                          is_editable, no_contextmenu)
   {
     var tmpl = window.templates.inspected_dom_node(model, target_id,
@@ -122,7 +122,7 @@ cls.DOMInspectorActions = function(id)
                            obj_id != current_target_id;
         hostspotlighter.spotlight(obj_id, scroll_into_view);
       }
-      breadcrumbhead = model.breadcrumbhead || model.target; 
+      breadcrumbhead = model.breadcrumbhead || model.target;
       model.target = obj_id;
       inspections.active = model;
       window.messages.post("element-selected", {model: model,
@@ -151,8 +151,8 @@ cls.DOMInspectorActions = function(id)
           {
             obj_id = target.parentNode.get_attr("parent-node-chain", "ref-id");
           }
-          this._modebar.set_content(model.id, 
-                                    window.templates.breadcrumb(model, obj_id), 
+          this._modebar.set_content(model.id,
+                                    window.templates.breadcrumb(model, obj_id),
                                     true);
         }
       }
@@ -164,7 +164,7 @@ cls.DOMInspectorActions = function(id)
   /*
   this.breadcrumb_link = function(event, target)
   {
-    var 
+    var
     obj_id = parseInt(target.getAttribute('ref-id')),
     model_id = target.get_attr("parent-node-chain", "data-model-id"),
     inspections = window.dominspections,
@@ -651,7 +651,7 @@ cls.DOMInspectorActions = function(id)
     if (view_container)
     {
       var new_target = nav_target &&
-                       nav_target.getNextWithFilter(view_container, 
+                       nav_target.getNextWithFilter(view_container,
                                                     nav_filters.up_down) ||
                        !nav_target && this.getFirstTarget();
       if (!this.setSelected(new_target, true))
@@ -879,7 +879,7 @@ cls.DOMInspectorActions = function(id)
   {
     var ele = event.target.has_attr("parent-node-chain", "ref-id");
     if (ele && !ele.hasAttribute("data-pseudo-element"))
-    {  
+    {
       var rt_id = parseInt(ele.get_attr("parent-node-chain", "rt-id"));
       var ref_id = parseInt(ele.get_attr("parent-node-chain", "ref-id"));
       var tag = 0;

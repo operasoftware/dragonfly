@@ -11,12 +11,12 @@ new cls.RuntimesView('runtimes', ui_strings.M_VIEW_LABEL_SCRIPTS, 'scroll runtim
 new Settings
 (
   // id
-  'runtimes', 
+  'runtimes',
   // kel-value map
   {
     'selected-window': '',
     'reload-runtime-automatically': false
-  }, 
+  },
   // key-label map
   {
     'reload-runtime-automatically': ui_strings.S_SWITCH_RELOAD_SCRIPTS_AUTOMATICALLY

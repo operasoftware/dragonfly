@@ -3,7 +3,7 @@
   var get_path = function(ele)
   {
     var path = [], proto = null;
-    while (ele && (proto = ele.parentNode) && 
+    while (ele && (proto = ele.parentNode) &&
         proto.parentNode.nodeName.toLowerCase() == 'examine-objects')
     {
       path.push([
@@ -68,10 +68,10 @@
     */
 
     const PATH_OBJ_ID = 1;
-    
+
     var
     parent = target.parentNode,
-    data_model = window.inspections[parent.get_attr('parent-node-chain', 'data-id')],  
+    data_model = window.inspections[parent.get_attr('parent-node-chain', 'data-id')],
     examine_object = parent.getElementsByTagName('examine-objects')[0],
     path = get_path(parent);
 
@@ -126,7 +126,7 @@
   {
     var
     parent = target.parentNode,
-    data_model = window.inspections[target.getAttribute('data-id')],  
+    data_model = window.inspections[target.getAttribute('data-id')],
     examine_object = parent.getElementsByTagName('examine-objects')[0];
 
     if (examine_object) // is unfolded
@@ -145,7 +145,7 @@
   {
     var PATH_PROTO_INDEX = 2;
     var STATUS_OK = 0;
-    if (status === STATUS_OK && 
+    if (status === STATUS_OK &&
         data_model.set_getter_value(obj_id, getter, message) &&
         target.parentNode && target.parentNode.parentNode)
     {
@@ -174,13 +174,13 @@
 
   window.eventHandlers.click['inspect-object-inline-link'] = function(event, target)
   {
-    if (event.target.nodeName.toLowerCase() == "key" && 
+    if (event.target.nodeName.toLowerCase() == "key" &&
         event.target.parentNode.hasAttribute('obj-id'))
     {
       var obj_id = parseInt(event.target.parentNode.getAttribute('obj-id'));
       var model_id = event.target.get_attr('parent-node-chain', 'data-id');
       var model = model_id && window.inspections[model_id];
-      var rt_id = model && model.runtime_id; 
+      var rt_id = model && model.runtime_id;
       _inspect_object(rt_id, obj_id);
     }
   };

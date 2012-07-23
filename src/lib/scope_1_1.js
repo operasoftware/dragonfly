@@ -4,7 +4,7 @@ cls.Scope["1.1"] || (cls.Scope["1.1"] = {});
 cls.Scope["1.1"].name = 'scope';
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ServiceBase
   * generated with hob from the service definitions
   */
@@ -48,7 +48,7 @@ cls.Scope["1.1"].Service = function()
   this.handleEnable = function(status, message)
   {
     var NAME = 0;
-    
+
     var all_enabled = true;
     var service = message[NAME];
     var service_name = "";
@@ -85,7 +85,7 @@ cls.Scope["1.1"].Service = function()
   {
     opera.scopeTransmit("scope", message || [], 6, tag || 0);
   };
-  
+
   this.handleDisable = function(status, message)
   {
     var NAME = 0;
@@ -114,12 +114,12 @@ cls.Scope["1.1"].Service = function()
     const
     COMMAND_LIST = 0,
     EVENT_LIST = 1,
-    // sub message CommandInfo 
+    // sub message CommandInfo
     NAME = 0,
     NUMBER = 1,
     MESSAGE_ID = 2,
     RESPONSE_ID = 3;
-    // sub message EventInfo 
+    // sub message EventInfo
     EVENTINFO_NAME = 0,
     EVENTINFO_NUMBER = 1,
     EVENTINFO_MESSAGE_ID = 2;
@@ -151,11 +151,11 @@ cls.Scope["1.1"].Service = function()
     OPERATING_SYSTEM = 3,
     USER_AGENT = 4,
     SERVICE_LIST = 5,
-    // sub message Service 
+    // sub message Service
     NAME = 0,
     VERSION = 1;
-    
-    this._hello_message = 
+
+    this._hello_message =
     {
       stpVersion: message[STP_VERSION],
       coreVersion: message[CORE_VERSION],
@@ -168,7 +168,7 @@ cls.Scope["1.1"].Service = function()
     var service = null, _services = message[SERVICE_LIST], i = 0, tag = 0;
     for( ; service = _services[i]; i++)
     {
-      this._service_descriptions[service[NAME]] = 
+      this._service_descriptions[service[NAME]] =
       {
         name: service[NAME],
         version: service[VERSION],
@@ -188,7 +188,7 @@ cls.Scope["1.1"].Service = function()
       }, this);
     }, this);
     this._onHostInfoCallback(this._service_descriptions, this._hello_message);
-    this._hello_message.services = this._service_descriptions;    
+    this._hello_message.services = this._service_descriptions;
   }
 
   // see http://dragonfly.opera.com/app/scope-interface/Scope.html#messageinfo
@@ -201,12 +201,12 @@ cls.Scope["1.1"].Service = function()
     /*
     const
     MESSAGE_LIST = 0,
-    // sub message MessageInfo 
+    // sub message MessageInfo
     ID = 0,
     NAME = 1,
     FIELD_LIST = 2,
     PARENT_ID = 3,
-    // sub message FieldInfo 
+    // sub message FieldInfo
     FIELDINFO_NAME = 0,
     TYPE = 1,
     NUMBER = 2,
@@ -227,11 +227,11 @@ cls.Scope["1.1"].Service = function()
     /*
     const
     ENUM_LIST = 0,
-    // sub message Enum 
+    // sub message Enum
     ID = 0,
     NAME = 1,
     VALUE_LIST = 2,
-    // sub message Value 
+    // sub message Value
     VALUE_NAME = 0,
     NUMBER = 1;
     */

@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends UIBase
   */
 
@@ -73,11 +73,11 @@ var ContainerBase = function()
       container.removeAttribute('edit-handler');
       if (view.default_handler)
       {
-        container.setAttribute('handler', view.default_handler); 
+        container.setAttribute('handler', view.default_handler);
       }
       if (view.edit_handler)
       {
-        container.setAttribute('edit-handler', view.edit_handler); 
+        container.setAttribute('edit-handler', view.edit_handler);
       }
       container.className = view.container_class || '';
       container.setAttribute('data-menu', view_id || '');
@@ -99,7 +99,7 @@ var ContainerBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ContainerBase
   */
 

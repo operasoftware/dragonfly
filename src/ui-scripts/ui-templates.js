@@ -12,9 +12,9 @@
                      .filter(Boolean).join(' ');
     if (obj.has_close_button)
     {
-      ret.push(['span', 
+      ret.push(['span',
                 'tabindex', '1',
-                'handler', 'close-tab', 
+                'handler', 'close-tab',
                 'class', 'close-tab-button']);
     }
     ret.push('handler', 'tab', 'ref-id', obj.ref_id);
@@ -28,7 +28,7 @@
   this.top_tab = function(obj, is_active_tab)
   {
     return (
-    ['tab', 
+    ['tab',
       ['span', "class", "icon " + obj.ref_id],
       ['span', "class", "badge"],
       ['span',
@@ -128,7 +128,7 @@
     ];
     ["handler",
      "shortcuts",
-     "focus-handler", 
+     "focus-handler",
      "blur-handler"].forEach(function(attr)
     {
       if (filter.hasOwnProperty(attr))
@@ -139,7 +139,7 @@
 
   this.search_control = function(button)
   {
-    var ret = 
+    var ret =
     ['span',
         'tabindex', '1',
         'class', 'ui-button ' + button.class,
@@ -156,8 +156,8 @@
   this.search_button = function(search)
   {
     return (
-    ['toolbar-search', 
-      ['button', 
+    ['toolbar-search',
+      ['button',
         'class', 'search ui-control ' + (search.is_active ? "is-active" : ""),
         'handler', 'show-search',
         'title', ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
@@ -312,7 +312,7 @@
     {
       if (!tab.disabled)
       {
-        ret[ret.length] = this.tab(tab, 
+        ret[ret.length] = this.tab(tab,
                                    obj.activeTab == tab.ref_id,
                                    tab.has_close_button && !is_first_temp_tab);
         if (!is_first_temp_tab)
@@ -408,9 +408,9 @@
     var settings_map = setting.setting_map;
     var cat_name = '';
     // so far checkboxes, customSettings
-    for( cat_name in settings_map ) 
+    for( cat_name in settings_map )
     {
-      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]); 
+      ret[ret.length] = this[cat_name](setting, settings_map[cat_name]);
     }
     return ret;
   }
@@ -519,7 +519,7 @@
     {
       return this[this._window_types[UIWindow.HUD]](win);
     }
-    var ret = 
+    var ret =
     ['window',
         win.header ? this.window_header(views[win.view_id].name) : [],
         win.is_resizable ?

@@ -99,7 +99,7 @@ cls.ResourceManagerAllView = function(id, name, container_class, html, default_h
     }
   };
 
-  this._type_class_map = 
+  this._type_class_map =
   {
     image: cls.ImageResourceDetail,
     font: cls.FontResourceDetail,

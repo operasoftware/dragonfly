@@ -9,7 +9,7 @@
   {
     if (hash_map[key]) // for pre ES5
     {
-      
+
     }
   }
 
@@ -29,7 +29,7 @@ if (Object.create)
 else
 {
   var HashMap = function() {};
-  
+
   HashMap.prototype = new function()
   {
     this.__defineGetter__  = undefined;

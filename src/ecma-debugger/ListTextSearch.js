@@ -3,20 +3,20 @@
  * expanded/collapsed trees.
  * @see VirtualTextSearch
  * @see TextSearch
- * @constructor 
+ * @constructor
  */
 var ListTextSearch = function()
 {
-  const 
+  const
   SEARCH_DELAY = 50; // in ms
 
-  var 
-  self = this, 
+  var
+  self = this,
   search_term = '',
   search_results = [],
   cursor = -1,
   container = null,
-  input = null, 
+  input = null,
   timeouts = new Timeouts(),
   cache = {},
   current_id = '',
@@ -39,8 +39,8 @@ var ListTextSearch = function()
       cur = container.getElementsByTagName('start-search-scope')[0];
       while( cur && ( cur = cur.nextSibling ) && cur.nodeName.toLowerCase() != "end-search-scope" )
       {
-        display = 
-          cur.getElementsByTagName('key')[0].textContent.indexOf(search_term) == -1 
+        display =
+          cur.getElementsByTagName('key')[0].textContent.indexOf(search_term) == -1
           && 'none'
           || '';
         cur.style.display = display;
@@ -50,7 +50,7 @@ var ListTextSearch = function()
         }
         depth = parseInt( cur.getAttribute('depth'));
         cur_2 = cur;
-        while( ( cur_2 = cur_2.nextSibling ) 
+        while( ( cur_2 = cur_2.nextSibling )
                   && cur_2.nodeName.toLowerCase() != "end-search-scope"
                   && ( parseInt( cur.getAttribute('depth')) < depth ) )
         {
@@ -70,17 +70,17 @@ var ListTextSearch = function()
 
   var selectNextInput = function(start, next, direction)
   {
-    var 
-    cur = __selected_element && __selected_element.parentNode 
+    var
+    cur = __selected_element && __selected_element.parentNode
       || container.getElementsByTagName(start)[0],
     scrollTop = 0,
     scrollBottom = 0,
     targetTop = 0,
     targetBottom = 0;
 
-    while( ( cur = cur[next] ) 
-      && !( cur.nodeName.toLowerCase() == 'item' 
-      && cur.style.display != 'none' 
+    while( ( cur = cur[next] )
+      && !( cur.nodeName.toLowerCase() == 'item'
+      && cur.style.display != 'none'
       && ( cur.firstChild && /input/i.test(cur.firstChild.nodeName) ) ) );
     if( cur && cur.nodeName.toLowerCase() == 'item' )
     {
@@ -150,9 +150,9 @@ var ListTextSearch = function()
       }
     }
   }
-  
+
   this.handleEnterKey = function()
-  { 
+  {
     switch( event.keyCode)
     {
       case 13:
@@ -186,7 +186,7 @@ var ListTextSearch = function()
             //target.click();
           }
         }
-        
+
         break;
       }
     }
@@ -200,8 +200,8 @@ var ListTextSearch = function()
       items = container.getElementsByTagName('item');
       for( ; item = items[i]; i++)
       {
-        if( item.getAttribute('obj-id') == current_context.obj_id 
-            && item.getAttribute('depth') == current_context.depth 
+        if( item.getAttribute('obj-id') == current_context.obj_id
+            && item.getAttribute('depth') == current_context.depth
             && item.getElementsByTagName('key')[0].textContent == current_context.key )
         {
           break;
@@ -241,7 +241,7 @@ var ListTextSearch = function()
       container = _container;
       if( !highlightColor )
       {
-        highlightColor = 
+        highlightColor =
           document.styleSheets.getPropertyValue('item.selected', 'background-color');
       }
     }
@@ -260,5 +260,5 @@ var ListTextSearch = function()
     input = null;
     container = null;
   }
-  
+
 };

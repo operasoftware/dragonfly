@@ -77,7 +77,7 @@ window.templates = window.templates || {};
 templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
 {
   var url = resource.urltype == 4 ? "data:URI" : resource.url;
-  
+
   var content = [];
   if (expanded)
   {

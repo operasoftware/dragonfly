@@ -174,7 +174,7 @@ cls.JsSourceView = function(id, name, container_class)
           }
           if (line.className.indexOf('error') > -1)
           {
-            line.className = Array.prototype.filter.call(line.classList, 
+            line.className = Array.prototype.filter.call(line.classList,
                                                          function(cl_name)
             {
               return cl_name.indexOf('error') > -1;
@@ -749,9 +749,9 @@ cls.JsSourceView = function(id, name, container_class)
       var line_ele = this.get_line_element(line_number);
       while (line_ele && typeof length == "number" && !isNaN(length) && length > 0)
       {
-        this._slice_highlighter.set_hit(line_ele, 
+        this._slice_highlighter.set_hit(line_ele,
                                         offset_start,
-                                        length, 
+                                        length,
                                         TextSearch.HIGHLIGHT_STYLE,
                                         true,
                                         ".error-description");
@@ -974,7 +974,7 @@ cls.JsSourceView = function(id, name, container_class)
         this._tooltip.unregister();
 
       this._tooltip = null;
-    } 
+    }
   };
 
   eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
@@ -991,7 +991,7 @@ cls.JsSourceView = function(id, name, container_class)
                             this._go_to_line.window_height);
     return false;
   }.bind(this);
-  
+
   this.required_services = ["ecmascript-debugger"];
   this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
@@ -1015,7 +1015,7 @@ cls.JsSourceView = function(id, name, container_class)
       "selected_match_class": "js-identifier-selected",
       "selected_match_class_first": "js-identifier-selected-first",
       "selected_match_class_between": "js-identifier-selected-between",
-      "selected_match_class_last": "js-identifier-selected-last" 
+      "selected_match_class_last": "js-identifier-selected-last"
     }
   }
 
@@ -1157,11 +1157,11 @@ cls.JsSourceView.create_ui_widgets = function()
   ];
 
   if (service.satisfies_version(6, 13))
-  { 
+  {
     checkboxes.push('use_reformat_condition');
     switches.push('reformat_javascript');
   }
-  
+
   new Settings
   (
     // id
@@ -1192,7 +1192,7 @@ cls.JsSourceView.create_ui_widgets = function()
       'tab-size': ui_strings.S_LABEL_TAB_SIZE,
       'max-displayed-search-hits': ui_strings.S_LABEL_MAX_SEARCH_HITS,
       'show-js-tooltip': ui_strings.S_LABEL_SHOW_JS_TOOLTIP,
-      'reformat_javascript': ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT, 
+      'reformat_javascript': ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT,
       'use_reformat_condition': ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT,
     },
     // settings map
@@ -1306,7 +1306,7 @@ cls.JsSourceView.create_ui_widgets = function()
     {
       callback: function(event, target)
       {
-        var line = parseInt(event.target.get_attr("parent-node-chain", 
+        var line = parseInt(event.target.get_attr("parent-node-chain",
                                                   "data-line-number"));
         var script_id = views.js_source.getCurrentScriptId();
         var bp_view = window.views.breakpoints;
@@ -1384,7 +1384,7 @@ cls.JsSourceView.create_ui_widgets = function()
             });
           }
         }
-        
+
         if (items.length)
           items.push(ContextMenu.separator);
 

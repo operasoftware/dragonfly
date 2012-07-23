@@ -104,6 +104,13 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineSetter__("dir_pathname", function() {});
 
+  this.__defineGetter__("basename", function()
+  {
+    return this.filename || this.dir_pathname;
+  });
+
+  this.__defineSetter__("basename", function() {});
+
   this.__defineGetter__("abs_dir", function()
   {
     if (this._abs_dir === undefined && (this._is_parsed || this[uri_prop_name]))
