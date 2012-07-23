@@ -89,11 +89,6 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list)
   {
     this.id = this._get_id();
-    if (!window.inspections)
-    {
-      window.inspections = new cls.Inspections();
-    }
-    window.inspections.add(this);
     this._obj_map =
     {
       0:
@@ -121,6 +116,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._root_path_joined = this._root_path.join();
     this.scope_list = scope_list && scope_list.slice(1);
     this._has_data = false;
+    if (!window.inspections)
+    {
+      window.inspections = new cls.Inspections();
+    }
+    window.inspections.add(this);
   }
 
   this._get_subtree = function(path)
@@ -941,12 +941,8 @@ cls.InspectionsPrototype = function()
 {
   this.add = function(obj)
   {
-    this._objects.push(obj);
-    var name = obj.id || obj.name;
-    if (name)
-      this[name] = obj;
-    else
-      throw "The object must have and id or a name";
+    this[obj.object_id] = obj;
+    this._objects[obj.object_id] = obj;
   };
 
   /**
@@ -957,17 +953,12 @@ cls.InspectionsPrototype = function()
    */
   this.get_object = function(obj_id)
   {
-    for (var i = 0, object; object = this._objects[i]; i++)
-    {
-      if (object.object_id === obj_id)
-        return object;
-    }
-    return null;
+    return this._objects[obj_id] || null;
   };
 
   this.init = function()
   {
-    this._objects = [];
+    this._objects = new HashMap();
   };
 };
 
