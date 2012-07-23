@@ -183,13 +183,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        // todo: it would be good if we knew if the whole context is finished. Better only to get_body then, less potential to disturb.
-        if (!entry.current_response_has_responsebody &&
-            !entry.called_get_body && 
-            entry.is_finished &&
-            entry.current_response_saw_responsefinished)
+        // Decide to try to fetch the body, for when content-tracking is off or it's a cached request.
+        if (
+          entry.is_finished &&
+          !entry.called_get_body &&
+          (!entry.current_response || !entry.current_response.responsebody) &&
+          // When we have a response, but didn't see responsefinished, it means there's really no
+          // responsebody. Don't attempt to fetch it.
+          (!entry.current_response || entry.current_response.saw_responsefinished)
+        )
+        {
           this._service.get_body(entry.id, this.update_bound);
-
+        }
         template = [template, this._render_details_view(entry)];
       }
     }

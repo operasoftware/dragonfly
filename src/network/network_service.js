@@ -241,7 +241,7 @@ cls.NetworkLoggerService = function(view)
 
     if (status)
     {
-      // the object passed to _current_context represents empty event_data. will set body_unavailable.
+      // the object passed to _current_context represents empty event_data. will set no_used_mimetype.
       this._current_context.update("responsebody", {resourceID: entry.resource_id});
     }
     else
@@ -578,6 +578,8 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.events = [];
   this.event_sequence = [];
   this.called_get_body = false;
+  this.current_response = null;
+  this.current_request = null;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -773,8 +775,8 @@ cls.NetworkLoggerEntryPrototype = function()
   this._update_event_urlunload = function(event)
   {
     this.is_unloaded = true;
-    if (this._current_response)
-      this._current_response._update_event_urlunload(event);
+    if (this.current_response)
+      this.current_response._update_event_urlunload(event);
   };
 
   this._update_event_urlfinished = function(event)
@@ -785,8 +787,8 @@ cls.NetworkLoggerEntryPrototype = function()
     this.size = event.contentLength;
     this.is_finished = true;
     // Responses keep duplicates of the finished state. It's only relevant on the last one though.
-    if (this._current_response)
-      this._current_response._update_event_urlfinished(event);
+    if (this.current_response)
+      this.current_response._update_event_urlfinished(event);
 
     this._guess_response_type();
     this._humanize_url();
@@ -795,31 +797,31 @@ cls.NetworkLoggerEntryPrototype = function()
   this._update_event_request = function(event)
   {
     this.last_method = event.method;
-    this._current_request = new cls.NetworkLoggerRequest(this);
-    this.requests_responses.push(this._current_request);
-    this._current_request._update_event_request(event);
+    this.current_request = new cls.NetworkLoggerRequest(this);
+    this.requests_responses.push(this.current_request);
+    this.current_request._update_event_request(event);
   };
 
   this._update_event_requestheader = function(event)
   {
-    if (!this._current_request)
+    if (!this.current_request)
     {
       // This means we didn't see a request before that, CORE-47076
-      this._current_request = new cls.NetworkLoggerRequest(this);
-      this.requests_responses.push(this._current_request);
+      this.current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this.current_request);
     }
-    this._current_request._update_event_requestheader(event);
+    this.current_request._update_event_requestheader(event);
   };
 
   this._update_event_requestfinished = function(event)
   {
-    if (!this._current_request)
+    if (!this.current_request)
     {
       // There should always be a request by now, but keep the data anyway.
-      this._current_request = new cls.NetworkLoggerRequest(this);
-      this.requests_responses.push(this._current_request);
+      this.current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this.current_request);
     }
-    this._current_request._update_event_requestfinished(event);
+    this.current_request._update_event_requestfinished(event);
   };
 
   this._update_event_requestretry = function(event)
@@ -831,38 +833,38 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    if (this._current_request)
+    if (this.current_request)
     {
-      this._current_request.was_responded = true;
+      this.current_request.was_responded_to = true;
     }
     this.last_responsecode = event.responseCode;
     this.error_in_last_response = /^[45]/.test(this.last_responsecode);
-    this._current_response = new cls.NetworkLoggerResponse(this);
-    this.requests_responses.push(this._current_response);
-    this._current_response._update_event_response(event);
+    this.current_response = new cls.NetworkLoggerResponse(this);
+    this.requests_responses.push(this.current_response);
+    this.current_response._update_event_response(event);
   };
 
   this._update_event_responseheader = function(event)
   {
     // Sometimes we see no "response" event before we see responseheader,
     // therefore have to init NetworkLoggerResponse here. See CORE-43935.
-    if (!this._current_response)
+    if (!this.current_response)
     {
-      if (this._current_request)
+      if (this.current_request)
       {
-        this._current_request.was_responded = true;
+        this.current_request.was_responded_to = true;
       }
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.requests_responses.push(this._current_response);
+      this.current_response = new cls.NetworkLoggerResponse(this);
+      this.requests_responses.push(this.current_response);
     }
-    this._current_response._update_event_responseheader(event);
+    this.current_response._update_event_responseheader(event);
     // todo: should _guess_response_type here? if there was a Content-Type response-header, pick it from there.
   };
 
   this._update_event_responsefinished = function(event)
   {
-    if (this._current_response)
-      this._current_response._update_event_responsefinished(event);
+    if (this.current_response)
+      this.current_response._update_event_responsefinished(event);
 
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
@@ -872,13 +874,13 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_responsebody = function(event)
   {
-    if (!this._current_response)
+    if (!this.current_response)
     {
       // This should mean there wasn't a request, but it was fetched over GetResource.
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.requests_responses.push(this._current_response);
+      this.current_response = new cls.NetworkLoggerResponse(this);
+      this.requests_responses.push(this.current_response);
     }
-    this._current_response._update_event_responsebody(event);
+    this.current_response._update_event_responsebody(event);
   };
 
   this._update_event_urlredirect = function(event)
@@ -900,8 +902,8 @@ cls.NetworkLoggerEntryPrototype = function()
     else
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
-    if (this._current_response)
-      this._current_response._update_mime_and_type(this.mime, this.type);
+    if (this.current_response)
+      this.current_response._update_mime_and_type(this.mime, this.type);
   };
 
   this._humanize_url = function()
@@ -959,16 +961,6 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.__defineGetter__("current_response_has_responsebody", function()
-  {
-    return Boolean(this._current_response && this._current_response.responsebody);
-  });
-
-  this.__defineGetter__("current_response_saw_responsefinished", function()
-  {
-    return Boolean(this._current_response && this._current_response.saw_responsefinished);
-  });
-
   this.__defineGetter__("duration", function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
@@ -983,7 +975,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("touched_network", function()
   {
-     return Boolean(this._current_request);
+     return Boolean(this.current_request);
   });
 
   // todo: add empty setters.
@@ -1002,7 +994,7 @@ cls.NetworkLoggerRequest = function(entry)
   this.request_type = null;
   this.requestbody = null;
   this.boundary = "";
-  this.was_responded = false;
+  this.was_responded_to = false;
   // Set from template code, when first needed:
   this.header_tokens = null;
   // Belongs here, unused though:
@@ -1059,6 +1051,7 @@ cls.NetworkLoggerResponse = function(entry)
   this.header_tokens = null; // This is set from template code, when it's first needed
   this.is_response = true; // Simpler for recognizing than dealing with comparing the constructor
   this.saw_responsefinished = false;
+  this.no_used_mimetype = false;
 
   // The following are duplicated from the entry to have them available directly on the response
   this.logger_entry_type = entry.type;
@@ -1090,20 +1083,17 @@ cls.NetworkLoggerResponsePrototype = function()
     if (event.data && event.data.content)
     {
       // event.data is of type ResourceData here.
-      // todo: this does not set body_unavailable = true when there is no mimeType. does that make sense?
+      // From here, no_used_mimetype is not set to true when there is no mimeType.
+      // A later call to get_resource will set it from _update_event_responsebody.
       this.responsebody = event.data;
     }
   };
 
   this._update_event_responsebody = function(event)
   {
-    // "The used mime type. This may be different from the mime type advertised in the HTTP headers."
-    // Todo: So this can mean that there was no response, this is better represented through "!saw_responsefinished" though,
-    // or that it was somehow invalid? Not so sure.
-    if (!event.mimeType) { this.body_unavailable = true; }
-    // event is of type ResourceData here.
+    // event.mimeType is the used mime type here.
+    if (!event.mimeType) { this.no_used_mimetype = true; }
     this.responsebody = event;
-    // todo: check how to distinguish body_unavailable and empty body.
   };
 
   this._update_event_urlunload = function(event)

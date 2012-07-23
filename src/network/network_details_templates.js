@@ -130,7 +130,7 @@ templates._request = function(request, is_last_request, do_raw)
   // That can't be determined only by looking at RequestRetry events, because a
   // request with for example a 401 Authorization Required response should still 
   // be shown.
-  if (!is_last_request && !request.was_responded)
+  if (!is_last_request && !request.was_responded_to)
     return [];
 
   return [
@@ -377,9 +377,10 @@ templates._response_body = function(resp, do_raw, is_last_response)
   var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
 
   var classname = "";
-  if ((resp.saw_responsefinished && resp.body_unavailable) ||
+  if ((resp.saw_responsefinished && resp.no_used_mimetype) ||
       !resp.responsebody && resp.is_unloaded)
   {
+    // Enable content-tracking.
     classname = "network_info";
     ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY);
   }
@@ -389,13 +390,16 @@ templates._response_body = function(resp, do_raw, is_last_response)
     {
       if (is_last_response && !resp.logger_entry_is_finished)
       {
+        // Unfinished.
         classname = "network_info";
         ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
       }
-      // else we're in the middle of getting it via GetResource, or there is in fact no responsebody.
+      // else 
+        // We're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else
     {
+      // Attempt to display the responsebody.
       if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
       {
         ret.push(

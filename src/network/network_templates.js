@@ -100,7 +100,7 @@ templates.request_crafter_main = function(url, loading, request, response)
 templates.incomplete_warning = function(context, index, all_contexts)
 {
   if (context.incomplete_warn_discarded ||
-      context.saw_main_document_abouttoloaddocument)
+      context.saw_main_document)
   {
     return [];
   }
