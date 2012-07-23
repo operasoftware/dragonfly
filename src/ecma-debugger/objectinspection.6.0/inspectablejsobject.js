@@ -941,10 +941,12 @@ cls.InspectionsPrototype = function()
 {
   this.add = function(obj)
   {
-    this._objects.push(obj);
-    var name = obj.id || obj.name;
-    if (name)
-      this[name] = obj;
+    var id = obj.id || obj.name;
+    if (id)
+    {
+      this[id] = obj;
+      this._objects[id] = obj;
+    }
     else
       throw "The object must have and id or a name";
   };
@@ -957,17 +959,18 @@ cls.InspectionsPrototype = function()
    */
   this.get_object = function(obj_id)
   {
-    for (var i = 0, object; object = this._objects[i]; i++)
+    var objects = this._objects;
+    for (var id in objects)
     {
-      if (object.object_id === obj_id)
-        return object;
+      if (objects[id].object_id === obj_id)
+        return objects[id];
     }
     return null;
   };
 
   this.init = function()
   {
-    this._objects = [];
+    this._objects = new HashMap();
   };
 };
 
