@@ -301,12 +301,13 @@
               "/>" +
               "<key " + (has_match ? "" : " class='no-match'") +
                         "data-spec='dom#" + esc_name + "'" + editable(prop) +
-                        ">" + esc_name + "</key> " +
+                        ">" + esc_name + "</key>" +
+              (esc_name ? " " : "") +
               "<value class='object" + (has_match ? "" : " no-match") + "' " +
                      "data-spec='dom#" + value + "' " +
                      "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
-            
+
             if (_has_own_prop.call(tree, prop[NAME]))
               ret.extend(expanded_prop);
 

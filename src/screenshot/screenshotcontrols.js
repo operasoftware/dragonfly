@@ -40,7 +40,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
   {
     if (this._ruler_dimensions)
     {
-      this._ruler_dimensions.textContent = 
+      this._ruler_dimensions.textContent =
         "width: " + ruler.w +"px\n" +
         "height: " + ruler.h +"px";
     }
@@ -98,9 +98,9 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._ruler = new cls.Ruler();
     this._ruler.callback = this._onrulerdimesions.bind(this);
     this._ruler.onclose = this._onrulerclose.bind(this);
-    var setting_map = 
+    var setting_map =
     {
-      'sample-size': 3, 
+      'sample-size': 3,
       'color-palette': [],
       'auto-screenshot': false
     };
@@ -108,7 +108,7 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     {
       'auto-screenshot': ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY
     };
-    var settings_map = 
+    var settings_map =
     {
       checkboxes: ['auto-screenshot']
     };
@@ -182,9 +182,9 @@ window.cls.ScreenShotControlsView = function(id, name, container_class)
     this._scale_control.value = this._scale;
     this._sample_size_control = container.getElementsByTagName('input')[1];
     this._sample_size_control.value = this._settings.get('sample-size');
-    this._sample_color_container = 
+    this._sample_color_container =
       container.getElementsByClassName('screenshot-sample-container')[0];
-    this._ruler_dimensions = 
+    this._ruler_dimensions =
       container.getElementsByClassName('screenshot-ruler-dimensions')[0];
     this._update_sample_colors();
   };

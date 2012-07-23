@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var ToolbarConfigBase = new function()
@@ -33,9 +33,9 @@ var ToolbarConfigBase = new function()
 
   this.updateButtons = function()
   {
-    var 
-    id = '', 
-    i = 0, 
+    var
+    id = '',
+    i = 0,
     container = null,
     buttons = null,
     button = null,
@@ -44,7 +44,7 @@ var ToolbarConfigBase = new function()
     for( ; id = this.container_ids[i]; i++)
     {
       container = document.getElementById(id);
-      
+
       if( container )
       {
         buttons = container.getElementsByTagName('toolbar-buttons')[0].getElementsByClassName('ui-button');
@@ -155,10 +155,10 @@ var ToolbarConfigBase = new function()
     }
   };
 
-  this.init = function(name_or_config_object, 
-                       button_array, 
-                       filter_array, 
-                       special_button_array, 
+  this.init = function(name_or_config_object,
+                       button_array,
+                       filter_array,
+                       special_button_array,
                        custom_button_array)
   {
     ids [ this.id = getId() ] = this;
@@ -167,7 +167,7 @@ var ToolbarConfigBase = new function()
       var name = name_or_config_object.view;
       this.groups = name_or_config_object.groups;
       // Add a plain button array to support deactivating etc.,
-      // initialize Switches and SingleSelect objects 
+      // initialize Switches and SingleSelect objects
       this.buttons = [];
       this.filters = [];
       for (var i = 0, group; group = this.groups[i]; i++)
@@ -225,7 +225,7 @@ var ToolbarConfigBase = new function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends ToolbarConfigBase
   */
 
@@ -244,17 +244,17 @@ var ToolbarConfigBase = new function()
     }
   */
 
-var ToolbarConfig = function(name_or_config_object, 
-                             button_array, 
-                             filter_array, 
-                             special_button_array, 
+var ToolbarConfig = function(name_or_config_object,
+                             button_array,
+                             filter_array,
+                             special_button_array,
                              custom_button_array)
 {
 
-  this.init(name_or_config_object, 
-            button_array, 
-            filter_array, 
-            special_button_array, 
+  this.init(name_or_config_object,
+            button_array,
+            filter_array,
+            special_button_array,
             custom_button_array);
 }
 

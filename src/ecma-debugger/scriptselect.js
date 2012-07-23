@@ -120,7 +120,7 @@ cls.ScriptSelect = function(id, class_name)
 
           if (this._setting)
             this._setting.set("js-dd-match-history", this._match_history);
-        } 
+        }
       }
       return true;
     }
@@ -156,12 +156,12 @@ cls.ScriptSelect = function(id, class_name)
     {
       if (this._input.value && !this._is_clear_button_visible)
       {
-        this._is_clear_button_visible = true; 
+        this._is_clear_button_visible = true;
         this._clear_button.addClass("js-dd-visible");
       }
       else if (!this._input.value && this._is_clear_button_visible)
       {
-        this._is_clear_button_visible = false; 
+        this._is_clear_button_visible = false;
         this._clear_button.removeClass("js-dd-visible");
       }
     }
@@ -174,7 +174,7 @@ cls.ScriptSelect = function(id, class_name)
       case "highlight-next-match":
       case "highlight-previous-match":
         var target = this._option_eles[this._option_ele_cursor];
-        if (target)       
+        if (target)
           target.dispatchMouseEvent("mouseup");
 
         return false;
@@ -200,7 +200,7 @@ cls.ScriptSelect = function(id, class_name)
           this._move_highlight(index, true);
         }
         return false;
-      
+
       case "shift-down":
         if (!this._setting)
           this._init_match_history();
@@ -208,7 +208,7 @@ cls.ScriptSelect = function(id, class_name)
         this._match_cursor++;
         if (this._match_cursor > this._match_history.length - 1)
           this._match_cursor = 0;
-        
+
         this._set_filter_value();
         return false;
 
@@ -221,7 +221,7 @@ cls.ScriptSelect = function(id, class_name)
           this._match_cursor = this._match_history.length
                              ? this._match_history.length - 1
                              : 0;
-        
+
         this._set_filter_value();
         return false;
 
@@ -255,7 +255,7 @@ cls.ScriptSelect = function(id, class_name)
   };
 
   this._get_option_ele_list = function()
-  { 
+  {
     var list = this._script_list.querySelectorAll("cst-option");
     this._option_eles = Array.prototype.slice.call(list);
     var index = 0;
@@ -270,7 +270,7 @@ cls.ScriptSelect = function(id, class_name)
 
       if (!this._option_eles[index])
         index = 0;
-             
+
       this._option_eles[index].addClass("hover");
     }
 
@@ -307,7 +307,7 @@ cls.ScriptSelect = function(id, class_name)
     {
       if (this._option_eles[this._option_ele_cursor])
         this._option_eles[this._option_ele_cursor].removeClass("hover");
-      
+
       this._option_ele_cursor = index;
       var ele = this._option_eles[this._option_ele_cursor];
       ele.addClass("hover");
@@ -320,7 +320,7 @@ cls.ScriptSelect = function(id, class_name)
           this._container.scrollTop -= this._option_box.top - box.top
                                      + this._option_box.height - box.height;
       }
-    } 
+    }
   };
 
   this._init_match_history = function()
@@ -346,8 +346,8 @@ cls.ScriptSelect = function(id, class_name)
     eventHandlers.mouseover["js-dd-move-highlight"] = this._onmouseover.bind(this);
     this._onshortcut_bound = this._onshortcut.bind(this);
     var gl_h = ActionBroker.get_instance().get_global_handler();
-    gl_h.register_shortcut_listener(this._id + "-filter", 
-                                    this._onshortcut_bound, 
+    gl_h.register_shortcut_listener(this._id + "-filter",
+                                    this._onshortcut_bound,
                                     ["highlight-next-match",
                                      "highlight-previous-match",
                                      "show-script",

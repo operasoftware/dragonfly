@@ -394,7 +394,7 @@ ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -637,7 +637,7 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+ui_strings.S_GLOBAL_SCOPE_NAME = "(global)";
 
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
@@ -1261,7 +1261,7 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 
 /* DESC: Fallback text for no filename, used as tab label */
-ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "(no name)";
 
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
@@ -1697,3 +1697,19 @@ ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
 
 /* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
 ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
+
+/* DESC: String shown instead of filename when file name is missing  */
+ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
+
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
+
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
+
+/* DESC: Section in the script side panel for return values. */
+ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
+
+/* DESC: The content of the return value section when there are not return values. */
+ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return values";
+

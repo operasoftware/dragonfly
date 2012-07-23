@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview
- * 
+ *
  * Convenience library for interacting with the scope proxy.
  *
  * The "proxy" object is a singleton that encapsulates logic for
@@ -18,7 +18,7 @@
  * Every access has a response value, which is normally "<ok />" if
  * nothing sensible can be returned.
  *
- * Properties of this object are read-only except where explicitly 
+ * Properties of this object are read-only except where explicitly
  * stated.
  */
 
@@ -36,7 +36,7 @@ window.cls.Proxy = function()
     * @return     Nothing.
     * @exceptions Throws if the access to /services failed
     */
-  this.configure = function ( host, port ) 
+  this.configure = function ( host, port )
   {
     if (host) { _host = host; }
     if (port) { _port = port; }
@@ -80,7 +80,7 @@ window.cls.Proxy = function()
     * @return      true if enabling succeeded, false otherwise
     * @exceptions  Throws if the access to the proxy failed
     */
-  this.enable = function (service_name) 
+  this.enable = function (service_name)
   {
     for (var i=0; i < this.services.length && this.services[i] != service_name ; i++ );
     if (i == this.services.length)
@@ -98,16 +98,16 @@ window.cls.Proxy = function()
     * returned from the proxy.
     *
     * @param msg  The full message to send, including leading "/"
-    * @return     The responseXML property of the XMLHttpRequest 
+    * @return     The responseXML property of the XMLHttpRequest
     * @exceptions Throws an exception if the return code is not 200
     * changed the code to work in an asynchroneous environment
     */
-  this.GET = function( msg, cb ) 
+  this.GET = function( msg, cb )
   {
     var x = new XMLHttpRequest;
     x.onload=function()
     {
-      if ( this.status != 200) 
+      if ( this.status != 200)
       {
         throw "Message failed, Status: " + this.status + ", msg: " + msg ;
       }
@@ -125,7 +125,7 @@ window.cls.Proxy = function()
           throw "Message failed, GET, empty document: " + this.responseText;
         }
       }
-      if(cb) 
+      if(cb)
       {
         cb(xml, x)
       }
@@ -150,10 +150,10 @@ window.cls.Proxy = function()
     *
     * @param msg   The full message to send, including leading "/"
     * @param data  XML data to post
-    * @return      The responseXML property of the XMLHttpRequest 
+    * @return      The responseXML property of the XMLHttpRequest
     * @exceptions Throws an exception if the return code is not 200
     */
-    this.POST = function (msg, data, cb, retry_count) 
+    this.POST = function (msg, data, cb, retry_count)
     {
       var x = new XMLHttpRequest;
       x.onload = function()
@@ -194,14 +194,14 @@ window.cls.Proxy = function()
     };
 
     /** WRITABLE.
-      * Installable handler that will be called every time a GET request 
+      * Installable handler that will be called every time a GET request
       * times out.  By default this does nothing.
       *
-      * A typical thing for a user handler to do here would be to update 
-      * the UI (eg "waiting..."), or throw an exception to break out of the 
+      * A typical thing for a user handler to do here would be to update
+      * the UI (eg "waiting..."), or throw an exception to break out of the
       * GET call.
       */
-    this.onTimeout = function () 
+    this.onTimeout = function ()
     {
         // Do nothing by default
     }
@@ -213,7 +213,7 @@ window.cls.Proxy = function()
       *
       * Useful for logging, debugging, and ad-hoc correction of incoming data.
       */
-    this.onReceive = function (x) 
+    this.onReceive = function (x)
     {
 	    // Do nothing by default
     }
@@ -222,9 +222,9 @@ window.cls.Proxy = function()
     var _host =  "127.0.0.1";
 
     /* Proxy port */
-    var _port = "8002"; 
+    var _port = "8002";
 
     /* Array of service names */
     this.services =  []
 };
-    
+
