@@ -378,6 +378,7 @@ cls.JSSourceTooltip = function(view)
               parens_stack.push(token[VALUE])
               previous_token = token;
             }
+
             if (token[VALUE] == "(")
             {
               parens_stack.pop();
@@ -428,6 +429,7 @@ cls.JSSourceTooltip = function(view)
                   index = i - 1;
                   continue;
                 }
+
                 if (token[VALUE] == "[" && bracket_stack.length)
                 {
                   bracket_stack.pop();
@@ -612,6 +614,7 @@ cls.JSSourceTooltip = function(view)
               parens_stack.push(token[VALUE])
               previous_token = token;
             }
+
             if (token[VALUE] == ")")
             {
               parens_stack.pop();
@@ -631,6 +634,7 @@ cls.JSSourceTooltip = function(view)
               bracket_stack.push(token[VALUE])
               previous_token = token;
             }
+
             if (token[VALUE] == "]")
             {
               bracket_stack.pop();
@@ -664,6 +668,7 @@ cls.JSSourceTooltip = function(view)
                   index = i;
                   continue;
                 }
+
                 if (token[VALUE] == "]")
                 {
                   bracket_stack.pop();
@@ -671,6 +676,7 @@ cls.JSSourceTooltip = function(view)
                   index = i;
                   continue;
                 }
+
                 if (token[VALUE] == "[")
                 {
                   bracket_stack.push(token[VALUE]);
@@ -702,6 +708,7 @@ cls.JSSourceTooltip = function(view)
                     index = i - 1;
                     continue;
                   }
+
                   if (token[VALUE] == "]" && bracket_stack.length)
                   {
                     bracket_stack.pop();
