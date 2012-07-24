@@ -39,7 +39,7 @@ templates.options_main = function(nocaching, tracking, headers, overrides)
                 "class", "checkbox",
                 "handler", "toggle-header-overrides"
               ].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
-            templates.network.options_override_list(headers, overrides)
+            templates.options_override_list(headers, overrides)
            ]
           ],
          "class", "network-options"
@@ -54,7 +54,7 @@ templates.options_override_list = function(headers, overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
   return [
           ["br"],
-          ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.network.options_override_presets(overrides),
+          ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.options_override_presets(overrides),
           ["br"],
           tpl,
           ["br"],
