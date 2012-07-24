@@ -361,6 +361,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./syntaxhighlight/markup/syntax.js"/>
 <script src="./syntaxhighlight/css/tokenizer.js"/>
 <script src="./syntaxhighlight/css/syntax.js"/>
+<script src="./syntaxhighlight/http-header/tokenizer.js"/>
 
 
 

@@ -2012,6 +2012,7 @@ SpecLinks.specs = {
     "Content-MD5": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.15",
     "Content-Range": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.16",
     "Content-Type": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17",
+    "Content-Disposition": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1",
     "Date": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18",
     "Clockless Origin Server Operation": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18.1",
     "ETag": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19",

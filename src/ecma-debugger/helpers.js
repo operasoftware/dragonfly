@@ -377,6 +377,14 @@ window.cls.Helpers = function()
      });
    };
   })();
+
+  this.eq = function(prop, val)
+  {
+    return function(obj)
+    {
+      return obj[prop] === val;
+    };
+  }
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)
