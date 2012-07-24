@@ -67,7 +67,7 @@ cls.ReplService = function(view, data)
         this._handle_log(msg, rt_id);
         break;
       case CONSOLE_DIR:
-        ctx = 
+        ctx =
         {
           is_unpacked: true,
           is_friendly_printed: true,
@@ -77,7 +77,7 @@ cls.ReplService = function(view, data)
         this._handle_log(msg, rt_id, ctx);
         break;
       case CONSOLE_DIRXML:
-        ctx = 
+        ctx =
         {
           is_unpacked: true,
           is_friendly_printed: true,
@@ -234,10 +234,10 @@ cls.ReplService = function(view, data)
   this._handle_group = function(msg, collapsed)
   {
     const VALUE = 0, VALUELIST = 2;
-    var group_name = msg[VALUELIST] && 
+    var group_name = msg[VALUELIST] &&
                      msg[VALUELIST][0] &&
                      msg[VALUELIST][0][VALUE] ||
-                     ""; 
+                     "";
     this._data.add_output_groupstart({name: group_name,
                                       collapsed: Boolean(collapsed)});
   };

@@ -1,0 +1,12 @@
+message <span class="message">GetPageTextArg</span>
+{
+  <span class="comment">/** 
+   * Get the text in this window.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+  <span class="comment">/** 
+   * If set, get the text only for the specified frame. The frame must be
+   * part of the document tree of the previously specified window.
+   */</span>
+  optional <span class="number">uint32</span> frameID  = 2; 
+}

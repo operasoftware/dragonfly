@@ -1,0 +1,19 @@
+message <span class="message">PageText</span>
+{
+  message <span class="message">DocumentText</span>
+  {
+    <span class="comment">/** 
+     * Which frame this document sits in.
+     */</span>
+    required <span class="number">uint32</span> frameID    = 1; 
+    <span class="comment">/** 
+     * The document that contains this text.
+     */</span>
+    required <span class="number">uint32</span> documentID = 2; 
+    <span class="comment">/** 
+     * The (plain) text of the document.
+     */</span>
+    required <span class="string">string</span> text       = 3; 
+  }
+  repeated <span class="message">DocumentText</span> documentTextList = 1; 
+}

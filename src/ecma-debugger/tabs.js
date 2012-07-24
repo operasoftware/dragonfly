@@ -3,7 +3,7 @@ cls.EcmascriptDebugger || (cls.EcmascriptDebugger = {});
 cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
 
 /**
-  * @constructor 
+  * @constructor
   */
 
 cls.EcmascriptDebugger["6.0"].HostTabs = function()
@@ -116,11 +116,11 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     if(this._has_changed(rt_ids, __activeTab))
     {
       __activeTab = rt_ids;
+      cleanUpEventListener();
       for (var ev = null, i = 0; ev = activeEvents[i]; i++)
       {
         __addEvenetListener(ev.type, ev.cb, ev.prevent_default, ev.stop_propagation);
       }
-      cleanUpEventListener();
       this.post_messages();
     }
   }
@@ -143,8 +143,8 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
 
   this.getActiveTab = function(top_frame_runtime_id)
   {
-    return __activeTab;
-  }
+    return __activeTab.slice();
+  };
 
   this.is_runtime_of_active_tab = function(rt)
   {
@@ -159,7 +159,7 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
   this.handleEventHandler = function(status, message)
   {
 
-    if( window.__times_spotlight__ ) 
+    if( window.__times_spotlight__ )
     {
       window.__times_spotlight__[0] =  new Date().getTime();
     }
@@ -187,16 +187,16 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     const
     STATUS = 0,
     OBJECT_VALUE = 3,
-    // sub message ObjectValue 
+    // sub message ObjectValue
     OBJECT_ID = 0;
 
-    var 
-    event_type = '', 
-    callback = null, 
-    prevent_default = null, 
+    var
+    event_type = '',
+    callback = null,
+    prevent_default = null,
     stop_propagation = null,
     id = 0,
-    ev_listener = null, 
+    ev_listener = null,
     i = 0,
     node_id = 0;
 
@@ -206,29 +206,32 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
       document_map[runtime_id] = node_id;
       for( ; ev_listener = __get_document_id[runtime_id][i]; i++)
       {
-        // __get_document_id[rt_p].push([rt_p, event_type, callback, prevent_default, stop_propagation])
         event_type = ev_listener[1];
-        callback = ev_listener[2]; 
+        callback = ev_listener[2];
         prevent_default = ev_listener[3];
         stop_propagation = ev_listener[4];
-        if( !checkTriple(node_id, event_type, callback ) ) 
+        if( !checkTriple(node_id, event_type, callback ) )
         {
           id = getNewHandlerId();
           node_map[id] = node_id;
           type_map[id] = event_type;
           callback_map[id] = callback;
           runtime_id_map[id] = runtime_id;
-          services['ecmascript-debugger'].requestAddEventHandler(33, 
-              [id, node_id, "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]); 
+          services['ecmascript-debugger'].requestAddEventHandler(33,
+              [id, node_id, "", event_type, prevent_default && 1 || 0, stop_propagation && 1 || 0]);
         }
       }
     }
     else
     {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + 
-        'Error in host_tabs handleAddEventWithDocument');
+      cleanUpEventListener();
+      if (__activeTab.contains(runtime_id))
+      {
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                        "Error in host_tabs handleAddEventWithDocument");
+      }
     }
-     
+
   }
 
   var __addEvenetListener = function(event_type, callback, prevent_default, stop_propagation)
@@ -265,7 +268,7 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     }
   }
 
-  
+
 
   var cleanUpEventListener =  function()
   {
@@ -300,7 +303,7 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
     ecma_debugger.handleAddEventHandler =
     ecma_debugger.handleRemoveEventHandler =
     function(status, message){};
-     
+
 
     ecma_debugger.onHandleEvent = function(status, message)
     {
@@ -311,7 +314,7 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
   window.messages.addListener('profile-disabled', _on_profile_disabled);
 
   /**
-  * @constructor 
+  * @constructor
   */
 
   this.activeTab = new function()
@@ -328,11 +331,11 @@ cls.EcmascriptDebugger["6.0"].HostTabs = function()
       {
         stop_propagation = true;
       }
-      activeEvents[activeEvents.length] = 
+      activeEvents[activeEvents.length] =
       {
-        type: event_type, 
+        type: event_type,
         cb: callback,
-        prevent_default: prevent_default, 
+        prevent_default: prevent_default,
         stop_propagation: stop_propagation
       };
       __addEvenetListener(event_type, callback, prevent_default, stop_propagation);

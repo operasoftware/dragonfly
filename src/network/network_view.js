@@ -50,16 +50,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (container)
       this._container = container;
 
-    // the query_selector for the mode needs to be set even when there is currently no query.
+    // In details, it would be better to not have .network_info and headlines searchable, but those can
+    // occur on different levels, so it's too complicated to do with the current script-search.
+    // Also searching accross spans (for syntax highlighting) is more important.
     if (this.mode == DETAILS)
-      this.text_search.set_query_selector("tbody:not(.network_info)");
+      this.text_search.set_query_selector(".entry-details");
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
     var ctx = this._service.get_request_context();
     if (ctx)
     {
-      // the filters need to be set when creating the view, the request_context may have changed in between
+      // The filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filters(this._type_filters || []);
       this._render_main_view(this._container);
       this.text_search.update_search();
@@ -73,7 +75,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._last_render_speed = now - started_rendering;
     this._rendertime = now;
   };
-  
+
   this.create_disabled_view = function(container)
   {
     container.clearAndRender(window.templates.disabled_view());
@@ -98,7 +100,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var MINIMUM_DETAIL_WIDTH = 100;
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    return templates.network_log_details(entry, left_val);
+    var do_raw = settings.network_logger.get("view-raw");
+    return templates.network.details(entry, left_val, do_raw);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -149,7 +152,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     var is_data_mode = Boolean(table_template);
     var ctx = this._service.get_request_context();
 
-    // In is_data_mode, the entries have to be retrieved from the table 
+    // In is_data_mode, the entries have to be retrieved from the table
     // to be in the correct order.
     if (is_data_mode)
       entries = this._table.get_data();
@@ -164,7 +167,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       this._list_cont_width = parseInt(style_dec.getPropertyValue("width"), 10); // in %
       this._list_cont_min_width = parseInt(style_dec.getPropertyValue("min-width"), 10);
     }
-    var url_list_width = 
+    var url_list_width =
         Math.ceil(Math.max(
                             this._list_cont_min_width,
                             parseInt(this._container.style.width, 10) * this._list_cont_width / 100
@@ -173,7 +176,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
 
-    var template = ["div", templates.network_log_main(
+    var template = ["div", templates.network.main(
                      ctx, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container"];
 
@@ -182,9 +185,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        if (entry.is_finished && !entry.has_responsebody && !entry.is_fetching_body)
+        // Decide to try to fetch the body, for when content-tracking is off or it's a cached request.
+        if (
+          entry.is_finished &&
+          !entry.called_get_body &&
+          (!entry.current_response || !entry.current_response.responsebody) &&
+          // When we have a response, but didn't see responsefinished, it means there's really no
+          // responsebody. Don't attempt to fetch it.
+          (!entry.current_response || entry.current_response.saw_responsefinished)
+        )
+        {
           this._service.get_body(entry.id, this.update_bound);
-
+        }
         template = [template, this._render_details_view(entry)];
       }
     }
@@ -193,7 +205,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     if (this._selected)
     {
-      var details = rendered.querySelector(".request-details");
+      var details = rendered.querySelector(".entry-details");
       if (details)
       {
         if (this._details_scroll_top)
@@ -228,20 +240,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
-        getter: function(entry) { return entry.method || ""; }
+        getter: function(entry) { return entry.last_method || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
         headertooltip: ui_strings.S_HTTP_TOOLTIP_RESPONSECODE,
         renderer: function(entry) {
-          return (entry.responsecode && String(entry.responsecode)) || "";
+          return (entry.current_responsecode && String(entry.current_responsecode)) || "";
         },
         title_getter: function(entry, renderer) {
-          if (cls.ResourceUtil.http_status_codes[entry.responsecode])
-            return String(cls.ResourceUtil.http_status_codes[entry.responsecode]);
+          if (cls.ResourceUtil.http_status_codes[entry.current_responsecode])
+            return String(cls.ResourceUtil.http_status_codes[entry.current_responsecode]);
           return renderer(entry);
         },
-        getter: function(entry) { return entry.responsecode || 0; }
+        getter: function(entry) { return entry.current_responsecode || 0; }
       },
       mime: {
         label: ui_strings.S_RESOURCE_ALL_TABLE_COLUMN_MIME,
@@ -276,9 +288,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          if (entry.responsestart && entry.requesttime)
-            return entry.responsestart - entry.requesttime;
-          return "";
+          return entry.waiting_time || "";
         },
         renderer: function(entry, getter)
         {
@@ -292,7 +302,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         align: "right",
         getter: function(entry)
         {
-          return entry.starttime_relative;  
+          return entry.starttime_relative;
         },
         renderer: function(entry)
         {
@@ -306,7 +316,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.duration },
         renderer: function(entry) {
           var dur = entry.duration;
-          return (dur && dur.toFixed(2) + "ms") || "";
+          return (dur && dur.toFixed(2) + " ms") || "";
         }
       },
       graph: {
@@ -316,7 +326,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
         getter: function(entry) { return entry.starttime },
         renderer: function(entry) {
           var FIXED_GRAPH_WIDTH = 50;
-          return templates.network_graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
+          return templates.network.graph_sections(entry, FIXED_GRAPH_WIDTH, entry.duration, true);
         }
       }
     }
@@ -376,8 +386,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (this._selected)
     {
       var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
-      if (selected_node && 
-          selected_node[accessor] && 
+      if (selected_node &&
+          selected_node[accessor] &&
           selected_node[accessor].dataset.objectId)
       {
         this._selected = selected_node[accessor].dataset.objectId;
@@ -443,7 +453,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("request-details"))
+    if (evt.target.hasClass("entry-details"))
     {
       this._details_scroll_top = evt.target.scrollTop;
       this._details_scroll_left = evt.target.scrollLeft;
@@ -462,7 +472,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (!this.mono_lineheight)
       this._update_mono_lineheight();
 
-    var template = templates.network_graph_tooltip(entry, this.mono_lineheight);
+    var template = templates.network.graph_tooltip(entry, this.mono_lineheight);
     this.graph_tooltip.show(template);
   }.bind(this);
 
@@ -498,7 +508,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry(entry_id);
       if (entry)
       {
-        var template = templates.network_log_url_tooltip(entry);
+        var template = templates.network.url_tooltip(entry);
         this.url_tooltip.show(template);
       }
     }
@@ -527,8 +537,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   this._on_close_incomplete_warning_bound = function(evt, target)
   {
     var ctx = this._service.get_request_context();
-    if (ctx)
-      ctx.incomplete_warn_discarded = true;
+    var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
+    if (ctx && window_id)
+      ctx.discard_incomplete_warning(window_id);
 
     this.needs_instant_update = true;
     this.update();
@@ -666,7 +677,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
   eh.click["clear-log-network-view"] = this._on_clear_log_bound;
-  
+
   messages.addListener("single-select-changed", this._on_single_select_changed_bound);
   messages.addListener("setting-changed", this._on_setting_changed_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
@@ -701,17 +712,19 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": false,
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
-      "track-content": true
+      "track-content": true,
+      "view-raw": false
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
+      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL
     },
     // settings map
     {
-      checkboxes: ["track-content"]
+      checkboxes: ["track-content", "view-raw"]
     },
     // templates
     {
@@ -813,6 +826,15 @@ cls.NetworkLog.create_ui_widgets = function()
           handler: "profiler-mode-switch"
         },
         {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.view-raw",
+              icon: "view-raw-requests-responses"
+            }
+          ]
+        },
+        {
           type: UI.TYPE_INPUT,
           items: [
             {
@@ -840,7 +862,7 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector(".request-details");
+      var scroll_container = msg.container.querySelector(".entry-details");
       if (!scroll_container)
         scroll_container = msg.container.querySelector("#network-outer-container");
 

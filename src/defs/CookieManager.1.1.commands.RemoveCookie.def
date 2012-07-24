@@ -1,0 +1,6 @@
+message <span class="message">RemoveCookieArg</span>
+{
+  required <span class="string">string</span> domain = 1; 
+  optional <span class="string">string</span> path   = 2; 
+  optional <span class="string">string</span> name   = 3; 
+}

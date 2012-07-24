@@ -32,6 +32,13 @@
   }
 };
 
+window.eventHandlers.click["goto-script-line"] = function(event, target)
+{
+  var script_id = Number(event.target.getAttribute("data-script-id"));
+  var script_line = Number(event.target.getAttribute("data-script-line"));
+  window.views.js_source.show_and_flash_line(script_id, script_line);
+};
+
 window.eventHandlers.click['expand-value'] = function(event, target)
 {
   var
@@ -165,19 +172,29 @@ window.eventHandlers.click['set-stop-at'] = function(event)
 
 window.eventHandlers.click['set-break-point'] = function(event)
 {
-  var line = parseInt(event.target.parentElement.children[0].value);
-  var script_id = views.js_source.getCurrentScriptId();
   var bps = cls.Breakpoints.get_instance();
-  if (line)
+  var target = event.target;
+  var li = target.get_ancestor("li");
+  if (li)
   {
-    if (bps.script_has_breakpoint_on_line(script_id, line))
+    var input = li.querySelector("input");
+    var line_number = input && Number(input.value);
+    if (!line_number)
     {
-      var bp_id = bps.remove_breakpoint(script_id, line);
-      cls.Breakpoints.get_instance().delete_breakpoint(bp_id);
+      var span = li.querySelector(".line-number");
+      line_number = span && Number(span.textContent);
     }
-    else
+    var script_id = window.views.js_source.getCurrentScriptId() ||
+                    Number(target.get_ancestor_attr("data-script-id"));
+    if (script_id && line_number)
     {
-      bps.add_breakpoint(script_id, line);
+      if (bps.script_has_breakpoint_on_line(script_id, line_number))
+      {
+        var bp_id = bps.remove_breakpoint(script_id, line_number);
+        bps.delete_breakpoint(bp_id);
+      }
+      else
+        bps.add_breakpoint(script_id, line_number);
     }
   }
 };

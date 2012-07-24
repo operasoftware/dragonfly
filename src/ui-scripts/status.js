@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   * @extends UIBase
   */
 
@@ -14,7 +14,7 @@ var StatusbarBase = function()
   this.info = '';
   this.DEFAULT_MODE = "default";
   this.TOOLTIP_MODE = "tooltip";
-  this.mode = this.DEFAULT_MODE; 
+  this.mode = this.DEFAULT_MODE;
   this.selector_cap_width = 0;
   this.available_width_delta = 0;
   this.info_container_scroll_height = 0;
@@ -32,8 +32,8 @@ var StatusbarBase = function()
       var style = window.getComputedStyle(info_container, null);
       this.selector_cap_width = spans[1].offsetLeft - ( spans[0].offsetLeft + spans[0].offsetWidth );
       this.info_container_scroll_height = info_container.scrollHeight;
-      this.available_width_delta = 
-        info_container.offsetLeft 
+      this.available_width_delta =
+        info_container.offsetLeft
         + parseInt(style.getPropertyValue('padding-left'))
         + parseInt(style.getPropertyValue('padding-right'));
     }
@@ -42,11 +42,11 @@ var StatusbarBase = function()
       statusbar.addClass('type-tooltip');
     }
     this.updateInfo(' ');
-  } 
-  
+  }
+
   this.updateInfo = function(info)
   {
-    var 
+    var
     statusbar = document.getElementById(this.type + '-to-' + this.cell.id) || this.update(),
     info_container = statusbar.getElementsByTagName('info')[0],
     breadcrumb = null,
@@ -68,7 +68,7 @@ var StatusbarBase = function()
       }
       else if(typeof info == "object")
       {
-        
+
         info_container.innerHTML = "";
         breadcrumb = info_container.render(info);
         if( this.mode == this.DEFAULT_MODE && info_container.scrollHeight > this.info_container_scroll_height )
@@ -87,7 +87,7 @@ var StatusbarBase = function()
             }
             consumed_width += delta;
             cursor = cursor.previousElementSibling;
-          }        
+          }
           if(cursor)
           {
             // range.deleteContents() causes 'jumping'
@@ -146,7 +146,7 @@ var StatusbarBase = function()
     }
 
     this.update(force_redraw);
-    
+
   }
 
   this.init = function(cell)
@@ -162,7 +162,7 @@ var StatusbarBase = function()
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends StatusbarBase
   */
 
@@ -172,7 +172,7 @@ var Statusbar = function(cell)
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends StatusbarBase
   */
 
@@ -188,7 +188,7 @@ var WindowStatusbar = function(cell)
 }
 
 /**
-  * @constructor 
+  * @constructor
   * @extends StatusbarBase
   */
 
@@ -215,11 +215,11 @@ var TopStatusbar = function(cell)
       {
         self.spin_animator.setActive();
         break;
-      }      
+      }
     }
   }
   messages.addListener('host-state', handleHostState);
-  var spin_animator = 
+  var spin_animator =
   {
     id: 'spin-button',
     delta: -16,

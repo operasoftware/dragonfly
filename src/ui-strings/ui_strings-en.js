@@ -1,4 +1,4 @@
-﻿window.ui_strings || ( window.ui_strings  = {} );
+window.ui_strings || ( window.ui_strings  = {} );
 window.ui_strings.lang_code = "en";
 
 /**
@@ -15,8 +15,14 @@ window.ui_strings.lang_code = "en";
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
 ui_strings.D_REDO_SEARCH = "The searched document no longer exists.\nRepeat search in the current document?";
 
+/* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
+ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
+
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
 ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload the page?";
+
+/* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
+ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
 
 /* DESC: Context menu item for adding an attribute in the DOM view. */
 ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = "Add attribute";
@@ -270,6 +276,15 @@ ui_strings.M_VIEW_LABEL_ERROR_XSLT = "XSLT";
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";
 
+/* DESC: Side panel view with event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: View with all event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
+
+/* DESC: View with the event listeners of the selected node. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
+
 /* DESC: Heading for Export button, accessed by clicking the subhead DOM view button. */
 ui_strings.M_VIEW_LABEL_EXPORT = "Export";
 
@@ -311,6 +326,9 @@ ui_strings.M_VIEW_LABEL_NO_INSPECTION = "No inspection";
 
 /* DESC: Text to show in watches if there are no watches */
 ui_strings.M_VIEW_LABEL_NO_WATCHES = "No watches";
+
+/* DESC: View for DOM debugging. */
+ui_strings.M_VIEW_LABEL_PROFILER = "Profiler";
 
 /* DESC: Name of raw request tab */
 ui_strings.M_VIEW_LABEL_RAW_REQUEST_INFO = "Raw request";
@@ -394,7 +412,10 @@ ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
+
+/* DESC: Info in a tooltip that the according listener was set as attribute. */
+ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -455,6 +476,12 @@ ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = "Show default pro
 
 /* DESC: List item under the Source settings menu to logs all threads when activated. Also Tooltip text for a button on the Source tab. */
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
+
+/* DESC: Refetch the event listeners. */
+ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
+
+/* DESC: Enable reformatting of JavaScript. */
+ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
 
 /* DESC: Tooltip text for a button under the Scripts tab that reloads the browser to receive fresh DOM, etc. */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
@@ -522,11 +549,20 @@ ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
 /* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
+/* DESC: Button title for starting the profiler */
+ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_BUTTON_STOP_PROFILER = "Stop profiling";
+
 /* DESC: Button label to delete all items in a storage, e.g. the local storage */
 ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
 /* DESC: Button label to store the color */
 ui_strings.S_BUTTON_STORE_COLOR = "Store color";
+
+/* DESC: Button to switch to network-profiler mode. */
+ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Improve accuracy of timing information";
 
 /* DESC: Button label to take a screenshot */
 ui_strings.S_BUTTON_TAKE_SCREENSHOT = "Take screenshot";
@@ -545,6 +581,9 @@ ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 
 /* DESC: Button label to update the screenshot */
 ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
+/* DESC: Unit string for bytes */
+ui_strings.S_BYTES_UNIT = "bytes";
 
 /* DESC: Clears the command line log */
 ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
@@ -572,6 +611,9 @@ ui_strings.S_COLUMN_LABEL_LINE = "Line";
 
 /* DESC: Message about having to load a different version of dragonfly in order to work with the browser bing debugged */
 ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION = "The protocol version of Opera does not match the one which Opera Dragonfly is using.\n\nTry to load a compatible version?";
+
+/* DESC: Dialog to confirm switching to network-profiler mode. */
+ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "To improve the accuracy of timing information, other features are turned off. You may lose changes you made.";
 
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
@@ -630,6 +672,48 @@ ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 /* DESC: List of filters that will be hidden in the Error log */
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 
+/* DESC: Link in an event listener tooltip to the source position where the listener is added. */
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+
+/* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+
+/* DESC: Info in a tooltip that the according listener was set by the event target interface. */
+ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_PAINT = "Paint";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_PROCESS = "Process";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
+
+/* DESC: Event type for events in the profiler */
+ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
+
 /* DESC: Context menu item for expanding CSS shorthands */
 ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 
@@ -637,7 +721,7 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+ui_strings.S_GLOBAL_SCOPE_NAME = "(global)";
 
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
@@ -816,6 +900,9 @@ ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port 
 /* DESC: A info message that the debugger is currently in HTTP profiler mode. */
 ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled."
 
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
+
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 
@@ -824,6 +911,9 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
+
+/* DESC: Info in an event listener tooltip that the according source file is missing. */
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
@@ -839,6 +929,9 @@ ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s
 
 /* DESC: A info message that the debugger is currently in profiler mode. */
 ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
@@ -1062,6 +1155,9 @@ ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 /* DESC: Settings label to show a tooltip for the hovered identifier in the source view. */
 ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
+/* DESC: Enable smart reformatting of JavaScript. */
+ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
+
 /* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
 
@@ -1091,6 +1187,12 @@ ui_strings.S_LABEL_UTIL_AREA = "Area";
 
 /* DESC: Scale */
 ui_strings.S_LABEL_UTIL_SCALE = "Scale";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
 
 /* DESC: Debug context menu */
 ui_strings.S_MENU_DEBUG_CONTEXT = "Select the debugging context";
@@ -1185,14 +1287,71 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
-/* DESC: Explanation about why a network requests lacks headers. */
+/* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
+
+/* DESC: Explanation about why a network entry doesn't have request data: General */
+ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
 /* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";
+
+/* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
+ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_AREA_LOCATION = "Location";
+
+/* DESC: Message in the profiler when the profiler is calculating */
+ui_strings.S_PROFILER_CALCULATING = "Calculating…";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_DURATION = "Duration";
+
+/* DESC: Message in the profiler when no data was "captured" by the profiler */
+ui_strings.S_PROFILER_NO_DATA = "No data";
+
+/* DESC: Message when an event in the profiler has no details */
+ui_strings.S_PROFILER_NO_DETAILS = "No details";
+
+/* DESC: Message in the profiler when the profiler is active */
+ui_strings.S_PROFILER_PROFILING = "Profiling…";
+
+/* DESC: Message in the profiler when the profiler failed */
+ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
+
+/* DESC: Message before activating the profiler profile */
+ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_SELF_TIME = "Self time";
+
+/* DESC: Message before starting the profiler */
+ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profiling";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_START_TIME = "Start";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
+
+/* DESC: Label in a tooltip */
+ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
 
 /* DESC: Remote debug guide, connection setup */
 ui_strings.S_REMOTE_DEBUG_GUIDE_PRECONNECT_HEADER = "Steps to enable remote debugging:";
@@ -1261,7 +1420,7 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 
 /* DESC: Fallback text for no filename, used as tab label */
-ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "(no name)";
 
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
@@ -1283,6 +1442,42 @@ ui_strings.S_SCRIPT_SELECT_SECTION_BROWSER_AND_USER_JS = "Browser JS and User JS
 
 /* DESC: Section header in the script drop-down select for inline, eval, timeout and event handler scripts. */
 ui_strings.S_SCRIPT_SELECT_SECTION_INLINE_AND_EVALS = "Inline, eval, timeout and event-handler scripts";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_BROWSERJS = "BrowserJS";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER = "Event";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_GENERATED = "document.write()";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_INLINE = "Inline";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_LINKED = "External";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_UNKNOWN = "Unknown";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_URI = "javascript: URL";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_USERJS = "UserJS";
 
 /* DESC: Tooltip for filtering text-input boxes */
 ui_strings.S_SEARCH_INPUT_TOOLTIP = "text search";
@@ -1322,6 +1517,9 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
+
+/* DESC: Button title for stopping the profiler */
+ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
 
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
@@ -1455,6 +1653,12 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = "Automatically update global scope";
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = "Use lower case tag names for text/html";
 
+/* DESC: Table header in the profiler */
+ui_strings.S_TABLE_HEADER_HITS = "Hits";
+
+/* DESC: Table header in the profiler */
+ui_strings.S_TABLE_HEADER_TIME = "Time";
+
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_CALL_STACK_FRAME_LINE = "%(FUNCTION_NAME)s: %(SCRIPT_ID)s:%(LINE_NUMBER)s";
 
@@ -1494,6 +1698,33 @@ ui_strings.S_TEXT_STATUS_SEARCH = "Matches for \"%(SEARCH_TERM)s\": Match %(SEAR
 /* DESC: Result text for the search. Please do not modify the %(VARIABLE)s . */
 ui_strings.S_TEXT_STATUS_SEARCH_NO_MATCH = "No match for \"%(SEARCH_TERM)s\"";
 
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_COMMON = "Common";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL = "Debugger";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_EVENT = "Event";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_INLINE_SCRIPT = "Inline script";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
+
+/* DESC: Thread type for events in the profiler. This should not be translated. */
+ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_TIMEOUT = "Timeout or interval";
+
+/* DESC: Thread type for events in the profiler */
+ui_strings.S_THREAD_TYPE_UNKNOWN = "Unknown";
+
 /* DESC: Enabling/disabling DOM modebar */
 ui_strings.S_TOGGLE_DOM_MODEBAR = "Show breadcrumb trail";
 
@@ -1503,194 +1734,30 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
-/* DESC: Dialog to confirm switching to network-profiler mode. */
-ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "To improve the accuracy of timing information, other features are turned off. You may lose changes you made.";
 
-/* DESC: Button to switch to network-profiler mode. */
-ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Improve accuracy of timing information";
+/* DESC: String shown instead of filename when file name is missing  */
+ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
 
-/* DESC: Unit string for bytes */
-ui_strings.S_BYTES_UNIT = "bytes";
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
 
-/* DESC: A info message that the debugger is currently in profiler mode. */
-ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
 
-/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
-ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
+/* DESC: Section in the script side panel for return values. */
+ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
 
-/* DESC: Button label to enable the default debugger features. */
-ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
-
-/* DESC: Enable reformatting of JavaScript. */
-ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
-
-/* DESC: Enable smart reformatting of JavaScript. */
-ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
-
-/* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
-ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
-
-/* DESC: View for DOM debugging. */
-ui_strings.M_VIEW_LABEL_PROFILER = "Profiler";
-
-/* DESC: Button title for starting the profiler */
-ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
-
-/* DESC: Button title for stopping the profiler */
-ui_strings.S_BUTTON_STOP_PROFILER = "Stop profiling";
-
-/* DESC: Button title for stopping the profiler */
-ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
-
-/* DESC: Message in the profiler when the profiler is active */
-ui_strings.S_PROFILER_PROFILING = "Profiling…";
-
-/* DESC: Message in the profiler when the profiler failed */
-ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
-
-/* DESC: Message in the profiler when the profiler is calculating */
-ui_strings.S_PROFILER_CALCULATING = "Calculating…";
-
-/* DESC: Message in the profiler when no data was "captured" by the profiler */
-ui_strings.S_PROFILER_NO_DATA = "No data";
-
-/* DESC: Message when an event in the profiler has no details */
-ui_strings.S_PROFILER_NO_DETAILS = "No details";
-
-/* DESC: Message before starting the profiler */
-ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profiling";
-
-/* DESC: Message before activating the profiler profile */
-ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_AREA_LOCATION = "Location";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_START_TIME = "Start";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_DURATION = "Duration";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_SELF_TIME = "Self time";
-
-/* DESC: Label in a tooltip */
-ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
-
-/* DESC: Table header in the profiler */
-ui_strings.S_TABLE_HEADER_TIME = "Time";
-
-/* DESC: Table header in the profiler */
-ui_strings.S_TABLE_HEADER_HITS = "Hits";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_PROCESS = "Process";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
-
-/* DESC: Event type for events in the profiler */
-ui_strings.S_EVENT_TYPE_PAINT = "Paint";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_UNKNOWN = "Unknown";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_COMMON = "Common";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_TIMEOUT = "Timeout or interval";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_EVENT = "Event";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_INLINE_SCRIPT = "Inline script";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_JAVASCRIPT_URL = "javascript: URL";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_HISTORY_NAVIGATION = "History navigation";
-
-/* DESC: Thread type for events in the profiler. This should not be translated. */
-ui_strings.S_THREAD_TYPE_JAVA_EVAL = "Java (LiveConnect)";
-
-/* DESC: Thread type for events in the profiler */
-ui_strings.S_THREAD_TYPE_DEBUGGER_EVAL = "Debugger";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_UNKNOWN = "Unknown";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_LINKED = "External";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_INLINE = "Inline";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_GENERATED = "document.write()";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_TIMEOUT = "Timeout or interval";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_URI = "javascript: URL";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_EVENT_HANDLER = "Event";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_USERJS = "UserJS";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_BROWSERJS = "BrowserJS";
+/* DESC: The content of the return value section when there are not return values. */
+ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return values";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
 
 /* DESC: Script type for events in the profiler */
 ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
+ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
+
+/* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
+ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";

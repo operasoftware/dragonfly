@@ -1,0 +1,6 @@
+message <span class="message">ObjectSelection</span>
+{
+  required <span class="number">uint32</span> objectID  = 1; 
+  required <span class="number">uint32</span> windowID  = 2; 
+  optional <span class="number">uint32</span> runtimeID = 3; 
+}

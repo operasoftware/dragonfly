@@ -370,15 +370,15 @@ cls.EventBreakpoints = function()
 
   this.update_section = function(index, event_list)
   {
-    var 
-    section = this._events[index], 
-    old_events = {}, 
-    i = 0, 
+    var
+    section = this._events[index],
+    old_events = {},
+    i = 0,
     event = null,
     event_name = '';
 
     for (; event = section.events[i]; i++)
-      old_events[event[NAME]] = event[CHECKED]; 
+      old_events[event[NAME]] = event[CHECKED];
     section.events = event_list.map(function(event_name, index)
     {
       var ret = [event_name, old_events[event_name] || 0, index];

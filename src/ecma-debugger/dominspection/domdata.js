@@ -58,6 +58,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   this._reset_spotlight_timeouts = new Timeouts();
   this._is_waiting = false;
   this._editor_active = false;
+  this._last_selectors = {};
 
   this._spotlight = function(event)
   {
@@ -111,9 +112,16 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
         {
           if (!this._data.length && this._element_selected_state == CHECKED)
           {
-            this._get_initial_view(this._data_runtime_id);
+            var rt_id = this._data_runtime_id;
+            if (runtime_onload_handler.is_loaded(rt_id))
+              this._get_initial_view(rt_id);
+            else
+            {
+              var cb = this._get_initial_view.bind(this, rt_id);
+              runtime_onload_handler.register(rt_id, cb, cb, 500);
+            }
           }
-          else if (this._element_selected_state != CHECKED && 
+          else if (this._element_selected_state != CHECKED &&
                    this._element_selected_state != CHECK_AGAIN_NO_RUNTIME)
           {
             this._get_selected_element(this._data_runtime_id);
@@ -212,11 +220,11 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 
   this._get_selected_element = function(rt_id)
   {
-    var tag = tagManager.set_callback(this, this._on_element_selected, [rt_id, true]);
+    var tag = tagManager.set_callback(this, this._on_object_selected, [rt_id, true]);
     window.services['ecmascript-debugger'].requestGetSelectedObject(tag);
   }
 
-  this._on_element_selected = function(status, message, rt_id, show_initial_view)
+  this._on_object_selected = function(status, message, rt_id, show_initial_view)
   {
     // If the window ID is not the debug context, the runtime ID will not be set
     const OBJECT_ID = 0, WINDOW_ID = 1, RUNTIME_ID = 2;
@@ -278,7 +286,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 
   this._on_active_tab = function(msg)
   {
-    if (!this._data_runtime_id || 
+    if (!this._data_runtime_id ||
         msg.activeTab.indexOf(this._data_runtime_id) == -1)
     {
       if (this._element_selected_state == CHECK_AGAIN_NO_RUNTIME)
@@ -299,7 +307,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
       }
     }
   }
-  
+
   this._on_top_runtime_update = function()
   {
     window['cst-selects']['document-select'].updateElement();
@@ -317,10 +325,10 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     var do_highlight = event.highlight === false ? false : true;
     this._get_dom_sub(rt_id, obj_id, do_highlight);
   }
-  
+
   this._get_dom_sub = function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
-    var cb = this._handle_get_dom.bind(this, rt_id, obj_id, 
+    var cb = this._handle_get_dom.bind(this, rt_id, obj_id,
                                        do_highlight, scroll_into_view);
     this._current_target = obj_id;
     this._data = [];
@@ -419,8 +427,13 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
 
   this._get_initial_view = function(rt_id)
   {
+    var last_selector = this._last_selectors[window.runtimes.getActiveWindowId()];
+    var query_last_selector = last_selector
+                            ? "document.querySelector(\"" + last_selector + "\") || "
+                            : "";
     var tag = tagManager.set_callback(this, this._handle_initial_view, [rt_id]);
-    var script_data = "return ( document.body || document.documentElement )";
+    var script_data = "return (" + query_last_selector +
+                               "document.body || document.documentElement)";
     services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script_data]);
   }
 
@@ -457,9 +470,25 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
         'this._handle_snapshot in dom_data has failed');
   }
 
+  this._on_element_selected = function(msg)
+  {
+    var win_id = window.runtimes.getActiveWindowId();
+    var css_path = this.get_css_path(msg.obj_id, null, true, false, true);
+    var is_first = false;
+    var selector = css_path.reduce(function(sel, ele)
+    {
+      sel = sel + ele.name + (is_first ? ":first-child " : " ") +
+            (ele.combinator ? ele.combinator + " " : "");
+      is_first = ele.combinator == ">";
+      return sel;
+    }, "");
+    if (selector)
+      this._last_selectors[win_id] = selector;
+  };
+
   /* implementation */
 
-  
+
   this.get_dom = (function(rt_id, obj_id, do_highlight, scroll_into_view)
   {
     if (obj_id)
@@ -469,7 +498,10 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
       if (runtime_onload_handler.is_loaded(rt_id))
         this._get_initial_view(rt_id);
       else
-        runtime_onload_handler.register(rt_id, this._get_initial_view.bind(this, rt_id));
+      {
+        var cb = this._get_initial_view.bind(this, rt_id);
+        runtime_onload_handler.register(rt_id, cb, cb);
+      }
     }
     this._is_waiting = true;
   }).bind(this);
@@ -490,7 +522,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   {
     ecma_debugger.onObjectSelected =
     ecma_debugger.handleGetSelectedObject =
-    this._on_element_selected.bind(this);
+    this._on_object_selected.bind(this);
   }
 
   /* initialisation */
@@ -509,6 +541,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   this._set_reset_spotlight_bound = this._set_reset_spotlight.bind(this);
   this._on_top_runtime_update_bound = this._on_top_runtime_update.bind(this);
   this._on_dom_editor_active_bound = this._on_dom_editor_active.bind(this);
+  this._on_element_selected_bound = this._on_element_selected.bind(this);
 
   this._init(0, 0);
 
@@ -522,6 +555,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
   messages.addListener('top-runtime-updated', this._on_top_runtime_update_bound);
   messages.addListener('dom-editor-active', this._on_dom_editor_active_bound);
   messages.addListener('profile-disabled', this._on_profile_disabled_bound);
+  messages.addListener("element-selected", this._on_element_selected_bound);
 };
 
 cls.EcmascriptDebugger["6.0"].DOMData.prototype = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype;

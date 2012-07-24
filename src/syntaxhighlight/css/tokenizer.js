@@ -27,7 +27,7 @@ cls.CSSTokenizer = function()
     // check dom.js and helpers.js for trim.
     // There are some inherent limitations in fromCharCode wrt
     // multibyte sequences, but this should work for all CSS keywords.
-    return token.replace(_escapes_re, function(s,p1,p2){ 
+    return token.replace(_escapes_re, function(s,p1,p2){
       return String.fromCharCode(parseInt(p1,16))
     });
   }
@@ -40,7 +40,7 @@ cls.CSSTokenizer = function()
     while ( this._state_handler !== this._state_handlers.EOF)
     {
         this._state_handler.apply(this);
-    } 
+    }
 
     this._state_handlers.EOF.apply(this);
   };
@@ -56,7 +56,7 @@ cls.CSSTokenizer = function()
       {
         return true;
       }
-      if (this._is_string()) 
+      if (this._is_string())
       {
         return true;
       }
@@ -95,7 +95,7 @@ cls.CSSTokenizer = function()
       return;
     };
 
-    if (   (c in this._HEX_NUMBERS) 
+    if (   (c in this._HEX_NUMBERS)
         && (this._escape_sequence.length)
         && (this._escape_sequence.length < 7)
     )
@@ -168,20 +168,20 @@ cls.CSSTokenizer = function()
     }
     return false;
   }
-    
+
   this._WHITESPACE =
   {
       ' ': 1,
       '\t': 1,
   };
-  
+
   this._HEX_NUMBERS =
   {
-    '1' : 1, '2' : 1, '3' : 1, '4' : 1, '5' : 1, '6' : 1, '7' : 1, '8' : 1, 
+    '1' : 1, '2' : 1, '3' : 1, '4' : 1, '5' : 1, '6' : 1, '7' : 1, '8' : 1,
     '9' : 1, '0' : 1, 'a' : 1, 'b' : 1, 'c' : 1, 'd' : 1, 'e' : 1, 'f' : 1,
     'A' : 1, 'B' : 1, 'C' : 1, 'D' : 1, 'E' : 1, 'F' : 1
   };
-  
+
   this._QUOTES =
   {
       '"': 1,
@@ -201,7 +201,7 @@ cls.CSSTokenizer = function()
     ';': 1,
     ':': 1,
   }
-  
+
   this._BRACES =
   {
     '(': 1,
@@ -209,9 +209,9 @@ cls.CSSTokenizer = function()
     '{': 1,
     '}': 1,
   }
-    
+
   this._state_handlers = {
-      
+
       EOF: function(){
         // Currently, this doesn't try to balance output braces, brackets and strings
         this._emitToken(this._token_type, this._token_buffer)
@@ -222,7 +222,7 @@ cls.CSSTokenizer = function()
       EOL: function()
       {
         this._handle_escape_status();
-        // First invocation, guarantees that we 
+        // First invocation, guarantees that we
         // leave this state with empty token buffer
         var c = this._buffer.charAt(this._current_pos);
         if (this._token_buffer.length)
@@ -266,7 +266,7 @@ cls.CSSTokenizer = function()
         this._emitToken(cls.CSSTokenizer.types.EOL_DATA,LF);
         this._EOL_buffer = "";
         // Switch to whatever state we were in prior to EOL
-        this._state_handler = this._state_cache.shift(); 
+        this._state_handler = this._state_cache.shift();
         return false;
       },
 
@@ -484,7 +484,7 @@ cls.CSSTokenizer = function()
 
       CHARSET_RULE: function()
       {
-        this._token_type = cls.CSSTokenizer.types.AT_RULE; 
+        this._token_type = cls.CSSTokenizer.types.AT_RULE;
         if (this._init_state())
         {
           return false;
@@ -521,11 +521,11 @@ cls.CSSTokenizer = function()
         {
           this._emitToken(cls.CSSTokenizer.types.AT_RULE, this._token_buffer);
           this._emitToken(cls.CSSTokenizer.types.DECLARATION_BLOCK_START, "{");
-          // Fix for DFL-1844, 
+          // Fix for DFL-1844,
           if (this.normalize_token(this._token_buffer).trim().toLowerCase() == "@font-face")
           {
             this._state_handler = this._state_handlers.BEFORE_PROPERTY;
-          } 
+          }
           else
           {
             this._state_handler = this._state_handlers.BEFORE_RULE;

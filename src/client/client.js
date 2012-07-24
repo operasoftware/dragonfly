@@ -86,9 +86,9 @@ window.cls.Client = function()
         var tmpl = window.templates.remote_debug_settings(port + 1);
         remote_debug_setting.clearAndRender(tmpl);
       }
-
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .addClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.addClass("alert");
 
       Overlay.get_instance().set_info_content(
         ["p", ui_strings.S_INFO_ERROR_LISTENING.replace(/%s/, port)]
@@ -208,8 +208,9 @@ window.cls.Client = function()
     }
     else if (is_remote_connection)
     {
-      UI.get_instance().get_button("toggle-remote-debug-overlay")
-                       .removeClass("alert");
+      var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
+      if (button)
+        button.removeClass("alert");
 
       Overlay.get_instance().set_info_content(
         window.templates.remote_debug_waiting_help(port)
@@ -235,7 +236,7 @@ window.cls.Client = function()
         "<div class='info-box'>" + msg +
             (port ? "<p><span class='ui-button' handler='cancel-remote-debug' tabindex='1'>" +
                       ui_strings.S_BUTTON_CANCEL_REMOTE_DEBUG +
-                    "</span></p>" 
+                    "</span></p>"
                   : "") +
         "</div>" +
       "</div>";
@@ -274,9 +275,9 @@ window.cls.Client = function()
       {
         if (confirm(ui_strings.S_CONFIRM_LOAD_COMPATIBLE_VERSION))
         {
-          location = protocol + 
-                     hostname + port + 
-                     fallback_urls[type][version] + 
+          location = protocol +
+                     hostname + port +
+                     fallback_urls[type][version] +
                      file_name + search;
         }
       }
@@ -291,7 +292,7 @@ window.cls.Client = function()
 
   this.handle_fallback = function(version)
   {
-    handle_fallback.call(new XMLHttpRequest(), version); 
+    handle_fallback.call(new XMLHttpRequest(), version);
   };
 
   this.create_top_level_views = function(services)
@@ -371,13 +372,12 @@ window.cls.Client = function()
     window.messages.post("window-controls-created", {window_controls: win_ctrls});
 
     var button = UI.get_instance().get_button("toggle-remote-debug-overlay");
-    if (this.current_client && this.connection_is_remote(this.current_client))
+    if (button)
     {
-      button.addClass("remote-active");
-    }
-    else
-    {
-      button.removeClass("remote-active");
+      if (this.current_client && this.connection_is_remote(this.current_client))
+        button.addClass("remote-active");
+      else
+        button.removeClass("remote-active");
     }
   };
 
@@ -394,11 +394,11 @@ window.cls.Client = function()
       }
       if(window.ini.debug)
       {
-        window.viewsMenu.create();
         if(window.settings.debug.get('show-as-tab'))
         {
           ui_framework.layouts.main_layout.tabs.push('debug_new');
           window.topCell.tab.addTab(new Tab('debug_new', window.views['debug_new'].name));
+          window.topCell.onresize();
         }
       }
       // a short workaround to hide some tabs as long as we don't have the dynamic tabs
@@ -477,7 +477,7 @@ window.cls.Client = function()
     }
     else
       this._show_last_selected_view(last_selected_view);
-    
+
     window.messages.removeListener("profile-enabled", this._on_profile_enabled_cb);
 
   };
@@ -547,9 +547,16 @@ ui_framework.layouts.dom_rough_layout =
       width: 350,
       tabs: function(services)
       {
-        return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
-               ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'] :
-               ['dom-side-panel', 'dom_attrs', 'css-layout']);
+        if (services['ecmascript-debugger'].satisfies_version(6, 11))
+        {
+          return ['dom-side-panel',
+                  'dom_attrs',
+                  'css-layout',
+                  'ev-listeners-side-panel',
+                  'dom-search'];
+        }
+
+        return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];
       }
     }
   ]

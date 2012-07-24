@@ -190,7 +190,9 @@ var messages = new function()
         }
       }
     }
-  }
+  };
+
+  this.remove_listener = this.removeListener;
 
   /**
    * Post a message to all its listeners, optionally with a payload. The

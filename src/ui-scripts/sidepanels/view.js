@@ -78,7 +78,7 @@
 
   this._store_views_unfolded = function()
   {
-    window.settings[this.id].set('panel-expanded-' + this.id, 
+    window.settings[this.id].set('panel-expanded-' + this.id,
                                  this._views.map(function(view){return view.is_unfolded}));
   }
 

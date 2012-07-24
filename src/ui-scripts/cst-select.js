@@ -2,33 +2,33 @@
 {
 
   /** interface **/
-	
+
   /**
-    * get the text string of the selected option 
+    * get the text string of the selected option
     */
   this.getSelectedOptionText = function(){};
   /**
-    * get the text string for the tooltip of the selected option 
+    * get the text string for the tooltip of the selected option
     */
   this.getSelectedOptionTooltipText = function(){};
   /**
-    * get the text value of the selected option 
+    * get the text value of the selected option
     */
   this.getSelectedOptionValue = function(){};
   /**
     * the template for the option list.
-    * there is default style for a <cst-option> element 
-    * this template will be displayed in a <'cst-select-option-list> element, 
-    * absolute positioned 
+    * there is default style for a <cst-option> element
+    * this template will be displayed in a <'cst-select-option-list> element,
+    * absolute positioned
     */
   this.templateOptionList = function(select_obj){};
   /**
-    * the call to check if a new selected option has actually changed 
+    * the call to check if a new selected option has actually changed
     */
   this.checkChange = function(target_ele){};
   /**
     * a optional call to check if the changes shall be submitted
-    * for more complex selects like colors 
+    * for more complex selects like colors
     * return 0 submit, 1 cancel, 2 keep modal state
     */
   this.handleClick = function(target_ele, modal_box, _select_obj)
@@ -36,7 +36,7 @@
     if ((!_select_obj.ignore_option_handlers && target_ele.hasAttribute('handler')) ||
         _select_obj.checkChange(target_ele))
       return 1;
-    
+
     if (target_ele.nodeName.toLowerCase() != 'cst-option')
       return 2;
 
@@ -78,7 +78,7 @@
     target = event.target,
     select = null;
 
-    if ((window.Tooltips && Tooltips.is_in_target_chain(event)) || 
+    if ((window.Tooltips && Tooltips.is_in_target_chain(event)) ||
         (event.target.nodeName.toLowerCase() == "input" &&
          event.target.type == "text"))
       return;
@@ -150,17 +150,17 @@
   {
     if (_modal_box)
       return;
-      
+
     var select = event.target;
     var count = 2;
-    
+
     while (count && select)
     {
       if (/^cst-select/i.test(select.nodeName))
         break;
 
       select = count && select.parentNode;
-    } 
+    }
 
     if (select)
     {
@@ -279,24 +279,24 @@
 
   this.updateElement = function(checkbox_value)
   {
-    var 
+    var
     selects = document.getElementsByTagName('cst-select'),
-    select = null, 
+    select = null,
     id = this.getId(),
     i = 0,
     ret_val = 0;
 
     for( ; select = selects[i]; i++)
     {
-      
+
       if( select.getAttribute('cst-id') == id )
       {
         this.setNewValues(select, checkbox_value);
         ret_val = i;
       }
     }
-    
-    return selects[ret_val]; 
+
+    return selects[ret_val];
   }
 
   this.init = function(id, class_name, type, handler)
@@ -338,15 +338,15 @@
   /* default interface implemetation */
   this.templateOptionList = function(select_obj)
   {
-    var 
+    var
     ret = [],
     opt_list = select_obj._option_list,
-    opt = null, 
+    opt = null,
     i = 0;
 
     for( ; opt = opt_list[i]; i++)
     {
-      ret[i] = 
+      ret[i] =
       [
         "cst-option",
         opt.text,
@@ -419,10 +419,10 @@ var CstSelectWithActionBase = function(id, class_name, type)
 
   this.templateOptionList = function(select_obj)
   {
-    var 
+    var
     ret = select_obj._action_entries.map(this._action_entry),
     opt_list = select_obj._option_list,
-    opt = null, 
+    opt = null,
     i = 0;
 
     if(ret.length)
@@ -431,7 +431,7 @@ var CstSelectWithActionBase = function(id, class_name, type)
     }
     for( ; opt = opt_list[i]; i++)
     {
-      ret[ret.length] = 
+      ret[ret.length] =
       [
         "cst-option",
         opt.text,
@@ -444,8 +444,8 @@ var CstSelectWithActionBase = function(id, class_name, type)
   }
 }
 
-CstSelectWithActionBase.prototype = 
-CstSelect.prototype = 
+CstSelectWithActionBase.prototype =
+CstSelect.prototype =
 CstSelectBase;
 
 CstSelectWithAction = function(id, class_name, type)
@@ -459,9 +459,9 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
 {
   var tooltip_text = select.getSelectedOptionTooltipText();
   return ["cst-select",
-           ["cst-value", 
+           ["cst-value",
              ["span", select.getSelectedOptionText(),
-                      "data-tooltip", tooltip_text && "js-script-select", 
+                      "data-tooltip", tooltip_text && "js-script-select",
                       "data-tooltip-text", tooltip_text],
              "unselectable", "on"],
            ["cst-drop-down"],
@@ -470,7 +470,7 @@ CstSelectWithAction.prototype = new CstSelectWithActionBase();
            "unselectable", "on",
            "class", "ui-control",
            "disabled", disabled && "disabled",
-           "handler", select.handler]; 
+           "handler", select.handler];
 }
 
 templates['cst-select-option-list'] = function(_select_obj, select_ele)

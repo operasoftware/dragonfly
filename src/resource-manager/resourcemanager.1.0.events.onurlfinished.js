@@ -10,13 +10,13 @@ cls.ResourceManager["1.0"].UrlFinished = function(arr, parent)
   // cls.ResourceManager["1.0"].UrlFinished.Result
   this.result = arr[1];
   this.time = arr[2];
-  /** 
+  /**
     * The MIME type of the resource. This information might not be available if the server
     * did not specify the MIME type, and if content detection has not yet run (or was unable
     * to detect the type).
     */
   this.mimeType = arr[3];
-  /** 
+  /**
     * The character encoding of the resource. This information might not be available if the server
     * did not specify the character encoding, and if character encoding detection has not yet run
     * (or was unable to detect the type).

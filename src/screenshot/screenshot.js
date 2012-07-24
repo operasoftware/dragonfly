@@ -26,7 +26,7 @@ cls.DragState = function(screenshot, pixelmagnifier)
   {
     if (this.event)
     {
-      if (!this.is_cursor_style_set && (this.dx - this.event.clientX || 
+      if (!this.is_cursor_style_set && (this.dx - this.event.clientX ||
                                         this.dy - this.event.clientY))
       {
         this._event_target = this.event.target;
@@ -235,8 +235,8 @@ cls.ScreenShotView = function(id, name, container_class)
         'handler', 'take-first-screenshot',
         'tabindex', '1'],
       ['p',
-        window.templates.settingCheckbox('screenshot-controls', 
-                                         'auto-screenshot', 
+        window.templates.settingCheckbox('screenshot-controls',
+                                         'auto-screenshot',
                                          false,
                                          ui_strings.S_SWITCH_TAKE_SCREENSHOT_AUTOMATICALLY)],
       'class', 'info-box']);

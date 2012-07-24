@@ -45,7 +45,7 @@ function ContextMenu() {
   this.oncontextmenu = function(event)
   {
 
-    var parents = [];      
+    var parents = [];
     var cur = event.target;
     while (cur)
       parents.push(cur = cur.parentNode);
@@ -67,9 +67,9 @@ function ContextMenu() {
 
     var ele = event.target;
     // The previous calls could have removed the event.target from the DOM.
-    // In this case we re-dispatch the event if any element in 
+    // In this case we re-dispatch the event if any element in
     // the parent node chain is still in the DOM.
-    // (It would be better to get the new target with elementFromPoint 
+    // (It would be better to get the new target with elementFromPoint
     //  but that is currently broken in XML documents.)
     if (!document.documentElement.contains(ele))
     {
@@ -79,7 +79,7 @@ function ContextMenu() {
         if (document.documentElement.contains(new_target))
           break;
       }
-      
+
       if (new_target)
       {
         var new_event = document.createEvent("MouseEvent");
@@ -99,7 +99,7 @@ function ContextMenu() {
                                  event.button,
                                  event.relatedTarget);
         new_target.dispatchEvent(new_event);
-      }  
+      }
       return;
     }
 
@@ -164,7 +164,7 @@ function ContextMenu() {
           all_items.push(ContextMenu.separator);
         }
       }
-      
+
       if (items)
       {
         all_items = all_items.concat(items);

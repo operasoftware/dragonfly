@@ -15,7 +15,7 @@ window.cls.SearchWindowBase = function(id, name, container_class)
   this.update_search = function(){};
 
   /* settings */
-  
+
   this.show_in_views_menu = true;
   this.window_top = 100;
   this.window_left = 150;

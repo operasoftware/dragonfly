@@ -47,7 +47,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    container.clearAndRender(templates.network_request_crafter_main(this._prev_url,
+    container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
                                                                     this._is_listening,
                                                                     this._prev_request,
                                                                     this._prev_response));

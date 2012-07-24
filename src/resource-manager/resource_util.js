@@ -88,6 +88,7 @@ cls.ResourceUtil.mime_type_map = {
   "application/javascript": "script",
   "text/javascript": "script",
   "application/json": "script",
+  "text/json": "script",
 
   "image/png": "image",
   "image/gif": "image",
