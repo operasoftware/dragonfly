@@ -36,11 +36,13 @@ var OverlayServicePrototype = function()
    */
   this.create_overlay = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
 
     if (config.x == null || config.y == null || config.w == null || config.h == null)
+    {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                       "Too few arguments to OverlayService#create_overlay.");
+    }
 
     var window_id = config.window_id || this._window_id;
     var overlay_type = config.overlay_type || OverlayService.OverlayType.AREA;
@@ -59,7 +61,7 @@ var OverlayServicePrototype = function()
       window_id,
       overlay_type,
       insertion,
-      area_overlay || null
+      area_overlay
     ];
     this._overlay.requestCreateOverlay(tag, msg);
   };
@@ -72,13 +74,13 @@ var OverlayServicePrototype = function()
    */
   this.remove_overlay = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
     var window_id = config.window_id || this._window_id;
-    var overlay_id = config.overlay_id || null;
+    var overlay_id = typeof config.overlay_id == "number" ? config.overlay_id : null;
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
       window_id,
-      typeof overlay_id == "number" ? overlay_id : null
+      overlay_id
     ];
     this._overlay.requestRemoveOverlay(tag, msg);
   };
