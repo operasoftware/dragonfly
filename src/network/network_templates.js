@@ -152,7 +152,7 @@ templates.main = function(ctx, entries, selected, detail_width, table_template)
       "class", "network-main-container"
     ],
     [
-      "div", templates.summary(entries), "class", "network-summary"
+      templates.summary(entries)
     ],
     ctx.window_contexts.map(templates.incomplete_warning)
   ];
@@ -290,7 +290,7 @@ templates.summary = function(entries)
   if (total_size)
     str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
 
-  return ["div", str];
+  return ["div", str, "class", "network-summary"];
 };
 
 templates.icon = function(entry)

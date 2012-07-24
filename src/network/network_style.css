@@ -288,19 +288,20 @@
   color: #006C0E;
 }
 
-.network_logger .network-summary
-{
-  clear: both;
-  text-align: center;
-}
-
-.network_logger .network-summary div
+.network_logger .network-summary,
+.network-details-container h1
 {
   text-align: center;
-  display: inline-block;
   font-size: 1.4em;
   margin: 18px 0;
   color: #808080;
+}
+
+.network-details-container h1
+{
+  color: #444444;
+  margin: 9px 0;
+  background-color: transparent;
 }
 
 .network-details-container pre,

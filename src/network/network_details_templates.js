@@ -51,41 +51,38 @@ templates.details = function(entry, left_val, do_raw)
 };
 
 templates._details_content = function(entry, do_raw)
-{  
-  var responsecode = entry.last_responsecode;
-  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
-     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
-
+{
   // Bind a template function for raw / not-raw, on demand.
   var template_func_name = "_requests_responses_" + (do_raw ? "raw" : "not_raw" + "_bound");
   if (!this[template_func_name])
     this[template_func_name] = this.requests_responses.bind(this, do_raw);
 
   var requests_responses = entry.requests_responses.map(this[template_func_name]);
-
   if (do_raw)
   {
     return requests_responses;
   }
 
+  var responsecode = entry.last_responsecode;
+  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
+     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+
   return (
     ["table",
       ["tbody",
-        ["tr",
-          ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.url]
-        ],
-        ["tr",
-          ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
-          ["td", entry.touched_network ? entry.last_method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-          "data-spec", "http#" + entry.last_method
-        ],
-        ["tr",
-          ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
-          ["td",
-            entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
-          ],
-         "data-spec", "http#" + entry.last_responsecode
-        ]
+        this._wrap_col_or_row(
+          [
+            "h1",
+            [
+              [
+                "span",
+                entry.touched_network && responsecode ? String(responsecode) : "",
+                "data-spec", "http#" + entry.last_responsecode
+              ],
+              ["span", " – " + entry.url]
+            ]
+          ]
+        )
       ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
       requests_responses
@@ -219,11 +216,14 @@ templates._request_headers = function(req, do_raw)
   }
 
   var ret = [];
+  var method_str = req.method || "";
+  if (method_str)
+    method_str = " – " + method_str;
 
   if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-    ret.push(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]);
+    ret.push(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE + method_str]);
   else
-    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]);
+    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE + method_str]);
 
   if (!req.request_headers)
   {
@@ -262,8 +262,24 @@ templates._response_headers = function(resp, do_raw)
   }
 
   var ret = [];
+  var responsecode = resp.responsecode || "";
+  if (responsecode)
+  {
+    if (responsecode in cls.ResourceUtil.http_status_codes)
+      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+
+    responsecode = " – " + responsecode;
+  }
+
   if (resp.logger_entry_touched_network)
-    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]);
+  {
+    var head = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE + responsecode];
+    if (responsecode)
+    {
+      head.extend(["data-spec", "http#" + resp.responsecode]);
+    }
+    ret.push(head);
+  }
 
   ret.extend(this.headers_list(resp.response_headers));
   return ["tbody", ret.map(this._wrap_col_or_row)];
