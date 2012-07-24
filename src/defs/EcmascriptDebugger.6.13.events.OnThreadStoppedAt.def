@@ -1,0 +1,136 @@
+message <span class="message">ThreadStopInfo</span>
+{
+  <span class="comment">/** 
+   * Represents an ECMAScript value, a value is either one of the primitives
+   * like string or boolean or an object.
+   */</span>
+  message <span class="message">Value</span>
+  {
+    enum Type
+    {
+      <span class="comment">/** 
+       * The undefined type, returned when no value was found or "undefined"
+       * was referenced.
+       */</span>
+      UNDEFINED = 0;
+      <span class="comment">/** 
+       * A null value.
+       */</span>
+      NULL = 1;
+      <span class="comment">/** 
+       * Boolean value true.
+       */</span>
+      TRUE = 2;
+      <span class="comment">/** 
+       * Boolean value false.
+       */</span>
+      FALSE = 3;
+      <span class="comment">/** 
+       * NaN value which cannot be exported to JSON directly.
+       * Should be treated like a number.
+       * 
+       * ECMAScript users should use this code to get the value natively::
+       * 
+       *   parseFloat("NaN")
+       */</span>
+      NAN = 4;
+      <span class="comment">/** 
+       * Plus infinity value which cannot be export to JSON directly.
+       * Should be treated like a number.
+       * 
+       * ECMAScript users should use this code to get the value natively::
+       * 
+       *   parseFloat("Infinity")
+       */</span>
+      PLUS_INFINITY = 5;
+      <span class="comment">/** 
+       * Minus infinity value which cannot be export to JSON directly.
+       * Should be treated like a number.
+       * 
+       * ECMAScript users should use this code to get the value natively::
+       * 
+       *   parseFloat("-Infinity")
+       */</span>
+      MINUS_INFINITY = 6;
+      <span class="comment">/** 
+       * A number, use the field 'number' for the actual value.
+       */</span>
+      NUMBER = 7;
+      <span class="comment">/** 
+       * A string, use the field 'str' for the actual string data.
+       */</span>
+      STRING = 8;
+      <span class="comment">/** 
+       * An object, the field 'object' contains object details.
+       */</span>
+      OBJECT = 9;
+    }
+
+    <span class="comment">/** 
+     * The type of value.
+     * 
+     * @note Booleans are encoded as either TRUE or FALSE to shorten the number
+     * fields in use.
+     */</span>
+    optional <span class="number">Type       </span> type   = 1; 
+    <span class="comment">/** 
+     * The numeric value, set if type = NUMBER.
+     */</span>
+    optional <span class="number">double     </span> number = 2; 
+    <span class="comment">/** 
+     * The string, set if type = STRING.
+     */</span>
+    optional <span class="string">string     </span> str    = 3; 
+    <span class="comment">/** 
+     * Object information, set if type = OBJECT.
+     */</span>
+    optional <span class="message">ObjectValue</span> object = 4; 
+  }
+  message <span class="message">ObjectValue</span>
+  {
+    required <span class="number">uint32</span> objectID     = 1; 
+    required <span class="bool">bool  </span> isCallable   = 2; 
+    <span class="comment">/** 
+     * type, function or object
+     */</span>
+    required <span class="string">string</span> type         = 3; 
+    optional <span class="number">uint32</span> prototypeID  = 4; 
+    <span class="comment">/** 
+     * The class of the object.
+     */</span>
+    optional <span class="string">string</span> className    = 5; 
+    <span class="comment">/** 
+     * If the object is a function, this is the name of
+     * the variable associated with that function (if any).
+     */</span>
+    optional <span class="string">string</span> functionName = 6; 
+  }
+  required <span class="number">uint32</span> runtimeID      = 1; 
+  required <span class="number">uint32</span> threadID       = 2; 
+  required <span class="number">uint32</span> scriptID       = 3; 
+  required <span class="number">uint32</span> lineNumber     = 4; 
+  <span class="comment">/** 
+   * One of:
+   * - `"new script"`, when we're on the first statement of a new script.
+   * - `"exception"`, when an exception occurred.
+   * - `"error"`, when an error ocurred.
+   * - `"abort"`, when the thread was aborted.
+   * - `"gc"`, when garbage collection occurs.
+   * - `"broken"`, when the `Break` command is used.
+   * - `"debugger statement"`, when a debugger-statement is encountered.
+   * - `"breakpoint"`, when a breakpoint is hit.
+   * - `"step"`, when the 'ContinueThread' command is used.
+   */</span>
+  required <span class="string">string</span> stoppedReason  = 5; 
+  <span class="comment">/** 
+   * Present if and only if `stoppedReason` is `"breakpoint"`
+   */</span>
+  optional <span class="number">uint32</span> breakpointID   = 6; 
+  <span class="comment">/** 
+   * If the stopped reason is "exception" or "error", this field will contain
+   * the thrown value.
+   * 
+   * @since 6.8
+   */</span>
+  optional <span class="message">Value </span> exceptionValue = 7; 
+}

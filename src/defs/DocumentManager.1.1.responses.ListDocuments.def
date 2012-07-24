@@ -1,0 +1,40 @@
+message <span class="message">DocumentList</span>
+{
+  message <span class="message">Document</span>
+  {
+    required <span class="number">uint32</span> windowID         = 1; 
+    required <span class="number">uint32</span> frameID          = 2; 
+    optional <span class="number">uint32</span> documentID       = 3; 
+    <span class="comment">/** 
+     * The parent frame, present only if the frame is not the
+     * top level frame.
+     */</span>
+    optional <span class="number">uint32</span> parentFrameID    = 4; 
+    <span class="comment">/** 
+     * Present unless this document is the top-level document
+     * in the Window.
+     */</span>
+    optional <span class="number">uint32</span> parentDocumentID = 5; 
+    <span class="comment">/** 
+     * The current URL of the document.
+     */</span>
+    optional <span class="string">string</span> url              = 6; 
+    <span class="comment">/** 
+     * The resource used to generate this document.
+     */</span>
+    optional <span class="number">uint32</span> resourceID       = 7; 
+    <span class="comment">/** 
+     * The value of the name attribute of the HTMLFrameElement. If the
+     * frame does not have a name, or this document is not associated with
+     * a HTMLFrameElement, this will field will not be present.
+     */</span>
+    optional <span class="string">string</span> frameElementName = 8; 
+    <span class="comment">/** 
+     * The value of the id attribute of the HTMLFrameElement. If the
+     * frame does not have an id, or this document is not associated with
+     * a HTMLFrameElement, this will field will not be present.
+     */</span>
+    optional <span class="string">string</span> frameElementID   = 9; 
+  }
+  repeated <span class="message">Document</span> documentList = 1; 
+}

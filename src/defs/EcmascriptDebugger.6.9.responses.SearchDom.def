@@ -1,0 +1,141 @@
+message <span class="message">NodeList</span>
+{
+  message <span class="message">NodeInfo</span>
+  {
+    <span class="comment">/** 
+     * Values in this enum explain why the node was included in the response.
+     */</span>
+    enum MatchReason
+    {
+      <span class="comment">/** 
+       * The node was included because we explicitly traversed the DOM
+       * (sub-)tree.
+       */</span>
+      TRAVERSAL = 1;
+      <span class="comment">/** 
+       * The node was included because it is an ancestor of a node hit by a
+       * search.
+       */</span>
+      SEARCH_ANCESTOR = 2;
+      <span class="comment">/** 
+       * The node was included because it was directly hit by a search.
+       */</span>
+      SEARCH_HIT = 3;
+    }
+
+    required <span class="number">uint32         </span> objectID          =  1; 
+    <span class="comment">/** 
+     * The type for this Node.
+     */</span>
+    required <span class="number">NodeType       </span> type              =  2; 
+    required <span class="string">string         </span> name              =  3; 
+    required <span class="number">uint32         </span> depth             =  4; 
+    <span class="comment">/** 
+     * Used if type is `ELEMENT`.
+     */</span>
+    optional <span class="string">string         </span> namespacePrefix   =  5; 
+    <span class="comment">/** 
+     * Used if type is `ELEMENT`.
+     */</span>
+    repeated <span class="message">Attribute      </span> attributeList     =  6; 
+    <span class="comment">/** 
+     * Used if type is `ELEMENT`.
+     */</span>
+    optional <span class="number">uint32         </span> childrenLength    =  7; 
+    <span class="comment">/** 
+     * Used if type is `TEXT`, `CDATA_SECTION`, `PROCESSING_INSTRUCTION` or
+     * `COMMENT`.
+     */</span>
+    optional <span class="string">string         </span> value             =  8; 
+    <span class="comment">/** 
+     * Used if type is `DOCUMENT_TYPE`.
+     */</span>
+    optional <span class="string">string         </span> publicID          =  9; 
+    <span class="comment">/** 
+     * Used if type is `DOCUMENT_TYPE`.
+     */</span>
+    optional <span class="string">string         </span> systemID          = 10; 
+    <span class="comment">/** 
+     * The runtime ID of this node. This field will always be set.
+     * 
+     * @since 6.5
+     */</span>
+    optional <span class="number">uint32         </span> runtimeID         = 11; 
+    <span class="comment">/** 
+     * If the node type is an `ELEMENT` which contains another document,
+     * (frame, iframe, or object), this field will be set with a reference to
+     * the document node contained within that element.
+     * 
+     * The field will not be set if the element does not contain a document.
+     * 
+     * @since 6.5
+     */</span>
+    optional <span class="message">ObjectReference</span> contentDocument   = 12; 
+    <span class="comment">/** 
+     * Like 'contentDocument', but the other direction; if this node is
+     * a `DOCUMENT` node, then this field will be set with a reference to the
+     * element that contains the document in the parent runtime.
+     * 
+     * The field will not be set if the document node represents a top-level
+     * document.
+     * 
+     * @since 6.5
+     */</span>
+    optional <span class="message">ObjectReference</span> frameElement      = 13; 
+    <span class="comment">/** 
+     * Explains why the node was included in the response. This field will
+     * always be set.
+     * 
+     * When this message is a response to DOM inspection, this field will be set
+     * to TRAVERSAL. When sent as a response to a search, it will either be set
+     * to SEARCH_HIT, or SEARCH_PARENT. 
+     * 
+     * @since 6.5
+     */</span>
+    optional <span class="number">MatchReason    </span> matchReason       = 14; 
+    <span class="comment">/** 
+     * If the node has pseudo elements applied, this list will contain those
+     * elements.
+     * 
+     * @since 6.5
+     */</span>
+    repeated <span class="message">PseudoElement  </span> pseudoElementList = 15; 
+  }
+  message <span class="message">Attribute</span>
+  {
+    required <span class="string">string</span> namePrefix = 1; 
+    required <span class="string">string</span> name       = 2; 
+    required <span class="string">string</span> value      = 3; 
+  }
+  <span class="comment">/** 
+   * Refers to an object and its parent runtime.
+   */</span>
+  message <span class="message">ObjectReference</span>
+  {
+    required <span class="number">uint32</span> runtimeID = 1; 
+    required <span class="number">uint32</span> objectID  = 2; 
+  }
+  <span class="comment">/** 
+   * Represents a pseudo element, such as ::after, ::before, and so forth.
+   * 
+   * @since 6.5
+   */</span>
+  message <span class="message">PseudoElement</span>
+  {
+    enum Type
+    {
+      BEFORE = 1;
+      AFTER = 2;
+      FIRST_LETTER = 3;
+      FIRST_LINE = 4;
+    }
+
+    required <span class="number">Type  </span> type    = 1; 
+    <span class="comment">/** 
+     * If a ::before or ::after rule uses the 'content' property to insert
+     * text content, this field will contain that content.
+     */</span>
+    optional <span class="string">string</span> content = 2; 
+  }
+  repeated <span class="message">NodeInfo</span> nodeList = 1; 
+}

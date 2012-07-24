@@ -1,0 +1,30 @@
+message <span class="message">Configuration</span>
+{
+  optional <span class="bool">bool  </span> stopAtScript              = 1; 
+  optional <span class="bool">bool  </span> stopAtException           = 2; 
+  optional <span class="bool">bool  </span> stopAtError               = 3; 
+  optional <span class="bool">bool  </span> stopAtAbort               = 4; 
+  optional <span class="bool">bool  </span> stopAtGc                  = 5; 
+  optional <span class="bool">bool  </span> stopAtDebuggerStatement   = 6; 
+  <span class="comment">/** 
+   * If set, the source of the scripts/eval'ed code/event-handlers will be
+   * reformatted before being parsed and compiled.
+   * 
+   * @since 6.13
+   */</span>
+  optional <span class="bool">bool  </span> reformatScriptData        = 7; 
+  <span class="comment">/** 
+   * The body of the function used to determine whether code should be
+   * reformatted.
+   * 
+   * If both reformatScriptData is enabled and reformatConditionFunction set,
+   * reformatting will only be performed if provided function code evaluates
+   * to a boolean 'true' value.
+   * 
+   * The original script source is available through a scriptData
+   * variable that is accessible in the scope of the function.
+   * 
+   * @since 6.13
+   */</span>
+  optional <span class="string">string</span> reformatConditionFunction = 8; 
+}

@@ -1,0 +1,5 @@
+message <span class="message">GetCookieArg</span>
+{
+  required <span class="string">string</span> domain = 1; 
+  optional <span class="string">string</span> path   = 2; 
+}

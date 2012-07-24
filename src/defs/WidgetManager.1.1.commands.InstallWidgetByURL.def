@@ -1,0 +1,14 @@
+message <span class="message">InstallWidgetByURLArg</span>
+{
+  <span class="comment">/** 
+   * Any URL which the host can reach can be used. This includes data URLs
+   * and file URLs available on the host.
+   * 
+   * The only requirements is that the MIME-Type is set when the resource is
+   * fetched and the MIME-Type must be a widget. For data URLs remember to
+   * set the MIME-Type and encoding, e.g.::
+   * 
+   *  data:application/x-opera-widgets;base64,
+   */</span>
+  required <span class="string">string</span> url = 1; 
+}
