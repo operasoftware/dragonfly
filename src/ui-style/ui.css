@@ -12,7 +12,7 @@ viewport,
   color: #444;
 }
 
-.mono 
+.mono
 {
   font-family: "Menlo", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Consolas", "Monaco", "Lucida Console", monospace;
   font-size: 11px;
@@ -23,13 +23,13 @@ viewport,
 textarea,
 input,
 code,
-pre 
+pre
 {
   font: inherit;
 }
 
 /* UI Style */
-viewport 
+viewport
 {
   width: 100%;
   height: 100%;
@@ -376,6 +376,11 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_autoscroll.png");
 }
 
+.update-ev-listeners::before
+{
+  background-image: url("../ui-images/icons/icon_refetch_listeners.png");
+}
+
 .storage-delete
 {
   background-image: url("../ui-images/icons/icon_clear.png");
@@ -528,7 +533,7 @@ panel-toolbar .ui-button:empty,
 .advanced-search .ui-button,
 window-controls .ui-button,
 .ui-control /* cst-select needs to be tweaked before changing this */
-{ 
+{
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -907,7 +912,7 @@ ui-menu > h2
   border-top-width: 0;
 }
 
-ui-menu ul 
+ui-menu ul
 { /* The list needs a bottom shadow when opened */
   position: absolute;
   right: 9px;
@@ -1184,7 +1189,7 @@ textarea-container textarea
   overflow: hidden;
 }
 
-textarea-container-inline 
+textarea-container-inline
 {
   display: inline-block;
   padding: 1px;
@@ -1414,13 +1419,13 @@ cst-select-option-list-container.color cst-selected-border
   border: 2px solid #999;
 }
 
-cst-option-list-background > div > div 
+cst-option-list-background > div > div
 {
   clear: both;
   padding-top: 5px;
 }
 
-cst-select-option-list-container.color label 
+cst-select-option-list-container.color label
 {
   display: block;
   margin: 2px 3px;
@@ -1810,4 +1815,4 @@ info {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-} 
+}

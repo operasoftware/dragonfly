@@ -38,6 +38,19 @@ window.cls.NewScript.COMMENT_STATE = 4;
 
 window.cls.NewScriptPrototype = function()
 {
+  var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
+  var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
+  var IDENTIFIER = cls.SimpleJSParser.IDENTIFIER;
+  var NUMBER = cls.SimpleJSParser.NUMBER;
+  var STRING = cls.SimpleJSParser.STRING;
+  var PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
+  var DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR;
+  var REG_EXP = cls.SimpleJSParser.REG_EXP;
+  var COMMENT = cls.SimpleJSParser.COMMENT;
+  var TYPE = 0;
+  var VALUE = 1;
+  var _tokenizer = new cls.SimpleJSParser();
+
   /**
     * Searches the actual data.
     * Updates the script object with the following properties for all matches:
@@ -129,6 +142,9 @@ window.cls.NewScriptPrototype = function()
 
   this.get_line = function(line_number)
   {
+    if (!this.line_arr)
+      this.set_line_states();
+
     if (line_number > 0 && this.line_arr[line_number])
       return this.script_data.slice(this.line_arr[line_number - 1],
                                     this.line_arr[line_number]);
@@ -143,7 +159,117 @@ window.cls.NewScriptPrototype = function()
     this.line_offsets_length = [];
     this.match_cursor = -1;
     this.match_length = 0;
-  }
+  };
+
+  this.__defineGetter__("is_minified", function()
+  {
+    if (this._is_minified === undefined)
+    {
+      var MAX_SLICE = 5000;
+      var LIMIT = 11;
+      var re = /\s+/g;
+      var ws = 0;
+      var m = null;
+      var src = this.script_data.slice(0, MAX_SLICE);
+      while (m = re.exec(src))
+        ws += m[0].length;
+
+      this._is_minified = (100 * ws / src.length) < LIMIT;
+    }
+    return this._is_minified;
+  });
+
+  this.__defineSetter__("is_minified", function() {});
+
+  this.get_function = function(line_number)
+  {
+    if (this.is_minified)
+      return null;
+
+    var start_line = -1;
+    var end_line = -1;
+    var index = -1;
+    var tokens = null;
+    var op_bracket_count = 0;
+    while (start_line == -1 && line_number > -1)
+    {
+      tokens = this._get_tokens_of_line(line_number);
+      for (var i = 0, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == IDENTIFIER && token[VALUE] == "function")
+        {
+          start_line = line_number;
+          index = i;
+        }
+      }
+      if (index == -1)
+        line_number--;
+    }
+    while (!op_bracket_count && line_number <= this.line_arr.length)
+    {
+      for (var i = index, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == PUNCTUATOR && token[VALUE] == "{")
+        {
+          op_bracket_count++;
+          index = i + 1;
+          break;
+        }
+      }
+      if (!token)
+      {
+        index = 0;
+        tokens = this._get_tokens_of_line(++line_number);
+      }
+    }
+    while (op_bracket_count && end_line == -1 && line_number <= this.line_arr.length)
+    {
+      for (var i = index, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == PUNCTUATOR)
+        {
+          if (token[VALUE] == "{")
+            op_bracket_count++;
+          else if (token[VALUE] == "}")
+          {
+            op_bracket_count--;
+            if (!op_bracket_count)
+            {
+              end_line = line_number;
+              break;
+            }
+          }
+        }
+      }
+
+      if (end_line == -1)
+      {
+        index = 0;
+        tokens = this._get_tokens_of_line(++line_number);
+      }
+    }
+    return start_line > -1 && end_line > -1
+         ? {start_line: start_line, end_line: end_line}
+         : null;
+  };
+
+  this._get_tokens_of_line = function(line_number)
+  {
+    if (!this.line_arr)
+      this.set_line_states();
+
+    var tokens = [];
+    var line = this.get_line(line_number);
+    var start_state = this.state_arr[line_number - 1];
+    if (line)
+    {
+      _tokenizer.tokenize(line, function(token_type, token)
+      {
+        tokens.push([token_type, token]);
+      }, false, start_state);
+    }
+    return tokens;
+  };
 
   this.set_line_states = function()
   {
