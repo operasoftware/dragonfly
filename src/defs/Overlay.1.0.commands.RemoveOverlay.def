@@ -1,0 +1,10 @@
+message <span class="message">RemoveOverlayArg</span>
+{
+  required <span class="number">uint32</span> windowID  = 1; 
+  <span class="comment">/** 
+   * The ID for the overlay to remove.
+   * 
+   * If not set, remove *all* overlays for the given window.
+   */</span>
+  optional <span class="number">uint32</span> overlayID = 2; 
+}

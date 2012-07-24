@@ -1,0 +1,7 @@
+<span class="comment">/** 
+ * @since 6.11
+ */</span>
+message <span class="message">GetEventNamesArg</span>
+{
+  required <span class="number">uint32</span> runtimeID = 1; 
+}

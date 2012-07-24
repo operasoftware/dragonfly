@@ -1,0 +1,54 @@
+message <span class="message">CssStyleDeclarations</span>
+{
+  message <span class="message">NodeStyle</span>
+  {
+    required <span class="number">uint32          </span> objectID    = 1; 
+    required <span class="string">string          </span> elementName = 2; 
+    repeated <span class="message">StyleDeclaration</span> styleList   = 3; 
+  }
+  <span class="comment">/** 
+   * Common to all origins:
+   * - indexList
+   * - valueList
+   * - priorityList
+   * - statusList
+   * 
+   * Common to AUTHOR and LOCAL
+   * - selector
+   * - specificity
+   * 
+   * For AUTHOR
+   * - stylesheetID
+   * - ruleID
+   * - ruleType
+   * 
+   * For SVG
+   * - specificity
+   */</span>
+  message <span class="message">StyleDeclaration</span>
+  {
+    required <span class="number">RuleOrigin       </span> origin       =  1; 
+    repeated <span class="number">uint32           </span> indexList    =  2; 
+    repeated <span class="string">string           </span> valueList    =  3; 
+    repeated <span class="bool">bool             </span> priorityList =  4; 
+    repeated <span class="number">DeclarationStatus</span> statusList   =  5; 
+    optional <span class="string">string           </span> selector     =  6; 
+    optional <span class="number">uint32           </span> specificity  =  7; 
+    optional <span class="number">uint32           </span> stylesheetID =  8; 
+    optional <span class="number">uint32           </span> ruleID       =  9; 
+    optional <span class="number">uint32           </span> ruleType     = 10; 
+    <span class="comment">/** 
+     * The original, stylesheet relative line number of this rule. The
+     * line number refers to the start of the declaration block.
+     * 
+     * This field *may* be set for STYLE rules, but as the information
+     * depends on an optional feature in Opera, some builds intended for
+     * low-memory devices may not support this.
+     * 
+     * @since 6.6
+     */</span>
+    optional <span class="number">uint32           </span> lineNumber   = 11; 
+  }
+  repeated <span class="string">string   </span> computedStyleList = 1; 
+  repeated <span class="message">NodeStyle</span> nodeStyleList     = 2; 
+}

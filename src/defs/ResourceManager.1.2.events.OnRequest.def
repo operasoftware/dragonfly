@@ -1,0 +1,14 @@
+message <span class="message">Request</span>
+{
+  required <span class="number">uint32</span> requestID  = 1; 
+  required <span class="number">uint32</span> resourceID = 2; 
+  required <span class="number">uint32</span> windowID   = 3; 
+  optional <span class="number">uint32</span> frameID    = 4; 
+  optional <span class="number">uint32</span> documentID = 5; 
+  required <span class="string">string</span> url        = 6; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double</span> time       = 7; 
+  required <span class="string">string</span> method     = 8; 
+}

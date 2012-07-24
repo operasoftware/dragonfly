@@ -1,0 +1,49 @@
+<span class="comment">/** 
+ * Contains the result of fetching the script positions for the specified
+ * function objects.
+ * 
+ * @since 6.11
+ */</span>
+message <span class="message">FunctionPositionList</span>
+{
+  <span class="comment">/** 
+   * Contains the object ID of the function and the script position if
+   * it was found.
+   */</span>
+  message <span class="message">FunctionPosition</span>
+  {
+    <span class="comment">/** 
+     * The object ID of the function which was specified in the input.
+     */</span>
+    required <span class="number">uint32  </span> objectID = 1; 
+    <span class="comment">/** 
+     * The position of a function object if available, typically native
+     * functions or objects which are not functions will not have a
+     * position set.
+     * The position contains the ID of the script and the line number in
+     * the script where it was defined.
+     */</span>
+    optional <span class="message">Position</span> position = 2; 
+  }
+  <span class="comment">/** 
+   * Defines the position in a script. The position is identified by the ID of
+   * the script and the line number in the script.
+   */</span>
+  message <span class="message">Position</span>
+  {
+    <span class="comment">/** 
+     * ID of the script which contains the position.
+     * The ID will be set in the ScriptInfo message when a new script appears.
+     */</span>
+    required <span class="number">uint32</span> scriptID   = 1; 
+    <span class="comment">/** 
+     * The line number in the script.
+     */</span>
+    required <span class="number">uint32</span> lineNumber = 2; 
+  }
+  <span class="comment">/** 
+   * A list of function positions. The number of items in the list
+   * corresponds to the number of object IDs sent in GetFunctionPositions.
+   */</span>
+  repeated <span class="message">FunctionPosition</span> functionPositionList = 1; 
+}
