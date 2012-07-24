@@ -52,7 +52,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     // the query_selector for the mode needs to be set even when there is currently no query.
     if (this.mode == DETAILS)
-      this.text_search.set_query_selector("tbody:not(.network_info)");
+      this.text_search.set_query_selector(".entry-details > *:not(.network_info)");
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
