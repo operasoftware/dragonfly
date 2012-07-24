@@ -50,16 +50,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     if (container)
       this._container = container;
 
-    // the query_selector for the mode needs to be set even when there is currently no query.
+    // In details, it would be better to not have .network_info and headlines searchable, but those can
+    // occur on different levels, so it's too complicated to do with the current script-search.
+    // Also searching accross spans (for syntax highlighting) is more important.
     if (this.mode == DETAILS)
-      this.text_search.set_query_selector(".entry-details > *:not(.network_info)");
+      this.text_search.set_query_selector(".entry-details");
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
     var ctx = this._service.get_request_context();
     if (ctx)
     {
-      // the filters need to be set when creating the view, the request_context may have changed in between
+      // The filters need to be set when creating the view, the request_context may have changed in between
       ctx.set_filters(this._type_filters || []);
       this._render_main_view(this._container);
       this.text_search.update_search();

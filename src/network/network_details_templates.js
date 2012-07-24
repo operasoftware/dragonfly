@@ -76,10 +76,10 @@ templates._details_content = function(entry, do_raw)
             [
               [
                 "span",
-                entry.touched_network && responsecode ? String(responsecode) : "",
+                entry.touched_network && responsecode ? String(responsecode) + " – " : "",
                 "data-spec", "http#" + entry.last_responsecode
               ],
-              ["span", " – " + entry.url]
+              ["span", entry.url]
             ]
           ]
         )
