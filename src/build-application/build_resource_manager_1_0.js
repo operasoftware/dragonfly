@@ -2,6 +2,7 @@
 
 window.app.builders.ResourceManager["1.0"] = function(service)
 {
+  window.network_logger = new cls.NetworkLoggerService();
   new cls.ResourceManagerAllView("resource_all", ui_strings.M_VIEW_LABEL_ALL_RESOURCES, "scroll resource-manager", "", "");
   //new cls.ResourceManagerFontView('resource_fonts', "Fonts", 'scroll', '', '');
   //new cls.ResourceManagerImageView('resource_images', "Images", 'scroll', '', '');

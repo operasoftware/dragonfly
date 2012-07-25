@@ -1,8 +1,7 @@
 ﻿"use strict";
 
-cls.NetworkLoggerService = function(view)
+cls.NetworkLoggerService = function()
 {
-  this._view = view;
   this._current_context = null;
 
   this._on_abouttoloaddocument_bound = function(msg)
@@ -136,8 +135,7 @@ cls.NetworkLoggerService = function(view)
 
   this._on_debug_context_selected_bound = function()
   {
-    this._current_context = null;
-    this._view.update();
+    this.clear_request_context();
   }.bind(this);
 
   this._setup_request_body_behaviour_bound = function()
@@ -221,17 +219,28 @@ cls.NetworkLoggerService = function(view)
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_body = function(itemid)
+  this.get_body = function(entry)
   {
     if (!this._current_context)
       return;
 
-    var entry = this._current_context.get_entry(itemid);
     entry.called_get_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
     var tag = window.tagManager.set_callback(this, this._handle_get_resource, [entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
+  };
+
+  this.get_resource_info = function(resource_id)
+  {
+    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
+    var entry = this._current_context && 
+                this._current_context.get_entries_with_res_id(resource_id).last;
+    if (entry && entry.current_response && entry.current_response.responsebody)
+    {
+      return new cls.ResourceInfo(entry);
+    }
+    return null;
   };
 
   this._handle_get_resource = function(status, data, entry)
@@ -249,9 +258,9 @@ cls.NetworkLoggerService = function(view)
       var msg = new cls.ResourceManager["1.2"].ResourceData(data);
       this._current_context.update("responsebody", msg);
     }
-    // Update the view. This is only needed when the generic updating per event is paused.
-    if (this.is_paused && window.views && window.views.network_logger)
-      window.views.network_logger.update();
+    // Post update message from here. This is only needed when the generic updating per event is paused.
+    if (this.is_paused)
+      window.messages.post("network-resource-updated", {id: entry.resource_id});
 
   };
 
@@ -263,6 +272,7 @@ cls.NetworkLoggerService = function(view)
   this.clear_request_context = function()
   {
     this._current_context = null;
+    window.messages.post("network-context-cleared");
   };
 
   this.pause = function()
@@ -490,8 +500,8 @@ cls.RequestContextPrototype = function()
       logger_entry.update(eventname, event);
     }
 
-    if (window.views && !this.is_paused)
-      window.views.network_logger.update();
+    if (!this.is_paused)
+      window.messages.post("network-resource-updated", {id: event.resourceID});
 
   };
 
@@ -858,7 +868,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.requests_responses.push(this.current_response);
     }
     this.current_response._update_event_responseheader(event);
-    // todo: should _guess_response_type here? if there was a Content-Type response-header, pick it from there.
   };
 
   this._update_event_responsefinished = function(event)
@@ -961,7 +970,7 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.check_to_get_body = function(service)
+  this.check_to_request_body = function(service)
   {
     // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
     if (
@@ -973,7 +982,7 @@ cls.NetworkLoggerEntryPrototype = function()
       (!this.current_response || this.current_response.saw_responsefinished)
     )
     {
-      service.get_body(this.id);
+      service.get_body(this);
     }
   };
 
@@ -1132,3 +1141,10 @@ cls.NetworkLoggerResponsePrototype = function()
 };
 
 cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
+
+cls.ResourceInfo = function(entry)
+{
+  this.url = entry.url;
+  this.responseheaders = entry.current_response.response_headers;
+  this.responsebody = entry.current_response.responsebody;
+};

@@ -12,7 +12,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   var DEFAULT = "default";
   var DETAILS = "details";
 
-  this._service = new cls.NetworkLoggerService(this);
+  this._service = window.network_logger;
   this._container_scroll_top = 0;
   this._details_scroll_top = 0;
   this._details_scroll_left = 0;
@@ -86,8 +86,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._render_timeout = 0;
     this.update();
   }.bind(this);
-
-  this.update_bound = this.update.bind(this);
 
   this.onresize = function()
   {
@@ -185,7 +183,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        entry.check_to_get_body(this._service);
+        entry.check_to_request_body(this._service);
         template = [template, this._render_details_view(entry)];
       }
     }
@@ -520,7 +518,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     this._service.clear_request_context();
     this.needs_instant_update = true;
-    this.update();
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
@@ -669,6 +666,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   messages.addListener("single-select-changed", this._on_single_select_changed_bound);
   messages.addListener("setting-changed", this._on_setting_changed_bound);
+  messages.addListener("network-resource-updated", this.update.bind(this));
+  messages.addListener("network-context-cleared", this.update.bind(this));
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
