@@ -475,8 +475,10 @@
             "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
-           "title", ui_strings.S_RETURN_VALUES_FUNCTION_FROM.replace("%s", from_uri)
-                                                            .replace("%s", retval.positionFrom.lineNumber),
+           "data-tooltip", "return-value-tooltip",
+           "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_FROM
+                                          .replace("%s", from_uri)
+                                          .replace("%s", retval.positionFrom.lineNumber),
            "data-script-id", String(retval.positionFrom.scriptID),
            "data-script-line", String(retval.positionFrom.lineNumber)
           ],
@@ -489,8 +491,10 @@
               "↳",
              "class", "return-value-arrow return-value-arrow-to",
              "handler", "goto-script-line",
-             "title", ui_strings.S_RETURN_VALUES_FUNCTION_TO.replace("%s", to_uri)
-                                                            .replace("%s", retval.positionTo.lineNumber),
+             "data-tooltip", "return-value-tooltip",
+             "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_TO
+                                            .replace("%s", to_uri)
+                                            .replace("%s", retval.positionTo.lineNumber),
              "data-script-id", String(retval.positionTo.scriptID),
              "data-script-line", String(retval.positionTo.lineNumber)
             ],
