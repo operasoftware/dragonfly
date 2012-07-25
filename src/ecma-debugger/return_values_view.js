@@ -87,7 +87,7 @@ cls.ReturnValuesView = function(id, name, container_class)
     this.required_services = ["ecmascript-debugger"];
     this._container = null;
     this._search_term = "";
-
+    this._tooltip = Tooltips.register("return-value-tooltip", false, false);
     this._text_search = new TextSearch(1);
     this._text_search.add_listener("onbeforesearch", this._onbeforesearch.bind(this));
 
