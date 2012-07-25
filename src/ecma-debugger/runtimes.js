@@ -72,10 +72,11 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   var _selected_window = '';
   var _threads = [];
   var _old_selected_window = "";
+  var _scripts = {};
   var _replaced_scripts = {};
   var _selected_runtime_id = "";
   var _next_runtime_id_to_select = "";
-  var _selected_script_id = '';
+  var _selected_script_id = "";
   var _selected_script_type = "";
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
   var _window_top_rt_map = {};
@@ -114,7 +115,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     ].indexOf(script_type) != -1);
   };
 
-  var onResetState = function()
+  this._on_reset_state = function()
   {
     _runtimes = {};
     _old_runtimes = {};
@@ -124,12 +125,12 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     _selected_window = '';
     _threads = [];
     _old_selected_window = '';
-    _selected_runtime_id = '';
     _next_runtime_id_to_select = '';
-    _selected_script_id = '';
+    this.setSelectedRuntime();
+    this.setSelectedScript();
   };
 
-  var _on_profile_disabled = function(msg)
+  this._on_profile_disabled = function(msg)
   {
     if (msg.profile == window.app.profiles.DEFAULT)
     {
@@ -139,10 +140,10 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       _window_ids = {};
       _windows_reloaded = {};
       _threads = [];
-      _selected_runtime_id = '';
       _next_runtime_id_to_select = '';
-      _selected_script_id = '';
       _thread_queues = {};
+      this.setSelectedRuntime();
+      this.setSelectedScript();
     }
   };
 
@@ -180,15 +181,12 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
     if (_selected_runtime_id == id)
     {
-      _selected_runtime_id = '';
+      this.setSelectedRuntime();
       if (_runtimes[id] && !_runtimes[id].is_top)
       {
         var rt = _window_top_rt_map[_runtimes[id].window_id];
         if (rt)
-        {
           this.setSelectedRuntime(rt);
-          window['cst-selects']['cmd-runtime-select'].updateElement();
-        }
       }
     }
     messages.post('runtime-destroyed', {id: id});
@@ -332,15 +330,15 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         if (!_debug_context_frame_path)
           _debug_context_frame_path = runtime.html_frame_path;
 
-        _selected_script_id = "";
+        this.setSelectedScript();
       }
 
-      var title = window.window_manager_data.get_window(win_id);
-      if (title)
-        runtime.title = title;
+      var win = window.window_manager_data.get_window(win_id);
+      if (win)
+        runtime.title = win.title;
       _runtimes[runtimeId] = runtime;
       // TODO check if that is still needed
-      if(_next_runtime_id_to_select == runtimeId)
+      if (_next_runtime_id_to_select == runtimeId)
       {
         this.setSelectedRuntime(runtime);
         _next_runtime_id_to_select = "";
@@ -358,7 +356,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
       if (_debug_context_frame_path == runtime.html_frame_path &&
           _selected_window == runtime.window_id &&
-          runtimeId != _selected_runtime_id )
+          runtimeId != _selected_runtime_id)
       {
         this.setSelectedRuntimeId(runtimeId);
       }
@@ -369,12 +367,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         host_tabs_update_active_tab = true;
       }
 
-      if(runtime.is_top)
-      {
-        views['js_source'].update();
-        window['cst-selects']['js-script-select'].updateElement();
-        window['cst-selects']['cmd-runtime-select'].updateElement();
-      }
+      if (runtime.is_top)
+        views["js_source"].update();
     }
 
     if(host_tabs_set_active_tab)
@@ -391,7 +385,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
                                  _runtimes[rt_id].description === undefined);
   };
 
-  var _scripts = {};
+
 
 /** checks if that script is already known from a previous runtime
   * checks first for the url and the for the script data.
@@ -430,9 +424,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     {
       this._bps.copy_breakpoints(script, _scripts[sc]);
       if (_scripts[sc].script_id == _selected_script_id)
-      {
-        _selected_script_id = new_script_id;
-      }
+        this.setSelectedScript(new_script_id);
+
       // the script could be in a pop-up window
       if (old_rt.window_id == new_rt.window_id)
       {
@@ -449,11 +442,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         (is_injected_script(_selected_script_type) &&
          !is_injected_script(script.script_type)))
     {
-      _selected_script_id = new_script_id;
-      _selected_script_type = script.script_type;
-      views['js_source'].update();
-      window['cst-selects']['js-script-select'].updateElement();
-      window['cst-selects']['cmd-runtime-select'].updateElement();
+      this.setSelectedScript(new_script_id);
     }
   }
 
@@ -539,15 +528,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     _debug_context_frame_path = '';
     _windows_reloaded = {};
-    _selected_script_id = '';
-    /*
-    if( _is_first_call_create_all_runtimes_on_debug_context_change )
-    {
-      stop_at.setInitialSettings();
-      // with the STP 1 design this workaround can be removed
-      _is_first_call_create_all_runtimes_on_debug_context_change = false;
-    }
-    */
+    this.setSelectedScript();
     var tag =  tagManager.set_callback(this, this._set_new_debug_context, [win_id]);
     _ecma_debugger.requestListRuntimes(tag, [[],1]);
   }
@@ -571,11 +552,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
         this._reset_window(win_id);
       else
         _window_ids[win_id] = true;
-      _selected_runtime_id = "";
-      _selected_script_id = "";
-      views["js_source"].update();
-      window["cst-selects"]["js-script-select"].updateElement();
-      window["cst-selects"]["cmd-runtime-select"].updateElement();
+      this.setSelectedRuntime();
+      this.setSelectedScript();
     }
   }
 
@@ -1035,29 +1013,41 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
 
   this.setSelectedRuntime = function(runtime)
   {
-    var r = '';
-    for( r in _runtimes )
+    for (var r in _runtimes)
     {
-      if( _runtimes[r] == runtime )
+      if (_runtimes[r] && _runtimes[r] == runtime)
       {
-        _runtimes[r]['selected'] = true;
+        _runtimes[r]["selected"] = true;
         _selected_runtime_id = _runtimes[r].runtime_id;
       }
       else
       {
         // the runtime could be registered but not jet parsed
         if( _runtimes[r] )
-        {
-          _runtimes[r]['selected'] = false;
-        }
+          _runtimes[r]["selected"] = false;
       }
     }
-  }
-  // only one script can be selected at a time
-  this.setSelectedScript = function( script_id )
+    if (!runtime)
+      _selected_runtime_id = "";
+
+    window["cst-selects"]["cmd-runtime-select"].updateElement();
+  };
+
+  this.setSelectedScript = function(script_id)
   {
-    _selected_script_id = script_id;
-    window['cst-selects']['js-script-select'].updateElement();
+    if (script_id != _selected_script_id)
+    {
+      _selected_script_id = script_id || "";
+      var script = script_id && _scripts[script_id];
+      if (script)
+      {
+        _selected_script_type = script.script_type;
+        if (script.runtime_id != _selected_runtime_id)
+          this.setSelectedRuntimeId(script.runtime_id);
+      }
+      window["cst-selects"]["js-script-select"].updateElement();
+      window.views["js_source"].update();
+    }
   }
 
   this.getSelectedScript = function()
@@ -1068,14 +1058,10 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   this.setSelectedRuntimeId = function(id)
   {
     if (_runtimes[id])
-    {
       this.setSelectedRuntime(_runtimes[id]);
-    }
     else
-    {
       _next_runtime_id_to_select = id;
-    }
-  }
+  };
 
   this.getSelectedRuntimeId = function()
   {
@@ -1200,11 +1186,11 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   messages.addListener("thread-stopped-event", onThreadStopped);
   messages.addListener("thread-continue-event", onThreadContinue);
   messages.addListener('host-state', onHostStateChange);
-  messages.addListener('reset-state', onResetState);
+  messages.addListener('reset-state', this._on_reset_state.bind(this));
   messages.addListener('window-updated', _on_window_updated);
   messages.addListener('debug-context-selected', this._on_debug_context_selected.bind(this));
   messages.addListener('console-script-submitted', _on_console_script_submitted);
-  messages.addListener('profile-disabled', _on_profile_disabled);
+  messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
   messages.addListener('profile-enabled', this._on_profile_enabled.bind(this));
 
   this.bind = function(_ecma_debugger)
