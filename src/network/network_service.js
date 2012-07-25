@@ -221,7 +221,7 @@ cls.NetworkLoggerService = function(view)
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_body = function(itemid, update_callback)
+  this.get_body = function(itemid)
   {
     if (!this._current_context)
       return;
@@ -230,11 +230,11 @@ cls.NetworkLoggerService = function(view)
     entry.called_get_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [update_callback, entry]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._handle_get_resource = function(status, data, update_callback, entry)
+  this._handle_get_resource = function(status, data, entry)
   {
     if (!this._current_context)
       return;
@@ -250,8 +250,8 @@ cls.NetworkLoggerService = function(view)
       this._current_context.update("responsebody", msg);
     }
     // Update the view. This is only needed when the generic updating per event is paused.
-    if (this.is_paused && update_callback)
-      update_callback();
+    if (this.is_paused && window.views && window.views.network_logger)
+      window.views.network_logger.update();
 
   };
 
@@ -959,6 +959,22 @@ cls.NetworkLoggerEntryPrototype = function()
       this.event_sequence.push(gap);
     }
     this.events.push(evt);
+  };
+
+  this.check_to_get_body = function(service)
+  {
+    // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
+    if (
+      this.is_finished &&
+      !this.called_get_body &&
+      (!this.current_response || !this.current_response.responsebody) &&
+      // When we have a response, but didn't see responsefinished, it means there's really no
+      // responsebody. Don't attempt to fetch it.
+      (!this.current_response || this.current_response.saw_responsefinished)
+    )
+    {
+      service.get_body(this.id);
+    }
   };
 
   this.__defineGetter__("duration", function()
