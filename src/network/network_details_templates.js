@@ -330,10 +330,11 @@ templates._request_body = function(req, do_raw)
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
-      if (n < req.requestbody.partList.length - 1)
-        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary, HTTP_BOUNDARY_CLASS) : ["hr"]);
-      else if (use_raw_boundary)
-        ret.push(this._wrap_pre(req.boundary + "--\n", HTTP_BOUNDARY_CLASS));
+      var boundary = use_raw_boundary ? req.boundary : ["hr"];
+      if (use_raw_boundary && part === req.requestbody.partList.last)
+        boundary += "--\n";
+
+      ret.push(this._wrap_pre(boundary, HTTP_BOUNDARY_CLASS));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
