@@ -176,7 +176,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     var template = ["div", templates.network.main(
                      ctx, entries, this._selected, detail_width, table_template
-                   ), "id", "network-outer-container"];
+                   ), "id", "network-outer-container",
+                      "data-menu", "network-logger-context"];
 
     if (this._selected)
     {
@@ -682,6 +683,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
+
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("network-logger-context", [
+    {
+      label: ui_strings.S_CLEAR_NETWORK_LOG,
+      handler: this._on_clear_log_bound
+    }
+  ]);
 
   this._type_filters = ["all"].map(this._map_filter_bound);
   this.init(id, name, container_class, html, default_handler);
