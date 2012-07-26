@@ -990,6 +990,7 @@ cls.NetworkLoggerEntryPrototype = function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
   });
+  this.__defineSetter__("duration", function(){});
 
   this.__defineGetter__("waiting_time", function()
   {
@@ -997,14 +998,13 @@ cls.NetworkLoggerEntryPrototype = function()
                                           .sum(helpers.prop("val"));
     return waiting_time || 0;
   });
+  this.__defineSetter__("waiting_time", function(){});
 
   this.__defineGetter__("touched_network", function()
   {
      return Boolean(this.current_request);
   });
-
-  // todo: add empty setters.
-
+  this.__defineSetter__("touched_network", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
