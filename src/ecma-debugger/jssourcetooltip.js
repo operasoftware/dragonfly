@@ -26,7 +26,7 @@ cls.JSSourceTooltip = function(view)
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
   var MAX_MOUSE_POS_COUNT = 2;
   var FILTER_HANDLER = "js-tooltip-filter";
-  var KEYWORD_BEFORE_BARCETS_BLACKLIST = ["while", "for", "if", "switch", "return"];
+  var KEYWORD_BEFORE_OPEN_PAREN_BLACKLIST = ["while", "for", "if", "switch", "return"];
 
   var _tooltip = null;
   var _view = null;
@@ -493,7 +493,7 @@ cls.JSSourceTooltip = function(view)
                 case IDENTIFIER:
                 {
                   if (previous_token[VALUE] == "(" &&
-                      KEYWORD_BEFORE_BARCETS_BLACKLIST.contains(token[VALUE]))
+                      KEYWORD_BEFORE_OPEN_PAREN_BLACKLIST.contains(token[VALUE]))
                     break;
                 }
                 case STRING:
