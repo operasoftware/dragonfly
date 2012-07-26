@@ -186,14 +186,13 @@ templates._request_headers = function(req, do_raw)
 {
   if (do_raw)
   {
-    if (req.request_headers_raw) // todo: we explicitely mention missing request headers in parsed. this check here is a bit ugly.
+    if (req.request_headers_raw)
     {
       if (!req.header_tokens)
       {
-        var tokens = [];
+        req.header_tokens = [];
         var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, tokens));
-        req.header_tokens = tokens;
+        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
       }
       if (req.header_tokens.length)
       {
@@ -231,17 +230,17 @@ templates._request_headers = function(req, do_raw)
 
 templates._response_headers = function(resp, do_raw)
 {
-  if (!resp.response_headers) // todo: we explicitely mention missing request headers but not missing response headers // ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
+  // Missing response headers aren't mentioned explicitely
+  if (!resp.response_headers)
     return [];
 
   if (do_raw)
   {
     if (!resp.header_tokens)
     {
-      var tokens = [];
+      resp.header_tokens = [];
       var tokenizer = new cls.HTTPHeaderTokenizer();
-      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, tokens));
-      resp.header_tokens = tokens;
+      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
     }
     if (resp.header_tokens.length)
     {
