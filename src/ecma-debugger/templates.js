@@ -471,7 +471,7 @@
     return [
       ["li",
         ["div",
-          ["span",
+          ["div",
             "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
@@ -487,14 +487,17 @@
         ],
         (value_template.length
         ? ["div",
-            ["span",
-              "↳",
-             "class", "return-value-arrow return-value-arrow-to",
+            ["div",
+              ["div",
+                "↳",
+               "class", "return-value-arrow-to",
+               "data-tooltip", "return-value-tooltip",
+               "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_TO
+                                              .replace("%s", to_uri)
+                                              .replace("%s", retval.positionTo.lineNumber)
+              ],
+             "class", "return-value-arrow",
              "handler", "goto-script-line",
-             "data-tooltip", "return-value-tooltip",
-             "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_TO
-                                            .replace("%s", to_uri)
-                                            .replace("%s", retval.positionTo.lineNumber),
              "data-script-id", String(retval.positionTo.scriptID),
              "data-script-line", String(retval.positionTo.lineNumber)
             ],
