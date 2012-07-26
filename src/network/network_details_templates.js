@@ -145,31 +145,14 @@ templates._response = function(response, is_last_response, do_raw)
   ]
 };
 
-templates._make_header_template_func = function(is_request_headers)
+templates._make_header_token_templ_func = function(state)
 {
-  // add data-spec attributes on certain firstline tokens, depending on if it's request_headers.
-  // todo: while this has firstline_tokens, it can't be reused.
-  // todo: not looking too good.
-  var firstline_tokens = 0;
-  var add_data_spec;
-  if (is_request_headers)
-  {
-    add_data_spec = {
-      0: true
-    };
-  }
-  else
-  {
-    add_data_spec = {
-      1: true
-    };
-  }
-
   return function(token)
   {
     var TYPE = 0;
     var STR = 1;
     var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
       attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
@@ -177,11 +160,12 @@ templates._make_header_template_func = function(is_request_headers)
     else
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
-      if (firstline_tokens in add_data_spec)
+      if (state.data_spec_firstline_tokens.contains(state.firstline_tokens))
       {
+        // Add data-spec attributes on certain firstline tokens, tracked in state
         attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
       }
-      firstline_tokens++;
+      state.firstline_tokens++;
     }
     return ["span", token[STR]].concat(attrs);
   }
@@ -191,6 +175,12 @@ templates._token_receiver = function(tokens, token_type, token)
 {
   tokens.push([token_type, token]);
 };
+
+templates.TokenStateholder = function(data_spec_firstline_tokens)
+{
+  this.data_spec_firstline_tokens = data_spec_firstline_tokens;
+  this.firstline_tokens = 0;
+}
 
 templates._request_headers = function(req, do_raw)
 {
@@ -207,7 +197,8 @@ templates._request_headers = function(req, do_raw)
       }
       if (req.header_tokens.length)
       {
-        var map_func = this._make_header_template_func(true);
+        var state_holder = new this.TokenStateholder([0]);
+        var map_func = this._make_header_token_templ_func(state_holder);
         return [
           ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
           this._wrap_pre(req.header_tokens.map(map_func))
@@ -254,7 +245,8 @@ templates._response_headers = function(resp, do_raw)
     }
     if (resp.header_tokens.length)
     {
-      var map_func = this._make_header_template_func(false);
+      var state_holder = new this.TokenStateholder([1]);
+      var map_func = this._make_header_token_templ_func(state_holder);
       return [
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         this._wrap_pre(resp.header_tokens.map(map_func))
