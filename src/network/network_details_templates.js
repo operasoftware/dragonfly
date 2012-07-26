@@ -92,13 +92,15 @@ templates._details_content = function(entry, do_raw)
 
 templates.did_not_touch_network = function(entry)
 {
-  var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
+  var local = [
+    cls.ResourceManager["1.2"].UrlLoad.URLType.FILE,
+    cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
+  ];
   return (
     ["tbody", 
-      this._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
-        ["p", entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
-                                   : ui_strings.S_NETWORK_SERVED_FROM_CACHE,
-              "class", "network-info"])
+      this._wrap_col_or_row(
+        ["p", local.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
+                                            : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
     ]);
 };
 
