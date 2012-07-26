@@ -590,6 +590,7 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.called_get_body = false;
   this.current_response = null;
   this.current_request = null;
+  this.set_is_finished_on_responsefinished = false;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -878,6 +879,9 @@ cls.NetworkLoggerEntryPrototype = function()
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
 
+    if (this.set_is_finished_on_responsefinished)
+      this.is_finished = true;
+
     this._guess_response_type();
   };
 
@@ -894,7 +898,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_urlredirect = function(event)
   {
-    // This does not add any information, the event is only used to change the requestID
+    // Workaround for CORE-47687
+    this.set_is_finished_on_responsefinished = true;
   };
 
   this._guess_response_type = function()
