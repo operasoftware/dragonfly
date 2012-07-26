@@ -96,6 +96,21 @@ cls.HostCommandTransformer = function() {
   TYPE = 0,
   VALUE = 1;
 
+  this.has_tokens = function(source, target_tokens)
+  {
+    var matches = [];
+    this.parser.tokenize(source, function(token_type, token)
+    {
+      for (var i = 0, target_token; token = target_tokens[i]; i++)
+      {
+        if (token[TYPE] == target_token[type] &&
+            token[VALUE] == target_token[VALUE])
+          matches.push(token);
+      }
+    });
+    return matches;
+  };
+
   this.transform = function(source)
   {
     var tokens = [];
