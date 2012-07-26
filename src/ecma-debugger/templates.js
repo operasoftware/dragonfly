@@ -455,7 +455,10 @@
                      new cls.InspectableJSObject(rt_id,
                                                  object.objectID,
                                                  function_name,
-                                                 object.className);
+                                                 object.className,
+                                                 null,
+                                                 null,
+                                                 true);
     var func_search_term = value_template.length ? null : search_term;
     var func = window.templates.inspected_js_object(func_model, true, null, func_search_term);
 
