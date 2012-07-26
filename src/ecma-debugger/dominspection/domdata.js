@@ -282,6 +282,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     this._current_target = 0;
     this._active_window = [];
     this.target = 0;
+    window.messages.post("element-selected", {obj_id: 0, rt_id: 0, model: null});
   }
 
   this._on_active_tab = function(msg)
