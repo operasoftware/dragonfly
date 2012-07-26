@@ -267,7 +267,7 @@
   overflow: auto;
   height: 100%;
   box-sizing: border-box;
-  padding: 27px 20px 37px 0;
+  padding: 27px 20px 27px 0;
   background-color: #fff;
   /* using border-left instead of padding-left to keep the 
      space for the close button when scrolling horizontally */
@@ -308,11 +308,6 @@
 .network-details-container p
 {
   margin: 0;
-}
-
-.network-details-container img.network-body
-{
-  margin-top: 2em;
 }
 
 .network-details-container table

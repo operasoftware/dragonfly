@@ -149,6 +149,7 @@ templates._make_header_template_func = function(is_request_headers)
 {
   // add data-spec attributes on certain firstline tokens, depending on if it's request_headers.
   // todo: while this has firstline_tokens, it can't be reused.
+  // todo: not looking too good.
   var firstline_tokens = 0;
   var add_data_spec;
   if (is_request_headers)
@@ -392,7 +393,7 @@ templates._request_body = function(req, do_raw)
 
 templates._response_body = function(resp, do_raw, is_last_response)
 {
-  var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
+  var ret = [];
 
   var classname = "";
   if ((resp.saw_responsefinished && resp.no_used_mimetype) ||
@@ -439,6 +440,9 @@ templates._response_body = function(resp, do_raw, is_last_response)
       }
     }
   }
+  if (ret.length)
+    ret.unshift(this._wrap_pre("\n"));
+
   if (do_raw)
     return ret;
   else
