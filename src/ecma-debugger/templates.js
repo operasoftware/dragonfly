@@ -475,7 +475,6 @@
       ["li",
         ["div",
           ["div",
-            "↱",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
            "data-tooltip", "return-value-tooltip",
@@ -492,7 +491,6 @@
         ? ["div",
             ["div",
               ["div",
-                "↳",
                "class", "return-value-arrow-to",
                "data-tooltip", "return-value-tooltip",
                "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_TO

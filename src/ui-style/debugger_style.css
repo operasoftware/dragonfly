@@ -1661,13 +1661,11 @@ d
 
 .return-value-arrow-from
 {
-  content: "";
   background: transparent url("../ui-images/arrow_roundl.png") 0 50% no-repeat;
 }
 
 .return-value-arrow-to
 {
-  content: "";
   height: 100%;
   background: transparent url("../ui-images/arrow_tail.png") 13px 2px no-repeat;
 }
