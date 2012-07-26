@@ -426,16 +426,16 @@ cls.RequestContextPrototype = function()
       return Math.min.apply(null, entries.map(function(e) { return e.starttime }));
   };
 
-  this._event_changes_req_id = function(event, last_entry)
+  this._event_changes_req_id = function(event, current_entry)
   {
     /* 
-      Checks if the event's requestID is different from the one in last_entry. 
+      Checks if the event's requestID is different from the one in current_entry. 
       That should never be the case, since the "urlload" event initiates 
-      a new entry and that doesn't have a requestID. Note that last_entry is 
+      a new entry and that doesn't have a requestID. Note that current_entry is 
       the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
-           (last_entry.last_requestID !== event.requestID);
+           (current_entry._requestID !== event.requestID);
   };
 
   this.update = function(eventname, event)
@@ -468,7 +468,7 @@ cls.RequestContextPrototype = function()
     else
     {
       var logger_entry = logger_entries.last;
-      if (logger_entry && logger_entry.last_requestID)
+      if (logger_entry && logger_entry._requestID)
       {
         /*
           The same resource id can be loaded several times, but then the request id changes.
@@ -482,7 +482,7 @@ cls.RequestContextPrototype = function()
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           " Unexpected change in requestID on " + eventname +
-                          ": Change from " + logger_entry.last_requestID + " to " + 
+                          ": Change from " + logger_entry._requestID + " to " + 
                           event.requestID + ", URL: " + logger_entry.human_url);
         }
       }
@@ -496,7 +496,7 @@ cls.RequestContextPrototype = function()
         var window_context = this.get_window_context(event.windowID);
         window_context.entry_ids.push(id);
       }
-      logger_entry.last_requestID = event.requestID;
+      logger_entry._requestID = event.requestID;
       logger_entry.update(eventname, event);
     }
 
@@ -577,20 +577,20 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.starttime = null;
-  this.starttime_relative = null;
+  this.starttime = 0;
+  this.starttime_relative = 0;
   this.endtime = null;
-  this.requests_responses = [];
-  this.last_responsecode = null;
-  this.last_method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
-  this.called_get_body = false;
-  this.current_response = null;
+  this.requests_responses = [];
   this.current_request = null;
+  this.current_response = null;
+  this.current_responsecode = null;
+  this.called_get_body = false;
   this.set_is_finished_on_responsefinished = false;
+  this._requestID = 0;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -740,8 +740,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.starttime = eventdata.time;
       if (this.context_starttime)
         this.starttime_relative = this.starttime - this.context_starttime;
-      else
-        this.starttime_relative = 0;
 
       var d = new Date(this.starttime);
       var h = String(d.getHours()).zfill(2);
@@ -807,7 +805,6 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_request = function(event)
   {
-    this.last_method = event.method;
     this.current_request = new cls.NetworkLoggerRequest(this);
     this.requests_responses.push(this.current_request);
     this.current_request._update_event_request(event);
@@ -839,7 +836,7 @@ cls.NetworkLoggerEntryPrototype = function()
   {
     // This means on the next request with event.toRequestID, we won't 
     // make a new entry, but a new NetworkLoggerRequest on the same entry.
-    this.last_requestID = event.toRequestID;
+    this._requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
@@ -848,8 +845,8 @@ cls.NetworkLoggerEntryPrototype = function()
     {
       this.current_request.was_responded_to = true;
     }
-    this.last_responsecode = event.responseCode;
-    this.error_in_last_response = /^[45]/.test(this.last_responsecode);
+    this.current_responsecode = event.responseCode;
+    this.error_in_current_response = /^[45]/.test(this.current_responsecode);
     this.current_response = new cls.NetworkLoggerResponse(this);
     this.requests_responses.push(this.current_response);
     this.current_response._update_event_response(event);

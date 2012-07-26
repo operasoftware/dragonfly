@@ -63,7 +63,7 @@ templates._details_content = function(entry, do_raw)
     return requests_responses;
   }
 
-  var responsecode = entry.last_responsecode;
+  var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
@@ -77,7 +77,7 @@ templates._details_content = function(entry, do_raw)
               [
                 "span",
                 entry.touched_network && responsecode ? String(responsecode) + " – " : "",
-                "data-spec", "http#" + entry.last_responsecode
+                "data-spec", "http#" + entry.current_responsecode
               ],
               ["span", entry.url]
             ]
