@@ -26,6 +26,7 @@
   height: 7px;
   opacity: 0.66;
   -o-transition: 0.2s;
+  transition: 0.2s;
 }
 
 .shortcuts-config filter
