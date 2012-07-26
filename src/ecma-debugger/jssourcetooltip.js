@@ -26,7 +26,7 @@ cls.JSSourceTooltip = function(view)
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
   var MAX_MOUSE_POS_COUNT = 2;
   var FILTER_HANDLER = "js-tooltip-filter";
-  var CONTROL_KEYWORD = ["while", "for", "if", "switch"];
+  var KEYWORD_BEFORE_BARCETS_BLACKLIST = ["while", "for", "if", "switch", "return"];
 
   var _tooltip = null;
   var _view = null;
@@ -492,7 +492,8 @@ cls.JSSourceTooltip = function(view)
                 }
                 case IDENTIFIER:
                 {
-                  if (previous_token[VALUE] == "(" && CONTROL_KEYWORD.contains(token[VALUE]))
+                  if (previous_token[VALUE] == "(" &&
+                      KEYWORD_BEFORE_BARCETS_BLACKLIST.contains(token[VALUE]))
                     break;
                 }
                 case STRING:
@@ -600,9 +601,7 @@ cls.JSSourceTooltip = function(view)
 
     while (bracket_stack.length || (shift_key && parens_stack.length))
     {
-      for (var i = match_index + 1, token = null, break_loop = false;
-           !break_loop && (token = tokens[i]);
-           i++)
+      for (var i = match_index + 1, token = null; token = tokens[i]; i++)
       {
         // consume everything between parentheses if shiftKey is pressed
         if (shift_key && parens_stack.length)
@@ -781,10 +780,10 @@ cls.JSSourceTooltip = function(view)
                 }
               }
             }
-            break_loop = true;
             break;
           }
         }
+        break;
       }
 
       if (i == tokens.length && bracket_stack.length)
