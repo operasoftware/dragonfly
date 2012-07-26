@@ -15,9 +15,9 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject =
-function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list)
+function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list, use_cache)
 {
-  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list);
+  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list, use_cache);
 }
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
@@ -86,7 +86,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     "}"
   */
 
-  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list)
+  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list, use_cache)
   {
     this.id = this._get_id();
     this._obj_map =
@@ -120,7 +120,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     {
       window.inspections = new cls.Inspections();
     }
-    window.inspections.add(this);
+    window.inspections.add(this, use_cache);
   }
 
   this._get_subtree = function(path)
@@ -939,9 +939,11 @@ cls.Inspections = function()
 
 cls.InspectionsPrototype = function()
 {
-  this.add = function(obj)
+  this.add = function(obj, use_cache)
   {
-    this._objects[obj.object_id] = obj;
+    if (use_cache)
+      this._objects[obj.object_id] = obj;
+
     var id = obj.id || obj.name;
     if (id)
       this[id] = obj;

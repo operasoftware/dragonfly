@@ -1639,11 +1639,6 @@ d
   display: table-cell;
 }
 
-.return-value .return-value-arrow-to
-{
-  padding-left: 14px;
-}
-
 .return-function-from .folder-key
 {
   display: none;
@@ -1653,11 +1648,15 @@ d
 {
   display: inline-block;
   vertical-align: top;
-  width: 15px;
-  height: 16px;
+  width: 14px;
+  height: 15px;
   background-repeat: no-repeat;
   cursor: pointer;
-  content: "";
+}
+
+.return-value .return-value-arrow
+{
+  width: 28px;
 }
 
 .return-value-arrow-from
@@ -1667,7 +1666,8 @@ d
 
 .return-value-arrow-to
 {
-  background: transparent url("../ui-images/arrow_tail.png") 14px 2px no-repeat;
+  height: 100%;
+  background: transparent url("../ui-images/arrow_tail.png") 13px 2px no-repeat;
 }
 
 .return-function-from:hover .return-value-arrow-from
