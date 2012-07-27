@@ -23,6 +23,7 @@ ui_strings.D_RELOAD_SCRIPTS = "Not all scripts are loaded. Do you want to reload
 
 /* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
 ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
+
 /* DESC: Context menu item for adding an attribute in the DOM view. */
 ui_strings.M_CONTEXTMENU_ADD_ATTRIBUTE = "Add attribute";
 
