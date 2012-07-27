@@ -101,11 +101,10 @@ cls.HostCommandTransformer = function() {
     var matches = [];
     this.parser.tokenize(source, function(token_type, token)
     {
-      for (var i = 0, target_token; token = target_tokens[i]; i++)
+      for (var i = 0, target_token; target_token = target_tokens[i]; i++)
       {
-        if (token[TYPE] == target_token[type] &&
-            token[VALUE] == target_token[VALUE])
-          matches.push(token);
+        if (token_type == target_token[TYPE] && token == target_token[VALUE])
+          matches.push([token_type, token]);
       }
     });
     return matches;

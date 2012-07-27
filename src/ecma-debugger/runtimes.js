@@ -76,7 +76,7 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   var _replaced_scripts = {};
   var _selected_runtime_id = "";
   var _next_runtime_id_to_select = "";
-  var _selected_script_id = "";
+  var _selected_script_id = 0;
   var _selected_script_type = "";
   var _is_first_call_create_all_runtimes_on_debug_context_change = true;
   var _window_top_rt_map = {};
@@ -1030,14 +1030,14 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     if (!runtime)
       _selected_runtime_id = "";
 
-    window["cst-selects"]["cmd-runtime-select"].updateElement();
+    window.messages.post("runtime-selected", {id: _selected_runtime_id});
   };
 
   this.setSelectedScript = function(script_id)
   {
     if (script_id != _selected_script_id)
     {
-      _selected_script_id = script_id || "";
+      _selected_script_id = script_id || 0;
       var script = script_id && _scripts[script_id];
       if (script)
       {

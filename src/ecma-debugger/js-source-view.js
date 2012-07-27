@@ -534,7 +534,6 @@ cls.JsSourceView = function(id, name, container_class)
     if (!is_current_script || is_parse_error)
     {
       var script_obj = runtimes.getScript(script_id);
-
       if (script_obj)
       {
         if (!script_obj.line_arr)
@@ -832,7 +831,7 @@ cls.JsSourceView = function(id, name, container_class)
     __timeout_clear_view = 0;
     view_invalid = true;
     __view_is_destroyed = true;
-    runtimes.setSelectedScript(-1);
+    runtimes.setSelectedScript();
   }
 
   var onRuntimeDestroyed = function(msg)
