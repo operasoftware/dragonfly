@@ -808,7 +808,7 @@ ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
 
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
+ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
 
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
@@ -823,7 +823,7 @@ ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the \"%s\" shortcut.";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
+ui_strings.S_INFO_IS_SEARCHING = "Searching…";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
