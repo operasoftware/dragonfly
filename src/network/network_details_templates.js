@@ -97,7 +97,7 @@ templates.did_not_touch_network = function(entry)
     cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
   ];
   return (
-    ["tbody", 
+    ["tbody",
       this._wrap_col_or_row(
         ["p", local.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
                                             : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
@@ -128,7 +128,7 @@ templates._request = function(request, is_last_request, do_raw)
   // is not shown in network-details. It will mostly mean it was retried internally
   // and didn't go on the network.
   // That can't be determined only by looking at RequestRetry events, because a
-  // request with for example a 401 Authorization Required response should still 
+  // request with for example a 401 Authorization Required response should still
   // be shown.
   if (!is_last_request && !request.was_responded_to)
     return [];
@@ -344,7 +344,7 @@ templates._request_body = function(req, do_raw)
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
                 ]); // It's necesary to just push the outer array, because each entry will be wrapped in a row.
-      
+
       ret.extend(parts.map(function(e) {
                     e = e.replace(/\+/g, "%20").split("=");
                     return [
@@ -406,7 +406,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
         classname = "network_info";
         ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
       }
-      // else 
+      // else
         // We're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else

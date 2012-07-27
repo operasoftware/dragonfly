@@ -185,7 +185,7 @@ cls.NetworkLoggerService = function()
 
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger" && 
+    if (message.id === "network_logger" &&
         message.key === "track-content")
     {
       this.setup_content_tracking_bound();
@@ -234,7 +234,7 @@ cls.NetworkLoggerService = function()
   this.get_resource_info = function(resource_id)
   {
     // Returns a ResourceInfo based on the most recent Entry with that resource_id.
-    var entry = this._current_context && 
+    var entry = this._current_context &&
                 this._current_context.get_entries_with_res_id(resource_id).last;
     if (entry && entry.current_response && entry.current_response.responsebody)
     {
@@ -428,10 +428,10 @@ cls.RequestContextPrototype = function()
 
   this._event_changes_req_id = function(event, current_entry)
   {
-    /* 
-      Checks if the event's requestID is different from the one in current_entry. 
-      That should never be the case, since the "urlload" event initiates 
-      a new entry and that doesn't have a requestID. Note that current_entry is 
+    /*
+      Checks if the event's requestID is different from the one in current_entry.
+      That should never be the case, since the "urlload" event initiates
+      a new entry and that doesn't have a requestID. Note that current_entry is
       the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
@@ -456,7 +456,7 @@ cls.RequestContextPrototype = function()
       return;
     }
 
-    // For responsebody, all entries with that resourceID need to be updated. 
+    // For responsebody, all entries with that resourceID need to be updated.
     // Others are callbacks that belongs to the current (and last) entry of that resourceID.
     if (eventname === "responsebody")
     {
@@ -482,7 +482,7 @@ cls.RequestContextPrototype = function()
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           " Unexpected change in requestID on " + eventname +
-                          ": Change from " + logger_entry._requestID + " to " + 
+                          ": Change from " + logger_entry._requestID + " to " +
                           event.requestID + ", URL: " + logger_entry.human_url);
         }
       }
@@ -603,7 +603,7 @@ cls.NetworkLoggerEntryPrototype = function()
   var CLASSNAME_RECEIVING = "receiving";
   var CLASSNAME_IRREGULAR = "irregular";
 
-  /*  // gap_def format: 
+  /*  // gap_def format:
   {
      classname: type of sequence,
      sequences: {
@@ -613,7 +613,7 @@ cls.NetworkLoggerEntryPrototype = function()
        ]
      }
    } */
-  
+
   var gap_defs = {
     "urlload": {
         "request": {
@@ -624,7 +624,7 @@ cls.NetworkLoggerEntryPrototype = function()
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
           classname: CLASSNAME_BLOCKED
         },
-        // The response-phase can be closed without ever seeing a response event, for 
+        // The response-phase can be closed without ever seeing a response event, for
         // example because the request was aborted. See CORE-43284.
         "responsefinished": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
@@ -706,10 +706,10 @@ cls.NetworkLoggerEntryPrototype = function()
       }
   };
 
-  // What is not defined as it's own case by the above, but it terminated by 
+  // What is not defined as it's own case by the above, but it terminated by
   // urlredirect, requestretry or urlfinished, will be defined regardless of the preceding event
 
-  /* // gap_def_to_phase format: 
+  /* // gap_def_to_phase format:
   {
      classname: type of sequence,
      sequences: {
@@ -834,7 +834,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_requestretry = function(event)
   {
-    // This means on the next request with event.toRequestID, we won't 
+    // This means on the next request with event.toRequestID, we won't
     // make a new entry, but a new NetworkLoggerRequest on the same entry.
     this._requestID = event.toRequestID;
   };
