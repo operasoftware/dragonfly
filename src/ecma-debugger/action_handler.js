@@ -32,6 +32,13 @@
   }
 };
 
+window.eventHandlers.click["goto-script-line"] = function(event, target)
+{
+  var script_id = Number(event.target.get_attr("parent-node-chain", "data-script-id"));
+  var script_line = Number(event.target.get_attr("parent-node-chain", "data-script-line"));
+  window.views.js_source.show_and_flash_line(script_id, script_line);
+};
+
 window.eventHandlers.click['expand-value'] = function(event, target)
 {
   var
