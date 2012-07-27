@@ -421,7 +421,8 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       var name         = edit_tr.querySelector("[name='name']").value.trim();
       var value        = edit_tr.querySelector("[name='value']").value;
-      var expires      = new Date(edit_tr.querySelector("[name='expires']").value || 0).getTime();
+      // Using getAttribute("value") instead of .value works around CORE-47780 / CORE-46758
+      var expires      = new Date(edit_tr.querySelector("[name='expires']").getAttribute("value") || 0).getTime();
       var path         = edit_tr.querySelector("[name='path']").value.trim();
       var is_secure    = +(is_secure_input && is_secure_input.checked);
       var is_http_only = +(is_http_only_input && is_http_only_input.checked);
