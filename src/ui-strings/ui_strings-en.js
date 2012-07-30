@@ -72,6 +72,9 @@ ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
 /* DESC: Context menu item for disabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
 
+/* DESC: Context menu item for disabling a breakpoint. */
+ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
+
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -276,6 +279,15 @@ ui_strings.M_VIEW_LABEL_ERROR_XSLT = "XSLT";
 /* DESC: view to set and remove event breakpoints */
 ui_strings.M_VIEW_LABEL_EVENT_BREAKPOINTS = "Event Breakpoints";
 
+/* DESC: Side panel view with event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
+
+/* DESC: View with all event listeners. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
+
+/* DESC: View with the event listeners of the selected node. */
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
+
 /* DESC: Heading for Export button, accessed by clicking the subhead DOM view button. */
 ui_strings.M_VIEW_LABEL_EXPORT = "Export";
 
@@ -411,6 +423,9 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 /* DESC: Anonymous function label. */
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
+/* DESC: Info in a tooltip that the according listener was set as attribute. */
+ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
 
@@ -470,6 +485,9 @@ ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = "Show default pro
 
 /* DESC: List item under the Source settings menu to logs all threads when activated. Also Tooltip text for a button on the Source tab. */
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
+
+/* DESC: Refetch the event listeners. */
+ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
 
 /* DESC: Enable reformatting of JavaScript. */
 ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
@@ -662,6 +680,15 @@ ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 
 /* DESC: List of filters that will be hidden in the Error log */
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
+
+/* DESC: Link in an event listener tooltip to the source position where the listener is added. */
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+
+/* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+
+/* DESC: Info in a tooltip that the according listener was set by the event target interface. */
+ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
 
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
@@ -893,6 +920,9 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
+
+/* DESC: Info in an event listener tooltip that the according source file is missing. */
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
@@ -1170,6 +1200,12 @@ ui_strings.S_LABEL_UTIL_AREA = "Area";
 /* DESC: Scale */
 ui_strings.S_LABEL_UTIL_SCALE = "Scale";
 
+/* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
+ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
+
+/* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
+ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
+
 /* DESC: Debug context menu */
 ui_strings.S_MENU_DEBUG_CONTEXT = "Select the debugging context";
 
@@ -1271,6 +1307,9 @@ ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
 /* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";
+
+/* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
+ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
 
 /* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
@@ -1709,6 +1748,9 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: Script type for events in the profiler */
+ui_strings.S_SCRIPT_TYPE_EVAL = "Eval";
 
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";

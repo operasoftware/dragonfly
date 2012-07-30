@@ -547,9 +547,16 @@ ui_framework.layouts.dom_rough_layout =
       width: 350,
       tabs: function(services)
       {
-        return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
-               ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'] :
-               ['dom-side-panel', 'dom_attrs', 'css-layout']);
+        if (services['ecmascript-debugger'].satisfies_version(6, 11))
+        {
+          return ['dom-side-panel',
+                  'dom_attrs',
+                  'css-layout',
+                  'ev-listeners-side-panel',
+                  'dom-search'];
+        }
+
+        return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];
       }
     }
   ]

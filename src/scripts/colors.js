@@ -505,6 +505,30 @@ Color.prototype = new function()
     return this.rgb_to_hex_c(this.__rgb).toUpperCase();
   }
 
+  // http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  this.getLuminance = function()
+  {
+    var RGB = this.__rgb.map(function(c)
+    {
+      var cs =  c / 255;
+      return cs <= 0.03928
+           ? cs / 12.92
+           : Math.pow(((cs + 0.055) / 1.055), 2.4);
+    });
+    return 0.2126 * RGB[0] + 0.7152 * RGB[1] + 0.0722 * RGB[2];
+  };
+
+  // http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  this.getContrastRatio = function(color2)
+  {
+    var l1 = this.getLuminance();
+    var l2 = color2.getLuminance();
+    return l1 > l2
+         ? (l1 + 0.05) / (l2 + 0.05)
+         : (l2 + 0.05) / (l1 + 0.05);
+  };
+
+
   this._alpha2string = function()
   {
     if (typeof this.alpha == 'number')
