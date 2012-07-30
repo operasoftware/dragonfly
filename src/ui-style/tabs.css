@@ -89,13 +89,13 @@ top-tabs tab .block-content
   line-height: 1;
 }
 
-top-tabs .two-rows .inline-block 
+top-tabs .two-rows .inline-block
 {
   vertical-align: middle;
   line-height: 2;
 }
 
-top-tabs .two-rows .block-content 
+top-tabs .two-rows .block-content
 {
   display: block;
 }
@@ -202,13 +202,13 @@ top-tabs .badge:empty
 .network_mode
 {
   background-image: url("../ui-images/mode_network.png");
-  width: 23px; 
+  width: 23px;
 }
 
 .resource_panel
 {
   background-image: url("../ui-images/mode_resources.png");
-  width: 23px; 
+  width: 23px;
 }
 
 .storage {
@@ -234,5 +234,11 @@ top-tabs .badge:empty
 .profiler_mode
 {
   background: url("../ui-images/mode_profiler.png");
+  width: 25px;
+}
+
+.debug_new
+{
+  background-image: url("../ui-images/mode_debug.png");
   width: 25px;
 }

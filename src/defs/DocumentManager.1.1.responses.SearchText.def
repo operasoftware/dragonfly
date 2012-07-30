@@ -1,0 +1,30 @@
+message <span class="message">HighlightList</span>
+{
+  message <span class="message">Highlight</span>
+  {
+    <span class="comment">/** 
+     * Which frame this highlight is in.
+     */</span>
+    required <span class="number">uint32</span> frameID = 1; 
+    <span class="comment">/** 
+     * The first common ancestor that contains the entire highlight.
+     */</span>
+    optional <span class="message">Node  </span> node    = 2; 
+  }
+  message <span class="message">Node</span>
+  {
+    <span class="comment">/** 
+     * E.g. "a", "div".
+     */</span>
+    required <span class="string">string</span> tag = 1; 
+    <span class="comment">/** 
+     * Present if there is an ID attribute set.
+     */</span>
+    optional <span class="string">string</span> id  = 2; 
+  }
+  <span class="comment">/** 
+   * When searching for text in a page, we often get multiple hits. This is a
+   * list of all the current hits.
+   */</span>
+  repeated <span class="message">Highlight</span> highlightList = 1; 
+}

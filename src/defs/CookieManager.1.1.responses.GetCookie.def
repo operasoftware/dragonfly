@@ -1,0 +1,24 @@
+message <span class="message">CookieList</span>
+{
+  message <span class="message">Cookie</span>
+  {
+    required <span class="string">string</span> domain     = 1; 
+    required <span class="string">string</span> path       = 2; 
+    required <span class="string">string</span> name       = 3; 
+    required <span class="string">string</span> value      = 4; 
+    <span class="comment">/** 
+     * Expiry time for cookie specified in seconds from epoch (Unix timestamp).
+     * A value of 0 means the cookie is expired when the session ends (browser closes).
+     */</span>
+    required <span class="number">uint32</span> expires    = 5; 
+    <span class="comment">/** 
+     * If true the cookie will only be transferred on secure connections (HTTPS).
+     */</span>
+    required <span class="bool">bool  </span> isSecure   = 6; 
+    <span class="comment">/** 
+     * If true the cookie is only accessible via HTTP.
+     */</span>
+    required <span class="bool">bool  </span> isHTTPOnly = 7; 
+  }
+  repeated <span class="message">Cookie</span> cookieList = 1; 
+}
