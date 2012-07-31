@@ -1,0 +1,65 @@
+<span class="comment">/** 
+ * Argument to SearchDom command.
+ * 
+ * @since 6.5
+ */</span>
+message <span class="message">SearchDomArg</span>
+{
+  enum Type
+  {
+    <span class="comment">/** 
+     * Search tag names, attribute names, attribute values, and text content
+     * for an ocurrence of the specified string.
+     * 
+     * The query string "strong", for instance, would match all <strong>
+     * nodes as well as text content and attribute values with "strong"
+     * in them.
+     */</span>
+    PLAIN_TEXT = 1;
+    <span class="comment">/** 
+     * Match tag names, attribute names, attribute values, and text content
+     * against a specified regular expression. Do not delimit the query
+     * string Perl-style ("/foo/"). Provide the plain regex string only
+     * ("foo").
+     * 
+     * The regular expression "[0-9]+", for instance, would match all text
+     * nodes and attribute values containing digits.
+     * 
+     * Regular expression searches use the same syntax and semantics as
+     * the RegExp object in ECMAScript.
+     */</span>
+    REGEXP = 2;
+    <span class="comment">/** 
+     * Matches nodes according to an XPath expression.
+     * 
+     * "//p", for instance, matches all <p> nodes.
+     */</span>
+    XPATH = 3;
+    <span class="comment">/** 
+     * Matches nodes according to a CSS selector.
+     * 
+     * For instance, "div" matches all <div> nodes, and ".box" matches
+     * all nodes with the class "box".
+     */</span>
+    SELECTOR = 4;
+  }
+
+  <span class="comment">/** 
+   * Search the DOM of this runtime.
+   */</span>
+  required <span class="number">uint32</span> runtimeID  = 1; 
+  <span class="comment">/** 
+   * The string to search for.
+   */</span>
+  required <span class="string">string</span> query      = 2; 
+  optional <span class="number">Type  </span> type       = 3; 
+  <span class="comment">/** 
+   * If present, search only the subtree of this node.
+   */</span>
+  optional <span class="number">uint32</span> objectID   = 4; 
+  <span class="comment">/** 
+   * Set to TRUE to ignore case (REGEXP and PLAIN_TEXT only). If set to
+   * FALSE, which is the default, case will be respected.
+   */</span>
+  optional <span class="bool">bool  </span> ignoreCase = 5; 
+}
