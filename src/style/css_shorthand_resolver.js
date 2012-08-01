@@ -334,7 +334,7 @@ CssShorthandResolver.shorthands = (function() {
             sub_template.push(" ", declarations["animation-fill-mode"][i]);
 
           // There's always an extra space at the beginning, remove it here
-          sub_template.splice(0, 1);
+          sub_template.shift();
 
           // If all properties have default values, at least append the default name
           if (!sub_template.length)
@@ -412,7 +412,7 @@ CssShorthandResolver.shorthands = (function() {
             sub_template.push(" ", declarations["-o-animation-fill-mode"][i]);
 
           // There's always an extra space at the beginning, remove it here
-          sub_template.splice(0, 1);
+          sub_template.shift();
 
           // If all properties have default values, at least append the default name
           if (!sub_template.length)
@@ -722,7 +722,7 @@ CssShorthandResolver.shorthands = (function() {
         template.push(" ", decls["font-family"]);
 
         // There's always an extra space at the beginning, remove it here
-        template.splice(0, 1);
+        template.shift();
 
         return template;
       }
@@ -861,7 +861,7 @@ CssShorthandResolver.shorthands = (function() {
             get_tokens(declarations["transition-delay"][i]), ", "
           );
         }
-        template.splice(-1, 1); // Remove the last ','
+        template.pop();
 
         return template;
       }
@@ -888,7 +888,7 @@ CssShorthandResolver.shorthands = (function() {
             get_tokens(declarations["-o-transition-delay"][i]), ", "
           );
         }
-        template.splice(-1, 1); // Remove the last ','
+        template.pop();
 
         return template;
       }
