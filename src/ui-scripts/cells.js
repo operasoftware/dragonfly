@@ -292,9 +292,9 @@
     {
       ["tabs", "tabbar"].forEach(function(prop)
       {
-        if (rough_cell[prop] && typeof rough_cell[prop] == "function")
+        if (rough_cell["get_" + prop] && typeof rough_cell["get_" + prop] == "function")
         {
-          rough_cell[prop] = rough_cell[prop](services);
+          rough_cell[prop] = rough_cell["get_" + prop](services);
         }
       });
 
