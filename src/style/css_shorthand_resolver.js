@@ -291,13 +291,6 @@ CssShorthandResolver.shorthands = (function() {
         "animation-fill-mode"
       ],
       format: function(decls) {
-        // Workaround for CORE-45497: -o-animation-duration computed style
-        // missing comma when having multiple values
-        // Fixed in ci-322
-        var duration = decls["animation-duration"];
-        if (duration.value.indexOf(" ") !== -1 && duration.value.indexOf(",") === -1)
-          duration.value = duration.value.replace(/\s+/g, ", ");
-
         var declarations = split_values(decls);
         var template = [];
         var len = declarations["animation-name"].length;
