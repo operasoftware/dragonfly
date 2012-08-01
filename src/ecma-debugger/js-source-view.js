@@ -1141,7 +1141,7 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
   var service = window.services['ecmascript-debugger'];
-  var stop_on_error = service.satisfies_version(6, 8) ? true : false;
+  var stop_on_error = service.satisfies_version(6, 8);
   var checkboxes =
   [
     'script',

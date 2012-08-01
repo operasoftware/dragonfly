@@ -472,7 +472,7 @@ ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = "Show default pro
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 
 /* DESC: Enable reformatting of JavaScript. */
-ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
+ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty-print JavaScript";
 
 /* DESC: Tooltip text for a button under the Scripts tab that reloads the browser to receive fresh DOM, etc. */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
@@ -1129,7 +1129,7 @@ ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
 /* DESC: Enable smart reformatting of JavaScript. */
-ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
+ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty-printing";
 
 /* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";
