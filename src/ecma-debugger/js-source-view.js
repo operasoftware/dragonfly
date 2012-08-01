@@ -1141,7 +1141,7 @@ cls.JsSourceView.create_ui_widgets = function()
   );
 
   var service = window.services['ecmascript-debugger'];
-  var stop_on_error = service.satisfies_version(6, 8) ? 1 : 0;
+  var stop_on_error = service.satisfies_version(6, 8) ? true : false;
   var checkboxes =
   [
     'script',
@@ -1168,10 +1168,10 @@ cls.JsSourceView.create_ui_widgets = function()
     'js_source',
     // key-value map
     {
-      script: 0,
-      exception: 0,
+      script: false,
+      exception: false,
       error: stop_on_error,
-      abort: 0,
+      abort: false,
       'tab-size': 4,
       'js-search-type': DOMSearch.PLAIN_TEXT,
       'js-search-ignore-case': true,
