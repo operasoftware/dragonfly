@@ -1,0 +1,23 @@
+message <span class="message">AboutToLoadDocument</span>
+{
+  required <span class="number">uint32</span> windowID         = 1; 
+  required <span class="number">uint32</span> frameID          = 2; 
+  <span class="comment">/** 
+   * The resource that is about to get loaded.
+   */</span>
+  required <span class="number">uint32</span> resourceID       = 3; 
+  <span class="comment">/** 
+   * Milliseconds since Unix Epoch.
+   */</span>
+  required <span class="number">double</span> time             = 4; 
+  <span class="comment">/** 
+   * The parent document, present only if the frame is not the
+   * top level frame.
+   */</span>
+  optional <span class="number">uint32</span> parentDocumentID = 5; 
+  <span class="comment">/** 
+   * The parent frame, present only if the frame is not the
+   * top level frame.
+   */</span>
+  optional <span class="number">uint32</span> parentFrameID    = 6; 
+}

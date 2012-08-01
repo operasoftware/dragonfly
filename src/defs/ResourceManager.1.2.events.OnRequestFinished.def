@@ -1,0 +1,85 @@
+message <span class="message">RequestFinished</span>
+{
+  message <span class="message">RequestData</span>
+  {
+    required <span class="number">uint32 </span> requestID         = 1; 
+    required <span class="number">uint32 </span> resourceID        = 2; 
+    optional <span class="string">string </span> mimeType          = 3; 
+    <span class="comment">/** 
+     * The character encoding of the payload. Not applicable when the
+     * payload is of a non-text type.
+     * 
+     * Example: utf-8
+     */</span>
+    optional <span class="string">string </span> characterEncoding = 4; 
+    optional <span class="number">uint32 </span> contentLength     = 5; 
+    optional <span class="message">Content</span> content           = 6; 
+    <span class="comment">/** 
+     * If the payload is multipart, this list contains the
+     * individual parts.
+     */</span>
+    repeated <span class="message">Part   </span> partList          = 7; 
+  }
+  message <span class="message">Content</span>
+  {
+    <span class="comment">/** 
+     * If BYTES or DATA_URI was chosen as the transport mode, this field
+     * contains the size of the data. (If, in addition, decoding was enabled,
+     * the field contains the size of the decoded data).
+     * 
+     * If STRING was chosen as the transport mode, this field contains the
+     * string length (regardless of encoding), i.e. the number of characters,
+     * not including zero terminator.
+     */</span>
+    optional <span class="number">uint32</span> length            = 1; 
+    <span class="comment">/** 
+     * The (original) character encoding of the data (if applicable).
+     */</span>
+    optional <span class="string">string</span> characterEncoding = 2; 
+    <span class="comment">/** 
+     * This field contains the data if BYTES was chosen as the transport
+     * mode. If other modes were chosen, this field is not set.
+     * 
+     * @see ContentMode::Transport
+     */</span>
+    optional <span class="bytes">bytes </span> byteData          = 3; 
+    <span class="comment">/** 
+     * This field contains the data if either STRING or DATA_URI were chosen
+     * as transport mode. If some other mode was chosen, this field is not set.
+     * 
+     * @see ContentMode::Transport
+     */</span>
+    optional <span class="string">string</span> stringData        = 4; 
+  }
+  message <span class="message">Part</span>
+  {
+    <span class="comment">/** 
+     * In multi-part, each part may have its own headers.
+     */</span>
+    repeated <span class="message">Header </span> headerList    = 1; 
+    <span class="comment">/** 
+     * The length of this part.
+     */</span>
+    optional <span class="number">uint32 </span> contentLength = 2; 
+    optional <span class="message">Content</span> content       = 3; 
+  }
+  message <span class="message">Header</span>
+  {
+    <span class="comment">/** 
+     * The name of the HTTP header, for instance "Accept-Charset".
+     */</span>
+    required <span class="string">string</span> name  = 1; 
+    <span class="comment">/** 
+     * The value of the HTTP header, for instance "utf-8" when using
+     * Accept-Charset, or "text/html; charset=utf8" for Content-Type.
+     */</span>
+    required <span class="string">string</span> value = 2; 
+  }
+  required <span class="number">uint32     </span> requestID  = 1; 
+  required <span class="number">uint32     </span> resourceID = 2; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double     </span> time       = 3; 
+  optional <span class="message">RequestData</span> data       = 4; 
+}

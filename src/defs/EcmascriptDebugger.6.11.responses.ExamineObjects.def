@@ -1,0 +1,64 @@
+message <span class="message">ObjectChainList</span>
+{
+  message <span class="message">ObjectList</span>
+  {
+    repeated <span class="message">ObjectInfo</span> objectList = 1; 
+  }
+  message <span class="message">ObjectInfo</span>
+  {
+    required <span class="message">ObjectValue</span> value        = 1; 
+    repeated <span class="message">Property   </span> propertyList = 2; 
+  }
+  message <span class="message">ObjectValue</span>
+  {
+    required <span class="number">uint32</span> objectID     = 1; 
+    required <span class="bool">bool  </span> isCallable   = 2; 
+    <span class="comment">/** 
+     * type, function or object
+     */</span>
+    required <span class="string">string</span> type         = 3; 
+    optional <span class="number">uint32</span> prototypeID  = 4; 
+    <span class="comment">/** 
+     * The class of the object.
+     */</span>
+    optional <span class="string">string</span> className    = 5; 
+    <span class="comment">/** 
+     * If the object is a function, this is the name of
+     * the variable associated with that function (if any).
+     */</span>
+    optional <span class="string">string</span> functionName = 6; 
+  }
+  <span class="comment">/** 
+   * If `type` is ... then ... is present:
+   *   "object", `objectValue`
+   *   "number", `value`
+   *   "string", `value`
+   *   "boolean", `value` (`"true"` or `"false"`)
+   * Otherwise (`"undefined"` or `"null"`), only `type` is present.
+   */</span>
+  message <span class="message">Property</span>
+  {
+    required <span class="string">string     </span> name        = 1; 
+    <span class="comment">/** 
+     * One of:
+     * - `"number"`
+     * - `"boolean"`
+     * - `"string"`
+     * - `"null"`
+     * - `"undefined"`
+     * - `"object"`
+     * - `"script_getter"`               @since 6.7, value is undefined. The property has to be fetched by eval.
+     * - `"function_caller_or_argument"` @since 6.7, value is undefined. The property is a function argument or function caller.
+     */</span>
+    required <span class="string">string     </span> type        = 2; 
+    <span class="comment">/** 
+     * Only present for `"number"`, `"string"` or `"boolean"`
+     */</span>
+    optional <span class="string">string     </span> value       = 3; 
+    <span class="comment">/** 
+     * Only present for `"object"`
+     */</span>
+    optional <span class="message">ObjectValue</span> objectValue = 4; 
+  }
+  repeated <span class="message">ObjectList</span> objectChainList = 1; 
+}

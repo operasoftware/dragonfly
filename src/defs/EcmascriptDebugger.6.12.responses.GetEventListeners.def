@@ -1,0 +1,126 @@
+<span class="comment">/** 
+ * Contains a list of event targets and their event listeners.
+ * 
+ * @since 6.11
+ */</span>
+message <span class="message">EventTargets</span>
+{
+  <span class="comment">/** 
+   * Represents the EventTarget DOM interface found on DOM nodes and objects.
+   * This message will also be used for objects that does not support
+   * EventTarget, in those cases only the objectID will be set.
+   * 
+   * Details on the EventTarget interface:
+   * http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-EventTarget
+   * 
+   * @since 6.11
+   */</span>
+  message <span class="message">EventTarget</span>
+  {
+    <span class="comment">/** 
+     * The ID of the object which has the event target.
+     */</span>
+    required <span class="number">uint32       </span> objectID          = 1; 
+    <span class="comment">/** 
+     * List of event listeners registered on this event target.
+     * If the object does not implement the EventTarget DOM interface then
+     * the field will not be set.
+     */</span>
+    repeated <span class="message">EventListener</span> eventListenerList = 2; 
+  }
+  <span class="comment">/** 
+   * Defines a DOM event listener which will be called when a matching DOM
+   * event is triggered. The listener is registered on a DOM Node for a
+   * given event type, e.g. "click", either by calling EventTarget.addEventListener()
+   * or by setting an attribute e.g. onclick="...". Use the field
+   * `origin` to determine where it was registered.
+   * 
+   * The origin dictates which fields are set in this message.
+   * 
+   * If origin.type is `EVENT_TARGET` then the following fields are set:
+   * - useCapture
+   * - listenerObjectID
+   * - position
+   * 
+   * If origin.type is `ATTRIBUTE` then the following fields are set:
+   * - listenerObjectID or listenerScriptData
+   * 
+   * @since 6.11
+   */</span>
+  message <span class="message">EventListener</span>
+  {
+    <span class="comment">/** 
+     * Defines possible origins for the registration of the event listener.
+     */</span>
+    enum Origin
+    {
+      <span class="comment">/** 
+       * The listener was created by calling EventTarget.addEventListener().
+       */</span>
+      EVENT_TARGET = 1;
+      <span class="comment">/** 
+       * The listener was created from an attribute, e.g. onclick="alert()"
+       */</span>
+      ATTRIBUTE = 2;
+    }
+
+    <span class="comment">/** 
+     * The event type which the listener triggers on e.g., `"click"`, `"mousemove"`
+     * More examples at http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.html
+     */</span>
+    required <span class="string">string  </span> eventType          = 1; 
+    <span class="comment">/** 
+     * Determines the origin of the registration.
+     */</span>
+    required <span class="number">Origin  </span> origin             = 2; 
+    <span class="comment">/** 
+     * Contains the script ID and line number in the script where the listener
+     * was registered.
+     * This is only set when a script registered the listener with
+     * EventTarget.addEventListener().
+     */</span>
+    optional <span class="message">Position</span> position           = 3; 
+    <span class="comment">/** 
+     * The value of the useCapture parameter sent to addEventListener().
+     * Only set when origin is EVENT_TARGET.
+     */</span>
+    optional <span class="bool">bool    </span> useCapture         = 4; 
+    <span class="comment">/** 
+     * The function object which was registered as the EventListener.
+     * This is either set by calling EventTarget.addEventListener() or by
+     * setting an attribute on a node, e.g. node.onclick=handleClick.
+     */</span>
+    optional <span class="number">uint32  </span> listenerObjectID   = 5; 
+    <span class="comment">/** 
+     * The script data which will be used as the EventListener. This is
+     * only set for attribute based listeners e.g. <div onclick="..." /> or
+     * node.onclick="...". When the listener is triggered by an event the
+     * script is compiled into a function and `listenerObjectID` will be set
+     * and this field unset.
+     */</span>
+    optional <span class="string">string  </span> listenerScriptData = 6; 
+  }
+  <span class="comment">/** 
+   * Defines the position in a script. The position is identified by the ID of
+   * the script and the line number in the script.
+   */</span>
+  message <span class="message">Position</span>
+  {
+    <span class="comment">/** 
+     * ID of the script which contains the position.
+     * The ID will be set in the ScriptInfo message when a new script appears.
+     */</span>
+    required <span class="number">uint32</span> scriptID   = 1; 
+    <span class="comment">/** 
+     * The line number in the script.
+     */</span>
+    required <span class="number">uint32</span> lineNumber = 2; 
+  }
+  required <span class="number">uint32     </span> runtimeID  = 1; 
+  <span class="comment">/** 
+   * List of event targets that was fetched. The list will also
+   * contain event targets for objects that does not implement the
+   * EventTarget DOM interface but the listener list will be unset.
+   */</span>
+  repeated <span class="message">EventTarget</span> targetList = 2; 
+}

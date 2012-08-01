@@ -1,0 +1,23 @@
+message <span class="message">OpenWidgetArg</span>
+{
+  required <span class="string">string</span> widgetID           = 1; 
+  <span class="comment">/** 
+   * Set this to true to give the widget programmatic access
+   * to the global security policy (the widget.setGlobalPolicy
+   * function).
+   * 
+   * This should only be set for widgets deployed for testing
+   * purposes.
+   */</span>
+  optional <span class="bool">bool  </span> allowMutablePolicy = 2; 
+  <span class="comment">/** 
+   * Override the regular global policy. This field may contain
+   * a full XML global policy file, starting with the <widgets>
+   * tag. The 'allowMutablePolicy' must be set to true when using
+   * this field.
+   * 
+   * If a security policy was specified, but could not be parsed,
+   * this command fails and the widget will not be opened.
+   */</span>
+  optional <span class="string">string</span> globalPolicy       = 3; 
+}

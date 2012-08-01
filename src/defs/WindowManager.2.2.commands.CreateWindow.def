@@ -1,0 +1,29 @@
+message <span class="message">CreateWindowArg</span>
+{
+  <span class="comment">/** 
+   * Type is one of:
+   * - "normal"
+   * - "download"
+   * - "cache"
+   * - "plugins"
+   * - "history"
+   * - "help"
+   * - "mail_view"
+   * - "mail_compose"
+   * - "newsfeed_view"
+   * - "ad"
+   * - "im_view"
+   * - "p2p_view"
+   * - "brand_view"
+   * - "print_selection"
+   * - "js_console"
+   * - "gadget"
+   * - "controller"
+   * - "info"
+   * - "dialog"
+   * - "thumbnail"
+   * - "normal_hidden"
+   * - "devtools"
+   */</span>
+  optional <span class="string">string</span> windowType = 1; 
+}

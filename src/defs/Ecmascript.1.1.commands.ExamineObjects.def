@@ -1,0 +1,16 @@
+message <span class="message">ExamineObjectsArg</span>
+{
+  <span class="comment">/** 
+   * ID of runtime to examine object in.
+   */</span>
+  required <span class="number">uint32</span> runtimeID         = 1; 
+  <span class="comment">/** 
+   * List of object IDs to examine.
+   */</span>
+  repeated <span class="number">uint32</span> objectIDList      = 2; 
+  <span class="comment">/** 
+   * If true then each examined object will also include the prototype
+   * chain.
+   */</span>
+  optional <span class="bool">bool  </span> examinePrototypes = 3; 
+}

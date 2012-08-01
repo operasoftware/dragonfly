@@ -1,0 +1,7 @@
+message <span class="message">OverlayID</span>
+{
+  <span class="comment">/** 
+   * Non-zero ID for an overlay.
+   */</span>
+  required <span class="number">uint32</span> overlayID = 1; 
+}

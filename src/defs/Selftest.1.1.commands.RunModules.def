@@ -1,0 +1,26 @@
+message <span class="message">RunModulesArg</span>
+{
+  <span class="comment">/** 
+   * @since 1.1
+   */</span>
+  enum OutputType
+  {
+    <span class="comment">/** 
+     * Output from selftest run should be human readable.
+     */</span>
+    HUMAN_READABLE = 1;
+    <span class="comment">/** 
+     * Output from selftest run should be machine readable. The output will
+     * still be plain text, but in a form which is easy to process further.
+     */</span>
+    MACHINE_READABLE = 2;
+  }
+
+  repeated <span class="string">string    </span> moduleList = 1; 
+  <span class="comment">/** 
+   * Specifies the output type for this selftest run.
+   * 
+   * @since 1.1
+   */</span>
+  optional <span class="number">OutputType</span> outputType = 2; 
+}

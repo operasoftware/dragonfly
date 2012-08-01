@@ -1,0 +1,23 @@
+<span class="comment">/** 
+ * Fired for specific events happening during document load.
+ * 
+ * @since 1.2
+ */</span>
+message <span class="message">DocumentEvent</span>
+{
+  required <span class="number">uint32           </span> windowID   = 1; 
+  required <span class="number">uint32           </span> frameID    = 2; 
+  required <span class="number">uint32           </span> documentID = 3; 
+  <span class="comment">/** 
+   * The resource that was used to generate this document.
+   */</span>
+  required <span class="number">uint32           </span> resourceID = 4; 
+  <span class="comment">/** 
+   * The type of event that is being reported.
+   */</span>
+  required <span class="number">DocumentEventType</span> eventType  = 5; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double           </span> time       = 6; 
+}
