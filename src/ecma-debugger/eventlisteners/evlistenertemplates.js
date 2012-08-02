@@ -177,7 +177,7 @@
     if (script.uri)
     {
       var is_linked = script.script_type == "linked";
-      ret.push("span", str.replace("%s", script.filename + ":" + line_number),
+      ret.push("span", str.replace("%s", script.short_url + ":" + line_number),
                        "data-tooltip", is_linked && "url-tooltip",
                        "data-tooltip-text", is_linked && script.uri);
     }
@@ -185,7 +185,7 @@
     {
       var rt = window.runtimes.getRuntime(script.runtime_id);
       if (rt)
-        ret.push("span", str.replace("%s", rt.filename),
+        ret.push("span", str.replace("%s", rt.short_url),
                          "data-tooltip", "url-tooltip",
                          "data-tooltip-text", rt.uri);
       else
