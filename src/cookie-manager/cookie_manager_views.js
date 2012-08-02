@@ -432,11 +432,9 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       // Fix expires value, work around CORE-47780: .value property of <input type=datetime-local>
       // element has two digits representing milliseconds, instead of three.
-      var expires_parts = expires.split(".");
-      if (expires_parts[1] && expires_parts[1].length < 3)
-      {
+      if (/.\.\d{2}$/.test(expires))
         expires += "0";
-      }
+
       expires = new Date(expires || 0).getTime();
 
       var object_id = edit_tr.getAttribute("data-object-id");
