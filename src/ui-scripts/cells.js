@@ -292,10 +292,9 @@
     {
       ["tabs", "tabbar"].forEach(function(prop)
       {
-        if (rough_cell["get_" + prop] && typeof rough_cell["get_" + prop] == "function")
-        {
-          rough_cell[prop] = rough_cell["get_" + prop](services);
-        }
+        var getter = rough_cell["get_" + prop];
+        if (typeof getter == "function")
+          rough_cell[prop] = getter(services);
       });
 
       this.appendUiNodes(rough_cell.tabbar);
