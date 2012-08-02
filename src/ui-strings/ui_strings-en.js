@@ -679,10 +679,10 @@ ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
-ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "Added in %s";
 
 /* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
-ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "Set as markup attribute";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
 ui_strings.S_EVENT_TARGET_LISTENER = "Event target listener";
