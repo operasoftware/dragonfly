@@ -286,7 +286,7 @@ ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
 
 /* DESC: View with the event listeners of the selected node. */
-ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected Node";
 
 /* DESC: Heading for Export button, accessed by clicking the subhead DOM view button. */
 ui_strings.M_VIEW_LABEL_EXPORT = "Export";
@@ -418,7 +418,7 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
-ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+ui_strings.S_ATTRIBUTE_LISTENER = "Attribute listener";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -682,7 +682,7 @@ ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
 ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
-ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
+ui_strings.S_EVENT_TARGET_LISTENER = "Event target listener";
 
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
@@ -916,7 +916,7 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
 
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
-ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "(Missing source file)";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
