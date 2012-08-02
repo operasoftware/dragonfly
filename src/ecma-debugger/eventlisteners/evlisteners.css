@@ -20,6 +20,11 @@
   margin-bottom: 10px;
 }
 
+.list-selected-node dd
+{
+  margin-left: 26px;
+}
+
 .ev-missing-script:hover
 {
   border-radius: 2px;
