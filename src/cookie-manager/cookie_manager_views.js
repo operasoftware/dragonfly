@@ -437,6 +437,9 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       expires = new Date(expires || 0).getTime();
 
+      // "expires" represents a local time value. Add timezone offset.
+      expires += new Date().getTimezoneOffset() * 60 * 1000;
+
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;
       if (object_id)
