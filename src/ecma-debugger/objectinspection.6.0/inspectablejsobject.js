@@ -15,9 +15,9 @@ cls.EcmascriptDebugger["6.0"] || (cls.EcmascriptDebugger["6.0"] = {});
   */
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject =
-function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list)
+function(rt_id, obj_id, identifier, _class, pseudo_properties, scope_list, use_cache)
 {
-  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list);
+  this._init(rt_id, obj_id, pseudo_properties || null, identifier, _class, scope_list, use_cache);
 }
 
 cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
@@ -86,14 +86,9 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     "}"
   */
 
-  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list)
+  this._init = function(rt_id, obj_id, virtual_props, identifier, _class, scope_list, use_cache)
   {
     this.id = this._get_id();
-    if (!window.inspections)
-    {
-      new cls.Namespace("inspections");
-    }
-    window.inspections.add(this);
     this._obj_map =
     {
       0:
@@ -121,6 +116,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     this._root_path_joined = this._root_path.join();
     this.scope_list = scope_list && scope_list.slice(1);
     this._has_data = false;
+    if (!window.inspections)
+    {
+      window.inspections = new cls.Inspections();
+    }
+    window.inspections.add(this, use_cache);
   }
 
   this._get_subtree = function(path)
@@ -931,3 +931,42 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   };
 
 }).apply(cls.EcmascriptDebugger["6.0"].InspectableJSObject);
+
+cls.Inspections = function()
+{
+  this.init();
+};
+
+cls.InspectionsPrototype = function()
+{
+  this.add = function(obj, use_cache)
+  {
+    if (use_cache)
+      this._objects[obj.object_id] = obj;
+
+    var id = obj.id || obj.name;
+    if (id)
+      this[id] = obj;
+    else
+      throw "The object must have and id or a name";
+  };
+
+  /**
+   * While this is guaranteed to return the correct object, there's no
+   * guarantee that the correct model is returned. In other words, don't
+   * rely in this for things that are dependent on the state, e.g. the
+   * expanded state.
+   */
+  this.get_object = function(obj_id)
+  {
+    return this._objects[obj_id] || null;
+  };
+
+  this.init = function()
+  {
+    this._objects = new HashMap();
+  };
+};
+
+cls.Inspections.prototype = new cls.InspectionsPrototype();
+

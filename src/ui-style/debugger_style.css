@@ -1606,3 +1606,76 @@ d
   margin: -3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+.return-values
+{
+  margin: 5px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.return-value
+{
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.return-function-from > examine-objects
+{
+  display: inline-block;
+}
+
+.return-function-from > examine-objects,
+.return-value > examine-objects
+{
+  padding: 0;
+}
+
+.return-value > .return-value-arrow,
+.return-value > item,
+.return-value > examine-objects
+{
+  display: table-cell;
+}
+
+.return-function-from .folder-key
+{
+  display: none;
+}
+
+.return-value-arrow
+{
+  display: inline-block;
+  vertical-align: top;
+  width: 14px;
+  height: 15px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.return-value .return-value-arrow
+{
+  width: 28px;
+}
+
+.return-value-arrow-from
+{
+  background: transparent url("../ui-images/arrow_roundl.png") 0 50% no-repeat;
+}
+
+.return-value-arrow-to
+{
+  height: 100%;
+  background: transparent url("../ui-images/arrow_tail.png") 13px 2px no-repeat;
+}
+
+.return-function-from:hover .return-value-arrow-from
+{
+  background-image: url("../ui-images/arrow_roundl_hover.png");
+}
+
+.return-value:hover .return-value-arrow-to
+{
+  background-image: url("../ui-images/arrow_tail_hover.png");
+}
+

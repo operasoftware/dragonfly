@@ -324,6 +324,9 @@ ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = "No breakpoint";
 /* DESC: Text to show in inspection if there is no object to inspect. */
 ui_strings.M_VIEW_LABEL_NO_INSPECTION = "No inspection";
 
+/* DESC: The content of the return value section when there are not return values. */
+ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return values";
+
 /* DESC: Text to show in watches if there are no watches */
 ui_strings.M_VIEW_LABEL_NO_WATCHES = "No watches";
 
@@ -356,6 +359,9 @@ ui_strings.M_VIEW_LABEL_RESPONSE_BODY = "Response body";
 
 /* DESC: Name of response headers tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = "Response Headers";
+
+/* DESC: Section in the script side panel for return values. */
+ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
 
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = "State";
@@ -412,7 +418,7 @@ ui_strings.M_VIEW_SUB_LABEL_OFFSET_VALUES = "Offset Values";
 ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 
 /* DESC: Anonymous function label. */
-ui_strings.S_ANONYMOUS_FUNCTION_NAME = "<anonymous function>";
+ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "Attribute listener";
@@ -721,7 +727,7 @@ ui_strings.S_EXPAND_SHORTHANDS = "Expand shorthands";
 ui_strings.S_GLOBAL_KEYBOARD_SHORTCUTS_SECTION_TITLE = "Global";
 
 /* DESC: Global scope label. */
-ui_strings.S_GLOBAL_SCOPE_NAME = "<global scope>";
+ui_strings.S_GLOBAL_SCOPE_NAME = "(global)";
 
 /* DESC: Show help in command line */
 ui_strings.S_HELP_COMMAND_LINE = "Help";
@@ -1411,7 +1417,7 @@ ui_strings.S_RESOURCE_ALL_TABLE_GROUP_GROUPS = "Groups";
 ui_strings.S_RESOURCE_ALL_TABLE_GROUP_HOSTS = "Hosts";
 
 /* DESC: Fallback text for no filename, used as tab label */
-ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "<no name>";
+ui_strings.S_RESOURCE_ALL_TABLE_NO_FILENAME = "(no name)";
 
 /* DESC: Fallback text for no host */
 ui_strings.S_RESOURCE_ALL_TABLE_NO_HOST = "No host";
@@ -1421,6 +1427,12 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
+
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
+
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
 
 /* DESC: Label for the global scope in the Scope Chain. */
 ui_strings.S_SCOPE_GLOBAL = "Global";
@@ -1724,4 +1736,7 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
+
+/* DESC: String shown instead of filename when file name is missing  */
+ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
 
