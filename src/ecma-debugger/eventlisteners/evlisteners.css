@@ -5,7 +5,7 @@
 
 .ev-type-list
 {
-  margin: 0 3px;
+  margin: 0;
 }
 
 .ev-listener-tooltip
@@ -22,7 +22,12 @@
 
 .list-selected-node dd
 {
-  margin-left: 26px;
+  margin-left: 23px;
+}
+
+.ev-listener-tooltip dd
+{
+  margin-left: 16px;
 }
 
 .ev-missing-script:hover
