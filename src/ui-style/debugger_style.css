@@ -1621,6 +1621,11 @@ d
   width: 100%;
 }
 
+.return-function-from
+{
+  white-space: pre;
+}
+
 .return-function-from > examine-objects
 {
   display: inline-block;
