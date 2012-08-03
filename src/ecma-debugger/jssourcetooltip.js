@@ -186,6 +186,9 @@ cls.JSSourceTooltip = function(view)
     var OBJECT_ID = 0;
     var CLASS_NAME = 4;
 
+    if (!_container)
+      return;
+
     if (status === 0 && message[STATUS] == "completed")
     {
       _identifier = selection;
