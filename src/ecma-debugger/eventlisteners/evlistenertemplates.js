@@ -31,7 +31,7 @@
     if (ev_rt_list.length > 1)
     {
       ret.push(["h2",
-                 ["span", rt && (rt.title || rt.host),
+                 ["span", rt && (rt.title || rt.host || rt.short_url),
                           "data-tooltip", "url-tooltip",
                           "data-tooltip-text", rt && rt.uri],
                  "class", "ev-rt-title"]);
