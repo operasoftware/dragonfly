@@ -20,6 +20,10 @@ var URIPrototype = function(uri_prop_name)
     abs_dir // protocol plus hostname plus dir_pathname
     path_parts // list of "directories" in pathname
     short_distinguisher // the last part of a url that can be used to distinguish it
+
+    The value of uri_prop_name (uri) must be ab absolute URI.
+    For relative URIs the properties have not clear defined values, e.g. "a.b"
+    could be a host or a filename.
   */
 
   var DATA_URI_LENGTH_SHORT = 25;
