@@ -43,7 +43,7 @@ templates.cookie_manager = {
     var datetime_local_val;
     if (value_in_seconds)
     {
-      datetime_local_val= new Date(value_in_seconds * 1000).toISOString();
+      datetime_local_val= new Date(value_in_seconds * 1000).toLocaleISOString();
     }
     return [
       "input",

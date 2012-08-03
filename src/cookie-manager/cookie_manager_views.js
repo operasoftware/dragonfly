@@ -430,17 +430,10 @@ cls.CookieManager.CookieManagerViewBase = function()
       // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
       var domain       = domain_input && domain_input.value.trim() || runtime && this.data._rts[runtime].hostname;
 
-      // Fix expires value, work around CORE-47780: .value property of <input type=datetime-local>
-      // element has two digits representing milliseconds, instead of three.
-      if (/.\.\d{2}$/.test(expires))
-        expires += "0";
-
-      expires = new Date(expires || 0).getTime();
-
-      // An expires value of 0 represents a session cookie.
-      // Other values represent local time values. Add timezone offset.
       if (expires)
-        expires += new Date().getTimezoneOffset() * 60 * 1000;
+        expires = Date.fromLocaleISOString(expires).getTime();
+      else
+        expires = 0; // 0 means the cookie expires after the session.
 
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;

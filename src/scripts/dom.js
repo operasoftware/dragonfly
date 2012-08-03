@@ -777,6 +777,40 @@ Date.prototype.toLocaleISOString = function()
  return new Date(this.getTime() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','');
 };
 
+Date.fromLocaleISOString = function(localeISOString)
+{
+  // A localeISOString looks like one of these:
+    // 2012-08-03T16:11
+    // 2012-08-03T16:11:52.61 (the it's CORE-47780)
+    // 2012-08-03T16:11:52.611
+
+  var parts = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})\.(\d{2,3}))?$/.exec(localeISOString);
+  if (parts)
+  {
+    parts.shift();
+    var date = new Date(0);
+    [
+      // setXyz methods are used to set local timezone, as opposed to setXyzUTC
+      date.setFullYear,
+      function(v){
+        this.setMonth(v - 1)
+      },
+      date.setDate,
+      date.setHours,
+      date.setMinutes,
+      date.setSeconds,
+      date.setMilliseconds
+    ].forEach(function(func){
+      var val = parts.shift();
+      if (val)
+        func.call(date, Number(val));
+
+    });
+    return date;
+  }
+  return null;
+};
+
 /**
  * Convenience function for loading a resource with XHR using the get method.
  * Will automatically append a "time" guery argument to avoid caching.
