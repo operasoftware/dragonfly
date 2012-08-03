@@ -421,7 +421,7 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
-ui_strings.S_ATTRIBUTE_LISTENER = "Attribute listener";
+ui_strings.S_ATTRIBUTE_LISTENER = "Event handler";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -685,7 +685,7 @@ ui_strings.S_EVENT_LISTENER_ADDED_IN = "Added in %s";
 ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "Set as markup attribute";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
-ui_strings.S_EVENT_TARGET_LISTENER = "Event target listener";
+ui_strings.S_EVENT_TARGET_LISTENER = "Event listener";
 
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
