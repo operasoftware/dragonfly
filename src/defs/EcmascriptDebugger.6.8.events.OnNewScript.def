@@ -1,0 +1,22 @@
+message <span class="message">ScriptInfo</span>
+{
+  required <span class="number">uint32</span> runtimeID  = 1; 
+  required <span class="number">uint32</span> scriptID   = 2; 
+  <span class="comment">/** 
+   * One of:
+   * - `"inline"`
+   * - `"event"`
+   * - `"linked"`
+   * - `"timeout"`
+   * - `"java"`
+   * - `"generated"`
+   * - `"unknown"`
+   * - `"debugger-eval"`
+   */</span>
+  required <span class="string">string</span> scriptType = 3; 
+  required <span class="string">string</span> scriptData = 4; 
+  <span class="comment">/** 
+   * present if `scriptType` is Linked
+   */</span>
+  optional <span class="string">string</span> uri        = 5; 
+}

@@ -1,0 +1,31 @@
+message <span class="message">AddCookieArg</span>
+{
+  <span class="comment">/** 
+   * Domain name of cookie
+   */</span>
+  required <span class="string">string</span> domain     = 1; 
+  <span class="comment">/** 
+   * Name of cookie
+   */</span>
+  required <span class="string">string</span> name       = 2; 
+  <span class="comment">/** 
+   * Path of cookie, defaults to /
+   */</span>
+  optional <span class="string">string</span> path       = 3; 
+  <span class="comment">/** 
+   * Cookie value
+   */</span>
+  optional <span class="string">string</span> value      = 4; 
+  <span class="comment">/** 
+   * Expiry time set via seconds since epoch
+   */</span>
+  optional <span class="number">uint32</span> expires    = 5; 
+  <span class="comment">/** 
+   * If true cookie is only accessible via secure connections
+   */</span>
+  optional <span class="bool">bool  </span> isSecure   = 6; 
+  <span class="comment">/** 
+   * If true the cookie is only accessible via HTTP
+   */</span>
+  optional <span class="bool">bool  </span> isHTTPOnly = 7; 
+}

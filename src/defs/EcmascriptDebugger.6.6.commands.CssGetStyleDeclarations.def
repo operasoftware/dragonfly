@@ -1,0 +1,24 @@
+message <span class="message">CssElementSelection</span>
+{
+  required <span class="number">uint32        </span> runtimeID          = 1; 
+  required <span class="number">uint32        </span> objectID           = 2; 
+  <span class="comment">/** 
+   * Set this field to match rules with the specified pseudo selectors, even
+   * if that rule is not currently applied.
+   * 
+   * The rule will match if either of the specified pseudo classes or pseudo
+   * elements are used in the selector. Order does not matter.
+   * 
+   * This is handy for inspecting and modifying style rules for non-current
+   * element states.
+   * 
+   * LINK and VISISTED are not supported for elements that are not links.
+   * 
+   * Using this field will not alter the state of the element. Selecting
+   * HOVER, for instance, when an element is currently not hovered will
+   * therefore not *apply* the HOVER style rules.
+   * 
+   * @since 6.5
+   */</span>
+  repeated <span class="number">PseudoSelector</span> pseudoSelectorList = 3; 
+}

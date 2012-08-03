@@ -1,0 +1,8 @@
+message <span class="message">ReleaseSessionArg</span>
+{
+  <span class="comment">/** 
+   * Which `Session` to release. If omitted, *all* `Sessions` are released,
+   * except the in-progress `Session`, if any.
+   */</span>
+  optional <span class="number">uint32</span> sessionID = 1; 
+}

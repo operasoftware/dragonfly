@@ -1,0 +1,4 @@
+message <span class="message">SetReloadPolicyArg</span>
+{
+  required <span class="number">ReloadPolicy</span> policy = 1; 
+}

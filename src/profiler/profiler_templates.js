@@ -84,12 +84,16 @@ var ProfilerTemplates = function()
   var style_sheets = document.styleSheets;
   var profiler_event_decl = style_sheets.getDeclaration(".profiler-event");
   var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
+  var profiler_event_tooltip_decl = style_sheets.getDeclaration(".profiler-event-tooltip");
   var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
   var BAR_HEIGHT = profiler_timeline_row_decl
-                 ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
-                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
-                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
+                 ? (parseInt(profiler_timeline_row_decl.height) +
+                    parseInt(profiler_timeline_row_decl.paddingTop) +
+                    parseInt(profiler_timeline_row_decl.paddingBottom))
                  : 0;
+  var TOOLTIP_WIDTH = profiler_event_tooltip_decl
+                    ? parseInt(profiler_event_tooltip_decl.width)
+                    : 0;
 
   this._order = [
     EVENT_TYPE_DOCUMENT_PARSING,
@@ -240,7 +244,7 @@ var ProfilerTemplates = function()
   this._timeline_event = function(interval_start, ms_unit, selected_id, event)
   {
     var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
-    var self_time = Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit));
+    var self_time = interval ? Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit)) : 0;
     var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
     var column = this._order.indexOf(event.type);
     var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
@@ -463,15 +467,14 @@ var ProfilerTemplates = function()
 
   this.get_title_interval_bar = function(event)
   {
-    var WIDTH = 200;
     var interval = event.interval.end - event.interval.start;
-    var ms_unit = WIDTH / interval;
+    var ms_unit = interval ? (TOOLTIP_WIDTH / interval) : 0;
     var self_time = Math.round(event.time * ms_unit);
     var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
     return (
       ["div",
        "style",
-         "width: " + WIDTH + "px; " +
+         "width: " + TOOLTIP_WIDTH + "px; " +
          "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255,255,255,.25) 100%), " +
                            "-o-linear-gradient(0, " + color + " 0, " +
                                               color + " " + self_time + "px, " +
