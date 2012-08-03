@@ -39,12 +39,11 @@ templates.cookie_manager = {
    }
    return template;
   },
-  input_datetime_container: function(name, value) {
-    var lz = helpers.make_leading_zero_string;
+  input_datetime_container: function(name, value_in_seconds) {
     var datetime_local_val;
-    if (value)
+    if (value_in_seconds)
     {
-      datetime_local_val= new Date(value).toLocaleISOString();
+      datetime_local_val= new Date(value_in_seconds * 1000).toISOString();
     }
     return [
       "input",
@@ -152,8 +151,7 @@ templates.cookie_manager = {
     {
        editing_default = new Date().getTime() / 1000 + 60 * 60; // if expiry is unknown, editing default is in one hour
     }
-    var parsed_date = new Date(editing_default * 1000);
-    var edit_elem = this.input_datetime_container("expires", parsed_date.toISOString());
+    var edit_elem = this.input_datetime_container("expires", editing_default);
     return [this.expires(date_in_seconds, objectref), this.edit_container(edit_elem)];
   },
   secure: function(is_secure) {
