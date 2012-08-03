@@ -149,7 +149,7 @@ test("uri", function()
   equal(uri.abs_dir, "");
   equal(uri.basename, "");
   equal(uri.filename, "");
-  equal(uri.short_url, "data:text/plain,a…");
+  equal(uri.short_url, "data:text/plain,a");
 
   var uri = new URI("data:text/plain,abcdefghijklmnopqrstuvwxyz");
   equal(uri.protocol, "data:");
@@ -159,7 +159,7 @@ test("uri", function()
   equal(uri.abs_dir, "");
   equal(uri.basename, "");
   equal(uri.filename, "");
-  equal(uri.short_url, "data:text/plain,abcd…");
+  equal(uri.short_url, "data:text/plain,abcdefghi…");
 
 });
 

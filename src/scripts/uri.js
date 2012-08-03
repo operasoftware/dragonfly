@@ -22,6 +22,8 @@ var URIPrototype = function(uri_prop_name)
     short_distinguisher // the last part of a url that can be used to distinguish it
   */
 
+  var DATA_URI_LENGTH_SHORT = 25;
+
   [
     "hash",
     "host",
@@ -132,7 +134,12 @@ var URIPrototype = function(uri_prop_name)
     if (this._short_url === undefined && (this._is_parsed || this[uri_prop_name]))
     {
       if (this._is_data_uri)
-        this._short_url = (this._protocol + this._pathname).slice(0, 20) + "…";
+      {
+        var short_url = this._protocol + this._pathname;
+        this._short_url = short_url.length <= DATA_URI_LENGTH_SHORT
+                        ? short_url
+                        : short_url.slice(0, DATA_URI_LENGTH_SHORT) + "…";
+      }
       else
         this._short_url = this.filename || this.basename || this.host;
     }
