@@ -31,6 +31,9 @@ test("locale_iso_strings", function()
   var t = Date.fromLocaleISOString("2012-08-03T17:00:00.00").getTime();
   equal(t, 1344013200000 + TIMEZONE_OFFSET);
 
+  var t = Date.fromLocaleISOString("2012-08-03T17:00:00.0").getTime();
+  equal(t, 1344013200000 + TIMEZONE_OFFSET);
+
 });
 
 
