@@ -800,13 +800,14 @@ Date.fromLocaleISOString = function(localeISOString)
       date.setHours,
       date.setMinutes,
       date.setSeconds,
-      date.setMilliseconds
+      function(v){
+        this.setMilliseconds(("0." + v) * 1000);
+      }
     ].forEach(function(func, i){
       func.call(date, Number(parts[i] || 0));
     });
     return date;
   }
-  return null;
 };
 
 /**
