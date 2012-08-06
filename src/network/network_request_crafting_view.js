@@ -72,7 +72,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._parse_request = function(requeststr)
   {
     var retval = {};
-    var lines = requeststr.split("\r\n");
+    var lines = requeststr.split(/(?:\r\n|\n)/);
     var requestline = lines.shift();
     var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
