@@ -483,11 +483,11 @@ ui_strings.S_BUTTON_LABEL_HIDE_DEFAULT_PROPS_IN_GLOBAL_SCOPE = "Show default pro
 /* DESC: List item under the Source settings menu to logs all threads when activated. Also Tooltip text for a button on the Source tab. */
 ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 
-/* DESC: Refetch the event listeners. */
-ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
-
 /* DESC: Enable reformatting of JavaScript. */
 ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty-print JavaScript";
+
+/* DESC: Refetch the event listeners. */
+ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
 
 /* DESC: Tooltip text for a button under the Scripts tab that reloads the browser to receive fresh DOM, etc. */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
