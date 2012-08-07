@@ -89,15 +89,20 @@ cls.DOMSearchView = function(id, name, container_class)
 
   this._show_search_hit = function(event, target)
   {
-    this._search.update_match_highlight(event, target);
-    this._search_hit = this._search.get_search_hit();
-    if (window.host_tabs.is_runtime_of_active_tab(this._search_hit.runtime_id))
+    if (target.get_ancestor(".panel-search-container"))
     {
-      eventHandlers.click['inspect-node-link'](event, target);
+      this._search.update_match_highlight(event, target);
+      this._search_hit = this._search.get_search_hit();
+      if (window.host_tabs.is_runtime_of_active_tab(this._search_hit.runtime_id))
+        eventHandlers.click['inspect-node-link'](event, target);
+      else
+        new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
     }
     else
     {
-      new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
+      var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
+      if (window.host_tabs.is_runtime_of_active_tab(rt_id))
+        eventHandlers.click['inspect-node-link'](event, target);
     }
   };
 

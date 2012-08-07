@@ -202,7 +202,7 @@ var ui_framework = new function()
     "<div class='js-source mono'> " +
       "<div id='test-line-height' class='mono'><span>1234567890</span></div> " +
       "<div id='js-source-scroll-content'> " +
-        "<div id='js-source-content'> " +
+        "<div class='js-source-content'> " +
           "<div style='position:absolute;width:100px;height:100px;overflow:auto'> " +
             "<div id='test-scrollbar-width' style='height:300px'></div> " +
           "</div> " +

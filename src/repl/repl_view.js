@@ -950,18 +950,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_show_log_entry_source_bound = function(event, target)
   {
-    var line = parseInt(target.getAttribute("data-scriptline"));
-    var script = parseInt(target.getAttribute("data-scriptid"));
-    var sourceview = window.views.js_source;
+    if (window.Tooltips)
+      window.Tooltips.hide_tooltip();
 
-    // This will also be set from show_and_flash_line, but setting it before showing
-    // the view prevents the old script from flashing.
-    window.runtimes.setSelectedScript(script);
-    UI.get_instance().show_view("js_mode");
-    if (sourceview)
-    {
-      sourceview.show_and_flash_line(script, line);
-    }
+    var script_id = Number(target.getAttribute("data-scriptid"));
+    var start_line = Number(target.getAttribute("data-scriptline"));
+    var end_line = Number(target.getAttribute("data-script-endline"));
+    if (window.views.js_source)
+      window.views.js_source.show_script(script_id, start_line, end_line);
   }.bind(this);
 
   this.required_services = ["ecmascript-debugger", "console-logger"];
