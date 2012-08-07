@@ -63,7 +63,7 @@ templates._details_content = function(entry, do_raw)
     return requests_responses;
   }
 
-  var responsecode = entry.last_responsecode;
+  var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
@@ -77,7 +77,7 @@ templates._details_content = function(entry, do_raw)
               [
                 "span",
                 entry.touched_network && responsecode ? String(responsecode) + " – " : "",
-                "data-spec", "http#" + entry.last_responsecode
+                "data-spec", "http#" + entry.current_responsecode
               ],
               ["span", entry.url]
             ]
@@ -92,13 +92,15 @@ templates._details_content = function(entry, do_raw)
 
 templates.did_not_touch_network = function(entry)
 {
-  var data = cls.ResourceManager["1.2"].UrlLoad.URLType.DATA;
+  var local = [
+    cls.ResourceManager["1.2"].UrlLoad.URLType.FILE,
+    cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
+  ];
   return (
-    ["tbody", 
-      this._wrap_col_or_row( // Todo: Alternatively put into a headline, as these otherwise say "Request" here.
-        ["p", entry.urltype === data ? ui_strings.S_NETWORK_NOT_REQUESTED
-                                   : ui_strings.S_NETWORK_SERVED_FROM_CACHE,
-              "class", "network-info"])
+    ["tbody",
+      this._wrap_col_or_row(
+        ["p", local.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
+                                            : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
     ]);
 };
 
@@ -126,7 +128,7 @@ templates._request = function(request, is_last_request, do_raw)
   // is not shown in network-details. It will mostly mean it was retried internally
   // and didn't go on the network.
   // That can't be determined only by looking at RequestRetry events, because a
-  // request with for example a 401 Authorization Required response should still 
+  // request with for example a 401 Authorization Required response should still
   // be shown.
   if (!is_last_request && !request.was_responded_to)
     return [];
@@ -145,30 +147,14 @@ templates._response = function(response, is_last_response, do_raw)
   ]
 };
 
-templates._make_header_template_func = function(is_request_headers)
+templates._make_header_token_templ_func = function(state)
 {
-  // add data-spec attributes on certain firstline tokens, depending on if it's request_headers.
-  // todo: while this has firstline_tokens, it can't be reused.
-  var firstline_tokens = 0;
-  var add_data_spec;
-  if (is_request_headers)
-  {
-    add_data_spec = {
-      0: true
-    };
-  }
-  else
-  {
-    add_data_spec = {
-      1: true
-    };
-  }
-
   return function(token)
   {
     var TYPE = 0;
     var STR = 1;
     var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
       attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
@@ -176,11 +162,12 @@ templates._make_header_template_func = function(is_request_headers)
     else
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
-      if (firstline_tokens in add_data_spec)
+      if (state.data_spec_firstline_tokens.contains(state.firstline_tokens))
       {
+        // Add data-spec attributes on certain firstline tokens, tracked in state
         attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
       }
-      firstline_tokens++;
+      state.firstline_tokens++;
     }
     return ["span", token[STR]].concat(attrs);
   }
@@ -191,22 +178,28 @@ templates._token_receiver = function(tokens, token_type, token)
   tokens.push([token_type, token]);
 };
 
+templates.TokenStateholder = function(data_spec_firstline_tokens)
+{
+  this.data_spec_firstline_tokens = data_spec_firstline_tokens;
+  this.firstline_tokens = 0;
+}
+
 templates._request_headers = function(req, do_raw)
 {
   if (do_raw)
   {
-    if (req.request_headers_raw) // todo: we explicitely mention missing request headers in parsed. this check here is a bit ugly.
+    if (req.request_headers_raw)
     {
       if (!req.header_tokens)
       {
-        var tokens = [];
+        req.header_tokens = [];
         var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, tokens));
-        req.header_tokens = tokens;
+        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
       }
       if (req.header_tokens.length)
       {
-        var map_func = this._make_header_template_func(true);
+        var state_holder = new this.TokenStateholder([0]);
+        var map_func = this._make_header_token_templ_func(state_holder);
         return [
           ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
           this._wrap_pre(req.header_tokens.map(map_func))
@@ -239,21 +232,22 @@ templates._request_headers = function(req, do_raw)
 
 templates._response_headers = function(resp, do_raw)
 {
-  if (!resp.response_headers) // todo: we explicitely mention missing request headers but not missing response headers // ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
+  // Missing response headers aren't mentioned explicitely
+  if (!resp.response_headers)
     return [];
 
   if (do_raw)
   {
     if (!resp.header_tokens)
     {
-      var tokens = [];
+      resp.header_tokens = [];
       var tokenizer = new cls.HTTPHeaderTokenizer();
-      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, tokens));
-      resp.header_tokens = tokens;
+      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
     }
     if (resp.header_tokens.length)
     {
-      var map_func = this._make_header_template_func(false);
+      var state_holder = new this.TokenStateholder([1]);
+      var map_func = this._make_header_token_templ_func(state_holder);
       return [
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         this._wrap_pre(resp.header_tokens.map(map_func))
@@ -330,10 +324,11 @@ templates._request_body = function(req, do_raw)
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
-      if (n < req.requestbody.partList.length - 1)
-        ret.push(use_raw_boundary ? this._wrap_pre(req.boundary, HTTP_BOUNDARY_CLASS) : ["hr"]);
-      else if (use_raw_boundary)
-        ret.push(this._wrap_pre(req.boundary + "--\n", HTTP_BOUNDARY_CLASS));
+      var boundary = use_raw_boundary ? req.boundary : ["hr"];
+      if (use_raw_boundary && part === req.requestbody.partList.last)
+        boundary += "--\n";
+
+      ret.push(this._wrap_pre(boundary, HTTP_BOUNDARY_CLASS));
     }
   }
   else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
@@ -349,7 +344,7 @@ templates._request_body = function(req, do_raw)
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
                   ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
                 ]); // It's necesary to just push the outer array, because each entry will be wrapped in a row.
-      
+
       ret.extend(parts.map(function(e) {
                     e = e.replace(/\+/g, "%20").split("=");
                     return [
@@ -391,7 +386,7 @@ templates._request_body = function(req, do_raw)
 
 templates._response_body = function(resp, do_raw, is_last_response)
 {
-  var ret = [this._wrap_pre("\n")]; // todo: no, then it's (really) empty there shouldn't be a separator either. For images it looks a bit wrong too, since the img elem makes its own space too.
+  var ret = [];
 
   var classname = "";
   if ((resp.saw_responsefinished && resp.no_used_mimetype) ||
@@ -411,7 +406,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
         classname = "network_info";
         ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
       }
-      // else 
+      // else
         // We're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else
@@ -438,6 +433,9 @@ templates._response_body = function(resp, do_raw, is_last_response)
       }
     }
   }
+  if (ret.length)
+    ret.unshift(this._wrap_pre("\n"));
+
   if (do_raw)
     return ret;
   else

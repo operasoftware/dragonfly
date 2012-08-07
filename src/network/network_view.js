@@ -12,7 +12,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   var DEFAULT = "default";
   var DETAILS = "details";
 
-  this._service = new cls.NetworkLoggerService(this);
+  this._service = window.network_logger;
   this._container_scroll_top = 0;
   this._details_scroll_top = 0;
   this._details_scroll_left = 0;
@@ -86,8 +86,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this._render_timeout = 0;
     this.update();
   }.bind(this);
-
-  this.update_bound = this.update.bind(this);
 
   this.onresize = function()
   {
@@ -178,25 +176,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
     var template = ["div", templates.network.main(
                      ctx, entries, this._selected, detail_width, table_template
-                   ), "id", "network-outer-container"];
+                   ), "id", "network-outer-container",
+                      "data-menu", "network-logger-context"];
 
     if (this._selected)
     {
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        // Decide to try to fetch the body, for when content-tracking is off or it's a cached request.
-        if (
-          entry.is_finished &&
-          !entry.called_get_body &&
-          (!entry.current_response || !entry.current_response.responsebody) &&
-          // When we have a response, but didn't see responsefinished, it means there's really no
-          // responsebody. Don't attempt to fetch it.
-          (!entry.current_response || entry.current_response.saw_responsefinished)
-        )
-        {
-          this._service.get_body(entry.id, this.update_bound);
-        }
+        entry.check_to_request_body(this._service);
         template = [template, this._render_details_view(entry)];
       }
     }
@@ -531,7 +519,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   {
     this._service.clear_request_context();
     this.needs_instant_update = true;
-    this.update();
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
@@ -680,6 +667,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
 
   messages.addListener("single-select-changed", this._on_single_select_changed_bound);
   messages.addListener("setting-changed", this._on_setting_changed_bound);
+  messages.addListener("network-resource-updated", this.update.bind(this));
+  messages.addListener("network-context-cleared", this.update.bind(this));
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
@@ -694,6 +683,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
+
+  var contextmenu = ContextMenu.get_instance();
+  contextmenu.register("network-logger-context", [
+    {
+      label: ui_strings.S_CLEAR_NETWORK_LOG,
+      handler: this._on_clear_log_bound
+    }
+  ]);
 
   this._type_filters = ["all"].map(this._map_filter_bound);
   this.init(id, name, container_class, html, default_handler);

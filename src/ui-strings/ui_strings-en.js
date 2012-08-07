@@ -324,6 +324,9 @@ ui_strings.M_VIEW_LABEL_NO_BREAKPOINT = "No breakpoint";
 /* DESC: Text to show in inspection if there is no object to inspect. */
 ui_strings.M_VIEW_LABEL_NO_INSPECTION = "No inspection";
 
+/* DESC: The content of the return value section when there are not return values. */
+ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return values";
+
 /* DESC: Text to show in watches if there are no watches */
 ui_strings.M_VIEW_LABEL_NO_WATCHES = "No watches";
 
@@ -356,6 +359,9 @@ ui_strings.M_VIEW_LABEL_RESPONSE_BODY = "Response body";
 
 /* DESC: Name of response headers tab */
 ui_strings.M_VIEW_LABEL_RESPONSE_HEADERS = "Response Headers";
+
+/* DESC: Section in the script side panel for return values. */
+ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
 
 /* DESC: side panel in the script view with the callstack and the inspection view. */
 ui_strings.M_VIEW_LABEL_RUNTIME_STATE = "State";
@@ -1065,6 +1071,9 @@ ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 /* DESC: Button label to enable the default debugger features. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
+/* DESC: Button label to enable the default debugger features. */
+ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
+
 /* DESC: Setting label to select the font face */
 ui_strings.S_LABEL_FONT_SELECTION_FACE = "Font face";
 
@@ -1257,8 +1266,14 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 /* DESC: Title of request body section when the body is multipart-encoded */
 ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
+/* DESC: Explanation about why a network entry doesn't have request data: General */
+ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
+
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
+ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
@@ -1430,6 +1445,12 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
+
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
+
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
 
 /* DESC: Label for the global scope in the Scope Chain. */
 ui_strings.S_SCOPE_GLOBAL = "Global";
@@ -1761,3 +1782,6 @@ ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
 
 /* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
 ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
+
+/* DESC: String shown instead of filename when file name is missing  */
+ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";

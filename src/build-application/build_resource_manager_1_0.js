@@ -1,4 +1,4 @@
-﻿window.app.builders.ResourceManager = window.app.builders.ResourceManager || {};
+window.app.builders.ResourceManager = window.app.builders.ResourceManager || {};
 
 window.app.builders.ResourceManager["1.0"] = function(service)
 {

@@ -1,8 +1,7 @@
 ﻿"use strict";
 
-cls.NetworkLoggerService = function(view)
+cls.NetworkLoggerService = function()
 {
-  this._view = view;
   this._current_context = null;
 
   this._on_abouttoloaddocument_bound = function(msg)
@@ -136,8 +135,7 @@ cls.NetworkLoggerService = function(view)
 
   this._on_debug_context_selected_bound = function()
   {
-    this._current_context = null;
-    this._view.update();
+    this.clear_request_context();
   }.bind(this);
 
   this._setup_request_body_behaviour_bound = function()
@@ -187,7 +185,7 @@ cls.NetworkLoggerService = function(view)
 
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger" && 
+    if (message.id === "network_logger" &&
         message.key === "track-content")
     {
       this.setup_content_tracking_bound();
@@ -221,20 +219,31 @@ cls.NetworkLoggerService = function(view)
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_body = function(itemid, update_callback)
+  this.get_body = function(entry)
   {
     if (!this._current_context)
       return;
 
-    var entry = this._current_context.get_entry(itemid);
     entry.called_get_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [update_callback, entry]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [entry]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._handle_get_resource = function(status, data, update_callback, entry)
+  this.get_resource_info = function(resource_id)
+  {
+    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
+    var entry = this._current_context &&
+                this._current_context.get_entries_with_res_id(resource_id).last;
+    if (entry && entry.current_response && entry.current_response.responsebody)
+    {
+      return new cls.ResourceInfo(entry);
+    }
+    return null;
+  };
+
+  this._handle_get_resource = function(status, data, entry)
   {
     if (!this._current_context)
       return;
@@ -249,9 +258,9 @@ cls.NetworkLoggerService = function(view)
       var msg = new cls.ResourceManager["1.2"].ResourceData(data);
       this._current_context.update("responsebody", msg);
     }
-    // Update the view. This is only needed when the generic updating per event is paused.
-    if (this.is_paused && update_callback)
-      update_callback();
+    // Post update message from here. This is only needed when the generic updating per event is paused.
+    if (this.is_paused)
+      window.messages.post("network-resource-updated", {id: entry.resource_id});
 
   };
 
@@ -263,6 +272,7 @@ cls.NetworkLoggerService = function(view)
   this.clear_request_context = function()
   {
     this._current_context = null;
+    window.messages.post("network-context-cleared");
   };
 
   this.pause = function()
@@ -416,16 +426,16 @@ cls.RequestContextPrototype = function()
       return Math.min.apply(null, entries.map(function(e) { return e.starttime }));
   };
 
-  this._event_changes_req_id = function(event, last_entry)
+  this._event_changes_req_id = function(event, current_entry)
   {
-    /* 
-      Checks if the event's requestID is different from the one in last_entry. 
-      That should never be the case, since the "urlload" event initiates 
-      a new entry and that doesn't have a requestID. Note that last_entry is 
+    /*
+      Checks if the event's requestID is different from the one in current_entry.
+      That should never be the case, since the "urlload" event initiates
+      a new entry and that doesn't have a requestID. Note that current_entry is
       the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
-           (last_entry.last_requestID !== event.requestID);
+           (current_entry._requestID !== event.requestID);
   };
 
   this.update = function(eventname, event)
@@ -446,7 +456,7 @@ cls.RequestContextPrototype = function()
       return;
     }
 
-    // For responsebody, all entries with that resourceID need to be updated. 
+    // For responsebody, all entries with that resourceID need to be updated.
     // Others are callbacks that belongs to the current (and last) entry of that resourceID.
     if (eventname === "responsebody")
     {
@@ -458,7 +468,7 @@ cls.RequestContextPrototype = function()
     else
     {
       var logger_entry = logger_entries.last;
-      if (logger_entry && logger_entry.last_requestID)
+      if (logger_entry && logger_entry._requestID)
       {
         /*
           The same resource id can be loaded several times, but then the request id changes.
@@ -472,7 +482,7 @@ cls.RequestContextPrototype = function()
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           " Unexpected change in requestID on " + eventname +
-                          ": Change from " + logger_entry.last_requestID + " to " + 
+                          ": Change from " + logger_entry._requestID + " to " +
                           event.requestID + ", URL: " + logger_entry.human_url);
         }
       }
@@ -486,12 +496,12 @@ cls.RequestContextPrototype = function()
         var window_context = this.get_window_context(event.windowID);
         window_context.entry_ids.push(id);
       }
-      logger_entry.last_requestID = event.requestID;
+      logger_entry._requestID = event.requestID;
       logger_entry.update(eventname, event);
     }
 
-    if (window.views && !this.is_paused)
-      window.views.network_logger.update();
+    if (!this.is_paused)
+      window.messages.post("network-resource-updated", {id: event.resourceID});
 
   };
 
@@ -567,19 +577,20 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.starttime = null;
-  this.starttime_relative = null;
+  this.starttime = 0;
+  this.starttime_relative = 0;
   this.endtime = null;
-  this.requests_responses = [];
-  this.last_responsecode = null;
-  this.last_method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
-  this.called_get_body = false;
-  this.current_response = null;
+  this.requests_responses = [];
   this.current_request = null;
+  this.current_response = null;
+  this.current_responsecode = null;
+  this.called_get_body = false;
+  this.set_is_finished_on_responsefinished = false;
+  this._requestID = 0;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -592,7 +603,7 @@ cls.NetworkLoggerEntryPrototype = function()
   var CLASSNAME_RECEIVING = "receiving";
   var CLASSNAME_IRREGULAR = "irregular";
 
-  /*  // gap_def format: 
+  /*  // gap_def format:
   {
      classname: type of sequence,
      sequences: {
@@ -602,7 +613,7 @@ cls.NetworkLoggerEntryPrototype = function()
        ]
      }
    } */
-  
+
   var gap_defs = {
     "urlload": {
         "request": {
@@ -613,7 +624,7 @@ cls.NetworkLoggerEntryPrototype = function()
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
           classname: CLASSNAME_BLOCKED
         },
-        // The response-phase can be closed without ever seeing a response event, for 
+        // The response-phase can be closed without ever seeing a response event, for
         // example because the request was aborted. See CORE-43284.
         "responsefinished": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
@@ -695,10 +706,10 @@ cls.NetworkLoggerEntryPrototype = function()
       }
   };
 
-  // What is not defined as it's own case by the above, but it terminated by 
+  // What is not defined as it's own case by the above, but it terminated by
   // urlredirect, requestretry or urlfinished, will be defined regardless of the preceding event
 
-  /* // gap_def_to_phase format: 
+  /* // gap_def_to_phase format:
   {
      classname: type of sequence,
      sequences: {
@@ -729,8 +740,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.starttime = eventdata.time;
       if (this.context_starttime)
         this.starttime_relative = this.starttime - this.context_starttime;
-      else
-        this.starttime_relative = 0;
 
       var d = new Date(this.starttime);
       var h = String(d.getHours()).zfill(2);
@@ -796,7 +805,6 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_request = function(event)
   {
-    this.last_method = event.method;
     this.current_request = new cls.NetworkLoggerRequest(this);
     this.requests_responses.push(this.current_request);
     this.current_request._update_event_request(event);
@@ -826,9 +834,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_requestretry = function(event)
   {
-    // This means on the next request with event.toRequestID, we won't 
+    // This means on the next request with event.toRequestID, we won't
     // make a new entry, but a new NetworkLoggerRequest on the same entry.
-    this.last_requestID = event.toRequestID;
+    this._requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
@@ -837,8 +845,8 @@ cls.NetworkLoggerEntryPrototype = function()
     {
       this.current_request.was_responded_to = true;
     }
-    this.last_responsecode = event.responseCode;
-    this.error_in_last_response = /^[45]/.test(this.last_responsecode);
+    this.current_responsecode = event.responseCode;
+    this.error_in_current_response = /^[45]/.test(this.current_responsecode);
     this.current_response = new cls.NetworkLoggerResponse(this);
     this.requests_responses.push(this.current_response);
     this.current_response._update_event_response(event);
@@ -858,7 +866,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.requests_responses.push(this.current_response);
     }
     this.current_response._update_event_responseheader(event);
-    // todo: should _guess_response_type here? if there was a Content-Type response-header, pick it from there.
   };
 
   this._update_event_responsefinished = function(event)
@@ -868,6 +875,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
+
+    if (this.set_is_finished_on_responsefinished)
+      this.is_finished = true;
 
     this._guess_response_type();
   };
@@ -885,7 +895,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_urlredirect = function(event)
   {
-    // This does not add any information, the event is only used to change the requestID
+    // Workaround for CORE-47687
+    this.set_is_finished_on_responsefinished = true;
   };
 
   this._guess_response_type = function()
@@ -961,10 +972,27 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
+  this.check_to_request_body = function(service)
+  {
+    // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
+    if (
+      this.is_finished &&
+      !this.called_get_body &&
+      (!this.current_response || !this.current_response.responsebody) &&
+      // When we have a response, but didn't see responsefinished, it means there's really no
+      // responsebody. Don't attempt to fetch it.
+      (!this.current_response || this.current_response.saw_responsefinished)
+    )
+    {
+      service.get_body(this);
+    }
+  };
+
   this.__defineGetter__("duration", function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
   });
+  this.__defineSetter__("duration", function(){});
 
   this.__defineGetter__("waiting_time", function()
   {
@@ -972,14 +1000,13 @@ cls.NetworkLoggerEntryPrototype = function()
                                           .sum(helpers.prop("val"));
     return waiting_time || 0;
   });
+  this.__defineSetter__("waiting_time", function(){});
 
   this.__defineGetter__("touched_network", function()
   {
      return Boolean(this.current_request);
   });
-
-  // todo: add empty setters.
-
+  this.__defineSetter__("touched_network", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -1116,3 +1143,10 @@ cls.NetworkLoggerResponsePrototype = function()
 };
 
 cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
+
+cls.ResourceInfo = function(entry)
+{
+  this.url = entry.url;
+  this.responseheaders = entry.current_response.response_headers;
+  this.responsebody = entry.current_response.responsebody;
+};
