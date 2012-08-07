@@ -17,13 +17,12 @@ var SettingsBase = function()
    */
   this.set = function(key, value, sync_switches)
   {
-    window.localStorage.setItem(key, JSON.stringify(this.map[key] = value));
+    this.map[key] = value;
+    this._storage.stringify_and_set_item(key, value);
     if (this.callback_map.hasOwnProperty(key))
-    {
       this.callback_map[key].call(this, value);
-    }
     messages.post("setting-changed", {id: this.view_id, key: key, value: value});
-  }
+  };
 
   /**
    * Returns the value assosciated with "key". If the key does not exist,
@@ -32,12 +31,10 @@ var SettingsBase = function()
    */
   this.get = function(key)
   {
-    var val = "";
-    return (
-    typeof this.map[key] !== 'undefined' ?
-    this.map[key] :
-    (this.map[key] = ((val = window.localStorage.getItem(key)) ? JSON.parse(val) : null)));
-  }
+    if (typeof this.map[key] == "undefined")
+      this.map[key] = this._storage.get_and_parse_item(key, this._default_values[key]);
+    return this.map[key]
+  };
 
   /**
    * Check if a particular key exist in the settings object
@@ -53,7 +50,7 @@ var SettingsBase = function()
     views[this.view_id].update();
   };
 
-  this.init = function(view_id, key_map, label_map, setting_map, templates, group, callback_map)
+  this.init = function(view_id, default_values, label_map, setting_map, templates, group, callback_map)
   {
     this.map = {};
     this.view_id = view_id;
@@ -62,21 +59,16 @@ var SettingsBase = function()
     this.templates = templates || {};
     this.group = group;
     this.callback_map = callback_map || {};
-    var stored_map = key_map, key = '', val = '';
-    for( key in stored_map)
+    this._default_values = default_values;
+    this._storage = window.localStorage;
+    for (var key in default_values)
     {
-      val = window.localStorage.getItem(key);
-      this.map[key] = (val === undefined || val === null) ? key_map[key] :
-                      val === 'undefined' ? undefined : JSON.parse(val);
+      this.map[key] = this._storage.get_and_parse_item(key, default_values[key]);
     }
-    if(!window.settings)
-    {
+    if (!window.settings)
       window.settings = {};
-    }
-    window.settings[arguments[0]] = this;
-
+    window.settings[view_id] = this;
     window.messages.post("settings-initialized", {view_id: view_id, setting: this});
-
     // Add a context menu
     var contextmenu = ContextMenu.get_instance();
     var menu = setting_map && setting_map.contextmenu;
@@ -93,30 +85,7 @@ var SettingsBase = function()
       }
       contextmenu.register(view_id, items);
     }
-  }
-
-  if(!window.localStorage)
-  {
-    window.localStorage =
-    {
-      setItem: function(name, value)
-      {
-        document.cookie = name + "="+
-          encodeURIComponent(value)+
-          "; expires="+(new Date(new Date().getTime()+ (360 * 24 * 60 * 60 * 1000 ))).toGMTString()+
-          "; path=/";
-      },
-      getItem: function(name)
-      {
-        var match = null;
-        if (match = new RegExp(name+'\=([^;]*);','').exec(document.cookie+';'))
-        {
-          return decodeURIComponent(match[1]);
-        }
-        return null;
-      }
-    }
-  }
+  };
 }
 
 /**
