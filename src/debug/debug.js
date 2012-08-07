@@ -218,7 +218,7 @@ cls.debug.Debug = function(id, name, container_class)
 
   this.createView = function(container)
   {
-    this._textarea = container.clearAndRender(this._main_template()).childNodes[1];
+    this._textarea = container.clearAndRender(this._main_template()).querySelector("textarea");
     this._display_log();
   };
 
