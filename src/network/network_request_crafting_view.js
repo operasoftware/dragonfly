@@ -8,9 +8,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._input = null;
   this._output = null;
   this._urlfield = null;
-  this._is_listening = false;
-  this._listening_for = null;
-  this._resources = {};
+  this._crafter_requests = [];
   this._uastring = window.services.scope.get_hello_message().userAgent;
 
   this._request_template = [
@@ -26,14 +24,19 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   ].join("\r\n");
 
   this._prev_request = this._request_template;
+  /*
   this._prev_response = "No response";
+  */
   this._prev_url = "";
 
+  /*
+  // todo: will see what do on send, resetting is probably annoying.
   this.ondestroy = function()
   {
     this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
     this._prev_request = this._input ? this._input.get_value() : "";
   };
+  */
 
   this.createView = function(container)
   {
@@ -47,10 +50,15 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
+    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER);
+    var entries = [];
+    if (ctx)
+      entries = ctx.get_entries_filtered();
+
+    // render entries..
     container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
-                                                                    this._is_listening,
                                                                     this._prev_request,
-                                                                    this._prev_response));
+                                                                    entries));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
@@ -72,7 +80,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._parse_request = function(requeststr)
   {
     var retval = {};
-    var lines = requeststr.split("\r\n");
+    var lines = requeststr.split(/\r?\n/);
     var requestline = lines.shift();
     var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
@@ -132,59 +140,24 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     return headers;
   };
 
-  this._send_request = function(requestdata)
-  {
-    var url = this._urlfield.get_value();
-    var windowid = window_manager_data.get_debug_context();
-    var request = [
-      windowid,
-      url,
-      requestdata.method,
-      requestdata.headers,
-      null, // payload
-      3, // header policy. 2 == overwrite, 3 == replace
-      2, // reload policy. 2 == no cache, always reload from network
-      null, // request content mode
-      [1, 1] // response content mode 1 == string, 1 == decodee
-    ];
-    this._listening_for = null;
-    this._resources = [];
-    this._is_listening = true;
-    this.ondestroy(); // saves state of in/out
-    var tag = window.tagManager.set_callback(null, this._on_send_request_bound)
-    this._service.requestCreateRequest(tag, request);
-    this.update();
-  };
-
   this._handle_send_request_bound = function()
   {
+    this._prev_url = this._urlfield.get_value();
     var data = this._input.get_value();
     var requestdata = this._parse_request(data);
     if (requestdata)
     {
-      this._send_request(requestdata);
+      var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER, true);
+      var crafter_request_id = ctx.send_request(this._prev_url, requestdata);
+      this._crafter_requests.push(crafter_request_id);
     }
     else
     {
-      this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
+      // this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
       this.update();
     }
   }.bind(this);
 
-  this._on_send_request_bound = function(status, msg)
-  {
-    if (status == 0)
-    {
-      const RESOURCEID = 0;
-      this._listening_for = msg[RESOURCEID];
-    }
-    else
-    {
-      this._stop_loading();
-      this._prev_response = msg[0];
-      this.update();
-    }
-  }.bind(this);
 
   this._handle_url_change_bound = function(evt, target)
   {
@@ -201,124 +174,26 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._input.set_value(current);
   };
 
-  /**
-   * Since we might get network events before we know what resource we've
-   * requested, we need to keep track of all of them until we figure it out.
-   * This method determines if the event in data is still relevant.
-   */
-  this._is_relevant = function(rid)
+  this._on_context_established_bound = function(message)
   {
-    if (!this._is_listening) { return false; }
-    else if (this._listening_for !== null && rid != this._listening_for) { return false; }
-    else if (! (rid in this._resources)) { return false; }
-    else { return true; }
-  };
-
-  this._on_urlload_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
-    if (!this._is_listening) { return; }
-    if (this._listening_for !== null && this._listening_for != data.resourceID) { return; }
-    this._resources[data.resourceID] = {urlload: data};
-  }.bind(this);
-
-  this._on_response_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.0"].Response(msg);
-    if (!this._is_relevant(data.resourceID)) { return; }
-    this._resources[data.resourceID].response = data;
-  }.bind(this);
-
-  this._on_responseheader_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
-    if (!this._is_relevant(data.resourceID)) { return; }
-    this._resources[data.resourceID].responseheader = data;
-  }.bind(this);
-
-  this._on_responsefinished_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
-    if (!this._is_relevant(data.resourceID)) { return; }
-    this._resources[data.resourceID].responsefinished = data;
-  }.bind(this);
-
-  this._on_urlfinished_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    if (!this._is_relevant(data.resourceID)) { return; }
-    this._resources[data.resourceID].urlfinished = data;
-    if (this._listening_for == data.resourceID)
+    if (message.context_type === this._service.CONTEXT_TYPE_CRAFTER)
     {
-      this._on_got_relevant_response(data);
+      var ctx = this._service.get_request_context(message.context_type);
+      ctx.addListener("resource-update", this.update.bind(this));
     }
   }.bind(this);
-
-  this._on_urlredirect_bound = function(msg)
-  {
-    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
-    if (!this._is_relevant(data.fromResourceID)) { return; }
-    this._resources[data.fromResourceID].urlredirect = data;
-    if (this._listening_for == data.fromResourceID)
-    {
-      this._on_got_relevant_response();
-    }
-  }.bind(this);
-
-  this._on_got_relevant_response = function()
-  {
-    var resource = this._resources[this._listening_for];
-    this._stop_loading();
-
-    var response = "";
-
-    if (resource.urlfinished && resource.urlfinished.result != 1) // 1 == success
-    {
-      response = ui_strings.S_INFO_REQUEST_FAILED;
-    }
-    else
-    {
-      response = resource.responseheader.raw;
-      if (!resource.urlredirect)
-      {
-        if (resource.responsefinished &&
-            resource.responsefinished.data &&
-            resource.responsefinished.data.content &&
-            resource.responsefinished.data.content.stringData)
-        {
-          response += resource.responsefinished.data.content.stringData;
-        }
-      }
-    }
-
-    this._prev_response = response;
-    this.update();
-  };
-
-  this._stop_loading = function()
-  {
-    this._is_listening = false;
-    this._listening_for = null;
-    this._resources = {};
-  };
 
   var eh = window.eventHandlers;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
 
+  this._service = window.network_logger;
+  this._service.addListener("context-established", this._on_context_established_bound);
+
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 
   this.required_services = ["resource-manager", "document-manager"];
-  this._service = window.services['resource-manager'];
-  this._service.addListener("urlload", this._on_urlload_bound);
-  this._service.addListener("request", this._on_request_bound);
-  this._service.addListener("response", this._on_response_bound);
-  this._service.addListener("responseheader", this._on_responseheader_bound);
-  this._service.addListener("responsefinished", this._on_responsefinished_bound);
-  this._service.addListener("urlredirect", this._on_urlredirect_bound);
-  this._service.addListener("urlfinished", this._on_urlfinished_bound);
-
   this.init(id, name, container_class, html, default_handler);
 };
 cls.RequestCraftingView.prototype = ViewBase;
