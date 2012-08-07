@@ -16,10 +16,10 @@ cls.debug.Debug = function(id, name, container_class)
   this.log_message = function(service, message, command, status, tag){};
   this.log_transmit = function(service, message, command, tag){};
   this.get_log_filter = function(){};
-  this.set_log_filter = function(service, type, message, bool){};
+  this.set_log_filter = function(service, type, message, visible){};
   this.clear_log = function(){};
   this.show_configuration = function(container, service){};
-  this.set_unfold = function(service, bool){};
+  this.set_unfold = function(service, unfolded){};
 
   /* private */
 
@@ -153,7 +153,7 @@ cls.debug.Debug = function(id, name, container_class)
     ]);
   }
 
-  this._get_log_text = function(entry){ return entry[LOG];}
+  this._get_log_text = function(entry) { return entry[LOG]; }
 
   this._filter_log = function(entry)
   {
@@ -208,11 +208,11 @@ cls.debug.Debug = function(id, name, container_class)
     }
   };
 
-  this._filter_command = function(msg){return /^handle/.test(msg);}
+  this._filter_command = function(msg) { return /^handle/.test(msg); }
 
-  this._filter_event = function(msg, index){return /^on/.test(msg);}
+  this._filter_event = function(msg, index) { return /^on/.test(msg); }
 
-  this._get_message_class = function(msg){return msg.replace(/^handle/, "").replace(/^on/, "On");}
+  this._get_message_class = function(msg) { return msg.replace(/^handle/, "").replace(/^on/, "On"); }
 
   /* implementation */
 
@@ -283,11 +283,11 @@ cls.debug.Debug = function(id, name, container_class)
     this._times[service + command + tag] = new Date().getTime();
   };
 
-  this.get_log_filter = function(){return this._filter;}
+  this.get_log_filter = function() { return this._filter; }
 
-  this.set_log_filter = function(service, type, message, bool)
+  this.set_log_filter = function(service, type, message, visible)
   {
-    this._filter[service][type][message] = bool;
+    this._filter[service][type][message] = visible;
     this._display_log();
   };
 
@@ -303,9 +303,9 @@ cls.debug.Debug = function(id, name, container_class)
     container.render(this._template_service_config(service));
   }
 
-  this.set_unfold = function(service, bool)
+  this.set_unfold = function(service, unfolded)
   {
-    this._unfolded[service] = bool;
+    this._unfolded[service] = unfolded;
   }
 
   /* event handlers */
