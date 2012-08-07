@@ -2,6 +2,7 @@ window.app.builders.ResourceManager = window.app.builders.ResourceManager || {};
 
 window.app.builders.ResourceManager["1.0"] = function(service)
 {
+  window.network_logger = new cls.NetworkLoggerService();
   new cls.ResourceTreeView('resource_tree_view','Tree View');
   new cls.ResourceDetailView('resource_detail_view', 'Detail');
   cls.ResourceDetailView.create_ui_widgets();
