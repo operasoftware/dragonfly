@@ -72,14 +72,14 @@
       var tokens = shortcut.split(/[ ,\+]+/).map(function(t)
       {
         t = t.toLowerCase();
-        // on Mac Opera cmd and ctrl are switched
+        // on Mac Opera cmd sets the meta flag
         if (t == "cmd")
-          t = "ctrl";
+          t = "meta";
 
         return t;
       });
 
-      var mod_key = ["shift", "ctrl", "alt"/*, "meta"*/].reduce(function(m_key, mod, index)
+      var mod_key = ["shift", "ctrl", "alt", "meta"].reduce(function(m_key, mod, index)
       {
         var pos = tokens.indexOf(mod);
         if (pos > -1)
@@ -199,7 +199,7 @@
   // opera
   this._handle_keydown_bound = function(event)
   {
-    var mod_key = ["shift", "ctrl", "alt"/*, "meta"*/].reduce(function(m_key, mod, index)
+    var mod_key = ["shift", "ctrl", "alt", "meta"].reduce(function(m_key, mod, index)
     {
       return m_key | (event[mod + "Key"] ? Math.pow(2, index) : 0);
     }, 0);
