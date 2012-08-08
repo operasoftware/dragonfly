@@ -898,8 +898,6 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 
 /* DESC: A info message that the debugger is currently in HTTP profiler mode. */
-ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
-
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 

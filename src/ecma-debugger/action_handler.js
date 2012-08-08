@@ -101,65 +101,6 @@ window.eventHandlers.click['examine-object-2'] = function(event, target)
   }
 };
 
-window.eventHandlers.click['show-scripts'] = function(event)
-{
-  var runtime_id = event.target.getAttribute('runtime_id');
-  var scripts = runtimes.getScripts(runtime_id);
-  var scripts_container = event.target.parentNode.getElementsByTagName('ul')[0];
-  var script = null, i = 0;
-
-  if (scripts_container)
-  {
-    event.target.parentNode.removeChild(scripts_container);
-    event.target.style.removeProperty('background-position');
-    runtimes.setUnfolded(runtime_id, 'script', false);
-  }
-  else
-  {
-    scripts_container = ['ul'];
-    for ( ; script = scripts[i]; i++)
-    {
-      scripts_container.push(templates.scriptLink(script));
-    }
-    scripts_container.splice(scripts_container.length, 0, 'runtime-id', runtime_id);
-    event.target.parentNode.render(scripts_container);
-    event.target.style.backgroundPosition = '0 -11px';
-    runtimes.setUnfolded(runtime_id, 'script', true);
-  }
-};
-
-window.eventHandlers.click['show-stylesheets'] = function(event, target)
-{
-  var rt_id = target.getAttribute('runtime_id');
-  // stylesheets.get_stylesheets will call this function again if data is not avaible
-  // handleGetAllStylesheets in stylesheets will
-  // set for this reason __call_count on the event object
-  var sheets = cls.Stylesheets.get_instance().get_stylesheets(rt_id, arguments);
-  if (sheets)
-  {
-    var container = event.target.parentNode.getElementsByTagName('ul')[0];
-    var sheet = null, i = 0;
-    if (container)
-    {
-      target.parentNode.removeChild(container);
-      target.style.removeProperty('background-position');
-      runtimes.setUnfolded(rt_id, 'css', false);
-    }
-    else
-    {
-      container = ['ul'];
-      for ( ; sheet = sheets[i]; i++)
-      {
-        container.push(templates.sheetLink(sheet, i));
-      }
-      container.splice(container.length, 0, 'runtime-id', rt_id);
-      event.target.parentNode.render(container);
-      event.target.style.backgroundPosition = '0 -11px';
-      runtimes.setUnfolded(rt_id, 'css', true);
-    }
-  }
-};
-
 window.eventHandlers.click['continue'] = function(event)
 {
   this.broker.dispatch_action('global', event.target.id);

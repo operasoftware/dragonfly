@@ -251,7 +251,6 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
       {
         if (message[WINDOW_ID] == window.window_manager_data.get_debug_context())
         {
-          messages.post("runtime-selected", {id: this._data_runtime_id});
           window['cst-selects']['document-select'].updateElement();
           this._get_dom_sub(message[RUNTIME_ID], message[OBJECT_ID], true);
         }
@@ -282,6 +281,7 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     this._current_target = 0;
     this._active_window = [];
     this.target = 0;
+    window.messages.post("element-selected", {obj_id: 0, rt_id: 0, model: null});
   }
 
   this._on_active_tab = function(msg)
@@ -299,7 +299,6 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
         this._on_reset_state();
         // the first field is the top runtime
         this._data_runtime_id = msg.activeTab[0];
-        messages.post("runtime-selected", {id: this._data_runtime_id});
         window['cst-selects']['document-select'].updateElement();
         this._active_window = msg.activeTab.slice();
         if (window.views[this._view_id].isvisible())
@@ -410,7 +409,6 @@ cls.EcmascriptDebugger["6.0"].DOMData = function(view_id)
     if (rt_id != this._data_runtime_id)
     {
       this._data_runtime_id = rt_id;
-      messages.post("runtime-selected", {id: this._data_runtime_id});
       window['cst-selects']['document-select'].updateElement();
     }
     if (obj_id)
