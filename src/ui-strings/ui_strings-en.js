@@ -72,9 +72,6 @@ ui_strings.M_CONTEXTMENU_DISABLE_ALL_BREAKPOINTS = "Disable all breakpoints";
 /* DESC: Context menu item for disabling a breakpoint. */
 ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
 
-/* DESC: Context menu item for disabling a breakpoint. */
-ui_strings.M_CONTEXTMENU_DISABLE_BREAKPOINT = "Disable breakpoint";
-
 /* DESC: Context menu item for disabling all declarations in a rule. */
 ui_strings.M_CONTEXTMENU_DISABLE_DECLARATIONS = "Disable all declarations";
 
@@ -903,9 +900,6 @@ ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port 
 /* DESC: A info message that the debugger is currently in HTTP profiler mode. */
 ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled."
 
-/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
-ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
-
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 
@@ -929,9 +923,6 @@ ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment
 
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
-
-/* DESC: A info message that the debugger is currently in profiler mode. */
-ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
 
 /* DESC: A info message that the debugger is currently in profiler mode. */
 ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
@@ -1064,9 +1055,6 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
-
-/* DESC: Button label to enable the default debugger features. */
-ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
 /* DESC: Button label to enable the default debugger features. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
