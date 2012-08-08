@@ -20,7 +20,13 @@ var URIPrototype = function(uri_prop_name)
     abs_dir // protocol plus hostname plus dir_pathname
     path_parts // list of "directories" in pathname
     short_distinguisher // the last part of a url that can be used to distinguish it
+
+    The value of uri_prop_name (uri) must be ab absolute URI.
+    For relative URIs the properties have not clear defined values, e.g. "a.b"
+    could be a host or a filename.
   */
+
+  var DATA_URI_LENGTH_SHORT = 25;
 
   [
     "hash",
@@ -51,7 +57,7 @@ var URIPrototype = function(uri_prop_name)
         if (pos > -1)
           this._filename = this.pathname.slice(pos + 1);
         else
-          this._filename = this.pathname;
+          this._filename = "";
       }
       else
         this._filename = "";
@@ -106,10 +112,46 @@ var URIPrototype = function(uri_prop_name)
 
   this.__defineGetter__("basename", function()
   {
-    return this.filename || this.dir_pathname;
+
+    if (this._basename === undefined && (this._is_parsed || this[uri_prop_name]))
+    {
+      if (!this._is_data_uri)
+      {
+        if (this.filename)
+          this._basename = this.filename;
+        else if (this.path_parts.length)
+          this._basename = this.path_parts[this.path_parts.length - 1] + "/";
+        else
+          this._basename = "";
+      }
+      else
+        this._basename = "";
+    }
+
+    return this._basename;
   });
 
   this.__defineSetter__("basename", function() {});
+
+  this.__defineGetter__("short_url", function()
+  {
+    if (this._short_url === undefined && (this._is_parsed || this[uri_prop_name]))
+    {
+      if (this._is_data_uri)
+      {
+        var short_url = this._protocol + this._pathname;
+        this._short_url = short_url.length <= DATA_URI_LENGTH_SHORT
+                        ? short_url
+                        : short_url.slice(0, DATA_URI_LENGTH_SHORT) + "…";
+      }
+      else
+        this._short_url = this.filename || this.basename || this.host;
+    }
+
+    return this._short_url;
+  });
+
+  this.__defineSetter__("short_url", function() {});
 
   this.__defineGetter__("abs_dir", function()
   {
@@ -244,6 +286,7 @@ var URIPrototype = function(uri_prop_name)
       else if (this._protocol && !this._is_data_uri)
       {
         this._host = val;
+        val = "";
       }
       else
         this._host = "";

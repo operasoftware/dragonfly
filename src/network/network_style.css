@@ -38,7 +38,14 @@
 
 .network-main-container #graph
 {
-  background-image: -o-linear-gradient(0deg, #e5e5e5 0px, #e5e5e5 1px, transparent 1px);
+  background-image: -o-linear-gradient(0deg,
+                                       #e5e5e5 0px,
+                                       #e5e5e5 1px,
+                                       transparent 1px);
+  background-image: linear-gradient(90deg,
+                                    #e5e5e5 0px,
+                                    #e5e5e5 1px,
+                                    transparent 1px);
   background-position: 0 21px;
   background-repeat: repeat-x;
 }

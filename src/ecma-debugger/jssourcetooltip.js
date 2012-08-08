@@ -148,7 +148,7 @@ cls.JSSourceTooltip = function(view)
                                        box, shift_key)
   {
     var sel = _get_identifier(script, line_number, char_offset, shift_key);
-    if (sel && sel.bracket_balance == 0)
+    if (sel && (sel.bracket_balance == 0 || sel.is_user_selection))
     {
       var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
       var end = script.line_arr[sel.end_line - 1] + sel.end_offset;
@@ -343,7 +343,8 @@ cls.JSSourceTooltip = function(view)
           return {start_line: start.line_number,
                   start_offset: start.offset,
                   end_line: end.line_number,
-                  end_offset: end.offset - 1};
+                  end_offset: end.offset - 1,
+                  is_user_selection: true};
         }
       }
     }
@@ -997,7 +998,7 @@ cls.JSSourceTooltip = function(view)
 
   var _get_tab_size = function()
   {
-    var style_dec = document.styleSheets.getDeclaration("#js-source-content div");
+    var style_dec = document.styleSheets.getDeclaration(".js-source-content div");
     return style_dec ? parseInt(style_dec.getPropertyValue("-o-tab-size")) : 0;
   };
 
