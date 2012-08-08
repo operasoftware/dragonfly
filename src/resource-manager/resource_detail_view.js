@@ -65,7 +65,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
         for (var pos = 0, len = value.length; pos < len; pos++)
         {
           var c = value.charAt(pos);
-          // Linefeed recognition will not support Acorn BBC spooled text output 
+          // Linefeed recognition will not support Acorn BBC spooled text output
           if ((c == CR ) || (c == LF))
           {
             this._line_count++;
@@ -87,11 +87,11 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
                 var delta = this._tops[1] - this._tops[0];
                 var scroll_top = scroll_container.scrollTop;
                 ele.addClass(HIGHLIGHTED_LINE_CLASSNAME);
-                ele.style.cssText = 
+                ele.style.cssText =
                   "background-size: 100% " + delta + "px;" +
-                  "background-position: 0 " + 
+                  "background-position: 0 " +
                     (this._tops[0] - container_top + scroll_top) + "px;";
-                
+
                 var scroll_position = scroll_top + this._tops[0] - container_top;
                 if (scroll_position <= this._root_ele.parentNode.clientHeight)
                 {
@@ -187,7 +187,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     window.UI.instance.show_view( window.views.resource_detail_view.id );
   }
 
-	
+
   //  WIP
   this.show_resource_group = function(resourceGroup)
 	{

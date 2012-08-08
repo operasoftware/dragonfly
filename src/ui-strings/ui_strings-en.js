@@ -898,9 +898,6 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 
 /* DESC: A info message that the debugger is currently in HTTP profiler mode. */
-ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled."
-
-/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
 ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
 
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
@@ -929,9 +926,6 @@ ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s
 
 /* DESC: A info message that the debugger is currently in profiler mode. */
 ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
-
-/* DESC: A info message that the debugger is currently in profiler mode. */
-ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
@@ -1061,9 +1055,6 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
-
-/* DESC: Button label to enable the default debugger features. */
-ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
 /* DESC: Button label to enable the default debugger features. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
@@ -1298,9 +1289,6 @@ ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
 /* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
-
-/* DESC: Explanation about why a network entry doesn't have request data: General */
-ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
@@ -1748,34 +1736,6 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
-
-
-/* DESC: String shown instead of filename when file name is missing  */
-ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
-
-/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
-ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
-
-/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
-ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
-
-/* DESC: Section in the script side panel for return values. */
-ui_strings.M_VIEW_LABEL_RETURN_VALUES = "Return Values";
-
-/* DESC: The content of the return value section when there are not return values. */
-ui_strings.M_VIEW_LABEL_NO_RETURN_VALUES = "No return values";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_EXTENSIONJS = "Extension";
-
-/* DESC: Script type for events in the profiler */
-ui_strings.S_SCRIPT_TYPE_DEBUGGER = "Debugger";
-
-/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
-ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
-
-/* DESC: Alert dialog that updating of the custom shortcuts with new ones has failed. */
-ui_strings.D_SHORTCUTS_UPDATE_FAILED = "Failed to sync custom shortcuts. The shortcuts are reset to the default ones.";
 
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";

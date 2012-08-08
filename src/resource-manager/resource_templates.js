@@ -24,13 +24,13 @@ templates.resource_tree =
 		{
 			var frame = context.frames[frameID];
 			if( frame.parentFrameID != parentFrameID ){ continue; }
-			
+
 			r=frame.resource;
 			if(!r)
 				continue;
 
 			var className = '-expand-collapse';
-			var tmp = 
+			var tmp =
 			{
 				'time':frame.time||0,
 				'tpl':
@@ -110,7 +110,7 @@ templates.resource_tree =
 					'handler','resources-expand-collapse',
 					'class','header'+className
 				],
-				[	// resources 
+				[	// resources
 					'ul',
 					this.group_resources(context, frameID, groupName),
 					'class','children'+className
@@ -128,7 +128,7 @@ templates.resource_tree =
 		var frame = context.frames[frameID];
 		var group = frame.groups[groupName];
 		var className = '-expand-collapse';
-		
+
 		return group.ids.map
 		(
 			function(v)
@@ -170,7 +170,7 @@ templates.resource_detail =
 		['div',
 			this.overview(resource),	// overview
 			['div',	// specific template
-				this[specificTemplate](resource, resource.data),		
+				this[specificTemplate](resource, resource.data),
 				'class','resource-detail-'+ specificTemplate +'-container'
 			],
 			'class','resource-detail-container',
