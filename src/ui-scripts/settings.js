@@ -31,9 +31,9 @@ var SettingsBase = function()
    */
   this.get = function(key)
   {
-    if (typeof this.map[key] == "undefined")
+    if (this.map[key] == null)
       this.map[key] = this._storage.get_and_parse_item(key, this._default_values[key]);
-    return this.map[key]
+    return this.map[key];
   };
 
   /**
