@@ -1,4 +1,4 @@
-Storage.prototype.get_and_parse_item = function(key, default_value)
+﻿Storage.prototype.get_and_parse_item = function(key, default_value)
 {
   var raw_value = this.getItem(key);
   var value = null;
