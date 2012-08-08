@@ -62,7 +62,7 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
-if (typeof document.createElement('div').classList == 'undefined')
+if (!document.createElement('div').classList)
 {
   Element.prototype.__defineGetter__('classList', function()
   {
