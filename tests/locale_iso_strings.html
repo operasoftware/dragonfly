@@ -4,7 +4,8 @@
     <title>Dragonfly - Locale ISO strings</title>
     <link rel="stylesheet" href="qunit/qunit.css" media="screen">
     <script src="qunit/qunit.js"></script>
-    <script src="../src/scripts/dom.js"></script>
+    <script src="../src/lib/dateprototype.js"></script>
+    <script src="../src/lib/datenamespace.js"></script>
 
 
 <script>
@@ -25,8 +26,11 @@ test("locale_iso_strings", function()
 
   // The outcome of toLocaleISOString depends on the timezone.
   // The expected moment needs to be adjusted.
-  var t = Date.fromLocaleISOString("2012-08-03T17:00").getTime();
-  equal(t, 1344013200000 + TIMEZONE_OFFSET);
+  var ms = Date.fromLocaleISOString("2012-08-03T17:00");
+  equal(ms, 1344013200000 + TIMEZONE_OFFSET);
+
+  var ms = Date.fromLocaleISOString("2012-08-03T17:00+02:00");
+  equal(isNaN(ms), true);
 });
 
 

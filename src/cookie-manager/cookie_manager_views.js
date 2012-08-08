@@ -430,21 +430,13 @@ cls.CookieManager.CookieManagerViewBase = function()
       // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
       var domain       = domain_input && domain_input.value.trim() || runtime && this.data._rts[runtime].hostname;
 
-      // Check if the value retrieved from datetime-local looks local (without trailing Z or +01:00)
-      var expires_is_local = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(expires);
-
       // Remove "0" milliseconds to make sure Date can parse the string (see CORE-47780).
       // Milliseconds are always 0 for cookies.
       // This make sense even if we got a UTC value or a value with timezone-offset.
-      expires = expires.replace(/\.0+/,"");
+      expires = expires.replace(/\.0+/, "");
 
-      if (expires_is_local)
-        expires = Date.fromLocaleISOString(expires).getTime();
-      else if (expires)
-        expires = new Date(expires).getTime();
-      // If the value retrieved from datetime-local is "", the cookie expires when the session ends.
-      else
-        expires = 0;
+      // Attempt to treat this as localeISOString first.
+      expires = Date.fromLocaleISOString(expires) || Date.parse(expires) || 0;
 
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;
