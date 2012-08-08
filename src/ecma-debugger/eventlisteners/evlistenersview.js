@@ -102,6 +102,12 @@ cls.EventListenersView = function(id, name, container_class)
     this._text_search.searchDelayed(target.value);
   };
 
+  this._onsettingchange = function(msg)
+  {
+    if (msg.id == "dom" && msg.key == "dom-tree-style")
+      this.update();
+  };
+
   this._expand_all_types = function(event, target)
   {
     var list = event.target.get_ancestor(".ev-type-list");
@@ -137,6 +143,7 @@ cls.EventListenersView = function(id, name, container_class)
       },
     ];
     ContextMenu.get_instance().register("ev-listeners-all", contextmenu);
+    window.messages.add_listener("setting-changed", this._onsettingchange.bind(this));
   };
 
   this._init(id, name, container_class);

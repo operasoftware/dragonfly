@@ -84,11 +84,21 @@ window.app.builders.EcmascriptDebugger["6.0"] = function(service)
                         'scroll mono');
 
     /* Runtime State */
+    var js_side_panel_sections = service_interface.satisfies_version(6, 10)
+                               ? ['watches', 'return-values', 'callstack', 'inspection']
+                               : ['watches', 'callstack', 'inspection'];
     new cls.JSSidePanelView('scripts-side-panel',
                             ui_strings.M_VIEW_LABEL_RUNTIME_STATE,
-                            ['watches', 'callstack', 'inspection'],
+                            js_side_panel_sections,
                             // default expanded flags for the view list
-                            [false, true, true]);
+                            [false, true, true, true]);
+
+    /* Return Values */
+    cls.ReturnValuesView.prototype = ViewBase;
+    new cls.ReturnValuesView('return-values',
+                             ui_strings.M_VIEW_LABEL_RETURN_VALUES,
+                             'scroll mono');
+    cls.ReturnValuesView.create_ui_widgets();
 
     /* Callstack */
     cls.CallstackView.prototype = ViewBase;
