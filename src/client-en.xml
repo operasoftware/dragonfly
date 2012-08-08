@@ -219,6 +219,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/stringprototype.js"/>
 <script src="./lib/stylesheetlistprototype.js"/>
 <script src="./lib/xmlhttprequestprototype.js"/>
+<script src="./lib/storageprototype.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
