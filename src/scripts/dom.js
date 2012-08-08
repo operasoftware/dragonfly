@@ -779,35 +779,18 @@ Date.prototype.toLocaleISOString = function()
 
 Date.fromLocaleISOString = function(localeISOString)
 {
-  // A localeISOString looks like one of these:
-    // 2012-08-03T16:11
-    // 2012-08-03T16:11:52.2
-    // 2012-08-03T16:11:52.12 (CORE-47780)
-    // 2012-08-03T16:11:52.612
+  var date = new Date(localeISOString);
 
-  var parts = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})\.(\d+))?$/.exec(localeISOString);
-  if (parts)
-  {
-    parts.shift();
-    var date = new Date();
-    [
-      // setXyz methods are used to set local timezone, as opposed to setXyzUTC
-      date.setFullYear,
-      function(v){
-        this.setMonth(v - 1)
-      },
-      date.setDate,
-      date.setHours,
-      date.setMinutes,
-      date.setSeconds,
-      function(v){
-        this.setMilliseconds(("0." + v) * 1000);
-      }
-    ].forEach(function(func, i){
-      func.call(date, Number(parts[i] || 0));
-    });
-    return date;
-  }
+  // Test if Date parsed the value as a UTC string.
+  // If it does, add the current timezone offset to get the local time.
+  // When the current timezone offset is 0, this will be a false positive,
+  // but that doesn't matter since we correct the value by 0 then.
+  var ms = date.getTime();
+  var timezone_offset = new Date().getTimezoneOffset() * 1000 * 60;
+  if (ms === new Date(localeISOString + "Z").getTime())
+    date = new Date(ms + timezone_offset);
+
+  return date;
 };
 
 /**
