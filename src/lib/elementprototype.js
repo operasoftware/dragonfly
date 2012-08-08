@@ -686,11 +686,9 @@ window.CustomElements.AutoScrollHeightFeature = function()
     if (!this.value)
     {
       this.style.height = "auto";
-      this.rows = 1;
     }
     else
     {
-      this.rows = 0;
       this.style.height = "0";
       this.style.height = this.scrollHeight + delta + "px";
     }
@@ -709,6 +707,7 @@ window.CustomElements.AutoScrollHeightFeature = function()
 
   (this._inits || (this._inits = [])).push(function(ele)
   {
+    ele.setAttribute("rows", "1");
     var delta = this._get_delta(ele);
     var adjust_height = this._adjust_height.bind(ele, delta);
     adjust_height();

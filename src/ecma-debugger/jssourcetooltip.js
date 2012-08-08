@@ -26,7 +26,7 @@ cls.JSSourceTooltip = function(view)
   var TOOLTIP_NAME = cls.JSInspectionTooltip.tooltip_name;
   var MAX_MOUSE_POS_COUNT = 2;
   var FILTER_HANDLER = "js-tooltip-filter";
-  var CONTROL_KEYWORD = ["while", "for", "if", "switch"];
+  var KEYWORD_BEFORE_OPEN_PAREN_BLACKLIST = ["while", "for", "if", "switch", "return"];
 
   var _tooltip = null;
   var _view = null;
@@ -148,7 +148,7 @@ cls.JSSourceTooltip = function(view)
                                        box, shift_key)
   {
     var sel = _get_identifier(script, line_number, char_offset, shift_key);
-    if (sel && sel.bracket_balance == 0)
+    if (sel && (sel.bracket_balance == 0 || sel.is_user_selection))
     {
       var start = script.line_arr[sel.start_line - 1] + sel.start_offset;
       var end = script.line_arr[sel.end_line - 1] + sel.end_offset;
@@ -190,6 +190,9 @@ cls.JSSourceTooltip = function(view)
     var OBJECT = 3;
     var OBJECT_ID = 0;
     var CLASS_NAME = 4;
+
+    if (!_container)
+      return;
 
     if (status === 0 && message[STATUS] == "completed")
     {
@@ -345,7 +348,8 @@ cls.JSSourceTooltip = function(view)
           return {start_line: start.line_number,
                   start_offset: start.offset,
                   end_line: end.line_number,
-                  end_offset: end.offset - 1};
+                  end_offset: end.offset - 1,
+                  is_user_selection: true};
         }
       }
     }
@@ -497,7 +501,8 @@ cls.JSSourceTooltip = function(view)
                 }
                 case IDENTIFIER:
                 {
-                  if (previous_token[VALUE] == "(" && CONTROL_KEYWORD.contains(token[VALUE]))
+                  if (previous_token[VALUE] == "(" &&
+                      KEYWORD_BEFORE_OPEN_PAREN_BLACKLIST.contains(token[VALUE]))
                     break;
                 }
                 case STRING:
@@ -605,9 +610,7 @@ cls.JSSourceTooltip = function(view)
 
     while (bracket_stack.length || (shift_key && parens_stack.length))
     {
-      for (var i = match_index + 1, token = null, break_loop = false;
-           !break_loop && (token = tokens[i]);
-           i++)
+      for (var i = match_index + 1, token = null; token = tokens[i]; i++)
       {
         // consume everything between parentheses if shiftKey is pressed
         if (shift_key && parens_stack.length)
@@ -786,10 +789,10 @@ cls.JSSourceTooltip = function(view)
                 }
               }
             }
-            break_loop = true;
             break;
           }
         }
+        break;
       }
 
       if (i == tokens.length && bracket_stack.length)

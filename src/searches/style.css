@@ -27,6 +27,8 @@
   background-image: -o-linear-gradient(-90deg, 
                                        #fce703 30%,
                                        #fcbe03 100%);
+  background-image: linear-gradient(#fce703 30%,
+                                    #fcbe03 100%);
   border-color: #ceba73;   
   border-top-color: #dbd3ad;
   border-bottom-color: #c7b267;
