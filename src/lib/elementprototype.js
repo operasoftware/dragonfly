@@ -1,42 +1,4 @@
-﻿if (!window.opera)
-{
-  window.opera =
-  {
-    postError: function(a){console.log(a);},
-    stpVersion: true
-  };
-}
-/*
-(function()
-{
-  var div = document.createElement('div')
-  var setter = div.__lookupSetter__("scrollTop");
-  var getter = div.__lookupGetter__("scrollTop");
-  Element.prototype.__defineSetter__('scrollTop', function(scroll_top)
-  {
-    opera.postError('setter: '+this.nodeName + ', '+scroll_top);
-    setter.call(this, scroll_top);
-  });
-  Element.prototype.__defineGetter__('scrollTop', function()
-  {
-    var scroll_top = getter.call(this);
-    return scroll_top;
-  });
-})();
-*/
-
-/* testing in Chrome or FF *
-if (document.createElementNS &&
-    document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
-{
-  Document.prototype.createElement = document.createElement = function(name)
-  {
-    return this.createElementNS('http://www.w3.org/1999/xhtml', name);
-  };
-}
-/* */
-
-if (!Element.prototype.contains)
+﻿if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
   {
@@ -190,7 +152,7 @@ Element.prototype.re_render = function(args)
     return ret;
   }
   return null;
-}
+};
 
 /**
  * Clear the element and render the template into it
@@ -329,7 +291,8 @@ Element.prototype.get_scroll_container = function()
     scroll_container = scroll_container.parentNode;
   return (scroll_container == document.documentElement ||
           scroll_container == document) ? null : scroll_container;
-}
+};
+
 /**
   * A class to store a scroll position and reset it later in an asynchronous
   * environment.
@@ -363,8 +326,7 @@ Element.ScrollPosition = function(target)
     this._delta_top = target_box.top - scroll_box.top;
     this._delta_left = target_box.left - scroll_box.left;
   }
-
-}
+};
 
 /**
   * To reset the scroll position.
@@ -402,7 +364,7 @@ Element.ScrollPosition.prototype.reset = function(target, sec_container)
       scroll_container.scrollLeft = 0;
     }
   }
-}
+};
 
 /**
  * Returns the next element for which the function "filter" returns true.
@@ -451,7 +413,7 @@ Element.prototype.getPreviousInFlow = function(root_context)
 };
 
 
-/* Check elements of a DOM traversal for an attribute. */
+/* Deprecated. Use get_acestor with an according selector instead. */
 Element.prototype.has_attr = function(traverse_type, name)
 {
   switch (traverse_type)
@@ -469,18 +431,22 @@ Element.prototype.has_attr = function(traverse_type, name)
 };
 
 /* Get an attribute of the first hit of a DOM traversal. */
+Element.prototype.get_ancestor_attr = function(name)
+{
+  var ele = this;
+  while (ele && !ele.hasAttribute(name))
+    ele = ele.parentElement;
+
+  return ele && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
+};
+
+/* Deprecated. Use get_ancestor_attr instead */
 Element.prototype.get_attr = function(traverse_type, name)
 {
   switch (traverse_type)
   {
     case "parent-node-chain":
-    {
-      var ele = this;
-      while (ele && ele.nodeType == 1 && !ele.hasAttribute(name))
-        ele = ele.parentNode;
-      return ele && ele.nodeType == 1 && ele.hasAttribute(name) ? ele.getAttribute(name) : null;
-      break;
-    }
+      return this.get_ancestor_attr(name);
   }
   return null;
 };
@@ -499,17 +465,15 @@ if (!Element.prototype.matchesSelector)
 };
 
 /* The naming is not precise, it can return the element itself. */
-
 Element.prototype.get_ancestor = function(selector)
 {
   var ele = this;
   while (ele)
   {
-    if (ele.nodeType == 1 && ele.matchesSelector(selector))
-    {
+    if (ele.matchesSelector(selector))
       return ele;
-    }
-    ele = ele.parentNode;
+
+    ele = ele.parentElement;
   }
   return null;
 };
@@ -576,222 +540,6 @@ Element.prototype.hasTextNodeChild = function()
     }
   }
   return false;
-}
-
-/**
- * Get the text content of the first node in Node with the name nodeName
- * Escapes opening angle brackets into less than entities. If node is not
- * found, returns null
- * @argument nodeName {string} node name
- * @returns {Element}
- */
-Node.prototype.getNodeData = function(nodeName)
-{
-  var node = this.getElementsByTagName(nodeName)[0];
-  if (node)
-  {
-    return node.textContent.replace(/</g, '&lt;');
-  }
-  return null;
-};
-
-/**
- * Returns the index of item in the nodelist
- * (The same behaviour as js1.6 array.indexOf)
- * @argument item {Element}
- */
-NodeList.prototype.indexOf = function(item)
-{
-  for (var cursor = null, i = 0; cursor = this[i]; i++)
-  {
-    if (cursor == item)
-    {
-      return i;
-    }
-  }
-  return -1;
-};
-
-/**
- * Return the sum of all the values in the array. If selectorfun is given,
- * it will be called to retrieve the relevant value for each item in the
- * array.
- */
-Array.prototype.sum = function(selectorfun)
-{
-  if (selectorfun)
-  {
-    return this.map(selectorfun).sum();
-  }
-  else
-  {
-    var ret = 0;
-    this.forEach(function(e) { ret += e });
-    return ret
-  }
-};
-
-Array.prototype.unique = function()
-{
-  var ret = [];
-  this.forEach(function(e) { if (ret.indexOf(e) == -1) {ret.push(e) }});
-  return ret;
-}
-
-Array.prototype.__defineGetter__("last", function()
-{
-   return this[this.length - 1];
-});
-
-Array.prototype.__defineSetter__("last", function() {});
-
-Array.prototype.extend = function(list)
-{
-  this.push.apply(this, list);
-  return this;
-};
-
-Array.prototype.insert = function(index, list, replace_count)
-{
-  this.splice.apply(this, [index, replace_count || 0].extend(list));
-  return this;
-};
-
-
-StyleSheetList.prototype.getDeclaration = function(selector)
-{
-  var sheet = null, i = 0, j = 0, rules = null, rule = null;
-  for ( ; sheet = this[i]; i++)
-  {
-    rules = sheet.cssRules;
-    // does not take into account import rules
-    for (j = 0; (rule = rules[j]) && !(rule.type == 1 && rule.selectorText == selector); j++);
-    if (rule)
-    {
-      return rule.style;
-    }
-  }
-  return null;
-};
-
-StyleSheetList.prototype.getPropertyValue = function(selector, property)
-{
-  var style = this.getDeclaration(selector);
-  return style && style.getPropertyValue(property) || '';
-};
-
-if (!(function(){}).bind)
-{
-  Function.prototype.bind = function (context)
-  {
-    var method = this, args = Array.prototype.slice.call(arguments, 1);
-    return function()
-    {
-      return method.apply(context, args.concat(Array.prototype.slice.call(arguments)));
-    }
-  };
-};
-
-if (!"".trim)
-{
-  String.prototype.trim = function()
-  {
-    return this.replace(/^\s+/, '').replace(/\s+$/, '');
-  }
-}
-
-if (!Object.getOwnPropertyNames)
-{
-  Object.getOwnPropertyNames = function(obj)
-  {
-    var ret = [];
-    for (var p in obj)
-    {
-      if (Object.prototype.hasOwnProperty.call(obj, p))
-        ret.push(p);
-    }
-    return ret;
-  }
-}
-
-/**
- * Check if a string appears to be a number, that is, all letters in the
- * string are numbers. Does not take in to account decimals. Clones the
- * behaviour of str.isdigit in python
- */
-String.prototype.isdigit = function()
-{
-  return this.length && !(/\D/.test(this));
-};
-
-Array.prototype.contains = String.prototype.contains = function(str)
-{
-  return this.indexOf(str) != -1;
-};
-
-String.prototype.startswith = function(str)
-{
-  return this.slice(0, str.length) === str;
-};
-
-String.prototype.endswith = function(str)
-{
-  return this.slice(this.length - str.length) === str;
-};
-
-String.prototype.zfill = function(width)
-{
-  return this.replace(/(^[+-]?)(.+)/, function(str, sign, rest) {
-    var fill = Array(Math.max(width - str.length + 1, 0)).join(0);
-    return sign + fill + rest;
-  });
-};
-
-String.prototype.ljust = function(width, char)
-{
-  return this + Array(Math.max(width - this.length + 1, 0)).join(char || ' ');
-};
-
-/**
- * Capitalizes the first character of the string. Lowercases the rest of
- * the characters, unless `only_first` is true.
- */
-String.prototype.capitalize = function(only_first)
-{
-  var rest = this.slice(1);
-  if (!only_first)
-  {
-    rest = rest.toLowerCase();
-  }
-  return this[0].toUpperCase() + rest;
-};
-
-
-
-/**
- * Local ISO strings, currently needed as datetime-local input values
- * http://dev.w3.org/html5/markup/input.datetime-local.html#input.datetime-local.attrs.value
- */
-Date.prototype.toLocaleISOString = function()
-{
- return new Date(this.getTime() - this.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','');
-};
-
-/**
- * Convenience function for loading a resource with XHR using the get method.
- * Will automatically append a "time" guery argument to avoid caching.
- * When the load is finished, callback will be invoced with context as its
- * "this" value
- */
-
-XMLHttpRequest.prototype.loadResource = function(url, callback, context)
-{
-  this.onload = function()
-  {
-    callback(this, context);
-  }
-  this.open('GET', url);
-  this.send(null);
 };
 
 window.CustomElements = new function()
@@ -977,55 +725,34 @@ CustomElements.add(function()
 },
 'AutoScrollHeightFeature');
 
-CanvasRenderingContext2D.prototype.draw_2d_gradient = function(top_color_list,
-                                                               bottom_color_list,
-                                                               flip)
+/* testing in Chrome or FF *
+if (document.createElementNS &&
+    document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {
-  if (typeof bottom_color_list == "boolean")
+  Document.prototype.createElement = document.createElement = function(name)
   {
-    flip = bottom_color_list;
-    bottom_color_list = null;
-  }
-
-  if (!this._src_canvas)
-  {
-    this._src_canvas = document.createElement("canvas");
-    this._src_ctx = this._src_canvas.getContext("2d");
-  }
-  var width = this._src_canvas.width = this.canvas.width;
-  var height = this._src_canvas.height = this.canvas.height;
-  var set_stop = function(color, index, list)
-  {
-    this.addColorStop((1 / (list.length - 1 || 1)) * index, color);
+    return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
-  var lg = flip
-         ? this._src_ctx.createLinearGradient(0, 0, 0, height)
-         : this._src_ctx.createLinearGradient(0, 0, width, 0);
-  this._src_ctx.clearRect(0, 0, width, height);
-  top_color_list.forEach(set_stop, lg);
-  this._src_ctx.fillStyle = lg;
-  this._src_ctx.globalCompositeOperation = "source-over";
-  this._src_ctx.fillRect(0, 0, width, height);
-  this.drawImage(this._src_canvas, 0, 0);
-  if (bottom_color_list)
+}
+/* */
+
+/*
+(function()
+{
+  var div = document.createElement('div')
+  var setter = div.__lookupSetter__("scrollTop");
+  var getter = div.__lookupGetter__("scrollTop");
+  Element.prototype.__defineSetter__('scrollTop', function(scroll_top)
   {
-    this._src_ctx.clearRect(0, 0, width, height);
-    lg = flip
-         ? this._src_ctx.createLinearGradient(0, 0, width, 0)
-         : this._src_ctx.createLinearGradient(0, 0, 0, height);
-    lg.addColorStop(0, "hsla(0, 0%, 0%, 0)");
-    lg.addColorStop(1, "hsla(0, 0%, 0%, 1)");
-    this._src_ctx.fillStyle = lg;
-    this._src_ctx.fillRect(0, 0, width, height);
-    this._src_ctx.globalCompositeOperation = "source-in";
-    lg = flip
-         ? this._src_ctx.createLinearGradient(0, 0, 0, height)
-         : this._src_ctx.createLinearGradient(0, 0, width, 0);
-    bottom_color_list.forEach(set_stop, lg);
-    this._src_ctx.fillStyle = lg;
-    this._src_ctx.fillRect(0, 0, width, height);
-    this.drawImage(this._src_canvas, 0, 0);
-  }
-};
+    opera.postError('setter: '+this.nodeName + ', '+scroll_top);
+    setter.call(this, scroll_top);
+  });
+  Element.prototype.__defineGetter__('scrollTop', function()
+  {
+    var scroll_top = getter.call(this);
+    return scroll_top;
+  });
+})();
+*/
 
 

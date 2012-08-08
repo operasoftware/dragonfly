@@ -1,0 +1,118 @@
+﻿.ev-rt-list
+{
+  margin-top: 5px;
+}
+
+.ev-type-list
+{
+  margin: 0;
+}
+
+.ev-listener-tooltip
+{
+  margin: 0;
+  margin-top: -13px;
+}
+
+.list-selected-node
+{
+  margin-top: -5px;
+  margin-bottom: 10px;
+}
+
+.list-selected-node dd
+{
+  margin-left: 23px;
+}
+
+.ev-listener-tooltip dd
+{
+  margin-left: 16px;
+}
+
+.ev-missing-script:hover
+{
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #d3dff8;
+  background-color: #d3dff8;
+}
+
+.ev-listener
+{
+  display: inline-block;
+  height: 12px;
+  line-height: 12px;
+  vertical-align: middle;
+  margin-left: 3px;
+  padding: 0 2px;
+  background-color: hsl(0, 0%, 70%);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.ev-listener::after
+{
+  content: "ev";
+}
+
+.ev-type
+{
+  font: inherit;
+}
+
+.ev-listener-tooltip .ev-type,
+.ev-listeners-selected-node .ev-type
+{
+  background-color: hsla(0, 0%, 0%, 0.04);
+  padding: 2px 8px;
+  border-width: 1px 0;
+  margin: 5px 0px 1px;
+}
+
+.ev-listener-tooltip .ev-type
+{
+  margin: 5px -8px 1px;
+}
+
+.ev-phase
+{
+  float: right;
+  font-style: italic;
+  color: hsl(0, 0%, 50%);
+}
+
+.capturing-phase
+{
+  color: hsl(0, 70%, 30%);
+}
+
+.ev-added,
+.ev-origin
+{
+  border-radius: 2px;
+}
+
+.ev-listener-list
+{
+  margin-left: 12px;
+}
+
+.tooltip-function-source .js-tooltip-examine-container
+{
+  padding: 0;
+}
+
+.tooltip-function-source .js-source-line-numbers
+{
+  border-radius: 0 0 0 3px;
+}
+
+.tooltip-function-source .js-source-content
+{
+  margin-left: 40px;
+}
+
+.position-relative
+{
+  position: relative;
+}

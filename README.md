@@ -23,8 +23,8 @@ Building is done using the `df2` tool. For more information, see
 
 ## Running test builds of dragonfly
 
-Open [opera:config#DeveloperTools|DeveloperToolsURL](opera:config#DeveloperTools|DeveloperToolsURL) and set the url to the
-path to the dragonfly build to use.
+Open [opera:config#DeveloperTools|DeveloperToolsURL](opera:config#DeveloperTools|DeveloperToolsURL) and set the URL to the
+path to the Dragonfly build to use.
 
 ## Updating translations
 
