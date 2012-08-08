@@ -277,7 +277,7 @@ ui_strings.M_VIEW_LABEL_EVENT_LISTENERS = "Listeners";
 ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_ALL = "All";
 
 /* DESC: View with the event listeners of the selected node. */
-ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected node";
+ui_strings.M_VIEW_LABEL_EVENT_LISTENERS_SELECTED_NODE = "Selected Node";
 
 /* DESC: Heading for Export button, accessed by clicking the subhead DOM view button. */
 ui_strings.M_VIEW_LABEL_EXPORT = "Export";
@@ -415,7 +415,7 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
-ui_strings.S_ATTRIBUTE_LISTENER = "attribute listener";
+ui_strings.S_ATTRIBUTE_LISTENER = "Event handler";
 
 /* DESC: Generic label for a cancel button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
@@ -673,13 +673,13 @@ ui_strings.S_ERRORS_MAXIMUM_REACHED = "Displaying %(MAX)s of %(COUNT)s errors";
 ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
-ui_strings.S_EVENT_LISTENER_ADDED_IN = "added in %s";
+ui_strings.S_EVENT_LISTENER_ADDED_IN = "Added in %s";
 
 /* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
-ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "set as markup attribute";
+ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "Set as markup attribute";
 
 /* DESC: Info in a tooltip that the according listener was set by the event target interface. */
-ui_strings.S_EVENT_TARGET_LISTENER = "event target listener";
+ui_strings.S_EVENT_TARGET_LISTENER = "Event listener";
 
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_CSS_PARSING = "CSS parsing";
@@ -910,7 +910,7 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
 
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
-ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "<missing JavaScript source file>";
+ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "(Missing source file)";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
 ui_strings.S_INFO_NETWORK_UPDATES_PAUSED = "Updating of network log is paused.";
@@ -925,8 +925,6 @@ ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
 
 /* DESC: A info message that the debugger is currently in profiler mode. */
-ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled."
-
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";
 
