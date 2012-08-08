@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dragonfly - Locale ISO strings</title>
+    <link rel="stylesheet" href="qunit/qunit.css" media="screen">
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/lib/dateprototype.js"></script>
+    <script src="../src/lib/datenamespace.js"></script>
+
+
+<script>
+
+var ui_strings = {
+  S_DRAGONFLY_INFO_MESSAGE: ""
+};
+
+test("locale_iso_strings", function()
+{
+  var TIMEZONE_OFFSET = new Date().getTimezoneOffset() * 1000 * 60;
+
+  // The outcome of toLocaleISOString depends on the timezone.
+  // Using getTimezoneOffset to hit the moving target at beer o'clock.
+  // The moment we create a Date object on, for comparison, is variable.
+  var d = new Date(1344013200000 + TIMEZONE_OFFSET);
+  equal(d.toLocaleISOString(),"2012-08-03T17:00:00.000");
+
+  // The outcome of toLocaleISOString depends on the timezone.
+  // The expected moment needs to be adjusted.
+  var ms = Date.fromLocaleISOString("2012-08-03T17:00");
+  equal(ms, 1344013200000 + TIMEZONE_OFFSET);
+
+  var ms = Date.fromLocaleISOString("2012-08-03T17:00+02:00");
+  equal(isNaN(ms), true);
+});
+
+
+
+</script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Dragonfly - Locale ISO strings</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
