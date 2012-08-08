@@ -1,144 +1,268 @@
 ﻿"use strict";
 
-cls.NetworkLoggerService = function(view)
+cls.NetworkLoggerService = function()
 {
-  this._view = view;
-  this._current_context = null;
+  this.CONTEXT_TYPE_LOGGER = "network-logger";
+  this.CONTEXT_TYPE_CRAFTER = "request-crafter";
 
-  this._on_abouttoloaddocument_bound = function(msg)
+  this._get_matching_context = function(res_id)
   {
+    var crafter_context = this.contexts[this.CONTEXT_TYPE_CRAFTER];
+    if (crafter_context && res_id in crafter_context.allocated_res_ids)
+      return crafter_context;
+
+    var logger_context = this.contexts[this.CONTEXT_TYPE_LOGGER];
+    return logger_context;
+  };
+
+  this.get_request_context = function(type, force)
+  {
+    var ctx = this.contexts[type];
+    if (!ctx && force)
+    {
+      ctx = this.contexts[type] = new cls.RequestContext();
+      this.post("context-established", {"context_type": type});
+    }
+    return ctx;
+  };
+
+  this.clear_request_context = function(type)
+  {
+    // Todo: Maybe this should be called with the context gotten from get_request_context instead.
+    var type = this.CONTEXT_TYPE_LOGGER;
+    this.contexts[type] = null;
+    this.post("context-cleared");
+  };
+
+  this._queue_message = function(listener, msg)
+  {
+    var crafter = this.contexts[this.CONTEXT_TYPE_CRAFTER];
+    if (crafter)
+    {
+      if (crafter.is_waiting_for_create_request)
+      {
+        // Store in a queue. Before we know what resourceID create_request
+        // will return, messages can't be assorciated with the right context.
+        this._message_queue.push([listener, msg]);
+        return true;
+      }
+      else
+      {
+        // Play back the message queue.
+        while (this._message_queue.length)
+          this._replay_message_bound(this._message_queue.shift());
+
+      }
+    }
+    return false;
+  };
+
+  this._replay_message_bound = function(queued)
+  {
+    var LISTENER =  0;
+    var MSG = 1;
+    queued[LISTENER].call(this, queued[LISTENER], queued[MSG]);
+  }.bind(this);
+
+  this._on_abouttoloaddocument = function(listener, msg)
+  {
+    if (this._queue_message(listener, msg))
+      return;
+
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
 
-    if (!this._current_context)
-      this._current_context = new cls.RequestContext();
-
+    // For abouttoloaddocument, the context is always of type CONTEXT_TYPE_LOGGER.
+    var ctx = this.get_request_context(this.CONTEXT_TYPE_LOGGER, true);
     if (!data.parentDocumentID)
     {
       // This basically means "unload" for that windowID, potentially
       // existing data for that windowID needs to be cleared now.
-      this._current_context.remove_window_context(data.windowID);
+      ctx.remove_window_context(data.windowID);
     }
 
-    var window_context = this._current_context.get_window_context(data.windowID);
+    var window_context = ctx.get_window_context(data.windowID);
     if (!window_context)
     {
       var window_context = new cls.NetworkLoggerService.WindowContext(data.windowID);
-      this._current_context.window_contexts.push(window_context);
+      ctx.window_contexts.push(window_context);
       if (!data.parentDocumentID)
       {
         window_context.saw_main_document = true;
       }
     }
-  }.bind(this);
+  };
+  this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
 
-  this._on_urlload_bound = function(msg)
+  this._on_urlload = function(listener, msg)
   {
-    if (!this._current_context)
-      this._current_context = new cls.RequestContext();
-
-    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
-    this._current_context.update("urlload", data);
-  }.bind(this);
-
-  this._on_urlredirect_bound = function(msg)
-  {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
+    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+    {
+      var context_type = this.CONTEXT_TYPE_LOGGER;
+      ctx = this.contexts[context_type] = new cls.RequestContext();
+      this.post("context-established", {"context_type": context_type});
+    }
+    ctx.update("urlload", data);
+  };
+  this._on_urlload_bound = this._on_urlload.bind(this, this._on_urlload);
+
+  this._on_urlredirect = function(listener, msg)
+  {
+    if (this._queue_message(listener, msg))
+      return;
 
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
+    var ctx = this._get_matching_context(data.fromResourceID);
+    if (!ctx)
+      return;
+
+    // Allocate the resource_id we redirect to to the same context.
+    if (data.fromResourceID in ctx.allocated_res_ids)
+      ctx.allocated_res_ids[data.toResourceID] = ctx.allocated_res_ids[data.fromResourceID];
+
     // a bit of cheating since further down we use .resouceID to determine
     // what resource the event applies to:
     data.resourceID = data.fromResourceID;
-    this._current_context.update("urlredirect", data);
-  }.bind(this);
+      
+    ctx.update("urlredirect", data);
+  };
+  this._on_urlredirect_bound = this._on_urlredirect.bind(this, this._on_urlredirect);
 
-  this._on_urlfinished_bound = function(msg)
+  this._on_urlfinished = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    this._current_context.update("urlfinished", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_response_bound = function(msg)
+    ctx.update("urlfinished", data);
+    // On a context of type CONTEXT_TYPE_CRAFTER, resource id now needs to be removed
+    // from the allocated list. Furthcoming requests can have the same recourceID,
+    // don't belong to the crafter.
+    delete ctx.allocated_res_ids[data.resourceID];
+  };
+  this._on_urlfinished_bound = this._on_urlfinished.bind(this, this._on_urlfinished);
+
+  this._on_response_bound = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Response(msg);
-    this._current_context.update("response", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_request_bound = function(msg)
+    ctx.update("response", data);
+  }
+  this._on_response_bound = this._on_response_bound.bind(this, this._on_response_bound);
+
+  this._on_request = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Request(msg);
-    this._current_context.update("request", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_requestheader_bound = function(msg)
+    ctx.update("request", data);
+  };
+  this._on_request_bound = this._on_request.bind(this, this._on_request);
+
+  this._on_requestheader = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
-    this._current_context.update("requestheader", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_requestfinished_bound = function(msg)
+    ctx.update("requestheader", data);
+  };
+  this._on_requestheader_bound = this._on_requestheader.bind(this, this._on_requestheader);
+
+  this._on_requestfinished = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
-    this._current_context.update("requestfinished", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_requestretry_bound = function(msg)
+    ctx.update("requestfinished", data);
+  };
+  this._on_requestfinished_bound = this._on_requestfinished.bind(this, this._on_requestfinished);
+
+  this._on_requestretry = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
-    this._current_context.update("requestretry", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_responseheader_bound = function(msg)
+    ctx.update("requestretry", data);
+  };
+  this._on_requestretry_bound = this._on_requestretry.bind(this, this._on_requestretry);
+
+  this._on_responseheader = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
-    this._current_context.update("responseheader", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_responsefinished_bound = function(msg)
+    ctx.update("responseheader", data);
+  };
+  this._on_responseheader_bound = this._on_responseheader.bind(this, this._on_responseheader);
+
+  this._on_responsefinished = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
-    this._current_context.update("responsefinished", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_urlunload_bound = function(msg)
+    ctx.update("responsefinished", data);
+    // todo: work around CORE-47687 here too. in case the corresponding entry
+    // has seen a redirect before, it needs to remove the resource id from the allocated list now.
+  };
+  this._on_responsefinished_bound = this._on_responsefinished.bind(this, this._on_responsefinished);
+
+  this._on_urlunload = function(listener, msg)
   {
-    if (!this._current_context)
+    if (this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
-    this._current_context.update("urlunload", data);
-  }.bind(this);
+    var ctx = this._get_matching_context(data.resourceID);
+    if (!ctx)
+      return;
 
-  this._on_debug_context_selected_bound = function()
-  {
-    this._current_context = null;
-    this._view.update();
-  }.bind(this);
+    ctx.update("urlunload", data);
+  };
+  this._on_urlunload_bound = this._on_urlunload.bind(this, this._on_urlunload);
 
   this._setup_request_body_behaviour_bound = function()
   {
@@ -181,13 +305,17 @@ cls.NetworkLoggerService = function(view)
     this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
 
-    messages.addListener("debug-context-selected", this._on_debug_context_selected_bound);
+    messages.addListener("debug-context-selected", this.clear_request_context.bind(this, this.CONTEXT_TYPE_LOGGER));
     messages.addListener("setting-changed", this._on_setting_changed_bound);
+
+    this._message_queue = [];
+    this.contexts = {};
+    window.cls.MessageMixin.apply(this);
   };
 
   this._on_setting_changed_bound = function(message)
   {
-    if (message.id === "network_logger" && 
+    if (message.id === "network_logger" &&
         message.key === "track-content")
     {
       this.setup_content_tracking_bound();
@@ -221,69 +349,63 @@ cls.NetworkLoggerService = function(view)
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_body = function(itemid, update_callback)
+  this.get_body = function(entry)
   {
-    if (!this._current_context)
-      return;
-
-    var entry = this._current_context.get_entry(itemid);
     entry.called_get_body = true;
     var contentmode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
     var typecode = {datauri: 3, string: 1}[contentmode] || 1;
-    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [update_callback, entry]);
+    var tag = window.tagManager.set_callback(this, this._handle_get_resource, [entry.resource_id]);
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this._handle_get_resource = function(status, data, update_callback, entry)
+  this.get_resource_info = function(resource_id)
   {
-    if (!this._current_context)
-      return;
+    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
+    var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
+    if (ctx)
+    {
+      var entry = ctx.get_entries_with_res_id(resource_id).last;
+      if (entry && entry.current_response && entry.current_response.responsebody)
+      {
+        return new cls.ResourceInfo(entry);
+      }
+    }
+    return null;
+  };
 
+  this.get_entry = function(resource_id)
+  {
+    // Returns the current entry matching a resource id.
+    // Todo: this only makes sense when it's from a CONTEXT_TYPE_LOGGER context,
+    // if the same url was requested by the crafter after it was in the page,
+    // it should still return the one that the page got. That should be in the name,
+    // or get_entry should just be called on the context instead of the service.
+    var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
+    if (ctx)
+      return ctx.get_entries_with_res_id(resource_id).last;
+
+    return null;
+  }
+
+  this._handle_get_resource = function(status, data, resource_id)
+  {
+    var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
     if (status)
     {
       // the object passed to _current_context represents empty event_data. will set no_used_mimetype.
-      this._current_context.update("responsebody", {resourceID: entry.resource_id});
+      ctx.update("responsebody", {resourceID: resource_id});
     }
     else
     {
       var msg = new cls.ResourceManager["1.2"].ResourceData(data);
-      this._current_context.update("responsebody", msg);
+      ctx.update("responsebody", msg);
     }
-    // Update the view. This is only needed when the generic updating per event is paused.
-    if (this.is_paused && update_callback)
-      update_callback();
-
+    // Post update message from here. This is only needed when the generic updating per event is paused.
+    if (this.is_paused)
+    {
+      ctx.post("resource-update", {id: resource_id});
+    }
   };
-
-  this.get_request_context = function()
-  {
-    return this._current_context;
-  };
-
-  this.clear_request_context = function()
-  {
-    this._current_context = null;
-  };
-
-  this.pause = function()
-  {
-    if (this._current_context)
-      this._current_context.pause();
-  };
-
-  this.unpause = function()
-  {
-    if (this._current_context)
-      this._current_context.unpause();
-  };
-
-  this.__defineGetter__("is_paused", function()
-  {
-    if (this._current_context)
-      return this._current_context.is_paused;
-  });
-
-  this.__defineSetter__("is_paused", function(){});
 
   this.init();
 };
@@ -297,9 +419,15 @@ cls.NetworkLoggerService.WindowContext = function(window_id)
 
 cls.RequestContext = function()
 {
-  this._logger_entries = [];
-  this._filters = [];
+  this.FILTER_ALLOW_ALL = {
+    type_list: [],
+    "is_blacklist": true
+  };
+  this.allocated_res_ids = [];
   this.window_contexts = [];
+  this.is_paused = false;
+  this._logger_entries = [];
+  this._filters = [this.FILTER_ALLOW_ALL];
   this._init();
 };
 
@@ -308,12 +436,15 @@ cls.RequestContextPrototype = function()
   this._init = function()
   {
     // When a new context is initiated, it's not paused by default. Reset the setting.
+    // Todo: The context for the request crafter shouldn't do that.
     // Todo: Ideally, when paused, the new context should be created in a different
     // place, so the old one can be kept while we're on pause.
     if (settings.network_logger.get("pause") != false)
       settings.network_logger.set("pause", false);
 
+    this.is_waiting_for_create_request = false;
     this._filter_function_bound = this._filter_function.bind(this);
+    window.cls.MessageMixin.apply(this);
   };
 
   this._filter_function = function(item)
@@ -416,16 +547,16 @@ cls.RequestContextPrototype = function()
       return Math.min.apply(null, entries.map(function(e) { return e.starttime }));
   };
 
-  this._event_changes_req_id = function(event, last_entry)
+  this._event_changes_req_id = function(event, current_entry)
   {
-    /* 
-      Checks if the event's requestID is different from the one in last_entry. 
-      That should never be the case, since the "urlload" event initiates 
-      a new entry and that doesn't have a requestID. Note that last_entry is 
+    /*
+      Checks if the event's requestID is different from the one in current_entry.
+      That should never be the case, since the "urlload" event initiates
+      a new entry and that doesn't have a requestID. Note that current_entry is
       the last entry we saw with the event's resourceID.
     */
     return event.requestID &&
-           (last_entry.last_requestID !== event.requestID);
+           (current_entry._requestID !== event.requestID);
   };
 
   this.update = function(eventname, event)
@@ -439,14 +570,14 @@ cls.RequestContextPrototype = function()
       }
     }
 
-    var logger_entries = this.get_entries_with_res_id(event.resourceID);
+    var res_id = event.resourceID;
+    var logger_entries = this.get_entries_with_res_id(res_id);
     if (!logger_entries.length && eventname !== "urlload")
     {
       // ignoring. Never saw an urlload, or it's already invalidated
       return;
     }
-
-    // For responsebody, all entries with that resourceID need to be updated. 
+    // For responsebody, all entries with that resourceID need to be updated.
     // Others are callbacks that belongs to the current (and last) entry of that resourceID.
     if (eventname === "responsebody")
     {
@@ -458,7 +589,7 @@ cls.RequestContextPrototype = function()
     else
     {
       var logger_entry = logger_entries.last;
-      if (logger_entry && logger_entry.last_requestID)
+      if (logger_entry && logger_entry._requestID)
       {
         /*
           The same resource id can be loaded several times, but then the request id changes.
@@ -472,7 +603,7 @@ cls.RequestContextPrototype = function()
         {
           opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
                           " Unexpected change in requestID on " + eventname +
-                          ": Change from " + logger_entry.last_requestID + " to " + 
+                          ": Change from " + logger_entry._requestID + " to " +
                           event.requestID + ", URL: " + logger_entry.human_url);
         }
       }
@@ -486,13 +617,20 @@ cls.RequestContextPrototype = function()
         var window_context = this.get_window_context(event.windowID);
         window_context.entry_ids.push(id);
       }
-      logger_entry.last_requestID = event.requestID;
+
+      logger_entry._requestID = event.requestID;
+
+      // Add a mapped crafter_request_id when applicable
+      if (res_id in this.allocated_res_ids)
+        logger_entry.crafter_request_id = this.allocated_res_ids[res_id];
+
       logger_entry.update(eventname, event);
     }
 
-    if (window.views && !this.is_paused)
-      window.views.network_logger.update();
-
+    if (!this.is_paused)
+    {
+      this.post("resource-update", {id: event.resourceID});
+    }
   };
 
   this.remove_window_context = function(window_id)
@@ -503,15 +641,14 @@ cls.RequestContextPrototype = function()
     if (ids_to_remove && ids_to_remove.length)
     {
       this._logger_entries = this._logger_entries.filter(
-        function(entry){
+        function(entry) {
           return !ids_to_remove.contains(entry.id);
         }
       );
     }
     // Remove the window_context itself
     this.window_contexts = this.window_contexts.filter(
-      function(context)
-      {
+      function(context) {
         return window_id != context.id;
       }
     );
@@ -538,6 +675,7 @@ cls.RequestContextPrototype = function()
 
   this.discard_incomplete_warning = function(window_id)
   {
+    // Todo: Filter
     for (var i = 0, window_context; window_context = this.window_contexts[i]; i++)
       if (window_context.id === window_id)
         window_context.incomplete_warn_discarded = true;
@@ -547,6 +685,42 @@ cls.RequestContextPrototype = function()
   this.get_window_context = function(window_id)
   {
     return this.window_contexts.filter(helpers.eq("id", window_id))[0];
+  };
+
+  this.send_request = function(url, requestdata)
+  {
+    var windowid = window.window_manager_data.get_debug_context();
+    var request = [
+      windowid,
+      url,
+      requestdata.method,
+      requestdata.headers,
+      null, // payload
+      3, // header policy. 2 == overwrite, 3 == replace
+      2, // reload policy. 2 == no cache, always reload from network
+      null, // request content mode
+      [1, 1] // response content mode 1 == string, 1 == decodee
+    ];
+    this.is_waiting_for_create_request = true;
+    var id = this._get_uid();
+    var tag = window.tagManager.set_callback(null, this._handle_create_request.bind(this), [id]);
+    window.services["resource-manager"].requestCreateRequest(tag, request);
+    return id;
+  };
+
+  this._handle_create_request = function(status, msg, id)
+  {
+    this.is_waiting_for_create_request = false;
+    if (status == 0)
+    {
+      var RESOURCEID = 0;
+      // todo: use the message class instead
+      this.allocated_res_ids[msg[RESOURCEID]] = id;
+    }
+    else
+    {
+      // todo: talk back to request_crafting_view. handle the error.
+    }
   };
 
 };
@@ -567,19 +741,20 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.size = null;
   this.type = null;
   this.urltype = null;
-  this.starttime = null;
-  this.starttime_relative = null;
+  this.starttime = 0;
+  this.starttime_relative = 0;
   this.endtime = null;
-  this.requests_responses = [];
-  this.last_responsecode = null;
-  this.last_method = null;
   this.is_unloaded = false;
   this.is_finished = false;
   this.events = [];
   this.event_sequence = [];
-  this.called_get_body = false;
-  this.current_response = null;
+  this.requests_responses = [];
   this.current_request = null;
+  this.current_response = null;
+  this.current_responsecode = null;
+  this.called_get_body = false;
+  this.set_is_finished_on_responsefinished = false;
+  this._requestID = 0;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -592,7 +767,7 @@ cls.NetworkLoggerEntryPrototype = function()
   var CLASSNAME_RECEIVING = "receiving";
   var CLASSNAME_IRREGULAR = "irregular";
 
-  /*  // gap_def format: 
+  /*  // gap_def format:
   {
      classname: type of sequence,
      sequences: {
@@ -602,7 +777,7 @@ cls.NetworkLoggerEntryPrototype = function()
        ]
      }
    } */
-  
+
   var gap_defs = {
     "urlload": {
         "request": {
@@ -613,7 +788,7 @@ cls.NetworkLoggerEntryPrototype = function()
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_READING_LOCAL_DATA,
           classname: CLASSNAME_BLOCKED
         },
-        // The response-phase can be closed without ever seeing a response event, for 
+        // The response-phase can be closed without ever seeing a response event, for
         // example because the request was aborted. See CORE-43284.
         "responsefinished": {
           title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_CLOSING_RESPONSE_PHASE,
@@ -695,10 +870,10 @@ cls.NetworkLoggerEntryPrototype = function()
       }
   };
 
-  // What is not defined as it's own case by the above, but it terminated by 
+  // What is not defined as it's own case by the above, but it terminated by
   // urlredirect, requestretry or urlfinished, will be defined regardless of the preceding event
 
-  /* // gap_def_to_phase format: 
+  /* // gap_def_to_phase format:
   {
      classname: type of sequence,
      sequences: {
@@ -729,8 +904,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.starttime = eventdata.time;
       if (this.context_starttime)
         this.starttime_relative = this.starttime - this.context_starttime;
-      else
-        this.starttime_relative = 0;
 
       var d = new Date(this.starttime);
       var h = String(d.getHours()).zfill(2);
@@ -796,7 +969,6 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_request = function(event)
   {
-    this.last_method = event.method;
     this.current_request = new cls.NetworkLoggerRequest(this);
     this.requests_responses.push(this.current_request);
     this.current_request._update_event_request(event);
@@ -826,9 +998,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_requestretry = function(event)
   {
-    // This means on the next request with event.toRequestID, we won't 
+    // This means on the next request with event.toRequestID, we won't
     // make a new entry, but a new NetworkLoggerRequest on the same entry.
-    this.last_requestID = event.toRequestID;
+    this._requestID = event.toRequestID;
   };
 
   this._update_event_response = function(event)
@@ -837,8 +1009,8 @@ cls.NetworkLoggerEntryPrototype = function()
     {
       this.current_request.was_responded_to = true;
     }
-    this.last_responsecode = event.responseCode;
-    this.error_in_last_response = /^[45]/.test(this.last_responsecode);
+    this.current_responsecode = event.responseCode;
+    this.error_in_current_response = /^[45]/.test(this.current_responsecode);
     this.current_response = new cls.NetworkLoggerResponse(this);
     this.requests_responses.push(this.current_response);
     this.current_response._update_event_response(event);
@@ -858,7 +1030,6 @@ cls.NetworkLoggerEntryPrototype = function()
       this.requests_responses.push(this.current_response);
     }
     this.current_response._update_event_responseheader(event);
-    // todo: should _guess_response_type here? if there was a Content-Type response-header, pick it from there.
   };
 
   this._update_event_responsefinished = function(event)
@@ -868,6 +1039,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
+
+    if (this.set_is_finished_on_responsefinished)
+      this.is_finished = true;
 
     this._guess_response_type();
   };
@@ -885,7 +1059,8 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_urlredirect = function(event)
   {
-    // This does not add any information, the event is only used to change the requestID
+    // Workaround for CORE-47687
+    this.set_is_finished_on_responsefinished = true;
   };
 
   this._guess_response_type = function()
@@ -961,10 +1136,27 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
+  this.check_to_request_body = function(service)
+  {
+    // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
+    if (
+      this.is_finished &&
+      !this.called_get_body &&
+      (!this.current_response || !this.current_response.responsebody) &&
+      // When we have a response, but didn't see responsefinished, it means there's really no
+      // responsebody. Don't attempt to fetch it.
+      (!this.current_response || this.current_response.saw_responsefinished)
+    )
+    {
+      service.get_body(this);
+    }
+  };
+
   this.__defineGetter__("duration", function()
   {
     return (this.events.length && this.endtime - this.starttime) || 0;
   });
+  this.__defineSetter__("duration", function(){});
 
   this.__defineGetter__("waiting_time", function()
   {
@@ -972,14 +1164,13 @@ cls.NetworkLoggerEntryPrototype = function()
                                           .sum(helpers.prop("val"));
     return waiting_time || 0;
   });
+  this.__defineSetter__("waiting_time", function(){});
 
   this.__defineGetter__("touched_network", function()
   {
      return Boolean(this.current_request);
   });
-
-  // todo: add empty setters.
-
+  this.__defineSetter__("touched_network", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -1116,3 +1307,10 @@ cls.NetworkLoggerResponsePrototype = function()
 };
 
 cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
+
+cls.ResourceInfo = function(entry)
+{
+  this.url = entry.url;
+  this.responseheaders = entry.current_response.response_headers;
+  this.responsebody = entry.current_response.responsebody;
+};

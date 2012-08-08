@@ -455,7 +455,10 @@
                      new cls.InspectableJSObject(rt_id,
                                                  object.objectID,
                                                  function_name,
-                                                 object.className);
+                                                 object.className,
+                                                 null,
+                                                 null,
+                                                 true);
     var func_search_term = value_template.length ? null : search_term;
     var func = window.templates.inspected_js_object(func_model, true, null, func_search_term);
 
@@ -471,12 +474,13 @@
     return [
       ["li",
         ["div",
-          ["span",
-            "↱",
+          ["div",
            "class", "return-value-arrow return-value-arrow-from",
            "handler", "goto-script-line",
-           "title", ui_strings.S_RETURN_VALUES_FUNCTION_FROM.replace("%s", from_uri)
-                                                            .replace("%s", retval.positionFrom.lineNumber),
+           "data-tooltip", "return-value-tooltip",
+           "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_FROM
+                                          .replace("%s", from_uri)
+                                          .replace("%s", retval.positionFrom.lineNumber),
            "data-script-id", String(retval.positionFrom.scriptID),
            "data-script-line", String(retval.positionFrom.lineNumber)
           ],
@@ -485,12 +489,16 @@
         ],
         (value_template.length
         ? ["div",
-            ["span",
-              "↳",
-             "class", "return-value-arrow return-value-arrow-to",
+            ["div",
+              ["div",
+               "class", "return-value-arrow-to",
+               "data-tooltip", "return-value-tooltip",
+               "data-tooltip-text", ui_strings.S_RETURN_VALUES_FUNCTION_TO
+                                              .replace("%s", to_uri)
+                                              .replace("%s", retval.positionTo.lineNumber)
+              ],
+             "class", "return-value-arrow",
              "handler", "goto-script-line",
-             "title", ui_strings.S_RETURN_VALUES_FUNCTION_TO.replace("%s", to_uri)
-                                                            .replace("%s", retval.positionTo.lineNumber),
              "data-script-id", String(retval.positionTo.scriptID),
              "data-script-line", String(retval.positionTo.lineNumber)
             ],

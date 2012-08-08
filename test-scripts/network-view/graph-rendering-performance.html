@@ -15,28 +15,6 @@
 
 -->
 
-<!-- --
-<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
-<link rel="stylesheet" href="../../src/ui-style/overlay.css"/>
-<link rel="stylesheet" href="../../src/ui-style/tabs.css"/>
-<link rel="stylesheet" href="../../src/ui-style/debugger_style.css"/>
-<link rel="stylesheet" href="../../src/ui-style/js-source.css"/>
-<link rel="stylesheet" href="../../src/ui-style/syntax-highlight.css"/>
-<link rel="stylesheet" href="../../src/console-logger/consolelogger_style.css"/>
-<link rel="stylesheet" href="../../src/ui-style/colorpickerstyle.css"/>
-<link rel="stylesheet" href="../../src/ui-scripts/sortable_table/sortable_table.css"/>
-<link rel="stylesheet" href="../../src/ui-scripts/metadata_drawer/metadata_drawer.css"/>
-<link rel="stylesheet" href="../../src/repl/repl_style.css"/>
-<link rel="stylesheet" href="../../src/resource-manager/resource_style.css"/>
-<link rel="stylesheet" href="../../src/network/network_style.css"/>
-<link rel="stylesheet" href="../../src/shortcutconfig/style.css"/>
-<link rel="stylesheet" href="../../src/ui-style/global_command_line.css"/>
-<link rel="stylesheet" href="../../src/ui-style/contextmenu.css"/>
-<link rel="stylesheet" href="../../src/cookie-manager/cookie_manager_style.css"/>
-<link rel="stylesheet" href="../../src/searches/style.css"/>
-<link rel="stylesheet" href="../../src/ecma-debugger/breakpoints/style.css"/>
-<link rel="stylesheet" href="../../src/screenshot/style.css"/>
-<!-- -->
 <link rel="stylesheet" href="../../src/ui-style/ui.css"/>
 <link rel="stylesheet" href="../../src/network/network_style.css"/>
 
@@ -50,7 +28,7 @@
 <script>
 
 window.helpers = new window.cls.Helpers();
-window.settings = {network_logger:{ set: function(){}}};
+window.settings = {network_logger:{ set: function(){}, get: function(){}}};
 window.messages = {post: function(){}};
 
 var TestContext = function(ctx)
@@ -65,7 +43,7 @@ var test = function()
   var t = Date.now();
   var basetime = ctx._logger_entries[0].starttime;
   var duration = ctx._logger_entries.last.endtime - basetime;
-  var tpl = templates.network_graph_rows(ctx, ctx._logger_entries, null, 1000, basetime, duration); // ctx, entries, selected, width, basetime, duration
+  var tpl = templates.network.graph_rows(ctx, ctx._logger_entries, null, 1000, basetime, duration); // ctx, entries, selected, width, basetime, duration
   document.getElementById("graph").clearAndRender(tpl);
   var c = document.documentElement.offsetHeight + document.documentElement.offsetWidth;
   document.getElementsByTagName('code')[0].textContent = "time: " + (Date.now() - t) + " millisec";
