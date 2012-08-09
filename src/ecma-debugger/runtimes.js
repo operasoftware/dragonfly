@@ -1332,15 +1332,15 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
-  this.reloadWindow = function(passed_window)
+  this.reloadWindow = function(window_id)
   {
-    var sel_window = passed_window || __selected_window;
-    if (sel_window)
+    __selected_window = window_id || __selected_window;
+    if (__selected_window)
     {
-      if (!__windows_reloaded[sel_window])
-        __windows_reloaded[sel_window] = 1;
+      if (!__windows_reloaded[__selected_window])
+        __windows_reloaded[__selected_window] = 1;
 
-      var rt_id = this.getRuntimeIdsFromWindow(sel_window)[0];
+      var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if (window.services['ecmascript-debugger'] &&
           window.services['ecmascript-debugger'].is_enabled &&
           // For background processes we can not use the exec service.
