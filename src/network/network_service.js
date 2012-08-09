@@ -236,8 +236,7 @@ cls.NetworkLoggerService = function()
     // Returns a ResourceInfo based on the most recent Entry with that resource_id.
     var entry = this._current_context &&
                 this._current_context.get_entries_with_res_id(resource_id).last;
-    // todo: probably make a getter for current_response that gets _current_response.
-    if (entry && entry._current_response && entry._current_response.responsebody)
+    if (entry && entry.current_response && entry.current_response.responsebody)
     {
       return new cls.ResourceInfo(entry);
     }
@@ -1009,9 +1008,17 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("touched_network", function()
   {
-     return Boolean(this._current_request);
+    return Boolean(this._current_request);
   });
   this.__defineSetter__("touched_network", function(){});
+
+  this.__defineGetter__("current_response", function()
+  {
+    // In 99% of the cases, _current_response is used. It's only
+    // exposed for getting the ResourceInfo from the service directly.
+    return this.current_response;
+  });
+  this.__defineSetter__("current_response", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -1152,7 +1159,6 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 cls.ResourceInfo = function(entry)
 {
   this.url = entry.url;
-  // todo: probably make a getter for current_response that gets _current_response.
-  this.responseheaders = entry._current_response.response_headers;
-  this.responsebody = entry._current_response.responsebody;
+  this.responseheaders = entry.current_response.response_headers;
+  this.responsebody = entry.current_response.responsebody;
 };
