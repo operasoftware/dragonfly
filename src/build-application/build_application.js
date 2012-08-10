@@ -86,7 +86,6 @@ window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled = false;
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-
   var _find_compatible_version = function(version, version_list)
   {
     var
@@ -146,6 +145,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
     i = 0,
     builder = null,
     numbers = null;
+
+    window.messages.clear_session_listeners();
 
     for (service_name in service_descriptions)
     {
@@ -221,7 +222,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   new cls.ServiceBase();
   new ActionBroker();
 
-  window.messages.addListener("application-setup", report_usage);
+  window.messages.addListener("application-setup", report_usage, true);
 
   // global objects
   window.tagManager = window.tag_manager = new window.cls.TagManager();
