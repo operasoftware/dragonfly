@@ -25,7 +25,7 @@ cls.ScriptSelect = function(id, class_name)
       {
         var script_type = script.script_type.capitalize(true);
         return script.uri
-             ? script.filename
+             ? script.filename || script.uri
              : script_type + " – " + (script.script_data.replace(/\s+/g, " ").slice(0, 300) ||
                ui_strings.S_TEXT_ECMA_SCRIPT_SCRIPT_ID + ': ' + script.script_id);
       }
