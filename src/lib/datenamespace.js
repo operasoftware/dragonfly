@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Local ISO strings, currently needed as datetime-local input values
  * http://dev.w3.org/html5/markup/input.datetime-local.html#input.datetime-local.attrs.value
  */
