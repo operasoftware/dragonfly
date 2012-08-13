@@ -81,9 +81,9 @@ cls.JSInspectionTooltip = function()
     switch (_cur_ctx.type.type)
     {
       case cls.PrettyPrinter.ELEMENT:
-        UI.get_instance().show_view("dom");
         dom_data.get_dom(_cur_ctx.rt_id, _cur_ctx.obj_id);
         _hide_tooltip();
+        UI.get_instance().show_view("dom");
         break;
     }
   };

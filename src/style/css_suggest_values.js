@@ -204,27 +204,32 @@ suggest_values['-o-border-image'] =
 [
 ];
 
+suggest_values['animation'] =
 suggest_values['-o-animation'] =
 [
 ];
 
+suggest_values['animation-delay'] =
 suggest_values['-o-animation-delay'] =
 [
   // <time>
   '0'
 ];
 
+suggest_values['animation-direction'] =
 suggest_values['-o-animation-direction'] =
 [
   'normal',
   'alternate'
 ];
 
+suggest_values['animation-duration'] =
 suggest_values['-o-animation-duration'] =
 [
   '0'
 ];
 
+suggest_values['animation-fill-mode'] =
 suggest_values['-o-animation-fill-mode'] =
 [
   'none',
@@ -233,23 +238,27 @@ suggest_values['-o-animation-fill-mode'] =
   'both'
 ];
 
+suggest_values['animation-iteration-count'] =
 suggest_values['-o-animation-iteration-count'] =
 [
   // <number>
   'infinite'
 ];
 
+suggest_values['animation-name'] =
 suggest_values['-o-animation-name'] =
 [
   'none'
 ];
 
+suggest_values['animation-play-state'] =
 suggest_values['-o-animation-play-state'] =
 [
   'running',
   'paused'
 ];
 
+suggest_values['animation-timing-function'] =
 suggest_values['-o-animation-timing-function'] =
 [
   'ease',
@@ -283,11 +292,13 @@ suggest_values['-o-text-overflow'] =
   'ellipsis'
 ];
 
+suggest_values['transform'] =
 suggest_values['-o-transform'] =
 [
   'none'
 ];
 
+suggest_values['transform-origin'] =
 suggest_values['-o-transform-origin'] =
 [
   'left',
@@ -297,24 +308,29 @@ suggest_values['-o-transform-origin'] =
   'bottom'
 ];
 
+suggest_values['transition'] =
 suggest_values['-o-transition'] =
 [
 ];
 
+suggest_values['transition-delay'] =
 suggest_values['-o-transition-delay'] =
 [
 ];
 
+suggest_values['transition-duration'] =
 suggest_values['-o-transition-duration'] =
 [
 ];
 
+suggest_values['transition-property'] =
 suggest_values['-o-transition-property'] =
 [
   'none',
   'all'
 ];
 
+suggest_values['transition-timing-function'] =
 suggest_values['-o-transition-timing-function'] =
 [
   'ease',

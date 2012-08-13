@@ -355,30 +355,39 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "-apple-dashboard-region":
     return "";
 
+  case "animation":
   case "-o-animation":
       return "none 0s 0s cubic-bezier(0.25, 0.1, 0.25, 1) normal none 1";
 
+  case "animation-delay":
   case "-o-animation-delay":
       return "0s";
 
+  case "animation-direction":
   case "-o-animation-direction":
       return "normal";
 
+  case "animation-duration":
   case "-o-animation-duration":
       return "0s";
 
+  case "animation-fill-mode":
   case "-o-animation-fill-mode":
       return "none";
 
+  case "animation-iteration-count":
   case "-o-animation-iteration-count":
       return "1";
 
+  case "animation-name":
   case "-o-animation-name":
       return "none";
 
+  case "animation-play-state":
   case "-o-animation-play-state":
       return "running";
 
+  case "animation-timing-function":
   case "-o-animation-timing-function":
       return "cubic-bezier(0.25, 0.1, 0.25, 1)";
 
@@ -412,10 +421,12 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "-o-text-overflow":
     return "";
 
+  case "transform":
   case "-o-transform":
   case "-webkit-transform":
     return "none";
 
+  case "transform-origin":
   case "-o-transform-origin":
   case "-webkit-transform-origin":
     var w = parseInt(data[index_map.indexOf("width")]) || 0;
@@ -429,22 +440,27 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     }
     return (w / 2) + "px " + (h / 2) + "px";
 
+  case "transition":
   case "-o-transition":
   case "-webkit-transition":
     return "all 0s 0s cubic-bezier(0.25, 0.1, 0.25, 1)";
 
+  case "transition-delay":
   case "-o-transition-delay":
   case "-webkit-transition-delay":
     return "0s";
 
+  case "transition-duration":
   case "-o-transition-duration":
   case "-webkit-transition-duration":
     return "0s";
 
+  case "transition-property":
   case "-o-transition-property":
   case "-webkit-transition-property":
     return "all";
 
+  case "transition-timing-function":
   case "-o-transition-timing-function":
   case "-webkit-transition-timing-function":
     return "cubic-bezier(0.25, 0.1, 0.25, 1)";
@@ -528,6 +544,7 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "repeat";
 
   case "background-size":
+  case "-webkit-background-size":
     return "auto";
 
   case "baseline-shift":
@@ -600,7 +617,8 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
     return "0px";
 
   case "border-radius":
-    return "";
+  case "-webkit-border-radius":
+    return "0px";
 
   case "border-bottom-left-radius":
   case "-webkit-border-bottom-left-radius":

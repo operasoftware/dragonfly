@@ -251,10 +251,14 @@ var ProfilerTemplates = function()
          "width: " + interval + "px;" +
          "left: " + event_start + "px;" +
          "top:" + ((column * BAR_HEIGHT) + 1) + "px;" +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255,255,255,.25) 100%), " +
-                           "-o-linear-gradient(0, " + color + " 0, " +
-                                              color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px);",
+         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                           "-o-linear-gradient(0deg, " + color + " 0, " +
+                                               color + " " + self_time + "px, " +
+                                              "transparent " + self_time + "px); " +
+         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                           "linear-gradient(90deg, " + color + " 0, " +
+                                            color + " " + self_time + "px, " +
+                                           "transparent " + self_time + "px);",
        "class", "profiler-event profiler-event-interval event-type-" + event.type +
                 (event.eventID == selected_id ? " selected" : "") +
                 (is_expandable ? " expandable" : " non-expandable"),
@@ -472,10 +476,14 @@ var ProfilerTemplates = function()
       ["div",
        "style",
          "width: " + WIDTH + "px; " +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255,255,255,.25) 100%), " +
-                           "-o-linear-gradient(0, " + color + " 0, " +
-                                              color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px);",
+         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                           "-o-linear-gradient(0deg, " + color + " 0, " +
+                                               color + " " + self_time + "px, " +
+                                              "transparent " + self_time + "px);" +
+         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                           "linear-gradient(90deg, " + color + " 0, " +
+                                            color + " " + self_time + "px, " +
+                                           "transparent " + self_time + "px);",
        "class", "profiler-event profiler-event-interval event-type-" + event.type
       ]
     );

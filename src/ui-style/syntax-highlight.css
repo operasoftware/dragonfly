@@ -291,9 +291,13 @@ examine-objects key
   border: 1px solid transparent;
   border-radius: 2px;
   border-bottom-color: #fefefe;
-  background-image: -o-linear-gradient(-90deg, transparent 0,
-                                               transparent 1px,
-                                               #fefefe 1px);
+  background-image: -o-linear-gradient(-90deg,
+                                       transparent 0,
+                                       transparent 1px,
+                                       #fefefe 1px);
+  background-image: linear-gradient(transparent 0,
+                                    transparent 1px,
+                                    #fefefe 1px);
   background-repeat: no-repeat;
 }
 

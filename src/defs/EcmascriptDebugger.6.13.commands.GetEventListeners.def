@@ -1,0 +1,16 @@
+<span class="comment">/** 
+ * Arguments for the GetEventListeners command.
+ * 
+ * @since 6.11
+ */</span>
+message <span class="message">GetEventListenersArg</span>
+{
+  required <span class="number">uint32</span> runtimeID  = 1; 
+  <span class="comment">/** 
+   * List of object IDs to fetch event listeners from, the object must have
+   * implemented the EventTarget DOM interface to be able to get the
+   * registered listeners, otherwise the event listener will be unset in the
+   * response.
+   */</span>
+  repeated <span class="number">uint32</span> objectList = 2; 
+}

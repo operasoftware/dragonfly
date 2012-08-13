@@ -255,7 +255,9 @@ window.cls.FriendlyPrinter.prototype = new function()
         return [
           DATE,
           1, // expandable inline object (booleans are returned as string)
-          new Date(item.getTime() - item.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','')
+          !isNaN(item.getTime())
+          ? new Date(item.getTime() - item.getTimezoneOffset() * 1000 * 60).toISOString().replace('Z','')
+          : item.toString()
         ];
       }
       else if (class_ == "[object Function]")

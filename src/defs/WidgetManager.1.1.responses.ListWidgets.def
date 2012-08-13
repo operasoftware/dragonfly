@@ -1,0 +1,695 @@
+message <span class="message">WidgetList</span>
+{
+  <span class="comment">/** 
+   * Contains detailed information on a widget. The structure is modeled after
+   * the W3C spec but with additional information for opera specific widgets.
+   * 
+   * The same structure is also used for Unite apps/services and browser
+   * extensions.
+   */</span>
+  message <span class="message">Widget</span>
+  {
+    enum Type
+    {
+      <span class="comment">/** 
+       * Regular widget.
+       */</span>
+      WIDGET = 1;
+      <span class="comment">/** 
+       * Unite application or service.
+       */</span>
+      UNITE = 2;
+      <span class="comment">/** 
+       * Browser extension.
+       */</span>
+      EXTENSION = 3;
+    }
+
+    enum WidgetType
+    {
+      UNKNOWN = 1;
+      CHROMELESS = 2;
+      WINDOWED = 3;
+      TOOLBAR = 4;
+    }
+
+    enum ViewMode
+    {
+      UNKNOWN = 1;
+      <span class="comment">/** 
+       * No chrome
+       */</span>
+      WIDGET = 2;
+      <span class="comment">/** 
+       * Floating, same as widget (W3C mode)
+       */</span>
+      FLOATING = 3;
+      DOCKED = 4;
+      APPLICATION = 5;
+      FULLSCREEN = 6;
+      <span class="comment">/** 
+       * With chrome and occupying the entire screen.
+       */</span>
+      MAXIMIZED = 7;
+      <span class="comment">/** 
+       * Same as docked
+       */</span>
+      MINIMIZED = 8;
+      <span class="comment">/** 
+       * Same as widget
+       */</span>
+      WINDOWED = 9;
+    }
+
+    <span class="comment">/** 
+     * A unique identifier for the widget.
+     * 
+     * e.g. "wuid-351f0e9d-24f2-080b-07e7-13b724cdaef8"
+     */</span>
+    required <span class="string">string        </span> widgetID           =  1; 
+    <span class="comment">/** 
+     * The major type for the widget, most fields are common among
+     * the types but certain fields are type specific.
+     */</span>
+    required <span class="number">Type          </span> type               =  2; 
+    required <span class="number">WidgetType    </span> widgetType         =  3; 
+    <span class="comment">/** 
+     * Represents the full human-readable name for a widget. This field will
+     * only be set if there is a name element defined in the widget
+     * specification.
+     * 
+     * Note: This is either the localized name that matches the gadget locales, or the unlocalized name.
+     */</span>
+    optional <span class="message">Name          </span> name               =  4; 
+    required <span class="message">Properties    </span> properties         =  5; 
+    <span class="comment">/** 
+     * Represents people or an organization attributed with the creation of the widget.
+     * This field will only be set if there is an author element defined in the
+     * widget specification.
+     */</span>
+    optional <span class="message">Author        </span> author             =  6; 
+    <span class="comment">/** 
+     * The namespaces this widget uses. If no namespace is defined the field is not set.
+     * e.g. "http://www.w3.org/ns/widgets" or "http://xmlns.opera.com/2006/widget"
+     */</span>
+    optional <span class="string">string        </span> namespace          =  7; 
+    <span class="comment">/** 
+     * The version of the widget.
+     */</span>
+    optional <span class="string">string        </span> version            =  8; 
+    <span class="comment">/** 
+     * If specified defines the preferred viewport width in pixels. The value,
+     * when set, is from 1 and up.
+     */</span>
+    optional <span class="number">int32         </span> width              =  9; 
+    <span class="comment">/** 
+     * If specified defines the preferred viewport height in pixels. The value,
+     * when set, is from 1 and up.
+     */</span>
+    optional <span class="number">int32         </span> height             = 10; 
+    <span class="comment">/** 
+     * The current width of the widget in pixels.
+     */</span>
+    optional <span class="number">int32         </span> currentWidth       = 11; 
+    <span class="comment">/** 
+     * The current height of the widget in pixels.
+     */</span>
+    optional <span class="number">int32         </span> currentHeight      = 12; 
+    <span class="comment">/** 
+     * The current viewmode used by the widget.
+     */</span>
+    required <span class="number">ViewMode      </span> currentViewMode    = 13; 
+    <span class="comment">/** 
+     * The default viewmode for the widget.
+     */</span>
+    required <span class="number">ViewMode      </span> defaultViewMode    = 14; 
+    <span class="comment">/** 
+     * All viewmodes defined for this widget.
+     */</span>
+    repeated <span class="number">ViewMode      </span> viewModeList       = 15; 
+    <span class="comment">/** 
+     * Represents a human-readable description of the widget.
+     * This field will only be set if there is a description element defined
+     * in the widget specification.
+     * 
+     * Note: This is either the localized description that matches the gadget locales, or the unlocalized description.
+     */</span>
+    optional <span class="message">Description   </span> description        = 16; 
+    <span class="comment">/** 
+     * The license information for the widget if one is present.
+     * This field will only be set if there is a license element defined in
+     * the widget specification.
+     */</span>
+    optional <span class="message">License       </span> license            = 17; 
+    <span class="comment">/** 
+     * All icons defined for the widget.
+     */</span>
+    repeated <span class="message">Icon          </span> iconList           = 18; 
+    <span class="comment">/** 
+     * Declare a custom start file the user agent is expected to use when it
+     * instantiates the widget.
+     * This field will only be set if there is a content element defined in
+     * the widget specification.
+     */</span>
+    optional <span class="message">Content       </span> content            = 19; 
+    <span class="comment">/** 
+     * List of all features requested by the widget.
+     */</span>
+    repeated <span class="message">Feature       </span> featureList        = 20; 
+    <span class="comment">/** 
+     * List of all preferences defined by the widget.
+     */</span>
+    repeated <span class="message">Preference    </span> preferenceList     = 21; 
+    <span class="comment">/** 
+     * If the widget was signed with a digital signature this is set with
+     * information on the signature.
+     */</span>
+    optional <span class="message">Signature     </span> signature          = 22; 
+    <span class="comment">/** 
+     * The URL used for updating the widget.
+     */</span>
+    optional <span class="string">string        </span> updateURL          = 23; 
+    <span class="comment">/** 
+     * List of requests to access network resources.
+     */</span>
+    repeated <span class="message">Network       </span> networkAccessList  = 24; 
+    <span class="comment">/** 
+     * Lists of security access the widget requests.
+     * Note: This only applies to Opera Widgets (namespace "http://xmlns.opera.com/2006/widget" and ""), not W3C and other widget formats.
+     */</span>
+    repeated <span class="message">SecurityAccess</span> securityAccessList = 25; 
+    <span class="comment">/** 
+     * An IRI identifier chosen by widget itself.
+     */</span>
+    optional <span class="string">string        </span> iriIdentifier      = 26; 
+    <span class="comment">/** 
+     * Additional information which is specific to extensions. Only set when
+     * it contains an extension.
+     */</span>
+    optional <span class="message">ExtensionInfo </span> extensionInfo      = 27; 
+    <span class="comment">/** 
+     * Additional information which is specific to Unite apps and services.
+     * Only set when it contains a Unite app or service.
+     */</span>
+    optional <span class="message">UniteInfo     </span> uniteInfo          = 28; 
+    <span class="comment">/** 
+     * Information about an available update for the widget.
+     * Set when available, which will be during an update.
+     */</span>
+    optional <span class="message">UpdateInfo    </span> updateInfo         = 29; 
+    <span class="comment">/** 
+     * Added UserJS files, this applies to extensions.
+     */</span>
+    repeated <span class="message">UserJS        </span> userJSList         = 30; 
+  }
+  <span class="comment">/** 
+   * Represents the full human-readable name for a widget that is used, for example, in an application menu or in other contexts.
+   * 
+   * 7.7
+   * http://www.w3.org/TR/widgets/#name
+   */</span>
+  message <span class="message">Name</span>
+  {
+    <span class="comment">/** 
+     * The full human-readable name for the widget.
+     */</span>
+    required <span class="string">string</span> text      = 1; 
+    <span class="comment">/** 
+     * A displayable string intended to represent a condensed name for a widget,
+     * e.g. as a name for an icon.
+     * 
+     * note: This is the unlocalized version.
+     */</span>
+    optional <span class="string">string</span> shortName = 2; 
+    <span class="comment">/** 
+     * The locale used for the name and shortName fields.
+     * If the fields are unlocalized the field is not set.
+     */</span>
+    optional <span class="string">string</span> locale    = 3; 
+  }
+  <span class="comment">/** 
+   * Various properties specific to Opera
+   */</span>
+  message <span class="message">Properties</span>
+  {
+    <span class="comment">/** 
+     * Specifies whether the widget is currently running or not.
+     */</span>
+    required <span class="bool">bool  </span> isActive               =  1; 
+    <span class="comment">/** 
+     * Specifies whether the widget is enabled or not. If the widget is
+     * disabled details on this may be found in disabledDetails.
+     */</span>
+    required <span class="bool">bool  </span> isEnabled              =  2; 
+    <span class="comment">/** 
+     * Specifies whether the widget is dockable or not. This is only used
+     * by older Opera widgets (not W3C), other types sets this to false.
+     */</span>
+    required <span class="bool">bool  </span> isDockable             =  3; 
+    <span class="comment">/** 
+     * Specifies whether the widget as access to the filesystem or not.
+     */</span>
+    required <span class="bool">bool  </span> hasFileAccess          =  4; 
+    <span class="comment">/** 
+     * Specifies whether the widget is considered persistent or not.
+     * Persistent widgets cannot be removed. Widgets are by default not
+     * persistent.
+     */</span>
+    required <span class="bool">bool  </span> isPersistent           =  5; 
+    <span class="comment">/** 
+     * True if the widget has transparent features or not, false otherwise.
+     */</span>
+    required <span class="bool">bool  </span> hasTransparentFeatures =  6; 
+    <span class="comment">/** 
+     * Specifies whether the widget can use JS plugins or not. This is
+     * specific to older Opera widget (not W3C), other types sets this to
+     * false.
+     */</span>
+    required <span class="bool">bool  </span> hasJSPluginsAccess     =  8; 
+    <span class="comment">/** 
+     * Specific flag for JIL widgets, set to true if the widget has
+     * filesystem access.
+     */</span>
+    required <span class="bool">bool  </span> hasJILFilesystemAccess =  9; 
+    <span class="comment">/** 
+     * Is true if the widget namespace supports feature tags.
+     * Currently W3C and JIL widgets support this.
+     */</span>
+    required <span class="bool">bool  </span> hasFeatureTagSupport   = 10; 
+    <span class="comment">/** 
+     * The entire path of the widget as it is stored on the host.
+     */</span>
+    required <span class="string">string</span> path                   = 11; 
+    <span class="comment">/** 
+     * The filename of the widget as it stored on the host.
+     */</span>
+    required <span class="string">string</span> fileName               = 12; 
+    <span class="comment">/** 
+     * The relative path to the config file, this is usually config.xml
+     * but may differ depending on the widget namespace in use.
+     * e.g. "config.xml"
+     */</span>
+    required <span class="string">string</span> configFilePath         = 13; 
+    <span class="comment">/** 
+     * The URL which was used to download and install the widget. This
+     * may be empty in some cases even though it was downloaded from a URL.
+     */</span>
+    required <span class="string">string</span> downloadURL            = 14; 
+    <span class="comment">/** 
+     * The ID of the window the widget was opened in or 0 if there is no window.
+     */</span>
+    required <span class="number">uint32</span> windowID               = 15; 
+    <span class="comment">/** 
+     * Set to true if the widget has access to public networks.
+     * Some widget namespaces allow this to be controlled per widget
+     * while others have it set globally.
+     */</span>
+    required <span class="bool">bool  </span> publicNetwork          = 16; 
+    <span class="comment">/** 
+     * Set to true if the widget has access to private networks.
+     * Some widget namespaces allow this to be controlled per widget
+     * while others have it set globally.
+     */</span>
+    required <span class="bool">bool  </span> privateNetwork         = 17; 
+    <span class="comment">/** 
+     * Details on why a widget is disabled. Only set when disabled.
+     */</span>
+    optional <span class="string">string</span> disabledDetails        = 18; 
+    <span class="comment">/** 
+     * Full path of the widget resource in the filesystem. (eg '/opera/widgets/somewidget.wgt/index.html')
+     */</span>
+    optional <span class="string">string</span> resolvedStartPath      = 19; 
+    <span class="comment">/** 
+     * The current locale used in the widget/extension. (eg 'en', 'en-gb', 'nb-no')
+     */</span>
+    optional <span class="string">string</span> startfileLocale        = 20; 
+  }
+  <span class="comment">/** 
+   * Represents people or an organization attributed with the creation of the widget.
+   * 
+   * 7.9
+   * http://www.w3.org/TR/widgets/#author0
+   */</span>
+  message <span class="message">Author</span>
+  {
+    <span class="comment">/** 
+     * People or organization attributed with the creation of the widget.
+     */</span>
+    required <span class="string">string</span> text         = 1; 
+    <span class="comment">/** 
+     * Email address associated with the author.
+     */</span>
+    optional <span class="string">string</span> email        = 2; 
+    <span class="comment">/** 
+     * URI that represents a link associated with the author.
+     */</span>
+    optional <span class="string">string</span> href         = 3; 
+    <span class="comment">/** 
+     * Represents the name of an organization that the author is affiliated with.
+     */</span>
+    optional <span class="string">string</span> organization = 4; 
+  }
+  <span class="comment">/** 
+   * Represents a human-readable description of the widget.
+   * 
+   * 7.8
+   * http://www.w3.org/TR/widgets/#description
+   */</span>
+  message <span class="message">Description</span>
+  {
+    <span class="comment">/** 
+     * The description text.
+     */</span>
+    required <span class="string">string</span> text   = 1; 
+    <span class="comment">/** 
+     * The locale used for the description field.
+     * If the field is unlocalized the field is not set.
+     */</span>
+    optional <span class="string">string</span> locale = 2; 
+  }
+  <span class="comment">/** 
+   * The software license for this widget.
+   */</span>
+  message <span class="message">License</span>
+  {
+    <span class="comment">/** 
+     * The license text.
+     */</span>
+    required <span class="string">string</span> text   = 1; 
+    <span class="comment">/** 
+     * A URL or path that points to a representation of a software and/or content license
+     */</span>
+    optional <span class="string">string</span> href   = 2; 
+    <span class="comment">/** 
+     * The locale used for this license.
+     * If the field is unlocalized the field is not set.
+     */</span>
+    optional <span class="string">string</span> locale = 3; 
+  }
+  <span class="comment">/** 
+   * A custom icon for the widget.
+   * 
+   * 7.11
+   * http://www.w3.org/TR/widgets/#the-icon-element-and-its-attributes
+   */</span>
+  message <span class="message">Icon</span>
+  {
+    <span class="comment">/** 
+     * A path attribute that points to a file inside the widget package.
+     */</span>
+    required <span class="string">string</span> src    = 1; 
+    <span class="comment">/** 
+     * The author's preferred width for the icon if any. Only set for values
+     * 1 and up.
+     */</span>
+    optional <span class="number">uint32</span> width  = 2; 
+    <span class="comment">/** 
+     * The author's preferred height for the icon if any. Only set for values
+     * 1 and up.
+     */</span>
+    optional <span class="number">uint32</span> height = 3; 
+  }
+  <span class="comment">/** 
+   * Defines the start file for a widget, the file is defined by a path
+   * and optionally which MIME-Type and encoding it has.
+   * If no content has been defined the widget is started from "index.html".
+   */</span>
+  message <span class="message">Content</span>
+  {
+    <span class="comment">/** 
+     * A path which points to a file within the widget package.
+     * e.g. "mywidget.html"
+     */</span>
+    required <span class="string">string</span> src      = 1; 
+    <span class="comment">/** 
+     * Defines the MIME-Type for the file referenced in 'src'.
+     * The default MIME-Type is "text/html".
+     */</span>
+    optional <span class="string">string</span> type     = 2; 
+    <span class="comment">/** 
+     * Defines the encoding for the file referenced in 'src'.
+     * The default encoding is "UTF-8".
+     */</span>
+    optional <span class="string">string</span> encoding = 3; 
+  }
+  <span class="comment">/** 
+   * A feature is a URI identifiable runtime component. (e.g. an API).
+   * 
+   * 7.13
+   * http://www.w3.org/TR/widgets/#feature
+   */</span>
+  message <span class="message">Feature</span>
+  {
+    <span class="comment">/** 
+     * An IRI attribute that identifies a feature that is needed by the widget at runtime (such as an API).
+     */</span>
+    required <span class="string">string</span> name       = 1; 
+    <span class="comment">/** 
+     * A boolean attribute that indicates whether or not this feature has to be available to the widget at runtime.
+     */</span>
+    required <span class="bool">bool  </span> isRequired = 2; 
+    <span class="comment">/** 
+     * List of parameters for the feature.
+     */</span>
+    repeated <span class="message">Param </span> paramList  = 3; 
+  }
+  <span class="comment">/** 
+   * A parameter for a feature, defined as a name/value pair. The meaning
+   * of the name and value depends entirely on the feature.
+   * 
+   * 7.14
+   * http://www.w3.org/TR/widgets/#param
+   */</span>
+  message <span class="message">Param</span>
+  {
+    required <span class="string">string</span> name  = 1; 
+    required <span class="string">string</span> value = 2; 
+  }
+  <span class="comment">/** 
+   * The preference element allows authors to declare one or more preferences.
+   * Preferences are persistently stored in the browser.
+   * 
+   * 7.15
+   * http://www.w3.org/TR/widgets/#preference
+   */</span>
+  message <span class="message">Preference</span>
+  {
+    <span class="comment">/** 
+     * The name of the preference
+     * e.g. "skin"
+     */</span>
+    required <span class="string">string</span> name       = 1; 
+    <span class="comment">/** 
+     * The value of the preference
+     * e.g. "alien"
+     */</span>
+    required <span class="string">string</span> value      = 2; 
+    <span class="comment">/** 
+     * Controls whether this preference can, or cannot, be overwritten at runtime (e.g. via scripts).
+     */</span>
+    required <span class="bool">bool  </span> isReadOnly = 3; 
+  }
+  message <span class="message">Signature</span>
+  {
+    enum State
+    {
+      UNKNOWN = 1;
+      <span class="comment">/** 
+       * Widget is unsigned.
+       */</span>
+      UNSIGNED = 2;
+      <span class="comment">/** 
+       * Widget is signed and signature is valid.
+       */</span>
+      SIGNED = 3;
+      <span class="comment">/** 
+       * Widget is signed but the signature is invalid.
+       */</span>
+      VERIFICATION_FAILED = 4;
+      <span class="comment">/** 
+       * Signature verification is still in progress.
+       */</span>
+      PENDING = 5;
+    }
+
+    <span class="comment">/** 
+     * Short name of the signature used.
+     */</span>
+    required <span class="string">string</span> id               = 1; 
+    <span class="comment">/** 
+     * The state of the signature, for instance whether verification failed
+     * or it was properly signed.
+     */</span>
+    required <span class="number">State </span> state            = 2; 
+    <span class="comment">/** 
+     * Set to true if the widget has been signed with a privileged certificate.
+     */</span>
+    optional <span class="bool">bool  </span> isPrivilegedCert = 3; 
+  }
+  <span class="comment">/** 
+   * Defines a request for permission to access a set of network resources.
+   * http://www.w3.org/TR/widgets-access/#the-access-element
+   */</span>
+  message <span class="message">Network</span>
+  {
+    <span class="comment">/** 
+     * Defines the URL that the widget should get access to, e.g. "https://example.net"
+     * A special value of U+002A ASTERISK (*) means unrestricted access to any network resources.
+     */</span>
+    required <span class="string">string</span> origin          = 1; 
+    <span class="comment">/** 
+     * Indicates whether or not the host component part of origin applies to subdomains as well.
+     * The default is not to allow subdomains.
+     */</span>
+    required <span class="bool">bool  </span> allowSubdomains = 2; 
+  }
+  <span class="comment">/** 
+   * Declares which protocols, hosts, ports, and paths the widget may use.
+   * 
+   * http://dev.opera.com/articles/view/opera-widgets-specification-1-0/#xmlsecurity
+   */</span>
+  message <span class="message">SecurityAccess</span>
+  {
+    <span class="comment">/** 
+     * The protocols the widget will be using to contact external servers. All protocols, except the file protocol is permitted.
+     * e.g. "http", "https"
+     * If the list is empty it means any protocol (excluding exceptions).
+     */</span>
+    repeated <span class="string">string</span> protocolList = 1; 
+    <span class="comment">/** 
+     * The hostnames/ip-addresses which the widget may use, e.g. "www.example.com" or "192.168.1.1"
+     * The hostnames is an exact match, so a widget specifying www.example.com will not be able to contact example.com.
+     * If the list is empty it means any host.
+     */</span>
+    repeated <span class="string">string</span> hostList     = 2; 
+    <span class="comment">/** 
+     * Ports which may be used by the widget.
+     * Each entry is a range of ports, e.g. 1024-2048
+     * If the list is empty it means port.
+     */</span>
+    repeated <span class="message">Port  </span> portList     = 3; 
+    <span class="comment">/** 
+     * The path elements the widget may contact, e.g. "/foo"
+     * If the list is empty it means any path.
+     */</span>
+    repeated <span class="string">string</span> pathList     = 4; 
+  }
+  <span class="comment">/** 
+   * Represents a range of ports the widget may use, e.g. 1024-2048
+   * If only a single port is defined then both low and high will contain the same value.
+   */</span>
+  message <span class="message">Port</span>
+  {
+    required <span class="number">uint32</span> low  = 1; 
+    required <span class="number">uint32</span> high = 2; 
+  }
+  message <span class="message">ExtensionInfo</span>
+  {
+    <span class="comment">/** 
+     * Specifies the includes folder for the extension.
+     */</span>
+    required <span class="string">string</span> includesPath = 1; 
+    <span class="comment">/** 
+     * True if the extension is currently running.
+     */</span>
+    required <span class="bool">bool  </span> isRunning    = 2; 
+  }
+  message <span class="message">UniteInfo</span>
+  {
+    <span class="comment">/** 
+     * Unite type
+     */</span>
+    enum Type
+    {
+      <span class="comment">/** 
+       * The Unite type is not known by the service.
+       */</span>
+      UNKNOWN = 1;
+      SERVICE = 2;
+      APPLICATION = 3;
+    }
+
+    required <span class="number">Type  </span> type        = 1; 
+    <span class="comment">/** 
+     * The service path, e.g. "fridge".
+     */</span>
+    optional <span class="string">string</span> servicePath = 2; 
+  }
+  message <span class="message">UpdateInfo</span>
+  {
+    enum UpdateType
+    {
+      <span class="comment">/** 
+       * The update type is not known by the service.
+       */</span>
+      UNKNOWN = 1;
+      <span class="comment">/** 
+       * An update is available for this widget.
+       */</span>
+      UPDATE = 2;
+      <span class="comment">/** 
+       * The widget is to be disabled.
+       */</span>
+      DISABLE = 3;
+      <span class="comment">/** 
+       * The widget is to be enabled.
+       */</span>
+      ACTIVATE = 4;
+      <span class="comment">/** 
+       * The widget is to be deleted.
+       */</span>
+      DELETE = 5;
+      <span class="comment">/** 
+       * No update is available.
+       * 
+       * This value is DEPRECATED. If there is no update available then no message is sent.
+       */</span>
+      NO_UPDATE = 6;
+    }
+
+    <span class="comment">/** 
+     * Widget id (not the same as widget uid, which is called id...), specified in config.xml
+     */</span>
+    required <span class="string">string    </span> customWidgetID = 1; 
+    <span class="comment">/** 
+     * What type of update this is (update, disable, activate, delete)
+     */</span>
+    required <span class="number">UpdateType</span> updateType     = 2; 
+    <span class="comment">/** 
+     * This is a mandatory update.
+     */</span>
+    required <span class="bool">bool      </span> isMandatory    = 3; 
+    <span class="comment">/** 
+     * Version of the updated widget.
+     */</span>
+    required <span class="string">string    </span> version        = 4; 
+    <span class="comment">/** 
+     * Last visited time on 'src' URI
+     */</span>
+    required <span class="number">double    </span> lastModified   = 5; 
+    <span class="comment">/** 
+     * URI pointing to the updated widget.
+     */</span>
+    required <span class="string">string    </span> src            = 6; 
+    <span class="comment">/** 
+     * Size of the widget archive (or 0 if unknown).
+     */</span>
+    required <span class="number">uint32    </span> size           = 7; 
+    <span class="comment">/** 
+     * Detail text as returned by the update server.
+     */</span>
+    required <span class="string">string    </span> details        = 8; 
+    <span class="comment">/** 
+     * URI that could point to an additional information document.
+     */</span>
+    optional <span class="string">string    </span> documentUri    = 9; 
+  }
+  message <span class="message">UserJS</span>
+  {
+    <span class="comment">/** 
+     * Absolute path to the file representing this userjs.
+     */</span>
+    required <span class="string">string</span> filename = 1; 
+  }
+  repeated <span class="message">Widget</span> widgetList = 1; 
+}

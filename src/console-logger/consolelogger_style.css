@@ -38,11 +38,13 @@
   padding: 0;
   cursor: pointer;
   -o-transition: -o-transform 0.2s;
+  transition: transform 0.2s;
 }
 
 .errors-table > tr.expanded .expander
 {
   -o-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 .errors-table .expand_cell

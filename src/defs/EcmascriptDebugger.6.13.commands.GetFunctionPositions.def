@@ -1,0 +1,12 @@
+<span class="comment">/** 
+ * @since 6.11
+ */</span>
+message <span class="message">GetFunctionPositionsArg</span>
+{
+  required <span class="number">uint32</span> runtimeID  = 1; 
+  <span class="comment">/** 
+   * List of object IDs to fetch position for, the object must be a
+   * non-native function for the position to be fetched.
+   */</span>
+  repeated <span class="number">uint32</span> objectList = 2; 
+}
