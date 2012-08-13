@@ -1144,9 +1144,17 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       }
     }
     return ret;
-  }
+  };
 
+  this.get_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window);
+  };
 
+  this.get_dom_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window).filter(this.runtime_has_dom);
+  };
 
   this.getRuntimeIdWithURL = function(url)
   {
@@ -1368,6 +1376,13 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     return __windows_reloaded[window_id] == 2;
   }
+
+  this.is_runtime_of_reloaded_window = function(rt_id)
+  {
+    var rt = this.getRuntime(rt_id);
+    var win_id = rt && rt.window_id;
+    return win_id ? this.isReloadedWindow(win_id) : false;
+  };
 
   this.get_execution_context = function()
   {

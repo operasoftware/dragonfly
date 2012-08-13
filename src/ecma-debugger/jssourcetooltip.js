@@ -934,7 +934,7 @@ cls.JSSourceTooltip = function(view)
 
   var _get_tab_size = function()
   {
-    var style_dec = document.styleSheets.getDeclaration("#js-source-content div");
+    var style_dec = document.styleSheets.getDeclaration(".js-source-content div");
     return style_dec ? parseInt(style_dec.getPropertyValue("-o-tab-size")) : 0;
   };
 

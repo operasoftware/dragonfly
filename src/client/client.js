@@ -545,11 +545,18 @@ ui_framework.layouts.dom_rough_layout =
     {
       name: 'dom_panel',
       width: 350,
-      tabs: function(services)
+      get_tabs: function(services)
       {
-        return (services['ecmascript-debugger'].major_minor_version > 6.4 ?
-               ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'] :
-               ['dom-side-panel', 'dom_attrs', 'css-layout']);
+        if (services['ecmascript-debugger'].satisfies_version(6, 11))
+        {
+          return ['dom-side-panel',
+                  'dom_attrs',
+                  'css-layout',
+                  'ev-listeners-side-panel',
+                  'dom-search'];
+        }
+
+        return ['dom-side-panel', 'dom_attrs', 'css-layout', 'dom-search'];
       }
     }
   ]
@@ -575,7 +582,7 @@ ui_framework.layouts.js_rough_layout =
       children:
       [
         {
-          tabs: function(services)
+          get_tabs: function(services)
           {
             return services['ecmascript-debugger'].major_version > 5 ?
                    ['scripts-side-panel', 'breakpoints-side-panel', 'js-search'] :
@@ -644,7 +651,7 @@ ui_framework.layouts.storage_rough_layout =
     height: 1000,
     children: [ {
       height: 1000,
-      tabs: function(services)
+      get_tabs: function(services)
       {
         var cookie_module = 'cookies';
         if(services["cookie-manager"] && services["cookie-manager"].is_implemented)
@@ -667,11 +674,10 @@ ui_framework.layouts.console_rough_layout =
 ui_framework.layouts.main_layout =
 {
   id: 'main-view',
-  // tab (and tabbar) can either be a layout list
-  // or a function returning a layout list
+  // tab and tabbar can have an according get_ function.
   // the function gets called with the services returned
   // and created depending on Scope.HostInfo
-  tabs: function(services)
+  get_tabs: function(services)
   {
     // return a layout depending on services
     // e.g. services['ecmascript-debugger'].version
