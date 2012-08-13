@@ -4,7 +4,9 @@
  * @constructor
  * @extends ViewBase
  */
-cls.RequestCraftingView = function(id, name, container_class, html, default_handler) {
+cls.RequestCraftingView = function(id, name, container_class, html, default_handler, service)
+{
+  this._service = service;
   this._input = null;
   this._output = null;
   this._urlfield = null;
@@ -188,7 +190,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
 
-  this._service = window.network_logger;
   this._service.addListener("context-established", this._on_context_established_bound);
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;

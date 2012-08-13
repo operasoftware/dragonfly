@@ -12,7 +12,12 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                          null,
                          "network-logger",
                          logger_service);
-  new cls.RequestCraftingView("request_crafter", ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER, "scroll", "", "");
+  new cls.RequestCraftingView("request_crafter",
+                              ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER,
+                              "scroll",
+                              "",
+                              "",
+                              logger_service);
   new cls.NetworkOptionsView("network_options",
                              ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS,
                              "scroll network-options-container", "", "");

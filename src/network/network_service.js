@@ -1180,7 +1180,7 @@ cls.NetworkLoggerEntryPrototype = function()
   {
     // In 99% of the cases, _current_response is used. It's only
     // exposed for getting the ResourceInfo from the service directly.
-    return this.current_response;
+    return this._current_response;
   });
   this.__defineSetter__("current_response", function(){});
 };
