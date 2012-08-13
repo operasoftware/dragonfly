@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 cls.NetworkLoggerService = function()
 {
@@ -127,7 +127,7 @@ cls.NetworkLoggerService = function()
     // a bit of cheating since further down we use .resouceID to determine
     // what resource the event applies to:
     data.resourceID = data.fromResourceID;
-      
+
     ctx.update("urlredirect", data);
   };
   this._on_urlredirect_bound = this._on_urlredirect.bind(this, this._on_urlredirect);

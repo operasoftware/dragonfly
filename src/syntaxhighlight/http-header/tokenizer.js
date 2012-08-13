@@ -79,7 +79,7 @@ cls.HTTPHeaderTokenizerPrototype = function()
 
       var c = this._buffer.charAt(this._current_pos++);
       this._token_type = cls.HTTPHeaderTokenizer.types.VALUE;
-      // LINEBREAK_CHARS only mean switching to header when the following char is not whitespace. They 
+      // LINEBREAK_CHARS only mean switching to header when the following char is not whitespace. They
       // are added to the NAME tokens, since the purpose of the tokenizer is mostly visual highlighting.
       if (c in LINEBREAK_CHARS && !(this._buffer.charAt(this._current_pos) in WHITESPACE_CHARS))
       {
