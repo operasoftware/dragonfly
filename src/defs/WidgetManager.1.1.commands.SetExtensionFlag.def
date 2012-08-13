@@ -1,0 +1,40 @@
+message <span class="message">SetExtensionFlagArg</span>
+{
+  message <span class="message">ExtensionFlag</span>
+  {
+    enum FlagType
+    {
+      <span class="comment">/** 
+       * If an extension contains UserJS that would activate
+       * on HTTPS hosted content, this flag controls if those
+       * scripts should be allowed to activate.
+       */</span>
+      ALLOW_USERJS_HTTPS = 1;
+      <span class="comment">/** 
+       * If in a private mode setting, this flag controls if an
+       * an extension's UserJS should be allowed to activate
+       * (provided it would otherwise apply.) Not orthogonal to
+       * the above option; HTTPS may or may not be supported within
+       * privacy mode windows.
+       */</span>
+      ALLOW_USERJS_PRIVATE = 2;
+    }
+
+    <span class="comment">/** 
+     * Flag type.
+     */</span>
+    required <span class="number">FlagType</span> flag  = 1; 
+    <span class="comment">/** 
+     * The value of 'flag'
+     */</span>
+    required <span class="bool">bool    </span> value = 2; 
+  }
+  <span class="comment">/** 
+   * The uid of the widget.
+   */</span>
+  required <span class="string">string       </span> widgetID = 1; 
+  <span class="comment">/** 
+   * Flagtype and value.
+   */</span>
+  required <span class="message">ExtensionFlag</span> flag     = 2; 
+}

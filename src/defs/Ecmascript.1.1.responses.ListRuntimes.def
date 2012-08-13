@@ -1,0 +1,44 @@
+message <span class="message">RuntimeList</span>
+{
+  <span class="comment">/** 
+   * A runtime is an ECMAScript execution environment.
+   */</span>
+  message <span class="message">Runtime</span>
+  {
+    <span class="comment">/** 
+     * A unique ID for this runtime, persists through the entire session or
+     * until the runtime is destroyed.
+     * 
+     * Is an integer from 1 and up.
+     */</span>
+    required <span class="number">uint32</span> runtimeID     = 1; 
+    <span class="comment">/** 
+     * The frame path in the window, for instance "_top" means the top-most
+     * frame of a window.
+     * 
+     * Other examples are::
+     * 
+     *   "_top/[1]"
+     *   "_top/[1]/[1]"
+     */</span>
+    required <span class="string">string</span> htmlFramePath = 2; 
+    <span class="comment">/** 
+     * The ID this window belongs to.
+     * 
+     * Multiple frames in a window will be reported as multiple runtimes and
+     * they will all share the same windowID.
+     */</span>
+    required <span class="number">uint32</span> windowID      = 3; 
+    <span class="comment">/** 
+     * The global object associated with this runtime.
+     */</span>
+    required <span class="number">uint32</span> objectID      = 4; 
+    <span class="comment">/** 
+     * The URI of the resource loaded in the runtime. This can be a normal
+     * URI (HTTP etc.) or a special interal URI like *"opera:blank"* or
+     * "opera:debug".
+     */</span>
+    required <span class="string">string</span> uri           = 5; 
+  }
+  repeated <span class="message">Runtime</span> runtimeList = 1; 
+}

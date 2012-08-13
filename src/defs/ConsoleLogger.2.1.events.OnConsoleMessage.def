@@ -1,0 +1,56 @@
+message <span class="message">ConsoleMessage</span>
+{
+  <span class="comment">/** 
+   * The window ID is shared across scope. Notably, it's the same as in the ecmascript debugger.
+   * INTERNAL: The value is from Window::id
+   */</span>
+  required <span class="number">uint32</span> windowID    = 1; 
+  <span class="comment">/** 
+   * 
+   * The number of seconds since 1970-01-01T00:00:00Z.
+   */</span>
+  required <span class="number">uint32</span> time        = 2; 
+  <span class="comment">/** 
+   * Description of the error. Sometimes this message only makes sense when
+   * displayed in a monospace font.
+   */</span>
+  required <span class="string">string</span> description = 3; 
+  <span class="comment">/** 
+   * The URL of the entity (document, script, style file, etc) that caused the
+   * message to be generated.
+   */</span>
+  optional <span class="string">string</span> uri         = 4; 
+  <span class="comment">/** 
+   * The context in which the message was generated; it is intended for human
+   * consumption and provides additional information about the context for the
+   * message.
+   */</span>
+  optional <span class="string">string</span> context     = 5; 
+  <span class="comment">/** 
+   * The component in Opera that generated the message
+   * One of:
+   * - "ecmascript"
+   * - "java"
+   * - "m2"
+   * - "network"
+   * - "xml"
+   * - "html"
+   * - "css"
+   * - "xslt"
+   * - "svg"
+   * - "bittorrent"
+   * - "voice"
+   * - "widget"
+   * - "selftest"
+   */</span>
+  optional <span class="string">string</span> source      = 6; 
+  <span class="comment">/** 
+   * One of:
+   * - "debug"
+   * - "verbose"
+   * - "information"
+   * - "error"
+   * - "critical"
+   */</span>
+  optional <span class="string">string</span> severity    = 7; 
+}

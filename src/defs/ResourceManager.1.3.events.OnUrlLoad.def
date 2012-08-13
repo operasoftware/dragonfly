@@ -1,0 +1,92 @@
+message <span class="message">UrlLoad</span>
+{
+  enum URLType
+  {
+    <span class="comment">/** 
+     * Type not known, should not occur.
+     */</span>
+    UNKNOWN = 0;
+    <span class="comment">/** 
+     * HTTP protocol.
+     */</span>
+    HTTP = 1;
+    <span class="comment">/** 
+     * HTTP protocol with SSL.
+     */</span>
+    HTTPS = 2;
+    <span class="comment">/** 
+     * Local file access.
+     */</span>
+    FILE = 3;
+    <span class="comment">/** 
+     * Data URIs, e.g data:text/plain,mydata
+     */</span>
+    DATA = 4;
+    FTP = 5;
+    GOPHER = 6;
+    WAIS = 7;
+    NEWS = 8;
+    SNEWS = 9;
+    NEWSATTACHMENT = 10;
+    SNEWSATTACHMENT = 11;
+    EMAIL = 12;
+    ATTACHMENT = 13;
+    TELNET = 14;
+    MAILTO = 15;
+    OPERA = 16;
+    JAVASCRIPT = 17;
+    CONTENT_ID = 18;
+    TN3270 = 19;
+    SOURCE = 21;
+    CLIENT = 22;
+    NNTP = 23;
+    NNTPS = 25;
+    SHARE = 26;
+    GHTTP = 27;
+    TV = 28;
+    EDITED = 29;
+    ERROR = 30;
+    DVB = 31;
+    TEL = 32;
+    MAIL = 33;
+    IRC = 34;
+    SMS = 35;
+    SMSTO = 36;
+    CHAT_TRANSFER = 39;
+    DEVICE = 40;
+    MOUNTPOINT = 41;
+    WIDGET = 42;
+    OBMLSERVER = 43;
+    UNITE = 44;
+    INTERNAL = 100;
+  }
+
+  required <span class="number">uint32    </span> windowID   = 1; 
+  optional <span class="number">uint32    </span> frameID    = 2; 
+  optional <span class="number">uint32    </span> documentID = 3; 
+  required <span class="number">uint32    </span> resourceID = 4; 
+  <span class="comment">/** 
+   * The URL which which is about to be loaded.
+   */</span>
+  required <span class="string">string    </span> url        = 5; 
+  <span class="comment">/** 
+   * The type of URL that was started, this can referer to a specific protocol
+   * or a special URL type.
+   * 
+   * @note More types may be added in the future, make sure the client supports that.
+   */</span>
+  required <span class="number">URLType   </span> urlType    = 6; 
+  <span class="comment">/** 
+   * Milliseconds since Unix epoch.
+   */</span>
+  required <span class="number">double    </span> time       = 7; 
+  <span class="comment">/** 
+   * This field may be set to provide additional information about the
+   * origin of a URL load.
+   * 
+   * If the field is not set, the origin is unknown.
+   * 
+   * @since 1.2
+   */</span>
+  optional <span class="number">LoadOrigin</span> loadOrigin = 8; 
+}

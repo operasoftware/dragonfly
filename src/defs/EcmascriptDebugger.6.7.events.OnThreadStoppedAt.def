@@ -1,0 +1,24 @@
+message <span class="message">ThreadStopInfo</span>
+{
+  required <span class="number">uint32</span> runtimeID     = 1; 
+  required <span class="number">uint32</span> threadID      = 2; 
+  required <span class="number">uint32</span> scriptID      = 3; 
+  required <span class="number">uint32</span> lineNumber    = 4; 
+  <span class="comment">/** 
+   * One of:
+   * - `"new script"`, when we're on the first statement of a new script.
+   * - `"exception"`, when an exception occurred.
+   * - `"error"`, when an error ocurred.
+   * - `"abort"`, when the thread was aborted.
+   * - `"gc"`, when garbage collection occurs.
+   * - `"broken"`, when the `Break` command is used.
+   * - `"debugger statement"`, when a debugger-statement is encountered.
+   * - `"breakpoint"`, when a breakpoint is hit.
+   * - `"step"`, when the 'ContinueThread' command is used.
+   */</span>
+  required <span class="string">string</span> stoppedReason = 5; 
+  <span class="comment">/** 
+   * Present if and only if `stoppedReason` is `"breakpoint"`
+   */</span>
+  optional <span class="number">uint32</span> breakpointID  = 6; 
+}

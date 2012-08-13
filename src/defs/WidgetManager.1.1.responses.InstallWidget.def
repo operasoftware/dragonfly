@@ -1,0 +1,37 @@
+message <span class="message">WidgetInstallResult</span>
+{
+  enum Result
+  {
+    <span class="comment">/** 
+     * The install failed but the reason is unknown.
+     */</span>
+    UNKNOWN = 1;
+    <span class="comment">/** 
+     * Failed to download widget from URL.
+     */</span>
+    DOWNLOAD_FAILED = 2;
+    <span class="comment">/** 
+     * Not enough space to install widget file.
+     */</span>
+    NOT_ENOUGH_SPACE = 3;
+    <span class="comment">/** 
+     * Installation of widget failed.
+     */</span>
+    INSTALL_FAILED = 4;
+    <span class="comment">/** 
+     * Widget was successfully installed.
+     */</span>
+    INSTALL_SUCCESSFUL = 5;
+  }
+
+  <span class="comment">/** 
+   * Result of an installation attempt.
+   */</span>
+  required <span class="number">Result</span> result = 1; 
+  <span class="comment">/** 
+   * The URL that was used to (download and) install the widget.
+   * Should be the same URL as InstallWidgetByURLArg.url
+   * @note Only set if it was installed from a URL.
+   */</span>
+  optional <span class="string">string</span> url    = 2; 
+}
