@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 var Dict = function(obj)
 {
