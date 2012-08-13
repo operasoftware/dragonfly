@@ -123,7 +123,7 @@ templates.incomplete_warning = function(context, index, all_contexts)
   if (all_contexts.length > 1)
   {
     var win = window.window_manager_data.get_window(context.id);
-    title = win && (" - " + win.title);
+    title = win && win.title && (" – " + win.title);
   }
 
   return ["div",

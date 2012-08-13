@@ -6,13 +6,13 @@ window.cls = window.cls || {};
  * @constructor
  * @extends ViewBase
  */
-cls.NetworkLogView = function(id, name, container_class, html, default_handler)
+cls.NetworkLogView = function(id, name, container_class, html, default_handler, service)
 {
   var MIN_RENDER_DELAY = 200;
   var DEFAULT = "default";
   var DETAILS = "details";
 
-  this._service = window.network_logger;
+  this._service = service;
   this._container_scroll_top = 0;
   this._details_scroll_top = 0;
   this._details_scroll_left = 0;
@@ -235,9 +235,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
           return (entry.current_responsecode && String(entry.current_responsecode)) || "";
         },
         title_getter: function(entry, renderer) {
-          if (cls.ResourceUtil.http_status_codes[entry.current_responsecode])
-            return String(cls.ResourceUtil.http_status_codes[entry.current_responsecode]);
-          return renderer(entry);
+          var responsecode = cls.ResourceUtil.http_status_codes[entry.current_responsecode];
+          return responsecode ? String(responsecode) : renderer(entry);
         },
         getter: function(entry) { return entry.current_responsecode || 0; }
       },

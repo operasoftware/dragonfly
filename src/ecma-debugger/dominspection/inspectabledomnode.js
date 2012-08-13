@@ -28,41 +28,42 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.CONTENT_DOCUMENT = 11;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.FRAME_ELEMENT = 12;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON = 13;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT = 14;
+cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST = 15;
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE = 0;
 
 cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 {
 
-  const
-  NODE_LIST = 0,
-  ID = 0,
-  TYPE = 1,
-  NAME = 2,
-  DEPTH = 3,
+  var NODE_LIST = 0;
+  var ID = 0;
+  var TYPE = 1;
+  var NAME = 2;
+  var DEPTH = 3;
 
-  ATTRS = 5,
-  ATTR_PREFIX = 0,
-  ATTR_KEY = 1,
-  ATTR_VALUE = 2,
-  CHILDREN_LENGTH = 6,
-  PUBLIC_ID = 4,
-  SYSTEM_ID = 5,
-  MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON,
-  TRAVERSE_SEARCH = "search",
-  TRAVERSAL = 1,
-  SEARCH_PARENT = 2,
-  SEARCH_HIT = 3,
-  PSEUDO_TYPE = 0,
-  PSEUDO_ELEMENT = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT,
-  PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE,
-  BEFORE = 1,
-  AFTER = 2,
-  FIRST_LETTER = 3,
-  FIRST_LINE = 4,
-  BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE],
-  AFTER_ALIKES = [AFTER],
-  ERROR_MSG = 0,
-  PSEUDO_NAME = {};
+  var ATTRS = 5;
+  var ATTR_PREFIX = 0;
+  var ATTR_KEY = 1;
+  var ATTR_VALUE = 2;
+  var CHILDREN_LENGTH = 6;
+  var PUBLIC_ID = 4;
+  var SYSTEM_ID = 5;
+  var MATCH_REASON = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.MATCH_REASON;
+  var TRAVERSE_SEARCH = "search";
+  var TRAVERSAL = 1;
+  var SEARCH_PARENT = 2;
+  var SEARCH_HIT = 3;
+  var PSEUDO_TYPE = 0;
+  var PSEUDO_ELEMENT = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_ELEMENT;
+  var PSEUDO_NODE = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.PSEUDO_NODE;
+  var BEFORE = 1;
+  var AFTER = 2;
+  var FIRST_LETTER = 3;
+  var FIRST_LINE = 4;
+  var BEFORE_ALIKES = [BEFORE, FIRST_LETTER, FIRST_LINE];
+  var AFTER_ALIKES = [AFTER];
+  var ERROR_MSG = 0;
+  var PSEUDO_NAME = {};
+  var EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
 
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
@@ -136,6 +137,16 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
       this._data[i][MATCH_REASON] = TRAVERSAL;
     };
   };
+
+  this.node_has_attr = function(node_id, attr_name)
+  {
+    var node = this.get_node(node_id);
+    var attrs = node && node[ATTRS];
+    return attrs && attrs.some(function(attr)
+    {
+      return attr[ATTR_KEY] == attr_name;
+    });
+  }
 
   this._get_dom = function(object_id, traverse_type, cb)
   {
@@ -438,11 +449,26 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return Boolean(this._data && this._data.length);
   }
 
+  this.get_node = function(node_id)
+  {
+    if (this.has_data())
+    {
+      for (var i = 0; this._data[i] && this._data[i][ID] != node_id; i++);
+      return this._data[i];
+    }
+    return null;
+  };
+
   this.has_node = function(node_id)
   {
-    for (var i = 0; this._data[i] && this._data[i][ID] != node_id; i++);
-    return Boolean(this._data[i]);
-  }
+    return Boolean(this.get_node(node_id));
+  };
+
+  this.get_ev_listeners = function(node_id)
+  {
+    var node = this.get_node(node_id);
+    return node && node[EVENT_LISTENER_LIST] || [];
+  };
 
   this.get_data = this.getData = function()
   {

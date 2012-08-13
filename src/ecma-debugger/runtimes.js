@@ -1144,9 +1144,17 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       }
     }
     return ret;
-  }
+  };
 
+  this.get_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window);
+  };
 
+  this.get_dom_runtime_ids = function()
+  {
+    return this.getRuntimeIdsFromWindow(__selected_window).filter(this.runtime_has_dom);
+  };
 
   this.getRuntimeIdWithURL = function(url)
   {
@@ -1332,15 +1340,15 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
-  this.reloadWindow = function(passed_window)
+  this.reloadWindow = function(window_id)
   {
-    var sel_window = passed_window || __selected_window;
-    if (sel_window)
+    __selected_window = window_id || __selected_window;
+    if (__selected_window)
     {
-      if (!__windows_reloaded[sel_window])
-        __windows_reloaded[sel_window] = 1;
+      if (!__windows_reloaded[__selected_window])
+        __windows_reloaded[__selected_window] = 1;
 
-      var rt_id = this.getRuntimeIdsFromWindow(sel_window)[0];
+      var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
       if (window.services['ecmascript-debugger'] &&
           window.services['ecmascript-debugger'].is_enabled &&
           // For background processes we can not use the exec service.
@@ -1368,6 +1376,13 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   {
     return __windows_reloaded[window_id] == 2;
   }
+
+  this.is_runtime_of_reloaded_window = function(rt_id)
+  {
+    var rt = this.getRuntime(rt_id);
+    var win_id = rt && rt.window_id;
+    return win_id ? this.isReloadedWindow(win_id) : false;
+  };
 
   this.get_execution_context = function()
   {
