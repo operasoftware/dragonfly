@@ -419,6 +419,8 @@ container > div > header
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.85) 0,
                                        rgba(255, 255, 255, 0.45) 100%);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.85) 0,
+                                    rgba(255, 255, 255, 0.45) 100%);
 }
 
 div.unfolded
@@ -438,6 +440,7 @@ header input
   width: 17px;
   height: 17px;
   -o-transition: 0.2s;
+  transition: 0.2s;
 }
 
 .unfolded > header
@@ -449,6 +452,7 @@ header input
 input.unfolded
 {
   -o-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 .css-inspector .selected
@@ -477,6 +481,8 @@ input.unfolded
   background-image: -o-linear-gradient(-90deg,
                                        rgba(255, 255, 255, 0.55) 0px,
                                        rgba(255, 255, 255, 0.25) 100%);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.55) 0px,
+                                    rgba(255, 255, 255, 0.25) 100%);
   margin: 5px -5px;
   padding-left: 4px;
 }
@@ -791,6 +797,7 @@ breadcrumb span
 {
   opacity: 1; 
   -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
 }
 
 /* JS dropdown list */
@@ -1133,16 +1140,26 @@ d
 {
   box-sizing: border-box;
   display: block;
-  width: 100%;
+  width: 77%;
   height: 100%;
   margin: 0;
   border: 0;
   padding: 2px 7px;
 }
 
+.debug-container .message-filter
+{
+  box-sizing: border-box;
+  overflow: auto;
+  float: right;
+  width: 23%;
+  height: 100%;
+  border-left: 1px solid #999;
+}
+
 .filter-container ul ul
 {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 .filter-container .disabled
@@ -1158,7 +1175,6 @@ d
 
 .filter-container ul div
 {
-  border-top: 1px solid #999;
   padding: 5px 7px;
   margin-top: 3px;
 }
@@ -1429,6 +1445,12 @@ d
                     -o-linear-gradient(0deg,
                                        #c8c8c8 100%,
                                        #c8c8c8 0);
+  background-image: linear-gradient(90deg,
+                                    #c8c8c8 100%,
+                                    #c8c8c8 0),
+                    linear-gradient(90deg,
+                                    #c8c8c8 100%,
+                                    #c8c8c8 0);
   background-position: 1px 1px, 5px 5px;
   background-size: 4px;
   vertical-align: -1px; /* Should really be middle, but most often this looks better */
@@ -1462,6 +1484,11 @@ d
                                        rgba(34, 34, 34, 0.4) 5px,
                                        rgba(34, 34, 34, 0.4) 6px,
                                        transparent 6px);
+  background-image: linear-gradient(135deg,
+                                    transparent 5px,
+                                    rgba(34, 34, 34, 0.4) 5px,
+                                    rgba(34, 34, 34, 0.4) 6px,
+                                    transparent 6px);
   border-color: #aaa;
 }
 
@@ -1606,6 +1633,7 @@ d
   margin: -3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+
 .return-values
 {
   margin: 5px;
