@@ -220,6 +220,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/nodelistprototype.js"/>
 <script src="./lib/objectnamespace.js"/>
 <script src="./lib/operanamespace.js"/>
+<script src="./lib/datenamespace.js"/>
 <script src="./lib/stringprototype.js"/>
 <script src="./lib/stylesheetlistprototype.js"/>
 <script src="./lib/xmlhttprequestprototype.js"/>

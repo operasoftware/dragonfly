@@ -256,7 +256,7 @@ var ProfilerTemplates = function()
                                                color + " " + self_time + "px, " +
                                               "transparent " + self_time + "px); " +
          "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(-90deg, " + color + " 0, " +
+                           "linear-gradient(90deg, " + color + " 0, " +
                                             color + " " + self_time + "px, " +
                                            "transparent " + self_time + "px);",
        "class", "profiler-event profiler-event-interval event-type-" + event.type +
@@ -481,7 +481,7 @@ var ProfilerTemplates = function()
                                                color + " " + self_time + "px, " +
                                               "transparent " + self_time + "px);" +
          "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(-90deg, " + color + " 0, " +
+                           "linear-gradient(90deg, " + color + " 0, " +
                                             color + " " + self_time + "px, " +
                                            "transparent " + self_time + "px);",
        "class", "profiler-event profiler-event-interval event-type-" + event.type

@@ -396,7 +396,7 @@ templates.graph_sections = function(entry, width, duration, do_tooltip)
                         "linear-gradient(0deg," +
                                "transparent 0%," +
                                "rgba(255, 255, 255, 0.25) 100%), " +
-                        "linear-gradient(-90deg," +
+                        "linear-gradient(90deg," +
                           templates.graph_sections_style(entry, width, duration) +
                         ");"
          ];
