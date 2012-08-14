@@ -34,13 +34,10 @@
   {
     if (!index) // the properties of the object itself
       return true;
-
-    if (!_has_own_prop.call(tree.protos, index.toString()))
-      return collapsed_protos[0] == '*'
-           ? false
-           :  (collapsed_protos.indexOf(name) == -1);
-
-    return Boolean(tree.protos[index]);
+    var proto = tree.get_chain(["protos", index]);
+    if (!proto)
+      return collapsed_protos[0] == '*' ? false : (collapsed_protos.indexOf(name) == -1);
+    return true;
   }
 
   var _pretty_print_object = function(model,
@@ -86,9 +83,10 @@
     var ret = [];
     var name = proto[VALUE][CLASS_NAME] || "";
     var is_unfolded = _is_unfolded(tree, index, name, collapsed_protos);
+    var proto_tree = tree.get_chain(["protos", index]) || new Dict();
     var expanded_props = is_unfolded &&
                          _pretty_print_properties(model,
-                                                  tree.protos && tree.protos[index] || {},
+                                                  proto_tree,
                                                   proto[PROPERTY_LIST] || [],
                                                   collapsed_protos,
                                                   filter,
@@ -274,9 +272,9 @@
         case "object":
         {
           obj_id = prop[OBJECT_VALUE][OBJECT_ID];
-          expanded_prop = _has_own_prop.call(tree, prop[NAME]) &&
+          expanded_prop = tree.get(prop[NAME]) &&
                           _pretty_print_object(model,
-                                               tree[prop[NAME]],
+                                               tree.get(prop[NAME]),
                                                obj_id,
                                                collapsed_protos,
                                                filter,
@@ -294,8 +292,7 @@
                 "handler='examine-object'  " +
                 "class='folder-key" + (has_match ? "" : " no-match") + "' "
             );
-            // 'in' is true for all non enumarables
-            if (_has_own_prop.call(tree, prop[NAME]) && tree[prop[NAME]])
+            if (tree.get(prop[NAME]))
               ret.push(STYLE_EXPANDED);
             ret.push(
               "/>" +
@@ -308,7 +305,7 @@
                      "data-tooltip='" + TOOLTIP_NAME + "' >" + value + "</value>"
             );
 
-            if (_has_own_prop.call(tree, prop[NAME]))
+            if (tree.get(prop[NAME]))
               ret.extend(expanded_prop);
 
             ret.push("</item>");
@@ -332,7 +329,7 @@
                  window.inspectionfilters;
     var ret = _pretty_print_object(model,
                                    tree,
-                                   tree.object_id,
+                                   tree.get("object_id"),
                                    collapsed_protos,
                                    filter,
                                    searchterm).join('');
@@ -345,7 +342,7 @@
   {
     var OBJ_ID = 1;
     var tree = model.get_expanded_tree(null, path);
-    var data = tree && model.get_data(tree.object_id);
+    var data = tree && model.get_data(tree.get("object_id"));
     var setting = window.settings.inspection;
     var collapsed_protos = setting.get('collapsed-prototypes');
     var filter = !setting.get('show-default-nulls-and-empty-strings') &&

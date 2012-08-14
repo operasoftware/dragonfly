@@ -166,7 +166,7 @@ window.cls.ListUnpacker = function(callback)
       var orig_value_list = ctx.value_list;
       ctx.value_list = log.reduce(function(list, log_entry, index)
       {
-        if (log_entry)
+        if (log_entry && !(object_list[0] && object_list[0].length == 0 && log_entry == 1))
         {
           var unpack_header = orig_value_list[index];
           unpack_header[DF_INTERN_TYPE] = "unpack-header";
