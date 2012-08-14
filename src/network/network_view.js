@@ -61,6 +61,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
     if (ctx)
     {
+      if (this._type_filters)
+        ctx.set_filters(this._type_filters);
+
       this._render_main_view(this._container);
       this.text_search.update_search();
     }
@@ -657,7 +660,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       if (this._type_filters)
         ctx.set_filters(this._type_filters);
 
-      ctx.addListener("resource-update", this.update.bind(this));
     }
   }.bind(this);
 
@@ -688,6 +690,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
     this._service.addListener("context-established", this._on_context_established_bound);
     this._service.addListener("context-cleared", this.update.bind(this));
+    this._service.addListener("resource-update", this.update.bind(this));
 
     ActionHandlerInterface.apply(this);
     this._handlers = {

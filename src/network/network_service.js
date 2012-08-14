@@ -2,7 +2,7 @@
 
 cls.NetworkLoggerService = function()
 {
-  this.CONTEXT_TYPE_LOGGER = "network-logger";
+  this.CONTEXT_TYPE_LOGGER = this.MAIN_CONTEXT_TYPE = "network-logger";
   this.CONTEXT_TYPE_CRAFTER = "request-crafter";
 
   this._get_matching_context = function(res_id)
@@ -20,7 +20,8 @@ cls.NetworkLoggerService = function()
     var ctx = this.contexts[type];
     if (!ctx && force)
     {
-      ctx = this.contexts[type] = new cls.RequestContext();
+      var is_main_context = type === this.MAIN_CONTEXT_TYPE;
+      ctx = this.contexts[type] = new cls.RequestContext(this, is_main_context);
       this.post("context-established", {"context_type": type});
     }
     return ctx;
@@ -83,12 +84,15 @@ cls.NetworkLoggerService = function()
     var window_context = ctx.get_window_context(data.windowID);
     if (!window_context)
     {
-      var window_context = new cls.NetworkLoggerService.WindowContext(data.windowID);
+      var window_context = (
+        new cls.NetworkLoggerService.WindowContext(data.windowID, this._service, ctx)
+      );
       ctx.window_contexts.push(window_context);
       if (!data.parentDocumentID)
       {
         window_context.saw_main_document = true;
       }
+      ctx.post_("window-context-added", {"window-context": window_context});
     }
   };
   this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
@@ -102,9 +106,10 @@ cls.NetworkLoggerService = function()
     var ctx = this._get_matching_context(data.resourceID);
     if (!ctx)
     {
-      var context_type = this.CONTEXT_TYPE_LOGGER;
-      ctx = this.contexts[context_type] = new cls.RequestContext();
-      this.post("context-established", {"context_type": context_type});
+      var type = this.CONTEXT_TYPE_LOGGER;
+      var is_main_context = type === this.MAIN_CONTEXT_TYPE;
+      ctx = this.contexts[type] = new cls.RequestContext(this, is_main_context);
+      this.post("context-established", {"context_type": type});
     }
     ctx.update("urlload", data);
   };
@@ -358,35 +363,6 @@ cls.NetworkLoggerService = function()
     this._res_service.requestGetResource(tag, [entry.resource_id, [typecode, 1]]);
   };
 
-  this.get_resource_info = function(resource_id)
-  {
-    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
-    var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
-    if (ctx)
-    {
-      var entry = ctx.get_entries_with_res_id(resource_id).last;
-      if (entry && entry.current_response && entry.current_response.responsebody)
-      {
-        return new cls.ResourceInfo(entry);
-      }
-    }
-    return null;
-  };
-
-  this.get_entry = function(resource_id)
-  {
-    // Returns the current entry matching a resource id.
-    // Todo: this only makes sense when it's from a CONTEXT_TYPE_LOGGER context,
-    // if the same url was requested by the crafter after it was in the page,
-    // it should still return the one that the page got. That should be in the name,
-    // or get_entry should just be called on the context instead of the service.
-    var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
-    if (ctx)
-      return ctx.get_entries_with_res_id(resource_id).last;
-
-    return null;
-  }
-
   this._handle_get_resource = function(status, data, resource_id)
   {
     var ctx = this.contexts[this.CONTEXT_TYPE_LOGGER];
@@ -403,21 +379,57 @@ cls.NetworkLoggerService = function()
     // Post update message from here. This is only needed when the generic updating per event is paused.
     if (this.is_paused)
     {
-      ctx.post("resource-update", {id: resource_id});
+      ctx.post_("resource-update", {id: event.resourceID});
     }
   };
 
   this.init();
 };
 
-cls.NetworkLoggerService.WindowContext = function(window_id)
+cls.NetworkLoggerService.WindowContext = function(window_id, service, context)
 {
+  this._service = service;
+  this._context = context;
   this.id = window_id;
   this.saw_main_document = false;
   this.entry_ids = [];
-}
+};
 
-cls.RequestContext = function()
+cls.NetworkLoggerService.WindowContextPrototype = function()
+{
+  this.get_resources = function(resource_ids)
+  {
+    // resource_ids
+      // An optional array of resource ids
+
+    // Take all entries of the window-context's context, filter by what actually belongs
+    // to this window context.
+    var entries = this._context.get_entries().filter(function(entry) {
+      return this.entry_ids.contains(entry.id) &&
+             (!resource_ids || resource_ids.contains(entry.id));
+    }, this);
+
+    // Todo: can hopefully be made nicer.
+    var resource_ids_collected_resources = [];
+    var resources = [];
+    entries.forEach(function(entry) {
+      var index_of_last_with_res_id = resource_ids_collected_resources.indexOf(entry.resource_id);
+      if (index_of_last_with_res_id != -1)
+      {
+        // This is newer, remove the previous entry from resources.
+        resources.splice(index_of_last_with_res_id, 1);
+        resource_ids_collected_resources.splice(index_of_last_with_res_id, 1);
+      }
+      resources.push(entry);
+      resource_ids_collected_resources.push(entry.resource_id);
+    });
+    return resources.map(function(entry){return new cls.ResourceInfo(entry)});
+  };
+};
+
+cls.NetworkLoggerService.WindowContext.prototype = new cls.NetworkLoggerService.WindowContextPrototype();
+
+cls.RequestContext = function(service, is_main_context)
 {
   this.FILTER_ALLOW_ALL = {
     type_list: [],
@@ -426,8 +438,11 @@ cls.RequestContext = function()
   this.allocated_res_ids = [];
   this.window_contexts = [];
   this.is_paused = false;
+  this.is_waiting_for_create_request = false;
   this._logger_entries = [];
   this._filters = [this.FILTER_ALLOW_ALL];
+  this._is_main_context = is_main_context;
+  this._service = service;
   this._init();
 };
 
@@ -436,13 +451,11 @@ cls.RequestContextPrototype = function()
   this._init = function()
   {
     // When a new context is initiated, it's not paused by default. Reset the setting.
-    // Todo: The context for the request crafter shouldn't do that.
     // Todo: Ideally, when paused, the new context should be created in a different
     // place, so the old one can be kept while we're on pause.
-    if (settings.network_logger.get("pause") != false)
+    if (this._is_main_context && settings.network_logger.get("pause") != false)
       settings.network_logger.set("pause", false);
 
-    this.is_waiting_for_create_request = false;
     this._filter_function_bound = this._filter_function.bind(this);
     window.cls.MessageMixin.apply(this);
   };
@@ -566,7 +579,9 @@ cls.RequestContextPrototype = function()
       var matching_window_context = this.get_window_context(event.windowID);
       if (!matching_window_context)
       {
-        this.window_contexts.push(new cls.NetworkLoggerService.WindowContext(event.windowID));
+        var window_context = new cls.NetworkLoggerService.WindowContext(event.windowID, this._service, this);
+        this.window_contexts.push(window_context);
+        this.post_("window-context-added", {"window-context": window_context});
       }
     }
 
@@ -629,8 +644,19 @@ cls.RequestContextPrototype = function()
 
     if (!this.is_paused)
     {
-      this.post("resource-update", {id: event.resourceID});
+      this.post_("resource-update", {id: event.resourceID});
     }
+  };
+
+  this.post_ = function(name, body) // post_on_context_or_service?
+  {
+    // Find out where to post the update message.
+    // Messages of main_contexts are posted on the service, not the context.
+    var posting_object = this;
+    if (this._is_main_context)
+      posting_object = this._service;
+
+    posting_object.post(name, body);
   };
 
   this.remove_window_context = function(window_id)
@@ -652,6 +678,7 @@ cls.RequestContextPrototype = function()
         return window_id != context.id;
       }
     );
+    this.post_("window-context-removed", {"window-id": window_id});
   };
 
   this.get_entry_from_filtered = function(id)
@@ -1323,6 +1350,8 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 cls.ResourceInfo = function(entry)
 {
   this.url = entry.url;
-  this.responseheaders = entry.current_response.response_headers;
-  this.responsebody = entry.current_response.responsebody;
+  this.id = entry.id;
+  this.document_id = entry.document_id;
+  this.type = entry.type;
+  this._entry = entry; // dbg
 };
