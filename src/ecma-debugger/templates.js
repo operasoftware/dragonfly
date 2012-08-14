@@ -277,7 +277,7 @@
       var is_linked = script.script_type == "linked";
       ret = ["cst-option",
               ["span",
-                 script.filename,
+                 script.filename || script.uri,
                  "data-tooltip", is_linked && "js-script-select",
                  "data-tooltip-text", is_linked && script.uri]];
 
