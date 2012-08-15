@@ -357,7 +357,8 @@
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       is_expandable = children_length || (show_pseudo_elements &&
-                                          node[PSEUDO_ELEMENT_LIST]);
+                                          node[PSEUDO_ELEMENT_LIST] &&
+                                          node[PSEUDO_ELEMENT_LIST].length);
       child_pointer = 0;
 
       if (force_lower_case && disregard_force_lower_case(node))

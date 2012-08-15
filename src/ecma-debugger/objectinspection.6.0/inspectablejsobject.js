@@ -128,16 +128,12 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     var PATH_KEY = 0;
     var PATH_OBJ_ID = 1;
     var PATH_PROTO_INDEX = 2;
-    var key = "";
-    var obj_id = 0;
-    var proto_index = 0;
     var tree = this._expand_tree;
-    var index = 0;
-    for (var i = 0 ; path && path[i]; i++)
+    for (var i = 0; path && path[i]; i++)
     {
-      key = path[i][PATH_KEY];
-      obj_id = path[i][PATH_OBJ_ID];
-      index = path[i][PATH_PROTO_INDEX];
+      var key = path[i][PATH_KEY];
+      var obj_id = path[i][PATH_OBJ_ID];
+      var index = path[i][PATH_PROTO_INDEX];
       if (i < (path.length - 1) && !(tree.get_chain(["protos", index, key])))
         throw "not valid path in InspectableJSObject._get_subtree";
 
@@ -162,16 +158,13 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     var PATH_KEY = 0;
     var PATH_OBJ_ID = 1;
     var PATH_PROTO_INDEX = 2;
-    var key = "";
-    var obj_id = 0;
-    var proto_index = 0;
     var tree = this._expand_tree;
     var ret = null;
-    for (var i = 0 ; path && path[i]; i++)
+    for (var i = 0; path && path[i]; i++)
     {
-      key = path[i][PATH_KEY];
-      obj_id = path[i][PATH_OBJ_ID];
-      index = path[i][PATH_PROTO_INDEX];
+      var key = path[i][PATH_KEY];
+      var obj_id = path[i][PATH_OBJ_ID];
+      var index = path[i][PATH_PROTO_INDEX];
       var sub_tree = tree.get_chain(["protos",  index, key]);
       if (!sub_tree)
       {

@@ -167,7 +167,7 @@ cls.CookieManager.CookieDataBase = function()
           delete this._rts[rt_id];
           this.cookie_list = this.cookie_list.filter(function(cookie)
           {
-            return !(cookie.rt_id == rt_id);
+            return cookie.rt_id != rt_id;
           });
         }
       }
@@ -280,7 +280,7 @@ cls.CookieManager.CookieDataBase = function()
 
     if (status === SUCCESS)
     {
-      const COOKIE = 0;
+      var COOKIE = 0;
       if (message.length > 0)
       {
         var cookies = message[COOKIE];
