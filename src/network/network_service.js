@@ -1353,5 +1353,6 @@ cls.ResourceInfo = function(entry)
   this.id = entry.id;
   this.document_id = entry.document_id;
   this.type = entry.type;
+  this.is_unloaded = entry.is_unloaded;
   this._entry = entry; // dbg
 };
