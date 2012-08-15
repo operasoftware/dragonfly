@@ -48,11 +48,11 @@ var TabBase = new function()
   this.set_badge = function(type)
   {
     var tab = this._get_top_tab_element();
-    var badge = tab ? tab.querySelector(".badge") : null;
-    if (badge)
-    {
-      badge.addClass(type || "");
-    }
+    var badge = tab && tab.querySelector(".badge");
+    if (badge && type)
+      badge.addClass(type);
+    else
+      badge.className = "badge";
   };
 
   this.set_legend_info = function(text)
