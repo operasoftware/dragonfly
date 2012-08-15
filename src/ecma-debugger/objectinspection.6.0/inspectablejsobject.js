@@ -138,7 +138,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         throw "not valid path in InspectableJSObject._get_subtree";
 
       if (!tree.get("protos"))
-        tree.set("protos",  new Dict());
+        tree.set("protos", new Dict());
       var protos = tree.get("protos");
       if (!protos.get(index))
         protos.set(index, new Dict());
