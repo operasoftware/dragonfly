@@ -1,0 +1,9 @@
+message <span class="message">Configuration</span>
+{
+  optional <span class="bool">bool</span> stopAtScript            = 1; 
+  optional <span class="bool">bool</span> stopAtException         = 2; 
+  optional <span class="bool">bool</span> stopAtError             = 3; 
+  optional <span class="bool">bool</span> stopAtAbort             = 4; 
+  optional <span class="bool">bool</span> stopAtGc                = 5; 
+  optional <span class="bool">bool</span> stopAtDebuggerStatement = 6; 
+}

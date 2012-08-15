@@ -1,0 +1,11 @@
+message <span class="message">OpenURLArg</span>
+{
+  <span class="comment">/** 
+   * Start loading the URL in this Window.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+  <span class="comment">/** 
+   * The URL to load.
+   */</span>
+  required <span class="string">string</span> url      = 2; 
+}

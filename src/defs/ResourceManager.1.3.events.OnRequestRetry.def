@@ -1,0 +1,13 @@
+message <span class="message">RequestRetry</span>
+{
+  required <span class="number">uint32</span> resourceID    = 1; 
+  required <span class="number">uint32</span> fromRequestID = 2; 
+  required <span class="number">uint32</span> toRequestID   = 3; 
+  required <span class="number">double</span> time          = 4; 
+  <span class="comment">/** 
+   * fromRequestID alias
+   * 
+   * @since 1.3
+   */</span>
+  optional <span class="number">uint32</span> requestID     = 5; 
+}

@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 window.templates || (window.templates = {});
 window.templates.network || (window.templates.network = {});
@@ -378,6 +378,13 @@ templates.graph_sections = function(entry, width, duration, do_tooltip)
                                   "rgba(255, 255, 255, 0.25) 100%), " +
                         "-o-linear-gradient(0deg," +
                           templates.graph_sections_style(entry, width, duration) +
+                        ");" +
+                    "background-image: " +
+                        "linear-gradient(0deg," +
+                               "transparent 0%," +
+                               "rgba(255, 255, 255, 0.25) 100%), " +
+                        "linear-gradient(90deg," +
+                          templates.graph_sections_style(entry, width, duration) +
                         ");"
          ];
 };
@@ -470,6 +477,9 @@ templates.graph_tooltip = function(entry, mono_lineheight)
             ["div",
               "style", "height: " + HEIGHT + "px; " +
                        "background-image: -o-linear-gradient(270deg," +
+                          templates.graph_sections_style(entry, HEIGHT, duration) +
+                        ");" +
+                       "background-image: linear-gradient(180deg," +
                           templates.graph_sections_style(entry, HEIGHT, duration) +
                         ");",
               "class", "network-tooltip-graph"

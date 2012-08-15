@@ -57,6 +57,7 @@ window.cls.TestFramework = function()
   this._status_map = cls.ServiceBase.get_status_map();
   this._event_map = cls.ServiceBase.get_event_map();
   this._service_descriptions = null;
+  this._last_txtarea_value = "";
 
   const INDENT = "  ", RESPONSE = 2;
 
@@ -325,7 +326,7 @@ window.cls.TestFramework = function()
           message_container.innerHTML =
             "<h2>Command " + event.target.textContent + "</h2>" +
             "<h3>command</h3><pre class='definition'></pre>" +
-            "<textarea rows='10' id='proto-message'>[]</textarea>" +
+            "<textarea rows='10' id='proto-message'>" + (this._last_txtarea_value || "[]") + "</textarea>" +
             "<p class='right-aligned'><input type='button' value='send' data-service='" + this._selected_service + "'" +
             " data-command='" + event.target.textContent +
             "' id = 'test-send-command' /></p>" +
@@ -351,6 +352,8 @@ window.cls.TestFramework = function()
                 {'pre': pres[1]}
               )
           }
+          var txt = message_container.querySelector('textarea');
+          txt.oninput = (function() { this._last_txtarea_value = txt.value; }).bind(this);
           cookies.set('command-list', event.target.textContent, 2*60*60*1000);
           break;
         }

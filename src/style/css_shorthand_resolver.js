@@ -279,6 +279,77 @@ CssShorthandResolver.shorthands = (function() {
   var get_initial_value = cls.Stylesheets.get_initial_value;
 
   return {
+    "animation": {
+      properties: [
+        // Note that animation-play-state is not part of the shorthand
+        "animation-name",
+        "animation-duration",
+        "animation-timing-function",
+        "animation-delay",
+        "animation-iteration-count",
+        "animation-direction",
+        "animation-fill-mode"
+      ],
+      format: function(decls) {
+        var declarations = split_values(decls);
+        var template = [];
+        var len = declarations["animation-name"].length;
+        resolve_multiple_values(declarations, len);
+        for (var i = 0; i < len; i++)
+        {
+          var sub_template = [];
+          var is_final_layer = (i == len-1);
+          // The spec says that the first value that can be parsed as time is
+          // assigned to the animation-duration. There are two time values in
+          // the shorthand, 'duration' and 'delay'. If delay has a non-default
+          // value, we must therefore include duration.
+          var is_default_delay = declarations["animation-delay"][i].value ==
+                                 get_initial_value("animation-delay");
+
+          if (declarations["animation-name"][i].value !=
+              get_initial_value("animation-name"))
+            sub_template.push(" ", declarations["animation-name"][i]);
+
+          if (!is_default_delay || declarations["animation-duration"][i].value !=
+                                   get_initial_value("animation-duration"))
+            sub_template.push(" ", declarations["animation-duration"][i]);
+
+          if (declarations["animation-timing-function"][i].value !=
+              get_initial_value("animation-timing-function"))
+            sub_template.push(" ", declarations["animation-timing-function"][i]);
+
+          if (!is_default_delay)
+            sub_template.push(" ", declarations["animation-delay"][i]);
+
+          if (declarations["animation-iteration-count"][i].value !=
+              get_initial_value("animation-iteration-count"))
+            sub_template.push(" ", declarations["animation-iteration-count"][i]);
+
+          if (declarations["animation-direction"][i].value !=
+              get_initial_value("animation-direction"))
+            sub_template.push(" ", declarations["animation-direction"][i]);
+
+          if (declarations["animation-fill-mode"][i].value !=
+              get_initial_value("animation-fill-mode"))
+            sub_template.push(" ", declarations["animation-fill-mode"][i]);
+
+          // There's always an extra space at the beginning, remove it here
+          sub_template.shift();
+
+          // If all properties have default values, at least append the default name
+          if (!sub_template.length)
+            template.push("none");
+
+          if (!is_final_layer)
+            sub_template.push(", ");
+
+          template.push.apply(template, sub_template);
+        }
+
+        return template;
+      }
+    },
+
     "-o-animation": {
       properties: [
         // Note that -o-animation-play-state is not part of the shorthand
@@ -341,7 +412,7 @@ CssShorthandResolver.shorthands = (function() {
             sub_template.push(" ", declarations["-o-animation-fill-mode"][i]);
 
           // There's always an extra space at the beginning, remove it here
-          sub_template.splice(0, 1);
+          sub_template.shift();
 
           // If all properties have default values, at least append the default name
           if (!sub_template.length)
@@ -651,7 +722,7 @@ CssShorthandResolver.shorthands = (function() {
         template.push(" ", decls["font-family"]);
 
         // There's always an extra space at the beginning, remove it here
-        template.splice(0, 1);
+        template.shift();
 
         return template;
       }
@@ -769,6 +840,33 @@ CssShorthandResolver.shorthands = (function() {
       }
     },
 
+    "transition": {
+      properties: [
+        "transition-property",
+        "transition-duration",
+        "transition-timing-function",
+        "transition-delay",
+      ],
+      format: function(decls) {
+        var declarations = split_values(decls);
+        var template = [];
+        var len = declarations["transition-property"].length;
+        resolve_multiple_values(declarations, len);
+        for (var i = 0; i < len; i++)
+        {
+          template.push(
+            get_tokens(declarations["transition-property"][i]), " ",
+            get_tokens(declarations["transition-duration"][i]), " ",
+            get_tokens(declarations["transition-timing-function"][i]), " ",
+            get_tokens(declarations["transition-delay"][i]), ", "
+          );
+        }
+        template.pop();
+
+        return template;
+      }
+    },
+
     "-o-transition": {
       properties: [
         "-o-transition-property",
@@ -790,7 +888,7 @@ CssShorthandResolver.shorthands = (function() {
             get_tokens(declarations["-o-transition-delay"][i]), ", "
           );
         }
-        template.splice(-1, 1); // Remove the last ','
+        template.pop();
 
         return template;
       }
@@ -799,7 +897,15 @@ CssShorthandResolver.shorthands = (function() {
 })();
 
 CssShorthandResolver.property_to_shorthand = {
-  // Note that -o-animation-play-state is not part of the shorthand
+  // Note that animation-play-state is not part of the shorthand
+  "animation-delay": "animation",
+  "animation-direction": "animation",
+  "animation-duration": "animation",
+  "animation-fill-mode": "animation",
+  "animation-iteration-count": "animation",
+  "animation-name": "animation",
+  "animation-timing-function": "animation",
+
   "-o-animation-delay": "-o-animation",
   "-o-animation-direction": "-o-animation",
   "-o-animation-duration": "-o-animation",
@@ -877,6 +983,11 @@ CssShorthandResolver.property_to_shorthand = {
   "padding-left": "padding",
 
   // pause not supported
+
+  "transition-property": "transition",
+  "transition-duration": "transition",
+  "transition-timing-function": "transition",
+  "transition-delay": "transition",
 
   "-o-transition-property": "-o-transition",
   "-o-transition-duration": "-o-transition",

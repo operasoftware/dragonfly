@@ -1,0 +1,4 @@
+message <span class="message">SelftestOutput</span>
+{
+  required <span class="string">string</span> output = 2; 
+}

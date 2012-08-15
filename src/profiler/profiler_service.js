@@ -13,7 +13,7 @@ var ProfilerService = function()
 
   this.start_profiler = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
     var start_mode = config.start_mode || ProfilerService.StartMode.IMMEDIATE;
     var window_id = config.window_id || this._window_id;
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, true]);
@@ -26,7 +26,7 @@ var ProfilerService = function()
 
   this.stop_profiler = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback, false]);
     var msg = [
       config.session_id
@@ -36,7 +36,7 @@ var ProfilerService = function()
 
   this.get_events = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
       config.session_id,
@@ -52,7 +52,7 @@ var ProfilerService = function()
 
   this.release_session = function(callback, config)
   {
-    var config = config || {};
+    config = config || {};
     var tag = this._tag_manager.set_callback(this, this._callback_handler, [callback]);
     var msg = [
       typeof config.session_id == "number" ? config.session_id : null

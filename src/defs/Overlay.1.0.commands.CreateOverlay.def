@@ -1,0 +1,88 @@
+message <span class="message">CreateOverlayArg</span>
+{
+  message <span class="message">Insertion</span>
+  {
+    <span class="comment">/** 
+     * Specifies how an overlay should be inserted.
+     */</span>
+    required <span class="number">InsertionMethod</span> method    = 1; 
+    <span class="comment">/** 
+     * If `method` is `ABOVE_TARGET` or `BELOW_TARGET`, then this field must
+     * be set, and refer to a valid overlay.
+     */</span>
+    optional <span class="number">uint32         </span> overlayID = 2; 
+  }
+  message <span class="message">AreaOverlay</span>
+  {
+    <span class="comment">/** 
+     * The area that should be painted.
+     */</span>
+    required <span class="message">Area </span> area            = 1; 
+    <span class="comment">/** 
+     * The background color of the area.
+     */</span>
+    required <span class="message">Color</span> backgroundColor = 2; 
+    <span class="comment">/** 
+     * If set, draw a 1px border on the inside of the area.
+     */</span>
+    optional <span class="message">Color</span> borderColor     = 3; 
+    <span class="comment">/** 
+     * If set, draw a 1px wide lines intersecting the area edges
+     * and extending over whole window.
+     */</span>
+    optional <span class="message">Color</span> gridColor       = 4; 
+  }
+  message <span class="message">Area</span>
+  {
+    <span class="comment">/** 
+     * The x-coordinate of the upper-left corner of the area, in document
+     * coordinates.
+     */</span>
+    required <span class="number">uint32</span> x = 1; 
+    <span class="comment">/** 
+     * The y-coordinate of the upper-left corner of the area, in document
+     * coordinates.
+     */</span>
+    required <span class="number">uint32</span> y = 2; 
+    <span class="comment">/** 
+     * The width of the area.
+     */</span>
+    required <span class="number">uint32</span> w = 3; 
+    <span class="comment">/** 
+     * The height of the area.
+     */</span>
+    required <span class="number">uint32</span> h = 4; 
+  }
+  message <span class="message">Color</span>
+  {
+    <span class="comment">/** 
+     * The red component of the `Color`. (0 - 255).
+     */</span>
+    required <span class="number">uint32</span> r = 1; 
+    <span class="comment">/** 
+     * The green component of the `Color`. (0 - 255).
+     */</span>
+    required <span class="number">uint32</span> g = 2; 
+    <span class="comment">/** 
+     * The blue component of the `Color`. (0 - 255).
+     */</span>
+    required <span class="number">uint32</span> b = 3; 
+    <span class="comment">/** 
+     * The alpha component of the `Color`. (0 - 255).
+     */</span>
+    optional <span class="number">uint32</span> a = 4; 
+  }
+  required <span class="number">uint32     </span> windowID    = 1; 
+  <span class="comment">/** 
+   * The type of overlay we want to create.
+   */</span>
+  required <span class="number">OverlayType</span> overlayType = 2; 
+  <span class="comment">/** 
+   * Where to insert this overlay in the list of overlays.
+   */</span>
+  required <span class="message">Insertion  </span> insertion   = 3; 
+  <span class="comment">/** 
+   * Must be provided if `overlayType` is `AREA`.
+   */</span>
+  optional <span class="message">AreaOverlay</span> areaOverlay = 4; 
+}

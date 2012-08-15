@@ -7,27 +7,25 @@ message <span class="message">CssStyleDeclarations</span>
     repeated <span class="message">StyleDeclaration</span> styleList   = 3; 
   }
   <span class="comment">/** 
+   * Common to all origins:
+   * - indexList
+   * - valueList
+   * - priorityList
+   * - statusList
    * 
-   *  Common to all origins:
-   *  - indexList
-   *  - valueList
-   *  - priorityList
-   *  - statusList
+   * Common to AUTHOR and LOCAL
+   * - selector
+   * - specificity
    * 
-   *  Common to AUTHOR and LOCAL
-   *  - selector
-   *  - specificity
-   * 
-   *  For AUTHOR
-   *  - stylesheetID
-   *  - ruleID
-   *  - ruleType
+   * For AUTHOR
+   * - stylesheetID
+   * - ruleID
+   * - ruleType
    */</span>
   message <span class="message">StyleDeclaration</span>
   {
     <span class="comment">/** 
-     * 
-     *  1 = USER-AGENT, 2=LOCAL, 3=AUTHOR, 4=ELEMENT
+     * 1 = USER-AGENT, 2=LOCAL, 3=AUTHOR, 4=ELEMENT
      */</span>
     required <span class="number">uint32</span> origin       =  1; 
     repeated <span class="number">uint32</span> indexList    =  2; 
