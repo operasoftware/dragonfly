@@ -97,7 +97,7 @@ templates.metadata_drawer = function(resource, expanded, objectid, rules, title)
                   ],
                   "class", "expandercell"
                ],
-               ["th", templates.network_request_icon(resource), "class", "iconcell"],
+               ["th", templates.network.icon(resource), "class", "iconcell"],
                ["th", url, "class", "urlcell"],
                ["td", "", "class", "searchcell"],
              ],
