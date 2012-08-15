@@ -31,6 +31,15 @@ Dict.prototype = new function()
     return keys;
   };
 
+  this.setdefault = function(key, value)
+  {
+    if (this._dict.hasOwnProperty(PREFIX + key))
+      return this.get(key);
+
+    this.set(key, value);
+    return value;
+  };
+
   this.toString = function()
   {
     var rep = [];
@@ -39,7 +48,7 @@ Dict.prototype = new function()
       var value = this._dict[key];
       value = typeof value == "string" ? "\"" + value + "\"" : String(value);
       key = key.slice(PREFIX.length);
-      rep.push(rep.length ? ", " : "", "\"", key, "\": ", value);
+      rep.push((rep.length ? ", " : ""), "\"", key, "\": ", value);
     }
     return "{" + rep.join("") + "}";
   };

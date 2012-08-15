@@ -28,8 +28,6 @@
 
   /* private */
 
-  var _has_own_prop = Object.prototype.hasOwnProperty;
-
   var _is_unfolded = function(tree, index, name, collapsed_protos)
   {
     if (!index) // the properties of the object itself
