@@ -58,7 +58,10 @@ Dict.prototype = new function()
     this._dict = Object.create ? Object.create(null) : {};
     for (var key in obj)
     {
-      this.set(key, obj[key]);
+      var value = obj[key];
+      if (Object.prototype.toString.call(value) == "[object Object]")
+        value = new Dict(value);
+      this.set(key, value);
     }
   };
 };
