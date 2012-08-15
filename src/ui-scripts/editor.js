@@ -74,7 +74,7 @@ var BaseEditor = new function()
     // TODO force new lines if needed
     var
     max_content_length =
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){
+      Math.max.apply(null, this.textarea.value.split(/\r?\n/).map(function(item){
         return item.length
       })),
     width = this.char_width * max_content_length;

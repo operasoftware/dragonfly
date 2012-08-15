@@ -1,0 +1,16 @@
+message <span class="message">SearchTextArg</span>
+{
+  <span class="comment">/** 
+   * Search in this window.
+   */</span>
+  required <span class="number">uint32</span> windowID = 1; 
+  <span class="comment">/** 
+   * The text string to search for.
+   */</span>
+  required <span class="string">string</span> text     = 2; 
+  <span class="comment">/** 
+   * If set, search only in the specified frame. The frame must be
+   * part of the document tree of the previously specified window.
+   */</span>
+  optional <span class="number">uint32</span> frameID  = 3; 
+}

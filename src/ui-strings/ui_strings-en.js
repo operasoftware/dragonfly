@@ -481,7 +481,7 @@ ui_strings.S_BUTTON_LABEL_LOG_THREADS = "Log threads";
 ui_strings.S_BUTTON_LABEL_REFETCH_EVENT_LISTENERS = "Refetch event listeners";
 
 /* DESC: Enable reformatting of JavaScript. */
-ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty print JavaScript";
+ui_strings.S_BUTTON_LABEL_REFORMAT_JAVASCRIPT = "Pretty-print JavaScript";
 
 /* DESC: Tooltip text for a button under the Scripts tab that reloads the browser to receive fresh DOM, etc. */
 ui_strings.S_BUTTON_LABEL_RELOAD_HOST = "Reload the selected window in the browser";
@@ -892,7 +892,7 @@ ui_strings.S_HTTP_UNREFERENCED = "Unreferenced";
 ui_strings.S_INFO_DOCUMENT_HAS_NO_STYLESHEETS = "This document has no style sheets";
 
 /* DESC: Feedback showing that Opera Dragonfly is loading and the user shall have patience. */
-ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly‚Ä¶";
+ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
 
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
@@ -907,7 +907,7 @@ ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be inverted with the \"%s\" shortcut.";
 
 /* DESC: The info text to notify the user that the application is performing the search. */
-ui_strings.S_INFO_IS_SEARCHING = "Searching‚Ä¶";
+ui_strings.S_INFO_IS_SEARCHING = "Searching…";
 
 /* DESC: Info in an event listener tooltip that the according source file is missing. */
 ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "(Missing source file)";
@@ -1150,7 +1150,7 @@ ui_strings.S_LABEL_SEARCH_TYPE_XPATH = "XPath";
 ui_strings.S_LABEL_SHOW_JS_TOOLTIP = "Show inspection tooltip";
 
 /* DESC: Enable smart reformatting of JavaScript. */
-ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty printing";
+ui_strings.S_LABEL_SMART_REFORMAT_JAVASCRIPT = "Smart JavaScript pretty-printing";
 
 /* DESC: Settings label to configure the element highlight color */
 ui_strings.S_LABEL_SPOTLIGHT_TITLE = "Element Highlight";

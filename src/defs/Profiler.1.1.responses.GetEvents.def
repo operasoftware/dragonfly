@@ -1,0 +1,193 @@
+message <span class="message">Events</span>
+{
+  message <span class="message">Interval</span>
+  {
+    <span class="comment">/** 
+     * The start of the `Interval`. If not present, this is an left-open
+     * `Interval` ([-inf, N]).
+     */</span>
+    optional <span class="number">double</span> start = 1; 
+    <span class="comment">/** 
+     * The end of the `Interval`. If not present, this is an right-open
+     * `Interval` ([N, +inf]).
+     */</span>
+    optional <span class="number">double</span> end   = 2; 
+  }
+  message <span class="message">Event</span>
+  {
+    <span class="comment">/** 
+     * The type of `Event`. Some `Events` carry additional information relevant
+     * to their type.
+     */</span>
+    required <span class="number">EventType                  </span> type                   =  1; 
+    <span class="comment">/** 
+     * The time spent on this task. (Self-time). This time takes place at some
+     * (unknown) point in the `Interval`.
+     * 
+     * Does not include `overhead`.
+     */</span>
+    required <span class="number">double                     </span> time                   =  2; 
+    <span class="comment">/** 
+     * Profiling overhead. This is the time spent doing things which would
+     * normally not happen if we had not been profiling, e.g. storing the
+     * selector text for CSS selector `Events`.
+     * 
+     * The overhead takes place at some (unknown) point in the `Interval`.
+     */</span>
+    required <span class="number">double                     </span> overhead               =  3; 
+    <span class="comment">/** 
+     * Number of hits on this `Event`.
+     */</span>
+    required <span class="number">uint32                     </span> hits                   =  4; 
+    <span class="comment">/** 
+     * The `Interval` in which the `Event` took place. An `Event` may consume time
+     * across multiple time slices (e.g. thread evaluation) without requiring
+     * *all* the time in that `Interval`.
+     * 
+     * The `time` field contains the time actually spent working on the `Event`.
+     * There is no exact start and end time for `Events` which are spread across
+     * time slices, because the self-time spent is fragmented across the
+     * `Interval`.
+     * 
+     * We can therefore only know that the `time` spent on this `Event` happened
+     * some time in this `Interval`, but not exactly where. (It would be
+     * possible to expose each fragment of execution, of course, but the amount
+     * of data required to represent this would be to large to handle).
+     * 
+     * The start of the `Interval` represents the first time we started working
+     * on this `Event`. The end of the `Interval` represents the last time we
+     * were done working on this `Event`.
+     */</span>
+    optional <span class="message">Interval                   </span> interval               =  5; 
+    <span class="comment">/** 
+     * The non-zero ID of this `Event`.
+     */</span>
+    optional <span class="number">uint32                     </span> eventID                =  6; 
+    <span class="comment">/** 
+     * The parent `Event` ID, or not set if this is a top-level `Event`.
+     */</span>
+    optional <span class="number">uint32                     </span> parentEventID          =  7; 
+    <span class="comment">/** 
+     * The number of immediate children (not grandchildren) for this `Event`.
+     */</span>
+    optional <span class="number">uint32                     </span> childCount             =  8; 
+    <span class="comment">/** 
+     * Aggregated `time` for all children, including `time` for this `Event`.
+     */</span>
+    optional <span class="number">double                     </span> aggregatedTime         =  9; 
+    <span class="comment">/** 
+     * Aggregated `overhead` for all children, including `overhead` for this
+     * `Event`.
+     */</span>
+    optional <span class="number">double                     </span> aggregatedOverhead     = 10; 
+    <span class="comment">/** 
+     * Additional information for `CSS_SELECTOR_MATCHING` `Events`.
+     */</span>
+    optional <span class="message">CssSelectorMatchingEvent   </span> cssSelectorMatching    = 11; 
+    <span class="comment">/** 
+     * Additional information for `SCRIPT_THREAD_EVALUATION` `Events`.
+     */</span>
+    optional <span class="message">ScriptThreadEvaluationEvent</span> scriptThreadEvaluation = 12; 
+    <span class="comment">/** 
+     * Additional information for `DOCUMENT_PARSING` `Events`.
+     */</span>
+    optional <span class="message">DocumentParsingEvent       </span> documentParsing        = 13; 
+    <span class="comment">/** 
+     * Additional information for `CSS_PARSING` `Events`.
+     */</span>
+    optional <span class="message">CssParsingEvent            </span> cssParsing             = 14; 
+    <span class="comment">/** 
+     * Additional information for `SCRIPT_COMPILATION` `Events`.
+     */</span>
+    optional <span class="message">ScriptCompilationEvent     </span> scriptCompilation      = 15; 
+    <span class="comment">/** 
+     * Additional information for `PAINT` `Events`.
+     */</span>
+    optional <span class="message">PaintEvent                 </span> paint                  = 16; 
+  }
+  message <span class="message">CssSelectorMatchingEvent</span>
+  {
+    <span class="comment">/** 
+     * The selector text, e.g. "#foo .bar".
+     */</span>
+    required <span class="string">string</span> selector = 1; 
+  }
+  message <span class="message">ScriptThreadEvaluationEvent</span>
+  {
+    <span class="comment">/** 
+     * What kind of thread the `Event` represents.
+     */</span>
+    required <span class="number">ScriptThreadType</span> scriptThreadType = 1; 
+    <span class="comment">/** 
+     * If `scriptThreadType` is `EVENT`, this field will contain the event name,
+     * e.g. 'load'.
+     * 
+     * In all other cases, this field is not set.
+     */</span>
+    optional <span class="string">string          </span> eventName        = 2; 
+  }
+  message <span class="message">DocumentParsingEvent</span>
+  {
+    <span class="comment">/** 
+     * The URL of the document that was parsed.
+     */</span>
+    required <span class="string">string</span> url = 1; 
+  }
+  message <span class="message">CssParsingEvent</span>
+  {
+    <span class="comment">/** 
+     * The URL of the stylesheet that was parsed. If the stylesheet is inlined
+     * in another document, that document is used as the URL.
+     */</span>
+    required <span class="string">string</span> url = 1; 
+  }
+  message <span class="message">ScriptCompilationEvent</span>
+  {
+    <span class="comment">/** 
+     * Describes the origin of the script.
+     */</span>
+    required <span class="number">ScriptType</span> scriptType = 1; 
+    <span class="comment">/** 
+     * The URL of the stylesheet that was parsed. If the stylesheet is inlined
+     * in another document, that document is used as the URL.
+     */</span>
+    optional <span class="string">string    </span> url        = 2; 
+  }
+  message <span class="message">PaintEvent</span>
+  {
+    <span class="comment">/** 
+     * The `Area` that was painted, in document coordinates relative the upper
+     * left corner of the view.
+     */</span>
+    optional <span class="message">Area</span> area = 1; 
+  }
+  <span class="comment">/** 
+   * Defines an `Area` by its top-left corner and width/height.
+   */</span>
+  message <span class="message">Area</span>
+  {
+    required <span class="number">int32</span> x  = 1; 
+    required <span class="number">int32</span> y  = 2; 
+    required <span class="number">int32</span> w  = 3; 
+    required <span class="number">int32</span> h  = 4; 
+    <span class="comment">/** 
+     * The scroll offsets of the view in which area is defined.
+     * 
+     * @since 1.1
+     */</span>
+    optional <span class="number">int32</span> ox = 5; 
+    optional <span class="number">int32</span> oy = 6; 
+  }
+  <span class="comment">/** 
+   * Represents the smallest `Interval` which is large enough to cover all the
+   * `Intervals` of each individual `Event` in the list.
+   * 
+   * Is not set if `eventList` is empty.
+   */</span>
+  optional <span class="message">Interval</span> interval  = 1; 
+  <span class="comment">/** 
+   * List of `Events`. The `Events` are ordered according to the start time of
+   * their `Intervals` (increasing order).
+   */</span>
+  repeated <span class="message">Event   </span> eventList = 2; 
+}

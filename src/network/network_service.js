@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 cls.NetworkLoggerService = function()
 {
@@ -781,10 +781,10 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.requests_responses = [];
   this.current_responsecode = null;
   this.error_in_current_response = false;
+  this.called_get_body = false;
   this._current_request = null;
   this._current_response = null;
   this._set_is_finished_on_responsefinished = false;
-  this._called_get_body = false;
 };
 
 cls.NetworkLoggerEntryPrototype = function()
@@ -1171,7 +1171,7 @@ cls.NetworkLoggerEntryPrototype = function()
     // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
     if (
       this.is_finished &&
-      !this._called_get_body &&
+      !this.called_get_body &&
       (!this._current_response || !this._current_response.responsebody) &&
       // When we have a response, but didn't see responsefinished, it means there's really no
       // responsebody. Don't attempt to fetch it.

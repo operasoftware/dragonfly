@@ -475,12 +475,71 @@ addTest("Resolving CSS shorthands", function () {
 
   clear_properties();
 
+  set_properties({"-o-transition": "1s"});
+
+  assert_rule(
+    {
+      properties: [
+        "-o-transition",
+      ],
+      values: [
+        "all 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0",
+      ]
+    }
+  );
+
+  clear_properties();
+
   set_properties({"-o-transition": "color 1s, opacity 2s"});
 
   assert_rule(
     {
       properties: [
         "-o-transition",
+      ],
+      values: [
+        "color 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0, opacity 2s cubic-bezier(0.25, 0.1, 0.25, 1) 0",
+      ]
+    }
+  );
+
+  clear_properties();
+
+  set_properties({"transition": "1s"});
+
+  assert_rule(
+    {
+      properties: [
+        "transition",
+      ],
+      values: [
+        "all 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0",
+      ]
+    }
+  );
+  clear_properties();
+
+  set_properties({"transition": "1s"});
+
+  assert_rule(
+    {
+      properties: [
+        "transition",
+      ],
+      values: [
+        "all 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0",
+      ]
+    }
+  );
+
+  clear_properties();
+
+  set_properties({"transition": "color 1s, opacity 2s"});
+
+  assert_rule(
+    {
+      properties: [
+        "transition",
       ],
       values: [
         "color 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0, opacity 2s cubic-bezier(0.25, 0.1, 0.25, 1) 0",
@@ -587,6 +646,27 @@ addTest("Resolving CSS shorthands", function () {
       ],
       values: [
         "-o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), -o-linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed transparent",
+      ],
+    }
+  );
+
+  clear_properties();
+
+  // One missing value in background-attachment has to be repeated
+  set_properties(
+    {
+      "background": "linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px)",
+      "background-attachment": "fixed, scroll",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "background",
+      ],
+      values: [
+        "linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed, linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px), linear-gradient(1deg, rgb(0, 0, 0) 1px, rgb(0, 0, 0) 1px) fixed transparent",
       ],
     }
   );
@@ -707,6 +787,76 @@ addTest("Resolving CSS shorthands", function () {
     {
       properties: [
         "-o-animation",
+      ],
+      values: [
+        "none, none",
+      ],
+    }
+  );
+
+  clear_properties();
+
+  set_properties(
+    {
+      "animation": "1s, 2s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "animation",
+      ],
+      values: [
+        "1s, 2s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "animation": "1s, 2s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "animation",
+      ],
+      values: [
+        "1s, 2s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "animation": "0s 1s",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "animation",
+      ],
+      values: [
+        "0s 1s",
+      ],
+    }
+  );
+
+  set_properties(
+    {
+      "animation": "none, none",
+    }
+  );
+
+  assert_rule(
+    {
+      properties: [
+        "animation",
       ],
       values: [
         "none, none",

@@ -1,0 +1,7 @@
+message <span class="message">UpdateWidgetArg</span>
+{
+  <span class="comment">/** 
+   * The uid of the widget to update.
+   */</span>
+  required <span class="string">string</span> widgetID = 1; 
+}

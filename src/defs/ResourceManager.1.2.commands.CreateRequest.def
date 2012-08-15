@@ -1,0 +1,157 @@
+message <span class="message">CreateRequestArg</span>
+{
+  message <span class="message">Header</span>
+  {
+    <span class="comment">/** 
+     * The name of the HTTP header, for instance "Accept-Charset".
+     */</span>
+    required <span class="string">string</span> name  = 1; 
+    <span class="comment">/** 
+     * The value of the HTTP header, for instance "utf-8" when using
+     * Accept-Charset, or "text/html; charset=utf8" for Content-Type.
+     */</span>
+    required <span class="string">string</span> value = 2; 
+  }
+  message <span class="message">Payload</span>
+  {
+    <span class="comment">/** 
+     * The mime type of this payload.
+     */</span>
+    required <span class="string">string</span> mimeType   = 1; 
+    <span class="comment">/** 
+     * The bytes to use as the payload. If this field is set, the stringData
+     * can not also be set.
+     */</span>
+    optional <span class="bytes">bytes </span> byteData   = 3; 
+    <span class="comment">/** 
+     * The string to use as the payload. This is an alternative to using bytes
+     * directly. If this field is set, byteData can not also be set.
+     */</span>
+    optional <span class="string">string</span> stringData = 2; 
+  }
+  message <span class="message">ContentMode</span>
+  {
+    enum Transport
+    {
+      <span class="comment">/** 
+       * Send the payload as a string.
+       * 
+       * Selecting this transport mode  will automatically enable decoding,
+       * and the string will automatically converted to the correct character
+       * encoding.
+       * 
+       * If this transport mode is used an unsuitable content type, the payload
+       * will not be sent (without errors).
+       */</span>
+      STRING = 1;
+      <span class="comment">/** 
+       * Send the payload as bytes. When this transport mode is chosen, character
+       * conversion will not be performed. If the payload contains text data, it
+       * will be sent in its original encoding.
+       */</span>
+      BYTES = 2;
+      <span class="comment">/** 
+       * Send the payload as a base64-encoded data URI in the string field. When
+       * this transport mode is chosen, character conversion will not be performed.
+       * If the payload contains text data, it will be sent in its original encoding.
+       */</span>
+      DATA_URI = 3;
+      <span class="comment">/** 
+       * Do not send the payload at all.
+       */</span>
+      OFF = 4;
+    }
+
+    <span class="comment">/** 
+     * Indicates how to send the payload.
+     */</span>
+    optional <span class="number">Transport</span> transport = 1; 
+    <span class="comment">/** 
+     * Decode the data (for instance, decompress it, decrypt it, etc). This is
+     * unrelated to character encoding.
+     */</span>
+    optional <span class="bool">bool     </span> decode    = 2; 
+    <span class="comment">/** 
+     * Even if other conditions are met, do not send the payload if it
+     * exceeds the specified amout (in bytes).
+     * 
+     * By default, only payloads under one megabyte are sent.
+     */</span>
+    optional <span class="number">uint32   </span> sizeLimit = 3; 
+  }
+  enum HeaderPolicy
+  {
+    <span class="comment">/** 
+     * Let's Opera choose request headers depending on how the resource is fetched.
+     * Custom headers will be set but only if allowed.
+     */</span>
+    NORMAL = 1;
+    <span class="comment">/** 
+     * Similar to NORMAL but any header in headerList will overwrite those chosen by Opera.
+     */</span>
+    OVERWRITE = 2;
+    <span class="comment">/** 
+     * Replaces all headers with the custom ones. Care must be taken as illegal requests can
+     * easily be created with this. It is primarly used for re-running a previous request with
+     * the same or slighly altered headers.
+     */</span>
+    REPLACE = 3;
+  }
+
+  <span class="comment">/** 
+   * The Window to perform the request in. (The events triggered by this
+   * command will appear to come from this Window).
+   */</span>
+  required <span class="number">uint32      </span> windowID            = 1; 
+  <span class="comment">/** 
+   * The URL to request.
+   */</span>
+  required <span class="string">string      </span> url                 = 2; 
+  <span class="comment">/** 
+   * The HTTP method, e.g. "GET", "POST".
+   */</span>
+  required <span class="string">string      </span> method              = 3; 
+  <span class="comment">/** 
+   * Set HTTP headers for this request. When HeaderPolicy NORMAL is chosen,
+   * Opera will set reasonable default headers. With HeaderPolicy NORMAL, the
+   * following headers can not be set by the caller:
+   * 
+   * - Accept-Charset
+   * - Accept-Encoding
+   * - Cache-Control
+   * - Connection
+   * - Cookie
+   * - Cookie2
+   * - Date
+   * - Expect
+   * - Host
+   * - If-Range
+   * - Pragma
+   * - Range
+   * - TE
+   * - Trailer
+   * - Upgrade
+   * - User-Agent
+   * - Via
+   * 
+   * Use either HeaderPolicy OVERWRITE, or REPLACE to set these headers.
+   */</span>
+  repeated <span class="message">Header      </span> headerList          = 4; 
+  optional <span class="message">Payload     </span> payload             = 5; 
+  <span class="comment">/** 
+   * Controls how custom headers are handled.
+   */</span>
+  optional <span class="number">HeaderPolicy</span> headerPolicy        = 6; 
+  <span class="comment">/** 
+   * Override the global reload policy for this resource.
+   */</span>
+  optional <span class="number">ReloadPolicy</span> reloadPolicy        = 7; 
+  <span class="comment">/** 
+   * Override the global request content mode for this resource.
+   */</span>
+  optional <span class="message">ContentMode </span> requestContentMode  = 8; 
+  <span class="comment">/** 
+   * Override the global response content mode for this resource.
+   */</span>
+  optional <span class="message">ContentMode </span> responseContentMode = 9; 
+}

@@ -1,0 +1,45 @@
+message <span class="message">ConsoleLogInfo</span>
+{
+  message <span class="message">Value</span>
+  {
+    optional <span class="string">string     </span> value       = 1; 
+    optional <span class="message">ObjectValue</span> objectValue = 2; 
+  }
+  message <span class="message">ObjectValue</span>
+  {
+    required <span class="number">uint32</span> objectID     = 1; 
+    required <span class="bool">bool  </span> isCallable   = 2; 
+    <span class="comment">/** 
+     * type, function or object
+     */</span>
+    required <span class="string">string</span> type         = 3; 
+    optional <span class="number">uint32</span> prototypeID  = 4; 
+    <span class="comment">/** 
+     * The class of the object.
+     */</span>
+    optional <span class="string">string</span> className    = 5; 
+    <span class="comment">/** 
+     * If the object is a function, this is the name of
+     * the variable associated with that function (if any).
+     */</span>
+    optional <span class="string">string</span> functionName = 6; 
+  }
+  message <span class="message">Position</span>
+  {
+    required <span class="number">uint32</span> scriptID   = 1; 
+    required <span class="number">uint32</span> lineNumber = 2; 
+  }
+  required <span class="number">uint32        </span> runtimeID = 1; 
+  <span class="comment">/** 
+   * This fields indicates which ``console.*`` function was called.
+   */</span>
+  required <span class="number">ConsoleLogType</span> type      = 2; 
+  <span class="comment">/** 
+   * The list of values passed to the function as arguments.
+   */</span>
+  repeated <span class="message">Value         </span> valueList = 3; 
+  <span class="comment">/** 
+   * The position the function was called.
+   */</span>
+  optional <span class="message">Position      </span> position  = 4; 
+}
