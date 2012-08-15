@@ -8,6 +8,7 @@ var Dict = function(obj)
 Dict.prototype = new function()
 {
   var PREFIX = "$";
+  var to_string = Object.prototype.toString.call.bind(Object.prototype.toString);
 
   this.get = function(key) { return this._dict[PREFIX + key]; };
 
@@ -59,8 +60,7 @@ Dict.prototype = new function()
     for (var key in obj)
     {
       var value = obj[key];
-      if (Object.prototype.toString.call(value) == "[object Object]" &&
-          !(value instanceof Dict))
+      if (to_string(value) == "[object Object]" && !(value instanceof Dict))
         value = new Dict(value);
       this.set(key, value);
     }
