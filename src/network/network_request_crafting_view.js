@@ -144,12 +144,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._handle_send_request_bound = function()
   {
+    var CONTEXT_TYPE_CRAFTER = this._service.CONTEXT_TYPE_CRAFTER;
+    // todo: the old contexts will probably be kept for comparing previous requests.
+    this._service.remove_request_context(CONTEXT_TYPE_CRAFTER);
+
     this._prev_url = this._urlfield.get_value();
     var data = this._input.get_value();
     var requestdata = this._parse_request(data);
     if (requestdata)
     {
-      var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER, true);
+      var ctx = this._service.get_request_context(CONTEXT_TYPE_CRAFTER, true);
       var crafter_request_id = ctx.send_request(this._prev_url, requestdata);
       this._crafter_requests.push(crafter_request_id);
     }
@@ -190,7 +194,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
 
-  this._service.addListener("context-established", this._on_context_established_bound);
+  this._service.addListener("context-added", this._on_context_established_bound);
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 

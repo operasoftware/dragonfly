@@ -76,7 +76,23 @@ templates.options_override_presets = function(overrides)
 
 templates.request_crafter_main = function(url, request, entries)
 {
-  var entry = entries.last; // todo: will deal with multiple entries later.
+  var entry = entries[0]; // todo: will deal with multiple entries later.
+  var response = ui_strings.M_NETWORK_CRAFTER_SEND;
+  if (entry && entry.is_finished)
+  {
+    var helpers = window.helpers;
+    var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
+    if (first_response)
+    {
+      response = first_response.response_headers_raw;
+      if (first_response.responsebody && 
+          first_response.responsebody.content &&
+          first_response.responsebody.content.stringData)
+      {
+        response += "\n\n" + first_response.responsebody.content.stringData;
+      }
+    }
+  }
   return (
     ["div",
       ["div",
@@ -102,7 +118,7 @@ templates.request_crafter_main = function(url, request, entries)
         ],
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         ["p",
-          ["textarea", (entry && entry.is_finished) ? entry.current_response.response_headers_raw : ui_strings.M_NETWORK_CRAFTER_SEND]
+          ["textarea", response]
         ],
         "class", "padding request-crafter"
       ]

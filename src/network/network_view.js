@@ -517,7 +517,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clear_log_bound = function(evt, target)
   {
-    this._service.clear_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    this._service.remove_request_context();
     this.needs_instant_update = true;
   }.bind(this);
 
@@ -663,6 +663,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
+  this._on_context_removed_bound = function(message)
+  {
+    if (message.context_type === this._service.CONTEXT_TYPE_LOGGER)
+    {
+      this.update();
+    }
+  }.bind(this);
+
   this._init = function(id, name, container_class, html, default_handler)
   {
     var eh = window.eventHandlers;
@@ -688,8 +696,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
     eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
 
-    this._service.addListener("context-established", this._on_context_established_bound);
-    this._service.addListener("context-cleared", this.update.bind(this));
+    this._service.addListener("context-added", this._on_context_established_bound);
+    this._service.addListener("context-removed", this._on_context_removed_bound);
     this._service.addListener("resource-update", this.update.bind(this));
 
     ActionHandlerInterface.apply(this);

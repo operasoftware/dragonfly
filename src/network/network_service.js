@@ -2,7 +2,7 @@
 
 cls.NetworkLoggerService = function()
 {
-  this.CONTEXT_TYPE_LOGGER = this.MAIN_CONTEXT_TYPE = "network-logger";
+  this.CONTEXT_TYPE_LOGGER = this.CONTEXT_TYPE_MAIN = "network-logger";
   this.CONTEXT_TYPE_CRAFTER = "request-crafter";
 
   this._get_matching_context = function(res_id)
@@ -20,19 +20,18 @@ cls.NetworkLoggerService = function()
     var ctx = this.contexts[type];
     if (!ctx && force)
     {
-      var is_main_context = type === this.MAIN_CONTEXT_TYPE;
+      var is_main_context = type === this.CONTEXT_TYPE_MAIN;
       ctx = this.contexts[type] = new cls.RequestContext(this, is_main_context);
-      this.post("context-established", {"context_type": type});
+      this.post("context-added", {"context_type": type});
     }
     return ctx;
   };
 
-  this.clear_request_context = function(type)
+  this.remove_request_context = function(type)
   {
-    // Todo: Maybe this should be called with the context gotten from get_request_context instead.
-    var type = this.CONTEXT_TYPE_LOGGER;
+    type = (type || this.CONTEXT_TYPE_MAIN);
     this.contexts[type] = null;
-    this.post("context-cleared");
+    this.post("context-removed", {"context_type": type});
   };
 
   this._queue_message = function(listener, msg)
@@ -107,9 +106,9 @@ cls.NetworkLoggerService = function()
     if (!ctx)
     {
       var type = this.CONTEXT_TYPE_LOGGER;
-      var is_main_context = type === this.MAIN_CONTEXT_TYPE;
+      var is_main_context = type === this.CONTEXT_TYPE_MAIN;
       ctx = this.contexts[type] = new cls.RequestContext(this, is_main_context);
-      this.post("context-established", {"context_type": type});
+      this.post("context-added", {"context_type": type});
     }
     ctx.update("urlload", data);
   };
@@ -310,7 +309,7 @@ cls.NetworkLoggerService = function()
     this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
 
-    messages.addListener("debug-context-selected", this.clear_request_context.bind(this, this.CONTEXT_TYPE_LOGGER));
+    messages.addListener("debug-context-selected", this.remove_request_context.bind(this, null));
     messages.addListener("setting-changed", this._on_setting_changed_bound);
 
     this._message_queue = [];
@@ -742,9 +741,8 @@ cls.RequestContextPrototype = function()
     this.is_waiting_for_create_request = false;
     if (status == 0)
     {
-      var RESOURCEID = 0;
-      // todo: use the message class instead
-      this.allocated_res_ids[msg[RESOURCEID]] = id;
+      var data = new cls.ResourceManager["1.3"].ResourceID(msg);
+      this.allocated_res_ids[data.resourceID] = id;
     }
     else
     {
