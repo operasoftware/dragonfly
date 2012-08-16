@@ -155,7 +155,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
       helpers: app_ctx.helpers,
       tag_manager: app_ctx.tag_manager,
       show_dragonfly_window: app_ctx.show_dragonfly_window,
-      services: app_ctx.services,
+      services: app_ctx.services
     };
 
     for (service_name in service_descriptions)
