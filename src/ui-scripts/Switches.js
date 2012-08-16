@@ -39,7 +39,7 @@ var SwitchesBase = function()
     }
   }.bind(this);
 
-  window.messages.addListener("setting-changed", this._on_setting_changed_bound);
+  window.messages.addListener("setting-changed", this._on_setting_changed_bound, true);
 }
 
 

@@ -400,7 +400,7 @@
         UIWindowBase.closeWindow('command_line');
       }
     }
-  });
+  }, true);
 
 };
 
