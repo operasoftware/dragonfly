@@ -19,8 +19,12 @@ cls.WindowManager["2.0"].WindowManagerData = function(session_ctx)
 
   /* private */
 
+  var WINDOW_TYPES = session_ctx.show_dragonfly_window
+                   ? ["normal", "gadget", "devtools"]
+                   : ["normal", "gadget"];
+
   var self = this;
-  var window_manager = window.services['window-manager'];
+  var window_manager = session_ctx.services['window-manager'];
 
   this._active_window = 0;
   this._window_list = null;
@@ -110,15 +114,10 @@ cls.WindowManager["2.0"].WindowManagerData = function(session_ctx)
     window.windowsDropDown.update();
   };
 
-  this._window_filter = session_ctx.show_dragonfly_window
-                      ? function(win)
-                        {
-                          return win.window_type in {"normal": 1, "gadget": 1, "devtools": 1};
-                        }
-                      : function(win)
-                        {
-                          return win.window_type in {"normal": 1, "gadget": 1};
-                        };
+  this._window_filter = function(win)
+  {
+    return WINDOW_TYPES.contains(win.window_type);
+  };
 
   this._update_list = function(win_obj)
   {
@@ -211,12 +210,13 @@ cls.WindowManager["2.0"].WindowManagerData = function(session_ctx)
     {
       if (this._session_ctx.show_dragonfly_window)
       {
-        var cb = function(status, message) { window_manager.requestListWindows() };
+        var cb = function(status, message) { window_manager.requestListWindows(); };
         var tag = this._tag_man.set_callback(this, cb);
         var msg = ["replace", ["normal_hidden"]];
         window_manager.requestModifyTypeFilter(tag, msg);
       }
-      window_manager.requestListWindows();
+      else
+        window_manager.requestListWindows();
     }
   };
 
@@ -317,7 +317,7 @@ cls.WindowManager["2.0"].WindowManagerData = function(session_ctx)
     };
   };
 
-  window.messages.addListener('reset-state', function(msg)
+  session_ctx.messages.addListener('reset-state', function(msg)
   {
     self._reset_state_handler(msg);
   });

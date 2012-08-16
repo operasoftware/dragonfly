@@ -86,8 +86,7 @@ window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled = false;
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-  var app_ctx = {};
-  app_ctx.messages = window.messages;
+  var app_ctx = {messages: window.messages};
   var _find_compatible_version = function(version, version_list)
   {
     var
@@ -155,7 +154,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
       messages: app_ctx.messages,
       helpers: app_ctx.helpers,
       tag_manager: app_ctx.tag_manager,
-      show_dragonfly_window: app_ctx.show_dragonfly_window
+      show_dragonfly_window: app_ctx.show_dragonfly_window,
+      services: app_ctx.services,
     };
 
     for (service_name in service_descriptions)
@@ -242,7 +242,8 @@ window.app.build_application = function(on_services_created, on_services_enabled
   window.helpers = app_ctx.helpers = new cls.Helpers();
 
   // create window.services namespace and register it.
-  cls.ServiceBase.register_services(new cls.Namespace("services"));
+  app_ctx.services = new cls.Namespace("services");
+  cls.ServiceBase.register_services(app_ctx.services);
   [
     'scope',
     'console-logger',
