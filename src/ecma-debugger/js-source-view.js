@@ -545,7 +545,7 @@ cls.JsSourceView = function(id, name, container_class)
         {
           var error_line = 0;
           while(error_line < script_obj.line_arr.length &&
-              script_obj.line_arr[error_line] < script_obj.parse_error.offset)
+              script_obj.line_arr[error_line] <= script_obj.parse_error.offset)
           {
             error_line++;
           }
