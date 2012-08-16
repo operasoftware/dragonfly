@@ -26,19 +26,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   ].join("\r\n");
 
   this._prev_request = this._request_template;
-  /*
-  this._prev_response = "No response";
-  */
   this._prev_url = "";
 
-  /*
-  // todo: will see what do on send, resetting is probably annoying.
   this.ondestroy = function()
   {
     this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
     this._prev_request = this._input ? this._input.get_value() : "";
   };
-  */
 
   this.createView = function(container)
   {
@@ -60,7 +54,8 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     // render entries..
     container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
                                                                     this._prev_request,
-                                                                    entries));
+                                                                    entries,
+                                                                    this._error_message));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
@@ -86,8 +81,10 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var requestline = lines.shift();
     var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
 
-    if (!reqparts || reqparts.length != 4) {
-        return null; // fixme: tell what's wrong
+    if (!reqparts || reqparts.length != 4)
+    {
+      this._error_message = ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST;
+      return null;
     }
 
     retval.method = reqparts[1];
@@ -149,17 +146,17 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._service.remove_request_context(CONTEXT_TYPE_CRAFTER);
 
     this._prev_url = this._urlfield.get_value();
-    var data = this._input.get_value();
-    var requestdata = this._parse_request(data);
-    if (requestdata)
+    this._prev_request = this._input.get_value();
+    var parsed_request = this._parse_request(this._prev_request);
+    if (parsed_request)
     {
       var ctx = this._service.get_request_context(CONTEXT_TYPE_CRAFTER, true);
-      var crafter_request_id = ctx.send_request(this._prev_url, requestdata);
+      this._error_message = null;
+      var crafter_request_id = ctx.send_request(this._prev_url, parsed_request);
       this._crafter_requests.push(crafter_request_id);
     }
     else
     {
-      // this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
       this.update();
     }
   }.bind(this);

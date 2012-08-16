@@ -74,22 +74,29 @@ templates.options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.request_crafter_main = function(url, request, entries)
+templates.request_crafter_main = function(url, request, entries, error_message)
 {
-  var entry = entries[0]; // todo: will deal with multiple entries later.
   var response = ui_strings.M_NETWORK_CRAFTER_SEND;
-  if (entry && entry.is_finished)
+  if (error_message)
   {
-    var helpers = window.helpers;
-    var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
-    if (first_response)
+    response = error_message;
+  }
+  else
+  {
+    var entry = entries[0]; // todo: will deal with multiple entries later.
+    if (entry && entry.is_finished)
     {
-      response = first_response.response_headers_raw;
-      if (first_response.responsebody && 
-          first_response.responsebody.content &&
-          first_response.responsebody.content.stringData)
+      var helpers = window.helpers;
+      var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
+      if (first_response)
       {
-        response += "\n\n" + first_response.responsebody.content.stringData;
+        response = first_response.response_headers_raw;
+        if (first_response.responsebody && 
+            first_response.responsebody.content &&
+            first_response.responsebody.content.stringData)
+        {
+          response += "\n\n" + first_response.responsebody.content.stringData;
+        }
       }
     }
   }

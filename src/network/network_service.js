@@ -57,23 +57,23 @@ cls.NetworkLoggerService = function()
       {
         // Play back the message queue.
         while (this._message_queue.length)
-          this._replay_message_bound(this._message_queue.shift());
+          this._playback_message_bound(this._message_queue.shift());
 
       }
     }
     return false;
   };
 
-  this._replay_message_bound = function(queued)
+  this._playback_message_bound = function(queued)
   {
     var LISTENER =  0;
     var MSG = 1;
-    queued[LISTENER].call(this, queued[LISTENER], queued[MSG]);
+    queued[LISTENER].call(this, queued[LISTENER], queued[MSG], true);
   }.bind(this);
 
-  this._on_abouttoloaddocument = function(listener, msg)
+  this._on_abouttoloaddocument = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
@@ -101,9 +101,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
 
-  this._on_urlload = function(listener, msg)
+  this._on_urlload = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
@@ -119,9 +119,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_urlload_bound = this._on_urlload.bind(this, this._on_urlload);
 
-  this._on_urlredirect = function(listener, msg)
+  this._on_urlredirect = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
@@ -141,9 +141,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_urlredirect_bound = this._on_urlredirect.bind(this, this._on_urlredirect);
 
-  this._on_urlfinished = function(listener, msg)
+  this._on_urlfinished = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
@@ -159,9 +159,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_urlfinished_bound = this._on_urlfinished.bind(this, this._on_urlfinished);
 
-  this._on_response_bound = function(listener, msg)
+  this._on_response_bound = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Response(msg);
@@ -173,9 +173,9 @@ cls.NetworkLoggerService = function()
   }
   this._on_response_bound = this._on_response_bound.bind(this, this._on_response_bound);
 
-  this._on_request = function(listener, msg)
+  this._on_request = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Request(msg);
@@ -187,9 +187,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_request_bound = this._on_request.bind(this, this._on_request);
 
-  this._on_requestheader = function(listener, msg)
+  this._on_requestheader = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
@@ -201,9 +201,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_requestheader_bound = this._on_requestheader.bind(this, this._on_requestheader);
 
-  this._on_requestfinished = function(listener, msg)
+  this._on_requestfinished = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
@@ -215,9 +215,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_requestfinished_bound = this._on_requestfinished.bind(this, this._on_requestfinished);
 
-  this._on_requestretry = function(listener, msg)
+  this._on_requestretry = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
@@ -229,9 +229,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_requestretry_bound = this._on_requestretry.bind(this, this._on_requestretry);
 
-  this._on_responseheader = function(listener, msg)
+  this._on_responseheader = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
@@ -243,9 +243,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_responseheader_bound = this._on_responseheader.bind(this, this._on_responseheader);
 
-  this._on_responsefinished = function(listener, msg)
+  this._on_responsefinished = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
@@ -259,9 +259,9 @@ cls.NetworkLoggerService = function()
   };
   this._on_responsefinished_bound = this._on_responsefinished.bind(this, this._on_responsefinished);
 
-  this._on_urlunload = function(listener, msg)
+  this._on_urlunload = function(listener, msg, is_playing_back)
   {
-    if (this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(listener, msg))
       return;
 
     var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
