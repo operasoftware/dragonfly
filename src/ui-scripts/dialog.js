@@ -101,21 +101,21 @@ BaseDialog.prototype = new function()
 /**
  * @constructor
  */
-function ConfirmDialog(template, ok_callback, cancel_callback) {
-  this._init(template, ok_callback, cancel_callback);
+function ConfirmDialog(template, ok_callback, cancel_callback, ok_label, cancel_label) {
+  this._init(template, ok_callback, cancel_callback, ok_label, cancel_label);
 };
 
 function ConfirmDialogPrototype()
 {
-  this._init = function(template, ok_callback, cancel_callback)
+  this._init = function(template, ok_callback, cancel_callback, ok_label, cancel_label)
   {
     var buttons = [
       {
-        label: ui_strings.S_BUTTON_OK,
+        label: ok_label || ui_strings.S_BUTTON_OK,
         handler: ok_callback,
       },
       {
-        label: ui_strings.S_BUTTON_CANCEL,
+        label: cancel_label || ui_strings.S_BUTTON_CANCEL,
         handler: cancel_callback,
       }
     ];

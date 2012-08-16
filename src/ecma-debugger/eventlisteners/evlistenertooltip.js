@@ -49,7 +49,10 @@ cls.EventListenerTooltip = function()
   var _reload_script_dialog = function(event, target)
   {
     new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
-                      function(){ window.runtimes.reloadWindow(); }).show();
+                      function() { window.runtimes.reloadWindow(); },
+                      null,
+                      ui_strings.S_BUTTON_YES,
+                      ui_strings.S_BUTTON_NO).show();
   };
 
   var _init = function(view)
