@@ -54,7 +54,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     // occur on different levels, so it's too complicated to do with the current script-search.
     // Also searching accross spans (for syntax highlighting) is more important.
     if (this.mode == DETAILS)
-      this.text_search.set_query_selector(".entry-details");
+      this.text_search.set_query_selector(null);
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
