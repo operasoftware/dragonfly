@@ -34,6 +34,18 @@ cls.NetworkLoggerService = function()
     this.post("context-removed", {"context_type": type});
   };
 
+  this.get_window_context = function(window_id, force)
+  {
+    var window_context = this.window_contexts.filter(helpers.eq("id", window_id))[0];
+    if (!window_context && force)
+    {
+      window_context = new cls.NetworkLoggerService.WindowContext(window_id, this._service, this);
+      this.window_contexts.push(window_context);
+      this.post_on_context_or_service("window-context-added", {"window-context": window_context});
+    }
+    return window_context;
+  };
+
   this.get_window_contexts = function(type)
   {
     type = (type || this.CONTEXT_TYPE_MAIN);
@@ -78,26 +90,16 @@ cls.NetworkLoggerService = function()
 
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
 
-    // For abouttoloaddocument, the context is always of type CONTEXT_TYPE_LOGGER.
+    // For this event, the context is always of type CONTEXT_TYPE_LOGGER.
+    // That needs to be static here, because a new context will be created if it doesn't exist.
     var ctx = this.get_request_context(this.CONTEXT_TYPE_LOGGER, true);
-    if (!data.parentDocumentID)
-    {
-      // This basically means "unload" for that windowID, potentially
-      // existing data for that windowID needs to be cleared now.
-      ctx.remove_window_context(data.windowID);
-    }
 
-    var window_context = ctx.get_window_context(data.windowID);
-    if (!window_context)
-    {
-      var window_context = new cls.NetworkLoggerService.WindowContext(data.windowID, this, ctx);
-      ctx.window_contexts.push(window_context);
-      if (!data.parentDocumentID)
-      {
-        window_context.saw_main_document = true;
-      }
-      ctx.post_on_context_or_service("window-context-added", {"window-context": window_context});
-    }
+    // Without a parentDocumentID, this event means "unload" for the old content of this windowID.
+    if (!data.parentDocumentID)
+      ctx.remove_window_context(data.windowID);
+
+    var window_context = ctx.get_window_context(data.windowID, true);
+    window_context.saw_main_document = !data.parentDocumentID;
   };
   this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
 
@@ -382,9 +384,8 @@ cls.NetworkLoggerService = function()
     }
     // Post update message from here. This is only needed when the generic updating per event is paused.
     if (this.is_paused)
-    {
       ctx.post_on_context_or_service("resource-update", {id: event.resourceID});
-    }
+
   };
 
   this.init();
@@ -578,17 +579,6 @@ cls.RequestContextPrototype = function()
 
   this.update = function(eventname, event)
   {
-    if (event.windowID)
-    {
-      var matching_window_context = this.get_window_context(event.windowID);
-      if (!matching_window_context)
-      {
-        var window_context = new cls.NetworkLoggerService.WindowContext(event.windowID, this._service, this);
-        this.window_contexts.push(window_context);
-        this.post_on_context_or_service("window-context-added", {"window-context": window_context});
-      }
-    }
-
     var res_id = event.resourceID;
     var logger_entries = this.get_entries_with_res_id(res_id);
     if (!logger_entries.length && eventname !== "urlload")
@@ -634,7 +624,7 @@ cls.RequestContextPrototype = function()
         logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
         this._logger_entries.push(logger_entry);
         // Store the id in the list of entries in the window_context
-        var window_context = this.get_window_context(event.windowID);
+        var window_context = (event.windowID && this.get_window_context(event.windowID, true));
         window_context.entry_ids.push(id);
       }
       logger_entry.request_id = event.requestID;
@@ -713,11 +703,6 @@ cls.RequestContextPrototype = function()
         window_context.incomplete_warn_discarded = true;
 
     }
-  };
-
-  this.get_window_context = function(window_id)
-  {
-    return this.window_contexts.filter(helpers.eq("id", window_id))[0];
   };
 
   this.send_request = function(url, requestdata)

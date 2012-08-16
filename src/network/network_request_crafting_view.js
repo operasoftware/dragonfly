@@ -10,7 +10,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._input = null;
   this._output = null;
   this._urlfield = null;
-  this._crafter_requests = [];
+  this._requests = [];
   this._uastring = window.services.scope.get_hello_message().userAgent;
 
   this._request_template = [
@@ -153,14 +153,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
       var ctx = this._service.get_request_context(CONTEXT_TYPE_CRAFTER, true);
       this._error_message = null;
       var crafter_request_id = ctx.send_request(this._prev_url, parsed_request);
-      this._crafter_requests.push(crafter_request_id);
+      this._requests.push(crafter_request_id);
     }
     else
     {
       this.update();
     }
   }.bind(this);
-
 
   this._handle_url_change_bound = function(evt, target)
   {
