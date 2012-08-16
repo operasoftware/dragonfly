@@ -1,289 +1,435 @@
 ﻿"use strict";
 
 window.templates || (window.templates = {});
+window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
-templates.network_detail_row = function(wrap)
+var HTTP_BOUNDARY_CLASS = "http-token-type-boundary";
+var TEXT_TYPES = ["markup", "script", "css", "text"];
+
+templates._col_or_row = function(template)
 {
-  return ["tr", ["td", wrap, "colspan", "2"]];
+  // template is either ["elem", "text"], which will be wrapped in a column
+  // or [["elem", "text"], ["elem", "text"]] which will be wrapped in a row.
+  if (Array.isArray(template[0]) && template[1])
+  {
+    return ["tr", template[0], template[1]];
+  }
+  return ["tr", ["td", template, "colspan", "2"]];
 };
 
-templates.network_log_details = function(entry, left_val)
+templates._pre = function(str, additional_classname)
 {
-  return [
-      "div",
+  var classname = "mono";
+  if (additional_classname)
+    classname += " " + additional_classname;
+
+  return ["pre", str, "class", classname];
+};
+
+templates.details = function(entry, left_val, do_raw)
+{
+  return (
+    ["div",
+      ["span",
         ["span",
-          ["span",
-            "class", "close-request-detail",
-            "handler", "close-request-detail",
-            "tabindex", "1"
-          ],
-          "class", "resize-request-detail",
-          "handler", "resize-request-detail"
+          "class", "close-request-detail",
+          "handler", "close-request-detail",
+          "tabindex", "1"
         ],
-        templates.network_log_detail(entry),
-      "class", "network-details-container",
-      "style", "left:" + left_val + "px"
-    ];
+        "class", "resize-request-detail",
+        "handler", "resize-request-detail"
+      ],
+      ["div",
+        this._details_content(entry, do_raw),
+        "data-object-id", String(entry.id),
+        "class", "entry-details"
+      ],
+    "class", "network-details-container",
+    "style", "left:" + left_val + "px"]
+  );
 };
 
-templates.network_log_detail = function(entry)
+templates._details_content = function(entry, do_raw)
 {
-  var responsecode = entry.responses.last && entry.responses.last.responsecode;
+  var requests_responses = entry.requests_responses.map(do_raw ? this._requests_responses_raw_bound
+                                                               : this._requests_responses_parsed_bound);
+  if (do_raw)
+    return requests_responses;
+
+  var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
 
   return (
-    ["div",
-      ["table",
-        ["tbody",
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_URL + ":"], ["td", entry.url]
-          ],
-          ["tr",
-            ["th", ui_strings.S_HTTP_LABEL_METHOD + ":"],
-            ["td", entry.touched_network ? entry.method : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE],
-            "data-spec", "http#" + entry.method
-          ],
-          ["tr",
-            ["th", ui_strings.M_NETWORK_REQUEST_DETAIL_STATUS + ":"],
-            ["td",
-              entry.touched_network && responsecode ? String(responsecode) : ui_strings.S_RESOURCE_ALL_NOT_APPLICABLE
-            ],
-           "data-spec", "http#" + entry.responsecode
+    ["table",
+      ["tbody",
+        this._col_or_row(
+          ["h1",
+            [
+              ["span",
+                entry.touched_network && responsecode ? String(responsecode) + " – " : "",
+                "data-spec", "http#" + entry.current_responsecode
+              ],
+              ["span", entry.url]
+            ]
           ]
-        ],
-        templates.request_details(entry),
-        templates.network_request_body(entry),
-        entry.responses.map(templates.network_response)
+        )
       ],
-      "data-object-id", String(entry.id),
-      "class", "request-details"
+      entry.touched_network ? [] : this.did_not_touch_network(entry),
+      requests_responses
     ]
   );
 };
 
-templates.network_response = function(response)
+templates.did_not_touch_network = function(entry)
 {
-  return [
-    response.logger_entry_touched_network ?
-      templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE]): [],
-    templates.response_details(response),
-    templates.network_response_body(response)
-  ]
+  var local_url_types = [
+    cls.ResourceManager["1.2"].UrlLoad.URLType.FILE,
+    cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
+  ];
+  return (
+    ["tbody",
+      this._col_or_row(
+        ["p", local_url_types.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
+                                                      : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
+    ]);
 };
 
-templates.request_details = function(req)
+templates.requests_responses = function(do_raw, request_response, index, requests_responses)
 {
-  var ret = [];
-  if (!req || req.urltype === cls.ResourceManager["1.2"].UrlLoad.URLType.DATA)
-    return ret;
-
-  if (req.touched_network)
+  var is_last_of_type = true;
+  for (var i = index + 1, req_res; req_res = requests_responses[i]; i++)
   {
-    if (req.requestbody && req.requestbody.partList && req.requestbody.partList.length)
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE]));
-    else
-      ret.push(templates.network_detail_row(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE]));
-  }
-
-  var tbody = ["tbody"];
-  if (req.is_finished && !req.touched_network)
-  {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_SERVED_FROM_CACHE));
-  }
-  else if (!req.request_headers)
-  {
-    tbody.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL));
-  }
-  else
-  {
-    if (req.firstline)
+    if (request_response.is_response == req_res.is_response)
     {
-      var parts = req.firstline.split(" ");
-      var firstline;
-      if (parts.length == 3)
-      {
-        firstline = [
-          ["span", parts[0] + " ", "data-spec", "http#" + parts[0]],
-          ["span", parts[1] + " "],
-          ["span", parts[2] + " "]
-        ];
-      }
-      tbody.extend(templates.network_headers_list(req.request_headers, firstline));
+      is_last_of_type = false;
+      break;
     }
   }
-  ret.push(tbody);
-  return ret;
+  return (
+    request_response.is_response ? this._response(request_response, is_last_of_type, do_raw)
+                                 : this._request(request_response, is_last_of_type, do_raw)
+  );
 };
 
-templates.response_details = function(resp)
+templates._requests_responses_raw_bound = templates.requests_responses.bind(templates, true);
+templates._requests_responses_parsed_bound = templates.requests_responses.bind(templates, false);
+
+templates._request = function(request, is_last, do_raw)
 {
+  // A request that's followed by another one, without a response in between,
+  // is not shown in network-details. It will mostly mean it was retried internally
+  // and didn't go on the network.
+  // That can't be determined only by looking at RequestRetry events, because a
+  // request with for example a 401 Authorization Required response should still
+  // be shown.
+  if (!is_last && !request.was_responded_to)
+    return [];
+
+  return [
+    templates._request_headers(request, do_raw),
+    templates._request_body(request, do_raw)
+  ];
+};
+
+templates._response = function(response, is_last, do_raw)
+{
+  return [
+    this._response_headers(response, do_raw),
+    this._response_body(response, do_raw, is_last)
+  ];
+};
+
+templates._header_token_templ = function(state, token)
+{
+  var TYPE = 0;
+  var STR = 1;
+  var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+
+  if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
+  {
+    attrs.extend(["data-spec", "http#" + token[STR].trim()]);
+  }
+  else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
+  {
+    if (state.data_spec_firstline_tokens.contains(state.firstline_tokens))
+    {
+      // Add data-spec attributes on certain firstline tokens, tracked in state
+      attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
+    }
+    state.firstline_tokens++;
+  }
+  return ["span", token[STR]].concat(attrs);
+};
+
+templates._token_receiver = function(tokens, token_type, token)
+{
+  tokens.push([token_type, token]);
+};
+
+templates._request_headers = function(req, do_raw)
+{
+  if (do_raw)
+  {
+    if (req.request_headers_raw)
+    {
+      if (!req.header_tokens)
+      {
+        req.header_tokens = [];
+        var tokenizer = new cls.HTTPHeaderTokenizer();
+        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
+      }
+
+      if (req.header_tokens.length)
+      {
+        var data_spec_firstline_tokens = [0];
+        var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+        var map_func = this._header_token_templ.bind(this, state_holder);
+        return [
+          ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
+          this._pre(req.header_tokens.map(map_func))
+        ];
+      }
+    }
+    return [];
+  }
+
+  var ret = [];
+  var method_str = req.method || "";
+  if (method_str)
+    method_str = " – " + method_str;
+
+  if (req.request_body && req.request_body.partList && req.request_body.partList.length)
+    ret.push(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE + method_str]);
+  else
+    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE + method_str]);
+
+  if (!req.request_headers)
+    ret.push(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL);
+  else
+    ret.extend(this.headers_list(req.request_headers));
+
+  return ["tbody", ret.map(this._col_or_row)];
+};
+
+templates._response_headers = function(resp, do_raw)
+{
+  // Missing response headers aren't mentioned explicitely
   if (!resp.response_headers)
     return [];
 
-  var firstline;
-  var parts = resp.firstline.split(" ", 2);
-  if (parts.length == 2)
+  if (do_raw)
   {
-    firstline = [
-      ["span", parts[0] + " "],
-      ["span", parts[1], "data-spec", "http#" + parts[1]],
-      ["span", resp.firstline.slice(parts[0].length + parts[1].length + 1)]
-    ];
-  }
-  return ["tbody", templates.network_headers_list(resp.response_headers, firstline)];
-};
+    if (!resp.header_tokens)
+    {
+      resp.header_tokens = [];
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
+    }
 
-templates.network_headers_list = function(headers, firstline)
-{
-  var lis = headers.map(function(header) {
-      return ["tr", ["th", header.name + ":"], ["td", header.value], "data-spec", "http#" + header.name];
-  });
-
-  if (firstline)
-  {
-    lis.unshift(["tr", ["td", firstline, "colspan", "2"], "class", "network-details-header-list mono"]);
-  }
-  return lis;
-};
-
-templates.network_body_seperator = function()
-{
-  return ["pre", " ", "class", "mono"];
-};
-
-templates.network_request_body = function(req)
-{
-  if (!req.requestbody)
-  {
+    if (resp.header_tokens.length)
+    {
+      var data_spec_firstline_tokens = [1];
+      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+      var map_func = this._header_token_templ.bind(this, state_holder);
+      return [
+        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+        this._pre(resp.header_tokens.map(map_func))
+      ];
+    }
     return [];
   }
 
-  var cont = [];
-  // when partList.length is 0, the request was one that did not send data
-  if (req.requestbody.partList.length)
-  {
-    for (var n = 0, part; part = req.requestbody.partList[n]; n++)
-    {
-      cont.push(templates.network_headers_list(part.headerList));
-      if (part.content && part.content.stringData)
-        cont.push(templates.network_detail_row(["pre", part.content.stringData]));
-      else
-        cont.push(templates.network_detail_row(["pre", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]));
+  var ret = [];
 
-      if (n < req.requestbody.partList.length - 1)
-        cont.push(templates.network_detail_row(["hr"]));
+  var responsecode = resp.responsecode || "";
+  var status_code = cls.ResourceUtil.http_status_codes[responsecode];
+  if (status_code)
+    responsecode = responsecode + " " + status_code;
+
+  if (responsecode)
+    responsecode = " – " + responsecode;
+
+  if (resp.logger_entry_touched_network)
+  {
+    var head = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE + responsecode];
+    if (responsecode)
+    {
+      head.extend(["data-spec", "http#" + resp.responsecode]);
+    }
+    ret.push(head);
+  }
+
+  ret.extend(this.headers_list(resp.response_headers));
+  return ["tbody", ret.map(this._col_or_row)];
+};
+
+templates._headers_pseudo_raw = function(header)
+{
+  var template = [
+      ["span", header.name + ":",
+        "data-spec", "http#" + header.name.trim()
+      ],
+      ["span", " " + header.value]
+    ];
+  return this._pre(template);
+};
+
+templates._headers = function(header) {
+  return [
+    ["th", header.name + ":",
+      "data-spec", "http#" + (header.name).trim()
+    ],
+    ["td", header.value]
+  ];
+};
+
+templates.headers_list = function(headers, do_raw)
+{
+  return headers.map(do_raw ? this._headers_pseudo_raw : this._headers, this);
+};
+
+templates.param_cells = function(name_value)
+{
+  var parts = name_value.replace(/\+/g, " ").split("=");
+  return [
+      ["td", decodeURIComponent(parts[0])],
+      ["td", decodeURIComponent(parts[1])]
+  ];
+};
+
+templates._request_body = function(req, do_raw)
+{
+  if (req.request_body == null)
+    return [];
+
+  var ret = [this._pre("\n")];
+  if (req.request_body.partList.length) // Multipart
+  {
+    var use_raw_boundary = Boolean(do_raw && req.boundary);
+    for (var n = 0, part; part = req.request_body.partList[n]; n++)
+    {
+      if (use_raw_boundary && n === 0)
+        ret.push(this._pre(req.boundary, HTTP_BOUNDARY_CLASS));
+
+      ret.extend(this.headers_list(part.headerList, do_raw));
+      ret.push(this._pre("\n"));
+      if (part.content && part.content.stringData)
+        ret.push(this._pre(part.content.stringData, "mono network-body"));
+      else
+        ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
+
+      var boundary = use_raw_boundary ? req.boundary : ["hr"];
+      if (use_raw_boundary && part === req.request_body.partList.last)
+        boundary += "--\n";
+
+      ret.push(this._pre(boundary, HTTP_BOUNDARY_CLASS));
     }
   }
-  else if (req.requestbody.mimeType.startswith("application/x-www-form-urlencoded"))
+  else if (req.request_body.mimeType.startswith("application/x-www-form-urlencoded"))
   {
-    var parts = req.requestbody.content.stringData.split("&");
-    var tab = [
-                ["tr",
-                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
-                  ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
-                ]
-              ].concat(parts.map(function(e) {
-                  e = e.replace(/\+/g, "%20").split("=");
-                  return ["tr",
-                      ["td", decodeURIComponent(e[0])],
-                      ["td", decodeURIComponent(e[1])]
-                  ];
-    }));
-    cont.push(tab);
+    if (do_raw)
+    {
+      ret.push(this._pre(req.request_body.content.stringData, "network-body"));
+    }
+    else
+    {
+      var parts = req.request_body.content.stringData.split("&");
+      ret.push([
+        ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
+        ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
+      ]); // It's necesary to just push the outer array, because each entry will be wrapped in a row.
+      ret.extend(parts.map(this.param_cells));
+    }
   }
   else // not multipart or form.
   {
-    var tpl = [];
-    if (req.requestbody.content)
+    if (req.request_body.content)
     {
-      var type = cls.ResourceUtil.mime_to_type(req.requestbody.mimeType);
-      switch (type)
+      var type = cls.ResourceUtil.mime_to_type(req.request_body.mimeType);
+      if (TEXT_TYPES.contains(type))
       {
-        case "markup":
-        case "script":
-        case "css":
-        case "text":
+        ret.push(this._pre(req.request_body.content.stringData, "network-body"));
+      }
+      else
+      {
+        if (req.request_body.mimeType)
         {
-          tpl = ["pre", req.requestbody.content.stringData];
-          break;
+          ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType)]);
         }
-        default:
+        else
         {
-          if (req.requestbody.mimeType)
-          {
-            cont.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.requestbody.mimeType)]);
-          }
-          else
-          {
-            cont.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
-          }
+          ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
         }
       }
     }
-    cont.push(tpl);
   }
 
-  return [
-           templates.network_detail_row(templates.network_body_seperator()),
-           ["tbody", cont]
-         ];
+  if (do_raw)
+    return ret;
+  else
+    return ["tbody", ret.map(this._col_or_row)];
 };
 
 
-templates.network_response_body = function(resp)
+templates._response_body = function(resp, do_raw, is_last_response)
 {
-  var ret = [templates.network_detail_row(templates.network_body_seperator())];
+  var ret = [];
+
   var classname = "";
-  if (resp.body_unavailable ||
+  if ((resp.saw_responsefinished && resp.no_used_mimetype) ||
       !resp.responsebody && resp.is_unloaded)
   {
+    // Enable content-tracking.
     classname = "network_info";
-    ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY));
+    ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY);
   }
   else
   {
     if (!resp.responsebody)
     {
-      if (!resp.logger_entry_is_finished)
+      if (is_last_response && !resp.logger_entry_is_finished)
       {
+        // Unfinished.
         classname = "network_info";
-        ret.push(templates.network_detail_row(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED));
+        ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_BODY_UNFINISHED);
       }
-      // else we're in the middle of getting it via GetResource, leave the response part empty until it updates.
+      // else
+        // We're in the middle of getting it via GetResource, or there is in fact no responsebody.
     }
     else
     {
-      if (["script", "markup", "css", "text"].contains(resp.logger_entry_type))
+      // Attempt to display the responsebody.
+      if (TEXT_TYPES.contains(resp.logger_entry_type))
       {
         ret.push(
-          templates.network_detail_row(
-            ["pre", resp.responsebody.content.stringData, "class", "network-body mono"]
-          )
+          this._pre(resp.responsebody.content.stringData, "network-body")
         );
       }
       else if (resp.logger_entry_type == "image")
       {
         ret.push(
-          templates.network_detail_row(
-            ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
-          )
+          ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
         );
       }
       else
       {
         ret.push(
-          templates.network_detail_row(
-            ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
-             "class", "network-body"]
-          )
+          ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
+           "class", "network-body"]
         );
       }
     }
   }
-  return ["tbody", ret, "class", classname];
+  if (ret.length)
+    ret.unshift(this._pre("\n"));
+
+  if (do_raw)
+    return ret;
+  else
+    return ["tbody", ret.map(this._col_or_row), "class", classname];
 };
 
-})(window.templates);
+})(window.templates.network);
