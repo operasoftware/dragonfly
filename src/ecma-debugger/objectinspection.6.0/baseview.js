@@ -12,6 +12,7 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this.createView = function(container)
   {
+    this._is_destroyed = false;
     var data_model = this._data || window.inspections && window.inspections[this._cur_data];
     if (data_model)
     {
@@ -38,6 +39,9 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
 
   this._create_view = function(container, data_model)
   {
+    if (this._is_destroyed)
+      return;
+
     var tmpl = window.templates.inspected_js_object(data_model, false,
                                                     null, this._searchterm);
     container.clearAndRender(tmpl);
@@ -53,6 +57,11 @@ cls.EcmascriptDebugger["6.0"].InspectionBaseView = function()
   };
 
   this._tmpl_no_content = function(){return []};
+
+  this.ondestroy = function()
+  {
+    this._is_destroyed = true;
+  }
 
 }
 
