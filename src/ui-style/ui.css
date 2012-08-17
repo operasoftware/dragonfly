@@ -182,6 +182,11 @@ cst-select-option-list,
   color: #333;
 }
 
+.tooltip-container
+{
+  padding: 3px 7px;
+}
+
 .reload-window::before
 {
   background-image: url("../ui-images/icons/icon_reload.png");
