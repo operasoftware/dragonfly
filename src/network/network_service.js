@@ -34,23 +34,12 @@ cls.NetworkLoggerService = function()
     this.post("context-removed", {"context_type": type});
   };
 
-  this.get_window_context = function(window_id, force)
-  {
-    var window_context = this.window_contexts.filter(helpers.eq("id", window_id))[0];
-    if (!window_context && force)
-    {
-      window_context = new cls.NetworkLoggerService.WindowContext(window_id, this._service, this);
-      this.window_contexts.push(window_context);
-      this.post_on_context_or_service("window-context-added", {"window-context": window_context});
-    }
-    return window_context;
-  };
-
+  // get_window_contexts means "of the main context" here (on the service). That's in line
+  // with messages of the main context firing here instead of on the context.
   this.get_window_contexts = function(type)
   {
-    type = (type || this.CONTEXT_TYPE_MAIN);
-    var ctx = this.get_request_context(type);
-    return ctx && ctx.window_contexts;
+    var ctx = this.get_request_context(this.CONTEXT_TYPE_MAIN);
+    return ctx && ctx.get_window_contexts();
   };
 
   this._queue_message = function(listener, msg)
@@ -99,7 +88,9 @@ cls.NetworkLoggerService = function()
       ctx.remove_window_context(data.windowID);
 
     var window_context = ctx.get_window_context(data.windowID, true);
-    window_context.saw_main_document = !data.parentDocumentID;
+    if (!data.parentDocumentID)
+      window_context.saw_main_document = true;
+
   };
   this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
 
@@ -371,7 +362,7 @@ cls.NetworkLoggerService = function()
 
   this._handle_get_resource = function(status, data, resource_id)
   {
-    var ctx = this._contexts[this.CONTEXT_TYPE_LOGGER];
+    var ctx = this.get_request_context(this.CONTEXT_TYPE_LOGGER);
     if (status)
     {
       // the object passed to _current_context represents empty event_data. will set no_used_mimetype.
@@ -397,38 +388,31 @@ cls.NetworkLoggerService.WindowContext = function(window_id, service, context)
   this._context = context;
   this.id = window_id;
   this.saw_main_document = false;
+  this.incomplete_warn_discarded = false;
   this.entry_ids = [];
 };
 
 cls.NetworkLoggerService.WindowContextPrototype = function()
 {
+  this._filter_entries = function(resource_ids, entry, index, entries)
+  {
+    // Skip an entry if an entry with the same resource_id is found further down the list.
+    var same_resource_id = window.helpers.eq("resource_id", entry.resource_id);
+    return this.entry_ids.contains(entry.id) &&
+           (!resource_ids || resource_ids.contains(entry.resource_id)) &&
+           entries.slice(index + 1).filter(same_resource_id).length == 0;
+  }
+
   this.get_resources = function(resource_ids)
   {
-    // resource_ids
-      // An optional array of resource ids
+    var filter_bound = this._filter_entries.bind(this, resource_ids);
+    var entries = this._context.get_entries().filter(filter_bound);
+    return entries.map(function(entry){return new cls.ResourceInfo(entry)});
+  };
 
-    // Take all entries of the window-context's context, filter by what actually belongs
-    // to this window context.
-    var entries = this._context.get_entries().filter(function(entry) {
-      return this.entry_ids.contains(entry.id) &&
-             (!resource_ids || resource_ids.contains(entry.id));
-    }, this);
-
-    // Todo: can hopefully be made nicer.
-    var resource_ids_collected_resources = [];
-    var resources = [];
-    entries.forEach(function(entry) {
-      var index_of_last_with_res_id = resource_ids_collected_resources.indexOf(entry.resource_id);
-      if (index_of_last_with_res_id != -1)
-      {
-        // This is newer, remove the previous entry from resources.
-        resources.splice(index_of_last_with_res_id, 1);
-        resource_ids_collected_resources.splice(index_of_last_with_res_id, 1);
-      }
-      resources.push(entry);
-      resource_ids_collected_resources.push(entry.resource_id);
-    });
-    return resources.map(function(entry){return new cls.ResourceInfo(entry)});
+  this.discard_incomplete_warning = function()
+  {
+    this.incomplete_warn_discarded = true;
   };
 };
 
@@ -441,13 +425,13 @@ cls.RequestContext = function(service, is_main_context)
     "is_blacklist": true
   };
   this.allocated_res_ids = [];
-  this.window_contexts = [];
   this.is_paused = false;
   this.is_waiting_for_create_request = false;
   this._logger_entries = [];
   this._filters = [this.FILTER_ALLOW_ALL];
   this._is_main_context = is_main_context;
   this._service = service;
+  this._window_contexts = [];
   this._init();
 };
 
@@ -653,6 +637,24 @@ cls.RequestContextPrototype = function()
     posting_object.post(name, body);
   };
 
+  this.get_window_contexts = function(type)
+  {
+    return this._window_contexts;
+  };
+
+  this.get_window_context = function(window_id, force)
+  {
+    var helpers = window.helpers;
+    var window_context = this._window_contexts.filter(helpers.eq("id", window_id))[0];
+    if (!window_context && force)
+    {
+      window_context = new cls.NetworkLoggerService.WindowContext(window_id, this._service, this);
+      this._window_contexts.push(window_context);
+      this.post_on_context_or_service("window-context-added", {"window-context": window_context});
+    }
+    return window_context;
+  };
+
   this.remove_window_context = function(window_id)
   {
     var window_context = this.get_window_context(window_id);
@@ -667,7 +669,7 @@ cls.RequestContextPrototype = function()
       );
     }
     // Remove the window_context itself
-    this.window_contexts = this.window_contexts.filter(
+    this._window_contexts = this._window_contexts.filter(
       function(context) {
         return window_id != context.id;
       }
@@ -693,17 +695,6 @@ cls.RequestContextPrototype = function()
       return "uid-" + count++;
     }
   })();
-
-  this.discard_incomplete_warning = function(window_id)
-  {
-    // Todo: Filter
-    for (var i = 0, window_context; window_context = this.window_contexts[i]; i++)
-    {
-      if (window_context.id === window_id)
-        window_context.incomplete_warn_discarded = true;
-
-    }
-  };
 
   this.send_request = function(url, requestdata)
   {
@@ -1338,9 +1329,7 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 cls.ResourceInfo = function(entry)
 {
   this.url = entry.url;
-  this.id = entry.id;
   this.document_id = entry.document_id;
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
-  this._entry = entry; // dbg
 };

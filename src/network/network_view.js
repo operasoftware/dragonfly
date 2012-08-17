@@ -174,9 +174,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
                  );
 
     var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
-
+    var window_contexts = ctx.get_window_contexts();
     var template = ["div", templates.network.main(
-                     ctx, entries, this._selected, detail_width, table_template
+                     ctx, window_contexts, entries, this._selected, detail_width, table_template
                    ), "id", "network-outer-container",
                       "data-menu", "network-logger-context"];
 
@@ -525,8 +525,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   {
     var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
     var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
-    if (ctx && window_id)
-      ctx.discard_incomplete_warning(window_id);
+    var window_context = ctx.get_window_context(window_id);
+    if (window_context)
+      window_context.discard_incomplete_warning();
 
     this.needs_instant_update = true;
     this.update();

@@ -171,7 +171,7 @@ templates.incomplete_warning = function(context, index, all_contexts)
          ];
 };
 
-templates.main = function(ctx, entries, selected, detail_width, table_template)
+templates.main = function(ctx, window_contexts, entries, selected, detail_width, table_template)
 {
   return [
     [
@@ -190,7 +190,7 @@ templates.main = function(ctx, entries, selected, detail_width, table_template)
     [
       templates.summary(entries)
     ],
-    ctx.window_contexts.map(templates.incomplete_warning)
+    window_contexts.map(templates.incomplete_warning)
   ];
 };
 
