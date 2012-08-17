@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 window.templates || (window.templates = {});
 window.templates.network || (window.templates.network = {});
