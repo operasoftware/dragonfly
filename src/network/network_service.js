@@ -246,9 +246,25 @@ cls.NetworkLoggerService = function()
     if (!ctx)
       return;
 
+    // Workaround CORE-47687: UrlFinished is missing for urls resulting in a 301 (Moved Permanently) response
+    var remove_from_allocated_after_update = false;
+    if (ctx)
+    {
+      // Guess what the matching entry is from here. This is normally much harder,
+      // but we only want to do this workaround in this easy case anyway.
+      var matching_entry = ctx.get_entries_with_res_id(data.resourceID)[0];
+      if (matching_entry.events.last && 
+          matching_entry.events.last.name == "urlredirect")
+      {
+        remove_from_allocated_after_update = true;
+      }
+    }
+
     ctx.update("responsefinished", data);
-    // todo: work around CORE-47687 here too. in case the corresponding entry
-    // has seen a redirect before, it needs to remove the resource id from the allocated list now.
+
+    if (remove_from_allocated_after_update)
+      delete ctx.allocated_res_ids[data.resourceID];
+
   };
   this._on_responsefinished_bound = this._on_responsefinished.bind(this, this._on_responsefinished);
 
@@ -1068,7 +1084,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_urlredirect = function(event)
   {
-    // Workaround for CORE-47687
+    // Workaround CORE-47687: UrlFinished is missing for urls resulting in a 301 (Moved Permanently) response
     this._set_is_finished_on_responsefinished = true;
   };
 
