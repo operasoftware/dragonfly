@@ -254,7 +254,7 @@ cls.HostCommandTransformer = function() {
   {
     if (this.is_global_call(tokenlist, index))
       token[VALUE] = "(typeof $ == 'function' && $ || \
-                       function(e) { return document.getElementById(e); })";
+                       function(e) { return document.querySelector(e); })";
   };
 
   this._hostcommands.$$ = function(token, tokenlist, index)
