@@ -58,7 +58,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     else
       this.text_search.set_query_selector("[handler='select-network-request']");
 
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
     if (ctx)
     {
       if (this._type_filters)
@@ -120,7 +120,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._render_main_view = function(container)
   {
     var selected_viewmode = settings.network_logger.get("selected-viewmode");
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
     var entries = ctx.get_entries_filtered();
     var table_template;
     if (selected_viewmode === "data")
@@ -149,7 +149,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   {
     var table_template = after_render_object && after_render_object.template;
     var is_data_mode = Boolean(table_template);
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
 
     // In is_data_mode, the entries have to be retrieved from the table
     // to be in the correct order.
@@ -369,7 +369,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this._resize_detail_evt = null;
   }.bind(this);
 
-  var _make_selection_func = function(accessor)
+  this._move_selection = function(accessor)
   {
     if (this._selected)
     {
@@ -454,7 +454,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_graph_tooltip_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
     this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
     var entry = ctx.get_entry(this._graph_tooltip_id);
     if (!this.mono_lineheight)
@@ -489,7 +489,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_url_tooltip_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
     if (ctx)
     {
       var entry_id = target.get_attr("parent-node-chain", "data-object-id");
@@ -517,13 +517,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clear_log_bound = function(evt, target)
   {
-    this._service.remove_request_context();
+    this._service.remove_logger_request_context();
     this.needs_instant_update = true;
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
+    var ctx = this._service.get_logger_context();
     var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
     var window_context = ctx.get_window_context(window_id);
     if (window_context)
@@ -545,13 +545,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       {
         if (message.key === "pause")
         {
-          var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_LOGGER);
-          var is_paused = ctx.is_paused;
-          var pause = settings.network_logger.get(message.key);
-          if (is_paused && !pause)
-            ctx.unpause();
-          else if (!is_paused && pause)
-            ctx.pause();
+          var ctx = this._service.get_logger_context();
+          if (ctx)
+          {
+            var is_paused = ctx.is_paused;
+            var pause = settings.network_logger.get(message.key);
+            if (is_paused && !pause)
+              ctx.unpause();
+            else if (!is_paused && pause)
+              ctx.pause();
+          }
         }
         else if (message.key === "network-profiler-mode")
         {
@@ -656,7 +659,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   {
     if (message.context_type === this._service.CONTEXT_TYPE_LOGGER)
     {
-      var ctx = this._service.get_request_context(message.context_type);
+      var ctx = this._service.get_logger_context();
       if (this._type_filters)
         ctx.set_filters(this._type_filters);
 
@@ -702,10 +705,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this._service.addListener("context-removed", this._on_context_removed_bound);
     this._service.addListener("resource-update", this.update.bind(this));
 
-    ActionHandlerInterface.apply(this);
     this._handlers = {
-      "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
-      "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
+      "select-next-entry": this._move_selection.bind(this, "nextElementSibling"),
+      "select-previous-entry": this._move_selection.bind(this, "previousElementSibling"),
       "close-details": this._on_clicked_close_bound
     };
     ActionBroker.get_instance().register_handler(this);
@@ -720,6 +722,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.init(id, name, container_class, html, default_handler);
   };
 
+  ActionHandlerInterface.apply(this);
   this._init(id, name, container_class, html, default_handler);
 };
 cls.NetworkLogView.prototype = ViewBase;

@@ -2,8 +2,8 @@
 
 cls.NetworkLoggerService = function()
 {
-  this.CONTEXT_TYPE_LOGGER = this.CONTEXT_TYPE_MAIN = "network-logger";
-  this.CONTEXT_TYPE_CRAFTER = "request-crafter";
+  this.CONTEXT_TYPE_LOGGER = this.CONTEXT_TYPE_MAIN = 1;
+  this.CONTEXT_TYPE_CRAFTER = 2;
 
   this._get_matching_context = function(res_id)
   {
@@ -15,30 +15,50 @@ cls.NetworkLoggerService = function()
     return logger_context;
   };
 
-  this.get_request_context = function(type, force)
+  this._get_request_context = function(type, force)
   {
     var ctx = this._contexts[type];
     if (!ctx && force)
     {
       var is_main_context = type === this.CONTEXT_TYPE_MAIN;
       ctx = this._contexts[type] = new cls.RequestContext(this, is_main_context);
-      this.post("context-added", {"context_type": type});
+      this.post("context-added", {"context_type": type, "context": ctx});
     }
     return ctx;
   };
 
-  this.remove_request_context = function(type)
+  this.get_logger_context = function()
+  {
+    return this._get_request_context(this.CONTEXT_TYPE_LOGGER);
+  };
+
+  this.get_logger_context = function(force)
+  {
+    return this._get_request_context(this.CONTEXT_TYPE_CRAFTER, force);
+  };
+
+  this._remove_request_context = function(type)
   {
     type = type || this.CONTEXT_TYPE_MAIN;
     this._contexts[type] = null;
     this.post("context-removed", {"context_type": type});
   };
 
+  this.remove_logger_request_context = function()
+  {
+    return this._remove_request_context(this.CONTEXT_TYPE_LOGGER);
+  };
+
+  this.remove_crafter_request_context = function()
+  {
+    return this._remove_request_context(this.CONTEXT_TYPE_CRAFTER);
+  };
+
   // get_window_contexts means "of the main context" here (on the service). That's in line
   // with messages of the main context firing here instead of on the context.
   this.get_window_contexts = function(type)
   {
-    var ctx = this.get_request_context(this.CONTEXT_TYPE_MAIN);
+    var ctx = this._get_request_context(this.CONTEXT_TYPE_MAIN);
     return ctx && ctx.get_window_contexts();
   };
 
@@ -77,7 +97,7 @@ cls.NetworkLoggerService = function()
 
     // For this event, the context is always of type CONTEXT_TYPE_LOGGER.
     // That needs to be static here, because a new context will be created if it doesn't exist.
-    var ctx = this.get_request_context(this.CONTEXT_TYPE_LOGGER, true);
+    var ctx = this._get_request_context(this.CONTEXT_TYPE_LOGGER, true);
 
     // Without a parentDocumentID, this event means "unload" for the old content of this windowID.
     if (!data.parentDocumentID)
@@ -102,7 +122,7 @@ cls.NetworkLoggerService = function()
       var type = this.CONTEXT_TYPE_LOGGER;
       var is_main_context = type === this.CONTEXT_TYPE_MAIN;
       ctx = this._contexts[type] = new cls.RequestContext(this, is_main_context);
-      this.post("context-added", {"context_type": type});
+      this.post("context-added", {"context_type": type, "context": ctx});
     }
     ctx.update("urlload", data);
   };
@@ -118,7 +138,7 @@ cls.NetworkLoggerService = function()
     if (!ctx)
       return;
 
-    // Allocate the resource_id we redirect to to the same context.
+    // Allocate the resource_id we redirect to, to the same context.
     if (data.fromResourceID in ctx.allocated_res_ids)
       ctx.allocated_res_ids[data.toResourceID] = ctx.allocated_res_ids[data.fromResourceID];
 
@@ -319,7 +339,7 @@ cls.NetworkLoggerService = function()
     this._doc_service = window.services["document-manager"];
     this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
 
-    messages.addListener("debug-context-selected", this.remove_request_context.bind(this, null));
+    messages.addListener("debug-context-selected", this._remove_request_context.bind(this, null));
     messages.addListener("setting-changed", this._on_setting_changed_bound);
 
     this._message_queue = [];
@@ -374,7 +394,7 @@ cls.NetworkLoggerService = function()
 
   this._handle_get_resource = function(status, data, resource_id)
   {
-    var ctx = this.get_request_context(this.CONTEXT_TYPE_LOGGER);
+    var ctx = this._get_request_context(this.CONTEXT_TYPE_LOGGER);
     if (status)
     {
       // the object passed to _current_context represents empty event_data. will set no_used_mimetype.
@@ -726,7 +746,7 @@ cls.RequestContextPrototype = function()
     ];
     this.is_waiting_for_create_request = true;
     var id = this._get_uid();
-    var tag = window.tag_manager.set_callback(null, this._handle_create_request.bind(this), [id]);
+    var tag = window.tag_manager.set_callback(this, this._handle_create_request, [id]);
     window.services["resource-manager"].requestCreateRequest(tag, request);
     return id;
   };
@@ -734,7 +754,8 @@ cls.RequestContextPrototype = function()
   this._handle_create_request = function(status, msg, id)
   {
     this.is_waiting_for_create_request = false;
-    if (status == 0)
+    var SUCCESS = 0;
+    if (status == SUCCESS)
     {
       var data = new cls.ResourceManager["1.3"].ResourceID(msg);
       this.allocated_res_ids[data.resourceID] = id;
