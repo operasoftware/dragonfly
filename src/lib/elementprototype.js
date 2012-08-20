@@ -24,15 +24,6 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
-if (!document.createElement('div').classList)
-{
-  Element.prototype.__defineGetter__('classList', function()
-  {
-    return this.className.split(/\s+/);
-  });
-  Element.prototype.__defineSetter__('classList', function(){});
-}
-
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
