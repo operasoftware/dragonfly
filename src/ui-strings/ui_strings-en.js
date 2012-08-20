@@ -138,11 +138,11 @@ ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User interface language";
 
-/* DESC: Label for send request button in network crafter */
-ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
-
 /* DESC: Error message for when the request could not be parsed */
 ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST = "Could not parse request";
+
+/* DESC: Label for send request button in network crafter */
+ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
 
 /* DESC: Label for request duration */
 ui_strings.M_NETWORK_REQUEST_DETAIL_DURATION = "Duration";

@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 window.templates || (window.templates = {});
 window.templates.network || (window.templates.network = {});
@@ -91,7 +91,7 @@ templates.request_crafter_main = function(url, request, entries, error_message)
       if (first_response)
       {
         response = first_response.response_headers_raw;
-        if (first_response.responsebody && 
+        if (first_response.responsebody &&
             first_response.responsebody.content &&
             first_response.responsebody.content.stringData)
         {

@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 cls.NetworkLoggerService = function()
 {
@@ -253,7 +253,7 @@ cls.NetworkLoggerService = function()
       // Guess what the matching entry is from here. This is normally much harder,
       // but we only want to do this workaround in this easy case anyway.
       var matching_entry = ctx.get_entries_with_res_id(data.resourceID)[0];
-      if (matching_entry.events.last && 
+      if (matching_entry.events.last &&
           matching_entry.events.last.name == "urlredirect")
       {
         remove_from_allocated_after_update = true;
@@ -1349,3 +1349,5 @@ cls.ResourceInfo = function(entry)
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
 };
+
+cls.ResourceInfo.prototype = new URIPrototype("url");
