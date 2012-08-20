@@ -528,7 +528,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     var window_context = ctx.get_window_context(window_id);
     if (window_context)
       window_context.discard_incomplete_warning();
-
     this.needs_instant_update = true;
     this.update();
   }.bind(this);
@@ -589,7 +588,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     return {
       all: {
         type_list: [],
-        "is_blacklist": true
+        is_blacklist: true
       },
       markup: {
         type_list: ["markup"]
@@ -605,7 +604,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       },
       other_types: {
         type_list: ["markup", "css", "script", "image"],
-        "is_blacklist": true
+        is_blacklist: true
       },
       xhr: {
         origin_list: ["xhr"]
@@ -674,7 +673,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._init = function(id, name, container_class, html, default_handler)
   {
-    var eh = window.eventHandlers;
+    this.id = id;
+    var eh = window.event_handlers;
+    var messages = window.messages;
 
     eh.click["select-network-request"] = this._on_clicked_request_bound;
     eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
@@ -707,7 +708,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
       "close-details": this._on_clicked_close_bound
     };
-    this.id = id;
     ActionBroker.get_instance().register_handler(this);
 
     var contextmenu = ContextMenu.get_instance();

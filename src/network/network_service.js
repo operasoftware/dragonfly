@@ -29,7 +29,7 @@ cls.NetworkLoggerService = function()
 
   this.remove_request_context = function(type)
   {
-    type = (type || this.CONTEXT_TYPE_MAIN);
+    type = type || this.CONTEXT_TYPE_MAIN;
     this._contexts[type] = null;
     this.post("context-removed", {"context_type": type});
   };
@@ -45,22 +45,18 @@ cls.NetworkLoggerService = function()
   this._queue_message = function(listener, msg)
   {
     var crafter = this._contexts[this.CONTEXT_TYPE_CRAFTER];
-    if (crafter)
+    if (crafter && crafter.is_waiting_for_create_request)
     {
-      if (crafter.is_waiting_for_create_request)
-      {
-        // Store in a queue. Before we know what resourceID create_request
-        // will return, messages can't be assorciated with the right context.
-        this._message_queue.push([listener, msg]);
-        return true;
-      }
-      else
-      {
-        // Play back the message queue.
-        while (this._message_queue.length)
-          this._playback_message_bound(this._message_queue.shift());
-
-      }
+      // Store in a queue. Before we know what resourceID create_request
+      // will return, messages can't be associated with the right context.
+      this._message_queue.push([listener, msg]);
+      return true;
+    }
+    else
+    {
+      // Play back the message queue.
+      while (this._message_queue.length)
+        this._playback_message_bound(this._message_queue.shift());
     }
     return false;
   };
@@ -69,12 +65,12 @@ cls.NetworkLoggerService = function()
   {
     var LISTENER =  0;
     var MSG = 1;
-    queued[LISTENER].call(this, queued[LISTENER], queued[MSG], true);
+    queued[LISTENER].call(this, queued[MSG], true);
   }.bind(this);
 
-  this._on_abouttoloaddocument = function(listener, msg, is_playing_back)
+  this._on_abouttoloaddocument = function on_abouttoloaddocument(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_abouttoloaddocument, msg))
       return;
 
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
@@ -92,11 +88,11 @@ cls.NetworkLoggerService = function()
       window_context.saw_main_document = true;
 
   };
-  this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this, this._on_abouttoloaddocument_bound);
+  this._on_abouttoloaddocument_bound = this._on_abouttoloaddocument.bind(this);
 
-  this._on_urlload = function(listener, msg, is_playing_back)
+  this._on_urlload = function on_urlload(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_urlload, msg))
       return;
 
     var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
@@ -110,11 +106,11 @@ cls.NetworkLoggerService = function()
     }
     ctx.update("urlload", data);
   };
-  this._on_urlload_bound = this._on_urlload.bind(this, this._on_urlload);
+  this._on_urlload_bound = this._on_urlload.bind(this);
 
-  this._on_urlredirect = function(listener, msg, is_playing_back)
+  this._on_urlredirect = function on_urlredirect(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_urlredirect, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
@@ -132,11 +128,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("urlredirect", data);
   };
-  this._on_urlredirect_bound = this._on_urlredirect.bind(this, this._on_urlredirect);
+  this._on_urlredirect_bound = this._on_urlredirect.bind(this);
 
-  this._on_urlfinished = function(listener, msg, is_playing_back)
+  this._on_urlfinished = function on_urlfinished(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_urlfinished, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
@@ -150,11 +146,11 @@ cls.NetworkLoggerService = function()
     // don't belong to the crafter.
     delete ctx.allocated_res_ids[data.resourceID];
   };
-  this._on_urlfinished_bound = this._on_urlfinished.bind(this, this._on_urlfinished);
+  this._on_urlfinished_bound = this._on_urlfinished.bind(this);
 
-  this._on_response_bound = function(listener, msg, is_playing_back)
+  this._on_response_bound = function on_response_bound(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_response_bound, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Response(msg);
@@ -164,11 +160,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("response", data);
   }
-  this._on_response_bound = this._on_response_bound.bind(this, this._on_response_bound);
+  this._on_response_bound = this._on_response_bound.bind(this);
 
-  this._on_request = function(listener, msg, is_playing_back)
+  this._on_request = function on_request(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_request, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].Request(msg);
@@ -178,11 +174,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("request", data);
   };
-  this._on_request_bound = this._on_request.bind(this, this._on_request);
+  this._on_request_bound = this._on_request.bind(this);
 
-  this._on_requestheader = function(listener, msg, is_playing_back)
+  this._on_requestheader = function on_requestheader(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_requestheader, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestHeader(msg);
@@ -192,11 +188,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("requestheader", data);
   };
-  this._on_requestheader_bound = this._on_requestheader.bind(this, this._on_requestheader);
+  this._on_requestheader_bound = this._on_requestheader.bind(this);
 
-  this._on_requestfinished = function(listener, msg, is_playing_back)
+  this._on_requestfinished = function on_requestfinished(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_requestfinished, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestFinished(msg);
@@ -206,11 +202,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("requestfinished", data);
   };
-  this._on_requestfinished_bound = this._on_requestfinished.bind(this, this._on_requestfinished);
+  this._on_requestfinished_bound = this._on_requestfinished.bind(this);
 
-  this._on_requestretry = function(listener, msg, is_playing_back)
+  this._on_requestretry = function on_requestretry(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_requestretry, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].RequestRetry(msg);
@@ -220,11 +216,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("requestretry", data);
   };
-  this._on_requestretry_bound = this._on_requestretry.bind(this, this._on_requestretry);
+  this._on_requestretry_bound = this._on_requestretry.bind(this);
 
-  this._on_responseheader = function(listener, msg, is_playing_back)
+  this._on_responseheader = function on_responseheader(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_responseheader, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseHeader(msg);
@@ -234,11 +230,11 @@ cls.NetworkLoggerService = function()
 
     ctx.update("responseheader", data);
   };
-  this._on_responseheader_bound = this._on_responseheader.bind(this, this._on_responseheader);
+  this._on_responseheader_bound = this._on_responseheader.bind(this);
 
-  this._on_responsefinished = function(listener, msg, is_playing_back)
+  this._on_responsefinished = function on_responsefinished(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_responsefinished, msg))
       return;
 
     var data = new cls.ResourceManager["1.0"].ResponseFinished(msg);
@@ -266,11 +262,11 @@ cls.NetworkLoggerService = function()
       delete ctx.allocated_res_ids[data.resourceID];
 
   };
-  this._on_responsefinished_bound = this._on_responsefinished.bind(this, this._on_responsefinished);
+  this._on_responsefinished_bound = this._on_responsefinished.bind(this);
 
-  this._on_urlunload = function(listener, msg, is_playing_back)
+  this._on_urlunload = function on_urlunload(msg, is_playing_back)
   {
-    if (!is_playing_back && this._queue_message(listener, msg))
+    if (!is_playing_back && this._queue_message(on_urlunload, msg))
       return;
 
     var data = new cls.ResourceManager["1.2"].UrlUnload(msg);
@@ -280,7 +276,7 @@ cls.NetworkLoggerService = function()
 
     ctx.update("urlunload", data);
   };
-  this._on_urlunload_bound = this._on_urlunload.bind(this, this._on_urlunload);
+  this._on_urlunload_bound = this._on_urlunload.bind(this);
 
   this._setup_request_body_behaviour_bound = function()
   {
@@ -423,7 +419,7 @@ cls.NetworkLoggerService.WindowContextPrototype = function()
   {
     var filter_bound = this._filter_entries.bind(this, resource_ids);
     var entries = this._context.get_entries().filter(filter_bound);
-    return entries.map(function(entry){return new cls.ResourceInfo(entry)});
+    return entries.map(function(entry) { return new cls.ResourceInfo(entry);} );
   };
 
   this.discard_incomplete_warning = function()
@@ -438,7 +434,7 @@ cls.RequestContext = function(service, is_main_context)
 {
   this.FILTER_ALLOW_ALL = {
     type_list: [],
-    "is_blacklist": true
+    is_blacklist: true
   };
   this.allocated_res_ids = [];
   this.is_paused = false;
@@ -625,11 +621,16 @@ cls.RequestContextPrototype = function()
         this._logger_entries.push(logger_entry);
         // Store the id in the list of entries in the window_context
         var window_context = (event.windowID && this.get_window_context(event.windowID, true));
-        window_context.entry_ids.push(id);
+        if (window_context)
+          window_context.entry_ids.push(id);
       }
       logger_entry.request_id = event.requestID;
 
       // Add a mapped crafter_request_id when applicable
+      var crafter_request_id = this.allocated_res_ids[res_id];
+      if (crafter_request_id && !logger_entry.crafter_request_id)
+        logger_entry.crafter_request_id = crafter_request_id;
+
       if (res_id in this.allocated_res_ids)
         logger_entry.crafter_request_id = this.allocated_res_ids[res_id];
 
@@ -646,10 +647,7 @@ cls.RequestContextPrototype = function()
   {
     // Find out where to post the update message.
     // Messages of main_contexts are posted on the service, not the context.
-    var posting_object = this;
-    if (this._is_main_context)
-      posting_object = this._service;
-
+    var posting_object = this._is_main_context ? this._service : this;
     posting_object.post(name, body);
   };
 
@@ -724,11 +722,11 @@ cls.RequestContextPrototype = function()
       3, // header policy. 2 == overwrite, 3 == replace
       2, // reload policy. 2 == no cache, always reload from network
       null, // request content mode
-      [1, 1] // response content mode 1 == string, 1 == decodee
+      [1, 1] // response content mode 1 == string, 1 == decode
     ];
     this.is_waiting_for_create_request = true;
     var id = this._get_uid();
-    var tag = window.tagManager.set_callback(null, this._handle_create_request.bind(this), [id]);
+    var tag = window.tag_manager.set_callback(null, this._handle_create_request.bind(this), [id]);
     window.services["resource-manager"].requestCreateRequest(tag, request);
     return id;
   };
@@ -780,6 +778,7 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this._current_request = null;
   this._current_response = null;
   this._set_is_finished_on_responsefinished = false;
+  this.crafter_request_id = null;
 };
 
 cls.NetworkLoggerEntryPrototype = function()

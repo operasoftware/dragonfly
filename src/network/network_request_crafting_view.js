@@ -49,7 +49,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER);
     var entries = [];
     if (ctx)
-      entries = ctx.get_entries_filtered();
+      entries = ctx.get_entries();
 
     // render entries..
     container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
@@ -80,16 +80,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var lines = requeststr.split(/\r?\n/);
     var requestline = lines.shift();
     var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
-
-    if (!reqparts || reqparts.length != 4)
+    // .match will return the whole match as [0], slice it off.
+    if (!reqparts || (reqparts = reqparts.slice(1)).length != 3)
     {
       this._error_message = ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST;
       return null;
     }
 
-    retval.method = reqparts[1];
-    retval.path = reqparts[2];
-    retval.protocol = reqparts[3];
+    retval.method = reqparts[0];
+    retval.path = reqparts[1];
+    retval.protocol = reqparts[2];
     retval.headers = this._parse_headers(lines);
     retval.host = retval.headers.Host;
 
