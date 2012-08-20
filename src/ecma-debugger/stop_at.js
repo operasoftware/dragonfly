@@ -101,7 +101,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       if (msg.key == 'reformat_javascript')
       {
         new ConfirmDialog(ui_strings.D_REFORMAT_SCRIPTS,
-                          function() { window.runtimes.reloadWindow(); }).show();
+                          [function() { window.runtimes.reloadWindow(); }],
+                          ConfirmDialog.YES_NO).show();
       }
     }
   };

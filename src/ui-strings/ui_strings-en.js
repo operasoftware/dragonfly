@@ -519,6 +519,9 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
+/* DESC: Generic label for a no button */
+ui_strings.S_BUTTON_NO = "No";
+
 /* DESC: Generic label for an OK button */
 ui_strings.S_BUTTON_OK = "OK";
 
@@ -587,6 +590,9 @@ ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 
 /* DESC: Button label to update the screenshot */
 ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
+
+/* DESC: Generic label for a yes button */
+ui_strings.S_BUTTON_YES = "Yes";
 
 /* DESC: Unit string for bytes */
 ui_strings.S_BYTES_UNIT = "bytes";
