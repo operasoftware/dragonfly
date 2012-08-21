@@ -1014,11 +1014,15 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("current_response", function()
   {
-    // In 99% of the cases, _current_response is used. It's only
-    // exposed for getting the ResourceInfo from the service directly.
-    return this.current_response;
+    return this._current_response;
   });
   this.__defineSetter__("current_response", function(){});
+
+  this.__defineGetter__("current_request", function()
+  {
+    return this._current_request;
+  });
+  this.__defineSetter__("current_request", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -1037,7 +1041,7 @@ cls.NetworkLoggerRequest = function(entry)
   // Set from template code, when first needed:
   this.header_tokens = null;
   // Belongs here, unused though:
-  this.request_id = entry.requestID;
+  this.request_id = entry.request_id;
 };
 
 cls.NetworkLoggerRequestPrototype = function()

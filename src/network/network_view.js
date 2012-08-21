@@ -228,7 +228,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
-        getter: function(entry) { return entry.last_method || ""; }
+        getter: function(entry) { return (entry.current_request && entry.current_request.method) || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
