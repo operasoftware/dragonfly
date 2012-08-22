@@ -49,7 +49,7 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
     "var MAX_LINE_LENGTH = 160;",
     "var last = 0;",
     "var index = 0;",
-    "while ((index = scriptData.indexOf(\"\n\"), last) > -1)",
+    "while ((index = scriptData.indexOf(\"\\n\", last)) > -1)",
     "{",
     "  if (index - last > MAX_LINE_LENGTH)",
     "    return true;",
