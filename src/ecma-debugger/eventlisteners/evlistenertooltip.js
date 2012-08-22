@@ -57,7 +57,8 @@ cls.EventListenerTooltip = function()
     _tooltip = Tooltips.register(cls.EventListenerTooltip.tooltip_name,
                                  {type: Tooltips.TYPE_SUPPORT_CONTEXT,
                                   set_selected: true});
-    _url_tooltip = Tooltips.register("url-tooltip", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
+    _url_tooltip = Tooltips.register("url-tooltip", {type: Tooltips.TYPE_SUPPORT_CONTEXT,
+                                                     set_selected: true});
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _hide_tooltip;
     _tooltip.ontooltipclick = _ontooltipclick;
