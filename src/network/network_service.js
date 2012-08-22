@@ -743,8 +743,6 @@ cls.NetworkLoggerEntryPrototype = function()
   this._update_event_urlunload = function(event)
   {
     this.is_unloaded = true;
-    if (this._current_response)
-      this._current_response.update_event_urlunload(event);
   };
 
   this._update_event_urlfinished = function(event)
@@ -1117,11 +1115,6 @@ cls.NetworkLoggerResponsePrototype = function()
   this.update_responsebody = function(responsebody)
   {
     this.responsebody = responsebody;
-  };
-
-  this.update_event_urlunload = function(event)
-  {
-    this.is_unloaded = true; // todo: check if we use that on the response?
   };
 
   // The following are to reflect changes that happened on Entry.
