@@ -1,5 +1,8 @@
 ﻿var Tooltips = function() {};
 
+Tooltips.TYPE_SIMPLE = 0;
+Tooltips.TYPE_SUPPORT_CONTEXT = 1;
+
 Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
 (function()
@@ -16,9 +19,20 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       config
         keep_on_hover: Boolean, default false
         set_selected: Boolean, default false
-        max_height_target: Number
+          If true it sets the class 'selected' on the target.
+        max_height_target: String css_query
+          If set it sets max-width and max-height on that element instead
+          on the tooltip-container.
         dynamic_size: Boolean, default false
-        class: default "", supported "context-window"
+          If true it positions the tooltip always in the biggest possible free area.
+          If false the preferred position is bottom-right of the target. Only if it
+          doesn't fit there it positions it in an other area.
+        class: String default ""
+        preferred_position: String , "top" or "bottom", default "bottom"
+          This setting has only an effect if dynamic_size is not set.
+        type: Type default Tooltips.TYPE_SIMPLE
+          If set to Tooltips.TYPE_SUPPORT_CONTEXT it will set keep_on_hover to true
+          and class to "support-context".
     */
     this._init(keep_on_hover_or_config, set_selected, max_height_target);
   };
@@ -73,7 +87,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     this._init = function(keep_on_hover_or_config, set_selected, max_height_target)
     {
-      if (typeof keep_on_hover_or_config== "object")
+      if (typeof keep_on_hover_or_config == "object")
       {
         var config = keep_on_hover_or_config;
         this.keep_on_hover = config.keep_on_hover || false;
@@ -81,6 +95,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         this.max_height_target = config.max_height_target || "";
         this.dynamic_size = config.dynamic_size || false;
         this.class = config.class || "";
+        this.preferred_position = config.preferred_position || "bottom";
+        this.type = config.type || Tooltips.TYPE_SIMPLE;
+        if (this.type == Tooltips.TYPE_SUPPORT_CONTEXT)
+        {
+          this.keep_on_hover = true;
+          this.class = "support-context";
+        }
       }
       else
       {
@@ -89,6 +110,8 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         this.max_height_target = max_height_target || "";
         this.dynamic_size = false;
         this.class = "";
+        this.preferred_position = "bottom";
+        this.type = Tooltips.TYPE_SIMPLE
       }
     }
 
@@ -309,6 +332,12 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             : _cur_ctx.tooltip_ele.clearAndRender(content);
       }
 
+      if (_cur_ctx.current_tooltip.class)
+        _cur_ctx.tooltip_ele.addClass(_cur_ctx.current_tooltip.class);
+      else
+        _cur_ctx.tooltip_ele.className = "tooltip-container";
+
+
       if (!box && _cur_ctx.last_box)
       {
         box = {top: _cur_ctx.last_box.top,
@@ -421,31 +450,39 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         {
           var tooltip_height = _cur_ctx.tooltip_ele.offsetHeight;
           var tooltip_width = _cur_ctx.tooltip_ele.offsetWidth;
-          // positioning horizontally
-          if (_window_height - box.bottom > tooltip_height + DISTANCE_Y_STATIC)
+          var distance_x = DISTANCE_X_STATIC;
+          var distance_y = DISTANCE_Y_STATIC;
+          if (tooltip.type == Tooltips.TYPE_SUPPORT_CONTEXT)
           {
-            var top = box.bottom + DISTANCE_Y_STATIC;
+            distance_x = DISTANCE_X;
+            distance_y = DISTANCE_Y;
+          }
+          // positioning horizontally
+          if (tooltip.preferred_position == "bottom" &&
+              _window_height - box.bottom > tooltip_height + distance_y)
+          {
+            var top = box.bottom + distance_y;
             _cur_ctx.tooltip_ele.style.top = top + "px";
             _cur_ctx.tooltip_ele.style.bottom = "auto";
           }
           else
           {
-            var bottom = _window_height - box.top + DISTANCE_Y_STATIC;
-            _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
+            var bottom = _window_height - box.top + distance_y;
             _cur_ctx.tooltip_ele.style.top = "auto";
+            _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
           }
           // positioning vertically
-          if (_window_width - box.mouse_x > tooltip_width + DISTANCE_X_STATIC)
+          if (_window_width - box.mouse_x > tooltip_width + distance_x)
           {
-            var left = box.mouse_x + DISTANCE_X_STATIC;
+            var left = box.mouse_x + distance_x;
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
           }
           else
           {
-            var right = box.mouse_x - DISTANCE_X_STATIC;
-            _cur_ctx.tooltip_ele.style.right = right + "px";
+            var right = _window_width - box.mouse_x + distance_x;
             _cur_ctx.tooltip_ele.style.left = "auto";
+            _cur_ctx.tooltip_ele.style.right = right + "px";
           }
         }
       }
@@ -467,7 +504,6 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       {
         while (_ctx_stack.length > index + 1)
           _ctx_stack.pop().hide_tooltip(true);
-
         ctx.hide_tooltip(true);
         _cur_ctx = ctx;
         break;
@@ -490,7 +526,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   /* implementation */
 
-  this.register = function(name, keep_on_hover, set_selected, max_height_target)
+  this.register = function(name, keep_on_hover_or_config, set_selected, max_height_target)
   {
     if (!_is_setup)
     {
@@ -500,11 +536,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         document.addEventListener("DOMContentLoaded", _setup, false);
       _is_setup = true;
     }
-
-    if (typeof set_selected != "boolean")
-      set_selected = true;
-
-    _tooltips[name] = new Tooltip(keep_on_hover, set_selected, max_height_target);
+    _tooltips[name] = new Tooltip(keep_on_hover_or_config, set_selected, max_height_target);
     return _tooltips[name];
   };
 

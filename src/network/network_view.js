@@ -509,10 +509,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler)
     this.mono_lineheight = window.defaults["js-source-line-height"];
   }.bind(this);
 
-  this.url_tooltip = Tooltips.register("network-url-list-tooltip", true, false);
+  this.url_tooltip = Tooltips.register("network-url-list-tooltip", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
   this.url_tooltip.ontooltip = this._on_url_tooltip_bound;
 
-  this.graph_tooltip = Tooltips.register("network-graph-tooltip", true, false);
+  this.graph_tooltip = Tooltips.register("network-graph-tooltip", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
   this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
   this.graph_tooltip.ontooltipenter = this._on_graph_tooltip_enter_bound;
   this.graph_tooltip.ontooltipleave = this._on_graph_tooltip_leave_bound;
