@@ -184,7 +184,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        entry.check_to_request_body(this._service);
+        entry.check_to_get_body();
         template = [template, this._render_details_view(entry)];
       }
     }
