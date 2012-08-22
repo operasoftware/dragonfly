@@ -47,16 +47,15 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
   var reformat_condition =
   [
     "var MAX_LINE_LENGTH = 160;",
-    "var re = /(?:\\n|$)/g;",
     "var last = 0;",
-    "var m = null;",
-    "while (m = re.exec(scriptData))",
+    "var index = 0;",
+    "while ((index = scriptData.indexOf(\"\n\"), last) > -1)",
     "{",
-    "  if (m.index - last > MAX_LINE_LENGTH)",
+    "  if (index - last > MAX_LINE_LENGTH)",
     "    return true;",
-    "  last = m.index;",
+    "  last = index + 1;",
     "}",
-    "return false;"
+    "return scriptData.length - last > MAX_LINE_LENGTH;"
   ].join("");
 
   var self = this;
