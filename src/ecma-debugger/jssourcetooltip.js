@@ -1129,8 +1129,10 @@ cls.JSSourceTooltip = function(view)
   {
     _view = view;
     _tokenizer = new cls.SimpleJSParser();
-    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name, true, false,
-                                 ".js-tooltip-examine-container");
+    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name,
+                                 {type: Tooltips.TYPE_SUPPORT_CONTEXT,
+                                  dynamic_size: true,
+                                  max_height_target: ".js-tooltip-examine-container"});
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _onhide;
     _tooltip.ontooltipenter = _ontooltipenter;

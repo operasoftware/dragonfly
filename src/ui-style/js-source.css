@@ -14,7 +14,7 @@
 }
 
 #js-source-scroll-container {
-  /* the correct width is set dynamically 
+  /* the correct width is set dynamically
      to scroll bar width in JsSourceView */
   width: 50px;
 }
@@ -62,7 +62,7 @@
   color: #5c0909 !important;
 }
 
-/* line number */ 
+/* line number */
 .js-source-line-numbers
 {
   position: absolute;
@@ -99,7 +99,7 @@
   padding: 0;
   padding-right: 3px;
   background-color: transparent;
-  height: 100%; /* should be the same as the line height .js-source-content li */ 
+  height: 100%; /* should be the same as the line height .js-source-content li */
   font-size: inherit;
   font-family: inherit;
   vertical-align: middle;
@@ -136,7 +136,7 @@
 .js-identifier-selected,
 .js-identifier-selected-first,
 .js-identifier-selected-between,
-.js-identifier-selected-last 
+.js-identifier-selected-last
 {
   color: #000000;
   background-color: #c5daf1;
