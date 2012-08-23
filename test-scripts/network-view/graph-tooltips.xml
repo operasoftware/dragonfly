@@ -35,7 +35,10 @@ viewport
 </style>
 
 <script src="../../src/ui-strings/ui_strings-en.js"></script>
-<script src="../../src/scripts/dom.js"></script>
+<script src="../../src/lib/elementprototype.js"></script>
+<script src="../../src/lib/stringprototype.js"></script>
+<script src="../../src/lib/arrayprototype.js"></script>
+<script src="../../src/lib/stylesheetlistprototype.js"></script>
 <script src="../../src/ecma-debugger/helpers.js"></script>
 <script src="../../src/scripts/uri.js"></script>
 <script src="../../src/network/network_service.js"></script>

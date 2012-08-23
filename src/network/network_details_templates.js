@@ -377,12 +377,16 @@ templates._request_body = function(req, do_raw)
 templates._response_body = function(resp, do_raw, is_last_response)
 {
   var ret = [];
-
   var classname = "";
-  if ((resp.saw_responsefinished && resp.no_used_mimetype) ||
-      !resp.responsebody && resp.is_unloaded)
+
+  var should_track_content =
+    resp.saw_responsefinished &&
+    (!resp.responsebody || !resp.responsebody.content) &&
+    (!resp.logger_entry_called_get_body || resp.logger_entry_get_body_unsuccessful);
+
+  if (should_track_content)
   {
-    // Enable content-tracking.
+    // Ask to enable content-tracking.
     classname = "network_info";
     ret.push(ui_strings.S_NETWORK_REQUEST_DETAIL_NO_RESPONSE_BODY);
   }
