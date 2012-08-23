@@ -1841,3 +1841,9 @@ info {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+#contenteditable
+{
+  position: absolute;
+  left: -100px;
+}
