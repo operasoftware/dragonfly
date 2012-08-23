@@ -934,7 +934,7 @@ cls.NetworkLoggerEntryPrototype = function()
 
     // Todo: The exception for !saw_responsefinished is AFAIR so we don't fetch a wrong result like a
     // placeholder from Opera, but thee's currently no testcase for that.
-    // We could also avoid it when this.is_unloaded, but seems there it will 
+    // We could also avoid it when this.is_unloaded, but seems there it will
     // just be unsuccessful and we handle that.
 
     if (should_get_body)
@@ -953,7 +953,7 @@ cls.NetworkLoggerEntryPrototype = function()
   };
 
   this._handle_get_resource = function(status, msg)
-  {    
+  {
     if (!this._current_response)
     {
       // This means there wasn't a request, we add a "response" though because that's where that data lives.

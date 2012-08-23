@@ -383,7 +383,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
     resp.saw_responsefinished &&
     (!resp.responsebody || !resp.responsebody.content) &&
     (!resp.logger_entry_called_get_body || resp.logger_entry_get_body_unsuccessful);
-       
+
   if (should_track_content)
   {
     // Ask to enable content-tracking.
