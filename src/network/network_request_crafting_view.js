@@ -4,9 +4,9 @@
  * @constructor
  * @extends ViewBase
  */
-cls.RequestCraftingView = function(id, name, container_class, html, default_handler, service)
+cls.RequestCraftingView = function(id, name, container_class, html, default_handler, network_logger)
 {
-  this._service = service;
+  this._network_logger = network_logger;
   this._input = null;
   this._output = null;
   this._urlfield = null;
@@ -46,7 +46,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    var ctx = this._service.get_logger_context();
+    var ctx = this._network_logger.get_crafter_context();
     var entries = [];
     if (ctx)
       entries = ctx.get_entries();
@@ -142,14 +142,14 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this._handle_send_request_bound = function()
   {
     // todo: the old context will probably be kept for comparing previous requests.
-    this._service.remove_crafter_request_context();
+    this._network_logger.remove_crafter_request_context();
 
     this._prev_url = this._urlfield.get_value();
     this._prev_request = this._input.get_value();
     var parsed_request = this._parse_request(this._prev_request);
     if (parsed_request)
     {
-      var ctx = this._service.get_logger_context(true);
+      var ctx = this._network_logger.get_crafter_context(true);
       this._error_message = null;
       var crafter_request_id = ctx.send_request(this._prev_url, parsed_request);
       this._requests.push(crafter_request_id);
@@ -177,7 +177,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._on_context_added_bound = function(message)
   {
-    if (message.context_type === this._service.CONTEXT_TYPE_CRAFTER)
+    if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_CRAFTER)
       message.context.addListener("resource-update", this.update.bind(this));
   }.bind(this);
 
@@ -186,7 +186,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
 
-  this._service.addListener("context-added", this._on_context_added_bound);
+  this._network_logger.addListener("context-added", this._on_context_added_bound);
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 

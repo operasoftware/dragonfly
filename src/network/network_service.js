@@ -1,17 +1,14 @@
 ﻿"use strict";
 
-cls.NetworkLoggerService = function()
+cls.NetworkLogger = function()
 {
-  this.CONTEXT_TYPE_LOGGER = this.CONTEXT_TYPE_MAIN = 1;
-  this.CONTEXT_TYPE_CRAFTER = 2;
-
   this._get_matching_context = function(res_id)
   {
-    var crafter_context = this._contexts[this.CONTEXT_TYPE_CRAFTER];
+    var crafter_context = this._contexts[cls.NetworkLogger.CONTEXT_TYPE_CRAFTER];
     if (crafter_context && res_id in crafter_context.allocated_res_ids)
       return crafter_context;
 
-    var logger_context = this._contexts[this.CONTEXT_TYPE_LOGGER];
+    var logger_context = this._contexts[cls.NetworkLogger.CONTEXT_TYPE_LOGGER];
     return logger_context;
   };
 
@@ -20,7 +17,7 @@ cls.NetworkLoggerService = function()
     var ctx = this._contexts[type];
     if (!ctx && force)
     {
-      var is_main_context = type === this.CONTEXT_TYPE_MAIN;
+      var is_main_context = type === cls.NetworkLogger.CONTEXT_TYPE_MAIN;
       ctx = this._contexts[type] = new cls.RequestContext(this, is_main_context);
       this.post("context-added", {"context_type": type, "context": ctx});
     }
@@ -29,42 +26,42 @@ cls.NetworkLoggerService = function()
 
   this.get_logger_context = function()
   {
-    return this._get_request_context(this.CONTEXT_TYPE_LOGGER);
+    return this._get_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER);
   };
 
-  this.get_logger_context = function(force)
+  this.get_crafter_context = function(force)
   {
-    return this._get_request_context(this.CONTEXT_TYPE_CRAFTER, force);
+    return this._get_request_context(cls.NetworkLogger.CONTEXT_TYPE_CRAFTER, force);
   };
 
   this._remove_request_context = function(type)
   {
-    type = type || this.CONTEXT_TYPE_MAIN;
+    type = type || cls.NetworkLogger.CONTEXT_TYPE_MAIN;
     this._contexts[type] = null;
     this.post("context-removed", {"context_type": type});
   };
 
   this.remove_logger_request_context = function()
   {
-    return this._remove_request_context(this.CONTEXT_TYPE_LOGGER);
+    return this._remove_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER);
   };
 
   this.remove_crafter_request_context = function()
   {
-    return this._remove_request_context(this.CONTEXT_TYPE_CRAFTER);
+    return this._remove_request_context(cls.NetworkLogger.CONTEXT_TYPE_CRAFTER);
   };
 
-  // get_window_contexts means "of the main context" here (on the service). That's in line
+  // get_window_contexts means "of the main context" here (on the logger). That's in line
   // with messages of the main context firing here instead of on the context.
   this.get_window_contexts = function(type)
   {
-    var ctx = this._get_request_context(this.CONTEXT_TYPE_MAIN);
+    var ctx = this._get_request_context(cls.NetworkLogger.CONTEXT_TYPE_MAIN);
     return ctx && ctx.get_window_contexts();
   };
 
   this._queue_message = function(listener, msg)
   {
-    var crafter = this._contexts[this.CONTEXT_TYPE_CRAFTER];
+    var crafter = this._contexts[cls.NetworkLogger.CONTEXT_TYPE_CRAFTER];
     if (crafter && crafter.is_waiting_for_create_request)
     {
       // Store in a queue. Before we know what resourceID create_request
@@ -97,7 +94,7 @@ cls.NetworkLoggerService = function()
 
     // For this event, the context is always of type CONTEXT_TYPE_LOGGER.
     // That needs to be static here, because a new context will be created if it doesn't exist.
-    var ctx = this._get_request_context(this.CONTEXT_TYPE_LOGGER, true);
+    var ctx = this._get_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER, true);
 
     // Without a parentDocumentID, this event means "unload" for the old content of this windowID.
     if (!data.parentDocumentID)
@@ -119,8 +116,8 @@ cls.NetworkLoggerService = function()
     var ctx = this._get_matching_context(data.resourceID);
     if (!ctx)
     {
-      var type = this.CONTEXT_TYPE_LOGGER;
-      var is_main_context = type === this.CONTEXT_TYPE_MAIN;
+      var type = cls.NetworkLogger.CONTEXT_TYPE_LOGGER;
+      var is_main_context = type === cls.NetworkLogger.CONTEXT_TYPE_MAIN;
       ctx = this._contexts[type] = new cls.RequestContext(this, is_main_context);
       this.post("context-added", {"context_type": type, "context": ctx});
     }
@@ -394,7 +391,7 @@ cls.NetworkLoggerService = function()
 
   this._handle_get_resource = function(status, data, resource_id)
   {
-    var ctx = this._get_request_context(this.CONTEXT_TYPE_LOGGER);
+    var ctx = this._get_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER);
     if (status)
     {
       // the object passed to _current_context represents empty event_data. will set no_used_mimetype.
@@ -407,16 +404,19 @@ cls.NetworkLoggerService = function()
     }
     // Post update message from here. This is only needed when the generic updating per event is paused.
     if (this.is_paused)
-      ctx.post_on_context_or_service("resource-update", {id: event.resourceID});
+      ctx.post_on_context_or_logger("resource-update", {id: event.resourceID});
 
   };
 
   this.init();
 };
+cls.NetworkLogger.CONTEXT_TYPE_LOGGER = 1;
+cls.NetworkLogger.CONTEXT_TYPE_CRAFTER = 2;
+cls.NetworkLogger.CONTEXT_TYPE_MAIN = cls.NetworkLogger.CONTEXT_TYPE_LOGGER;
 
-cls.NetworkLoggerService.WindowContext = function(window_id, service, context)
+cls.NetworkLogger.WindowContext = function(window_id, logger, context)
 {
-  this._service = service;
+  this._logger = logger;
   this._context = context;
   this.id = window_id;
   this.saw_main_document = false;
@@ -424,7 +424,7 @@ cls.NetworkLoggerService.WindowContext = function(window_id, service, context)
   this.entry_ids = [];
 };
 
-cls.NetworkLoggerService.WindowContextPrototype = function()
+cls.NetworkLogger.WindowContextPrototype = function()
 {
   this._filter_entries = function(resource_ids, entry, index, entries)
   {
@@ -448,9 +448,9 @@ cls.NetworkLoggerService.WindowContextPrototype = function()
   };
 };
 
-cls.NetworkLoggerService.WindowContext.prototype = new cls.NetworkLoggerService.WindowContextPrototype();
+cls.NetworkLogger.WindowContext.prototype = new cls.NetworkLogger.WindowContextPrototype();
 
-cls.RequestContext = function(service, is_main_context)
+cls.RequestContext = function(logger, is_main_context)
 {
   this.FILTER_ALLOW_ALL = {
     type_list: [],
@@ -462,7 +462,7 @@ cls.RequestContext = function(service, is_main_context)
   this._logger_entries = [];
   this._filters = [this.FILTER_ALLOW_ALL];
   this._is_main_context = is_main_context;
-  this._service = service;
+  this._logger = logger;
   this._window_contexts = [];
   this._init();
 };
@@ -659,15 +659,15 @@ cls.RequestContextPrototype = function()
 
     if (!this.is_paused)
     {
-      this.post_on_context_or_service("resource-update", {id: event.resourceID});
+      this.post_on_context_or_logger("resource-update", {id: event.resourceID});
     }
   };
 
-  this.post_on_context_or_service = function(name, body)
+  this.post_on_context_or_logger = function(name, body)
   {
     // Find out where to post the update message.
-    // Messages of main_contexts are posted on the service, not the context.
-    var posting_object = this._is_main_context ? this._service : this;
+    // Messages of main_contexts are posted on the logger, not the context.
+    var posting_object = this._is_main_context ? this._logger : this;
     posting_object.post(name, body);
   };
 
@@ -682,9 +682,9 @@ cls.RequestContextPrototype = function()
     var window_context = this._window_contexts.filter(helpers.eq("id", window_id))[0];
     if (!window_context && force)
     {
-      window_context = new cls.NetworkLoggerService.WindowContext(window_id, this._service, this);
+      window_context = new cls.NetworkLogger.WindowContext(window_id, this._logger, this);
       this._window_contexts.push(window_context);
-      this.post_on_context_or_service("window-context-added", {"window-context": window_context});
+      this.post_on_context_or_logger("window-context-added", {"window-context": window_context});
     }
     return window_context;
   };
@@ -708,7 +708,7 @@ cls.RequestContextPrototype = function()
         return window_id != context.id;
       }
     );
-    this.post_on_context_or_service("window-context-removed", {"window-id": window_id});
+    this.post_on_context_or_logger("window-context-removed", {"window-id": window_id});
   };
 
   this.get_entry_from_filtered = function(id)
@@ -733,16 +733,22 @@ cls.RequestContextPrototype = function()
   this.send_request = function(url, requestdata)
   {
     var windowid = window.window_manager_data.get_debug_context();
+    var PAYLOAD = null;
+    var HEADER_POLICY_OVERWRITE = 2;
+    var HEADER_POLICY_REPLACE = 3;
+    var RELOAD_POLICY_NO_CACHE = 2;
+    var REQUEST_CONTENT_MODE = null;
+    var RESPONSE_CONTENT_MODE_STRING_DECODE = [1, 1];
     var request = [
       windowid,
       url,
       requestdata.method,
       requestdata.headers,
-      null, // payload
-      3, // header policy. 2 == overwrite, 3 == replace
-      2, // reload policy. 2 == no cache, always reload from network
-      null, // request content mode
-      [1, 1] // response content mode 1 == string, 1 == decode
+      PAYLOAD,
+      HEADER_POLICY_REPLACE,
+      RELOAD_POLICY_NO_CACHE,
+      REQUEST_CONTENT_MODE,
+      RESPONSE_CONTENT_MODE_STRING_DECODE
     ];
     this.is_waiting_for_create_request = true;
     var id = this._get_uid();
@@ -1181,7 +1187,7 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.check_to_request_body = function(service)
+  this.check_to_request_body = function(logger)
   {
     // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
     if (
@@ -1193,7 +1199,7 @@ cls.NetworkLoggerEntryPrototype = function()
       (!this._current_response || this._current_response.saw_responsefinished)
     )
     {
-      service.get_body(this);
+      logger.get_body(this);
     }
   };
 
@@ -1221,7 +1227,7 @@ cls.NetworkLoggerEntryPrototype = function()
   this.__defineGetter__("current_response", function()
   {
     // In 99% of the cases, _current_response is used. It's only
-    // exposed for getting the ResourceInfo from the service directly.
+    // exposed for getting the ResourceInfo from the logger directly.
     return this._current_response;
   });
   this.__defineSetter__("current_response", function(){});
