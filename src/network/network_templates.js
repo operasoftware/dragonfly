@@ -74,9 +74,32 @@ templates.options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.request_crafter_main = function(url, request, entries)
+templates.request_crafter_main = function(url, request, entries, error_message)
 {
-  var entry = entries.last; // todo: will deal with multiple entries later.
+  var response = ui_strings.M_NETWORK_CRAFTER_SEND;
+  if (error_message)
+  {
+    response = error_message;
+  }
+  else
+  {
+    var entry = entries[0]; // todo: will deal with multiple entries later.
+    if (entry && entry.is_finished)
+    {
+      var helpers = window.helpers;
+      var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
+      if (first_response)
+      {
+        response = first_response.response_headers_raw;
+        if (first_response.responsebody &&
+            first_response.responsebody.content &&
+            first_response.responsebody.content.stringData)
+        {
+          response += "\n\n" + first_response.responsebody.content.stringData;
+        }
+      }
+    }
+  }
   return (
     ["div",
       ["div",
@@ -102,7 +125,7 @@ templates.request_crafter_main = function(url, request, entries)
         ],
         ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         ["p",
-          ["textarea", (entry && entry.is_finished) ? entry.current_response.response_headers_raw : ui_strings.M_NETWORK_CRAFTER_SEND]
+          ["textarea", response]
         ],
         "class", "padding request-crafter"
       ]
@@ -123,7 +146,7 @@ templates.incomplete_warning = function(context, index, all_contexts)
   if (all_contexts.length > 1)
   {
     var win = window.window_manager_data.get_window(context.id);
-    title = win && (" - " + win.title);
+    title = win && win.title && (" – " + win.title);
   }
 
   return ["div",
@@ -148,7 +171,7 @@ templates.incomplete_warning = function(context, index, all_contexts)
          ];
 };
 
-templates.main = function(ctx, entries, selected, detail_width, table_template)
+templates.main = function(ctx, window_contexts, entries, selected, detail_width, table_template)
 {
   return [
     [
@@ -167,7 +190,7 @@ templates.main = function(ctx, entries, selected, detail_width, table_template)
     [
       templates.summary(entries)
     ],
-    ctx.window_contexts.map(templates.incomplete_warning)
+    window_contexts.map(templates.incomplete_warning)
   ];
 };
 

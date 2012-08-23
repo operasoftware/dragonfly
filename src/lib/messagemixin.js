@@ -21,6 +21,13 @@ cls.MessageMixin = function()
    */
   this.add_listener = function(name, cb)
   {
+    if (!cb)
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      "No callback function for message listener provided: " + name);
+      return;
+    }
+
     if(! this._mm_listeners)
     {
       this._mm_listeners = {};
