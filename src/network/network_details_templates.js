@@ -379,11 +379,10 @@ templates._response_body = function(resp, do_raw, is_last_response)
   var ret = [];
   var classname = "";
 
-  var should_track_content = (
+  var should_track_content =
     resp.saw_responsefinished &&
     (!resp.responsebody || !resp.responsebody.content) &&
-    (!resp.logger_entry_called_get_body || resp.logger_entry_get_body_unsuccessful)
-  );
+    (!resp.logger_entry_called_get_body || resp.logger_entry_get_body_unsuccessful);
        
   if (should_track_content)
   {

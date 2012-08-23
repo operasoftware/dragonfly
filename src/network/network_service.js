@@ -752,10 +752,9 @@ cls.NetworkLoggerEntryPrototype = function()
     this.encoding = event.characterEncoding;
     this.size = event.contentLength;
     this.is_finished = true;
-    // Responses keep duplicates of the finished state. It's only relevant on the last one though.
+    // Responses keep duplicates of the finished state. It's only relevant on the last one.
     if (this._current_response)
-      this._current_response.update_event_urlfinished(event);
-
+      this._current_response.logger_entry_is_finished = true;
     this._guess_response_type();
     this._humanize_url();
   };
@@ -860,7 +859,12 @@ cls.NetworkLoggerEntryPrototype = function()
       this.type = cls.ResourceUtil.mime_to_type(this.mime);
 
     if (this._current_response)
-      this._current_response.update_mime_and_type(this.mime, this.type);
+    {
+      // This could be only on the response. But as only the last response has body
+      // that would complicate it for nothing.
+      this._current_response.logger_entry_mime = this.mime;
+      this._current_response.logger_entry_type = this.type;
+    }
   };
 
   this._humanize_url = function()
@@ -920,14 +924,14 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.check_to_get_body = function()
   {
-    var should_get_body = (
+    var should_get_body =
       this.is_finished &&
       !this.called_get_body &&
       (!this._current_response || !this._current_response.responsebody) &&
       // When we have a response, but didn't see responsefinished, there really is no
       // responsebody. Don't attempt to fetch it.
-      (!this._current_response || this._current_response.saw_responsefinished)
-    );
+      (!this._current_response || this._current_response.saw_responsefinished);
+
     // Todo: The exception for !saw_responsefinished is AFAIR so we don't fetch a wrong result like a
     // placeholder from Opera, but thee's currently no testcase for that.
     // We could also avoid it when this.is_unloaded, but seems there it will 
@@ -938,13 +942,13 @@ cls.NetworkLoggerEntryPrototype = function()
       // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
       this.called_get_body = true;
       if (this._current_response)
-        this._current_response.update_called_get_body(true);
-
-      var contentmode = cls.ResourceUtil.mime_to_content_mode(this.mime);
-      var typecode = {datauri: 3, text: 1}[contentmode];
-      var tag = window.tagManager.set_callback(this, this._handle_get_resource);
+        this._current_response.logger_entry_called_get_body = true;
+      var content_mode = cls.ResourceUtil.mime_to_content_mode(this.mime);
+      var transport_type = {"text": 1, "datauri": 3}[content_mode];
+      var tag = window.tag_manager.set_callback(this, this._handle_get_resource);
       var CONTENT_MODE_STRING = 1;
-      window.services["resource-manager"].requestGetResource(tag, [this.resource_id, [typecode, CONTENT_MODE_STRING]]);
+      window.services["resource-manager"].requestGetResource(tag, [this.resource_id,
+                                                                    [transport_type, CONTENT_MODE_STRING]]);
     }
   };
 
@@ -966,8 +970,7 @@ cls.NetworkLoggerEntryPrototype = function()
     }
     else
     {
-      this.get_body_unsuccessful = true;
-      this._current_response.update_get_body_unsuccessful(true);
+      this.get_body_unsuccessful = this._current_response.logger_entry_get_body_unsuccessful = true;
     }
     window.messages.post("network-resource-updated", {id: this.resource_id});
   };
@@ -1076,7 +1079,8 @@ cls.NetworkLoggerResponse = function(entry)
   this.is_response = true; // Simpler for recognizing than dealing with comparing the constructor
   this.saw_responsefinished = false;
 
-  // The following are duplicated from the entry to have them available directly on the response
+  // The following are duplicated from the entry to have them available directly on the response.
+  // They are accessed and updated directly from the entry.
   this.logger_entry_type = entry.type;
   this.logger_entry_id = entry.id;
   this.logger_entry_mime = entry.mime;
@@ -1115,29 +1119,6 @@ cls.NetworkLoggerResponsePrototype = function()
   this.update_responsebody = function(responsebody)
   {
     this.responsebody = responsebody;
-  };
-
-  // The following are to reflect changes that happened on Entry.
-  this.update_event_urlfinished = function(event)
-  {
-    this.logger_entry_is_finished = true;
-  };
-
-  this.update_mime_and_type = function(mime, type)
-  {
-    // This could actually be per response too. But as only the last response has body, it can be on the entry.
-    this.logger_entry_mime = mime;
-    this.logger_entry_type = type;
-  };
-
-  this.update_called_get_body = function(called_get_body)
-  {
-    this.logger_entry_called_get_body = called_get_body;
-  };
-
-  this.update_get_body_unsuccessful = function(get_body_unsuccessful)
-  {
-    this.logger_entry_get_body_unsuccessful = get_body_unsuccessful;
   };
 };
 
