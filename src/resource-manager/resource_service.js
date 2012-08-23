@@ -414,8 +414,9 @@ cls.ResourceContext = function(data)
       frame = this.frames[res.frameID];
       if (!frame)
       {
-        //  unknown frame -> invalid resource
-        console.info('invalidating the orphan resource '+ res.id );
+        // unknown frame -> invalid resource
+        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+          'Invalidating orphan resource '+ res.id);
         res.invalid = true;
       }
      else if (eventname == "urlload")
