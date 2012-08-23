@@ -1089,12 +1089,12 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
   this.reloadWindow = function(window_id)
   {
     if (!window_id)
-      window_id = __selected_window;
+      window_id = _selected_window;
 
     if (window_id)
     {
-      if (!__windows_reloaded[window_id])
-        __windows_reloaded[window_id] = 1;
+      if (!_windows_reloaded[window_id])
+        _windows_reloaded[window_id] = 1;
 
       var rt_id = this.getRuntimeIdsFromWindow(window_id)[0];
       if (window.services['ecmascript-debugger'] &&
