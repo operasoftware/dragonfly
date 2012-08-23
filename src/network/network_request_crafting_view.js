@@ -312,7 +312,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.required_services = ["resource-manager", "document-manager"];
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
-  this._service.addListener("request", this._on_request_bound);
   this._service.addListener("response", this._on_response_bound);
   this._service.addListener("responseheader", this._on_responseheader_bound);
   this._service.addListener("responsefinished", this._on_responsefinished_bound);
