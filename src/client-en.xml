@@ -225,6 +225,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/stylesheetlistprototype.js"/>
 <script src="./lib/xmlhttprequestprototype.js"/>
 <script src="./lib/storageprototype.js"/>
+<script src="./lib/clipboard.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
@@ -537,4 +538,5 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./screenshot/colorpaletteview.js"/>
 
 <body/>
+<div id="contenteditable"/>
 </viewport>
