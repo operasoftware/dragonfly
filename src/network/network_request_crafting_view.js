@@ -4,11 +4,13 @@
  * @constructor
  * @extends ViewBase
  */
-cls.RequestCraftingView = function(id, name, container_class, html, default_handler) {
+cls.RequestCraftingView = function(id, name, container_class, html, default_handler, network_logger)
+{
+  this._network_logger = network_logger;
   this._input = null;
   this._output = null;
   this._urlfield = null;
-  this._crafter_requests = [];
+  this._requests = [];
   this._uastring = window.services.scope.get_hello_message().userAgent;
 
   this._request_template = [
@@ -24,19 +26,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   ].join("\r\n");
 
   this._prev_request = this._request_template;
-  /*
-  this._prev_response = "No response";
-  */
   this._prev_url = "";
 
-  /*
-  // todo: will see what do on send, resetting is probably annoying.
   this.ondestroy = function()
   {
     this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
     this._prev_request = this._input ? this._input.get_value() : "";
   };
-  */
 
   this.createView = function(container)
   {
@@ -50,15 +46,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER);
+    var ctx = this._network_logger.get_crafter_context();
     var entries = [];
     if (ctx)
-      entries = ctx.get_entries_filtered();
+      entries = ctx.get_entries();
 
     // render entries..
     container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
                                                                     this._prev_request,
-                                                                    entries));
+                                                                    entries,
+                                                                    this._error_message));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
     this._input = new cls.BufferManager(container.querySelector("textarea"));
     this._output = container.querySelector("code");
@@ -83,14 +80,16 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var lines = requeststr.split(/\r?\n/);
     var requestline = lines.shift();
     var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
-
-    if (!reqparts || reqparts.length != 4) {
-        return null; // fixme: tell what's wrong
+    // .match will return the whole match as [0], slice it off.
+    if (!reqparts || (reqparts = reqparts.slice(1)).length != 3)
+    {
+      this._error_message = ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST;
+      return null;
     }
 
-    retval.method = reqparts[1];
-    retval.path = reqparts[2];
-    retval.protocol = reqparts[3];
+    retval.method = reqparts[0];
+    retval.path = reqparts[1];
+    retval.protocol = reqparts[2];
     retval.headers = this._parse_headers(lines);
     retval.host = retval.headers.Host;
 
@@ -142,22 +141,24 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._handle_send_request_bound = function()
   {
+    // todo: the old context will probably be kept for comparing previous requests.
+    this._network_logger.remove_crafter_request_context();
+
     this._prev_url = this._urlfield.get_value();
-    var data = this._input.get_value();
-    var requestdata = this._parse_request(data);
-    if (requestdata)
+    this._prev_request = this._input.get_value();
+    var parsed_request = this._parse_request(this._prev_request);
+    if (parsed_request)
     {
-      var ctx = this._service.get_request_context(this._service.CONTEXT_TYPE_CRAFTER, true);
-      var crafter_request_id = ctx.send_request(this._prev_url, requestdata);
-      this._crafter_requests.push(crafter_request_id);
+      var ctx = this._network_logger.get_crafter_context(true);
+      this._error_message = null;
+      var crafter_request_id = ctx.send_request(this._prev_url, parsed_request);
+      this._requests.push(crafter_request_id);
     }
     else
     {
-      // this._prev_response = ui_strings.S_INFO_REQUEST_FAILED;
       this.update();
     }
   }.bind(this);
-
 
   this._handle_url_change_bound = function(evt, target)
   {
@@ -174,13 +175,10 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     this._input.set_value(current);
   };
 
-  this._on_context_established_bound = function(message)
+  this._on_context_added_bound = function(message)
   {
-    if (message.context_type === this._service.CONTEXT_TYPE_CRAFTER)
-    {
-      var ctx = this._service.get_request_context(message.context_type);
-      ctx.addListener("resource-update", this.update.bind(this));
-    }
+    if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_CRAFTER)
+      message.context.addListener("resource-update", this.update.bind(this));
   }.bind(this);
 
   var eh = window.eventHandlers;
@@ -188,8 +186,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
 
-  this._service = window.network_logger;
-  this._service.addListener("context-established", this._on_context_established_bound);
+  this._network_logger.addListener("context-added", this._on_context_added_bound);
 
   // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
 

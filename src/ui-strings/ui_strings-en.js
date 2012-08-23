@@ -138,6 +138,9 @@ ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User interface language";
 
+/* DESC: Error message for when the request could not be parsed */
+ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST = "Could not parse request";
+
 /* DESC: Label for send request button in network crafter */
 ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
 
@@ -903,6 +906,9 @@ ui_strings.S_INFO_DOCUMNENT_LOADING = "Updating Opera Dragonfly…";
 /* DESC: There was an error trying to listen to the specified port */
 ui_strings.S_INFO_ERROR_LISTENING = "There was an error. Please check that port %s is not in use.";
 
+/* DESC: A info message that the debugger is currently in HTTP profiler mode. */
+ui_strings.S_INFO_HTTP_PROFILER_MODE = "The debugger is in HTTP profiler mode. All other features are disabled.";
+
 /* DESC: Information shown if the user tries to perform a reg exp search with an invalid regular expression. */
 ui_strings.S_INFO_INVALID_REGEXP = "Invalid regular expression.";
 
@@ -926,6 +932,9 @@ ui_strings.S_INFO_NO_JAVASCRIPT_IN_CONTEXT = "There is no JavaScript environment
 
 /* DESC: The info text in an alert box if the user has specified an invalid port number for remote debugging. */
 ui_strings.S_INFO_NO_VALID_PORT_NUMBER = "Please select a port number between %s and %s.";
+
+/* DESC: A info message that the debugger is currently in profiler mode. */
+ui_strings.S_INFO_PROFILER_MODE = "The debugger is in profiler mode. All other features are disabled.";
 
 /* DESC: Information shown if the user tries to perform a reg exp search which matches the empty string. */
 ui_strings.S_INFO_REGEXP_MATCHES_EMPTY_STRING = "RegExp matches empty string. No search was performed.";

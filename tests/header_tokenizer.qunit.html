@@ -1,39 +1,12 @@
-<!DOCTYPE html>
-<html>
-
-<link rel="stylesheet" href="../../src/ui-style/ui.css"/>
-<link rel="stylesheet" href="../../src/network/network_style.css"/>
-<link rel="stylesheet" href="../../src/ui-scripts/tooltip/tooltip.css"/>
-
-<style>
-
-html
-{
-  margin: 5px;
-}
-
-.type-1 {
-  color: blue;
-}
-
-.type-2 {
-  color: red;
-}
-
-.type-3 {
-  color: green;
-}
-
-.type-4 {
-  color: #bada55;
-}
-
-</style>
-
-<script src="../../src/scripts/dom.js"></script>
-<script src="../../src/syntaxhighlight/http-header/tokenizer.js"></script>
-
+<!doctype html>
+<meta charset="utf-8">
+<title>Header Tokenizer</title>
+<link rel="stylesheet" href="qunit/qunit.css" media="screen">
+<script src="qunit/qunit.js"></script>
+<script src="../src/lib/elementprototype.js"></script>
+<script src="../src/syntaxhighlight/http-header/tokenizer.js"></script>
 <script>
+window.onload = function() {
 
 var token_template = function(token)
 {
@@ -90,20 +63,26 @@ Referer:https://homes.oslo.osa/dherzog/\n\
 Cache-Control:no-cache\n\
 Connection:Keep-Alive";
 
-window.onload = function()
-{
-  var headers = [raw_headers, raw_headers2, raw_headers3];
-  headers.forEach(function(header_string){
-    var pre = document.body.firstElementChild.render(["pre"])
-    pre.render(get_tokens(header_string).map(token_template));
-    if (pre.textContent !== header_string)
-      throw(new Error("Tokenized headers produced different result."));
-  });
+test("Tokenized headers",
+  function()
+  {
+    var headers = [raw_headers, raw_headers2, raw_headers3];
+    headers.forEach(function(header_string){
+      var pre = document.body.firstElementChild.render(["pre"])
+      pre.render(get_tokens(header_string).map(token_template));
+      deepEqual(pre.textContent, header_string);
+    }); 
+  }
+)
 }
-
 </script>
 <body>
-  <pre class="mono"></pre>
+  <pre style="display: none"></pre>
+  <h1 id="qunit-header">Dragonfly - Command Processor</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
 </body>
 </html>
 
