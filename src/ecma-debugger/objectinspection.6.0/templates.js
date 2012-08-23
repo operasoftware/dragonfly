@@ -281,7 +281,7 @@
           has_match = !searchterm ||
                       prop[NAME].toLowerCase().contains(searchterm) ||
                       value.toLowerCase().contains(searchterm);
-          if (has_match || expanded_prop.length)
+          if (has_match || (expanded_prop && expanded_prop.length))
           {
             ret.push(
               "<item obj-id='" + obj_id + "'>" +
