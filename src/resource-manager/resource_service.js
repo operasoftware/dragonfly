@@ -412,7 +412,13 @@ cls.ResourceContext = function(data)
       res.update(eventname, event);
 
       frame = this.frames[res.frameID];
-      if (eventname == "urlload")
+      if (!frame)
+      {
+        //  unknown frame -> invalid resource
+        console.info('invalidating the orphan resource '+ res.id );
+        res.invalid = true;
+      }
+     else if (eventname == "urlload")
       {
         if (res.id == frame.resourceID)
         {
@@ -428,7 +434,7 @@ cls.ResourceContext = function(data)
         }
       }
 
-      if (eventname == "urlfinished")
+      else if (eventname == "urlfinished")
       {
         // push the resourceID into the proper group
         if (frame && frame.resource)
@@ -450,7 +456,7 @@ cls.ResourceContext = function(data)
         }
       }
 
-      if (eventname == "urlredirect")
+      else if (eventname == "urlredirect")
       {
         // Adjust the frame if its top resource is redirected
         if (frame && frame.resourceID == res.id)
