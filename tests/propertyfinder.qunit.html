@@ -5,11 +5,14 @@
     <link rel="stylesheet" href="qunit/qunit.css" media="screen">
     <script src="qunit/qunit.js"></script>
     <script src="../src/lib/json.js"></script>
+    <script src="../src/syntaxhighlight/js/syntax.js"></script>
+    <script src="../src/syntaxhighlight/js/tokenizer.js"></script>
     <script src="../src/repl/propertyfinder.js"></script>
 <script>
 
 test("Input scope smoketest", function() {
-    var fp = new cls.PropertyFinder()._find_input_parts;
+    var propfinder = new cls.PropertyFinder();
+    var fp = propfinder._find_input_parts.bind(propfinder);
     var parts;
 
     parts = fp("foo");
@@ -38,6 +41,30 @@ test("Input scope smoketest", function() {
 
     parts = fp("foo[bar.baz");
     equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo().bar.baz");
+    equal(parts.scope, "foo().bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo(bar.baz");
+    equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo = bar.baz");
+    equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo in baz");
+    equal(parts.scope, "");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo in bar.baz");
+    equal(parts.scope, "bar");
+    equal(parts.identifier, "baz");
+
+    parts = fp("foo = bar(baz");
+    equal(parts.scope, "");
     equal(parts.identifier, "baz");
 
 });

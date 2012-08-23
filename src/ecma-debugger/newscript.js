@@ -38,10 +38,23 @@ window.cls.NewScript.COMMENT_STATE = 4;
 
 window.cls.NewScriptPrototype = function()
 {
+  var WHITESPACE = cls.SimpleJSParser.WHITESPACE;
+  var LINETERMINATOR = cls.SimpleJSParser.LINETERMINATOR;
+  var IDENTIFIER = cls.SimpleJSParser.IDENTIFIER;
+  var NUMBER = cls.SimpleJSParser.NUMBER;
+  var STRING = cls.SimpleJSParser.STRING;
+  var PUNCTUATOR = cls.SimpleJSParser.PUNCTUATOR;
+  var DIV_PUNCTUATOR = cls.SimpleJSParser.DIV_PUNCTUATOR;
+  var REG_EXP = cls.SimpleJSParser.REG_EXP;
+  var COMMENT = cls.SimpleJSParser.COMMENT;
+  var TYPE = 0;
+  var VALUE = 1;
+  var _tokenizer = new cls.SimpleJSParser();
+
   /**
     * Searches the actual data.
     * Updates the script object with the following properties for all matches:
-    *   - line_matches, a list of all matches in the source, 
+    *   - line_matches, a list of all matches in the source,
     *     the values are the lines numbers of a given match
     *   - line_offsets, a list of all matches in the source,
     *     the values are the character offset in the line of the match
@@ -107,7 +120,7 @@ window.cls.NewScriptPrototype = function()
           {
             ++line_cur;
           }
-          
+
           this.line_matches[index] = line_cur;
           this.line_offsets[index] = pos - this.line_arr[line_cur - 1];
           if (is_reg_exp)
@@ -129,6 +142,9 @@ window.cls.NewScriptPrototype = function()
 
   this.get_line = function(line_number)
   {
+    if (!this.line_arr)
+      this.set_line_states();
+
     if (line_number > 0 && this.line_arr[line_number])
       return this.script_data.slice(this.line_arr[line_number - 1],
                                     this.line_arr[line_number]);
@@ -143,8 +159,118 @@ window.cls.NewScriptPrototype = function()
     this.line_offsets_length = [];
     this.match_cursor = -1;
     this.match_length = 0;
-  }
-  
+  };
+
+  this.__defineGetter__("is_minified", function()
+  {
+    if (this._is_minified === undefined)
+    {
+      var MAX_SLICE = 5000;
+      var LIMIT = 11;
+      var re = /\s+/g;
+      var ws = 0;
+      var m = null;
+      var src = this.script_data.slice(0, MAX_SLICE);
+      while (m = re.exec(src))
+        ws += m[0].length;
+
+      this._is_minified = (100 * ws / src.length) < LIMIT;
+    }
+    return this._is_minified;
+  });
+
+  this.__defineSetter__("is_minified", function() {});
+
+  this.get_function = function(line_number)
+  {
+    if (this.is_minified)
+      return null;
+
+    var start_line = -1;
+    var end_line = -1;
+    var index = -1;
+    var tokens = null;
+    var op_bracket_count = 0;
+    while (start_line == -1 && line_number > -1)
+    {
+      tokens = this._get_tokens_of_line(line_number);
+      for (var i = 0, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == IDENTIFIER && token[VALUE] == "function")
+        {
+          start_line = line_number;
+          index = i;
+        }
+      }
+      if (index == -1)
+        line_number--;
+    }
+    while (!op_bracket_count && line_number <= this.line_arr.length)
+    {
+      for (var i = index, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == PUNCTUATOR && token[VALUE] == "{")
+        {
+          op_bracket_count++;
+          index = i + 1;
+          break;
+        }
+      }
+      if (!token)
+      {
+        index = 0;
+        tokens = this._get_tokens_of_line(++line_number);
+      }
+    }
+    while (op_bracket_count && end_line == -1 && line_number <= this.line_arr.length)
+    {
+      for (var i = index, token; token = tokens[i]; i++)
+      {
+        if (token[TYPE] == PUNCTUATOR)
+        {
+          if (token[VALUE] == "{")
+            op_bracket_count++;
+          else if (token[VALUE] == "}")
+          {
+            op_bracket_count--;
+            if (!op_bracket_count)
+            {
+              end_line = line_number;
+              break;
+            }
+          }
+        }
+      }
+
+      if (end_line == -1)
+      {
+        index = 0;
+        tokens = this._get_tokens_of_line(++line_number);
+      }
+    }
+    return start_line > -1 && end_line > -1
+         ? {start_line: start_line, end_line: end_line}
+         : null;
+  };
+
+  this._get_tokens_of_line = function(line_number)
+  {
+    if (!this.line_arr)
+      this.set_line_states();
+
+    var tokens = [];
+    var line = this.get_line(line_number);
+    var start_state = this.state_arr[line_number - 1];
+    if (line)
+    {
+      _tokenizer.tokenize(line, function(token_type, token)
+      {
+        tokens.push([token_type, token]);
+      }, false, start_state);
+    }
+    return tokens;
+  };
+
   this.set_line_states = function()
   {
     this.line_arr = [];
@@ -158,7 +284,7 @@ window.cls.NewScriptPrototype = function()
     var slash_cur = -2;
     var nl_cur = 0;
     var cr_cur = 0;
-    
+
 
     var min_cur = 0;
 
@@ -201,8 +327,8 @@ window.cls.NewScriptPrototype = function()
 
     var handle_strings = function(ref_pos, ref_val)
     {
-      // ensure that a string never exceeds the current 
-      // line if the newline is not escaped 
+      // ensure that a string never exceeds the current
+      // line if the newline is not escaped
       var temp_count = 0;
       var is_cr = 0;
       var nl_cur = string.indexOf(eol, ref_pos + 1);
@@ -227,17 +353,17 @@ window.cls.NewScriptPrototype = function()
 
     while( min_cur != -1 )
     {
-      
+
       state = '';
-      if( ( s_quote_cur != -1 ) && ( s_quote_cur <= cur_cur ) ) 
+      if( ( s_quote_cur != -1 ) && ( s_quote_cur <= cur_cur ) )
       {
         s_quote_cur = string.indexOf(s_quote_val, cur_cur + 1);
       }
-      if( ( d_quote_cur != -1 ) && ( d_quote_cur <= cur_cur ) ) 
+      if( ( d_quote_cur != -1 ) && ( d_quote_cur <= cur_cur ) )
       {
         d_quote_cur = string.indexOf(d_quote_val, cur_cur + 1);
       }
-      if( ( slash_cur != -1 ) && ( slash_cur <= cur_cur ) ) 
+      if( ( slash_cur != -1 ) && ( slash_cur <= cur_cur ) )
       {
         slash_cur = string.indexOf(slash_val, cur_cur + 1);
       }
@@ -260,7 +386,7 @@ window.cls.NewScriptPrototype = function()
       }
       if( state )
       {
-        
+
         while( line_cur <= min_cur )
         {
           line_arr[line_count++] = line_cur;
@@ -271,7 +397,7 @@ window.cls.NewScriptPrototype = function()
               line_arr[line_count] = string.length;
             }
             return;
-          } 
+          }
         }
         switch( state )
         {
@@ -317,7 +443,7 @@ window.cls.NewScriptPrototype = function()
                 }
               }
             }
-            
+
             continue;
           }
           case 'SLASH':
@@ -345,7 +471,7 @@ window.cls.NewScriptPrototype = function()
               {
                 // skip the first '*'
                 slash_cur++;
-                
+
                 do
                 {
                   slash_cur = string.indexOf('*', slash_cur + 1);
@@ -359,7 +485,7 @@ window.cls.NewScriptPrototype = function()
                   {
                     line_arr[line_count] = line_cur;
                     state_arr[line_count++] = COMMENT;
-                    
+
                     if ((line_cur = string.indexOf(eol, line_cur) + 1) == 0)
                     {
                       if (line_arr[ line_arr.length - 1 ] < string.length)
@@ -383,17 +509,17 @@ window.cls.NewScriptPrototype = function()
                 while ( temp_char == ' ' && ( slash_cur - temp_count > 0 ) );
                 switch(temp_char)
                 {
-                  case '=': 
-                  case '(': 
-                  case '[': 
-                  case ':': 
-                  case ',': 
+                  case '=':
+                  case '(':
+                  case '[':
+                  case ':':
+                  case ',':
                   case '!':
                   {
                     temp_type = 'REG_EXP';
                     break;
                   }
-                  case '&': 
+                  case '&':
                   case '|':
                   {
                     if(string.charAt(slash_cur-temp_count) == temp_char)
@@ -467,7 +593,7 @@ window.cls.NewScriptPrototype = function()
         {
           line_arr[line_count] = string.length;
         }
-        
+
         return;
       }
     }

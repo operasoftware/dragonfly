@@ -9,7 +9,7 @@ cls.ResourceManager["1.0"].Response = function(arr, parent)
   this.requestID = arr[0];
   this.resourceID = arr[1];
   this.time = arr[2];
-  /** 
+  /**
     * HTTP response code, such as 200, 404, etc.
     */
   this.responseCode = arr[3];

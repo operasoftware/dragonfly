@@ -20,21 +20,21 @@ cls.Scope["1.0"].HostInfo = function(arr)
 cls.Scope["1.0"].Service = function(arr)
 {
   this.name = arr[0];
-  /** 
+  /**
     * This field contains the major and minor version number of the service.
     * The first number is the major version, the second is the minor, and any additional
     * numbers/strings are not of relevance but can be shown to the end-user if wanted.
-    * 
+    *
     * The major version determines major changes (ie. compatibility breaks), while
     * the minor version determines incremental changes (ie. backwards compatible).
     * The client must check these two numbers to ensure it is able to communicate
     * properly with the service. If the major version is different from the
     * versions the client is compatible with, or the minor version is less than
     * the required version, it must disconnect.
-    * 
+    *
     * Let us say a client supports version 1.6 and up and also version 2.0 and up.
     * It would do::
-    * 
+    *
     *   if major == 1 and minor >= 6 or major == 2:
     *     print "We support service version %d.%d" % (major, minor)
     *   else:

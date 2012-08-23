@@ -16,7 +16,7 @@ var Color = function()
 {
   this.__rgb = [0, 0, 0];
   this.__hsl = [0, 50, 50];
-  this.__hsv = [0, 50, 50]; 
+  this.__hsv = [0, 50, 50];
 }
 
 Color.KEYWORD = "keyword";
@@ -56,7 +56,7 @@ Color.prototype = new function()
     this.__hsv = this.rgb_to_hsv( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
-  
+
   /**
    * Set the luminosity component of the color
    * @param l {int} desired value of luminosity
@@ -141,7 +141,7 @@ Color.prototype = new function()
     this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
-  
+
   /**
    * Set the red, green and blue components of the color
    * @param c_arr {array} array containing red,green,blue ints
@@ -157,7 +157,7 @@ Color.prototype = new function()
     this.__hsl = this.rgb_to_hsl( this.__rgb[RED], this.__rgb[GREEN], this.__rgb[BLUE] );
     return this;
   }
-  
+
   /**
    * Set the blue component of the color
    * @param b {int} value of blue component
@@ -190,58 +190,58 @@ Color.prototype = new function()
     }
     return this;
   }
-  
+
   this._css_color_keywords =
   {
-    black: '000000', silver: 'C0C0C0', gray: '808080', white: 'FFFFFF', 
-    maroon: '800000', red: 'FF0000', purple: '800080', fuchsia: 'FF00FF', 
-    green: '008000', lime: '00FF00', olive: '808000', yellow: 'FFFF00', 
-    navy: '000080', blue: '0000FF', teal: '008080', aqua: '00FFFF', 
-    aliceblue: 'f0f8ff', antiquewhite: 'faebd7', aqua: '00ffff', 
-    aquamarine: '7fffd4', azure: 'f0ffff', beige: 'f5f5dc', bisque: 'ffe4c4', 
-    black: '000000', blanchedalmond: 'ffebcd', blue: '0000ff', 
-    blueviolet: '8a2be2', brown: 'a52a2a', burlywood: 'deb887', 
-    cadetblue: '5f9ea0', chartreuse: '7fff00', chocolate: 'd2691e', 
-    coral: 'ff7f50', cornflowerblue: '6495ed', cornsilk: 'fff8dc', 
-    crimson: 'dc143c', cyan: '00ffff', darkblue: '00008b', darkcyan: '008b8b', 
-    darkgoldenrod: 'b8860b', darkgray: 'a9a9a9', darkgreen: '006400', 
-    darkgrey: 'a9a9a9', darkkhaki: 'bdb76b', darkmagenta: '8b008b', 
-    darkolivegreen: '556b2f', darkorange: 'ff8c00', darkorchid: '9932cc', 
-    darkred: '8b0000', darksalmon: 'e9967a', darkseagreen: '8fbc8f', 
-    darkslateblue: '483d8b', darkslategray: '2f4f4f', darkslategrey: '2f4f4f', 
-    darkturquoise: '00ced1', darkviolet: '9400d3', deeppink: 'ff1493', 
-    deepskyblue: '00bfff', dimgray: '696969', dimgrey: '696969', 
-    dodgerblue: '1e90ff', firebrick: 'b22222', floralwhite: 'fffaf0', 
-    forestgreen: '228b22', fuchsia: 'ff00ff', gainsboro: 'dcdcdc', 
-    ghostwhite: 'f8f8ff', gold: 'ffd700', goldenrod: 'daa520', gray: '808080', 
-    green: '008000', greenyellow: 'adff2f', grey: '808080', honeydew: 'f0fff0', 
-    hotpink: 'ff69b4', indianred: 'cd5c5c', indigo: '4b0082', ivory: 'fffff0', 
-    khaki: 'f0e68c', lavender: 'e6e6fa', lavenderblush: 'fff0f5', 
-    lawngreen: '7cfc00', lemonchiffon: 'fffacd', lightblue: 'add8e6', 
-    lightcoral: 'f08080', lightcyan: 'e0ffff', lightgoldenrodyellow: 'fafad2', 
-    lightgray: 'd3d3d3', lightgreen: '90ee90', lightgrey: 'd3d3d3', 
-    lightpink: 'ffb6c1', lightsalmon: 'ffa07a', lightseagreen: '20b2aa', 
-    lightskyblue: '87cefa', lightslategray: '778899', lightslategrey: '778899', 
-    lightsteelblue: 'b0c4de', lightyellow: 'ffffe0', lime: '00ff00', 
-    limegreen: '32cd32', linen: 'faf0e6', magenta: 'ff00ff', maroon: '800000', 
-    mediumaquamarine: '66cdaa', mediumblue: '0000cd', mediumorchid: 'ba55d3', 
-    mediumpurple: '9370db', mediumseagreen: '3cb371', mediumslateblue: '7b68ee', 
-    mediumspringgreen: '00fa9a', mediumturquoise: '48d1cc', 
-    mediumvioletred: 'c71585', midnightblue: '191970', mintcream: 'f5fffa', 
-    mistyrose: 'ffe4e1', moccasin: 'ffe4b5', navajowhite: 'ffdead', 
-    navy: '000080', oldlace: 'fdf5e6', olive: '808000', olivedrab: '6b8e23', 
-    orange: 'ffa500', orangered: 'ff4500', orchid: 'da70d6', 
-    palegoldenrod: 'eee8aa', palegreen: '98fb98', paleturquoise: 'afeeee', 
-    palevioletred: 'db7093', papayawhip: 'ffefd5', peachpuff: 'ffdab9', 
-    peru: 'cd853f', pink: 'ffc0cb', plum: 'dda0dd', powderblue: 'b0e0e6', 
-    purple: '800080', red: 'ff0000', rosybrown: 'bc8f8f', royalblue: '4169e1', 
-    saddlebrown: '8b4513', salmon: 'fa8072', sandybrown: 'f4a460', 
-    seagreen: '2e8b57', seashell: 'fff5ee', sienna: 'a0522d', silver: 'c0c0c0', 
-    skyblue: '87ceeb', slateblue: '6a5acd', slategray: '708090', 
-    slategrey: '708090', snow: 'fffafa', springgreen: '00ff7f', 
-    steelblue: '4682b4', tan: 'd2b48c', teal: '008080', thistle: 'd8bfd8', 
-    tomato: 'ff6347', turquoise: '40e0d0', violet: 'ee82ee', wheat: 'f5deb3', 
-    white: 'ffffff', whitesmoke: 'f5f5f5', yellow: 'ffff00', 
+    black: '000000', silver: 'C0C0C0', gray: '808080', white: 'FFFFFF',
+    maroon: '800000', red: 'FF0000', purple: '800080', fuchsia: 'FF00FF',
+    green: '008000', lime: '00FF00', olive: '808000', yellow: 'FFFF00',
+    navy: '000080', blue: '0000FF', teal: '008080', aqua: '00FFFF',
+    aliceblue: 'f0f8ff', antiquewhite: 'faebd7', aqua: '00ffff',
+    aquamarine: '7fffd4', azure: 'f0ffff', beige: 'f5f5dc', bisque: 'ffe4c4',
+    black: '000000', blanchedalmond: 'ffebcd', blue: '0000ff',
+    blueviolet: '8a2be2', brown: 'a52a2a', burlywood: 'deb887',
+    cadetblue: '5f9ea0', chartreuse: '7fff00', chocolate: 'd2691e',
+    coral: 'ff7f50', cornflowerblue: '6495ed', cornsilk: 'fff8dc',
+    crimson: 'dc143c', cyan: '00ffff', darkblue: '00008b', darkcyan: '008b8b',
+    darkgoldenrod: 'b8860b', darkgray: 'a9a9a9', darkgreen: '006400',
+    darkgrey: 'a9a9a9', darkkhaki: 'bdb76b', darkmagenta: '8b008b',
+    darkolivegreen: '556b2f', darkorange: 'ff8c00', darkorchid: '9932cc',
+    darkred: '8b0000', darksalmon: 'e9967a', darkseagreen: '8fbc8f',
+    darkslateblue: '483d8b', darkslategray: '2f4f4f', darkslategrey: '2f4f4f',
+    darkturquoise: '00ced1', darkviolet: '9400d3', deeppink: 'ff1493',
+    deepskyblue: '00bfff', dimgray: '696969', dimgrey: '696969',
+    dodgerblue: '1e90ff', firebrick: 'b22222', floralwhite: 'fffaf0',
+    forestgreen: '228b22', fuchsia: 'ff00ff', gainsboro: 'dcdcdc',
+    ghostwhite: 'f8f8ff', gold: 'ffd700', goldenrod: 'daa520', gray: '808080',
+    green: '008000', greenyellow: 'adff2f', grey: '808080', honeydew: 'f0fff0',
+    hotpink: 'ff69b4', indianred: 'cd5c5c', indigo: '4b0082', ivory: 'fffff0',
+    khaki: 'f0e68c', lavender: 'e6e6fa', lavenderblush: 'fff0f5',
+    lawngreen: '7cfc00', lemonchiffon: 'fffacd', lightblue: 'add8e6',
+    lightcoral: 'f08080', lightcyan: 'e0ffff', lightgoldenrodyellow: 'fafad2',
+    lightgray: 'd3d3d3', lightgreen: '90ee90', lightgrey: 'd3d3d3',
+    lightpink: 'ffb6c1', lightsalmon: 'ffa07a', lightseagreen: '20b2aa',
+    lightskyblue: '87cefa', lightslategray: '778899', lightslategrey: '778899',
+    lightsteelblue: 'b0c4de', lightyellow: 'ffffe0', lime: '00ff00',
+    limegreen: '32cd32', linen: 'faf0e6', magenta: 'ff00ff', maroon: '800000',
+    mediumaquamarine: '66cdaa', mediumblue: '0000cd', mediumorchid: 'ba55d3',
+    mediumpurple: '9370db', mediumseagreen: '3cb371', mediumslateblue: '7b68ee',
+    mediumspringgreen: '00fa9a', mediumturquoise: '48d1cc',
+    mediumvioletred: 'c71585', midnightblue: '191970', mintcream: 'f5fffa',
+    mistyrose: 'ffe4e1', moccasin: 'ffe4b5', navajowhite: 'ffdead',
+    navy: '000080', oldlace: 'fdf5e6', olive: '808000', olivedrab: '6b8e23',
+    orange: 'ffa500', orangered: 'ff4500', orchid: 'da70d6',
+    palegoldenrod: 'eee8aa', palegreen: '98fb98', paleturquoise: 'afeeee',
+    palevioletred: 'db7093', papayawhip: 'ffefd5', peachpuff: 'ffdab9',
+    peru: 'cd853f', pink: 'ffc0cb', plum: 'dda0dd', powderblue: 'b0e0e6',
+    purple: '800080', red: 'ff0000', rosybrown: 'bc8f8f', royalblue: '4169e1',
+    saddlebrown: '8b4513', salmon: 'fa8072', sandybrown: 'f4a460',
+    seagreen: '2e8b57', seashell: 'fff5ee', sienna: 'a0522d', silver: 'c0c0c0',
+    skyblue: '87ceeb', slateblue: '6a5acd', slategray: '708090',
+    slategrey: '708090', snow: 'fffafa', springgreen: '00ff7f',
+    steelblue: '4682b4', tan: 'd2b48c', teal: '008080', thistle: 'd8bfd8',
+    tomato: 'ff6347', turquoise: '40e0d0', violet: 'ee82ee', wheat: 'f5deb3',
+    white: 'ffffff', whitesmoke: 'f5f5f5', yellow: 'ffff00',
     yellowgreen: '9acd32'
   }
 
@@ -259,7 +259,7 @@ Color.prototype = new function()
   // helper call to construct reg exps to verify css color tokens
   (function()
   {
-    var 
+    var
     // rgb component
     c = "\\s*(?:[0-1]?\\d{1,2}|2[0-4]\\d|25[0-5])\\s*",
     // alpha
@@ -271,10 +271,10 @@ Color.prototype = new function()
     // saturation and luminosity
     sl = "\\s*(?:[0]?\\d{1,2}" + of + "|100(?:\\.0+)?)%\\s*";
 
-    this._re_rgb = new RegExp("^rgb\\(" + [c, c, c].join(',') + "\\)$"); 
-    this._re_rgba = new RegExp("^rgba\\(" + [c, c, c, a].join(',') + "\\)$"); 
-    this._re_hsl = new RegExp("^hsl\\(" + [h, sl, sl].join(',') + "\\)$");   
-    this._re_hsla = new RegExp("^hsla\\(" + [h, sl, sl, a].join(',') + "\\)$"); 
+    this._re_rgb = new RegExp("^rgb\\(" + [c, c, c].join(',') + "\\)$");
+    this._re_rgba = new RegExp("^rgba\\(" + [c, c, c, a].join(',') + "\\)$");
+    this._re_hsl = new RegExp("^hsl\\(" + [h, sl, sl].join(',') + "\\)$");
+    this._re_hsla = new RegExp("^hsla\\(" + [h, sl, sl, a].join(',') + "\\)$");
   }).apply(this);
 
   this.parseCSSColor = function(in_str)
@@ -287,7 +287,7 @@ Color.prototype = new function()
     {
       this.setHex("000000");
       this.alpha = 0;
-      this.type = this.KEYWORD; 
+      this.type = this.KEYWORD;
       return this;
     }
     if (in_str in this._css_color_keywords)
@@ -344,7 +344,7 @@ Color.prototype = new function()
     return null;
   }
 
-    
+
   this.serializeToCSSColor = function(type)
   {
     switch (type)
@@ -354,7 +354,7 @@ Color.prototype = new function()
 
       case Color.RGB:
         return this.rgb;
-      
+
       case Color.RGBA:
         return this.rgba;
 
@@ -476,7 +476,7 @@ Color.prototype = new function()
   {
     return [this._round_val(this.__rgb[0], 255, 0), this._round_val(this.__rgb[1], 255, 0), this._round_val(this.__rgb[2], 255, 0)];
   }
-  
+
   this.clone = function(color)
   {
     if(color instanceof Color)
@@ -487,9 +487,9 @@ Color.prototype = new function()
       this.__hsl[0] = color.__hsl[0];
       this.__hsl[1] = color.__hsl[1];
       this.__hsl[2] = color.__hsl[2];
-      this.__hsv[0] = color.__hsv[0]; 
-      this.__hsv[1] = color.__hsv[1]; 
-      this.__hsv[2] = color.__hsv[2]; 
+      this.__hsv[0] = color.__hsv[0];
+      this.__hsv[1] = color.__hsv[1];
+      this.__hsv[2] = color.__hsv[2];
       this.alpha = color.alpha;
       this.type = color.type; // hex, rgb, rgba, hsl, hsla, keyword
       this.cssvalue = color.cssvalue;
@@ -505,6 +505,30 @@ Color.prototype = new function()
     return this.rgb_to_hex_c(this.__rgb).toUpperCase();
   }
 
+  // http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  this.getLuminance = function()
+  {
+    var RGB = this.__rgb.map(function(c)
+    {
+      var cs =  c / 255;
+      return cs <= 0.03928
+           ? cs / 12.92
+           : Math.pow(((cs + 0.055) / 1.055), 2.4);
+    });
+    return 0.2126 * RGB[0] + 0.7152 * RGB[1] + 0.0722 * RGB[2];
+  };
+
+  // http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  this.getContrastRatio = function(color2)
+  {
+    var l1 = this.getLuminance();
+    var l2 = color2.getLuminance();
+    return l1 > l2
+         ? (l1 + 0.05) / (l2 + 0.05)
+         : (l2 + 0.05) / (l1 + 0.05);
+  };
+
+
   this._alpha2string = function()
   {
     if (typeof this.alpha == 'number')
@@ -519,9 +543,9 @@ Color.prototype = new function()
     }
     return "1";
   }
-  
-  // convenience 
-  
+
+  // convenience
+
   this.__property = function(name, setter, getter)
   {
     this.__defineGetter__(name, function()
@@ -533,22 +557,22 @@ Color.prototype = new function()
       this[setter](val);
     });
   };
-  
+
   this.__defineGetter__('hsl', function()
   {
     return (
-      "hsl(" + 
+      "hsl(" +
       this.getHue() + ', ' +
       this.getSaturation() + '%, ' +
       this.getLuminosity() + '%' +
       ")");
   });
   this.__defineSetter__('hsl', function(val){}); // parse hsl?
-  
+
   this.__defineGetter__('hsla', function()
   {
     return (
-      "hsla(" + 
+      "hsla(" +
       this.getHue() + ', ' +
       this.getSaturation() + '%, ' +
       this.getLuminosity() + '%, ' +
@@ -556,33 +580,33 @@ Color.prototype = new function()
       ")");
   });
   this.__defineSetter__('hsla', function(val){}); // parse hsl?
-  
+
   this.__defineGetter__('hsv', function()
   {
     return (
-      "hsv(" + 
+      "hsv(" +
       this.getHue() + ', ' +
       this.getSaturationV() + '%, ' +
       this.getValue() + '%' +
       ")");
   });
   this.__defineSetter__('hsv', function(val){}); // parse hsv?
-  
+
   this.__defineGetter__('rgb', function()
   {
     return (
-      "rgb(" + 
+      "rgb(" +
       this.getRed() + ', ' +
       this.getGreen() + ', ' +
-      this.getBlue() + 
+      this.getBlue() +
       ")");
   });
   this.__defineSetter__('rgb', function(val){}); // parse rgb?
-  
+
   this.__defineGetter__('rgba', function()
   {
     return (
-      "rgba(" + 
+      "rgba(" +
       this.getRed() + ', ' +
       this.getGreen() + ', ' +
       this.getBlue() + ', ' +
@@ -590,7 +614,7 @@ Color.prototype = new function()
       ")");
   });
   this.__defineSetter__('rgba', function(val){}); // parse rgb?
-  
+
   this.__defineGetter__('hhex', function()
   {
     return "#" + this.getHex();
@@ -611,15 +635,15 @@ Color.prototype = new function()
     const NAME = 0, SETTER = 1, GETTER = 2;
     this.__property(property[NAME], property[SETTER], property[GETTER]);
   }, this);
-  
-  const 
-  RED = 0, 
-  GREEN = 1, 
+
+  const
+  RED = 0,
+  GREEN = 1,
   BLUE = 2,
-  HUE = 0, 
-  SAT = 1, 
+  HUE = 0,
+  SAT = 1,
   LUM = 2;
-  
+
   /**
    * return val bounded to upper or lower if it over/underflows
    * @private
@@ -636,7 +660,7 @@ Color.prototype = new function()
     }
     return val > upper ? upper : val < lower ? lower : val;
   }
-  
+
   /**
    * rounds off val and bounds it to upper and lower
    * @see Color#this._fix_range
@@ -651,8 +675,8 @@ Color.prototype = new function()
     val = Math.round(val);
     return val > upper ? upper : val < lower ? lower : val;
   }
-  
-  this._hsl_or_hsv_to_rgb = function ( h, s, l, is_hsl ) 
+
+  this._hsl_or_hsv_to_rgb = function ( h, s, l, is_hsl )
   {
     var ret = this.hue_to_rgb(h), i = 0;
     if( is_hsl)
@@ -675,7 +699,7 @@ Color.prototype = new function()
     return ret;
   }
 
-  this._rgb_to_hsl_or_hsv = function ( r, g, b, is_to_hsl ) 
+  this._rgb_to_hsl_or_hsv = function ( r, g, b, is_to_hsl )
   {
     r /= 255;
     g /= 255;
@@ -688,7 +712,7 @@ Color.prototype = new function()
     var mincolor = Math.min(r, g, b);
     var delta = maxcolor - mincolor;
     var sum = maxcolor + mincolor;
-    
+
     if( is_to_hsl )
     {
       l = sum / 2;
@@ -697,7 +721,7 @@ Color.prototype = new function()
     {
       l = maxcolor;
     }
-    
+
     if( delta == 0 )
     {
       s = h = 0;
@@ -729,24 +753,24 @@ Color.prototype = new function()
         h = 2.0 + ( b - r ) / delta;
       }
       else
-      { 
+      {
         h = 4.0 + ( r - g ) / delta;
       }
     }
 
     h *= 60;
-    if( h > 360 ) 
-    { 
+    if( h > 360 )
+    {
       h = 360;
     }
-    else if ( h < 0 ) 
+    else if ( h < 0 )
     {
       h += 360;
     }
-    else if (h == 0 && ((is_to_hsl && this.__hsv[HUE] == 360) || 
+    else if (h == 0 && ((is_to_hsl && this.__hsv[HUE] == 360) ||
                         (!is_to_hsl && this.__hsl[HUE] == 360)))
     {
-      h = 360; 
+      h = 360;
     }
     s *= 100;
     if( s > 100 )
@@ -754,20 +778,20 @@ Color.prototype = new function()
       s = 100;
     }
     l *= 100;
-    if( l > 100 ) 
+    if( l > 100 )
     {
       l = 100;
     }
 
-    return [ h, s, l ]; 
+    return [ h, s, l ];
   }
-  
+
   this.rgb_c_to_hex_c = function(c)
   {
     c = this._round_val(c, 255, 0);
     return ( c < 16 ? '0' : '' ) + c.toString(16);
   }
-  
+
   this.rgb_to_hex_c = function(c_arr)
   {
     var ret = '', i = 0, c = 0;
@@ -794,7 +818,7 @@ Color.prototype = new function()
   {
     h = h % 360;
     var delta = h % 60;
-    h -= delta;	
+    h -= delta;
     delta = ( 255 / 60 * delta ) >> 0;
     if( h < 60 ) return [0xff, delta, 0];
     if( h < 120 ) return  [0xff - delta, 0xff, 0];
@@ -804,22 +828,22 @@ Color.prototype = new function()
     if( h < 360 ) return  [0xff, 0, 0xff - delta];
   }
 
-  this.hsl_to_rgb = function ( h, s, l ) 
+  this.hsl_to_rgb = function ( h, s, l )
   {
     return this._hsl_or_hsv_to_rgb( h, s, l, true);
   }
 
-  this.hsv_to_rgb = function ( h, s, v ) 
+  this.hsv_to_rgb = function ( h, s, v )
   {
     return this._hsl_or_hsv_to_rgb( h, s, v, false);
   }
 
-  this.rgb_to_hsv = function ( r, g, b ) 
+  this.rgb_to_hsv = function ( r, g, b )
   {
     return this._rgb_to_hsl_or_hsv ( r, g, b, false );
   }
 
-  this.rgb_to_hsl = function ( r, g, b ) 
+  this.rgb_to_hsl = function ( r, g, b )
   {
     return this._rgb_to_hsl_or_hsv ( r, g, b, true );
   }

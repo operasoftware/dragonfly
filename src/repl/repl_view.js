@@ -346,7 +346,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._render_input = function(str)
   {
     window.simple_js_parser.format_source(str).forEach(function(line, index) {
-      this._add_line('<span class="repl-line-marker">' + 
+      this._add_line('<span class="repl-line-marker">' +
                        (index ? "... " : "&gt;&gt;&gt; ") +
                      "</span>" + line);
     }, this);
@@ -455,7 +455,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._construct_line = function(pre, prop, post, is_partial_completion)
   {
     var is_number_without_leading_zero = /^0$|^[1-9][0-9]*$/;
-    if (!is_partial_completion && 
+    if (!is_partial_completion &&
         !JSSyntax.is_valid_identifier(prop) &&
         this._autocompletion_scope)
     {
@@ -521,6 +521,9 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_completer = function(props)
   {
+    if (!(this._linelist && this._textarea))
+      return;
+
     if (props)
     {
       var localpart = props.identifier;
@@ -714,7 +717,11 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._on_profile_disabled_bound = function(msg)
   {
     if (msg.profile == window.app.profiles.DEFAULT)
+    {
       this.ondestroy();
+      this._toolbar_visibility = false;
+      topCell.setTooolbarVisibility("command_line", false);
+    }
   }.bind(this);
 
   this["_handle_action_clear"] = function(evt, target)
@@ -910,7 +917,7 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   /**
    * action click
    */
-  this.onclick = function(event) 
+  this.onclick = function(event)
   {
     if (!this._container)
       return;
@@ -943,18 +950,14 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
 
   this._handle_repl_show_log_entry_source_bound = function(event, target)
   {
-    var line = parseInt(target.getAttribute("data-scriptline"));
-    var script = parseInt(target.getAttribute("data-scriptid"));
-    var sourceview = window.views.js_source;
+    if (window.Tooltips)
+      window.Tooltips.hide_tooltip();
 
-    // This will also be set from show_and_flash_line, but setting it before showing
-    // the view prevents the old script from flashing.
-    window.runtimes.setSelectedScript(script);
-    UI.get_instance().show_view("js_mode");
-    if (sourceview)
-    {
-      sourceview.show_and_flash_line(script, line);
-    }
+    var script_id = Number(target.getAttribute("data-scriptid"));
+    var start_line = Number(target.getAttribute("data-scriptline"));
+    var end_line = Number(target.getAttribute("data-script-endline"));
+    if (window.views.js_source)
+      window.views.js_source.show_script(script_id, start_line, end_line);
   }.bind(this);
 
   this.required_services = ["ecmascript-debugger", "console-logger"];
@@ -1046,14 +1049,14 @@ cls.ReplView.create_ui_widgets = function()
 
   var broker = ActionBroker.get_instance();
   var contextmenu = ContextMenu.get_instance();
-  var default_menu = 
+  var default_menu =
   [
     {
       label: ui_strings.S_CLEAR_COMMAND_LINE_LOG,
       handler: function() {
         broker.dispatch_action("command_line", "clear");
       }
-    }, 
+    },
   ];
   var with_close_option = default_menu.slice(0);
   with_close_option.push(
@@ -1064,7 +1067,7 @@ cls.ReplView.create_ui_widgets = function()
     }
   });
 
-  contextmenu.register("command_line", 
+  contextmenu.register("command_line",
   [
     {
       callback: function(event, target)

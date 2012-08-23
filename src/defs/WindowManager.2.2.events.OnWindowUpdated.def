@@ -1,0 +1,49 @@
+<span class="comment">/** 
+ * TODO: We probably want a lot more information about each window, like URL, shortcut
+ *       icon, etc.
+ */</span>
+message <span class="message">WindowInfo</span>
+{
+  required <span class="number">uint32</span> windowID      = 1; 
+  required <span class="string">string</span> title         = 2; 
+  <span class="comment">/** 
+   * 
+   * TODO: Some of these are obsolete, like "ad". Figure out which ones should really be present.
+   * 
+   * Type is one of:
+   * - "normal"
+   * - "download"
+   * - "cache"
+   * - "plugins"
+   * - "history"
+   * - "help"
+   * - "mail_view"
+   * - "mail_compose"
+   * - "newsfeed_view"
+   * - "ad"
+   * - "im_view"
+   * - "p2p_view"
+   * - "brand_view"
+   * - "print_selection"
+   * - "js_console"
+   * - "gadget"
+   * - "controller"
+   * - "info"
+   * - "dialog"
+   * - "thumbnail"
+   * - "normal_hidden"
+   * - "devtools"
+   */</span>
+  required <span class="string">string</span> windowType    = 3; 
+  <span class="comment">/** 
+   * The `window-id` of the window who opened the window in question,
+   * or 0 if it was not opened by another window.
+   */</span>
+  required <span class="number">uint32</span> openerID      = 4; 
+  <span class="comment">/** 
+   * The name of the extension if window type is 'gadget'.
+   * 
+   * @since 2.2
+   */</span>
+  optional <span class="string">string</span> extensionName = 5; 
+}

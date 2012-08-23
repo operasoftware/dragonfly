@@ -111,9 +111,12 @@
 
 .highlighted-line
 {
-  background-image: -o-linear-gradient(90deg, 
+  background-image: -o-linear-gradient(90deg,
                                        #d4e3f4,
                                        #d4e3f4);
+  background-image: linear-gradient(0deg,
+                                    #d4e3f4,
+                                    #d4e3f4);
   background-repeat: no-repeat;
 }
 

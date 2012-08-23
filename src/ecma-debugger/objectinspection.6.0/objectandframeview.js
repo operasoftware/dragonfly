@@ -22,10 +22,10 @@ cls.EcmascriptDebugger["6.0"].InspectionView = function(id, name, container_clas
   {
     return (
     [
-      'div', 
-        ui_strings.M_VIEW_LABEL_NO_INSPECTION, 
+      'div',
+        ui_strings.M_VIEW_LABEL_NO_INSPECTION,
         'class', 'not-content inspection'
-    ]); 
+    ]);
   };
 
   this._on_object_selected = function(msg)

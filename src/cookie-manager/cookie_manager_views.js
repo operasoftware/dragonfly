@@ -166,12 +166,12 @@ cls.CookieManager.CookieManagerViewBase = function()
         no_group_changing: true
       }
     };
-    this._sortable_table = new SortableTable(this._tabledef, 
-                                             null, 
-                                             null, 
-                                             "domain", 
-                                             "runtime", 
-                                             true, 
+    this._sortable_table = new SortableTable(this._tabledef,
+                                             null,
+                                             null,
+                                             "domain",
+                                             "runtime",
+                                             true,
                                              "cookie-inspector");
 
     this._sortable_table.add_listener("before-render", this._before_table_render.bind(this));
@@ -421,7 +421,7 @@ cls.CookieManager.CookieManagerViewBase = function()
 
       var name         = edit_tr.querySelector("[name='name']").value.trim();
       var value        = edit_tr.querySelector("[name='value']").value;
-      var expires      = new Date(edit_tr.querySelector("[name='expires']").value || 0).getTime();
+      var expires      = edit_tr.querySelector("[name='expires']").value;
       var path         = edit_tr.querySelector("[name='path']").value.trim();
       var is_secure    = +(is_secure_input && is_secure_input.checked);
       var is_http_only = +(is_http_only_input && is_http_only_input.checked);
@@ -429,6 +429,14 @@ cls.CookieManager.CookieManagerViewBase = function()
       var runtime      = runtime_elem && parseInt(runtime_elem.value.split(",")[0]);
       // "domain" is val of [input] (with add_cookie service present), or runtimes .hostname
       var domain       = domain_input && domain_input.value.trim() || runtime && this.data._rts[runtime].hostname;
+
+      // Remove "0" milliseconds to make sure Date can parse the string (see CORE-47780).
+      // Milliseconds are always 0 for cookies.
+      // This make sense even if we got a UTC value or a value with timezone-offset.
+      expires = expires.replace(/\.0+/, "");
+
+      // Attempt to treat this as localeISOString first.
+      expires = Date.fromLocaleISOString(expires) || Date.parse(expires) || 0;
 
       var object_id = edit_tr.getAttribute("data-object-id");
       var old_cookie;

@@ -16,7 +16,7 @@
   *   max_y: <number> // optional
   * }
   */
-    
+
 var Slider = function(config)
 {
   /* interface */
@@ -149,18 +149,18 @@ Slider.prototype = new function()
 
       if (this._is_invers_y)
         this._w_mouse_y = this._max_y - this._w_mouse_y + this._min_y;
-        
+
       this._w_old_x = this._has_x ? this.x : 0;
       this._w_old_y = this. _has_y ? this.y : 0;
       var d = this._distance(this._w_old_x, this._w_old_y, this._w_mouse_x, this._w_mouse_y);
       var unit_count = d / this._w_unit;
       this._w_delta_x = this._has_x ? (this._w_mouse_x - this._w_old_x) / unit_count : 0;
       this._w_delta_y = this._has_y ? (this._w_mouse_y - this._w_old_y) / unit_count : 0;
-      
+
       if (this._is_invers_x)
       {
-        this._w_delta_x *= -1; 
-        this._w_delta_y *= -1; 
+        this._w_delta_x *= -1;
+        this._w_delta_y *= -1;
       }
 
       if (this._has_x && this._has_y)
@@ -254,7 +254,7 @@ Slider.prototype = new function()
       this._onmousemoveinterval_bound = null;
     }
   }
-  
+
   this._set_axis = function(axis, min, max, pixel_range)
   {
     this['_has_' + axis] = true;
@@ -284,7 +284,7 @@ Slider.prototype = new function()
       this._ref_element = container.getElementsByClassName(slider_base_class)[0];
       this._element = container.getElementsByClassName(slider_class)[0];
       box = this._ref_element.getBoundingClientRect();
-      
+
       if (config.onxy)
       {
         this.onxy = config.onxy;
@@ -353,5 +353,5 @@ Slider.prototype = new function()
   });
 
   this.__defineGetter__('y', function() {return this.__y;});
-  
+
 };

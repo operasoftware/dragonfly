@@ -10,7 +10,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   this.unregister = function(name, tooltip) {};
   this.is_inside_tooltip = function(event, close_if_not_inside) {};
 
-  var Tooltip = function(keep_on_hover, set_selected, max_height_target) 
+  var Tooltip = function(keep_on_hover, set_selected, max_height_target)
   {
     this._init(keep_on_hover, set_selected, max_height_target);
   };
@@ -26,7 +26,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       * prevent that the tooltip is shown before it has content.
       */
     this.ontooltip = function(event, target){};
-    
+
     /**
       * Called if the tooltip gets hidden.
       */
@@ -41,19 +41,19 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     /**
       * To show the tooltip.
       * By default the tooltip is positioned in relation to the element
-      * with the data-tooltip attribute, the tooltip-target. If the method 
-      * is called with the optional 'box' argument that box is used 
+      * with the data-tooltip attribute, the tooltip-target. If the method
+      * is called with the optional 'box' argument that box is used
       * instead to position the tooltip.
       * @param content {String or Template} The content for the tooltip. Optional.
-      * If not set the 'data-tooltip-text' value on the target element will be 
+      * If not set the 'data-tooltip-text' value on the target element will be
       * used instead.
-      * @param box The box to position the tooltip. Optional. The top, bottom, 
-      * right and left property describe the position and dimension of the 
-      * tooltip-target. Additionally the box needs a mouse_x and a mouse_y 
-      * position. If the height of the tooltip-target is less than 1/3 of 
-      * the window height, it is displayed above or beyond the tooltip-target, 
-      * either on the left or the right side of the mouse-x position and vice 
-      * versa if the hight is bigger. By default the box is created 
+      * @param box The box to position the tooltip. Optional. The top, bottom,
+      * right and left property describe the position and dimension of the
+      * tooltip-target. Additionally the box needs a mouse_x and a mouse_y
+      * position. If the height of the tooltip-target is less than 1/3 of
+      * the window height, it is displayed above or beyond the tooltip-target,
+      * either on the left or the right side of the mouse-x position and vice
+      * versa if the hight is bigger. By default the box is created
       * automatically with the mouse position and the target.
       */
     this.show = function(content, box){};
@@ -69,9 +69,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
       this.set_selected = set_selected;
       this.max_height_target = max_height_target;
     }
-    
+
     /* implementation */
-    
+
     this.show = function(content, box)
     {
       return _show_tooltip(this, content, box);
@@ -95,8 +95,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
   const DATA_TOOLTIP = "data-tooltip";
   const DATA_TOOLTIP_TEXT = "data-tooltip-text";
-  const HIDE_DELAY = 120;
-  const SHOW_DELAY = 110;
+  const HOVER_DELAY = 70;
   const DISTANCE_X = 5;
   const DISTANCE_Y = 5;
   const MARGIN_Y = 30;
@@ -115,6 +114,8 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   var _window_height = 0;
   var _padding_width = -1;
   var _padding_height = -1;
+  var _hover_delay = 0;
+  var _hover_events = [];
 
   var store_window_dimensions = function()
   {
@@ -129,12 +130,24 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     _ctx_stack.push(_tooltip_ctxs[_ctx_stack.length]);
     _cur_ctx = _ctx_stack.last;
-  }
+  };
 
   var _mouseover = function(event)
   {
-    if (_contextmenu && _contextmenu.is_visible)
-      return; 
+    _hover_events.push(event);
+    if (!_hover_delay)
+      _hover_delay = setTimeout(_handle_mouseover, HOVER_DELAY);
+  };
+
+  var _handle_mouseover = function()
+  {
+    _hover_delay = 0;
+    var event = _hover_events.last;
+    while (_hover_events.length)
+      _hover_events.pop();
+
+    if (!event || (_contextmenu && _contextmenu.is_visible))
+      return;
 
     var ele = event.target;
     var index = _ctx_stack.length - 1;
@@ -155,6 +168,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         ctx.last_box = null;
         ctx.clear_show_timeout();
         ctx.clear_hide_timeout();
+        ctx.accept_call = true;
         _push_ctx();
       }
       else
@@ -170,7 +184,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         _ctx_stack.last.handle_mouse_leave(event);
         if (_ctx_stack.length == index + 2)
           break;
-        
+
         else
           _ctx_stack.pop().hide_tooltip();
       }
@@ -179,9 +193,9 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
     _cur_ctx = _ctx_stack.last;
 
     while (ele && ele.nodeType == Node.ELEMENT_NODE)
-    {      
+    {
       var name = ele.getAttribute(DATA_TOOLTIP);
-      if (name && _tooltips[name]) 
+      if (name && _tooltips[name])
       {
         if (ele == _cur_ctx.last_handler_ele)
           return;
@@ -221,7 +235,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
 
     if (_cur_ctx.current_tooltip)
       _cur_ctx.accept_call = false;
-    
+
     _cur_ctx.set_hide_timeout();
   };
 
@@ -249,16 +263,16 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
           var value = parseInt(style.getPropertyValue(prop));
           if (value)
           {
-            if (prop.contains("left") || prop.contains("right")) 
+            if (prop.contains("left") || prop.contains("right"))
               _padding_width += value;
             else
               _padding_height += value;
           }
-        });      
+        });
       }
-                                     
+
       if (!content && _cur_ctx.last_handler_ele)
-        content = ["span", 
+        content = ["span",
                      _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT),
                      "class", "basic-tooltip"];
 
@@ -282,19 +296,18 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         {
           box.mouse_x = _cur_ctx.last_event.clientX;
           box.mouse_y = _cur_ctx.last_event.clientY;
-        } 
+        }
         else
         {
           box.mouse_x = Math.floor(box.left + (box.right - box.left) / 2);
           box.mouse_y = Math.floor(box.top + (box.bottom - box.top) / 2);
-        }        
+        }
       }
 
       if (box)
       {
         var max_h = 0;
         var max_w = 0;
-
         var max_height_target = tooltip.max_height_target
                              && _cur_ctx.tooltip_ele.querySelector(tooltip.max_height_target)
                              || _cur_ctx.tooltip_ele;
@@ -319,7 +332,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.bottom = bottom + "px";
             _cur_ctx.tooltip_ele.style.top = "auto";
             max_h = _window_height - bottom - MARGIN_Y - _padding_height;
-            max_height_target.style.maxHeight = max_h + "px"; 
+            max_height_target.style.maxHeight = max_h + "px";
           }
 
           if (box.mouse_x < _window_width / 2)
@@ -328,7 +341,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            max_height_target.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px";
           }
           else
           {
@@ -336,20 +349,20 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
             _cur_ctx.tooltip_ele.style.right = right + "px";
             _cur_ctx.tooltip_ele.style.left = "auto";
             max_w = _window_width - right - MARGIN_X - _padding_width;
-            max_height_target.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px";
           }
-          
+
         }
         else
         {
-          // positioning vertically 
+          // positioning vertically
           if (_window_width - box.right > box.left)
           {
             var left = box.right + DISTANCE_X;
             _cur_ctx.tooltip_ele.style.left = left + "px";
             _cur_ctx.tooltip_ele.style.right = "auto";
             max_w = _window_width - left - MARGIN_X - _padding_width;
-            max_height_target.style.maxWidth = max_w + "px"; 
+            max_height_target.style.maxWidth = max_w + "px";
           }
           else
           {
@@ -379,17 +392,29 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         }
       }
     }
-    
+
     return ret;
   };
 
   var _hide_tooltip = function(tooltip)
   {
-    if (_cur_ctx && _cur_ctx.current_tooltip && 
-        tooltip == _cur_ctx.current_tooltip &&
-        _cur_ctx.accept_call)
+    if (!_cur_ctx)
+      return;
+
+    var index = _ctx_stack.length - 1;
+    var ctx = _ctx_stack[index];
+    while (ctx && index > -1)
     {
-      _cur_ctx.hide_tooltip(true);
+      if (ctx.current_tooltip && tooltip == ctx.current_tooltip && ctx.accept_call)
+      {
+        while (_ctx_stack.length > index + 1)
+          _ctx_stack.pop().hide_tooltip(true);
+
+        ctx.hide_tooltip(true);
+        _cur_ctx = ctx;
+        break;
+      }
+      ctx = _ctx_stack[--index]
     }
   };
 
@@ -397,7 +422,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   {
     if ("ContextMenu" in window)
       _contextmenu = ContextMenu.get_instance();
-    
+
     _push_ctx();
     document.addEventListener("mouseover", _mouseover, false);
     document.documentElement.addEventListener("mouseleave", _mouseover, false);
@@ -415,7 +440,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
         _setup();
       else
         document.addEventListener("DOMContentLoaded", _setup, false);
-      _is_setup = true;  
+      _is_setup = true;
     }
 
     if (typeof set_selected != "boolean")
@@ -450,7 +475,13 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
   this.hide_tooltip = function()
   {
     if (_cur_ctx)
+    {
+      while (_ctx_stack.length > 1)
+        _ctx_stack.pop().hide_tooltip();
+
+      _cur_ctx = _ctx_stack.last;
       _cur_ctx.hide_tooltip();
-  }
+    }
+  };
 
 }).apply(Tooltips);

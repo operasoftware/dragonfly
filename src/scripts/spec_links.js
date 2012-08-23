@@ -939,7 +939,7 @@ SpecLinks.specs = {
     "pageshow": "http://www.w3.org/TR/html5/history.html#event-pageshow",
     "popstate": "http://www.w3.org/TR/html5/history.html#event-popstate",
     "readystatechange": "http://www.w3.org/TR/html5/dom.html#event-readystatechange",
-    
+
     // HTML5 Elements
     "dataset": "http://www.w3.org/TR/html5/elements.html#dom-dataset",
 
@@ -1297,18 +1297,18 @@ SpecLinks.specs = {
     "Position": "http://www.w3.org/TR/geolocation-API/#position_interface",
     "Coordinates": "http://www.w3.org/TR/geolocation-API/#coordinates_interface",
     "PositionError": "http://www.w3.org/TR/geolocation-API/#position_error_interface",
-    
+
     // File API
-    "Blob": "http://www.w3.org/TR/FileAPI/#blob", 
-    "File": "http://www.w3.org/TR/FileAPI/#file", 
-    "lastModifiedDate": "http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate", 
-    "FileReader": "http://www.w3.org/TR/FileAPI/#FileReader-interface", 
-    "readAsArrayBuffer": "http://www.w3.org/TR/FileAPI/#dfn-readAsArrayBuffer", 
-    "readAsBinaryString": "http://www.w3.org/TR/FileAPI/#dfn-readAsBinaryStringAsync", 
-    "readAsText": "http://www.w3.org/TR/FileAPI/#dfn-readAsText", 
-    "readAsDataURL": "http://www.w3.org/TR/FileAPI/#dfn-readAsDataURL", 
-    "FileReaderSync": "http://www.w3.org/TR/FileAPI/#FileReaderSync", 
-    "FileError": "http://www.w3.org/TR/FileAPI/#FileErrorInterface",   
+    "Blob": "http://www.w3.org/TR/FileAPI/#blob",
+    "File": "http://www.w3.org/TR/FileAPI/#file",
+    "lastModifiedDate": "http://www.w3.org/TR/FileAPI/#dfn-lastModifiedDate",
+    "FileReader": "http://www.w3.org/TR/FileAPI/#FileReader-interface",
+    "readAsArrayBuffer": "http://www.w3.org/TR/FileAPI/#dfn-readAsArrayBuffer",
+    "readAsBinaryString": "http://www.w3.org/TR/FileAPI/#dfn-readAsBinaryStringAsync",
+    "readAsText": "http://www.w3.org/TR/FileAPI/#dfn-readAsText",
+    "readAsDataURL": "http://www.w3.org/TR/FileAPI/#dfn-readAsDataURL",
+    "FileReaderSync": "http://www.w3.org/TR/FileAPI/#FileReaderSync",
+    "FileError": "http://www.w3.org/TR/FileAPI/#FileErrorInterface",
     "FileException": "http://www.w3.org/TR/FileAPI/#FileException",
 
     // ES5 (put in a new section? (using Mike Smith’s version as real spec is PDF)

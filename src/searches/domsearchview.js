@@ -1,12 +1,12 @@
 ﻿window.cls || (window.cls = {});
 
-/** Inherits from ViewBase, 
+/** Inherits from ViewBase,
    @see ../build-application/build_ecmascript_debugger_6_0.js
 **/
 cls.DOMSearchView = function(id, name, container_class)
 {
 
-  const 
+  const
   SEARCHFIELD = 0,
   MOVE_HIGHLIGHT_UP = 1,
   MOVE_HIGHLIGHT_DOWN = 2,
@@ -51,7 +51,7 @@ cls.DOMSearchView = function(id, name, container_class)
     if (this._input)
     {
       this._input.selectionStart = 0;
-      this._input.selectionEnd = this._input.value.length; 
+      this._input.selectionEnd = this._input.value.length;
       this._input.focus();
     }
   }.bind(this);
@@ -89,21 +89,26 @@ cls.DOMSearchView = function(id, name, container_class)
 
   this._show_search_hit = function(event, target)
   {
-    this._search.update_match_highlight(event, target);
-    this._search_hit = this._search.get_search_hit();
-    if (window.host_tabs.is_runtime_of_active_tab(this._search_hit.runtime_id))
+    if (target.get_ancestor(".panel-search-container"))
     {
-      eventHandlers.click['inspect-node-link'](event, target);
+      this._search.update_match_highlight(event, target);
+      this._search_hit = this._search.get_search_hit();
+      if (window.host_tabs.is_runtime_of_active_tab(this._search_hit.runtime_id))
+        eventHandlers.click['inspect-node-link'](event, target);
+      else
+        new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
     }
     else
     {
-      new ConfirmDialog(ui_strings.D_REDO_SEARCH, this._redo_search_bound).show();
+      var rt_id = Number(target.get_ancestor_attr("data-rt-id"));
+      if (window.host_tabs.is_runtime_of_active_tab(rt_id))
+        eventHandlers.click['inspect-node-link'](event, target);
     }
   };
 
   this._onsettingchange = function(msg)
   {
-    if (msg.id == "dom" && 
+    if (msg.id == "dom" &&
         (msg.key == "dom-tree-style" || msg.key == "force-lowercase"))
     {
       this.update();
@@ -154,20 +159,20 @@ cls.DOMSearchView = function(id, name, container_class)
       this.__defineSetter__(prop, function(){});
     }, this);
 
-    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] = 
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_DOWN].handler] =
       this._handlers['highlight-next-match'];
-    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] = 
+    eventHandlers.click[this.controls[MOVE_HIGHLIGHT_UP].handler] =
       this._handlers['highlight-previous-match'];
     eventHandlers.mouseover[HANDLER] =
       this._search.clear_style_highlight_node.bind(this._search);
     eventHandlers.click[SHOW_SEARCH_MATCH] = this._show_search_hit.bind(this);
-    eventHandlers.mouseover[SHOW_SEARCH_MATCH] = 
+    eventHandlers.mouseover[SHOW_SEARCH_MATCH] =
       eventHandlers.mouseover['inspect-node-link'];
     this._broker = ActionBroker.get_instance();
     this._broker.register_handler(this);
     this._broker.get_global_handler()
-    .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts, 
-                                this.handle.bind(this), 
+    .register_shortcut_listener(this.controls[SEARCHFIELD].shortcuts,
+                                this.handle.bind(this),
                                 ['highlight-next-match',
                                  'highlight-previous-match',
                                  'hide-search']);

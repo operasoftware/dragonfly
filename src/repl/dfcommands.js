@@ -9,7 +9,7 @@ DFLCommands.commands.help =
     data.add_message("Available commands:");
     var names = [];
     for (var key in this._dfcommands)
-    { 
+    {
       if (this._dfcommands.hasOwnProperty(key))
         names.push(key);
     }
@@ -40,7 +40,7 @@ DFLCommands.commands.help =
           keys.push(mode_shortcut);
         }
         keys.sort();
-        all_keys.extend(keys)  
+        all_keys.extend(keys)
         label_map[mode] = {label: mode_label, keys: keys};
       }
     }

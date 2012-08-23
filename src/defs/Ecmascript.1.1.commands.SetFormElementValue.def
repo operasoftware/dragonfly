@@ -1,0 +1,11 @@
+message <span class="message">SetFormElementValueArg</span>
+{
+  <span class="comment">/** 
+   * ID of object to set value.
+   */</span>
+  required <span class="number">uint32</span> objectID = 1; 
+  <span class="comment">/** 
+   * Value to set.
+   */</span>
+  required <span class="string">string</span> value    = 2; 
+}

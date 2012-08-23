@@ -33,7 +33,7 @@ var ToolbarBase = function()
     return this.__is_visible ? this.getTopPosition() + this.offsetHeight : 0;
   }
 
-  this.get_control = function(handler, handler_name) 
+  this.get_control = function(handler, handler_name)
   {
     handler_name || (handler_name = 'handler');
     var toolbar = this.getElement();
@@ -50,7 +50,7 @@ var ToolbarBase = function()
     }
     return null;
   }
-   
+
   this.setDimensions = function(force_redraw)
   {
     var dim = '', i = 0;
@@ -82,8 +82,8 @@ var ToolbarBase = function()
       this.is_dirty = true;
       this.width = dim;
     }
-    dim = ( this.__is_visible  && ( 
-            this.buttons.length 
+    dim = ( this.__is_visible  && (
+            this.buttons.length
             || this.switches && this.switches.length
             || this.filters.length
             || this.specials.length
@@ -97,8 +97,8 @@ var ToolbarBase = function()
     }
 
     this.update(force_redraw)
-     
-  } 
+
+  }
 
   this.update_sub_class = function()
   {
@@ -108,7 +108,7 @@ var ToolbarBase = function()
       var cst_select = toolbar.getElementsByTagName('cst-select')[0];
       if( cst_select )
       {
-        var 
+        var
         width = this.width,
         filter = toolbar.getElementsByTagName('filter')[0] ||
                  toolbar.getElementsByTagName('toolbar-search')[0],
@@ -150,7 +150,7 @@ var ToolbarBase = function()
 
   // belongs in ToolbarConfigBase
   this.create_toolbar_content = function(view_id, toolbar)
-  {        
+  {
     this.filters = toolbars[view_id] && toolbars[view_id].filters || [];
     this.buttons = toolbars[view_id] && toolbars[view_id].buttons || [];
     this.groups = toolbars[view_id] && toolbars[view_id].groups || [];
@@ -181,7 +181,7 @@ var ToolbarBase = function()
         for (var i = 0, group; group = this.groups[i]; i++)
         {
           var button_templates = [];
-          // The templated will be collected in button_templates, to be then passed to 
+          // The templated will be collected in button_templates, to be then passed to
           // another template function. That is because a button can have a .template member
           // which defines a custom template
           if (group.items && group.type !== UI.TYPE_INPUT)
@@ -224,26 +224,26 @@ var ToolbarBase = function()
       if(this.specials.length)
       {
         toolbar.render(templates.buttons(this.specials));
-      } 
+      }
       if(this.customs.length)
       {
         var custom = null, i = 0;
         for( ; custom = this.customs[i]; i++)
         {
           toolbar.render(custom.template(views[view_id]));
-        } 
+        }
       }
 
       if (!window.views[view_id].is_enabled && toolbars[view_id])
         toolbars[view_id].disable();
     }
   }
-  
+
   this.get_filters = function()
   {
     return this.filters;
   }
-  
+
   this.init = function(cell, buttons, filters, specials, customs)
   {
     this.cell = cell;
@@ -315,8 +315,8 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
       this.width = dim;
     }
 
-    dim = ( this.__is_visible  && ( 
-            this.buttons.length 
+    dim = ( this.__is_visible  && (
+            this.buttons.length
             || this.switches && this.switches.length
             || this.filters.length
             || this.specials.length
@@ -329,7 +329,7 @@ var WindowToolbar = function(cell, buttons, filters, specials, customs)
       this.offsetHeight = dim + this.vertical_border_padding;
     }
     this.update(force_redraw)
-  } 
+  }
   // window toolbar is positioned static, no need to update style.
   this.update_style = function(style)
   {

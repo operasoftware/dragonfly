@@ -1,5 +1,5 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var TabBase = new function()
@@ -149,8 +149,8 @@ var ErrorConsoleTab = function(ref_id, name, has_close_button)
   this.init(ref_id, name, has_close_button)
 
   window.messages.addListener("error-count-update", function(msg) {
-    var text = msg.current_error_count == 0 ? 
-              "" : 
+    var text = msg.current_error_count == 0 ?
+              "" :
               "(" + msg.current_error_count + ")";
     this.set_legend_info(text);
   }.bind(this));

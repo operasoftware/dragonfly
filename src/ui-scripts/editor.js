@@ -1,21 +1,21 @@
 ﻿/**
-  * @constructor 
+  * @constructor
   */
 
 var BaseEditor = new function()
 {
   // an editable element must have monospace font
-  
+
   /* interface */
-  this.edit = 
-  this.oninput = 
+  this.edit =
+  this.oninput =
   // must return a valid navigation target or null
   this.submit =
   // must return a valid navigation target or null
-  this.cancel = 
+  this.cancel =
   // to handle click events while editing
   // could be perhaps a base method
-  this.onclick = 
+  this.onclick =
   // must return a valid navigation target or null
   this.nav_next =
   // must return a valid navigation target or null
@@ -33,7 +33,7 @@ var BaseEditor = new function()
     i = 0,
     span = document.createElement('test-element'),
     cssText = 'display:block;position:absolute;left:-100px;top:0;white-space:pre;';
- 
+
     for( ; prop = props[i]; i++)
     {
       this.base_style[prop] = style.getPropertyValue(prop);
@@ -46,10 +46,10 @@ var BaseEditor = new function()
     this.base_style['line-height'] = ( this.line_height = span.offsetHeight ) + 'px';
     document.documentElement.removeChild(span);
     // host element style
-    this.host_element_border_padding_left = 
+    this.host_element_border_padding_left =
       parseInt(style.getPropertyValue('padding-left')) +
       parseInt(style.getPropertyValue('border-left-width'));
-    this.host_element_border_padding_top = 
+    this.host_element_border_padding_top =
       parseInt(style.getPropertyValue('padding-top')) +
       parseInt(style.getPropertyValue('border-top-width'));
     cssText = '';
@@ -72,15 +72,15 @@ var BaseEditor = new function()
   this._set_textarea_dimensions = function()
   {
     // TODO force new lines if needed
-    var 
-    max_content_length = 
-      Math.max.apply(null, this.textarea.value.split('\r\n').map(function(item){
+    var
+    max_content_length =
+      Math.max.apply(null, this.textarea.value.split(/\r?\n/).map(function(item){
         return item.length
       })),
     width = this.char_width * max_content_length;
     this.textarea.style.height = '0px';
-    this.textarea.style.width = (width < this.max_width ? 
-                                 (width || 1) : 
+    this.textarea.style.width = (width < this.max_width ?
+                                 (width || 1) :
                                  this.max_width) + "px";
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   };
@@ -123,7 +123,7 @@ SimpleBaseEditorPrototype = function()
   };
 
   /**
-    * The enter state for the edited elemnt. The updated state gets 
+    * The enter state for the edited elemnt. The updated state gets
     * passed to onsubmit.
     * @param {Element} ele. The element to be edited
     * @return {Object}. The returned object must have a property "value".

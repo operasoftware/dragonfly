@@ -1,0 +1,18 @@
+<span class="comment">/** 
+ * @since 6.9
+ */</span>
+message <span class="message">ThreadMigration</span>
+{
+  <span class="comment">/** 
+   * The ID of the thread that just migrated.
+   */</span>
+  required <span class="number">uint32</span> threadID      = 1; 
+  <span class="comment">/** 
+   * The ID of the former runtime for this thread.
+   */</span>
+  required <span class="number">uint32</span> fromRuntimeID = 2; 
+  <span class="comment">/** 
+   * The ID of the new (and current) runtime of this thread.
+   */</span>
+  required <span class="number">uint32</span> toRuntimeID   = 3; 
+}

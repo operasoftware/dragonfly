@@ -1,4 +1,4 @@
-window.cls || (window.cls = {});
+﻿window.cls || (window.cls = {});
 
 /**
  * @constructor
@@ -92,8 +92,8 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   }.bind(this);
 
 
-  
-	this._type_class_map = 
+
+	this._type_class_map =
   {
     image: cls.ImageResourceDetail,
     font: cls.FontResourceDetail,
@@ -103,7 +103,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     text: cls.TextResourceDetail,
   };
 	this._open_resource_views = {};
-  
+
   this._open_resource_tab = function(resource, data)
   {
     var ui = UI.get_instance();

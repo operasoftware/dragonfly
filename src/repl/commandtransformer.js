@@ -26,7 +26,7 @@
  * useful if a handler inserts something that is itself a host command.
  *
  * commandline API (http://getfirebug.com/wiki/index.php/Command_Line_API)
- * 
+ *
  *   $(id)
  *   $$(selector)
  *   $x(xpath)
@@ -48,9 +48,9 @@
  *   unmonitorEvents(object[, types])
  *   profile([title])
  *   profileEnd()
- * 
+ *
  * console API (http://getfirebug.com/wiki/index.php/Console_API)
- * 
+ *
  *   console.log(object[, object, ...])
  *   console.debug(object[, object, ...])
  *   console.info(object[, object, ...])
@@ -71,7 +71,7 @@
  *   console.count([title])
  *   console.exception(error-object[, object, ...])
  *   console.table(data[, columns])
- * 
+ *
  */
 window.cls = window.cls || {};
 cls.HostCommandTransformer = function() {
@@ -117,7 +117,7 @@ cls.HostCommandTransformer = function() {
         }
       }
     }
-    
+
     return tokens.map(function(e) {return e[VALUE];}).join("");
   };
 
@@ -254,7 +254,7 @@ cls.HostCommandTransformer = function() {
   {
     if (this.is_global_call(tokenlist, index))
       token[VALUE] = "(typeof $ == 'function' && $ || \
-                       function(e) { return document.getElementById(e); })";
+                       function(e) { return document.querySelector(e); })";
   };
 
   this._hostcommands.$$ = function(token, tokenlist, index)

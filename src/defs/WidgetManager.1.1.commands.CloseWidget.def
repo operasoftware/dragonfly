@@ -1,0 +1,4 @@
+message <span class="message">CloseWidgetArg</span>
+{
+  required <span class="string">string</span> widgetID = 1; 
+}

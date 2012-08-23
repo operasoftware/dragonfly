@@ -1,7 +1,7 @@
 ﻿/**
  * Base class for Switches
  * @see Switches
- * @constructor 
+ * @constructor
  */
 var SwitchesBase = function()
 {
@@ -48,7 +48,7 @@ var SwitchesBase = function()
  * the view to toggle buttons in the UI
  *
  * @see Settings
- * @constructor 
+ * @constructor
  * @extends SwitchesBase
  */
 var Switches = function(view_id, key_map)
