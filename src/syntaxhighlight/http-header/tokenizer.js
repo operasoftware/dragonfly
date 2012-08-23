@@ -115,13 +115,14 @@ cls.HTTPHeaderTokenizer.types = {
   PUNCTUATOR: 4
 };
 
-(function(types) {
+(function() {
+  var types = cls.HTTPHeaderTokenizer.types;
   var classnames = cls.HTTPHeaderTokenizer.classnames = {};
   classnames[types.FIRST_LINE_PART] = "first_line_part";
   classnames[types.NAME] = "name";
   classnames[types.VALUE] = "value";
   classnames[types.PUNCTUATOR] = "punctuator";
-})(cls.HTTPHeaderTokenizer.types);
+})();
 
 cls.HTTPHeaderTokenizer.TokenStateholder = function(data_spec_firstline_tokens)
 {
