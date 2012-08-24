@@ -1,6 +1,7 @@
 ﻿"use strict";
 
 window.templates || (window.templates = {});
+window.templates.network || (window.templates.network = {});
 
 (function(templates) {
 
@@ -13,7 +14,7 @@ var UNREFERENCED = "unreferenced";
 var ERROR_RESPONSE = "error_response";
 var NOT_REQUESTED = "not_requested";
 
-templates.network_options_main = function(nocaching, tracking, headers, overrides)
+templates.options_main = function(nocaching, tracking, headers, overrides)
 {
   return ["div",
           ["div",
@@ -38,14 +39,14 @@ templates.network_options_main = function(nocaching, tracking, headers, override
                 "class", "checkbox",
                 "handler", "toggle-header-overrides"
               ].concat(overrides ? ["checked", "checked"] : []), ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL],
-            templates.network_options_override_list(headers, overrides)
+            templates.options_override_list(headers, overrides)
            ]
           ],
          "class", "network-options"
          ];
 };
 
-templates.network_options_override_list = function(headers, overrides)
+templates.options_override_list = function(headers, overrides)
 {
   var tpl = ["_auto_height_textarea",
              headers.map(function(e) {return e.name + ": " + e.value}).join("\n"),
@@ -53,7 +54,7 @@ templates.network_options_override_list = function(headers, overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
   return [
           ["br"],
-          ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.network_options_override_presets(overrides),
+          ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL + ":", templates.options_override_presets(overrides),
           ["br"],
           tpl,
           ["br"],
@@ -65,7 +66,7 @@ templates.network_options_override_list = function(headers, overrides)
          ];
 };
 
-templates.network_options_override_presets = function(overrides)
+templates.options_override_presets = function(overrides)
 {
     return ["select",
             cls.ResourceUtil.header_presets.map(function(e) { return ["option", e.name, "value", e.headers] }),
@@ -73,31 +74,81 @@ templates.network_options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.network_request_crafter_main = function(url, loading, request, response)
+templates.request_crafter_main = function(url, request, entries, error_message)
 {
-  // fixme: replace request in progress text with spinner or similar.
-  return ["div",
-          ["div",
-           ["h2", ui_strings.S_HTTP_LABEL_URL],
-           ["p", ["input", "type", "text",
-            "value", url || "http://example.org",
-            "handler", "request-crafter-url-change"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
-            ["p", ["_auto_height_textarea", request]],
-           ["p", ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
-            "handler", "request-crafter-send",
-            "unselectable", "on",
-            "class", "ui-button",
-            "tabindex", "1"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
-           ["p", ["textarea", loading ? ui_strings.M_NETWORK_CRAFTER_SEND : response]],
-           "class", "padding request-crafter"
+  var response = ui_strings.M_NETWORK_CRAFTER_SEND;
+  if (error_message)
+  {
+    response = error_message;
+  }
+  else
+  {
+    var entry = entries[0]; // todo: will deal with multiple entries later.
+    if (entry && entry.is_finished)
+    {
+      var helpers = window.helpers;
+      var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
+      if (first_response)
+      {
+        response = first_response.response_headers_raw;
+        if (first_response.responsebody &&
+            first_response.responsebody.content &&
+            first_response.responsebody.content.stringData)
+        {
+          response += "\n\n" + first_response.responsebody.content.stringData;
+        }
+      }
+    }
+  }
+  return (
+    ["div",
+      ["div",
+        ["h2", ui_strings.S_HTTP_LABEL_URL],
+        ["p",
+          ["input",
+           "type", "text",
+           "value", url || "http://example.org",
+           "handler", "request-crafter-url-change"
           ]
-         ];
+        ],
+        ["h2", ui_strings.S_NETWORK_REQUEST],
+        ["p",
+          ["_auto_height_textarea", request]
+        ],
+        ["p",
+          ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
+           "handler", "request-crafter-send",
+           "unselectable", "on",
+           "class", "ui-button",
+           "tabindex", "1"
+          ]
+        ],
+        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+        ["p",
+          ["textarea", response]
+        ],
+        "class", "padding request-crafter"
+      ]
+    ]
+  );
 };
 
-templates.network_incomplete_warning = function()
+templates.incomplete_warning = function(context, index, all_contexts)
 {
+  if (context.incomplete_warn_discarded ||
+      context.saw_main_document)
+  {
+    return [];
+  }
+
+  // Only add the title if there's more than one context in total
+  var title = "";
+  if (all_contexts.length > 1)
+  {
+    var win = window.window_manager_data.get_window(context.id);
+    title = win && win.title && (" – " + win.title);
+  }
+
   return ["div",
            ["div",
              ["span",
@@ -107,7 +158,7 @@ templates.network_incomplete_warning = function()
              ]
            ],
            ["p",
-             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH
+             ui_strings.S_HTTP_INCOMPLETE_LOADING_GRAPH + title
            ],
            ["span",
              " ",
@@ -115,23 +166,21 @@ templates.network_incomplete_warning = function()
              "handler", "close-incomplete-warning",
              "tabindex", "1"
            ],
-           "class", "info-box network_incomplete_warning"
+           "class", "info-box network_incomplete_warning",
+           "data-reload-window-id", String(context.id)
          ];
 };
 
-templates.network_log_main = function(ctx, entries, selected, detail_width, table_template)
+templates.main = function(ctx, window_contexts, entries, selected, detail_width, table_template)
 {
-  var show_incomplete_warning = !ctx.saw_main_document_abouttoloaddocument &&
-                                !ctx.incomplete_warn_discarded;
-
   return [
     [
-      "div", templates.network_log_url_list(ctx, entries, selected),
+      "div", templates.url_list(ctx, entries, selected),
       "id", "network-url-list-container"
     ],
     [
       "div", [
-        "div", table_template || templates.network_viewmode_graphs(
+        "div", table_template || templates.viewmode_graphs(
                                    ctx, entries, selected, detail_width
                                  ),
         "class", "network-data-container " + (table_template ? "data" : "graphs")
@@ -139,20 +188,19 @@ templates.network_log_main = function(ctx, entries, selected, detail_width, tabl
       "class", "network-main-container"
     ],
     [
-      "div", templates.network_log_summary(entries), "class", "network-summary"
+      templates.summary(entries)
     ],
-    show_incomplete_warning ?
-      templates.network_incomplete_warning() : []
+    window_contexts.map(templates.incomplete_warning)
   ];
 };
 
-templates.network_viewmode_graphs = function(ctx, entries, selected, width)
+templates.viewmode_graphs = function(ctx, entries, selected, width)
 {
   var basetime = ctx.get_starttime();
   var duration = ctx.get_coarse_duration(
                    MIN_BAR_WIDTH + SECTIONS_HITAREA_PADDING, width
                  );
-  var rows = templates.network_graph_rows(
+  var rows = templates.graph_rows(
                ctx, entries, selected, width, basetime, duration
              );
 
@@ -161,7 +209,7 @@ templates.network_viewmode_graphs = function(ctx, entries, selected, width)
   {
     var stepsize = templates.grid_info(duration, width);
     var gridwidth = Math.round((width / duration) * stepsize);
-    var headerrow = templates.network_timeline_row(width, stepsize, gridwidth);
+    var headerrow = templates.timeline_row(width, stepsize, gridwidth);
 
     template = ["div", headerrow, rows,
                   "id", "graph",
@@ -171,13 +219,13 @@ templates.network_viewmode_graphs = function(ctx, entries, selected, width)
   return template;
 }
 
-templates.network_log_url_list_entry = function(selected, entry)
+templates.url_list_entry = function(selected, entry)
 {
-  var had_error_response = entry.had_error_response;
+  var error_in_current_response = entry.error_in_current_response;
   var not_requested = !entry.touched_network;
 
   return ["li",
-           templates.network_request_icon(entry),
+           templates.icon(entry),
            ["span",
              (entry.short_distinguisher || entry.human_url).slice(0, 200),
              "class", "network-url",
@@ -186,23 +234,23 @@ templates.network_log_url_list_entry = function(selected, entry)
            "handler", "select-network-request",
            "data-object-id", String(entry.id),
            "class", (selected === entry.id ? "selected" : "") +
-                    (had_error_response ? " " + ERROR_RESPONSE : "") +
+                    (error_in_current_response ? " " + ERROR_RESPONSE : "") +
                     (not_requested ? " " + NOT_REQUESTED : "")
          ];
 };
 
-templates.network_log_url_list = function(ctx, entries, selected)
+templates.url_list = function(ctx, entries, selected)
 {
   return [
     ["ol",
       entries.map(
-        templates.network_log_url_list_entry.bind(null, selected)
+        templates.url_list_entry.bind(null, selected)
       ),
       "class", "network-log-url-list sortable-table-style-list"]
   ]
 };
 
-templates.network_log_url_tooltip = function(entry)
+templates.url_tooltip = function(entry)
 {
   var URL_TYPE_DEF = cls.ResourceManager["1.2"].UrlLoad.URLType;
   var HTTP_STATUS_CODES = cls.ResourceUtil.http_status_codes;
@@ -216,10 +264,10 @@ templates.network_log_url_tooltip = function(entry)
     context_string = ui_strings.S_HTTP_UNREFERENCED;
     context_type = UNREFERENCED;
   }
-  else if (entry.had_error_response)
+  else if (entry.error_in_current_response)
   {
-    context_string = entry.responsecode +
-                     " (" + HTTP_STATUS_CODES[entry.responsecode] + ")";
+    context_string = entry.current_responsecode +
+                     " (" + HTTP_STATUS_CODES[entry.current_responsecode] + ")";
     context_type = ERROR_RESPONSE;
   }
   else if (!entry.touched_network)
@@ -264,7 +312,7 @@ templates.network_log_url_tooltip = function(entry)
   return template;
 };
 
-templates.network_log_summary = function(entries)
+templates.summary = function(entries)
 {
   var total_size = entries.map(function(entry){
                         return entry.size || 0
@@ -278,10 +326,10 @@ templates.network_log_summary = function(entries)
   if (total_size)
     str += ", " + cls.ResourceUtil.bytes_to_human_readable(total_size);
 
-  return ["div", str];
+  return ["div", str, "class", "network-summary"];
 };
 
-templates.network_request_icon = function(entry)
+templates.icon = function(entry)
 {
   var classname = "resource-icon resource-type-" + entry.type;
   if (entry.load_origin_name)
@@ -290,7 +338,7 @@ templates.network_request_icon = function(entry)
   return ["span", "class", classname];
 };
 
-templates.network_timeline_row = function(width, stepsize, gridwidth)
+templates.timeline_row = function(width, stepsize, gridwidth)
 {
   var labels = [];
   var cnt = Math.ceil(width / gridwidth);
@@ -316,20 +364,20 @@ templates.network_timeline_row = function(width, stepsize, gridwidth)
   return ["div", labels, "class", "network-timeline-row"];
 };
 
-templates.network_graph_rows = function(ctx, entries, selected, width, basetime, duration)
+templates.graph_rows = function(ctx, entries, selected, width, basetime, duration)
 {
   return entries.map(function(entry) {
-    return templates.network_graph_row(entry, selected, width, basetime, duration);
+    return templates.graph_row(entry, selected, width, basetime, duration);
   });
 };
 
-templates.network_graph_row = function(entry, selected, width, basetime, duration)
+templates.graph_row = function(entry, selected, width, basetime, duration)
 {
   var scale = width / duration;
   var start = (entry.starttime - basetime) * scale;
   var PADDING_LEFT_HITAREA = 3;
   var item_container = ["span",
-                        templates.network_graph_sections(entry, width, duration),
+                        templates.graph_sections(entry, width, duration),
                         "class", "network-graph-sections-hitarea",
                         "data-tooltip", "network-graph-tooltip",
                         "style", "margin-left:" + (start - PADDING_LEFT_HITAREA) + "px;"];
@@ -340,7 +388,7 @@ templates.network_graph_row = function(entry, selected, width, basetime, duratio
           "data-object-id", String(entry.id)];
 }
 
-templates.network_graph_section_colors = {
+templates.graph_section_colors = {
   waiting: "#7381FF",
   request: "#de5b5b",
   receiving: "#79db86",
@@ -348,7 +396,7 @@ templates.network_graph_section_colors = {
   irregular: "#ebcc78"
 }
 
-templates.network_graph_sections = function(entry, width, duration, do_tooltip)
+templates.graph_sections = function(entry, width, duration, do_tooltip)
 {
   if (!duration)
     return;
@@ -365,19 +413,19 @@ templates.network_graph_sections = function(entry, width, duration, do_tooltip)
                                   "transparent 0%," +
                                   "rgba(255, 255, 255, 0.25) 100%), " +
                         "-o-linear-gradient(0deg," +
-                          templates.network_graph_sections_style(entry, width, duration) +
+                          templates.graph_sections_style(entry, width, duration) +
                         ");" +
                     "background-image: " +
                         "linear-gradient(0deg," +
                                "transparent 0%," +
                                "rgba(255, 255, 255, 0.25) 100%), " +
                         "linear-gradient(90deg," +
-                          templates.network_graph_sections_style(entry, width, duration) +
+                          templates.graph_sections_style(entry, width, duration) +
                         ");"
          ];
 };
 
-templates.network_graph_sections_style = function(entry, size, duration)
+templates.graph_sections_style = function(entry, size, duration)
 {
   if (!entry.event_sequence.length)
     return "transparent 0, transparent 100%";
@@ -389,7 +437,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
     var val = section.val * scale;
     to += val;
 
-    var color = templates.network_graph_section_colors[section.classname];
+    var color = templates.graph_section_colors[section.classname];
     return color + " " + Math.round(from) + "px," +  color + " " + Math.round(to) + "px";
   }).join(",");
   // End transparent. This will let the fallback background-color show in case min-width applies.
@@ -397,7 +445,7 @@ templates.network_graph_sections_style = function(entry, size, duration)
   return gradient_vals;
 };
 
-templates.network_graph_tooltip_tr = function(stop, index, arr)
+templates.graph_tooltip_tr = function(stop, index, arr)
 {
   return ["tr",
            ["td", stop.val_string, "class", "time_data"],
@@ -408,7 +456,7 @@ templates.network_graph_tooltip_tr = function(stop, index, arr)
          ];
 };
 
-templates.network_graph_tooltip = function(entry, mono_lineheight)
+templates.graph_tooltip = function(entry, mono_lineheight)
 {
   if (!entry)
     return;
@@ -418,21 +466,21 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
   var scale = HEIGHT / duration;
   if (duration && entry.events)
   {
-    var event_rows = entry.event_sequence.map(templates.network_graph_tooltip_tr);
+    var event_rows = entry.event_sequence.map(templates.graph_tooltip_tr);
     event_rows.push(["tr",
                       ["td", duration.toFixed(2) + " ms", "class", "time_data"],
                       ["td", ui_strings.S_HTTP_LABEL_DURATION, "class", "gap_title"],
                      "class", "sum"]);
 
-    if (!templates.network_tt_vert_padding)
+    if (!templates.tt_vert_padding)
     {
       var padd = document.styleSheets.getDeclaration(".network-tooltip-legend .time_data")
                   .getPropertyValue("padding")
                   .split(" ").map(function(n){return parseInt(n, 10)});
-      templates.network_tt_vert_padding = padd[0] + padd[2];
+      templates.tt_vert_padding = padd[0] + padd[2];
     }
 
-    var lineheight = mono_lineheight + templates.network_tt_vert_padding;
+    var lineheight = mono_lineheight + templates.tt_vert_padding;
     var svg_width = 100.5;
     var x_start = 1.5;
     var y_start = 0.5;
@@ -465,10 +513,10 @@ templates.network_graph_tooltip = function(entry, mono_lineheight)
             ["div",
               "style", "height: " + HEIGHT + "px; " +
                        "background-image: -o-linear-gradient(270deg," +
-                          templates.network_graph_sections_style(entry, HEIGHT, duration) +
+                          templates.graph_sections_style(entry, HEIGHT, duration) +
                         ");" +
                        "background-image: linear-gradient(180deg," +
-                          templates.network_graph_sections_style(entry, HEIGHT, duration) +
+                          templates.graph_sections_style(entry, HEIGHT, duration) +
                         ");",
               "class", "network-tooltip-graph"
             ],
@@ -515,4 +563,4 @@ templates.grid_info = function(duration, width)
   }
 }
 
-})(window.templates);
+})(window.templates.network);

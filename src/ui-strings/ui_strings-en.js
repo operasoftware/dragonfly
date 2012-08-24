@@ -138,11 +138,8 @@ ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 /* DESC: Label for user interface language dropdown in settings */
 ui_strings.M_LABEL_UI_LANGUAGE = "User interface language";
 
-/* DESC: Label for request body input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY = "Request body";
-
-/* DESC: Label for response body input in network crafter */
-ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY = "Response";
+/* DESC: Error message for when the request could not be parsed */
+ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST = "Could not parse request";
 
 /* DESC: Label for send request button in network crafter */
 ui_strings.M_NETWORK_CRAFTER_SEND = "Send request";
@@ -1257,8 +1254,14 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 /* DESC: Title of request body section when the body is multipart-encoded */
 ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
 
+/* DESC: Explanation about why a network entry doesn't have request data: General */
+ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
+
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
+ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
@@ -1287,7 +1290,7 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
-/* DESC: Explanation about why a network requests lacks headers. */
+/* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
 
 /* DESC: Unknown mime type for content */

@@ -477,6 +477,7 @@ cls.MainView .create_ui_widgets = function()
 
   eventHandlers.click['reload-window'] = function(event, target)
   {
-    runtimes.reloadWindow();
+    var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
+    runtimes.reloadWindow(window_id);
   }
 }
