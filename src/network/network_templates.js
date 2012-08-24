@@ -74,31 +74,27 @@ templates.options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.request_crafter_main = function(url, request, entries, error_message)
+templates.request_crafter_main = function(url, current_request, entries, error_message)
 {
-  var response = ui_strings.M_NETWORK_CRAFTER_SEND;
+  var response_and_subsequent = [ui_strings.M_NETWORK_CRAFTER_SEND];
   if (error_message)
   {
-    response = error_message;
+    response_and_subsequent = error_message;
   }
   else
   {
-    var entry = entries[0]; // todo: will deal with multiple entries later.
-    if (entry && entry.is_finished)
-    {
-      var helpers = window.helpers;
-      var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
-      if (first_response)
-      {
-        response = first_response.response_headers_raw;
-        if (first_response.responsebody &&
-            first_response.responsebody.content &&
-            first_response.responsebody.content.stringData)
-        {
-          response += "\n\n" + first_response.responsebody.content.stringData;
-        }
-      }
-    }
+    response_and_subsequent = entries.map(function(entry, index) {
+      var is_first_entry = index == 0;
+      var req_res = entry.requests_responses;
+      // Skip the first request, that's shown as current_request
+      if (is_first_entry && index == 0)
+        req_res = req_res.slice(1);
+      return (
+        ["div", req_res.map(templates._requests_responses_raw_bound),
+         "class", "url-request",
+         "data-entry-id", entry.id]
+      );
+    });
   }
   return (
     ["div",
@@ -113,7 +109,7 @@ templates.request_crafter_main = function(url, request, entries, error_message)
         ],
         ["h2", ui_strings.S_NETWORK_REQUEST],
         ["p",
-          ["_auto_height_textarea", request]
+          ["_auto_height_textarea", current_request]
         ],
         ["p",
           ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
@@ -123,10 +119,7 @@ templates.request_crafter_main = function(url, request, entries, error_message)
            "tabindex", "1"
           ]
         ],
-        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
-        ["p",
-          ["textarea", response]
-        ],
+        response_and_subsequent,
         "class", "padding request-crafter"
       ]
     ]

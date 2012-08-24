@@ -25,13 +25,13 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     "TE: deflate, gzip, chunked, identity, trailers"
   ].join("\r\n");
 
-  this._prev_request = this._request_template;
-  this._prev_url = "";
+  this._current_request = this._request_template;
+  this._current_url = "";
 
   this.ondestroy = function()
   {
-    this._prev_url = this._urlfield ? this._urlfield.get_value() : "";
-    this._prev_request = this._input ? this._input.get_value() : "";
+    this._current_url = this._urlfield ? this._urlfield.get_value() : "";
+    this._current_request = this._input ? this._input.get_value() : "";
   };
 
   this.createView = function(container)
@@ -51,9 +51,15 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     if (ctx)
       entries = ctx.get_entries();
 
+    // Map issued requests with entries.
+    var helpers = window.helpers;
+    var selected_req = this._requests.last; // todo: make others selectable
+    var matches_id = window.helpers.eq("crafter_request_id", selected_req);
+    entries = entries.filter(matches_id);
+
     // render entries..
-    container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
-                                                                    this._prev_request,
+    container.clearAndRender(templates.network.request_crafter_main(this._current_url,
+                                                                    this._current_request,
                                                                     entries,
                                                                     this._error_message));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
@@ -139,19 +145,22 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     return headers;
   };
 
+  this._on_clear_bound = function()
+  {
+    this._network_logger.remove_crafter_request_context();
+    this.update();
+  }.bind(this);
+
   this._handle_send_request_bound = function()
   {
-    // todo: the old context will probably be kept for comparing previous requests.
-    this._network_logger.remove_crafter_request_context();
-
-    this._prev_url = this._urlfield.get_value();
-    this._prev_request = this._input.get_value();
-    var parsed_request = this._parse_request(this._prev_request);
+    this._current_url = this._urlfield.get_value();
+    this._current_request = this._input.get_value();
+    var parsed_request = this._parse_request(this._current_request);
     if (parsed_request)
     {
       var ctx = this._network_logger.get_crafter_context(true);
       this._error_message = null;
-      var crafter_request_id = ctx.send_request(this._prev_url, parsed_request);
+      var crafter_request_id = ctx.send_request(this._current_url, parsed_request);
       this._requests.push(crafter_request_id);
     }
     else
@@ -182,6 +191,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   }.bind(this);
 
   var eh = window.eventHandlers;
+  eh.click["clear-request-crafter"] = this._on_clear_bound;
   eh.click["request-crafter-send"] = this._handle_send_request_bound;
   eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
   eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
@@ -194,3 +204,24 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.init(id, name, container_class, html, default_handler);
 };
 cls.RequestCraftingView.prototype = ViewBase;
+
+cls.RequestCraftingView.create_ui_widgets = function()
+{
+  new ToolbarConfig(
+    {
+      view: "request_crafter",
+      groups: [
+        {
+          type: UI.TYPE_BUTTONS,
+          items: [
+            {
+              handler: "clear-request-crafter",
+              icon: "clear-log-network-view",
+              title: ui_strings.S_CLEAR_REQUEST_CRAFTER
+            }
+          ]
+        }
+      ]
+    }
+  );
+}

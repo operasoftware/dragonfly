@@ -623,6 +623,15 @@ cls.RequestContextPrototype = function()
         window_context.entry_ids.push(id);
     }
     logger_entry.request_id = event.requestID;
+
+    // Add a mapped crafter_request_id when applicable
+    var crafter_request_id = this.allocated_res_ids[res_id];
+    if (crafter_request_id && !logger_entry.crafter_request_id)
+      logger_entry.crafter_request_id = crafter_request_id;
+
+    if (res_id in this.allocated_res_ids)
+      logger_entry.crafter_request_id = this.allocated_res_ids[res_id];
+
     logger_entry.update(eventname, event);
 
     if (!this.is_paused)

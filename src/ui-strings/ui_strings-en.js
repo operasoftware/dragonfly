@@ -594,6 +594,9 @@ ui_strings.S_CLEAR_COMMAND_LINE_LOG = "Clear console";
 /* DESC: Label on button to clear network graph */
 ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
 
+/* DESC: Label on button to clear request crafter */
+ui_strings.S_CLEAR_REQUEST_CRAFTER = "Clear";
+
 /* DESC: Close command line window */
 ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 
