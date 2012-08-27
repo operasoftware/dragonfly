@@ -4,7 +4,7 @@
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceTreeView = function(id, name, container_class, html, default_handler) {
+cls.ResourceTreeView = function(id, name, container_class, html, default_handler, network_logger) {
   if (cls.ResourceTreeView.instance)
   {
     return cls.ResourceTreeView.instance;
@@ -12,42 +12,25 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   cls.ResourceTreeView.instance = this;
 
   //	const
-  var updateThrottleTime  = 500;
+  const THROTTLE_DELAY = 500;
 
-  // "private"
-  this._service = new cls.ResourceManagerService(this);
+    // "private"
+  this._service = new cls.ResourceManagerService(this, network_logger);
   this._loading = false;
 
-  this._updateTime = 0;
-  this._updateThrottled = false;
 
   // public
 
+  // throttle the update
+  this.update = this.update.bind(this).throttle(THROTTLE_DELAY);
+
   this.createView = function(container)
   {
-  	// throttle
-		var timeSinceLastRender = Date.now()-this._updateTime;
-		if( timeSinceLastRender<updateThrottleTime )
-		{
-			if (!this._updateThrottled)
-			{
-				this._updateThrottled = true;
-				setTimeout( this.update.bind(this), updateThrottleTime-timeSinceLastRender );
-			}
-			return;
-		}
-		else
-		{
-			this._updateThrottled = false;
-			this._updateTime = Date.now();
-		}
+    var service = this._service;
+    var ctx = this._service.get_resource_context();
 
-		// createView
-		var service = this._service;
-		var ctx = this._service.get_resource_context();
-
-		if (ctx && Object.keys(ctx.resourcesDict).length)
-		{
+    if (ctx )//&& ctx.resourcesDict && Object.keys(ctx.resourcesDict).length)
+    {
       container.clearAndRender( templates.resource_tree.update(ctx) );
     }
     else if (this._loading)

@@ -3,8 +3,7 @@
 /**
  *
  */
-
-cls.ResourceManagerService = function(view)
+cls.ResourceManagerService = function(view, network_logger)
 {
   if (cls.ResourceManagerService.instance)
     return cls.ResourceManagerService.instance;
@@ -12,13 +11,144 @@ cls.ResourceManagerService = function(view)
   cls.ResourceManagerService.instance = this;
 
   this._view = view;
+  this._network_logger = network_logger;
   this._context = null;
+  this._documentList = [];
+  this._documentURLHash = {};
+  this._collapsedHash = {};
 
-  this._enable_content_tracking = function()
+  this._handle_listDocuments = function(status,msg)
   {
-    this._res_service.requestSetResponseMode(null, [[3, 1]]);
+    delete this._tag_requestListDocuments;
+    this._documentList = new cls.DocumentManager["1.0"].DocumentList(msg).documentList;
+
+    //  use the URL class
+    //  populate this._documentURLHash
+    this._documentURLHash = {};
+    this._documentList.forEach(function(d)
+    {
+      d.url = new URI(d.url);
+      this._documentURLHash[ d.documentID ] = d.url;
+    },this);
+
+    //  sameOrigin as parentDocument ?
+    this._documentList.forEach(function(d)
+    {
+      d.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[d.parentDocumentID], d.url);
+    },this);
+
+    this._update({});
   };
 
+  this._listDocuments = function()
+  {
+    this._tag_requestListDocuments = window.tagManager.set_callback(this, this._handle_listDocuments );
+    window.services['document-manager'].requestListDocuments(this._tag_requestListDocuments, []);
+  };
+
+  this._getNetworkContext = function()
+  {
+    return this._network_logger.get_window_contexts();
+  }
+
+  this._update = function(msg)
+  {
+    var ctx = {};
+
+    ctx.windowList = this._network_logger.get_window_contexts();
+    if (ctx.windowList.length)
+    {
+      var typeGroupMapping =
+      {
+        'markup':'markup',
+        'css':'stylesheets',
+        'script':'scripts',
+        'image':'images',
+        'font':'fonts',
+        '*':'others'
+      };
+
+      // get all the resources
+      ctx.resourceList = [];
+      ctx.windowList.
+      forEach(function(w){
+        var wr = w.get_resources();
+        ctx.resourceList = ctx.resourceList.concat( wr );
+      });
+
+      ctx.resourceHash_id = {};
+
+      // filter the documentId that belong in the windowIdList
+      ctx.documentList  = this._documentList.
+      filter(function(d){
+        var inTheContext = ctx.windowList.
+        some( function(w){
+          return w.id==d.windowID;
+        });
+
+        if (inTheContext && d.resourceID != null)
+          ctx.resourceHash_id[ d.resourceID ] = d.documentID;
+
+        return inTheContext;
+      },this);
+
+      // add group to each resource
+      // sameOrigin flag to each resource
+      ctx._resourceHash = {};
+      ctx.resourceList.
+      forEach(function(r, i){
+        var tmp = ctx.resourceHash_id[r.resource_id];
+        if (tmp!=null)
+        {
+          console.log(r.id +' aka '+r.resource_id +' from d.'+ r.document_id +' to d.'+ tmp +' // '+ r.url);
+          r.document_id = tmp;
+        }
+
+        ctx._resourceHash[ r.id ] = i;
+        r.group = typeGroupMapping[r.type]||typeGroupMapping['*'];
+        r.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[r.document_id], r);
+      },this);
+
+      //  filter the list of window. Purge the ones with no documents
+      ctx.windowList = ctx.windowList.
+      filter(function(v){
+        return ctx.documentList.
+        some( function(w){ return v.id==w.windowID;} );
+      });
+
+      // request the list of documents if we have
+      // an empty documentList
+      // or a resource pointing to an unknown document
+      // or a document does not have a documentID yet
+      if ( ctx.documentList.length == 0
+        || ctx.resourceList.some(function(v){ return v.document_id && !this._documentURLHash[v.document_id]; },this)
+        || ctx.documentList.some(function(v){ return v.documentID==null; }))
+        this._listDocuments();
+
+      ctx.collapsed = this._collapsedHash;
+      this._context = ctx;
+    }
+    else
+    {
+      this._context = null;
+    }
+
+    this._view.update();
+  };
+
+  this._update_bound = this._update.bind(this);
+
+  this._on_debug_context_selected_bound = function()
+  {
+    this._documentList = [];
+    this._collapsedHash = {};
+
+ //   if (this._context)
+    delete this._context;
+    this._view.update();
+  }.bind(this);
+
+/*
   this._on_abouttoloaddocument_bound = function(msg)
   {
     var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
@@ -32,7 +162,6 @@ cls.ResourceManagerService = function(view)
 
     if (this._context)
       this._context.update("abouttoloaddocument", data);
-
   }.bind(this);
 
   this._on_urlload_bound = function(msg)
@@ -91,6 +220,7 @@ cls.ResourceManagerService = function(view)
       delete this._context;
     this._view.update();
   }.bind(this);
+*/
 
 
   this._handle_expand_collapse_bound = function(event, target)
@@ -99,7 +229,29 @@ cls.ResourceManagerService = function(view)
       return;
 
     var button = target.querySelector('.button-expand-collapse');
-    var target = target.parentNode;
+    var pivot = target.get_ancestor('[data-expand-collapse-id]');
+    if (button && pivot)
+    {
+      var hash = this. _collapsedHash;
+      var pivotID = pivot.getAttribute('data-expand-collapse-id');
+      if (hash[pivotID])
+      {
+        pivot.classList.remove('close');
+        delete hash[pivotID];
+      }
+      else
+      {
+        hash[pivotID] = true;
+        pivot.classList.add('close');
+      }
+    }
+/*
+    do
+    {
+      if (target)
+        p.push()
+
+      var target = target.parentNode;
 
     var frameID = target.getAttribute('data-frame-id');
     var data = this._context.frames[ frameID ];
@@ -122,6 +274,7 @@ cls.ResourceManagerService = function(view)
     {
       target.removeClass('collapsed');
     }
+*/
   }.bind(this);
 
 
@@ -143,7 +296,7 @@ cls.ResourceManagerService = function(view)
         resource.selected = false;
     }
 
-    var id = Number( parent.getAttribute('data-resource-id') );
+    var id = parent.getAttribute('data-resource-id');
     resource = this.get_resource(id);
 
     if (!resource)
@@ -187,13 +340,20 @@ cls.ResourceManagerService = function(view)
     }
 
     this._res_service = window.services['resource-manager'];
-    this._res_service.addListener("urlload", this._on_urlload_bound);
-    this._res_service.addListener("response", this._on_response_bound);
-    this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
-    this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
+/*
+    this._res_service.addListener("urlload", this._update_bound);
+    this._res_service.addListener("response", this._update_bound);
+    this._res_service.addListener("urlredirect", this._update_bound);
+    this._res_service.addListener("urlfinished", this._update_bound);
+
     this._doc_service = window.services['document-manager'];
-    this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+    this._doc_service.addListener("abouttoloaddocument", this._update_bound);
+*/
+    window.messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+    this._network_logger.addListener("resource-update", this._update_bound);
+    this._network_logger.addListener("window-context-added", this._update_bound);
+    this._network_logger.addListener("window-context-removed", this._update_bound);
+
   };
 
 
@@ -205,10 +365,11 @@ cls.ResourceManagerService = function(view)
 
   this.get_resource = function(id)
   {
-    if (!this._context)
+    var ctx = this._context;
+    if (!ctx || ctx._resourceHash[id]==null)
       return null;
 
-    return this._context.resourcesDict[id];
+    return ctx.resourceList[ctx._resourceHash[id]];
   };
 
 
@@ -412,58 +573,56 @@ cls.ResourceContext = function(data)
       res.update(eventname, event);
 
       frame = this.frames[res.frameID];
-      if (!frame)
-      {
-        // unknown frame -> invalid resource
-        opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-          'Invalidating orphan resource '+ res.id);
+      if(!frame)
         res.invalid = true;
-      }
-     else if (eventname == "urlload")
+      else
       {
-        if (res.id == frame.resourceID)
+        if (eventname == "urlload")
         {
-          frame.resource = res;
-          if (frame.parentFrameID )
+          if (res.id == frame.resourceID)
           {
-            var parentFrame = this.frames[frame.parentFrameID];
-            if (parentFrame && parentFrame.resource)
-              frame.sameOrigin = cls.ResourceUtil.sameOrigin(parentFrame.resource, frame.resource);
-            else
-              frame.sameOrigin = false;
+            frame.resource = res;
+            if (frame.parentFrameID )
+            {
+              var parentFrame = this.frames[frame.parentFrameID];
+              if (parentFrame && parentFrame.resource)
+                frame.sameOrigin = cls.ResourceUtil.sameOrigin(parentFrame.resource, frame.resource);
+              else
+                frame.sameOrigin = false;
+            }
           }
         }
-      }
 
-      else if (eventname == "urlfinished")
-      {
-        // push the resourceID into the proper group
-        if (frame && frame.resource)
+        else if (eventname == "urlfinished")
         {
-          var type = res.type;
-          if (!frame.groups[type]){ type='other'; }
+          // push the resourceID into the proper group
+          if (frame && frame.resource)
+          {
+            var type = res.type;
+            if (!frame.groups[type]){ type='other'; }
 
-          frame.groups[type].push( res.id );
-          this.resourcesUrlDict[ res.url ] = res.id;
+            frame.groups[type].push( res.id );
+            this.resourcesUrlDict[ res.url ] = res.id;
 
-          // sameOrigin check
-          res.sameOrigin = cls.ResourceUtil.sameOrigin(frame.resource, res);
+            // sameOrigin check
+            res.sameOrigin = cls.ResourceUtil.sameOrigin(frame.resource, res);
+          }
+          else
+          {
+            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+              'Invalidating the resource '+ res.id +': '+ (frame?'Unkown top level resource '+frame.resourceId +' for the frame '+frame.id:'Unknown frameID '+  res.frameID));
+            res.invalid = true;
+          }
         }
-        else
-        {
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-            'Invalidating the resource '+ res.id +': '+ (frame?'Unkown top level resource '+frame.resourceId +' for the frame '+frame.id:'Unknown frameID '+  res.frameID));
-          res.invalid = true;
-        }
-      }
 
-      else if (eventname == "urlredirect")
-      {
-        // Adjust the frame if its top resource is redirected
-        if (frame && frame.resourceID == res.id)
+        else if (eventname == "urlredirect")
         {
-          frame.resourceID = event.toResourceID;
-          delete frame.resource;
+          // Adjust the frame if its top resource is redirected
+          if (frame && frame.resourceID == res.id)
+          {
+            frame.resourceID = event.toResourceID;
+            delete frame.resource;
+          }
         }
       }
 

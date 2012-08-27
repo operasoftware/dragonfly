@@ -111,9 +111,6 @@
 
 .highlighted-line
 {
-  background-image: -o-linear-gradient(90deg,
-                                       #d4e3f4,
-                                       #d4e3f4);
   background-image: linear-gradient(0deg,
                                     #d4e3f4,
                                     #d4e3f4);
@@ -160,7 +157,7 @@
 }
 
 
-
+/*
 .expand-collapse > ul
 {
   margin:0;
@@ -173,7 +170,8 @@
   margin:0 0 0 16px;
   line-height:17px;
 }
-.expand-collapse.close > ul
+*/
+.resource-tree-expand-collapse.close > ul
 {
   display:none;
 }
@@ -193,7 +191,7 @@
   outline: 2px solid #598BEC;
   outline-offset: -2px;
 }
-.collapsed .button-expand-collapse
+.resource-tree-expand-collapse.close .button-expand-collapse
 {
   background-position:1px 1px;
 }
@@ -275,7 +273,7 @@ a.external:hover
 {/* note: same color as the .string class */
   color:#a54;
 }
-
+/*
 .children-expand-collapse
 {
   display:block;
@@ -296,4 +294,96 @@ a.external:hover
 .children-expand-collapse, .header-expand-collapse
 {
   white-space:nowrap;
+}
+*/
+
+/* ------------------ */
+.resource-tree
+{
+ padding:8px;
+ height:100%;
+ box-sizing:border-box;
+ overflow:auto;
+}
+.resource-tree li > h2
+{
+  margin:0;
+  padding:0;
+  white-space:nowrap;
+  font-weight:normal;
+  min-width:100%;
+  display: inline-block;
+  font-size:11px;
+  line-height:18px;
+  vertical-align: middle;
+}
+
+
+.resource-tree-documents, .resource-tree-groups, .resource-tree-resources
+{
+  padding:0 0 0 18px;
+  margin:0;
+}
+/* zebra resources */
+.resource-tree-resources > li:nth-child(odd) > h2
+{
+  background-color:rgba(0,0,0,.05);
+}
+
+.resource-tree li > h2:hover
+{
+  background-color:orange;
+}
+
+.wat:before
+{
+ margin-left:-18px
+ content:url(../ui-images/error-console-warning.png);
+ padding:1px;
+}
+
+span.resource-tree-count
+{
+  color:#666;
+}
+span.resource-tree-window-label,
+span.resource-tree-document-label,
+span.resource-tree-group-label
+{
+  font-weight:bold;
+  padding:0 0 0 18px;
+  line-height:18px;
+  display:inline-block;
+  background-position:1px 1px;
+  background-repeat:no-repeat;
+  background-size:16px 16px;
+  background-image:url(../ui-images/type_storage.png);
+}
+h2.resource-tree-group/* > span*/
+{
+  text-transform:capitalize;
+}
+h2.resource-tree-group-markup > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_markup.png);
+}
+h2.resource-tree-group-stylesheets > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_style.png);
+}
+h2.resource-tree-group-scripts > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_script.png);
+}
+h2.resource-tree-group-images > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_picture.png);
+}
+h2.resource-tree-group-fonts > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_font.png);
+}
+h2.resource-tree-group-others > span.resource-tree-group-label
+{
+  background-image:url(../ui-images/type_other.png);
 }

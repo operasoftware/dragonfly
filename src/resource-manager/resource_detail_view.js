@@ -4,14 +4,15 @@
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceDetailView = function(id, name, container_class, html, default_handler) {
+cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger) {
   if (cls.ResourceDetailView.instance)
   {
     return cls.ResourceDetailView.instance;
   }
   cls.ResourceDetailView.instance = this;
 
-  this._service = new cls.ResourceManagerService(this);
+  this._service = new cls.ResourceManagerService(this, network_logger);
+
 
 	this.createView = function(container)
 	{
@@ -176,13 +177,15 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   {
     this.data = data;
 
+    this.resource = resource;
+    /*
     if(resource instanceof cls.Resource)
       this._show_resource_by_instance(resource);
     else if (resource==Number(resource))
       this._show_resource_by_id(resource);
     else if (resource==String(resource))
       this._show_resource_url(resource);
-
+*/
     this.update();
     window.UI.instance.show_view( window.views.resource_detail_view.id );
   }
