@@ -113,7 +113,7 @@ window.cls.Helpers = function()
         || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
   }
 
-  this.escapeTextHtml = (function()
+  this.escape_html = (function()
   {
     var re_amp = /&/g;
     var re_lt = /</g;
@@ -127,13 +127,13 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.escapeAttributeHtml = (function()
+  this.escape_html_attr = (function()
   {
     var re_quot = /"/g;
     var re_apos = /'/g;
     return function(str)
     {
-      return str ? this.escapeTextHtml(str)
+      return str ? this.escape_html(str)
                        .replace(re_quot, "&quot;")
                        .replace(re_apos, "&#x27;")
                  : str;

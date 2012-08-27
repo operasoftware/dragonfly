@@ -53,7 +53,7 @@
         {
           ret.push(
             "<div class='item'>" +
-              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
               "<span class='value " + type + "'>" + value + "</span>" +
             "</div>"
           );
@@ -63,15 +63,15 @@
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
                         value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escape_html(value).replace(/'/g, '&#39;');
           if (short_val)
           {
             ret.push(
               "<div class='item'>" +
                 "<input type='button' data-handler='expand-value'  class='folder-key'/>" +
-                "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='key'>" + helpers.escape_html(prop[NAME]) + "</span>" +
                 "<span class='value " + type + "' data-value='" + value + "'>" +
-                  "\"" + helpers.escapeTextHtml(short_val) +
+                  "\"" + helpers.escape_html(short_val) +
                 "</span>" +
               "</div>"
             );
@@ -80,7 +80,7 @@
           {
             ret.push(
               "<div class='item'>" +
-                "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
                 "<span class='value " + type + "'>\"" + value + "\"</span>" +
               "</div>"
             );
@@ -92,7 +92,7 @@
         {
           ret.push(
             "<div class='item'>" +
-              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
               "<span class='value " + type + "'>" + type + "</span>" +
             "</div>"
           );
@@ -112,7 +112,7 @@
             ret.push("style='background-position: 0px -11px') ");
           ret.push(
             "/>" +
-            "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+            "<span class='key'>" + helpers.escape_html(prop[NAME]) + "</span>" +
             "<span class='value object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</span>"
           );
           if (obj_id in tree)
