@@ -1351,10 +1351,17 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
+  this.id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
+
+  var lastResponse = entry.requests_responses.last;
+  if (lastResponse && lastResponse.saw_responsefinished)
+  {
+    this.data = lastResponse.responsebody;
+  }
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
