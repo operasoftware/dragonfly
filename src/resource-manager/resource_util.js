@@ -157,21 +157,7 @@ cls.ResourceUtil.type_to_string_map = {
 cls.ResourceUtil.mime_to_content_mode = function(mime)
 {
   var type = cls.ResourceUtil.mime_to_type(mime);
-  switch (type) {
-    case "image":
-    case "video":
-    case "audio":
-    case "pdf":
-    case "flash":
-    case "font":
-      return "datauri";
-    case "markup":
-    case "css":
-    case "xml":
-    case "script":
-      return "text";
-  }
-  return "text";
+  return cls.ResourceUtil.type_to_content_mode(type);
 }
 
 /**
