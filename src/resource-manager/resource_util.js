@@ -438,6 +438,9 @@ cls.ResourceUtil.http_status_codes = {
 
 cls.ResourceUtil.sameOrigin = function(reference, url)
 {
+  if (!reference)
+    return true;
+
   if (reference.protocol == url.protocol)
   {
     if (reference.host == url.host)
