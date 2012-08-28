@@ -1,11 +1,6 @@
-﻿.ev-rt-list
+﻿.ev-rt-list>li
 {
-  margin-top: 5px;
-}
-
-.ev-type-list
-{
-  margin: 0;
+  margin-bottom: 6px;
 }
 
 .ev-listener-tooltip
@@ -39,15 +34,19 @@
 
 .ev-listener
 {
-  display: inline-block;
-  height: 12px;
-  line-height: 12px;
-  vertical-align: middle;
+
   margin-left: 3px;
   padding: 0 2px;
-  background-color: hsl(0, 0%, 70%);
+  background-color: rgba(0, 0, 0, 0.29);
   color: #fff;
   border-radius: 2px;
+}
+
+.ev-listener.tooltip-selected
+{
+  box-shadow: none;
+  color: #fff;
+  background-color: rgba(82, 122, 204, 0.553);
 }
 
 .ev-listener::after
@@ -95,6 +94,11 @@
 .ev-listener-list
 {
   margin-left: 12px;
+}
+
+.ev-rt-list .ev-rt-title
+{
+  margin-left: 0px;
 }
 
 .tooltip-function-source .js-tooltip-examine-container
