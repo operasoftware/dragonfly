@@ -1,4 +1,4 @@
-﻿.ev-rt-list>li
+﻿.ev-rt-list > li
 {
   margin-bottom: 6px;
 }
@@ -46,7 +46,7 @@
 {
   box-shadow: none;
   color: #fff;
-  background-color: rgba(82, 122, 204, 0.553);
+  background-color: rgba(82, 122, 204, 0.55);
 }
 
 .ev-listener::after
@@ -65,7 +65,7 @@
   background-color: hsla(0, 0%, 0%, 0.04);
   padding: 2px 8px;
   border-width: 1px 0;
-  margin: 5px 0px 1px;
+  margin: 5px 0 1px;
 }
 
 .ev-listener-tooltip .ev-type
@@ -98,7 +98,7 @@
 
 .ev-rt-list .ev-rt-title
 {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 .tooltip-function-source .js-tooltip-examine-container
