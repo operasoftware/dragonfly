@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 window.cls = window.cls || {};
 
@@ -185,7 +185,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       var entry = ctx.get_entry_from_filtered(this._selected);
       if (entry)
       {
-        entry.check_to_request_body(this._network_logger);
+        entry.check_to_get_body();
         template = [template, this._render_details_view(entry)];
       }
     }
@@ -229,7 +229,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     columns: {
       method: {
         label: ui_strings.S_HTTP_LABEL_METHOD,
-        getter: function(entry) { return entry.last_method || ""; }
+        getter: function(entry) { return (entry.current_request && entry.current_request.method) || ""; }
       },
       responsecode: {
         label: ui_strings.S_HTTP_LABEL_RESPONSECODE,
