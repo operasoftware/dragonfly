@@ -277,7 +277,6 @@ cls.NetworkLogger = function()
 
     if (remove_from_allocated_after_update)
       delete ctx.allocated_res_ids[data.resourceID];
-
   };
   this._on_responsefinished_bound = this._on_responsefinished.bind(this);
 
@@ -588,7 +587,7 @@ cls.RequestContextPrototype = function()
       logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
       this._logger_entries.push(logger_entry);
       // Store the id in the list of entries in the window_context
-      var window_context = (event.windowID && this.get_window_context(event.windowID, true));
+      var window_context = event.windowID && this.get_window_context(event.windowID, true);
       if (window_context)
         window_context.entry_ids.push(id);
     }
