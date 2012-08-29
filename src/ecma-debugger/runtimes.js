@@ -1129,14 +1129,14 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return win_id ? this.isReloadedWindow(win_id) : false;
   };
 
-  this.get_execution_context = function()
+  this.get_execution_context = function(rt_id)
   {
     var selected_frame = window.stop_at.getSelectedFrame();
-    return selected_frame
+    return selected_frame && (!rt_id || selected_frame.runtime_id == rt_id)
          ? {rt_id: selected_frame.runtime_id,
             thread_id: selected_frame.thread_id,
             frame_index: selected_frame.index}
-         : {rt_id: this.getSelectedRuntimeId(),
+         : {rt_id: rt_id || this.getSelectedRuntimeId(),
             thread_id: 0,
             frame_index: 0};
   };

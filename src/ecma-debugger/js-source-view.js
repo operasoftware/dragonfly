@@ -1431,6 +1431,20 @@ cls.JsSourceView.create_ui_widgets = function()
           }
         }
 
+        var script = window.views.js_source.get_current_script();
+        if (script)
+        {
+          items.push({label: ui_strings.M_CONTEXTMENU_COPY_CONTENT,
+                      handler: Clipboard.set_string.bind(Clipboard, script.script_data),
+                      id: "copy-clipboard"});
+          if (script.uri)
+          {
+            items.push({label: ui_strings.M_CONTEXTMENU_COPY_URL,
+                        handler: Clipboard.set_string.bind(Clipboard, script.uri),
+                        id: "copy-clipboard"});
+          }
+        }
+
         if (items.length)
           items.push(ContextMenu.separator);
 

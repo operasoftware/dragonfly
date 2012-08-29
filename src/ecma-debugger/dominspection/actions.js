@@ -11,11 +11,12 @@ cls.DOMInspectorActions = function(id)
   this.view_id = id;
   this.id = id;
 
-  const
-  SCROLL_IN_PADDING = 30,
-  MODE_DEFAULT = "default",
-  MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text",
-  MODE_EDIT_MARKUP = "edit-markup";
+  var SCROLL_IN_PADDING = 30;
+  var MODE_DEFAULT = "default";
+  var MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text";
+  var MODE_EDIT_MARKUP = "edit-markup";
+  var LEFT_CLICK = 1;
+  var SUCCESS = 0;
 
   this.mode_labels =
   {
@@ -368,10 +369,10 @@ cls.DOMInspectorActions = function(id)
         }
       }
       if (!nav_target)
-      {
         nav_target = this.getFirstTarget();
-      }
-      this.setSelected(nav_target);
+
+      if (event.which == LEFT_CLICK)
+        this.setSelected(nav_target);
     }
   }
 
@@ -478,9 +479,11 @@ cls.DOMInspectorActions = function(id)
   {
     var target = event.target;
     var is_in_container = view_container && view_container.contains(target);
-    if(is_in_container)
+    if (is_in_container)
     {
-      if(target != nav_target && /^input|node|key|value|text$/i.test(target.nodeName))
+      if (event.which == LEFT_CLICK &&
+          target != nav_target &&
+          /^input|node|key|value|text$/i.test(target.nodeName))
       {
         this.setSelected(target);
       }
@@ -497,9 +500,10 @@ cls.DOMInspectorActions = function(id)
 
   this.blur = function(event)
   {
+
     if (this.mode != MODE_DEFAULT && this.editor)
       this.editor.submit();
-    if (selection)
+    if (selection && !selection.isCollapsed)
       selection.removeAllRanges();
     view_container = null;
     view_container_first_child = null;
@@ -891,6 +895,45 @@ cls.DOMInspectorActions = function(id)
       services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, "el.parentNode.removeChild(el)", [["el", ref_id]]]);
     }
   }.bind(this);
+
+  this._handlers["copy-xpath"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      var force_lower_case = window.settings.dom.get("force-lowercase");
+      model.get_xpath(obj_id, force_lower_case, function(path)
+      {
+        if (path)
+          Clipboard.set_string(path);
+      });
+    }
+  }.bind(this);
+
+  this._handlers["copy-markup"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      var script = "ele.namespaceURI == \"http://www.w3.org/1999/xhtml\"" +
+                 "? ele.outerHTML" +
+                 ": new XMLSerializer().serializeToString(ele);";
+      var ex_ctx = window.runtimes.get_execution_context(model.getDataRuntimeId());
+      var tag = window.tag_manager.set_callback(this, this._handle_get_inner_html);
+      var msg = [ex_ctx.rt_id, ex_ctx.thread_id, ex_ctx.frame_index, script, [["ele", obj_id]]];
+      window.services["ecmascript-debugger"].requestEval(tag, msg);
+    }
+  }.bind(this);
+
+  this._handle_get_inner_html = function(status, message)
+  {
+    var STATUS = 0;
+    var VALUE = 2;
+    if (status == SUCCESS && message[STATUS] == "completed")
+      Clipboard.set_string(message[VALUE]);
+  };
 
   this.edit_onclick = function(event)
   {

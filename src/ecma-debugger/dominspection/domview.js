@@ -370,6 +370,14 @@ cls.DOMView.create_ui_widgets = function()
     {
       label: ui_strings.M_CONTEXTMENU_REMOVE_NODE,
       handler: contextmenu_remove_node
+    },
+    {
+      label: ui_strings.M_CONTEXTMENU_COPY_XPATH,
+      handler: contextmenu_copy_xpath
+    },
+    {
+      label: ui_strings.M_CONTEXTMENU_COPY_MARKUP,
+      handler: contextmenu_copy_markup
     }
   ];
 
@@ -508,6 +516,16 @@ cls.DOMView.create_ui_widgets = function()
   {
     broker.dispatch_action("dom", "remove-node", event, event.target);
   }
+
+  function contextmenu_copy_xpath(event, target)
+  {
+    broker.dispatch_action("dom", "copy-xpath", event, event.target);
+  };
+
+  function contextmenu_copy_markup(event, target)
+  {
+    broker.dispatch_action("dom", "copy-markup", event, event.target);
+  };
 
   new Switches
   (

@@ -1743,3 +1743,11 @@ ui_strings.M_CONTEXTMENU_COPY = "Copy";
 /* DESC: Context menu item to copy a URL. */
 ui_strings.M_CONTEXTMENU_COPY_URL = "Copy URL";
 
+/* DESC: Context menu item to copy content, e.g of a file. */
+ui_strings.M_CONTEXTMENU_COPY_CONTENT = "Copy content";
+
+/* DESC: Context menu item to copy the XPath expression. */
+ui_strings.M_CONTEXTMENU_COPY_XPATH = "Copy XPath";
+
+/* DESC: Context menu item to copy the markup. */
+ui_strings.M_CONTEXTMENU_COPY_MARKUP = "Copy markup";

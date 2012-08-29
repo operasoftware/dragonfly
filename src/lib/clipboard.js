@@ -3,6 +3,7 @@ var Clipboard = function() {};
 (function()
 {
   var _content_editable_ele = null;
+  var _is_supported = false;
   // static methods
 
   this.set_string = function(string)
@@ -13,15 +14,13 @@ var Clipboard = function() {};
     var listener = _set_string.bind(null, string);
     document.addEventListener("copy", listener, false);
     document.execCommand("copy");
-    setTimeout(function()
-    {
-      document.removeEventListener("copy", listener, false);
-      _content_editable_ele.contentEditable = false;
-    }, 0);
+    setTimeout(_remove_listener.bind(null, listener), 0);
   };
 
   this.populate_menu = function(event, all_items)
   {
+    if (!_is_supported)
+      return;
     var copy_string = event.target.get_ancestor_attr("data-copy");
     if (copy_string)
     {
@@ -40,5 +39,26 @@ var Clipboard = function() {};
     event.preventDefault();
   };
 
-}).apply(Clipboard);
+  var _remove_listener = function(listener)
+  {
+    document.removeEventListener("copy", listener, false);
+    _content_editable_ele.contentEditable = false;
+  };
 
+  var _test_support = function()
+  {
+    if (!_content_editable_ele)
+      _content_editable_ele = document.querySelector("#contenteditable");
+    _content_editable_ele.contentEditable = true;
+    var listener = function(event) { _is_supported = true; };
+    document.addEventListener("copy", listener, false);
+    document.execCommand("copy");
+    setTimeout(_remove_listener.bind(null, listener), 0);
+  };
+
+  this.__defineGetter__("is_supported", function() { return _is_supported; });
+  this.__defineSetter__("is_supported", function() { });
+
+  window.addEventListener("load", _test_support, false);
+
+}).apply(Clipboard);
