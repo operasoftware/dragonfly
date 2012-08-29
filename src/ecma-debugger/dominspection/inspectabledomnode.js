@@ -476,12 +476,24 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     var VALUE = 2;
     if (status != SUCCESS || message[STATUS] != "completed")
       return callback(null);
+    var is_in_xhtml_ns = message[VALUE] == "true";
+    var path = this._get_unique_path("XPath", object_id, force_lower_case, is_in_xhtml_ns);
+    callback(path);
+  };
+
+  this.get_unique_css_path = function(object_id, force_lower_case)
+  {
+    return this._get_unique_path("CSS", object_id, force_lower_case, true);
+  };
+
+  this._get_unique_path = function(type, object_id, force_lower_case, is_in_xhtml_ns)
+  {
     var path = "";
     var name = "";
     var name_count = 0;
-    var is_in_xhtml_ns = message[VALUE] == "true";
     var ele = null;
     var prev_ele = null;
+    var selector = this._selectors[type];
     if (object_id)
     {
       for (var i = 0; (ele = this._data[i]) && ele[ID] != object_id; i++);
@@ -491,7 +503,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
         {
           var id = is_in_xhtml_ns && this.get_attr(ele, "id");
           if (id)
-            return callback("//*[@id=\"" + id + "\"]");
+            return selector.get_id(id);
           name  = this._get_element_name(ele, force_lower_case);
           name_count = 1;
         }
@@ -503,7 +515,7 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           {
             if (ele[DEPTH] < prev_ele[DEPTH])
             {
-              path = "/" + name + (name_count > 1 ? "[" + name_count + "]" : "") + path;
+              path = selector.get_part(name, name_count) + path;
               name  = this._get_element_name(ele, force_lower_case);
               name_count = 1;
               prev_ele = ele;
@@ -513,10 +525,34 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
           }
         }
         if (name)
-          path = "/" + name + (name_count > 1 ? "[" + name_count + "]" : "") + path;
+          path = selector.get_part(name, name_count) + path;
       }
     }
-    callback(path);
+    return path.replace(/^ > /, "");
+  };
+
+  this._selectors = {};
+  this._selectors["XPath"] =
+  {
+    get_id: function(id)
+    {
+      return "//*[@id=\"" + id + "\"]";
+    },
+    get_part: function(name, name_count)
+    {
+      return "/" + name + (name_count > 1 ? "[" + name_count + "]" : "");
+    }
+  };
+  this._selectors["CSS"] =
+  {
+    get_id: function(id)
+    {
+      return "#" + id;
+    },
+    get_part: function(name, name_count)
+    {
+      return " > " + name + (name_count > 1 ? ":nth-of-type(" + name_count + ")" : "");
+    }
   };
 
   this.has_data = function()

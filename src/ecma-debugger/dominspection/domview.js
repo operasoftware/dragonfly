@@ -376,6 +376,10 @@ cls.DOMView.create_ui_widgets = function()
       handler: contextmenu_copy_xpath
     },
     {
+      label: ui_strings.M_CONTEXTMENU_COPY_CSS_PATH,
+      handler: contextmenu_copy_css_path
+    },
+    {
       label: ui_strings.M_CONTEXTMENU_COPY_MARKUP,
       handler: contextmenu_copy_markup
     }
@@ -525,6 +529,11 @@ cls.DOMView.create_ui_widgets = function()
   function contextmenu_copy_markup(event, target)
   {
     broker.dispatch_action("dom", "copy-markup", event, event.target);
+  };
+
+  function contextmenu_copy_css_path(event, target)
+  {
+    broker.dispatch_action("dom", "copy-css-path", event, event.target);
   };
 
   new Switches

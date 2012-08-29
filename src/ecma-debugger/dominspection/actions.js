@@ -911,6 +911,19 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
+  this._handlers["copy-css-path"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      var force_lower_case = window.settings.dom.get("force-lowercase");
+      var path = model.get_unique_css_path(obj_id, force_lower_case);
+      if (path)
+        Clipboard.set_string(path);
+    }
+  }.bind(this);
+
   this._handlers["copy-markup"] = function(event, target)
   {
     var model = window.dominspections[target.get_ancestor_attr("data-model-id")];

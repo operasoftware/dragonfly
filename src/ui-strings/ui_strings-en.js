@@ -1749,5 +1749,8 @@ ui_strings.M_CONTEXTMENU_COPY_CONTENT = "Copy content";
 /* DESC: Context menu item to copy the XPath expression. */
 ui_strings.M_CONTEXTMENU_COPY_XPATH = "Copy XPath";
 
+/* DESC: Context menu item to copy the CSS path. */
+ui_strings.M_CONTEXTMENU_COPY_CSS_PATH = "Copy CSS path";
+
 /* DESC: Context menu item to copy the markup. */
 ui_strings.M_CONTEXTMENU_COPY_MARKUP = "Copy markup";
