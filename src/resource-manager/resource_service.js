@@ -245,27 +245,24 @@ cls.ResourceManagerService = function(view, network_logger)
     return this._context;
   };
 
-
   this.get_resource = function(id)
   {
     var ctx = this._context;
-    if (!ctx || ctx._resourceHash[id]==null)
-      return null;
+    if (!ctx)
+        return null;
 
-    return ctx.resourceList[ctx._resourceHash[id]];
+    var resource = ctx.resourceList.filter(function(v){return v.id==id;});
+    return resource && resource.last;
   };
-
 
   this.get_resource_for_url = function(url)
   {
-    if (!this._context)
+    var ctx = this._context;
+    if (!ctx)
       return null;
 
-    var id = this._context.resourcesUrlDict[url];
-    if (id===undefined)
-      return null;
-
-    return this.get_resource(id);
+    var resource = ctx.resourceList.filter(function(v){return v.url==url;});
+    return resource && resource.last;
   };
 
   this._fetch_resource_data = function(callback, id, type)
@@ -294,8 +291,6 @@ cls.ResourceManagerService = function(view, network_logger)
     }
     this._view.update();
   }.bind(this);
-
-
 
   this.request_resource_for_url = function(url,callback)
   {
