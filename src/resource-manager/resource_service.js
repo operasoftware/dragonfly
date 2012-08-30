@@ -70,59 +70,69 @@ cls.ResourceManagerService = function(view, network_logger)
 
       // get all the resources
       ctx.resourceList = [];
-      ctx.windowList.
-      forEach(function(w){
+      ctx.windowList.forEach(function(w)
+      {
         var wr = w.get_resources();
         ctx.resourceList = ctx.resourceList.concat( wr );
       });
 
-      ctx.resourceHash_id = {};
+      ctx.documentResourceHash = {};
 
       // filter the documentId that belong in the windowIdList
-      ctx.documentList  = this._documentList.
-      filter(function(d){
-        var inTheContext = ctx.windowList.
-        some( function(w){
+      ctx.documentList  = this._documentList.filter(function(d)
+      {
+        var inWindowContext = ctx.windowList.some( function(w)
+        {
           return w.id==d.windowID;
         });
 
-        if (inTheContext && d.resourceID != null)
-          ctx.resourceHash_id[ d.resourceID ] = d.documentID;
+        if (inWindowContext && d.resourceID != null)
+          ctx.documentResourceHash[ d.resourceID ] = d.documentID;
 
-        return inTheContext;
+        return inWindowContext;
       },this);
 
+      // assign top resource to the right document
       // add group to each resource
       // sameOrigin flag to each resource
-      ctx._resourceHash = {};
-      ctx.resourceList.
-      forEach(function(r, i){
-        var tmp = ctx.resourceHash_id[r.resource_id];
-        if (tmp!=null)
-        {
-          console.log(r.id +' aka '+r.resource_id +' from d.'+ r.document_id +' to d.'+ tmp +' // '+ r.url);
-          r.document_id = tmp;
-        }
+      ctx.resourceList.forEach(function(r, i)
+      {
+        var documentID = ctx.documentResourceHash[r.id];
+        if (documentID!=null && documentID!=r.document_id)
+          r.document_id = documentID;
 
-        ctx._resourceHash[ r.id ] = i;
         r.group = typeGroupMapping[r.type]||typeGroupMapping['*'];
         r.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[r.document_id], r);
       },this);
 
       //  filter the list of window. Purge the ones with no documents
-      ctx.windowList = ctx.windowList.
-      filter(function(v){
-        return ctx.documentList.
-        some( function(w){ return v.id==w.windowID;} );
+      ctx.windowList = ctx.windowList.filter(function(v)
+      {
+        return ctx.documentList.some(function(w)
+        {
+          return v.id==w.windowID;
+        });
       });
 
       // request the list of documents if we have
       // an empty documentList
       // or a resource pointing to an unknown document
       // or a document does not have a documentID yet
-      if ( ctx.documentList.length == 0
-        || ctx.resourceList.some(function(v){ return v.document_id && !this._documentURLHash[v.document_id]; },this)
-        || ctx.documentList.some(function(v){ return v.documentID==null; }))
+      if(
+          ctx.documentList.length == 0
+        ||
+          ctx.resourceList.some(
+            function(v)
+            {
+             return v.document_id && !this._documentURLHash[v.document_id];
+            },this)
+        ||
+          ctx.documentList.some(
+            function(v)
+            {
+              return v.documentID==null;
+            })
+      )
         this._listDocuments();
 
       ctx.collapsed = this._collapsedHash;
@@ -137,6 +147,7 @@ cls.ResourceManagerService = function(view, network_logger)
   };
 
   this._update_bound = this._update.bind(this);
+
 
   this._on_debug_context_selected_bound = function()
   {
