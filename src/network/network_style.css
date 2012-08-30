@@ -497,14 +497,21 @@
 /* Request crafter */
 .request-crafter
 {
-  padding: 5px 20px;
+  width: 75%;
+}
+
+.request-crafter-history
+{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 25%;
 }
 
 .request-crafter p
 {
   margin-top: 0;
 }
-
 
 .request-crafter input
 {
@@ -559,4 +566,14 @@ table .network-body
   /* work-around CORE-46966: Big pre element breaks layout in a table */
   float: left;
   margin-right: -10000000px;
+}
+
+.request-crafter-history
+{
+  
+}
+
+.request-crafter-history .selected
+{
+  background-color: #D4E3F4;
 }

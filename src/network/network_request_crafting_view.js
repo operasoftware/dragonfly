@@ -4,34 +4,18 @@ window.cls = window.cls || {};
  * @constructor
  * @extends ViewBase
  */
-cls.RequestCraftingView = function(id, name, container_class, html, default_handler, network_logger)
+cls.RequestCraftingView = function(id, name, container_class, html, default_handler, request_crafter)
 {
-  this._network_logger = network_logger;
-  this._input = null;
-  this._output = null;
-  this._urlfield = null;
-  this._requests = [];
-  this._uastring = window.services.scope.get_hello_message().userAgent;
+  this._request_crafter = request_crafter;
+  this._init(id, name, container_class, html, default_handler);
+};
 
-  this._request_template = [
-    "GET / HTTP/1.1",
-    "Host: example.org",
-    "User-Agent: " + this._uastring,
-    "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
-    "Accept-Language: en",
-    "Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1",
-    "Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0",
-    "Connection: Keep-Alive, TE",
-    "TE: deflate, gzip, chunked, identity, trailers"
-  ].join("\r\n");
-
-  this._current_request = this._request_template;
-  this._current_url = "";
-
+cls.RequestCraftingViewPrototype = function()
+{
   this.ondestroy = function()
   {
     this._current_url = this._urlfield ? this._urlfield.get_value() : "";
-    this._current_request = this._input ? this._input.get_value() : "";
+    this._current_request = this._headers_field ? this._headers_field.get_value() : "";
   };
 
   this.createView = function(container)
@@ -46,25 +30,58 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    var ctx = this._network_logger.get_crafter_context();
-    var entries = [];
-    if (ctx)
-      entries = ctx.get_entries();
-
-    // Map issued requests with entries.
-    var helpers = window.helpers;
-    var selected_req = this._requests.last; // todo: make others selectable
-    var matches_id = window.helpers.eq("crafter_request_id", selected_req);
-    entries = entries.filter(matches_id);
-
+    var requests = this._request_crafter.get_requests();
+    var selected = this._request_crafter.selected; // is an id
     // render entries..
-    container.clearAndRender(templates.network.request_crafter_main(this._current_url,
-                                                                    this._current_request,
-                                                                    entries,
-                                                                    this._error_message));
+    container.clearAndRender(templates.network.request_crafter_main(requests, selected));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
-    this._input = new cls.BufferManager(container.querySelector("textarea"));
-    this._output = container.querySelector("code");
+    this._headers_field = new cls.BufferManager(container.querySelector("textarea"));
+  };
+
+  this._on_clear = function()
+  {
+    this._request_crafter.clear();
+    this.update();
+  }
+
+  this._handle_send_request = function()
+  {
+    this._request_crafter.send_request();
+    this.update();
+  };
+
+  this._handle_select_request = function(event, target)
+  {
+    var id = event.target.get_attr("parent-node-chain", "data-id");
+    if (id)
+    {
+      this._request_crafter.selected = id;
+      this.update();
+    }
+  };
+
+  this._handle_request_changed = function()
+  {
+    this._request_crafter.update_request(
+      this._urlfield.get_value(),
+      this._headers_field.get_value()
+    );
+  };
+
+  this._handle_url_change = function(evt, target)
+  {
+    var urlstr = target.value;
+    this._add_url_info_to_request(this._parse_url(urlstr));
+  };
+
+  this._add_url_info_to_request = function(urldata)
+  {
+    if (!urldata) { return; }
+    var current = this._headers_field.get_value();
+    current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) {return m1 + urldata.path + " " + urldata.protocol + "/1.1" ; });
+    current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
+    this._headers_field.set_value(current);
+    this._handle_request_changed_bound();
   };
 
   this._parse_url = function(url)
@@ -80,130 +97,34 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     return null;
   };
 
-  this._parse_request = function(requeststr)
+  this._init = function(id, name, container_class, html, default_handler)
   {
-    var retval = {};
-    var lines = requeststr.split(/\r?\n/);
-    var requestline = lines.shift();
-    var reqparts = requestline.match(/(\w*?) (.*) (.*)/);
-    // .match will return the whole match as [0], slice it off.
-    if (!reqparts || (reqparts = reqparts.slice(1)).length != 3)
-    {
-      this._error_message = ui_strings.M_NETWORK_CRAFTER_FAILED_PARSE_REQUEST;
-      return null;
-    }
+    this._headers_field = null;
+    this._urlfield = null;
+    this._request_crafter.addListener("update", this.update.bind(this));
 
-    retval.method = reqparts[0];
-    retval.path = reqparts[1];
-    retval.protocol = reqparts[2];
-    retval.headers = this._parse_headers(lines);
-    retval.host = retval.headers.Host;
+    // Todo: Maybe I don't need those and can just assign them as handlers.
+    this._on_clear_bound = this._on_clear.bind(this);
+    this._handle_send_request_bound = this._handle_send_request.bind(this);
+    this._handle_select_request_bound = this._handle_select_request.bind(this);
+    this._handle_request_changed_bound = this._handle_request_changed.bind(this);
+    this._handle_url_change_bound = this._handle_url_change.bind(this);
 
-    for (var n=0, header; header=retval.headers[n]; n++)
-    {
-      if (header[0] == "Host")
-      {
-        retval.host = header[1]; // don't break. pick up last header if dupes
-      }
-    }
-    retval.url = this._protocol + retval.host + retval.path;
-    return retval;
+    var eh = window.eventHandlers;
+    eh.click["clear-request-crafter"] = this._on_clear_bound;
+    eh.click["request-crafter-send"] = this._handle_send_request_bound;
+    eh.click["select-crafter-request"] = this._handle_select_request_bound;
+    // eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
+    // eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
+    eh.input["request-crafter-url-change"] = this._handle_url_change_bound;
+    eh.input["request-crafter-header-change"] = this._handle_request_changed_bound;
+
+    this.required_services = ["resource-manager", "document-manager"];
+    this.init(id, name, container_class, html, default_handler);
   };
-
-  this._parse_headers = function(lines)
-  {
-    var headers = [];
-    for (var n=0, line; line=lines[n]; n++)
-    {
-      if (line.indexOf(" ") == 0 || line.indexOf("\t") == 0)
-      {
-        // this is a continuation from the previous line
-        // Replace all leading whitespace with a single space
-        var value = "line".replace(/^[ \t]+/, " ");
-
-        if (headers.length)
-        {
-          var old = headers.pop();
-          headers.push([old[0], old[1]+value]);
-        }
-        else
-        { // should never happen with well formed headers
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + " Crafter: this header is malformed\n" + line);
-        }
-      }
-      else
-      {
-        var parts = line.match(/([\w-]*?):(.*)/);
-        if (!parts || parts.length!=3) {
-          opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE + "Crafter could not parse header!:\n" + line);
-          continue;
-        }
-        headers.push([parts[1], parts[2].trim()]);
-      }
-    }
-
-    return headers;
-  };
-
-  this._on_clear_bound = function()
-  {
-    this._network_logger.remove_crafter_request_context();
-    this.update();
-  }.bind(this);
-
-  this._handle_send_request_bound = function()
-  {
-    this._current_url = this._urlfield.get_value();
-    this._current_request = this._input.get_value();
-    var parsed_request = this._parse_request(this._current_request);
-    if (parsed_request)
-    {
-      var ctx = this._network_logger.get_crafter_context(true);
-      this._error_message = null;
-      var crafter_request_id = ctx.send_request(this._current_url, parsed_request);
-      this._requests.push(crafter_request_id);
-    }
-    else
-    {
-      this.update();
-    }
-  }.bind(this);
-
-  this._handle_url_change_bound = function(evt, target)
-  {
-    var urlstr = target.value;
-    this._add_url_info_to_request(this._parse_url(urlstr));
-  }.bind(this);
-
-  this._add_url_info_to_request = function(urldata)
-  {
-    if (!urldata) { return; }
-    var current = this._input.get_value();
-    current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) {return m1 + urldata.path + " " + urldata.protocol + "/1.1" ; });
-    current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
-    this._input.set_value(current);
-  };
-
-  this._on_context_added_bound = function(message)
-  {
-    if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_CRAFTER)
-      message.context.addListener("resource-update", this.update.bind(this));
-  }.bind(this);
-
-  var eh = window.eventHandlers;
-  eh.click["clear-request-crafter"] = this._on_clear_bound;
-  eh.click["request-crafter-send"] = this._handle_send_request_bound;
-  eh.change["request-crafter-url-change"] = this._handle_url_change_bound;
-  eh.keyup["request-crafter-url-change"] = this._handle_url_change_bound;
-
-  this._network_logger.addListener("context-added", this._on_context_added_bound);
-
-  // for onchange and buffermanager  eh.click["request-crafter-send"] = this._handle_send_request_bound;
-
-  this.required_services = ["resource-manager", "document-manager"];
-  this.init(id, name, container_class, html, default_handler);
 };
-cls.RequestCraftingView.prototype = ViewBase;
+cls.RequestCraftingViewPrototype.prototype = ViewBase;
+cls.RequestCraftingView.prototype = new cls.RequestCraftingViewPrototype();
 
 cls.RequestCraftingView.create_ui_widgets = function()
 {

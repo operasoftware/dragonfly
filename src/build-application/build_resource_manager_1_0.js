@@ -14,12 +14,13 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                          network_logger);
   cls.NetworkLog.create_ui_widgets();
 
+  var request_crafter = new cls.RequestCrafter(network_logger);
   new cls.RequestCraftingView("request_crafter",
                               ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER,
                               "scroll",
                               "",
                               "",
-                              network_logger);
+                              request_crafter);
   cls.RequestCraftingView.create_ui_widgets();
 
   new cls.NetworkOptionsView("network_options",

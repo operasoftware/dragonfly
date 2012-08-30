@@ -74,19 +74,22 @@ templates.options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.request_crafter_main = function(url, current_request, entries, error_message)
+templates.request_crafter_main = function(issued_requests, selected)
 {
-  var response_and_subsequent = [ui_strings.M_NETWORK_CRAFTER_SEND];
-  if (error_message)
+  var get_selected = window.helpers.eq("id", selected);
+  var selected_request = issued_requests.filter(get_selected)[0];
+
+  var response_and_subsequent = ui_strings.M_NETWORK_CRAFTER_SEND;
+  if (selected_request.error_message)
   {
-    response_and_subsequent = error_message;
+    response_and_subsequent = selected_request.error_message;
   }
   else
   {
-    response_and_subsequent = entries.map(function(entry, index) {
+    response_and_subsequent = selected_request.entries.map(function(entry, index) {
       var is_first_entry = index == 0;
       var req_res = entry.requests_responses;
-      // Skip the first request, that's shown as current_request
+      // Skip the first request, that's shown separately
       if (is_first_entry && index == 0)
         req_res = req_res.slice(1);
       return (
@@ -96,34 +99,45 @@ templates.request_crafter_main = function(url, current_request, entries, error_m
       );
     });
   }
-  return (
+  return [
     ["div",
-      ["div",
-        ["h2", ui_strings.S_HTTP_LABEL_URL],
-        ["p",
-          ["input",
-           "type", "text",
-           "value", url || "http://example.org",
-           "handler", "request-crafter-url-change"
-          ]
-        ],
-        ["h2", ui_strings.S_NETWORK_REQUEST],
-        ["p",
-          ["_auto_height_textarea", current_request]
-        ],
-        ["p",
-          ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
-           "handler", "request-crafter-send",
-           "unselectable", "on",
-           "class", "ui-button",
-           "tabindex", "1"
-          ]
-        ],
-        response_and_subsequent,
-        "class", "padding request-crafter"
-      ]
+      ["h2", ui_strings.S_HTTP_LABEL_URL],
+      ["p",
+        ["input",
+         "type", "text",
+         "value", selected_request.url || "http://example.org",
+         "handler", "request-crafter-url-change"
+        ]
+      ],
+      ["h2", ui_strings.S_NETWORK_REQUEST],
+      ["p",
+        ["_auto_height_textarea", selected_request.headers,
+         "handler", "request-crafter-header-change"]
+      ],
+      ["p",
+        ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
+         "handler", "request-crafter-send",
+         "unselectable", "on",
+         "class", "ui-button",
+         "tabindex", "1"
+        ]
+      ],
+      response_and_subsequent,
+      "class", "padding request-crafter"
+    ],
+    ["div",
+      ["ul",
+        issued_requests.map(function(req, index) {
+          return [
+            "li", req.method + " – " + req.url,
+            "data-id", req.id
+          ].concat(req.id == selected ? ["class", "selected"] : []);
+        })
+      ],
+      "handler", "select-crafter-request",
+      "class", "padding request-crafter-history"
     ]
-  );
+  ]
 };
 
 templates.incomplete_warning = function(context, index, all_contexts)

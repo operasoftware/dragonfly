@@ -527,6 +527,7 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>
+<script src="./network/network_request_crafter.js"/>
 <script src="./network/network_request_crafting_view.js"/>
 <script src="./network/network_global_options_view.js"/>
 <script src="./network/network_templates.js"/>
