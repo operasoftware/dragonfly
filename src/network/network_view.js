@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 window.cls = window.cls || {};
 
@@ -63,7 +63,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     {
       if (this._type_filters)
         ctx.set_filters(this._type_filters);
-
       this._render_main_view(this._container);
       this.text_search.update_search();
     }
@@ -669,9 +668,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._on_context_removed_bound = function(message)
   {
     if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_LOGGER)
-    {
       this.update();
-    }
   }.bind(this);
 
   this._init = function(id, name, container_class, html, default_handler)
