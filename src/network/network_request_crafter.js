@@ -36,7 +36,6 @@ cls.RequestCrafterPrototype = function()
 
   this.update_request = function(url, headers)
   {
-    var do_update = false;
     // may go when moving this to the request
     var get_selected = window.helpers.eq("id", this.selected);
     var selected_request = this._requests.filter(get_selected)[0];
@@ -54,13 +53,13 @@ cls.RequestCrafterPrototype = function()
       this.selected = this._get_uid();
       selected_request = new cls.RequestCrafter.Request(this, this.selected, url, headers);
       this._requests.push(selected_request);
-      do_update = true;
     }
     selected_request.url = url;
     selected_request.headers = headers;
     selected_request.parse_request();
-    if (do_update)
-      this.post_message("update");
+    if (selected_request.parsed_request)
+      selected_request.method = selected_request.parsed_request.method;
+    this.post_message("update-request-list");
   };
 
   this.send_request = function()
@@ -114,10 +113,10 @@ cls.RequestCrafter.Request = function(crafter, id, url, headers)
   this.crafter_request_id = 0;
   this.error_message = null;
 
-  this.url = url || "http://example.org";
+  this.url = url || "http://echo.opera.com";
   this.headers = headers || [
     this.method + " / HTTP/1.1",
-    "Host: example.org",
+    "Host: echo.opera.com",
     "User-Agent: " + crafter.ua_string,
     "Accept: text/html, application/xml;q=0.9, application/xhtml xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
     "Accept-Language: en",

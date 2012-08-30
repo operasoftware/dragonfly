@@ -105,7 +105,7 @@ templates.request_crafter_main = function(issued_requests, selected)
       ["p",
         ["input",
          "type", "text",
-         "value", selected_request.url || "http://example.org",
+         "value", selected_request.url || "",
          "handler", "request-crafter-url-change"
         ]
       ],
@@ -125,19 +125,23 @@ templates.request_crafter_main = function(issued_requests, selected)
       response_and_subsequent,
       "class", "padding request-crafter"
     ],
-    ["div",
-      ["ul",
-        issued_requests.map(function(req, index) {
-          return [
-            "li", req.method + " – " + req.url,
-            "data-id", req.id
-          ].concat(req.id == selected ? ["class", "selected"] : []);
-        })
-      ],
-      "handler", "select-crafter-request",
-      "class", "padding request-crafter-history"
+    ["div", templates.crafter_request_list(issued_requests, selected),
+     "handler", "select-crafter-request",
+     "class", "padding request-crafter-history"
     ]
-  ]
+  ];
+};
+
+templates.crafter_request_list = function(issued_requests, selected)
+{
+  return ["ul",
+    issued_requests.map(function(req, index) {
+      return [
+        "li", (req.is_sent ? "" : "(unsent) ") + req.method + " – " + req.url,
+        "data-id", req.id
+      ].concat(req.id == selected ? ["class", "selected"] : []);
+    }).reverse()
+  ];
 };
 
 templates.incomplete_warning = function(context, index, all_contexts)

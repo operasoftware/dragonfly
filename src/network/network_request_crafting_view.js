@@ -1,4 +1,4 @@
-﻿window.cls = window.cls || {};
+window.cls = window.cls || {};
 
 /**
  * @constructor
@@ -7,6 +7,9 @@
 cls.RequestCraftingView = function(id, name, container_class, html, default_handler, request_crafter)
 {
   this._request_crafter = request_crafter;
+  this._headers_field = null;
+  this._urlfield = null;
+  this._container = null;
   this._init(id, name, container_class, html, default_handler);
 };
 
@@ -18,24 +21,33 @@ cls.RequestCraftingViewPrototype = function()
     this._current_request = this._headers_field ? this._headers_field.get_value() : "";
   };
 
-  this.createView = function(container)
-  {
-    this._render_main_view(container);
-  };
-
   this.create_disabled_view = function(container)
   {
     container.clearAndRender(window.templates.disabled_view());
   };
 
-  this._render_main_view = function(container)
+  this.createView = function(container)
   {
+    this._container = container;
     var requests = this._request_crafter.get_requests();
     var selected = this._request_crafter.selected; // is an id
     // render entries..
-    container.clearAndRender(templates.network.request_crafter_main(requests, selected));
+    var templates = window.templates.network;
+    container.clearAndRender(templates.request_crafter_main(requests, selected));
     this._urlfield = new cls.BufferManager(container.querySelector("input"));
     this._headers_field = new cls.BufferManager(container.querySelector("textarea"));
+  };
+
+  this.update_request_list = function()
+  {
+    var list = this._container && this._container.querySelector(".request-crafter-history");
+    if (list)
+    {
+      var requests = this._request_crafter.get_requests();
+      var selected = this._request_crafter.selected; // is an id
+      var templates = window.templates.network;
+      list.clearAndRender(templates.crafter_request_list(requests, selected));
+    }
   };
 
   this._on_clear = function()
@@ -99,9 +111,8 @@ cls.RequestCraftingViewPrototype = function()
 
   this._init = function(id, name, container_class, html, default_handler)
   {
-    this._headers_field = null;
-    this._urlfield = null;
     this._request_crafter.addListener("update", this.update.bind(this));
+    this._request_crafter.addListener("update-request-list", this.update_request_list.bind(this));
 
     // Todo: Maybe I don't need those and can just assign them as handlers.
     this._on_clear_bound = this._on_clear.bind(this);
