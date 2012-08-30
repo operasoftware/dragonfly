@@ -273,8 +273,8 @@
 {
   overflow: auto;
   height: 100%;
+  padding-top: 15px;
   box-sizing: border-box;
-  padding: 27px 20px 27px 0;
   background-color: #fff;
   /* using border-left instead of padding-left to keep the 
      space for the close button when scrolling horizontally */
@@ -289,10 +289,14 @@
   font-weight: bold;
 }
 
-.network_logger .header-token-type-name,
+.network_logger .header-token-type-name
+{
+  color: #7070B4;
+}
+
 .network_logger .http-token-type-boundary
 {
-  color: #006C0E;
+  color: #AA5544;
 }
 
 .network_logger .network-summary
@@ -356,7 +360,7 @@
 .network-options h2
 {
   font-size: 125%;
-  padding: 15px 0 10px 0;
+  padding: 10px 0 5px 0;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
