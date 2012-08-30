@@ -574,5 +574,7 @@ table .network-body
   /* work-around CORE-46966: Big pre element breaks layout in a table */
   float: left;
   margin-right: -10000000px;
+  /* todo: word-wrap: break-word; won't really work without this, doesn't make sense with smaller content though
   width: 100%;
+  */
 }

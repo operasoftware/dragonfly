@@ -345,8 +345,8 @@ templates.param_cells = function(name_value)
 {
   var parts = name_value.replace(/\+/g, " ").split("=");
   return [
-      ["td", decodeURIComponent(parts[0])],
-      ["td", decodeURIComponent(parts[1])]
+      ["td", decodeURIComponent(parts[0]), "class", "mono"],
+      ["td", decodeURIComponent(parts[1]), "class", "mono"]
   ];
 };
 
