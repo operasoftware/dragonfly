@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 cls.RequestCrafter = function(logger)
 {
@@ -85,7 +85,7 @@ cls.RequestCrafterPrototype = function()
   })();
 
   this._on_context_added = function(message)
-  {    
+  {
     if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_CRAFTER)
       message.context.addListener("resource-update", this.add_entries_to_requests.bind(this));
   };
