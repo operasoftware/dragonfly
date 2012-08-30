@@ -149,6 +149,8 @@ var DOMMarkupEditor = function()
   {
     this.textarea.style.height = 0;
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
+    this.textarea_container.offsetHeight;
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
   this.__is_active = function()
@@ -307,13 +309,11 @@ var DOMMarkupEditor = function()
     };
     if (next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent))
       parent_parent.removeChild(next);
-    this.set_textarea_dimensions();
     // only for click events
     if (event)
       this.textarea.focus();
     scroll_position.reset(null, this.textarea);
     this.textarea.selectionEnd = this.textarea.selectionStart = 0;
-    // it seems it needs to be set twice to get set correctly
     this.set_textarea_dimensions();
   };
 
