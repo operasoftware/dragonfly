@@ -56,31 +56,44 @@ templates._details_content = function(entry, do_raw)
   var requests_responses = entry.requests_responses.map(do_raw ? this._requests_responses_raw_bound
                                                                : this._requests_responses_parsed_bound);
   if (do_raw)
-    return requests_responses;
-
-  var responsecode = entry.current_responsecode;
-  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
-     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
-
+  {
+    return [
+      templates.details_headline(entry),
+      requests_responses
+    ];
+  }
   return (
     ["table",
       ["tbody",
         this._col_or_row(
-          ["h1",
-            [
-              ["span",
-                entry.touched_network && responsecode ? String(responsecode) + " – " : "",
-                "data-spec", "http#" + entry.current_responsecode
-              ],
-              ["span", entry.url]
-            ]
-          ]
+          templates.details_headline(entry)
         )
       ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
       requests_responses
     ]
   );
+};
+
+templates.details_headline = function(entry)
+{
+  /*
+  var responsecode = entry.current_responsecode;
+  if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
+     responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
+  */
+  return ["h2", entry.url, "class", "url"];
+  /*
+  ["h2",
+    [
+      ["span",
+        entry.touched_network && responsecode ? String(responsecode) + " – " : "",
+        "data-spec", "http#" + entry.current_responsecode
+      ],
+      ["span", entry.url ]
+    ]
+  ]
+  */
 };
 
 templates.did_not_touch_network = function(entry)
@@ -146,7 +159,7 @@ templates._header_token_templ = function(state, token)
 {
   var TYPE = 0;
   var STR = 1;
-  var attrs = ["class", "header-token-type-" + cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
+  var attrs = ["class", cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
 
   if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
   {
@@ -171,6 +184,17 @@ templates._token_receiver = function(tokens, token_type, token)
 
 templates._request_headers = function(req, do_raw)
 {
+  /*
+  var method_str = req.method || "";
+  if (method_str)
+    method_str = " – " + method_str;
+  */
+  var headline;
+  if (req.request_body && req.request_body.partList && req.request_body.partList.length)
+    headline = ["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE /* + method_str */];
+  else
+    headline = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE /* + method_str */];
+
   if (do_raw)
   {
     if (req.request_headers_raw)
@@ -188,7 +212,7 @@ templates._request_headers = function(req, do_raw)
         var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
         var map_func = this._header_token_templ.bind(this, state_holder);
         return [
-          ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE],
+          headline,
           this._pre(req.header_tokens.map(map_func))
         ];
       }
@@ -197,19 +221,26 @@ templates._request_headers = function(req, do_raw)
   }
 
   var ret = [];
-  var method_str = req.method || "";
-  if (method_str)
-    method_str = " – " + method_str;
-
-  if (req.request_body && req.request_body.partList && req.request_body.partList.length)
-    ret.push(["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE + method_str]);
-  else
-    ret.push(["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE + method_str]);
-
   if (!req.request_headers)
+  {
     ret.push(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL);
+  }
   else
+  {
     ret.extend(this.headers_list(req.request_headers));
+    if (req.first_line)
+    {
+      // todo: make nice, add speclinks
+      var classname = "mono " + cls.HTTPHeaderTokenizer.classnames[
+                                  cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
+                                ];
+      ret.unshift([
+        "pre", req.first_line,
+        "class", classname
+      ]);
+    }
+  }
+  ret.unshift(headline);
 
   return ["tbody", ret.map(this._col_or_row)];
 };
@@ -243,7 +274,7 @@ templates._response_headers = function(resp, do_raw)
   }
 
   var ret = [];
-
+/*
   var responsecode = resp.responsecode || "";
   var status_code = cls.ResourceUtil.http_status_codes[responsecode];
   if (status_code)
@@ -251,30 +282,46 @@ templates._response_headers = function(resp, do_raw)
 
   if (responsecode)
     responsecode = " – " + responsecode;
+*/
+
+  ret.extend(this.headers_list(resp.response_headers));
+  if (resp.first_line)
+  {
+    // todo: make nice, add speclinks
+    var classname = "mono " + cls.HTTPHeaderTokenizer.classnames[
+                                cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
+                              ];
+    ret.unshift([
+      "pre", resp.first_line,
+      "class", classname
+    ]);
+  }
 
   if (resp.logger_entry_touched_network)
   {
-    var head = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE + responsecode];
+    var head = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE /* + responsecode */];
+    /*
     if (responsecode)
     {
       head.extend(["data-spec", "http#" + resp.responsecode]);
     }
-    ret.push(head);
+    */
+    ret.unshift(head);
   }
-
-  ret.extend(this.headers_list(resp.response_headers));
   return ["tbody", ret.map(this._col_or_row)];
 };
 
 templates._headers_pseudo_raw = function(header)
 {
   var template = [
-      ["span", header.name + ":",
-        "data-spec", "http#" + header.name.trim()
-      ],
-      ["span", " " + header.value]
-    ];
-  return this._pre(template);
+    ["span", header.name + ":",
+      "data-spec", "http#" + header.name.trim(),
+      "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME]
+    ],
+    ["span", " " + header.value,
+      "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.VALUE]]
+  ];
+  return templates._pre(template);
 };
 
 templates._headers = function(header) {
@@ -288,7 +335,8 @@ templates._headers = function(header) {
 
 templates.headers_list = function(headers, do_raw)
 {
-  return headers.map(do_raw ? this._headers_pseudo_raw : this._headers, this);
+  // return headers.map(do_raw ? this._headers_pseudo_raw : this._headers, this);
+  return headers.map(this._headers_pseudo_raw);
 };
 
 templates.param_cells = function(name_value)

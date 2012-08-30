@@ -295,8 +295,7 @@
   color: #006C0E;
 }
 
-.network_logger .network-summary,
-.network-details-container h1
+.network_logger .network-summary
 {
   text-align: center;
   font-size: 1.4em;
@@ -304,17 +303,21 @@
   color: #808080;
 }
 
-.network-details-container h1
+.network-details-container h2
 {
-  color: #444444;
-  margin: 9px 0;
-  background-color: transparent;
+  padding: 9px 0;
+}
+
+.entry-details .url
+{
+  font-weight: normal;
 }
 
 .network-details-container pre,
 .network-details-container p
 {
   margin: 0;
+  word-wrap: break-word;
 }
 
 .network-details-container table
@@ -325,6 +328,7 @@
 .network-details-container td,
 .network-details-container th
 {
+  padding: 0;
   vertical-align: top;
   word-wrap: break-word;  
 }
@@ -352,7 +356,7 @@
 .network-options h2
 {
   font-size: 125%;
-  margin: 15px 0 10px 0;
+  padding: 15px 0 10px 0;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
@@ -566,4 +570,5 @@ table .network-body
   /* work-around CORE-46966: Big pre element breaks layout in a table */
   float: left;
   margin-right: -10000000px;
+  width: 100%;
 }
