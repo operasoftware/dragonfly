@@ -143,84 +143,9 @@ cls.ResourceManagerService = function(view, network_logger)
     this._documentList = [];
     this._collapsedHash = {};
 
- //   if (this._context)
     delete this._context;
     this._view.update();
   }.bind(this);
-
-/*
-  this._on_abouttoloaddocument_bound = function(msg)
-  {
-    var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-
-    if (!data.parentFrameID)
-    {
-      if(this._context)
-        delete this._context;
-      this._context = new cls.ResourceContext(data);
-    }
-
-    if (this._context)
-      this._context.update("abouttoloaddocument", data);
-  }.bind(this);
-
-  this._on_urlload_bound = function(msg)
-  {
-    if (!this._context)
-      return;
-
-    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
-      //bail if we get dupes. Why do we get dupes? fixme
-      //if (data.resourceID in this._current_document.resourcemap) { return }
-
-    this._context.update("urlload", data);
-    this._view.update();
-
-  }.bind(this);
-
-  this._on_urlredirect_bound = function(msg)
-  {
-    if (!this._context)
-      return;
-
-    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
-    // a bit of cheating since further down we use .resouceID to determine
-    // what resource the event applies to:
-    data.resourceID = data.fromResourceID;
-    this._context.update("urlredirect", data);
-  }.bind(this);
-
-  this._on_urlfinished_bound = function(msg)
-  {
-    if (!this._context)
-      return;
-
-    var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    var r = this._context.update("urlfinished", data);
-
-    if (r && !r.data)
-    {
-        r.fetch_data();
-    }
-
-  }.bind(this);
-
-  this._on_response_bound = function(msg)
-  {
-    if (!this._context)
-      return;
-
-    var data = new cls.ResourceManager["1.0"].Response(msg);
-    this._context.update("response", data);
-  }.bind(this);
-
-  this._on_debug_context_selected_bound = function()
-  {
-    if (this._context)
-      delete this._context;
-    this._view.update();
-  }.bind(this);
-*/
 
 
   this._handle_expand_collapse_bound = function(event, target)
@@ -245,36 +170,6 @@ cls.ResourceManagerService = function(view, network_logger)
         pivot.classList.add('close');
       }
     }
-/*
-    do
-    {
-      if (target)
-        p.push()
-
-      var target = target.parentNode;
-
-    var frameID = target.getAttribute('data-frame-id');
-    var data = this._context.frames[ frameID ];
-
-    if (!data)
-      return;
-
-    var groupName = target.getAttribute('data-resource-group');
-    if (groupName){ data = data.groups[ groupName ]; }
-
-    if (!data)
-      return;
-
-    data.closed = !data.closed;
-    if (data.closed)
-    {
-      target.addClass('collapsed');
-    }
-    else
-    {
-      target.removeClass('collapsed');
-    }
-*/
   }.bind(this);
 
 
@@ -324,8 +219,6 @@ cls.ResourceManagerService = function(view, network_logger)
     cls.ResourceDetailView.instance.show_resource_group(group);
   }.bind(this);
 
-
-
   this._init = function()
   {
     var eh = window.eventHandlers;
@@ -340,22 +233,12 @@ cls.ResourceManagerService = function(view, network_logger)
     }
 
     this._res_service = window.services['resource-manager'];
-/*
-    this._res_service.addListener("urlload", this._update_bound);
-    this._res_service.addListener("response", this._update_bound);
-    this._res_service.addListener("urlredirect", this._update_bound);
-    this._res_service.addListener("urlfinished", this._update_bound);
-
-    this._doc_service = window.services['document-manager'];
-    this._doc_service.addListener("abouttoloaddocument", this._update_bound);
-*/
     window.messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
     this._network_logger.addListener("resource-update", this._update_bound);
     this._network_logger.addListener("window-context-added", this._update_bound);
     this._network_logger.addListener("window-context-removed", this._update_bound);
 
   };
-
 
   this.get_resource_context = function()
   {
@@ -513,168 +396,6 @@ cls.ResourceRequest = function(url, callback,data)
   this._init(url, callback, data);
   if (this._initialized)
     this._request_resource();
-}
-
-cls.ResourceFrame = function( data )
-{
-  this._init( data );
-}
-cls.ResourceFramePrototype = function()
-{
-  this._init = function(data)
-  {
-    this.id = data.frameID;
-    this.resourceID = data.resourceID;
-    this.parentFrameID = data.parentFrameID;
-    this.windowID = data.windowID;
-    this.closed = !!data.parentFrameID;
-    this.groups =
-    {
-      markup: new cls.ResourceGroup('markup','markup'),
-      css: new cls.ResourceGroup('stylesheets','css'),
-      script: new cls.ResourceGroup('scripts','script'),
-      image: new cls.ResourceGroup('images','image'),
-      font: new cls.ResourceGroup('fonts','font'),
-      other: new cls.ResourceGroup('other','other')
-    }
-  }
-}
-
-window.cls.ResourceFrame.prototype = new window.cls.ResourceFramePrototype();
-
-
-cls.ResourceContext = function(data)
-{
-  this.resourcesDict = {};
-  this.resourcesUrlDict = {};
-  this.frames = {};
-
-  this.update = function(eventname, event)
-  {
-    var frame;
-    if (eventname == "abouttoloaddocument")
-    {
-      frame = new cls.ResourceFrame(event);
-      this.frames[ frame.id ] = frame;
-      return;
-    }
-
-
-    var res = this.get_resource(event.resourceID);
-    if (eventname == "urlload" && !res)
-    {
-      res = new cls.Resource(event.resourceID);
-      res.frameID = event.frameID;
-      this.resourcesDict[ res.id ] = res;
-    }
-
-    if (res)
-    {
-      res.update(eventname, event);
-
-      frame = this.frames[res.frameID];
-      if(!frame)
-        res.invalid = true;
-      else
-      {
-        if (eventname == "urlload")
-        {
-          if (res.id == frame.resourceID)
-          {
-            frame.resource = res;
-            if (frame.parentFrameID )
-            {
-              var parentFrame = this.frames[frame.parentFrameID];
-              if (parentFrame && parentFrame.resource)
-                frame.sameOrigin = cls.ResourceUtil.sameOrigin(parentFrame.resource, frame.resource);
-              else
-                frame.sameOrigin = false;
-            }
-          }
-        }
-
-        else if (eventname == "urlfinished")
-        {
-          // push the resourceID into the proper group
-          if (frame && frame.resource)
-          {
-            var type = res.type;
-            if (!frame.groups[type]){ type='other'; }
-
-            frame.groups[type].push( res.id );
-            this.resourcesUrlDict[ res.url ] = res.id;
-
-            // sameOrigin check
-            res.sameOrigin = cls.ResourceUtil.sameOrigin(frame.resource, res);
-          }
-          else
-          {
-            opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-              'Invalidating the resource '+ res.id +': '+ (frame?'Unkown top level resource '+frame.resourceId +' for the frame '+frame.id:'Unknown frameID '+  res.frameID));
-            res.invalid = true;
-          }
-        }
-
-        else if (eventname == "urlredirect")
-        {
-          // Adjust the frame if its top resource is redirected
-          if (frame && frame.resourceID == res.id)
-          {
-            frame.resourceID = event.toResourceID;
-            delete frame.resource;
-          }
-        }
-      }
-
-      if (res.invalid)
-      {
-        // delete the frame and all its resources if the top resource of a frame is invalid
-        if (frame && frame.resource && frame.resource.id==res.id)
-        {
-          delete this.frames[frame.id];
-          for(var rid in this.resourcesDict)
-          {
-            var r = this.resourcesDict[ rid ];
-            if(r.frameID == frame.id)
-              delete this.resourcesDict[ rid ];
-          }
-        }
-        delete this.resourcesDict[ res.id ];
-      }
-      else
-      {
-        return res;
-      }
-    }
-
-  }
-
-  this.get_resource = function(id)
-  {
-    return this.resourcesDict[ id ];
-  };
-}
-
-cls.ResourceGroup = function(name,type)
-{
-  this.ids = [];
-  this.name = null;
-  this.type = null;
-  this.closed = true;
-
-  this._init = function(name,type)
-  {
-    this.name = name;
-    this.type = type;
-    this.ids.length = 0;
-  }
-  this.push = function( id )
-  {
-    if( this.ids.indexOf(id)===-1 )
-      this.ids.push(id);
-  }
-
-  this._init(name);
 }
 
 
