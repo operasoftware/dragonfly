@@ -2,6 +2,7 @@
 
 cls.JsSourceView = function(id, name, container_class)
 {
+  ActionHandlerInterface.apply(this);
   // TODO this view can just be visible once at the time otherwise there will be problems
   // this must be refactored. line_arr, state_arr, breakpoints must be added to the script object
   // getting context values must move out of this class
@@ -898,6 +899,18 @@ cls.JsSourceView = function(id, name, container_class)
     for (key in this._handlers)
       actions.push(key);
     return actions;
+  };
+
+  this.get_selection_string = function()
+  {
+    var selection = window.getSelection();
+    if (source_content && !selection.isCollapsed)
+    {
+      var range = selection.getRangeAt(0);
+      if (range.toString() == source_content.textContent)
+        return __current_script.script_data;
+    }
+    return this._tooltip.get_selection_string();
   };
 
   this.mode = "default";

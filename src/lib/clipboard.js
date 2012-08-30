@@ -4,10 +4,12 @@ var Clipboard = function() {};
 {
   var _content_editable_ele = null;
   var _is_supported = false;
+  var _is_copy_action = false;
   // static methods
 
   this.set_string = function(string)
   {
+    _is_copy_action = true;
     if (!_content_editable_ele)
       _content_editable_ele = document.querySelector("#contenteditable");
     _content_editable_ele.contentEditable = true;
@@ -33,6 +35,16 @@ var Clipboard = function() {};
     }
   };
 
+  this.add_listener = function(type, listener, is_capturing)
+  {
+    var wrapped = function(event)
+    {
+      if (!_is_copy_action)
+        listener(event);
+    };
+    document.addEventListener(type, wrapped, Boolean(is_capturing));
+  };
+
   var _set_string = function(string, event)
   {
     event.clipboardData.setData("text/plain", string);
@@ -43,6 +55,7 @@ var Clipboard = function() {};
   {
     document.removeEventListener("copy", listener, false);
     _content_editable_ele.contentEditable = false;
+    _is_copy_action = false;
   };
 
   var _test_support = function()

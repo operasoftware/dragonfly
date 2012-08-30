@@ -114,9 +114,11 @@ function ContextMenu() {
     var items = null;
     var selection = window.getSelection();
     var range = Clipboard.is_supported && !selection.isCollapsed && selection.getRangeAt(0);
-    var type = range && range.intersectsNode(ele)
-             ? ContextMenu.SELECTION
-             : ContextMenu.DEFAULT;
+    var cur_handler_id = ActionBroker.get_instance().get_current_handler_id();
+    var view = window.views[cur_handler_id];
+    var selection_string = (view && view.get_selection_string()) ||
+                           (range && range.intersectsNode(ele) && String(selection));
+    var type = selection_string ? ContextMenu.SELECTION : ContextMenu.DEFAULT;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
@@ -134,7 +136,7 @@ function ContextMenu() {
         var menus = this._registered_menus[type][menu_id];
         if (menus && menus.length)
         {
-          var items = this._expand_all_items(menus, event, menu_id, String(selection));
+          var items = this._expand_all_items(menus, event, menu_id, selection_string);
           if (items.length)
           {
             if (all_items.length)
@@ -229,7 +231,7 @@ function ContextMenu() {
     else if (type == ContextMenu.SELECTION)
     {
       all_items.push({label: ui_strings.M_CONTEXTMENU_COPY,
-                  handler: Clipboard.set_string.bind(Clipboard, String(selection)),
+                  handler: Clipboard.set_string.bind(Clipboard, selection_string),
                   id: "copy-clipboard"});
     }
 
