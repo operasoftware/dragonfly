@@ -1365,18 +1365,6 @@ cls.JsSourceView.create_ui_widgets = function()
         }
         if (line)
         {
-          var selection = window.getSelection();
-          if (!selection.isCollapsed)
-          {
-            var key = selection.toString();
-            items.push({
-              label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
-              handler: function(event, target) {
-                window.views.watches.add_watch(key);
-              }
-            });
-          }
-
           var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
           if (bp)
           {
@@ -1452,4 +1440,20 @@ cls.JsSourceView.create_ui_widgets = function()
       }
     }
   ], true); // extend the default existing menu
+
+  contextmenu.register("js_source", [
+    {
+      callback: function(event, target, selection)
+      {
+        var items = [];
+        items.push({
+          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", selection),
+          handler: function(event, target) {
+            window.views.watches.add_watch(selection);
+          }
+        });
+        return items;
+      }
+    }
+  ], false, ContextMenu.SELECTION);
 };

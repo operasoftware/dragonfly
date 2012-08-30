@@ -27,15 +27,22 @@ function ContextMenu() {
    *                          for showing a checkbox before the item, or 'selected'
    *                          (boolean) for showing the selected item in a group.
    */
-  this.register = function(menu_id, item_list, extend)
+  this.register = function(menu_id, item_list, extend, type)
   {
+    if (!type)
+      type = ContextMenu.DEFAULT;
+
+    if (!this._registered_menus[type])
+      this._registered_menus[type] = {};
+
+    var registered_menus = this._registered_menus[type];
     if (item_list)
     {
-      if (this._registered_menus[menu_id] && extend)
+      if (registered_menus[menu_id] && extend)
       {
-        item_list.extend(this._registered_menus[menu_id]);
+        item_list.extend(registered_menus[menu_id]);
       }
-      this._registered_menus[menu_id] = item_list;
+      registered_menus[menu_id] = item_list;
     }
   };
 
@@ -107,44 +114,40 @@ function ContextMenu() {
     var items = null;
     var selection = window.getSelection();
     var range = Clipboard.is_supported && !selection.isCollapsed && selection.getRangeAt(0);
-    if (range && range.intersectsNode(ele))
+    var type = range && range.intersectsNode(ele)
+             ? ContextMenu.SELECTION
+             : ContextMenu.DEFAULT;
+    // This traverses up the tree and collects all menus it finds, and
+    // concatenates them with a separator between each menu. It stops if it
+    // finds a data-menu attribute with a blank value.
+    while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
     {
-      all_items.push({label: ui_strings.M_CONTEXTMENU_COPY,
-                  handler: Clipboard.set_string.bind(Clipboard, String(selection)),
-                  id: "copy-clipboard"});
-    }
-    else
-    {
-      // This traverses up the tree and collects all menus it finds, and
-      // concatenates them with a separator between each menu. It stops if it
-      // finds a data-menu attribute with a blank value.
-      while (ele && ele != document && (menu_id = ele.getAttribute("data-menu")) !== "")
+      items = null;
+      if (menu_id)
       {
-        items = null;
-        if (menu_id)
+        last_found_menu_id = menu_id;
+      }
+      // Make sure the same menu is never collected twice
+      if (collected_menus.indexOf(menu_id) == -1) {
+        collected_menus.push(menu_id);
+
+        var menus = this._registered_menus[type][menu_id];
+        if (menus && menus.length)
         {
-          last_found_menu_id = menu_id;
-        }
-        // Make sure the same menu is never collected twice
-        if (collected_menus.indexOf(menu_id) == -1) {
-          collected_menus.push(menu_id);
-
-          var menus = this._registered_menus[menu_id];
-          if (menus && menus.length)
+          var items = this._expand_all_items(menus, event, menu_id, String(selection));
+          if (items.length)
           {
-            var items = this._expand_all_items(menus, event, menu_id);
-            if (items.length)
-            {
-              if (all_items.length)
-                all_items.push(ContextMenu.separator);
+            if (all_items.length)
+              all_items.push(ContextMenu.separator);
 
-              all_items = all_items.concat(items);
-            }
+            all_items = all_items.concat(items);
           }
         }
-        ele = ele.parentNode;
       }
-
+      ele = ele.parentNode;
+    }
+    if (type == ContextMenu.DEFAULT)
+    {
       // This should preferably not be done inside ContextMenu.
       var spec = event.target.get_attr("parent-node-chain", "data-spec");
       if (spec)
@@ -222,6 +225,12 @@ function ContextMenu() {
           }
         )
       }
+    }
+    else if (type == ContextMenu.SELECTION)
+    {
+      all_items.push({label: ui_strings.M_CONTEXTMENU_COPY,
+                  handler: Clipboard.set_string.bind(Clipboard, String(selection)),
+                  id: "copy-clipboard"});
     }
 
     this._current_items = all_items;
@@ -307,7 +316,7 @@ function ContextMenu() {
     this.is_visible = false;
   };
 
-  this._expand_all_items = function(items, event, menu_id)
+  this._expand_all_items = function(items, event, menu_id, selection)
   {
     var all_items = [];
 
@@ -315,7 +324,7 @@ function ContextMenu() {
     {
       if (typeof item.callback == "function")
       {
-        var callback_items = item.callback(event, event.target);
+        var callback_items = item.callback(event, event.target, selection);
         if (callback_items)
         {
           all_items = all_items.concat(callback_items);
@@ -394,3 +403,6 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
+ContextMenu.DEFAULT = 0;
+ContextMenu.SELECTION = 1;
+
