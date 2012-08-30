@@ -650,6 +650,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
+/*
+  // Todo: currently can't have the setting-changing context menu only on this container
+  this._on_toggle_raw_mode_bound = function(event)
+  {
+    var KEY = "view-raw";
+    settings.network_logger.set(KEY, !settings.network_logger.get(KEY));
+  }.bind(this);
+*/
+
   var eh = window.eventHandlers;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
@@ -720,7 +729,8 @@ cls.NetworkLog.create_ui_widgets = function()
     },
     // settings map
     {
-      checkboxes: ["track-content", "view-raw"]
+      checkboxes: ["track-content", "view-raw"],
+      contextmenu: ["view-raw"]
     },
     // templates
     {
@@ -820,15 +830,6 @@ cls.NetworkLog.create_ui_widgets = function()
             }
           ],
           handler: "profiler-mode-switch"
-        },
-        {
-          type: UI.TYPE_SWITCH,
-          items: [
-            {
-              key: "network_logger.view-raw",
-              icon: "view-raw-requests-responses"
-            }
-          ]
         },
         {
           type: UI.TYPE_INPUT,

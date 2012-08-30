@@ -432,11 +432,6 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_network_profiler.png");
 }
 
-.network_logger\.view-raw::before
-{
-  background-image: url("../ui-images/icons/icon_raw_headers.png");
-}
-
 .profiler-start-stop::before
 {
   background-image: url("../ui-images/icons/icon_record.png");

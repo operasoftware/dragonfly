@@ -45,6 +45,8 @@ templates.details = function(entry, left_val, do_raw)
         this._details_content(entry, do_raw),
         "data-object-id", String(entry.id),
         "class", "entry-details"
+        // Todo: currently can't have the setting-changing context menu only on this container
+        // ,"data-menu", "network-logger-details"
       ],
     "class", "network-details-container",
     "style", "left:" + left_val + "px"]
@@ -357,10 +359,11 @@ templates._request_body = function(req, do_raw)
   if (req.request_body.partList.length) // Multipart
   {
     var use_raw_boundary = Boolean(do_raw && req.boundary);
+    var boundary = use_raw_boundary ? req.boundary : ["hr"];
     for (var n = 0, part; part = req.request_body.partList[n]; n++)
     {
-      if (use_raw_boundary && n === 0)
-        ret.push(this._pre(req.boundary, HTTP_BOUNDARY_CLASS));
+      if (n === 0)
+        ret.push(this._pre(boundary, HTTP_BOUNDARY_CLASS));
 
       ret.extend(this.headers_list(part.headerList, do_raw));
       ret.push(this._pre("\n"));
@@ -369,7 +372,6 @@ templates._request_body = function(req, do_raw)
       else
         ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
-      var boundary = use_raw_boundary ? req.boundary : ["hr"];
       if (use_raw_boundary && part === req.request_body.partList.last)
         boundary += "--\n";
 
