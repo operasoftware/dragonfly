@@ -160,7 +160,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._show_resource_by_id = function(id)
   {
-    var resource = this._service.get_resource(resource);
+    var resource = this._service.get_resource(id);
     this._show_resource_by_instance(resource);
   }
 
@@ -176,16 +176,15 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this.show_resource = function(resource, data)
   {
     this.data = data;
-
     this.resource = resource;
-    /*
-    if(resource instanceof cls.Resource)
+
+    if (resource instanceof cls.ResourceInfo)
       this._show_resource_by_instance(resource);
     else if (resource==Number(resource))
       this._show_resource_by_id(resource);
     else if (resource==String(resource))
       this._show_resource_url(resource);
-*/
+
     this.update();
     window.UI.instance.show_view( window.views.resource_detail_view.id );
   }
