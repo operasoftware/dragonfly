@@ -339,10 +339,6 @@ cls.DOMView.create_ui_widgets = function()
       {
         handler: 'dom-inspection-snapshot',
         title: ui_strings.S_BUTTON_LABEL_GET_THE_WOHLE_TREE
-      },
-      {
-        handler: 'dom-inspection-export',
-        title: ui_strings.S_BUTTON_LABEL_EXPORT_DOM
       }
     ],
     null,

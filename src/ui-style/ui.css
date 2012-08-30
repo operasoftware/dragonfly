@@ -241,11 +241,6 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.dom-inspection-export::before
-{
-  background-image: url("../ui-images/icons/icon_export.png");
-}
-
 .dom\.find-with-click::before
 {
   background-image: url("../ui-images/icons/icon_click.png");

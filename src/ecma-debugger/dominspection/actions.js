@@ -34,8 +34,6 @@ cls.DOMInspectorActions = function(id)
 
   var broker = ActionBroker.get_instance();
 
-  this.serializer = new cls.DOMSerializer();
-
   this._handlers = {};
   this._mode = MODE_DEFAULT;
   this.__defineSetter__("mode", function(mode)
@@ -614,12 +612,6 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
-  this._handlers["export-markup"] = function(event, target)
-  {
-    var data = this.serializer.serialize(window.dom_data);
-    window.open("data:text/plain;charset=utf-8," + encodeURIComponent(data));
-  }.bind(this);
-
   this._handlers["expand-whole-dom"] = function(event, target)
   {
     window.dom_data.get_snapshot();
@@ -930,23 +922,13 @@ cls.DOMInspectorActions = function(id)
     var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
     if (model && obj_id)
     {
-      var script = "ele.namespaceURI == \"http://www.w3.org/1999/xhtml\"" +
-                 "? ele.outerHTML" +
-                 ": new XMLSerializer().serializeToString(ele);";
-      var ex_ctx = window.runtimes.get_execution_context(model.getDataRuntimeId());
-      var tag = window.tag_manager.set_callback(this, this._handle_get_inner_html);
-      var msg = [ex_ctx.rt_id, ex_ctx.thread_id, ex_ctx.frame_index, script, [["ele", obj_id]]];
-      window.services["ecmascript-debugger"].requestEval(tag, msg);
+      model.serialize_to_string(obj_id, function(markup)
+      {
+        if (markup)
+          Clipboard.set_string(markup);
+      });
     }
   }.bind(this);
-
-  this._handle_get_inner_html = function(status, message)
-  {
-    var STATUS = 0;
-    var VALUE = 2;
-    if (status == SUCCESS && message[STATUS] == "completed")
-      Clipboard.set_string(message[VALUE]);
-  };
 
   this.edit_onclick = function(event)
   {
@@ -1016,11 +998,6 @@ window.event_handlers.mouseover['spotlight-node'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
-
-window.event_handlers.click['dom-inspection-export'] = function(event, target)
-{
-  this.broker.dispatch_action("dom", "export-markup", event, target);
-};
 
 window.event_handlers.click['dom-inspection-snapshot'] = function(event, target)
 {

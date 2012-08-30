@@ -65,6 +65,8 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   var PSEUDO_NAME = {};
   var EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
   var SUCCESS = 0;
+  var STATUS = 0;
+  var VALUE = 2;
 
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
@@ -472,8 +474,6 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
 
   this._handle_get_xpath = function(status, message, object_id, force_lower_case, callback)
   {
-    var STATUS = 0;
-    var VALUE = 2;
     if (status != SUCCESS || message[STATUS] != "completed")
       return callback(null);
     var is_in_xhtml_ns = message[VALUE] == "true";
@@ -617,6 +617,22 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   {
     return this._data_runtime_id;
   }
+
+  this.serialize_to_string = function(node_id, callback)
+  {
+    var script = "ele.namespaceURI == \"http://www.w3.org/1999/xhtml\"" +
+               "? ele.outerHTML" +
+               ": new XMLSerializer().serializeToString(ele);";
+    var ex_ctx = window.runtimes.get_execution_context(this._data_runtime_id);
+    var tag = window.tag_manager.set_callback(this, this._handle_serialize_to_string, [callback]);
+    var msg = [ex_ctx.rt_id, ex_ctx.thread_id, ex_ctx.frame_index, script, [["ele", node_id]]];
+    window.services["ecmascript-debugger"].requestEval(tag, msg);
+  };
+
+  this._handle_serialize_to_string = function(status, message, callback)
+  {
+    callback(status == SUCCESS && message[STATUS] == "completed" ? message[VALUE] : null);
+  };
 
   this._get_id = (function()
   {
