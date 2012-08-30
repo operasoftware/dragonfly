@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 window.cls = window.cls || {};
 
