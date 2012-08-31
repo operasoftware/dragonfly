@@ -9,16 +9,47 @@ templates.resource_tree =
 {
 	_groupOrder:['markup','stylesheets','scripts','images','fonts','others'],
 
-	expandCollapseToggle:function(context, id, tpl)
+	_init:function()
+	{
+		this._initialized = true;
+		['document', 'resource_group', 'resource'].forEach(function(f)
+		{
+			var original = this[f];
+			this[f] = function()
+			{
+				this._depth++;
+
+				var r = original.apply(this, arguments);
+				if(r && r[1] && r[1][0] == 'h2')
+					r[1].push( 'style','padding-left:'+this._depth*18+'px;' );
+
+				this._depth--;
+				return r;
+			};
+		}, this);
+
+	},
+
+	expandCollapseToggle:function(context, pivotID, tpl)
 	{
 		var button = ['input',
 			'type','button',
 			'class','button-expand-collapse'
 		];
-		tpl.push('data-expand-collapse-id', id, 'class', 'resource-tree-expand-collapse'+(context.collapsed[id]?' close':''));
+
+		var hash = context.collapsed;
+		if (!hash.hasOwnProperty(pivotID))
+			hash[pivotID] = this._depth>1;
+
+	 	var collapsed = hash[pivotID];
+
+		tpl.push
+		(
+			'data-expand-collapse-id', pivotID,
+			'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
+		);
+
 		tpl[1].push( 'handler','resources-expand-collapse' );
-
-
 		tpl[1].splice(1, 0, button);
 
 		return tpl;
@@ -26,6 +57,9 @@ templates.resource_tree =
 
 	update:function(context)
 	{
+		if (!this._initialized)
+			this._init();
+		this._depth = 0;
 		return this.windows(context);
 	},
 
@@ -109,7 +143,6 @@ templates.resource_tree =
 						this.resource_groups(context, resources),
 						this.documents(context, d.windowID, d.documentID)
 					]
-	//				'data-expand-collapse-id','d'+d.documentID
 				]
 			);
 	},

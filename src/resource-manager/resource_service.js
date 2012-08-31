@@ -56,7 +56,7 @@ cls.ResourceManagerService = function(view, network_logger)
     var ctx = {};
 
     ctx.windowList = this._network_logger.get_window_contexts();
-    if (ctx.windowList.length)
+    if (ctx.windowList && ctx.windowList.length)
     {
       var typeGroupMapping =
       {
@@ -170,10 +170,11 @@ cls.ResourceManagerService = function(view, network_logger)
     {
       var hash = this. _collapsedHash;
       var pivotID = pivot.getAttribute('data-expand-collapse-id');
-      if (hash[pivotID])
+
+      if (hash[pivotID] === true)
       {
+        hash[pivotID] = false;
         pivot.classList.remove('close');
-        delete hash[pivotID];
       }
       else
       {
