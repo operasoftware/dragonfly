@@ -11,7 +11,10 @@ templates.resource_tree =
 
 	_init:function()
 	{
-		this._initialized = true;
+		if (this._initialized)
+			return;
+
+		// wrap the nesting templating for _depth iteration according styling
 		['document', 'resource_group', 'resource'].forEach(function(f)
 		{
 			var original = this[f];
@@ -19,15 +22,17 @@ templates.resource_tree =
 			{
 				this._depth++;
 
-				var r = original.apply(this, arguments);
-				if(r && r[1] && r[1][0] == 'h2')
-					r[1].push( 'style','padding-left:'+this._depth*18+'px;' );
+				var tpl = original.apply(this, arguments);
+				if(tpl && tpl[1] && tpl[1][0] == 'h2')
+					tpl[1].push( 'style', 'padding-left:'+ this._depth*18 +'px;' );
 
 				this._depth--;
-				return r;
+
+				return tpl;
 			};
 		}, this);
 
+		this._initialized = true;
 	},
 
 	expandCollapseToggle:function(context, pivotID, tpl)
