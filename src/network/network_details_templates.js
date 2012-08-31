@@ -32,21 +32,32 @@ templates.details = function(entry, left_val, do_raw)
 {
   return (
     ["div",
-      ["span",
+      [
         ["span",
-          "class", "close-request-detail",
-          "handler", "close-request-detail",
-          "tabindex", "1"
+          "class", "resize-request-detail",
+          "handler", "resize-request-detail"
         ],
-        "class", "resize-request-detail",
-        "handler", "resize-request-detail"
-      ],
-      ["div",
-        this._details_content(entry, do_raw),
-        "data-object-id", String(entry.id),
-        "class", "entry-details"
-        // Todo: currently can't have the setting-changing context menu only on this container
-        // ,"data-menu", "network-logger-details"
+        ["div",
+          [
+            ["span",
+              "class", "close-request-detail",
+              "handler", "close-request-detail",
+              "tabindex", "1"
+            ],
+            templates.details_headline(entry)
+          ],
+          "class", "network-details-header-row"
+        ],
+        ["div",
+          ["div",
+            this._details_content(entry, do_raw),
+            "data-object-id", String(entry.id),
+            "class", "entry-details"
+            // Todo: currently can't have the setting-changing context menu only on this container
+            // ,"data-menu", "network-logger-details"
+          ],
+         "class", "height-holder"
+        ]
       ],
     "class", "network-details-container",
     "style", "left:" + left_val + "px"]
@@ -60,17 +71,11 @@ templates._details_content = function(entry, do_raw)
   if (do_raw)
   {
     return [
-      templates.details_headline(entry),
       requests_responses
     ];
   }
   return (
     ["table",
-      ["tbody",
-        this._col_or_row(
-          templates.details_headline(entry)
-        )
-      ],
       entry.touched_network ? [] : this.did_not_touch_network(entry),
       requests_responses
     ]
@@ -79,23 +84,19 @@ templates._details_content = function(entry, do_raw)
 
 templates.details_headline = function(entry)
 {
-  /*
   var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
-  */
-  return ["h2", entry.url, "class", "url"];
-  /*
-  ["h2",
+
+  return ["h2",
     [
       ["span",
         entry.touched_network && responsecode ? String(responsecode) + " – " : "",
         "data-spec", "http#" + entry.current_responsecode
       ],
-      ["span", entry.url ]
-    ]
+      ["span", entry.url]
+    ], "class", "url"
   ]
-  */
 };
 
 templates.did_not_touch_network = function(entry)
@@ -316,11 +317,11 @@ templates._response_headers = function(resp, do_raw)
 templates._headers_pseudo_raw = function(header)
 {
   var template = [
-    ["span", header.name + ":",
+    ["span", header.name,
       "data-spec", "http#" + header.name.trim(),
       "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME]
     ],
-    ["span", " " + header.value,
+    ["span", ": " + header.value,
       "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.VALUE]]
   ];
   return templates._pre(template);
