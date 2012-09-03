@@ -724,7 +724,8 @@ CustomElements.add(function()
 },
 'AutoScrollHeightFeature');
 
-/* testing in Chrome or FF *
+// Chrome and Firefox do not set the correct namespace for elements created
+// via document.createElement().
 if (document.createElementNS &&
     document.createElement('div').namespaceURI != 'http://www.w3.org/1999/xhtml')
 {
@@ -733,7 +734,6 @@ if (document.createElementNS &&
     return this.createElementNS('http://www.w3.org/1999/xhtml', name);
   };
 }
-/* */
 
 /*
 (function()
