@@ -289,6 +289,12 @@
   top: 0;
 }
 
+.network-details-header-row
+{
+  position: absolute;
+  z-index: 3;
+}
+
 .network_logger .header-token-type-first_line_part
 {
   font-weight: bold;
@@ -331,7 +337,9 @@
 {
   padding: 0;
   vertical-align: top;
-  word-wrap: break-word;  
+  /*
+  word-wrap: break-word;
+  */
 }
 
 .network-details-container th

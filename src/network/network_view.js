@@ -687,7 +687,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._handlers = {
     "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
     "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
-    "close-details": this._on_clicked_close_bound
+    "close-request-detail": this._on_clicked_close_bound
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
