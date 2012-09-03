@@ -81,8 +81,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._timeline_modes = [
     {id: "_timeline_list", mode: MODE_ALL},
-    {id: "_aggregated_list", mode: MODE_REDUCE_UNIQUE_TYPES},
-    {id: "_reduced_list", mode: MODE_REDUCE_ALL}
+    {id: "_aggregated_list", mode: MODE_REDUCE_UNIQUE_TYPES}
   ];
 
   this._reset = function()
@@ -93,9 +92,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._event_type = null;
     this._timeline_list = null;
     this._aggregated_list = null;
-    this._reduced_list = null;
     this._table = null;
     this._details_time = 0;
+    this._timeline_width = 0;
   };
 
   this._reset_details = function()
@@ -107,6 +106,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._start_profiler = function()
   {
     this._reset();
+    this._zoomer.reset();
     this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
     this._profiler.start_profiler(this._handle_start_profiler_bound);
     this._overlay.set_window_id(this._profiler.get_window_id());
@@ -165,7 +165,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         return this[timeline_mode.id];
       }, this);
       if (got_all_responses)
+      {
+        this._x0 = this._timeline_list.interval.start;
+        this._x1 = this._timeline_list.interval.end;
         this._update_view();
+      }
     }
     else
     {
@@ -181,39 +185,84 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_view = function()
   {
-    if (!this._container)
+    var container = this._container;
+    if (!container)
       return;
-    var template = [];
-    if (this._profiler.is_active)
+
+    if (!this._timeline_list.eventList.length)
     {
-      template.extend(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
+      container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DATA));
+      return;
     }
-    else if (this._timeline_list && this._timeline_list.eventList)
+
+    this._timeline_width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
+    var width = this._timeline_width;
+
+    // TODO: Check if these are already appended
+    var frag = document.createDocumentFragment();
+    frag.appendChild(this._legend_ele);
+    frag.appendChild(this._zoomer_times_ele);
+    frag.appendChild(this._zoomer_ele);
+    frag.appendChild(this._timeline_times_ele);
+    frag.appendChild(this._timeline_ele);
+    frag.appendChild(this._details_ele);
+    frag.appendChild(this._status_ele);
+
+    var timeline_list = this._timeline_list;
+
+    this._legend_ele.clearAndRender(this._templates.legend(this._aggregated_list.eventList));
+    this._zoomer_times_ele.clearAndRender(this._templates.timeline_markers(0, timeline_list.interval.end, width));
+    this._zoomer_ele.clearAndRender(this._templates.event_list_full(timeline_list.eventList, timeline_list.interval, width));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(timeline_list.interval.start, timeline_list.interval.end, width));
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(timeline_list.eventList, timeline_list.interval, this._event_id, width));
+    this._details_ele.clearAndRender(this._templates.details(this._table));
+    this._status_ele.clearAndRender(this._templates.status(this._details_time));
+
+    var data = this._table && this._table.get_data();
+    if (!(data && data.length))
     {
-      template.extend(this._timeline_list.eventList[0]
-        ? this._templates.main(this._timeline_list,
-                               this._aggregated_list,
-                               this._table,
-                               this._details_time,
-                               this._event_id,
-                               this._container.clientWidth - AGGREGATED_EVENTS_WIDTH,
-                               this._get_zero_point())
-        : this._templates.empty(ui_strings.S_PROFILER_NO_DATA)
-      );
+      this._details_ele.addClass("profiler-no-status");
+      this._status_ele.addClass("profiler-no-status");
     }
-    else
-    {
-      template.extend(this._templates.empty(ui_strings.S_PROFILER_START_MESSAGE));
-    }
-    this._container.clearAndRender(template);
-    this._details_list = this._container.querySelector(".profiler-details-list");
-    this._status = this._container.querySelector(".profiler-status");
+
+    container.innerHTML = "";
+    container.appendChild(frag);
+
+    this._zoomer.set_zoomer_ele(this._zoomer_ele);
+    this._zoomer.set_model_ele_width(width);
+    this._zoomer.set_model_duration(timeline_list.interval.end);
+    this._zoomer.set_current_area();
   };
 
   this.createView = function(container)
   {
     this._container = container;
-    this._update_view();
+    this._legend_ele = document.createElement("div");
+    this._legend_ele.className = "profiler-legend";
+    this._zoomer_ele = document.createElement("div");
+    this._zoomer_ele.className = "profiler-full-timeline";
+    this._zoomer_times_ele = document.createElement("div");
+    this._zoomer_times_ele.className = "profiler-full-timeline-times";
+    this._timeline_ele = document.createElement("div");
+    this._timeline_ele.className = "profiler-timeline";
+    this._timeline_times_ele = document.createElement("div");
+    this._timeline_times_ele.className = "profiler-timeline-background";
+    this._details_ele = document.createElement("div");
+    this._details_ele.className = "profiler-details-list";
+    this._status_ele = document.createElement("div");
+    this._status_ele.className = "profiler-status";
+
+    if (this._timeline_list && this._timeline_list.eventList && this._timeline_list.eventList.length)
+    {
+      this._update_view();
+    }
+    else
+    {
+      var message = this._profiler.is_active
+                  ? ui_strings.S_PROFILER_PROFILING
+                  : ui_strings.S_PROFILER_START_MESSAGE;
+      container.clearAndRender(this._templates.empty(message));
+    }
   };
 
   this.create_disabled_view = function(container)
@@ -224,16 +273,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this.ondestroy = function()
   {
     this._container = null;
+    this._legend_ele = null;
+    this._zoomer_ele = null;
+    this._timeline_ele = null;
+    this._details_ele = null;
+    this._status_ele = null;
   };
-
-  this.focus = function() {};
-
-  this.blur = function() {};
-
-  this.onclick = function() {};
 
   this.onresize = function()
   {
+    // TODO: don't update stuff that doesn't have to be updated, e.g.
+    // legend, details, status
     if (this._container)
       this._update_view();
   };
@@ -261,7 +311,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var child_type = this._children[this._event_type];
     if (child_type)
     {
-      this._details_list.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
+      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
       var config = {
         session_id: this._current_session_id,
         timeline_id: this._current_timeline_id,
@@ -274,9 +324,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     else
     {
       this._reset_details();
-      this._details_list.clearAndRender(this._templates.no_events());
-      this._details_list.addClass("profiler-no-status");
-      this._status.addClass("profiler-no-status");
+      this._details_ele.clearAndRender(this._templates.no_events());
+      this._details_ele.addClass("profiler-no-status");
+      this._status_ele.addClass("profiler-no-status");
     }
   };
 
@@ -298,14 +348,14 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       this._details_time = data.reduce(function(prev, curr) {
         return prev + curr.time;
       }, 0);
-      this._details_list.clearAndRender(this._templates.details(this._table));
-      this._status.clearAndRender(this._templates.status(this._details_time));
-      this._details_list.removeClass("profiler-no-status");
-      this._status.removeClass("profiler-no-status");
+      this._details_ele.clearAndRender(this._templates.details(this._table));
+      this._status_ele.clearAndRender(this._templates.status(this._details_time));
+      this._details_ele.removeClass("profiler-no-status");
+      this._status_ele.removeClass("profiler-no-status");
     }
     else
     {
-      this._details_list.clearAndRender(this._templates.no_events());
+      this._details_ele.clearAndRender(this._templates.no_events());
     }
   };
 
@@ -319,19 +369,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._update_record_button_title = function()
   {
-    window.toolbars[this.id].set_button_title("profiler-start-stop", this._profiler.is_active ?
-                                                                     ui_strings.S_BUTTON_STOP_PROFILER :
-                                                                     ui_strings.S_BUTTON_START_PROFILER);
-  };
-
-  this._get_zero_point = function()
-  {
-    return this._has_zero_at_first_event
-         ? (this._timeline_list &&
-            this._timeline_list.eventList &&
-            this._timeline_list.eventList[0] &&
-            this._timeline_list.eventList[0].interval.start)
-         : 0;
+    var button_title = this._profiler.is_active
+                     ? ui_strings.S_BUTTON_STOP_PROFILER
+                     : ui_strings.S_BUTTON_START_PROFILER
+    window.toolbars[this.id].set_button_title("profiler-start-stop", button_title);
   };
 
   this._on_profile_enabled = function(msg)
@@ -401,6 +442,42 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
   };
 
+  this._reset_timeline_area = function()
+  {
+    if (!this._timeline_list)
+      return;
+    this._x0 = 0;
+    this._x1 = this._timeline_list.interval.end;
+    var width = this._timeline_width;
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(this._timeline_list.eventList, this._timeline_list.interval, this._event_id, width));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(this._x0, this._x1, this._timeline_width));
+  };
+
+  this._set_timeline_area = function(x0, x1)
+  {
+    this._x0 = x0;
+    this._x1 = x1;
+    if (!this._timeline_list)
+      return;
+    var event_list = this._timeline_list.eventList.filter(function(event) {
+      var start = event.interval.start;
+      var end = event.interval.end;
+      return (start <= x0 && end >= x0) ||
+             (start >= x0 && start <= x1);
+    });
+    this._zoomer.fast_throttle = event_list.length < 500;
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, this._timeline_list.interval, this._event_id, this._timeline_width, x0, x1));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, this._timeline_width));
+  };
+
+  this._get_timeline_area = function()
+  {
+    return {
+      x0: this._x0,
+      x1: this._x1
+    };
+  };
+
   this._init = function(id, name, container_class, html, default_handler)
   {
     View.prototype.init.call(this, id, name, container_class, html, default_handler);
@@ -412,6 +489,21 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._has_zero_at_first_event = false;
     this._old_session_id = null;
     this._reset();
+
+    this.x0 = 0;
+    this.x1 = 0;
+
+    this._legend_ele = null;
+    this._zoomer_ele = null;
+    this._timeline_ele = null;
+    this._details_ele = null;
+    this._status_ele = null;
+
+    this._zoomer = new Zoomer({
+      reset_to_default_area: this._reset_timeline_area.bind(this),
+      set_area: this._set_timeline_area.bind(this),
+      get_current_area: this._get_timeline_area.bind(this)
+    });
 
     Tooltips.register("profiler-tooltip-url", true, false);
     this._tooltip = Tooltips.register("profiler-event", true, false);
@@ -498,7 +590,7 @@ cls.Profiler["1.0"].EventList.prototype.get_event_by_id = function(id)
 // These getters will be called when the table is created
 cls.Profiler["1.0"].Event.prototype =
 {
-  set selector() {},
+  set selector(value) {},
   get selector()
   {
     return this.cssSelectorMatching ? this.cssSelectorMatching.selector : null;

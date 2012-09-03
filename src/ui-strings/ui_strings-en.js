@@ -1318,7 +1318,7 @@ ui_strings.S_PROFILER_NO_DATA = "No data";
 ui_strings.S_PROFILER_NO_DETAILS = "No details";
 
 /* DESC: Message in the profiler when the profiler is active */
-ui_strings.S_PROFILER_PROFILING = "Profiling…";
+ui_strings.S_PROFILER_PROFILING =  "Stop profiling to inspect the collected data.";
 
 /* DESC: Message in the profiler when the profiler failed */
 ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";

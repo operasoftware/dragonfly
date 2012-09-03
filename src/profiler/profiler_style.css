@@ -2,9 +2,43 @@
 {
   position: absolute;
   left: 0;
-  top: 20px;
+  top: 60px;
   width: 160px;
   border-top: 1px solid #e6e6e6;
+}
+
+.profiler-full-timeline
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 15px;
+  height: 26px; /* 8 types * 3px height + 2 extra for padding */
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  overflow-x: hidden;
+}
+
+.profiler-full-timeline-times
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 15px;
+  height: 26px; /* 8 types * 3px height + 2 extra for padding */
+}
+
+.profiler-timeline-background
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 60px;
+  background-image: -o-linear-gradient(to bottom, transparent 50%, #f7f7f7 50%);
+  background-image: linear-gradient(to bottom, #f7f7f7 50%, transparent 50%);
+  background-position: 0 1px;
+  background-size: 1px 36px;
+  height: 145px;
 }
 
 .profiler-timeline
@@ -12,14 +46,16 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 20px;
+  top: 60px;
   border-top: 1px solid #e6e6e6;
+  overflow-x: hidden;
+  height: 145px;
 }
 
 .profiler-details-list
 {
   position: absolute;
-  top: 165px;
+  top: 205px;
   bottom: 21px;
   overflow: auto;
   border-top: 1px solid #e6e6e6;
@@ -74,8 +110,6 @@
   line-height: 16px;
   padding: 1px 5px; /* Line up up with the table below */
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   position: relative;
 }
 
@@ -90,6 +124,8 @@
   padding-right: 10px;
   font-weight: bold;
   color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profiler-legend-amount
@@ -124,8 +160,9 @@
 
 .profiler-timeline-marker-time
 {
+  font-size: 9px;
   position: absolute;
-  top: -15px;
+  top: -12px;
   color: #444;
   white-space: nowrap;
 }
@@ -142,11 +179,18 @@
   right: 2px;
 }
 
+.profiler-event-small
+{
+  min-width: 2px;
+  height: 3px;
+  position: absolute;
+}
+
 .profiler-event
 {
   min-width: 3px;
   height: 10px;
-  border-radius: 2px;
+  /*border-radius: 2px;*/ /* Disable this, it's too expensive to paint */
 }
 
 .profiler-timeline .profiler-event
@@ -167,7 +211,7 @@
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
               inset 0 0 0 1px rgba(0, 0, 0, 0.07),
               inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
-              0 0 0 3px #ceddf5;
+              0 0 0 2px #ceddf5;
 }
 
 .profiler-event-interval.non-expandable:hover
@@ -175,7 +219,7 @@
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
               inset 0 0 0 1px rgba(0, 0, 0, 0.07),
               inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
-              0 0 0 3px #ddd;
+              0 0 0 2px #ddd;
 }
 
 .profiler-event-interval.selected
@@ -287,3 +331,59 @@
   color: #333;
 }
 
+
+
+
+
+
+.zoomer-element.overlay-size-change,
+.zoomer-element.overlay-size-change .zoomer-overlay,
+.zoomer-element.overlay-size-change .zoomer-overlay-handle
+{
+    cursor: ew-resize;
+}
+
+.zoomer-element.overlay-drag,
+.zoomer-element.overlay-drag .zoomer-overlay,
+.zoomer-element.overlay-drag .zoomer-overlay-handle
+{
+    cursor: move;
+}
+
+.zoomer-overlay
+{
+    position: absolute;
+    background-color: rgba(197, 218, 241, .5);
+    cursor: move;
+    display: none;
+}
+
+.zoomer-overlay-handle
+{
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: #C5DAF1;
+    cursor: ew-resize;
+}
+
+/* Make bigger handle areas for easier grabbing */
+.zoomer-overlay-handle::before
+{
+    content: "";
+    display: block;
+    height: 100%;
+    width: 5px;
+    margin-left: -2px;
+}
+
+.zoomer-overlay-handle-left
+{
+    left: 0;
+}
+
+.zoomer-overlay-handle-right
+{
+    right: 0;
+}

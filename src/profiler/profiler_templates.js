@@ -91,6 +91,12 @@ var ProfilerTemplates = function()
                     parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
                  : 0;
 
+  var HAS_UNPREFIXED_GRADIENTS = (function() {
+    var ele = document.createElement("div");
+    ele.style.backgroundImage = "-o-linear-gradient(0, transparent 0, transparent 0)";
+    return ele.style.backgroundImage === "";
+  }());
+
   this._order = [
     EVENT_TYPE_DOCUMENT_PARSING,
     EVENT_TYPE_CSS_PARSING,
@@ -104,38 +110,9 @@ var ProfilerTemplates = function()
   this._expandables = [EVENT_TYPE_STYLE_RECALCULATION];
   this._event_colors = {}; // Will be populated lazily
 
-  this.main = function(timeline_list, aggregated_list, table, details_time, event_id, width, zero_point)
+  this.legend = function(event_list)
   {
-    var data = table && table.get_data();
-    var has_details_events = data && data.length;
-    return [
-      ["div",
-         this.legend(aggregated_list),
-       "class", "profiler-legend"
-      ],
-      ["div",
-         this.event_list_all(timeline_list,
-                             event_id,
-                             width,
-                             zero_point),
-       "class", "profiler-timeline",
-       "handler", "profiler-zoom-timeline"
-      ],
-      ["div",
-         this.details(table),
-       "class", "profiler-details-list" + (has_details_events ? "" : " profiler-no-status")
-      ],
-      ["div",
-         this.status(details_time),
-       "class", "profiler-status" + (has_details_events ? "" : " profiler-no-status")
-      ]
-    ];
-  };
-
-  this.legend = function(events)
-  {
-    var event_list = events && events.eventList;
-    if (event_list && event_list.length)
+    if (event_list)
     {
       var template = [];
       var total_time = event_list.reduce(function(prev, curr) {
@@ -170,11 +147,13 @@ var ProfilerTemplates = function()
     }
   };
 
-  this.timeline_markers = function(width, start, duration, ms_unit)
+  this.timeline_markers = function(start, end, container_width)
   {
-    var MIN_MARKER_GAP = 120;
+    var MIN_MARKER_GAP = 80;
     var MIN_MARKERS = 2;
-    var cell_amount = Math.max(MIN_MARKERS, Math.round(width / MIN_MARKER_GAP));
+    var duration = end - start;
+    var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
+    var cell_amount = Math.max(MIN_MARKERS, Math.round(container_width / MIN_MARKER_GAP));
     var marker_time = duration / cell_amount;
     var fractions = marker_time < 10 ? 1 : 0;
     var template = [];
@@ -199,7 +178,7 @@ var ProfilerTemplates = function()
 
     template.push(
       ["div",
-         this.format_time(start + duration),
+         this.format_time(start + duration, fractions),
        "class", "profiler-timeline-marker-time last"
       ]
     );
@@ -214,27 +193,50 @@ var ProfilerTemplates = function()
            ];
   };
 
-  this.event_list_all = function(events, selected_id, container_width, start, end)
+  this.event_list_full = function(event_list, interval, container_width)
   {
     var template = [];
-    var event_list = events && events.eventList;
-    if (event_list && event_list.length)
+    if (event_list)
     {
-      var interval_start = start || 0;
-      var interval_end = events.interval.end;
+      var interval_start = 0;
+      var interval_end = interval.end;
       var duration = interval_end - interval_start;
       var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
-      // Add background bars
-      template.extend(this._order.map(this._background_bar));
+      template.extend(event_list.map(this._full_timeline_event.bind(this, interval_start, ms_unit)));
+    }
+    return template;
+  };
 
-      // Add time markers
-      template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
+  this.event_list_all = function(event_list, interval, selected_id, container_width, start, end)
+  {
+    var template = [];
+    if (event_list)
+    {
+      var interval_start = start || 0;
+      var interval_end = end || interval.end;
+      var duration = interval_end - interval_start;
+      var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
-      // Add actual events
       template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit, selected_id)));
     }
     return template;
+  };
+
+  this._full_timeline_event = function(interval_start, ms_unit, event)
+  {
+    var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
+    var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
+    var column = this._order.indexOf(event.type);
+    return (
+      ["div",
+       "style",
+         "width: " + interval + "px; " +
+         "left: " + event_start + "px; " +
+         "top: " + (column * 3 + 1) + "px;", // TODO: 3 -> constant
+       "class", "profiler-event-small event-type-" + event.type + "-selftime" // FIXME: not actually selftime
+      ]
+    );
   };
 
   this._timeline_event = function(interval_start, ms_unit, selected_id, event)
@@ -244,28 +246,56 @@ var ProfilerTemplates = function()
     var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
     var column = this._order.indexOf(event.type);
     var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
-    var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
+    var color = this._get_color_for_type(event.type);
     return (
       ["div",
        "style",
-         "width: " + interval + "px;" +
-         "left: " + event_start + "px;" +
-         "top:" + ((column * BAR_HEIGHT) + 1) + "px;" +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "-o-linear-gradient(0deg, " + color + " 0, " +
-                                               color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px); " +
-         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(90deg, " + color + " 0, " +
-                                            color + " " + self_time + "px, " +
-                                           "transparent " + self_time + "px);",
+         "width: " + interval + "px; " +
+         "left: " + event_start + "px; " +
+         "top: " + (column * BAR_HEIGHT + 1) + "px; " +
+         (HAS_UNPREFIXED_GRADIENTS
+           ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "linear-gradient(90deg, " + color + " 0, " +
+                                                color + " " + self_time + "px, " +
+                                               "transparent " + self_time + "px);"
+           : "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "-o-linear-gradient(0deg, " + color + " 0, " +
+                                                   color + " " + self_time + "px, " +
+                                                  "transparent " + self_time + "px);"
+         ),
        "class", "profiler-event profiler-event-interval event-type-" + event.type +
-                (event.eventID == selected_id ? " selected" : "") +
+                (event.eventID == selected_id && is_expandable ? " selected" : "") +
                 (is_expandable ? " expandable" : " non-expandable"),
        "data-event-id", String(event.eventID),
        "data-event-type", String(event.type),
        "handler", "profiler-event",
        "data-tooltip", "profiler-event"
+      ]
+    );
+  };
+
+  this.get_title_interval_bar = function(event)
+  {
+    var WIDTH = 200;
+    var interval = event.interval.end - event.interval.start;
+    var ms_unit = WIDTH / interval;
+    var self_time = Math.round(event.time * ms_unit);
+    var color = this._get_color_for_type(event.type);
+    return (
+      ["div",
+       "style",
+         "width: " + WIDTH + "px; " +
+         (HAS_UNPREFIXED_GRADIENTS
+           ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "linear-gradient(90deg, " + color + " 0, " +
+                                                color + " " + self_time + "px, " +
+                                               "transparent " + self_time + "px);"
+           : "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "-o-linear-gradient(0deg, " + color + " 0, " +
+                                                   color + " " + self_time + "px, " +
+                                                  "transparent " + self_time + "px);"
+         ),
+       "class", "profiler-event profiler-event-interval event-type-" + event.type
       ]
     );
   };
@@ -293,7 +323,7 @@ var ProfilerTemplates = function()
   this.format_time = function(time, fractions)
   {
     fractions = (fractions != null) ? fractions
-                                    : (time < 1 ? 1 : 0);
+                                    : (time < 1 ? 2 : 1);
     return time.toFixed(fractions) + " ms";
   };
 
@@ -450,7 +480,7 @@ var ProfilerTemplates = function()
                 ui_strings.S_PROFILER_AREA_LOCATION + ": ",
               "class", "profiler-event-tooltip-label"
              ],
-             area.x + ", " + area.y
+             "(" + area.x + ", " + area.y + ")"
           ],
           ["li",
              ["span",
@@ -463,30 +493,6 @@ var ProfilerTemplates = function()
       );
     }
     return [];
-  };
-
-  this.get_title_interval_bar = function(event)
-  {
-    var WIDTH = 200;
-    var interval = event.interval.end - event.interval.start;
-    var ms_unit = WIDTH / interval;
-    var self_time = Math.round(event.time * ms_unit);
-    var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
-    return (
-      ["div",
-       "style",
-         "width: " + WIDTH + "px; " +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "-o-linear-gradient(0deg, " + color + " 0, " +
-                                               color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px);" +
-         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(90deg, " + color + " 0, " +
-                                            color + " " + self_time + "px, " +
-                                           "transparent " + self_time + "px);",
-       "class", "profiler-event profiler-event-interval event-type-" + event.type
-      ]
-    );
   };
 
   this.disabled_view = function()
@@ -508,8 +514,13 @@ var ProfilerTemplates = function()
 
   this._get_color_for_type = function(type)
   {
+    var color = this._event_colors[type];
+    if (color)
+      return color;
     var decl = document.styleSheets.getDeclaration(".event-type-" + type + "-selftime");
-    return decl ? decl.backgroundColor : "#000";
+    color = decl ? decl.backgroundColor : "#000";
+    this._event_colors[type] = color;
+    return color;
   };
 };
 
