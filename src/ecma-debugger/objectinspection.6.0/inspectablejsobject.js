@@ -266,7 +266,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
         if (i == 0 && obj_id == this._obj_id && this._virtual_props)
         {
-          const NAME = 0, ARGS = "arguments";
+          var ARGS = "arguments";
           // Not really a clean solution, but at some point
           // the "arguments" object was exposed as property of the scope too.
           // So we remove here the arguments object from the "virtual"

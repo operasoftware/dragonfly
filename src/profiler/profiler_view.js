@@ -498,7 +498,7 @@ cls.Profiler["1.0"].EventList.prototype.get_event_by_id = function(id)
 // These getters will be called when the table is created
 cls.Profiler["1.0"].Event.prototype =
 {
-  set selector() {},
+  set selector(value) {},
   get selector()
   {
     return this.cssSelectorMatching ? this.cssSelectorMatching.selector : null;
