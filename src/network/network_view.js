@@ -650,6 +650,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
+  this._on_toggle_expand_request_response_bound = function(event)
+  {
+    var KEY = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var set_active = !settings.network_logger.get(KEY);
+    settings.network_logger.set(KEY, set_active);
+    this.needs_instant_update = true;
+    this.update();
+  }.bind(this);
+
 /*
   // Todo: currently can't have the setting-changing context menu only on this container
   this._on_toggle_raw_mode_bound = function(event)
@@ -680,7 +689,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
-
+  eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response_bound;
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
 
   ActionHandlerInterface.apply(this);
@@ -718,7 +727,9 @@ cls.NetworkLog.create_ui_widgets = function()
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
       "track-content": true,
-      "view-raw": false
+      "view-raw": false,
+      "expand-requests": true,
+      "expand-responses": true
     },
     // key-label map
     {

@@ -141,21 +141,47 @@ templates._request = function(request, is_last, do_raw)
   // A request that's followed by another one, without a response in between,
   // is not shown in network-details. It will mostly mean it was retried internally
   // and didn't go on the network.
-  if (!is_last && !request.was_responded_to)
-    return [];
+  var is_relevant = is_last && request.was_responded_to;
+
+  var expanded = window.settings.network_logger.get("expand-requests");
+  var show_headline = is_relevant;
+  var show_headers = is_relevant && expanded;
+  var show_body = show_headers;
 
   return [
-    templates._request_headers(request, do_raw),
-    templates._request_body(request, do_raw)
+    show_headline ? this._headline(false, expanded) : [],
+    show_headers ? templates._request_headers(request, do_raw) : [],
+    show_body ? templates._request_body(request, do_raw) : []
   ];
 };
 
 templates._response = function(response, is_last, do_raw)
 {
+  var expanded = window.settings.network_logger.get("expand-responses");
+  var show_headline = response.logger_entry_touched_network;
+  var show_headers = expanded && response.logger_entry_touched_network;
+  var show_body = expanded;
+
   return [
-    this._response_headers(response, do_raw),
-    this._response_body(response, do_raw, is_last)
+    show_headline ? this._headline(true, expanded) : [],
+    show_headers ? this._response_headers(response, do_raw) : [],
+    show_body ? this._response_body(response, do_raw, is_last) : []
   ];
+};
+
+templates._headline = function(is_response, is_unfolded)
+{
+  return [
+    "div",
+      ["input",
+        "type", "button",
+        "class", is_unfolded ? "unfolded" : ""
+      ],
+      is_response ? ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE
+                  : ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE,
+      "handler", "toggle-expand-request-response",
+      "class", "header"
+  ].concat(is_response ? ["data-is-response", "data-is-response"] : []);
 };
 
 templates._header_token_templ = function(state, token)
@@ -187,8 +213,6 @@ templates._token_receiver = function(tokens, token_type, token)
 
 templates._request_headers = function(req, do_raw)
 {
-  var headline = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE];
-
   if (do_raw)
   {
     if (req.request_headers_raw)
@@ -204,12 +228,10 @@ templates._request_headers = function(req, do_raw)
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       return [
-        headline,
         this._pre(req.header_tokens.map(map_func))
       ];
     }
     return [
-      headline,
       ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     ];
   }
@@ -243,17 +265,12 @@ templates._request_headers = function(req, do_raw)
     }
   }
   return [
-    headline,
     ret
   ];
 };
 
 templates._response_headers = function(resp, do_raw)
 {
-  if (!resp.logger_entry_touched_network)
-    return [];
-
-  var headline = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE];
   if (do_raw)
   {
     if (!resp.header_tokens)
@@ -269,12 +286,10 @@ templates._response_headers = function(resp, do_raw)
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       return [
-        headline,
         this._pre(resp.header_tokens.map(map_func))
       ];
     }
     return [
-      headline,
       ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     ];
   }
@@ -301,7 +316,6 @@ templates._response_headers = function(resp, do_raw)
   }
 
   return [
-    headline,
     ret
   ];
 };
