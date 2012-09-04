@@ -1,7 +1,7 @@
 message <span class="message">StopProfilerArg</span>
 {
-  <span class="comment">/** 
-   * The `Session` to stop.
-   */</span>
-  required <span class="number">uint32</span> sessionID = 1; 
+  <span class="comment">/**
+    * The `Session` to stop.
+    */</span>
+  required <span class="number">uint32</span> sessionID = 1;
 }

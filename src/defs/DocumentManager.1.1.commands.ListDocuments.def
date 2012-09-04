@@ -1,4 +1,4 @@
 message <span class="message">ListDocumentsArg</span>
 {
-  optional <span class="number">uint32</span> windowID = 1; 
+  optional <span class="number">uint32</span> windowID = 1;
 }

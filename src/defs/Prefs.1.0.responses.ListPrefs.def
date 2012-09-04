@@ -1,43 +1,40 @@
 message <span class="message">PrefList</span>
 {
-  message <span class="message">Pref</span>
+  repeated Pref prefList = 1;
   {
-    enum Type
+    required Type type = 1;
     {
-      STRING = 1;
-      INTEGER = 2;
-      BOOLEAN = 3;
-      FILE = 4;
-      REQUIRED_FILE = 5;
-      DIRECTORY = 6;
-      COLOR = 7;
+      <span class="enum">STRING</span> = 1;
+      <span class="enum">INTEGER</span> = 2;
+      <span class="enum">BOOLEAN</span> = 3;
+      <span class="enum">FILE</span> = 4;
+      <span class="enum">REQUIRED_FILE</span> = 5;
+      <span class="enum">DIRECTORY</span> = 6;
+      <span class="enum">COLOR</span> = 7;
     }
-
-    required <span class="number">Type  </span> type    = 1; 
-    <span class="comment">/** 
-     * Preferences are divided into groups called *sections*. This
-     * field indicates which section this preference is a member of.
-     * 
-     * Example: *Developer Tools*
-     */</span>
-    optional <span class="string">string</span> section = 2; 
-    <span class="comment">/** 
-     * This is the key, or *name* of the preference.
-     * 
-     * Example: *Developer Tools URL*
-     */</span>
-    optional <span class="string">string</span> key     = 3; 
-    <span class="comment">/** 
-     * The value of the preference. For instance, for the preference
-     * *Developer Tools URL* in the *Developer Tools* section, the
-     * default value is https://dragonfly.opera.com/app/.
-     */</span>
-    optional <span class="string">string</span> value   = 4; 
-    <span class="comment">/** 
-     * Whether setting is overriden by global ini. If this value is
-     * missing, it means global ini is not supported.
-     */</span>
-    optional <span class="bool">bool  </span> enabled = 5; 
+    <span class="comment">/**
+      * Preferences are divided into groups called *sections*. This
+      * field indicates which section this preference is a member of.
+      * 
+      * Example: *Developer Tools
+      */</span>
+    optional <span class="string">string</span> section = 2;
+    <span class="comment">/**
+      * This is the key, or *name* of the preference.
+      * 
+      * Example: *Developer Tools URL
+      */</span>
+    optional <span class="string">string</span> key = 3;
+    <span class="comment">/**
+      * The value of the preference. For instance, for the preference
+      * *Developer Tools URL* in the *Developer Tools* section, the
+      * default value is https://dragonfly.opera.com/app/.
+      */</span>
+    optional <span class="string">string</span> value = 4;
+    <span class="comment">/**
+      * Whether setting is overriden by global ini. If this value is
+      * missing, it means global ini is not supported.
+      */</span>
+    optional <span class="boolean">bool</span> enabled = 5;
   }
-  repeated <span class="message">Pref</span> prefList = 1; 
 }
