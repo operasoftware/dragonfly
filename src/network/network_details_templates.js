@@ -224,7 +224,8 @@ templates._request_headers = function(req, do_raw)
         tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
       }
 
-      var data_spec_firstline_tokens = [0];
+      var METHOD = 0;
+      var data_spec_firstline_tokens = [METHOD];
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       return [
@@ -256,7 +257,8 @@ templates._request_headers = function(req, do_raw)
 
       if (req.firstline_tokens.length)
       {
-        var data_spec_firstline_tokens = [0];
+        var METHOD = 0;
+        var data_spec_firstline_tokens = [METHOD];
         var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
         var map_func = this._header_token_templ.bind(this, state_holder);
         firstline = req.firstline_tokens.map(map_func);
@@ -282,7 +284,8 @@ templates._response_headers = function(resp, do_raw)
 
     if (resp.header_tokens.length)
     {
-      var data_spec_firstline_tokens = [1];
+      var RESPONSECODE = 1;
+      var data_spec_firstline_tokens = [RESPONSECODE];
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       return [
@@ -307,7 +310,8 @@ templates._response_headers = function(resp, do_raw)
 
     if (resp.firstline_tokens.length)
     {
-      var data_spec_firstline_tokens = [1];
+      var RESPONSECODE = 1;
+      var data_spec_firstline_tokens = [RESPONSECODE];
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       firstline = resp.firstline_tokens.map(map_func);
