@@ -1,4 +1,4 @@
 message <span class="message">ServiceList</span>
 {
-  repeated <span class="string">string</span> serviceList = 1; 
+  repeated <span class="string">string</span> serviceList = 1;
 }

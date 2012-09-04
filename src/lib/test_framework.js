@@ -320,17 +320,23 @@ window.cls.TestFramework = function()
         }
         case 'command-list':
         {
+          var command_expanded = window.localStorage.getItem("test-msg-command") == "true";
+          var response_expanded = window.localStorage.getItem("test-msg-response") == "true";
           this._update_selected(target, event.target);
           this._update_selected(document.getElementById('event-list'));
           var message_container = document.getElementById('message-container');
           message_container.innerHTML =
             "<h2>Command " + event.target.textContent + "</h2>" +
-            "<h3>command</h3><pre class='definition'></pre>" +
+            "<h3 id='test-msg-command'" + (command_expanded ? " class='unfolded'" : "") + ">" +
+              "<input type='button' class='folder-key'/>command</h3>" +
+            "<pre class='definition mono' " + (command_expanded ? "" : " style='display:none'") + "></pre>" +
             "<textarea rows='10' id='proto-message'>" + (this._last_txtarea_value || "[]") + "</textarea>" +
             "<p class='right-aligned'><input type='button' value='send' data-service='" + this._selected_service + "'" +
             " data-command='" + event.target.textContent +
             "' id = 'test-send-command' /></p>" +
-            "<h3>response</h3><pre class='definition'></pre>" +
+            "<h3 id='test-msg-response'" + (response_expanded ? " class='unfolded'" : "") + ">" +
+              "<input type='button' class='folder-key'/>response</h3>" +
+            "<pre class='definition mono' " + (response_expanded ? "" : " style='display:none'") + "></pre>" +
               "<p class='right-aligned'><label>pretty print message " +
                 "<input type='checkbox'" +
                   (cookies.get('pretty-print-message') == 'true' ? " checked='checked' " : "" ) +
@@ -364,7 +370,7 @@ window.cls.TestFramework = function()
           var message_container = document.getElementById('message-container');
           message_container.innerHTML =
             "<h2>Event " + event.target.textContent + "</h2>" +
-            "<pre class='definition'></pre>";
+            "<pre class='definition mono'></pre>";
           var pres = message_container.getElementsByTagName('pre');
           var service = window.services[this._dashed_name(this._selected_service)];
           if (service)
@@ -386,6 +392,23 @@ window.cls.TestFramework = function()
         case 'clear-log':
         {
           document.getElementById('log-container').firstElementChild.textContent = "";
+          break;
+        }
+        case "test-msg-command":
+        case "test-msg-response":
+        {
+          if (target.hasClass("unfolded"))
+          {
+            target.removeClass("unfolded");
+            target.nextElementSibling.style.display = "none";
+            window.localStorage.setItem(target.id, false);
+          }
+          else
+          {
+            target.addClass("unfolded");
+            target.nextElementSibling.style.display = "block";
+            window.localStorage.setItem(target.id, true);
+          }
           break;
         }
       }
