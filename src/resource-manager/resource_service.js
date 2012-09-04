@@ -135,6 +135,7 @@ cls.ResourceManagerService = function(view, network_logger)
       )
         this._listDocuments();
 
+      ctx.selectedResourceID = this._selectedResourceID;
       ctx.collapsed = this._collapsedHash;
       this._context = ctx;
     }
@@ -147,7 +148,6 @@ cls.ResourceManagerService = function(view, network_logger)
   };
 
   this._update_bound = this._update.bind(this);
-
 
   this._on_debug_context_selected_bound = function()
   {
@@ -187,7 +187,6 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._handle_resource_detail_bound = function(event, target)
   {
-    var resource;
     if (!this._context)
       return;
 
@@ -195,25 +194,19 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!parent)
       return;
 
-
-    if (this._selectedResourceId)
-    {
-      resource = this.get_resource(this._selectedResourceId);
-      if(resource)
-        resource.selected = false;
-    }
-
     var id = parent.getAttribute('data-resource-id');
-    resource = this.get_resource(id);
+    this.highlight_resource( id );
+    cls.ResourceDetailView.instance.show_resource(id);
+  }.bind(this);
 
-    if (!resource)
-      return;
+  this.highlight_resource = function(id)
+  {
+    this._selectedResourceID = id;
 
-    this._selectedResourceId = id;
-    resource.selected = true;
+    if (this._context)
+      this._context.selectedResourceID = id;
+
     this._view.update();
-    cls.ResourceDetailView.instance.show_resource(resource);
-
   }.bind(this);
 
   //  WIP: soon there will be some triggers to display a whole group of resource, e.g. gallery of images, videos, fonts, audios, ...

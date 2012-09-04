@@ -332,6 +332,10 @@ a.external:hover
   background-repeat:repeat;
 }
 
+h2.resource-highlight
+{
+  background-color:yellow;
+}
 .resource-tree li > h2:hover
 {
   background-color:orange;

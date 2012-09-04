@@ -220,7 +220,10 @@ templates.resource_tree =
 				'data-resource-id',''+r.id,
 				'data-tooltip',!r.url&&'js-script-select',
 				'data-tooltip-text',!r.url&&JSON.stringify(r),
-				'class','resource-tree-resource'+(r.sameOrigin?'':' resource-different-origin')+(!r.url?' wat':'')
+				'class','resource-tree-resource'
+					+(r.sameOrigin?'':' resource-different-origin')
+					+(context.selectedResourceID==r.id?' resource-highlight':'')
+					+(!r.url?' wat':'')
 			]
 		]);
 	}
