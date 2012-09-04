@@ -1254,9 +1254,6 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
-/* DESC: Title of request body section when the body is multipart-encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
-
 /* DESC: Explanation about why a network entry doesn't have request data: General */
 ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 
