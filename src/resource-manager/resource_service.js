@@ -155,6 +155,7 @@ cls.ResourceManagerService = function(view, network_logger)
     this._collapsedHash = {};
 
     delete this._context;
+    delete this._selectedResourceID
     this._view.update();
   }.bind(this);
 
@@ -201,6 +202,9 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this.highlight_resource = function(id)
   {
+    if (this._selectedResourceID == id)
+        return;
+
     this._selectedResourceID = id;
 
     if (this._context)
