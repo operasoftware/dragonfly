@@ -201,6 +201,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
         if (this._details_scroll_left)
           details.scrollLeft = this._details_scroll_left;
+
+        this.check_overflow();
       }
 
       if (is_data_mode)
@@ -219,6 +221,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       outer_container.scrollTop = this._container_scroll_top;
     }
   }.bind(this);
+
+  this.check_overflow = function()
+  {
+    var header_row = this._container.querySelector(".network-details-header-row");
+    var details_container = this._container.querySelector(".network-details-container");
+    if (!header_row || !details_container)
+      return;
+
+    if (!this._header_row_height)
+    {
+      var style_dec = document.styleSheets.getDeclaration(".network-details-header-row");
+      this._header_row_height = parseInt(style_dec.getPropertyValue("height"), 10); // in px
+    }
+    // Switch the overflow to .network-details-container (or back, in case of resizing)
+    if (header_row.scrollHeight > this._header_row_height)
+      details_container.addClass("network-details-container-overflows");
+    else
+      details_container.removeClass("network-details-container-overflows");
+  }
 
   this._tabledef = {
     column_order: ["method", "responsecode", "mime", "protocol", "size_h", "waiting", "duration", "started", "graph"],
@@ -357,6 +378,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       this._detail_left = Math.min(this._detail_left, window.innerWidth - 100);
       container.style.left = this._detail_left + "px";
       settings.network_logger.set("detail-view-left-pos", this._detail_left);
+      this.check_overflow();
     }
   }.bind(this);
 

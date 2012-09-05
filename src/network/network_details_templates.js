@@ -59,7 +59,7 @@ templates.details = function(entry, left_val, do_raw)
          "class", "height-holder"
         ]
       ],
-    "class", "network-details-container",
+    "class", "network-details-container" + (do_raw? "" : " parsed"),
     "style", "left:" + left_val + "px"]
   );
 };
@@ -415,7 +415,6 @@ templates._request_body = function(req, do_raw)
       }
     }
   }
-
   return ret;
 };
 

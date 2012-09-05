@@ -273,12 +273,27 @@
               -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
+.network-details-container-overflows
+{
+  overflow: auto;
+}
+
 .network_logger .entry-details
 {
   overflow: auto;
   height: 100%;
   padding-left: 5px;
   box-sizing: border-box;
+}
+
+.network-details-container-overflows .entry-details,
+.network-details-container-overflows .network-details-header-row,
+.network-details-container-overflows .height-holder
+{
+  overflow: visible;
+  height: auto;
+  position: static;
+  padding-top: 0;
 }
 
 .height-holder /* todo: probably merge me with entry-details */
@@ -297,7 +312,11 @@
   z-index: 3;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 5px;
+  padding-right: 45px;
+  height: 55px;
+  overflow: auto;
+  border-bottom: 1px solid #D6D6D6;
 }
 
 .network-details-header-row > p
@@ -308,6 +327,7 @@
 
 .network-details-header-row .method-and-url
 {
+  white-space: pre;
   word-wrap: break-word;
 }
 
@@ -338,9 +358,12 @@
 .network-details-container p
 {
   margin: 0;
-  /*
+}
+.parsed pre,
+.parsed p,
+.parsed td
+{
   word-wrap: break-word;
-  */
 }
 
 .network-details-container table
@@ -353,9 +376,6 @@
 {
   padding: 0;
   vertical-align: top;
-  /*
-  word-wrap: break-word;
-  */
 }
 
 .network-details-container th
