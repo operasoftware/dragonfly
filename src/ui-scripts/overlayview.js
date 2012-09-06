@@ -23,5 +23,6 @@ var OverlayViewPrototype = function()
     ViewBase.init.call(this, id, "", container_class, html, default_handler);
   };
 };
+
 OverlayViewPrototype.prototype = ViewBase;
 OverlayView.prototype = new OverlayViewPrototype();

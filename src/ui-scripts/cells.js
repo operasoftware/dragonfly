@@ -288,11 +288,12 @@
         rough_cell.height = stored_height;
     }
 
-    this.min_width = rough_cell.min_width != null?
-     rough_cell.min_width : defaults.min_view_width;
-    this.min_height = rough_cell.min_height != null ?
-      rough_cell.min_height : defaults.min_view_height;
-
+    this.min_width = rough_cell.min_width != null
+                   ? rough_cell.min_width
+                   : defaults.min_view_width;
+    this.min_height = rough_cell.min_height != null
+                    ? rough_cell.min_height
+                    : defaults.min_view_height;
     this.width =
       rough_cell.width && rough_cell.width > this.min_width ?
       rough_cell.width : this.min_width;
@@ -693,24 +694,27 @@
   this.checkDelta = function(dim, delta, sibling)
   {
     var delta_applied = 0;
-    var child = null, i = 0;
-    var deltas = [], min = 0, max = 0;
-    if( this.children.length )
+    var child = null;
+    var deltas = [];
+    var i = 0;
+    var min = 0;
+    var max = 0;
+    if (this.children.length)
     {
-      if( ( dim == 'height' && this.dir == HOR ) || ( dim == 'width' && this.dir == VER ) )
+      if ((dim == 'height' && this.dir == HOR) || (dim == 'width' && this.dir == VER))
       {
-        if(delta)
+        if (delta)
         {
-          for( ; child = this.children[i]; i++)
+          for (i = 0; child = this.children[i]; i++)
           {
             deltas[deltas.length] = child.checkDelta(dim, delta, sibling);
           }
           min = Math.min.apply(null, deltas);
           max = Math.max.apply(null, deltas);
           delta_applied = delta > 0 ? max : min;
-          if( max != min )
+          if (max != min)
           {
-            for( i = 0; child = this.children[i]; i++)
+            for (i = 0; child = this.children[i]; i++)
             {
               child.checkDelta(dim, delta - delta_applied, sibling)
             }
@@ -719,7 +723,7 @@
         }
         else // clear
         {
-          for( i=0; child = this.children[i]; i++)
+          for (i = 0; child = this.children[i]; i++)
           {
             child.checkDelta(dim, 0, sibling);
           }
@@ -729,7 +733,7 @@
       else
       {
         delta_applied = delta;
-        for( i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
+        for (i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
         {
           delta_applied = child.checkDelta(dim, delta_applied, sibling);
         }
@@ -739,26 +743,20 @@
     else
     {
       min = this['min_' + dim];
-      if( delta)
+      if (delta)
       {
         var newDim = this[dim] + delta;
-        if( newDim >= min || newDim >= this[dim] )
-        {
+        if (newDim >= min || newDim >= this[dim])
           this['checked_' + dim] = newDim;
-        }
         else
-        {
           this['checked_' + dim] = min;
-        }
         delta_applied = delta - ( this['checked_' + dim] - this[dim] );
       }
       else // clear
-      {
         delta_applied = this['checked_' + dim] = 0;
-      }
     }
     return delta_applied;
-  }
+  };
 
   this.getCapTarget = function(dim, target)
   {

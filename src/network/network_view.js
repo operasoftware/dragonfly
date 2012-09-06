@@ -936,7 +936,6 @@ cls.DetailOverlayView = function(id, container_class, html, default_handler, ser
 
   // overlay view has no name
   this.init(id, container_class, html, default_handler);
-
 };
 
 cls.DetailOverlayView.prototype = new OverlayView();

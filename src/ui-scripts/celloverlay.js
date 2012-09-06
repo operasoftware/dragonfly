@@ -3,7 +3,7 @@
   this._init(view_id, parent_cell, parent_view_id);
 };
 
-CellOverlayPrototype = function()
+var CellOverlayPrototype = function()
 {
   this._init = function(view_id, parent_cell, parent_view_id)
   {
