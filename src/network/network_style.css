@@ -331,7 +331,7 @@
 }
 
 .network-details-container-wrap img {
-  width: 100%;
+  max-width: 100%;
 }
 
 .network-details-container p
@@ -377,7 +377,7 @@
 {
   border: none;
   border-top: 1px solid #a4a4a4;
-  margin-top: 9px;
+  margin: 7px 0 -8px 0;
 }
 
 .request-crafter h2,

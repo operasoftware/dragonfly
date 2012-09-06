@@ -13,6 +13,7 @@ var GRAPH_PADDING = (TIMELINE_MARKER_WIDTH / 2) + MIN_BAR_WIDTH + SECTIONS_HITAR
 var UNREFERENCED = templates.UNREFERENCED = "unreferenced";
 var ERROR_RESPONSE = templates.ERROR_RESPONSE = "error_response";
 var NOT_REQUESTED = templates.NOT_REQUESTED = "not_requested";
+var UI_CLASSNAME = templates.UI_CLASSNAME = "not-content";
 
 templates.options_main = function(nocaching, tracking, headers, overrides)
 {
