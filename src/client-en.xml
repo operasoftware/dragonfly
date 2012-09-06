@@ -273,6 +273,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
 <script src="./ui-scripts/cells.js"/>
+<script src="./ui-scripts/celloverlay.js"/>
 <script src="./ui-scripts/topCell.js"/>
 <script src="./ui-scripts/view.js"/>
 <script src="./ui-scripts/tempview.js"/>

@@ -151,6 +151,45 @@
     return null;
   }
 
+  this.show_overlay = function(view)
+  {
+    if (!this.overlay || !this.overlay.view_id == view.id)
+    {
+      if (this.overlay)
+        this.overlay.hide();
+      this.overlay = new CellOverlay(view.id, this, view.parent_view_id);
+    }
+    return this.overlay.show();
+  };
+
+  this.hide_overlay = function(view_id)
+  {
+    if (this.overlay && this.overlay.view_id == view_id)
+      this.overlay.hide();
+  };
+
+  this.remove_ui_elements = function(view_id)
+  {
+    var view = window.views[view_id];
+    if (view && view.isvisible())
+    {
+      var cell = this.get_cell(view_id);
+      var container_id = 'container-to-' + cell.id;
+      var toolbar_id = 'toolbar-to-' + cell.id;
+      window.messages.post("hide-view", {id: view_id});
+      view.removeContainerId(container_id);
+      var toolbar = window.toolbars[view_id];
+      if (toolbar)
+        toolbar.removeContainerId(toolbar_id);
+      [container_id, toolbar_id].forEach(function(id)
+      {
+        var ele = document.getElementById(id);
+        if (ele)
+          ele.parentNode.removeChild(ele);
+      });
+    }
+  };
+
   this.add_searchbar = function(searchbar)
   {
     this.searchbar = searchbar;
@@ -265,6 +304,7 @@
     this.parent = parent;
     this.container_id = container_id; // think about this
     this.is_dirty = true;
+    this.is_empty = Boolean(rough_cell.is_empty);
 
     dir = dir == HOR ? VER : HOR;
 
@@ -288,7 +328,7 @@
         // is previoue set for the last?
       }
     }
-    else
+    else if (!this.is_empty)
     {
       ["tabs", "tabbar"].forEach(function(prop)
       {
@@ -329,6 +369,9 @@
 
   this.setup = function(view_id)
   {
+    if (this.is_empty)
+      return;
+
     var view_id = this.tab && this.tab.activeTab;
     if (view_id)
     {
