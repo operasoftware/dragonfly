@@ -6,6 +6,7 @@ window.templates.network || (window.templates.network = {});
 (function(templates) {
 
 var HTTP_BOUNDARY_CLASS = "http-token-type-boundary";
+var UI_CLASSNAME = "not-content";
 var TEXT_TYPES = ["markup", "script", "css", "text"];
 
 templates._pre = function(content)
@@ -341,27 +342,30 @@ templates._request_body = function(req, do_raw)
   var ret; // todo: might revisit "ret", maybe return more often so that it's clear nothing more happens.
   if (req.request_body.partList.length) // Multipart
   {
-    var multi_p_template = [];
     var use_raw_boundary = Boolean(do_raw && req.boundary);
-    var boundary = use_raw_boundary ? ["span", req.boundary, "class", HTTP_BOUNDARY_CLASS] : ["hr"];
+    var multi_p_template = [];
     for (var n = 0, part; part = req.request_body.partList[n]; n++)
     {
-      if (n === 0)
-        multi_p_template.push(boundary);
+      if (use_raw_boundary && n === 0)
+        multi_p_template.push(["span", req.boundary, "class", HTTP_BOUNDARY_CLASS]);
 
+      multi_p_template.push(["span", "\n"]);
       multi_p_template.extend(part.headerList.map(this._headers_pseudo_raw));
-      multi_p_template.push(this._pre("\n"));
+      multi_p_template.push(["span", "\n"]);
       if (part.content && part.content.stringData)
         multi_p_template.push(part.content.stringData);
       else
-        multi_p_template.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
+        multi_p_template.push(["span", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength),
+                               "class", UI_CLASSNAME]);
 
+      var raw_boundary = req.boundary;
       if (use_raw_boundary && part === req.request_body.partList.last)
-      {
-        var TEXTCONTENT = 1;
-        boundary[TEXTCONTENT] += "--\n";
-      }
-      multi_p_template.push(boundary);
+        raw_boundary += "--";
+
+      if (use_raw_boundary)
+        multi_p_template.push(["span", "\n" + raw_boundary, "class", HTTP_BOUNDARY_CLASS]);
+      else
+        multi_p_template.push(["hr"]);
     }
     ret = multi_p_template;
   }
@@ -378,8 +382,8 @@ templates._request_body = function(req, do_raw)
       var rows = [];
       rows.push([
         "tr",
-          ["th", ["p", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME]],
-          ["th", ["p", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
+          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME, "class", UI_CLASSNAME]],
+          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE, "class", UI_CLASSNAME]]
         ]
       );
       rows.extend(parts.map(this.param_cells));
@@ -401,11 +405,13 @@ templates._request_body = function(req, do_raw)
       {
         if (req.request_body.mimeType)
         {
-          ret = ["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType)];
+          ret = ["span", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType),
+                 "class", UI_CLASSNAME];
         }
         else
         {
-          ret = ["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE];
+          ret = ["span", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE,
+                 "class", UI_CLASSNAME];
         }
       }
     }
@@ -461,7 +467,8 @@ templates._response_body = function(resp, do_raw, is_last_response)
       else
       {
         ret.push(
-          ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime)]
+          ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
+           "class", UI_CLASSNAME]
         );
       }
     }
