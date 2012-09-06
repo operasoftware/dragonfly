@@ -456,15 +456,11 @@ templates._response_body = function(resp, do_raw, is_last_response)
       // Attempt to display the responsebody.
       if (TEXT_TYPES.contains(resp.logger_entry_type))
       {
-        ret.push(
-          this._pre(resp.responsebody.content.stringData) // todo: don't pre here
-        );
+        ret.push(this._pre(resp.responsebody.content.stringData));
       }
       else if (resp.logger_entry_type == "image")
       {
-        ret.push(
-          ["img", "src", resp.responsebody.content.stringData]
-        );
+        ret.push(["img", "src", resp.responsebody.content.stringData]);
       }
       else
       {
