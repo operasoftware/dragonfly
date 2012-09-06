@@ -358,7 +358,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       document.addEventListener("mousemove", this._on_drag_detail_bound, false);
       document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
       if (!this._resize_interval)
-        this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
+        this._resize_interval = setInterval(this._on_drag_interval_bound, 15);
 
       evt.preventDefault();
     }
@@ -523,6 +523,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
+  this._on_header_tooltip_bound = function(evt, target)
+  {
+    // Probably make a template do the work. Need to know raw or parsed though, or probably only do it
+    // on the parsed headers.
+    
+  }.bind(this);
+
   this._update_mono_lineheight = function()
   {
     this.mono_lineheight = window.defaults["js-source-line-height"];
@@ -535,6 +542,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
   this.graph_tooltip.ontooltipenter = this._on_graph_tooltip_enter_bound;
   this.graph_tooltip.ontooltipleave = this._on_graph_tooltip_leave_bound;
+
+  this.header_tooltip = Tooltips.register("network-header-tooltip", true, false);
+  this.header_tooltip.ontooltip = this._on_header_tooltip_bound;
 
   this._on_clear_log_bound = function(evt, target)
   {

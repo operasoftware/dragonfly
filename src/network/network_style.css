@@ -273,61 +273,22 @@
               -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
-.network-details-container-overflows
-{
-  overflow: auto;
-}
-
 .network_logger .entry-details
 {
   overflow: auto;
   height: 100%;
-  padding-left: 5px;
+  padding: 0 5px;
   box-sizing: border-box;
-}
-
-.network-details-container-overflows .entry-details,
-.network-details-container-overflows .network-details-header-row,
-.network-details-container-overflows .height-holder
-{
-  overflow: visible;
-  height: auto;
-  position: static;
-  padding-top: 0;
-}
-
-.height-holder /* todo: probably merge me with entry-details */
-{
-  height: 100%;
-  width: 100%;
-  padding-top: 55px;
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-}
-
-.network-details-header-row
-{
-  position: absolute;
-  z-index: 3;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 5px;
-  padding-right: 45px;
-  height: 55px;
   overflow: auto;
-  border-bottom: 1px solid #D6D6D6;
 }
 
-.network-details-header-row > p
-{
-  margin-bottom: 3px;
-  margin-right: 18px;
-}
-
-.network-details-header-row .method-and-url
+.method-and-url
 {
   white-space: pre;
+}
+
+.parsed .method-and-url
+{
   word-wrap: break-word;
 }
 
@@ -415,7 +376,7 @@
 }
 
 .network-details-container div.header {
-  margin: 0 -5px; /* todo: 10px -5px looks better to me but is inconsistent with dom panel headers */
+  margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
 }
 
 .entry-details > h2:first-child,

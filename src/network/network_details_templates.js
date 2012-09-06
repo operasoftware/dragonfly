@@ -23,25 +23,12 @@ templates.details = function(entry, left_val, do_raw)
           "handler", "resize-request-detail"
         ],
         ["div",
-          [
-            templates.details_headline(entry),
-            ["span",
-              "class", "close-request-detail",
-              "handler", "close-request-detail",
-              "tabindex", "1"
-            ]
-          ],
-          "class", "network-details-header-row"
-        ],
-        ["div",
-          ["div",
-            this._details_content(entry, do_raw),
-            "data-object-id", String(entry.id),
-            "class", "entry-details"
-            // Todo: currently can't have the setting-changing context menu only on this container
-            // ,"data-menu", "network-logger-details"
-          ],
-         "class", "height-holder"
+          this._details_headline(entry),
+          this._details_content(entry, do_raw),
+          "data-object-id", String(entry.id),
+          "class", "entry-details"
+          // Todo: currently can't have the setting-changing context menu only on this container
+          // ,"data-menu", "network-logger-details"
         ]
       ],
     "class", "network-details-container" + (do_raw? "" : " parsed"),
@@ -57,7 +44,7 @@ templates._details_content = function(entry, do_raw)
   ];
 };
 
-templates.details_headline = function(entry)
+templates._details_headline = function(entry)
 {
   var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
