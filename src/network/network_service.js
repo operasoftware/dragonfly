@@ -1069,7 +1069,7 @@ cls.NetworkLoggerResponsePrototype = function()
     // At the time of the this event, it's possible that more than the header
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
-    
+
     // Todo: Not sure I should rely on this
     if (this.response_headers_raw != "SPDY DATA")
       this.first_line = this.response_headers_raw.split("\n")[0];

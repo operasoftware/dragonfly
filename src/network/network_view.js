@@ -426,6 +426,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clicked_request_bound = function(evt, target)
   {
+    if (this._overlay.is_active)
+      this._overlay.hide();
+    else
+      this._overlay.show();
+
+    return;
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
     if (this._selected == item_id)
     {
@@ -731,6 +737,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   ]);
 
+  this._overlay = this.register_overlay(new cls.DetailOverlayView("detail-overlay"));
+  cls.DetailOverlayView.create_ui_widgets();
+
   this._type_filters = ["all"].map(this._map_filter_bound);
   this.init(id, name, container_class, html, default_handler);
 };
@@ -936,3 +945,37 @@ cls.NetworkLog.create_ui_widgets = function()
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
 }
+
+cls.DetailOverlayView = function(id, container_class, html, default_handler, service)
+{
+  this.createView = function(container)
+  {
+    container.innerHTML = "<h2>hello</h2>";
+  };
+
+  // overlay view has no name
+  this.init(id, container_class, html, default_handler);
+};
+
+cls.DetailOverlayView.prototype = new OverlayView();
+
+cls.DetailOverlayView.create_ui_widgets = function()
+{
+  var config =
+  {
+    view: "detail-overlay",
+    groups: [
+      {
+        type: UI.TYPE_BUTTONS,
+        items: [
+          {
+            handler: "clear-log-network-view",
+            icon: "clear-log-network-view",
+            title: ui_strings.S_CLEAR_NETWORK_LOG
+          }
+        ]
+      },
+    ]
+  };
+  new ToolbarConfig(config);
+};
