@@ -1,4 +1,4 @@
-var OverlayView = function(id, container_class, html, default_handler) {};
+﻿var OverlayView = function(id, container_class, html, default_handler) {};
 var OverlayViewPrototype = function()
 {
   this.type = "overlay";

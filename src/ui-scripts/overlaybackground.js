@@ -1,4 +1,4 @@
-var OverlayBackground = function(cell)
+﻿var OverlayBackground = function(cell)
 {
   this.init(cell);
 };

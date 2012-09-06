@@ -1,4 +1,4 @@
-var CellOverlay = function(view_id, parent_cell, parent_view_id)
+﻿var CellOverlay = function(view_id, parent_cell, parent_view_id)
 {
   this._init(view_id, parent_cell, parent_view_id);
 };
