@@ -8,24 +8,9 @@ window.templates.network || (window.templates.network = {});
 var HTTP_BOUNDARY_CLASS = "http-token-type-boundary";
 var TEXT_TYPES = ["markup", "script", "css", "text"];
 
-templates._col_or_row = function(template)
+templates._pre = function(content)
 {
-  // template is either ["elem", "text"], which will be wrapped in a column
-  // or [["elem", "text"], ["elem", "text"]] which will be wrapped in a row.
-  if (Array.isArray(template[0]) && template[1])
-  {
-    return ["tr", template[0], template[1]];
-  }
-  return ["tr", ["td", template, "colspan", "2"]];
-};
-
-templates._pre = function(str, additional_classname)
-{
-  var classname = "mono";
-  if (additional_classname)
-    classname += " " + additional_classname;
-
-  return ["pre", str, "class", classname];
+  return ["pre", content, "class", "mono"];
 };
 
 templates.details = function(entry, left_val, do_raw)
@@ -188,22 +173,38 @@ templates._header_token_templ = function(state, token)
 {
   var TYPE = 0;
   var STR = 1;
+  var highlighted_types = [
+    cls.HTTPHeaderTokenizer.types.NAME,
+    cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
+  ];
   var attrs = ["class", cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
 
-  if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
+  if (highlighted_types.indexOf(token[TYPE]) != -1)
   {
-    attrs.extend(["data-spec", "http#" + token[STR].trim()]);
-  }
-  else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
-  {
-    if (state.data_spec_firstline_tokens.contains(state.firstline_tokens))
+    if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
-      // Add data-spec attributes on certain firstline tokens, tracked in state
-      attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
+      attrs.extend(["data-spec", "http#" + token[STR].trim()]);
     }
-    state.firstline_tokens++;
+    else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
+    {
+      if (state.data_spec_firstline_tokens.contains(state.firstline_tokens))
+      {
+        // Add data-spec attributes on certain firstline tokens, tracked in state
+        attrs.extend(["data-spec", "http#" + (token[STR]).trim()]);
+      }
+      state.firstline_tokens++;
+    }
+    var buffer = state.str_buffer;
+    var ret = [["span", token[STR]].concat(attrs)];
+    if (buffer)
+    {
+      ret.unshift(buffer);
+      state.str_buffer = "";
+    }
+    return ret;
   }
-  return ["span", token[STR]].concat(attrs);
+  state.str_buffer += token[STR];
+  return [];
 };
 
 templates._token_receiver = function(tokens, token_type, token)
@@ -223,18 +224,10 @@ templates._request_headers = function(req, do_raw)
         var tokenizer = new cls.HTTPHeaderTokenizer();
         tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
       }
-
       var METHOD = 0;
-      var data_spec_firstline_tokens = [METHOD];
-      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
-      var map_func = this._header_token_templ.bind(this, state_holder);
-      return [
-        this._pre(req.header_tokens.map(map_func))
-      ];
+      return this._pre(this.headers_tonkenized(req.header_tokens, [METHOD]));
     }
-    return [
-      ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
-    ];
+    return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL;
   }
 
   var ret = [];
@@ -258,18 +251,25 @@ templates._request_headers = function(req, do_raw)
       if (req.firstline_tokens.length)
       {
         var METHOD = 0;
-        var data_spec_firstline_tokens = [METHOD];
-        var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
-        var map_func = this._header_token_templ.bind(this, state_holder);
-        firstline = req.firstline_tokens.map(map_func);
+        ret.unshift(this.headers_tonkenized(req.firstline_tokens, [METHOD]));
       }
-      ret.unshift(this._pre(firstline));
     }
   }
-  return [
-    ret
-  ];
+  return templates._pre(ret);
 };
+
+templates.headers_tonkenized = function(tokens, data_spec_firstline_tokens)
+{
+  var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+  var map_func = this._header_token_templ.bind(this, state_holder);
+  var token_templates = tokens.reduce(function(previous_val, current_val, index){
+    if (index == 1)
+      previous_val = map_func(previous_val);
+    return previous_val.concat(map_func(current_val));
+  });
+  token_templates.push(state_holder.str_buffer);
+  return token_templates;
+}
 
 templates._response_headers = function(resp, do_raw)
 {
@@ -285,19 +285,14 @@ templates._response_headers = function(resp, do_raw)
     if (resp.header_tokens.length)
     {
       var RESPONSECODE = 1;
-      var data_spec_firstline_tokens = [RESPONSECODE];
-      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
-      var map_func = this._header_token_templ.bind(this, state_holder);
-      return [
-        this._pre(resp.header_tokens.map(map_func))
-      ];
+      return this._pre(this.headers_tonkenized(resp.header_tokens, [RESPONSECODE]));
     }
     return [
       ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
     ];
   }
 
-  var ret = [resp.response_headers.map(this._headers_pseudo_raw)];
+  var ret = resp.response_headers && resp.response_headers.map(this._headers_pseudo_raw) || [];
   if (resp.first_line)
   {
     var firstline = [];
@@ -310,37 +305,38 @@ templates._response_headers = function(resp, do_raw)
 
     if (resp.firstline_tokens.length)
     {
-      var RESPONSECODE = 1;
-      var data_spec_firstline_tokens = [RESPONSECODE];
-      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
-      var map_func = this._header_token_templ.bind(this, state_holder);
-      firstline = resp.firstline_tokens.map(map_func);
+      ret.unshift(this.headers_tonkenized(resp.firstline_tokens, [RESPONSECODE]));
     }
-    ret.unshift(this._pre(firstline));
   }
 
-  return [
-    ret
-  ];
+  return templates._pre(ret);
 };
 
 templates._headers_pseudo_raw = function(header)
 {
+  /* Shortcutting. For raw headers, highlighted types are defined like this:
+  var highlighted_types = [
+    cls.HTTPHeaderTokenizer.types.NAME,
+    cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
+  ];
+  */
   var template = [
     ["span", header.name,
       "data-spec", "http#" + header.name.trim(),
-      "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME]
+      "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME],
+      "data-tooltip", "network-header-tooltip",
+      "data-header-name", header.name.trim().toLowerCase()
     ],
-    ["span", ": " + header.value,
-      "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.VALUE]]
+    ": " + header.value + "\n"
   ];
-  return templates._pre(template);
+  return template;
 };
 
 templates.param_cells = function(name_value)
 {
   var parts = name_value.replace(/\+/g, " ").split("=");
   return [
+    "tr",
       ["td", decodeURIComponent(parts[0]), "class", "mono"],
       ["td", decodeURIComponent(parts[1]), "class", "mono"]
   ];
@@ -351,47 +347,55 @@ templates._request_body = function(req, do_raw)
   if (req.request_body == null)
     return [];
 
-  var ret = [this._pre("\n")];
+  var ret; // todo: might revisit "ret", maybe return more often so that it's clear nothing more happens.
   if (req.request_body.partList.length) // Multipart
   {
+    var multi_p_template = [];
     var use_raw_boundary = Boolean(do_raw && req.boundary);
-    var boundary = use_raw_boundary ? req.boundary : ["hr"];
+    var boundary = use_raw_boundary ? ["span", req.boundary, "class", HTTP_BOUNDARY_CLASS] : ["hr"];
     for (var n = 0, part; part = req.request_body.partList[n]; n++)
     {
       if (n === 0)
-        ret.push(this._pre(boundary, HTTP_BOUNDARY_CLASS));
+        multi_p_template.push(boundary);
 
-      ret.extend(part.headerList.map(this._headers_pseudo_raw));
-      ret.push(this._pre("\n"));
+      multi_p_template.extend(part.headerList.map(this._headers_pseudo_raw));
+      multi_p_template.push(this._pre("\n"));
       if (part.content && part.content.stringData)
-        ret.push(this._pre(part.content.stringData, "mono network-body"));
+        multi_p_template.push(part.content.stringData);
       else
-        ret.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
+        multi_p_template.push(["p", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength)]);
 
       if (use_raw_boundary && part === req.request_body.partList.last)
-        boundary += "--\n";
-
-      ret.push(this._pre(boundary, HTTP_BOUNDARY_CLASS));
+      {
+        var TEXTCONTENT = 1;
+        boundary[TEXTCONTENT] += "--\n";
+      }
+      multi_p_template.push(boundary);
     }
+    ret = multi_p_template;
   }
   else if (req.request_body.mimeType.startswith("application/x-www-form-urlencoded"))
   {
+    var url_enc_template = [];
     if (do_raw)
     {
-      ret.push(this._pre(req.request_body.content.stringData, "network-body"));
+      url_enc_template.push(req.request_body.content.stringData);
     }
     else
     {
       var parts = req.request_body.content.stringData.split("&");
       var rows = [];
       rows.push([
-        ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
-        ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
-      ]);
+        "tr",
+          ["th", ["p", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME]],
+          ["th", ["p", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]]
+        ]
+      );
       rows.extend(parts.map(this.param_cells));
       var table = ["table", rows];
-      ret.push(table);
+      url_enc_template.push(table);
     }
+    ret = url_enc_template;
   }
   else // not multipart or form.
   {
@@ -400,22 +404,22 @@ templates._request_body = function(req, do_raw)
       var type = cls.ResourceUtil.mime_to_type(req.request_body.mimeType);
       if (TEXT_TYPES.contains(type))
       {
-        ret.push(this._pre(req.request_body.content.stringData, "network-body"));
+        ret = req.request_body.content.stringData;
       }
       else
       {
         if (req.request_body.mimeType)
         {
-          ret.push(["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType)]);
+          ret = ["p", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType)];
         }
         else
         {
-          ret.push(["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE]);
+          ret = ["p", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE];
         }
       }
     }
   }
-  return ret;
+  return [this._pre("\n"), templates._pre(ret)];
 };
 
 
@@ -454,20 +458,19 @@ templates._response_body = function(resp, do_raw, is_last_response)
       if (TEXT_TYPES.contains(resp.logger_entry_type))
       {
         ret.push(
-          this._pre(resp.responsebody.content.stringData, "network-body")
+          this._pre(resp.responsebody.content.stringData) // todo: don't pre here
         );
       }
       else if (resp.logger_entry_type == "image")
       {
         ret.push(
-          ["img", "src", resp.responsebody.content.stringData, "class", "network-body"]
+          ["img", "src", resp.responsebody.content.stringData]
         );
       }
       else
       {
         ret.push(
-          ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
-           "class", "network-body"]
+          ["p", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime)]
         );
       }
     }

@@ -338,7 +338,7 @@
 
 .network_logger .header-token-type-name
 {
-  color: #F19800;
+  color: #149CBD;
 }
 
 .network_logger .http-token-type-boundary
@@ -359,11 +359,21 @@
 {
   margin: 0;
 }
+
 .parsed pre,
 .parsed p,
 .parsed td
 {
   word-wrap: break-word;
+}
+
+.parsed .entry-details img {
+  width: 100%;
+}
+
+.network-details-container p
+{
+  font: 11px "menu";
 }
 
 .network-details-container table
@@ -374,7 +384,7 @@
 .network-details-container td,
 .network-details-container th
 {
-  padding: 0;
+  padding: 0 5px 0 0;
   vertical-align: top;
 }
 
@@ -618,14 +628,4 @@
 {
   width: 100%;
   margin: 10px 0;
-}
-
-table .network-body
-{
-  /* work-around CORE-46966: Big pre element breaks layout in a table */
-  float: left;
-  margin-right: -10000000px;
-  /* todo: word-wrap: break-word; won't really work without this, doesn't make sense with smaller content though
-  width: 100%;
-  */
 }
