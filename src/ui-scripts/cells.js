@@ -158,6 +158,8 @@
       if (this.overlay)
         this.overlay.hide();
       this.overlay = new CellOverlay(view.id, this, view.parent_view_id);
+      if (!window.toolbars[view.id])
+        new ToolbarConfig({view: view.id, groups: [Toolbar.overlay_close_button]});
     }
     return this.overlay.show();
   };
@@ -174,14 +176,17 @@
     if (view && view.isvisible())
     {
       var cell = this.get_cell(view_id);
-      var container_id = 'container-to-' + cell.id;
-      var toolbar_id = 'toolbar-to-' + cell.id;
+      var container_id = "container-to-" + cell.id;
       window.messages.post("hide-view", {id: view_id});
       view.removeContainerId(container_id);
+      var toolbar_id = "toolbar-to-" + cell.id;
       var toolbar = window.toolbars[view_id];
       if (toolbar)
         toolbar.removeContainerId(toolbar_id);
-      [container_id, toolbar_id].forEach(function(id)
+      [container_id,
+       toolbar_id,
+       "overlay-background-to-" + cell.id,
+       "slider-for-" + cell.id].forEach(function(id)
       {
         var ele = document.getElementById(id);
         if (ele)
@@ -310,6 +315,7 @@
     this.container_id = container_id; // think about this
     this.is_dirty = true;
     this.is_empty = Boolean(rough_cell.is_empty);
+    this.overlay_background = null;
 
     dir = dir == HOR ? VER : HOR;
 
@@ -380,6 +386,11 @@
     var view_id = this.tab && this.tab.activeTab;
     if (view_id)
     {
+      if (window.views[view_id] && window.views[view_id].type == "overlay" && !this.overlay_background)
+        this.overlay_background = new OverlayBackground(this);
+
+      if (this.overlay_background)
+        this.overlay_background.setup();
       this.toolbar.setup(view_id);
       var search = UI.get_instance().get_search(view_id);
       this.searchbar = search && search.get_searchbar() || null;
@@ -448,6 +459,11 @@
         }
         else
         {
+          if (this.overlay_background)
+            this.overlay_background.setDimensions(force_redraw);
+
+          if (this.overlay)
+            this.overlay.update(this.left, this.top, force_redraw, is_resize);
           this.tab.setDimensions(force_redraw);
           this.toolbar.setDimensions(force_redraw);
           if (this.searchbar)

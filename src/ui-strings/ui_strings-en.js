@@ -1743,3 +1743,6 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
 
+/* DESC: Button label to close an overlay. */
+ui_strings.S_CLOSE_OVERLAY_VIEW = "Close overlay";
+

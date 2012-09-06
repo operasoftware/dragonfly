@@ -933,10 +933,7 @@ cls.DetailOverlayView = function(id, container_class, html, default_handler, ser
   {
     container.innerHTML = "<h2>hello</h2>";
   };
-  this.ondestroy = function()
-  {
-    opera.postError(this.id + " destroyed")
-  }
+
   // overlay view has no name
   this.init(id, container_class, html, default_handler);
 

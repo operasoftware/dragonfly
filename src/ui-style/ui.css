@@ -387,6 +387,11 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_refetch_listeners.png");
 }
 
+.close-overlay-view::before
+{
+  background-image: url("../ui-images/icons/icon_close.png");
+}
+
 .storage-delete
 {
   background-image: url("../ui-images/icons/icon_clear.png");
@@ -1834,4 +1839,11 @@ info {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.background-overlay
+{
+  position: absolute;
+  border: 1px solid #999999;
+  box-shadow: 0 2px 5px hsla(0, 0%, 0%, .5);
 }

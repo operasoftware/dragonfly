@@ -306,6 +306,15 @@ eventHandlers.click["toolbar-single-select"] = function(event, target)
   }
 }
 
+eventHandlers.click["close-overlay-view"] = function(event, target)
+{
+  var ui_id = target.get_ancestor_attr("ui-id");
+  var toolbar = UIBase.getUIById(ui_id);
+  var view = toolbar && window.views[toolbar.cell.tab.activeTab];
+  if (view)
+    view.hide();
+};
+
 
 /***** change handler *****/
 
