@@ -13,7 +13,7 @@ templates._pre = function(content)
   return ["pre", content, "class", "mono"];
 };
 
-templates.details = function(entry, left_val, do_raw)
+templates.details = function(entry, left_val, do_raw, do_wrap)
 {
   return (
     ["div",
@@ -23,15 +23,17 @@ templates.details = function(entry, left_val, do_raw)
           "handler", "resize-request-detail"
         ],
         ["div",
-          this._details_headline(entry),
-          this._details_content(entry, do_raw),
+          ["div",
+            this._details_headline(entry),
+            this._details_content(entry, do_raw),
+            "class", "table-cell"
+          ],
           "data-object-id", String(entry.id),
           "class", "entry-details"
-          // Todo: currently can't have the setting-changing context menu only on this container
-          // ,"data-menu", "network-logger-details"
         ]
       ],
-    "class", "network-details-container" + (do_raw? "" : " parsed"),
+    "class", "network-details-container" + 
+             (do_wrap ? " network-details-container-wrap" : ""),
     "style", "left:" + left_val + "px"]
   );
 };
@@ -170,7 +172,7 @@ templates._header_token_templ = function(state, token)
   {
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
-      attrs.extend(["data-spec", "http#" + token[STR].trim()]);
+      attrs.extend(["data-spec", "http#" + token[STR].trim(), "data-tooltip", "network-header-tooltip"]);
     }
     else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
@@ -245,18 +247,20 @@ templates._request_headers = function(req, do_raw)
   return templates._pre(ret);
 };
 
+templates._reduce_tokens = function(map_func, previous_val, current_val, index){
+  if (index == 1)
+    previous_val = map_func(previous_val);
+  return previous_val.concat(map_func(current_val));
+};
+
 templates.headers_tonkenized = function(tokens, data_spec_firstline_tokens)
 {
   var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
   var map_func = this._header_token_templ.bind(this, state_holder);
-  var token_templates = tokens.reduce(function(previous_val, current_val, index){
-    if (index == 1)
-      previous_val = map_func(previous_val);
-    return previous_val.concat(map_func(current_val));
-  });
+  var token_templates = tokens.reduce(this._reduce_tokens.bind(this, map_func));
   token_templates.push(state_holder.str_buffer);
   return token_templates;
-}
+};
 
 templates._response_headers = function(resp, do_raw)
 {
@@ -363,10 +367,10 @@ templates._request_body = function(req, do_raw)
   }
   else if (req.request_body.mimeType.startswith("application/x-www-form-urlencoded"))
   {
-    var url_enc_template = [];
+    var url_enc_template;
     if (do_raw)
     {
-      url_enc_template.push(req.request_body.content.stringData);
+      url_enc_template = req.request_body.content.stringData;
     }
     else
     {
@@ -380,7 +384,7 @@ templates._request_body = function(req, do_raw)
       );
       rows.extend(parts.map(this.param_cells));
       var table = ["table", rows];
-      url_enc_template.push(table);
+      url_enc_template = table;
     }
     ret = url_enc_template;
   }

@@ -1263,6 +1263,9 @@ ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 /* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
 ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
 
+/* DESC: Name of networks wrap-lines setting */
+ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Wrap long lines";
+
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
 

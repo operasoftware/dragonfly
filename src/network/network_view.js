@@ -99,7 +99,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     var left_val = settings.network_logger.get("detail-view-left-pos");
     left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
     var do_raw = settings.network_logger.get("view-raw");
-    return templates.network.details(entry, left_val, do_raw);
+    var do_wrap = settings.network_logger.get("wrap-detail-view");
+    return templates.network.details(entry, left_val, do_raw, do_wrap);
   };
 
   this._render_click_to_fetch_view = function(container)
@@ -525,9 +526,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_header_tooltip_bound = function(evt, target)
   {
-    // Probably make a template do the work. Need to know raw or parsed though, or probably only do it
-    // on the parsed headers.
-    
+    // console.log("_on_header_tooltip_bound", evt, target);
   }.bind(this);
 
   this._update_mono_lineheight = function()
@@ -691,15 +690,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.update();
   }.bind(this);
 
-/*
-  // Todo: currently can't have the setting-changing context menu only on this container
-  this._on_toggle_raw_mode_bound = function(event)
-  {
-    var KEY = "view-raw";
-    settings.network_logger.set(KEY, !settings.network_logger.get(KEY));
-  }.bind(this);
-*/
-
   var eh = window.eventHandlers;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
@@ -760,6 +750,7 @@ cls.NetworkLog.create_ui_widgets = function()
       "detail-view-left-pos": 120,
       "track-content": true,
       "view-raw": false,
+      "wrap-detail-view": true,
       "expand-requests": true,
       "expand-responses": true
     },
@@ -768,12 +759,12 @@ cls.NetworkLog.create_ui_widgets = function()
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
       "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
-      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL
+      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL,
+      "wrap-detail-view": ui_strings.S_NETWORK_WRAP_LINES_LABEL
     },
     // settings map
     {
-      checkboxes: ["track-content", "view-raw"],
-      contextmenu: ["view-raw"]
+      checkboxes: ["track-content"]
     },
     // templates
     {
@@ -873,6 +864,24 @@ cls.NetworkLog.create_ui_widgets = function()
             }
           ],
           handler: "profiler-mode-switch"
+        },
+        {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.view-raw",
+              icon: "view-raw"
+            }
+          ]
+        },
+        {
+          type: UI.TYPE_SWITCH,
+          items: [
+            {
+              key: "network_logger.wrap-detail-view",
+              icon: "wrap-detail-view"
+            }
+          ]
         },
         {
           type: UI.TYPE_INPUT,

@@ -198,7 +198,6 @@
 }
 
 /* Network log / Detail view */
-.network_logger .close-request-detail,
 .network_logger .close_incomplete_warning
 {
   width: 15px;
@@ -213,7 +212,6 @@
   position: absolute;
 }
 
-.network_logger .close-request-detail::before,
 .network_logger .close_incomplete_warning::before
 {
   content: "";
@@ -223,20 +221,12 @@
   background: transparent url("../ui-images/icons/icon_close_tab_small.png") 50% 50% no-repeat;
 }
 
-.network_logger .close-request-detail:active,
 .network_logger .close_incomplete_warning:active
 {
   background-color: rgba(0, 0, 0, 0.28);
   box-shadow: 0 1px #fff,
               inset 0 1px 1px rgba(0, 0, 0, 0.15),
               inset 0 0 4px rgba(0, 0, 0, 0.05);
-}
-.close-request-detail
-{
-  display: inline-block;
-  position: absolute;
-  right: 7px;
-  top: 7px;
 }
 
 .network_logger .close_incomplete_warning
@@ -252,11 +242,6 @@
   width: 12px;
   left: -6px;
   cursor: col-resize;
-}
-
-.network-details-container .close-request-detail:active
-{
-  background-color: #cacaca;
 }
 
 .network-details-container
@@ -282,17 +267,27 @@
   overflow: auto;
 }
 
+.network-details-container .table-cell
+{
+  display: table-cell;
+}
+
+.network-details-container-wrap .table-cell
+{
+  display: block;
+}
+
 .method-and-url
 {
   white-space: pre;
 }
 
-.parsed .method-and-url
+.network-details-container-wrap .method-and-url
 {
   word-wrap: break-word;
 }
 
-.network_logger .header-token-type-first_line_part
+.network-details-container .header-token-type-first_line_part
 {
   font-weight: bold;
 }
@@ -321,14 +316,21 @@
   margin: 0;
 }
 
-.parsed pre,
-.parsed p,
-.parsed td
+.network-details-container-wrap pre,
+.network-details-container-wrap p,
+.network-details-container-wrap td
 {
   word-wrap: break-word;
+  white-space: pre;
 }
 
-.parsed .entry-details img {
+.network-details-container-wrap td
+{
+  /* not entirely sure why only pre-wrap helps here */
+  white-space: pre-wrap;
+}
+
+.network-details-container-wrap img {
   width: 100%;
 }
 
@@ -342,10 +344,19 @@
   border-collapse: collapse;
 }
 
+.network-details-container table
+{
+  width: 1px;
+}
+
+.network-details-container-wrap table
+{
+  width: 100%;
+}
+
 .network-details-container td,
 .network-details-container th
 {
-  padding: 0 5px 0 0;
   vertical-align: top;
 }
 
@@ -355,7 +366,8 @@
   white-space: nowrap;
 }
 
-.network-details-container th:first-child
+.network-details-container th:first-child,
+.network-details-container td:first-child
 {
   width: 20%;
   padding-right: 30px;
@@ -377,12 +389,6 @@
 
 .network-details-container div.header {
   margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
-}
-
-.entry-details > h2:first-child,
-.entry-details tbody:first-child tr:first-child h2
-{
-  margin-top: 0;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
@@ -457,6 +463,7 @@
 .network-tooltip-container table
 {
   border-collapse: collapse;
+  width: 100%;
 }
 
 .network-tooltip-container td
