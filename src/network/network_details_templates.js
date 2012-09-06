@@ -32,84 +32,88 @@ templates.details = function(entry, left_val, do_raw)
 {
   return (
     ["div",
-      ["span",
+      [
         ["span",
-          "class", "close-request-detail",
-          "handler", "close-request-detail",
-          "tabindex", "1"
+          "class", "resize-request-detail",
+          "handler", "resize-request-detail"
         ],
-        "class", "resize-request-detail",
-        "handler", "resize-request-detail"
+        ["div",
+          [
+            templates.details_headline(entry),
+            ["span",
+              "class", "close-request-detail",
+              "handler", "close-request-detail",
+              "tabindex", "1"
+            ]
+          ],
+          "class", "network-details-header-row"
+        ],
+        ["div",
+          ["div",
+            this._details_content(entry, do_raw),
+            "data-object-id", String(entry.id),
+            "class", "entry-details"
+            // Todo: currently can't have the setting-changing context menu only on this container
+            // ,"data-menu", "network-logger-details"
+          ],
+         "class", "height-holder"
+        ]
       ],
-      ["div",
-        this._details_content(entry, do_raw),
-        "data-object-id", String(entry.id),
-        "class", "entry-details"
-        // Todo: currently can't have the setting-changing context menu only on this container
-        // ,"data-menu", "network-logger-details"
-      ],
-    "class", "network-details-container",
+    "class", "network-details-container" + (do_raw? "" : " parsed"),
     "style", "left:" + left_val + "px"]
   );
 };
 
 templates._details_content = function(entry, do_raw)
 {
-  var requests_responses = entry.requests_responses.map(do_raw ? this._requests_responses_raw_bound
-                                                               : this._requests_responses_parsed_bound);
-  if (do_raw)
-  {
-    return [
-      templates.details_headline(entry),
-      requests_responses
-    ];
-  }
-  return (
-    ["table",
-      ["tbody",
-        this._col_or_row(
-          templates.details_headline(entry)
-        )
-      ],
-      entry.touched_network ? [] : this.did_not_touch_network(entry),
-      requests_responses
-    ]
-  );
+  return [
+    entry.requests_responses.map(do_raw ? this._requests_responses_raw_bound
+                                        : this._requests_responses_parsed_bound)
+  ];
 };
 
 templates.details_headline = function(entry)
 {
-  /*
   var responsecode = entry.current_responsecode;
   if (responsecode && responsecode in cls.ResourceUtil.http_status_codes)
      responsecode = responsecode + " " + cls.ResourceUtil.http_status_codes[responsecode];
-  */
-  return ["h2", entry.url, "class", "url"];
-  /*
-  ["h2",
-    [
-      ["span",
-        entry.touched_network && responsecode ? String(responsecode) + " – " : "",
-        "data-spec", "http#" + entry.current_responsecode
-      ],
-      ["span", entry.url ]
-    ]
-  ]
-  */
-};
 
-templates.did_not_touch_network = function(entry)
-{
-  var local_url_types = [
-    cls.ResourceManager["1.2"].UrlLoad.URLType.FILE,
-    cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
+  var response_summary = [];
+  if (entry.touched_network && responsecode)
+  {
+    response_summary = [
+      "p", String(responsecode),
+      "data-spec", "http#" + entry.current_responsecode,
+      "class", (entry.error_in_current_response ? templates.ERROR_RESPONSE
+                                                : "") + " response-summary"
+    ];
+  }
+  else
+  {
+    var local_url_types = [
+      cls.ResourceManager["1.2"].UrlLoad.URLType.FILE,
+      cls.ResourceManager["1.2"].UrlLoad.URLType.DATA
+    ];
+    response_summary = [
+      "p", local_url_types.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
+                                                   : ui_strings.S_NETWORK_SERVED_FROM_CACHE,
+      "class", templates.NOT_REQUESTED
+    ];
+  }
+
+  return [
+    ["p",
+      [
+        "span", (entry.current_request && entry.current_request.method + " ") || ""
+      ],
+      [
+        "span", entry.url,
+        "class", "url"
+      ],
+      "class", "method-and-url"
+    ],
+    response_summary
   ];
-  return (
-    ["tbody",
-      this._col_or_row(
-        ["p", local_url_types.contains(entry.urltype) ? ui_strings.S_NETWORK_NOT_REQUESTED
-                                                      : ui_strings.S_NETWORK_SERVED_FROM_CACHE])
-    ]);
 };
 
 templates.requests_responses = function(do_raw, request_response, index, requests_responses)
@@ -137,24 +141,47 @@ templates._request = function(request, is_last, do_raw)
   // A request that's followed by another one, without a response in between,
   // is not shown in network-details. It will mostly mean it was retried internally
   // and didn't go on the network.
-  // That can't be determined only by looking at RequestRetry events, because a
-  // request with for example a 401 Authorization Required response should still
-  // be shown.
-  if (!is_last && !request.was_responded_to)
-    return [];
+  var is_relevant = is_last && request.was_responded_to;
+
+  var expanded = window.settings.network_logger.get("expand-requests");
+  var show_headline = is_relevant;
+  var show_headers = is_relevant && expanded;
+  var show_body = show_headers;
 
   return [
-    templates._request_headers(request, do_raw),
-    templates._request_body(request, do_raw)
+    show_headline ? this._headline(false, expanded) : [],
+    show_headers ? templates._request_headers(request, do_raw) : [],
+    show_body ? templates._request_body(request, do_raw) : []
   ];
 };
 
 templates._response = function(response, is_last, do_raw)
 {
+  var expanded = window.settings.network_logger.get("expand-responses");
+  var show_headline = response.logger_entry_touched_network;
+  var show_headers = expanded && response.logger_entry_touched_network;
+  var show_body = expanded;
+
   return [
-    this._response_headers(response, do_raw),
-    this._response_body(response, do_raw, is_last)
+    show_headline ? this._headline(true, expanded) : [],
+    show_headers ? this._response_headers(response, do_raw) : [],
+    show_body ? this._response_body(response, do_raw, is_last) : []
   ];
+};
+
+templates._headline = function(is_response, is_unfolded)
+{
+  return [
+    "div",
+      ["input",
+        "type", "button",
+        "class", is_unfolded ? "unfolded" : ""
+      ],
+      is_response ? ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE
+                  : ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE,
+      "handler", "toggle-expand-request-response",
+      "class", "header"
+  ].concat(is_response ? ["data-is-response", "data-is-response"] : []);
 };
 
 templates._header_token_templ = function(state, token)
@@ -186,17 +213,6 @@ templates._token_receiver = function(tokens, token_type, token)
 
 templates._request_headers = function(req, do_raw)
 {
-  /*
-  var method_str = req.method || "";
-  if (method_str)
-    method_str = " – " + method_str;
-  */
-  var headline;
-  if (req.request_body && req.request_body.partList && req.request_body.partList.length)
-    headline = ["h2", ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE /* + method_str */];
-  else
-    headline = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE /* + method_str */];
-
   if (do_raw)
   {
     if (req.request_headers_raw)
@@ -208,18 +224,17 @@ templates._request_headers = function(req, do_raw)
         tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
       }
 
-      if (req.header_tokens.length)
-      {
-        var data_spec_firstline_tokens = [0];
-        var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
-        var map_func = this._header_token_templ.bind(this, state_holder);
-        return [
-          headline,
-          this._pre(req.header_tokens.map(map_func))
-        ];
-      }
+      var METHOD = 0;
+      var data_spec_firstline_tokens = [METHOD];
+      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+      var map_func = this._header_token_templ.bind(this, state_holder);
+      return [
+        this._pre(req.header_tokens.map(map_func))
+      ];
     }
-    return [];
+    return [
+      ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
+    ];
   }
 
   var ret = [];
@@ -229,30 +244,35 @@ templates._request_headers = function(req, do_raw)
   }
   else
   {
-    ret.extend(this.headers_list(req.request_headers));
+    ret.extend(req.request_headers.map(this._headers_pseudo_raw));
     if (req.first_line)
     {
-      // todo: make nice, add speclinks
-      var classname = "mono " + cls.HTTPHeaderTokenizer.classnames[
-                                  cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
-                                ];
-      ret.unshift([
-        "pre", req.first_line,
-        "class", classname
-      ]);
+      var firstline = [];
+      if (!req.firstline_tokens)
+      {
+        req.firstline_tokens = [];
+        var tokenizer = new cls.HTTPHeaderTokenizer();
+        tokenizer.tokenize(req.first_line, this._token_receiver.bind(this, req.firstline_tokens))
+      }
+
+      if (req.firstline_tokens.length)
+      {
+        var METHOD = 0;
+        var data_spec_firstline_tokens = [METHOD];
+        var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+        var map_func = this._header_token_templ.bind(this, state_holder);
+        firstline = req.firstline_tokens.map(map_func);
+      }
+      ret.unshift(this._pre(firstline));
     }
   }
-  ret.unshift(headline);
-
-  return ["tbody", ret.map(this._col_or_row)];
+  return [
+    ret
+  ];
 };
 
 templates._response_headers = function(resp, do_raw)
 {
-  // Missing response headers aren't mentioned explicitely
-  if (!resp.response_headers)
-    return [];
-
   if (do_raw)
   {
     if (!resp.header_tokens)
@@ -264,81 +284,57 @@ templates._response_headers = function(resp, do_raw)
 
     if (resp.header_tokens.length)
     {
-      var data_spec_firstline_tokens = [1];
+      var RESPONSECODE = 1;
+      var data_spec_firstline_tokens = [RESPONSECODE];
       var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
       var map_func = this._header_token_templ.bind(this, state_holder);
       return [
-        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
         this._pre(resp.header_tokens.map(map_func))
       ];
     }
-    return [];
+    return [
+      ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
+    ];
   }
 
-  var ret = [];
-/*
-  var responsecode = resp.responsecode || "";
-  var status_code = cls.ResourceUtil.http_status_codes[responsecode];
-  if (status_code)
-    responsecode = responsecode + " " + status_code;
-
-  if (responsecode)
-    responsecode = " – " + responsecode;
-*/
-
-  ret.extend(this.headers_list(resp.response_headers));
+  var ret = [resp.response_headers.map(this._headers_pseudo_raw)];
   if (resp.first_line)
   {
-    // todo: make nice, add speclinks
-    var classname = "mono " + cls.HTTPHeaderTokenizer.classnames[
-                                cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
-                              ];
-    ret.unshift([
-      "pre", resp.first_line,
-      "class", classname
-    ]);
+    var firstline = [];
+    if (!resp.firstline_tokens)
+    {
+      resp.firstline_tokens = [];
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(resp.first_line, this._token_receiver.bind(this, resp.firstline_tokens))
+    }
+
+    if (resp.firstline_tokens.length)
+    {
+      var RESPONSECODE = 1;
+      var data_spec_firstline_tokens = [RESPONSECODE];
+      var state_holder = new cls.HTTPHeaderTokenizer.TokenStateholder(data_spec_firstline_tokens);
+      var map_func = this._header_token_templ.bind(this, state_holder);
+      firstline = resp.firstline_tokens.map(map_func);
+    }
+    ret.unshift(this._pre(firstline));
   }
 
-  if (resp.logger_entry_touched_network)
-  {
-    var head = ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE /* + responsecode */];
-    /*
-    if (responsecode)
-    {
-      head.extend(["data-spec", "http#" + resp.responsecode]);
-    }
-    */
-    ret.unshift(head);
-  }
-  return ["tbody", ret.map(this._col_or_row)];
+  return [
+    ret
+  ];
 };
 
 templates._headers_pseudo_raw = function(header)
 {
   var template = [
-    ["span", header.name + ":",
+    ["span", header.name,
       "data-spec", "http#" + header.name.trim(),
       "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME]
     ],
-    ["span", " " + header.value,
+    ["span", ": " + header.value,
       "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.VALUE]]
   ];
   return templates._pre(template);
-};
-
-templates._headers = function(header) {
-  return [
-    ["th", header.name + ":",
-      "data-spec", "http#" + (header.name).trim()
-    ],
-    ["td", header.value]
-  ];
-};
-
-templates.headers_list = function(headers, do_raw)
-{
-  // return headers.map(do_raw ? this._headers_pseudo_raw : this._headers, this);
-  return headers.map(this._headers_pseudo_raw);
 };
 
 templates.param_cells = function(name_value)
@@ -365,7 +361,7 @@ templates._request_body = function(req, do_raw)
       if (n === 0)
         ret.push(this._pre(boundary, HTTP_BOUNDARY_CLASS));
 
-      ret.extend(this.headers_list(part.headerList, do_raw));
+      ret.extend(part.headerList.map(this._headers_pseudo_raw));
       ret.push(this._pre("\n"));
       if (part.content && part.content.stringData)
         ret.push(this._pre(part.content.stringData, "mono network-body"));
@@ -387,11 +383,14 @@ templates._request_body = function(req, do_raw)
     else
     {
       var parts = req.request_body.content.stringData.split("&");
-      ret.push([
+      var rows = [];
+      rows.push([
         ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME],
         ["th", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE]
-      ]); // It's necesary to just push the outer array, because each entry will be wrapped in a row.
-      ret.extend(parts.map(this.param_cells));
+      ]);
+      rows.extend(parts.map(this.param_cells));
+      var table = ["table", rows];
+      ret.push(table);
     }
   }
   else // not multipart or form.
@@ -416,11 +415,7 @@ templates._request_body = function(req, do_raw)
       }
     }
   }
-
-  if (do_raw)
-    return ret;
-  else
-    return ["tbody", ret.map(this._col_or_row)];
+  return ret;
 };
 
 
@@ -480,10 +475,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
   if (ret.length)
     ret.unshift(this._pre("\n"));
 
-  if (do_raw)
-    return ret;
-  else
-    return ["tbody", ret.map(this._col_or_row), "class", classname];
+  return ret;
 };
 
 })(window.templates.network);

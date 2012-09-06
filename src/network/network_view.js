@@ -201,6 +201,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
         if (this._details_scroll_left)
           details.scrollLeft = this._details_scroll_left;
+
+        this.check_overflow();
       }
 
       if (is_data_mode)
@@ -219,6 +221,25 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       outer_container.scrollTop = this._container_scroll_top;
     }
   }.bind(this);
+
+  this.check_overflow = function()
+  {
+    var header_row = this._container.querySelector(".network-details-header-row");
+    var details_container = this._container.querySelector(".network-details-container");
+    if (!header_row || !details_container)
+      return;
+
+    if (!this._header_row_height)
+    {
+      var style_dec = document.styleSheets.getDeclaration(".network-details-header-row");
+      this._header_row_height = parseInt(style_dec.getPropertyValue("height"), 10); // in px
+    }
+    // Switch the overflow to .network-details-container (or back, in case of resizing)
+    if (header_row.scrollHeight > this._header_row_height)
+      details_container.addClass("network-details-container-overflows");
+    else
+      details_container.removeClass("network-details-container-overflows");
+  }
 
   this._tabledef = {
     column_order: ["method", "responsecode", "mime", "protocol", "size_h", "waiting", "duration", "started", "graph"],
@@ -357,6 +378,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       this._detail_left = Math.min(this._detail_left, window.innerWidth - 100);
       container.style.left = this._detail_left + "px";
       settings.network_logger.set("detail-view-left-pos", this._detail_left);
+      this.check_overflow();
     }
   }.bind(this);
 
@@ -650,6 +672,15 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
+  this._on_toggle_expand_request_response_bound = function(event)
+  {
+    var KEY = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var set_active = !settings.network_logger.get(KEY);
+    settings.network_logger.set(KEY, set_active);
+    this.needs_instant_update = true;
+    this.update();
+  }.bind(this);
+
 /*
   // Todo: currently can't have the setting-changing context menu only on this container
   this._on_toggle_raw_mode_bound = function(event)
@@ -680,14 +711,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
-
+  eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response_bound;
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
     "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
     "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
-    "close-details": this._on_clicked_close_bound
+    "close-request-detail": this._on_clicked_close_bound
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
@@ -718,7 +749,9 @@ cls.NetworkLog.create_ui_widgets = function()
       "network-profiler-mode": false,
       "detail-view-left-pos": 120,
       "track-content": true,
-      "view-raw": false
+      "view-raw": false,
+      "expand-requests": true,
+      "expand-responses": true
     },
     // key-label map
     {

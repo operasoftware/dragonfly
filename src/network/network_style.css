@@ -90,7 +90,7 @@
   content: " – ";
 }
 
-.network-log-url-list .not_requested
+.network_logger .not_requested
 {
   color: rgba(0, 0, 0, 0.5);
 }
@@ -101,12 +101,12 @@
 }
 
 .tooltip-container .error_response,
-.network-log-url-list .error_response
+.network_logger .error_response
 {
-  color: #d2001c !important;
+  color: #d2001c;
 }
 
-.network-log-url-list .error_response.selected
+.network_logger .error_response.selected
 {
   color: #3d0008;
 }
@@ -233,10 +233,10 @@
 }
 .close-request-detail
 {
+  display: inline-block;
   position: absolute;
-  left: 12px;
+  right: 7px;
   top: 7px;
-  cursor: default;
 }
 
 .network_logger .close_incomplete_warning
@@ -267,21 +267,68 @@
   height: 100%;
   z-index: 2;
   left: 120px;
+  background-color: #fff;
+  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.39),
+              0 2px 2px 1px rgba(0, 0, 0, 0.28),
+              -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.network-details-container-overflows
+{
+  overflow: auto;
 }
 
 .network_logger .entry-details
 {
   overflow: auto;
   height: 100%;
-  padding-top: 15px;
+  padding-left: 5px;
   box-sizing: border-box;
-  background-color: #fff;
-  /* using border-left instead of padding-left to keep the 
-     space for the close button when scrolling horizontally */
-  border-left: 28px solid transparent;
-  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.39),
-              0 2px 2px 1px rgba(0, 0, 0, 0.28),
-              -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.network-details-container-overflows .entry-details,
+.network-details-container-overflows .network-details-header-row,
+.network-details-container-overflows .height-holder
+{
+  overflow: visible;
+  height: auto;
+  position: static;
+  padding-top: 0;
+}
+
+.height-holder /* todo: probably merge me with entry-details */
+{
+  height: 100%;
+  width: 100%;
+  padding-top: 55px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+}
+
+.network-details-header-row
+{
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  padding-right: 45px;
+  height: 55px;
+  overflow: auto;
+  border-bottom: 1px solid #D6D6D6;
+}
+
+.network-details-header-row > p
+{
+  margin-bottom: 3px;
+  margin-right: 18px;
+}
+
+.network-details-header-row .method-and-url
+{
+  white-space: pre;
+  word-wrap: break-word;
 }
 
 .network_logger .header-token-type-first_line_part
@@ -291,12 +338,12 @@
 
 .network_logger .header-token-type-name
 {
-  color: #7070B4;
+  color: #F19800;
 }
 
 .network_logger .http-token-type-boundary
 {
-  color: #AA5544;
+  color: #7E7E7E;
 }
 
 .network_logger .network-summary
@@ -307,20 +354,15 @@
   color: #808080;
 }
 
-.network-details-container h2
-{
-  padding: 9px 0;
-}
-
-.entry-details .url
-{
-  font-weight: normal;
-}
-
 .network-details-container pre,
 .network-details-container p
 {
   margin: 0;
+}
+.parsed pre,
+.parsed p,
+.parsed td
+{
   word-wrap: break-word;
 }
 
@@ -334,7 +376,6 @@
 {
   padding: 0;
   vertical-align: top;
-  word-wrap: break-word;  
 }
 
 .network-details-container th
@@ -353,14 +394,24 @@
 {
   border: none;
   border-top: 1px solid #a4a4a4;
+  margin-top: 9px;
 }
 
-.network-details-container h2,
 .request-crafter h2,
 .network-options h2
 {
   font-size: 125%;
   padding: 10px 0 5px 0;
+}
+
+.network-details-container div.header {
+  margin: 0 -5px; /* todo: 10px -5px looks better to me but is inconsistent with dom panel headers */
+}
+
+.entry-details > h2:first-child,
+.entry-details tbody:first-child tr:first-child h2
+{
+  margin-top: 0;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
