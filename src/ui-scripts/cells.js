@@ -244,12 +244,17 @@
         rough_cell.height = stored_height;
     }
 
+    this.min_width = rough_cell.min_width != null?
+     rough_cell.min_width : defaults.min_view_width;
+    this.min_height = rough_cell.min_height != null ?
+      rough_cell.min_height : defaults.min_view_height;
+
     this.width =
-      rough_cell.width && rough_cell.width > defaults.min_view_width ?
-      rough_cell.width : defaults.min_view_width;
+      rough_cell.width && rough_cell.width > this.min_width ?
+      rough_cell.width : this.min_width;
     this.height =
-      rough_cell.height && rough_cell.height > defaults.min_view_height ?
-      rough_cell.height : defaults.min_view_height;
+      rough_cell.height && rough_cell.height > this.min_height ?
+      rough_cell.height : this.min_height;
     ids[ this.id = rough_cell.id || getId()] = this;
 
     this.checked_height = 0;
@@ -499,7 +504,7 @@
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0;
+    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0, min = 0;
     var auto_dim_count = 0, average_dim = 0;
     if (length)
     {
@@ -521,15 +526,16 @@
           // allocate space
           for (i = 0; child = this.children[i++]; )
           {
-            if (child['has_explicit_' + dim] && child[dim] < defaults['min_view_' + dim])
+            min = child['min_' + dim];
+            if (child['has_explicit_' + dim] && child[dim] < min)
             {
               // if the dimension is below the minimum limit, set minimum value
               // and reduce the average to compensate for the distributed pixels
-              average_dim -= (defaults['min_view_' + dim] - child[dim]) / auto_dim_count;
-              child[dim] = defaults['min_view_' + dim];
+              average_dim -= (min - child[dim]) / auto_dim_count;
+              child[dim] = min;
             }
             else if (!child['has_explicit_' + dim])
-              child[dim] = average_dim > defaults['min_view_' + dim] ? average_dim : defaults['min_view_' + dim];
+              child[dim] = average_dim > min ? average_dim : min;
           }
         }
       }
@@ -538,7 +544,8 @@
       {
         sum = this.get_total_children_dimension(dim);
         temp = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
-        if (sum <= max || defaults['min_view_' + dim] < temp)
+        min = this.children[length]['min_' + dim];
+        if (sum <= max || min < temp)
         {
           this.children[length][dim] = temp;
           length = this.children.length;
@@ -546,7 +553,7 @@
         }
         else
         {
-          this.children[length][dim] = defaults['min_view_' + dim];
+          this.children[length][dim] = min;
         }
       }
 
@@ -628,7 +635,7 @@
   {
     var delta_applied = 0;
     var child = null, i = 0;
-    var deltas = [];
+    var deltas = [], min = 0, max = 0;
     if( this.children.length )
     {
       if( ( dim == 'height' && this.dir == HOR ) || ( dim == 'width' && this.dir == VER ) )
@@ -639,8 +646,8 @@
           {
             deltas[deltas.length] = child.checkDelta(dim, delta, sibling);
           }
-          var min = Math.min.apply(null, deltas);
-          var max = Math.max.apply(null, deltas);
+          min = Math.min.apply(null, deltas);
+          max = Math.max.apply(null, deltas);
           delta_applied = delta > 0 ? max : min;
           if( max != min )
           {
@@ -672,16 +679,17 @@
     }
     else
     {
+      min = this['min_' + dim];
       if( delta)
       {
         var newDim = this[dim] + delta;
-        if( newDim >= defaults['min_view_' + dim] || newDim >= this[dim] )
+        if( newDim >= min || newDim >= this[dim] )
         {
           this['checked_' + dim] = newDim;
         }
         else
         {
-          this['checked_' + dim] = defaults['min_view_' + dim]
+          this['checked_' + dim] = min;
         }
         delta_applied = delta - ( this['checked_' + dim] - this[dim] );
       }
