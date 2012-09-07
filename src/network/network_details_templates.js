@@ -216,13 +216,15 @@ templates._request_headers = function(req, do_raw)
       var METHOD = 0;
       return this._pre(this.headers_tonkenized(req.header_tokens, [METHOD]));
     }
-    return ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL;
+    return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
+            "class", templates.UI_CLASSNAME];
   }
 
   var ret = [];
   if (!req.request_headers)
   {
-    ret.push(ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL);
+    ret.push(["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
+              "class", templates.UI_CLASSNAME]);
   }
   else
   {
@@ -269,8 +271,11 @@ templates._response_headers = function(resp, do_raw)
     if (!resp.header_tokens)
     {
       resp.header_tokens = [];
-      var tokenizer = new cls.HTTPHeaderTokenizer();
-      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
+      if (resp.response_headers_raw)
+      {
+        var tokenizer = new cls.HTTPHeaderTokenizer();
+        tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
+      }
     }
 
     if (resp.header_tokens.length)
@@ -278,12 +283,11 @@ templates._response_headers = function(resp, do_raw)
       var RESPONSECODE = 1;
       return this._pre(this.headers_tonkenized(resp.header_tokens, [RESPONSECODE]));
     }
-    return [
-      ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL
-    ];
+    return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
+            "class", templates.UI_CLASSNAME];
   }
 
-  var ret = resp.response_headers && resp.response_headers.map(this._headers_pseudo_raw) || [];
+  var ret = resp.response_headers && resp.response_headers.map(this._headers_pseudo_raw);
   if (resp.first_line)
   {
     var firstline = [];
@@ -299,7 +303,11 @@ templates._response_headers = function(resp, do_raw)
       ret.unshift(this.headers_tonkenized(resp.firstline_tokens, [RESPONSECODE]));
     }
   }
-
+  if (!ret)
+  {
+    ret = ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
+           "class", templates.UI_CLASSNAME];
+  }
   return templates._pre(ret);
 };
 

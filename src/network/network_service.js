@@ -1000,8 +1000,8 @@ cls.NetworkLoggerRequestPrototype = function()
   this._update_event_requestheader = function(event)
   {
     this.request_headers = event.headerList;
-    // Todo: Not sure I should rely on this
-    if (event.raw != "SPDY DATA")
+    // Don't set a first_line for a SPDY request
+    if (event.raw && event.raw.indexOf("\n") != -1)
       this.first_line = event.raw && event.raw.split("\n")[0];
 
     for (var n = 0, header; header = this.request_headers[n]; n++)
@@ -1069,9 +1069,8 @@ cls.NetworkLoggerResponsePrototype = function()
     // At the time of the this event, it's possible that more than the header
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
-    
-    // Todo: Not sure I should rely on this
-    if (this.response_headers_raw != "SPDY DATA")
+    // Don't set a first_line for a SPDY request
+    if (this.response_headers_raw && this.response_headers_raw.indexOf("\n") != -1)
       this.first_line = this.response_headers_raw.split("\n")[0];
   };
 
