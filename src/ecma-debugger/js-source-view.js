@@ -981,10 +981,54 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
-  eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
+  var _last_delta = 0;
+  var _accumulated_delta = 0;
+  const UNIT_LINES = 1;
+  const UNIT_PIXELS = 2;
+
+  this._get_lines_from_delta = function(delta, unit)
   {
-    this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
-  }.bind(this);
+    var lines;
+    if (unit == UNIT_LINES)
+      lines = delta;
+    else if (unit == UNIT_PIXELS)
+    {
+      if (_last_delta * delta < 0)
+        // Scroll direction has changed - reset accumulated delta.
+        _accumulated_delta = 0;
+
+      _last_delta = delta;
+      _accumulated_delta += delta;
+      // Convert pixels to lines.
+      delta = _accumulated_delta / window.defaults["js-source-line-height"];
+
+      if (Math.abs(delta) >= 1)
+      {
+        // Enough delta to scroll at least one line, round delta
+        // to full integer towards 0 and store remainder for later.
+        lines = delta >= 1 ? Math.floor(delta) : Math.ceil(delta);
+        _accumulated_delta = delta % 1;
+      }
+      else
+        // Not enough delta accumulated to scroll.
+        lines = 0;
+    }
+    else
+      lines = 0;
+
+    return lines;
+  }
+
+  eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
+  {
+    if (event.wheelDeltaX !== undefined && event.wheelDeltaX != 0)
+      // Horizontal scrolling is handled natively by the browser.
+      return;
+
+    var lines = this._get_lines_from_delta(-event.wheelDelta / 40, unit);
+    if (lines)
+      this._scroll_lines(lines, event, target);
+  }.bind(this, navigator.platform == 'MacIntel' ? UNIT_PIXELS : UNIT_LINES);
 
   this._handlers['show-window-go-to-line'] = function(event, target)
   {
