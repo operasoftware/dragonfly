@@ -16,10 +16,12 @@ var OverlayViewPrototype = function()
     if (cell)
       cell.hide_overlay(this.id);
     this.is_active = false;
+    this.post("hidden", {});
   };
 
   this.init = function(id, container_class, html, default_handler)
   {
+    window.cls.MessageMixin.apply(this);
     ViewBase.init.call(this, id, "", container_class, html, default_handler);
   };
 };
