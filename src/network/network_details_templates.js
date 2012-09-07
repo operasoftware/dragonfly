@@ -13,28 +13,14 @@ templates._pre = function(content)
   return ["pre", content, "class", "mono"];
 };
 
-templates.details = function(entry, left_val, do_raw, do_wrap)
+templates.details = function(entry, do_raw, do_wrap)
 {
   return (
     ["div",
-      [
-        ["span",
-          "class", "resize-request-detail",
-          "handler", "resize-request-detail"
-        ],
-        ["div",
-          ["div",
-            this._details_headline(entry),
-            this._details_content(entry, do_raw),
-            "class", "table-cell"
-          ],
-          "data-object-id", String(entry.id),
-          "class", "entry-details"
-        ]
-      ],
-    "class", "network-details-container" + 
-             (do_wrap ? " network-details-container-wrap" : ""),
-    "style", "left:" + left_val + "px"]
+      this._details_headline(entry),
+      this._details_content(entry, do_raw),
+      "class", "table-cell" + (do_wrap ? " wrap" : "")
+    ]
   );
 };
 
@@ -117,7 +103,7 @@ templates._request = function(request, is_last, do_raw)
   // and didn't go on the network.
   var is_relevant = is_last && request.was_responded_to;
 
-  var expanded = window.settings.network_logger.get("expand-requests");
+  var expanded = window.settings["network-detail-overlay"].get("expand-requests");
   var show_headline = is_relevant;
   var show_headers = is_relevant && expanded;
   var show_body = show_headers;
@@ -131,7 +117,7 @@ templates._request = function(request, is_last, do_raw)
 
 templates._response = function(response, is_last, do_raw)
 {
-  var expanded = window.settings.network_logger.get("expand-responses");
+  var expanded = window.settings["network-detail-overlay"].get("expand-responses");
   var show_headline = response.logger_entry_touched_network;
   var show_headers = expanded && response.logger_entry_touched_network;
   var show_body = expanded;
