@@ -600,6 +600,9 @@ ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
 /* DESC: Close command line window */
 ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 
+/* DESC: Button label to close an overlay. */
+ui_strings.S_CLOSE_OVERLAY_VIEW = "Close overlay";
+
 /* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
 ui_strings.S_COLOR_NOTATION = "Color format";
 
