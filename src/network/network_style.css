@@ -91,6 +91,7 @@
 }
 
 .network_logger .not_requested
+.network-details-view .not_requested
 {
   color: rgba(0, 0, 0, 0.5);
 }
@@ -102,6 +103,7 @@
 
 .tooltip-container .error_response,
 .network_logger .error_response
+.network-details-view .error_response
 {
   color: #d2001c;
 }
