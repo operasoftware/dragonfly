@@ -1019,17 +1019,16 @@ cls.JsSourceView = function(id, name, container_class)
     return lines;
   }
 
-  eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
+  eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
   {
     if (event.wheelDeltaX !== undefined && event.wheelDeltaX != 0)
       // Horizontal scrolling is handled natively by the browser.
       return;
 
-    var unit = navigator.platform == 'MacIntel' ? UNIT_PIXELS : UNIT_LINES;
     var lines = this._get_lines_from_delta(-event.wheelDelta / 40, unit);
     if (lines)
       this._scroll_lines(lines, event, target);
-  }.bind(this);
+  }.bind(this, navigator.platform == 'MacIntel' ? UNIT_PIXELS : UNIT_LINES);
 
   this._handlers['show-window-go-to-line'] = function(event, target)
   {
