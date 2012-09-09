@@ -986,7 +986,7 @@ cls.JsSourceView = function(id, name, container_class)
   const UNIT_LINES = 1;
   const UNIT_PIXELS = 2;
 
-  this._get_lines_from_delta = function(delta, unit)
+  var _get_lines_from_delta = function(delta, unit)
   {
     var lines;
     if (unit == UNIT_LINES)
@@ -1004,8 +1004,8 @@ cls.JsSourceView = function(id, name, container_class)
 
       if (Math.abs(delta) >= 1)
       {
-        // Enough delta to scroll at least one line, round delta to
-        // integer and store remainder for later.
+        // Enough delta to scroll at least one line, round delta
+        // to full integer towards 0 and store remainder for later.
         lines = delta >= 1 ? Math.floor(delta) : Math.ceil(delta);
         _accumulated_delta = delta % 1;
       }
@@ -1025,7 +1025,7 @@ cls.JsSourceView = function(id, name, container_class)
       // Horizontal scrolling is handled natively by the browser.
       return;
 
-    var lines = this._get_lines_from_delta(-event.wheelDelta / 40, unit);
+    var lines = _get_lines_from_delta(-event.wheelDelta / 40, unit);
     if (lines)
       this._scroll_lines(lines, event, target);
   }.bind(this, navigator.platform == 'MacIntel' ? UNIT_PIXELS : UNIT_LINES);
