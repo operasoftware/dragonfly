@@ -773,19 +773,16 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector(".entry-details");
-      if (!scroll_container)
-        scroll_container = msg.container.querySelector("#network-outer-container");
-
+      var scroll_container = msg.container.querySelector("#network-outer-container");
       if (scroll_container)
       {
-        text_search.setContainer(scroll_container);
-        text_search.setFormInput(
+        text_search.set_container(scroll_container);
+        text_search.set_form_input(
           views.network_logger.getToolbarControl(msg.container, "network-text-search")
         );
       }
     }
-  }
+  };
 
   var on_view_destroyed = function(msg)
   {
@@ -793,7 +790,7 @@ cls.NetworkLog.create_ui_widgets = function()
     {
       text_search.cleanup();
     }
-  }
+  };
 
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
@@ -821,6 +818,7 @@ cls.NetworkDetailOverlayViewPrototype = function()
         entry.check_to_get_body();
         container.clearAndRender(this._render_details_view(entry));
       }
+      this.text_search.update_search();
 
       if (this._details_scroll_top)
         container.scrollTop = this._details_scroll_top;
@@ -925,7 +923,52 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
             icon: "wrap-detail-view"
           }
         ]
+      },
+      {
+        type: UI.TYPE_INPUT,
+        items: [
+          {
+            handler: "network-details-text-search",
+            shortcuts: "network-details-text-search",
+            title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+            label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+          }
+        ]
       }
     ]
   });
+
+  var text_search = window.views["network-detail-overlay"].text_search = new TextSearch();
+  window.eventHandlers.input["network-details-text-search"] = function(event, target)
+  {
+    text_search.searchDelayed(target.value);
+  };
+  ActionBroker.get_instance().get_global_handler().
+      register_shortcut_listener("network-details-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
+
+  var on_view_created = function(msg)
+  {
+    if (msg.id === "network-detail-overlay")
+    {
+      var scroll_container = msg.container;
+      if (scroll_container)
+      {
+        text_search.set_container(scroll_container);
+        text_search.set_form_input(
+          views["network-detail-overlay"].getToolbarControl(msg.container, "network-details-text-search")
+        );
+      }
+    }
+  };
+
+  var on_view_destroyed = function(msg)
+  {
+    if (msg.id == "network-detail-overlay")
+    {
+      text_search.cleanup();
+    }
+  };
+
+  messages.addListener("view-created", on_view_created);
+  messages.addListener("view-destroyed", on_view_destroyed);
 };
