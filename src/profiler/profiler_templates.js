@@ -480,7 +480,10 @@ var ProfilerTemplates = function()
                 ui_strings.S_PROFILER_AREA_LOCATION + ": ",
               "class", "profiler-event-tooltip-label"
              ],
-             "(" + area.x + ", " + area.y + ")"
+             (window.services["profiler"].satisfies_version(1, 1)
+              ? "(" + (area.x + area.ox) + ", " + (area.y + area.oy) + ")"
+              : "(" + area.x + ", " + area.y + ")"
+             )
           ],
           ["li",
              ["span",

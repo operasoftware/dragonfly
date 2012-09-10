@@ -252,6 +252,8 @@ cls.Profiler["1.0"].Area = function(arr, parent)
   this.y = arr[1];
   this.w = arr[2];
   this.h = arr[3];
+  this.ox = arr[4];
+  this.oy = arr[5];
   this.toString = function() { return "[message Area]"; }
 };
 

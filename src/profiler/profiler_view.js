@@ -423,7 +423,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       if (timeline_event.type === TYPE_PAINT)
       {
         var area = timeline_event.paint.area;
-        var config = {x: area.x, y: area.y, w: area.w, h:area.h};
+        var config = {x: area.x, y: area.y, w: area.w, h: area.h};
+        if (window.services["profiler"].satisfies_version(1, 1))
+        {
+          config.x += area.ox;
+          config.y += area.oy;
+        }
         this._overlay.create_overlay(null, config);
       }
     }
