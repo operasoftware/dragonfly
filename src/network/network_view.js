@@ -612,7 +612,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   ]);
 
-  this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay", "network-details-view"));
+  this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay",
+                                                                         "network-details-view scroll",
+                                                                         null,
+                                                                         "network-detail-overlay"));
   cls.NetworkDetailOverlayView.create_ui_widgets();
 
   this._type_filters = ["all"].map(this._map_filter_bound);
