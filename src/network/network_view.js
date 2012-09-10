@@ -837,6 +837,25 @@ cls.NetworkDetailOverlayViewPrototype = function()
     return templates.network.details(entry, do_raw, do_wrap);
   };
 
+  this._on_network_resource_updated = function(message)
+  {
+    if (this.is_active)
+    {
+      var resource_id = message.id;
+      var parent_view = window.views[this.parent_view_id];
+      if (parent_view && parent_view.selected)
+      {
+        var updated = parent_view.service
+                      .get_request_context()
+                      .get_entries_with_res_id(message.id)
+                      .map(window.helpers.prop("id"));
+        if (updated.contains(parent_view.selected))
+          this.update();
+
+      }
+    }
+  };
+
   this._on_toggle_expand_request_response = function(event)
   {
     var KEY = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
@@ -867,7 +886,7 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
   this._init = function(id, container_class, html, default_handler)
   {
-    messages.addListener("network-resource-updated", this.update.bind(this));
+    messages.addListener("network-resource-updated", this._on_network_resource_updated.bind(this));
     messages.addListener("network-context-cleared", this.update.bind(this));
     messages.addListener("setting-changed", this._on_setting_changed.bind(this));
 
