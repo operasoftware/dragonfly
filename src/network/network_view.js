@@ -562,12 +562,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  this._clear_selected = function(message)
+  this._view_hidden_bound = function(message)
   {
-    this.selected = null;
-    this.needs_instant_update = true;
-    this.update();
-  };
+    if (message.id != "network-detail-overlay")
+      return;
+
+    if (!this._overlay.is_active)
+    {
+      this.selected = null;
+      this.needs_instant_update = true;
+      this.update();
+    }
+  }.bind(this);
 
   var eh = window.eventHandlers;
 
@@ -584,6 +590,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   messages.addListener("setting-changed", this._on_setting_changed_bound);
   messages.addListener("network-resource-updated", this.update.bind(this));
   messages.addListener("network-context-cleared", this.update.bind(this));
+  messages.addListener("hide-view", this._view_hidden_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
@@ -606,7 +613,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   ]);
 
   this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay", "network-details-view"));
-  this._overlay.addListener("hidden", this._clear_selected.bind(this));
   cls.NetworkDetailOverlayView.create_ui_widgets();
 
   this._type_filters = ["all"].map(this._map_filter_bound);

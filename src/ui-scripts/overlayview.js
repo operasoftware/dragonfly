@@ -12,11 +12,10 @@ var OverlayViewPrototype = function()
 
   this.hide = function()
   {
+    this.is_active = false;
     var cell = window.topCell.get_cell(this.parent_view_id);
     if (cell)
       cell.hide_overlay(this.id);
-    this.is_active = false;
-    this.post("hidden", {});
   };
 
   this.init = function(id, container_class, html, default_handler)
