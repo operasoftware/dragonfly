@@ -817,14 +817,18 @@ cls.NetworkDetailOverlayViewPrototype = function()
       {
         entry.check_to_get_body();
         container.clearAndRender(this._render_details_view(entry));
+        this.text_search.update_search();
+        if (this._details_scroll_top)
+          container.scrollTop = this._details_scroll_top;
+
+        if (this._details_scroll_left)
+          container.scrollLeft = this._details_scroll_left;
+
       }
-      this.text_search.update_search();
-
-      if (this._details_scroll_top)
-        container.scrollTop = this._details_scroll_top;
-
-      if (this._details_scroll_left)
-        container.scrollLeft = this._details_scroll_left;
+      else
+      {
+        this.hide();
+      }
     }
   };
 
