@@ -13,7 +13,7 @@
 .search-highlight-between,
 .search-highlight-last
 {
-  background-color: rgba(0, 0, 0, 0.13); 
+  background-color: rgba(0, 0, 0, 0.13);
   background-color: hsl(0, 0%, 87%);
   color: #333333;
 }
@@ -23,13 +23,13 @@
 .search-highlight-selected-between,
 .search-highlight-selected-last
 {
-  background-color: #c8f7bd; 
-  background-image: -o-linear-gradient(-90deg, 
+  background-color: #c8f7bd;
+  background-image: -o-linear-gradient(-90deg,
                                        #fce703 30%,
                                        #fcbe03 100%);
   background-image: linear-gradient(#fce703 30%,
                                     #fcbe03 100%);
-  border-color: #ceba73;   
+  border-color: #ceba73;
   border-top-color: #dbd3ad;
   border-bottom-color: #c7b267;
   color: #000000;
@@ -124,10 +124,14 @@
   width: 100%;
 }
 
+.panel-search
+{
+  padding: 5px;
+}
+
 .search-match
 {
-  padding: 4px;
-  margin: 0 2px;
+  padding: 2px 4px;
   border-radius: 3px;
   border: 1px solid transparent;
 }
@@ -187,6 +191,7 @@
 .advanced-search .ui-button
 {
   margin-top: -1px;
+  margin-right: -1px;
   vertical-align: top;
 }
 
@@ -212,10 +217,8 @@
   background: transparent url("../ui-images/error-console-info.png") no-repeat 0 50%;
   border: none;
   display: inline-block;
-  padding: 4px 0;
-  padding-left: 25px;
-  margin-top: 1px;
-  margin-bottom: -1px;
+  padding: 4px 0 4px 25px;
+  margin: 0 0 5px;
 }
 
 
@@ -228,9 +231,8 @@
   color: hsl(0, 0%, 20%);
   margin: 0;
   font: inherit;
-  padding: 3px;
+  padding: 2px 4px;
   word-wrap: break-word;
-  margin: 2px;
   border-radius: 2px;
   border: 1px solid hsl(0, 0%, 85%);
 }

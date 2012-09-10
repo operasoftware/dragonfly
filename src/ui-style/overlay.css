@@ -184,7 +184,7 @@ overlay hr
 /* Input Fields, Drop Downs */
 
 .overlay input[type='text']:not([default-text]):not([placeholder]),
-.overlay input[type='number'], 
+.overlay input[type='number'],
 .overlay select,
 .overlay textarea,
 .scc-input,
@@ -207,7 +207,7 @@ overlay hr
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.overlay select option 
+.overlay select option
 {
     color: rgba(255, 255, 255, 0.6);
 }
@@ -253,5 +253,6 @@ overlay hr
 
 .overlay select + .ui-button
 {
-  margin-left: 6px;
+  margin-left: 5px;
 }
+

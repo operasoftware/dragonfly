@@ -40,11 +40,6 @@
   text-align: right;
 }
 
-#ui-dialog-buttons .ui-button
-{
-  margin-left: 5px;
-}
-
 #ui-dialog-message
 {
   white-space: pre-wrap;

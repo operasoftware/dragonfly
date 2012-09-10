@@ -1,7 +1,7 @@
 ﻿.breakpoint
 {
   border-bottom: 1px solid #ccc;
-  padding: 2px 0;
+  padding: 2px 2px 2px 21px;
 }
 
 .breakpoint,
@@ -16,17 +16,12 @@
   border-bottom: 0;
 }
 
-.breakpoint-checkbox
+.breakpoint-checkbox + .file-line,
+.breakpoint-checkbox + .event-type,
+.breakpoint-checkbox + .source-line,
+.breakpoint-checkbox + .condition
 {
-  float: left;
-}
-
-.breakpoint .file-line,
-.source-line,
-.event-type,
-.condition
-{
-  margin-left: 25px;
+  display: inline;
 }
 
 .breakpoint .file-line,

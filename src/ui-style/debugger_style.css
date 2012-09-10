@@ -1,4 +1,4 @@
-﻿h1
+h1
 {
   margin: 0;
   font-weight: normal;
@@ -60,11 +60,6 @@ ul
 .folder-key
 {
   border: none;
-  margin: 0;
-  margin-right: 7px;
-  padding: 0;
-  font-size: 10px;
-  line-height: 11px;
   height: 11px;
   width: 11px;
   background: transparent url('../ui-images/expand-collapse.gif') scroll no-repeat 0 0;
@@ -101,7 +96,8 @@ ul
 
 #backtrace-container li
 {
-  padding-left: 20px;
+  padding-left: 21px;
+  margin-left: -4px;
   background: transparent url('../ui-images/selected_frame.png') scroll no-repeat -20px 0;
   cursor: pointer;
   white-space: nowrap;
@@ -315,8 +311,8 @@ cst-option.selected-runtime
 
 .css-declaration
 {
-  padding-left: 2em;
   padding-right: 3px;
+  padding-left: 16px;
 }
 
 .css-declaration.disabled,
@@ -328,11 +324,20 @@ cst-option.selected-runtime
 
 .enable-disable
 {
-  float: left;
   opacity: 0; /* This is a hack (instead of visibility: hidden) to make sure the checkbox is always clickable */
-  margin-bottom: -10px; /* This is rather hackish too */
-  margin-left: -20px;
+}
+
+.enable-disable,
+.event-list input,
+.breakpoint-checkbox,
+.folder-key
+{
+  margin: 0 5px 0 -16px;
+  padding: 0px;
+  font-size: 10px;
+  line-height: 11px;
   cursor: default;
+  width: 11px;
 }
 
 .enable-disable.hidden
@@ -350,6 +355,10 @@ cst-option.selected-runtime
 {
   display: block;
   margin: 5px 0;
+}
+.css-rule:first-child
+{
+  margin-top: 0;
 }
 
 .stylesheets pre
@@ -401,7 +410,7 @@ styles
 
 .unfolded styles
 {
-  padding: 0 5px;
+  padding: 5px;
 }
 
 header
@@ -441,6 +450,7 @@ header input
   height: 17px;
   -o-transition: 0.2s;
   transition: 0.2s;
+  margin: 0 1px;
 }
 
 .unfolded > header
@@ -495,7 +505,7 @@ examine-objects item
 
 examine-objects
 {
-  padding: 5px;
+  padding: 5px 5px 5px 21px;
 }
 
 examine-objects examine-objects
@@ -505,12 +515,8 @@ examine-objects examine-objects
 
 examine-objects examine-objects
 {
-  padding: 0 0 0 16px;
-}
-
-examine-objects key.no-expander
-{
-  margin-left: 18px;
+  padding: 0 0 0 32px;
+  margin-left: -16px;
 }
 
 .prototype-chain-object
@@ -768,7 +774,7 @@ breadcrumb span
 
 .js-dd-filter-container
 {
-  margin: 0 3px;  
+  margin: 0 3px;
 }
 
 .js-dd-filter
@@ -795,7 +801,7 @@ breadcrumb span
 
 .js-dd-visible
 {
-  opacity: 1; 
+  opacity: 1;
   -o-transition: opacity 0.5s;
   transition: opacity 0.5s;
 }
@@ -831,7 +837,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option
-{  
+{
   margin-bottom: 0;
 }
 
@@ -875,7 +881,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option:hover
-{  
+{
   background-color: #bbcef1;
   color: #000;
 }
@@ -1502,7 +1508,26 @@ d
 
 .event-list
 {
-  padding: 4px;
+  padding: 5px;
+}
+
+.event-list > li
+{
+  padding-left: 16px;
+  font-size: 11px;
+  line-height: 15px;
+  margin-bottom: 2px;
+}
+
+.event-list li textarea,
+.event-list li + .controls
+{
+  margin-left: -16px;
+}
+
+.event-list li + .controls
+{
+  margin-top: 5px;
 }
 
 .event-breakpoints li:first-child header
@@ -1539,15 +1564,21 @@ d
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+
 .not-content {
   cursor: auto;
   color: #999;
   font-style: italic;
-  padding-left: 20px;
 }
 
+.ev-listeners-selected-node .not-content
+{
+  padding-left: 21px;
+}
+
+
 .not-content.inspection {
-  padding: 5px 5px 5px 25px;
+  padding: 5px 5px 5px 21px;
 }
 
 .go-to-line-input

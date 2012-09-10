@@ -1,11 +1,19 @@
-﻿.ev-rt-list
+﻿.ev-rt-list > li
 {
-  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.ev-rt-list .ev-rt-title
+{
+  margin: 0 0 1px 0;
 }
 
 .ev-type-list
 {
   margin: 0;
+  padding-left: 16px;
 }
 
 .ev-listener-tooltip
@@ -22,7 +30,7 @@
 
 .list-selected-node dd
 {
-  margin-left: 23px;
+  margin-left: 21px;
 }
 
 .ev-listener-tooltip dd
@@ -64,9 +72,11 @@
 .ev-listeners-selected-node .ev-type
 {
   background-color: hsla(0, 0%, 0%, 0.04);
-  padding: 2px 8px;
+  padding: 2px 5px;
   border-width: 1px 0;
   margin: 5px 0px 1px;
+  font-size: 11px;
+  line-height: 15px;
 }
 
 .ev-listener-tooltip .ev-type
