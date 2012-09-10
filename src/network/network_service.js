@@ -651,6 +651,10 @@ cls.NetworkLoggerEntryPrototype = function()
       title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
       classname: CLASSNAME_IRREGULAR
     },
+    "request": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
+      classname: CLASSNAME_IRREGULAR
+    },
     "urlfinished": {
       title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST,
       classname: CLASSNAME_IRREGULAR
