@@ -5,17 +5,23 @@ var OverlayViewPrototype = function()
 
   this.show = function()
   {
-    var cell = window.topCell.get_cell(this.parent_view_id);
-    if (cell)
-      this.is_active = cell.show_overlay(this);
+    if (!this.is_active)
+    {
+      var cell = window.topCell.get_cell(this.parent_view_id);
+      if (cell)
+        this.is_active = cell.show_overlay(this);
+    }
   };
 
   this.hide = function()
   {
-    this.is_active = false;
-    var cell = window.topCell.get_cell(this.parent_view_id);
-    if (cell)
-      cell.hide_overlay(this.id);
+    if (this.is_active)
+    {
+      this.is_active = false;
+      var cell = window.topCell.get_cell(this.parent_view_id);
+      if (cell)
+        cell.hide_overlay(this.id);
+    }
   };
 
   this.init = function(id, container_class, html, default_handler)

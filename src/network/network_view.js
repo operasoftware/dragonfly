@@ -162,8 +162,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
                       "data-menu", "network-logger-context"];
     var rendered = this._container.clearAndRender(template);
 
-    if (this.selected)
+    if (this.selected && ctx.get_entry_from_filtered(this.selected))
     {
+      if (this._overlay.is_active)
+        this._overlay.update();
+      else
+        this._overlay.show();
+
       if (is_data_mode)
       {
         var sel_row = rendered.querySelector("tr[data-object-id='" + this.selected + "']");
@@ -171,6 +176,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
           sel_row.addClass("selected");
 
       }
+    }
+    else
+    {
+      this._overlay.hide();
     }
 
     if (this._container_scroll_top)
@@ -317,18 +326,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   {
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
     if (this.selected == item_id)
-    {
       this.selected = null;
-      this._overlay.hide();
-    }
     else
-    {
       this.selected = item_id;
-      if (this._overlay.is_active)
-        this._overlay.update();
-      else
-        this._overlay.show();
-    }
 
     this.needs_instant_update = true;
     this.update();
@@ -800,7 +800,6 @@ cls.NetworkDetailOverlayView = function(id, container_class, html, default_handl
 {
   this._details_scroll_top = 0;
   this._details_scroll_left = 0;
-  this.needs_instant_update = false; // todo: implement throttling
   this._init(id, container_class, html, default_handler);
 };
 
@@ -824,10 +823,6 @@ cls.NetworkDetailOverlayViewPrototype = function()
         if (this._details_scroll_left)
           container.scrollLeft = this._details_scroll_left;
 
-      }
-      else
-      {
-        this.hide();
       }
     }
   };
@@ -871,15 +866,12 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
   this._init = function(id, container_class, html, default_handler)
   {
-    messages.addListener("network-resource-updated", this.update.bind(this));
-    messages.addListener("network-context-cleared", this.update.bind(this));
     messages.addListener("setting-changed", this._on_setting_changed.bind(this));
 
     var eh = window.eventHandlers;
     eh.scroll["network-detail-overlay"] = this._on_scroll.bind(this);
     eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response.bind(this);
 
-    // overlay view has no name
     this.init(id, container_class, html, default_handler);
   }
 }
