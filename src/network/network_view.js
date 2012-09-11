@@ -410,11 +410,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  this._on_header_tooltip_bound = function(evt, target)
-  {
-    // console.log("_on_header_tooltip_bound", evt, target);
-  }.bind(this);
-
   this._update_mono_lineheight = function()
   {
     this.mono_lineheight = window.defaults["js-source-line-height"];
@@ -427,9 +422,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
   this.graph_tooltip.ontooltipenter = this._on_graph_tooltip_enter_bound;
   this.graph_tooltip.ontooltipleave = this._on_graph_tooltip_leave_bound;
-
-  this.header_tooltip = Tooltips.register("network-header-tooltip", true, false);
-  this.header_tooltip.ontooltip = this._on_header_tooltip_bound;
 
   this._on_clear_log_bound = function(evt, target)
   {

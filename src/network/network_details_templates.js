@@ -176,7 +176,7 @@ templates._header_token_templ = function(state, token)
   {
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
-      attrs.extend(["data-spec", "http#" + token[STR].trim(), "data-tooltip", "network-header-tooltip"]);
+      attrs.extend(["data-spec", "http#" + token[STR].trim()]);
     }
     else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
@@ -327,7 +327,6 @@ templates._headers_pseudo_raw = function(header)
     ["span", header.name,
       "data-spec", "http#" + header.name.trim(),
       "class", cls.HTTPHeaderTokenizer.classnames[cls.HTTPHeaderTokenizer.types.NAME],
-      "data-tooltip", "network-header-tooltip",
       "data-header-name", header.name.trim().toLowerCase()
     ],
     ": " + header.value + "\n"
