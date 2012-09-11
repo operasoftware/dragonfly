@@ -118,12 +118,13 @@ var ProfilerTemplates = function()
       var total_time = event_list.reduce(function(prev, curr) {
         return prev + curr.time;
       }, 0);
-      event_list.forEach(function(event) {
-        var index = this._order.indexOf(event.type);
+      event_list.forEach(function(event, index) {
         if (index !== -1)
         {
-          var percentage = event.time / total_time * 100;
-          template[index] =
+          var percentage = total_time
+                         ? event.time / total_time * 100
+                         : 0;
+          template.push(
             ["div",
                ["span",
                   event_type_string_map[event.type],
@@ -131,16 +132,17 @@ var ProfilerTemplates = function()
                ],
                ["span",
                   this.format_time(event.time, 0),
-                "class", "profiler-legend-amount"
+                "class", "profiler-legend-time"
                ],
                ["div",
-                "class", "profiler-legend-amount-bar",
-                "style", "width:" + percentage + "%"
+                "class", "profiler-legend-time-bar",
+                "style", "width: " + percentage + "%"
                ],
              "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
              "data-event-type", String(event.type),
              "handler", "profiler-event"
-            ];
+            ]
+          );
         }
       }, this);
       return template;

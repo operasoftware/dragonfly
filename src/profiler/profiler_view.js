@@ -41,7 +41,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._tabledefs = {};
   this._tabledefs[TYPE_CSS_SELECTOR_MATCHING] = {
     idgetter: function(item) { return item.cssSelectorMatching.selector; },
-    column_order: ["selector", "time", "hits"],
     columns: {
       "selector": {
         label: ui_strings.S_PROFILER_TYPE_SELECTOR,
@@ -74,14 +73,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     TYPE_THREAD_EVALUATION,
     TYPE_REFLOW,
     TYPE_STYLE_RECALCULATION,
-    //TYPE_STYLE_SELECTOR_MATCHING,
+    //TYPE_CSS_SELECTOR_MATCHING,
     TYPE_LAYOUT,
     TYPE_PAINT
   ];
 
   this._timeline_modes = [
-    {id: "_timeline_list", mode: MODE_ALL},
-    {id: "_aggregated_list", mode: MODE_REDUCE_UNIQUE_TYPES}
+    {id: "_timeline_list", mode: MODE_ALL}
   ];
 
   this._reset = function()
@@ -166,8 +164,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       }, this);
       if (got_all_responses)
       {
-        this._x0 = this._timeline_list.interval.start;
-        this._x1 = this._timeline_list.interval.end;
+        if (this._timeline_list && this._timeline_list.interval)
+        {
+          this._x0 = this._timeline_list.interval.start;
+          this._x1 = this._timeline_list.interval.end;
+        }
         this._update_view();
       }
     }
@@ -195,8 +196,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       return;
     }
 
-    this._timeline_width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
-    var width = this._timeline_width;
+    var timeline_list = this._timeline_list;
+    var interval = timeline_list.interval;
+    var event_list = timeline_list.eventList;
+    var aggregated_event_list = this._get_aggregated_event_list(event_list);
+    var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
 
     // TODO: Check if these are already appended
     var frag = document.createDocumentFragment();
@@ -206,31 +210,29 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     frag.appendChild(this._timeline_times_ele);
     frag.appendChild(this._timeline_ele);
     frag.appendChild(this._details_ele);
-    frag.appendChild(this._status_ele);
 
-    var timeline_list = this._timeline_list;
+    this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
+    this._zoomer_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
+    this._zoomer_ele.clearAndRender(this._templates.event_list_full(event_list, interval, width));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(interval.start, interval.end, width));
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
 
-    this._legend_ele.clearAndRender(this._templates.legend(this._aggregated_list.eventList));
-    this._zoomer_times_ele.clearAndRender(this._templates.timeline_markers(0, timeline_list.interval.end, width));
-    this._zoomer_ele.clearAndRender(this._templates.event_list_full(timeline_list.eventList, timeline_list.interval, width));
-    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(timeline_list.interval.start, timeline_list.interval.end, width));
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(timeline_list.eventList, timeline_list.interval, this._event_id, width));
-    this._details_ele.clearAndRender(this._templates.details(this._table));
-    this._status_ele.clearAndRender(this._templates.status(this._details_time));
-
-    var data = this._table && this._table.get_data();
-    if (!(data && data.length))
+    if (this._table)
     {
-      this._details_ele.addClass("profiler-no-status");
-      this._status_ele.addClass("profiler-no-status");
+      frag.appendChild(this._status_ele);
+      this._details_ele.clearAndRender(this._templates.details(this._table));
+      this._status_ele.clearAndRender(this._templates.status(this._details_time));
+    }
+    else
+    {
+      this._details_ele.clearAndRender(this._templates.no_events());
     }
 
     container.innerHTML = "";
     container.appendChild(frag);
 
-    this._zoomer.set_zoomer_ele(this._zoomer_ele);
-    this._zoomer.set_model_ele_width(width);
-    this._zoomer.set_model_duration(timeline_list.interval.end);
+    this._timeline_width = width;
+    this._zoomer.set_zoomer_element(this._zoomer_ele);
     this._zoomer.set_current_area();
   };
 
@@ -317,7 +319,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         timeline_id: this._current_timeline_id,
         mode: MODE_REDUCE_UNIQUE_EVENTS,
         event_id: this._event_id,
-        event_type_list: [child_type]
+        event_type_list: [child_type],
+        interval: [this._x0, this._x1] // TODO: take the interval of the parent event?
       };
       this._profiler.get_events(this._handle_details_list_bound.bind(null, child_type), config);
     }
@@ -325,8 +328,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     {
       this._reset_details();
       this._details_ele.clearAndRender(this._templates.no_events());
-      this._details_ele.addClass("profiler-no-status");
-      this._status_ele.addClass("profiler-no-status");
+      this._status_ele.remove();
     }
   };
 
@@ -340,8 +342,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
                                     null,
                                     true,
                                     "profiler");
-    var parsed_msg = new cls.Profiler["1.0"].EventList(msg);
-    var data = parsed_msg && parsed_msg.eventList;
+    var event_list = new cls.Profiler["1.0"].EventList(msg);
+    var data = event_list && event_list.eventList;
     if (data.length)
     {
       this._table.set_data(data);
@@ -350,13 +352,35 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       }, 0);
       this._details_ele.clearAndRender(this._templates.details(this._table));
       this._status_ele.clearAndRender(this._templates.status(this._details_time));
-      this._details_ele.removeClass("profiler-no-status");
-      this._status_ele.removeClass("profiler-no-status");
+      this._container.appendChild(this._details_ele);
+      this._container.appendChild(this._status_ele);
     }
     else
     {
       this._details_ele.clearAndRender(this._templates.no_events());
     }
+  };
+
+  this._get_aggregated_event_list = function(event_list)
+  {
+    var list = this._default_types.map(function(type) {
+      return {
+        type: type,
+        time: 0
+      };
+    });
+    event_list.forEach(function(event) {
+      var type = event.type;
+      for (var i = 0, item; item = list[i]; i++)
+      {
+        if (item.type == type)
+        {
+          item.time += event.time;
+          continue;
+        }
+      }
+    });
+    return list;
   };
 
   this._reload_window = function(event, target)
@@ -451,28 +475,42 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (!this._timeline_list)
       return;
-    this._x0 = 0;
-    this._x1 = this._timeline_list.interval.end;
+
+    var timeline_list = this._timeline_list;
+    var interval = timeline_list.interval;
+    var event_list = timeline_list.eventList;
+    var aggregated_event_list = this._get_aggregated_event_list(event_list);
     var width = this._timeline_width;
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(this._timeline_list.eventList, this._timeline_list.interval, this._event_id, width));
-    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(this._x0, this._x1, this._timeline_width));
+
+    this._x0 = 0;
+    this._x1 = interval.end;
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
+    this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
   };
 
   this._set_timeline_area = function(x0, x1)
   {
-    this._x0 = x0;
-    this._x1 = x1;
     if (!this._timeline_list)
       return;
-    var event_list = this._timeline_list.eventList.filter(function(event) {
+
+    var timeline_list = this._timeline_list;
+    var interval = timeline_list.interval;
+    var event_list = timeline_list.eventList.filter(function(event) {
       var start = event.interval.start;
       var end = event.interval.end;
       return (start <= x0 && end >= x0) ||
              (start >= x0 && start <= x1);
     });
+    var aggregated_event_list = this._get_aggregated_event_list(event_list);
+    var width = this._timeline_width;
+
+    this._x0 = x0;
+    this._x1 = x1;
     this._zoomer.fast_throttle = event_list.length < 500;
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, this._timeline_list.interval, this._event_id, this._timeline_width, x0, x1));
-    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, this._timeline_width));
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width, x0, x1));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, width));
+    this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
   };
 
   this._get_timeline_area = function()
@@ -481,6 +519,16 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       x0: this._x0,
       x1: this._x1
     };
+  };
+
+  this._get_timeline_duration = function()
+  {
+    return this._timeline_list.interval.end;
+  };
+
+  this._get_timeline_ele_width = function()
+  {
+    return this._timeline_width;
   };
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -507,7 +555,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._zoomer = new Zoomer({
       reset_to_default_area: this._reset_timeline_area.bind(this),
       set_area: this._set_timeline_area.bind(this),
-      get_current_area: this._get_timeline_area.bind(this)
+      get_current_area: this._get_timeline_area.bind(this),
+      get_duration: this._get_timeline_duration.bind(this),
+      get_model_element_width: this._get_timeline_ele_width.bind(this)
     });
 
     Tooltips.register("profiler-tooltip-url", true, false);

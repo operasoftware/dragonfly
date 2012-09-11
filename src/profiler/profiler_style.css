@@ -5,6 +5,8 @@
   top: 60px;
   width: 160px;
   border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  overflow: hidden;
 }
 
 .profiler-full-timeline
@@ -25,7 +27,7 @@
   left: 160px;
   right: 0;
   top: 15px;
-  height: 26px; /* 8 types * 3px height + 2 extra for padding */
+  height: 27px;
 }
 
 .profiler-timeline-background
@@ -48,17 +50,17 @@
   right: 0;
   top: 60px;
   border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
   overflow-x: hidden;
-  height: 145px;
+  height: 144px;
 }
 
 .profiler-details-list
 {
   position: absolute;
-  top: 205px;
+  top: 206px;
   bottom: 21px;
   overflow: auto;
-  border-top: 1px solid #e6e6e6;
   width: 100%;
 }
 
@@ -128,14 +130,14 @@
   text-overflow: ellipsis;
 }
 
-.profiler-legend-amount
+.profiler-legend-time
 {
   position: absolute;
   right: 2px;
   text-shadow: 1px 1px #fff;
 }
 
-.profiler-legend-amount-bar
+.profiler-legend-time-bar
 {
   background: #769FE1;
   position: absolute;
