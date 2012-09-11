@@ -1266,9 +1266,6 @@ ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 /* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
 ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
 
-/* DESC: Name of networks wrap-lines setting */
-ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Wrap long lines";
-
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
 
@@ -1301,6 +1298,9 @@ ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieve
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
+
+/* DESC: Name of networks wrap-lines setting */
+ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Wrap long lines";
 
 /* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";
