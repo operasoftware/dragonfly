@@ -59,6 +59,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
     else
     {
+      this._overlay.hide();
       this._render_click_to_fetch_view(this._container);
     }
 
@@ -289,7 +290,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   };
 
-  var _make_selection_func = function(accessor)
+  var selection_func = function(accessor)
   {
     if (this.selected)
     {
@@ -447,6 +448,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.update();
   }.bind(this);
 
+  this._close_detail_overlay_bound = function(evt, target)
+  {
+    if (this.selected)
+    {
+      this.selected = null;
+      this.needs_instant_update = true;
+      this.update();
+      return false;
+    }
+  }.bind(this);
+
   this._on_setting_changed_bound = function(message)
   {
     switch (message.id)
@@ -598,8 +610,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
-    "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
-    "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling")
+    "select-next-entry": selection_func.bind(this, "nextElementSibling"),
+    "select-previous-entry": selection_func.bind(this, "previousElementSibling"),
+    "close-details": this._close_detail_overlay_bound
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
@@ -616,6 +629,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
                                                                          "network-details-view scroll",
                                                                          null,
                                                                          "network-detail-overlay"));
+  this._overlay.shared_shortcuts = this.id;
   cls.NetworkDetailOverlayView.create_ui_widgets();
 
   this._type_filters = ["all"].map(this._map_filter_bound);
@@ -829,11 +843,7 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
   this._render_details_view = function(entry)
   {
-    var do_raw = settings["network-detail-overlay"].get("view-raw");
-    var do_wrap = settings["network-detail-overlay"].get("wrap-detail-view");
-    // todo: not consistent to read some settings from within the template,
-    // but annoying to pass them over 8 trillion functions.
-    return templates.network.details(entry, do_raw, do_wrap);
+    return templates.network.details(entry);
   };
 
   this._on_toggle_expand_request_response = function(event)
@@ -871,6 +881,17 @@ cls.NetworkDetailOverlayViewPrototype = function()
     var eh = window.eventHandlers;
     eh.scroll["network-detail-overlay"] = this._on_scroll.bind(this);
     eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response.bind(this);
+
+    ActionHandlerInterface.apply(this);
+    this.handle = function(action_id, event, target)
+    {
+      var parent_view = window.views[this.parent_view_id];
+      if (parent_view)
+        parent_view.handle.apply(parent_view, arguments);
+
+    }
+    this.id = id;
+    ActionBroker.get_instance().register_handler(this);
 
     this.init(id, container_class, html, default_handler);
   }
