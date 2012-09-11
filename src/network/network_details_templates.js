@@ -139,7 +139,7 @@ templates._response = function(response, is_last, do_raw)
       ["div",
         [
           show_headers ? this._response_headers(response, do_raw) : [],
-          show_body ? this._response_body(response, do_raw, is_last)
+          show_body ? this._response_body(response, do_raw, is_last) : []
         ], "class", "foldable"
       ],
       "class", (expanded ? "unfolded" : "")
