@@ -1,4 +1,15 @@
-﻿if (!Element.prototype.contains)
+﻿// From DOM4
+// http://www.w3.org/TR/dom/#dom-childnode-remove
+if (!Element.prototype.remove)
+{
+  Element.prototype.remove = function()
+  {
+    if (this.parentNode)
+      this.parentNode.removeChild(this);
+  };
+}
+
+if (!Element.prototype.contains)
 {
   Element.prototype.contains = function(ele)
   {
