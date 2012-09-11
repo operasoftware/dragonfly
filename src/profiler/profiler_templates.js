@@ -138,7 +138,7 @@ var ProfilerTemplates = function()
                 "class", "profiler-legend-time-bar",
                 "style", "width: " + percentage + "%"
                ],
-             "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
+             "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? "" : " even"),
              "data-event-type", String(event.type),
              "handler", "profiler-event"
             ]
@@ -186,13 +186,6 @@ var ProfilerTemplates = function()
     );
 
     return template;
-  };
-
-  this._background_bar = function(order, index)
-  {
-    return ["div",
-            "class", "profiler-timeline-row" + (index % 2 ? " odd" : "")
-           ];
   };
 
   this.event_list_full = function(event_list, interval, container_width)
