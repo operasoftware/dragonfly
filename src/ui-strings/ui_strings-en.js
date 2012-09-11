@@ -1521,9 +1521,6 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 
-/* DESC: Button title for stopping the profiler */
-ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
-
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
 

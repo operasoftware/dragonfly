@@ -217,7 +217,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(interval.start, interval.end, width));
     this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
 
-    if (this._table)
+    if (this._table && this._table.get_data())
     {
       frag.appendChild(this._status_ele);
       this._details_ele.clearAndRender(this._templates.details(this._table));
@@ -358,6 +358,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     else
     {
       this._details_ele.clearAndRender(this._templates.no_events());
+      this._status_ele.remove();
     }
   };
 
@@ -412,18 +413,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         this._profiler.release_session(null, {session_id: this._old_session_id});
       this._reset();
     }
-  };
-
-  this._on_settings_changed = function(msg)
-  {
-    if (msg.id === this.id && msg.key === "zero-at-first-event")
-      this._has_zero_at_first_event = msg.value;
-  };
-
-  this._on_settings_initialized = function(msg)
-  {
-    if (msg.view_id === this.id)
-      this._has_zero_at_first_event = msg.setting.get("zero-at-first-event");
   };
 
   this._ontooltip = function(event, target)
@@ -539,7 +528,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._overlay = new OverlayService();
     this._templates = new ProfilerTemplates();
     this._has_overlay_service = false;
-    this._has_zero_at_first_event = false;
     this._old_session_id = null;
     this._reset();
 
@@ -570,8 +558,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._handle_details_list_bound = this._handle_details_list.bind(this);
 
     window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
-    window.messages.addListener("setting-changed", this._on_settings_changed.bind(this));
-    window.messages.addListener("settings-initialized", this._on_settings_initialized.bind(this));
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
@@ -598,27 +584,9 @@ ProfilerView.create_ui_widgets = function()
             title: ui_strings.S_BUTTON_START_PROFILER
           }
         ]
-      },
-      {
-        type: UI.TYPE_SWITCH,
-        items: [
-          {
-            key: "profiler_all.zero-at-first-event"
-          }
-        ]
       }
     ]
   });
-
-  new Settings(
-    "profiler_all",
-    {
-      "zero-at-first-event": true
-    },
-    {
-      "zero-at-first-event": ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT
-    }
-  );
 };
 
 /**
