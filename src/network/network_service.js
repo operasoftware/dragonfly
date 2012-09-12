@@ -1005,7 +1005,7 @@ cls.NetworkLoggerRequestPrototype = function()
   {
     this.request_headers = event.headerList;
     // Don't set a first_line for a SPDY request
-    if (event.raw && event.raw.indexOf("\n") != -1)
+    if (event.raw && event.raw.contains("\n"))
       this.first_line = event.raw && event.raw.split("\n")[0];
 
     for (var n = 0, header; header = this.request_headers[n]; n++)
@@ -1074,7 +1074,7 @@ cls.NetworkLoggerResponsePrototype = function()
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
     // Don't set a first_line for a SPDY request
-    if (this.response_headers_raw && this.response_headers_raw.indexOf("\n") != -1)
+    if (this.response_headers_raw && this.response_headers_raw.contains("\n"))
       this.first_line = this.response_headers_raw.split("\n")[0];
   };
 
