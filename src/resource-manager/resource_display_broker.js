@@ -54,7 +54,7 @@ cls.ResourceDisplayBroker = function()
     else if (url)
     {
       //  resolve the URL based on that of the runtime if we only have a relative path
-      if (url[0].indexOf('://') == -1)
+      if (url.indexOf('://') == -1)
       {
         rt_id = ele.get_attr('parent-node-chain', 'rt-id');
         if(rt_id)
