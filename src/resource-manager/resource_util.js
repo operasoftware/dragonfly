@@ -144,12 +144,6 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-silverlight-app": "silverlight"
 }
 
-cls.ResourceUtil.type_to_string_map = {
-  "css": "CSS",
-  "pdf": "PDF",
-  "postscript": "PostScript"
-};
-
 /**
  * Returns the most sensible way of getting this resource,
  * as datauri or string, based on the mime type.
@@ -188,55 +182,38 @@ cls.ResourceUtil.mime_to_type = function(mime, extension)
   }
 }
 
-cls.ResourceUtil.path_to_type = function(path)
+/**
+ *  Returns the most sensible type based on
+ *  the mimeType and extension of resource
+ */
+cls.ResourceUtil.guess_type = function(mime, extension)
 {
-  if (path)
+  // For "application/octet-stream" we check by extension even though we have a mime
+  if (!mime || mime.toLowerCase() === "application/octet-stream")
+    return this.extension_type_map[extension];
+
+  return this.mime_to_type(mime);
+}
+
+/**
+ *  Returns meta_data of a cls.ResourceInfo
+ */
+cls.ResourceUtil.get_meta_data = function(resourceInfo)
+{
+  var data = resourceInfo.data;
+  if (!data)
+    return;
+
+  if (resourceInfo.type == 'image')
   {
-    var extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
-    var query = extension.indexOf("?");
-    if (query != -1)
-      extension = extension.slice(0, query);
-    var hash = extension.indexOf("#");
-    if (hash != -1)
-      extension = extension.slice(0, hash);
-    return extension && this.extension_type_map[extension];
+    var i=new Image();
+    i.src=data.content.stringData;
+    if (i.naturalWidth)
+      return i.naturalWidth + '\u00D7' + i.naturalHeight;
+    else
+      return 'vectorial image';
   }
-}
-
-cls.ResourceUtil.url_path = function(url)
-{
-  if (!url) { return null; }
-  var firstslash = url.replace("://", "xxx").indexOf("/");
-  var querystart = url.indexOf("?");
-  if (querystart == -1) { querystart = url.length; }
-  var path = url.slice(firstslash, querystart);
-  return path;
-}
-
-cls.ResourceUtil.url_filename = function(url)
-{
-  var path = cls.ResourceUtil.url_path(url);
-  var lastslash = path.lastIndexOf("/");
-  if (
-    lastslash === -1 || // no slash or
-    path === "/"        // the path _is_ a slash means there is no file name
-  )
-  {
-    return null;
-  }
-  else {
-    return path.slice(lastslash+1);
-  }
-}
-
-cls.ResourceUtil.url_host = function(url)
-{
-  if (!url) { return null; }
-  var host = url.replace(/\w+?:\/\//, "");
-  var firstslash = host.indexOf("/");
-  host = host.slice(0, firstslash == -1 ? host.length : firstslash);
-  return host;
-}
+};
 
 cls.ResourceUtil.header_presets = [
   {name: ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE, headers: ""},
