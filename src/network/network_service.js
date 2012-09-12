@@ -876,6 +876,10 @@ cls.NetworkLoggerEntryPrototype = function()
       title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
       classname: CLASSNAME_IRREGULAR
     },
+    "request": {
+      title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORT_RETRYING,
+      classname: CLASSNAME_IRREGULAR
+    },
     "urlfinished": {
       title: ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_ABORTING_REQUEST,
       classname: CLASSNAME_IRREGULAR
@@ -1225,6 +1229,9 @@ cls.NetworkLoggerRequestPrototype = function()
   this._update_event_requestheader = function(event)
   {
     this.request_headers = event.headerList;
+    // Don't set a first_line for a SPDY request
+    if (event.raw && event.raw.indexOf("\n") != -1)
+      this.first_line = event.raw && event.raw.split("\n")[0];
 
     for (var n = 0, header; header = this.request_headers[n]; n++)
     {
@@ -1291,6 +1298,9 @@ cls.NetworkLoggerResponsePrototype = function()
     // At the time of the this event, it's possible that more than the header
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
+    // Don't set a first_line for a SPDY request
+    if (this.response_headers_raw && this.response_headers_raw.indexOf("\n") != -1)
+      this.first_line = this.response_headers_raw.split("\n")[0];
   };
 
   this.update_event_responsefinished = function(event)

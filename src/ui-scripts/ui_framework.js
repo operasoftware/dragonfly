@@ -116,6 +116,11 @@ var ui_framework = new function()
         }
       ]
     },
+    {
+      template: ["div", "class", "background-overlay"],
+      target: OverlayBackground.prototype,
+      properties: resolve_map_properties
+    },
   ];
 
 
