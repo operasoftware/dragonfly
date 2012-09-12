@@ -1314,10 +1314,12 @@ cls.ResourceInfo = function(entry)
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
 
-  var lastResponse = entry.requests_responses.last;
-  if (lastResponse && lastResponse.saw_responsefinished)
+  var lastResponse = entry.requests_responses && entry.requests_responses.last;
+  if (lastResponse && lastResponse.responsebody)
   {
     this.data = lastResponse.responsebody;
+    if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
+      this.data.meta = cls.ResourceUtil.get_meta_data(this);
   }
 };
 
