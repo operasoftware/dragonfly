@@ -618,7 +618,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   ]);
 
   this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay",
-                                                                         "network-details-view scroll",
+                                                                         "network-detail-overlay scroll",
                                                                          null,
                                                                          "network-detail-overlay"));
   this._overlay.shared_shortcuts = this.id;

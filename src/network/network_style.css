@@ -91,7 +91,7 @@
 }
 
 .network_logger .not_requested
-.network-details-view .not_requested
+.network-detail-overlay .not_requested
 {
   color: rgba(0, 0, 0, 0.5);
 }
@@ -103,7 +103,7 @@
 
 .tooltip-container .error_response,
 .network_logger .error_response
-.network-details-view .error_response
+.network-detail-overlay .error_response
 {
   color: #d2001c;
 }
@@ -246,7 +246,7 @@
   cursor: col-resize;
 }
 
-.network-details-view
+.network-detail-overlay
 {
   height: 100%;
   padding: 0 5px;
@@ -254,12 +254,12 @@
   overflow: auto;
 }
 
-.network-details-view .table-cell
+.network-detail-overlay .table-cell
 {
   display: table-cell;
 }
 
-.network-details-view .wrap /* that's .table-cell.wrap */
+.network-detail-overlay .wrap /* that's .table-cell.wrap */
 {
   display: block;
 }
@@ -269,22 +269,22 @@
   white-space: pre;
 }
 
-.network-details-view .wrap .method-and-url
+.network-detail-overlay .wrap .method-and-url
 {
   word-wrap: break-word;
 }
 
-.network-details-view .header-token-type-first_line_part
+.network-detail-overlay .header-token-type-first_line_part
 {
   font-weight: bold;
 }
 
-.network-details-view .header-token-type-name
+.network-detail-overlay .header-token-type-name
 {
   color: #149CBD;
 }
 
-.network-details-view .http-token-type-boundary
+.network-detail-overlay .http-token-type-boundary
 {
   color: #7E7E7E;
 }
@@ -297,77 +297,77 @@
   color: #808080;
 }
 
-.network-details-view pre,
-.network-details-view p
+.network-detail-overlay pre,
+.network-detail-overlay p
 {
   margin: 0;
 }
 
-.network-details-view .wrap pre,
-.network-details-view .wrap p,
-.network-details-view .wrap td
+.network-detail-overlay .wrap pre,
+.network-detail-overlay .wrap p,
+.network-detail-overlay .wrap td
 {
   word-wrap: break-word;
   white-space: pre;
 }
 
-.network-details-view .wrap td
+.network-detail-overlay .wrap td
 {
   /* not entirely sure why only pre-wrap helps here */
   white-space: pre-wrap;
 }
 
-.network-details-view .wrap img {
+.network-detail-overlay .wrap img {
   max-width: 100%;
 }
 
-.network-details-view p
+.network-detail-overlay p
 {
   font: 11px "menu";
 }
 
-.network-details-view table
+.network-detail-overlay table
 {
   border-collapse: collapse;
 }
 
-.network-details-view table
+.network-detail-overlay table
 {
   width: 1px;
 }
 
-.network-details-view .wrap table
+.network-detail-overlay .wrap table
 {
   width: 100%;
 }
 
-.network-details-view td,
-.network-details-view th
+.network-detail-overlay td,
+.network-detail-overlay th
 {
   vertical-align: top;
 }
 
-.network-details-view th
+.network-detail-overlay th
 {
   text-align: left;
   white-space: nowrap;
 }
 
-.network-details-view th:first-child,
-.network-details-view td:first-child
+.network-detail-overlay th:first-child,
+.network-detail-overlay td:first-child
 {
   width: 20%;
   padding-right: 30px;
 }
 
-.network-details-view hr
+.network-detail-overlay hr
 {
   border: none;
   border-top: 1px solid #a4a4a4;
   margin: 7px 0 -8px 0;
 }
 
-.network-details-view div.header {
+.network-detail-overlay div.header {
   margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
 }
 
