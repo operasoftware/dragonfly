@@ -190,7 +190,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (!container)
       return;
 
-    if (!this._timeline_list.eventList.length)
+    if (!(this._timeline_list && this._timeline_list.eventList.length))
     {
       container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DATA));
       return;
@@ -201,6 +201,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var event_list = timeline_list.eventList;
     var aggregated_event_list = this._get_aggregated_event_list(event_list);
     var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
+
+    event_list = event_list.filter(function(event) {
+      return event.time > this._min_event_time;
+    }, this);
 
     // TODO: Check if these are already appended
     var frag = document.createDocumentFragment();
@@ -415,6 +419,25 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
   };
 
+  this._on_settings_initialized = function(msg)
+  {
+    if (msg.view_id == "profiler_all")
+    {
+      this._min_event_time = window.settings["profiler_all"].get("min-event-time")
+    }
+  };
+
+  this._on_single_select_changed = function(msg)
+  {
+    if (msg.name == "min-event-time")
+    {
+      window.settings["profiler_all"].set("min-event-time", msg.values[0])
+      this._min_event_time = Number(msg.values[0]);
+      if (this._timeline_list)
+        this._update_view();
+    }
+  };
+
   this._ontooltip = function(event, target)
   {
     var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
@@ -479,6 +502,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var aggregated_event_list = this._get_aggregated_event_list(event_list);
     var width = this._timeline_width;
 
+    event_list = event_list.filter(function(event) {
+      return event.time > this._min_event_time;
+    }, this);
+
     this._x0 = 0;
     this._x1 = interval.end;
     this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
@@ -496,9 +523,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var event_list = timeline_list.eventList.filter(function(event) {
       var start = event.interval.start;
       var end = event.interval.end;
-      return (start <= x0 && end >= x0) ||
-             (start >= x0 && start <= x1);
-    });
+      return ((start <= x0 && end >= x0) ||
+              (start >= x0 && start <= x1)) &&
+             event.time > this._min_event_time;
+    }, this);
     var aggregated_event_list = this._get_aggregated_event_list(event_list);
     var width = this._timeline_width;
 
@@ -539,8 +567,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._old_session_id = null;
     this._reset();
 
-    this.x0 = 0;
-    this.x1 = 0;
+    this._x0 = 0;
+    this._x1 = 0;
+    this._min_event_time = 0;
 
     this._legend_ele = null;
     this._zoomer_ele = null;
@@ -566,6 +595,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._handle_details_list_bound = this._handle_details_list.bind(this);
 
     window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
+    window.messages.addListener("single-select-changed", this._on_single_select_changed.bind(this));
+    window.messages.addListener("settings-initialized", this._on_settings_initialized.bind(this));
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
@@ -592,9 +623,37 @@ ProfilerView.create_ui_widgets = function()
             title: ui_strings.S_BUTTON_START_PROFILER
           }
         ]
+      },
+      {
+        type: UI.TYPE_SINGLE_SELECT,
+        name: "min-event-time",
+        items: [
+          {
+            text: "All",
+            title: "Show all events",
+            value: "0"
+          },
+          {
+            text: "> 1 ms",
+            title: "Show events with a self time of at least 1 ms",
+            value: "1"
+          },
+          {
+            text: "> 15 ms",
+            title: "Show events with a self time of at least 15 ms",
+            value: "15"
+          },
+        ]
       }
     ]
   });
+
+  new Settings(
+    "profiler_all",
+    {
+      "min-event-time": "0"
+    }
+  );
 };
 
 /**
