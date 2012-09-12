@@ -317,7 +317,8 @@
   white-space: pre-wrap;
 }
 
-.network-detail-overlay .wrap img {
+.network-detail-overlay .wrap img
+{
   max-width: 100%;
 }
 
