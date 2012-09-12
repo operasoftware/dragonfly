@@ -882,7 +882,7 @@ cls.NetworkDetailOverlayViewPrototype = function()
     {
       var parent_view = window.views[this.parent_view_id];
       if (parent_view)
-        parent_view.handle(action_id, event, target);
+        return parent_view.handle(action_id, event, target);
     }
     this.id = id;
     ActionBroker.get_instance().register_handler(this);
