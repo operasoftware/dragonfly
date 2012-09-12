@@ -368,7 +368,8 @@
   margin: 7px 0 -8px 0;
 }
 
-.network-detail-overlay div.header {
+.network-detail-overlay div.header
+{
   margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
 }
 
