@@ -225,7 +225,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      this._details_ele.clearAndRender(this._templates.no_events());
+      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
     }
 
     container.innerHTML = "";
@@ -311,6 +311,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._show_details_list = function()
   {
     var child_type = this._children[this._event_type];
+    this._status_ele.remove();
     if (child_type)
     {
       this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
@@ -326,9 +327,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
     else
     {
+      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
       this._reset_details();
-      this._details_ele.clearAndRender(this._templates.no_events());
-      this._status_ele.remove();
     }
   };
 
@@ -357,7 +357,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
     else
     {
-      this._details_ele.clearAndRender(this._templates.no_events());
+      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
       this._status_ele.remove();
     }
   };
