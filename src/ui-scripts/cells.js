@@ -151,6 +151,50 @@
     return null;
   }
 
+  this.show_overlay = function(view)
+  {
+    if (!this.overlay || !this.overlay.view_id == view.id)
+    {
+      if (this.overlay)
+        this.overlay.hide();
+      this.overlay = new CellOverlay(view.id, this, view.parent_view_id);
+      if (!window.toolbars[view.id])
+        new ToolbarConfig({view: view.id, groups: [Toolbar.overlay_close_button]});
+    }
+    return this.overlay.show();
+  };
+
+  this.hide_overlay = function(view_id)
+  {
+    if (this.overlay && this.overlay.view_id == view_id)
+      this.overlay.hide();
+  };
+
+  this.remove_ui_elements = function(view_id)
+  {
+    var view = window.views[view_id];
+    if (view && view.isvisible())
+    {
+      var cell = this.get_cell(view_id);
+      var container_id = "container-to-" + cell.id;
+      window.messages.post("hide-view", {id: view_id});
+      view.removeContainerId(container_id);
+      var toolbar_id = "toolbar-to-" + cell.id;
+      var toolbar = window.toolbars[view_id];
+      if (toolbar)
+        toolbar.removeContainerId(toolbar_id);
+      [container_id,
+       toolbar_id,
+       "overlay-background-to-" + cell.id,
+       "slider-for-" + cell.id].forEach(function(id)
+      {
+        var ele = document.getElementById(id);
+        if (ele)
+          ele.parentNode.removeChild(ele);
+      });
+    }
+  };
+
   this.add_searchbar = function(searchbar)
   {
     this.searchbar = searchbar;
@@ -244,11 +288,12 @@
         rough_cell.height = stored_height;
     }
 
-    this.min_width = rough_cell.min_width != null?
-     rough_cell.min_width : defaults.min_view_width;
-    this.min_height = rough_cell.min_height != null ?
-      rough_cell.min_height : defaults.min_view_height;
-
+    this.min_width = rough_cell.min_width != null
+                   ? rough_cell.min_width
+                   : defaults.min_view_width;
+    this.min_height = rough_cell.min_height != null
+                    ? rough_cell.min_height
+                    : defaults.min_view_height;
     this.width =
       rough_cell.width && rough_cell.width > this.min_width ?
       rough_cell.width : this.min_width;
@@ -270,6 +315,8 @@
     this.parent = parent;
     this.container_id = container_id; // think about this
     this.is_dirty = true;
+    this.is_empty = Boolean(rough_cell.is_empty);
+    this.overlay_background = null;
 
     dir = dir == HOR ? VER : HOR;
 
@@ -293,7 +340,7 @@
         // is previoue set for the last?
       }
     }
-    else
+    else if (!this.is_empty)
     {
       ["tabs", "tabbar"].forEach(function(prop)
       {
@@ -334,9 +381,17 @@
 
   this.setup = function(view_id)
   {
+    if (this.is_empty)
+      return;
+
     var view_id = this.tab && this.tab.activeTab;
     if (view_id)
     {
+      if (window.views[view_id] && window.views[view_id].type == "overlay" && !this.overlay_background)
+        this.overlay_background = new OverlayBackground(this);
+
+      if (this.overlay_background)
+        this.overlay_background.setup();
       this.toolbar.setup(view_id);
       var search = UI.get_instance().get_search(view_id);
       this.searchbar = search && search.get_searchbar() || null;
@@ -405,6 +460,11 @@
         }
         else
         {
+          if (this.overlay_background)
+            this.overlay_background.setDimensions(force_redraw);
+
+          if (this.overlay)
+            this.overlay.update(this.left, this.top, force_redraw, is_resize);
           this.tab.setDimensions(force_redraw);
           this.toolbar.setDimensions(force_redraw);
           if (this.searchbar)
@@ -504,7 +564,7 @@
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, min = 0, sum = 0, length = this.children.length, temp = 0;
+    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0, min = 0;
     var auto_dim_count = 0, average_dim = 0;
     if (length)
     {
@@ -634,24 +694,27 @@
   this.checkDelta = function(dim, delta, sibling)
   {
     var delta_applied = 0;
-    var child = null, i = 0;
-    var deltas = [], min = 0, max = 0;
-    if( this.children.length )
+    var child = null;
+    var deltas = [];
+    var i = 0;
+    var min = 0;
+    var max = 0;
+    if (this.children.length)
     {
-      if( ( dim == 'height' && this.dir == HOR ) || ( dim == 'width' && this.dir == VER ) )
+      if ((dim == 'height' && this.dir == HOR) || (dim == 'width' && this.dir == VER))
       {
-        if(delta)
+        if (delta)
         {
-          for( ; child = this.children[i]; i++)
+          for (i = 0; child = this.children[i]; i++)
           {
             deltas[deltas.length] = child.checkDelta(dim, delta, sibling);
           }
           min = Math.min.apply(null, deltas);
           max = Math.max.apply(null, deltas);
           delta_applied = delta > 0 ? max : min;
-          if( max != min )
+          if (max != min)
           {
-            for( i = 0; child = this.children[i]; i++)
+            for (i = 0; child = this.children[i]; i++)
             {
               child.checkDelta(dim, delta - delta_applied, sibling)
             }
@@ -660,7 +723,7 @@
         }
         else // clear
         {
-          for( i=0; child = this.children[i]; i++)
+          for (i = 0; child = this.children[i]; i++)
           {
             child.checkDelta(dim, 0, sibling);
           }
@@ -670,7 +733,7 @@
       else
       {
         delta_applied = delta;
-        for( i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
+        for (i = 0; child = this.children[i]; i++) // if delta_applied is zero clear the rest
         {
           delta_applied = child.checkDelta(dim, delta_applied, sibling);
         }
@@ -680,26 +743,20 @@
     else
     {
       min = this['min_' + dim];
-      if( delta)
+      if (delta)
       {
         var newDim = this[dim] + delta;
-        if( newDim >= min || newDim >= this[dim] )
-        {
+        if (newDim >= min || newDim >= this[dim])
           this['checked_' + dim] = newDim;
-        }
         else
-        {
           this['checked_' + dim] = min;
-        }
         delta_applied = delta - ( this['checked_' + dim] - this[dim] );
       }
       else // clear
-      {
         delta_applied = this['checked_' + dim] = 0;
-      }
     }
     return delta_applied;
-  }
+  };
 
   this.getCapTarget = function(dim, target)
   {
