@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 cls.NetworkLogger = function()
 {
@@ -277,7 +277,6 @@ cls.NetworkLogger = function()
 
     if (remove_from_allocated_after_update)
       delete ctx.allocated_res_ids[data.resourceID];
-
   };
   this._on_responsefinished_bound = this._on_responsefinished.bind(this);
 
@@ -587,7 +586,7 @@ cls.RequestContextPrototype = function()
       logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
       this._logger_entries.push(logger_entry);
       // Store the id in the list of entries in the window_context
-      var window_context = this.get_window_context(event.windowID);
+      var window_context = event.windowID && this.get_window_context(event.windowID, true);
       if (window_context)
         window_context.entry_ids.push(id);
     }
@@ -1230,7 +1229,7 @@ cls.NetworkLoggerRequestPrototype = function()
   {
     this.request_headers = event.headerList;
     // Don't set a first_line for a SPDY request
-    if (event.raw && event.raw.indexOf("\n") != -1)
+    if (event.raw && event.raw.contains("\n"))
       this.first_line = event.raw && event.raw.split("\n")[0];
 
     for (var n = 0, header; header = this.request_headers[n]; n++)
@@ -1299,7 +1298,7 @@ cls.NetworkLoggerResponsePrototype = function()
     // has been read from the socket already.
     this.response_headers_raw = event.raw.split("\r\n\r\n")[0];
     // Don't set a first_line for a SPDY request
-    if (this.response_headers_raw && this.response_headers_raw.indexOf("\n") != -1)
+    if (this.response_headers_raw && this.response_headers_raw.contains("\n"))
       this.first_line = this.response_headers_raw.split("\n")[0];
   };
 

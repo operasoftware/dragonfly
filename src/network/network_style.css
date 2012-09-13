@@ -322,11 +322,6 @@
   max-width: 100%;
 }
 
-.network-detail-overlay p
-{
-  font: 11px "menu";
-}
-
 .network-detail-overlay table
 {
   border-collapse: collapse;
@@ -377,7 +372,7 @@
 .network-options h2
 {
   font-size: 125%;
-  padding: 10px 0 5px 0;
+  padding: 10px 0 5px;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
