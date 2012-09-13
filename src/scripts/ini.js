@@ -208,7 +208,7 @@
         }
       },
       "network_logger": {
-        "details":
+        "default":
         {
           "escape": "close-details",
           "up": "select-previous-entry",
@@ -426,7 +426,7 @@
         }
       },
       "network_logger": {
-        "details":
+        "default":
         {
           "escape": "close-details",
           "up": "select-previous-entry",

@@ -152,6 +152,9 @@
 
   this.store_last_selected_view = function(view_id)
   {
+    var view = window.views[view_id];
+    if (view && view.parent_view_id)
+      view_id = view.parent_view_id;
     window.settings.general.set('last-selected-view', view_id);
   };
 

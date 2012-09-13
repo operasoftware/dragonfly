@@ -404,16 +404,12 @@ styles
   padding: 0 5px;
 }
 
-header
+container > div > header,
+.header
 {
   padding: 2px;
-  background-color: #fff;
-  border-bottom: 1px solid #fff;
-  border-bottom-color: #ccc;
-}
-
-container > div > header
-{
+  border: 0 solid #ccc;
+  border-bottom-width: 1px;
   line-height: 20px;
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
@@ -423,9 +419,10 @@ container > div > header
                                     rgba(255, 255, 255, 0.45) 100%);
 }
 
-div.unfolded
+.unfolded + div header,
+.unfolded + div .header
 {
-  border-bottom: 1px solid #ccc;
+  border-top-width: 1px;
 }
 
 category header:hover input
@@ -433,7 +430,8 @@ category header:hover input
   opacity: 1;
 }
 
-header input
+header input,
+.header input
 {
   background: transparent url('../ui-images/icons/icon_arrow_right.png') scroll no-repeat 50% 100%;
   border: none;
@@ -443,13 +441,13 @@ header input
   transition: 0.2s;
 }
 
-.unfolded > header
+.unfolded .foldable
 {
-  border-bottom-color: #d7d7d7;
+  padding: 5px;
 }
 
 .unfolded > header input,
-input.unfolded
+.unfolded > .header input
 {
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
