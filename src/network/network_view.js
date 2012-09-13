@@ -334,9 +334,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.needs_instant_update = true;
     this.update();
     if (this.graph_tooltip)
-    {
       this.graph_tooltip.hide();
-    }
+
+    if (this.url_tooltip)
+      this.url_tooltip.hide();
   }.bind(this);
 
   this._on_mouseover_entry_bound = function(evt, target)
@@ -357,7 +358,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_scroll_bound = function(evt, target)
   {
-    this._container_scroll_top = target.firstChild.scrollTop;
+    if (target.firstElementChild)
+      this._container_scroll_top = target.firstElementChild.scrollTop;
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
@@ -410,11 +412,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  this._on_header_tooltip_bound = function(evt, target)
-  {
-    // console.log("_on_header_tooltip_bound", evt, target);
-  }.bind(this);
-
   this._update_mono_lineheight = function()
   {
     this.mono_lineheight = window.defaults["js-source-line-height"];
@@ -427,9 +424,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this.graph_tooltip.ontooltip = this._on_graph_tooltip_bound;
   this.graph_tooltip.ontooltipenter = this._on_graph_tooltip_enter_bound;
   this.graph_tooltip.ontooltipleave = this._on_graph_tooltip_leave_bound;
-
-  this.header_tooltip = Tooltips.register("network-header-tooltip", true, false);
-  this.header_tooltip.ontooltip = this._on_header_tooltip_bound;
 
   this._on_clear_log_bound = function(evt, target)
   {
@@ -587,7 +581,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  var eh = window.eventHandlers;
+  var eh = window.event_handlers;
+  var messages = window.messages;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
@@ -626,7 +621,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   ]);
 
   this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay",
-                                                                         "network-details-view scroll",
+                                                                         "network-detail-overlay scroll",
                                                                          null,
                                                                          "network-detail-overlay"));
   this._overlay.shared_shortcuts = this.id;
@@ -776,7 +771,7 @@ cls.NetworkLog.create_ui_widgets = function()
 
   var text_search = window.views.network_logger.text_search = new TextSearch();
 
-  window.eventHandlers.input["network-text-search"] = function(event, target)
+  window.event_handlers.input["network-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
@@ -806,6 +801,7 @@ cls.NetworkLog.create_ui_widgets = function()
     }
   };
 
+  var messages = window.messages;
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
 }
@@ -836,7 +832,6 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
         if (this._details_scroll_left)
           container.scrollLeft = this._details_scroll_left;
-
       }
     }
   };
@@ -848,9 +843,9 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
   this._on_toggle_expand_request_response = function(event)
   {
-    var KEY = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
-    var set_active = !settings["network-detail-overlay"].get(KEY);
-    settings["network-detail-overlay"].set(KEY, set_active);
+    var key = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var set_active = !settings["network-detail-overlay"].get(key);
+    settings["network-detail-overlay"].set(key, set_active);
     this.needs_instant_update = true;
     this.update();
   };
@@ -876,9 +871,10 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
   this._init = function(id, container_class, html, default_handler)
   {
+    var messages = window.messages;
     messages.addListener("setting-changed", this._on_setting_changed.bind(this));
 
-    var eh = window.eventHandlers;
+    var eh = window.event_handlers;
     eh.scroll["network-detail-overlay"] = this._on_scroll.bind(this);
     eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response.bind(this);
 
@@ -887,8 +883,7 @@ cls.NetworkDetailOverlayViewPrototype = function()
     {
       var parent_view = window.views[this.parent_view_id];
       if (parent_view)
-        parent_view.handle.apply(parent_view, arguments);
-
+        return parent_view.handle(action_id, event, target);
     }
     this.id = id;
     ActionBroker.get_instance().register_handler(this);
@@ -899,7 +894,6 @@ cls.NetworkDetailOverlayViewPrototype = function()
 
 cls.NetworkDetailOverlayViewPrototype.prototype = new OverlayView();
 cls.NetworkDetailOverlayView.prototype = new cls.NetworkDetailOverlayViewPrototype();
-
 
 cls.NetworkDetailOverlayView.create_ui_widgets = function()
 {
@@ -956,7 +950,7 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
   });
 
   var text_search = window.views["network-detail-overlay"].text_search = new TextSearch();
-  window.eventHandlers.input["network-details-text-search"] = function(event, target)
+  window.event_handlers.input["network-details-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
@@ -986,6 +980,7 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
     }
   };
 
+  var messages = window.messages;
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
 };

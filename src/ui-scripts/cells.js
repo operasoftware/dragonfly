@@ -564,12 +564,13 @@
   {
     var dim = this.dir == VER ? 'height' : 'width';
     var max = this[dim];
-    var child = null, i = 0, sum = 0, length = this.children.length, temp = 0, min = 0;
-    var auto_dim_count = 0, average_dim = 0;
+    var length = this.children.length;
+    var auto_dim_count = 0;
+    var average_dim = 0;
     if (length)
     {
       // check how many implicit (auto) dimensions were specified
-      for (i = 0; child = this.children[i++]; )
+      for (var i = 0, child; child = this.children[i++]; )
       {
         if (!child['has_explicit_' + dim])
           auto_dim_count++;
@@ -577,7 +578,7 @@
 
       if (auto_dim_count)
       {
-        sum = this.get_total_children_dimension(dim, true);
+        var sum = this.get_total_children_dimension(dim, true);
         if (sum < max)
         {
           // calculate average that should be allocated for each auto dimension
@@ -586,7 +587,7 @@
           // allocate space
           for (i = 0; child = this.children[i++]; )
           {
-            min = child['min_' + dim];
+            var min = child['min_' + dim];
             if (child['has_explicit_' + dim] && child[dim] < min)
             {
               // if the dimension is below the minimum limit, set minimum value
@@ -603,7 +604,7 @@
       while (--length)
       {
         sum = this.get_total_children_dimension(dim);
-        temp = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
+        var temp = max - (sum - this.children[length][dim] - 2 * defaults.view_border_width);
         min = this.children[length]['min_' + dim];
         if (sum <= max || min < temp)
         {

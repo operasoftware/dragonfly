@@ -124,9 +124,3 @@ cls.HTTPHeaderTokenizer.types = {
   classnames[types.PUNCTUATOR] = base + "punctuator";
 })(cls.HTTPHeaderTokenizer.types);
 
-cls.HTTPHeaderTokenizer.TokenStateholder = function(data_spec_firstline_tokens)
-{
-  this.data_spec_firstline_tokens = data_spec_firstline_tokens;
-  this.firstline_tokens = 0;
-  this.str_buffer = "";
-};
