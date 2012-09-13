@@ -115,7 +115,7 @@
 
 .network-log-url-list li:last-child,
 .network-graph-row:last-child
-{ 
+{
   border-bottom-width: 1px;
 }
 
@@ -249,7 +249,6 @@
 .network-details-view
 {
   height: 100%;
-  padding: 0 5px;
   box-sizing: border-box;
   overflow: auto;
 }
@@ -281,7 +280,7 @@
 
 .network-details-view .header-token-type-name
 {
-  color: #149CBD;
+  color: #5555aa;
 }
 
 .network-details-view .http-token-type-boundary
@@ -295,6 +294,16 @@
   font-size: 1.4em;
   margin: 18px 0;
   color: #808080;
+}
+
+.network-detail-overlay\.wrap-detail-view::before
+{
+  background-image: url("../ui-images/icons/icon_wrap_text.png");
+}
+
+.network-detail-overlay\.view-raw::before
+{
+  background-image: url("../ui-images/icons/icon_hidedefaults.png");
 }
 
 .network-details-view pre,
@@ -324,6 +333,7 @@
 .network-details-view p
 {
   font: 11px "menu";
+  margin: 6px;
 }
 
 .network-details-view table
@@ -345,6 +355,8 @@
 .network-details-view th
 {
   vertical-align: top;
+  padding: 4px 10px;
+  border-right: 1px solid #fff;
 }
 
 .network-details-view th
@@ -353,22 +365,38 @@
   white-space: nowrap;
 }
 
+.network-details-view th .not-content
+{
+  padding: 0px;
+  font-style: normal;
+  border-collapse: collapse;
+  color: #808080;
+  cursor: default;
+  display: block;
+  font-weight: normal;
+}
+
 .network-details-view th:first-child,
 .network-details-view td:first-child
 {
   width: 20%;
-  padding-right: 30px;
+  padding-left: 0px;
+}
+
+.network-details-view tr:nth-child(even)
+{
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .network-details-view hr
 {
   border: none;
-  border-top: 1px solid #a4a4a4;
+  border-top: 1px solid #ccc;
   margin: 7px 0 -8px 0;
 }
 
-.network-details-view div.header {
-  margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
+.response-summary + div .header {
+  border-top-width: 1px;
 }
 
 .request-crafter h2,
@@ -501,7 +529,7 @@
   border-radius: 3px;
 }
 
-/* the value of the padding property of this selector 
+/* the value of the padding property of this selector
    is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
