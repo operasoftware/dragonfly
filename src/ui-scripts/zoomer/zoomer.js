@@ -54,7 +54,7 @@ var Zoomer = function(model, zoomer_ele)
     this._last_update = 0;
 
     if (zoomer_ele)
-      this.set_zoomer_ele(zoomer_ele);
+      this.set_zoomer_element(zoomer_ele);
   };
 
   this._init();
@@ -66,7 +66,6 @@ var ZoomerPrototype = function()
 
   this._set_up_zoomer_ele = function()
   {
-    this._zoomer_ele.classList.add("zoomer-element");
     var zoomer_ele_style = window.getComputedStyle(this._zoomer_ele);
     this._zoomer_ele_ver_borders = parseInt(zoomer_ele_style.borderTopWidth) +
                                    parseInt(zoomer_ele_style.borderBottomWidth);
@@ -114,7 +113,7 @@ var ZoomerPrototype = function()
 
   //
   // Zoomer element event handlers
-  ///
+  //
 
   this.zoomer_ele_onmousedown = function(event)
   {
@@ -207,7 +206,7 @@ var ZoomerPrototype = function()
 
   //
   // Overlay element event handlers
-  ///
+  //
 
   this.overlay_ele_onmousedown = function(event)
   {
@@ -353,11 +352,12 @@ var ZoomerPrototype = function()
     }[event.which];
     if (!diff)
       return;
+
     var is_left_handle = this._handler_ele == this._overlay_handle_left_ele;
     if (is_left_handle)
-      this._overlay_left = Math.max(this._overlay_left - diff, 0);
+      this._overlay_left = Math.max(Math.min(this._overlay_left - diff, this._to_right_x(this._overlay_right)), 0);
     else
-      this._overlay_right = Math.max(this._overlay_right + diff, 0);
+      this._overlay_right = Math.max(Math.min(this._overlay_right + diff, this._to_right_x(this._overlay_left)), 0);
     this._set_overlay_position();
     this._set_model_area();
     event.stopPropagation();
