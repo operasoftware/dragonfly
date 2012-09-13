@@ -237,15 +237,6 @@
   top: 3px;
 }
 
-.network_logger .resize-request-detail
-{
-  position: absolute;
-  height: 100%;
-  width: 12px;
-  left: -6px;
-  cursor: col-resize;
-}
-
 .network-detail-overlay
 {
   height: 100%;
