@@ -167,6 +167,10 @@ var ToolbarBase = function()
     var search = this.filters.length && UI.get_instance().get_search(view_id);
     if (this.__is_visible)
     {
+      var view = window.views[view_id];
+      if (view && view.type == "overlay" && this.groups[0] != Toolbar.overlay_close_button)
+        this.groups.unshift(Toolbar.overlay_close_button);
+
       if (this.filters.length)
       {
         toolbar.render(templates.filters(this.filters));
@@ -233,7 +237,6 @@ var ToolbarBase = function()
           toolbar.render(custom.template(views[view_id]));
         }
       }
-
       if (!window.views[view_id].is_enabled && toolbars[view_id])
         toolbars[view_id].disable();
     }
@@ -370,5 +373,18 @@ window.templates || (window.templates = {});
 window.templates["toolbar-separator"] = function()
 {
   return ["toolbar-separator"];
+};
+
+Toolbar.overlay_close_button =
+{
+  type: UI.TYPE_BUTTONS,
+  items:
+  [
+    {
+      handler: "close-overlay-view",
+      icon: "close-overlay-view",
+      title: ui_strings.S_CLOSE_OVERLAY_VIEW
+    }
+  ]
 };
 
