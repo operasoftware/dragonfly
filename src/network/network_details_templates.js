@@ -224,28 +224,29 @@ templates._reduce_tokens = function(context, token, index)
 {
   var TYPE = 0;
   var STR = 1;
-  var attrs = ["class", cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
-
   if (HIGHLIGHTED_TYPES.contains(token[TYPE]))
   {
+    var token_templ = ["span", token[STR],
+                       "class", cls.HTTPHeaderTokenizer.classnames[token[TYPE]]];
     if (token[TYPE] === cls.HTTPHeaderTokenizer.types.NAME)
     {
-      attrs.push("data-spec", "http#" + token[STR].trim());
+      token_templ.push("data-spec", "http#" + token[STR].trim());
     }
     else if (token[TYPE] === cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART)
     {
       if (context.spec_tokens.contains(context.saw_firstline_tokens))
       {
-        attrs.push("data-spec", "http#" + (token[STR]).trim());
+        token_templ.push("data-spec", "http#" + (token[STR]).trim());
       }
       context.saw_firstline_tokens++;
     }
+
     if (context.str_buffer)
     {
       context.template.push(context.str_buffer);
       context.str_buffer = "";
     }
-    context.template.push(["span", token[STR]].extend(attrs));
+    context.template.push(token_templ);
   }
   else
     context.str_buffer += token[STR];
@@ -253,7 +254,7 @@ templates._reduce_tokens = function(context, token, index)
   return context;
 };
 
-templates._token_to_template_context = function(is_response)
+templates.TokenToTemplateContext = function(is_response)
 {
   var spec_tokens;
   if (!is_response)
@@ -274,7 +275,7 @@ templates._token_to_template_context = function(is_response)
 
 templates.headers_tonkenized = function(tokens, is_response)
 {
-  var context = new templates._token_to_template_context(is_response);
+  var context = new templates.TokenToTemplateContext(is_response);
   var template = tokens.reduce(this._reduce_tokens, context).template;
   if (context.str_buffer)
     template.push(context.str_buffer);
