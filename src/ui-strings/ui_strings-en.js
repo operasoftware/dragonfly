@@ -48,8 +48,20 @@ ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = "Collapse subtree";
 /* DESC: Generic context menu item to copy something. */
 ui_strings.M_CONTEXTMENU_COPY = "Copy";
 
+/* DESC: Context menu item to copy content, e.g of a file. */
+ui_strings.M_CONTEXTMENU_COPY_CONTENT = "Copy content";
+
+/* DESC: Context menu item to copy the CSS path. */
+ui_strings.M_CONTEXTMENU_COPY_CSS_PATH = "Copy CSS path";
+
+/* DESC: Context menu item to copy the markup. */
+ui_strings.M_CONTEXTMENU_COPY_MARKUP = "Copy markup";
+
 /* DESC: Context menu item to copy a URL. */
 ui_strings.M_CONTEXTMENU_COPY_URL = "Copy URL";
+
+/* DESC: Context menu item to copy the XPath expression. */
+ui_strings.M_CONTEXTMENU_COPY_XPATH = "Copy XPath";
 
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
@@ -1758,14 +1770,3 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
 
-/* DESC: Context menu item to copy content, e.g of a file. */
-ui_strings.M_CONTEXTMENU_COPY_CONTENT = "Copy content";
-
-/* DESC: Context menu item to copy the XPath expression. */
-ui_strings.M_CONTEXTMENU_COPY_XPATH = "Copy XPath";
-
-/* DESC: Context menu item to copy the CSS path. */
-ui_strings.M_CONTEXTMENU_COPY_CSS_PATH = "Copy CSS path";
-
-/* DESC: Context menu item to copy the markup. */
-ui_strings.M_CONTEXTMENU_COPY_MARKUP = "Copy markup";
