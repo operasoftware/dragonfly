@@ -50,6 +50,7 @@
   var _modal_box = null;
   var _select_obj = null;
   var self = this;
+  var RIGHT_CLICK = 3;
 
   var modal_mousedown_handler = function(event)
   {
@@ -82,6 +83,13 @@
         (event.target.nodeName.toLowerCase() == "input" &&
          event.target.type == "text"))
       return;
+
+    if (event.which == RIGHT_CLICK)
+    {
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+      return;
+    }
 
     event.stopPropagation();
     event.preventDefault();
@@ -118,6 +126,7 @@
       }
 
       self.remove_select();
+      ContextMenu.get_instance().dismiss();
       if (window.Tooltips)
         window.Tooltips.hide_tooltip();
     }

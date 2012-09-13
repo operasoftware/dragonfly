@@ -262,8 +262,21 @@ var ActionBroker = function()
       document.addEventListener('click', this._set_action_context_bound, true);
       document.addEventListener('focus', this._set_action_context_bound, true);
       window.messages.addListener('hide-view', this._onhideviewbound);
+      Clipboard.add_listener("copy", this._oncopy.bind(this));
       window.messages.post('shortcuts-changed');
     }.bind(this));
+  };
+
+  this._oncopy = function(event)
+  {
+    var selection = this._action_context && this._action_context.get_selection_string();
+    if (selection)
+    {
+
+      event.preventDefault();
+      Clipboard.set_string(selection);
+    }
+
   };
 
   /* handling of the shortcuts map */

@@ -2,6 +2,7 @@
 
 cls.JsSourceView = function(id, name, container_class)
 {
+  ActionHandlerInterface.apply(this);
   // TODO this view can just be visible once at the time otherwise there will be problems
   // this must be refactored. line_arr, state_arr, breakpoints must be added to the script object
   // getting context values must move out of this class
@@ -900,6 +901,18 @@ cls.JsSourceView = function(id, name, container_class)
     return actions;
   };
 
+  this.get_selection_string = function()
+  {
+    var selection = window.getSelection();
+    if (source_content && !selection.isCollapsed)
+    {
+      var range = selection.getRangeAt(0);
+      if (range.toString() == source_content.textContent)
+        return __current_script.script_data;
+    }
+    return this._tooltip.get_selection_string();
+  };
+
   this.mode = "default";
 
   this._handlers = {};
@@ -1365,18 +1378,6 @@ cls.JsSourceView.create_ui_widgets = function()
         }
         if (line)
         {
-          var selection = window.getSelection();
-          if (!selection.isCollapsed)
-          {
-            var key = selection.toString();
-            items.push({
-              label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", key),
-              handler: function(event, target) {
-                window.views.watches.add_watch(key);
-              }
-            });
-          }
-
           var bp = breakpoints.get_breakpoint_on_script_line(script_id, line);
           if (bp)
           {
@@ -1431,6 +1432,20 @@ cls.JsSourceView.create_ui_widgets = function()
           }
         }
 
+        var script = window.views.js_source.get_current_script();
+        if (script)
+        {
+          items.push({label: ui_strings.M_CONTEXTMENU_COPY_CONTENT,
+                      handler: Clipboard.set_string.bind(Clipboard, script.script_data),
+                      id: "copy-clipboard"});
+          if (script.uri)
+          {
+            items.push({label: ui_strings.M_CONTEXTMENU_COPY_URL,
+                        handler: Clipboard.set_string.bind(Clipboard, script.uri),
+                        id: "copy-clipboard"});
+          }
+        }
+
         if (items.length)
           items.push(ContextMenu.separator);
 
@@ -1438,4 +1453,20 @@ cls.JsSourceView.create_ui_widgets = function()
       }
     }
   ], true); // extend the default existing menu
+
+  contextmenu.register("js_source", [
+    {
+      callback: function(event, target, selection)
+      {
+        var items = [];
+        items.push({
+          label: ui_strings.M_CONTEXTMENU_ADD_WATCH.replace("%s", selection),
+          handler: function(event, target) {
+            window.views.watches.add_watch(selection);
+          }
+        });
+        return items;
+      }
+    }
+  ], false, ContextMenu.SELECTION);
 };

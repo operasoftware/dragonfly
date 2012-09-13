@@ -768,7 +768,7 @@ breadcrumb span
 
 .js-dd-filter-container
 {
-  margin: 0 3px;  
+  margin: 0 3px;
 }
 
 .js-dd-filter
@@ -795,7 +795,7 @@ breadcrumb span
 
 .js-dd-visible
 {
-  opacity: 1; 
+  opacity: 1;
   -o-transition: opacity 0.5s;
   transition: opacity 0.5s;
 }
@@ -831,7 +831,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option
-{  
+{
   margin-bottom: 0;
 }
 
@@ -875,7 +875,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option:hover
-{  
+{
   background-color: #bbcef1;
   color: #000;
 }
@@ -1212,7 +1212,7 @@ d
   padding: 0 5px;
   margin: 0;
   border: 1px solid #666;
-  border-width: 0 1px;
+  border-width: 0 1px 1px 1px;
 }
 
 .test-messages h2
@@ -1274,6 +1274,7 @@ d
 .test-messages .definition
 {
   border: 1px solid #666;
+  border-top-width: 0;
   background-color: hsl(0, 0%, 98%);
 }
 

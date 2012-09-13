@@ -7,7 +7,6 @@ var DOMMarkupEditor = function()
 {
   this.base_init(this);
   this.type = "dom-markup-editor";
-  this.domnodeserializer = new cls.DOMSerializer();
   // specific context
   this.context_enter =
   {
@@ -35,25 +34,13 @@ var DOMMarkupEditor = function()
 
   this.edit = function(event, ref_ele)
   {
-    var
-    ele = ref_ele || event.target,
-    rt_id = parseInt(ele.get_attr('parent-node-chain', 'rt-id')),
-    obj_id = parseInt(ele.parentElement.getAttribute('ref-id')),
-    model_id = ele.get_attr('parent-node-chain', 'data-model-id'),
-    script = '',
-    tag = '',
-    prop = '',
-    container = ele,
-    model = null,
-    dom = null,
-    cb = null;
-
-    while( container
-            && !/container/i.test(container.nodeName)
-            && ( container = container.parentElement ) );
-    if(container && model_id)
+    var ele = ref_ele || event.target;
+    var rt_id = parseInt(ele.get_ancestor_attr("rt-id"));
+    var obj_id = parseInt(ele.get_ancestor_attr("ref-id"));
+    var model = window.dominspections[ele.get_ancestor_attr("data-model-id")];
+    var container = ele.get_ancestor("container");
+    if (container && model)
     {
-      model = window.dominspections[model_id];
       this.context_enter =
       {
         rt_id: rt_id,
@@ -64,18 +51,17 @@ var DOMMarkupEditor = function()
         model: model
       };
       this.context_cur = {};
-      for( prop in this.context_enter )
+      for (var prop in this.context_enter )
       {
         this.context_cur[prop] = this.context_enter[prop];
       }
-      script = this["return new Host_updater(target)"];
-      tag = tagManager.set_callback(this, this.register_host_updater, [rt_id]);
-      services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [['target', obj_id]]]);
-      dom = new cls.InspectableDOMNode(rt_id, obj_id);
-      cb = this.handle_get_outer_html.bind(this, dom, rt_id, obj_id, ele, event);
-      dom.expand(cb, obj_id, "subtree");
+      var script = this["return new Host_updater(target)"];
+      var tag = tagManager.set_callback(this, this.register_host_updater, [rt_id]);
+      window.services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script, [['target', obj_id]]]);
+      var cb = this.handle_get_outer_html.bind(this, rt_id, obj_id, ele, event);
+      model.serialize_to_string(obj_id, cb);
     }
-  }
+  };
 
   this.oninput = function(event)
   {
@@ -162,6 +148,8 @@ var DOMMarkupEditor = function()
   this.set_textarea_dimensions = function()
   {
     this.textarea.style.height = 0;
+    this.textarea.style.height = this.textarea.scrollHeight + 'px';
+    this.textarea_container.offsetHeight;
     this.textarea.style.height = this.textarea.scrollHeight + 'px';
   }
 
@@ -303,48 +291,31 @@ var DOMMarkupEditor = function()
   }
 
   // complete the edit call
-  this.handle_get_outer_html = function(dom, rt_id, obj_id, ele, event)
+  this.handle_get_outer_html = function(rt_id, obj_id, ele, event, outer_html)
   {
-    var
-    outerHTML = this.domnodeserializer.serialize(dom),
-    parent = ele.parentNode,
-    parent_parent = parent.parentElement,
-    margin = parseInt(parent.style.marginLeft),
-    next = null;
-    this.context_enter.outerHTML = this.context_cur.outerHTML = outerHTML;
-    if( !this.base_style['font-size'] )
-    {
+    var parent = ele.parentNode;
+    var parent_parent = parent.parentElement;
+    var margin = parseInt(parent.style.marginLeft);
+    var next = null;
+    if (!this.base_style['font-size'] )
       this.get_base_style(ele);
-    }
-    // this should never be needed
-    if( this.textarea_container.parentElement )
-    {
-      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-        "this.textarea_container.parentElement is not null in submit");
-    }
-    this.textarea.value = outerHTML;
+    this.textarea.value = this.context_enter.outer_html = this.context_cur.outer_html = outer_html;
     var scroll_position = new Element.ScrollPosition(parent);
     parent.innerHTML = "";
     parent.appendChild(this.textarea_container);
-    while( ( next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin )
+    while ((next = parent.nextElementSibling ) && parseInt(next.style.marginLeft) > margin)
     {
       parent_parent.removeChild(next);
     };
-    if( next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent) )
-    {
+    if (next && parseInt(next.style.marginLeft) == margin && /<\//.test(next.textContent))
       parent_parent.removeChild(next);
-    }
-    this.set_textarea_dimensions();
     // only for click events
-    if( event )
-    {
+    if (event)
       this.textarea.focus();
-    }
     scroll_position.reset(null, this.textarea);
     this.textarea.selectionEnd = this.textarea.selectionStart = 0;
-    // it seems it needs to be set twice to get set correctly
     this.set_textarea_dimensions();
-  }
+  };
 
   this._onmonospacefontchange = function(msg)
   {

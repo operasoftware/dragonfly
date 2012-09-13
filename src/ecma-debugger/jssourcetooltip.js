@@ -1049,7 +1049,6 @@ cls.JSSourceTooltip = function(view)
     if (_poll_interval)
     {
       clearInterval(_poll_interval);
-      _clear_selection();
       _tooltip_target_ele.removeEventListener('mousemove', _onmousemove, false);
       _poll_interval = 0;
       _tooltip_target_ele = null;
@@ -1153,6 +1152,11 @@ cls.JSSourceTooltip = function(view)
     document.addEventListener("keydown", _onkeydown, false);
     document.addEventListener("keyup", _onkeyup, false);
     document.addEventListener("mouseup", _onmouseup, false);
+  };
+
+  this.get_selection_string = function()
+  {
+    return _last_script_text;
   };
 
   this.unregister = function()

@@ -241,11 +241,6 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_expand.png");
 }
 
-.dom-inspection-export::before
-{
-  background-image: url("../ui-images/icons/icon_export.png");
-}
-
 .dom\.find-with-click::before
 {
   background-image: url("../ui-images/icons/icon_click.png");
@@ -1187,7 +1182,7 @@ textarea-container
 {
   display: block;
   padding: 1px;
-  margin: -2px -4px -2px -2px;
+  margin: -1px -4px -1px -2px;
   position:relative;
   z-index: 10;
   background: #fff;
