@@ -245,12 +245,13 @@
   overflow: auto;
 }
 
-.network-detail-overlay .table-cell
+.network-detail-overlay .table
 {
-  display: table-cell;
+  display: table;
+  width: 100%;
 }
 
-.network-detail-overlay .wrap /* that's .table-cell.wrap */
+.network-detail-overlay .wrap /* that's .table.wrap */
 {
   display: block;
 }

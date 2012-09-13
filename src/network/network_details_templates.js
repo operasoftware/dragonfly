@@ -49,7 +49,7 @@ templates.details = function(entry)
     ["div",
       this._details_headline(entry),
       this._details_content(entry, do_raw),
-      "class", "table-cell" + (do_wrap ? " wrap" : "")
+      "class", "table" + (do_wrap ? " wrap" : "")
     ]
   );
 };
