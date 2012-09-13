@@ -16,6 +16,25 @@ var HIGHLIGHTED_TYPES = [
   cls.HTTPHeaderTokenizer.types.FIRST_LINE_PART
 ];
 
+var _TokenToTemplateContext = function(is_response)
+{
+  var spec_tokens;
+  if (!is_response)
+  {
+    var firstline = { METHOD: 0, URI: 1, HTTP_VERSION: 2 };
+    spec_tokens = [firstline.METHOD];
+  }
+  else
+  {
+    var firstline = { PROTOCOL: 0, RESPONSE_CODE: 1, RESPONSE_PHRASE: 2 };
+    spec_tokens = [firstline.RESPONSE_CODE];
+  }
+  this.spec_tokens = spec_tokens;
+  this.saw_firstline_tokens = 0;
+  this.str_buffer = "";
+  this.template = [];
+};
+
 templates._pre = function(content)
 {
   return ["pre", content, "class", "mono"];
@@ -30,7 +49,7 @@ templates.details = function(entry)
     ["div",
       this._details_headline(entry),
       this._details_content(entry, do_raw),
-      "class", "table-cell" + (do_wrap ? " wrap" : "")
+      "class", "table" + (do_wrap ? " wrap" : "")
     ]
   );
 };
@@ -164,11 +183,6 @@ templates._headline = function(is_response, is_unfolded)
   return headline;
 };
 
-templates._header_token_templ = function(state, token)
-{
-  
-};
-
 templates._token_receiver = function(tokens, token_type, token)
 {
   tokens.push([token_type, token]);
@@ -254,28 +268,9 @@ templates._reduce_tokens = function(context, token, index)
   return context;
 };
 
-templates.TokenToTemplateContext = function(is_response)
-{
-  var spec_tokens;
-  if (!is_response)
-  {
-    var firstline = { METHOD: 0, URI: 1, HTTP_VERSION: 2 };
-    spec_tokens = [firstline.METHOD];
-  }
-  else
-  {
-    var firstline = { PROTOCOL: 0, RESPONSE_CODE: 1, RESPONSE_PHRASE: 2 };
-    spec_tokens = [firstline.RESPONSE_CODE];
-  }
-  this.spec_tokens = spec_tokens;
-  this.saw_firstline_tokens = 0;
-  this.str_buffer = "";
-  this.template = [];
-};
-
 templates.headers_tonkenized = function(tokens, is_response)
 {
-  var context = new templates.TokenToTemplateContext(is_response);
+  var context = new _TokenToTemplateContext(is_response);
   var template = tokens.reduce(this._reduce_tokens, context).template;
   if (context.str_buffer)
     template.push(context.str_buffer);

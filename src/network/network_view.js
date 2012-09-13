@@ -333,9 +333,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.needs_instant_update = true;
     this.update();
     if (this.graph_tooltip)
-    {
       this.graph_tooltip.hide();
-    }
+
+    if (this.url_tooltip)
+      this.url_tooltip.hide();
   }.bind(this);
 
   this._on_mouseover_entry_bound = function(evt, target)

@@ -39,7 +39,7 @@
   padding: 4px 5px 1px 5px;
 }
 
-.sortable-table > tr > td.align-justify 
+.sortable-table > tr > td.align-justify
 {
   text-align: justify;
 }
@@ -53,12 +53,12 @@
 .network-log-url-list li,
 .network-timeline-row,
 .network-graph-row
-{ 
+{
   border: 0 solid #f0f0f0;
 }
 
 .sortable-table > tr:last-child
-{ 
+{
   border-bottom-width: 1px;
 }
 

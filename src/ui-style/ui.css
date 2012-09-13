@@ -897,6 +897,7 @@ view-slider
 {
   display: block;
   position: absolute;
+  z-index: 2;
 }
 
 view-slider.vertical
@@ -1852,5 +1853,13 @@ info {
 {
   position: absolute;
   border: 1px solid #999;
-  box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.5);
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.4),
+              0 2px 2px hsla(0, 0%, 0%, 0.3),
+              0 1px 1px hsla(0, 0%, 0%, 0.1);
+}
+
+#toolbar-to-cell-id-28,
+.network-details-view
+{
+  border-left-width: 0;
 }
