@@ -183,11 +183,6 @@ templates._headline = function(is_response, is_unfolded)
   return headline;
 };
 
-templates._header_token_templ = function(state, token)
-{
-  
-};
-
 templates._token_receiver = function(tokens, token_type, token)
 {
   tokens.push([token_type, token]);
