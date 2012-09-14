@@ -79,7 +79,6 @@
   content: "";
   display: block;
   position: absolute;
-  z-index: 1;
   right: 0;
   top: 4px;
   width: 15px;
@@ -93,7 +92,6 @@
   content: "";
   display: block;
   position: absolute;
-  z-index: 1;
   right: 0;
   top: 4px;
   width: 15px;

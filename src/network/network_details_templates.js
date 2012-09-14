@@ -151,7 +151,7 @@ templates._response = function(response, is_last, do_raw)
   var expanded = settings.get("expand-responses");
   var show_header = response.logger_entry_touched_network;
   var show_headers = expanded && response.logger_entry_touched_network;
-  var show_body = expanded;
+  var show_body = !show_header || (show_header && expanded);
 
   return [
     "div",
