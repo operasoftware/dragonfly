@@ -74,37 +74,6 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     this.update();
   }.bind(this);
 
-
-
-	this._type_class_map =
-  {
-    image: cls.ImageResourceDetail,
-    font: cls.FontResourceDetail,
-    script: cls.JSResourceDetail,
-    markup: cls.MarkupResourceDetail,
-    css: cls.CSSResourceDetail,
-    text: cls.TextResourceDetail,
-  };
-	this._open_resource_views = {};
-
-  this._open_resource_tab = function(resource, data)
-  {
-    var ui = UI.get_instance();
-
-    if (!this._open_resource_views[resource.id])
-    {
-      var viewclass = this._type_class_map[resource.type]||cls.GenericResourceDetail;
-      var view = new viewclass( resource, this._service );
-      this._open_resource_views[resource.id] = view.id;
-    }
-    window.views[this._open_resource_views[resource.id]].data = data
-
-    ui.get_tabbar("resources").add_tab(this._open_resource_views[resource.id]);
-    ui.show_view(this._open_resource_views[resource.id]);
-  }
-
-
-
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);

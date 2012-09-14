@@ -260,7 +260,6 @@ cls.ResourceManagerService = function(view, network_logger)
     var eh = window.eventHandlers;
     eh.click["resources-expand-collapse"] = this._handle_expand_collapse_bound;
     eh.click["resource-detail"] = this._handle_resource_detail_bound;
-    eh.click["resource-group"] = this._handle_resource_group_bound;
 
     eh.click['open-resource-tab'] = function(event, target)
     {
@@ -301,32 +300,6 @@ cls.ResourceManagerService = function(view, network_logger)
     return resource && resource.last;
   };
 
-  this._fetch_resource_data = function(callback, id, type)
-  {
-    var resource = this.get_resource(id);
-
-    var typecode = {datauri: 3, string: 1}[type] || 1;
-    var tag = window.tagManager.set_callback(null, callback);
-    const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
-    this._res_service.requestGetResource(tag, [id, [typecode, 1, MAX_PAYLOAD_SIZE]]);
-  };
-
-  this._on_resource_data_bound = function(type, data)
-  {
-    var id = data[0];
-    var resource = this.get_resource(id);
-    if(resource)
-    {
-      resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
-      if(resource.type=='image')
-      {
-        var i=new Image();
-        i.src=resource.data.content.stringData;
-        resource.data.meta = i.naturalWidth+'x'+i.naturalHeight;
-      }
-    }
-    this._view.update();
-  }.bind(this);
 
   this.request_resource_for_url = function(url,callback)
   {

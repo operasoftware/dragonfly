@@ -123,9 +123,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._tops = [];
     var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
     if (_ele)
-    {
       _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
-    }
   }
 
   this.go_to_line = function(container, data)
@@ -139,17 +137,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this._highlight_line(this._root_ele);
     }
   }
-
-	this.on_resource_data_bound = function(type, data)
-	{
-		var id = data[0];
-		var resource = this._service.get_resource(id);
-		if(resource)
-		{
-			resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
-		}
-		return resource;
-	}.bind(this);
 
   this._show_resource_by_instance = function(resource)
   {
@@ -188,30 +175,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this.update();
     window.UI.instance.show_view( window.views.resource_detail_view.id );
   }
-
-
-  //  WIP
-  this.show_resource_group = function(resourceGroup)
-	{
-    return;
-
-		this.resources = [];
-		for( var i=0; i<group.ids.length; i++)
-		{
-			var id = group.ids[i];
-			var resource = this._service.get_resource(id);
-			if (resource)
-			{
-				this.resources.push( resource );
-				if (!resource.data)
-				{
-					var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
-					this._service.fetch_resource_data( this.on_resource_data_bound, id, responseType );
-				}
-			}
-		}
-		this.update();
-	}
 
   this.init(id, name, container_class, html, default_handler);
 };
