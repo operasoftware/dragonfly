@@ -172,6 +172,8 @@ templates.resource_tree =
 		var resources = resources_unfiltered.
 		filter(function(r){
 			return r.group == g;
+		}).sort(function(a,b){
+			return a.id-b.id;
 		});
 
 		if (resources.length)
