@@ -115,17 +115,12 @@ cls.HTTPHeaderTokenizer.types = {
   PUNCTUATOR: 4
 };
 
-(function() {
-  var types = cls.HTTPHeaderTokenizer.types;
+(function(types) {
   var classnames = cls.HTTPHeaderTokenizer.classnames = {};
-  classnames[types.FIRST_LINE_PART] = "first_line_part";
-  classnames[types.NAME] = "name";
-  classnames[types.VALUE] = "value";
-  classnames[types.PUNCTUATOR] = "punctuator";
-})();
+  var base = "header-token-type-";
+  classnames[types.FIRST_LINE_PART] = base + "first_line_part";
+  classnames[types.NAME] = base + "name";
+  classnames[types.VALUE] = base + "value";
+  classnames[types.PUNCTUATOR] = base + "punctuator";
+})(cls.HTTPHeaderTokenizer.types);
 
-cls.HTTPHeaderTokenizer.TokenStateholder = function(data_spec_firstline_tokens)
-{
-  this.data_spec_firstline_tokens = data_spec_firstline_tokens;
-  this.firstline_tokens = 0;
-};
