@@ -281,6 +281,10 @@ cls.ResourceManagerService = function(view, network_logger)
 
     var messages = window.messages;
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+
+    messages.addListener('resource-request-id', this._resource_request_update_bound);
+    messages.addListener('resource-request-resource', this._resource_request_update_bound);
+
     this._network_logger.addListener("resource-update", this._update_bound);
     this._network_logger.addListener("window-context-added", this._update_bound);
     this._network_logger.addListener("window-context-removed", this._update_bound);
@@ -372,6 +376,10 @@ cls.ResourceRequest = function(url, callback, data)
       // resource_id -> getResource => _on_request_get_resource
       const RESOURCE_ID = 0;
       this.resource_id = message[RESOURCE_ID];
+
+        //  broadcast that we are working on the resource this.resource_id
+      window.messages.post('resource-request-id', {resource_id: this.resource_id});
+
       this._request_get_resource();
     }
     else
@@ -405,6 +413,8 @@ cls.ResourceRequest = function(url, callback, data)
         this.requests_responses = [{responsebody:resourceData}];
         this.resourceInfo = new cls.ResourceInfo(this);
 
+        //  broadcast that we got payload of the resource
+        window.messages.post('resource-request-resource', {resource_id: this.resource_id});
 
         //  aaaand callback
         this._callback(this.resourceInfo, this._calback_data);
