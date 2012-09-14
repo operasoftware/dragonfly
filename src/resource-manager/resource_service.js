@@ -16,6 +16,7 @@ cls.ResourceManagerService = function(view, network_logger)
   this._documentList = [];
   this._documentURLHash = {};
   this._collapsedHash = {};
+  this._documentResources = {};
 
   this._handle_listDocuments = function(status,msg)
   {
@@ -46,9 +47,13 @@ cls.ResourceManagerService = function(view, network_logger)
     window.services['document-manager'].requestListDocuments(this._tag_requestListDocuments, []);
   };
 
-  this._getNetworkContext = function()
+  this._populateDocumentResources = function(r)
   {
-    return this._network_logger.get_window_contexts();
+    var documentID = r.document_id;
+    if (!this._documentResources[documentID])
+      this._documentResources[documentID]=[];
+    if (!this._documentResources[documentID].contains(r.id))
+      this._documentResources[documentID].push(r.id);
   }
 
   this._update = function(msg)
@@ -95,11 +100,18 @@ cls.ResourceManagerService = function(view, network_logger)
       // assign top resource to the right document
       // add group to each resource
       // sameOrigin flag to each resource
-      ctx.resourceList.forEach(function(r, i)
+      ctx.resourceList
+      .forEach(function(r)
       {
+        this._populateDocumentResources(r);
+
+        // check if this is the top resource of a document
         var documentID = ctx.documentResourceHash[r.id];
-        if (documentID!=null && documentID!=r.document_id)
+        if (documentID != null && documentID != r.document_id)
+        {
           r.document_id = documentID;
+          this._populateDocumentResources(r);
+        }
 
         r.group = typeGroupMapping[r.type]||typeGroupMapping['*'];
         r.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[r.document_id], r);
@@ -136,6 +148,7 @@ cls.ResourceManagerService = function(view, network_logger)
         this._listDocuments();
 
       ctx.selectedResourceID = this._selectedResourceID;
+      ctx.documentResources = this._documentResources;
       ctx.collapsed = this._collapsedHash;
       this._context = ctx;
     }
@@ -153,6 +166,7 @@ cls.ResourceManagerService = function(view, network_logger)
   {
     this._documentList = [];
     this._collapsedHash = {};
+    this._documentResources = {};
 
     delete this._context;
     delete this._selectedResourceID

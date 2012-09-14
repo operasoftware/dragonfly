@@ -102,7 +102,7 @@ templates.resource_tree =
 	{
 		var documents = context.documentList.
 		filter(function(d){
-			return d.documentID!=null && d.windowID==wid && d.parentDocumentID==pid;
+			return d.documentID != null && d.windowID == wid && d.parentDocumentID == pid;
 		});
 
 		if (documents.length)
@@ -110,7 +110,7 @@ templates.resource_tree =
 			['ul',
 				documents.map(this.document.bind(this, context)).
 				filter(function(v){
-					return v!=null;
+					return v != null;
 				}),
 				'class','resource-tree-documents'
 			]);
@@ -118,11 +118,10 @@ templates.resource_tree =
 
 	document:function(context, d)
 	{
-//		var documentMainResource = context.documents.map(function(d){return d.resourceID;});
-
+		var documentResources = context.documentResources[d.documentID]||[];
 		var resources = context.resourceList.
 		filter(function(r){
-			return r.document_id==d.documentID //|| d.resourceID==r.resource_id;
+			return documentResources.contains(r.id);
 		});
 
 		if (resources.length)
@@ -133,7 +132,7 @@ templates.resource_tree =
 				['li',
 					['h2',
 						['span',
-							(d.url.filename||d.url.short_distinguisher),
+							(d.url.filename || d.url.short_distinguisher),
 							'class','resource-tree-document-label'
 						],
 						' ',
@@ -172,7 +171,7 @@ templates.resource_tree =
 	{
 		var resources = resources_unfiltered.
 		filter(function(r){
-			return r.group==g;
+			return r.group == g;
 		});
 
 		if (resources.length)
@@ -214,7 +213,7 @@ templates.resource_tree =
 			['h2',
 				['span',
 					(r.filename || r.short_distinguisher || r.url || 'NO URL'),
-						'class','resource-tree-resource-label'
+					'class','resource-tree-resource-label'
 				],
 				'handler','resource-detail',
 				'data-resource-id',''+r.id,
