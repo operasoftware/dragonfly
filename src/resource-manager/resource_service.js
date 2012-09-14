@@ -10,6 +10,8 @@ cls.ResourceManagerService = function(view, network_logger)
 
   cls.ResourceManagerService.instance = this;
 
+  var THROTTLE_DELAY = 250;
+
   this._view = view;
   this._network_logger = network_logger;
   this._context = null;
@@ -38,14 +40,14 @@ cls.ResourceManagerService = function(view, network_logger)
       d.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[d.parentDocumentID], d.url);
     },this);
 
-    this._update({});
+    this._update({type:'_handle_listDocuments'});
   };
 
   this._listDocuments = function()
   {
     this._tag_requestListDocuments = window.tagManager.set_callback(this, this._handle_listDocuments );
     window.services['document-manager'].requestListDocuments(this._tag_requestListDocuments, []);
-  };
+  }.bind(this).throttle(THROTTLE_DELAY);;
 
   this._populateDocumentResources = function(r)
   {
