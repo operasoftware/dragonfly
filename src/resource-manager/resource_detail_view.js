@@ -211,7 +211,11 @@ cls.ResourceDetailView.create_ui_widgets = function()
   ActionBroker.
     get_instance().
     get_global_handler().
-      register_shortcut_listener("resource-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
+      register_shortcut_listener
+      (
+        "resource-text-search",
+        cls.Helpers.shortcut_search_cb.bind(text_search)
+      );
 
   var on_view_created = function(msg)
   {

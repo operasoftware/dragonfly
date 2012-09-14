@@ -99,11 +99,13 @@ cls.ResourceManagerService = function(view, network_logger)
       });
 
       // filter the documentId that belong in the windowIdList
-      ctx.documentList  = this._documentList.filter(function(d)
+      ctx.documentList  = this._documentList
+      .filter(function(d)
       {
-        var inWindowContext = ctx.windowList.some( function(w)
+        var inWindowContext = ctx.windowList
+        .some( function(w)
         {
-          return w.id==d.windowID;
+          return w.id == d.windowID;
         });
 
         if (inWindowContext && d.resourceID != null)
@@ -133,11 +135,13 @@ cls.ResourceManagerService = function(view, network_logger)
       },this);
 
       //  filter the list of window. Purge the ones with no documents
-      ctx.windowList = ctx.windowList.filter(function(v)
+      ctx.windowList = ctx.windowList
+      .filter(function(v)
       {
-        return ctx.documentList.some(function(w)
+        return ctx.documentList
+        .some(function(w)
         {
-          return v.id==w.windowID;
+          return v.id == w.windowID;
         });
       });
 
@@ -147,18 +151,18 @@ cls.ResourceManagerService = function(view, network_logger)
       // or a document does not have a documentID yet
       if(
           ctx.documentList.length == 0
-        ||
-          ctx.resourceList.some(
-            function(v)
-            {
-             return v.document_id && !this._documentURLHash[v.document_id];
-            },this)
-        ||
-          ctx.documentList.some(
-            function(v)
-            {
-              return v.documentID==null;
-            })
+          ||
+          ctx.resourceList
+          .some(function(v)
+          {
+           return v.document_id && !this._documentURLHash[v.document_id];
+          },this)
+          ||
+          ctx.documentList
+          .some(function(v)
+          {
+            return v.documentID == null;
+          })
       )
         this._listDocuments();
 
@@ -269,8 +273,8 @@ cls.ResourceManagerService = function(view, network_logger)
       broker.show_resource_for_ele(target);
     }
 
-    this._res_service = window.services['resource-manager'];
-    window.messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+    var messages = window.messages;
+    messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
     this._network_logger.addListener("resource-update", this._update_bound);
     this._network_logger.addListener("window-context-added", this._update_bound);
     this._network_logger.addListener("window-context-removed", this._update_bound);
@@ -302,8 +306,7 @@ cls.ResourceManagerService = function(view, network_logger)
     return resource && resource.last;
   };
 
-
-  this.request_resource_for_url = function(url,callback)
+  this.request_resource = function( url, callback, data )
   {
     cls.ResourceRequest(url, callback, data);
   }
@@ -312,7 +315,7 @@ cls.ResourceManagerService = function(view, network_logger)
   this._init();
 };
 
-cls.ResourceRequest = function(url, callback,data)
+cls.ResourceRequest = function(url, callback, data)
 {
   const
   TRANSPORT_STRING = 1,
