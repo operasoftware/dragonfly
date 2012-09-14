@@ -59,8 +59,12 @@ cls.ResourceManagerService = function(view, network_logger)
   this._update = function(msg)
   {
     var ctx = {};
+    // get list of window_contexts for which we saw the main_document
+    ctx.windowList = (this._network_logger.get_window_contexts()||[]).filter(function(w)
+    {
+      return w.saw_main_document;
+    });
 
-    ctx.windowList = this._network_logger.get_window_contexts();
     if (ctx.windowList && ctx.windowList.length)
     {
       var typeGroupMapping =
@@ -73,15 +77,24 @@ cls.ResourceManagerService = function(view, network_logger)
         '*':'others'
       };
 
-      // get all the resources
       ctx.resourceList = [];
-      ctx.windowList.forEach(function(w)
-      {
-        var wr = w.get_resources();
-        ctx.resourceList = ctx.resourceList.concat( wr );
-      });
-
       ctx.documentResourceHash = {};
+
+      // get all the resources
+      ctx.windowList
+      .forEach(function(w)
+      {
+        //  get resources of the current window
+        var windowResources = w.get_resources();
+        //  filter out the resources that are unloaded
+        windowResources
+        .filter(function(r)
+        {
+          return !r.is_unloaded;
+        });
+        //  concat the result to flat list of resource
+        ctx.resourceList = ctx.resourceList.concat( windowResources );
+      });
 
       // filter the documentId that belong in the windowIdList
       ctx.documentList  = this._documentList.filter(function(d)
