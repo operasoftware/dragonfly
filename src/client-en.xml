@@ -273,10 +273,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/defaults.js"/>
 <script src="./ui-scripts/window.js"/>
 <script src="./ui-scripts/cells.js"/>
+<script src="./ui-scripts/celloverlay.js"/>
 <script src="./ui-scripts/topCell.js"/>
 <script src="./ui-scripts/view.js"/>
 <script src="./ui-scripts/tempview.js"/>
 <script src="./ui-scripts/compositeView.js"/>
+<script src="./ui-scripts/overlayview.js"/>
 <script src="./ui-scripts/settingView.js"/>
 <script src="./ui-scripts/ui-base.js"/>
 <script src="./ui-scripts/TopUIBase.js"/>
@@ -306,6 +308,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/containers.js"/>
 <script src="./ui-scripts/topContainers.js"/>
 <script src="./ui-scripts/windowContainers.js"/>
+<script src="./ui-scripts/overlaybackground.js"/>
 <script src="./ui-scripts/tab.js"/>
 <script src="./ui-scripts/status.js"/>
 <script src="./ui-scripts/ui-templates.js"/>
@@ -332,6 +335,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/fontselection/templates.js"/>
 
 <script src="./ui-scripts/pixelmagnifier.js"/>
+
 
 
 <script src="./build-application/build_application.js"></script>
