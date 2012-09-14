@@ -238,27 +238,33 @@ cls.ResourceManagerService = function(view, network_logger)
     if (this._selectedResourceID == id)
         return;
 
+    if (this._selectedResourceID)
+    {
+        var r = document.getElementById('resource-'+this._selectedResourceID);
+        if (r)
+          r.classList.remove('resource-highlight');
+    }
     this._selectedResourceID = id;
 
     if (this._context)
       this._context.selectedResourceID = id;
 
-    this._view.update();
+    var r = document.getElementById('resource-'+this._selectedResourceID);
+    if (r)
+      r.classList.add('resource-highlight');
+
+//    this._view.update();
   }.bind(this);
 
-  //  WIP: soon there will be some triggers to display a whole group of resource, e.g. gallery of images, videos, fonts, audios, ...
-  this._handle_resource_group_bound = function(event, target)
+
+  this._resource_request_update_bound = function(msg)
   {
-    var parent = target.get_ancestor('[data-frame-id]');
-    if (!parent)
-      return;
+    1;
+    if (msg.type == 'resource-request-id')
+      this._suppressed_resource_update[msg.resource_id] = true;
+    else if (msg.type == 'resource-request-resource')
+      delete this._suppressed_resource_update[msg.resource_id];
 
-    var frameID = parent.getAttribute('data-frame-id');
-    var groupName = parent.getAttribute('data-resource-group');
-
-    var group = this._context.frames[ frameID ].groups[ groupName ];
-
-    cls.ResourceDetailView.instance.show_resource_group(group);
   }.bind(this);
 
   this._init = function()
@@ -306,11 +312,10 @@ cls.ResourceManagerService = function(view, network_logger)
     return resource && resource.last;
   };
 
-  this.request_resource = function( url, callback, data )
+  this.request_resource = function(url, callback, data)
   {
-    cls.ResourceRequest(url, callback, data);
+    new cls.ResourceRequest(url, callback, data);
   }
-
 
   this._init();
 };
@@ -318,39 +323,43 @@ cls.ResourceManagerService = function(view, network_logger)
 cls.ResourceRequest = function(url, callback, data)
 {
   const
+  SUCCESS = 0,
+
   TRANSPORT_STRING = 1,
   TRANSPORT_DATA_URI = 3,
   TRANSPORT_OFF = 4,
   DECODE_TRUE = 1,
   SIZE_LIMIT = 1e7;
 
+  var MAX_RETRIES = 3;
+
   this._init = function(url, callback, data)
   {
-    this._url = url;
+    this.url = url;
+    this._calback_data = data;
     this._callback = callback;
-    this._data = data;
-    this._initialized = false;
+    this._retries = 0;
 
-    if (!this._resource_manager)
-    {
-      this._resource_manager = window.services['resource-manager'];
-      this._tag_manager =  window.tagManager;
-      this._ResourceData = cls.ResourceManager["1.0"].ResourceData;
-      this._initialized = true;
-    }
+    this._tag_manager =  window.tagManager;
+    this._resource_manager = window.services['resource-manager'];
+    if (this._tag_manager && this._resource_manager)
+      this._request_create_request();
+    else
+      this._fallback();
   }
 
   this._fallback = function()
   {
-    window.open(this._url);
+    window.open(this.url);
   }
 
-  this._request_resource = function(url,callback)
+  this._request_create_request = function()
   {
-    if (this._resource_manager.requestGetResourceID)
+    if (this._resource_manager.requestCreateRequest)
     {
-      var tag = window.tagManager.set_callback(this, this._on_request_resource_id);
-      this._resource_manager.requestGetResourceID(tag, [this._url]);
+      var windowID = window.window_manager_data.get_debug_context();
+      var tag = this._tag_manager.set_callback(this, this._on_request_resource_id);
+      this._resource_manager.requestCreateRequest(tag, [windowID, this.url, 'GET']);
     }
     else
       this._fallback();
@@ -358,217 +367,61 @@ cls.ResourceRequest = function(url, callback, data)
 
   this._on_request_resource_id = function(status, message)
   {
-    if (status && this._resource_manager.requestCreateRequest)
+    if(status == SUCCESS && this._resource_manager.requestGetResource)
     {
-      var debugContext = window.window_manager_data.get_debug_context();
-      var tag = this._tag_manager.set_callback(this, this._on_request_create_request);
-      this._resource_manager.requestCreateRequest(tag, [debugContext, this._url, 'GET']);
-    }
-    else if(!status && this._resource_manager.requestGetResource)
-    {
+      // resource_id -> getResource => _on_request_get_resource
       const RESOURCE_ID = 0;
-      this._resource_id = message[RESOURCE_ID];
-      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
-      this._resource_manager.requestGetResource(tag, [this._resource_id, [TRANSPORT_OFF]]);
+      this.resource_id = message[RESOURCE_ID];
+      this._request_get_resource();
     }
     else
       this._fallback();
   }
 
-  this._on_request_create_request = function(status, message)
+  this._request_get_resource = function()
   {
-    if(!status && this._resource_manager.requestGetResource)
-    {
-      const RESOURCE_ID = 0;
-      this._resource_id = message[RESOURCE_ID];
+      var transport_type = TRANSPORT_OFF;
+      if (this.type)
+      {
+        // resource of known type-> call with appropriate transport mode.
+        var response_type = cls.ResourceUtil.type_to_content_mode(this./*nle.*/type);
+        var transport_type = response_type=='datauri'?TRANSPORT_DATA_URI:TRANSPORT_STRING;
+      }
+
       var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
-      this._resource_manager.requestGetResource(tag, [this._resource_id, [TRANSPORT_OFF]]);
-    }
+      this._resource_manager.requestGetResource(tag, [this.resource_id, [transport_type, DECODE_TRUE, SIZE_LIMIT]]);
   }
 
   this._on_request_get_resource = function(status, message)
   {
-    if (!status)
+    if (status == SUCCESS)
     {
-      this._resource = new cls.Resource(this._resource_id);
-      this._resource.update("urlfinished", new this._ResourceData(message));
-      this._resource.fetch_data(this._on_fetch_data_bound);
+
+      var resourceData = new  cls.ResourceManager["1.2"].ResourceData(message);
+      if (this._retries == MAX_RETRIES || resourceData.content)
+      {
+
+        // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
+        this.requests_responses = [{responsebody:resourceData}];
+        this.resourceInfo = new cls.ResourceInfo(this);
+
+
+        //  aaaand callback
+        this._callback(this.resourceInfo, this._calback_data);
+      }
+      else
+      {
+        // no content -> guess the type and request using the appropriate transport mode
+        this.type = cls.ResourceUtil.guess_type(resourceData.mimeType, this.extension);
+        this._request_get_resource();
+        this._retries++;
+      }
     }
+    else
+      this._fallback();
   }
-
-  this._on_fetch_data_bound = function()
-  {
-    this._callback(this._resource,this._data);
-  }.bind(this);
-
 
   this._init(url, callback, data);
-  if (this._initialized)
-    this._request_resource();
 }
 
-
-cls.Resource = function(id)
-{
-  this._init(id);
-}
-
-cls.ResourcePrototype = function()
-{
-  this._init = function(id)
-  {
-    this.id = id;
-    this.finished = false;
-    this.location = "No URL";
-    this.result = null;
-    this.mime = null;
-    this.encoding = null;
-    this.size = 0;
-    this.type = null;
-    this.urltype = null;
-    this.invalid = false;
-  }
-
-  this.update = function(eventname, eventdata)
-  {
-    if (eventname == "urlload")
-    {
-      this.url = eventdata.url;
-      this.urltype = eventdata.urlType;
-      // fixme: complete list
-      this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
-      this._humanize_url();
-    }
-    else if (eventname == "urlfinished")
-    {
-      if (!this.url)
-      {
-        this.url = eventdata.url;
-      }
-      this.result = eventdata.result;
-      this.mime = eventdata.mimeType;
-      this.encoding = eventdata.characterEncoding;
-      this.size = eventdata.contentLength || 0;
-      this.finished = true;
-      this._guess_type();
-      this._humanize_url();
-
-      if (eventdata.content)
-      {
-        this.update("responsefinished", eventdata);
-      }
-    }
-    else if (eventname == "response")
-    {
-      // If it's one of these, it's not a real resource.
-      if ([200, 206, 304].indexOf(eventdata.responseCode) == -1)
-      {
-//        this.invalid = true;
-      }
-    }
-    else if (eventname == "urlredirect")
-    {
-      this.invalid = true;
-    }
-    else if (eventname == "responsefinished")
-    {
-      this.data = new cls.ResourceManager["1.0"].ResourceData( eventdata );
-      this._get_meta_data();
-    }
-    else
-    {
-      opera.postError("got unknown event: " + eventname);
-    }
-  }
-
-  this._get_meta_data = function()
-  {
-    if (this.type == 'image')
-    {
-      var i=new Image();
-      i.src=this.data.content.stringData;
-      if(i.naturalWidth)
-      {
-        this.data.meta = i.naturalWidth+'x'+i.naturalHeight;
-      }
-      else
-      {
-        this.data.meta = 'vectorial image';
-      }
-    }
-  }
-
-  this._guess_type = function()
-  {
-    if (!this.finished || !this.mime)
-    {
-      this.type = undefined;
-    }
-    else
-    {
-      if (this.mime.toLowerCase() == "application/octet-stream")
-      {
-        this.type = cls.ResourceUtil.extension_type_map[this.extension];
-      }
-      if (!this.type)
-      {
-        this.type = cls.ResourceUtil.mime_to_type(this.mime);
-      }
-    }
-  }
-
-  this._humanize_url = function()
-  {
-    if (this.urltype == 4) // data URI
-    {
-      if (this.type)
-      {
-        this.human_url = this.type + " data URI";
-      }
-      else
-      {
-        this.human_url = "data URI";
-      }
-    }
-    else
-    {
-      this.human_url = this.url;
-    }
-  }
-
-  this._on_fetch_data_bound = function(callback)
-  {
-    return function(status,message)
-    {
-      if(!status){ this.update("responsefinished", message); }
-      if(callback){ callback(this); }
-    }.bind(this);
-  }
-
-  this.fetch_data = function(callback)
-  {
-    const
-    TRANSPORT_STRING = 1,
-    TRANSPORT_DATA_URI = 3,
-    TRANSPORT_OFF = 4,
-    DECODE_TRUE = 1,
-    SIZE_LIMIT = 1e7;
-
-    if (!this.data)
-    {
-      var tag = window.tagManager.set_callback(null, this._on_fetch_data_bound(callback));
-      var responseType = cls.ResourceUtil.type_to_content_mode(this.type);
-      var transportType = {datauri: TRANSPORT_DATA_URI}[responseType]||TRANSPORT_STRING;
-
-      window.services['resource-manager'].requestGetResource(tag, [this.id, [transportType, DECODE_TRUE, SIZE_LIMIT]]);
-    }
-    else if(callback)
-    {
-      callback(this);
-    }
-  };
-
-}
-
-window.cls.ResourcePrototype.prototype = new URIPrototype("url");
-window.cls.Resource.prototype = new window.cls.ResourcePrototype();
+cls.ResourceRequest.prototype = new URIPrototype("url");

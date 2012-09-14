@@ -23,13 +23,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if(this.data)
       this.go_to_line(container,this.data);
 
-//    if (this.resource && this.resource.type in {'markup':1,})
-    {
-      //this.text_search.set_query_selector(".resource-detail-container");
-      this.text_search.update_search();
-    }
-
-		this.data = null;
+    this.text_search.update_search();
 	};
 
   this.create_disabled_view = function(container)
@@ -140,9 +134,16 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._show_resource_by_instance = function(resource)
   {
-      this.resource = resource;
-      if (resource && !resource.data)
-        resource.fetch_data(cls.ResourceDetailView.instance.update.bind(cls.ResourceDetailView.instance));
+    this.resource = resource;
+    if (!resource)
+      return;
+
+    this._service.highlight_resource(resource.id);
+
+    if (resource.data)
+      this.update();
+    else
+      this._show_resource_by_url(resource.url);
   }
 
   this._show_resource_by_id = function(id)
@@ -151,13 +152,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._show_resource_by_instance(resource);
   }
 
-  this._show_resource_url = function(url)
+  this._show_resource_by_url = function(url)
   {
     var resource = this._service.get_resource_for_url(url);
-    if (resource)
+    if (resource && resource.data)
       this._show_resource_by_instance(resource);
     else
-      new cls.ResourceRequest(url, this.show_resource.bind(this), this.data);
+      this._service.request_resource(url, this.show_resource.bind(this), this.data);
   }
 
   this.show_resource = function(resource, data)
@@ -170,10 +171,11 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     else if (resource==Number(resource))
       this._show_resource_by_id(resource);
     else if (resource==String(resource))
-      this._show_resource_url(resource);
+      this._show_resource_by_url(resource);
+    else
+      this.update();
 
-    this.update();
-    window.UI.instance.show_view( window.views.resource_detail_view.id );
+    window.UI.instance.show_view( this.id );
   }
 
   this.init(id, name, container_class, html, default_handler);
