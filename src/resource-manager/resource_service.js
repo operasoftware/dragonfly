@@ -56,6 +56,10 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._update = function(msg)
   {
+    //  bounce if _suppress_updates
+    if (this._suppress_updates)
+      return setTimeout(this._update_bound, THROTTLE_DELAY);
+
     var ctx = {};
     // get list of window_contexts for which we saw the main_document
     ctx.windowList = (this._network_logger.get_window_contexts()||[]).filter(function(w)
@@ -250,10 +254,9 @@ cls.ResourceManagerService = function(view, network_logger)
   this._resource_request_update_bound = function(msg)
   {
     if (msg.type == 'resource-request-id')
-      this._suppressed_resource_update[msg.resource_id] = true;
-    else if (msg.type == 'resource-request-resource')
-      delete this._suppressed_resource_update[msg.resource_id];
-
+      this._suppress_updates = true;
+    else
+      this._suppress_updates = false;
   }.bind(this);
 
   this._init = function()
@@ -273,6 +276,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
     messages.addListener('resource-request-id', this._resource_request_update_bound);
     messages.addListener('resource-request-resource', this._resource_request_update_bound);
+    messages.addListener('resource-request-fallback', this._resource_request_update_bound);
 
     this._network_logger.addListener("resource-update", this._update_bound);
     this._network_logger.addListener("window-context-added", this._update_bound);
@@ -291,7 +295,7 @@ cls.ResourceManagerService = function(view, network_logger)
     this._collapsedHash = {};
     this._documentResources = {};
 
-    this._suppressed_resource_update = {};
+    this._suppress_updates = false;
     this._view.update();
   };
 
@@ -322,6 +326,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this.request_resource = function(url, callback, data)
   {
+    this._suppress_updates = true;
     new cls.ResourceRequest(url, callback, data);
   }
 
@@ -358,6 +363,9 @@ cls.ResourceRequest = function(url, callback, data)
 
   this._fallback = function()
   {
+    //  broadcast that we fellback
+    window.messages.post('resource-request-fallback', {resource_id: this.resource_id});
+
     window.open(this.url);
   }
 
