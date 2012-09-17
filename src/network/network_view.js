@@ -902,14 +902,14 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
     "network-detail-overlay",
     // key-value map
     {
-      "view-raw": false,
+      "view-parsed": true,
       "wrap-detail-view": true,
       "expand-requests": true,
       "expand-responses": true
     },
     // key-label map
     {
-      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL,
+      "view-parsed": ui_strings.S_NETWORK_RAW_VIEW_LABEL,
       "wrap-detail-view": ui_strings.S_NETWORK_WRAP_LINES_LABEL
     }
   );
@@ -921,8 +921,8 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
         type: UI.TYPE_SWITCH,
         items: [
           {
-            key: "network-detail-overlay.view-raw",
-            icon: "view-raw"
+            key: "network-detail-overlay.view-parsed",
+            icon: "view-parsed"
           }
         ]
       },
