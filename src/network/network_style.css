@@ -239,10 +239,8 @@
 
 .network-detail-overlay > .table
 {
-  height: 100%;
   padding: 0 5px;
   box-sizing: border-box;
-  overflow: auto;
 }
 
 .network-detail-overlay .table

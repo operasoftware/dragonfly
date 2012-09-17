@@ -43,7 +43,7 @@ templates._pre = function(content)
 templates.details = function(entry)
 {
   var settings = window.settings["network-detail-overlay"];
-  var do_raw = settings.get("view-raw");
+  var do_raw = !settings.get("view-parsed");
   var do_wrap = settings.get("wrap-detail-view");
   return (
     ["div",
