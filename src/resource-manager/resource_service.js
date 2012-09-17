@@ -14,11 +14,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._view = view;
   this._network_logger = network_logger;
-  this._context = null;
-  this._documentList = [];
-  this._documentURLHash = {};
-  this._collapsedHash = {};
-  this._documentResources = {};
+
 
   this._handle_listDocuments = function(status,msg)
   {
@@ -181,17 +177,11 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._update_bound = this._update.bind(this);
 
+
   this._on_debug_context_selected_bound = function()
   {
-    this._documentList = [];
-    this._collapsedHash = {};
-    this._documentResources = {};
-
-    delete this._context;
-    delete this._selectedResourceID
-    this._view.update();
+    this._reset();
   }.bind(this);
-
 
   this._handle_expand_collapse_bound = function(event, target)
   {
@@ -259,7 +249,6 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._resource_request_update_bound = function(msg)
   {
-    1;
     if (msg.type == 'resource-request-id')
       this._suppressed_resource_update[msg.resource_id] = true;
     else if (msg.type == 'resource-request-resource')
@@ -289,6 +278,21 @@ cls.ResourceManagerService = function(view, network_logger)
     this._network_logger.addListener("window-context-added", this._update_bound);
     this._network_logger.addListener("window-context-removed", this._update_bound);
 
+    this._reset();
+  };
+
+  this._reset = function()
+  {
+    this._context = null;
+    this._selectedResourceID = null;
+
+    this._documentList = [];
+    this._documentURLHash = {};
+    this._collapsedHash = {};
+    this._documentResources = {};
+
+    this._suppressed_resource_update = {};
+    this._view.update();
   };
 
   this.get_resource_context = function()
