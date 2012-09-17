@@ -40,7 +40,7 @@ cls.EcmascriptDebugger["6.0"].ExtensionRuntime = function(rt)
   this.type = "extension";
   this.id = rt.runtime_id;
   this.uri = rt.uri;
-  this.title = "Extension" + (rt.extension_name ? ': ' + rt.extension_name : '');
+  this.title = "Extension" + (rt.extension_name ? ': ' + rt.extension_name : ' Runtime '+ rt.runtime_id);
 };
 
 /**
