@@ -119,9 +119,10 @@
   border-bottom-width: 1px;
 }
 
-.network-data-container .sortable-table > tr.header:first-child
+.network-data-container .sortable-table > tr.table-header:first-child
 {
   border-width: 0;
+  background: none;
   color: #808080;
 }
 
@@ -272,7 +273,7 @@
 
 .network-detail-overlay .header-token-type-name
 {
-  color: #5555aa;
+  color: #cc0033;
 }
 
 .network-detail-overlay .http-token-type-boundary
@@ -295,7 +296,7 @@
 
 .network-detail-overlay\.view-raw::before
 {
-  background-image: url("../ui-images/icons/icon_hidedefaults.png");
+  background-image: url("../ui-images/icons/icon_view_raw.png");
 }
 
 .network-detail-overlay pre,
@@ -325,7 +326,7 @@
 
 .network-detail-overlay p
 {
-  margin: 5px;
+  margin: 6px 8px;
 }
 
 .network-detail-overlay table

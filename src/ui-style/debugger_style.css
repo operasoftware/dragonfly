@@ -443,7 +443,7 @@ header input,
 
 .unfolded .foldable
 {
-  padding: 5px;
+  padding: 6px 8px;
 }
 
 .unfolded > header input,
