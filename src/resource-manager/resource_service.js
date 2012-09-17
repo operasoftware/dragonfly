@@ -62,7 +62,8 @@ cls.ResourceManagerService = function(view, network_logger)
 
     var ctx = {};
     // get list of window_contexts for which we saw the main_document
-    ctx.windowList = (this._network_logger.get_window_contexts()||[]).filter(function(w)
+    ctx.windowList = (this._network_logger.get_window_contexts()||[])
+    .filter(function(w)
     {
       return w.saw_main_document;
     });
@@ -229,25 +230,24 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this.highlight_resource = function(id)
   {
+    var list, i, e;
     if (this._selectedResourceID == id)
         return;
 
     if (this._selectedResourceID)
     {
-        var r = document.getElementById('resource-'+this._selectedResourceID);
-        if (r)
-          r.classList.remove('resource-highlight');
+        list = document.querySelectorAll('*[data-resource-id="'+ this._selectedResourceID +'"]');
+        for(i=0; e=list[i]; i++)
+          e.classList.remove('resource-highlight');
     }
-    this._selectedResourceID = id;
 
+    this._selectedResourceID = id;
     if (this._context)
       this._context.selectedResourceID = id;
 
-    var r = document.getElementById('resource-'+this._selectedResourceID);
-    if (r)
-      r.classList.add('resource-highlight');
-
-//    this._view.update();
+    list = document.querySelectorAll('*[data-resource-id="'+ this._selectedResourceID +'"]');
+    for(i=0; e=list[i]; i++)
+      e.classList.add('resource-highlight');
   }.bind(this);
 
 
