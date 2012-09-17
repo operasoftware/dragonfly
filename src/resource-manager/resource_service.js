@@ -195,21 +195,25 @@ cls.ResourceManagerService = function(view, network_logger)
 
     var button = target.querySelector('.button-expand-collapse');
     var pivot = target.get_ancestor('[data-expand-collapse-id]');
+    var pivots = [pivot];
     if (button && pivot)
     {
       var hash = this. _collapsedHash;
       var pivotID = pivot.getAttribute('data-expand-collapse-id');
+      var collapsed = hash[pivotID] === true?false:true;
 
-      if (hash[pivotID] === true)
+      if (event.shiftKey)
+        [].push.apply(pivots, pivot.querySelectorAll('[data-expand-collapse-id]'));
+
+      pivots.forEach(function(p)
       {
-        hash[pivotID] = false;
-        pivot.classList.remove('close');
-      }
-      else
-      {
-        hash[pivotID] = true;
-        pivot.classList.add('close');
-      }
+        var pivotID = p.getAttribute('data-expand-collapse-id');
+        hash[pivotID] = collapsed;
+        if (collapsed)
+          p.classList.add('close');
+        else
+          p.classList.remove('close');
+      });
     }
   }.bind(this);
 
