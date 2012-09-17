@@ -43,7 +43,7 @@ templates._pre = function(content)
 templates.details = function(entry)
 {
   var settings = window.settings["network-detail-overlay"];
-  var do_raw = settings.get("view-raw");
+  var do_raw = !settings.get("view-parsed");
   var do_wrap = settings.get("wrap-detail-view");
   return (
     ["div",
@@ -151,7 +151,7 @@ templates._response = function(response, is_last, do_raw)
   var expanded = settings.get("expand-responses");
   var show_header = response.logger_entry_touched_network;
   var show_headers = expanded && response.logger_entry_touched_network;
-  var show_body = expanded;
+  var show_body = !show_header || (show_header && expanded);
 
   return [
     "div",

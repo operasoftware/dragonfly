@@ -1,4 +1,4 @@
-﻿/* Network log / Overview */
+/* Network log / Overview */
 
 .network_logger
 {
@@ -238,11 +238,9 @@
   top: 3px;
 }
 
-.network-detail-overlay
+.network-detail-overlay > .table
 {
-  height: 100%;
   box-sizing: border-box;
-  overflow: auto;
 }
 
 .network-detail-overlay .table
@@ -294,7 +292,7 @@
   background-image: url("../ui-images/icons/icon_wrap_text.png");
 }
 
-.network-detail-overlay\.view-raw::before
+.network-detail-overlay\.view-parsed::before
 {
   background-image: url("../ui-images/icons/icon_view_raw.png");
 }
