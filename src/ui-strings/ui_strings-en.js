@@ -1260,8 +1260,8 @@ ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 
-/* DESC: Name of networks raw-view setting, shows requests and responses raw instead of parsed */
-ui_strings.S_NETWORK_RAW_VIEW_LABEL = "Show raw requests and responses";
+/* DESC: Name of networks raw-view setting, shows requests and responses parsed as opposed to raw */
+ui_strings.S_NETWORK_PARSED_VIEW_LABEL = "Show in parsed mode";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
