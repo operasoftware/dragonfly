@@ -91,6 +91,8 @@ var ProfilerTemplates = function()
                     parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
                  : 0;
 
+  var MIN_DURATION = 0.1;
+
   var HAS_UNPREFIXED_GRADIENTS = (function() {
     var ele = document.createElement("div");
     ele.style.backgroundImage = "-o-linear-gradient(0, transparent 0, transparent 0)";
@@ -149,11 +151,11 @@ var ProfilerTemplates = function()
     }
   };
 
-  this.timeline_markers = function(start, end, container_width)
+  this.timeline_markers = function(interval_start, interval_end, container_width)
   {
     var MIN_MARKER_GAP = 80;
     var MIN_MARKERS = 2;
-    var duration = end - start;
+    var duration = Math.max(interval_end - interval_start, MIN_DURATION);
     var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
     var cell_amount = Math.max(MIN_MARKERS, Math.round(container_width / MIN_MARKER_GAP));
     var marker_time = duration / cell_amount;
@@ -161,8 +163,8 @@ var ProfilerTemplates = function()
     var template = [];
     for (var i = 0; i < cell_amount; i++)
     {
-      var left = Math.round(marker_time * i * ms_unit);
-      var time = (marker_time * i) + start;
+      var left = Math.floor(marker_time * i * ms_unit); // flooring avoids the line jumping around
+      var time = (marker_time * i) + interval_start;
       if (time === 0)
         fractions = 0;
       template.push(
@@ -180,7 +182,7 @@ var ProfilerTemplates = function()
 
     template.push(
       ["div",
-         this.format_time(start + duration, fractions),
+         this.format_time(interval_start + duration, fractions),
        "class", "profiler-timeline-marker-time last"
       ]
     );
@@ -195,7 +197,7 @@ var ProfilerTemplates = function()
     {
       var interval_start = 0;
       var interval_end = interval.end;
-      var duration = interval_end - interval_start;
+      var duration = Math.max(interval_end - interval_start, MIN_DURATION);
       var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
       template.extend(event_list.map(this._full_timeline_event.bind(this, interval_start, ms_unit)));
@@ -210,7 +212,7 @@ var ProfilerTemplates = function()
     {
       var interval_start = start || 0;
       var interval_end = end || interval.end;
-      var duration = interval_end - interval_start;
+      var duration = Math.max(interval_end - interval_start, MIN_DURATION);
       var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
 
       template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit, selected_id)));
@@ -234,9 +236,10 @@ var ProfilerTemplates = function()
     );
   };
 
+  // NOTE: the container_width is only needed for a workaround of a CORE bug
   this._timeline_event = function(interval_start, ms_unit, selected_id, event)
   {
-    var duration = event.interval.end - event.interval.start;
+    var duration = Math.max(event.interval.end - event.interval.start, MIN_DURATION);
     var self_time_amount = duration
                          ? (event.time / duration * 100).toFixed(2)
                          : 0;
@@ -245,12 +248,14 @@ var ProfilerTemplates = function()
     var column = this._order.indexOf(event.type);
     var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
     var color = this._get_color_for_type(event.type);
+
     return (
       ["div",
        "style",
          "width: " + width + "px; " +
          "left: " + left + "px; " +
          "top: " + (column * BAR_HEIGHT + 1) + "px; " +
+         (width > 46340 ? ("background-size: " + Math.floor(46340 / width * 100) + "%; ") : "") + // workaround for CORE-48579
          (HAS_UNPREFIXED_GRADIENTS
            ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
                                "linear-gradient(90deg, " + color + " 0, " +
@@ -320,7 +325,7 @@ var ProfilerTemplates = function()
     return time.toFixed(fractions) + " ms";
   };
 
-  this.get_title_all = function(event)
+  this.get_title_all = function(event, range_start)
   {
     return (
       ["div",
@@ -335,7 +340,8 @@ var ProfilerTemplates = function()
                    ui_strings.S_PROFILER_START_TIME + ": ",
                  "class", "profiler-event-tooltip-label"
                 ],
-                this.format_time(event.interval.start)
+                this.format_time(event.interval.start) +
+                " (relative: " + this.format_time(event.interval.start - range_start) + ")"
              ],
              ["li",
                 ["span",

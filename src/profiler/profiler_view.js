@@ -444,7 +444,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var timeline_event = this._timeline_list.get_event_by_id(id);
     if (timeline_event)
     {
-      this._tooltip.show(this._templates.get_title_all(timeline_event));
+      this._tooltip.show(this._templates.get_title_all(timeline_event, this._x0));
     }
   };
 
