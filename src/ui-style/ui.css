@@ -897,7 +897,6 @@ view-slider
 {
   display: block;
   position: absolute;
-  z-index: 2;
 }
 
 view-slider.vertical

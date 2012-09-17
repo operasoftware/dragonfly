@@ -249,6 +249,11 @@
   width: 100%;
 }
 
+.network-detail-overlay .foldable
+{
+  padding: 6px 8px;
+}
+
 .network-detail-overlay .wrap /* that's .table.wrap */
 {
   display: block;
@@ -356,14 +361,12 @@
   white-space: nowrap;
 }
 
-.network-detail-overlay th .not-content
+.network-detail-overlay .not-content
 {
-  padding: 0px;
+  padding: 0;
   font-style: normal;
-  border-collapse: collapse;
   color: #808080;
   cursor: default;
-  display: block;
   font-weight: normal;
 }
 
@@ -371,7 +374,7 @@
 .network-detail-overlay td:first-child
 {
   width: 20%;
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .network-detail-overlay tr:nth-child(even)
@@ -386,7 +389,8 @@
   margin: 7px 0 -8px 0;
 }
 
-.response-summary + div .header {
+.response-summary + div .header
+{
   border-top-width: 1px;
 }
 

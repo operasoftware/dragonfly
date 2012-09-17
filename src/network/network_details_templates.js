@@ -130,17 +130,17 @@ templates._request = function(request, is_last, do_raw)
   var settings = window.settings["network-detail-overlay"];
   var expanded = settings.get("expand-requests");
   var show_header = is_relevant;
-  var show_headers = is_relevant && expanded;
-  var show_body = show_headers;
+  var show_content = is_relevant && expanded;
 
   return [
     "div",
       show_header ? templates._headline(false, expanded) : [],
-      ["div",
-        show_headers ? templates._request_headers(request, do_raw) : [],
-        show_body ? templates._request_body(request, do_raw) : [],
-        "class", "foldable"
-      ],
+      show_content ? 
+        ["div",
+          templates._request_headers(request, do_raw),
+          templates._request_body(request, do_raw),
+          "class", "foldable"
+        ] : [],
       "class", (expanded ? "unfolded" : "")
   ];
 };
@@ -152,16 +152,18 @@ templates._response = function(response, is_last, do_raw)
   var show_header = response.logger_entry_touched_network;
   var show_headers = expanded && response.logger_entry_touched_network;
   var show_body = !show_header || (show_header && expanded);
+  var show_content = show_headers || show_body;
 
   return [
     "div",
       show_header ? this._headline(true, expanded) : [],
-      ["div",
-        show_headers ? this._response_headers(response, do_raw) : [],
-        show_body ? this._response_body(response, do_raw, is_last) : [],
-        "class", "foldable"
-      ],
-      "class", (expanded ? "unfolded" : "")
+      show_content ?
+        ["div",
+          show_headers ? this._response_headers(response, do_raw) : [],
+          show_body ? this._response_body(response, do_raw, is_last) : [],
+          "class", "foldable"
+        ] : [],
+      "class", (show_header && expanded ? "unfolded" : "")
   ];
 };
 
