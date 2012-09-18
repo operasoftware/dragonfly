@@ -934,7 +934,7 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
     },
     // key-label map
     {
-      "view-parsed": ui_strings.S_NETWORK_RAW_VIEW_LABEL,
+      "view-parsed": ui_strings.S_NETWORK_PARSED_VIEW_LABEL,
       "wrap-detail-view": ui_strings.S_NETWORK_WRAP_LINES_LABEL
     }
   );

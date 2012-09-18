@@ -130,17 +130,17 @@ templates._request = function(request, is_last, do_raw)
   var settings = window.settings["network-detail-overlay"];
   var expanded = settings.get("expand-requests");
   var show_header = is_relevant;
-  var show_headers = is_relevant && expanded;
-  var show_body = show_headers;
+  var show_content = is_relevant && expanded;
 
   return [
     "div",
       show_header ? templates._headline(false, expanded) : [],
-      ["div",
-        show_headers ? templates._request_headers(request, do_raw) : [],
-        show_body ? templates._request_body(request, do_raw) : [],
-        "class", "foldable"
-      ],
+      show_content ? 
+        ["div",
+          templates._request_headers(request, do_raw),
+          templates._request_body(request, do_raw),
+          "class", "foldable"
+        ] : [],
       "class", (expanded ? "unfolded" : "")
   ];
 };
@@ -152,16 +152,18 @@ templates._response = function(response, is_last, do_raw)
   var show_header = response.logger_entry_touched_network;
   var show_headers = expanded && response.logger_entry_touched_network;
   var show_body = !show_header || (show_header && expanded);
+  var show_content = show_headers || show_body;
 
   return [
     "div",
       show_header ? this._headline(true, expanded) : [],
-      ["div",
-        show_headers ? this._response_headers(response, do_raw) : [],
-        show_body ? this._response_body(response, do_raw, is_last) : [],
-        "class", "foldable"
-      ],
-      "class", (expanded ? "unfolded" : "")
+      show_content ?
+        ["div",
+          show_headers ? this._response_headers(response, do_raw) : [],
+          show_body ? this._response_body(response, do_raw, is_last) : [],
+          "class", "foldable"
+        ] : [],
+      "class", (show_header && expanded ? "unfolded" : "")
   ];
 };
 
@@ -170,8 +172,7 @@ templates._headline = function(is_response, is_unfolded)
   var headline = [
     "div",
       ["input",
-        "type", "button",
-        "class", is_unfolded ? "unfolded" : ""
+        "type", "button"
       ],
       is_response ? ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE
                   : ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE,
@@ -194,13 +195,10 @@ templates._request_headers = function(req, do_raw)
   {
     if (req.request_headers_raw)
     {
-      if (!req.header_tokens)
-      {
-        req.header_tokens = [];
-        var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, req.header_tokens));
-      }
-      return this._pre(this.headers_tonkenized(req.header_tokens, false));
+      var header_tokens = [];
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(req.request_headers_raw, this._token_receiver.bind(this, header_tokens));
+      return this._pre(this.headers_tonkenized(header_tokens, false));
     }
     return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
             "class", templates.UI_CLASSNAME];
@@ -217,17 +215,12 @@ templates._request_headers = function(req, do_raw)
     ret.extend(req.request_headers.map(this._headers_pseudo_raw));
     if (req.first_line)
     {
-      var firstline = [];
-      if (!req.firstline_tokens)
+      var firstline_tokens = [];
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(req.first_line, this._token_receiver.bind(this, firstline_tokens))
+      if (firstline_tokens.length)
       {
-        req.firstline_tokens = [];
-        var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(req.first_line, this._token_receiver.bind(this, req.firstline_tokens))
-      }
-
-      if (req.firstline_tokens.length)
-      {
-        ret.unshift(this.headers_tonkenized(req.firstline_tokens, false));
+        ret.unshift(this.headers_tonkenized(firstline_tokens, false));
       }
     }
   }
@@ -281,19 +274,16 @@ templates._response_headers = function(resp, do_raw)
 {
   if (do_raw)
   {
-    if (!resp.header_tokens)
+    var header_tokens = [];
+    if (resp.response_headers_raw)
     {
-      resp.header_tokens = [];
-      if (resp.response_headers_raw)
-      {
-        var tokenizer = new cls.HTTPHeaderTokenizer();
-        tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, resp.header_tokens));
-      }
+      var tokenizer = new cls.HTTPHeaderTokenizer();
+      tokenizer.tokenize(resp.response_headers_raw, this._token_receiver.bind(this, header_tokens));
     }
 
-    if (resp.header_tokens.length)
+    if (header_tokens.length)
     {
-      return this._pre(this.headers_tonkenized(resp.header_tokens, true));
+      return this._pre(this.headers_tonkenized(header_tokens, true));
     }
     return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
             "class", templates.UI_CLASSNAME];
@@ -302,16 +292,11 @@ templates._response_headers = function(resp, do_raw)
   var ret = resp.response_headers && resp.response_headers.map(this._headers_pseudo_raw);
   if (resp.first_line)
   {
-    var firstline = [];
-    if (!resp.firstline_tokens)
-    {
-      resp.firstline_tokens = [];
-      var tokenizer = new cls.HTTPHeaderTokenizer();
-      tokenizer.tokenize(resp.first_line, this._token_receiver.bind(this, resp.firstline_tokens))
-    }
-
-    if (resp.firstline_tokens.length)
-      ret.unshift(this.headers_tonkenized(resp.firstline_tokens, true));
+    var firstline_tokens = [];
+    var tokenizer = new cls.HTTPHeaderTokenizer();
+    tokenizer.tokenize(resp.first_line, this._token_receiver.bind(this, firstline_tokens))
+    if (firstline_tokens.length)
+      ret.unshift(this.headers_tonkenized(firstline_tokens, true));
   }
 
   if (!ret)
