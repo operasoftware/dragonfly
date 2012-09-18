@@ -140,8 +140,7 @@ templates.resource_tree =
 							'('+resources.length+')',
 							'class','resource-tree-count'
 						],
-						'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin'),
-						'title',JSON.stringify(d)
+						'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin')
 					],
 					[
 						this.resource_groups(context, resources),
@@ -219,12 +218,9 @@ templates.resource_tree =
 				],
 				'handler','resource-detail',
 				'data-resource-id',''+r.id,
-				'data-tooltip',!r.url&&'js-script-select',
-				'data-tooltip-text',!r.url&&JSON.stringify(r),
 				'class','resource-tree-resource'
 					+(r.sameOrigin?'':' resource-different-origin')
 					+(context.selectedResourceID==r.id?' resource-highlight':'')
-					+(!r.url?' wat':'')
 			]
 		]);
 	}
@@ -292,7 +288,7 @@ templates.resource_detail =
 	{
 		var info =
 		{
-			'human_url':resource.human_url,
+			'human_url':resource.short_distinguisher,
 			'type':resource.type,
 			'mimeType':resource.data.mimeType,
 			'size':resource.size||resource.data.contentLength||resource.data.content.length,
@@ -328,9 +324,7 @@ templates.resource_detail =
 	text:function(resource)
 	{
 		return (
-		[
-			['pre',resource.data.content.stringData],
-			['ptr',new Option(JSON.stringify(resource)).innerHTML]
+		['pre',resource.data.content.stringData
 		]);
 	},
 

@@ -312,11 +312,12 @@ a.external:hover
   white-space:nowrap;
   font-weight:normal;
   min-width:100%;
-  display: inline-block;
+  display: block;
   font-size:11px;
   line-height:18px;
   vertical-align: middle;
 }
+
 
 
 .resource-tree-documents, .resource-tree-groups, .resource-tree-resources
@@ -327,25 +328,20 @@ a.external:hover
 /* zebra resources */
 .resource-tree-windows
 {
-  background-image: linear-gradient(0deg, rgba(0,0,0,.05) 50%, transparent 0%);
+  background-image: linear-gradient(0deg, rgba(0,0,0,.031) 50%, transparent 0%);
   background-size: 100% 36px;
   background-repeat:repeat;
 }
 
-h2.resource-highlight
-{
-  background-color:yellow;
-}
 .resource-tree li > h2:hover
 {
-  background-color:orange;
+  background-color: rgba(137, 173, 232, 0.196);
 }
 
-.wat:before
+.resource-tree li > h2.resource-highlight
 {
- margin-left:-18px
- content:url(../ui-images/error-console-warning.png);
- padding:1px;
+  color:#fff;
+  background-color:rgba(55, 115, 211, 0.702);
 }
 
 span.resource-tree-count
