@@ -7,151 +7,224 @@ templates.resource_icon = function(resource)
 
 templates.resource_tree =
 {
-	update:function(context)
-	{
-		return (
-		['ul',
-			this.frame( context, null ),
-			'style','overflow:auto;height:100%;'
-		]);
-	},
+	_groupOrder:['markup','stylesheets','scripts','images','fonts','others'],
 
-	frame:function(context, parentFrameID)
+	_init:function()
 	{
-		var tpl = [];
+		if (this._initialized)
+			return;
 
-		for (var frameID in context.frames)
+		// wrap the nesting templating for _depth iteration according styling
+		['document', 'resource_group', 'resource'].forEach(function(f)
 		{
-			var frame = context.frames[frameID];
-			if( frame.parentFrameID != parentFrameID ){ continue; }
-
-			r=frame.resource;
-			if(!r)
-				continue;
-
-			var className = '-expand-collapse';
-			var tmp =
+			var original = this[f];
+			this[f] = function()
 			{
-				'time':frame.time||0,
-				'tpl':
-				[
-					'li',
-					[	// heading expand-collapse
-						'div',
-						['input','type','button','class','button'+className],
-						['span', 'class', 'resource-icon resource-type-storage'],
-						' ',
-						[
-							'span',
-							(r.filename||r.human_url),
-							[],
-							'class',(frame.sameOrigin!==false?'':'resource-different-origin'),
-							'data-tooltip',(r&&'js-script-select'),
-							'data-tooltip-text',(r&&'frame: '+r.human_url)
-						],
-						'handler','resources-expand-collapse',
-						'class','header'+className
-					],
-					[	// resources groups & frames
-						'ul',
-						this.groups( context, frameID ),
-						this.frame( context, frameID ),
-						'class','children'+className
-					],
-					'data-frame-id',frameID,
-					'class','item'+className+(frame.closed?' collapsed':'')
-				]
+				this._depth++;
+
+				var tpl = original.apply(this, arguments);
+				if(tpl && tpl[1] && tpl[1][0] == 'h2')
+					tpl[1].push( 'style', 'padding-left:'+ this._depth*18 +'px;' );
+
+				this._depth--;
+
+				return tpl;
 			};
-			tpl.push( tmp );
-		}
-		return tpl.sort(function(a,b){ return a.time-b.time; }).map(function(v){ return v.tpl; });
+		}, this);
+
+		this._initialized = true;
 	},
 
-	groups:function(context, frameID)
+	expandCollapseToggle:function(context, pivotID, tpl)
 	{
-		var tpl = [];
-		var frame = context.frames[frameID];
-		var groups = frame.groups;
+		var button = ['input',
+			'type','button',
+			'class','button-expand-collapse'
+		];
 
-		var triggers =
-		{
-			//	WIP: soon there will be some triggers to display a whole group of resource, e.g. gallery of images, videos, fonts, audios, ...
-//			'image':
-//			[
-//				'span',
-//				'gallery',
-//				[],
-//				'title','Gallery',
-//				'handler','resource-group',
-//				'class','resource-group-trigger resource-group-images-trigger'
-//			]
-		}
+		var hash = context.collapsed;
+		if (!hash.hasOwnProperty(pivotID))
+			hash[pivotID] = this._depth>1;
 
-		for (var groupName in groups)
-		{
-			var group = groups[groupName];
-			var count = group.ids.length;
-			if( !count ){ continue; }
+	 	var collapsed = hash[pivotID];
 
-			var className = '-expand-collapse';
-			tpl.push
-			([
-				'li',
-				[	// heading expand-collapse
-					'div',
-					['input','type','button','class','button'+className],
-					templates.resource_icon({type:groupName}),
-					' ',
-					[
-						'span',
-						group.name +' ('+ count +')',[],'class','resource-group'
-					],
-					(triggers[groupName]?triggers[groupName]:[]),
-					'handler','resources-expand-collapse',
-					'class','header'+className
-				],
-				[	// resources
-					'ul',
-					this.group_resources(context, frameID, groupName),
-					'class','children'+className
-				],
-				'data-frame-id',frameID,
-				'data-resource-group',groupName,
-				'class','item'+className+(group.closed?' collapsed':'')
-			]);
-		}
+		tpl.push
+		(
+			'data-expand-collapse-id', pivotID,
+			'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
+		);
+
+		tpl[1].push( 'handler','resources-expand-collapse' );
+		tpl[1].splice(1, 0, button);
+
 		return tpl;
 	},
 
-	group_resources:function(context, frameID, groupName)
+	update:function(context)
 	{
-		var frame = context.frames[frameID];
-		var group = frame.groups[groupName];
-		var className = '-expand-collapse';
+		if (!this._initialized)
+			this._init();
+		this._depth = 0;
+		return this.windows(context);
+	},
 
-		return group.ids.map
+	windows:function(context)
+	{
+		//if (context.windowList.length)
+			return (
+			['ul',
+				context.windowList.map(this.window.bind(this, context)),
+				'class','resource-tree-windows'
+			]);
+	},
+
+	window:function(context, w)
+	{
+		return this.expandCollapseToggle
 		(
-			function(v)
-			{
-				var r=context.get_resource(v);
-				return (
-				['li',
-					[
-						'span',
-						(r.filename||r.human_url),
-						[],
-						'class',(r.sameOrigin!==false?'':'resource-different-origin'),
-						'data-tooltip',(r&&'js-script-select'),
-						'data-tooltip-text',(r&&groupName+': '+r.human_url)
+			context,
+			'w'+w.id,
+			['li',
+				['h2',
+					['span',
+						'windowID '+w.id,
+						'class','resource-tree-window-label'
 					],
-					'id',(r.selected==true?'target-element':''),
-					'class','header'+className,
-					'handler','resource-detail',
-					'data-resource-id',(''+r.id)
-				]);
-			}
+					'class','resource-tree-window'
+				],
+				this.documents(context, w.id),
+				'data-expand-collapse-id','w'+w.id
+			]
 		);
+	},
+
+	documents:function(context, wid, pid)
+	{
+		var documents = context.documentList.
+		filter(function(d){
+			return d.documentID != null && d.windowID == wid && d.parentDocumentID == pid;
+		});
+
+		if (documents.length)
+			return (
+			['ul',
+				documents.map(this.document.bind(this, context)).
+				filter(function(v){
+					return v != null;
+				}),
+				'class','resource-tree-documents'
+			]);
+	},
+
+	document:function(context, d)
+	{
+		var documentResources = context.documentResources[d.documentID]||[];
+		var resources = context.resourceList.
+		filter(function(r){
+			return documentResources.contains(r.id);
+		});
+
+		if (resources.length)
+			return this.expandCollapseToggle
+			(
+				context,
+				'd'+d.documentID,
+				['li',
+					['h2',
+						['span',
+							(d.url.filename || d.url.short_distinguisher),
+							'class','resource-tree-document-label'
+						],
+						' ',
+						['span',
+							'('+resources.length+')',
+							'class','resource-tree-count'
+						],
+						'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin')
+					],
+					[
+						this.resource_groups(context, resources),
+						this.documents(context, d.windowID, d.documentID)
+					]
+				]
+			);
+	},
+
+	resource_groups:function(context, resources)
+	{
+		var tpl = this._groupOrder.
+		map(this.resource_group.bind(this, context, resources)).
+		filter(function(v){
+			return v!=null;
+		});
+
+		if (tpl.length)
+			return (
+			['ul',
+				tpl,
+				'class','resource-tree-groups'
+			]);
+	},
+
+	resource_group:function(context, resources_unfiltered, g)
+	{
+		var resources = resources_unfiltered.
+		filter(function(r){
+			return r.group == g;
+		}).sort(function(a,b){
+			return a.id-b.id;
+		});
+
+		if (resources.length)
+			return this.expandCollapseToggle
+			(
+				context,
+				'd'+resources[0].document_id+'-'+g,
+				['li',
+					['h2',
+						['span',
+							g,
+							'class','resource-tree-group-label'
+						],
+						' ',
+						['span',
+							'('+resources.length+')',
+							'class','resource-tree-count'
+						],
+						'class','resource-tree-group resource-tree-group-'+g
+					],
+					this.resources(context, resources)
+				]
+			);
+	},
+
+	resources:function(context, resources)
+	{
+		return (
+		['ul',
+			resources.map(this.resource.bind(this, context)),
+			'class','resource-tree-resources'
+		]);
+	},
+
+	resource:function(context, r)
+	{
+		return (
+		['li',
+			['h2',
+				['span',
+					(r.filename || r.short_distinguisher || r.url || 'NO URL'),
+					'class','resource-tree-resource-label'
+				],
+				'handler','resource-detail',
+				'data-resource-id',''+r.id,
+				'class','resource-tree-resource'
+					+(r.sameOrigin?'':' resource-different-origin')
+					+(context.selectedResourceID==r.id?' resource-highlight':'')
+			]
+		]);
 	}
+
 };
 
 templates.resource_detail =
@@ -215,7 +288,7 @@ templates.resource_detail =
 	{
 		var info =
 		{
-			'human_url':resource.human_url,
+			'human_url':resource.short_distinguisher,
 			'type':resource.type,
 			'mimeType':resource.data.mimeType,
 			'size':resource.size||resource.data.contentLength||resource.data.content.length,
@@ -251,9 +324,7 @@ templates.resource_detail =
 	text:function(resource)
 	{
 		return (
-		[
-			['pre',resource.data.content.stringData],
-			['ptr',new Option(JSON.stringify(resource)).innerHTML]
+		['pre',resource.data.content.stringData
 		]);
 	},
 
