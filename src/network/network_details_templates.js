@@ -217,7 +217,6 @@ templates._request_headers = function(req, do_raw)
       var firstline_tokens = [];
       var tokenizer = new cls.HTTPHeaderTokenizer();
       tokenizer.tokenize(req.first_line, this._token_receiver.bind(this, firstline_tokens))
-
       if (firstline_tokens.length)
       {
         ret.unshift(this.headers_tonkenized(firstline_tokens, false));
@@ -295,7 +294,6 @@ templates._response_headers = function(resp, do_raw)
     var firstline_tokens = [];
     var tokenizer = new cls.HTTPHeaderTokenizer();
     tokenizer.tokenize(resp.first_line, this._token_receiver.bind(this, firstline_tokens))
-
     if (firstline_tokens.length)
       ret.unshift(this.headers_tonkenized(firstline_tokens, true));
   }
