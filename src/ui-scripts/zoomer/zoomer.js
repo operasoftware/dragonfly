@@ -1,20 +1,26 @@
 "use strict";
 
-// TODO: possibly change the cursor for the whole viewport
 // TODO: when width is 1px and mousewheeling, don't move
 // TODO: prevent context menu
-// TODO: reset on doubleclick
 
 /**
  * @constructor
  */
 var Zoomer = function(model, zoomer_ele)
 {
-  this._init = function()
+  this._init(model, zoomer_ele);
+};
+
+var ZoomerPrototype = function()
+{
+  var UPDATE_THRESHOLD = 50;
+
+  this._init = function(model, zoomer_ele)
   {
+    /**
+     * The model to zoom.
+     */
     this._model = model;
-    this._model_ele_width = 0;
-    this._model_duration = 0;
     /**
      * Pixels from the left edge of the overlay to the left
      * edge of the model element.
@@ -41,9 +47,9 @@ var Zoomer = function(model, zoomer_ele)
      */
     this._mouse_drag_start_x = 0;
     /**
-     * Current resize handler element.
+     * Current resize handle element.
      */
-    this._handler_ele = null;
+    this._handle_ele = null;
     /**
      * A timeout ID.
      */
@@ -53,16 +59,25 @@ var Zoomer = function(model, zoomer_ele)
      */
     this._last_update = 0;
 
+    this._zoomer_ele_onmousemove_bound = this.zoomer_ele_onmousemove.bind(this);
+    this._zoomer_ele_onmouseup_bound = this.zoomer_ele_onmouseup.bind(this);
+    this._zoomer_ele_onmousewheel_bound = this.zoomer_ele_onmousewheel.bind(this);
+    this._overlay_ele_onmousedown_bound = this.overlay_ele_onmousedown.bind(this);
+    this._overlay_ele_onmousemove_bound = this.overlay_ele_onmousemove.bind(this);
+    this._overlay_ele_onmouseup_bound = this.overlay_ele_onmouseup.bind(this);
+    this._overlay_ele_onmousewheel_bound = this.overlay_ele_onmousewheel.bind(this);
+    this._overlay_ele_onkeydown_bound = this.overlay_ele_onkeydown.bind(this);
+    this._overlay_ele_ondblclick_bound = this.overlay_ele_ondblclick.bind(this);
+    this._handle_ele_onmousedown_bound = this.handle_ele_onmousedown.bind(this);
+    this._handle_ele_onmousemove_bound = this.handle_ele_onmousemove.bind(this);
+    this._handle_ele_onmouseup_bound = this.handle_ele_onmouseup.bind(this);
+    this._handle_ele_onkeydown_bound = this.handle_ele_onkeydown.bind(this);
+
+    this._update_overlay_position_bound = this._update_overlay_position.bind(this);
+
     if (zoomer_ele)
       this.set_zoomer_element(zoomer_ele);
   };
-
-  this._init();
-};
-
-var ZoomerPrototype = function()
-{
-  var UPDATE_THRESHOLD = 50;
 
   this._set_up_zoomer_ele = function()
   {
@@ -74,24 +89,22 @@ var ZoomerPrototype = function()
     this._zoomer_ele_dims = this._zoomer_ele.getBoundingClientRect();
     this._zoomer_ele_left = this._zoomer_ele_dims.left;
     this._zoomer_ele_width = this._zoomer_ele_dims.width - zoomer_ele_hor_borders;
-
-    this._zoomer_ele_onmousemove_bound = this.zoomer_ele_onmousemove.bind(this);
-    this._zoomer_ele_onmouseup_bound = this.zoomer_ele_onmouseup.bind(this);
-    this._zoomer_ele_onmousewheel_bound = this.zoomer_ele_onmousewheel.bind(this);
-    this._zoomer_ele.addEventListener("mousedown",
-      this.zoomer_ele_onmousedown.bind(this));
+    this._zoomer_ele.addEventListener("mousedown", this.zoomer_ele_onmousedown.bind(this));
   };
 
   this._set_up_overlay_ele = function()
   {
-    this._overlay_ele = document.createElement("div");
-    this._overlay_ele.className = "zoomer-overlay";
-    this._overlay_handle_left_ele = document.createElement("div");
-    this._overlay_handle_right_ele = document.createElement("div");
-    this._overlay_handle_left_ele.className = "zoomer-overlay-handle zoomer-overlay-handle-left";
-    this._overlay_handle_right_ele.className = "zoomer-overlay-handle zoomer-overlay-handle-right";
-    this._overlay_ele.appendChild(this._overlay_handle_left_ele);
-    this._overlay_ele.appendChild(this._overlay_handle_right_ele);
+    if (!this._overlay_ele)
+    {
+      this._overlay_ele = document.createElement("div");
+      this._overlay_ele.className = "zoomer-overlay";
+      this._handle_left_ele = document.createElement("div");
+      this._handle_right_ele = document.createElement("div");
+      this._handle_left_ele.className = "zoomer-overlay-handle zoomer-overlay-handle-left";
+      this._handle_right_ele.className = "zoomer-overlay-handle zoomer-overlay-handle-right";
+      this._overlay_ele.appendChild(this._handle_left_ele);
+      this._overlay_ele.appendChild(this._handle_right_ele);
+    }
     this._zoomer_ele.appendChild(this._overlay_ele);
     var overlay_ele_style = window.getComputedStyle(this._overlay_ele);
     var overlay_ele_ver_borders = parseInt(overlay_ele_style.borderTopWidth) +
@@ -99,16 +112,6 @@ var ZoomerPrototype = function()
     this._overlay_ele.style.height = this._zoomer_ele_dims.height -
                                      this._zoomer_ele_ver_borders -
                                      overlay_ele_ver_borders + "px";
-
-    this._overlay_ele_onmousedown_bound = this.overlay_ele_onmousedown.bind(this);
-    this._overlay_ele_onmousemove_bound = this.overlay_ele_onmousemove.bind(this);
-    this._overlay_ele_onmouseup_bound = this.overlay_ele_onmouseup.bind(this);
-    this._overlay_ele_onmousewheel_bound = this.overlay_ele_onmousewheel.bind(this);
-    this._overlay_ele_onkeydown_bound = this.overlay_ele_onkeydown.bind(this);
-    this._overlay_handle_ele_onmousedown_bound = this.overlay_handle_ele_onmousedown.bind(this);
-    this._overlay_handle_ele_onmousemove_bound = this.overlay_handle_ele_onmousemove.bind(this);
-    this._overlay_handle_ele_onmouseup_bound = this.overlay_handle_ele_onmouseup.bind(this);
-    this._overlay_handle_ele_onkeydown_bound = this.overlay_handle_ele_onkeydown.bind(this);
   };
 
   //
@@ -119,13 +122,13 @@ var ZoomerPrototype = function()
   {
     if (event.which != 1)
       return;
-    document.addEventListener("mousemove",
-      this._zoomer_ele_onmousemove_bound);
-    document.addEventListener("mouseup",
-      this._zoomer_ele_onmouseup_bound);
+    document.addEventListener("mousemove", this._zoomer_ele_onmousemove_bound);
+    document.addEventListener("mousemove", this._zoomer_ele_onmousemove_once_bound)
+    document.addEventListener("mouseup", this._zoomer_ele_onmouseup_bound);
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    this._overlay_left = this._overlay_start_left = mouse_x;
-    this._overlay_right = this._overlay_start_right = this._to_right_x(mouse_x);
+    this._overlay_left = mouse_x;
+    this._overlay_right = this._to_right_x(mouse_x);
+    this._mouse_drag_start_x = mouse_x;
     event.preventDefault();
   };
 
@@ -133,20 +136,19 @@ var ZoomerPrototype = function()
   {
     document.documentElement.classList.add("overlay-size-change");
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var diff = mouse_x - this._overlay_start_left;
-    if (diff < 0)
+    if (mouse_x < this._mouse_drag_start_x)
     {
-      this._overlay_left = Math.max(this._overlay_start_left + diff, 0);
-      this._overlay_right = this._overlay_start_right;
+      var diff = mouse_x - this._overlay_left;
+      this._overlay_right = this._to_right_x(this._mouse_drag_start_x);
+      this.change_overlay_size(diff, 0);
     }
     else
     {
-      this._overlay_left = this._overlay_start_left;
-      this._overlay_right = Math.max(this._overlay_start_right - diff, 0);
+      var diff = mouse_x - this._to_right_x(this._overlay_right);
+      this._overlay_left = this._mouse_drag_start_x;
+      this.change_overlay_size(0, diff);
     }
-    this._set_overlay_position();
     this._set_model_area();
-    this._overlay_ele.style.display = "block";
   };
 
   this.zoomer_ele_onmousewheel = function(event)
@@ -154,9 +156,7 @@ var ZoomerPrototype = function()
     var mouse_x = event.clientX - this._zoomer_ele_left;
     var diff = (mouse_x < this._overlay_left) ? 5 : -5;
     diff *= (event.wheelDelta > 0) ? 1 : -1;
-    this._overlay_left = Math.max(this._overlay_left - diff, 0);
-    this._overlay_right = Math.max(this._overlay_right + diff, 0);
-    this._set_overlay_position();
+    this.move_overlay(diff);
     this._set_model_area();
     event.stopPropagation();
   };
@@ -164,44 +164,14 @@ var ZoomerPrototype = function()
   this.zoomer_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-size-change");
-    document.removeEventListener("mousemove",
-      this._zoomer_ele_onmousemove_bound);
-    document.removeEventListener("mouseup",
-      this._zoomer_ele_onmouseup_bound);
-    this._zoomer_ele.addEventListener("mousewheel",
-      this._zoomer_ele_onmousewheel_bound);
-
-    // If these are the same, the overlay hasn't moved.
-    // We treat that as a reset.
-    if (this._overlay_left == this._overlay_start_left &&
-        this._overlay_right == this._overlay_start_right)
-    {
+    document.removeEventListener("mousemove", this._zoomer_ele_onmousemove_bound);
+    document.removeEventListener("mousemove", this._zoomer_ele_onmousemove_once_bound)
+    document.removeEventListener("mouseup", this._zoomer_ele_onmouseup_bound);
+    var mouse_x = event.clientX - this._zoomer_ele_left;
+    if (this._mouse_drag_start_x == mouse_x)
       this.reset();
-      this._zoomer_ele.removeEventListener("mousewheel",
-        this._zoomer_ele_onmousewheel_bound);
-
-      // Remove events for the overlay
-      this._overlay_ele.removeEventListener("mousedown",
-        this._overlay_ele_onmousedown_bound);
-      this._overlay_ele.removeEventListener("mousewheel",
-        this._overlay_ele_onmousewheel_bound);
-      this._overlay_handle_left_ele.removeEventListener("mousedown",
-        this._overlay_handle_ele_onmousedown_bound);
-      this._overlay_handle_right_ele.removeEventListener("mousedown",
-        this._overlay_handle_ele_onmousedown_bound);
-    }
     else
-    {
-      // Add events for the overlay
-      this._overlay_ele.addEventListener("mousedown",
-        this._overlay_ele_onmousedown_bound);
-      this._overlay_ele.addEventListener("mousewheel",
-        this._overlay_ele_onmousewheel_bound);
-      this._overlay_handle_left_ele.addEventListener("mousedown",
-        this._overlay_handle_ele_onmousedown_bound);
-      this._overlay_handle_right_ele.addEventListener("mousedown",
-        this._overlay_handle_ele_onmousedown_bound);
-    }
+      this._finalize();
   };
 
   //
@@ -213,14 +183,10 @@ var ZoomerPrototype = function()
     if (event.which != 1)
       return;
     document.documentElement.classList.add("overlay-drag");
-    document.addEventListener("mousemove",
-      this._overlay_ele_onmousemove_bound);
-    document.addEventListener("mouseup",
-      this._overlay_ele_onmouseup_bound);
-    document.addEventListener("keydown",
-      this._overlay_ele_onkeydown_bound);
+    document.addEventListener("mousemove", this._overlay_ele_onmousemove_bound);
+    document.addEventListener("mouseup", this._overlay_ele_onmouseup_bound);
+    document.addEventListener("keydown", this._overlay_ele_onkeydown_bound);
     this._overlay_start_left = this._overlay_left;
-    this._overlay_start_right = this._overlay_right;
     this._mouse_drag_start_x = event.clientX - this._zoomer_ele_left;
     event.stopPropagation();
     event.preventDefault();
@@ -229,150 +195,126 @@ var ZoomerPrototype = function()
   this.overlay_ele_onmousemove = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var mouse_to_edge_diff = this._mouse_drag_start_x - this._overlay_start_left;
-    var diff = mouse_x - this._overlay_left - mouse_to_edge_diff;
-    if (diff < 0)
-      diff = Math.max(this._overlay_left + diff, 0) - this._overlay_left;
-    else
-      diff = Math.min(diff, this._overlay_right);
-    this._overlay_left += diff;
-    this._overlay_right -= diff;
-    this._set_overlay_position();
+    var mouse_to_handle_diff = this._mouse_drag_start_x - this._overlay_start_left;
+    var diff = mouse_x - this._overlay_left - mouse_to_handle_diff;
+    this.move_overlay(diff);
     this._set_model_area();
   };
 
   this.overlay_ele_onmousewheel = function(event)
   {
     var diff = (event.wheelDelta < 0) ? 5 : -5;
-    this._overlay_left = Math.max(this._overlay_left + diff, 0);
-    this._overlay_right = Math.max(this._overlay_right + diff, 0);
-    this._set_overlay_position();
+    this.change_overlay_size(diff, -diff);
     this._set_model_area();
     event.stopPropagation();
   };
 
   this.overlay_ele_onkeydown = function(event)
   {
+    var width = this._to_right_x(this._overlay_right) - this._overlay_left;
     var diff = {
-      37: 1, // Arrow left
-      39: -1 // Arrow right
+      33: width,  // Page up
+      34: -width, // Page down
+      37: -1,     // Arrow left
+      39: 1       // Arrow right
     }[event.which];
     if (!diff)
       return;
-    this._overlay_left = Math.max(this._overlay_left - diff, 0);
-    this._overlay_right = Math.max(this._overlay_right + diff, 0);
-    this._set_overlay_position();
+    this.move_overlay(diff);
     this._set_model_area();
     event.stopPropagation();
+  };
+
+  this.overlay_ele_ondblclick = function(event)
+  {
+    this.reset();
   };
 
   this.overlay_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-drag");
-    document.removeEventListener("mousemove",
-      this._overlay_ele_onmousemove_bound);
-    document.removeEventListener("mouseup",
-      this._overlay_ele_onmouseup_bound);
-    document.removeEventListener("keydown",
-      this._overlay_ele_onkeydown_bound);
+    document.removeEventListener("mousemove", this._overlay_ele_onmousemove_bound);
+    document.removeEventListener("mouseup", this._overlay_ele_onmouseup_bound);
+    document.removeEventListener("keydown", this._overlay_ele_onkeydown_bound);
   };
 
   //
-  // Overlay handler element event handlers
+  // Overlay handle element event handlers
   //
 
-  this.overlay_handle_ele_onmousedown = function(event)
+  this.handle_ele_onmousedown = function(event)
   {
     if (event.which != 1)
       return;
     document.documentElement.classList.add("overlay-size-change");
-    document.addEventListener("mousemove",
-      this._overlay_handle_ele_onmousemove_bound);
-    document.addEventListener("mouseup",
-      this._overlay_handle_ele_onmouseup_bound);
-    document.addEventListener("keydown",
-      this._overlay_handle_ele_onkeydown_bound);
+    document.addEventListener("mousemove", this._handle_ele_onmousemove_bound);
+    document.addEventListener("mouseup", this._handle_ele_onmouseup_bound);
+    document.addEventListener("keydown", this._handle_ele_onkeydown_bound);
     this._overlay_start_left = this._overlay_left;
     this._overlay_start_right = this._overlay_right;
     this._mouse_drag_start_x = event.clientX - this._zoomer_ele_left;
-    this._handler_ele = event.target;
+    this._handle_ele = event.target;
     event.stopPropagation();
     event.preventDefault();
   };
 
-  this.overlay_handle_ele_onmousemove = function(event)
+  this.handle_ele_onmousemove = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var is_left_handle = this._handler_ele == this._overlay_handle_left_ele;
-    if (is_left_handle)
+    var is_left_handle = this._handle_ele == this._handle_left_ele;
+    var mouse_to_handle_diff = is_left_handle
+                             ? this._mouse_drag_start_x - this._overlay_start_left
+                             : this._overlay_start_right - this._to_right_x(this._mouse_drag_start_x);
+    var resize_left = is_left_handle
+                    ? mouse_x < this._to_right_x(this._overlay_start_right)
+                    : mouse_x > this._overlay_start_left;
+    var static_pos = is_left_handle
+                   ? this._to_right_x(this._overlay_start_right)
+                   : this._overlay_start_left;
+    if (resize_left)
     {
-      var mouse_to_edge_diff = this._mouse_drag_start_x - this._overlay_start_left;
-      var diff = mouse_x - this._overlay_left - mouse_to_edge_diff;
-      var new_pos = Math.max(this._overlay_left + diff, 0);
-      var right_edge_from_left = this._to_right_x(this._overlay_start_right);
-      if (new_pos <= right_edge_from_left)
-      {
-        this._overlay_left = new_pos;
-        this._overlay_right = this._overlay_start_right;
-      }
-      else
-      {
-        this._overlay_left = right_edge_from_left;
-        this._overlay_right = Math.max(this._overlay_start_right - diff, 0);
-      }
+      var diff = mouse_x - this._overlay_left - mouse_to_handle_diff;
+      this.set_overlay_position(this._overlay_left + diff, static_pos);
     }
     else
     {
-      var mouse_to_edge_diff = this._overlay_start_right -
-                               this._to_right_x(this._mouse_drag_start_x);
-      var diff = this._to_right_x(mouse_x) -
-                 this._overlay_right - mouse_to_edge_diff;
-      var new_pos = Math.max(this._overlay_right + diff, 0);
-      var right_edge_from_left = this._to_right_x(new_pos);
-      if (this._overlay_start_left <= right_edge_from_left)
-      {
-        this._overlay_left = this._overlay_start_left;
-        this._overlay_right = new_pos;
-      }
-      else
-      {
-        this._overlay_left = Math.max(right_edge_from_left, 0);
-        this._overlay_right = this._to_right_x(this._overlay_start_left);
-      }
+      var diff = mouse_x - this._to_right_x(this._overlay_right) - mouse_to_handle_diff;
+      this.set_overlay_position(static_pos, this._to_right_x(this._overlay_right) + diff);
     }
-    this._set_overlay_position();
     this._set_model_area();
   };
 
-  this.overlay_handle_ele_onkeydown = function(event)
+  this.handle_ele_onkeydown = function(event)
   {
     var diff = {
-      37: 1, // Arrow left
-      39: -1 // Arrow right
+      37: -1, // Arrow left
+      39: 1   // Arrow right
     }[event.which];
     if (!diff)
       return;
-
-    var is_left_handle = this._handler_ele == this._overlay_handle_left_ele;
+    var is_left_handle = this._handle_ele == this._handle_left_ele;
     if (is_left_handle)
-      this._overlay_left = Math.max(Math.min(this._overlay_left - diff, this._to_right_x(this._overlay_right)), 0);
+    {
+      if (this._overlay_left + diff < this._to_right_x(this._overlay_right))
+        this.change_overlay_size(diff, 0);
+    }
     else
-      this._overlay_right = Math.max(Math.min(this._overlay_right + diff, this._to_right_x(this._overlay_left)), 0);
-    this._set_overlay_position();
+    {
+      // TODO: check this calculation
+      if (this._overlay_left - diff < this._to_right_x(this._overlay_right))
+        this.change_overlay_size(0, diff);
+    }
     this._set_model_area();
     event.stopPropagation();
   };
 
-  this.overlay_handle_ele_onmouseup = function(event)
+  this.handle_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-size-change");
-    document.removeEventListener("mousemove",
-      this._overlay_handle_ele_onmousemove_bound);
-    document.removeEventListener("mouseup",
-      this._overlay_handle_ele_onmouseup_bound);
-    document.removeEventListener("keydown",
-      this._overlay_handle_ele_onkeydown_bound);
-    this._handler_ele = null;
+    document.removeEventListener("mousemove", this._handle_ele_onmousemove_bound);
+    document.removeEventListener("mouseup", this._handle_ele_onmouseup_bound);
+    document.removeEventListener("keydown", this._handle_ele_onkeydown_bound);
+    this._handle_ele = null;
   };
 
   // TODO: very temporary
@@ -417,10 +359,25 @@ var ZoomerPrototype = function()
     }
   };
 
-  this._set_overlay_position = function()
+  /**
+   * Update the left and right position of the overlay element.
+   */
+  this._update_overlay_position = function()
   {
-    this.set_overlay_left(this._overlay_left);
-    this.set_overlay_right(this._overlay_right);
+    if (!this._overlay_ele)
+      return;
+    // TODO: no need to set this all the time
+    this._overlay_ele.style.display = "block";
+    this._overlay_ele.style.left = this._overlay_left + "px";
+    this._overlay_ele.style.right = this._overlay_right + "px";
+  };
+
+  /**
+   * Request update of the overlay position.
+   */
+  this._request_update_overlay_position = function()
+  {
+    window.requestAnimationFrame(this._update_overlay_position_bound);
   };
 
   /**
@@ -431,50 +388,100 @@ var ZoomerPrototype = function()
     return this._zoomer_ele_width - left_x;
   };
 
+  this._finalize = function()
+  {
+    this._zoomer_ele.addEventListener("mousewheel", this._zoomer_ele_onmousewheel_bound);
+    this._overlay_ele.addEventListener("mousedown", this._overlay_ele_onmousedown_bound);
+    this._overlay_ele.addEventListener("mousewheel", this._overlay_ele_onmousewheel_bound);
+    this._overlay_ele.addEventListener("dblclick", this._overlay_ele_ondblclick_bound);
+    this._handle_left_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
+    this._handle_right_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
+  };
+
+  this.reset = function()
+  {
+    this._overlay_left = 0;
+    this._overlay_right = 0;
+    this._overlay_start_left = 0;
+    this._overlay_start_right = 0;
+    this._mouse_drag_start_x = 0;
+    this._handle_ele = null;
+    this._update_timeout = 0;
+    this._last_update = 0;
+    this._update_overlay_position();
+    this._model.reset_to_default_area();
+
+    if (this._overlay_ele)
+    {
+      this._overlay_ele.style.display = "none";
+      this._overlay_ele.removeEventListener("mousedown", this._overlay_ele_onmousedown_bound);
+      this._overlay_ele.removeEventListener("mousewheel", this._overlay_ele_onmousewheel_bound);
+      this._overlay_ele.removeEventListener("dblclick", this._overlay_ele_ondblclick_bound);
+      this._handle_left_ele.removeEventListener("mousedown", this._handle_ele_onmousedown_bound);
+      this._handle_right_ele.removeEventListener("mousedown", this._handle_ele_onmousedown_bound);
+    }
+
+    if (this._zoomer_ele)
+      this._zoomer_ele.removeEventListener("mousewheel", this._zoomer_ele_onmousewheel_bound);
+  };
+
   /**
-   * Sets the current state of the zoomer. Useful e.g when switching to another
-   * view and back.
+   * Sets the current state of the zoomer.
    */
   this.set_current_area = function()
   {
+    if (!this._zoomer_ele.parentNode)
+      this._zoomer_ele.appendChild(this._overlay_ele);
     var ms_unit = this._model.get_model_element_width() / this._model.get_duration();
     var area = this._model.get_current_area();
-    this._overlay_left = Math.floor(area.x0 * ms_unit);
-    this._overlay_right = this._to_right_x(Math.floor(area.x1 * ms_unit));
-    this._zoomer_ele_onmouseup_bound();
-    this._set_overlay_position();
-    this._overlay_ele.style.display = "block";
+    this.set_overlay_position(Math.floor(area.x0 * ms_unit), Math.ceil(area.x1 * ms_unit), true);
     this._model.set_area(area.x0, area.x1);
-  };
-
-  // TODO: should init() call this instead?
-  this.reset = function()
-  {
-    if (this._overlay_ele)
-      this._overlay_ele.style.display = "none";
-    this._last_update = 0;
-    this._overlay_left = 0;
-    this._overlay_right = 0;
-    this._set_overlay_position();
-    this._model.reset_to_default_area();
+    this._finalize();
   };
 
   /**
-   * Set the left position of the overlay.
+   *
    */
-  this.set_overlay_left = function(left_pos)
+  this.move_overlay = function(diff)
   {
-    if (this._overlay_ele)
-      this._overlay_ele.style.left = left_pos + "px";
+    if (diff == null)
+      diff = 0;
+    else if (diff < 0)
+      diff = Math.max(this._overlay_left + diff, 0) - this._overlay_left;
+    else
+      diff = Math.min(diff, this._overlay_right);
+    this.change_overlay_size(diff, diff);
   };
 
   /**
-   * Set the right position of the overlay.
+   *
    */
-  this.set_overlay_right = function(right_pos)
+  this.change_overlay_size = function(left_diff, right_diff)
   {
-    if (this._overlay_ele)
-      this._overlay_ele.style.right = right_pos + "px";
+    if (left_diff == null)
+      left_diff = 0;
+    else if (right_diff == null)
+      right_diff = 0;
+    var left = this._overlay_left + left_diff;
+    var right = this._overlay_right - right_diff;
+    this.set_overlay_position(left, this._to_right_x(right));
+  };
+
+  /**
+   *
+   */
+  this.set_overlay_position = function(left, right, immediate)
+  {
+    if (left == null)
+      left = 0;
+    else if (right == null)
+      right = 0;
+    this._overlay_left = Math.max(0, Math.min(left, right));
+    this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
+    if (!immediate)
+      this._request_update_overlay_position();
+    else
+      this._update_overlay_position();
   };
 
   /**
@@ -485,15 +492,6 @@ var ZoomerPrototype = function()
     this._zoomer_ele = ele;
     this._set_up_zoomer_ele();
     this._set_up_overlay_ele();
-  };
-
-  /**
-   * Re-adds the overlay element in case it has been overwritten by other
-   * content in the zoomer element.
-   */
-  this.attach_overlay_element = function()
-  {
-    this._zoomer_ele.appendChild(this._overlay_ele);
   };
 };
 

@@ -237,7 +237,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     this._timeline_width = width;
     this._zoomer.set_zoomer_element(this._zoomer_ele);
-    this._zoomer.set_current_area();
+    if (this._set_zoomer)
+      this._zoomer.set_current_area();
   };
 
   this.createView = function(container)
@@ -508,6 +509,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     this._x0 = 0;
     this._x1 = interval.end;
+    this._set_zoomer = false;
     this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
     this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
@@ -532,6 +534,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     this._x0 = x0;
     this._x1 = x1;
+    this._set_zoomer = true;
     this._zoomer.fast_throttle = event_list.length < 500;
     this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width, x0, x1));
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, width));
@@ -548,6 +551,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_timeline_duration = function()
   {
+    // TODO: make sure this exists
     return this._timeline_list.interval.end;
   };
 
@@ -569,6 +573,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     this._x0 = 0;
     this._x1 = 0;
+    this._set_zoomer = true;
     this._min_event_time = 0;
 
     this._legend_ele = null;

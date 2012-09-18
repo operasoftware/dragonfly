@@ -136,10 +136,6 @@ var ProfilerTemplates = function()
                   this.format_time(event.time, 0),
                 "class", "profiler-legend-time"
                ],
-               ["div",
-                "class", "profiler-legend-time-bar",
-                "style", "width: " + self_time_amount + "%"
-               ],
              "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? "" : " even"),
              "data-event-type", String(event.type),
              "handler", "profiler-event"

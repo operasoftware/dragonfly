@@ -214,6 +214,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <!-- command concat_js "./script/dragonfly.js" -->
 
 <script src="./scripts/ini.js"/>
+<script src="./lib/windowobject.js"/>
 <script src="./lib/elementprototype.js"/>
 <script src="./lib/arrayprototype.js"/>
 <script src="./lib/canvasrenderingcontext2dprototype.js"/>
