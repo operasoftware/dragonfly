@@ -272,7 +272,6 @@ var ActionBroker = function()
     var selection = this._action_context && this._action_context.get_selection_string();
     if (selection)
     {
-
       event.preventDefault();
       Clipboard.set_string(selection);
     }
