@@ -387,6 +387,11 @@ cst-select-option-list,
   background-image: url("../ui-images/icons/icon_refetch_listeners.png");
 }
 
+.close-overlay-view::before
+{
+  background-image: url("../ui-images/icons/icon_close.png");
+}
+
 .storage-delete
 {
   background-image: url("../ui-images/icons/icon_clear.png");
@@ -430,11 +435,6 @@ cst-select-option-list,
 .network_logger\.network-profiler-mode::before
 {
   background-image: url("../ui-images/icons/icon_network_profiler.png");
-}
-
-.network_logger\.view-raw::before
-{
-  background-image: url("../ui-images/icons/icon_raw_headers.png");
 }
 
 .profiler-start-stop::before
@@ -1839,4 +1839,12 @@ info {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.background-overlay
+{
+  position: absolute;
+  border: 1px solid #999;
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.30),
+              0 2px 2px hsla(0, 0%, 0%, 0.25)
 }

@@ -12,11 +12,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   var DEFAULT = "default";
   var DETAILS = "details";
 
-  this._service = service;
+  this.service = service;
   this._container_scroll_top = 0;
-  this._details_scroll_top = 0;
-  this._details_scroll_left = 0;
-  this._selected = null;
+  this.selected = null;
   this._rendertime = 0;
   this._render_timeout = 0;
   this._graph_tooltip_id = null;
@@ -47,18 +45,11 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
     this.needs_instant_update = false;
     var started_rendering = Date.now();
+    this.text_search.set_query_selector("[handler='select-network-request']");
     if (container)
       this._container = container;
 
-    // In details, it would be better to not have .network_info and headlines searchable, but those can
-    // occur on different levels, so it's too complicated to do with the current script-search.
-    // Also searching accross spans (for syntax highlighting) is more important.
-    if (this.mode == DETAILS)
-      this.text_search.set_query_selector(null);
-    else
-      this.text_search.set_query_selector("[handler='select-network-request']");
-
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
     if (ctx)
     {
       // The filters need to be set when creating the view, the request_context may have changed in between
@@ -68,6 +59,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
     else
     {
+      this._overlay.hide();
       this._render_click_to_fetch_view(this._container);
     }
 
@@ -93,15 +85,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     this.update();
   }.bind(this);
 
-  this._render_details_view = function(entry)
-  {
-    var MINIMUM_DETAIL_WIDTH = 100;
-    var left_val = settings.network_logger.get("detail-view-left-pos");
-    left_val = Math.min(left_val, window.innerWidth - MINIMUM_DETAIL_WIDTH);
-    var do_raw = settings.network_logger.get("view-raw");
-    return templates.network.details(entry, left_val, do_raw);
-  };
-
   this._render_click_to_fetch_view = function(container)
   {
     container.clearAndRender(
@@ -119,7 +102,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._render_main_view = function(container)
   {
     var selected_viewmode = settings.network_logger.get("selected-viewmode");
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
     var entries = ctx.get_entries_filtered();
     var table_template;
     if (selected_viewmode === "data")
@@ -148,7 +131,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   {
     var table_template = after_render_object && after_render_object.template;
     var is_data_mode = Boolean(table_template);
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
 
     // In is_data_mode, the entries have to be retrieved from the table
     // to be in the correct order.
@@ -175,41 +158,29 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     var detail_width = parseInt(this._container.style.width, 10) - url_list_width;
 
     var template = ["div", templates.network.main(
-                     ctx, entries, this._selected, detail_width, table_template
+                     ctx, entries, this.selected, detail_width, table_template
                    ), "id", "network-outer-container",
                       "data-menu", "network-logger-context"];
-
-    if (this._selected)
-    {
-      var entry = ctx.get_entry_from_filtered(this._selected);
-      if (entry)
-      {
-        entry.check_to_get_body();
-        template = [template, this._render_details_view(entry)];
-      }
-    }
-
     var rendered = this._container.clearAndRender(template);
 
-    if (this._selected)
+    if (this.selected && ctx.get_entry_from_filtered(this.selected))
     {
-      var details = rendered.querySelector(".entry-details");
-      if (details)
-      {
-        if (this._details_scroll_top)
-          details.scrollTop = this._details_scroll_top;
-
-        if (this._details_scroll_left)
-          details.scrollLeft = this._details_scroll_left;
-      }
+      if (this._overlay.is_active)
+        this._overlay.update();
+      else
+        this._overlay.show();
 
       if (is_data_mode)
       {
-        var sel_row = rendered.querySelector("tr[data-object-id='" + this._selected + "']");
+        var sel_row = rendered.querySelector("tr[data-object-id='" + this.selected + "']");
         if (sel_row)
           sel_row.addClass("selected");
 
       }
+    }
+    else
+    {
+      this._overlay.hide();
     }
 
     if (this._container_scroll_top)
@@ -319,66 +290,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   };
 
-  this._on_clicked_close_bound = function(evt, target)
+  var selection_func = function(accessor)
   {
-    this._selected = null;
-    this.mode = DEFAULT;
-    this.needs_instant_update = true;
-    this.update();
-    // the arrow keys don't scroll the main container after this was closed.
-    // dispatching a click event doesn't help either.
-    return false;
-  }.bind(this);
-
-  this._on_start_resize_detail_bound = function(evt, target)
-  {
-    if (evt.target.hasClass("resize-request-detail"))
+    if (this.selected)
     {
-      document.addEventListener("mousemove", this._on_drag_detail_bound, false);
-      document.addEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-      if (!this._resize_interval)
-        this._resize_interval = setInterval(this._on_drag_interval_bound, 30);
-
-      evt.preventDefault();
-    }
-  }.bind(this);
-
-  this._on_drag_detail_bound = function(evt)
-  {
-    this._resize_detail_evt = evt;
-  }.bind(this);
-
-  this._on_drag_interval_bound = function()
-  {
-    var container = document.querySelector(".network-details-container");
-    if (container && this._resize_detail_evt)
-    {
-      this._detail_left = Math.max(this._resize_detail_evt.clientX, 15);
-      this._detail_left = Math.min(this._detail_left, window.innerWidth - 100);
-      container.style.left = this._detail_left + "px";
-      settings.network_logger.set("detail-view-left-pos", this._detail_left);
-    }
-  }.bind(this);
-
-  this._on_stop_resize_detail_bound = function(evt)
-  {
-    document.removeEventListener("mousemove", this._on_drag_detail_bound, false);
-    document.removeEventListener("mouseup", this._on_stop_resize_detail_bound, false);
-    this._resize_interval = clearInterval(this._resize_interval);
-    this._resize_detail_evt = null;
-  }.bind(this);
-
-  var _make_selection_func = function(accessor)
-  {
-    if (this._selected)
-    {
-      var selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+      var selected_node = document.querySelector("[data-object-id='" + this.selected + "']");
       if (selected_node &&
           selected_node[accessor] &&
           selected_node[accessor].dataset.objectId)
       {
-        this._selected = selected_node[accessor].dataset.objectId;
-        selected_node = document.querySelector("[data-object-id='" + this._selected + "']");
+        this.selected = selected_node[accessor].dataset.objectId;
+        selected_node = document.querySelector("[data-object-id='" + this.selected + "']");
         if (selected_node)
         {
           var outer_container = this._container.firstChild;
@@ -404,22 +326,18 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._on_clicked_request_bound = function(evt, target)
   {
     var item_id = target.get_attr("parent-node-chain", "data-object-id");
-    if (this._selected == item_id)
-    {
-      this._selected = null;
-      this.mode = DEFAULT;
-    }
+    if (this.selected == item_id)
+      this.selected = null;
     else
-    {
-      this._selected = item_id;
-      this.mode = DETAILS;
-    }
+      this.selected = item_id;
+
     this.needs_instant_update = true;
     this.update();
     if (this.graph_tooltip)
-    {
       this.graph_tooltip.hide();
-    }
+
+    if (this.url_tooltip)
+      this.url_tooltip.hide();
   }.bind(this);
 
   this._on_mouseover_entry_bound = function(evt, target)
@@ -440,20 +358,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_scroll_bound = function(evt, target)
   {
-    if (evt.target.hasClass("entry-details"))
-    {
-      this._details_scroll_top = evt.target.scrollTop;
-      this._details_scroll_left = evt.target.scrollLeft;
-    }
-    else
-    {
-      this._container_scroll_top = target.firstChild.scrollTop;
-    }
+    if (target.firstElementChild)
+      this._container_scroll_top = target.firstElementChild.scrollTop;
   }.bind(this);
 
   this._on_graph_tooltip_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
     this._graph_tooltip_id = target.get_attr("parent-node-chain", "data-object-id");
     var entry = ctx.get_entry(this._graph_tooltip_id);
     if (!this.mono_lineheight)
@@ -488,7 +399,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_url_tooltip_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
     if (ctx)
     {
       var entry_id = target.get_attr("parent-node-chain", "data-object-id");
@@ -516,19 +427,30 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clear_log_bound = function(evt, target)
   {
-    this._service.clear_request_context();
+    this.service.clear_request_context();
     this.needs_instant_update = true;
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
   {
-    var ctx = this._service.get_request_context();
+    var ctx = this.service.get_request_context();
     var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
     if (ctx && window_id)
       ctx.discard_incomplete_warning(window_id);
 
     this.needs_instant_update = true;
     this.update();
+  }.bind(this);
+
+  this._close_detail_overlay_bound = function(evt, target)
+  {
+    if (this.selected)
+    {
+      this.selected = null;
+      this.needs_instant_update = true;
+      this.update();
+      return false;
+    }
   }.bind(this);
 
   this._on_setting_changed_bound = function(message)
@@ -544,12 +466,12 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       {
         if (message.key === "pause")
         {
-          var is_paused = this._service.is_paused;
+          var is_paused = this.service.is_paused;
           var pause = settings.network_logger.get(message.key);
           if (is_paused && !pause)
-            this._service.unpause();
+            this.service.unpause();
           else if (!is_paused && pause)
-            this._service.pause();
+            this.service.pause();
         }
         else if (message.key === "network-profiler-mode")
         {
@@ -559,12 +481,8 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
           if (current_profile !== set_profile)
             window.services.scope.enable_profile(set_profile);
         }
-
-        if (message.key !== "detail-view-left-pos")
-        {
-          this.needs_instant_update = true;
-          this.update();
-        }
+        this.needs_instant_update = true;
+        this.update();
         break;
       }
       case "general":
@@ -650,15 +568,26 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  var eh = window.eventHandlers;
+  this._view_hidden_bound = function(message)
+  {
+    if (message.id != "network-detail-overlay")
+      return;
+
+    if (!this._overlay.is_active)
+    {
+      this.selected = null;
+      this.needs_instant_update = true;
+      this.update();
+    }
+  }.bind(this);
+
+  var eh = window.event_handlers;
+  var messages = window.messages;
 
   eh.click["select-network-request"] = this._on_clicked_request_bound;
   eh.mouseover["select-network-request"] = this._on_mouseover_entry_bound;
   eh.mouseout["select-network-request"] = this._on_mouseout_entry_bound;
   eh.scroll["network-logger"] = this._on_scroll_bound;
-
-  eh.click["close-request-detail"] = this._on_clicked_close_bound;
-  eh.mousedown["resize-request-detail"] = this._on_start_resize_detail_bound;
 
   eh.click["toggle-raw-cooked-response"] = this._on_clicked_toggle_response_bound;
   eh.click["toggle-raw-cooked-request"] = this._on_clicked_toggle_request_bound;
@@ -668,17 +597,17 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   messages.addListener("setting-changed", this._on_setting_changed_bound);
   messages.addListener("network-resource-updated", this.update.bind(this));
   messages.addListener("network-context-cleared", this.update.bind(this));
+  messages.addListener("hide-view", this._view_hidden_bound);
   eh.click["select-network-viewmode"] = this._on_select_network_viewmode_bound;
   eh.click["type-filter-network-view"] = this._on_change_type_filter_bound;
   eh.click["profiler-mode-switch"] = this._on_toggle_network_profiler_bound;
-
   eh.click["close-incomplete-warning"] = this._on_close_incomplete_warning_bound;
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
-    "select-next-entry": _make_selection_func.bind(this, "nextElementSibling"),
-    "select-previous-entry": _make_selection_func.bind(this, "previousElementSibling"),
-    "close-details": this._on_clicked_close_bound
+    "select-next-entry": selection_func.bind(this, "nextElementSibling"),
+    "select-previous-entry": selection_func.bind(this, "previousElementSibling"),
+    "close-details": this._close_detail_overlay_bound
   };
   this.id = id;
   ActionBroker.get_instance().register_handler(this);
@@ -690,6 +619,13 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       handler: this._on_clear_log_bound
     }
   ]);
+
+  this._overlay = this.register_overlay(new cls.NetworkDetailOverlayView("network-detail-overlay",
+                                                                         "network-detail-overlay scroll",
+                                                                         null,
+                                                                         "network-detail-overlay"));
+  this._overlay.shared_shortcuts = this.id;
+  cls.NetworkDetailOverlayView.create_ui_widgets();
 
   this._type_filters = ["all"].map(this._map_filter_bound);
   this.init(id, name, container_class, html, default_handler);
@@ -707,20 +643,17 @@ cls.NetworkLog.create_ui_widgets = function()
       "selected-viewmode": "graphs",
       "pause": false,
       "network-profiler-mode": false,
-      "detail-view-left-pos": 120,
-      "track-content": true,
-      "view-raw": false
+      "track-content": true
     },
     // key-label map
     {
       "pause": ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW,
       "network-profiler-mode": ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER,
-      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL,
-      "view-raw": ui_strings.S_NETWORK_RAW_VIEW_LABEL
+      "track-content": ui_strings.S_NETWORK_CONTENT_TRACKING_SETTING_TRACK_LABEL
     },
     // settings map
     {
-      checkboxes: ["track-content", "view-raw"]
+      checkboxes: ["track-content"]
     },
     // templates
     {
@@ -822,15 +755,6 @@ cls.NetworkLog.create_ui_widgets = function()
           handler: "profiler-mode-switch"
         },
         {
-          type: UI.TYPE_SWITCH,
-          items: [
-            {
-              key: "network_logger.view-raw",
-              icon: "view-raw-requests-responses"
-            }
-          ]
-        },
-        {
           type: UI.TYPE_INPUT,
           items: [
             {
@@ -847,7 +771,7 @@ cls.NetworkLog.create_ui_widgets = function()
 
   var text_search = window.views.network_logger.text_search = new TextSearch();
 
-  window.eventHandlers.input["network-text-search"] = function(event, target)
+  window.event_handlers.input["network-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
@@ -858,19 +782,16 @@ cls.NetworkLog.create_ui_widgets = function()
   {
     if (msg.id === "network_logger")
     {
-      var scroll_container = msg.container.querySelector(".entry-details");
-      if (!scroll_container)
-        scroll_container = msg.container.querySelector("#network-outer-container");
-
+      var scroll_container = msg.container.querySelector("#network-outer-container");
       if (scroll_container)
       {
-        text_search.setContainer(scroll_container);
-        text_search.setFormInput(
+        text_search.set_container(scroll_container);
+        text_search.set_form_input(
           views.network_logger.getToolbarControl(msg.container, "network-text-search")
         );
       }
     }
-  }
+  };
 
   var on_view_destroyed = function(msg)
   {
@@ -878,8 +799,188 @@ cls.NetworkLog.create_ui_widgets = function()
     {
       text_search.cleanup();
     }
-  }
+  };
 
+  var messages = window.messages;
   messages.addListener("view-created", on_view_created);
   messages.addListener("view-destroyed", on_view_destroyed);
 }
+
+cls.NetworkDetailOverlayView = function(id, container_class, html, default_handler, service)
+{
+  this._details_scroll_top = 0;
+  this._details_scroll_left = 0;
+  this._init(id, container_class, html, default_handler);
+};
+
+cls.NetworkDetailOverlayViewPrototype = function()
+{
+  this.createView = function(container)
+  {
+    var parent_view = window.views[this.parent_view_id];
+    if (parent_view && parent_view.selected)
+    {
+      var ctx = parent_view.service.get_request_context();
+      var entry = ctx.get_entry_from_filtered(parent_view.selected);
+      if (entry)
+      {
+        entry.check_to_get_body();
+        container.clearAndRender(this._render_details_view(entry));
+        this.text_search.update_search();
+        if (this._details_scroll_top)
+          container.scrollTop = this._details_scroll_top;
+
+        if (this._details_scroll_left)
+          container.scrollLeft = this._details_scroll_left;
+      }
+    }
+  };
+
+  this._render_details_view = function(entry)
+  {
+    return templates.network.details(entry);
+  };
+
+  this._on_toggle_expand_request_response = function(event)
+  {
+    var key = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var set_active = !settings["network-detail-overlay"].get(key);
+    settings["network-detail-overlay"].set(key, set_active);
+    this.needs_instant_update = true;
+    this.update();
+  };
+
+  this._on_scroll = function(evt, target)
+  {
+    this._details_scroll_top = evt.target.scrollTop;
+    this._details_scroll_left = evt.target.scrollLeft;
+  };
+
+  this._on_setting_changed = function(message)
+  {
+    switch (message.id)
+    {
+      case "network-detail-overlay":
+      {
+        this.needs_instant_update = true;
+        this.update();
+        break;
+      }
+    }
+  };
+
+  this._init = function(id, container_class, html, default_handler)
+  {
+    var messages = window.messages;
+    messages.addListener("setting-changed", this._on_setting_changed.bind(this));
+
+    var eh = window.event_handlers;
+    eh.scroll["network-detail-overlay"] = this._on_scroll.bind(this);
+    eh.click["toggle-expand-request-response"] = this._on_toggle_expand_request_response.bind(this);
+
+    ActionHandlerInterface.apply(this);
+    this.handle = function(action_id, event, target)
+    {
+      var parent_view = window.views[this.parent_view_id];
+      if (parent_view)
+        return parent_view.handle(action_id, event, target);
+    }
+    this.id = id;
+    ActionBroker.get_instance().register_handler(this);
+
+    this.init(id, container_class, html, default_handler);
+  }
+}
+
+cls.NetworkDetailOverlayViewPrototype.prototype = new OverlayView();
+cls.NetworkDetailOverlayView.prototype = new cls.NetworkDetailOverlayViewPrototype();
+
+cls.NetworkDetailOverlayView.create_ui_widgets = function()
+{
+  new Settings(
+    // view_id
+    "network-detail-overlay",
+    // key-value map
+    {
+      "view-parsed": true,
+      "wrap-detail-view": true,
+      "expand-requests": true,
+      "expand-responses": true
+    },
+    // key-label map
+    {
+      "view-parsed": ui_strings.S_NETWORK_PARSED_VIEW_LABEL,
+      "wrap-detail-view": ui_strings.S_NETWORK_WRAP_LINES_LABEL
+    }
+  );
+
+  new ToolbarConfig({
+    view: "network-detail-overlay",
+    groups: [
+      {
+        type: UI.TYPE_SWITCH,
+        items: [
+          {
+            key: "network-detail-overlay.view-parsed",
+            icon: "view-parsed"
+          }
+        ]
+      },
+      {
+        type: UI.TYPE_SWITCH,
+        items: [
+          {
+            key: "network-detail-overlay.wrap-detail-view",
+            icon: "wrap-detail-view"
+          }
+        ]
+      },
+      {
+        type: UI.TYPE_INPUT,
+        items: [
+          {
+            handler: "network-details-text-search",
+            shortcuts: "network-details-text-search",
+            title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
+            label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+          }
+        ]
+      }
+    ]
+  });
+
+  var text_search = window.views["network-detail-overlay"].text_search = new TextSearch();
+  window.event_handlers.input["network-details-text-search"] = function(event, target)
+  {
+    text_search.searchDelayed(target.value);
+  };
+  ActionBroker.get_instance().get_global_handler().
+      register_shortcut_listener("network-details-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
+
+  var on_view_created = function(msg)
+  {
+    if (msg.id === "network-detail-overlay")
+    {
+      var scroll_container = msg.container;
+      if (scroll_container)
+      {
+        text_search.set_container(scroll_container);
+        text_search.set_form_input(
+          views["network-detail-overlay"].getToolbarControl(msg.container, "network-details-text-search")
+        );
+      }
+    }
+  };
+
+  var on_view_destroyed = function(msg)
+  {
+    if (msg.id == "network-detail-overlay")
+    {
+      text_search.cleanup();
+    }
+  };
+
+  var messages = window.messages;
+  messages.addListener("view-created", on_view_created);
+  messages.addListener("view-destroyed", on_view_destroyed);
+};

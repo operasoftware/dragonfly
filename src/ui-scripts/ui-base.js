@@ -177,7 +177,9 @@ var UIBase = new function()
     for( ; item = resolve_map[i]; i++)
     {
       container.innerHTML = '';
-      source = container.appendChild(document.createElement(item.source));
+      source = item.source
+             ? container.appendChild(document.createElement(item.source))
+             : container.render(item.template);
       if (item.source_attrs)
       {
         for (var key in item.source_attrs)
