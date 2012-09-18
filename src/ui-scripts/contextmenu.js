@@ -119,7 +119,7 @@ function ContextMenu() {
     if (view && !view.get_selection_string)
     {
       opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-                      " action handler without get_selection_string method: " + view_id + ".";
+                      " action handler without get_selection_string method: " + view_id + ".");
 
     }
     var selection_string = (view && view.get_selection_string && view.get_selection_string()) ||
