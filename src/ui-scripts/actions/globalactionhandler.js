@@ -1,5 +1,6 @@
 ﻿var GlobalActionHandler = function(id)
 {
+  ActionHandlerInterface.apply(this);
   /* interface */
   /**
     * A view id to identify an action handler.

@@ -116,7 +116,13 @@ function ContextMenu() {
     var range = Clipboard.is_supported && !selection.isCollapsed && selection.getRangeAt(0);
     var cur_handler_id = ActionBroker.get_instance().get_current_handler_id();
     var view = window.views[cur_handler_id];
-    var selection_string = (view && view.get_selection_string()) ||
+    if (view && !view.get_selection_string)
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      " action handler without get_selection_string method: " + view_id + ".";
+
+    }
+    var selection_string = (view && view.get_selection_string && view.get_selection_string()) ||
                            (range && range.intersectsNode(ele) && String(selection));
     var type = selection_string ? ContextMenu.SELECTION : ContextMenu.DEFAULT;
     // This traverses up the tree and collects all menus it finds, and

@@ -5,14 +5,12 @@
   var _content_editable_ele = null;
   var _is_supported = false;
   var _is_copy_action = false;
-  // static methods
+
+  /* static methods */
 
   this.set_string = function(string)
   {
     _is_copy_action = true;
-    if (!_content_editable_ele)
-      _content_editable_ele = document.querySelector("#contenteditable");
-    _content_editable_ele.contentEditable = true;
     var listener = _set_string.bind(null, string);
     document.addEventListener("copy", listener, false);
     document.execCommand("copy");
@@ -54,19 +52,15 @@
   var _remove_listener = function(listener)
   {
     document.removeEventListener("copy", listener, false);
-    _content_editable_ele.contentEditable = false;
     _is_copy_action = false;
   };
 
   var _test_support = function()
   {
-    if (!_content_editable_ele)
-      _content_editable_ele = document.querySelector("#contenteditable");
-    _content_editable_ele.contentEditable = true;
     var listener = function(event) { _is_supported = true; };
     document.addEventListener("copy", listener, false);
-    document.execCommand("copy");
     setTimeout(_remove_listener.bind(null, listener), 0);
+    try { document.execCommand("copy"); } catch(e) {};
   };
 
   this.__defineGetter__("is_supported", function() { return _is_supported; });
