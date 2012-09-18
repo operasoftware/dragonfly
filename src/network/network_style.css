@@ -249,11 +249,6 @@
   width: 100%;
 }
 
-.network-detail-overlay .foldable
-{
-  padding: 6px 8px;
-}
-
 .network-detail-overlay .wrap /* that's .table.wrap */
 {
   display: block;
@@ -302,8 +297,7 @@
   background-image: url("../ui-images/icons/icon_view_raw.png");
 }
 
-.network-detail-overlay pre,
-.network-detail-overlay p
+.network-detail-overlay pre
 {
   margin: 0;
 }
@@ -327,7 +321,8 @@
   max-width: 100%;
 }
 
-.network-detail-overlay p
+.network-detail-overlay p,
+.network-detail-overlay .foldable
 {
   margin: 6px 8px;
 }
@@ -389,7 +384,7 @@
   margin: 7px 0 -8px 0;
 }
 
-.response-summary + div .header
+.network-detail-overlay .table > div:first-of-type .header
 {
   border-top-width: 1px;
 }

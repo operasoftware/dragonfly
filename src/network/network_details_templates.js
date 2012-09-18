@@ -172,8 +172,7 @@ templates._headline = function(is_response, is_unfolded)
   var headline = [
     "div",
       ["input",
-        "type", "button",
-        "class", is_unfolded ? "unfolded" : ""
+        "type", "button"
       ],
       is_response ? ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE
                   : ui_strings.S_NETWORK_REQUEST_DETAIL_REQUEST_TITLE,
