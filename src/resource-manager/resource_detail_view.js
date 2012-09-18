@@ -4,14 +4,15 @@
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceDetailView = function(id, name, container_class, html, default_handler) {
+cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger) {
   if (cls.ResourceDetailView.instance)
   {
     return cls.ResourceDetailView.instance;
   }
   cls.ResourceDetailView.instance = this;
 
-  this._service = new cls.ResourceManagerService(this);
+  this._service = new cls.ResourceManagerService(this, network_logger);
+
 
 	this.createView = function(container)
 	{
@@ -22,13 +23,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if(this.data)
       this.go_to_line(container,this.data);
 
-//    if (this.resource && this.resource.type in {'markup':1,})
-    {
-      //this.text_search.set_query_selector(".resource-detail-container");
-      this.text_search.update_search();
-    }
-
-		this.data = null;
+    this.text_search.update_search();
 	};
 
   this.create_disabled_view = function(container)
@@ -122,9 +117,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._tops = [];
     var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
     if (_ele)
-    {
       _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
-    }
   }
 
   this.go_to_line = function(container, data)
@@ -139,77 +132,51 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     }
   }
 
-	this.on_resource_data_bound = function(type, data)
-	{
-		var id = data[0];
-		var resource = this._service.get_resource(id);
-		if(resource)
-		{
-			resource.data = new cls.ResourceManager["1.0"].ResourceData( data );
-		}
-		return resource;
-	}.bind(this);
-
   this._show_resource_by_instance = function(resource)
   {
-      this.resource = resource;
-      if (resource && !resource.data)
-        resource.fetch_data(cls.ResourceDetailView.instance.update.bind(cls.ResourceDetailView.instance));
+    this.resource = resource;
+    if (!resource)
+      return;
+
+    this._service.highlight_resource(resource.id);
+
+    if (resource.data)
+      this.update();
+    else
+      this._show_resource_by_url(resource.url);
   }
 
   this._show_resource_by_id = function(id)
   {
-    var resource = this._service.get_resource(resource);
+    var resource = this._service.get_resource(id);
     this._show_resource_by_instance(resource);
   }
 
-  this._show_resource_url = function(url)
+  this._show_resource_by_url = function(url)
   {
     var resource = this._service.get_resource_for_url(url);
-    if (resource)
+    if (resource && resource.data)
       this._show_resource_by_instance(resource);
     else
-      new cls.ResourceRequest(url, this.show_resource.bind(this), this.data);
+      this._service.request_resource(url, this.show_resource.bind(this), this.data);
   }
 
   this.show_resource = function(resource, data)
   {
     this.data = data;
+    this.resource = resource;
 
-    if(resource instanceof cls.Resource)
+    if (resource instanceof cls.ResourceInfo)
       this._show_resource_by_instance(resource);
     else if (resource==Number(resource))
       this._show_resource_by_id(resource);
     else if (resource==String(resource))
-      this._show_resource_url(resource);
+      this._show_resource_by_url(resource);
+    else
+      this.update();
 
-    this.update();
-    window.UI.instance.show_view( window.views.resource_detail_view.id );
+    window.UI.instance.show_view( this.id );
   }
-
-
-  //  WIP
-  this.show_resource_group = function(resourceGroup)
-	{
-    return;
-
-		this.resources = [];
-		for( var i=0; i<group.ids.length; i++)
-		{
-			var id = group.ids[i];
-			var resource = this._service.get_resource(id);
-			if (resource)
-			{
-				this.resources.push( resource );
-				if (!resource.data)
-				{
-					var responseType = cls.ResourceUtil.type_to_content_mode(resource.type);
-					this._service.fetch_resource_data( this.on_resource_data_bound, id, responseType );
-				}
-			}
-		}
-		this.update();
-	}
 
   this.init(id, name, container_class, html, default_handler);
 };
@@ -246,7 +213,11 @@ cls.ResourceDetailView.create_ui_widgets = function()
   ActionBroker.
     get_instance().
     get_global_handler().
-      register_shortcut_listener("resource-text-search", cls.Helpers.shortcut_search_cb.bind(text_search));
+      register_shortcut_listener
+      (
+        "resource-text-search",
+        cls.Helpers.shortcut_search_cb.bind(text_search)
+      );
 
   var on_view_created = function(msg)
   {

@@ -17,7 +17,7 @@ cls.ResourceDisplayBroker = function()
     if (manager && view)
     {
       if (line)
-        data.lines=[line];
+        data.lines = [line];
 
       view.show_resource(resource, data);
 
@@ -28,7 +28,8 @@ cls.ResourceDisplayBroker = function()
 
   this.show_resource_for_id = function(id, line)
   {
-    this._show_resource(id, line);
+    if (!this._show_resource(id, line))
+      window.open(url);
   }
 
   this.show_resource_for_url = function(url, line)
@@ -54,10 +55,10 @@ cls.ResourceDisplayBroker = function()
     else if (url)
     {
       //  resolve the URL based on that of the runtime if we only have a relative path
-      if (url[0].indexOf('://') == -1)
+      if (url.indexOf('://') == -1)
       {
         rt_id = ele.get_attr('parent-node-chain', 'rt-id');
-        if(rt_id)
+        if (rt_id)
           url = window.helpers.resolveURLS(runtimes.getURI(rt_id), url);
       }
       this.show_resource_for_url(url, line);

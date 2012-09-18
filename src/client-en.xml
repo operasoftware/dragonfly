@@ -221,6 +221,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/nodelistprototype.js"/>
 <script src="./lib/objectnamespace.js"/>
 <script src="./lib/operanamespace.js"/>
+<script src="./lib/functionprototype.js"/>
 <script src="./lib/datenamespace.js"/>
 <script src="./lib/stringprototype.js"/>
 <script src="./lib/stylesheetlistprototype.js"/>
@@ -521,12 +522,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
+<script src="./resource-manager/documentmanager.1.0.responses.listdocuments.js"/>
 <script src="./resource-manager/resourcemanager.1.2.events.onurlunload.js"/>
 <script src="./resource-manager/resourcemanager.1.2.responses.getresource.js"/>
 <script src="./resource-manager/resourcemanager.1.3.responses.createrequest.js"/>
-<script src="./resource-manager/resource_test_view.js"/>
+<script src="./resource-manager/resource_tree_view.js"/>
 <script src="./resource-manager/resource_detail_view.js"/>
-
 
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>

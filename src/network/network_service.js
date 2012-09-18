@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 cls.NetworkLogger = function()
 {
@@ -1041,14 +1041,10 @@ cls.NetworkLoggerEntryPrototype = function()
     // The first guess is made based on file extension. No response is needed for that.
     // The current response is updated though, at the time it will be the correct one.
     // Multiple responses can get different types in this way.
-    if (!cls || !cls.ResourceUtil)
+    if (!cls || !cls.ResourceUtil || !cls.ResourceUtil.guess_type)
       return;
 
-    // For "application/octet-stream" we check by extension even though we have a mime
-    if (!this.mime || this.mime.toLowerCase() === "application/octet-stream")
-      this.type = cls.ResourceUtil.extension_type_map[this.extension];
-    else
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    this.type = cls.ResourceUtil.guess_type(this.mime, this.extension);
 
     if (this._current_response)
     {
@@ -1322,10 +1318,19 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
+  this.id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
+
+  var lastResponse = entry.requests_responses && entry.requests_responses.last;
+  if (lastResponse && lastResponse.responsebody)
+  {
+    this.data = lastResponse.responsebody;
+    if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
+      this.data.meta = cls.ResourceUtil.get_meta_data(this);
+  }
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
