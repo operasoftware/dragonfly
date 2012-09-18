@@ -119,9 +119,10 @@
   border-bottom-width: 1px;
 }
 
-.network-data-container .sortable-table > tr.header:first-child
+.network-data-container .sortable-table > tr.table-header:first-child
 {
   border-width: 0;
+  background: none;
   color: #808080;
 }
 
@@ -237,11 +238,9 @@
   top: 3px;
 }
 
-.network-detail-overlay
+.network-detail-overlay > .table
 {
-  height: 100%;
   box-sizing: border-box;
-  overflow: auto;
 }
 
 .network-detail-overlay .table
@@ -272,7 +271,7 @@
 
 .network-detail-overlay .header-token-type-name
 {
-  color: #5555aa;
+  color: #cc0033;
 }
 
 .network-detail-overlay .http-token-type-boundary
@@ -293,13 +292,12 @@
   background-image: url("../ui-images/icons/icon_wrap_text.png");
 }
 
-.network-detail-overlay\.view-raw::before
+.network-detail-overlay\.view-parsed::before
 {
-  background-image: url("../ui-images/icons/icon_hidedefaults.png");
+  background-image: url("../ui-images/icons/icon_view_raw.png");
 }
 
-.network-detail-overlay pre,
-.network-detail-overlay p
+.network-detail-overlay pre
 {
   margin: 0;
 }
@@ -323,9 +321,10 @@
   max-width: 100%;
 }
 
-.network-detail-overlay p
+.network-detail-overlay p,
+.network-detail-overlay .foldable
 {
-  margin: 5px;
+  margin: 6px 8px;
 }
 
 .network-detail-overlay table
@@ -357,14 +356,12 @@
   white-space: nowrap;
 }
 
-.network-detail-overlay th .not-content
+.network-detail-overlay .not-content
 {
-  padding: 0px;
+  padding: 0;
   font-style: normal;
-  border-collapse: collapse;
   color: #808080;
   cursor: default;
-  display: block;
   font-weight: normal;
 }
 
@@ -372,7 +369,7 @@
 .network-detail-overlay td:first-child
 {
   width: 20%;
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .network-detail-overlay tr:nth-child(even)
@@ -387,7 +384,8 @@
   margin: 7px 0 -8px 0;
 }
 
-.response-summary + div .header {
+.network-detail-overlay .table > div:first-of-type .header
+{
   border-top-width: 1px;
 }
 

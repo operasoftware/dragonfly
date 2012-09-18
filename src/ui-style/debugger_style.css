@@ -419,10 +419,14 @@ container > div > header,
                                     rgba(255, 255, 255, 0.45) 100%);
 }
 
-.unfolded + div header,
-.unfolded + div .header
+div.unfolded
 {
-  border-top-width: 1px;
+  border-bottom: 1px solid #ccc;
+}
+
+div.unfolded:last-child
+{
+  border-bottom-width: 0;
 }
 
 category header:hover input
@@ -439,11 +443,6 @@ header input,
   height: 17px;
   -o-transition: 0.2s;
   transition: 0.2s;
-}
-
-.unfolded .foldable
-{
-  padding: 5px;
 }
 
 .unfolded > header input,
