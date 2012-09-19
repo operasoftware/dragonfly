@@ -359,6 +359,8 @@
 .network-detail-overlay .not-content
 {
   padding: 0;
+  font: menu;
+  font-size: 11px;
   font-style: normal;
   color: #808080;
   cursor: default;
