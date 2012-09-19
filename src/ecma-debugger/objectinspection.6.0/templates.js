@@ -294,7 +294,7 @@
               ret.push(STYLE_EXPANDED);
             ret.push(
               "/>" +
-              "<key " + (has_match ? "" : " class='no-match'") +
+              "<key " + (has_match ? "" : " class='no-match' ") +
                         "data-spec='dom#" + esc_name + "'" + editable(prop) +
                         ">" + esc_name + "</key>" +
               (esc_name ? " " : "") +
