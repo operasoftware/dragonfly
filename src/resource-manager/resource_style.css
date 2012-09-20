@@ -273,37 +273,12 @@ a.external:hover
 {/* note: same color as the .string class */
   color:#a54;
 }
-/*
-.children-expand-collapse
-{
-  display:block;
-  margin-left:16px;
-}
-.collapsed .children-expand-collapse
-{
-  display:none;
-}
-.item-expand-collapse
-{
-  line-height:17px;
-}
-.header-expand-collapse:hover
-{
-  background-color:#D4E3F4;
-}
-.children-expand-collapse, .header-expand-collapse
-{
-  white-space:nowrap;
-}
-*/
 
 /* ------------------ */
 .resource-tree
 {
- padding:8px;
- height:100%;
- box-sizing:border-box;
- overflow:auto;
+  height:100%;
+  overflow:auto;
 }
 .resource-tree li > h2
 {
@@ -328,9 +303,11 @@ a.external:hover
 /* zebra resources */
 .resource-tree-windows
 {
+  width:100%;
   background-image: linear-gradient(0deg, rgba(0,0,0,.031) 50%, transparent 0%);
   background-size: 100% 36px;
   background-repeat:repeat;
+  display:table;
 }
 
 .resource-tree li > h2:hover
@@ -346,7 +323,7 @@ a.external:hover
 
 span.resource-tree-count
 {
-  color:#666;
+  color:#999;
 }
 span.resource-tree-window-label,
 span.resource-tree-document-label,
@@ -361,7 +338,7 @@ span.resource-tree-group-label
   background-size:16px 16px;
   background-image:url(../ui-images/type_storage.png);
 }
-h2.resource-tree-group/* > span*/
+h2.resource-tree-group
 {
   text-transform:capitalize;
 }

@@ -23,8 +23,8 @@ templates.resource_tree =
 				this._depth++;
 
 				var tpl = original.apply(this, arguments);
-				if(tpl && tpl[1] && tpl[1][0] == 'h2')
-					tpl[1].push( 'style', 'padding-left:'+ this._depth*18 +'px;' );
+				if (tpl && tpl[1] && tpl[1][0] == 'h2')
+					tpl[1][1].push( 'style', 'margin-left:'+ this._depth*18 +'px;' );
 
 				this._depth--;
 
@@ -72,9 +72,12 @@ templates.resource_tree =
 	{
 		//if (context.windowList.length)
 			return (
-			['ul',
-				context.windowList.map(this.window.bind(this, context)),
-				'class','resource-tree-windows'
+				['div','',
+					['ul',
+						context.windowList.map(this.window.bind(this, context)),
+						'class','resource-tree-windows'
+					],
+					'class','resource-tree'
 			]);
 	},
 
@@ -217,7 +220,7 @@ templates.resource_tree =
 					'class','resource-tree-resource-label'
 				],
 				'handler','resource-detail',
-				'data-resource-id',''+r.id,
+				'data-resource-id',String(r.id),
 				'class','resource-tree-resource'
 					+(r.sameOrigin?'':' resource-different-origin')
 					+(context.selectedResourceID==r.id?' resource-highlight':'')
