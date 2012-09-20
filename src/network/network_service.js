@@ -1210,8 +1210,6 @@ cls.NetworkLoggerRequest = function(entry)
   this.request_body = null;
   this.boundary = "";
   this.was_responded_to = false;
-  // Set from template code, when first needed:
-  this.header_tokens = null;
 };
 
 cls.NetworkLoggerRequestPrototype = function()
@@ -1264,7 +1262,6 @@ cls.NetworkLoggerResponse = function(entry)
   this.response_headers = null;
   this.response_headers_raw = null;
   this.responsebody = null;
-  this.header_tokens = null; // This is set from template code, when it's first needed
   this.is_response = true; // Simpler for recognizing than dealing with comparing the constructor
   this.saw_responsefinished = false;
 

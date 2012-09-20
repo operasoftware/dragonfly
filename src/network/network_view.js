@@ -867,9 +867,9 @@ cls.NetworkDetailOverlayViewPrototype = function()
     return templates.network.details(entry);
   };
 
-  this._on_toggle_expand_request_response = function(event)
+  this._on_toggle_expand_request_response = function(event, target)
   {
-    var key = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var key = target.dataset.isResponse ? "expand-responses" : "expand-requests";
     var set_active = !settings["network-detail-overlay"].get(key);
     settings["network-detail-overlay"].set(key, set_active);
     this.needs_instant_update = true;
