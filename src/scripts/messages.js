@@ -156,6 +156,13 @@ var messages = new function()
    */
   this.addListener = function(key, cb)
   {
+    if (!cb)
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      "No callback function for message listener provided: " + key);
+      return;
+    }
+
     if (__listeners[key])
     {
       if (__listeners[key].indexOf(cb) == -1)
