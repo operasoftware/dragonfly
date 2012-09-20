@@ -340,6 +340,7 @@
 .network-detail-overlay .wrap table
 {
   width: 100%;
+  table-layout: fixed;
 }
 
 .network-detail-overlay td,
