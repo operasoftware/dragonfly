@@ -222,6 +222,10 @@
   text-overflow:ellipsis;
   color:#000;
 }
+.resource-detail-error
+{
+  color:red;
+}
 a.external
 {
   cursor: pointer;

@@ -1323,6 +1323,7 @@ cls.ResourceInfo = function(entry)
   this.document_id = entry.document_id;
   this.type = entry.type;
   this.is_unloaded = entry.is_unloaded;
+  this.responsecode = entry.current_responsecode;
 
   var lastResponse = entry.requests_responses && entry.requests_responses.last;
   if (lastResponse && lastResponse.responsebody)

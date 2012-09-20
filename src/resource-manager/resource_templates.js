@@ -291,19 +291,22 @@ templates.resource_detail =
 	{
 		var info =
 		{
-			'human_url':resource.short_distinguisher,
+			'humanUrl':resource.short_distinguisher,
+			'responseCode':resource.responsecode+' '+cls.ResourceUtil.http_status_codes[resource.responsecode],
 			'type':resource.type,
 			'mimeType':resource.data.mimeType,
 			'size':resource.size||resource.data.contentLength||resource.data.content.length,
 			'characterEncoding':resource.encoding||resource.data.characterEncoding
 		};
 
+		var isError = resource.responsecode && ![200,304].contains(resource.responsecode);
+
 		return (
 		['div',
 			['span',
 				[
 					'a',
-					info.human_url,
+					info.humanUrl,
 					'href',resource.url,
 					'target','_blank',
 					'class','external'
@@ -311,8 +314,9 @@ templates.resource_detail =
 				'class','resource-detail-overview-url'
 			],
 			['span',
+				(isError?info.responseCode+' - ':'')+
 				info.mimeType+' treated as '+info.type +' '+[resource.data.meta],
-				'class','resource-detail-overview-type'
+				'class','resource-detail-overview-type'+(isError?' resource-detail-error':'')
 			],
 			['span',
 				cls.ResourceUtil.bytes_to_human_readable(info.size)+(info.characterEncoding&&(' in '+info.characterEncoding)),
