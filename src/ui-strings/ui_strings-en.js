@@ -601,7 +601,7 @@ ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
 ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 
 /* DESC: Button label to close an overlay. */
-ui_strings.S_CLOSE_OVERLAY_VIEW = "Close overlay";
+ui_strings.S_CLOSE_OVERLAY_VIEW = "Close";
 
 /* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
 ui_strings.S_COLOR_NOTATION = "Color format";
@@ -1300,7 +1300,7 @@ ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieve
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
 
 /* DESC: Name of networks wrap-lines setting */
-ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Wrap long lines";
+ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Line wrap";
 
 /* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";

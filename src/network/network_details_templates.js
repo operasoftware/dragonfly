@@ -201,14 +201,14 @@ templates._request_headers = function(req, do_raw)
       return this._pre(this.headers_tonkenized(header_tokens, false));
     }
     return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
-            "class", templates.UI_CLASSNAME];
+            "class", templates.UI_CLASSNAMES];
   }
 
   var ret = [];
   if (!req.request_headers)
   {
     ret.push(["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
-              "class", templates.UI_CLASSNAME]);
+              "class", templates.UI_CLASSNAMES]);
   }
   else
   {
@@ -286,7 +286,7 @@ templates._response_headers = function(resp, do_raw)
       return this._pre(this.headers_tonkenized(header_tokens, true));
     }
     return ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
-            "class", templates.UI_CLASSNAME];
+            "class", templates.UI_CLASSNAMES];
   }
 
   var ret = resp.response_headers && resp.response_headers.map(this._headers_pseudo_raw);
@@ -302,7 +302,7 @@ templates._response_headers = function(resp, do_raw)
   if (!ret)
   {
     ret = ["span", ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL,
-           "class", templates.UI_CLASSNAME];
+           "class", templates.UI_CLASSNAMES];
   }
   return templates._pre(ret);
 };
@@ -364,7 +364,7 @@ templates._request_body = function(req, do_raw)
         ret.push(part.content.stringData);
       else
         ret.push(["span", ui_strings.S_NETWORK_N_BYTE_BODY.replace("%s", part.contentLength),
-                               "class", templates.UI_CLASSNAME]);
+                               "class", templates.UI_CLASSNAMES]);
 
       if (use_raw_boundary && part === req.request_body.partList.last)
         raw_boundary += "--";
@@ -388,8 +388,8 @@ templates._request_body = function(req, do_raw)
       var rows = [];
       rows.push([
         "tr",
-          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME, "class", templates.UI_CLASSNAME]],
-          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE, "class", templates.UI_CLASSNAME]]
+          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_NAME, "class", templates.UI_CLASSNAMES]],
+          ["th", ["span", ui_strings.S_LABEL_NETWORK_POST_DATA_VALUE, "class", templates.UI_CLASSNAMES]]
         ]
       );
       rows.extend(parts.map(this.param_cells));
@@ -411,12 +411,12 @@ templates._request_body = function(req, do_raw)
         if (req.request_body.mimeType)
         {
           ret = ["span", ui_strings.S_NETWORK_CANT_DISPLAY_TYPE.replace("%s", req.request_body.mimeType),
-                 "class", templates.UI_CLASSNAME];
+                 "class", templates.UI_CLASSNAMES];
         }
         else
         {
           ret = ["span", ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE,
-                 "class", templates.UI_CLASSNAME];
+                 "class", templates.UI_CLASSNAMES];
         }
       }
     }
@@ -470,7 +470,7 @@ templates._response_body = function(resp, do_raw, is_last_response)
       {
         ret.push(
           ["span", ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL.replace("%s", resp.logger_entry_mime),
-           "class", templates.UI_CLASSNAME]
+           "class", templates.UI_CLASSNAMES]
         );
       }
     }
