@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Header Tokenizer</title>
+<link rel="stylesheet" href="qunit/qunit.css" media="screen">
+<script src="qunit/qunit.js"></script>
+<script src="../src/lib/elementprototype.js"></script>
+<script src="../src/syntaxhighlight/http-header/tokenizer.js"></script>
+<script>
+window.onload = function() {
+
+var token_template = function(token)
+{
+  var TYPE = 0;
+  var STR = 1;
+  return ["span", token[STR], "class", "type-" + token[TYPE]]
+}
+
+var get_tokens = function(raw_headers)
+{
+  var tokens = [];
+  var tokenizer = new cls.HTTPHeaderTokenizer();
+
+  tokenizer.tokenize(raw_headers, function(token_type, token)
+  {
+    tokens.push([token_type, token]);
+  });
+
+  return tokens;
+};
+
+var raw_headers = "GET /dherzog/ HTTP/1.1 \n\
+User-Agent: Opera/9.80 (Macintosh; Intel Mac OS X 10.7.4; U; en) Presto/2.10.289 Version/12.00\n\
+Host: homes.oslo.osa\n\
+Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\n\
+Accept-Language: en,en-US;q=0.9,de;q=0.8,ja;q=0.7,fr;q=0.6,es;q=0.5,it;q=0.4,pt;q=0.3,pt-PT;q=0.2,nl;q=0.1,sv;q=0.1,nb;q=0.1,da;q=0.1,fi;q=0.1,ru;q=0.1,pl;q=0.1,zh-CN;q=0.1,zh-TW;q=0.1,ko;q=0.1,ar;q=0.1,cs;q=0.1,hu;q=0.1,tr;q=0.1,ca;q=0.1,el;q=0.1,he;q=0.1,hr;q=0.1,ro;q=0.1,sk;q=0.1,th;q=0.1,uk;q=0.1\
+Accept-Encoding: gzip, deflate\n\
+Authorization: Basic XXX==\n\
+Referer: https://homes.oslo.osa/dherzog/\n\
+Cache-Control: no-cache\n\
+Connection: Keep-Alive";
+
+var raw_headers2 = "GET /dherzog/ HTTP/1.1\n\
+User-Agent:Opera/9.80 (Macintosh; Intel Mac OS X 10.7.4; U; en) Presto/2.10.289 Version/12.00\n\
+Host:homes.oslo.osa\n\
+Accept:text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\n\
+Accept-Language:en,en-US;q=0.9,de;q=0.8,ja;q=0.7,fr;q=0.6,es;q=0.5,it;q=0.4,pt;q=0.3,pt-PT;q=0.2,nl;q=0.1,sv;q=0.1,nb;q=0.1,da;q=0.1,fi;q=0.1,ru;q=0.1,pl;q=0.1,zh-CN;q=0.1,zh-TW;q=0.1,ko;q=0.1,ar;q=0.1,cs;q=0.1,hu;q=0.1,tr;q=0.1,ca;q=0.1,el;q=0.1,he;q=0.1,hr;q=0.1,ro;q=0.1,sk;q=0.1,th;q=0.1,uk;q=0.1\
+Accept-Encoding:gzip, deflate\n\
+Authorization:Basic XXX==\n\
+Referer:https://homes.oslo.osa/dherzog/\n\
+Cache-Control:no-cache\n\
+Connection:Keep-Alive";
+
+var raw_headers3 = "GET /dherzog/ HTTP/1.1\n\
+User-Agent:Opera/9.80 (Macintosh; Intel Mac OS X 10.7.4; U; en) Presto/2.10.289 Version/12.00\n\
+Host:homes.oslo.osa\n\
+Accept:text/html, application/xml;q=0.9,\n\
+ ooh-this-is-continued, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\n\
+Accept-Language:en,en-US;q=0.9,de;q=0.8,ja;q=0.7,fr;q=0.6,es;q=0.5,it;q=0.4,pt;q=0.3,pt-PT;q=0.2,nl;q=0.1,sv;q=0.1,nb;q=0.1,da;q=0.1,fi;q=0.1,ru;q=0.1,pl;q=0.1,zh-CN;q=0.1,zh-TW;q=0.1,ko;q=0.1,ar;q=0.1,cs;q=0.1,hu;q=0.1,tr;q=0.1,ca;q=0.1,el;q=0.1,he;q=0.1,hr;q=0.1,ro;q=0.1,sk;q=0.1,th;q=0.1,uk;q=0.1\
+Accept-Encoding:gzip, \n\
+  \t  or even more continued\n\
+Authorization:Basic XXX==\n\
+Referer:https://homes.oslo.osa/dherzog/\n\
+Cache-Control:no-cache\n\
+Connection:Keep-Alive";
+
+test("Tokenized headers",
+  function()
+  {
+    var headers = [raw_headers, raw_headers2, raw_headers3];
+    headers.forEach(function(header_string){
+      var pre = document.body.firstElementChild.render(["pre"])
+      pre.render(get_tokens(header_string).map(token_template));
+      deepEqual(pre.textContent, header_string);
+    }); 
+  }
+)
+}
+</script>
+<body>
+  <pre style="display: none"></pre>
+  <h1 id="qunit-header">Dragonfly - Command Processor</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+</body>
+</html>
+

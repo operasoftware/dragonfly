@@ -28,7 +28,7 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
 
   this._render_main_view = function(container)
   {
-    container.clearAndRender(templates.network_options_main(this._bypass_cache,
+    container.clearAndRender(templates.network.options_main(this._bypass_cache,
                                                             this._track_bodies,
                                                             this._headers,
                                                             this._overrides));
@@ -97,16 +97,24 @@ cls.NetworkOptionsView = function(id, name, container_class, html, default_handl
     this._headerele.releaseEvent('input');
   }.bind(this);
 
-  this._clear_header_overrides = function()
+  this._clear_header_overrides = function(headers_to_set)
   {
-    this._service.requestClearHeaderOverrides(null, []);
+    var tag = window.tag_manager.set_callback(this, this._handle_clear_header_overrides, [headers_to_set]);
+    this._service.requestClearHeaderOverrides(tag, []);
+  };
+
+  this._handle_clear_header_overrides = function(status, data, headers_to_set)
+  {
+    if (headers_to_set)
+    {
+      var args = [headers_to_set.map(function(header) { return [header.name, header.value]; })];
+      this._service.requestAddHeaderOverrides(null, args);
+    }
   };
 
   this._set_header_overrides = function(headers)
   {
-    this._clear_header_overrides();
-    var args = [headers.map(function(e) {return [e.name, e.value] })];
-    this._service.requestAddHeaderOverrides(null, args);
+    this._clear_header_overrides(headers);
   };
 
   this.required_services = ["resource-manager", "document-manager"];
