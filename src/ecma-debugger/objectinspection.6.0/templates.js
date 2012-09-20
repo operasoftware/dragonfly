@@ -378,7 +378,7 @@
                   "data-id='" + model.id + "' " +
                   (has_match ? "" : " class='no-match'") + ">" +
             "<input type='button' " +
-              "class='" + (model.scope_list_models ? "unfolded" : "") + "' >" +
+              "class='" + (model.scope_list_models ? "unfolded" : "") + "'/>" +
             name +
           "</header>"
       );

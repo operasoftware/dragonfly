@@ -368,15 +368,23 @@ window.cls.Helpers = function()
 
   this.prop = (function()
   {
-   var cache = {};
-   return function(prop)
-   {
-     return cache[prop] || (cache[prop] = function(obj)
-     {
-       return obj[prop];
-     });
-   };
+    var cache = {};
+    return function(prop)
+    {
+      return cache[prop] || (cache[prop] = function(obj)
+      {
+        return obj[prop];
+      });
+    };
   })();
+
+  this.eq = function(prop, val)
+  {
+    return function(obj)
+    {
+      return obj[prop] === val;
+    };
+  };
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)

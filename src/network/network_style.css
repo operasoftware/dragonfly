@@ -90,7 +90,8 @@
   content: " – ";
 }
 
-.network-log-url-list .not_requested
+.network_logger .not_requested
+.network-detail-overlay .not_requested
 {
   color: rgba(0, 0, 0, 0.5);
 }
@@ -101,25 +102,27 @@
 }
 
 .tooltip-container .error_response,
-.network-log-url-list .error_response
+.network_logger .error_response
+.network-detail-overlay .error_response
 {
-  color: #d2001c !important;
+  color: #d2001c;
 }
 
-.network-log-url-list .error_response.selected
+.network_logger .error_response.selected
 {
   color: #3d0008;
 }
 
 .network-log-url-list li:last-child,
 .network-graph-row:last-child
-{ 
+{
   border-bottom-width: 1px;
 }
 
-.network-data-container .sortable-table > tr.header:first-child
+.network-data-container .sortable-table > tr.table-header:first-child
 {
   border-width: 0;
+  background: none;
   color: #808080;
 }
 
@@ -198,7 +201,6 @@
 }
 
 /* Network log / Detail view */
-.network_logger .close-request-detail,
 .network_logger .close_incomplete_warning
 {
   width: 15px;
@@ -213,7 +215,6 @@
   position: absolute;
 }
 
-.network_logger .close-request-detail::before,
 .network_logger .close_incomplete_warning::before
 {
   content: "";
@@ -223,20 +224,12 @@
   background: transparent url("../ui-images/icons/icon_close_tab_small.png") 50% 50% no-repeat;
 }
 
-.network_logger .close-request-detail:active,
 .network_logger .close_incomplete_warning:active
 {
   background-color: rgba(0, 0, 0, 0.28);
   box-shadow: 0 1px #fff,
               inset 0 1px 1px rgba(0, 0, 0, 0.15),
               inset 0 0 4px rgba(0, 0, 0, 0.05);
-}
-.close-request-detail
-{
-  position: absolute;
-  left: 12px;
-  top: 7px;
-  cursor: default;
 }
 
 .network_logger .close_incomplete_warning
@@ -245,103 +238,154 @@
   top: 3px;
 }
 
-.network_logger .resize-request-detail
+.network-detail-overlay > .table
 {
-  position: absolute;
-  height: 100%;
-  width: 12px;
-  left: -6px;
-  cursor: col-resize;
-}
-
-.network-details-container .close-request-detail:active
-{
-  background-color: #cacaca;
-}
-
-.network-details-container
-{
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  z-index: 2;
-  left: 120px;
-}
-
-.network_logger .request-details
-{
-  overflow: auto;
-  height: 100%;
   box-sizing: border-box;
-  padding: 27px 20px 37px 0;
-  background-color: #fff;
-  /* using border-left instead of padding-left to keep the 
-     space for the close button when scrolling horizontally */
-  border-left: 28px solid transparent;
-  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.39),
-              0 2px 2px 1px rgba(0, 0, 0, 0.28),
-              -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+.network-detail-overlay .table
+{
+  display: table;
+  width: 100%;
+}
+
+.network-detail-overlay .wrap /* that's .table.wrap */
+{
+  display: block;
+}
+
+.method-and-url
+{
+  white-space: pre;
+}
+
+.network-detail-overlay .wrap .method-and-url
+{
+  word-wrap: break-word;
+}
+
+.network-detail-overlay .header-token-type-first_line_part
+{
+  font-weight: bold;
+}
+
+.network-detail-overlay .header-token-type-name
+{
+  color: #cc0033;
+}
+
+.network-detail-overlay .http-token-type-boundary
+{
+  color: #7E7E7E;
 }
 
 .network_logger .network-summary
 {
-  clear: both;
   text-align: center;
-}
-
-.network_logger .network-summary div
-{
-  text-align: center;
-  display: inline-block;
   font-size: 1.4em;
   margin: 18px 0;
   color: #808080;
 }
 
-.network-details-container pre,
-.network-details-container p
+.network-detail-overlay\.wrap-detail-view::before
+{
+  background-image: url("../ui-images/icons/icon_wrap_text.png");
+}
+
+.network-detail-overlay\.view-parsed::before
+{
+  background-image: url("../ui-images/icons/icon_view_raw.png");
+}
+
+.network-detail-overlay pre
 {
   margin: 0;
 }
 
-.network-details-container img.network-body
+.network-detail-overlay .wrap pre,
+.network-detail-overlay .wrap p,
+.network-detail-overlay .wrap td
 {
-  margin-top: 2em;
+  word-wrap: break-word;
+  white-space: pre;
 }
 
-.network-details-container table
+.network-detail-overlay .wrap td
+{
+  /* not entirely sure why only pre-wrap helps here */
+  white-space: pre-wrap;
+}
+
+.network-detail-overlay .wrap img
+{
+  max-width: 100%;
+}
+
+.network-detail-overlay p,
+.network-detail-overlay .foldable
+{
+  margin: 6px 8px;
+}
+
+.network-detail-overlay table
 {
   border-collapse: collapse;
 }
 
-.network-details-container td,
-.network-details-container th
+.network-detail-overlay table
 {
-  vertical-align: top;
-  word-wrap: break-word;  
+  width: 1px;
 }
 
-.network-details-container th
+.network-detail-overlay .wrap table
+{
+  width: 100%;
+  table-layout: fixed;
+}
+
+.network-detail-overlay td,
+.network-detail-overlay th
+{
+  vertical-align: top;
+  padding: 4px 10px;
+  border-right: 1px solid #fff;
+}
+
+.network-detail-overlay th
 {
   text-align: left;
-  padding-right: 30px;
-  width: 140px;
   white-space: nowrap;
 }
 
-.network-details-container hr
+.network-detail-overlay th:first-child,
+.network-detail-overlay td:first-child
 {
-  border: none;
-  border-top: 1px solid #a4a4a4;
+  width: 20%;
+  padding-left: 0;
 }
 
-.network-details-container h2,
+.network-detail-overlay tr:nth-child(even)
+{
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.network-detail-overlay hr
+{
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 7px 0 -8px 0;
+}
+
+.network-detail-overlay .table > div:first-of-type .header
+{
+  border-top-width: 1px;
+}
+
 .request-crafter h2,
 .network-options h2
 {
   font-size: 125%;
-  margin: 15px 0 10px 0;
+  padding: 10px 0 5px;
 }
 
 .network_logger .network-main-container .sortable-table .network-graph-column
@@ -416,6 +460,7 @@
 .network-tooltip-container table
 {
   border-collapse: collapse;
+  width: 100%;
 }
 
 .network-tooltip-container td
@@ -466,7 +511,7 @@
   border-radius: 3px;
 }
 
-/* the value of the padding property of this selector 
+/* the value of the padding property of this selector
    is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
@@ -548,11 +593,4 @@
 {
   width: 100%;
   margin: 10px 0;
-}
-
-pre.network-body
-{
-  /* work-around CORE-46966: Big pre element breaks layout in a table */
-  float: left;
-  margin-right: -10000000px;
 }
