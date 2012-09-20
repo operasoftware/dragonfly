@@ -6,6 +6,8 @@
     */
   this.id = id;
 
+  this.is_enabled = true;
+
   /**
     * To handle a single action.
     * Returning false (as in === false) will cancel the event
