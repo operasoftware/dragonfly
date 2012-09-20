@@ -606,6 +606,9 @@ ui_strings.S_CLEAR_NETWORK_LOG = "Clear network log";
 /* DESC: Close command line window */
 ui_strings.S_CLOSE_COMMAND_LINE = "Close console";
 
+/* DESC: Button label to close an overlay. */
+ui_strings.S_CLOSE_OVERLAY_VIEW = "Close";
+
 /* DESC: Setting for changing the color notation (Hex, RGB, HSL) */
 ui_strings.S_COLOR_NOTATION = "Color format";
 
@@ -1260,11 +1263,14 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE = "None";
 /* DESC: Title of global header overrides section in global network settings */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_TITLE = "Global header overrides";
 
-/* DESC: Title of request body section when the body is multipart-encoded */
-ui_strings.S_NETWORK_MULTIPART_REQUEST_TITLE = "Request - multipart";
+/* DESC: Explanation about why a network entry doesn't have request data: General */
+ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
+
+/* DESC: Name of networks raw-view setting, shows requests and responses parsed as opposed to raw */
+ui_strings.S_NETWORK_PARSED_VIEW_LABEL = "Show in parsed mode";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
 ui_strings.S_NETWORK_REQUEST = "Request";
@@ -1293,11 +1299,14 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
-/* DESC: Explanation about why a network requests lacks headers. */
+/* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
 
 /* DESC: Unknown mime type for content */
 ui_strings.S_NETWORK_UNKNOWN_MIME_TYPE = "MIME type not known for request data";
+
+/* DESC: Name of networks wrap-lines setting */
+ui_strings.S_NETWORK_WRAP_LINES_LABEL = "Line wrap";
 
 /* DESC: The string "None" used wherever there's an absence of something */
 ui_strings.S_NONE = "None";

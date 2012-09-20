@@ -2005,6 +2005,7 @@ SpecLinks.specs = {
     "Authorization": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.8",
     "Cache-Control": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9",
     "Connection": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.10",
+    "Content-Disposition": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1",
     "Content-Encoding": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11",
     "Content-Language": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.12",
     "Content-Length": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13",
