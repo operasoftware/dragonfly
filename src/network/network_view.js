@@ -478,9 +478,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
             var is_paused = ctx.is_paused;
             var pause = settings.network_logger.get(message.key);
             if (is_paused && !pause)
-              this.network_logger.unpause();
+              ctx.unpause();
             else if (!is_paused && pause)
-              this.network_logger.pause();
+              ctx.pause();
           }
         }
         else if (message.key === "network-profiler-mode")
@@ -609,6 +609,9 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_resource_update_bound = function(message)
   {
+    if (message.is_paused)
+      return;
+
     if (message.id)
     {
       this._last_updated_entry = message.id;

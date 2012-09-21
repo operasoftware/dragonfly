@@ -580,7 +580,7 @@ cls.RequestContextPrototype = function()
         window_context.entry_ids.push(id);
     }
     logger_entry.update(eventname, event);
-    this.post_on_context_or_logger("resource-update", {id: logger_entry.id});
+    this.post_on_context_or_logger("resource-update", {id: logger_entry.id, is_paused: this.is_paused});
   };
 
   this.post_on_context_or_logger = function(name, body)
@@ -1149,7 +1149,8 @@ cls.NetworkLoggerEntryPrototype = function()
     {
       this.get_body_unsuccessful = this._current_response.logger_entry_get_body_unsuccessful = true;
     }
-    this.post_on_context_or_logger("resource-update", {id: this.id});
+    // todo: The entry doesn't know the context here. Maybe handle this entirely on the context?
+    // ctx.post_on_context_or_logger("resource-update", {id: this.id, is_paused: this.is_paused});
   };
 
   this.__defineGetter__("duration", function()
