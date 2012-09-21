@@ -1366,9 +1366,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       }
       else if (window.services.exec && window.services.exec.is_implemented)
       {
-        var msg = [[["reload",
-                     null,
-                     window.window_manager_data.get_debug_context()]]];
+        var action_list = ["reload", null, window_id];
+        var msg = [[action_list]];
         window.services.exec.requestExec(cls.TagManager.IGNORE_RESPONSE, msg);
       }
     }
