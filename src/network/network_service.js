@@ -11,7 +11,7 @@ cls.NetworkLogger = function()
   {
     // ids is an optional array of entry ids.
     var ctx = this.get_logger_context();
-    var entries = ctx.get_entries(true);
+    var entries = ctx && ctx.get_entries(true) || [];
     if (ids)
     {
       var filter_bound = this._filter_entries_by_list.bind(this, ids);
@@ -580,11 +580,7 @@ cls.RequestContextPrototype = function()
         window_context.entry_ids.push(id);
     }
     logger_entry.update(eventname, event);
-
-    if (!this.is_paused)
-    {
-      this.post_on_context_or_logger("resource-update", {id: event.resourceID});
-    }
+    this.post_on_context_or_logger("resource-update", {id: logger_entry.id});
   };
 
   this.post_on_context_or_logger = function(name, body)
@@ -1153,7 +1149,7 @@ cls.NetworkLoggerEntryPrototype = function()
     {
       this.get_body_unsuccessful = this._current_response.logger_entry_get_body_unsuccessful = true;
     }
-    window.messages.post("network-resource-updated", {id: this.resource_id});
+    this.post_on_context_or_logger("resource-update", {id: this.id});
   };
 
   this.__defineGetter__("duration", function()
