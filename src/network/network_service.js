@@ -1,7 +1,25 @@
 "use strict";
 
 cls.NetworkLogger = function()
-{
+{  
+  this._filter_entries_by_list = function(ids, entry)
+  {
+    return ids.contains(entry.id);
+  }
+
+  this.get_resources = function(ids)
+  {
+    // ids is an optional array of entry ids.
+    var ctx = this.get_logger_context();
+    var entries = ctx.get_entries(true);
+    if (ids)
+    {
+      var filter_bound = this._filter_entries_by_list.bind(this, ids);
+      entries = entries.filter(filter_bound);
+    }
+    return entries.map(function(entry) { return new cls.ResourceInfo(entry);} );
+  };
+
   this._get_matching_context = function(res_id)
   {
     var crafter_context = this._contexts[cls.NetworkLogger.CONTEXT_TYPE_CRAFTER];
@@ -380,23 +398,6 @@ cls.NetworkLogger = function()
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_resource_info = function(resource_id)
-  {
-    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
-    var entry = this._current_context &&
-                this._current_context.get_entries_with_res_id(resource_id).last;
-    if (entry && entry.current_response && entry.current_response.responsebody)
-    {
-      return new cls.ResourceInfo(entry);
-    }
-    return null;
-  };
-
-  this.get_request_context = function()
-  {
-    return this._current_context;
-  };
-
   this.init();
 };
 cls.NetworkLogger.CONTEXT_TYPE_LOGGER = 1;
@@ -404,10 +405,8 @@ cls.NetworkLogger.CONTEXT_TYPE_CRAFTER = 2;
 cls.NetworkLogger.CONTEXT_TYPE_MAIN = cls.NetworkLogger.CONTEXT_TYPE_LOGGER;
 
 
-cls.NetworkLogger.WindowContext = function(window_id, logger, context)
+cls.NetworkLogger.WindowContext = function(window_id)
 {
-  this._logger = logger;
-  this._context = context;
   this.id = window_id;
   this.saw_main_document = false;
   this.incomplete_warn_discarded = false;
@@ -416,22 +415,6 @@ cls.NetworkLogger.WindowContext = function(window_id, logger, context)
 
 cls.NetworkLogger.WindowContextPrototype = function()
 {
-  this._filter_entries = function(resource_ids, entry, index, entries)
-  {
-    // Skip an entry if an entry with the same resource_id is found further down the list.
-    var same_resource_id = window.helpers.eq("resource_id", entry.resource_id);
-    return this.entry_ids.contains(entry.id) &&
-           (!resource_ids || resource_ids.contains(entry.resource_id)) &&
-           entries.slice(index + 1).filter(same_resource_id).length == 0;
-  }
-
-  this.get_resources = function(resource_ids)
-  {
-    var filter_bound = this._filter_entries.bind(this, resource_ids);
-    var entries = this._context.get_entries().filter(filter_bound);
-    return entries.map(function(entry) { return new cls.ResourceInfo(entry);} );
-  };
-
   this.discard_incomplete_warning = function()
   {
     this.incomplete_warn_discarded = true;
@@ -498,10 +481,10 @@ cls.RequestContextPrototype = function()
     return this.get_entries().filter(this._filter_function_bound);
   };
 
-  this.get_entries = function()
+  this.get_entries = function(dismiss_paused)
   {
     var entries = this._logger_entries;
-    if (this.is_paused)
+    if (!dismiss_paused && this.is_paused)
       entries = this._paused_entries;
 
     return entries;
@@ -585,7 +568,11 @@ cls.RequestContextPrototype = function()
     if (eventname == "urlload")
     {
       var id = this._get_uid();
-      logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
+      logger_entry = new cls.NetworkLoggerEntry(id,
+                                                event.resourceID,
+                                                event.documentID,
+                                                event.windowID,
+                                                this.get_starttime());
       this._logger_entries.push(logger_entry);
       // Store the id in the list of entries in the window_context
       var window_context = event.windowID && this.get_window_context(event.windowID, true);
@@ -619,9 +606,8 @@ cls.RequestContextPrototype = function()
     var window_context = this._window_contexts.filter(helpers.eq("id", window_id))[0];
     if (!window_context && force)
     {
-      window_context = new cls.NetworkLogger.WindowContext(window_id, this._logger, this);
+      window_context = new cls.NetworkLogger.WindowContext(window_id);
       this._window_contexts.push(window_context);
-      this.post_on_context_or_logger("window-context-added", {"window-context": window_context});
     }
     return window_context;
   };
@@ -713,11 +699,12 @@ cls.RequestContextPrototype = function()
 
 cls.RequestContext.prototype = new cls.RequestContextPrototype();
 
-cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttime)
+cls.NetworkLoggerEntry = function(id, resource_id, document_id, window_id, context_starttime)
 {
   this.id = id;
   this.resource_id = resource_id;
   this.document_id = document_id;
+  this.window_id = window_id;
   this.context_starttime = context_starttime;
   this.url = null;
   this.human_url = "No URL";
@@ -1324,7 +1311,9 @@ cls.ResourceInfo = function(entry)
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
+  this.window_id = entry.window_id;
   this.is_unloaded = entry.is_unloaded;
+  this.id = entry.id;
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
