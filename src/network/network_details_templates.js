@@ -135,7 +135,7 @@ templates._request = function(request, is_last, do_raw)
   return [
     "div",
       show_header ? templates._headline(false, expanded) : [],
-      show_content ? 
+      show_content ?
         ["div",
           templates._request_headers(request, do_raw),
           templates._request_body(request, do_raw),

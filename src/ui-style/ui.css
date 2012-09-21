@@ -1,7 +1,9 @@
 ﻿/* Font stack defaults */
 viewport,
 .info-box,
-.ui-button {
+.ui-button,
+.ui-font
+{
   font-family: sans-serif;
   font: menu;
   font-style: normal;

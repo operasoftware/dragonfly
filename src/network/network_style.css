@@ -1,4 +1,4 @@
-/* Network log / Overview */
+﻿/* Network log / Overview */
 
 .network_logger
 {
@@ -340,6 +340,7 @@
 .network-detail-overlay .wrap table
 {
   width: 100%;
+  table-layout: fixed;
 }
 
 .network-detail-overlay td,
@@ -354,15 +355,6 @@
 {
   text-align: left;
   white-space: nowrap;
-}
-
-.network-detail-overlay .not-content
-{
-  padding: 0;
-  font-style: normal;
-  color: #808080;
-  cursor: default;
-  font-weight: normal;
 }
 
 .network-detail-overlay th:first-child,
