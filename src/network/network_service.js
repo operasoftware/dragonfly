@@ -716,8 +716,7 @@ cls.RequestContextPrototype = function()
     if (!entry.current_response)
     {
       // This means there wasn't a request, we add a "response" though because that's where that data lives.
-      // todo: illegal access..
-      entry.current_response = new cls.NetworkLoggerResponse(this);
+      entry.current_response = new cls.NetworkLoggerResponse(entry);
       entry.requests_responses.push(entry.current_response);
     }
 
