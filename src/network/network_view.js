@@ -869,7 +869,10 @@ cls.NetworkDetailOverlayViewPrototype = function()
       var entry = ctx.get_entry_from_filtered(parent_view.selected);
       if (entry)
       {
-        entry.check_to_get_body();
+        var get_body = entry.should_get_body();
+        if (get_body)
+          ctx.get_resource(entry);
+
         container.clearAndRender(this._render_details_view(entry));
         this.text_search.update_search();
         if (this._details_scroll_top)
