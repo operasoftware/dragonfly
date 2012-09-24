@@ -495,7 +495,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
                             window.app.profiles.HTTP_PROFILER : window.app.profiles.DEFAULT;
           var current_profile = settings.general.get("profile-mode");
           if (current_profile !== set_profile)
-            window.network_loggers.scope.enable_profile(set_profile);
+            window.services.scope.enable_profile(set_profile);
         }
         this.needs_instant_update = true;
         this.update();
