@@ -11,7 +11,7 @@ cls.NetworkLogger = function()
   {
     // ids is an optional array of entry ids.
     var ctx = this.get_logger_context();
-    var entries = ctx && ctx.get_entries(true) || [];
+    var entries = ctx && ctx.get_entries() || [];
     if (ids)
     {
       var filter_bound = this._filter_entries_by_list.bind(this, ids);
@@ -57,11 +57,6 @@ cls.NetworkLogger = function()
     type = type || cls.NetworkLogger.CONTEXT_TYPE_MAIN;
     this._contexts[type] = null;
     this.post("context-removed", {"context_type": type});
-  };
-
-  this.remove_logger_request_context = function()
-  {
-    return this._remove_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER);
   };
 
   this.remove_crafter_request_context = function()
@@ -430,6 +425,7 @@ cls.RequestContext = function(logger, is_main_context)
     is_blacklist: true
   };
   this.allocated_res_ids = [];
+  this._cleared_ids = [];
   this.is_paused = false;
   this.is_waiting_for_create_request = false;
   this._logger_entries = [];
@@ -456,6 +452,9 @@ cls.RequestContextPrototype = function()
 
   this._filter_function = function(item)
   {
+    if (this._cleared_ids.contains(item.id))
+      return false;
+
     var success = false;
     for (var i = 0, filter; filter = this._filters[i]; i++)
     {
@@ -478,16 +477,13 @@ cls.RequestContextPrototype = function()
 
   this.get_entries_filtered = function()
   {
-    return this.get_entries().filter(this._filter_function_bound);
+    var entries = this.is_paused ? this._paused_entries : this._logger_entries;
+    return entries.filter(this._filter_function_bound);
   };
 
-  this.get_entries = function(dismiss_paused)
+  this.get_entries = function()
   {
-    var entries = this._logger_entries;
-    if (!dismiss_paused && this.is_paused)
-      entries = this._paused_entries;
-
-    return entries;
+    return this._logger_entries;
   };
 
   this.get_entries_with_res_id = function(res_id)
@@ -574,6 +570,8 @@ cls.RequestContextPrototype = function()
                                                 event.windowID,
                                                 this.get_starttime());
       this._logger_entries.push(logger_entry);
+      if (this.after_clear)
+        this.after_clear = false;
       // Store the id in the list of entries in the window_context
       var window_context = event.windowID && this.get_window_context(event.windowID, true);
       if (window_context)
@@ -581,6 +579,13 @@ cls.RequestContextPrototype = function()
     }
     logger_entry.update(eventname, event);
     this.post_on_context_or_logger("resource-update", {id: logger_entry.id, is_paused: this.is_paused});
+  };
+
+  this.clear = function()
+  {
+    var helpers = window.helpers;
+    this._cleared_ids.extend(this.get_entries().map(helpers.prop("id")));
+    this.after_clear = true;
   };
 
   this.post_on_context_or_logger = function(name, body)

@@ -51,7 +51,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       this._container = container;
 
     var ctx = this.network_logger.get_logger_context();
-    if (ctx)
+    if (ctx && !ctx.after_clear)
     {
       if (this._type_filters)
         ctx.set_filters(this._type_filters);
@@ -433,8 +433,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clear_log_bound = function(evt, target)
   {
-    this.network_logger.remove_logger_request_context();
-    this.needs_instant_update = true;
+    // this.network_logger.remove_logger_request_context();
+    var ctx = this.network_logger.get_logger_context();
+    if (ctx)
+    {
+      ctx.clear();
+      this.needs_instant_update = true;
+      this.update();
+    }
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
