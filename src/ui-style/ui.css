@@ -1,7 +1,9 @@
 ﻿/* Font stack defaults */
 viewport,
 .info-box,
-.ui-button {
+.ui-button,
+.ui-font
+{
   font-family: sans-serif;
   font: menu;
   font-style: normal;
@@ -1845,5 +1847,6 @@ info {
 {
   position: absolute;
   border: 1px solid #999;
-  box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.5);
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.30),
+              0 2px 2px hsla(0, 0%, 0%, 0.25)
 }
