@@ -19,6 +19,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
   this._graph_tooltip_id = null;
   this._type_filters = null;
   this._last_render_speed = 0;
+  this._last_updated_entry = "";
   this.needs_instant_update = false;
   this.required_services = ["resource-manager", "document-manager"];
 
@@ -36,6 +37,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
         var min_render_delay = Math.max(MIN_RENDER_DELAY, this._last_render_speed * 2);
         if (timedelta < min_render_delay)
         {
+          this._last_updated_entry = "";
           this._render_timeout = window.setTimeout(this._create_delayed_bound,
                                                    min_render_delay - timedelta);
           return;
@@ -49,7 +51,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       this._container = container;
 
     var ctx = this.network_logger.get_logger_context();
-    if (ctx)
+    if (ctx && !ctx.after_clear)
     {
       if (this._type_filters)
         ctx.set_filters(this._type_filters);
@@ -62,6 +64,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       this._render_click_to_fetch_view(this._container);
     }
 
+    this._last_updated_entry = "";
     var now = Date.now();
     this._last_render_speed = now - started_rendering;
     this._rendertime = now;
@@ -165,7 +168,10 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     if (this.selected && ctx.get_entry_from_filtered(this.selected))
     {
       if (this._overlay.is_active)
-        this._overlay.update();
+      {
+        if (!this._last_updated_entry || this._last_updated_entry == this.selected)
+          this._overlay.update();
+      }
       else
         this._overlay.show();
 
@@ -426,8 +432,14 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
   this._on_clear_log_bound = function(evt, target)
   {
-    this.network_logger.clear_request_context();
-    this.needs_instant_update = true;
+    // this.network_logger.remove_logger_request_context();
+    var ctx = this.network_logger.get_logger_context();
+    if (ctx)
+    {
+      ctx.clear();
+      this.needs_instant_update = true;
+      this.update();
+    }
   }.bind(this);
 
   this._on_close_incomplete_warning_bound = function(evt, target)
@@ -465,12 +477,16 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       {
         if (message.key === "pause")
         {
-          var is_paused = this.network_logger.is_paused;
-          var pause = settings.network_logger.get(message.key);
-          if (is_paused && !pause)
-            this.network_logger.unpause();
-          else if (!is_paused && pause)
-            this.network_logger.pause();
+          var ctx = this.network_logger.get_logger_context();
+          if (ctx)
+          {
+            var is_paused = ctx.is_paused;
+            var pause = settings.network_logger.get(message.key);
+            if (is_paused && !pause)
+              ctx.unpause();
+            else if (!is_paused && pause)
+              ctx.pause();
+          }
         }
         else if (message.key === "network-profiler-mode")
         {
@@ -478,7 +494,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
                             window.app.profiles.HTTP_PROFILER : window.app.profiles.DEFAULT;
           var current_profile = settings.general.get("profile-mode");
           if (current_profile !== set_profile)
-            window.network_loggers.scope.enable_profile(set_profile);
+            window.services.scope.enable_profile(set_profile);
         }
         this.needs_instant_update = true;
         this.update();
@@ -590,13 +606,20 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
     }
   }.bind(this);
 
-  var eh = window.event_handlers;
-  var messages = window.messages;
-
   this._on_context_removed_bound = function(message)
   {
     if (message.context_type === cls.NetworkLogger.CONTEXT_TYPE_LOGGER)
       this.update();
+  }.bind(this);
+
+  this._on_resource_update_bound = function(message)
+  {
+    if (message.is_paused)
+      return;
+
+    if (message.id)
+      this._last_updated_entry = message.id;
+    this.update();
   }.bind(this);
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -623,7 +646,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
 
     this.network_logger.addListener("context-added", this._on_context_established_bound);
     this.network_logger.addListener("context-removed", this._on_context_removed_bound);
-    this.network_logger.addListener("resource-update", this.update.bind(this));
+    this.network_logger.addListener("resource-update", this._on_resource_update_bound);
 
     ActionHandlerInterface.apply(this);
     this._handlers = {
@@ -849,7 +872,10 @@ cls.NetworkDetailOverlayViewPrototype = function()
       var entry = ctx.get_entry_from_filtered(parent_view.selected);
       if (entry)
       {
-        entry.check_to_get_body();
+        var get_body = entry.should_get_body();
+        if (get_body)
+          ctx.get_resource(entry);
+
         container.clearAndRender(this._render_details_view(entry));
         this.text_search.update_search();
         if (this._details_scroll_top)
