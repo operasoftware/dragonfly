@@ -5,7 +5,7 @@
   {
     return (
     ['div',
-      'condition: ',
+      ui_strings.M_LABEL_BREAKPOINT_CONDITION + ': ',
       ['span', condition || ''],
       'class', 'condition',
       'edit-handler', 'edit-condition'

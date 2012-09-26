@@ -36,6 +36,9 @@ ui_strings.M_CONTEXTMENU_ADD_COLOR = "Add color";
 /* DESC: Context menu item for breakpoints to add a condition. */
 ui_strings.M_CONTEXTMENU_ADD_CONDITION = "Add condition";
 
+/* DESC: Label for breakpoint condition (lowercase). */
+ui_strings.M_LABEL_BREAKPOINT_CONDITION = "condition";
+
 /* DESC: Context menu item for adding a declaration in a rule. */
 ui_strings.M_CONTEXTMENU_ADD_DECLARATION = "Add declaration";
 
@@ -566,6 +569,9 @@ ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 
 /* DESC: Button label to store the color */
 ui_strings.S_BUTTON_STORE_COLOR = "Store color";
+
+/* DESC: Button label to show ruler */
+ui_strings.S_BUTTON_SHOW_RULER = "Show ruler";
 
 /* DESC: Button to switch to network-profiler mode. */
 ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Improve accuracy of timing information";
