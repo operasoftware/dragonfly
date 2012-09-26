@@ -15,6 +15,7 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                              "",
                              network_logger);
   cls.ResourceDetailView.create_ui_widgets();
+  cls.ResourceTreeView.create_ui_widgets();
 
   new cls.NetworkLogView("network_logger",
                          ui_strings.M_VIEW_LABEL_NETWORK_LOG,
