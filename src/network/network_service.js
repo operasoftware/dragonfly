@@ -5,7 +5,7 @@ cls.NetworkLogger = function()
   this._filter_entries_by_list = function(ids, entry)
   {
     return ids.contains(entry.id);
-  }
+  };
 
   this.get_resources = function(ids)
   {
@@ -17,7 +17,7 @@ cls.NetworkLogger = function()
       var filter_bound = this._filter_entries_by_list.bind(this, ids);
       entries = entries.filter(filter_bound);
     }
-    return entries.map(function(entry) { return new cls.ResourceInfo(entry);} );
+    return entries.map(function(entry) { return new cls.ResourceInfo(entry); } );
   };
 
   this._get_matching_context = function(res_id)

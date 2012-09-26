@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 window.cls = window.cls || {};
 
@@ -171,7 +171,6 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       {
         if (!this._last_updated_entry || this._last_updated_entry == this.selected)
           this._overlay.update();
-
       }
       else
         this._overlay.show();
@@ -619,9 +618,7 @@ cls.NetworkLogView = function(id, name, container_class, html, default_handler, 
       return;
 
     if (message.id)
-    {
       this._last_updated_entry = message.id;
-    }
     this.update();
   }.bind(this);
 
