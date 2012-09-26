@@ -7,98 +7,86 @@ templates.resource_icon = function(resource)
 
 templates.resource_tree =
 {
-	_groupOrder:['markup','stylesheets','scripts','images','fonts','others'],
+	_groupOrder:
+	[
+		ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+		ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+		ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+		ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+		ui_strings.S_HTTP_LABEL_FILTER_FONTS,
+		ui_strings.S_HTTP_LABEL_FILTER_OTHER
+	],
 
-	_init:function()
+	_expandCollapseExtras:function(context, pivotID, depth)
 	{
-		if (this._initialized)
-			return;
-
-		// wrap the nesting templating for _depth iteration according styling
-		['document', 'resource_group', 'resource'].forEach(function(f)
-		{
-			var original = this[f];
-			this[f] = function()
-			{
-				this._depth++;
-
-				var tpl = original.apply(this, arguments);
-				if (tpl && tpl[1] && tpl[1][0] == 'h2')
-					tpl[1][1].push( 'style', 'margin-left:'+ this._depth*18 +'px;' );
-
-				this._depth--;
-
-				return tpl;
-			};
-		}, this);
-
-		this._initialized = true;
-	},
-
-	expandCollapseToggle:function(context, pivotID, tpl)
-	{
-		var button = ['input',
-			'type','button',
-			'class','button-expand-collapse'
-		];
-
 		var hash = context.collapsed;
 		if (!hash.hasOwnProperty(pivotID))
-			hash[pivotID] = this._depth>1;
+			hash[pivotID] = depth>1;
 
-	 	var collapsed = hash[pivotID];
+		var collapsed = hash[pivotID];
 
-		tpl.push
-		(
-			'data-expand-collapse-id', pivotID,
-			'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
-		);
-
-		tpl[1].push( 'handler','resources-expand-collapse' );
-		tpl[1].splice(1, 0, button);
-
-		return tpl;
+		return ({
+			collapsed:false&&collapsed,
+			tpl:
+			{
+				li:
+				[
+					'data-expand-collapse-id', pivotID,
+					'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
+				],
+				h2:
+				[
+					'handler','resources-expand-collapse',
+					'title',pivotID+' \u2014 '+ (depth||0)
+				],
+				button:
+				[
+					'input',
+					'type','button',
+					'class','button-expand-collapse',
+					'style', 'margin-left:'+ depth*18 +'px;'
+				]
+			}
+		});
 	},
 
 	update:function(context)
 	{
-		if (!this._initialized)
-			this._init();
-		this._depth = 0;
 		return this.windows(context);
 	},
 
 	windows:function(context)
 	{
-		//if (context.windowList.length)
-			return (
-				['div','',
-					['ul',
-						context.windowList.map(this.window.bind(this, context)),
-						'class','resource-tree-windows'
-					],
-					'class','resource-tree'
-			]);
+		var tpl =
+			['div','',
+				['ul',
+					context.windowList.map(this.window.bind(this, context)),
+					'class','resource-tree-windows'
+				],
+				'class','resource-tree'
+			];
+
+		return tpl;
 	},
 
 	window:function(context, w)
 	{
-		return this.expandCollapseToggle
-		(
-			context,
-			'w'+w.id,
+		var extras = this._expandCollapseExtras( context, String(w.id) );
+
+		var tpl =
 			['li',
 				['h2',
+					extras.tpl.button,
 					['span',
 						'windowID '+w.id,
 						'class','resource-tree-window-label'
 					],
 					'class','resource-tree-window'
-				],
-				this.documents(context, w.id),
-				'data-expand-collapse-id','w'+w.id
-			]
-		);
+				].concat( extras.tpl.h2 ),
+				extras.collapsed?[]:this.documents(context, w.id)
+			].concat( extras.tpl.li );
+
+		return tpl;
 	},
 
 	documents:function(context, wid, pid)
@@ -108,124 +96,133 @@ templates.resource_tree =
 			return d.documentID != null && d.windowID == wid && d.parentDocumentID == pid;
 		});
 
-		if (documents.length)
-			return (
+		var tpl = documents.length?
 			['ul',
-				documents.map(this.document.bind(this, context)).
-				filter(function(v){
-					return v != null;
-				}),
+				documents.map( this.document.bind(this, context) ),
 				'class','resource-tree-documents'
-			]);
+			]:[];
+
+		return tpl;
 	},
 
 	document:function(context, d)
 	{
 		var documentResources = context.documentResources[d.documentID]||[];
-		var resources = context.resourceList.
-		filter(function(r){
+		var resources = context.resourceList
+		.filter(function(r){
 			return documentResources.contains(r.id);
 		});
 
-		if (resources.length)
-			return this.expandCollapseToggle
-			(
-				context,
-				'd'+d.documentID,
-				['li',
-					['h2',
-						['span',
-							(d.url.filename || d.url.short_distinguisher),
-							'class','resource-tree-document-label'
-						],
-						' ',
-						['span',
-							'('+resources.length+')',
-							'class','resource-tree-count'
-						],
-						'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin')
+		var depth = d.depth;
+		var extras = this._expandCollapseExtras( context, d.pivotID, depth );
+
+		var tpl =
+			['li',
+				['h2',
+					extras.tpl.button,
+					['span',
+						(d.url.filename || d.url.short_distinguisher),
+						'class','resource-tree-document-label'
 					],
-					[
-						this.resource_groups(context, resources),
-						this.documents(context, d.windowID, d.documentID)
-					]
+					' ',
+					['span',
+						'('+resources.length+')',
+						'class','resource-tree-count'
+					],
+					'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin')
+				].concat( extras.tpl.h2 ),
+				( resources.length == 0 || extras.collapsed )?[]:
+				[
+					this.resource_groups(context, resources, d),
+					this.documents(context, d.windowID, d.documentID)
 				]
-			);
+			].concat( extras.tpl.li );
+
+		return tpl;
+
 	},
 
-	resource_groups:function(context, resources)
+	resource_groups:function(context, resources, d)
 	{
-		var tpl = this._groupOrder.
-		map(this.resource_group.bind(this, context, resources)).
-		filter(function(v){
+		var tpl = this._groupOrder
+		.map( this.resource_group.bind(this, context, resources, d) )
+		.filter(function(v){
 			return v!=null;
 		});
 
-		if (tpl.length)
-			return (
+		return tpl.length?
 			['ul',
 				tpl,
 				'class','resource-tree-groups'
-			]);
+			]:[];
 	},
 
-	resource_group:function(context, resources_unfiltered, g)
+	resource_group:function(context, resources_unfiltered, d, g)
 	{
-		var resources = resources_unfiltered.
-		filter(function(r){
+		var resources = resources_unfiltered
+		.filter( function(r){
 			return r.group == g;
-		}).sort(function(a,b){
+		})
+		.sort( function(a, b){
 			return a.id-b.id;
 		});
 
-		if (resources.length)
-			return this.expandCollapseToggle
-			(
-				context,
-				'd'+resources[0].document_id+'-'+g,
-				['li',
-					['h2',
-						['span',
-							g,
-							'class','resource-tree-group-label'
-						],
-						' ',
-						['span',
-							'('+resources.length+')',
-							'class','resource-tree-count'
-						],
-						'class','resource-tree-group resource-tree-group-'+g
+		if (!resources.length)
+			return [];
+
+		var extras = this._expandCollapseExtras( context, d.pivotID+'_'+g, d.depth+1);
+
+		var tpl =
+			['li',
+				['h2',
+					extras.tpl.button,
+					['span',
+						g,
+						'class','resource-tree-group-label'
 					],
-					this.resources(context, resources)
+					' ',
+					['span',
+						'('+resources.length+')',
+						'class','resource-tree-count'
+					],
+					'class','resource-tree-group resource-tree-group-'+g.toLowerCase()
+				].concat( extras.tpl.h2 ),
+				extras.collapsed?[]:this.resources(context, resources, d.depth+2)
+			].concat( extras.tpl.li );
+
+		return tpl;
+	},
+
+	resources:function(context, resources,depth)
+	{
+		var tpl =
+			['ul',
+				resources.map(this.resource.bind(this, context, depth)),
+				'class','resource-tree-resources'
+			];
+
+		return tpl;
+	},
+
+	resource:function(context, depth, r)
+	{
+		var tpl =
+			['li',
+				['h2',
+					['span',
+						(r.filename || r.short_distinguisher || r.url || 'NO URL'),
+						'class','resource-tree-resource-label',
+						'style', 'margin-left:'+ depth*18 +'px;'
+					],
+					'handler','resource-detail',
+					'data-resource-id',String(r.id),
+					'class','resource-tree-resource'
+						+(r.sameOrigin?'':' resource-different-origin')
+						+(context.selectedResourceID==r.id?' resource-highlight':'')
 				]
-			);
-	},
+			];
 
-	resources:function(context, resources)
-	{
-		return (
-		['ul',
-			resources.map(this.resource.bind(this, context)),
-			'class','resource-tree-resources'
-		]);
-	},
-
-	resource:function(context, r)
-	{
-		return (
-		['li',
-			['h2',
-				['span',
-					(r.filename || r.short_distinguisher || r.url || 'NO URL'),
-					'class','resource-tree-resource-label'
-				],
-				'handler','resource-detail',
-				'data-resource-id',String(r.id),
-				'class','resource-tree-resource'
-					+(r.sameOrigin?'':' resource-different-origin')
-					+(context.selectedResourceID==r.id?' resource-highlight':'')
-			]
-		]);
+		return tpl;
 	}
 
 };
@@ -315,11 +312,15 @@ templates.resource_detail =
 			],
 			['span',
 				(isError?info.responseCode+' - ':'')+
-				info.mimeType+' treated as '+info.type +' '+[resource.data.meta],
+				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
+				.replace('%(SENT)',info.mimeType)
+				.replace('%(GUESSED)',info.type)
+				+(resource.data.meta?' ('+resource.data.meta+')':''),
 				'class','resource-detail-overview-type'+(isError?' resource-detail-error':'')
 			],
 			['span',
-				cls.ResourceUtil.bytes_to_human_readable(info.size)+(info.characterEncoding&&(' in '+info.characterEncoding)),
+				cls.ResourceUtil.bytes_to_human_readable(info.size)
+				+(info.characterEncoding&&ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
 				'data-tooltip','js-script-select',
 				'data-tooltip-text',info.size+' bytes',
 				'class','resource-detail-overview-size'

@@ -11,6 +11,17 @@ cls.ResourceManagerService = function(view, network_logger)
   cls.ResourceManagerService.instance = this;
 
   var THROTTLE_DELAY = 250;
+  var TYPE_GROUP_MAPPING =
+  {
+    'markup':ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+    'css':ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+    'script':ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+    'image':ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+    'font':ui_strings.S_HTTP_LABEL_FILTER_FONTS,
+    '*':ui_strings.S_HTTP_LABEL_FILTER_OTHER
+  };
+
+
 
   this._view = view;
   this._network_logger = network_logger;
@@ -21,20 +32,12 @@ cls.ResourceManagerService = function(view, network_logger)
     delete this._tag_requestListDocuments;
     this._documentList = new cls.DocumentManager["1.0"].DocumentList(msg).documentList;
 
-    //  use the URL class
-    //  populate this._documentURLHash
-    this._documentURLHash = {};
     this._documentList.forEach(function(d)
     {
+      //  use the URL class
       d.url = new URI(d.url);
-      this._documentURLHash[ d.documentID ] = d.url;
-    },this);
+    });
 
-    //  sameOrigin as parentDocument ?
-    this._documentList.forEach(function(d)
-    {
-      d.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[d.parentDocumentID], d.url);
-    },this);
 
     this._update({type:'_handle_listDocuments'});
   };
@@ -48,8 +51,10 @@ cls.ResourceManagerService = function(view, network_logger)
   this._populateDocumentResources = function(r)
   {
     var documentID = r.document_id;
+
     if (!this._documentResources[documentID])
       this._documentResources[documentID]=[];
+
     if (!this._documentResources[documentID].contains(r.id))
       this._documentResources[documentID].push(r.id);
   }
@@ -70,49 +75,47 @@ cls.ResourceManagerService = function(view, network_logger)
 
     if (ctx.windowList && ctx.windowList.length)
     {
-      var typeGroupMapping =
-      {
-        'markup':'markup',
-        'css':'stylesheets',
-        'script':'scripts',
-        'image':'images',
-        'font':'fonts',
-        '*':'others'
-      };
-
       ctx.resourceList = [];
       ctx.documentResourceHash = {};
 
       // get all the resources
+      var windowID_index = {};
       ctx.windowList
-      .forEach(function(w)
+      .forEach(function(w,i)
       {
+        windowID_index[w.id] = i;
+
         //  get resources of the current window
         var windowResources = w.get_resources();
-        //  filter out the resources that are unloaded
-        windowResources
-        .filter(function(r)
-        {
-          return !r.is_unloaded;
-        });
+
         //  concat the result to flat list of resource
         ctx.resourceList = ctx.resourceList.concat( windowResources );
       });
 
+
+      var documentID_index = {};
       // filter the documentId that belong in the windowIdList
       ctx.documentList  = this._documentList
-      .filter(function(d)
+      .filter(function(d,i,a)
       {
-        var inWindowContext = ctx.windowList
-        .some( function(w)
+        var inContext = windowID_index.hasOwnProperty(d.windowID);
+
+        if (inContext)
         {
-          return w.id == d.windowID;
-        });
+          if (d.resourceID != null)
+            ctx.documentResourceHash[ d.resourceID ] = d.documentID;
 
-        if (inWindowContext && d.resourceID != null)
-          ctx.documentResourceHash[ d.resourceID ] = d.documentID;
+          //  populate documentID_index
+          documentID_index[ d.documentID ] = i;
 
-        return inWindowContext;
+          //  set depth, pivotID and sameOrigin
+          var p = a[ documentID_index[ d.parentDocumentID ] ]||{pivotID:d.windowID,depth:0};
+          d.depth = p.depth+1;
+          d.pivotID = p.pivotID+'_'+d.documentID;
+          d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+        }
+
+        return inContext;
       },this);
 
       // assign top resource to the right document
@@ -131,8 +134,9 @@ cls.ResourceManagerService = function(view, network_logger)
           this._populateDocumentResources(r);
         }
 
-        r.group = typeGroupMapping[r.type]||typeGroupMapping['*'];
-        r.sameOrigin = cls.ResourceUtil.sameOrigin(this._documentURLHash[r.document_id], r);
+        r.group = TYPE_GROUP_MAPPING[r.type]||TYPE_GROUP_MAPPING['*'];
+        var d = this._documentList[documentID_index[r.document_id]];
+        r.sameOrigin = cls.ResourceUtil.sameOrigin(d&&d.url, r);
       },this);
 
       //  filter the list of window. Purge the ones with no documents
@@ -156,7 +160,7 @@ cls.ResourceManagerService = function(view, network_logger)
           ctx.resourceList
           .some(function(v)
           {
-           return v.document_id && !this._documentURLHash[v.document_id];
+           return v.document_id && !documentID_index[v.document_id];
           },this)
           ||
           ctx.documentList
@@ -193,27 +197,23 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!this._context)
       return;
 
-    var button = target.querySelector('.button-expand-collapse');
     var pivot = target.get_ancestor('[data-expand-collapse-id]');
-    var pivots = [pivot];
-    if (button && pivot)
+    if (pivot)
     {
       var hash = this. _collapsedHash;
       var pivotID = pivot.getAttribute('data-expand-collapse-id');
+      var pivotIDs = [pivotID];
       var collapsed = hash[pivotID] === true?false:true;
 
       if (event.shiftKey)
-        [].push.apply(pivots, pivot.querySelectorAll('[data-expand-collapse-id]'));
+        pivotIDs.push.apply( pivotIDs, Object.keys(hash).filter( function(p)
+        {
+          return p.indexOf(pivotID+'_') == 0;
+        }));
 
-      pivots.forEach(function(p)
-      {
-        var pivotID = p.getAttribute('data-expand-collapse-id');
-        hash[pivotID] = collapsed;
-        if (collapsed)
-          p.classList.add('close');
-        else
-          p.classList.remove('close');
-      });
+      pivotIDs.forEach(function(p){ hash[p] = collapsed; });
+
+      this._view.update();
     }
   }.bind(this);
 
