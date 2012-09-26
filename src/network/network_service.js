@@ -399,7 +399,6 @@ cls.NetworkLogger.CONTEXT_TYPE_LOGGER = 1;
 cls.NetworkLogger.CONTEXT_TYPE_CRAFTER = 2;
 cls.NetworkLogger.CONTEXT_TYPE_MAIN = cls.NetworkLogger.CONTEXT_TYPE_LOGGER;
 
-
 cls.NetworkLogger.WindowContext = function(window_id)
 {
   this.id = window_id;
