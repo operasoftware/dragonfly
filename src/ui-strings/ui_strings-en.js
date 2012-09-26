@@ -1434,6 +1434,15 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
 
+/* DESC: Formatting the resource */
+ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource...";
+
+/* DESC: No data available for the resource */
+ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";
+
+/* DESC: No resource selected ( for the detail view ) */
+ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED = "No resource selected.";
+
 /* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
 ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
 

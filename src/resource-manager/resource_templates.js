@@ -258,7 +258,7 @@ templates.resource_detail =
 	{
 		return(
 		['div',
-      'No resource selected',
+      ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED,
       'class','resource-detail-container-empty'
     ]);
 	},
@@ -267,7 +267,7 @@ templates.resource_detail =
 	{
 		return(
 		['div',
-      'No data available for the resource '+ resource.url,
+      ui_strings.S_RESOURCE_NO_DATA_AVAILABLE,
       'class','resource-detail-container-empty'
     ]);
 	},
@@ -282,7 +282,7 @@ templates.resource_detail =
 
 		return(
 		['div',
-			'Formatting the resource '+ resource.url +'...',
+			ui_strings.S_RESOURCE_FORMATTING_RESOURCE,
 			'class','resource-detail-container-empty'
     ]);
 	},
