@@ -463,7 +463,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
                     "data-column-id", c,
                    ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
           }),
-          "class", "header"
+          "class", "table-header"
          ];
 }
 

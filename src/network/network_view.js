@@ -866,9 +866,9 @@ cls.NetworkDetailOverlayViewPrototype = function()
     return templates.network.details(entry);
   };
 
-  this._on_toggle_expand_request_response = function(event)
+  this._on_toggle_expand_request_response = function(event, target)
   {
-    var key = event.target.dataset.isResponse ? "expand-responses" : "expand-requests";
+    var key = target.dataset.isResponse ? "expand-responses" : "expand-requests";
     var set_active = !settings["network-detail-overlay"].get(key);
     settings["network-detail-overlay"].set(key, set_active);
     this.needs_instant_update = true;
@@ -934,7 +934,7 @@ cls.NetworkDetailOverlayView.create_ui_widgets = function()
     },
     // key-label map
     {
-      "view-parsed": ui_strings.S_NETWORK_RAW_VIEW_LABEL,
+      "view-parsed": ui_strings.S_NETWORK_PARSED_VIEW_LABEL,
       "wrap-detail-view": ui_strings.S_NETWORK_WRAP_LINES_LABEL
     }
   );

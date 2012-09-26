@@ -115,13 +115,14 @@
 
 .network-log-url-list li:last-child,
 .network-graph-row:last-child
-{ 
+{
   border-bottom-width: 1px;
 }
 
-.network-data-container .sortable-table > tr.header:first-child
+.network-data-container .sortable-table > tr.table-header:first-child
 {
   border-width: 0;
+  background: none;
   color: #808080;
 }
 
@@ -239,7 +240,6 @@
 
 .network-detail-overlay > .table
 {
-  padding: 0 5px;
   box-sizing: border-box;
 }
 
@@ -271,7 +271,7 @@
 
 .network-detail-overlay .header-token-type-name
 {
-  color: #149CBD;
+  color: #cc0033;
 }
 
 .network-detail-overlay .http-token-type-boundary
@@ -287,8 +287,17 @@
   color: #808080;
 }
 
-.network-detail-overlay pre,
-.network-detail-overlay p
+.network-detail-overlay\.wrap-detail-view::before
+{
+  background-image: url("../ui-images/icons/icon_wrap_text.png");
+}
+
+.network-detail-overlay\.view-parsed::before
+{
+  background-image: url("../ui-images/icons/icon_view_raw.png");
+}
+
+.network-detail-overlay pre
 {
   margin: 0;
 }
@@ -312,6 +321,12 @@
   max-width: 100%;
 }
 
+.network-detail-overlay p,
+.network-detail-overlay .foldable
+{
+  margin: 6px 8px;
+}
+
 .network-detail-overlay table
 {
   border-collapse: collapse;
@@ -325,12 +340,15 @@
 .network-detail-overlay .wrap table
 {
   width: 100%;
+  table-layout: fixed;
 }
 
 .network-detail-overlay td,
 .network-detail-overlay th
 {
   vertical-align: top;
+  padding: 4px 10px;
+  border-right: 1px solid #fff;
 }
 
 .network-detail-overlay th
@@ -343,19 +361,24 @@
 .network-detail-overlay td:first-child
 {
   width: 20%;
-  padding-right: 30px;
+  padding-left: 0;
+}
+
+.network-detail-overlay tr:nth-child(even)
+{
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .network-detail-overlay hr
 {
   border: none;
-  border-top: 1px solid #a4a4a4;
+  border-top: 1px solid #ccc;
   margin: 7px 0 -8px 0;
 }
 
-.network-detail-overlay div.header
+.network-detail-overlay .table > div:first-of-type .header
 {
-  margin: 0 0 0 -5px; /* todo: 10px 0 10px -5px; looks better to me but is inconsistent with dom panel headers */
+  border-top-width: 1px;
 }
 
 .request-crafter h2,
@@ -488,7 +511,7 @@
   border-radius: 3px;
 }
 
-/* the value of the padding property of this selector 
+/* the value of the padding property of this selector
    is read out in network_templates.js */
 .network-tooltip-legend .time_data
 {
