@@ -1,7 +1,7 @@
-"use strict";
+﻿"use strict";
 
 cls.NetworkLogger = function()
-{  
+{
   this._filter_entries_by_list = function(ids, entry)
   {
     return ids.contains(entry.id);
