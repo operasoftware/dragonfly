@@ -150,6 +150,9 @@ ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
 
+/* DESC: Label for breakpoint condition (lowercase). */
+ui_strings.M_LABEL_BREAKPOINT_CONDITION = "condition";
+
 /* DESC: Label for option that clears all errors */
 ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 
@@ -569,6 +572,9 @@ ui_strings.S_BUTTON_SHOW_REQUEST_RAW = "Raw";
 
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
+
+/* DESC: Button label to show ruler */
+ui_strings.S_BUTTON_SHOW_RULER = "Show ruler";
 
 /* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
