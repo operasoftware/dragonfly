@@ -983,8 +983,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   var _last_delta = 0;
   var _accumulated_delta = 0;
-  const UNIT_LINES = 1;
-  const UNIT_PIXELS = 2;
+  var UNIT_LINES = 1;
+  var UNIT_PIXELS = 2;
 
   this._get_lines_from_delta = function(delta, unit)
   {
@@ -1007,17 +1007,14 @@ cls.JsSourceView = function(id, name, container_class)
         // Enough delta to scroll at least one line, round delta
         // to full integer towards 0 and store remainder for later.
         lines = delta > 0 ? Math.floor(delta) : Math.ceil(delta);
-        _accumulated_delta = delta % 1;
+        _accumulated_delta -= _lines * window.defaults["js-source-line-height"];
       }
-      else
-        // Not enough delta accumulated to scroll.
-        lines = 0;
     }
 
     return lines;
   }
 
-  eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
+  window.eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
   {
     if (event.wheelDeltaX !== undefined && event.wheelDeltaX != 0)
       // Horizontal scrolling is handled natively by the browser.
@@ -1350,7 +1347,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   new Switches ('js_source', switches);
 
-  eventHandlers.change['set-tab-size'] = function(event, target)
+  window.eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
     style = document.styleSheets.getDeclaration(DIV_SELECTOR),
@@ -1363,7 +1360,7 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-  eventHandlers.change['set-max-search-hits'] = function(event, target)
+  window.eventHandlers.change['set-max-search-hits'] = function(event, target)
   {
     var max_search_hits = Number(event.target.value);
     if (100 < max_search_hits && max_search_hits < 10000)
@@ -1372,7 +1369,7 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-  eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
+  window.eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
   {
     var view = window.views['event-breakpoints'];
     UIWindowBase.showWindow(view.id,
