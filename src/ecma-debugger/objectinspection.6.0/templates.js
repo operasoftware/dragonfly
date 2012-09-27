@@ -153,7 +153,7 @@
     for (var prop = null, i = 0; prop = property_list[i]; i++)
     {
       value = prop[PROPERTY_VALUE];
-      esc_name = helpers.escapeAttributeHtml(prop[NAME]);
+      esc_name = helpers.escape_html_attr(prop[NAME]);
       switch (type = prop[PROPERTY_TYPE])
       {
         case "number":
@@ -206,7 +206,7 @@
           }
           short_val = value.length > MAX_VALUE_LENGTH ?
                         value.slice(0, MAX_VALUE_LENGTH) + '…' : '';
-          value = helpers.escapeAttributeHtml(value);
+          value = helpers.escape_html_attr(value);
           if (short_val)
           {
             if (!searchterm ||
@@ -219,7 +219,7 @@
                   "<key data-spec='dom#" + esc_name + "'" +
                     editable(prop) + ">" + esc_name + "</key>\u00A0" +
                   "<value class='" + type + "' data-value='\"" + value + "\"'>" +
-                    "\"" + helpers.escapeTextHtml(short_val) + "\"" +
+                    "\"" + helpers.escape_html(short_val) + "\"" +
                   "</value>" +
                 "</item>"
               );

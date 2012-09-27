@@ -397,7 +397,7 @@ cls.WindowManager["2.0"].WindowsDropDown = function()
     return (
     '<option value="' + win.window_id + '"' +
       ( win.window_id == window_manager_data.get_debug_context() ? ' selected="selected"' : '' ) + '>' +
-      helpers.escapeTextHtml(win.title || "") +
+      helpers.escape_html(win.title || "") +
     '</option>');
   }
 
