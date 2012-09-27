@@ -113,6 +113,9 @@ templates.resource_tree =
 		var documentResources = context.documentResources[d.documentID]||[];
 		var resources = context.resourceList
 		.filter(function(r){
+			if (context.searchTerm != '' && !r.url.contains(context.searchTerm))
+				return false;
+
 			return documentResources.contains(r.id);
 		});
 

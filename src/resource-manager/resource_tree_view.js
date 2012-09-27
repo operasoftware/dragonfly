@@ -18,7 +18,6 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   this._service = new cls.ResourceManagerService(this, network_logger);
   this._loading = false;
 
-
   // public
 
   // throttle the update
@@ -30,8 +29,9 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     var ctx = this._service.get_resource_context();
     var scrollTop = container.firstElementChild?container.firstElementChild.scrollTop:0;
 
-    if (ctx )//&& ctx.resourcesDict && Object.keys(ctx.resourcesDict).length)
+    if (ctx )
     {
+      ctx.searchTerm = this.searchTerm||'';
       container.clearAndRender( templates.resource_tree.update(ctx) );
     }
     else if (this._loading)
@@ -106,7 +106,18 @@ cls.ResourceTreeView.create_ui_widgets = function()
     ]
   });
 
-  var text_search = window.views.resource_detail_view.text_search = new TextSearch();
+  var text_search = window.views.resource_tree_view.text_search = new TextSearch();
+
+  text_search.addListener("onbeforesearch",(function(msg)
+  {
+    var view = window.views.resource_tree_view;
+    if (view.searchTerm != msg.search_term)
+    {
+      view.searchTerm = msg.search_term;
+      view.update();
+    }
+
+  }).bind(text_search));
 
   window.eventHandlers.input["resource-tree-text-search"] = function(event, target)
   {
