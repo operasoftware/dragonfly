@@ -633,6 +633,9 @@ ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "To improve the accuracy of ti
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
 
+/* DESC: Text for a link to the contributors list. */
+ui_strings.S_CONTRIBUTORS = "Contributors";
+
 /* DESC: In 1 hour */
 ui_strings.S_COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
 
@@ -1754,8 +1757,4 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
-
-/* DESC: Text for a link to the contributors list. */
-ui_strings.S_CONTRIBUTORS = "Contributors";
-
 
