@@ -5,6 +5,8 @@
 
   /* private */
 
+  var EXCEPTIONS = ["Backspace", "Tab", "Enter", "Spacebar"];
+
   this._named_shortcuts = {};
   this._char_shortcuts = {};
   this._name_keycode_map = KeyIdentifier.named_keys;
@@ -204,7 +206,7 @@
       return m_key | (event[mod + "Key"] ? Math.pow(2, index) : 0);
     }, 0);
 
-    if (event.key.length > 1)
+    if (EXCEPTIONS.indexOf(event.key) != -1 || (!event.char && event.key.length > 1))
     {
       var key_id = this._name_keycode_map[event.key] << 4 | mod_key;
       if (key_id in this._named_shortcuts)
