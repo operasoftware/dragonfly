@@ -32,7 +32,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   var TIMELINE_ID = 0;
 
   var profiler_timeline_decl = document.styleSheets.getDeclaration(".profiler-timeline");
+  var profiler_event_decl = document.styleSheets.getDeclaration(".profiler-event");
   var AGGREGATED_EVENTS_WIDTH = profiler_timeline_decl ? parseInt(profiler_timeline_decl.left) : 0;
+  var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
 
   // Parent-children relationships
   this._children = {};
@@ -422,10 +424,10 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._on_settings_initialized = function(msg)
   {
-    if (msg.view_id == "profiler_all")
-    {
-      this._min_event_time = window.settings["profiler_all"].get("min-event-time")
-    }
+    //if (msg.view_id == "profiler_all")
+    //{
+    //  this._min_event_time = window.settings["profiler_all"].get("min-event-time")
+    //}
   };
 
   this._on_single_select_changed = function(msg)
@@ -499,13 +501,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     var timeline_list = this._timeline_list;
     var interval = timeline_list.interval;
-    var event_list = timeline_list.eventList;
-    var aggregated_event_list = this._get_aggregated_event_list(event_list);
-    var width = this._timeline_width;
-
-    event_list = event_list.filter(function(event) {
+    var event_list = timeline_list.eventList.filter(function(event) {
       return event.time > this._min_event_time;
     }, this);
+    var aggregated_event_list = this._get_aggregated_event_list(event_list);
+    var width = this._timeline_width;
 
     this._x0 = 0;
     this._x1 = interval.end;
@@ -522,21 +522,40 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     var timeline_list = this._timeline_list;
     var interval = timeline_list.interval;
-    var event_list = timeline_list.eventList.filter(function(event) {
+    var visible_event_list = timeline_list.eventList.filter(function(event) {
       var start = event.interval.start;
       var end = event.interval.end;
       return ((start <= x0 && end >= x0) ||
               (start >= x0 && start <= x1)) &&
              event.time > this._min_event_time;
     }, this);
-    var aggregated_event_list = this._get_aggregated_event_list(event_list);
+    var aggregated_event_list = this._get_aggregated_event_list(visible_event_list);
     var width = this._timeline_width;
+
+    var duration = Math.max(x1 - x0, ProfilerView.MIN_DURATION);
+    var ms_unit = (width - BAR_MIN_WIDTH) / duration;
+    var new_event_list = [];
+    for (var i = 0, event; event = timeline_list.eventList[i]; i++)
+    {
+      var ele = document.getElementById("profiler-event-" + event.eventID);
+      if (visible_event_list.indexOf(event) != -1)
+      {
+        if (ele)
+        {
+          ele.style.width = Math.round((event.interval.end - event.interval.start) * ms_unit) + "px";
+          ele.style.left = Math.round((event.interval.start - x0) * ms_unit) + "px";
+        }
+        else
+          new_event_list.push(event);
+      }
+      else if (ele)
+        ele.remove();
+    }
 
     this._x0 = x0;
     this._x1 = x1;
     this._set_zoomer = true;
-    this._zoomer.fast_throttle = event_list.length < 500;
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width, x0, x1));
+    this._timeline_ele.render(this._templates.event_list_all(new_event_list, interval, this._event_id, width, x0, x1));
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, width));
     this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
   };
@@ -551,7 +570,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_timeline_duration = function()
   {
-    // TODO: make sure this exists
     return this._timeline_list.interval.end;
   };
 
@@ -614,6 +632,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 };
 
 ProfilerView.prototype = ViewBase;
+
+ProfilerView.MIN_DURATION = 0.1;
 
 ProfilerView.create_ui_widgets = function()
 {

@@ -73,7 +73,7 @@ var ZoomerPrototype = function()
     this._handle_ele_onmouseup_bound = this.handle_ele_onmouseup.bind(this);
     this._handle_ele_onkeydown_bound = this.handle_ele_onkeydown.bind(this);
 
-    this._update_overlay_position_bound = this._update_overlay_position.bind(this);
+    this._update_bound = this._update.bind(this);
 
     if (zoomer_ele)
       this.set_zoomer_element(zoomer_ele);
@@ -123,13 +123,13 @@ var ZoomerPrototype = function()
     if (event.which != 1)
       return;
     document.addEventListener("mousemove", this._zoomer_ele_onmousemove_bound);
-    document.addEventListener("mousemove", this._zoomer_ele_onmousemove_once_bound)
     document.addEventListener("mouseup", this._zoomer_ele_onmouseup_bound);
     var mouse_x = event.clientX - this._zoomer_ele_left;
     this._overlay_left = mouse_x;
     this._overlay_right = this._to_right_x(mouse_x);
     this._mouse_drag_start_x = mouse_x;
     event.preventDefault();
+    // TODO: need to remove e.g. mousehweel event handlers here
   };
 
   this.zoomer_ele_onmousemove = function(event)
@@ -148,7 +148,6 @@ var ZoomerPrototype = function()
       this._overlay_left = this._mouse_drag_start_x;
       this.change_overlay_size(0, diff);
     }
-    this._set_model_area();
   };
 
   this.zoomer_ele_onmousewheel = function(event)
@@ -157,7 +156,6 @@ var ZoomerPrototype = function()
     var diff = (mouse_x < this._overlay_left) ? 5 : -5;
     diff *= (event.wheelDelta > 0) ? 1 : -1;
     this.move_overlay(diff);
-    this._set_model_area();
     event.stopPropagation();
   };
 
@@ -165,7 +163,6 @@ var ZoomerPrototype = function()
   {
     document.documentElement.classList.remove("overlay-size-change");
     document.removeEventListener("mousemove", this._zoomer_ele_onmousemove_bound);
-    document.removeEventListener("mousemove", this._zoomer_ele_onmousemove_once_bound)
     document.removeEventListener("mouseup", this._zoomer_ele_onmouseup_bound);
     var mouse_x = event.clientX - this._zoomer_ele_left;
     if (this._mouse_drag_start_x == mouse_x)
@@ -198,14 +195,12 @@ var ZoomerPrototype = function()
     var mouse_to_handle_diff = this._mouse_drag_start_x - this._overlay_start_left;
     var diff = mouse_x - this._overlay_left - mouse_to_handle_diff;
     this.move_overlay(diff);
-    this._set_model_area();
   };
 
   this.overlay_ele_onmousewheel = function(event)
   {
     var diff = (event.wheelDelta < 0) ? 5 : -5;
     this.change_overlay_size(diff, -diff);
-    this._set_model_area();
     event.stopPropagation();
   };
 
@@ -221,7 +216,6 @@ var ZoomerPrototype = function()
     if (!diff)
       return;
     this.move_overlay(diff);
-    this._set_model_area();
     event.stopPropagation();
   };
 
@@ -281,7 +275,6 @@ var ZoomerPrototype = function()
       var diff = mouse_x - this._to_right_x(this._overlay_right) - mouse_to_handle_diff;
       this.set_overlay_position(static_pos, this._to_right_x(this._overlay_right) + diff);
     }
-    this._set_model_area();
   };
 
   this.handle_ele_onkeydown = function(event)
@@ -304,7 +297,6 @@ var ZoomerPrototype = function()
       if (this._overlay_left - diff < this._to_right_x(this._overlay_right))
         this.change_overlay_size(0, diff);
     }
-    this._set_model_area();
     event.stopPropagation();
   };
 
@@ -317,46 +309,18 @@ var ZoomerPrototype = function()
     this._handle_ele = null;
   };
 
-  // TODO: very temporary
-  this.fast_throttle = true;
-  this._set_model_area = function()
+  /**
+   * Request update of the overlay position.
+   */
+  this._request_update = function()
   {
-    // TODO: very temporary
-    if (this.fast_throttle)
-    {
-      window.clearTimeout(this._update_timeout);
-      var now = Date.now();
-      var time_since_last_update = now - this._last_update;
-      if (time_since_last_update > UPDATE_THRESHOLD)
-      {
-        var ms_unit = this._model.get_duration() / this._model.get_model_element_width();
-        var x0 = this._overlay_left * ms_unit;
-        var x1 = this._to_right_x(this._overlay_right) * ms_unit;
-        this._model.set_area(x0, x1);
-        this._last_update = now;
-      }
+    window.requestAnimationFrame(this._update_bound);
+  };
 
-      // Set a timeout to set the area. This makes sure that the last update
-      // always happens, even if it was within the UPDATE_THRESHOLD.
-      this._update_timeout = window.setTimeout(function() {
-        var ms_unit = this._model.get_duration() / this._model.get_model_element_width();
-        var x0 = this._overlay_left * ms_unit;
-        var x1 = this._to_right_x(this._overlay_right) * ms_unit;
-        this._model.set_area(x0, x1);
-      }.bind(this), UPDATE_THRESHOLD);
-    }
-    else
-    {
-      window.clearTimeout(this._update_timeout);
-      // Set a timeout to set the area. This makes sure that the last update
-      // always happens, even if it was within the UPDATE_THRESHOLD.
-      this._update_timeout = window.setTimeout(function() {
-        var ms_unit = this._model.get_duration() / this._model.get_model_element_width();
-        var x0 = this._overlay_left * ms_unit;
-        var x1 = this._to_right_x(this._overlay_right) * ms_unit;
-        this._model.set_area(x0, x1);
-      }.bind(this), UPDATE_THRESHOLD);
-    }
+  this._update = function()
+  {
+    this._update_overlay_position();
+    this._set_model_area();
   };
 
   /**
@@ -366,18 +330,17 @@ var ZoomerPrototype = function()
   {
     if (!this._overlay_ele)
       return;
-    // TODO: no need to set this all the time
     this._overlay_ele.style.display = "block";
     this._overlay_ele.style.left = this._overlay_left + "px";
     this._overlay_ele.style.right = this._overlay_right + "px";
   };
 
-  /**
-   * Request update of the overlay position.
-   */
-  this._request_update_overlay_position = function()
+  this._set_model_area = function()
   {
-    window.requestAnimationFrame(this._update_overlay_position_bound);
+    var ms_unit = this._model.get_duration() / this._model.get_model_element_width();
+    var x0 = this._overlay_left * ms_unit;
+    var x1 = this._to_right_x(this._overlay_right) * ms_unit;
+    this._model.set_area(x0, x1);
   };
 
   /**
@@ -445,8 +408,9 @@ var ZoomerPrototype = function()
   this.move_overlay = function(diff)
   {
     if (diff == null)
-      diff = 0;
-    else if (diff < 0)
+      return;
+
+    if (diff < 0)
       diff = Math.max(this._overlay_left + diff, 0) - this._overlay_left;
     else
       diff = Math.min(diff, this._overlay_right);
@@ -479,9 +443,9 @@ var ZoomerPrototype = function()
     this._overlay_left = Math.max(0, Math.min(left, right));
     this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
     if (!immediate)
-      this._request_update_overlay_position();
+      this._request_update();
     else
-      this._update_overlay_position();
+      this._update();
   };
 
   /**

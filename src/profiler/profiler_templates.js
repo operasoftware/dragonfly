@@ -91,7 +91,7 @@ var ProfilerTemplates = function()
                     parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
                  : 0;
 
-  var MIN_DURATION = 0.1;
+  var MIN_DURATION = ProfilerView.MIN_DURATION;
 
   var HAS_UNPREFIXED_GRADIENTS = (function() {
     var ele = document.createElement("div");
@@ -159,7 +159,7 @@ var ProfilerTemplates = function()
     var template = [];
     for (var i = 0; i < cell_amount; i++)
     {
-      var left = Math.floor(marker_time * i * ms_unit); // flooring avoids the line jumping around
+      var left = Math.round(marker_time * i * ms_unit);
       var time = (marker_time * i) + interval_start;
       if (time === 0)
         fractions = 0;
@@ -262,6 +262,7 @@ var ProfilerTemplates = function()
                                                    color + " " + self_time_amount + "%, " +
                                                   "transparent " + self_time_amount + "%);"
          ),
+       "id", "profiler-event-" + event.eventID,
        "class", "profiler-event event-type-" + event.type +
                 (event.eventID == selected_id && is_expandable ? " selected" : "") +
                 (is_expandable ? " expandable" : " non-expandable"),
