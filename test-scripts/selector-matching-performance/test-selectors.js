@@ -10,7 +10,7 @@ var enable_stylesheets = function(bool)
   });
 };
 
-var escapeTextHtml = (function()
+var escape_html = (function()
 {
   var re_amp = /&/g, re_lt = /</g;
   return function(str)
@@ -67,7 +67,7 @@ var SelectorGenerator = new function()
   this.get_pattern =function()
   {
     return (
-    escapeTextHtml(this._prefix) + 
+    escape_html(this._prefix) + 
     "<span class=\"pattern\">&lt;"+ this.type + "&gt;</span>");
   };
 
@@ -156,13 +156,13 @@ AttrSelectorGeneratorPrototype = function()
   this.get_pattern =function()
   {
     return (
-    escapeTextHtml(this._before) + 
+    escape_html(this._before) + 
     "<span class=\"pattern\">&lt;attr-key&gt;</span>" +
     (this._attr_val ? 
-      escapeTextHtml(this._attr_before_val) + 
+      escape_html(this._attr_before_val) + 
       "<span class=\"pattern\">&lt;attr-val&gt;</span>" + 
-      escapeTextHtml(this._attr_after_val) : "") + 
-    escapeTextHtml(this._after));
+      escape_html(this._attr_after_val) : "") + 
+    escape_html(this._after));
   };
 
   this.iter = function()
@@ -198,7 +198,7 @@ FunctionSelectorGeneratorPrototype = function()
 
  this.get_pattern = function()
  {
-   return escapeTextHtml(this._str);
+   return escape_html(this._str);
  };
 
   this.iter = function()

@@ -55,7 +55,7 @@
         {
           ret.push(
           ['item',
-            ['key', helpers.escapeTextHtml(prop[NAME]),  'class', 'no-expander'],
+            ['key', helpers.escape_html(prop[NAME]),  'class', 'no-expander'],
             ['value', value.toString(), 'class', type]
           ]);
           break;
@@ -64,21 +64,21 @@
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
                         value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escape_html(value).replace(/'/g, '&#39;');
           if (short_val)
           {
             ret.push(
             ['item',
               ['input', 'type', 'button', 'handler', 'expand-value', 'class', 'folder-key'],
-              ['key', helpers.escapeTextHtml(prop[NAME])],
-              ['value', helpers.escapeTextHtml(short_val), 'class', type, 'data-value', value]
+              ['key', helpers.escape_html(prop[NAME])],
+              ['value', helpers.escape_html(short_val), 'class', type, 'data-value', value]
             ]);
           }
           else
           {
             ret.push(
             ['item',
-              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['key', helpers.escape_html(prop[NAME]), 'class', 'no-expander'],
               ['value', value, 'class', type]
             ]);
           }
@@ -89,7 +89,7 @@
         {
           ret.push(
             ['item',
-              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['key', helpers.escape_html(prop[NAME]), 'class', 'no-expander'],
               ['value', type, 'class', type]
           ]);
           break;
@@ -104,7 +104,7 @@
               'handler', 'examine-object', 
               'class', 'folder-key'
             ].concat(tree.hasOwnProperty(prop[NAME]) ? ['style', 'background-position: 0px -11px'] : []),
-            ['key', helpers.escapeTextHtml(prop[NAME])],
+            ['key', helpers.escape_html(prop[NAME])],
             ['value', prop[OBJECT_VALUE][CLASS_NAME], 'class', 'object'],
             tree.hasOwnProperty(prop[NAME]) ? _pretty_print_object(model, tree[prop[NAME]], obj_id, ret) : [],
             'obj-id', obj_id.toString()
