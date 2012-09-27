@@ -988,7 +988,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this._get_lines_from_delta = function(delta, unit)
   {
-    var lines;
+    var lines = 0;
     if (unit == UNIT_LINES)
       lines = delta;
     else if (unit == UNIT_PIXELS)
@@ -1006,15 +1006,13 @@ cls.JsSourceView = function(id, name, container_class)
       {
         // Enough delta to scroll at least one line, round delta
         // to full integer towards 0 and store remainder for later.
-        lines = delta >= 1 ? Math.floor(delta) : Math.ceil(delta);
+        lines = delta > 0 ? Math.floor(delta) : Math.ceil(delta);
         _accumulated_delta = delta % 1;
       }
       else
         // Not enough delta accumulated to scroll.
         lines = 0;
     }
-    else
-      lines = 0;
 
     return lines;
   }
