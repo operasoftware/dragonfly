@@ -1471,7 +1471,7 @@ ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button
 ui_strings.S_RESOURCE_ENCODING = "encoded in %s";
 
 /* DESC: Formatting the resource */
-ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource...";
+ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource…";
 
 /* DESC: No data available for the resource */
 ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";

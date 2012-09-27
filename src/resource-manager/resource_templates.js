@@ -36,8 +36,7 @@ templates.resource_tree =
 				],
 				h2:
 				[
-					'handler','resources-expand-collapse',
-					'title',pivotID+' \u2014 '+ (depth||0)
+					'handler','resources-expand-collapse'
 				],
 				button:
 				[
@@ -71,6 +70,10 @@ templates.resource_tree =
 
 	window:function(context, w)
 	{
+		var windowInfo = window.window_manager_data.get_window(w.id);
+		if (!windowInfo)
+			return [];
+
 		var extras = this._expandCollapseExtras( context, String(w.id) );
 
 		var tpl =
@@ -78,7 +81,7 @@ templates.resource_tree =
 				['h2',
 					extras.tpl.button,
 					['span',
-						'windowID '+w.id,
+						windowInfo.title,
 						'class','resource-tree-window-label'
 					],
 					'class','resource-tree-window'
