@@ -131,11 +131,12 @@ cls.Watches = function(view)
       "0": [[["watches"]]],
       "watches": [[[], []]]
     };
-    this._expand_tree =
+    var raw_tree =
     {
       "object_id": 0,
       "protos": {"0": {"": {"object_id": "watches"}}}
     };
+    this._expand_tree = new Dict(raw_tree);
   };
 
   /* implementation */

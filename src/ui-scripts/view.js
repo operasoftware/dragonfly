@@ -264,7 +264,7 @@ var ViewBase = new function()
     }
   }
 
-  window.messages.addListener("hide-view", onHideView);
+  window.messages.addListener("hide-view", onHideView, true);
   window.messages.addListener("profile-enabled", function(msg)
   {
     _ignore_updates = false;
@@ -285,7 +285,7 @@ var ViewBase = new function()
         }
       }
     }
-  });
+  }, true);
 
   window.messages.addListener("profile-disabled", function(msg)
   {
@@ -296,7 +296,7 @@ var ViewBase = new function()
     });
     // Updating the views will be done in the following "profile-enabled"
     // message.
-  });
+  }, true);
 
 }
 

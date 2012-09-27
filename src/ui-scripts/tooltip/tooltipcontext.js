@@ -55,7 +55,11 @@ TooltipContext.prototype = new function()
   {
     this.clear_show_timeout();
     if (!keep_context && this.current_tooltip)
+    {
+      if (this.last_event)
+        this.handle_mouse_leave(this.last_event);
       this.current_tooltip.onhide();
+    }
 
     this._clear_last_handler_eles();
     this.tooltip_ele.innerHTML = "";
