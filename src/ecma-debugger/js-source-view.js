@@ -1016,7 +1016,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   window.eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
   {
-    if (event.wheelDeltaX !== undefined && event.wheelDeltaX != 0)
+    if (event.wheelDeltaX)
       // Horizontal scrolling is handled natively by the browser.
       return;
 
