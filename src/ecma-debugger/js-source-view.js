@@ -221,8 +221,7 @@ cls.JsSourceView = function(id, name, container_class)
     container.innerHTML = "" +
       "<div id='" + SCROLL_CONTENT_ID + "'>"+
         "<div class='" + CONTAINER_CLASS_NAME + "' " +
-             "data-menu='js-source-content' " +
-             "data-tooltip='" + cls.JSSourceTooltip.tooltip_name + "'></div>"+
+             "data-menu='js-source-content'></div>" +
       "</div>"+
       "<div id='" + SCROLL_CONTAINER_ID + "' handler='scroll-js-source'>"+
         "<div id='" + SCROLL_ID + "'></div>"+
@@ -311,8 +310,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.onresize = function(container)
   {
-    // optimization - having no line wrapping allows to optimize out width-only changes
-    if(this.isvisible() && context['container-height'] != parseInt(container.style.height))
+    if(this.isvisible())
     {
       __view_is_destroyed = true;
       this.createView(container);
@@ -565,7 +563,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         document.getElementById(SCROLL_ID).innerHTML = "";
         if (typeof script_id == "number" && !isNaN(script_id) &&
-            typeof line_no == "number"  && !isNaN(line_no))
+            typeof line_no == "number" && !isNaN(line_no))
         {
           new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
                             function(){ runtimes.reloadWindow(); }).show();
@@ -1001,7 +999,13 @@ cls.JsSourceView = function(id, name, container_class)
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
   this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class, null, "scroll-js-source-view");
+  this.init(id,
+            name,
+            container_class,
+            null,
+            "scroll-js-source-view",
+            null,
+            cls.JSSourceTooltip.tooltip_name);
   this._go_to_line = new cls.GoToLine(this);
   messages.addListener("update-layout", updateLayout);
   messages.addListener("runtime-destroyed", onRuntimeDestroyed);

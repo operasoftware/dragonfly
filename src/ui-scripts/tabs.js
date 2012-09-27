@@ -378,7 +378,7 @@ var TabsBase = function()
         {
           return sum + tab.orig_width;
         }, 0);
-        scale = (orig_width_sum - delta) / orig_width_sum;
+        scale = Math.max(orig_width_sum - delta, 0) / orig_width_sum;
       }
     }
 
