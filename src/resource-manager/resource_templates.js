@@ -36,8 +36,7 @@ templates.resource_tree =
 				],
 				h2:
 				[
-					'handler','resources-expand-collapse',
-					'title',pivotID+' \u2014 '+ (depth||0)
+					'handler','resources-expand-collapse'
 				],
 				button:
 				[
