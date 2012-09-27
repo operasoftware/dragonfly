@@ -1005,7 +1005,7 @@ cls.JsSourceView = function(id, name, container_class)
         // Enough delta to scroll at least one line, round delta
         // to full integer towards 0 and store remainder for later.
         lines = delta > 0 ? Math.floor(delta) : Math.ceil(delta);
-        _accumulated_delta -= _lines * window.defaults["js-source-line-height"];
+        _accumulated_delta -= lines * window.defaults["js-source-line-height"];
       }
     }
 
