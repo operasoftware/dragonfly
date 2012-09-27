@@ -38,7 +38,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     {
       container.clearAndRender(
         ['div',
-         ['p', "Loading page..."],
+         ['p', ui_strings.S_RESOURCE_LOADING_PAGE],
          'class', 'info-box'
         ]
       );

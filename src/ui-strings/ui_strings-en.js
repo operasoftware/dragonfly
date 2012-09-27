@@ -1443,6 +1443,9 @@ ui_strings.S_RESOURCE_ENCODING = "encoded in %s";
 /* DESC: Formatting the resource */
 ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource…";
 
+/* DESC: Loading page */
+ui_strings.S_RESOURCE_LOADING_PAGE = "Loading page…";
+
 /* DESC: No data available for the resource */
 ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";
 
