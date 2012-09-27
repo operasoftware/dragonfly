@@ -12,6 +12,8 @@
 {
   margin: 0;
   margin-top: -13px;
+  white-space: pre;
+  min-width: 180px;
 }
 
 .list-selected-node
@@ -58,6 +60,7 @@
 .ev-type
 {
   font: inherit;
+  position: relative;
 }
 
 .ev-listener-tooltip .ev-type,
@@ -76,7 +79,17 @@
 
 .ev-phase
 {
-  float: right;
+  /*
+    Propably an expensive way to right align text. But a common float causes an unstable
+    box with horizontal scrollbars which disappears on hover with an ugly jumping tooltip.
+  */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 8px;
+  text-align: right;
   font-style: italic;
   color: hsl(0, 0%, 50%);
 }
