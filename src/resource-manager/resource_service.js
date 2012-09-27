@@ -286,6 +286,8 @@ cls.ResourceManagerService = function(view, network_logger)
     this._network_logger.addListener("window-context-added", this._update_bound);
     this._network_logger.addListener("window-context-removed", this._update_bound);
 
+    window.services["window-manager"].addListener('windowclosed', this._update_bound );
+
     this._reset();
   };
 
