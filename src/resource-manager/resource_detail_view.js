@@ -14,9 +14,9 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this._service = new cls.ResourceManagerService(this, network_logger);
 
 
-	this.createView = function(container)
-	{
-		if (this.resource && this.resource.data)
+  this.createView = function(container)
+  {
+    if (this.resource && this.resource.data)
       container.clearAndRender( templates.resource_detail.formatting_data(this.resource) );
 
     container.clearAndRender( templates.resource_detail.update(this.resource) );
@@ -24,7 +24,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this.go_to_line(container,this.data);
 
     this.text_search.update_search();
-	};
+  };
 
   this.create_disabled_view = function(container)
   {
@@ -122,7 +122,9 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this.go_to_line = function(container, data)
   {
-		if (!data || !(data.lines && data.lines.length)) return;
+    if (!data || !(data.lines && data.lines.length))
+      return;
+
     this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
     if (this._root_ele)
     {
@@ -130,13 +132,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this._target_line = parseInt(data.lines[0]);
       this._highlight_line(this._root_ele);
     }
-  }
+  };
 
   this._show_resource_by_instance = function(resource)
   {
     this.resource = resource;
-    if (!resource)
-      return;
+    if (!resource || !resource.data)
+      return false;
 
     this._service.highlight_resource(resource.id);
 
@@ -144,13 +146,14 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this.update();
     else
       this._show_resource_by_url(resource.url);
-  }
+  };
 
   this._show_resource_by_id = function(id)
   {
     var resource = this._service.get_resource(id);
+
     this._show_resource_by_instance(resource);
-  }
+  };
 
   this._show_resource_by_url = function(url)
   {
@@ -159,7 +162,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       this._show_resource_by_instance(resource);
     else
       this._service.request_resource(url, this.show_resource.bind(this), this.data);
-  }
+  };
 
   this.show_resource = function(resource, data)
   {
@@ -168,15 +171,15 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
     if (resource instanceof cls.ResourceInfo)
       this._show_resource_by_instance(resource);
-    else if (resource==Number(resource))
+    else if (resource == Number(resource))
       this._show_resource_by_id(resource);
-    else if (resource==String(resource))
+    else if (resource == String(resource))
       this._show_resource_by_url(resource);
     else
       this.update();
 
     window.UI.instance.show_view( this.id );
-  }
+  };
 
   this.init(id, name, container_class, html, default_handler);
 };
