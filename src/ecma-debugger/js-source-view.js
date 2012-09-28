@@ -222,8 +222,7 @@ cls.JsSourceView = function(id, name, container_class)
     container.innerHTML = "" +
       "<div id='" + SCROLL_CONTENT_ID + "'>"+
         "<div class='" + CONTAINER_CLASS_NAME + "' " +
-             "data-menu='js-source-content' " +
-             "data-tooltip='" + cls.JSSourceTooltip.tooltip_name + "'></div>"+
+             "data-menu='js-source-content'></div>" +
       "</div>"+
       "<div id='" + SCROLL_CONTAINER_ID + "' handler='scroll-js-source'>"+
         "<div id='" + SCROLL_ID + "'></div>"+
@@ -312,8 +311,7 @@ cls.JsSourceView = function(id, name, container_class)
 
   this.onresize = function(container)
   {
-    // optimization - having no line wrapping allows to optimize out width-only changes
-    if(this.isvisible() && context['container-height'] != parseInt(container.style.height))
+    if(this.isvisible())
     {
       __view_is_destroyed = true;
       this.createView(container);
@@ -565,7 +563,7 @@ cls.JsSourceView = function(id, name, container_class)
       {
         document.getElementById(SCROLL_ID).innerHTML = "";
         if (typeof script_id == "number" && !isNaN(script_id) &&
-            typeof line_no == "number"  && !isNaN(line_no))
+            typeof line_no == "number" && !isNaN(line_no))
         {
           new ConfirmDialog(ui_strings.D_RELOAD_SCRIPTS,
                             function(){ runtimes.reloadWindow(); }).show();
@@ -993,10 +991,49 @@ cls.JsSourceView = function(id, name, container_class)
     }
   };
 
-  eventHandlers.mousewheel['scroll-js-source-view'] = function(event, target)
+  var _last_delta = 0;
+  var _accumulated_delta = 0;
+  var UNIT_LINES = 1;
+  var UNIT_PIXELS = 2;
+
+  this._get_lines_from_delta = function(delta, unit)
   {
-    this._scroll_lines((event.detail > 0 ? 1 : -1) * 3 , event, target);
-  }.bind(this);
+    var lines = 0;
+    if (unit == UNIT_LINES)
+      lines = delta;
+    else if (unit == UNIT_PIXELS)
+    {
+      if (_last_delta * delta < 0)
+        // Scroll direction has changed - reset accumulated delta.
+        _accumulated_delta = 0;
+
+      _last_delta = delta;
+      _accumulated_delta += delta;
+      // Convert pixels to lines.
+      delta = _accumulated_delta / window.defaults["js-source-line-height"];
+
+      if (Math.abs(delta) >= 1)
+      {
+        // Enough delta to scroll at least one line, round delta
+        // to full integer towards 0 and store remainder for later.
+        lines = delta > 0 ? Math.floor(delta) : Math.ceil(delta);
+        _accumulated_delta -= lines * window.defaults["js-source-line-height"];
+      }
+    }
+
+    return lines;
+  }
+
+  window.eventHandlers.mousewheel['scroll-js-source-view'] = function(unit, event, target)
+  {
+    if (event.wheelDeltaX)
+      // Horizontal scrolling is handled natively by the browser.
+      return;
+
+    var lines = this._get_lines_from_delta(-event.wheelDelta / 40, unit);
+    if (lines)
+      this._scroll_lines(lines, event, target);
+  }.bind(this, navigator.platform == 'MacIntel' ? UNIT_PIXELS : UNIT_LINES);
 
   this._handlers['show-window-go-to-line'] = function(event, target)
   {
@@ -1013,7 +1050,13 @@ cls.JsSourceView = function(id, name, container_class)
   this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
   this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
-  this.init(id, name, container_class, null, "scroll-js-source-view");
+  this.init(id,
+            name,
+            container_class,
+            null,
+            "scroll-js-source-view",
+            null,
+            cls.JSSourceTooltip.tooltip_name);
   this._go_to_line = new cls.GoToLine(this);
   messages.addListener("update-layout", updateLayout);
   messages.addListener("runtime-destroyed", onRuntimeDestroyed);
@@ -1320,7 +1363,7 @@ cls.JsSourceView.create_ui_widgets = function()
 
   new Switches ('js_source', switches);
 
-  eventHandlers.change['set-tab-size'] = function(event, target)
+  window.eventHandlers.change['set-tab-size'] = function(event, target)
   {
     var
     style = document.styleSheets.getDeclaration(DIV_SELECTOR),
@@ -1333,7 +1376,7 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-  eventHandlers.change['set-max-search-hits'] = function(event, target)
+  window.eventHandlers.change['set-max-search-hits'] = function(event, target)
   {
     var max_search_hits = Number(event.target.value);
     if (100 < max_search_hits && max_search_hits < 10000)
@@ -1342,7 +1385,7 @@ cls.JsSourceView.create_ui_widgets = function()
     }
   }
 
-  eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
+  window.eventHandlers.click['show-event-breakpoint-view'] = function(event, target)
   {
     var view = window.views['event-breakpoints'];
     UIWindowBase.showWindow(view.id,

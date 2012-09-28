@@ -323,14 +323,7 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
                      _cur_ctx.last_handler_ele.getAttribute(DATA_TOOLTIP_TEXT),
                      "class", "basic-tooltip"];
 
-      if (content)
-      {
-        _cur_ctx.tooltip_ele.scrollTop = 0;
-        _cur_ctx.tooltip_ele.scrollLeft = 0;
-        ret = typeof content == "string"
-            ? (_cur_ctx.tooltip_ele.textContent = content)
-            : _cur_ctx.tooltip_ele.clearAndRender(content);
-      }
+      _cur_ctx.tooltip_ele.innerHTML = "";
 
       if (_cur_ctx.current_tooltip.class)
         _cur_ctx.tooltip_ele.addClass(_cur_ctx.current_tooltip.class);
@@ -486,8 +479,16 @@ Tooltips.CSS_TOOLTIP_SELECTED = "tooltip-selected";
           }
         }
       }
-    }
 
+      if (content)
+      {
+        _cur_ctx.tooltip_ele.scrollTop = 0;
+        _cur_ctx.tooltip_ele.scrollLeft = 0;
+        ret = typeof content == "string"
+            ? (_cur_ctx.tooltip_ele.textContent = content)
+            : _cur_ctx.tooltip_ele.clearAndRender(content);
+      }
+    }
     return ret;
   };
 

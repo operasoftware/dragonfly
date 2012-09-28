@@ -35,16 +35,16 @@ var test = function(script)
       "<tr><td>", 
       token_enums[types[index]], 
       "</td><td>", 
-      window.helpers.escapeTextHtml(tok), 
+      window.helpers.escape_html(tok), 
       "</td></tr>"
     );
   }, markup);
   markup.push("</table>");
   markup.push("<pre>tokens.join('') === script: ", tokens.join('') === script, "</pre>");
   markup.push("<h2>tokens join</h2>");
-  markup.push("<pre>", window.helpers.escapeTextHtml(tokens.join('')), "</pre>");
+  markup.push("<pre>", window.helpers.escape_html(tokens.join('')), "</pre>");
   markup.push("<h2>script</h2>");
-  markup.push("<pre>", window.helpers.escapeTextHtml(script), "</pre>");
+  markup.push("<pre>", window.helpers.escape_html(script), "</pre>");
   document.body.innerHTML = markup.join("");
   
 }

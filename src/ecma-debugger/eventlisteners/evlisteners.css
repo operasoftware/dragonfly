@@ -1,17 +1,14 @@
-﻿.ev-rt-list
+﻿.ev-rt-list > li
 {
-  margin-top: 5px;
-}
-
-.ev-type-list
-{
-  margin: 0;
+  margin-bottom: 6px;
 }
 
 .ev-listener-tooltip
 {
   margin: 0;
   margin-top: -13px;
+  white-space: pre;
+  min-width: 180px;
 }
 
 .list-selected-node
@@ -39,15 +36,19 @@
 
 .ev-listener
 {
-  display: inline-block;
-  height: 12px;
-  line-height: 12px;
-  vertical-align: middle;
+
   margin-left: 3px;
   padding: 0 2px;
-  background-color: hsl(0, 0%, 70%);
+  background-color: rgba(0, 0, 0, 0.29);
   color: #fff;
   border-radius: 2px;
+}
+
+.ev-listener.tooltip-selected
+{
+  box-shadow: none;
+  color: #fff;
+  background-color: rgba(82, 122, 204, 0.55);
 }
 
 .ev-listener::after
@@ -58,6 +59,7 @@
 .ev-type
 {
   font: inherit;
+  position: relative;
 }
 
 .ev-listener-tooltip .ev-type,
@@ -66,7 +68,7 @@
   background-color: hsla(0, 0%, 0%, 0.04);
   padding: 2px 8px;
   border-width: 1px 0;
-  margin: 5px 0px 1px;
+  margin: 5px 0 1px;
 }
 
 .ev-listener-tooltip .ev-type
@@ -76,7 +78,17 @@
 
 .ev-phase
 {
-  float: right;
+  /*
+    Propably an expensive way to right align text. But a common float causes an unstable
+    box with horizontal scrollbars which disappears on hover with an ugly jumping tooltip.
+  */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 8px;
+  text-align: right;
   font-style: italic;
   color: hsl(0, 0%, 50%);
 }
@@ -95,6 +107,11 @@
 .ev-listener-list
 {
   margin-left: 12px;
+}
+
+.ev-rt-list .ev-rt-title
+{
+  margin-left: 0;
 }
 
 .tooltip-function-source .js-tooltip-examine-container
