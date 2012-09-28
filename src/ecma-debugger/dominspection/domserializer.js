@@ -159,7 +159,7 @@ window.cls.DOMSerializer.prototype = new function()
             {
               tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) +
                       "<" + node_name +  attrs + ">" +
-                        helpers.escapeTextHtml(one_child_value) +
+                        helpers.escape_html(one_child_value) +
                       "</" + node_name + ">";
               i = child_pointer - 1;
             }
@@ -216,7 +216,7 @@ window.cls.DOMSerializer.prototype = new function()
         {
           if( !/^\s*$/.test(node[ VALUE ] ) )
           {
-            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + helpers.escapeTextHtml(node[VALUE]);
+            tree += LINEBREAK  + getIndent(node[DEPTH] - start_depth) + helpers.escape_html(node[VALUE]);
           }
         }
       }
