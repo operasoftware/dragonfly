@@ -211,7 +211,7 @@ cls.ResourceUtil.get_meta_data = function(resourceInfo)
     if (i.naturalWidth)
       return i.naturalWidth + '\u00D7' + i.naturalHeight;
     else
-      return 'vectorial image';
+      return ui_strings.S_RESOURCE_VECTOR_GRAPHIC;
   }
 };
 

@@ -150,6 +150,9 @@ ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
 
+/* DESC: Label for breakpoint condition (lowercase). */
+ui_strings.M_LABEL_BREAKPOINT_CONDITION = "condition";
+
 /* DESC: Label for option that clears all errors */
 ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
 
@@ -570,6 +573,9 @@ ui_strings.S_BUTTON_SHOW_REQUEST_RAW = "Raw";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
 
+/* DESC: Button label to show ruler */
+ui_strings.S_BUTTON_SHOW_RULER = "Show ruler";
+
 /* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
@@ -809,6 +815,9 @@ ui_strings.S_HTTP_LABEL_DURATION = "Duration";
 
 /* DESC: label for the network filter that shows all items */
 ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
+
+/* DESC: label for the network filter that shows font items */
+ui_strings.S_HTTP_LABEL_FILTER_FONTS = "Fonts";
 
 /* DESC: label for the network filter that shows image items */
 ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
@@ -1460,6 +1469,27 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
+
+/* DESC:  Encoding of the resource */
+ui_strings.S_RESOURCE_ENCODING = "encoded in %s";
+
+/* DESC: Formatting the resource */
+ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource…";
+
+/* DESC: Loading page */
+ui_strings.S_RESOURCE_LOADING_PAGE = "Loading page…";
+
+/* DESC: No data available for the resource */
+ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";
+
+/* DESC: No resource selected ( for the detail view ) */
+ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED = "No resource selected.";
+
+/* DESC: Display the mime type sent by the server and the mime type guessed by Opera/Dragonfly if there was any ambiguity */
+ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE = "%(SENT) treated as %(GUESSED)";
+
+/* DESC: Vector graphic ( used for SVG images. Otherwise we show the intrinsic dimension of the image ) */
+ui_strings.S_RESOURCE_VECTOR_GRAPHIC = "vector graphic";
 
 /* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
 ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
