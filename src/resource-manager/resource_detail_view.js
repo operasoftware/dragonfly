@@ -122,7 +122,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this.go_to_line = function(container, data)
   {
-    if (!data || !(data.lines && data.lines.length))
+    if (!data || !data.lines || !data.lines.length)
       return;
 
     this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
