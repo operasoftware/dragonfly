@@ -134,17 +134,21 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     }
   };
 
-  this._show_resource_by_instance = function(resource)
+  this._show_resource = function(resource)
   {
-    this.resource = resource;
     if (!resource || !resource.data)
       return false;
 
+    this.resource = resource;
     this._service.highlight_resource(resource.id);
+    this.update();
 
-    if (resource.data)
-      this.update();
-    else
+    return true;
+  };
+
+  this._show_resource_by_instance = function(resource)
+  {
+    if (!this._show_resource(resource))
       this._show_resource_by_url(resource.url);
   };
 
@@ -158,9 +162,8 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this._show_resource_by_url = function(url)
   {
     var resource = this._service.get_resource_for_url(url);
-    if (resource && resource.data)
-      this._show_resource_by_instance(resource);
-    else
+
+    if (!this._show_resource(resource))
       this._service.request_resource(url, this.show_resource.bind(this), this.data);
   };
 
