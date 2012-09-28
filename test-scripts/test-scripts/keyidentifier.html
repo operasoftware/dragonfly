@@ -20,7 +20,7 @@ var onshortcut = function(shortcut, event)
 {
   document.getElementsByTagName('p')[0].textContent = shortcut;
   var pre = document.getElementsByTagName('pre')[0];
-  
+
   var pos = ('\n' + pre.textContent + '\n').indexOf('\n' + shortcut + '\n');
   var selection = getSelection();
   var range = document.createRange();
@@ -37,15 +37,16 @@ var onshortcut = function(shortcut, event)
 
 window.onload = function()
 {
-  var sc = 
+  var sc =
   [
-    "ctrl a", "ctrl b", "shift ctrl a", 
+    "ctrl a", "ctrl b", "shift ctrl a",
     "up","down","left","right",
     "enter","ctrl enter",
     "shift tab","tab", "ctrl tab",
     "escape", "shift escape",
     "a", "(", ")", "s", "f6", ".", "[",
-    "ctrl p", "page-down", "page-up"
+    "ctrl p", "page-down", "page-up",
+    "cmd a", "cmd k"
   ];
   var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : window.opera ?"opera" : "firefox");
   document.getElementsByTagName('pre')[0].textContent = sc.join('\n');

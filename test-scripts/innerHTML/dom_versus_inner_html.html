@@ -550,7 +550,7 @@ window.cls.Helpers = function()
         || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
   }
 
-  this.escapeTextHtml = (function()
+  this.escape_html = (function()
   {
     var re_amp = /&/g, re_lt = /</g;
     return function(str)
@@ -559,7 +559,7 @@ window.cls.Helpers = function()
     }
   })();
 
-  this.escapeAttributeHtml = (function()
+  this.escape_html_attr = (function()
   {
     var re_amp = /&/g, re_lt = /</g, re_quot = /"/g;
     return function(str)
@@ -1054,7 +1054,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
             "<item>" +
-              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<key class='no-expander'>" + helpers.escape_html(prop[NAME]) + "</key>" +
               "<value class='" + type + "'>" + value + "</value>" +
             "</item>"
           );
@@ -1064,15 +1064,15 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
                         value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escape_html(value).replace(/'/g, '&#39;');
           if (short_val)
           {
             ret.push(
               "<item>" +
                 "<input type='button' handler='expand-value'  class='folder-key'/>" +
-                "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<key>" + helpers.escape_html(prop[NAME]) + "</key>" +
                 "<value class='" + type + "' data-value='" + value + "'>" +
-                  "\"" + helpers.escapeTextHtml(short_val) +
+                  "\"" + helpers.escape_html(short_val) +
                 "</value>" +
               "</item>"
             );
@@ -1081,7 +1081,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
           {
             ret.push(
               "<item>" +
-                "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+                "<key class='no-expander'>" + helpers.escape_html(prop[NAME]) + "</key>" +
                 "<value class='" + type + "'>\"" + value + "\"</value>" +
               "</item>"
             );
@@ -1093,7 +1093,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
             "<item>" +
-              "<key class='no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+              "<key class='no-expander'>" + helpers.escape_html(prop[NAME]) + "</key>" +
               "<value class='" + type + "'>" + type + "</value>" +
             "</item>"
           );
@@ -1113,7 +1113,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
             ret.push("style='background-position: 0px -11px') ");
           ret.push(
             "/>" +
-            "<key>" + helpers.escapeTextHtml(prop[NAME]) + "</key>" +
+            "<key>" + helpers.escape_html(prop[NAME]) + "</key>" +
             "<value class='object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</value>"
           );
           if (obj_id in tree)
@@ -1200,7 +1200,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
           ['item',
-            ['key', helpers.escapeTextHtml(prop[NAME]),  'class', 'no-expander'],
+            ['key', helpers.escape_html(prop[NAME]),  'class', 'no-expander'],
             ['value', value.toString(), 'class', type]
           ]);
           break;
@@ -1209,21 +1209,21 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
                         value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escape_html(value).replace(/'/g, '&#39;');
           if (short_val)
           {
             ret.push(
             ['item',
               ['input', 'type', 'button', 'handler', 'expand-value', 'class', 'folder-key'],
-              ['key', helpers.escapeTextHtml(prop[NAME])],
-              ['value', helpers.escapeTextHtml(short_val), 'class', type, 'data-value', value]
+              ['key', helpers.escape_html(prop[NAME])],
+              ['value', helpers.escape_html(short_val), 'class', type, 'data-value', value]
             ]);
           }
           else
           {
             ret.push(
             ['item',
-              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['key', helpers.escape_html(prop[NAME]), 'class', 'no-expander'],
               ['value', value, 'class', type]
             ]);
           }
@@ -1234,7 +1234,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
             ['item',
-              ['key', helpers.escapeTextHtml(prop[NAME]), 'class', 'no-expander'],
+              ['key', helpers.escape_html(prop[NAME]), 'class', 'no-expander'],
               ['value', type, 'class', type]
           ]);
           break;
@@ -1249,7 +1249,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
               'handler', 'examine-object', 
               'class', 'folder-key'
             ].concat(obj_id in tree ? ['style', 'background-position: 0px -11px'] : []),
-            ['key', helpers.escapeTextHtml(prop[NAME])],
+            ['key', helpers.escape_html(prop[NAME])],
             ['value', prop[OBJECT_VALUE][CLASS_NAME], 'class', 'object'],
             obj_id in tree ? _pretty_print_object(model, tree[obj_id], obj_id) : [],
             'obj-id', obj_id.toString()
@@ -1339,7 +1339,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
             "<div class='item'>" +
-              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
               "<span class='value " + type + "'>" + value + "</span>" +
             "</div>"
           );
@@ -1349,15 +1349,15 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           short_val = value.length > MAX_VALUE_LENGTH ? 
                         value.slice(0, MAX_VALUE_LENGTH) + '…"' : '';
-          value = helpers.escapeTextHtml(value).replace(/'/g, '&#39;');
+          value = helpers.escape_html(value).replace(/'/g, '&#39;');
           if (short_val)
           {
             ret.push(
               "<div class='item'>" +
                 "<input type='button' data-handler='expand-value'  class='folder-key'/>" +
-                "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='key'>" + helpers.escape_html(prop[NAME]) + "</span>" +
                 "<span class='value " + type + "' data-value='" + value + "'>" +
-                  "\"" + helpers.escapeTextHtml(short_val) +
+                  "\"" + helpers.escape_html(short_val) +
                 "</span>" +
               "</div>"
             );
@@ -1366,7 +1366,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
           {
             ret.push(
               "<div class='item'>" +
-                "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+                "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
                 "<span class='value " + type + "'>\"" + value + "\"</span>" +
               "</div>"
             );
@@ -1378,7 +1378,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
         {
           ret.push(
             "<div class='item'>" +
-              "<span class='key no-expander'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+              "<span class='key no-expander'>" + helpers.escape_html(prop[NAME]) + "</span>" +
               "<span class='value " + type + "'>" + type + "</span>" +
             "</div>"
           );
@@ -1398,7 +1398,7 @@ cls.EcmascriptDebugger["6.0"].FixObjectInspectionData = function(rt_id, obj_id, 
             ret.push("style='background-position: 0px -11px') ");
           ret.push(
             "/>" +
-            "<span class='key'>" + helpers.escapeTextHtml(prop[NAME]) + "</span>" +
+            "<span class='key'>" + helpers.escape_html(prop[NAME]) + "</span>" +
             "<span class='value object'>" + prop[OBJECT_VALUE][CLASS_NAME] + "</span>"
           );
           if (obj_id in tree)

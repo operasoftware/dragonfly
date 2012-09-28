@@ -985,6 +985,13 @@ suggest_values['overflow-y'] =
   'inherit'
 ];
 
+suggest_values['overflow-wrap'] =
+[
+  'normal',
+  'break-word',
+  'inherit'
+];
+
 suggest_values['padding'] =
 suggest_values['padding-top'] =
 suggest_values['padding-right'] =
