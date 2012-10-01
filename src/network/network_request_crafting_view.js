@@ -50,8 +50,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     var entries = [];
     if (ctx)
       entries = ctx.get_entries();
-
-    // render entries..
     container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
                                                                     this._prev_request,
                                                                     entries,
@@ -141,7 +139,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._handle_send_request_bound = function()
   {
-    // todo: the old context will probably be kept for comparing previous requests.
     this._network_logger.remove_crafter_request_context();
 
     this._prev_url = this._urlfield.get_value();
