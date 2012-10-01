@@ -49,7 +49,10 @@ var TabBase = new function()
   {
     var tab = this._get_top_tab_element();
     var badge = tab && tab.querySelector(".badge");
-    if (badge && type)
+    if (!badge)
+      return;
+
+    if (type)
       badge.addClass(type);
     else
       badge.className = "badge";
