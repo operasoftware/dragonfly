@@ -287,7 +287,7 @@ a.external:hover
 .resource-tree li > h2
 {
   margin:0;
-  padding:0;
+  padding:0 4px;
   white-space:nowrap;
   font-weight:normal;
   min-width:100%;
@@ -299,7 +299,9 @@ a.external:hover
 
 
 
-.resource-tree-documents, .resource-tree-groups, .resource-tree-resources
+.resource-tree-documents,
+.resource-tree-groups,
+.resource-tree-resources
 {
   padding:0;
   margin:0;
@@ -307,11 +309,12 @@ a.external:hover
 /* zebra resources */
 .resource-tree-windows
 {
-  width:100%;
+  width: 100%;
   background-image: linear-gradient(0deg, rgba(0,0,0,.031) 50%, transparent 0%);
   background-size: 100% 36px;
-  background-repeat:repeat;
-  display:table;
+  background-repeat: repeat;
+  display: table;
+  margin:4px 0;
 }
 
 .resource-tree li > h2:hover
@@ -334,7 +337,7 @@ span.resource-tree-document-label,
 span.resource-tree-group-label
 {
   font-weight:bold;
-  padding:0 0 0 18px;
+  padding:0 0 0 21px;
   line-height:18px;
   display:inline-block;
   background-position:1px 1px;

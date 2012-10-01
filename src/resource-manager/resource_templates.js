@@ -17,6 +17,8 @@ templates.resource_tree =
 		ui_strings.S_HTTP_LABEL_FILTER_OTHER
 	],
 
+	DEPTH_IDENTATION: 18,
+
 	_expandCollapseExtras:function(context, pivotID, depth)
 	{
 		var hash = context.collapsed;
@@ -43,7 +45,7 @@ templates.resource_tree =
 					'input',
 					'type','button',
 					'class','button-expand-collapse',
-					'style', 'margin-left:'+ depth*18 +'px;'
+					'style', 'margin-left:'+ depth*this.DEPTH_IDENTATION +'px;'
 				]
 			}
 		});
@@ -218,7 +220,7 @@ templates.resource_tree =
 					['span',
 						(r.filename || r.short_distinguisher || r.url || 'NO URL'),
 						'class','resource-tree-resource-label',
-						'style', 'margin-left:'+ depth*18 +'px;'
+						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;'
 					],
 					'handler','resource-detail',
 					'data-resource-id',String(r.id),
