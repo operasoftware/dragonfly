@@ -10,6 +10,7 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   var OBJECT_ID = 3;
   var URI = 4;
   var DESCRIPTION = 5;
+  var EXTENSION_NAME = 7;
 
   this.runtime_id = runtime[RUNTIME_ID];
   this.html_frame_path = runtime[HTML_FRAME_PATH];
@@ -17,6 +18,7 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   this.object_id = runtime[OBJECT_ID];
   this.uri = runtime[URI];
   this.description = runtime[DESCRIPTION];
+  this.extension_name = runtime[EXTENSION_NAME];
 };
 
 cls.EcmascriptDebugger["6.0"].Runtime.prototype = new URIPrototype("uri");
@@ -38,7 +40,7 @@ cls.EcmascriptDebugger["6.0"].ExtensionRuntime = function(rt)
   this.type = "extension";
   this.id = rt.runtime_id;
   this.uri = rt.uri;
-  this.title = "Extension Runtime " + rt.runtime_id;
+  this.title = "Extension" + (rt.extension_name ? ": " + rt.extension_name : " Runtime " + rt.runtime_id);
 };
 
 /**

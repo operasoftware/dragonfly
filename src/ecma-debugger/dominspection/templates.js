@@ -206,7 +206,7 @@
         force_lower_case = false;
       }
       else if (disregard_force_lower_case_depth &&
-               disregard_force_lower_case_depth == node[DEPTH])
+               disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() &&
@@ -367,7 +367,7 @@
         force_lower_case = false;
       }
       else if (disregard_force_lower_case_depth &&
-               disregard_force_lower_case_depth == node[DEPTH])
+               disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
@@ -642,7 +642,7 @@
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
       }
-      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');

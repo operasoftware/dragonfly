@@ -47,8 +47,9 @@ cls.WindowManager["2.0"].WindowManagerData = function(session_ctx)
     TITLE = 1,
     WINDOW_TYPE = 2,
     OPENER_ID = 3;
+    EXTENSION_NAME = 4;
     */
-    return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3]};
+    return {window_id: win[0], title: win[1], window_type: win[2], opener_id: win[3], extension_name: win[4]};
   };
 
   this._set_active_window_as_debug_context = function()
@@ -479,7 +480,7 @@ cls.WindowManager["2.0"].DebuggerMenu = function(id, class_name)
   {
     return (
     ["cst-option",
-        win.title || "\u00A0",
+        win.extension_name || win.title || "\u00A0",
         "opt-index", index,
         "value", win.window_id.toString(),
         "class", win.window_id == window_manager_data.get_debug_context() ?

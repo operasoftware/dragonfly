@@ -361,12 +361,8 @@ var ActionBroker = function()
     var shared_shortcuts = this._current_shared_shortcuts[this._action_context.mode] || {};
     var action = shortcuts[key_id] || shared_shortcuts[key_id] || '';
     var propagate_event = true;
-    if (action)
-    {
-      propagate_event = this._action_context.handle(action,
-                                                    event,
-                                                    this._container);
-    }
+    if (action && this._action_context.is_enabled)
+      propagate_event = this._action_context.handle(action, event, this._container);
 
     if (!(propagate_event === false) &&
          this._action_context != this._global_handler)
