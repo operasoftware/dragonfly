@@ -1,7 +1,7 @@
 message <span class="message">SessionID</span>
 {
-  <span class="comment">/** 
-   * The ID of the `Session`.
-   */</span>
-  required <span class="number">uint32</span> sessionID = 1; 
+  <span class="comment">/**
+    * The ID of the `Session`.
+    */</span>
+  required <span class="number">uint32</span> sessionID = 1;
 }

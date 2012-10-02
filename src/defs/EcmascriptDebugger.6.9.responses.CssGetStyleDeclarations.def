@@ -1,64 +1,87 @@
 message <span class="message">CssStyleDeclarations</span>
 {
-  message <span class="message">NodeStyle</span>
+  repeated <span class="string">string</span> computedStyleList = 1;
+  repeated NodeStyle nodeStyleList = 2;
   {
-    required <span class="number">uint32          </span> objectID      = 1; 
-    required <span class="string">string          </span> elementName   = 2; 
-    repeated <span class="message">StyleDeclaration</span> styleList     = 3; 
-    <span class="comment">/** 
-     * If set, the style declarations apply to the specified pseudo-element
-     * of the node represented by `objectID`.
-     * 
-     * This field (if set) will contain pseudo-elements only (not pseudo-
-     * classes).
-     * 
-     * @since 6.9
-     */</span>
-    optional <span class="number">PseudoSelector  </span> pseudoElement = 4; 
+    required <span class="number">uint32</span> objectID = 1;
+    required <span class="string">string</span> elementName = 2;
+    repeated StyleDeclaration styleList = 3;
+    {
+      required RuleOrigin origin = 1;
+      {
+        <span class="comment">/**
+          * This means that the user-agent provided this rule, i.e. the
+          * rule is part of the default style.
+          */</span>
+        <span class="enum">USER_AGENT</span> = 1;
+        <span class="comment">/**
+          * This means the rule originated from a local CSS file specified by the
+          * user, i.e. User CSS.
+          */</span>
+        <span class="enum">LOCAL</span> = 2;
+        <span class="comment">/**
+          * Author rules originate from stylesheets either in separate files, or
+          * inline in the document.
+          */</span>
+        <span class="enum">AUTHOR</span> = 3;
+        <span class="comment">/**
+          * The rule originated from a 'style' attribute on the HTML element.
+          */</span>
+        <span class="enum">ELEMENT</span> = 4;
+        <span class="comment">/**
+          * The rule is the CSS-equivalent of SVG presentational attributes.
+          * 
+          * @since 6.5
+          */</span>
+        <span class="enum">SVG</span> = 5;
+      }
+      repeated <span class="number">uint32</span> indexList = 2;
+      repeated <span class="string">string</span> valueList = 3;
+      repeated <span class="boolean">bool</span> priorityList = 4;
+      repeated DeclarationStatus statusList = 5;
+      {
+        <span class="enum">OVERWRITTEN</span> = 0;
+        <span class="enum">USED</span> = 1;
+      }
+      optional <span class="string">string</span> selector = 6;
+      optional <span class="number">uint32</span> specificity = 7;
+      optional <span class="number">uint32</span> stylesheetID = 8;
+      optional <span class="number">uint32</span> ruleID = 9;
+      optional <span class="number">uint32</span> ruleType = 10;
+      <span class="comment">/**
+        * The original, stylesheet relative line number of this rule. The
+        * line number refers to the start of the declaration block.
+        * 
+        * This field *may* be set for STYLE rules, but as the information
+        * depends on an optional feature in Opera, some builds intended for
+        * low-memory devices may not support this.
+        * 
+        * @since 6.6
+        */</span>
+      optional <span class="number">uint32</span> lineNumber = 11;
+    }
+    <span class="comment">/**
+      * If set, the style declarations apply to the specified pseudo-element
+      * of the node represented by `objectID`.
+      * 
+      * This field (if set) will contain pseudo-elements only (not pseudo-
+      * classes).
+      * 
+      * @since 6.9
+      */</span>
+    optional PseudoSelector pseudoElement = 4;
+    {
+      <span class="enum">NONE</span> = 0;
+      <span class="enum">HOVER</span> = 1;
+      <span class="enum">ACTIVE</span> = 2;
+      <span class="enum">FOCUS</span> = 3;
+      <span class="enum">LINK</span> = 4;
+      <span class="enum">VISITED</span> = 5;
+      <span class="enum">FIRST_LINE</span> = 6;
+      <span class="enum">FIRST_LETTER</span> = 7;
+      <span class="enum">BEFORE</span> = 8;
+      <span class="enum">AFTER</span> = 9;
+      <span class="enum">SELECTION</span> = 10;
+    }
   }
-  <span class="comment">/** 
-   * Common to all origins:
-   * - indexList
-   * - valueList
-   * - priorityList
-   * - statusList
-   * 
-   * Common to AUTHOR and LOCAL
-   * - selector
-   * - specificity
-   * 
-   * For AUTHOR
-   * - stylesheetID
-   * - ruleID
-   * - ruleType
-   * 
-   * For SVG
-   * - specificity
-   */</span>
-  message <span class="message">StyleDeclaration</span>
-  {
-    required <span class="number">RuleOrigin       </span> origin       =  1; 
-    repeated <span class="number">uint32           </span> indexList    =  2; 
-    repeated <span class="string">string           </span> valueList    =  3; 
-    repeated <span class="bool">bool             </span> priorityList =  4; 
-    repeated <span class="number">DeclarationStatus</span> statusList   =  5; 
-    optional <span class="string">string           </span> selector     =  6; 
-    optional <span class="number">uint32           </span> specificity  =  7; 
-    optional <span class="number">uint32           </span> stylesheetID =  8; 
-    optional <span class="number">uint32           </span> ruleID       =  9; 
-    optional <span class="number">uint32           </span> ruleType     = 10; 
-    <span class="comment">/** 
-     * The original, stylesheet relative line number of this rule. The
-     * line number refers to the start of the declaration block.
-     * 
-     * This field *may* be set for STYLE rules, but as the information
-     * depends on an optional feature in Opera, some builds intended for
-     * low-memory devices may not support this.
-     * 
-     * @since 6.6
-     */</span>
-    optional <span class="number">uint32           </span> lineNumber   = 11; 
-  }
-  repeated <span class="string">string   </span> computedStyleList = 1; 
-  repeated <span class="message">NodeStyle</span> nodeStyleList     = 2; 
 }

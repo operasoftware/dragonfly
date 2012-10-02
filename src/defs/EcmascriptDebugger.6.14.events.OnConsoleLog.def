@@ -1,56 +1,109 @@
 message <span class="message">ConsoleLogInfo</span>
 {
-  message <span class="message">Value</span>
+  required <span class="number">uint32</span> runtimeID = 1;
+  <span class="comment">/**
+    * This fields indicates which ``console.*`` function was called.
+    */</span>
+  required ConsoleLogType type = 2;
   {
-    optional <span class="string">string     </span> value       = 1; 
-    optional <span class="message">ObjectValue</span> objectValue = 2; 
+    <span class="comment">/**
+      * The script called ``console.log(...)``.
+      */</span>
+    <span class="enum">LOG</span> = 1;
+    <span class="comment">/**
+      * The script called ``console.debug(...)``.
+      */</span>
+    <span class="enum">DEBUG</span> = 2;
+    <span class="comment">/**
+      * The script called ``console.info(...)``.
+      */</span>
+    <span class="enum">INFO</span> = 3;
+    <span class="comment">/**
+      * The script called ``console.warn(...)``.
+      */</span>
+    <span class="enum">WARN</span> = 4;
+    <span class="comment">/**
+      * The script called ``console.error(...)``.
+      */</span>
+    <span class="enum">ERROR</span> = 5;
+    <span class="comment">/**
+      * The script called ``console.assert(expr, ...)``.
+      */</span>
+    <span class="enum">ASSERT</span> = 6;
+    <span class="comment">/**
+      * The script called ``console.dir(object)``.
+      */</span>
+    <span class="enum">DIR</span> = 7;
+    <span class="comment">/**
+      * The script called ``console.dirxml(node)``.
+      */</span>
+    <span class="enum">DIRXML</span> = 8;
+    <span class="comment">/**
+      * The script called ``console.group(...)``.
+      */</span>
+    <span class="enum">GROUP</span> = 9;
+    <span class="comment">/**
+      * The script called ``console.groupCollapsed(...)``.
+      */</span>
+    <span class="enum">GROUP_COLLAPSED</span> = 10;
+    <span class="comment">/**
+      * The script called ``console.groupEnd()``.
+      */</span>
+    <span class="enum">GROUP_END</span> = 11;
+    <span class="comment">/**
+      * The script called ``console.count([title])``.
+      */</span>
+    <span class="enum">COUNT</span> = 12;
+    <span class="comment">/**
+      * The script called ``console.table(data, [columns])``.
+      */</span>
+    <span class="enum">TABLE</span> = 13;
+    <span class="comment">/**
+      * The script called ``console.clear()``.
+      * 
+      * @since 6.9
+      */</span>
+    <span class="enum">CLEAR</span> = 14;
   }
-  message <span class="message">ObjectValue</span>
+  <span class="comment">/**
+    * The list of values passed to the function as arguments.
+    */</span>
+  repeated Value valueList = 3;
   {
-    required <span class="number">uint32</span> objectID     = 1; 
-    required <span class="bool">bool  </span> isCallable   = 2; 
-    <span class="comment">/** 
-     * type, function or object
-     */</span>
-    required <span class="string">string</span> type         = 3; 
-    optional <span class="number">uint32</span> prototypeID  = 4; 
-    <span class="comment">/** 
-     * The class of the object.
-     */</span>
-    optional <span class="string">string</span> className    = 5; 
-    <span class="comment">/** 
-     * If the object is a function, this is the name of
-     * the variable associated with that function (if any).
-     */</span>
-    optional <span class="string">string</span> functionName = 6; 
+    optional <span class="string">string</span> value = 1;
+    optional ObjectValue objectValue = 2;
+    {
+      required <span class="number">uint32</span> objectID = 1;
+      required <span class="boolean">bool</span> isCallable = 2;
+      <span class="comment">/**
+        * type, function or object
+        */</span>
+      required <span class="string">string</span> type = 3;
+      optional <span class="number">uint32</span> prototypeID = 4;
+      <span class="comment">/**
+        * The class of the object.
+        */</span>
+      optional <span class="string">string</span> className = 5;
+      <span class="comment">/**
+        * If the object is a function, this is the name of
+        * the variable associated with that function (if any).
+        */</span>
+      optional <span class="string">string</span> functionName = 6;
+    }
   }
-  <span class="comment">/** 
-   * Defines the position in a script. The position is identified by the ID of
-   * the script and the line number in the script.
-   */</span>
-  message <span class="message">Position</span>
+  <span class="comment">/**
+    * The position the function was called.
+    */</span>
+  optional Position position = 4;
   {
-    <span class="comment">/** 
-     * ID of the script which contains the position.
-     * The ID will be set in the ScriptInfo message when a new script appears.
-     */</span>
-    required <span class="number">uint32</span> scriptID   = 1; 
-    <span class="comment">/** 
-     * The line number in the script.
-     */</span>
-    required <span class="number">uint32</span> lineNumber = 2; 
+    <span class="comment">/**
+      * ID of the script which contains the position.
+      * The ID will be set in the ScriptInfo message when a new script appears.
+      */</span>
+    required <span class="number">uint32</span> scriptID = 1;
+    <span class="comment">/**
+      * The line number in the script.
+      */</span>
+    required <span class="number">uint32</span> lineNumber = 2;
   }
-  required <span class="number">uint32        </span> runtimeID = 1; 
-  <span class="comment">/** 
-   * This fields indicates which ``console.*`` function was called.
-   */</span>
-  required <span class="number">ConsoleLogType</span> type      = 2; 
-  <span class="comment">/** 
-   * The list of values passed to the function as arguments.
-   */</span>
-  repeated <span class="message">Value         </span> valueList = 3; 
-  <span class="comment">/** 
-   * The position the function was called.
-   */</span>
-  optional <span class="message">Position      </span> position  = 4; 
 }

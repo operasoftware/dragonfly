@@ -1,4 +1,4 @@
 message <span class="message">RunModulesArg</span>
 {
-  repeated <span class="string">string</span> moduleList = 1; 
+  repeated <span class="string">string</span> moduleList = 1;
 }

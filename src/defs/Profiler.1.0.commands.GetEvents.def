@@ -1,118 +1,202 @@
 message <span class="message">GetEventsArg</span>
 {
-  message <span class="message">Interval</span>
+  <span class="comment">/**
+    * ID of the `Session` to get `Events` from.
+    */</span>
+  required <span class="number">uint32</span> sessionID = 1;
+  <span class="comment">/**
+    * ID of the `Timeline` to get `Events` from.
+    */</span>
+  required <span class="number">uint32</span> timelineID = 2;
+  <span class="comment">/**
+    * How `Events` should be processed before they are returned.
+    */</span>
+  optional Mode mode = 3 [default = ALL];
   {
-    <span class="comment">/** 
-     * The start of the `Interval`. If not present, this is an left-open
-     * `Interval` ([-inf, N]).
-     */</span>
-    optional <span class="number">double</span> start = 1; 
-    <span class="comment">/** 
-     * The end of the `Interval`. If not present, this is an right-open
-     * `Interval` ([N, +inf]).
-     */</span>
-    optional <span class="number">double</span> end   = 2; 
+    <span class="comment">/**
+      * Return each `Event` unprocessed.
+      * 
+      * When using this mode, each `Event` in the `Timeline` may contain
+      * type specific data, which provides additional information about the
+      * `Event`, such as the `Area` that was painted for `PAINT` `Events`.
+      */</span>
+    <span class="enum">ALL</span> = 1;
+    <span class="comment">/**
+      * Reduce all `Events` of the same type into the same *virtual* `Event`.
+      * Timing information and number of hits will then be summarized into
+      * that single `Event` (for each type).
+      * 
+      * This makes it possible to provide a summary which says how much time
+      * was spent in total on a certain activity, e.g. CSS selector matching.
+      */</span>
+    <span class="enum">REDUCE_UNIQUE_TYPES</span> = 2;
+    <span class="comment">/**
+      * Reduce all equal `Events` into the same *virtual* `Event`. Timing
+      * information and number of hits will then be summarized into a single
+      * *virtual* `Event`.
+      * 
+      * An `Event` is equal to another `Event` if they both have the same
+      * type, and both have the same type-specific data. For instance, two
+      * CSS selector matching `Events` are equal if they have the same
+      * selector text.
+      * 
+      * This makes it possible to pinpoint specific performance problems in
+      * the profiling session. For instance, an overview of total time spent
+      * matching a single CSS selector can be provided.
+      */</span>
+    <span class="enum">REDUCE_UNIQUE_EVENTS</span> = 3;
+    <span class="comment">/**
+      * Reduce all `Events` (regardless of their types and content) into the
+      * same *virtual* `Event`. This creates a summary of the total time
+      * recording across all `Event` types. The returned `Event` will have
+      * type 'GENERIC', and contain no type-specific data.
+      * 
+      * When using this mode, another `Event` *may* be returned which
+      * represents the total execution time for the OS process in the
+      * profiling `Interval`. The execution time includes time spent in user
+      * mode and kernel mode for the current process, and does not include
+      * child processes. The `Event` is only present if the build supports
+      * this feature.
+      */</span>
+    <span class="enum">REDUCE_ALL</span> = 4;
   }
-  <span class="comment">/** 
-   * Describes different ways `Events` can be returned.
-   */</span>
-  enum Mode
+  <span class="comment">/**
+    * If present, this `Event` will be used as the root for the iteration
+    * instead of the `Timeline` itself. The `Event` specified here will not be
+    * included in the response. (The highest level `Events` in the response
+    * will be the specified `Event`'s immediate children).
+    * 
+    * This can be used with a non-default `Mode` to produce subtree summaries.
+    * 
+    * This, combined with the `maxDepth` option is useful for UIs where the
+    * `Timeline` is manually expanded by the user.
+    */</span>
+  optional <span class="number">uint32</span> eventID = 4;
+  <span class="comment">/**
+    * If present, return only `Events` down to the specified level. The
+    * smallest allowed vaule is '1', which represents the root `Event`'s
+    * immediate children. (A value of '0' represents the root `Event` itself,
+    * which is either the timeline, or the `Event` specified by `eventID`).
+    * A value of 2 represents the root `Event`'s grandchildren, and so forth.
+    * 
+    * A value of '1' will be useful for creating a UI where the user manually
+    * expands an `Event` he or she is interested in.
+    */</span>
+  optional <span class="number">uint32</span> maxDepth = 5;
+  <span class="comment">/**
+    * If non-empty, include only the specified types in the result. An empty
+    * list means all `Event` types will be included.
+    */</span>
+  repeated EventType eventTypeList = 6;
   {
-    <span class="comment">/** 
-     * Return each `Event` unprocessed.
-     * 
-     * When using this mode, each `Event` in the `Timeline` may contain
-     * type specific data, which provides additional information about the
-     * `Event`, such as the `Area` that was painted for `PAINT` `Events`.
-     */</span>
-    ALL = 1;
-    <span class="comment">/** 
-     * Reduce all `Events` of the same type into the same *virtual* `Event`.
-     * Timing information and number of hits will then be summarized into
-     * that single `Event` (for each type).
-     * 
-     * This makes it possible to provide a summary which says how much time
-     * was spent in total on a certain activity, e.g. CSS selector matching.
-     */</span>
-    REDUCE_UNIQUE_TYPES = 2;
-    <span class="comment">/** 
-     * Reduce all equal `Events` into the same *virtual* `Event`. Timing
-     * information and number of hits will then be summarized into a single
-     * *virtual* `Event`.
-     * 
-     * An `Event` is equal to another `Event` if they both have the same
-     * type, and both have the same type-specific data. For instance, two
-     * CSS selector matching `Events` are equal if they have the same
-     * selector text.
-     * 
-     * This makes it possible to pinpoint specific performance problems in
-     * the profiling session. For instance, an overview of total time spent
-     * matching a single CSS selector can be provided.
-     */</span>
-    REDUCE_UNIQUE_EVENTS = 3;
-    <span class="comment">/** 
-     * Reduce all `Events` (regardless of their types and content) into the
-     * same *virtual* `Event`. This creates a summary of the total time
-     * recording across all `Event` types. The returned `Event` will have
-     * type 'GENERIC', and contain no type-specific data.
-     * 
-     * When using this mode, another `Event` *may* be returned which
-     * represents the total execution time for the OS process in the
-     * profiling `Interval`. The execution time includes time spent in user
-     * mode and kernel mode for the current process, and does not include
-     * child processes. The `Event` is only present if the build supports
-     * this feature.
-     */</span>
-    REDUCE_ALL = 4;
+    <span class="comment">/**
+      * Unknown type.
+      */</span>
+    <span class="enum">GENERIC</span> = 1;
+    <span class="comment">/**
+      * Special `Event` type, which represents the total time spent in the
+      * process. This `Event` *may* appear in a response to `GetEvents` command
+      * in `REDUCE_ALL` mode. Not all builds support this `Event`, and it will
+      * only be present if supported.
+      */</span>
+    <span class="enum">PROCESS</span> = 2;
+    <span class="comment">/**
+      * Occurs when the main document (such as HTML, XHTML, etc) is parsed.
+      */</span>
+    <span class="enum">DOCUMENT_PARSING</span> = 3;
+    <span class="comment">/**
+      * Occurs when stylesheets are parsed. This `Event` carries information
+      * about the URL of the stylesheet. If the stylesheet was inline, the parent
+      * document is used for the URL.
+      */</span>
+    <span class="enum">CSS_PARSING</span> = 4;
+    <span class="comment">/**
+      * Occurs when a script is compiled. This `Event` carries the URL of the
+      * script. If the script is inline, the parent document is used for the URL.
+      */</span>
+    <span class="enum">SCRIPT_COMPILATION</span> = 5;
+    <span class="comment">/**
+      * Occurs when a script thread is being evaluated (run). `Events` of this
+      * type carry information about the type of the thread (inline, eval, and so
+      * forth). If the thread is an event handler, the name of the event is also
+      * provided.
+      */</span>
+    <span class="enum">SCRIPT_THREAD_EVALUATION</span> = 6;
+    <span class="comment">/**
+      * Occurs when a reflow is triggered. A reflow is triggered when something
+      * is changed on the document, which *may* require a recalculation of
+      * style and layout.
+      * 
+      * A `REFLOW` `Event` does not mean that the whole page will be
+      * recalculated; it is more like a *request* to check whether something
+      * needs to updated. The `REFLOW` is typically a parent of a
+      * `STYLE_RECALCULATION`, and then `LAYOUT`, like this:
+      * 
+      * - `REFLOW`
+      *   - `STYLE_RECALCULATION`
+      *     - `CSS_SELECTOR_MATCHING` (#foo)
+      *     - `CSS_SELECTOR_MATCHING` (.bar)
+      *     - ...
+      *     - `CSS_SELECTOR_MATCHING` (#bar .fooz)
+      *   - `LAYOUT`
+      * 
+      * Most the time will be spent in `STYLE_RECALCULATION` and `LAYOUT`. The
+      * `REFLOW` itself is not expensive.
+      * 
+      * A `REFLOW` may also have no children at all, if no changes were to
+      * layout were necessary.
+      */</span>
+    <span class="enum">REFLOW</span> = 7;
+    <span class="comment">/**
+      * Occurs when a CSS needs to be recalculated for a set of elements in the
+      * document. This `Event` usually contains many `CSS_SELECTOR_MATCHING`
+      * `Events`.
+      * 
+      * See `REFLOW` for more information about how this `Event` relates to
+      * `REFLOW`, `CSS_SELECTOR_MATCHING` and `LAYOUT`.
+      */</span>
+    <span class="enum">STYLE_RECALCULATION</span> = 8;
+    <span class="comment">/**
+      * Occurs when we try to match a specific selector. `Events` of this type
+      * carry information about which selector we tried to match.
+      * 
+      * See `REFLOW` for more information about how this `Event` relates to
+      * `REFLOW`, `STYLE_RECALCULATION` and `LAYOUT`.
+      */</span>
+    <span class="enum">CSS_SELECTOR_MATCHING</span> = 9;
+    <span class="comment">/**
+      * Occurs when the layout tree is created or changed. Changes to the layout
+      * tree are done based on the caclulated style of elements, so `LAYOUT` will
+      * usually occur after a `STYLE_RECALCULATION`.
+      * 
+      * See `REFLOW` for more information about how these `Events` usually relate
+      * to each other.
+      */</span>
+    <span class="enum">LAYOUT</span> = 10;
+    <span class="comment">/**
+      * Occurs when we draw the document (or parts of the document).
+      */</span>
+    <span class="enum">PAINT</span> = 11;
   }
-
-  <span class="comment">/** 
-   * ID of the `Session` to get `Events` from.
-   */</span>
-  required <span class="number">uint32   </span> sessionID     = 1; 
-  <span class="comment">/** 
-   * ID of the `Timeline` to get `Events` from.
-   */</span>
-  required <span class="number">uint32   </span> timelineID    = 2; 
-  <span class="comment">/** 
-   * How `Events` should be processed before they are returned.
-   */</span>
-  optional <span class="number">Mode     </span> mode          = 3; 
-  <span class="comment">/** 
-   * If present, this `Event` will be used as the root for the iteration
-   * instead of the `Timeline` itself. The `Event` specified here will not be
-   * included in the response. (The highest level `Events` in the response
-   * will be the specified `Event`'s immediate children).
-   * 
-   * This can be used with a non-default `Mode` to produce subtree summaries.
-   * 
-   * This, combined with the `maxDepth` option is useful for UIs where the
-   * `Timeline` is manually expanded by the user.
-   */</span>
-  optional <span class="number">uint32   </span> eventID       = 4; 
-  <span class="comment">/** 
-   * If present, return only `Events` down to the specified level. The
-   * smallest allowed vaule is '1', which represents the root `Event`'s
-   * immediate children. (A value of '0' represents the root `Event` itself,
-   * which is either the timeline, or the `Event` specified by `eventID`).
-   * A value of 2 represents the root `Event`'s grandchildren, and so forth.
-   * 
-   * A value of '1' will be useful for creating a UI where the user manually
-   * expands an `Event` he or she is interested in.
-   */</span>
-  optional <span class="number">uint32   </span> maxDepth      = 5; 
-  <span class="comment">/** 
-   * If non-empty, include only the specified types in the result. An empty
-   * list means all `Event` types will be included.
-   */</span>
-  repeated <span class="number">EventType</span> eventTypeList = 6; 
-  <span class="comment">/** 
-   * If present, include only `Events` whose `Interval` overlaps this
-   * `Interval`. If the option is not present, the entire `Timeline` may be
-   * included (subject to restrictions set by other options).
-   * 
-   * This option can be combined with any `Mode`, to produce a summary of
-   * parts of the `Timeline`.
-   */</span>
-  optional <span class="message">Interval </span> interval      = 7; 
+  <span class="comment">/**
+    * If present, include only `Events` whose `Interval` overlaps this
+    * `Interval`. If the option is not present, the entire `Timeline` may be
+    * included (subject to restrictions set by other options).
+    * 
+    * This option can be combined with any `Mode`, to produce a summary of
+    * parts of the `Timeline`.
+    */</span>
+  optional Interval interval = 7;
+  {
+    <span class="comment">/**
+      * The start of the `Interval`. If not present, this is an left-open
+      * `Interval` ([-inf, N]).
+      */</span>
+    optional <span class="number">double</span> start = 1;
+    <span class="comment">/**
+      * The end of the `Interval`. If not present, this is an right-open
+      * `Interval` ([N, +inf]).
+      */</span>
+    optional <span class="number">double</span> end = 2;
+  }
 }
