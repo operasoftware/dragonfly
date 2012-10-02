@@ -442,6 +442,8 @@ cls.CSSInspectorActions = function(id)
 
   /* ActionHandler interface */
 
+  ActionHandlerInterface.apply(this);
+
   var MODE_DEFAULT = "default";
   var MODE_EDIT = "edit";
   var MODE_EDIT_CLASS = "edit-mode";
