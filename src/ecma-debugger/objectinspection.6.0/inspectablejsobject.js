@@ -107,7 +107,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       ]
     };
     this._queried_map = {};
-    this._expand_tree = {object_id: 0, protos: {}};
+    this._expand_tree = new Dict({object_id: 0, protos: new Dict()});
     this._rt_id = rt_id;
     this._obj_id = obj_id;
     this._identifier = identifier || '';
@@ -125,26 +125,28 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
 
   this._get_subtree = function(path)
   {
-    const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var key = '', obj_id = 0, proto_index = 0, i = 0, tree = this._expand_tree, index = 0;
-    for ( ; path && path[i]; i++)
+    var PATH_KEY = 0;
+    var PATH_OBJ_ID = 1;
+    var PATH_PROTO_INDEX = 2;
+    var tree = this._expand_tree;
+    for (var i = 0; path && path[i]; i++)
     {
-      key = path[i][PATH_KEY];
-      obj_id = path[i][PATH_OBJ_ID];
-      index = path[i][PATH_PROTO_INDEX];
-      if (i < (path.length - 1) && !(tree.protos[index] && tree.protos[index][key]))
-      {
-        throw 'not valid path in InspectionBaseData._handle_examine_object';
-      }
-      if (!tree.protos)
-        tree.protos = {};
-      if (!tree.protos[index])
-        tree.protos[index] = {};
+      var key = path[i][PATH_KEY];
+      var obj_id = path[i][PATH_OBJ_ID];
+      var index = path[i][PATH_PROTO_INDEX];
+      if (i < (path.length - 1) && !(tree.get_chain(["protos", index, key])))
+        throw "not valid path in InspectableJSObject._get_subtree";
+
+      if (!tree.get("protos"))
+        tree.set("protos", new Dict());
+      var protos = tree.get("protos");
+      if (!protos.get(index))
+        protos.set(index, new Dict());
+      var proto_index = protos.get(index);
       /* the last element of a prototype path has no object id */
-      if ((!has_own_property.call(tree.protos[index], key) && !isNaN(obj_id)) ||
-          tree.protos[index][key] === null)
-        tree.protos[index][key] = {object_id: obj_id, protos: {}};
-      tree = tree.protos[index][key];
+      if (!proto_index.get(key) && !isNaN(obj_id))
+        proto_index.set(key, new Dict({object_id: obj_id, protos: new Dict()}));
+      tree = proto_index.get(key);
     }
     return tree;
   }
@@ -153,21 +155,18 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   // returns the removed tree
   this._remove_subtree = function(path)
   {
-    const PATH_KEY = 0, PATH_OBJ_ID = 1, PATH_PROTO_INDEX = 2;
-    var
-    key = '',
-    obj_id = 0,
-    proto_index = 0,
-    i = 0,
-    tree = this._expand_tree,
-    ret = null;
-
-    for ( ; path && path[i]; i++)
+    var PATH_KEY = 0;
+    var PATH_OBJ_ID = 1;
+    var PATH_PROTO_INDEX = 2;
+    var tree = this._expand_tree;
+    var ret = null;
+    for (var i = 0; path && path[i]; i++)
     {
-      key = path[i][PATH_KEY];
-      obj_id = path[i][PATH_OBJ_ID];
-      index = path[i][PATH_PROTO_INDEX];
-      if (!(tree.protos && tree.protos[index] && tree.protos[index][key]))
+      var key = path[i][PATH_KEY];
+      var obj_id = path[i][PATH_OBJ_ID];
+      var index = path[i][PATH_PROTO_INDEX];
+      var sub_tree = tree.get_chain(["protos",  index, key]);
+      if (!sub_tree)
       {
         // with watches it can happen that we try to collapse
         // a path which was never expanded.
@@ -175,11 +174,11 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       }
       if (i == path.length - 1)
       {
-        ret = tree.protos[index][key];
-        tree.protos[index][key] = null;
+        ret = sub_tree;
+        tree.get_chain(["protos", index])["delete"](key);
         break;
       }
-      tree = tree.protos[index][key];
+      tree = sub_tree;
     }
     return ret;
   }
@@ -285,7 +284,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
         }
 
       }
-      this._obj_map[this._get_subtree(path).object_id] = proto_chain;
+      this._obj_map[this._get_subtree(path).get("object_id")] = proto_chain;
       if (cb)
         cb();
     }
@@ -320,22 +319,21 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
   this._get_all_ids = function get_all_ids(tree, ret)
   {
     ret || (ret = []);
-    if (tree)
+    if (tree && tree.get("object_id"))
     {
-      ret.push(tree.object_id);
-      for (var index in tree.protos)
+      ret.push(tree.get("object_id"));
+      var protos = tree.get("protos");
+      protos.keys().forEach(function(index)
       {
-        for (var key in tree.protos[index])
+        var proto = protos.get(index);
+        proto.keys().forEach(function(key)
         {
-          if (tree.protos[index][key])
-          {
-            get_all_ids(tree.protos[index][key], ret);
-          }
-        }
-      }
+          get_all_ids(proto.get(key), ret);
+        });
+      });
     }
     return ret;
-  }
+  };
 
   this._get_id = (function()
   {
@@ -436,8 +434,8 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     path = this._norm_path(path).slice(0);
     var index = path.pop()[PATH_PROTO_INDEX];
     var top = this._get_subtree(path);
-    var removed = top.protos[index];
-    top.protos[index] = null;
+    var removed = top.get(["protos", index]);
+    top.get("protos")["delete"](index);
     this._cleanup_maps(removed);
   };
 

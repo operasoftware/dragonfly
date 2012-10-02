@@ -1703,8 +1703,8 @@ toolbar
 /* TODO: this is just a temp workaround. */
 #waiting-for-connection
 {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 
 .close-tab-button
@@ -1794,31 +1794,32 @@ info {
 
 .badge.paused
 {
-    content: url("../ui-images/pause.png");
-    background-color: transparent;
-    top: -2px;
-    left: 21px;
+  background: transparent url("../ui-images/pause.png") 50% no-repeat;
+  height: 15px;
+  width: 15px;
+  left: 22px;
+  top: -1px;
 }
 
 .inspect-node-link
 {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .inspect-node-link:hover
 {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .internal-link
 {
-    cursor: pointer;
-    text-decoration: underline;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .internal-link:hover
 {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .inline-block

@@ -22,6 +22,7 @@
               inset 0 0 0 2px rgba(255, 255, 255, 0.55);
   vertical-align: middle;
   -o-transition: background-color 0.2s;
+  transition: background-color 0.2s;
 }
 
 .ui-button:not([disabled]):active
@@ -226,6 +227,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/xmlhttprequestprototype.js"/>
 <script src="./lib/storageprototype.js"/>
 <script src="./lib/clipboard.js"/>
+<script src="./lib/dict.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
@@ -348,6 +350,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_resource_manager_1_0.js"></script>
 <script src="./build-application/build_profiler_1_0.js"></script>
 <script src="./build-application/build_document_manager_1_0.js"></script>
+<script src="./build-application/build_overlay_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
 <script src="./debug/po_tester.js"/>

@@ -113,24 +113,30 @@ window.cls.Helpers = function()
         || top_url.replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/[^/]*$/, "/") + url );
   }
 
-  this.escapeTextHtml = (function()
+  this.escape_html = (function()
   {
-    var re_amp = /&/g, re_lt = /</g;
+    var re_amp = /&/g;
+    var re_lt = /</g;
+    var re_cd_end = /]]>/g;
     return function(str)
     {
-      return str ? str.replace(re_amp, "&amp;").replace(re_lt, "&lt;") : str;
+      return str ? str.replace(re_amp, "&amp;")
+                      .replace(re_lt, "&lt;")
+                      .replace(re_cd_end, "]]&gt;")
+                 : str;
     }
   })();
 
-  this.escapeAttributeHtml = (function()
+  this.escape_html_attr = (function()
   {
-    var re_amp = /&/g, re_lt = /</g, re_quot = /"/g, re_s_quot = /'/g;
+    var re_quot = /"/g;
+    var re_apos = /'/g;
     return function(str)
     {
-      return str.replace(re_amp, "&amp;")
-                .replace(re_lt, "&lt;")
-                .replace(re_quot, "&quot;")
-                .replace(re_s_quot, "&#x27;");
+      return str ? this.escape_html(str)
+                       .replace(re_quot, "&quot;")
+                       .replace(re_apos, "&#x27;")
+                 : str;
     }
   })();
 

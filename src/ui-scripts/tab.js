@@ -45,15 +45,17 @@ var TabBase = new function()
     return document.querySelector("tab[ref-id='" + this.ref_id + "']");
   };
 
-  this.set_badge = function(type, content)
+  this.set_badge = function(type)
   {
     var tab = this._get_top_tab_element();
-    var badge = tab ? tab.querySelector(".badge") : null;
-    if (badge)
-    {
-      badge.addClass(type || "");
-      badge.textContent = content != null ? content : "";
-    }
+    var badge = tab && tab.querySelector(".badge");
+    if (!badge)
+      return;
+
+    if (type)
+      badge.addClass(type);
+    else
+      badge.className = "badge";
   };
 
   this.set_legend_info = function(text)
@@ -87,7 +89,7 @@ var TabBase = new function()
 
   this.clear_badge = function()
   {
-    this.set_badge("", null);
+    this.set_badge("");
   };
 
   this.set_state = function(state)
@@ -132,7 +134,7 @@ var JavaScriptTab = function(ref_id, name, has_close_button)
     switch (msg.state)
     {
       case "waiting":
-        this.set_badge("paused", "paused");
+        this.set_badge("paused");
         break;
       default:
         this.clear_badge();
