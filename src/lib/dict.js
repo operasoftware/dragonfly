@@ -14,7 +14,7 @@ Dict.prototype = new function()
 
   this.set = function(key, value) { this._dict[PREFIX + key] = value; };
 
-  this.delete = function(key) { delete this._dict[PREFIX + key]; };
+  this["delete"] = function(key) { delete this._dict[PREFIX + key]; };
 
   this.get_chain = function(prop_list)
   {
