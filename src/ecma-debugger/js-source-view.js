@@ -860,6 +860,8 @@ cls.JsSourceView = function(id, name, container_class)
 
   /* action broker interface */
 
+  ActionHandlerInterface.apply(this);
+
   /**
     * To handle a single action.
     * Returning false (as in === false) will cancel the event
