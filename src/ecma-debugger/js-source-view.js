@@ -858,7 +858,7 @@ cls.JsSourceView = function(id, name, container_class)
   }
 
 
-  /* action broker interface */
+  /* action handler interface */
 
   ActionHandlerInterface.apply(this);
 
