@@ -134,52 +134,41 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     }
   };
 
-  this._show_resource = function(resource)
+  this._show_resource = function(resource, data)
   {
     if (!resource || !resource.data)
       return false;
 
+    this.data = data;
     this.resource = resource;
-    this._service.highlight_resource(resource.id);
+    this._service.highlight_resource(resource.uid);
     this.update();
 
     return true;
   };
 
-  this._show_resource_by_instance = function(resource)
+  this._show_resource_by_instance = function(resource, data)
   {
-    if (!this._show_resource(resource))
-      this._show_resource_by_url(resource.url);
+    if (!this._show_resource(resource, data))
+      this._show_resource_by_key(resource.uid, data);
+  };
+  this._show_resource_by_key = function(key, data)
+  {
+    var service = this._service;
+    var resource = service.get_resource(key) || service.get_resource_by_url(key);
+
+    var url = resource?resource.url:key;
+
+    if (!this._show_resource(resource, data))
+      service.request_resource_data(url, this.show_resource.bind(this), data, resource);
   };
 
-  this._show_resource_by_id = function(id)
+  this.show_resource = function(key, data)
   {
-    var resource = this._service.get_resource(id);
-
-    this._show_resource_by_instance(resource);
-  };
-
-  this._show_resource_by_url = function(url)
-  {
-    var resource = this._service.get_resource_for_url(url);
-
-    if (!this._show_resource(resource))
-      this._service.request_resource(url, this.show_resource.bind(this), this.data);
-  };
-
-  this.show_resource = function(resource, data)
-  {
-    this.data = data;
-    this.resource = resource;
-
-    if (resource instanceof cls.ResourceInfo)
-      this._show_resource_by_instance(resource);
-    else if (resource == Number(resource))
-      this._show_resource_by_id(resource);
-    else if (resource == String(resource))
-      this._show_resource_by_url(resource);
+    if (key instanceof cls.ResourceInfo)
+      this._show_resource_by_instance(key, data);
     else
-      this.update();
+      this._show_resource_by_key(key, data);
 
     window.UI.instance.show_view( this.id );
   };
