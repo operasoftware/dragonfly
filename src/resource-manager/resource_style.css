@@ -132,18 +132,6 @@
   white-space: pre;
 }
 
-.resource-image
-{
-  display: block;
-  min-width:64px;
-  min-height:64px;
-  max-height: 100%;
-  max-width: 100%;
-  margin: 10px auto;
-  background: #fff url("../ui-images/grid_checkers_black.png");
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
 .font-preview
 {
   font-size: 400%;
@@ -157,20 +145,6 @@
 }
 
 
-/*
-.expand-collapse > ul
-{
-  margin:0;
-  padding:0;
-}
-.expand-collapse > ul > li
-{
-  white-space:nowrap;
-  padding:0;
-  margin:0 0 0 16px;
-  line-height:17px;
-}
-*/
 .resource-tree-expand-collapse.close > ul
 {
   display:none;
@@ -267,11 +241,8 @@ a.external:hover
 {
   object-fit:contain;
   -o-object-fit:contain;
-  min-width:64px;
-  min-height:64px;
-  max-width:300px;
-  max-height:300px;
-  margin:1em;
+  max-width:100%;
+  max-height:100%;
   box-sizing:border-box;
   background:url("../ui-images/grid_checkers_black.png") top left repeat;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
