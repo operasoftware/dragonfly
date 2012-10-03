@@ -222,6 +222,13 @@
   text-overflow:ellipsis;
   color:#000;
 }
+.resource-detail-text-container,
+.resource-detail-image-container,
+.resource-detail-others-container,
+.resource-detail-flash-container
+{
+  padding:8px;
+}
 .resource-detail-error
 {
   color:red;
