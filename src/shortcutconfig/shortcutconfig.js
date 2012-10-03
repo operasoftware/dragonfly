@@ -7,6 +7,7 @@
 
 cls.ShortcutConfigView = function(id, name, container_class)
 {
+  ActionHandlerInterface.apply(this);
   this.init(id, name, container_class);
 
   /* ActionHandler interface */

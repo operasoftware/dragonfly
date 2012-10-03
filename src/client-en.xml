@@ -226,6 +226,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/stylesheetlistprototype.js"/>
 <script src="./lib/xmlhttprequestprototype.js"/>
 <script src="./lib/storageprototype.js"/>
+<script src="./lib/clipboard.js"/>
 <script src="./lib/dict.js"/>
 
 
@@ -414,7 +415,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/scriptselect.js"/>
 
 <script src="./ecma-debugger/dominspection/templates.js"/>
-<script src="./ecma-debugger/dominspection/domserializer.js"/>
 <script src="./ecma-debugger/dominspection/domview.js"/>
 <script src="./ecma-debugger/dominspection/actions.js"/>
 <script src="./ecma-debugger/dominspection/attrandtextditor.js"/>

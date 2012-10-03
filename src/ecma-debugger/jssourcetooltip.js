@@ -156,11 +156,16 @@ cls.JSSourceTooltip = function(view)
 
       if (script_text != _last_script_text)
       {
+        var rt_id = script.runtime_id;
+        var thread_id = 0;
+        var frame_index = 0;
         _last_script_text = script_text;
         var ex_ctx = window.runtimes.get_execution_context();
-        var rt_id = ex_ctx.rt_id;
-        var thread_id = ex_ctx.thread_id;
-        var frame_index = ex_ctx.frame_index;
+        if (ex_ctx.rt_id == rt_id)
+        {
+          thread_id = ex_ctx.thread_id;
+          frame_index = ex_ctx.frame_index;
+        }
         var args = [script, line_number, char_offset, box, sel, rt_id, script_text];
         var tag = _tagman.set_callback(null, _handle_script, args);
         var msg = [rt_id, thread_id, frame_index, script_text];
@@ -1044,7 +1049,6 @@ cls.JSSourceTooltip = function(view)
     if (_poll_interval)
     {
       clearInterval(_poll_interval);
-      _clear_selection();
       _tooltip_target_ele.removeEventListener('mousemove', _onmousemove, false);
       _poll_interval = 0;
       _tooltip_target_ele = null;
@@ -1124,8 +1128,10 @@ cls.JSSourceTooltip = function(view)
   {
     _view = view;
     _tokenizer = new cls.SimpleJSParser();
-    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name, true, false,
-                                 ".js-tooltip-examine-container");
+    _tooltip = Tooltips.register(cls.JSSourceTooltip.tooltip_name,
+                                 {type: Tooltips.TYPE_SUPPORT_CONTEXT,
+                                  dynamic_size: true,
+                                  max_height_target: ".js-tooltip-examine-container"});
     _tooltip.ontooltip = _ontooltip;
     _tooltip.onhide = _onhide;
     _tooltip.ontooltipenter = _ontooltipenter;
@@ -1146,6 +1152,11 @@ cls.JSSourceTooltip = function(view)
     document.addEventListener("keydown", _onkeydown, false);
     document.addEventListener("keyup", _onkeyup, false);
     document.addEventListener("mouseup", _onmouseup, false);
+  };
+
+  this.get_selection_string = function()
+  {
+    return _last_script_text;
   };
 
   this.unregister = function()

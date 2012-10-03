@@ -158,8 +158,11 @@ cls.JSInspectionTooltip = function()
 
   var _init = function(view)
   {
-    _tooltip = Tooltips.register(cls.JSInspectionTooltip.tooltip_name, true, true,
-                                 ".js-tooltip-examine-container");
+    _tooltip = Tooltips.register(cls.JSInspectionTooltip.tooltip_name,
+                                 {type: Tooltips.TYPE_SUPPORT_CONTEXT,
+                                  dynamic_size: true,
+                                  set_selected: true,
+                                  max_height_target: ".js-tooltip-examine-container"});
     _pretty_printer = new cls.PrettyPrinter();
     _pretty_printer.register_types([cls.PrettyPrinter.ELEMENT,
                                     cls.PrettyPrinter.DATE,

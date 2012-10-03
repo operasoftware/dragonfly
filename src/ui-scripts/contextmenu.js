@@ -27,15 +27,22 @@ function ContextMenu() {
    *                          for showing a checkbox before the item, or 'selected'
    *                          (boolean) for showing the selected item in a group.
    */
-  this.register = function(menu_id, item_list, extend)
+  this.register = function(menu_id, item_list, extend, type)
   {
+    if (!type)
+      type = ContextMenu.DEFAULT;
+
+    if (!this._registered_menus[type])
+      this._registered_menus[type] = {};
+
+    var registered_menus = this._registered_menus[type];
     if (item_list)
     {
-      if (this._registered_menus[menu_id] && extend)
+      if (registered_menus[menu_id] && extend)
       {
-        item_list.extend(this._registered_menus[menu_id]);
+        item_list.extend(registered_menus[menu_id]);
       }
-      this._registered_menus[menu_id] = item_list;
+      registered_menus[menu_id] = item_list;
     }
   };
 
@@ -44,7 +51,6 @@ function ContextMenu() {
    */
   this.oncontextmenu = function(event)
   {
-
     var parents = [];
     var cur = event.target;
     while (cur)
@@ -54,8 +60,6 @@ function ContextMenu() {
     this.dismiss();
 
     Tooltips.handle_contextmenu_event(event);
-
-    CstSelectBase.close_opened_select();
 
     if (/*!window.getSelection().isCollapsed ||*/ event.shiftKey) // Shift key overrides for debugging
     {
@@ -108,6 +112,19 @@ function ContextMenu() {
     var last_found_menu_id = '';
     var collected_menus = [];
     var items = null;
+    var selection = window.getSelection();
+    var range = Clipboard.is_supported && !selection.isCollapsed && selection.getRangeAt(0);
+    var cur_handler_id = ActionBroker.get_instance().get_current_handler_id();
+    var view = window.views[cur_handler_id];
+    if (view && !view.get_selection_string)
+    {
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      " action handler without get_selection_string method: " + view_id + ".");
+
+    }
+    var selection_string = (view && view.get_selection_string && view.get_selection_string()) ||
+                           (range && range.intersectsNode(ele) && String(selection));
+    var type = selection_string ? ContextMenu.SELECTION : ContextMenu.DEFAULT;
     // This traverses up the tree and collects all menus it finds, and
     // concatenates them with a separator between each menu. It stops if it
     // finds a data-menu attribute with a blank value.
@@ -122,10 +139,10 @@ function ContextMenu() {
       if (collected_menus.indexOf(menu_id) == -1) {
         collected_menus.push(menu_id);
 
-        var menus = this._registered_menus[menu_id];
+        var menus = this._registered_menus[type][menu_id];
         if (menus && menus.length)
         {
-          var items = this._expand_all_items(menus, event, menu_id);
+          var items = this._expand_all_items(menus, event, menu_id, selection_string);
           if (items.length)
           {
             if (all_items.length)
@@ -137,81 +154,91 @@ function ContextMenu() {
       }
       ele = ele.parentNode;
     }
-
-    // This should preferably not be done inside ContextMenu.
-    var spec = event.target.get_attr("parent-node-chain", "data-spec");
-    if (spec)
+    if (type == ContextMenu.DEFAULT)
     {
-      var speclinks = SpecLinks.get_instance();
-      var specs = speclinks.get_spec_links(spec);
-      if (specs.length)
+      // This should preferably not be done inside ContextMenu.
+      var spec = event.target.get_attr("parent-node-chain", "data-spec");
+      if (spec)
       {
-        items = specs.map(function(spec)
+        var speclinks = SpecLinks.get_instance();
+        var specs = speclinks.get_spec_links(spec);
+        if (specs.length)
         {
-          return {
-            label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
-            handler: function(event, target) {
-              speclinks.open_spec_link(spec.url);
-            },
-            id: spec.prop,
-            menu_id: "spec"
-          };
-        });
-        this.register("spec", items);
+          items = specs.map(function(spec)
+          {
+            return {
+              label: ui_strings.M_CONTEXTMENU_SPEC_LINK.replace("%s", spec.prop),
+              handler: function(event, target) {
+                speclinks.open_spec_link(spec.url);
+              },
+              id: spec.prop,
+              menu_id: "spec"
+            };
+          });
+          this.register("spec", items);
+
+          if (all_items.length)
+          {
+            all_items.push(ContextMenu.separator);
+          }
+        }
+
+        if (items)
+        {
+          all_items = all_items.concat(items);
+        }
+      }
+
+      Clipboard.populate_menu(event, all_items);
+
+      var res_id_or_url = event.target.get_attr("parent-node-chain", "data-resource-id") ||
+                          event.target.get_attr("parent-node-chain", "data-resource-url");
+      var line_number = event.target.get_attr('parent-node-chain', 'data-resource-line-number');
+      if (res_id_or_url)
+      {
+        if (last_found_menu_id == "dom")
+        {
+          var rt_id = event.target.get_attr('parent-node-chain', 'rt-id');
+          res_id_or_url = helpers.resolveURLS(runtimes.getURI(rt_id), res_id_or_url);
+        }
+        var broker = cls.ResourceDisplayBroker.get_instance();
+        var rid = parseInt(res_id_or_url, 10);
+        if (rid)
+        {
+          // data-resource-line-number
+          var fun = function()
+          {
+            broker.show_resource_for_id(rid, line_number);
+          }
+        }
+        else
+        {
+          var fun = function()
+          {
+            broker.show_resource_for_url(res_id_or_url, line_number);
+          }
+        }
 
         if (all_items.length)
         {
           all_items.push(ContextMenu.separator);
         }
-      }
 
-      if (items)
-      {
-        all_items = all_items.concat(items);
+        all_items.push(
+          {
+            label: ui_strings.M_CONTEXTMENU_SHOW_RESOURCE,
+            handler: fun,
+            id: res_id_or_url,
+            menu_id: "resource"
+          }
+        )
       }
     }
-
-    var res_id_or_url = event.target.get_attr("parent-node-chain", "data-resource-id") ||
-                        event.target.get_attr("parent-node-chain", "data-resource-url");
-    var line_number = event.target.get_attr('parent-node-chain', 'data-resource-line-number');
-    if (res_id_or_url)
+    else if (type == ContextMenu.SELECTION)
     {
-      if (last_found_menu_id == "dom")
-      {
-        var rt_id = event.target.get_attr('parent-node-chain', 'rt-id');
-        res_id_or_url = helpers.resolveURLS(runtimes.getURI(rt_id), res_id_or_url);
-      }
-      var broker = cls.ResourceDisplayBroker.get_instance();
-      var rid = parseInt(res_id_or_url, 10);
-      if (rid)
-      {
-        // data-resource-line-number
-        var fun = function()
-        {
-          broker.show_resource_for_id(rid, line_number);
-        }
-      }
-      else
-      {
-        var fun = function()
-        {
-          broker.show_resource_for_url(res_id_or_url, line_number);
-        }
-      }
-
-      if (all_items.length)
-      {
-        all_items.push(ContextMenu.separator);
-      }
-
-      all_items.push(
-        {
-          label: ui_strings.M_CONTEXTMENU_SHOW_RESOURCE,
-          handler: fun,
-          id: res_id_or_url,
-          menu_id: "resource"
-        }
-      )
+      all_items.push({label: ui_strings.M_CONTEXTMENU_COPY,
+                  handler: Clipboard.set_string.bind(Clipboard, selection_string),
+                  id: "copy-clipboard"});
     }
 
     this._current_items = all_items;
@@ -297,7 +324,7 @@ function ContextMenu() {
     this.is_visible = false;
   };
 
-  this._expand_all_items = function(items, event, menu_id)
+  this._expand_all_items = function(items, event, menu_id, selection)
   {
     var all_items = [];
 
@@ -305,7 +332,7 @@ function ContextMenu() {
     {
       if (typeof item.callback == "function")
       {
-        var callback_items = item.callback(event, event.target);
+        var callback_items = item.callback(event, event.target, selection);
         if (callback_items)
         {
           all_items = all_items.concat(callback_items);
@@ -384,3 +411,6 @@ ContextMenu.get_instance = function()
 };
 
 ContextMenu.separator = {separator: true};
+ContextMenu.DEFAULT = 0;
+ContextMenu.SELECTION = 1;
+
