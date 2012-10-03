@@ -84,6 +84,8 @@ cls.ResourceUtil.mime_type_map = {
 
   "text/plain": "text",
 
+  "text/cache-manifest": "text",
+
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
