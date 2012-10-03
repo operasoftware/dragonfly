@@ -328,7 +328,7 @@ templates.resource_detail =
 			],
 			['span',
 				cls.ResourceUtil.bytes_to_human_readable(info.size)
-				+(info.characterEncoding&&ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
+				+(info.characterEncoding&&' '+ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
 				'data-tooltip','js-script-select',
 				'data-tooltip-text',info.size+' bytes',
 				'class','resource-detail-overview-size'
