@@ -6,6 +6,7 @@
  */
 
 cls.ReplView = function(id, name, container_class, html, default_handler) {
+  ActionHandlerInterface.apply(this);
   this._resolver = new cls.PropertyFinder();
   this._data = new cls.ReplData(this);
 
