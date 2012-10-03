@@ -323,12 +323,12 @@ templates.resource_detail =
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
 				.replace('%(SENT)',info.mimeType)
 				.replace('%(GUESSED)',info.type)
-				+(resource.data.meta?' ('+resource.data.meta+')':''),
+				+(info.characterEncoding&&' '+ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
 				'class','resource-detail-overview-type'+(isError?' resource-detail-error':'')
 			],
 			['span',
 				cls.ResourceUtil.bytes_to_human_readable(info.size)
-				+(info.characterEncoding&&' '+ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
+				+(resource.data.meta?' ('+resource.data.meta+')':''),
 				'data-tooltip','js-script-select',
 				'data-tooltip-text',info.size+' bytes',
 				'class','resource-detail-overview-size'
