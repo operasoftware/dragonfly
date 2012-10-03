@@ -339,9 +339,13 @@ templates.resource_detail =
 
 	text:function(resource)
 	{
-		return (
-		['pre',resource.data.content.stringData
-		]);
+		var data = resource.data.content.stringData;
+		var pos = data.indexOf(',');
+		var header = data.slice(0,pos);
+		var data = data.slice(pos+1);
+		var base64 = header.contains(';base64');
+
+		return ['pre',base64?atob(data):data];
 	},
 
 	markup:function(resource)
