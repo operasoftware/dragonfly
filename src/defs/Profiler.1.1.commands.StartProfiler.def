@@ -1,24 +1,22 @@
 message <span class="message">StartProfilerArg</span>
 {
-  enum StartMode
+  <span class="comment">/**
+    * Describes when profiling shall begin.
+    */</span>
+  required StartMode startMode = 1;
   {
-    <span class="comment">/** 
-     * Start profiling immediately.
-     */</span>
-    IMMEDIATE = 1;
-    <span class="comment">/** 
-     * Start profiling as soon as a URL is about to be opened in the desired
-     * window.
-     */</span>
-    URL = 2;
+    <span class="comment">/**
+      * Start profiling immediately.
+      */</span>
+    <span class="enum">IMMEDIATE</span> = 1;
+    <span class="comment">/**
+      * Start profiling as soon as a URL is about to be opened in the desired
+      * window.
+      */</span>
+    <span class="enum">URL</span> = 2;
   }
-
-  <span class="comment">/** 
-   * Describes when profiling shall begin.
-   */</span>
-  required <span class="number">StartMode</span> startMode = 1; 
-  <span class="comment">/** 
-   * Monitor activity in this window.
-   */</span>
-  required <span class="number">uint32   </span> windowID  = 2; 
+  <span class="comment">/**
+    * Monitor activity in this window.
+    */</span>
+  required <span class="number">uint32</span> windowID = 2;
 }
