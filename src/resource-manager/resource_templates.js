@@ -219,7 +219,9 @@ templates.resource_tree =
 			'span',
 			(r.filename || r.short_distinguisher || r.url || 'NO URL'),
 			'class','resource-tree-resource-label',
-			'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;'
+			'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;',
+			'data-tooltip','js-script-select',
+			'data-tooltip-text',r.url
 		];
 		var tpl =
 			['li',
