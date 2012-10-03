@@ -1,4 +1,4 @@
-var Clipboard = function() {};
+﻿var Clipboard = function() {};
 
 (function()
 {
