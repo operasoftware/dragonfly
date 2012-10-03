@@ -341,11 +341,9 @@ templates.resource_detail =
 	{
 		var data = resource.data.content.stringData;
 		var pos = data.indexOf(',');
-		var header = data.slice(0,pos);
-		var data = data.slice(pos+1);
-		var base64 = header.contains(';base64');
+		var base64 = data.lastIndexOf(';base64',pos)!=-1;
 
-		return ['pre',base64?atob(data):data];
+		return ['pre',base64?atob(data.slice(pos+1)):data.slice(pos+1)];
 	},
 
 	markup:function(resource)
