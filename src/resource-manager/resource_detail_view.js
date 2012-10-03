@@ -173,6 +173,16 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     window.UI.instance.show_view( this.id );
   };
 
+  this._on_debug_context_selected_bound = function()
+  {
+    this.resource = null;
+    this.update();
+  }.bind(this);
+
+  var messages = window.messages;
+  messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+
+
   this.init(id, name, container_class, html, default_handler);
 };
 
