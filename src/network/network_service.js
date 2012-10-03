@@ -1289,7 +1289,7 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
-  this.id = entry.resource_id;
+  this.resource_id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
@@ -1304,7 +1304,8 @@ cls.ResourceInfo = function(entry)
     if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
       this.data.meta = cls.ResourceUtil.get_meta_data(this);
   }
-  this.id = entry.id;
+  this.uid = entry.id;
+
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");

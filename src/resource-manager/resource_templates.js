@@ -223,10 +223,10 @@ templates.resource_tree =
 						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;'
 					],
 					'handler','resource-detail',
-					'data-resource-id',String(r.id),
+					'data-resource-uid',String(r.uid),
 					'class','resource-tree-resource'
 						+(r.sameOrigin?'':' resource-different-origin')
-						+(context.selectedResourceID==r.id?' resource-highlight':'')
+						+(context.selectedResourceUID==r.uid?' resource-highlight':'')
 				]
 			];
 

@@ -63,7 +63,16 @@ cls.ResourceManagerService = function(view, network_logger)
   {
     //  bounce if _suppress_updates
     if (this._suppress_updates)
+    {
+      if (msg && msg.id)
+      {
+        //  suppress the uid altogether if its URL matches the one we are requesting
+        var r = this._network_logger.get_resources([msg.id]);
+        if (r && r[0] && r[0].url == this._suppress_updates_url)
+          this._suppress_uids[msg.id] = true;
+      }
       return setTimeout(this._update_bound, THROTTLE_DELAY);
+    }
 
     var ctx = {};
     // get list of window_contexts for which we saw the main_document
@@ -75,7 +84,12 @@ cls.ResourceManagerService = function(view, network_logger)
 
     if (ctx.windowList && ctx.windowList.length)
     {
-      ctx.resourceList = [];
+      ctx.resourceList = (this._network_logger.get_resources()||[])
+      .filter(function(v)
+      {
+        return !this._suppress_uids.hasOwnProperty(v.uid);
+      }, this);
+
       ctx.documentResourceHash = {};
 
       // get all the resources
@@ -84,12 +98,6 @@ cls.ResourceManagerService = function(view, network_logger)
       .forEach(function(w,i)
       {
         windowID_index[w.id] = i;
-
-        //  get resources of the current window
-        var windowResources = w.get_resources();
-
-        //  concat the result to flat list of resource
-        ctx.resourceList = ctx.resourceList.concat( windowResources );
       });
 
 
@@ -171,7 +179,7 @@ cls.ResourceManagerService = function(view, network_logger)
       )
         this._listDocuments();
 
-      ctx.selectedResourceID = this._selectedResourceID;
+      ctx.selectedResourceUID = this._selectedResourceUID;
       ctx.documentResources = this._documentResources;
       ctx.collapsed = this._collapsedHash;
       this._context = ctx;
@@ -223,34 +231,34 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!this._context)
       return;
 
-    var parent = target.get_ancestor('[data-resource-id]');
+    var parent = target.get_ancestor('[data-resource-uid]');
     if (!parent)
       return;
 
-    var id = parent.getAttribute('data-resource-id');
-    this.highlight_resource( id );
-    cls.ResourceDetailView.instance.show_resource(id);
+    var uid = parent.getAttribute('data-resource-uid');
+    this.highlight_resource(uid);
+    cls.ResourceDetailView.instance.show_resource(uid);
   }.bind(this);
 
-  this.highlight_resource = function(id)
+  this.highlight_resource = function(uid)
   {
-    var list, i, e;
-    if (this._selectedResourceID == id)
+    var e;
+    if (this._selectedResourceUID == uid)
         return;
 
-    if (this._selectedResourceID)
+    if (this._selectedResourceUID)
     {
-        list = document.querySelectorAll('*[data-resource-id="'+ this._selectedResourceID +'"]');
-        for(i=0; e=list[i]; i++)
+        e = document.querySelector('*[data-resource-uid="'+ this._selectedResourceUID +'"]');
+        if (e)
           e.classList.remove('resource-highlight');
     }
 
-    this._selectedResourceID = id;
+    this._selectedResourceUID = uid;
     if (this._context)
-      this._context.selectedResourceID = id;
+      this._context.selectedResourceUID = uid;
 
-    list = document.querySelectorAll('*[data-resource-id="'+ this._selectedResourceID +'"]');
-    for(i=0; e=list[i]; i++)
+    e = document.querySelector('*[data-resource-uid="'+ this._selectedResourceUID +'"]');
+    if (e)
       e.classList.add('resource-highlight');
   }.bind(this);
 
@@ -294,7 +302,7 @@ cls.ResourceManagerService = function(view, network_logger)
   this._reset = function()
   {
     this._context = null;
-    this._selectedResourceID = null;
+    this._selectedResourceUID = null;
 
     this._documentList = [];
     this._documentURLHash = {};
@@ -302,6 +310,7 @@ cls.ResourceManagerService = function(view, network_logger)
     this._documentResources = {};
 
     this._suppress_updates = false;
+    this._suppress_uids = {};
     this._view.update();
   };
 
@@ -310,17 +319,17 @@ cls.ResourceManagerService = function(view, network_logger)
     return this._context;
   };
 
-  this.get_resource = function(id)
+  this.get_resource = function(uid)
   {
     var ctx = this._context;
     if (!ctx)
         return null;
 
-    var resource = ctx.resourceList.filter(function(v){return v.id==id;});
+    var resource = ctx.resourceList.filter(function(v){return v.uid==uid;});
     return resource && resource.last;
   };
 
-  this.get_resource_for_url = function(url)
+  this.get_resource_by_url = function(url)
   {
     var ctx = this._context;
     if (!ctx)
@@ -330,16 +339,17 @@ cls.ResourceManagerService = function(view, network_logger)
     return resource && resource.last;
   };
 
-  this.request_resource = function(url, callback, data)
+  this.request_resource_data = function(url, callback, data, resourceInfo)
   {
     this._suppress_updates = true;
-    new cls.ResourceRequest(url, callback, data);
+    this._suppress_updates_url = url;
+    new cls.ResourceRequest(url, callback, data, resourceInfo);
   }
 
   this._init();
 };
 
-cls.ResourceRequest = function(url, callback, data)
+cls.ResourceRequest = function(url, callback, data, resourceInfo)
 {
   const
   SUCCESS = 0,
@@ -352,9 +362,10 @@ cls.ResourceRequest = function(url, callback, data)
 
   var MAX_RETRIES = 3;
 
-  this._init = function(url, callback, data)
+  this._init = function(url, callback, data, resourceInfo)
   {
     this.url = url;
+    this.resourceInfo = resourceInfo;
     this._calback_data = data;
     this._callback = callback;
     this._retries = 0;
@@ -429,7 +440,11 @@ cls.ResourceRequest = function(url, callback, data)
 
         // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
         this.requests_responses = [{responsebody:resourceData}];
-        this.resourceInfo = new cls.ResourceInfo(this);
+        var resourceInfo = new cls.ResourceInfo(this);
+        if(!this.resourceInfo)
+            this.resourceInfo = resourceInfo;
+          else
+            this.resourceInfo.data = resourceInfo.data;
 
         //  broadcast that we got payload of the resource
         window.messages.post('resource-request-resource', {resource_id: this.resource_id});
@@ -449,7 +464,7 @@ cls.ResourceRequest = function(url, callback, data)
       this._fallback();
   }
 
-  this._init(url, callback, data);
+  this._init(url, callback, data, resourceInfo);
 }
 
 cls.ResourceRequest.prototype = new URIPrototype("url");
