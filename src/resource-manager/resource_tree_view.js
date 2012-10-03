@@ -99,7 +99,8 @@ cls.ResourceTreeView.create_ui_widgets = function()
             handler: "resource-tree-text-search",
             shortcuts: "resource-tree-text-search",
             title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
-            label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+            label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+            type: "filter"
           }
         ]
       }
