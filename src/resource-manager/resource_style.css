@@ -328,7 +328,8 @@ a.external:hover
   background-color:rgba(55, 115, 211, 0.702);
 }
 
-span.resource-tree-count
+span.resource-tree-count,
+span.resource-domain
 {
   color:#999;
 }

@@ -214,18 +214,31 @@ templates.resource_tree =
 
 	resource:function(context, depth, r)
 	{
+		var resourceName =
+		[
+			'span',
+			(r.filename || r.short_distinguisher || r.url || 'NO URL'),
+			'class','resource-tree-resource-label',
+			'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;'
+		];
 		var tpl =
 			['li',
 				['h2',
-					['span',
-						(r.filename || r.short_distinguisher || r.url || 'NO URL'),
-						'class','resource-tree-resource-label',
-						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;'
-					],
+					(
+						r.sameOrigin
+						?
+						resourceName
+						:
+						[resourceName,' ',
+						['span',
+						'('+r.host+')',
+						'class','resource-domain'
+					]]),
+
 					'handler','resource-detail',
 					'data-resource-uid',String(r.uid),
 					'class','resource-tree-resource'
-						+(r.sameOrigin?'':' resource-different-origin')
+//						+(r.sameOrigin?'':' resource-different-origin')
 						+(context.selectedResourceUID==r.uid?' resource-highlight':'')
 				]
 			];
