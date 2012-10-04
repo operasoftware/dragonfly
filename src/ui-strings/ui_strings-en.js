@@ -141,7 +141,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_ADD = "Add item";
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = "Delete item";
 
-/* DESC: Context menu item for editing an item in the storage view, where %s is the domain name. */
+/* DESC: Context menu item for deleting items in the storage view, where %s is the domain name. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
 
 /* DESC: Context menu item for deleting multiple items in the storage view. */
@@ -441,7 +441,7 @@ ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 /* DESC: Info in a tooltip that the according listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "Event handler";
 
-/* DESC: Generic label for a cancel button */
+/* DESC: Generic label for a 'cancel' button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
 
 /* DESC: Cancel button while the client is waiting for a host connection. */
@@ -537,10 +537,10 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
-/* DESC: Generic label for a no button */
+/* DESC: Generic label for a 'no' button */
 ui_strings.S_BUTTON_NO = "No";
 
-/* DESC: Generic label for an OK button */
+/* DESC: Generic label for an 'OK' button */
 ui_strings.S_BUTTON_OK = "OK";
 
 /* DESC: Remove all event breakpoints */
@@ -552,7 +552,7 @@ ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset default values";
 
-/* DESC: Generic label for a save button */
+/* DESC: Generic label for a 'save' button */
 ui_strings.S_BUTTON_SAVE = "Save";
 
 /* DESC: Search for an event in the event breakpoints view */
@@ -612,7 +612,7 @@ ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 /* DESC: Button label to update the screenshot */
 ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
 
-/* DESC: Generic label for a yes button */
+/* DESC: Generic label for a 'yes' button */
 ui_strings.S_BUTTON_YES = "Yes";
 
 /* DESC: Unit string for bytes */
