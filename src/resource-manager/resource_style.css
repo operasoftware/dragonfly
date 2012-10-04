@@ -203,6 +203,10 @@
 {
   padding:8px;
 }
+.resource-detail-image-container
+{
+  text-align:center;
+}
 .resource-detail-error
 {
   color:red;
@@ -249,12 +253,6 @@ a.external:hover
   vertical-align:middle;
 }
 
-
-/* ---------- */
-.resource-different-origin
-{/* note: same color as the .string class */
-  color:#a54;
-}
 
 /* ------------------ */
 .resource-tree
@@ -315,6 +313,7 @@ span.resource-domain
 {
   color:#999;
 }
+
 span.resource-tree-window-label,
 span.resource-tree-document-label,
 span.resource-tree-group-label

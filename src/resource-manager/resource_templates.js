@@ -137,7 +137,9 @@ templates.resource_tree =
 						'('+resources.length+')',
 						'class','resource-tree-count'
 					],
-					'class','resource-tree-document'+(d.sameOrigin?'':' resource-different-origin')
+					' ',
+					d.sameOrigin?[]:['span',d.url.host,'class','resource-domain'],
+					'class','resource-tree-document',
 				].concat( extras.tpl.h2 ),
 				( resources.length == 0 || extras.collapsed )?[]:
 				[
@@ -214,33 +216,21 @@ templates.resource_tree =
 
 	resource:function(context, depth, r)
 	{
-		var resourceName =
-		[
-			'span',
-			(r.filename || r.short_distinguisher || r.url || 'NO URL'),
-			'class','resource-tree-resource-label',
-			'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;',
-			'data-tooltip','js-script-select',
-			'data-tooltip-text',r.url
-		];
 		var tpl =
 			['li',
 				['h2',
-					(
-						r.sameOrigin
-						?
-						resourceName
-						:
-						[resourceName,' ',
-						['span',
-						'('+r.host+')',
-						'class','resource-domain'
-					]]),
-
+					['span',
+						(r.filename || r.short_distinguisher || r.url || 'NO URL'),
+						'class','resource-tree-resource-label',
+						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;',
+						'data-tooltip','js-script-select',
+						'data-tooltip-text',r.url
+					],
+					' ',
+					r.sameOrigin?[]:['span',r.host,'class','resource-domain'],
 					'handler','resource-detail',
 					'data-resource-uid',String(r.uid),
 					'class','resource-tree-resource'
-//						+(r.sameOrigin?'':' resource-different-origin')
 						+(context.selectedResourceUID==r.uid?' resource-highlight':'')
 				]
 			];
