@@ -19,7 +19,7 @@ templates.resource_tree =
 
 	DEPTH_IDENTATION: 18,
 
-	_expandCollapseExtras:function(context, pivotID, depth)
+	_expander_extras:function(context, pivotID, depth)
 	{
 		var hash = context.collapsed;
 		if (!hash.hasOwnProperty(pivotID))
@@ -76,7 +76,7 @@ templates.resource_tree =
 		if (!windowInfo)
 			return [];
 
-		var extras = this._expandCollapseExtras( context, String(w.id) );
+		var extras = this._expander_extras( context, String(w.id) );
 
 		var tpl =
 			['li',
@@ -122,7 +122,7 @@ templates.resource_tree =
 		});
 
 		var depth = d.depth;
-		var extras = this._expandCollapseExtras( context, d.pivotID, depth );
+		var extras = this._expander_extras( context, d.pivotID, depth );
 
 		var tpl =
 			['li',
@@ -180,7 +180,7 @@ templates.resource_tree =
 		if (!resources.length)
 			return [];
 
-		var extras = this._expandCollapseExtras( context, d.pivotID+'_'+g, d.depth+1);
+		var extras = this._expander_extras( context, d.pivotID+'_'+g, d.depth+1);
 
 		var tpl =
 			['li',
