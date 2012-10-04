@@ -22,7 +22,9 @@ templates.resource_tree =
 	_expander_extras:function(context, pivotID, depth)
 	{
 		var hash = context.collapsed;
-		if (!hash.hasOwnProperty(pivotID))
+		if (context.searchTerm != '')
+			hash[pivotID] = false;
+		else if (!hash.hasOwnProperty(pivotID))
 			hash[pivotID] = depth>1;
 
 		var collapsed = hash[pivotID];
