@@ -326,7 +326,7 @@ templates.resource_detail =
 			['span',
 				[
 					'a',
-					info.humanUrl,
+					resource.url,
 					'href',resource.url,
 					'target','_blank',
 					'class','external'
