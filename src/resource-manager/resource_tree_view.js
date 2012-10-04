@@ -28,6 +28,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     var service = this._service;
     var ctx = this._service.get_resource_context();
     var scrollTop = container.firstElementChild?container.firstElementChild.scrollTop:0;
+    var scrollLeft = container.firstElementChild?container.firstElementChild.scrollLeft:0;
 
     if (ctx )
     {
@@ -58,6 +59,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     }
 
     container.firstElementChild.scrollTop = scrollTop;
+    container.firstElementChild.scrollLeft = scrollLeft;
 	};
 
   this.create_disabled_view = function(container)
