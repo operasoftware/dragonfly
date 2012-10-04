@@ -118,7 +118,7 @@ templates.resource_tree =
 			if (context.searchTerm != '' && !r.url.contains(context.searchTerm))
 				return false;
 
-			return documentResources.contains(r.id);
+			return documentResources.contains(r.uid);
 		});
 
 		var depth = d.depth;

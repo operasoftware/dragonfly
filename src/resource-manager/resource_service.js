@@ -55,8 +55,8 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!this._documentResources[documentID])
       this._documentResources[documentID]=[];
 
-    if (!this._documentResources[documentID].contains(r.id))
-      this._documentResources[documentID].push(r.id);
+    if (!this._documentResources[documentID].contains(r.uid))
+      this._documentResources[documentID].push(r.uid);
   }
 
   this._update = function(msg)
@@ -135,7 +135,7 @@ cls.ResourceManagerService = function(view, network_logger)
         this._populateDocumentResources(r);
 
         // check if this is the top resource of a document
-        var documentID = ctx.documentResourceHash[r.id];
+        var documentID = ctx.documentResourceHash[r.resource_id];
         if (documentID != null && documentID != r.document_id)
         {
           r.document_id = documentID;
