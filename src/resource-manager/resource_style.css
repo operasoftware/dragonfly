@@ -305,6 +305,10 @@ a.external:hover
   color:#fff;
   background-color:rgba(55, 115, 211, 0.702);
 }
+.resource-tree li > h2.resource-highlight span.resource-domain
+{
+  color:#ddd;
+}
 
 span.resource-tree-count,
 span.resource-domain
