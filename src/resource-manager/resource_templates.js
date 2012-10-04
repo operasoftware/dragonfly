@@ -17,6 +17,7 @@ templates.resource_tree =
 		ui_strings.S_HTTP_LABEL_FILTER_OTHER
 	],
 
+	URL_MATCH_CONTEXT_SIZE: 10,
 	DEPTH_IDENTATION: 18,
 
 	_expander_extras:function(context, pivotID, depth)
@@ -218,11 +219,20 @@ templates.resource_tree =
 
 	resource:function(context, depth, r)
 	{
+		var search = context.searchTerm;
+		var partial_URL_match = '';
+		if (search != '')
+		{
+			var pos_first = r.url.indexOf(search)-this.URL_MATCH_CONTEXT_SIZE;
+			var pos_last = r.url.lastIndexOf(search)+this.URL_MATCH_CONTEXT_SIZE+search.length;
+
+			partial_URL_match = (pos_first>0?'…':'')+r.url.substring( pos_first, pos_last)+(pos_last<r.url.length?'…':'');
+		}
 		var tpl =
 			['li',
 				['h2',
 					['span',
-						(r.filename || r.short_distinguisher || r.url || 'NO URL'),
+						partial_URL_match||(r.filename || r.short_distinguisher || r.url || ''),
 						'class','resource-tree-resource-label',
 						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;',
 						'data-tooltip','js-script-select',
@@ -230,6 +240,7 @@ templates.resource_tree =
 					],
 					' ',
 					r.sameOrigin?[]:['span',r.host,'class','resource-domain'],
+
 					'handler','resource-detail',
 					'data-resource-uid',String(r.uid),
 					'class','resource-tree-resource'
