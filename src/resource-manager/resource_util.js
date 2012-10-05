@@ -111,6 +111,7 @@ cls.ResourceUtil.mime_type_map = {
   "font/otf": "font",
   "font/truetype": "font",
   "font/woff": "font", // not official, but seems to be common
+  "font/x-woff": "font",
 
   "audio/mid": "audio",
   "audio/mpeg": "audio",
