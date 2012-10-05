@@ -41,7 +41,7 @@ templates.resource_tree =
 		var collapsed = hash[pivotID];
 
 		return ({
-			collapsed:false&&collapsed,
+			collapsed:collapsed,
 			tpl:
 			{
 				li:
