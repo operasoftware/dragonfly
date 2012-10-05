@@ -19,6 +19,16 @@ templates.resource_tree =
 
 	URL_MATCH_CONTEXT_SIZE: 10,
 	DEPTH_IDENTATION: 18,
+	DISTINGUISHER_MAX_LENGTH: 64,
+
+	_get_short_distinguisher:function( url )
+	{
+		var name = url.filename || url.short_distinguisher || url;
+		if (name.length>this.DISTINGUISHER_MAX_LENGTH)
+			name = name.slice(0, this.DISTINGUISHER_MAX_LENGTH)+'…';
+		return name;
+	},
+
 
 	_expander_extras:function(context, pivotID, depth)
 	{
@@ -132,7 +142,7 @@ templates.resource_tree =
 				['h2',
 					extras.tpl.button,
 					['span',
-						(d.url.filename || d.url.short_distinguisher),
+						this._get_short_distinguisher(d.url),
 						'class','resource-tree-document-label'
 					],
 					' ',
@@ -232,7 +242,7 @@ templates.resource_tree =
 			['li',
 				['h2',
 					['span',
-						partial_URL_match||(r.filename || r.short_distinguisher || r.url || ''),
+						partial_URL_match||this._get_short_distinguisher(r),
 						'class','resource-tree-resource-label',
 						'style', 'margin-left:'+ (1+depth)*this.DEPTH_IDENTATION +'px;',
 						'data-tooltip','js-script-select',
