@@ -27,17 +27,19 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   {
     var service = this._service;
     var ctx = this._service.get_resource_context();
-    var scrollTop = container.firstElementChild?container.firstElementChild.scrollTop:0;
-    var scrollLeft = container.firstElementChild?container.firstElementChild.scrollLeft:0;
+    var target = container.firstElementChild;
+    var scrollTop = target?target.scrollTop:0;
+    var scrollLeft = target?target.scrollLeft:0;
+    var tpl;
 
     if (ctx )
     {
       ctx.searchTerm = this.searchTerm||'';
-      container.clearAndRender( templates.resource_tree.update(ctx) );
+      tpl = templates.resource_tree.update(ctx);
     }
     else if (this._loading)
     {
-      container.clearAndRender(
+      tpl = (
         ['div',
          ['p', ui_strings.S_RESOURCE_LOADING_PAGE],
          'class', 'info-box'
@@ -46,7 +48,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     }
     else
     {
-      container.clearAndRender(
+      tpl = (
         ['div',
          ['span',
           'class', 'container-button ui-button reload-window',
@@ -58,9 +60,26 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
       );
     }
 
-    container.firstElementChild.scrollTop = scrollTop;
-    container.firstElementChild.scrollLeft = scrollLeft;
+    //  only render it if the template has changed ( using its JSON representation as hash )
+    var tpl_JSON = JSON.stringify(tpl);
+    if( !this.tpl_JSON || tpl_JSON.length != this.tpl_JSON.length || tpl_JSON != this.tpl_JSON)
+    {
+      container.clearAndRender( tpl );
+      this.tpl_JSON = tpl_JSON;
+    }
+
+    target = container.firstElementChild;
+    if(target)
+    {
+      target.scrollTop = scrollTop;
+      target.scrollLeft = scrollLeft;
+    }
 	};
+
+  this.ondestroy = function(container)
+  {
+    delete this.tpl_JSON;
+  }
 
   this.create_disabled_view = function(container)
   {
