@@ -83,8 +83,9 @@ cls.ResourceManagerService = function(view, network_logger)
       return w.saw_main_document;
     });
 
-    if (ctx.windowList && ctx.windowList.length)
+    if (ctx.windowList.length)
     {
+      // get all the (non-suppressed) resources
       ctx.resourceList = (this._network_logger.get_resources()||[])
       .filter(function(v)
       {
@@ -93,13 +94,9 @@ cls.ResourceManagerService = function(view, network_logger)
 
       ctx.documentResourceHash = {};
 
-      // get all the resources
+      // mapping of the WindowIDs in the debugging context
       var windowID_index = {};
-      ctx.windowList
-      .forEach(function(w,i)
-      {
-        windowID_index[w.id] = i;
-      });
+      ctx.windowList.forEach(function(w,i){ windowID_index[w.id] = i; });
 
 
       var documentID_index = {};
@@ -212,7 +209,7 @@ cls.ResourceManagerService = function(view, network_logger)
       var hash = this. _collapsedHash;
       var pivotID = pivot.getAttribute('data-expand-collapse-id');
       var pivotIDs = [pivotID];
-      var collapsed = hash[pivotID] === true?false:true;
+      var collapsed = !hash[pivotID];
 
       if (event.shiftKey)
         pivotIDs.push.apply( pivotIDs, Object.keys(hash).filter( function(p)
