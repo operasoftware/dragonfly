@@ -12,7 +12,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   cls.ResourceTreeView.instance = this;
 
   //	const
-  const THROTTLE_DELAY = 500;
+  const THROTTLE_DELAY = 250;
 
     // "private"
   this._service = new cls.ResourceManagerService(this, network_logger);
