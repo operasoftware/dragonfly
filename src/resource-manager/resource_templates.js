@@ -143,7 +143,9 @@ templates.resource_tree =
 					extras.tpl.button,
 					['span',
 						this._get_short_distinguisher(d.url),
-						'class','resource-tree-document-label'
+						'class','resource-tree-document-label',
+						'data-tooltip','js-script-select',
+						'data-tooltip-text',d.url
 					],
 					' ',
 					['span',
