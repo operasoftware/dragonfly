@@ -72,7 +72,7 @@ templates.resource_tree =
 	windows:function(context)
 	{
 		var tpl =
-			['div','',
+			['div',
 				['ul',
 					context.windowList.map(this.window.bind(this, context)),
 					'class','resource-tree-windows'
@@ -148,12 +148,12 @@ templates.resource_tree =
 						'data-tooltip-text',d.url
 					],
 					' ',
+					d.sameOrigin?[]:['span',d.url.host,'class','resource-domain'],
+					' ',
 					['span',
 						'('+resources.length+')',
 						'class','resource-tree-count'
 					],
-					' ',
-					d.sameOrigin?[]:['span',d.url.host,'class','resource-domain'],
 					'class','resource-tree-document',
 				].concat( extras.tpl.h2 ),
 				( resources.length == 0 || extras.collapsed )?[]:
@@ -240,6 +240,7 @@ templates.resource_tree =
 
 			partial_URL_match = (pos_first>0?'…':'')+r.url.substring( pos_first, pos_last)+(pos_last<r.url.length?'…':'');
 		}
+
 		var tpl =
 			['li',
 				['h2',
