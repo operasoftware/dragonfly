@@ -35,6 +35,7 @@ cls.ResourceManagerService = function(view, network_logger)
     this._documentList.forEach(function(d)
     {
       //  use the URL class
+      d.original_url = d.url;
       d.url = new URI(d.url);
     });
 

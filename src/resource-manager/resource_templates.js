@@ -145,7 +145,7 @@ templates.resource_tree =
 						this._get_short_distinguisher(d.url),
 						'class','resource-tree-document-label',
 						'data-tooltip','js-script-select',
-						'data-tooltip-text',d.url
+						'data-tooltip-text',d.original_url
 					],
 					' ',
 					d.sameOrigin?[]:['span',d.url.host,'class','resource-domain'],
