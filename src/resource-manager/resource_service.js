@@ -130,15 +130,12 @@ cls.ResourceManagerService = function(view, network_logger)
       ctx.resourceList
       .forEach(function(r)
       {
-        this._populate_document_resources(r);
-
         // check if this is the top resource of a document
         var documentID = ctx.documentResourceHash[r.resource_id];
         if (documentID != null && documentID != r.document_id)
-        {
           r.document_id = documentID;
-          this._populate_document_resources(r);
-        }
+
+        this._populate_document_resources(r);
 
         r.group = TYPE_GROUP_MAPPING[r.type]||TYPE_GROUP_MAPPING['*'];
         var d = this._documentList[documentID_index[r.document_id]];
