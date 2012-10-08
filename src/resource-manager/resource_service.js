@@ -76,6 +76,10 @@ cls.ResourceManagerService = function(view, network_logger)
     }
 
     var ctx = {};
+
+    // get the order of the groups of resources
+    ctx.groupOrder = this._view.get_group_order();
+
     // get list of window_contexts for which we saw the main_document
     ctx.windowList = (this._network_logger.get_window_contexts()||[])
     .filter(function(w)
@@ -98,7 +102,6 @@ cls.ResourceManagerService = function(view, network_logger)
       var windowID_index = {};
       ctx.windowList.forEach(function(w,i){ windowID_index[w.id] = i; });
 
-
       var documentID_index = {};
       // filter the documentId that belong in the windowIdList
       ctx.documentList  = this._documentList
@@ -116,9 +119,18 @@ cls.ResourceManagerService = function(view, network_logger)
 
           //  set depth, pivotID and sameOrigin
           var p = a[ documentID_index[ d.parentDocumentID ] ]||{pivotID:d.windowID,depth:0};
+          var id = p.pivotID+'_'+d.documentID;
           d.depth = p.depth+1;
-          d.pivotID = p.pivotID+'_'+d.documentID;
+          d.pivotID = id;
           d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+
+          //  set the default collapsed flag
+          var hash = this. _collapsedHash;
+          if (!hash.hasOwnProperty(id))
+          {
+            hash[id] = d.depth>1;
+            ctx.groupOrder.forEach( function(g){ hash[id+'_'+g] = true; } );
+          }
         }
 
         return inContext;

@@ -7,16 +7,6 @@ templates.resource_icon = function(resource)
 
 templates.resource_tree =
 {
-	_groupOrder:
-	[
-		ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
-		ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
-		ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
-		ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
-		ui_strings.S_HTTP_LABEL_FILTER_FONTS,
-		ui_strings.S_HTTP_LABEL_FILTER_OTHER
-	],
-
 	URL_MATCH_CONTEXT_SIZE: 10,
 	DEPTH_IDENTATION: 18,
 	DISTINGUISHER_MAX_LENGTH: 64,
@@ -33,35 +23,33 @@ templates.resource_tree =
 	_expander_extras:function(context, pivotID, depth)
 	{
 		var hash = context.collapsed;
+
+		//	expand all pivots when searching
 		if (context.searchTerm != '')
 			hash[pivotID] = false;
-		else if (!hash.hasOwnProperty(pivotID))
-			hash[pivotID] = depth>1;
 
 		var collapsed = hash[pivotID];
 
-		return ({
-			collapsed:collapsed,
-			tpl:
-			{
-				li:
-				[
-					'data-expand-collapse-id', pivotID,
-					'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
-				],
-				h2:
-				[
-					'handler','resources-expand-collapse'
-				],
-				button:
-				[
-					'input',
-					'type','button',
-					'class','button-expand-collapse',
-					'style', 'margin-left:'+ depth*this.DEPTH_IDENTATION +'px;'
-				]
-			}
-		});
+		var tpl = {};
+
+		tpl.h2 = ['handler', 'resources-expand-collapse'];
+		tpl.li =
+		[
+			'data-expand-collapse-id', pivotID,
+			'class', 'resource-tree-expand-collapse'+(collapsed?' close':'')
+		];
+		tpl.button =
+		[
+			'input',
+			'type','button',
+			'class','button-expand-collapse'
+		];
+
+		if(depth)
+			tpl.button.push('style', 'margin-left:'+ depth*this.DEPTH_IDENTATION +'px;');
+
+
+		return { collapsed:collapsed, tpl:tpl };
 	},
 
 	update:function(context)
@@ -169,7 +157,7 @@ templates.resource_tree =
 
 	resource_groups:function(context, resources, d)
 	{
-		var tpl = this._groupOrder
+		var tpl = context.groupOrder
 		.map( this.resource_group.bind(this, context, resources, d) )
 		.filter(function(v){
 			return v!=null;
@@ -195,7 +183,8 @@ templates.resource_tree =
 		if (!resources.length)
 			return [];
 
-		var extras = this._expander_extras( context, d.pivotID+'_'+g, d.depth+1);
+		var depth = d.depth+1;
+		var extras = this._expander_extras( context, d.pivotID+'_'+g, depth);
 
 		var tpl =
 			['li',
@@ -212,7 +201,7 @@ templates.resource_tree =
 					],
 					'class','resource-tree-group resource-tree-group-'+g.toLowerCase()
 				].concat( extras.tpl.h2 ),
-				extras.collapsed?[]:this.resources(context, resources, d.depth+2)
+				extras.collapsed?[]:this.resources(context, resources, depth+1)
 			].concat( extras.tpl.li );
 
 		return tpl;

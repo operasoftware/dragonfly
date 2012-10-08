@@ -13,12 +13,25 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
   //	const
   const THROTTLE_DELAY = 250;
+  const GROUP_ORDER =
+  [
+    ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+    ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+    ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+    ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+    ui_strings.S_HTTP_LABEL_FILTER_FONTS,
+    ui_strings.S_HTTP_LABEL_FILTER_OTHER
+  ];
 
     // "private"
   this._service = new cls.ResourceManagerService(this, network_logger);
   this._loading = false;
 
   // public
+  this.get_group_order = function()
+  {
+    return GROUP_ORDER;
+  };
 
   // throttle the update
   this.update = this.update.bind(this).throttle(THROTTLE_DELAY);
@@ -60,7 +73,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
       );
     }
 
-    //  only render it if the template has changed ( using its JSON representation as hash )
+    //  only render the template if it has changed ( using its JSON representation as hash )
     var tpl_JSON = JSON.stringify(tpl);
     if( !this.tpl_JSON || tpl_JSON.length != this.tpl_JSON.length || tpl_JSON != this.tpl_JSON)
     {
